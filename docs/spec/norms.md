@@ -1,12 +1,14 @@
 # W1: norms (`norms@0`): obligations, prohibitions, permissions, exceptions and priorities
 
-> Status: W1 specification, draft 1 (2026-09-26), for the Astra + Fable xhigh statement review required by
+> Status: W1 specification, draft 2 (2026-09-26), revised after both Astra + Fable FIX FIRST reviews required by
 > [PLAN-EXPAND2.md](../../PLAN-EXPAND2.md) rule 10 and binding decision 9.3 before any Lean work in `lean/VE/Norms/*`
 > starts. It applies the W1 section of PLAN-EXPAND2 v3 and the converged change list of
 > `~/code/manage-agents/debates/expand2-v2/` (items 2, 5 and 6) to the P0 contracts now in the tree
 > (`lean/VE/Route/*`, `ve/background.py`, `ve/profiles.py`, `docs/P0-Lean-NOTES.md`, `docs/P0-Py-NOTES.md`,
 > `docs/P0-INTEGRATION.md`). Sections 4 to 7 are the statements under review; section 13 lists every point where this
-> draft chose between readings of the plan. The goal of record is [VISION.md](../../VISION.md), whose lead principle
+> draft chose between readings of the plan; sections 15 to 17 record contract status, review responses and changes.
+> The theorem statements and regression gates below are implementation obligations, not claims of completed proofs
+> or tests. The goal of record is [VISION.md](../../VISION.md), whose lead principle
 > (zero-training English) governs section 2.
 
 ## 0. Scope, one paragraph
@@ -15,7 +17,8 @@ A norm document says, in English, what is required, forbidden and permitted in a
 and priorities. The checker (unchanged) decides two things: what the rules require in a given situation, and whether
 the rules can ever contradict each other, with a witness situation when they can. Norms elaborate into first-order
 premises through one layer per regulated predicate on the P0 route; the elaboration is Lean-proved faithful to a
-direct Catala-style semantics; conflict-freedom is exactly unique expansion (the `expands` field of the P0 `Layer`).
+direct Catala-style semantics; conflict-freedom is exactly unique expansion over base structures, with local
+expansion furnishing the `expands` field of the P0 `Layer`.
 Everything else (defeasible weighing, "generally", "should", holistic priority) is outside: it becomes an open term,
 a hedged unit or a reading set (W2), never a silently strict rule.
 
@@ -29,7 +32,7 @@ is outside the fragment of section 7), and any notion of "more important than".
 ```text
 regulated predicate p   := a vocabulary predicate with a `regulated` declaration (section 3.1): role
                            (permission | obligation | plain), a completion default (deny | allow), for an
-                           obligation optionally its permission dual, and an act phrase for the English wordings
+                           obligation its permission dual whenever that act has both roles (3.1), and an act phrase
 situation variables x̄   := the arguments of p, in declared order, one per sort slot; every rule on p quantifies
                            universally over exactly x̄
 rule N (a norm unit)    := stable name; regulated predicate p_N; sign (p(x̄) or ¬p(x̄)); guard G_N(x̄); carve-outs
@@ -60,14 +63,15 @@ a norm wording: "should", "ought", "generally", "normally", "usually", "is expec
 ### 2.1 Rule blocks
 
 A norm is written as a numbered rule block. Numbers are display only (document order); identity uses the stable
-rule name (section 11.2), and renumbering changes no identity. There are no inline `unless` chains across
-sentences: one rule, one block.
+rule name (section 11.2), and renumbering alone changes no rule identity. There are no inline `unless` chains across
+sentences: one rule, one block. The editor preserves names in block metadata; an English export that promises
+identity preservation includes that metadata (11.2). Bare English alone cannot recover arbitrary hidden names.
 
 ```text
-Rule 3. Every state must not deprive a person of life, liberty or property, unless that state affords that
+Rule 3. Every state must not deprive each person of life, liberty or property, unless that state affords that
 person due process of law.
 
-Rule 4 (exception to rule 3). Every state may deprive a person of life, liberty or property, if that person has
+Rule 4 (exception to rule 3). Every state may deprive each person of life, liberty or property, if that person has
 been convicted of a crime by a court of that state.
 
 Rule 7 (exception to rules 2 and 5). ...
@@ -76,7 +80,7 @@ Rule 7 (exception to rules 2 and 5). ...
 | Wording | The one reading | Formal effect (section 4) |
 |---|---|---|
 | `Rule n.` | Begins a rule. `n` is its position among the document's rules. | a node of the tree; display number only |
-| `Rule n (exception to rule m).` / `(exception to rules m and k)` | Rule `n` decides instead of rule `m` (and `k`) whenever rule `n` applies. Rules `m`, `k` must regulate the same act. | `n` is a child of `m` (and `k`) in the precedence DAG |
+| `Rule n (exception to rule m).` / `(exception to rules m and k)` | Rule `n` can decide even where rule `m`'s guard fails: it has its own guard. When `n` or a descendant decides, `m` (and `k`) cannot decide. Rules `m`, `k` must regulate the same predicate. | `n` is a child of `m` (and `k`) in the precedence DAG; no inherited guard |
 | `Rule n takes precedence over rule m.` (a sentence on its own) | Same as the header form; accepted on input, rendered as the header form. | same |
 | `Every <noun> ... must <act>.` | In every situation of the described kind, the act is required. | consequence `required_act(x̄)` (obligation role, positive) |
 | `Every <noun> ... must not <act>.` | In every situation of the described kind, the act is not permitted (forbidden). | consequence `¬permitted_act(x̄)` (permission role, negative) |
@@ -90,7 +94,8 @@ Rule 7 (exception to rules 2 and 5). ...
 | `By default, a <noun> must <act>.` | When no rule decides, the act is required. | obligation, allow-by-default |
 
 Input synonyms (accepted, rendered canonically, shown in the paraphrase): `No <noun> may <act>` for `Every <noun>
-must not <act>`; `any`/`every` for `each` in object position (2.4); `except when` for `unless` inside a sentence.
+must not <act>`; `any` for `each` in object position (2.4); `except when` for `unless` inside a sentence.
+Object-position `every` is rejected with a rewrite to `each`: under `must not`, it invites the reading "not every".
 There are no other synonyms. Canonical rendering: one carve-out renders inline as `unless`; two or more render
 as separate `Except when ...` sentences in the block, in document order.
 
@@ -112,10 +117,11 @@ and one reading.
 
 ### 2.3 Precedence is nesting, not weight
 
-`Rule 5 takes precedence over rule 2` means: when rule 5 applies, rule 2 does not decide. It does not mean that
-rule 5 matters more, and it cannot be said of two rules that regulate different acts. A document that wants
+`Rule 5 takes precedence over rule 2` means: when rule 5's subtree yields, rule 2 does not decide. Rule 5 has its
+own guard and can decide where rule 2's guard fails; an exception does not inherit its parents' guards. It does
+not mean that rule 5 matters more, and both rules must regulate the same predicate. A document that wants
 "safety rules before helpfulness rules" writes the lower rules' outcomes into the higher rules' guards ("Rule 9.
-Every assistant may help with a request, if it is not the case that the assistant must refuse that request."),
+Every assistant may help with each request, if it is not the case that that assistant must refuse that request."),
 which the stratification of section 4.1 orders. The IDE offers exactly this rewrite when an author writes
 precedence across predicates (diagnostic `PrecedenceAcrossPredicates`, section 11.1).
 
@@ -145,6 +151,13 @@ it shows the default sentence of every regulated predicate and the conflict stat
 situation rendered as "Rule 3 applies; its exception 4 does not; rule 6 also applies; rule 3 forbids and rule 6
 permits".
 
+Every carve-out paraphrase names the actual default from the environment legend, even when other rules might
+decide: for a deny-default permission, "When this condition holds, this rule is silent; other rules may decide;
+if none does, entry is not permitted by default." The default is never left implicit in "the default decides".
+For precedence, the IDE also shows: rule 1 forbids ward entry on Mondays; rule 2, an exception to rule 1, permits
+entry for on-call doctors. An on-call doctor may enter on Tuesday under rule 2 even though rule 1's guard fails.
+If the author means only Mondays, the rewrite adds "and it is Monday" to rule 2's own guard.
+
 ### 2.6 How the IDE resolves ambiguity, in English
 
 The one-reading guarantee is mechanical (P0 3.2: every English input runs the all-derivations parser; two
@@ -154,11 +167,11 @@ must handle, each with the paraphrases the IDE shows:
 | The author wrote | Competing readings shown as paraphrases with an example situation | Rewrites offered |
 |---|---|---|
 | `Every employee must file a report.` and no act phrase `file a report` is declared | (a) "For every employee and every report, the employee must file that report" (a report is a second situation variable); (b) "Every employee must file some report" (the report is inside the act) | declare the act phrase `{0} file a report` (reading b); or write `each report` and declare `{0} file {1}` (reading a) |
-| `Every state must not deprive a person of liberty unless it affords due process, in which case it may.` | (a) carve-out: when due process is afforded, rule 3 is silent and the default decides; (b) exception rule: when due process is afforded, deprivation is permitted by a rule | keep `unless` (a); or `Rule 4 (exception to rule 3). Every state may deprive ..., if ...` (b). The two differ when the default is `must not` and another rule forbids in that situation: under (a) it stays forbidden, under (b) it is permitted |
+| `Every state must not deprive each person of liberty unless that state affords that person due process, in which case it may.` | (a) carve-out: with due process, rule 3 is silent; with no other deciding rule and the stated default `By default, a state must not deprive a person of liberty`, deprivation remains forbidden; (b) exception rule: with due process, a rule permits deprivation | keep `unless` (a); or `Rule 4 (exception to rule 3). Every state may deprive each person of liberty, if that state affords that person due process.` (b). With that deny default and no third rule, (a) forbids and (b) permits. With an independent forbidding rule, (b) is a conflict (10.1(i)) |
 | `Claude should generally prioritize safety.` | not a norm wording | `must` (a strict rule, reading A of the pilot in 9.2); or a hedged unit `hedged(generally, norm)` (W2), or an open term for the weighing (9.2) |
-| `Rule 5 is more important than rule 2.` | not a norm wording | `Rule 5 (exception to rule 2).` when both regulate the same act; else the guard rewrite of 2.3 |
-| `A doctor may enter the ward.` | (a) permission for every doctor; (b) "might" | only (a) exists; the paraphrase says "is permitted to" |
-| `Rule 6 (exception to rule 5). Every doctor must not enter the ward, unless the doctor is on call.` where rule 5 permits entering | one reading; the IDE shows the doctor-on-call-on-Monday situation: rule 6 does not apply (carve-out), so rule 5 decides and entry is permitted | none needed; the situation is the check the author wanted |
+| `Rule 5 is more important than rule 2.` | not a norm wording | `Rule 5 (exception to rule 2).` when both regulate the same predicate; else the guard rewrite of 2.3 |
+| `A doctor may enter the ward.` | (a) permission for every doctor; (b) "might"; the supplied wording is not admitted | rewrite (a) as `Every doctor may enter the ward.`; the paraphrase says "is permitted to"; (b) is outside norm wordings |
+| `Rule 6 (exception to rule 5). Every doctor must not enter the ward, unless that doctor is on call.` where rule 5 permits entering and the default forbids entry | one reading; for a doctor on call on Monday, rule 6 does not apply, so rule 5 permits entry. The stated default is `By default, a doctor must not enter the ward`; it decides only if no rule does | none needed; the situation is the check the author wanted |
 
 The IDE never shows logic. The distinguishing situation is a checked finite model rendered in document terms (W8
 de-elaboration: "state Texas, law L1: L1 abridges the privileges of citizen Ann; rule 2 applies").
@@ -191,12 +204,20 @@ of the mixed English harness (W7) and of `tests/test_english_unambiguity.py`.
 
 Rules: `default` is mandatory (no silent completion; a missing field is `InvalidInput`, never a default of
 its own); `role` mandatory; `act` mandatory for permission and obligation roles and forbidden for plain; an
-obligation's `permission` names a permission-role predicate with the same argument sorts (`DualSortMismatch`
-otherwise), and each permission predicate is named by at most one obligation; a regulated predicate carries no
-W5 flag (`functional`, `total`) and is not a W3 defined predicate (`RegulatedDefinedPredicate`); arity 1 or 2
+obligation's `permission` names a permission-role predicate with the same ordered argument sorts (`DualSortMismatch`
+otherwise) and the same canonical act phrase (`DualActMismatch` otherwise). Act identity is the pair
+`(ordered argument sorts, canonical act phrase)`; canonical means the linted template with whitespace normalised,
+slots preserved in order, and no semantic synonym matching. At most one predicate per role may describe an act
+(`DuplicateActRole`). If both obligation and permission roles describe that act, the obligation **must** name
+that permission (`MissingPermissionDual` if absent); a link to another act is rejected even if its sorts match.
+A dual may be absent only when no permission role for that act exists. Thus `must enter` and `must not enter`
+cannot be declared independently to bypass the profile premise. Each permission predicate is named by at most
+one obligation; `permission` is forbidden on other roles. A regulated predicate carries no W5 flag
+(`functional`, `total`) and is not a W3 defined predicate (`RegulatedDefinedPredicate`); arity 1 or 2
 today, up to 6 with `nary@0`; at most 64 regulated predicates per environment (`ResourceLimit`). The `regulated`
-field is part of the canonical environment bytes, so `environment_id` changes when a default, role, dual or act
-phrase changes, and is unchanged for every existing environment (no existing environment has the field).
+field (including its canonical act phrase) is part of the canonical environment bytes, so `environment_id`
+changes when a default, role, dual or act phrase changes, and is unchanged for every existing environment
+(no existing environment has the field).
 
 `Background(env)`, generator `profile` (P0 hook table, `ve/background.py` slot `"profile"`): for every declared
 pair `(r, m)` the premise `∀x̄. r(x̄) → m(x̄)`, in sorted order of `r`; `validate_background` rejects a finite
@@ -241,7 +262,8 @@ literal    = atom | "not (", atom, ")" ;   (* the atom's arguments are exactly t
 The consequence atom's arguments must be the binders in order, with no constant and no repetition
 (`ConsequenceArguments` otherwise); a rule about a constant writes `if (x0 equals @view)`. The canonical printer
 names binders `x0, x1, ...` as today; `print(parse(s)) = s` on canonical text; English and strict forms round
-trip through the same AST (acceptance 10.6).
+trip through the same AST with English's preserved name metadata (acceptance 10.6); strict text carries the
+names itself and needs no such metadata.
 
 ## 4. Semantics
 
@@ -280,9 +302,11 @@ N_p(x̄)       := ⋁_{N on p, sign −} selects_N(x̄)                      som
 ```
 
 Recursion is on the precedence DAG (well-founded by 4.1(3); in Lean, fuel = number of rules). A carve-out is
-part of `applies`, not a node: a rule whose carve-out holds neither applies nor yields, so it does not block the
-rules it takes precedence over (the doctor-on-Monday case of 2.6). Two rules of the same sign that both select at
-some `x̄` are a redundancy warning `Redundancy(N, N')` with an example situation, never a conflict; this is the
+part of `applies`, not a node: a rule whose carve-out holds does not itself apply or select. Its subtree can
+still yield through an applicable descendant and block its parents. Only when no descendant yields is that
+carved-out subtree silent (as in the doctor-on-Monday case of 2.6, which has no descendant). Two rules of the same
+sign that both select at some `x̄` produce an overlap diagnostic `Overlap(N, N')` with an example situation,
+never a conflict or a claim that either rule is logically redundant; this is the
 stated deviation from Catala, where two applicable exceptions are an error whatever their values. Two rules of
 opposite sign that both select are the intra-predicate conflict of section 5.
 
@@ -307,7 +331,7 @@ Value_p(S, v̄) := some true     if P_p holds at v̄ and N_p does not
                | some false    if N_p holds at v̄ and P_p does not
                | some d_p      if neither holds
                | none          if both hold                           (Catala's conflict error)
-Intended_p(T, S) := ∀ v̄ typed for p, Value_p(restrict S, v̄) = some (S ⊨ p(v̄))
+Intended_p(T, S) := ∀ v̄ typed for p, ∃ b : Bool, Value_p(restrict S, v̄) = some b ∧ (S ⊨ p(v̄) ↔ b = true)
 ```
 
 ### 4.4 Elaboration (the layer premises)
@@ -327,8 +351,9 @@ both theorems in section 6:
   reader may think of `p` as "defined by" `O_p`; on conflicting documents the biconditional would hide the
   conflict, which is why the three-clause form is the premise.
 
-Rendering: a certificate's premise list shows `elab_p` under the label `layer:norms:<p>` (the label grammar of
-P0 3.6 gains this form; `background:profile` covers the pair premise). W8's de-elaboration renders the
+Rendering: the new norms admission path (11.4) shows `elab_p` under the label `layer:norms:<p>` in its own
+extended label grammar; the frozen P0 parser is unchanged. `background:profile` covers the pair premise.
+W8's de-elaboration renders the
 premise back as the rule blocks it came from.
 
 ### 4.5 Outcome substitution
@@ -343,7 +368,8 @@ base structure := a structure admissible for E_base satisfying Background_base :
             (the definitions and the profile premise mention symbols outside E_base and are not part of it)
 ```
 
-`subst_sound` (section 6): on any structure satisfying the lower layers' premises, `φ°` and `φ` agree. Hence the
+`subst_sound` (section 6): for an explicit DAG prefix, a formula well-formed over that prefix and a typed
+valuation, on any structure satisfying that prefix's premises, `φ°` and `φ` agree. Hence the
 check can be stated and witnessed over base structures, where a witness is a plain situation with no derived
 tables, and the same formulas are what the fragment theorem measures.
 
@@ -365,8 +391,8 @@ as well as a rule that selects `required`; both reviewer counterexamples are in 
 
 | Status | Evidence | Where it is checked |
 |---|---|---|
-| CONFLICT-FREE | one accepted tableau certificate per `p` and per pair for `Background_base ++ lower non-norm layer premises ⊢ ∀x̄. ¬conflict_p(x̄)` (respectively `¬conflict_(r,m)`), bound to `environment_id` and the norm document hash (11.2) | Python replay, Lean `route` (`certificate` case kind over `E_base`), the unchanged FOL checker (or the family the environment enables) |
-| CONFLICT | a checked witness: a valid finite base model `M` (Background_base validated) and a tuple `ā` with `conflict_p°(ā)` (or the pair formula) true in `M` by the finite evaluator; rendered as a situation (2.5) | Python search + evaluation, Lean `countermodel` case kind with conclusion `∀x̄. ¬conflict`, Rust evaluation of the supplied elaborated formula |
+| CONFLICT-FREE | one accepted tableau certificate per `p` and per pair for `Background_base ⊢ ∀x̄. ¬conflict_p(x̄)` (respectively `¬conflict_(r,m)`), bound to the source `environment_id` and norm document hash by the new admission path (11.4) | Python replay, Lean `norms-route` wrapping the unchanged family's certificate checker over the regenerated `E_base` |
+| CONFLICT | a checked witness: a valid finite base model `M` (Background_base validated) and a tuple `ā` typed in argument order, with `conflict_p` (or the pair formula) true under `tupleVal ā` by the finite evaluator; rendered as a situation (2.5) | Python search + evaluation, Lean `norms-route` wrapping the family's countermodel checker with conclusion `∀x̄. ¬conflict`, Rust evaluation of the supplied elaborated formula |
 | UNKNOWN | neither within budget; the report names the budget (`MAX_EVALUATIONS`, the tableau budget, the search bound) | every site |
 
 A document's status is CONFLICT if any `p` or pair has a witness; CONFLICT-FREE if every `p` and pair is
@@ -380,169 +406,283 @@ facts, and any certificate depending on them at those facts is `vacuous`.
 
 For every base structure (every situation the author's vocabulary can describe, with the declared flags and
 literal distinctness), there is exactly one way to fill in every regulated predicate that satisfies all the
-rules, their defaults and the profile premise. Proof and countermodel results on the route then transfer to the
+rules, their defaults and the profile premise, together with the uniquely determined defined predicates.
+This is an iff for each base structure, including those with no full expansion; its universally quantified
+form is the document-wide claim. Proof and countermodel results on the route then transfer to the
 document's own vocabulary through the P0 route theorems: a certified conclusion over `E_base` holds in every
 situation satisfying the premises, and every countermodel in the author's vocabulary expands to one the checker
-sees. That is `Norms.conflictFree_expands` as the `expands` field of the P0 `Layer`, plus `route_acceptance`,
+sees. That is `Norms.conflictFree_expands_document` and `conflictFree_expands_all`, with
+`conflictFree_expands` furnishing each P0 `Layer.expands`, plus `route_acceptance`,
 `route_base`, `route_countermodel_expands` (`lean/VE/Route/Route.lean`).
 
 ## 6. Lean: definitions and the exact statements to prove
 
 Files: `lean/VE/Norms/Tree.lean` (syntax, `WellFormed`, both DAG checks through `VE.Route.dependencyOrder`),
 `Semantics.lean` (`Value`, `holdsCatala`), `Elaborate.lean` (`yields`, `selects`, `pos`, `neg`, `outcome`,
-`elab`, `elaborate`), `Subst.lean` (`subst`, `subst_sound`), `Conflict.lean` (`conflict`, `pairConflict`,
-`conflictFree_expands`), `Layer.lean` (the P0 `Layer` instance and the route theorems), `SmallModel.lean`
-(section 7, gated), `Cedar.lean` (section 8), `Checks.lean` (executable guards for the audit), and `lean/NORMS.md`
-listing each theorem in plain words (rule 9: the prose says "profile premises" and "background premises").
-Existing files are untouched (`lean/VE/Route/frozen.py` hash test extended to the norm files once they freeze).
+`elab`, `elaborate`), `Subst.lean` (`tupleVal`, prefix substitution), `Conflict.lean` (local and document-wide
+expansion), `Layer.lean` (P0 instances and route theorems), `Wire.lean`, `Admission.lean`, `Run.lean` (11.4),
+`SmallModel.lean` (7, gated), `Cedar.lean` (8), `Checks.lean` (executable audit guards), and `lean/NORMS.md`
+listing each theorem in plain words. All frozen P0 contracts and `lean/VE/Route/*` sources remain unchanged.
+The blocks below are statement schemata: helper names are defined here; they are not already implemented Lean.
 
-### 6.1 Definitions (statement review: 12.1 to 12.4)
+### 6.1 Definitions, tuple convention and prefix satisfaction
 
 ```lean
 namespace VE.Norms
 
 structure Node where
   name      : String
-  pred      : String            -- the regulated predicate p_N
-  sign      : Bool              -- true: p(x̄); false: ¬p(x̄)
-  guard     : VE.Formula        -- over context (argument sorts of p_N), closed otherwise
+  pred      : String
+  sign      : Bool
+  guard     : VE.Formula        -- context (sorts pred).reverse; otherwise closed
   carveOuts : List VE.Formula   -- same context
-  over      : List String       -- rules N takes precedence over (N is their exception)
+  over      : List String
 
 inductive Role | permission | obligation | plain
 
 structure Regulated where
   name           : String
   sorts          : List String
-  allowByDefault : Bool         -- d_p
+  allowByDefault : Bool
   role           : Role
-  permission     : Option String  -- an obligation's declared dual
+  act            : Option String -- canonical act phrase; required except for plain
+  permission     : Option String -- mandatory if this act has both roles (3.1)
 
 structure Tree where
   regulated : List Regulated
   nodes     : List Node
 
-/-- 4.1(1)-(4), executable: unique names, `over` on the same predicate, both `dependencyOrder` checks accept,
-    guards and carve-outs well-formed over `E_out` with only lower defined/regulated symbols. -/
+/-- Declaration checks (3.1), 4.1, guard/carve-out typing, and both DAG checks. -/
 def WellFormed (E : VE.Environment) (T : Tree) : Bool
 
-def applies (T : Tree) (N : Node) : VE.Formula          -- G_N ∧ ¬⋁ carve-outs
-def yields  (T : Tree) : Nat → Node → VE.Formula        -- fuel-indexed; fuel = T.nodes.length at the top
+/-- Relation tuples stay in declared argument order; formulas use de Bruijn valuation order. -/
+def tupleVal {α : Type} (vs : List α) : List α := vs.reverse
+
+def applies (T : Tree) (N : Node) : VE.Formula
+def yields  (T : Tree) : Nat → Node → VE.Formula -- fuel = T.nodes.length
 def selects (T : Tree) : Nat → Node → VE.Formula
-def pos     (T : Tree) (p : String) : VE.Formula        -- P_p, open in the context of p
-def neg     (T : Tree) (p : String) : VE.Formula        -- N_p
-def outcome (T : Tree) (p : String) : VE.Formula        -- O_p
-def elab    (T : Tree) (p : String) : VE.Formula        -- closed: ∀x̄. (P → p) ∧ (N → ¬p) ∧ (¬P ∧ ¬N → (p ↔ d_p))
+def pos     (T : Tree) (p : String) : VE.Formula
+def neg     (T : Tree) (p : String) : VE.Formula
+def outcome (T : Tree) (p : String) : VE.Formula
+def elab    (T : Tree) (p : String) : VE.Formula -- closed three-clause formula
 def elaborate (E : VE.Environment) (T : Tree) : List VE.Formula
-  -- (elab T p) for p in the regulated part of `dependencyOrder` over defined ∪ regulated, in that order
-def profilePremises (E : VE.Environment) : List VE.Formula
-  -- ∀x̄. r(x̄) → m(x̄) for each obligation r with permission m, sorted by r; the Background `profile` generator
+  -- norm elaborations in DAG order; layerPremises also interleaves W3 biconditionals
 
-/-- The direct semantics (Catala): the value the tree assigns to p at v̄, or none on a conflict. -/
-def Value (T : Tree) (p : String) (S : VE.Structure) (v̄ : List S.Carrier) : Option Bool
-def holdsCatala (E : VE.Environment) (T : Tree) (S : VE.Structure) : Prop :=
-  ∀ p ∈ regulatedNames T, ∀ v̄, VE.TupleTyped S (sorts p) v̄ → Value T p S v̄ = some (S.relation p v̄)
-
-/-- Outcome substitution and definition expansion, terminating by the DAG. -/
-def subst (E : VE.Environment) (T : Tree) : VE.Formula → VE.Formula
-def conflict     (T : Tree) (p : String) : VE.Formula      -- (pos T p)° ∧ (neg T p)°, open in the context of p
-def pairConflict (T : Tree) (r m : String) : VE.Formula    -- (outcome T r)° ∧ ¬(outcome T m)°
-def ConflictFree (E) (T) (S₀ : VE.Structure) : Prop :=
-  (∀ p ∈ regulatedNames T, ∀ v̄, VE.TupleTyped S₀ (sorts p) v̄ → ¬ (conflict T p).denote S₀ v̄) ∧
-  (∀ (r, m) ∈ pairs E, ∀ v̄, VE.TupleTyped S₀ (sorts r) v̄ → ¬ (pairConflict T r m).denote S₀ v̄)
+def Value (T : Tree) (p : String) (S : VE.Structure) (vs : List S.Carrier) : Option Bool
+  -- direct rule recursion, evaluating each guard/carve-out under tupleVal vs
+def IntendedAt (T : Tree) (p : String) (S : VE.Structure) : Prop :=
+  ∀ vs, VE.TupleTyped S (sorts p) vs →
+    ∃ b : Bool, Value T p (forget p S) vs = some b ∧ (S.relation p vs ↔ b = true)
+def holdsCatala (E) (T) (S : VE.Structure) : Prop :=
+  ∀ p ∈ regulatedNames T, IntendedAt T p S
 ```
 
-`Value` is defined by recursion on the tree with the executable `applies`, so `holdsCatala` is independent of
-the generated formulas; that independence is what makes `elaborate_iff` a faithfulness theorem rather than a
-tautology (verification-contract principle: the specification is not "whatever the elaborator returns").
+Here and below `sorts p` is the declaration's argument-order signature, never its reversal. For binary
+`p(state, person)`, relation tuple `[Texas, Ann]` becomes valuation `[Ann, Texas]`: guard
+`r(var 1, var 0)` tests `r(Texas, Ann)`. This conversion applies to `Value`, `pos`, `neg`, `outcome`, local and
+base conflict formulas, completion, finite witness evaluation and the small-model theorem. Closed formulas
+use `[]`. General substitution uses its explicit typed valuation `ρ`, not another reversal. Prove
+`tupleVal_typed`: `TupleTyped S ss vs → Valuation.Typed S ss.reverse (tupleVal vs)` (and the converse for
+`vs.length = ss.length`). `Value` recurses on rules independently of the generated selection formulas, so
+`elaborate_iff` expresses faithfulness to that direct semantics.
 
-### 6.2 Theorems
+Fix the unique dependency order `q₁, …, qₙ` of **all** defined and regulated predicates. `E_i` contains the base
+vocabulary plus the first `i` symbols; `before p` is the prefix length before `p` is introduced. All prefix
+indices below satisfy `0 ≤ i ≤ n`. Define `PrefixPremises i` as the first `i` layer premises (W3 biconditionals
+or norm elaborations) and every pair premise whose two members are in that prefix. `restrictTo i` forgets the
+later symbols, preserving the carrier, domains, constants and all other relations. `restrictAll = restrictTo 0`.
+These definitions do not require any `Layer` value or any conflict-free hypothesis.
+
+```text
+PrefixAdmissible 0 S := BaseAdmissible E S
+PrefixAdmissible (i+1) S := S.Admissible E_(i+1)
+  ∧ PrefixAdmissible i (forget q_(i+1) S)
+  ∧ LayerMeaning_(i+1)(S)
+  ∧ Sat S (pairPremisesClosedAt q_(i+1))
+
+LayerMeaning_i(S) := IntendedAt T q_i S                       if q_i is regulated
+                  | S ⊨ ∀x̄. q_i(x̄) ↔ definitionBody_i(x̄)    if q_i is defined
+```
+
+`Sat S as := ∀ a ∈ as, a.denote S []`; `BaseAdmissible` is structural admissibility over `E_base` plus
+`Background_base`. Prove `prefix_satisfaction`: `PrefixAdmissible i S` iff `S.Admissible E_i`, its base
+restriction is base-admissible, and `S` satisfies `PrefixPremises i`. The regulated step uses the local
+`elaborate_iff`; the definition step uses W3's faithfulness theorem. Pair premises are closed at the later
+member in the DAG order; they introduce no extra dependency edge.
+
+**W3 interface requirement:** each definitions layer on this route must include its own biconditional **and**
+the full input-prefix admissibility in `Admissible_out`. Structural admissibility alone, even with a correct
+`expands` proof, does not ensure that an arbitrary intermediate input to a later layer satisfies lower
+premises. This is an instantiation requirement on the unchanged P0 fields; `Examples.copyLayer` alone does
+not supply this stronger prefix invariant.
 
 ```lean
-/-- Precedence and stratification are acyclic and the layer order is a permutation (from Route.dag_acyclic). -/
-theorem precedence_acyclic (E) (T) (h : WellFormed E T = true) :
-    VE.Route.DagAcyclic (precedenceNodes T) ∧ VE.Route.DagAcyclic (stratumNodes E T)
-
-/-- Faithfulness of the elaboration to the direct semantics. -/
-theorem elaborate_iff (E) (T) (h : WellFormed E T = true) (S : VE.Structure) (hS : S.Admissible (E_out E T)) :
-    (∀ a ∈ elaborate E T, a.denote S []) ↔ holdsCatala E T S
-
-/-- On a conflict-free structure the elaboration is the completed-outcome biconditional. -/
-theorem elab_completion (E) (T) (h) (p) (S) (hS)
-    (hc : ∀ v̄, VE.TupleTyped S (sorts p) v̄ → ¬ ((pos T p).denote S v̄ ∧ (neg T p).denote S v̄)) :
-    (elab T p).denote S [] ↔ (∀ v̄, VE.TupleTyped S (sorts p) v̄ → (S.relation p v̄ ↔ (outcome T p).denote S v̄))
-
-/-- Substitution is sound on structures satisfying the lower layers' premises. -/
-theorem subst_sound (E) (T) (h) (S) (hS : S.Admissible (E_out E T))
-    (hlow : ∀ a ∈ lowerPremises E T, a.denote S []) (φ : VE.Formula) (ρ) :
-    (subst E T φ).denote S ρ ↔ φ.denote S ρ
-
-/-- The P0 Layer instance for one regulated predicate p, under the conflict-free hypothesis for p. -/
-def layer (E) (T) (h : WellFormed E T = true) (p : String) (hp : p ∈ regulatedNames T)
-    (hc : ∀ S₀, (layerBelow E T p).Admissible_out S₀ → ConflictFreeAt E T p S₀) : VE.Route.Layer VE.Route.fol Unit
-  -- E_in := environment of the layer below p; E_out := E_in + p;
-  -- premises _ := [elab T p];  Admissible_in := (layerBelow ...).Admissible_out;
-  -- Admissible_out S := S.Admissible E_out ∧ Admissible_in (restrict S) ∧ ∀ a ∈ pairPremisesClosedAt p, a.denote S [];
-  -- restrict := forget p;  Intended _ S := Intended_p T S;  faithful := elaborate_iff at p;  expands := conflictFree_expands
-
-/-- The theorem behind `expands`: unique expansion exactly when no conflict, per base structure. -/
-theorem conflictFree_expands (E) (T) (h : WellFormed E T = true) (p) (hp)
-    (S₀ : VE.Structure) (h₀ : (layerBelow E T p).Admissible_out S₀) :
-    VE.Route.Unique (fun S => forget p S = S₀ ∧ AdmissibleOut E T p S ∧ (elab T p).denote S []) ↔
-      ConflictFreeAt E T p S₀
-  -- ConflictFreeAt: no v̄ with (pos T p ∧ neg T p) at v̄ in S₀ (lower predicates already fixed by S₀), and for
-  -- each pair (r, m) whose later member is p, no v̄ with the pair conflict at v̄
-
-/-- Quantified form (the document-level statement): expansion for every base structure iff conflict-free everywhere. -/
-theorem conflictFree_expands_all (E) (T) (h) (p) (hp) :
-    (∀ S₀, (layerBelow E T p).Admissible_out S₀ →
-        VE.Route.Unique (fun S => forget p S = S₀ ∧ AdmissibleOut E T p S ∧ (elab T p).denote S [])) ↔
-      (∀ S₀, (layerBelow E T p).Admissible_out S₀ → ConflictFreeAt E T p S₀)
-
-/-- The composed norms route (definitions and norms in DAG order) and its acceptance theorem, by
-    Route.compose and Route.route_acceptance with BackgroundSound discharged by AdmissibleOut. -/
-theorem norms_route_acceptance (E) (T) (h) (hc : ∀ S₀, BaseAdmissible E S₀ → ConflictFree E T S₀)
-    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
-    (accepted : VE.Tableau.checkCertificate (E_out E T) (background E ++ layerPremises E T ++ Γ) φ c = true) :
-    (∀ S, S.Admissible (E_out E T) → holdsCatala E T S → definitionsHold E S → profileHold E S →
-        (∀ a ∈ Γ, a.denote S []) → φ.denote S []) ∧
-    ((∀ a ∈ Γ, a.WellFormed E_base []) → φ.WellFormed E_base [] →
-        ∀ S₀, BaseAdmissible E S₀ → (∀ a ∈ Γ, a.denote S₀ []) → φ.denote S₀ [])
-
-/-- Countermodels survive both ways (Route.route_countermodel_restricts / _expands instantiated). -/
-theorem norms_route_countermodel (E) (T) (h) (hc) (Γ) (φ) (hΓ) (hφ) (S₀) (h₀ : BaseAdmissible E S₀)
-    (hs : ∀ a ∈ Γ, a.denote S₀ []) (hn : ¬ φ.denote S₀ []) :
-    ∃ S, restrictAll S = S₀ ∧ S.Admissible (E_out E T) ∧
-      (∀ a ∈ background E ++ layerPremises E T ++ Γ, a.denote S []) ∧ ¬ φ.denote S []
-
-/-- The witness check is sound: a valid finite base model where the conflict formula evaluates true refutes
-    conflict-freedom (and hence unique expansion) for that document. -/
-theorem conflict_witness_sound {α} [DecidableEq α] (E) (T) (h) (p) (M : VE.FiniteModel α)
-    (valid : M.Valid E_base) (hb : backgroundValid M = true) (ā) (typed)
-    (hw : (conflict T p).eval M ā = true) :
-    ¬ ConflictFreeAt E T p M.asStructure ∧ ¬ (∀ S₀, BaseAdmissible E S₀ → ConflictFree E T S₀)
+/-- Substitute only defined/regulated symbols present in prefix i; recursively expand to base symbols. -/
+def subst (E) (T) (i : Nat) : VE.Formula → VE.Formula
+def outcomeBase (E) (T) (p) := subst E T (before p) (outcome T p)
+def conflict (E) (T) (p) :=
+  .and (subst E T (before p) (pos T p)) (subst E T (before p) (neg T p))
+def pairConflict (E) (T) (r m) := .and (outcomeBase E T r) (.not (outcomeBase E T m))
+def ConflictFree (E) (T) (B : VE.Structure) : Prop :=
+  (∀ p ∈ regulatedNames T, ∀ vs, VE.TupleTyped B (sorts p) vs →
+    ¬ (conflict E T p).denote B (tupleVal vs)) ∧
+  (∀ (r, m) ∈ pairs E, ∀ vs, VE.TupleTyped B (sorts r) vs →
+    ¬ (pairConflict E T r m).denote B (tupleVal vs))
 ```
 
-Proof sketches (for the reviewers, not the prover): `elaborate_iff` by cases on `Value` at each `v̄`: both
-`P`, `N` false, one, or both; the clauses of `elab` match the four cases and `holdsCatala` demands `some` on the
-fourth. `conflictFree_expands` (⇐): the structure `S` with `p := O_p` restricted to `S₀` satisfies `elab` by
-`elab_completion`; any other `S'` with `forget p S' = S₀` and `elab` agrees with `S` on `p` by the same lemma, so
-`S' = S` (structure equality as in `Examples.copy_expands`); the pair premise holds by the second conjunct of
-`ConflictFreeAt`. (⇒): a `P ∧ N` point makes `elab` unsatisfiable over `S₀`; a pair point makes every `S`
-satisfying `elab` violate the pair premise (using `elab_completion` on both members, the lower one fixed by
-`S₀`); either way no `S` exists, so `Unique` fails. `norms_route_acceptance` is `Route.route_acceptance` applied to
-`Route.compose` of the definition and norm layers in DAG order, with `Compatible` discharged by construction and
-`BackgroundSound` by `AdmissibleOut` (flags and literals from base admissibility, definitions from W3's layer
-premises, the profile premise from `AdmissibleOut`). `conflict_witness_sound` is `eval_iff_denote` plus
-`literalsValid_sound` and the W5 flag validity theorem.
+`ConflictFreeAt E T p S₀` is different: `S₀` interprets the prefix **below** `p`; it is not a base structure.
+It asserts no typed tuple satisfying `(pos T p) ∧ (neg T p)` in `S₀` under `tupleVal`, **without substitution**.
+For each pair closing at `p`, it also asserts the following local condition, under the same typed tuples:
+
+```text
+p = r (obligation introduced last): ¬(outcome T r evaluated in S₀ at tupleVal vs ∧ ¬ S₀.relation m vs)
+p = m (permission introduced last): ¬(S₀.relation r vs ∧ ¬ outcome T m evaluated in S₀ at tupleVal vs)
+```
+
+Only the new predicate is replaced by its local outcome; the earlier member is the actual relation in `S₀`.
+The prefix invariant and typed `subst_sound`, not a change to this definition, relate these local tests to
+`ConflictFree` over `restrictAll S₀`.
+
+### 6.2 Theorems and the actual document-wide iff
+
+```lean
+theorem precedence_acyclic (E) (T) (h : WellFormed E T = true) :
+  VE.Route.DagAcyclic (precedenceNodes T) ∧ VE.Route.DagAcyclic (stratumNodes E T)
+
+/-- Local faithfulness on all structurally admissible outputs, before adding prefix satisfaction. -/
+theorem elaborate_iff_at (E) (T) (h) (p) (hp : p ∈ regulatedNames T)
+    (S : VE.Structure) (hS : S.Admissible E_(before p + 1)) :
+  (elab T p).denote S [] ↔ IntendedAt T p S
+
+theorem elaborate_iff (E) (T) (h : WellFormed E T = true)
+    (S : VE.Structure) (hS : S.Admissible E_n) :
+  Sat S (elaborate E T) ↔ holdsCatala E T S
+
+theorem elab_completion (E) (T) (h) (p) (hp : p ∈ regulatedNames T)
+    (S : VE.Structure) (hS : S.Admissible E_(before p + 1))
+    (hc : ∀ vs, VE.TupleTyped S (sorts p) vs →
+      ¬ ((pos T p).denote S (tupleVal vs) ∧ (neg T p).denote S (tupleVal vs))) :
+  (elab T p).denote S [] ↔
+    (∀ vs, VE.TupleTyped S (sorts p) vs →
+      (S.relation p vs ↔ (outcome T p).denote S (tupleVal vs)))
+
+/-- Explicit prefix, formula typing and valuation typing exclude undefined raw variables. -/
+theorem subst_sound (E) (T) (h : WellFormed E T = true) (i) (hi : i ≤ n)
+    (S : VE.Structure) (hS : S.Admissible E_i) (hlow : Sat S (PrefixPremises i))
+    (Γ : List String) (φ : VE.Formula) (hφ : φ.WellFormed E_i Γ)
+    (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+  (subst E T i φ).denote (restrictAll S) ρ ↔ φ.denote S ρ
+
+/-- Local expansion; the input is an interpreted prefix, not an arbitrary base model. -/
+theorem conflictFree_expands (E) (T) (h : WellFormed E T = true) (p) (hp)
+    (S₀ : VE.Structure) (h₀ : PrefixAdmissible (before p) S₀) :
+  VE.Route.Unique (fun S => forget p S = S₀ ∧ AdmissibleOut E T p S ∧ (elab T p).denote S []) ↔
+    ConflictFreeAt E T p S₀
+
+/-- The P0 instance, only when every admissible prefix input passes the local test. -/
+def layer (E) (T) (h : WellFormed E T = true) (p) (hp)
+    (hc : ∀ S₀, PrefixAdmissible (before p) S₀ → ConflictFreeAt E T p S₀) :
+    VE.Route.Layer VE.Route.fol Unit
+  -- E_in := E_(before p); E_out := E_(before p + 1); premises _ := [elab T p]
+  -- Admissible_in := PrefixAdmissible (before p)
+  -- AdmissibleOut E T p S = Admissible_out S := S.Admissible E_out
+  --   ∧ Admissible_in (forget p S) ∧ IntendedAt T p S ∧ Sat S (pairPremisesClosedAt p)
+  -- This is exactly PrefixAdmissible (before p + 1), including the CURRENT elaboration.
+  -- restrict := forget p; Intended _ S := IntendedAt T p S
+  -- faithful := elaborate_iff_at; expands := conflictFree_expands under hc
+
+/-- The document relation is defined without assuming conflict-freedom or constructing Layers. -/
+def DocumentExpansion (E) (T) (B S : VE.Structure) : Prop :=
+  restrictAll S = B ∧ S.Admissible E_n ∧
+    Sat S (background E ++ layerPremises E T)
+
+/-- Pointwise iff over BASE structures, including definitions before, between and after norms. -/
+theorem conflictFree_expands_document (E) (T) (h : WellFormed E T = true)
+    (B : VE.Structure) (hB : BaseAdmissible E B) :
+  VE.Route.Unique (DocumentExpansion E T B) ↔ ConflictFree E T B
+
+/-- The document-wide iff; no predicate p and no intermediate-structure quantifier. -/
+theorem conflictFree_expands_all (E) (T) (h : WellFormed E T = true) :
+  (∀ B, BaseAdmissible E B → VE.Route.Unique (DocumentExpansion E T B)) ↔
+    (∀ B, BaseAdmissible E B → ConflictFree E T B)
+
+/-- Derive each layer's hypothesis from the base-level property via prefix satisfaction/substitution. -/
+theorem conflictFree_prefix (E) (T) (h) (p) (hp)
+    (hc : ∀ B, BaseAdmissible E B → ConflictFree E T B)
+    (S₀ : VE.Structure) (h₀ : PrefixAdmissible (before p) S₀) :
+  ConflictFreeAt E T p S₀
+
+/-- Semantic route acceptance, distinct from wire admission (11.4). -/
+theorem norms_route_acceptance (E) (T) (h) (hc : ∀ B, BaseAdmissible E B → ConflictFree E T B)
+    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
+    (hΓ : ∀ a ∈ Γ, a.WellFormed E_n []) (hφ : φ.WellFormed E_n [])
+    (accepted : VE.Tableau.checkCertificate E_n (background E ++ layerPremises E T ++ Γ) φ c = true) :
+  (∀ S, S.Admissible E_n → holdsCatala E T S → definitionsHold E S → profileHold E S →
+    Sat S (Background_base E) → Sat S Γ → φ.denote S []) ∧
+  ((∀ a ∈ Γ, a.WellFormed E_base []) → φ.WellFormed E_base [] →
+    ∀ B, BaseAdmissible E B → Sat B Γ → φ.denote B [])
+
+/-- Countermodels of base formulas expand; restriction is the companion route theorem. -/
+theorem norms_route_countermodel (E) (T) (h) (hc) (Γ) (φ)
+    (hΓ : ∀ a ∈ Γ, a.WellFormed E_base []) (hφ : φ.WellFormed E_base [])
+    (B : VE.Structure) (hB : BaseAdmissible E B) (hs : Sat B Γ) (hn : ¬ φ.denote B []) :
+  ∃ S, DocumentExpansion E T B S ∧ Sat S Γ ∧ ¬ φ.denote S []
+
+/-- A typed finite BASE witness refutes the document property, not ConflictFreeAt. -/
+theorem conflict_witness_sound {α} [DecidableEq α] (E) (T) (h) (p)
+    (hp : p ∈ regulatedNames T) (M : VE.FiniteModel α)
+    (valid : M.Valid E_base) (hb : backgroundValid M = true) (vs : List α)
+    (typed : VE.TupleTyped M.asStructure (sorts p) vs)
+    (hw : (conflict E T p).eval M (tupleVal vs) = true) :
+  ¬ ConflictFree E T M.asStructure ∧
+    ¬ VE.Route.Unique (DocumentExpansion E T M.asStructure) ∧
+    ¬ (∀ B, BaseAdmissible E B → ConflictFree E T B)
+-- Companion theorem conflict_pair_witness_sound uses (r,m) ∈ pairs E, sorts r and pairConflict E T r m.
+```
+
+All schematic `h` parameters are `WellFormed E T = true`; `hp` is membership in `regulatedNames T`; `hc` in
+the countermodel theorem is the same universally quantified base conflict-freedom as in acceptance. `background E`
+is the complete regenerated Background (flags, definitions, literals, profile); `Background_base E` contains
+flags and literals only. Conflict certificates after substitution use **only** `Background_base E` (5.2):
+no unexpanded definition premise is well-formed over `E_base`.
+
+Proof plan:
+
+1. Prove `tupleVal_typed`, typing preservation for prefix substitution, and the capture-avoiding atom substitution
+   lemma for typed terms/valuations. Prove `elaborate_iff_at` by the four direct-value cases, then
+   `elab_completion`, `prefix_satisfaction`, and `subst_sound` by induction over the explicit prefix. An atom
+   with an undefined variable is deliberately outside the substitution theorem.
+2. Prove the local iff using the actual lower tables. In the reverse direction set `p := O_p` on typed tuples
+   and false on all others; preserve every other component. No `P ∧ N` point gives the elaboration; the local
+   pair condition gives the newly closed profile premise. Completion forces this interpretation in any other
+   expansion, giving structure equality as in `Examples.copy_expands`. In the forward direction any expansion
+   rules out `P ∧ N` and satisfies the local pair condition; no arbitrary lower interpretation is substituted.
+3. Prove the **pointwise document iff**, independently of the existence of globally valid `Layer` instances.
+   From `ConflictFree E T B`, extend `B` in DAG order, inserting definition bodies or outcomes. At each prefix,
+   substitution transfers the base tests to local tests, so the local iff supplies the norm step and W3 supplies
+   the definition step. Inductively this preserves prefix satisfaction and proves uniqueness of the whole
+   expansion. Conversely, a full expansion satisfies every prefix's premises; faithfulness excludes each
+   intra-predicate conflict, substitution identifies every completed outcome with its interpreted relation,
+   and the profile premises exclude every pair conflict. Thus even existence implies base conflict-freedom.
+   Quantify this iff over `B` to obtain `conflictFree_expands_all`; merely quantifying a local iff is insufficient.
+4. Given global base conflict-freedom, restrict any admissible prefix to a base structure; use
+   `prefix_satisfaction` and `subst_sound` to derive `conflictFree_prefix`, hence each `layer`'s `hc`.
+   Compose using the frozen `Layer.compose`: consecutive admissibility predicates agree by construction.
+   Discharge both `BackgroundSound` and `BackgroundComplete` using prefix satisfaction, and apply the frozen
+   acceptance and countermodel theorems. Keep `elaborate_iff_at` independent of the strengthened admissibility,
+   so faithfulness is not justified solely by assuming its own conclusion.
+5. Witness soundness uses typed `eval_iff_denote`, validated base Background and the document iff. The wire
+   theorem of 11.4 additionally proves that these are the formulas regenerated from the document that was decoded
+   and identity-bound. Every proof is audited with the existing axiom allowlist.
 
 ### 6.3 What is not claimed
 
 No completeness of the conflict check outside section 7. No theorem about the English surface (W7). No claim
 that `Intended` matches an author's intent: that is the statement review of `holdsCatala` and the fidelity gate
-of W8. The Lean route admits FOL documents only in P0 (P0-Lean decision 10); a norm document on the closure or
-order family runs its conflict certificates through those checkers' `certificate` case kinds, and its route
-acceptance theorem is stated once P0's admission decoder covers those families (deferred, P0 section 7).
+of W8. W1's new executable norm-document admission and its end-to-end theorem are FOL-only. Closure/order
+conflict certificates use the new wrapper's regenerated base formulas and the unchanged family checkers;
+full document admission for those families remains deferred to a new compatible admission implementation,
+not an assumed future edit of frozen P0 decoders. The wrapper rejects unsupported modes explicitly (11.4).
 
 ## 7. The decidable fragment, as a proof-gated theorem
 
@@ -566,13 +706,15 @@ Membership is decided syntactically and reported per document (`fragment: yes | 
 ```lean
 /-- A conflict witness in the fragment restricts to the witnesses plus constants. -/
 theorem conflict_smallModel (E) (T) (h : WellFormed E T = true) (hf : InFragment E T = true) (p)
+    (hp : p ∈ regulatedNames T)
     (S : VE.Structure) (hS : BaseAdmissible E S) (v̄) (typed : VE.TupleTyped S (sorts p) v̄)
-    (hw : (conflict T p).denote S v̄) :
+    (hw : (conflict E T p).denote S (tupleVal v̄)) :
     ∃ (α : Type) (_ : DecidableEq α) (M : VE.FiniteModel α) (w̄ : List α),
       M.Valid E_base ∧ backgroundValid M = true ∧
-      (∀ s, (M.domain s).length ≤ max 1 (constantsOfSort E s + witnessVarsOfSort T p s)) ∧
-      (conflict T p).eval M w̄ = true
--- and the same statement for `pairConflict T r m` with the sorts of r
+      VE.TupleTyped M.asStructure (sorts p) w̄ ∧
+      (∀ s, (M.domains s).length ≤ max 1 (constantsOfSort E s + witnessVarsOfSort T p s)) ∧
+      (conflict E T p).eval M (tupleVal w̄) = true
+-- and the same statement for `pairConflict E T r m` with (r,m) ∈ pairs E and the sorts of r
 ```
 
 Proof sketch: let `D_s` be the set of elements of sort `s` among the denotations of the constants of sort `s`
@@ -580,8 +722,12 @@ and the components of `v̄` of sort `s`; the substructure `S|D` (relations restr
 `E_base`; `M.Valid` (typed tables, constants present) holds by construction; universal premises (functional
 flags) and ground ones (literal distinctness) are preserved under substructures, so `backgroundValid`; the
 quantifier-free `conflict_p` has the same value at `v̄` in `S|D` as in `S` (atoms only, all elements of `v̄`
-present); the bound is `|D_s| ≤ constants + witness variables` and the enumerator's `max 1 (...)` covers the
-empty case. Terms of `E_base` are constants and variables only (v0 is function-free), which the theorem's
+present and the returned `w̄` typed). Frozen `VE.Structure` and `VE.FiniteModel.Valid` allow empty sort domains,
+so the enumerator must include size zero when no constant or witness requires an inhabitant. If a later model
+format requires a nonempty sort that was nonempty in `S`, retain one existing element of that sort when `D_s`
+is empty; this still gives a substructure and the bound `max 1 (constants + witness variables)`. Never invent
+an inhabitant of an originally empty sort: universal premises need not survive that extension. Terms of
+`E_base` are constants and variables only (v0 is function-free), which the theorem's
 statement relies on.
 
 Consequence (`conflict_complete`, stated only after the proof): if `InFragment E T` and the enumerator finds no
@@ -617,37 +763,62 @@ regulated    permitted(request): role permission, default deny ("By default, a r
 permit i     rule permit-<id>: permitted(r) if def_i(r) ∧ val_i(r)
 forbid j     rule forbid-<id> over every permit rule: ¬permitted(r) if def_j(r) ∧ val_j(r)
              (a forbid is an exception of every permit, so a satisfied forbid blocks every permit: Cedar's
-             "forbid overrides"; two satisfied forbids are same-sign, a redundancy warning, not a conflict)
+             "forbid overrides"; two satisfied forbids are same-sign overlap, not a conflict)
 templates    one rule per linked instance (`instantiate` in the reference: static policies plus one instance per
              link); an unlinked template yields no rule and is listed under exclusions as `template-unlinked`
 decision     allow ⇔ O_permitted(r) = P_permitted(r); by the tree shape this is
              (∃ i. applies_i(r)) ∧ ¬(∃ j. applies_j(r)): exactly `permit and not forbid` of the reference
 ```
 
-Condition translation, per policy: the scope constraints (`principal == / in / is`, `action`, `resource`) and
-each `when` (`unless`) body are translated together into a pair `(def, val)` of VE formulas over `r` by Cedar's
-error rules, and the guard is `def ∧ val`:
+Condition translation is runtime-type-aware, matching `Evaluator.bool_`, `Evaluator.in_` and `Evaluator.ev`
+in the reference interpreter and the [Cedar operator semantics](https://docs.cedarpolicy.com/policies/syntax-operators.html).
+For each expression `e`, retain a definedness formula `D_e`, its tagged value `V_e`, and tag tests
+`Bool_e`, `Entity_e`, `Record_e`, `Set_e`. `b_e` means its Boolean payload when `Bool_e`; it is a harmless
+placeholder otherwise. `B_e := D_e ∧ Bool_e`. Tags are runtime tags, not an assumption that Cedar validation
+succeeded. Finite literal cases compile by case splitting; W5 attributes must retain tags/presence. A value
+form whose tag/payload cannot be represented is excluded with reason `value-representation`, never silently
+coerced. No strings or entities are treated as truthy. Value expressions in this table are translation
+metanotation, not new VE terms or trusted predicates supplied by the policy author.
 
 ```text
-lit, var, slot(linked)      def := ⊤;  val := the value (entity constants, $string literals, booleans)
-e has a                     def := def_e;  val := has_a(e)                           (`has` never errors on entities/records)
-e.a                         def := def_e ∧ has_a(e);  val := a(e)                    (missing attribute = error)
-a && b                      def := def_a ∧ (¬val_a ∨ def_b);  val := val_a ∧ val_b   (short-circuit)
-a || b                      def := def_a ∧ (val_a ∨ def_b);   val := val_a ∨ val_b
-!a                          def := def_a;  val := ¬val_a
-if c then a else b          def := def_c ∧ (val_c → def_a) ∧ (¬val_c → def_b);  val := (val_c ∧ val_a) ∨ (¬val_c ∧ val_b)
-e in f                      def := def_e ∧ def_f;  val := rtc[parent](e, f)   (set right-hand side: disjunction over members)
-e == f, e != f              def := def_e ∧ def_f;  val := e equals f, its negation (type mismatch is static: unequal)
-e is T [in f]               def as above;  val := is_T(e) [∧ rtc[parent](e, f)]
-unless { c }                contributes (def_c, ¬val_c)
+expression                  definedness D                                      value V (Boolean results use b)
+lit, var, slot(linked)       ⊤                                                  literal/request/linked tagged value
+[e₁, ..., eₖ]               ⋀ᵢ D_eᵢ                                           finite set of the tagged V_eᵢ
+e has a                     D_e ∧ (Entity_e ∨ Record_e)                        has_a(V_e)
+e.a                         D_e ∧ (Entity_e ∨ Record_e) ∧ has_a(V_e)           attribute payload, with its tag
+a && b                      B_a ∧ (¬b_a ∨ B_b)                                 b_a ∧ b_b
+a || b                      B_a ∧ (b_a ∨ B_b)                                  b_a ∨ b_b
+!a                          B_a                                                ¬b_a
+if c then a else b          B_c ∧ (b_c → D_a) ∧ (¬b_c → D_b)                   chosen branch's tagged value
+e in f                      D_e ∧ D_f ∧ Entity_e ∧ Entity_f                    rtc[parent](V_e, V_f)
+e in [f₁, ..., fₖ]          D_e ∧ Entity_e ∧ ⋀ᵢ (D_fᵢ ∧ Entity_fᵢ)            ⋁ᵢ rtc[parent](V_e, V_fᵢ)
+e == f, e != f              D_e ∧ D_f                                          tagged value equality, its negation
+e is T                      D_e ∧ Entity_e                                     entity type of V_e equals T
+e is T in f                 translate (e is T) && (e in f), including short-circuiting
+unless { c }                B_c                                                ¬b_c
 ```
 
-An erroneous policy is one whose `def` is false at `r`; its guard is then false, so it is inapplicable, exactly as
-Cedar skips a policy that errors (`explain` records it under `errors` and counts it for neither effect). Every
-construct not in the table (extension functions and methods, `like`, set operations, arithmetic, comparisons `<`,
-`<=`, ...) is outside stage 1: the policy is excluded and listed by reason (`extension-function`, `like`,
-`set-op`, `arithmetic`, `comparison`, `context`, `attribute`), and a decision that depends on an excluded policy is
-excluded with it.
+For a set-valued right operand other than a literal, `in` requires `Set_f` and checks **every** member's entity
+tag before using the membership disjunction; an empty set has no successful member. A non-entity left operand
+errors even for an empty set. Entity types may differ: the check is for entity values, not identical entity
+types. A scalar right operand that is neither an entity nor a set of entities errors. Cross-tag `==` is false
+and `!=` true; equality itself is not a type error. For `if`, only the condition must be Boolean; branches
+retain their own tags, and only the chosen branch's definedness matters. When an expression is used as a
+policy condition its result must also pass `Bool`; `unless` negates only such a defined Boolean result.
+
+Scope constraints and `when`/`unless` clauses are combined in Cedar's evaluation order using these guarded
+Boolean operations. The final policy guard is `B_condition ∧ b_condition`. An erroring policy has false
+definedness, is listed under `errors`, and contributes to neither effect. In particular, a forbid with
+`principal in [User::"alice", "x"]` errors and is skipped even for Alice; matching the first member cannot
+hide the invalid second member. A skipped policy is still in the translated corpus; an unsupported construct
+is an exclusion, which is a different outcome.
+
+Extension functions/methods, `like`, set operations beyond the listed set construction/membership, arithmetic,
+comparisons `<`, `<=`, and unrepresented values are excluded by reason (`extension-function`, `like`, `set-op`,
+`arithmetic`, `comparison`, `value-representation`). W1 additionally excludes context and attribute access
+(`context`, `attribute`); W5 enables their typed rows above. Decisions depending on excluded policies are
+excluded too. The adapter reports decision agreement **and** the set of erroring policies; comparing allow/deny
+alone could miss the same error in two translators. Deterministic error and short-circuit cases are in 10.2.
 
 Lean `Norms/Cedar.lean`, `cedar_decision`: for a tree of the adapter's shape (every negative rule takes precedence
 over every positive rule, no carve-outs, no nesting among positives or among negatives), on every structure
@@ -696,12 +867,13 @@ the lower", which is unsatisfiable with three contending properties (`GAPS.md` g
 The corrected norm asserts only the positive side and leaves the rest to the default:
 
 ```text
-regulated  follow(situation, property): obligation, deny-by-default ("By default, Claude in a situation need not
+regulated  follow(situation, property): obligation, deny-by-default ("By default, a situation need not
            follow a property."), act "{0} follow {1}"; no permission dual declared
 base       contends_for(situation, property), outranks(property, property) (the three edges), violates_hard_constraint(situation)
-Rule 1.  Every situation must follow each property that that situation contends for, unless there is a property
-         that that situation contends for and that outranks that property by one or more outranks steps, and
-         unless that situation violates a hard constraint.
+Rule 1.  Every situation must follow each property that that situation contends for.
+         Except when there is a property that that situation contends for and that outranks that property
+         by one or more outranks steps.
+         Except when that situation violates a hard constraint.
 ```
 
 The guard's existential and the closure step place it outside the fragment; its conflict status is three-valued
@@ -728,6 +900,9 @@ kind for it, from Lean (`tests/test_norms_three_way.py`, extending `conformance/
 
 ### 10.1 The reviewers' counterexamples and the worked cases
 
+These are deterministic regressions with hand-written expected tuples, truth values, diagnostics and premise
+lists. They supplement, rather than derive their expected results from, either elaborator or the generated corpus.
+
 | # | Document (one act, `a` the only situation) | Expected |
 |---|---|---|
 | a | `required` deny-by-default with an unconditional rule `must`; `permitted` deny-by-default with no rule; pair declared | CONFLICT with witness `a` (`O_required(a) ∧ ¬O_permitted(a)`); the v2-style check that looks only for a rule selecting `¬permitted` sees nothing, which is the point |
@@ -740,14 +915,44 @@ kind for it, from Lean (`tests/test_norms_three_way.py`, extending `conformance/
 | h | the total-functional `¬r(x,x)` regression of 7.3 | CONFLICT with the two-element witness; UNKNOWN with search disabled; never CONFLICT-FREE; `fragment: no (total)` |
 | i | carve-out versus exception (2.6 row 2): default `must not`, rule 3 forbids, rule 6 forbids in the same situation, rule 3 carries `unless C` (variant a) or rule 4 (exception to rule 3) permits under `C` (variant b) | variant (a): in a situation with `C`, outcome not permitted (rule 6); variant (b): CONFLICT (rule 4 permits, rule 6 forbids, no precedence between them) with the witness situation |
 | j | doctor-on-Monday (2.6 last row) | outcome permitted on Monday for a doctor on call; not permitted for a doctor not on call; the example situations are shown |
-| k | two same-sign rules selecting at one situation | CONFLICT-FREE with `Redundancy` warning naming both rules and a situation |
+| k | two same-sign rules selecting at one situation | CONFLICT-FREE with `Overlap` diagnostic naming both rules and a situation |
 | l | a pair outside the fragment with both budgets exhausted (a guard with an existential over a sort with no constants and a large search bound disabled) | UNKNOWN naming the budget (budget-to-UNKNOWN test) |
+| m | pair `a-required`, `b-permitted`, both deny-default, no rules, obligation ordered first; try an intermediate table with `a-required(a)` true | document CONFLICT-FREE; the intermediate structure fails `PrefixAdmissible 1`; the valid prefix has required false and uniquely expands to both false; Lean constructs both frozen `Layer` instances |
+| n | permission ordered first, deny-default, no rules; obligation allow-default, no rules; try lower permission true | document CONFLICT; that lower structure is not prefix-admissible; the valid lower permission is false and has no full expansion; tests the document iff, not just a local iff on the invalid table |
+| o | instantiate (c) as a Lean route; also insert a definition `eligible(x) ↔ permitted(x)` between permission and a required rule guarded by `eligible` | `layer` accepts its `hc` from `conflictFree_prefix`; the unique full expansion satisfies all rules and definition biconditionals; changing the intermediate defined table invalidates prefix admissibility |
+| p | a required rule whose guard directly mentions its paired permission; permission has one unconditional positive rule, both defaults deny | CONFLICT-FREE; both outcomes true; permission precedes obligation; removing the permission rule makes both false, still CONFLICT-FREE |
+| q | diamond: `r1` negative; `r2`, `r3` negative, each over `r1`; `r4` positive over both `r2` and `r3`; all guards true | only `r4` selects, shared descendant counted consistently; CONFLICT-FREE and positive outcome |
+| r | `r1` forbids on Monday; `r2` over `r1` permits on call; on-call Tuesday, deny-default | `r2` selects and permits despite the parent guard failing; the 2.5 paraphrase explicitly shows this situation |
+| s | `r1` negative; `r2` negative over `r1` has a true carve-out; `r3` positive over `r2` has true guard | `r2` does not apply/select but yields via `r3`; `r1` blocked; `r3` alone selects; CONFLICT-FREE |
+| t | `p(state,person)`, disjoint singleton domains `{Texas}`, `{Ann}`, base `r={(Texas,Ann)}`, guard `r(var 1,var 0)` | positive-only rule gives exactly `p(Texas,Ann)`; add an equally guarded negative rule: CONFLICT at argument tuple `[Texas,Ann]`, evaluated with `[Ann,Texas]`; exercise completion, pair outcomes, witnesses and small-model typing, never a reversed relation tuple |
+| u | allow-default lower predicate, no rules; substitute its atom containing an unbound variable, or present a witness tuple with wrong sorts/length | raw undefined atom and substituted outcome may differ; `subst_sound` requires typed formula/valuation and cannot be applied; admission rejects the malformed formula/witness; typed prefix instances agree |
+| v | `must enter` and `must not enter` predicates for the same act, with the dual omitted; alternatively link `must enter` to permission to leave with matching sorts | `MissingPermissionDual` / `DualActMismatch`; after a correct link, simultaneous must/must-not gives CONFLICT; duplicate same-role act is `DuplicateActRole` |
+| w | 2.6 carve-out/exception distinction with deny default and **no** independent third rule | under `C`, carve-out variant forbidden by default, exception variant permitted; adding the third rule changes only the exception variant to the conflict in (i) |
 
 ### 10.2 Cedar
 
 W1's own gate on the no-attribute subset (section 8), decisions equal to the recorded ones and to the reference;
 exclusions listed by reason; `cedar_decision` audited; a permit-only policy set is CONFLICT-FREE without hints;
-a set with two overlapping forbids reports `Redundancy` and the recorded deny.
+a set with two overlapping forbids reports `Overlap` and the recorded deny.
+
+For each condition below, pair an unconditional permit with a forbid carrying the condition. Check the reference
+interpreter's error-policy set as well as the decision; repeat set examples in reversed member order. No adapter
+implementation is accepted on corpus agreement alone.
+
+| Forbid condition (principal Alice) | Expected condition / decision |
+|---|---|
+| `principal in [User::"alice", "x"]` | runtime type error, forbid skipped, allow |
+| `"x" in []`; `principal in "x"` | runtime type error, forbid skipped, allow |
+| `principal in []`; `principal in [User::"alice"]` | false / allow; true / deny |
+| `true && "x"`; `false || "x"`; `!"x"`; `if "x" then true else false`; bare `"x"` | Boolean type error, forbid skipped, allow |
+| `false && "x"`; `true || "x"` | false / allow; true / deny; neither errors |
+| `if true then true else !"x"`; `if false then !"x" else false` | true / deny; false / allow; unchosen branch does not error |
+| `principal is Group in "x"` | false / allow; failed type test short-circuits the invalid membership operand |
+| `principal == "alice"`; `principal != "alice"` | false / allow; true / deny; equality mismatch is not an error |
+
+With W5, also test `has` and attribute access on non-record/non-entity values, missing attributes and a
+non-Boolean attribute in condition position. Unsupported value representations must be listed as exclusions,
+not reported as successful translations or runtime-skipped policies.
 
 ### 10.3 Gatekeeper
 
@@ -772,9 +977,15 @@ never CONFLICT-FREE, unless a certificate exists.
 ### 10.6 Surface
 
 2,000 generated norm documents (depth up to 4, up to 3 carve-outs, multi-parent precedence, both defaults, all
-three roles) round-trip English → AST → English byte-identically and strict → AST → strict likewise; every
-generated English text has exactly one derivation under the all-derivations parser; renumbering (inserting a rule
-before rule 1) changes no `meaning_id`; each row of 2.6 produces the listed paraphrases and rewrites.
+three roles) round-trip `AST → (English, metadata) → AST` exactly, including arbitrary names and `over` edges;
+canonical `(English, metadata) → AST → (English, metadata)` is byte-identical. Strict text round-trips without
+metadata. Every English text has exactly one grammatical derivation; the identity protocol is separate.
+Renumbering preserves each existing rule's `meaning_id` (the changed document has a new document/report hash).
+Each row of 2.6 produces its listed paraphrases and rewrites, with the actual default in every carve-out paraphrase.
+
+Deterministic surface cases: both flagship `each person` rules bind `that person`; dangling `a person … that
+person` rejects; object-position `every` under `must not` rejects with the `each` rewrite; subject `Every` and
+object `each`/`any` accept. The bare `A doctor` example is rejected and rewritten, not claimed to parse already.
 
 ### 10.7 Identity
 
@@ -783,12 +994,26 @@ does not move; a norm unit's `meaning_id` binds the norm AST and not its elabora
 environments differing only in a default has different `environment_id` and hence different `meaning_id`; the
 same environment and AST under renumbering has the same); adding a `regulated` field changes `environment_id`.
 
+Hand-written identity regressions: arbitrary names `ward-ban`/`on-call-release` survive export/reimport; two
+identical rule texts retain distinct names/handles; inserting, moving, renumbering and editing a block preserve
+that block's name; a copy gets a fresh name; references to duplicate-looking blocks still resolve to the chosen
+handle. Missing metadata follows the new-import path without claiming preserved identities; stale, duplicated
+or hash-mismatched metadata rejects. Two ASTs differing only in stable names may render the same bare English
+but must have different metadata and identities. Deleted referenced blocks produce a dangling-reference error.
+
 ### 10.8 Certificate binding
 
 A CONFLICT-FREE certificate replayed against a document whose norm hash differs (a dropped carve-out, a flipped
 default, a swapped precedence, a changed act phrase) is rejected as stale by Python and Lean; a certificate for
 the entailment `Background ++ layer premises ++ Γ ⊢ φ` replayed with an elaboration supplied on the wire that
 differs from the regenerated one is rejected.
+Exercise the raw JSON `norms-route` entry point of 11.4, not only helpers accepting decoded formulas. Change a
+norm object while retaining its old generated premises, source document hash or report id; each mismatch rejects.
+Change a pair link, drop a norm unit, replace norm content with a formula, or spoof a `layer:norms:<p>` leaf:
+admission rejects. A conflict certificate's regenerated `E_base` and `Background_base` contain no derived
+symbol or unexpanded definition; the outer binding still names the complete original environment/document.
+Valid regulated declarations and norm-object contents must reach checking through the new binary; old P0
+entry points keep their current rejection. Supported non-norm P0 cases delegated by the wrapper agree exactly.
 
 ### 10.9 Differential elaboration
 
@@ -804,11 +1029,16 @@ diagnostic from Python and Lean on 200 generated graphs (P0's differential exten
 
 ### 10.11 Lean
 
-`elaborate_iff`, `elab_completion`, `subst_sound`, `precedence_acyclic`, `conflictFree_expands`,
-`conflictFree_expands_all`, `norms_route_acceptance`, `norms_route_countermodel`, `conflict_witness_sound`,
+`tupleVal_typed`, `elaborate_iff_at`, `elaborate_iff`, `elab_completion`, `prefix_satisfaction`, `subst_sound`,
+`precedence_acyclic`, `conflictFree_expands`, `conflictFree_expands_document`, `conflictFree_expands_all`,
+`conflictFree_prefix`, `norms_route_acceptance`, `norms_route_countermodel`, `conflict_witness_sound`,
+`conflict_pair_witness_sound`, `norms_wire_acceptance`, `norms_wire_conflict_sound`,
 `cedar_decision` audited (`lean/audit.py`: allowlist unchanged, no `sorry`); `conflict_smallModel` when claimed;
 `lean/NORMS.md` lists each in plain words; `lean/METATHEORY.md` gains the `Norms` section; frozen-source hashes of
 the v0, closure, order and Route files unchanged.
+Lean executable guards instantiate 10.1(m–u), including actual `Layer` values for (c), arbitrary invalid lower
+tables, the diamond and mixed-sort witnesses. Small-model checks, when enabled, return typed witnesses and
+include empty irrelevant sorts; if a later format requires nonempty sorts, test the retained-element case of 7.2.
 
 ## 11. Diagnostics, identity, model validity, limits, Rust
 
@@ -816,11 +1046,14 @@ the v0, closure, order and Route files unchanged.
 
 `DependencyCycle: <sorted names>` (precedence or stratification, as P0), `DuplicateDeclaration: rule <name>`,
 `UnknownRule: rule <n>` (English) / `rule <name>` (strict), `PrecedenceAcrossPredicates: rule <a> on <p>, rule <b>
-on <q>`, `ConsequenceArguments: rule <name>`, `DualSortMismatch: <r>, <m>`, `RegulatedDefinedPredicate: <p>`,
+on <q>`, `ConsequenceArguments: rule <name>`, `DualSortMismatch: <r>, <m>`, `DualActMismatch: <r>, <m>`,
+`MissingPermissionDual: <r>, <m>`, `DuplicateActRole: <role>, <act>`, `RegulatedDefinedPredicate: <p>`,
 `RegulatedFlag: <p>`, `InvalidInput` for a missing `default`/`role`/`act`, `ResourceLimit: rules` (more than 256
 rules), `ResourceLimit: regulated predicates` (more than 64), `ResourceLimit: precedence depth` (more than 16),
 `UnsupportedProfile: norms@0 requires relational-fol@0` (always satisfied on `ve.core@0.2`). English diagnostics
 carry the span and the plain-language expectation as today.
+`IdentityMetadataMismatch` covers invalid/stale English identity metadata; `UnknownRule` covers a deleted
+referenced block. These are new norms diagnostics; existing P0 diagnostics are unchanged.
 
 ### 11.2 Identity
 
@@ -831,23 +1064,124 @@ in document order under `environment_id`; every CONFLICT-FREE certificate and ev
 it through the report identity of P0 3.9 (`{"environment_id", "document", "report"}`), so stripping a carve-out
 or flipping a default invalidates the certificate.
 
+**English identity protocol.** `renderEnglish(E, T)` returns an English view plus an editor/export manifest:
+`environment_id`, source norm document hash, a text digest, and one entry per block containing a persistent
+editor handle, stable rule `name` and current span/display number. The manifest is not shown as English and
+does not add tokens to the grammar. Export carries text and manifest together; strict text and the JSON norm
+objects remain self-contained alternatives. Handles are editor metadata; only rule names/ASTs, not handles or
+display numbers, enter `meaning_id`.
+
+`parseEnglish(E, text, manifest)` validates the environment/text binding, one-to-one block/handle/name mapping,
+unique names and spans, then parses with those names and resolves numbered references to the named target block.
+It recomputes the AST document hash and requires the supplied source hash to match. Thus
+`parseEnglish(E, renderEnglish(E,T)) = T`, including names and edges, for every well-formed `T`. A stale manifest
+is rejected, not heuristically matched by wording. Two identical block texts can have different names and
+remain two distinct rules.
+
+Editing uses explicit handle-based transactions: moving, renumbering or editing an existing block preserves
+its name; insertion/copy creates a fresh name; deletion removes that handle and any surviving reference to it
+must be repaired or rejected. The editor retains edges to handles while renumbering, regenerates their display
+references, and emits a new manifest with the new text/AST hash. Existing rule `meaning_id`s remain stable
+under renumbering alone; editing their guard/consequence/edges changes them. A document insertion/reordering
+changes its document/report hash even when surviving rule identities do not change. Arbitrary detached text
+edits are parsed as new imports unless accompanied by an explicit valid edit transaction.
+
+Bare-English import allocates `rule-1`, `rule-2`, … in block order, skipping reserved/existing names in the
+target document; copies use the first unused such name. Names once allocated persist. No equality
+`parseBare(renderBare(T)) = T` is claimed for arbitrary names: bare English is a view/import format, not an
+identity-preserving serialization. Text exported without metadata is labelled accordingly by the editor.
+
 ### 11.3 Regeneration and model validity
 
 Layer premises are regenerated from the decoded units by Python and Lean at every site; a premise list on the
-wire is used only by Rust (11.5) and is never bound. A finite model on a norm route supplies base tables only:
-a regulated predicate's table is computed as `O_p` (recursively, definitions first) and a supplied regulated
+wire is used only by Rust (11.6) as untrusted regression input; trusted sites reject it or compare it exactly
+with regeneration before checking, and bind the regenerated formulas. A finite model on a norm route supplies
+base tables only: a regulated predicate's table is computed as `O_p` in the shared DAG order, interleaving
+definitions, and a supplied regulated
 table is rejected with `InvalidModel("norms", "<p> is regulated; its table is computed")`, mirroring W3's rule
 for defined predicates; the `profile` hook then validates each declared pair. At a `P ∧ N` point the computed
 model falsifies `elab_p`, which the countermodel check reports as a false premise at that tuple (never as
 `InvalidModel`); the conflict check is where that situation is reported as CONFLICT.
 
-### 11.4 Limits
+### 11.4 Reachable decoder/admission path and wire theorem
+
+The frozen `Route.Wire.decodeVocabulary` rejects `regulated`, and frozen `Route.Admission.decodeUnit` requires
+formula content. W1 therefore adds `lean/VE/Norms/Wire.lean`, `Admission.lean`, `Run.lean` and a new Lake executable
+target `ve_norms_route` (invoked as `lean/.lake/build/bin/ve_norms_route <cases.json>`, the **norms-route** path).
+Its `Run.main` is the executable root: no edit to `lean/Main.lean` or any frozen `Route` file is required.
+Build/conformance integration adds this target to the build list without modifying existing target behavior.
+Python dispatches norm cases to its matching new decoder/admission module and this executable. Existing P0
+inputs without norm constructs can delegate unchanged to `Route.Run.runCase`; malformed norm inputs never
+fall back to P0 after a failed new-path decode.
+
+The new entry point must perform the following sequence on raw input, not merely accept pre-decoded formulas:
+
+1. Run the frozen envelope/profile gate. Require `norms@0` for regulated declarations or norm content. Decode
+   the extended vocabulary with a new strict decoder, checking all fields, act/dual consistency, typing and
+   W3 dependencies. It may validate the ordinary declaration fields through the old decoder after separating
+   recognised extension fields, but must retain and validate those fields and hash the **original complete**
+   environment; stripping them is not an admission path. Reject unknown fields. W3 syntax uses W3's new decoder.
+2. Decode norm-object content (3.2), rule names, spans, unit kinds and precedence into `T`; run `WellFormed` and
+   the shared DAG checks. Reuse P0 kind/graph machinery where its input type fits, but introduce norms-specific
+   unit and admission types. Do not pass norm objects to `Wire.decodeClosed` or disguise them as asserted
+   formulas. Preserve W2's quoted/hedged/reading-choice provenance: only active norm units for the admitted
+   choice contribute layers; every such unit and choice remains in the bound source document.
+3. Regenerate the full Background and interleaved layer premises, plus `E_base`, `Background_base` and every
+   substituted conflict formula. The new label parser adds `layer:norms:<p>` locally. A layer-labelled leaf is
+   admitted only if it equals the regenerated `elab T p` for the active, decoded rules on `p`; profile leaves
+   must equal regenerated pair premises. Quoted units cannot be activated without the required bridge/choice.
+   Claim-graph certificate replay uses unchanged checker functions on these regenerated typed formulas.
+4. Validate certificate bindings before replay. A conflict package has an outer source binding
+   `(environment_id, norm_document_hash, conflict_target)` and an inner ordinary certificate bound to the
+   canonical **regenerated base environment**, `Background_base` and the closed negated conflict formula.
+   Both bindings are recomputed from the raw source; an ordinary P0 base certificate alone is insufficient to
+   identify a norm document. Entailment certificates bind the full source environment and regenerated
+   `Background ++ layerPremises ++ Γ`. An admitted report uses P0's unchanged identity domain and canonical
+   `{"environment_id", "document", "report"}` payload, with the complete validated source document, not a
+   formula projection. Recompute any supplied report id; reject stale bindings and mismatched formula lists.
+5. Run the selected unchanged checker. For FOL documents, return the admitted report with provenance and
+   regenerated premises. For conflict packages on FOL/closure/order, replay the relevant family's checker
+   against the regenerated base formulas. Unsupported document-admission families return `UnsupportedProfile`;
+   closure+n-ary remains subject to W4's gate. Resource limits never become a verdict.
+
+The acceptance obligation starts at the public entry point. In the following schematic statement, `j` is
+raw JSON and `a` is a successful result for `kind = admission`:
+
+```lean
+theorem norms_wire_acceptance (j a : Json)
+    (h : Norms.Run.runCase j = .ok a) (hk : caseKind j = .ok "admission")
+    (hn : usesNormsPath j = true) :
+  ∃ D, Norms.Wire.decodeSource j = .ok D ∧ WellFormed D.E D.T = true ∧
+    a = encodeAdmitted (regeneratedAdmission D) ∧
+    BindingsMatchSourceAndRegeneration j D a ∧
+    Norms.Admission.ReportAdmitted D a ∧
+    (∀ S, S.Admissible D.E_out → Sat S (regeneratedBackground D ++ regeneratedLayers D) →
+      Sat S (reportOtherAssumptions D a) → (reportConclusion D a).denote S [])
+```
+
+`regeneratedAdmission` includes the decoded graph, checked evidence, labels and exact premise lists, not just
+the tree. `usesNormsPath` is the executable dispatch test for norm profiles/constructs; delegated P0 cases
+retain their existing theorem. `BindingsMatchSourceAndRegeneration` means equality to the recomputed canonical digests and regenerated
+formulas (no claim that SHA-256 is mathematically injective). `ReportAdmitted` is the norms extension of P0's
+independent admission relation, including exact layer-leaf origins and retained bridge/choice provenance.
+`reportOtherAssumptions` retains every undischarged non-background/non-layer leaf. Neither hash matching nor
+an accepted certificate alone is a proof that its leaves are admitted.
+
+Prove a companion `norms_wire_conflict_sound` from successful raw conflict-package replay: a certified
+CONFLICT-FREE result entails `∀ B, BaseAdmissible D.E B → ConflictFree D.E D.T B`; a CONFLICT result contains
+a typed, valid base witness and entails its negation. For a partial check, the theorem asserts only that
+target's result; document CONFLICT-FREE requires all targets. Compose the complete conflict-free result with
+`conflictFree_expands_all` and `norms_route_acceptance` to obtain the base-vocabulary report conclusion.
+The proof follows decoder soundness → exact regeneration → binding equality → leaf admission → checker
+soundness → document iff; the theorem over already-decoded formulas in 6.2 cannot replace this chain.
+
+### 11.5 Limits
 
 Rules ≤ 256 per document, regulated predicates ≤ 64, precedence depth ≤ 16, carve-outs ≤ 8 per rule, guard size
 within `MAX_NODES`; witness search uses the existing search bounds and `MAX_EVALUATIONS`; every overflow is
 `ResourceLimit` with the limit named, never a truth value.
 
-### 11.5 Rust (P0 3.7)
+### 11.6 Rust (P0 3.7)
 
 Rust never elaborates norms. On the `elaborated-document` family a norm case carries the Python-generated premise
 list marked `untrusted: true`; Rust evaluates and searches over it and its verdict must agree with Python's and
@@ -857,44 +1191,53 @@ Lean's regenerated ones (regression evidence; the trust path is Lean).
 
 1. `holdsCatala` / `Value` (4.3, 6.1): is the four-way case split the intended reading of exceptions and defaults?
 2. `applies`, `yields`, `selects` (4.2): carve-outs as guard narrowing rather than nodes; same-sign double
-   selection as a warning (the stated Catala deviation).
+   selection as overlap (the stated Catala deviation).
 3. The conflict formula (5.1) over base structures after substitution, and `ConflictFree`.
 4. `elab_p` in the three-clause form (4.4) and `Intended_p` of the layer (6.2): faithful, not the completed
    biconditional.
-5. `conflictFree_expands` and its `AdmissibleOut` (the profile premise as an admissibility condition of the pair's
-   later layer): the exact iff.
+5. Prefix satisfaction in `AdmissibleOut` (own meaning plus all earlier meanings and closed pairs), typed
+   `subst_sound`, local `ConflictFreeAt`, and the actual `conflictFree_expands_document` / `_all` iff over base
+   structures; the W3 biconditional requirement and executable admission theorem of 11.4.
 6. The profile premise as declared pairs `∀x̄. r(x̄) → m(x̄)` in Background (3.1), generalising `∀a. required(a) →
    permitted(a)`.
 7. `InFragment` (7.1) and the bound in `conflict_smallModel` (7.2).
 8. The English table of 2.1 and 2.4: one reading per wording; the input synonyms; `unless` as carve-out only.
 9. The Cedar translation table (8) and the shape lemma `cedar_decision`.
 
-## 13. Decisions this draft made where the plan left room (each reversible at the review)
+## 13. Resolved plan deviations and implementation decisions
 
-1. **Carve-outs narrow the guard; exceptions are nodes.** The plan lists `unless` and `except when` beside "takes
+Both reviews explicitly accepted decisions 13.1 and 13.2 on 2026-09-26. They are the specification's resolved
+semantics, with the descendant/default clarifications below; neither requires a change to a frozen P0 contract.
+
+1. **Accepted: carve-outs narrow the guard; exceptions are nodes.** The plan lists `unless` and `except when` beside "takes
    precedence over" without saying whether `unless` carries a consequence. Reading it as a consequence-free
    carve-out matches English and keeps every tree node a Catala node with a value; the alternative (an
    exception node with the default as its value) blocks parents even when the exception's own guard fails
-   (the doctor-on-Monday case) and was rejected for that reason.
-2. **Three-clause elaboration.** The plan's `elab(p) := ∀x̄. p ↔ O_p` is satisfiable at a `P ∧ N` point, so
+   (the doctor-on-Monday case) and was rejected for that reason. A carved-out node cannot itself select, but its
+   subtree may still yield through a descendant (4.2, 10.1(s)). Every English carve-out paraphrase names the
+   actual environment default and explains that other rules may decide (2.5).
+2. **Accepted: three-clause elaboration.** The plan's `elab(p) := ∀x̄. p ↔ O_p` is satisfiable at a `P ∧ N` point, so
    "no conflict ⇔ unique expansion" would fail in one direction for intra-predicate conflicts. The three-clause
    form makes the iff exact and reduces to the plan's biconditional on conflict-free documents
    (`elab_completion`); the plan's formula stays as the reader's picture.
 3. **Roles and act phrases** (3.1, 2.4) realise `required`/`permitted` as declared roles with declared duals,
    so that any act ("enforce a law") gets `must`/`must not`/`may`/`need not` wordings, Cedar's `permitted(request)`
    is a permission predicate, and plain regulated predicates remain possible. The profile premise generalises to
-   declared pairs of any sorts.
+   declared pairs of any sorts. If both roles describe one canonical act, linkage is mandatory; unrelated acts
+   with equal sorts cannot be linked (3.1).
 4. **Defaults in the environment**, rendered as the legend's `By default, ...` sentence, not as a document unit:
    the completion is identity-bound like flags and definitions.
 5. **Consequence arguments are exactly the situation variables** (no constants, no repeats); constants go in
    the guard. Keeps every rule on `p` over the same `x̄`, which the selection disjunctions need.
 6. **One layer per regulated predicate** in DAG order (not one norms layer), because definitions interleave
-   (3.5); the pair premise is an admissibility condition of the pair's later layer.
+   (3.5); the pair premise is an admissibility condition of the pair's later layer. Every layer's output
+   admissibility includes its own meaning and full prefix satisfaction, including W3 definitions (6.1).
 7. **Numbers resolve at parse time** to stable names; English references use numbers; rendering regenerates
-   them. The alternative (names in English) puts notation in readable text.
+   them. A persistent block manifest preserves names through editing/export, including duplicate-looking rules;
+   bare text alone is not an identity-preserving serialization (11.2).
 8. **`InvalidModel("norms")`** for a supplied regulated table, by analogy with W3's defined tables; a `P ∧ N`
    point is a false premise, not an invalid model.
-9. **Rust receives the elaboration untrusted** (11.5), the only reading consistent with 3.7's "Rust never
+9. **Rust receives the elaboration untrusted** (11.6), the only reading consistent with 3.7's "Rust never
    elaborates norms" and "a list supplied on the wire is never trusted": Rust's verdict is regression evidence.
 
 ## 14. Hand-off
@@ -906,4 +1249,51 @@ pilots' norm units through W2's format; W8 builds `add_norm` from sections 2.5 a
 sign, guard, carve-outs, parents; five examples in 9.1 to 9.3). Effort as planned: spec review 2 days, Python and
 adapter 5 days, Lean 5 to 7 days.
 
+The hand-off includes the W3 prefix-admissibility requirement, the new `ve_norms_route` executable/decoder and
+wire theorem, all deterministic regressions in section 10, and preservation of the English metadata protocol.
+Implementation must satisfy these gates before claiming W1 acceptance; the generated suites alone are insufficient.
 
+## 15. Contract change requests
+
+None. The repair strengthens W1/W3 **instances** of the existing `Admissible_out` field and proves the missing
+document-wide statements. The new executable and admission types extend reachability without changing
+`VE.Route.Layer`, `Layer.expands`, composition, `dependencyOrder`, checker interfaces, old decoders, labels,
+canonical identities or existing Route source files. Any implementation that cannot meet these requirements
+must record a concrete contract change request here before proposing a frozen-contract edit.
+
+## 16. Review response table (finding → change)
+
+Sources: Astra [w1-spec-review-astra.final.md](../../../manage-agents/w1-spec-review-astra.final.md) and Fable
+[w1-spec-review-fable.md](../../../manage-agents/reviews/w1-spec-review-fable.md), both **FIX FIRST**. Every A/B
+finding is addressed below. “Regression” names a required implementation test, not a test run in this spec revision.
+
+| Review finding | Specification change and required regression |
+|---|---|
+| Astra A1 — incomplete lower admissibility / missing document iff | 6.1 includes own meaning, full prefix and closed pairs in output admissibility; W3 biconditionals required. 6.2 separates local iff, pointwise base-structure document iff and universal document iff, with constructive/contrapositive proof obligations and prefix-derived `hc`. 10.1(m–p), 10.11 instantiate the frozen layers. |
+| Astra A2 — binary argument reversal | 6.1 defines `tupleVal = reverse`; relation tuples stay in argument order everywhere. Completion, local/base conflict, substitution interfaces, witness and small-model statements use the correct valuation. 10.1(t) fixes disjoint state/person domains and asymmetric relation data. |
+| Astra A3 — substitution/witness hypotheses | 6.2 supplies explicit prefix, well-formed formula and typed valuation; witness conclusion uses base `ConflictFree`, not local `ConflictFreeAt`; 7.2 returns a typed tuple. 10.1(u), 10.11 reject undefined/wrong-sort tuples. |
+| Astra B1 — optional/mismatched act duals | 3.1 gives canonical act identity, unique roles, mandatory linkage when both roles exist, sort/act mismatch diagnostics. 10.1(v) covers unlinked must/must-not and unrelated equal-sort acts. |
+| Astra B2 — contradictory English / descendant explanation | 2.1 binds `each person`; 2.6 distinguishes no-third-rule permission from the independent-forbid conflict; 4.2 says descendants can make a carved-out subtree yield. 10.1(s,w) and 10.6 are deterministic. |
+| Astra B3 — Cedar runtime type errors | 8 retains runtime tags, Boolean operand checks and all-member entity checks before set membership; exact short-circuit and branch behavior. 10.2 checks errors as well as decisions, including the matching-Alice/mixed-set forbid. |
+| Astra B4 — hidden stable-name round trips | 11.2 defines bound export manifests and handle-based editing, duplicate/copy/deletion rules, fresh bare-import naming and the precise round-trip law. 10.6–10.7 exercise arbitrary names and duplicate text. |
+| Astra B5 — frozen decoder cannot reach norms | 11.4 adds a separate Lake executable, strict extended decoding, regeneration, original-document/inner-certificate binding and `norms_wire_acceptance` from raw JSON. 10.8 exercises the public entry point and tampering; 15 requests no frozen-contract change. |
+| Fable A1 — own premises missing from output / local test wrong | 6.1–6.2 make prefix predicates independent of `Layer` construction, include each layer's own meaning, evaluate local tests in actual lower tables and derive `hc` by substitution. Definition layers must preserve their biconditionals. The actual whole-document iff replaces the quantified per-layer claim. 10.1(m–p). |
+| Fable B1 — non-base premises in base certificates | 5.2 and 6.2 use `Background_base` alone after substitution; 11.4 regenerates and binds that base environment. 10.8 rejects derived symbols/unexpanded definitions in base packages. |
+| Fable B2 — flagship non-binder | 2.1 uses `each person` in both rules; 10.6 tests valid binding and dangling `a person … that person`. |
+| Fable B3 — wrong ambiguity paraphrase | 2.6 removes the third rule from the distinguishing situation; 10.1(w) checks forbidden/permitted, while existing (i) retains the independent-forbid conflict. |
+| Fable B4 — object `every` invites wrong negation scope | 2.1 drops that synonym, keeps `each`/`any` and prescribes the rewrite; 10.6 tests acceptance/rejection under `must not`. |
+| Fable B5 — exception outside parent guard / missing gates | 2.1, 2.3 and 2.5 state and illustrate independent child applicability. 10.1(r) checks Tuesday; (q) a diamond; (p) a paired-permission guard; (c,o) real Lean layer construction. |
+| Fable B6 — base model passed to local predicate | 6.2 witness theorem concludes `¬ConflictFree E T M.asStructure` and failure of whole-document unique expansion; local tests require an interpreted prefix. |
+| Both reviews — section 13.1 | Accepted guard-only carve-outs; 4.2 corrects descendant yielding and 2.5 requires the actual default in every paraphrase. 10.1(s), 10.6. |
+| Both reviews — section 13.2 | Accepted three-clause elaboration; 4.4/6.2 retain faithfulness and reduction to the biconditional under no opposite selection. |
+| Fable C1 — overlap is not redundancy | 4.2, 8 and 10 use `Overlap` without claiming logical redundancy. |
+| Fable C2 — empty sorts in substructures | 7.2 states the frozen semantics' empty-sort allowance and enumeration requirement; if nonemptiness is later required, retain an existing element of a nonempty sort, never invent one in an empty sort. 10.11. |
+| Fable C3 — `A doctor` not accepted grammar | 2.6 now explicitly rejects and rewrites to `Every doctor`; 10.6 verifies it. |
+| Fable C4 — noncanonical pilot wording | 9.2 uses separate `Except when` sentences and the act-consistent default `a situation`; 10.4/10.6 round trips apply. |
+
+## 17. Dated change log
+
+| Date | Revision | Changes |
+|---|---|---|
+| 2026-09-26 | Draft 1 | Initial W1 statement-review specification, including zero-training English, direct semantics, three-clause elaboration, base conflict checks and proof-gated small-model claim. |
+| 2026-09-26 | Draft 2 | Applied every A/B finding from both FIX FIRST reviews and the four Fable C clarifications; repaired prefix composition and the document-wide iff; typed tuple/substitution/witness statements; mandatory same-act duals; corrected English and accepted both section-13 deviations; runtime-typed Cedar translation; identity-preserving English metadata; reachable new wire admission and theorem; deterministic regression gates and this response table. Spec-only revision: frozen P0 code/contracts unchanged; proofs/tests remain implementation gates. |
