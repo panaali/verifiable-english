@@ -768,6 +768,11 @@ class EnglishParser:
             end = match.end()
             if end < len(self.source) and re.match(r'[A-Za-z0-9_]', self.source[end]):
                 continue
+            # term_options is built at the start of the atom. An initial "it"
+            # must not leak into a later argument slot of the same atom.
+            if any(match.group(g) == 'it' and match.start(g) != self.sentence_formula_start
+                   for g in range(1, len(match.groups()) + 1)):
+                continue
             groups = [self.source[a:b] for a, b in (match.span(g) for g in range(1, len(match.groups()) + 1))]
             if slot not in (None, False):
                 offset = 1 if omitted == 'subject' else 0

@@ -177,6 +177,24 @@ def test_it_cannot_skip_referents_inside_the_current_sentence():
     assert parse_english(env, 'Api is reviewed. If beta is reviewed, then api is deployed.')
 
 
+def test_it_is_only_available_at_its_own_sentence_initial_position():
+    data = vocabulary()
+    data['vocabulary']['constants']['beta'] = {'sort': 'item', 'description': 'Beta'}
+    env = Environment(data)
+    for source in ('Api is reviewed. Beta depends on it.',
+                   'Api is reviewed. Api depends on it.',
+                   'Api is reviewed. Beta is the same as it.'):
+        with pytest.raises(Exception):
+            parse_english(env, source)
+        with pytest.raises(Exception):
+            parse_presentation(env, source)
+    initial = 'Api is reviewed. It depends on beta.'
+    expected = Document((Unary('reviewed', Const('api')),
+                         Binary('links', Const('api'), Const('beta'))))
+    assert parse_english(env, initial) == expected
+    assert parse_presentation(env, initial).document == expected
+
+
 def test_lowercase_alias_and_conclusion_initials_roundtrip():
     env = Environment(vocabulary())
     options = _names(env, api='api')
