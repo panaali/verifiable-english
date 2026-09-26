@@ -319,9 +319,11 @@ def definition_cases(case):
     case("defs-self-reference", "evaluate",
          {"status": "error", "code": "DependencyCycle", "error": "DependencyCycle: a"},
          two_definitions(_unary("a", 0), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
-    case("defs-free-variable", "evaluate", rejected,
+    typed_error = {"status": "error", "error":
+                   "Definition a: the body is not a typed formula over the symbols below it"}
+    case("defs-free-variable", "evaluate", typed_error,
          two_definitions(_unary("base", 1), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
-    case("defs-unknown-symbol", "evaluate", rejected,
+    case("defs-unknown-symbol", "evaluate", typed_error,
          two_definitions(_unary("missing", 0), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
     mismatch = deepcopy(DEF_VOCAB)
     mismatch["predicates"]["boss"]["defined"]["arguments"] = ["person", "person"]
@@ -507,8 +509,8 @@ def admission_cases():
         fragment of any other rejection."""
         if error is None:
             expected = {"status": "ok", **admit_document(environment, document)}
-        elif error.startswith("AdmissionError"):
-            expected = {"status": "error", "code": "AdmissionError", "error": error}
+        elif error.startswith(("AdmissionError", "UnsupportedProfile:")):
+            expected = {"status": "error", "code": error.split(":", 1)[0], "error": error}
         else:
             expected = {"status": "error",
                         "code": error if error in ("ResourceLimit", "UnsupportedProfile") else "rejected"}
@@ -590,7 +592,8 @@ def admission_cases():
         nodes[0], {"name": "cited", "ast": FIN_A, "label": "cite:b1/t1"},
         {"name": "uses", "ast": FIN_A, "premises": ["cited", "claim-u2"],
          "certificate": raw([FIN_A, ["or", SAME, FIN_A]], FIN_A)}]}
-    case("citation-with-leaves", cited)
+    case("citation-with-leaves", cited,
+         "UnsupportedProfile: document citations require a checked bundle binding")
     missing = deepcopy(cited)
     missing["graph"] = {"root": "cited", "nodes": [missing["graph"]["nodes"][1]]}
     case("citation-missing-leaf", missing, "AdmissionError: a cited lemma's leaves are missing from the report")

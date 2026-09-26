@@ -9,3 +9,7 @@ The elaborator handles unary and binary predicates over user sorts on the FOL an
 The Lean route gains two case kinds: `background` (the regenerated Background with generators, for the differential elaboration check) and `bundle` (a whole lemma bundle checked in one run). `RouteVocabulary` gains the checked definition list; `decodeModel` computes defined tables. `decodeModel_valid` and every other existing theorem statement are unchanged.
 
 The Lean `Definitions` theorems use the existing frozen `Layer` interface unchanged; all are in the central axiom audit manifest.
+
+Defined predicates cannot carry future data flags. Their tables are fixed by their bodies, so a flag that constrains the table needs an explicit compatibility proof or rejection gate when W5 adds that flag to the accepted schema. The current `functional` example is rejected as an unknown field; that alone does not discharge the W5 obligation.
+
+Document-level `cite:` leaves are gated on the Python and Lean routes until the document can bind each citation to a checked bundle and lemma meaning identity. Bundle citations remain available through the checked `bundle` case. A declared lemma in a document alone does not discharge a citation.

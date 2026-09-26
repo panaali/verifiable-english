@@ -36,7 +36,7 @@ def active(name):
 
 
 def diagnostic(code, message):
-    return message if re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
+    return message if message.startswith("Definition ") or re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
 
 
 def error_verdict(code, message, generator=None):

@@ -368,7 +368,8 @@ impl Environment {
         for name in order {
             let (signature, body) = decoded.remove(&name).expect("ordered node");
             check_in_context(&below, &body, &signature)
-                .map_err(|e| Error::new(&e.code, format!("Definition {name:?}: {}", e.message)))?;
+                .map_err(|_| Error::new("InvalidInput",
+                    format!("Definition {name}: the body is not a typed formula over the symbols below it")))?;
             below.predicates.insert(name.clone(), signature.clone());
             result.push((name, signature, body));
         }
