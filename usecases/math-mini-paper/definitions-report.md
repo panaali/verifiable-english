@@ -1,6 +1,6 @@
 # W3 definitions rerun
 
-The four properties are identity-bound `defined` declarations. Each theorem uses a vocabulary version containing only the declarations it needs, so no theorem copies a definition axiom into its own hypotheses.
+The four mathematical names are identity-bound `defined` declarations. Each theorem uses a vocabulary version containing only the declarations it needs, so no theorem copies a definition axiom into its own hypotheses.
 
 | Theorem | Python certificate | Copied definition hypotheses |
 |---|---|---:|

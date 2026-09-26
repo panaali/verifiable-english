@@ -94,7 +94,7 @@ def main():
               "lean_defined_route": "UnsupportedProfile",
               "c1": "uncertified"}
     (HERE / "definitions-results.json").write_text(json.dumps(result, indent=2) + "\n")
-    lines = ["# W3 definitions rerun", "", "The four properties are identity-bound `defined` declarations. Each theorem uses a vocabulary version containing only the declarations it needs, so no theorem copies a definition axiom into its own hypotheses.", "", "| Theorem | Python certificate | Copied definition hypotheses |", "|---|---|---:|"]
+    lines = ["# W3 definitions rerun", "", "The four mathematical names are identity-bound `defined` declarations. Each theorem uses a vocabulary version containing only the declarations it needs, so no theorem copies a definition axiom into its own hypotheses.", "", "| Theorem | Python certificate | Copied definition hypotheses |", "|---|---|---:|"]
     lines += [f"| {row['theorem']} | {'yes' if row['python_valid'] else 'no'} | 0 |" for row in rows]
     lines += ["", f"T7mono is certified by citing T7a and T7b to obtain T7: **{checked['status']}**. Its report retains the `background:definitions` and `open:transitivity` leaves.", "", "The checked-in baseline rerun remains 15/19; this citation adds T7mono to the Python-certified results, yielding 16/19. T9 and T9e still exhaust the current closure checker. C1 remains uncertified. Lean and Rust explicitly reject `defined` entries; these Python certificates therefore have no cross-language acceptance claim.", ""]
     (HERE / "definitions-report.md").write_text("\n".join(lines))
