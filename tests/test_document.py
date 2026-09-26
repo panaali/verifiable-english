@@ -143,6 +143,7 @@ def test_reading_identity_and_narrowing_schema(tmp_path):
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      reading_sets=[rs], narrowings=[narrowing])
     assert coverage(load_document(path))["residual"]["unresolved_reading_sets"] == 1
+    assert "This sentence could mean" in render_document(path)
     rs["readings"][0]["meaning_id"] = "wrong"
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      reading_sets=[rs], narrowings=[narrowing])
