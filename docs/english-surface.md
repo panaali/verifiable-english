@@ -354,7 +354,19 @@ The core renderer omits relative-clause contractions and validated negatives.
 Its output is still writable English that the Python parser accepts (for
 example `for every person, that person is happy` where the Python renderer
 prints `every person is happy`). `conformance/english_lean.py` compares the two
-implementations (below).
+implementations (below). Both parsers reject a declaration whose reference form
+is already in scope: for example a second `person` after `for every person`.
+`Tree.Syntactic` still includes such trees because uniqueness is stated over
+all grammatical trees; their checked reading is absent. The revised
+`Tree.denote` makes this admission rule explicit, while `renderTree_correct`
+uses `bindRef_fresh` to prove canonical text never shadows.
+
+The runner now reports both executable lexical gates. `admissible` decides the
+finite conditions used for grammatical uniqueness. `covers` checks every sort,
+predicate template arity and argument hole, and constant in the supplied
+environment, the three fields of `Covers`. For the finite JSON environment,
+`covers: true` records that the remaining hypothesis for the checked renderer
+corollaries holds.
 
 ## Extension discipline
 
@@ -405,8 +417,21 @@ Human readability is still unmeasured.
 
 ```sh
 uv run python -m conformance.english_mixed
-cd lean && lake build && cd .. && uv run python -m conformance.english_lean
+cd lean && lake build && cd ..
+uv run python -m conformance.english_lean --per-vocabulary 5000 --full \
+  --output conformance/english-lean-report.json
+uv run python -m conformance.english_mixed \
+  --output conformance/english-mixed-report.json
 ```
+
+The differential's independent Python core renderer classifies each Python
+text before reading the Lean result. A missing Lean parse of that text is a
+failure, including when Lean's renderer happens to return the same tokens.
+Fixed noncanonical list and article forms must parse; a missing period and a
+shadowed binder must be rejected. The `--full` gate requires 17 configurations
+times 5,000 formulas, exactly 85,000 pairs. The reports record the seed and
+corpus hashes. `tests/test_english_evidence.py` runs both harnesses at every
+merge and checks that the full differential report passes the count gate.
 
 ## Reproducible evidence and worked examples
 
