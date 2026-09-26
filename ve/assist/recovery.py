@@ -735,10 +735,20 @@ class RecoveryService:
             raise ValueError("actor, paraphrase, presentation and checked situation required")
         check_formula(self.env, formula)
         stop = time.monotonic() + OPERATION_SECONDS
-        checked_wording(self.env, presentation, formula)
-        checked_wording(self.env, paraphrase, formula)
-        if time.monotonic() >= stop:
-            raise ValueError("approval operation deadline")
+        from .ambiguity_patterns import _Deadline, _operation_budget
+        def within_deadline(operation, *args):
+            if time.monotonic() >= stop:
+                raise ValueError("approval operation deadline")
+            try:
+                with _operation_budget(stop):
+                    result = operation(*args)
+            except _Deadline as exc:
+                raise ValueError("approval operation deadline") from exc
+            if time.monotonic() >= stop:
+                raise ValueError("approval operation deadline")
+            return result
+        within_deadline(checked_wording, self.env, presentation, formula)
+        within_deadline(checked_wording, self.env, paraphrase, formula)
         model = FiniteModel.from_dict(self.env, situation)
         from ..background import background, validate_background
         validate_background(self.env, model)
@@ -756,7 +766,7 @@ class RecoveryService:
                 wording = candidate["wording"]
                 if not wording.endswith((".", ".\n")):
                     raise ValueError("catalogue wording is not writable")
-                parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
+                parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
                 if (len(parsed.document.formulas) != 1 or
                         meaning_id(self.env, parsed.document.formulas[0]) != candidate["meaning_id"]):
                     raise ValueError("catalogue wording changed meaning")
@@ -775,7 +785,7 @@ class RecoveryService:
                 for wording, candidate_id in zip(card["paraphrases"], card["meaning_ids"]):
                     if not wording.endswith((".", ".\n")):
                         raise ValueError("card wording is not writable")
-                    parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
+                    parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
                     if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != candidate_id:
                         raise ValueError("card wording changed meaning")
                     values.append(evaluate(self.env, parsed.document.formulas[0], card_model,
@@ -789,7 +799,7 @@ class RecoveryService:
             wording = row.get("wording")
             if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
                 raise ValueError("considered reading wording is not writable")
-            parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
+            parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
             if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != row.get("meaning_id"):
                 raise ValueError("considered reading wording changed meaning")
         proposed_readings = deepcopy(unit.readings)
