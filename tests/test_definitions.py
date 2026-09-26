@@ -51,7 +51,7 @@ def test_order_and_closed_biconditionals():
 
 @pytest.mark.parametrize("body, diagnostic", [
     (["unary", "upper", ["var", 0]], "DependencyCycle"),
-    (["unary", "base", ["var", 1]], "Variable index"),
+    (["unary", "base", ["var", 1]], "the body is not a typed formula over the symbols below it"),
 ])
 def test_reject_recursive_and_free(body, diagnostic):
     with pytest.raises(VEError, match=diagnostic):
@@ -103,7 +103,7 @@ def test_bound_definition_rejects_cycle_and_free_variable():
     with pytest.raises(VEError, match="DependencyCycle"):
         Environment(raw)
     entry["defined"]["body"] = ["unary", "base", ["var", 1]]
-    with pytest.raises(VEError, match="Variable index"):
+    with pytest.raises(VEError, match="the body is not a typed formula over the symbols below it"):
         Environment(raw)
 
 
