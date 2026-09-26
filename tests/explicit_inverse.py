@@ -30,7 +30,7 @@ def parse_explicit(env, text, view, scope=()):
         return ast.Top()
     if text == ("⊥" if symbols else "false"):
         return ast.Bottom()
-    negative = "¬ " if symbols else "it is not the case that " if view == "ve_natural" else "not "
+    negative = "¬ " if symbols else "it is not the case that " if view == "ve_explicit" else "not "
     if text.startswith(negative):
         return ast.Not(child(text[len(negative):]))
     for sort in env.sorts:
@@ -67,7 +67,7 @@ def parse_explicit(env, text, view, scope=()):
             assert m[3] == m[5]
             body = parse_explicit(env, m[6], view, (m[4], m[2], *scope))
             return ast.Reach("plus" if m[1] == "TC" else "star", ast.Body(m[3], body), term(m[7]), term(m[8]))
-    elif view == "ve_natural":
+    elif view == "ve_explicit":
         m = re.fullmatch(token + " is reachable from " + token + r" by (one|zero) or more ([a-z][a-z0-9_]*) steps", text)
         if m:
             return ast.Reach("plus" if m[3] == "one" else "star", ast.Named(m[4]), term(m[2]), term(m[1]))
@@ -87,13 +87,13 @@ def parse_explicit(env, text, view, scope=()):
         for separator, constructor in separators.items():
             if rest.startswith(separator):
                 right = rest[len(separator):]
-                if view == "ve_natural" and constructor is ast.Or:
+                if view == "ve_explicit" and constructor is ast.Or:
                     assert right.endswith(", or both")
                     right = right[:-9]
                 return constructor(child(left), child(right))
         raise AssertionError(rest)
     token = r"(@[a-z][a-z0-9_]*|x[0-9]+)"
-    equality = " = " if view.startswith("fol_") else " is equal to " if view == "ve_natural" else " equals "
+    equality = " = " if view.startswith("fol_") else " is equal to " if view == "ve_explicit" else " equals "
     match = re.fullmatch(token + equality + token, text)
     if match:
         return ast.Eq(term(match[1]), term(match[2]))
@@ -103,7 +103,7 @@ def parse_explicit(env, text, view, scope=()):
         if view.startswith("fol_"):
             pattern = name + r"\(" + token + (", " + token if arity == 2 else "") + r"\)"
         else:
-            template = (natural.predicates[name] if view == "ve_natural" else
+            template = (natural.predicates[name] if view == "ve_explicit" else
                         "{0} is " + name if arity == 1 else "{0} " + name + " {1}")
             pattern = re.escape(template)
             for i in range(arity):
