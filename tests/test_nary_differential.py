@@ -10,13 +10,14 @@ from pathlib import Path
 
 import pytest
 
-from ve.ast import Atom, Const, formula_to_data
+from ve.ast import And, Atom, Body, Const, Eq, Forall, Implies, Reach, Var, formula_to_data
 from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.identity import meaning_id
 from ve.model import FiniteModel
+from ve.closure import induction_step
 from ve.profiles import LANGUAGE, SPEC_REVISION
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -116,6 +117,44 @@ def test_statement_profile_preserves_core_family(lean_binary):
             "premises": [formula_to_data(combined, atom)],
             "conclusion": formula_to_data(combined, atom), "certificate": proof.certificate}
     assert check_entailment_certificate(combined, [atom], atom, proof.certificate).valid
+    assert invoke(lean_binary, "route", [case])[0]["valid"] is True
+
+
+def test_substitution_quantification_and_body_closure_agree_with_lean(lean_binary):
+    env = environment(3)
+    a, b, c = (Const(name) for name in "abc")
+    atom = Atom("p", (a, b, c))
+    cases = [
+        ([Eq(a, b), atom], Atom("p", (b, b, c)), "equality"),
+        ([Forall("item", Atom("p", (Var(0), b, c)))], atom, "quantifier"),
+        ([atom], Reach("plus", Body("item", Atom("p", (Var(1), Var(0), c))), a, b),
+         "body closure"),
+    ]
+    wire = []
+    for premises, conclusion, label in cases:
+        proof = prove_entailment(env, premises, conclusion, max_steps=500)
+        assert proof.status == "Found", label
+        assert check_entailment_certificate(env, premises, conclusion, proof.certificate).valid
+        wire.append({"id": label, "kind": "certificate", "environment": env.to_dict(),
+                     "premises": [formula_to_data(env, premise) for premise in premises],
+                     "conclusion": formula_to_data(env, conclusion),
+                     "certificate": proof.certificate})
+    assert [result["valid"] for result in invoke(lean_binary, "route", wire)] == [True] * 3
+
+
+def test_nary_body_induction_certificate_agrees_with_lean(lean_binary):
+    env = environment(3)
+    invariant = Atom("p", (Var(0), Const("b"), Const("c")))
+    edge = Body("item", Atom("p", (Var(1), Var(0), Const("c"))))
+    goal = Forall("item", Implies(And(invariant, induction_step("item", edge, invariant)),
+        Forall("item", Implies(Reach("plus", edge, Var(1), Var(0)), invariant))))
+    proof = prove_entailment(env, [], goal, invariants=[invariant], max_steps=1000)
+    assert proof.status == "Found"
+    assert 'closure-induct@1' in json.dumps(proof.certificate)
+    assert check_entailment_certificate(env, [], goal, proof.certificate).valid
+    case = {"id": "induction", "kind": "certificate", "environment": env.to_dict(),
+            "premises": [], "conclusion": formula_to_data(env, goal),
+            "certificate": proof.certificate}
     assert invoke(lean_binary, "route", [case])[0]["valid"] is True
 
 
