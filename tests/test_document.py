@@ -144,6 +144,19 @@ def test_reading_identity_and_narrowing_schema(tmp_path):
                      reading_sets=[rs], narrowings=[narrowing])
     assert coverage(load_document(path))["residual"]["unresolved_reading_sets"] == 1
     assert "This sentence could mean" in render_document(path)
+    conclusion = tmp_path / "conclusion.json"
+    conclusion.write_text('["top"]')
+    output = subprocess.run([sys.executable, "-m", "ve", "document", "readings", str(path),
+                             "--conclusion", str(conclusion), "--narrowing", "n1"],
+                            check=True, capture_output=True, text=True)
+    narrowed = json.loads(output.stdout)
+    assert narrowed["verdict"] == "ALL"
+    assert narrowed["narrowing"] == "narrowing:n1"
+    before = check_document(path)["reading_plan"]
+    weighted = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                         reading_sets=[rs], narrowings=[narrowing],
+                         weights=[{"set": "s1", "by": "translator", "values": {"r1": 0.8}}])
+    assert before == check_document(weighted)["reading_plan"]
     rs["readings"][0]["meaning_id"] = "wrong"
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      reading_sets=[rs], narrowings=[narrowing])
