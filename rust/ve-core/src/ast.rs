@@ -299,6 +299,22 @@ impl Checker<'_> {
         Ok(())
     }
 }
+/// A definition body: one decoded formula, checked in the argument context
+/// (index 0 is the last argument) over an environment below the definition.
+pub(crate) fn decode_formula(v: &Value) -> Result<Formula> {
+    AstDecoder { nodes: 0 }.formula(v, 1)
+}
+pub(crate) fn check_in_context(env: &Environment, f: &Formula, context: &[String]) -> Result<()> {
+    Checker { env, nodes: 0 }.formula(f, &mut context.to_vec(), 1)
+}
+pub(crate) fn has_reach(f: &Formula) -> bool {
+    match f {
+        Formula::Reach(..) => true,
+        Formula::Not(a) | Formula::Forall(_, a) | Formula::Exists(_, a) => has_reach(a),
+        Formula::And(a, b) | Formula::Or(a, b) | Formula::Implies(a, b) => has_reach(a) || has_reach(b),
+        _ => false,
+    }
+}
 struct AstDecoder {
     nodes: usize,
 }
