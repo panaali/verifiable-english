@@ -105,7 +105,7 @@ def test_500_certificates_and_2000_mutations_agree_with_lean(lean_binary):
     assert observed == expected
 
 
-def test_statement_profile_preserves_core_family(lean_binary):
+def test_statement_profile_preserves_core_family(lean_binary, rust_binary):
     env = environment(3)
     raw = env.to_dict()
     raw["profiles"] = ["closure@0", "documents@1", "nary@0", "relational-fol@0"]
@@ -118,6 +118,13 @@ def test_statement_profile_preserves_core_family(lean_binary):
             "conclusion": formula_to_data(combined, atom), "certificate": proof.certificate}
     assert check_entailment_certificate(combined, [atom], atom, proof.certificate).valid
     assert invoke(lean_binary, "route", [case])[0]["valid"] is True
+    model = {"complete": True, "domains": {"item": ["x"]},
+             "constants": {name: "x" for name in LETTERS},
+             "relations": {"p": [["x", "x", "x"]]}}
+    evaluation = {"id": "documents-evaluation", "kind": "evaluate", "environment": raw,
+                  "ast": [formula_to_data(combined, atom)], "model": model}
+    assert invoke(lean_binary, "route", [evaluation])[0]["values"] == [True]
+    assert invoke(rust_binary, "conformance", [evaluation])[0]["values"] == [True]
 
 
 def test_substitution_quantification_and_body_closure_agree_with_lean(lean_binary):
