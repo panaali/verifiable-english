@@ -16,7 +16,7 @@ from .environment import Environment
 from .errors import VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
-from .readings import plan_choices, validate_narrowings, validate_reading_sets
+from .readings import check_readings, plan_choices, validate_narrowings, validate_reading_sets
 from .vacuity import premise_status
 
 MAX_DOCUMENT_BYTES = 4_000_000
@@ -238,6 +238,7 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("check", "render", "coverage", "readings"):
         sub.add_parser(name).add_argument("path")
+    sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -246,7 +247,15 @@ def main(argv=None):
         data = check_document(args.path)
     else:
         doc = load_document(args.path)
-        data = coverage(doc) if args.command == "coverage" else doc["reading_plan"]
+        if args.command == "coverage":
+            data = coverage(doc)
+        elif args.conclusion:
+            conclusion = json.loads(Path(args.conclusion).read_text())
+            data = check_readings(doc["environment"],
+                                  [r for r in doc["meta"].get("reading_sets", []) if r["status"] == "open"],
+                                  conclusion)
+        else:
+            data = doc["reading_plan"]
     print(json.dumps(data, ensure_ascii=False, indent=2))
     return 0
 
