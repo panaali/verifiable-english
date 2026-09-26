@@ -117,4 +117,25 @@ theorem fol_data_route_acceptance (E : VE.Environment) (lits : List String)
     · exact (VE.Route.Background.literals_sat_iff S lits hn).mpr hS.1.2 a ha
   · exact hΓ a ha
 
+/-- The closure checker accepts the same regenerated data meaning after
+embedding the first-order background in the closure language. -/
+theorem closure_data_route_acceptance (E : VE.Environment) (lits : List String)
+    (hn : lits.Nodup) (flags : List Flag) (Γ : List VE.Closure.Formula)
+    (φ : VE.Closure.Formula) (c : VE.Closure.Tableau.Certificate)
+    (accepted : VE.Closure.Tableau.checkCertificate E
+      ((generate flags ++ VE.Route.Background.literals lits).map VE.Closure.embed ++ Γ)
+      φ c = true) :
+    ∀ S : VE.Structure.{u}, DataAdmissible E lits flags S →
+      (∀ a ∈ Γ, a.denote S []) → φ.denote S [] := by
+  intro S hS hΓ
+  apply VE.Closure.Tableau.checkCertificate_sound E _ φ c accepted S hS.1.1
+  intro a ha
+  rcases List.mem_append.mp ha with ha | ha
+  · obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha
+    apply (VE.Closure.conservativity S [] b).mpr
+    rcases List.mem_append.mp hb with hb | hb
+    · exact (generate_sat_iff S flags).mpr hS.2 b hb
+    · exact (VE.Route.Background.literals_sat_iff S lits hn).mpr hS.1.2 b hb
+  · exact hΓ a ha
+
 end VE.Data.Background
