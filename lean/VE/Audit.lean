@@ -21,6 +21,7 @@ import Iceberg
 import VE.Norms.Layer
 import VE.Norms.SmallModel
 import VE.Norms.Examples
+import VE.Norms.Cedar
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -637,3 +638,9 @@ import VE.Norms.Examples
 #print axioms VE.Norms.ground_conflictFree
 #print axioms VE.Norms.mem_insertBy
 #print axioms VE.Norms.mem_sortBy
+#print axioms VE.Norms.cedar_applies
+#print axioms VE.Norms.cedar_children_forbid
+#print axioms VE.Norms.cedar_children_permit
+#print axioms VE.Norms.cedar_decision
+#print axioms VE.Norms.cedar_yields_forbid
+#print axioms VE.Norms.mem_rulesOn
