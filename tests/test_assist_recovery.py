@@ -602,6 +602,36 @@ def test_import_rejects_forged_cancel_erasing_review_obligations(obligation):
         RecoveryService.from_ledger(env, forged)
 
 
+@pytest.mark.parametrize("obligation", ["catalogue_readings", "requested_pending", "catalogue_pending"])
+def test_import_rejects_forged_classify_erasing_new_obligations(obligation):
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    bindings = {"discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}}
+    if obligation == "catalogue_readings":
+        service.classify("u", parse_outcome="one", catalogue_bindings=bindings)
+        assert len(service.units["u"].readings) == 2
+    elif obligation == "requested_pending":
+        service.classify("u", parse_outcome="one", pending=[{"reason": "author check"}])
+    else:
+        service.classify("u", parse_outcome="one")
+    ledger = service.to_ledger()
+    snapshot = ledger["events"][-1]["unit_snapshot"]
+    if obligation == "catalogue_readings":
+        snapshot["readings"] = []
+    elif obligation == "requested_pending":
+        snapshot["pending"] = [row for row in snapshot["pending"] if row.get("pattern_id")]
+        snapshot["state"] = ledger["events"][-1]["state"] = "reading_review"
+    else:
+        snapshot["pending"] = []
+        snapshot["state"] = ledger["events"][-1]["state"] = "ready"
+    forged = _rehash_ledger(ledger)
+    assert not service.verify_ledger(forged)
+    with pytest.raises(ValueError, match="invalid recovery ledger"):
+        RecoveryService.from_ledger(env, forged)
+
+
 def test_import_rejects_forged_catalogue_page_erasing_other_pending_review():
     env = environment()
     service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
