@@ -101,3 +101,21 @@ def test_flag_certificate_bound_to_generated_background():
     del changed["vocabulary"]["predicates"]["department"]["functional"]
     case["environment"] = changed
     assert _run([case])[0].get("valid") is not True
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")
+def test_closure_family_replays_the_same_data_background():
+    from tests.test_data_flags import environment
+    data = environment().to_dict()
+    data["profiles"] = ["closure@0", "data@0", "relational-fol@0"]
+    env = Environment(data)
+    conclusion = Not(And(Binary("department", Const("alice"), Const("finance")),
+                         Binary("department", Const("alice"), Const("sales"))))
+    certificate = prove_entailment(env, (), conclusion).certificate
+    assert certificate is not None
+    case = {"id": "closure-data", "kind": "certificate", "environment": data,
+            "premises": [], "conclusion": ["not", ["and",
+                ["binary", "department", ["const", "alice"], ["const", "finance"]],
+                ["binary", "department", ["const", "alice"], ["const", "sales"]]]],
+            "certificate": certificate}
+    assert _run([case])[0]["valid"] is True

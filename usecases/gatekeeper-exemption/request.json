@@ -1,0 +1,5 @@
+{
+  "function": "glob@1",
+  "parameters": {"pattern": "registry.example/*"},
+  "domain": ["registry.example/trusted:v1", "other.example/app:v2"]
+}
