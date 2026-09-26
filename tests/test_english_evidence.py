@@ -61,6 +61,7 @@ def test_shadowed_binder_rejected_by_both_parsers():
         else:
             parsed = parse_english(env, english_lean.detokenize(tokens), **options)
             assert [english_lean.wire(f) for f in parsed.formulas] == expected
+            assert english_lean.core_reading(parsed.formulas[0], tokens, lex)
 
 
 def test_english_differential_merge_smoke():
