@@ -391,6 +391,12 @@ class RecoveryService:
         if checked.status != "Satisfied" or checked.value is not True:
             raise ValueError("example situation does not satisfy selected meaning")
         mid = meaning_id(self.env, formula)
+        if unit.mode == "authoring":
+            alternatives = {candidate for result in unit.catalogue_results.values()
+                            for card in result["cards"] for candidate in card["meaning_ids"]}
+            rejected_ids = {row.get("meaning_id") for row in rejected if isinstance(row, dict)}
+            if alternatives - {mid} - rejected_ids:
+                raise ValueError("every distinct catalogue alternative needs an explicit rejection")
         unit.meaning_id = mid
         unit.paraphrase, unit.presentation, unit.situation = paraphrase, presentation, deepcopy(situation)
         unit.rejected = deepcopy(list(rejected))
