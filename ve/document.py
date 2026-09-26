@@ -283,8 +283,12 @@ def check_document(path):
                 if any(c["kind"] != "asserted" or c["content"] is None
                        for c in reading_set["readings"]):
                     raise VEError("non-assertion reading admission needs an elaborator")
+        # A unit with an active reading set contributes premises only through
+        # readings labels, including when its old content has the same formula.
+        active_units = {r["unit"] for r in active}
         admission = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
-                                **({"content": u["content"]} if u["content"] is not None else {})}
+                                **({"content": u["content"]}
+                                   if u["content"] is not None and u["id"] not in active_units else {})}
                                for u in doc["units"]],
                      "graph": doc["meta"]["graph"],
                      "lemmas": doc["meta"].get("lemmas", []),
@@ -306,8 +310,9 @@ def check_document(path):
                                           and (parsed := parse_label(label)) is not None
                                           and parsed.kind == "readings"
                                           and parsed.args[1] < latest.get(parsed.args[0], 0)]
-        assertions = [formula_from_data(env, a["ast"])
-                      for a in result["admission"]["report"]["assumptions"]]
+        # Graph leaves add premises; they do not replace fixed document claims.
+        assertions.extend(formula_from_data(env, a["ast"])
+                          for a in result["admission"]["report"]["assumptions"])
         result["admission"]["core_report_id"] = result["admission"]["report_id"]
         result["admission"]["report_id"] = digest(
             f"ve-report-{env.identity_version}\n",
