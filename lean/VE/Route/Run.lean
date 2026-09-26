@@ -55,7 +55,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
       let _ ← Wire.decodeOrderVocabulary e.vocabulary
       pure ()
     else
-      let _ ← Wire.decodeVocabulary e.vocabulary
+      let _ ← Wire.decodeVocabulary e.profiles e.vocabulary
       pure ()
     -- The label grammar alone (PLAN-EXPAND2 3.6): only canonical labels parse.
     let s ← stringField j "label"
@@ -71,10 +71,10 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
     Wire.runOrder e.profiles environment v id kind j
   | .closure =>
     if kind == "admission" then throw (Gate.unsupported "admission on the closure family is deferred")
-    let rv ← Wire.decodeVocabulary e.vocabulary
+    let rv ← Wire.decodeVocabulary e.profiles e.vocabulary
     Wire.runClosure e.profiles environment rv id kind j
   | .fol =>
-    let rv ← Wire.decodeVocabulary e.vocabulary
+    let rv ← Wire.decodeVocabulary e.profiles e.vocabulary
     if kind == "admission" then runAdmit e.profiles environment rv id j
     else Wire.runFol e.profiles environment rv id kind j
 
