@@ -246,6 +246,16 @@ class EnglishVocabulary:
                 if (selected != (expected['singular'] if category == 'sorts' else expected)
                         or any(i.path.startswith(f'/vocabulary/{category}/{name}/') for i in self.issues)):
                     raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
+        # A regulated atom in a norm guard has one deontic spelling. The norm
+        # consequence parser handles must not / need not separately; ordinary
+        # formula parsing and the independent Earley grammar share these atoms.
+        if 'norms@0' in env.profiles:
+            for name, decl in env.predicates.items():
+                reg = decl.regulated
+                if reg is not None and reg.role in ('permission', 'obligation'):
+                    modal = 'may' if reg.role == 'permission' else 'must'
+                    self.predicates[name] = reg.act.replace('{0} ', '{0} ' + modal + ' ', 1)
+                    self.negatives.pop(name, None)
 
     def atom(self, name, terms, negative=False):
         text = (self.negatives if negative else self.predicates)[name]
