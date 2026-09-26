@@ -651,3 +651,7 @@ import VE.Norms.Replay
 #print axioms VE.Norms.certified_target
 #print axioms VE.Norms.conflictFreeCheck_sound
 #print axioms VE.Norms.conflictFreeCheck_target
+#print axioms VE.Norms.Replay.baseModel_valid
+#print axioms VE.Norms.Replay.lookup_filter_not
+#print axioms VE.Norms.Replay.norms_wire_conflict_witness_sound
+#print axioms VE.Norms.Replay.target_refutes
