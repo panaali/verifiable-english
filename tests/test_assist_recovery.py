@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -29,6 +30,9 @@ def test_catalogue_fixtures_match_and_negative_cases():
     fixture = json.loads(path.read_text())
     assert len(fixture["fixtures"]) == len(PATTERNS)
     for row in fixture["fixtures"]:
+        payload = {k: row[k] for k in ("pattern_id", "source", "bindings", "boundary", "negative")}
+        assert row["seal_sha256"] == hashlib.sha256(json.dumps(
+            payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         pattern = next(p for p in PATTERNS if p.id == row["pattern_id"])
         assert pattern.matches(row["source"])
         assert not pattern.matches(row["negative"])
