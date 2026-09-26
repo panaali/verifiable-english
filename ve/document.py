@@ -8,6 +8,7 @@ unit. The JSON front matter may instead bind a pre-existing formula AST.
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 from .admission import _check_kind, admit_document, token
@@ -181,7 +182,10 @@ def load_document(path: str | Path):
     weights = meta.get("weights", [])
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
-    return {"meta": meta, "environment": env, "source": source, "source_id": source_id(source, env),
+    sid = source_id(source, env)
+    document_id = hashlib.sha256(b"ve-document@1\n" + raw).hexdigest()
+    return {"meta": meta, "environment": env, "source": source, "source_id": sid,
+            "document_id": document_id,
             "units": compiled, "reading_plan": plan_choices([r for r in reading_sets if r["status"] == "open"])}
 
 
@@ -208,12 +212,29 @@ def coverage(doc):
             "residual": residual, "residual_total": sum(residual.values())}
 
 
+def _check_narrowing_choices(meta, labels):
+    from .admission import parse_label
+    for n in meta.get("narrowings", []):
+        if f"narrowing:{n['id']}" not in labels:
+            continue
+        rs = next(r for r in meta["reading_sets"]
+                  if (r["id"], r["version"]) == (n["set"], n["version"]))
+        for label in labels:
+            parsed = parse_label(label) if label is not None else None
+            if (parsed is not None and parsed.kind == "readings"
+                    and parsed.args[:2] == (n["set"], n["version"])
+                    and parsed.args[2] is not None
+                    and rs["readings"][parsed.args[2]]["id"] not in n["keeps"]):
+                raise VEError("reading choice conflicts with narrowing")
+
+
 def check_document(path):
     doc = load_document(path)
     env = doc["environment"]
     assertions = [formula_from_data(env, u["content"]) for u in doc["units"]
                   if u["kind"] == "asserted" and u["content"] is not None]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
+              "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if "graph" in doc["meta"]:
         admission = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
@@ -230,6 +251,8 @@ def check_document(path):
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
+        labels = [a.get("label") for a in result["admission"]["report"]["assumptions"]]
+        _check_narrowing_choices(doc["meta"], labels)
         from .admission import parse_label
         result["stale_reading_labels"] = [label for a in result["admission"]["report"]["assumptions"]
                                           if (label := a.get("label")) is not None
