@@ -15,9 +15,11 @@ from typing import Callable, Mapping
 from .. import ast
 from ..ast import check_formula
 from ..background import background
+from ..background import validate_background
 from ..errors import VEError
 from ..evaluate import evaluate
 from ..identity import meaning_id
+from ..english import parse_english_with_metadata, render_english
 from ..search import find_distinguishing_model
 
 CATALOGUE_VERSION = "ve.ambiguity-patterns@1"
@@ -145,13 +147,40 @@ def candidates(env, source: str, bindings: Mapping, *, pattern_id: str):
     missing = set(pattern.required) - set(bindings)
     if missing:
         return (), "missing bindings: " + ", ".join(sorted(missing))
+    # A connective in the source does not license the opposite connective.
+    # Likewise, the old attachment constructor only moved a predicate between
+    # constants; it did not represent attachment of a modifier in the source.
+    if pattern_id == "attachment.modifier@1":
+        return (), "modifier attachment has no supported source reading constructor"
     try:
         rows = pattern.constructor(bindings)
+        if pattern_id == "coordination.list@1":
+            rows = tuple(row for row in rows if row[0] ==
+                         ("both" if re.search(r"\band\b", source, re.I) else "either"))
+        if pattern_id == "scope.negation@1":
+            rows = tuple(row for row in rows if row[0] ==
+                         ("none" if re.search(r"\bno\b", source, re.I) else "not_all"))
         for _, formula in rows:
             check_formula(env, formula)
     except (VEError, ValueError, KeyError, TypeError) as exc:
         return (), "unsupported meaning: " + str(exc)
     return rows, None
+
+
+def checked_wording(env, wording: str, formula) -> str:
+    """The exact displayed sentence must have one full writable derivation."""
+    if not isinstance(wording, str) or not wording.strip():
+        raise ValueError("empty displayed meaning")
+    if not (wording.endswith(".") or wording.endswith(".\n")):
+        raise ValueError("displayed meaning must be a writable sentence ending in a period")
+    source = wording if wording.endswith(".\n") else wording + "\n"
+    try:
+        parsed = parse_english_with_metadata(env, source)
+    except (VEError, ValueError, TypeError) as exc:
+        raise ValueError("displayed meaning fails full English derivation") from exc
+    if len(parsed.document.formulas) != 1 or parsed.document.formulas[0] != formula:
+        raise ValueError("displayed meaning fails AST correspondence")
+    return wording
 
 
 def review(env, source: str, bindings: Mapping, *, pattern_id: str,
@@ -166,10 +195,18 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
               "limits": {**SEARCH_LIMITS, "operation_seconds": OPERATION_SECONDS,
                          "max_candidates": MAX_CANDIDATES, "max_comparisons": MAX_COMPARISONS,
                          "max_cards": MAX_CARDS}, "cards": [], "pending": [],
-              "candidate_count": len(rows), "comparison_count": 0,
+              "candidate_count": len(rows), "comparison_count": 0, "candidates": [],
               "cursor": cursor, "next_cursor": None, "residual": residual}
     if residual:
         return result
+    for name, formula in rows:
+        try:
+            wording = checked_wording(env, render_english(formula, env) + ".", formula)
+        except (VEError, ValueError) as exc:
+            result["residual"] = f"candidate {name} has no checked writable wording: {exc}"
+            return result
+        result["candidates"].append({"name": name, "meaning_id": meaning_id(env, formula),
+                                     "wording": wording})
     if len(rows) > MAX_CANDIDATES:
         result["residual"] = "candidate limit (32)"
         result["pending"].append({"reason": result["residual"]})
@@ -196,6 +233,7 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
                 continue
             # Regenerate Background, validate the model, and evaluate every premise.
             premises = background(env)
+            validate_background(env, found.model)
             if any(evaluate(env, premise.formula, found.model,
                             max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False).value is not True
                    for premise in premises):
@@ -210,15 +248,12 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
             card = {"pair": [left[0], right[0]], "meaning_ids": [meaning_id(env, left[1]),
                      meaning_id(env, right[1])], "model": found.model.to_dict(),
                      "values": [a.value, b.value], "pattern_id": pattern_id}
-            templates = pattern_by_id(pattern_id).paraphrases
-            if len(templates) == 2:
-                card["paraphrases"] = [template.format(**bindings) for template in templates]
-            else:
-                card["paraphrases"] = [f"{name}: {templates[0].format(**bindings)}"
-                                        for name in card["pair"]]
+            card["paraphrases"] = [result["candidates"][i]["wording"],
+                                    result["candidates"][j]["wording"]]
             if len(result["cards"]) < MAX_CARDS:
                 result["cards"].append(card)
             else:
+                result["comparison_count"] -= 1  # this pair is retried on the next page
                 result["pending"].append({"pair": card["pair"], "reason": "page card limit (3)"})
                 result["next_cursor"] = index
                 break
