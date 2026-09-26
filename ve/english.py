@@ -37,9 +37,7 @@ _ACTIVE = (
     r"has (?:access to|authority over|responsibility for)",
 )
 _EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end therefore so hence".split())
-_ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
-             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth',
-             'fourteenth', 'fifteenth', 'sixteenth')
+_ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth')
 _EXTRA_RESERVED |= frozenset(_ORDINALS)
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 # order@0 comparison wording ("at least n" is a comparison, never a counting quantifier).
