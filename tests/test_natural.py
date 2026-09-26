@@ -1,5 +1,6 @@
 """The natural view only accepts exact, uniquely parsed English sentences."""
 
+import json
 import pytest
 from lark import Lark
 from pathlib import Path
@@ -13,6 +14,14 @@ from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
 from ve.errors import ResourceLimit
 from ve.printer import natural_document
 from test_views import ENV, vocabulary
+
+
+def _names(env, **forms):
+    return {'vocabulary': {'format': 've.english-vocabulary@1',
+                           'environment_id': env.environment_id,
+                           'sorts': {}, 'predicates': {},
+                           'constants': {name: {'verbalisation': form}
+                                         for name, form in forms.items()}}}
 
 
 def test_natural_core_forms_are_writable_and_unique():
@@ -38,26 +47,25 @@ def test_natural_core_forms_are_writable_and_unique():
 
 def test_prose_paragraph_and_declared_constant_display_forms():
     data = vocabulary()
-    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
-    data['vocabulary']['constants']['alice']['verbalisation'] = 'Alice'
     data['vocabulary']['constants']['union'] = {
-        'sort': 'item', 'description': 'European Union',
-        'verbalisation': 'the European Union'}
+        'sort': 'item', 'description': 'European Union'}
     env = Environment(data)
+    options = _names(env, api='the API', alice='Alice', union='the European Union')
     formulas = (Unary('reviewed', Const('api')),
                 Unary('ready', Const('alice')),
                 Unary('reviewed', Const('union')))
     document = Document(formulas)
-    text = natural_document(env, document).text
+    text = natural_document(env, document, **options).text
     assert text == 'The API is reviewed. Alice is ready. The European Union is reviewed.'
-    assert render(document, env, 've_natural') == text
-    assert parse_english(env, text) == document
-    assert len(natural_document(env, document).sentences) == 3
+    assert render(document, env, 've_natural', **options) == text
+    assert parse_english(env, text, **options) == document
+    assert len(natural_document(env, document, **options).sentences) == 3
 
 
 def test_web_app_first_example_is_one_checked_prose_argument():
-    env = Environment.from_json((Path(__file__).resolve().parents[1] /
-                                 'examples/assist/environment.json').read_bytes())
+    example = Path(__file__).resolve().parents[1] / 'examples/assist'
+    env = Environment.from_json((example / 'environment.json').read_bytes())
+    options = {'vocabulary': json.loads((example / 'environment.english.json').read_text())}
     document = Document((
         Forall('service', Implies(Unary('reviewed', Var(0)), Unary('safe', Var(0)))),
         Unary('reviewed', Const('api')),
@@ -66,68 +74,67 @@ def test_web_app_first_example_is_one_checked_prose_argument():
                 'Therefore the API is safe.')
     for marker in ('Therefore', 'So', 'Hence', 'It follows that'):
         text = expected.replace('Therefore', marker)
-        assert parse_english(env, text) == document
-        view = natural_document(env, document, conclusions=(2,), conclusion_marker=marker)
+        assert parse_english(env, text, **options) == document
+        view = natural_document(env, document, conclusions=(2,), conclusion_marker=marker, **options)
         assert view.text == text
         assert view.sentences[2]['role'] == 'conclusion'
         assert render(document, env, 've_natural', conclusions=(2,),
-                      conclusion_marker=marker) == text
-        graph = parse_english_argument(env, text)
+                      conclusion_marker=marker, **options) == text
+        graph = parse_english_argument(env, text, **options)
         assert graph.deductions[0].premises == ('s1', 's2')
         checked = check_argument(graph, search=False)
         assert checked.findings['d3'] == ('follows',)
         assert checked.remaining_assumptions == ('s1', 's2')
-    separated = natural_document(env, document, conclusions=(2,), paragraph_breaks=(2,))
+    separated = natural_document(env, document, conclusions=(2,), paragraph_breaks=(2,), **options)
     assert separated.text == expected.replace(' Therefore', '\n\nTherefore')
     assert separated.paragraphs == ({'start': 0, 'end': 2}, {'start': 2, 'end': 3})
-    assert parse_english(env, separated.text) == document
+    assert parse_english(env, separated.text, **options) == document
     repeated = Document((*document.formulas, document.formulas[-1]))
-    repeated_view = natural_document(env, repeated, conclusions=(2, 3))
-    repeated_graph = parse_english_argument(env, repeated_view.text)
+    repeated_view = natural_document(env, repeated, conclusions=(2, 3), **options)
+    repeated_graph = parse_english_argument(env, repeated_view.text, **options)
     assert tuple(edge.premises for edge in repeated_graph.deductions) == (
         ('s1', 's2'), ('s1', 's2'))
     with pytest.raises(Exception, match='no checked derivation'):
-        parse_english(env, 'The API is reviewed. Therefore the API is safe.')
+        parse_english(env, 'The API is reviewed. Therefore the API is safe.', **options)
     with pytest.raises(Exception, match='earlier premise'):
-        parse_english(env, 'Therefore the API is safe. The API is reviewed.')
+        parse_english(env, 'Therefore the API is safe. The API is reviewed.', **options)
 
 
 def test_it_requires_one_preceding_constant_referent():
-    data = vocabulary()
-    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
-    env = Environment(data)
+    env = Environment(vocabulary())
+    options = _names(env, api='the API', alice='Alice')
     one = Document((Unary('reviewed', Const('api')), Unary('active', Const('api'))))
-    assert natural_document(env, one).text == 'The API is reviewed. It is deployed.'
-    assert parse_english(env, 'The API is reviewed. It is deployed.') == one
+    assert natural_document(env, one, **options).text == 'The API is reviewed. It is deployed.'
+    assert parse_english(env, 'The API is reviewed. It is deployed.', **options) == one
     with pytest.raises(Exception):
-        parse_english(env, 'It is deployed.')
+        parse_english(env, 'It is deployed.', **options)
     many = Document((Unary('reviewed', Const('api')),
                      Unary('ready', Const('alice')),
                      Unary('active', Const('api'))))
-    assert 'It is deployed' not in natural_document(env, many).text
+    assert 'It is deployed' not in natural_document(env, many, **options).text
     with pytest.raises(Exception):
-        parse_english(env, 'The API is reviewed. Alice is ready. It is deployed.')
+        parse_english(env, 'The API is reviewed. Alice is ready. It is deployed.', **options)
 
 
 def test_three_item_subject_and_predicate_lists_have_exact_ast():
     data = vocabulary()
-    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
     data['vocabulary']['constants']['beta'] = {
-        'sort': 'item', 'description': 'Beta', 'verbalisation': 'Beta'}
+        'sort': 'item', 'description': 'Beta'}
     data['vocabulary']['constants']['gamma'] = {
-        'sort': 'item', 'description': 'Gamma', 'verbalisation': 'Gamma'}
+        'sort': 'item', 'description': 'Gamma'}
     env = Environment(data)
+    options = _names(env, api='the API', beta='Beta', gamma='Gamma')
     for cls, connective, verb in ((And, 'and', 'are'), (Or, 'or', 'is')):
         atoms = [Unary('reviewed', Const(n)) for n in ('api', 'beta', 'gamma')]
         subjects = cls(atoms[0], cls(atoms[1], atoms[2]))
         text = f'The API, Beta {connective} Gamma {verb} reviewed'
-        assert render_natural_sentence(subjects, env).text == text
-        assert parse_english(env, text + '.') == Document((subjects,))
+        assert render_natural_sentence(subjects, env, **options).text == text
+        assert parse_english(env, text + '.', **options) == Document((subjects,))
         atoms = [Unary(p, Const('api')) for p in ('reviewed', 'active', 'exempt')]
         predicates = cls(atoms[0], cls(atoms[1], atoms[2]))
         text = f'The API is reviewed, deployed {connective} exempt'
-        assert render_natural_sentence(predicates, env).text == text
-        assert parse_english(env, text + '.') == Document((predicates,))
+        assert render_natural_sentence(predicates, env, **options).text == text
+        assert parse_english(env, text + '.', **options) == Document((predicates,))
 
 
 def test_relative_who_and_that_bind_the_local_quantifier():
@@ -138,15 +145,13 @@ def test_relative_who_and_that_bind_the_local_quantifier():
 
 
 def test_colliding_declared_names_use_exact_identifiers():
-    data = vocabulary()
-    data['vocabulary']['constants']['api']['verbalisation'] = 'Alice'
-    data['vocabulary']['constants']['alice']['verbalisation'] = 'Alice'
-    env = Environment(data)
-    first = render_natural_sentence(Unary('reviewed', Const('api')), env)
-    second = render_natural_sentence(Unary('ready', Const('alice')), env)
+    env = Environment(vocabulary())
+    options = _names(env, api='Alice', alice='Alice')
+    first = render_natural_sentence(Unary('reviewed', Const('api')), env, **options)
+    second = render_natural_sentence(Unary('ready', Const('alice')), env, **options)
     assert first.form == second.form == 'explicit form'
     assert '"api"' in first.text and '"alice"' in second.text
-    assert parse_english(env, first.text + '.') == Document((Unary('reviewed', Const('api')),))
+    assert parse_english(env, first.text + '.', **options) == Document((Unary('reviewed', Const('api')),))
 
 
 def test_writable_shared_copula_and_unqualified_owner():

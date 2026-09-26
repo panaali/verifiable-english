@@ -10,8 +10,8 @@
       "safe": {"arguments": ["service"], "description": "Recorded as safe in this inventory."}
     },
     "constants": {
-      "api": {"sort": "service", "description": "The public API service.", "verbalisation": "the API"},
-      "web": {"sort": "service", "description": "The web front-end service.", "verbalisation": "the web front end"}
+      "api": {"sort": "service", "description": "The public API service."},
+      "web": {"sort": "service", "description": "The web front-end service."}
     }
   }
 }

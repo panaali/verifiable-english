@@ -97,14 +97,15 @@ def audit(random_per_vocabulary=100):
     total = sum(row['statements'] for row in rows)
     natural = sum(row['natural'] for row in rows)
     demo_env = Environment.from_json((ROOT / 'examples/assist/environment.json').read_bytes())
+    demo_options = {'vocabulary': json.loads((ROOT / 'examples/assist/environment.english.json').read_text())}
     demo = ast.Document((
         ast.Forall('service', ast.Implies(ast.Unary('reviewed', ast.Var(0)),
                                           ast.Unary('safe', ast.Var(0)))),
         ast.Unary('reviewed', ast.Const('api')),
         ast.Unary('safe', ast.Const('api'))))
-    prose = natural_document(demo_env, demo, conclusions=(2,))
-    assert parse_english(demo_env, prose.text) == demo
-    graph = parse_english_argument(demo_env, prose.text)
+    prose = natural_document(demo_env, demo, conclusions=(2,), **demo_options)
+    assert parse_english(demo_env, prose.text, **demo_options) == demo
+    graph = parse_english_argument(demo_env, prose.text, **demo_options)
     assert check_argument(graph, search=False).findings['d3'] == ('follows',)
     return {'method': 'per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance; prose example adds document round trip and claim-graph certificate replay',
             'statements': total, 'natural': natural, 'fallback': total - natural,

@@ -87,7 +87,6 @@ class PredicateDecl:
 class ConstantDecl:
     sort: str
     description: str | None
-    verbalisation: str | None = None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -166,16 +165,14 @@ class Environment:
                                              verbalisation, negative)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
-            _entry_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"])
-                                           if "description" in entry else None,
-                                           _verbalisation(entry["verbalisation"])
-                                           if "verbalisation" in entry else None)
+                                           if "description" in entry else None)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -214,9 +211,7 @@ class Environment:
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
-                                                                      if v.description is not None else {}),
-                                                **({"verbalisation": v.verbalisation}
-                                                   if v.verbalisation is not None else {})}
+                                                                      if v.description is not None else {})}
                                              for k, v in self.constants.items()}}}
 
     @property
