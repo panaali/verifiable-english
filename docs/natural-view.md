@@ -1,20 +1,64 @@
 # Audited natural view
 
-`ve render --view ve_natural` renders one checked formula at a time. It tries
-ordinary English and parses the exact displayed sentence with the writable English
-parser, including P0's unconditional Earley all-derivations check. It accepts
-the wording only when the parser returns exactly the source AST and Earley finds
-one derivation. An unsuccessful candidate gets a per-sentence reason and an
-audited, writable explicit English form, which may contain exact quoted identifiers
-or structural notation. `render_natural_sentence` also retains
-the original fluent text in `fluent_text` for review of fallbacks. No checker,
-Lean source, canonical strict printer, or semantic identity changes.
+`ve render --view ve_natural` renders checked statements as prose paragraphs.
+Sentence boundaries remain in the `Document` AST and the view's `sentences` data;
+they are spaces rather than forced line breaks in the display. Callers can pass
+`paragraph_breaks=(2,)` to begin a new paragraph before sentence index 2; the
+view records each paragraph's sentence range. Every proposed
+sentence and the complete displayed document pass the writable English parser,
+including its Earley all-derivations check. Acceptance requires the exact source
+AST and one derivation. An unsuccessful candidate gets a per-sentence reason and
+an audited explicit English form. `render_natural_sentence` retains the original
+fluent text in `fluent_text` for fallback review. The strict printer and formula
+semantics are unchanged.
 
 The former explicit `ve_natural` experiment is available as `ve_explicit`.
 The frozen five-view measurement cohort uses that name. `natural_formula` and
 `natural_document` now return the audited view with renderer
-`ve.natural-audited`, version `2`. Each sentence in the UI data has a `form`
-field of `natural` or `explicit form` and a fallback reason where applicable.
+`ve.natural-audited`, version `3`. Each sentence in the UI data has a `form`
+field of `natural` or `explicit form`, a `role` of `premise` or `conclusion`, and
+a fallback reason where applicable.
+
+For the web app's first example, the old three line display was “Every reviewed
+service is safe. / Api is reviewed. / Api is safe.” A checked document with the
+constant display form `the API` and its third statement marked as a conclusion
+now displays:
+
+> Every reviewed service is safe. The API is reviewed. Therefore the API is safe.
+
+`natural_document(env, document, conclusions=(2,))` produces this text; the
+equivalent `render(..., view='ve_natural', conclusions=(2,))` does too. The
+writable parser accepts it with the same three formula ASTs. The API
+`parse_english_argument` builds a claim graph with a certificate-backed edge
+from the first two sentences to the third. An unproved marked conclusion is
+rejected. `Therefore`, `So`, `Hence`, and `It follows that` have the same checked
+role. They are never interpreted as assumptions.
+
+**Preceding premises** means every earlier *unmarked* sentence in the same
+document, including earlier paragraphs. Earlier conclusions are excluded from
+the premise set. There is no implicit section reset. A marker requires at least
+one earlier premise and a replayable entailment certificate; an inconclusive
+proof search does not license it. The graph's only assumption leaves are the
+unmarked sentences.
+
+Constant display forms are declared once as optional `verbalisation` strings on
+environment constants: `the API`, `Alice`, and `the European Union` are examples.
+They change spelling, articles, and casing, while every parsed term remains the
+same declared `Const` symbol. Invalid or colliding names use the quoted
+identifier fallback. Environment metadata remains identity bound, as with sort
+and predicate display forms.
+
+Three item distributive lists are writable for distinct constant subjects with
+one unary adjective predicate (“The API, Beta and Gamma are reviewed”) and for
+one constant with three distinct unary adjective predicates (“The API is
+reviewed, deployed and safe”). `or` has the corresponding fixed right
+association in the AST. The parser audits the full sentence and rejects a
+different association or a competing reading. Existing `who` and `that`
+relative clauses bind their locally introduced quantifier; they do not search
+the preceding paragraph for an antecedent. A simple “It is safe” resolves only
+when exactly one constant has been mentioned earlier in the document. With zero
+or multiple named referents, the parser rejects `It`, and the renderer uses the
+explicit name. Marked conclusions keep their explicit subject name.
 
 ## Before and after
 
@@ -64,6 +108,10 @@ Of the 620 explicit forms, 618 needed structural notation or quoted identifiers;
 one candidate changed the AST and one failed the English audit. The final output
 was independently checked sentence by sentence for exact AST identity and one
 derivation, with zero wrong readings and no skipped corpus source.
+The report also records the three statement web app example as a complete
+paragraph: exact document round trip, one English derivation, and replay of its
+single claim graph deduction all pass. That prose probe is reported separately
+from the 1,219 formula samples.
 
 ## Reader-facing notation audit
 
@@ -78,5 +126,6 @@ useful for editing and historical comparison. The audited `ve_natural` view
 uses word-marked nested lists and ordinal references through the eighth entity
 when the one-reading check accepts them. Explicit forms retain exact writable
 notation, including underscores and depth-specific list markers.
-The web app is outside this branch; its reader-facing claim selector should
-use `ve_natural` when integrated and keep `ve_strict` for the strict inspector.
+The web app is outside this branch; its reader-facing claim selector can use
+`ve_natural` with conclusion indices when integrated and keep `ve_strict` for
+the strict inspector.

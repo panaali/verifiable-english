@@ -1,10 +1,19 @@
 {
-  "method": "per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance",
+  "method": "per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance; prose example adds document round trip and claim-graph certificate replay",
   "statements": 1219,
   "natural": 599,
   "fallback": 620,
   "natural_fraction": 0.4913863822805578,
   "accepted_wrong_readings": 0,
+  "prose_argument": {
+    "before": "Every reviewed service is safe. / Api is reviewed. / Api is safe.",
+    "after": "Every reviewed service is safe. The API is reviewed. Therefore the API is safe.",
+    "statements": 3,
+    "checked_conclusions": 1,
+    "round_trip": true,
+    "one_reading": true,
+    "claim_graph_replay": true
+  },
   "rows": [
     {
       "corpus": "examples/conclusion.ve",

@@ -81,6 +81,10 @@ def test_web_app_first_example_is_one_checked_prose_argument():
         checked = check_argument(graph, search=False)
         assert checked.findings['d3'] == ('follows',)
         assert checked.remaining_assumptions == ('s1', 's2')
+    separated = natural_document(env, document, conclusions=(2,), paragraph_breaks=(2,))
+    assert separated.text == expected.replace(' Therefore', '\n\nTherefore')
+    assert separated.paragraphs == ({'start': 0, 'end': 2}, {'start': 2, 'end': 3})
+    assert parse_english(env, separated.text) == document
     with pytest.raises(Exception, match='no checked derivation'):
         parse_english(env, 'The API is reviewed. Therefore the API is safe.')
     with pytest.raises(Exception, match='earlier premise'):
@@ -123,6 +127,13 @@ def test_three_item_subject_and_predicate_lists_have_exact_ast():
         text = f'The API is reviewed, deployed {connective} exempt'
         assert render_natural_sentence(predicates, env).text == text
         assert parse_english(env, text + '.') == Document((predicates,))
+
+
+def test_relative_who_and_that_bind_the_local_quantifier():
+    formula = Forall('agent', Implies(Unary('ready', Var(0)),
+                                      Unary('ready', Var(0))))
+    for pronoun in ('who', 'that'):
+        assert parse_english(ENV, f'Every person {pronoun} is ready is ready.') == Document((formula,))
 
 
 def test_writable_shared_copula_and_unqualified_owner():
