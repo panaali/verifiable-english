@@ -122,18 +122,30 @@ def test_case_varied_and_nested_adjective_ambiguity_rejects():
 
 def test_forced_candidate_rejection_audits_final_fallback(monkeypatch):
     import ve.natural as natural
+    from ve.errors import ResourceLimit
     real_parse = natural.parse_english
     calls = []
     def reject_once(env, text, **options):
         calls.append(text)
         if len(calls) == 1:
-            raise ValueError('forced budget rejection')
+            raise ResourceLimit('forced Earley budget rejection')
         return real_parse(env, text, **options)
     monkeypatch.setattr(natural, 'parse_english', reject_once)
     formula = Exists('item', Unary('active', Var(0)))
     result = natural.render_natural_sentence(formula, ENV)
     assert result.form == 'explicit form' and len(calls) == 2
+    assert result.reason == 'english_audit_ResourceLimit'
     assert real_parse(ENV, result.text + '.') == Document((formula,))
+
+
+def test_no_sentence_is_displayed_when_every_audit_exhausts_budget(monkeypatch):
+    import ve.natural as natural
+    from ve.errors import ResourceLimit
+    def exhausted(*_args, **_kwargs):
+        raise ResourceLimit('forced budget exhaustion')
+    monkeypatch.setattr(natural, 'parse_english', exhausted)
+    with pytest.raises(ValueError, match='No writable English form'):
+        natural.render_natural_sentence(Exists('item', Unary('active', Var(0))), ENV)
 
 
 def test_order_comparison_uses_at_least_without_operator_symbols():

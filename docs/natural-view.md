@@ -33,7 +33,7 @@ the named use case.
 | Birthright | For every person P such that (both P is born_in_us and P is subject_to_jurisdiction), P is us_citizen. | Every person who is born in the United States and is subject to US jurisdiction is a US citizen. |
 | Birthright | For every person P such that P is has_noncitizen_domiciled_parent, P is subject_to_jurisdiction. | Every person who has a noncitizen parent domiciled in the United States is subject to US jurisdiction. |
 | Claude constitution | For every claude_model L such that L is current_claude_model, L is ought_have_core_values. | Every current Claude model is expected to have the core values. |
-| News | @fed raised_on @sept16. | Fed raised its policy rate on the named sept16. |
+| News | @fed raised_on @sept16. | Fed raised its policy rate on "sept16". (explicit form) |
 
 The writable natural forms include “Some service is deployed”, “No contractor
 may access the server” when the environment declares that atomic relation,
