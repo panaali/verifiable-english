@@ -1,8 +1,7 @@
 """Pure elaboration of acyclic predicate definitions.
 
-This module does not install a declaration hook.  The P0 environment decoder
-must attach identity-bound ``defined`` entries before these premises can be
-used as Background in the public checking route.
+The environment decoder stores identity-bound ``defined`` entries. The
+background generator calls this elaborator in dependency order.
 """
 from __future__ import annotations
 
@@ -69,8 +68,7 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
                         version: str) -> tuple[Definition, ...]:
     """Check declared bodies and order them below their dependents.
 
-    ``entries`` contains the identity-bound body payload supplied by the
-    future declaration hook.  The predicates must already be in ``env``.
+    ``entries`` contains identity-bound body payloads from the vocabulary.
     """
     if "definitions@0" not in env.profiles:
         raise VEError("Definitions require definitions@0")
@@ -120,7 +118,7 @@ def expand(definitions: tuple[Definition, ...]) -> tuple[ast.Formula, ...]:
 
 def definitions_id(env: Environment, definitions: tuple[Definition, ...], *,
                    version: str) -> str:
-    """A provisional content digest for tests; public environment identity awaits P0."""
+    """A content digest for standalone elaboration; public identity is on env."""
     from .ast import _to_data
     return digest("ve-definitions-v0.2\n", {
         "environment_id": env.environment_id,

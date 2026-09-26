@@ -238,6 +238,9 @@ impl Environment {
         }
         let mut predicates = BTreeMap::new();
         for (name, decl) in preds {
+            if decl.get("defined").is_some() {
+                return error("UnsupportedProfile", "defined declarations require the Python definitions elaborator");
+            }
             let d = entry_fields(decl, &["arguments", "description"], true)?;
             let args = d["arguments"]
                 .as_array()
