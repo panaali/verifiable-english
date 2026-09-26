@@ -342,15 +342,6 @@ impl Environment {
     /// A family the envelope gate accepts but whose checker has not landed:
     /// every checking site rejects it (same diagnostic as Python and Lean).
     pub(crate) fn require_checker(&self) -> Result<()> {
-        if self.route
-            && self.profiles.iter().any(|p| p == "nary@0")
-            && self.profiles.iter().any(|p| p == "closure@0")
-        {
-            return error(
-                "UnsupportedProfile",
-                "the closure+n-ary checker is gated until W4 stage 1 lands",
-            );
-        }
         Ok(())
     }
     pub(crate) fn validate_background(&self, constants: &BTreeMap<String, usize>) -> Result<()> {

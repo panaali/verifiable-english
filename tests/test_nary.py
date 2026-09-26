@@ -60,9 +60,7 @@ def test_environment_arity_cap_and_unknown_third_sort():
         Environment(data)
 
 
-def test_finite_model_and_countermodel_with_nary_relation(monkeypatch):
-    # Exercise the untrusted finite-model path while the verified route is gated.
-    monkeypatch.setattr("ve.profiles.GATED", {})
+def test_finite_model_and_countermodel_with_nary_relation():
     env = environment()
     model = FiniteModel.from_dict(env, {
         "complete": True,

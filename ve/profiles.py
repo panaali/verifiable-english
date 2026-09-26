@@ -55,7 +55,7 @@ def checker_family(profiles):
 
 # A family the gate accepts whose checker has not landed: every checking site
 # rejects it (the Lean `route` runner rejects it with the same diagnostic).
-GATED = {"closure+n-ary": "the closure+n-ary checker is gated until W4 stage 1 lands"}
+GATED = {}
 
 
 def require_checker(env) -> None:
