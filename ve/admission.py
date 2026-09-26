@@ -382,7 +382,9 @@ def _check_graph(env, nodes, root):
             continue
         children = [reports[p] for p in n.premises]
         checked = check_entailment_certificate(env, [c[0][1] for c in children], n.formula,
-                                               n.certificate, _background=False)
+                                               n.certificate, _background=False,
+                                               _generated_premises=[c[0][2].startswith("background:")
+                                                                    for c in children])
         if not checked.valid:
             raise VEError(GRAPH_REJECTED)
         reports[n.name] = (claim, [a for c in children for a in c[1]])
@@ -436,7 +438,9 @@ def admit_document(environment, document) -> dict:
             if p not in by_name:
                 raise VEError(f"dangling premise {p}")
         cert = n.certificate
-        expected = ([meaning_id(env, by_name[p].formula) for p in n.premises], meaning_id(env, n.formula))
+        expected = ([meaning_id(env, by_name[p].formula,
+                                _generated=by_name[p].label.startswith("background:"))
+                     for p in n.premises], meaning_id(env, n.formula))
         if (type(cert) is not dict or cert.get("environment_id") != env.environment_id
                 or (cert.get("premise_meaning_ids"), cert.get("conclusion_meaning_id")) != expected):
             raise VEError("certificate is stale or bound to different inputs")
