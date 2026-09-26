@@ -38,9 +38,13 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:1] == ["document"]:
+        from .document import main as document_main
+        return document_main(argv[1:])
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
+    commands.add_parser("document", help="document check, render, coverage and readings")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
