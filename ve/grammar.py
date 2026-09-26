@@ -235,6 +235,10 @@ def export_grammar(env: Environment, *, dialect: str = "lark", mode: str = "full
         raise ValueError("wrapper must be Boolean")
     grammar = _Grammar(env, mode, max_binder_depth, max_binders, max_rules, wrapper)
     grammar.build()
+    from .surface.registry import enabled, records
+    for record in records():
+        if record.strict_grammar_hook is not None and enabled(record, env):
+            record.strict_grammar_hook(grammar)
     return grammar.render(dialect)
 
 
