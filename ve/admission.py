@@ -202,7 +202,6 @@ def _decode_unit(env, data) -> _Unit:
 
 def _decode_leaf(env, data):
     _fields(data, ("ast", "label"))
-    formula = formula_from_data(env, data["ast"])
     label = data["label"]
     if type(label) is not str:
         raise VEError("expected a string")
@@ -211,6 +210,7 @@ def _decode_leaf(env, data):
         raise AdmissionError(f"AdmissionError: invalid label {label}")
     if parsed.kind == "cite":
         raise AdmissionError("AdmissionError: lemma leaves must be transitive (no cite labels)")
+    formula = formula_from_data(env, data["ast"], _generated=parsed.kind == "background")
     return formula, label
 
 
@@ -286,7 +286,6 @@ def _decode_node(env, data) -> _Node:
     name = data["name"]
     if type(name) is not str:
         raise VEError("expected a string")
-    formula = formula_from_data(env, data["ast"])
     label = "asserted"
     if "label" in data:
         if type(data["label"]) is not str:
@@ -294,6 +293,7 @@ def _decode_node(env, data) -> _Node:
         if data["label"] == "asserted":
             raise VEError("non-canonical label: the default label asserted is omitted")
         label = data["label"]
+    formula = formula_from_data(env, data["ast"], _generated=label.startswith("background:"))
     unit = data.get("unit")
     if "unit" in data and type(unit) is not str:
         raise VEError("expected a string")
@@ -400,7 +400,8 @@ def _compatible(x, y) -> bool:
 
 def _claim_json(env, claim):
     name, formula, label = claim
-    return {"name": name, "ast": formula_to_data(env, formula),
+    return {"name": name, "ast": formula_to_data(env, formula,
+            _generated=label.startswith("background:")),
             **({} if label == "asserted" else {"label": label})}
 
 

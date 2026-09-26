@@ -361,7 +361,6 @@
   {
     "id": "partial-total-table",
     "kind": "evaluate",
-    "pending": "W5",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [

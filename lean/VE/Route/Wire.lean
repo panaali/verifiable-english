@@ -283,14 +283,14 @@ def closureUsesStringBinder : VE.Closure.Formula → Bool
 def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
     Except String (List VE.Formula) := do
   let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
-  if data && fs.any usesStringBinder then throw "$string quantification requires data stage 2"
+  if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
   if (fs.map VE.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
   pure fs
 
 def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
   let a ← VE.Bridge.decodeFormula 64 j
-  if data && usesStringBinder a then throw "$string quantification requires data stage 2"
+  if data && usesStringBinder a then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless a.check E [] do throw "ill-typed or unbound conclusion"
   pure a
 

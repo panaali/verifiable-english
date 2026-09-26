@@ -173,6 +173,36 @@ def elaborated_document_cases():
          {"status": "ok", "valid": True, "background": bg}, closure,
          premises=gamma, conclusion=FIN_A, certificate=certificate(closure, gamma, FIN_A))
 
+    # Two flagged relations exercise declaration order, required search atoms,
+    # certificate binding, and a real countermodel on the data family.
+    data_vocab = {"sorts": {"person": {"description": "Person."},
+                            "department": {"description": "Department."}},
+        "predicates": {"dept": {"arguments": ["person", "department"],
+            "description": "Department.", "functional": True, "total": True},
+            "backup": {"arguments": ["person", "department"],
+            "description": "Backup department.", "total": True}},
+        "constants": {"alice": {"sort": "person", "description": "Alice."}}}
+    data_env = envelope(data_vocab, ["data@0", "relational-fol@0"])
+    data_model = {"complete": True,
+        "domains": {"person": ["a"], "department": ["d"]},
+        "constants": {"alice": "a"},
+        "relations": {"dept": [["a", "d"]], "backup": [["a", "d"]]}}
+    case("data-two-flags-evaluate", "evaluate", {"status": "ok", "values": [True]},
+         data_env, model=data_model, ast=[["top"]])
+    case("data-two-flags-countermodel", "countermodel", {"status": "ok", "refutes": True},
+         data_env, model=data_model, premises=[], conclusion=["bottom"])
+    case("data-two-flags-search", "search", {"status": "ok", "found": True},
+         data_env, max_domain_size=1, premises=[], conclusion=["bottom"])
+    flag_cert = certificate(data_env, [], ["top"])
+    case("data-two-flags-certificate", "certificate",
+         {"status": "ok", "valid": True, "background": 3}, data_env,
+         premises=[], conclusion=["top"], certificate=flag_cert)
+    changed_data = deepcopy(data_env)
+    del changed_data["vocabulary"]["predicates"]["backup"]["total"]
+    case("data-dropped-flag-stales-certificate", "certificate",
+         {"status": "ok", "valid": False}, changed_data,
+         premises=[], conclusion=["top"], certificate=flag_cert)
+
     # The order family admits literals (plan 3.1: Background depends on env only).
     order = envelope(ORDER_VOCAB, ["order@0", "relational-fol@0"])
     order_gamma = [["or", SAME, LIMIT_SMALL]]
@@ -256,7 +286,7 @@ def invalid_background_model_cases():
             {"id": "literal-alias-order-countermodel", "kind": "countermodel",
              "environment": envelope(ORDER_VOCAB, ["order@0", "relational-fol@0"]),
              "model": ORDER_ALIAS, "premises": [], "conclusion": ["bottom"], "expected": invalid},
-            {"id": "partial-total-table", "kind": "evaluate", "pending": "W5", "environment": flags,
+            {"id": "partial-total-table", "kind": "evaluate", "environment": flags,
              "model": {"complete": True, "domains": {"person": ["alice"],
                         "department": ["finance"]}, "constants": {}, "relations": {"dept": []}},
              "ast": [["top"]], "expected": {"status": "error", "code": "InvalidModel", "generator": "flags"}},
@@ -490,6 +520,25 @@ def admission_cases():
     order_doc = {"units": [], "graph": {"root": "t", "nodes": [{"name": "t", "ast": ["top"], "unit": "u"}]}}
     case("order-family-deferred", order_doc, "UnsupportedProfile",
          environment=envelope(ORDER_VOCAB, ["order@0", "relational-fol@0"]))
+    from ve.ast import formula_to_data
+    from ve.background import background
+    flagged = envelope({"sorts": {"person": {"description": "Person."}},
+        "predicates": {"dept": {"arguments": ["person", STRING],
+            "description": "Department.", "functional": True, "total": True}},
+        "constants": {}}, ["data@0", "relational-fol@0"])
+    flagged_env = _python_env(flagged)
+    generated = formula_to_data(flagged_env, background(flagged_env)[0].formula, _generated=True)
+    flag_doc = {"units": [], "graph": {"root": "f", "nodes": [
+        {"name": "f", "ast": generated, "label": "background:flags"}]}}
+    case("data-flag-background-leaf", flag_doc, environment=flagged)
+    fake = deepcopy(flag_doc)
+    fake["graph"]["nodes"][0]["ast"] = ["forall", STRING, ["top"]]
+    case("data-fake-background-leaf", fake,
+         "AdmissionError: node f is not admitted under label background:flags", flagged)
+    author = {"units": [{"id": "u", "span": [0, 1], "kind": "asserted",
+        "content": ["forall", STRING, ["top"]]}], "graph": {"root": "a", "nodes": [
+        {"name": "a", "ast": ["forall", STRING, ["top"]], "unit": "u"}]}}
+    case("data-author-string-binder", author, "UnsupportedProfile", flagged)
     return cases
 
 

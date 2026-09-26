@@ -2193,6 +2193,393 @@
   }
  },
  {
+  "id": "data-two-flags-evaluate",
+  "kind": "evaluate",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     },
+     "backup": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Backup department.",
+      "total": true
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice."
+     }
+    }
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a"
+    ],
+    "department": [
+     "d"
+    ]
+   },
+   "constants": {
+    "alice": "a"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "d"
+     ]
+    ],
+    "backup": [
+     [
+      "a",
+      "d"
+     ]
+    ]
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "expected": {
+   "status": "ok",
+   "values": [
+    true
+   ]
+  }
+ },
+ {
+  "id": "data-two-flags-countermodel",
+  "kind": "countermodel",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     },
+     "backup": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Backup department.",
+      "total": true
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice."
+     }
+    }
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a"
+    ],
+    "department": [
+     "d"
+    ]
+   },
+   "constants": {
+    "alice": "a"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "d"
+     ]
+    ],
+    "backup": [
+     [
+      "a",
+      "d"
+     ]
+    ]
+   }
+  },
+  "premises": [],
+  "conclusion": [
+   "bottom"
+  ],
+  "expected": {
+   "status": "ok",
+   "refutes": true
+  }
+ },
+ {
+  "id": "data-two-flags-search",
+  "kind": "countermodel",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     },
+     "backup": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Backup department.",
+      "total": true
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice."
+     }
+    }
+   }
+  },
+  "premises": [],
+  "conclusion": [
+   "bottom"
+  ],
+  "model": {
+   "complete": true,
+   "domains": {
+    "department": [
+     "e0"
+    ],
+    "person": [
+     "e0"
+    ]
+   },
+   "constants": {
+    "alice": "e0"
+   },
+   "relations": {
+    "backup": [
+     [
+      "e0",
+      "e0"
+     ]
+    ],
+    "dept": [
+     [
+      "e0",
+      "e0"
+     ]
+    ]
+   }
+  },
+  "expected": {
+   "status": "ok",
+   "refutes": true
+  }
+ },
+ {
+  "id": "data-two-flags-certificate",
+  "kind": "certificate",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     },
+     "backup": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Backup department.",
+      "total": true
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice."
+     }
+    }
+   }
+  },
+  "premises": [],
+  "conclusion": [
+   "top"
+  ],
+  "certificate": {
+   "checker_version": "ve-tableau-checker@2",
+   "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+   "premise_meaning_ids": [
+    "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+    "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+    "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+   ],
+   "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+   "trace": {
+    "rule": "close"
+   }
+  },
+  "expected": {
+   "status": "ok",
+   "valid": true,
+   "background": 3
+  }
+ },
+ {
+  "id": "data-dropped-flag-stales-certificate",
+  "kind": "certificate",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     },
+     "backup": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Backup department."
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice."
+     }
+    }
+   }
+  },
+  "premises": [],
+  "conclusion": [
+   "top"
+  ],
+  "certificate": {
+   "checker_version": "ve-tableau-checker@2",
+   "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+   "premise_meaning_ids": [
+    "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+    "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+    "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+   ],
+   "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+   "trace": {
+    "rule": "close"
+   }
+  },
+  "expected": {
+   "valid": false
+  }
+ },
+ {
   "id": "order-literals-evaluate",
   "kind": "evaluate",
   "environment": {
@@ -3237,6 +3624,64 @@
   "expected": {
    "status": "error",
    "generator": "literals"
+  }
+ },
+ {
+  "id": "partial-total-table",
+  "kind": "evaluate",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     },
+     "department": {
+      "description": "Department."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "department"
+      ],
+      "description": "Department of person.",
+      "functional": true,
+      "total": true
+     }
+    },
+    "constants": {}
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "alice"
+    ],
+    "department": [
+     "finance"
+    ]
+   },
+   "constants": {},
+   "relations": {
+    "dept": []
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "expected": {
+   "status": "error",
+   "generator": "flags"
   }
  },
  {
@@ -22220,6 +22665,349 @@
       "name": "t",
       "ast": [
        "top"
+      ],
+      "unit": "u"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "data-flag-background-leaf",
+  "kind": "admission",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     }
+    },
+    "constants": {}
+   }
+  },
+  "document": {
+   "units": [],
+   "graph": {
+    "root": "f",
+    "nodes": [
+     {
+      "name": "f",
+      "ast": [
+       "forall",
+       "person",
+       [
+        "forall",
+        "$string",
+        [
+         "forall",
+         "$string",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "dept",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "binary",
+            "dept",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ],
+          [
+           "eq",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "label": "background:flags"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "ok",
+   "admitted": true,
+   "report": {
+    "root": {
+     "name": "f",
+     "ast": [
+      "forall",
+      "person",
+      [
+       "forall",
+       "$string",
+       [
+        "forall",
+        "$string",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "dept",
+           [
+            "var",
+            2
+           ],
+           [
+            "var",
+            1
+           ]
+          ],
+          [
+           "binary",
+           "dept",
+           [
+            "var",
+            2
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "eq",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "background:flags"
+    },
+    "assumptions": [
+     {
+      "name": "f",
+      "ast": [
+       "forall",
+       "person",
+       [
+        "forall",
+        "$string",
+        [
+         "forall",
+         "$string",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "dept",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "binary",
+            "dept",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ],
+          [
+           "eq",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "label": "background:flags"
+     }
+    ]
+   },
+   "report_id": "29327f4f50946056046df7955d6d558bbc84964e253852cf80b7283ff1c696e8",
+   "kinds": []
+  }
+ },
+ {
+  "id": "data-fake-background-leaf",
+  "kind": "admission",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     }
+    },
+    "constants": {}
+   }
+  },
+  "document": {
+   "units": [],
+   "graph": {
+    "root": "f",
+    "nodes": [
+     {
+      "name": "f",
+      "ast": [
+       "forall",
+       "$string",
+       [
+        "top"
+       ]
+      ],
+      "label": "background:flags"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error",
+   "error": "AdmissionError: node f is not admitted under label background:flags"
+  }
+ },
+ {
+  "id": "data-author-string-binder",
+  "kind": "admission",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "data@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "Person."
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "Department.",
+      "functional": true,
+      "total": true
+     }
+    },
+    "constants": {}
+   }
+  },
+  "document": {
+   "units": [
+    {
+     "id": "u",
+     "span": [
+      0,
+      1
+     ],
+     "kind": "asserted",
+     "content": [
+      "forall",
+      "$string",
+      [
+       "top"
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "a",
+    "nodes": [
+     {
+      "name": "a",
+      "ast": [
+       "forall",
+       "$string",
+       [
+        "top"
+       ]
       ],
       "unit": "u"
      }
