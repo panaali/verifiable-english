@@ -6,12 +6,22 @@ claim checking, citation closure and report identity use the P0 machinery.
 """
 from __future__ import annotations
 
+from dataclasses import replace
+
 from . import admission as w2
 from .environment import Environment
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .norms import NormDocument
 from .wire import digest
+
+
+def _check_quoted(env, content):
+    """A quoted norm never contributes a layer, but it is still a norm object
+    over this environment: every single-rule check applies. Its precedence
+    edges name rules of the quoted source, so they are not resolved here."""
+    rule = NormDocument._decode(content)
+    NormDocument(env, [replace(rule, over=())])
 
 
 def admit_norm_document(environment, document):
@@ -26,6 +36,7 @@ def admit_norm_document(environment, document):
         raise ResourceLimit("ResourceLimit: unit count")
     units = []
     active = []
+    quoted = []
     for raw in raw_units:
         if type(raw) is not dict:
             raise VEError("invalid unit")
@@ -44,7 +55,9 @@ def admit_norm_document(environment, document):
             kind = w2._check_kind(raw["kind"])
             if kind == "norm":
                 active.append(content)
-            elif not w2._quoted(kind):
+            elif w2._quoted(kind):
+                quoted.append(content)
+            else:
                 raise VEError("norm content requires a norm or quoted kind")
             units.append(w2._Unit(uid, start, stop, kind, content))
         else:
@@ -54,6 +67,8 @@ def admit_norm_document(environment, document):
     if any(a.stop > b.start for a, b in zip(units, units[1:])):
         raise VEError("unit spans must be sorted and non-overlapping")
     norms = NormDocument(env, active)
+    for content in quoted:
+        _check_quoted(env, content)
     # Let the existing W2 decoder validate every non-unit source component.
     other = {**document, "units": []}
     decoded = w2._decode_doc(env, other)

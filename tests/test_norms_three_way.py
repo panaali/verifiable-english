@@ -226,6 +226,29 @@ def test_norm_document_admission_and_provenance_match_lean(lean_executable):
     assert {k: result[k] for k in expected} == expected
 
 
+def test_inactive_norm_content_is_rejected_by_lean(lean_executable):
+    from ve.admission import admit_document
+    from tests.test_norm_admission import inactive_norm_mutants, source
+
+    env, _ = source()
+    mutants = dict(inactive_norm_mutants())
+    rows = run(lean_executable, [{"id": label, "kind": "admission", "environment": env.to_dict(),
+                                  "document": doc} for label, doc in mutants.items()])
+    for row in rows:
+        with pytest.raises(Exception):
+            admit_document(env, mutants[row["id"]])
+        assert row["status"] == "error", row
+    assert any(r["error"] == "norm content requires a norm or quoted kind" for r in rows)
+
+    quoted = json.loads(json.dumps(mutants["quoted unknown predicate"]))
+    quoted["units"][0]["content"]["norm"]["predicate"] = "permitted"
+    quoted["units"][0]["content"]["norm"]["over"] = ["alices-other-rule"]
+    expected = admit_document(env, quoted)
+    result = run(lean_executable, [{"id": "edges", "kind": "admission",
+                                    "environment": env.to_dict(), "document": quoted}])[0]
+    assert {k: result[k] for k in expected} == expected
+
+
 def test_1100_regenerated_documents_match_lean(lean_executable):
     docs = [*corpus(), *pair_corpus()]
     results = run(lean_executable, [lean_case(i, d) for i, d in enumerate(docs)])

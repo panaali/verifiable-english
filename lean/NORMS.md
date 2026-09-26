@@ -138,7 +138,9 @@ prefix positions, table lookups) audited with the same allowlist.
 * Wire path (11.4): `ve_norms_route <cases.json|->` implements
   `norms-elaborate`, `norms-conflict` (packages or a witness),
   `norms-certificate`, and W2 FOL `admission` with active norm units and
-  `layer:norms:<p>` leaves. It delegates P0 cases without norm constructs to
+  `layer:norms:<p>` leaves. Norm content under a kind other than `norm` or a
+  quoted kind is rejected, never discarded; quoted norm content is inactive but
+  passes every single-rule check (`Admission.checkQuoted`). It delegates P0 cases without norm constructs to
   `Route.Run.runCase` unchanged. `Norms.Run.norms_wire_acceptance` proves that
   a successful public admission has a checked graph and exact admitted leaves;
   `Norms.Admission.norms_wire_report_consequence` discharges its regenerated

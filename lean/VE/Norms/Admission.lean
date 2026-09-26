@@ -10,24 +10,46 @@ open VE.Route.Admission
 open VE.Bridge (exactFields stringField)
 universe u
 
+/-- Norm content by the kind of its unit (Python `admit_norm_document`): an
+active `norm` unit contributes a layer; a quoted unit keeps its content
+inactive; under any other kind norm content is rejected, never discarded. -/
+inductive NormContent where
+  | active (content : Json)
+  | quoted (content : Json)
+
 /-- Remove norm content only from the copy passed to the FOL unit decoder.
 The original source document remains intact for report identity. -/
-def splitUnit (j : Json) : Except String (Json × Option Json) := do
+def splitUnit (j : Json) : Except String (Json × Option NormContent) := do
   match j.getObjVal? "content" with
   | .ok content =>
     if (content.getObjVal? "norm").toBool then
       let kind ← decodeKind 16 (← j.getObjVal? "kind")
-      let active := if kind == .norm then some content else none
+      let norm ← if kind == .norm then pure (NormContent.active content)
+        else if kind.quoted then pure (NormContent.quoted content)
+        else throw "norm content requires a norm or quoted kind"
       let obj ← VE.Bridge.fields j
-      return (Json.mkObj (obj.filter (·.1 != "content")), active)
+      return (Json.mkObj (obj.filter (·.1 != "content")), some norm)
     else return (j, none)
   | .error _ => return (j, none)
 
-def splitDocument (j : Json) : Except String (Json × Json) := do
+/-- The FOL copy of the document, the active norm objects and the quoted ones. -/
+def splitDocument (j : Json) : Except String (Json × Json × List Json) := do
   let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM splitUnit
   let clean := j.setObjVal! "units" (Json.arr (units.map Prod.fst).toArray)
-  let active := Json.arr (units.filterMap Prod.snd).toArray
-  pure (clean, active)
+  let active := Json.arr (units.filterMap (fun u => match u.2 with
+    | some (.active c) => some c
+    | _ => none)).toArray
+  let quoted := units.filterMap (fun u => match u.2 with
+    | some (.quoted c) => some c
+    | _ => none)
+  pure (clean, active, quoted)
+
+/-- A quoted norm never contributes a layer, but it is still a norm object over
+the source environment: every single-rule check of `validate` applies. Its
+precedence edges name rules of the quoted source and are not resolved here. -/
+def checkQuoted (src : Wire.Source) (j : Json) : Except String Unit := do
+  let N ← Wire.decodeNorm j
+  validate ⟨src.D.E, src.D.lits, ⟨src.D.T.regulated, [], [{ N with over := [] }]⟩⟩
 
 /-- Exact regenerated layer leaf, with no unit pointer. -/
 def LayerLeaf (src : Wire.Source) (w : WireNode) : Prop :=
@@ -77,8 +99,9 @@ certificate bindings, graph checking, citations and reading choices. -/
 def admitDocument (environment document : Json) : Except String Admitted := do
   VE.Bridge.displayFields document ["units", "graph"]
     ["lemmas", "open_terms", "reading_sets", "narrowings"]
-  let (clean, norms) ← splitDocument document
+  let (clean, norms, quoted) ← splitDocument document
   let src ← Wire.decodeSource environment norms
+  quoted.forM (checkQuoted src)
   let D ← VE.Route.Admission.decodeDoc src.ne.rv clean
   let graphJson ← document.getObjVal? "graph"
   exactFields graphJson ["root", "nodes"]
@@ -110,6 +133,7 @@ theorem norms_wire_admission_sound (environment document : Json) (res : Admitted
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨src, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨D, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
