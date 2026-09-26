@@ -13,6 +13,7 @@ import time
 from typing import Protocol
 
 from ..ast import check_formula
+from ..errors import VEError
 from ..evaluate import evaluate
 from ..model import FiniteModel
 from ..identity import meaning_id
@@ -158,7 +159,7 @@ class RecoveryService:
     def verify_ledger(self, ledger=None):
         try:
             return self._verify_ledger(ledger)
-        except (KeyError, TypeError, ValueError, IndexError):
+        except (KeyError, TypeError, ValueError, IndexError, VEError):
             return False
 
     def _verify_ledger(self, ledger=None):
@@ -170,11 +171,18 @@ class RecoveryService:
         if type(events) is not list or ledger.get("revision") != len(events):
             return False
         previous = None
+        history = RecoveryService(self.env, grammar_version=self.versions["grammar"],
+            glossary_version=self.versions["glossary"],
+            reading_set_version=self.versions["reading_set"])
         for number, event in enumerate(events, 1):
             raw = {k: v for k, v in event.items() if k != "event_digest"}
             if (event.get("revision") != number or event.get("previous_digest") != previous
                     or event.get("event_digest") != _digest(raw)
                     or event.get("source_digest") != _digest(event["unit_snapshot"]["source"])):
+                return False
+            history.versions = deepcopy(event["versions"])
+            history.units[event["unit"]] = Unit(**deepcopy(event["unit_snapshot"]))
+            if history.units[event["unit"]].state == "approved" and not history.approval_valid(event["unit"]):
                 return False
             previous = event["event_digest"]
         latest = {e["unit"]: e["unit_snapshot"] for e in events}
@@ -247,6 +255,12 @@ class RecoveryService:
     def edit(self, unit_id, *, source=None, anchor=None, presentation=None, expected_revision=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
+        new_source = unit.source if source is None else source
+        new_anchor = unit.anchor if anchor is None else anchor
+        new_presentation = unit.presentation if presentation is None else presentation
+        if (new_source, new_anchor, new_presentation) == (unit.source, unit.anchor, unit.presentation):
+            return unit
+        source_changed = new_source != unit.source
         source_ref = next((event["revision"] for event in reversed(self.events)
                            if event["unit"] == unit_id and event["action"] == "proposer_suggested"
                            and source is not None and event.get("text") == source), None)
@@ -257,14 +271,17 @@ class RecoveryService:
             unit.anchor = deepcopy(anchor)
         if presentation is not None:
             unit.presentation = presentation
-        unit.state = "draft"
-        unit.meaning_id = None
-        unit.readings.clear()
-        unit.rejected.clear()
-        unit.narrowings.clear()
-        unit.pending.clear()
-        unit.catalogue_reviewed.clear()
-        unit.catalogue_results.clear()
+        if source_changed:
+            unit.state = "draft"
+            unit.meaning_id = None
+            unit.readings.clear()
+            unit.rejected.clear()
+            unit.narrowings.clear()
+            unit.pending.clear()
+            unit.catalogue_reviewed.clear()
+            unit.catalogue_results.clear()
+        elif unit.state == "stale":
+            unit.state = "reading_review" if unit.pending else "ready"
         self._event("edit", unit, source_ref=source_ref)
         return unit
 
@@ -413,13 +430,18 @@ class RecoveryService:
         unit.proposals += 1
         self._event("proposer_reserved", unit, request=unit.proposals,
                     timeout_seconds=PROPOSAL_SECONDS)
+        reserved_revision, reserved_source = self.revision, unit.source
         started = time.monotonic()
         try:
-            suggestion = proposer.request(unit.source, timeout_seconds=PROPOSAL_SECONDS)
+            suggestion = proposer.request(reserved_source, timeout_seconds=PROPOSAL_SECONDS)
         except Exception as exc:
+            if self.revision != reserved_revision or unit.source != reserved_source:
+                return {"status": "stale", "reason": "proposer request superseded"}
             unit.state, unit.reason = "exhausted", f"proposer unavailable: {type(exc).__name__}"
             self._event("proposer_failed", unit, reason=unit.reason)
             return {"status": "exhausted", "reason": unit.reason}
+        if self.revision != reserved_revision or unit.source != reserved_source:
+            return {"status": "stale", "reason": "proposer request superseded"}
         if time.monotonic() - started > PROPOSAL_SECONDS:
             unit.state, unit.reason = "exhausted", "proposer request deadline (50 seconds)"
             self._event("proposer_timed_out", unit)
@@ -512,7 +534,7 @@ class RecoveryService:
                     cited_spans=deepcopy(list(cited_spans)))
 
     def record_narrowing(self, unit_id, *, keeps, actor, reason, cited_spans,
-                         expected_revision=None):
+                         document=None, expected_revision=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         ids = {row["meaning_id"] for row in unit.readings}
@@ -531,6 +553,22 @@ class RecoveryService:
                   "reading_set_digest": _digest(sorted(ids)),
                   "keeps": kept, "actor": actor, "reason": reason,
                   "cited_spans": deepcopy(cited_spans)}
+        record["document_unit"] = {"id": record["id"], "source": unit.source,
+                                   "anchor": deepcopy(cited_spans), "kind": "meta",
+                                   "meaning_status": "reviewed", "support": [unit.id]}
+        if self.document_adapter is not None:
+            if document is None:
+                raise ValueError("W2 document required for attributed narrowing")
+            checked = self.document_adapter.add_unit(document, anchor=deepcopy(cited_spans),
+                kind="meta", meaning_status="reviewed", support=[unit.id])
+            if checked is False or (isinstance(checked, dict) and checked.get("valid") is False):
+                raise ValueError("W2 rejected narrowing document unit")
+            result = self.document_adapter.narrow(document if checked is None else checked, set_id=unit.id,
+                set_version=self.versions["reading_set"], keeps=kept, actor=actor,
+                reason=reason, cited_spans=deepcopy(cited_spans))
+            if result is False or (isinstance(result, dict) and
+                                   (result.get("valid") is False or result.get("status") == "rejected")):
+                raise ValueError("W2 rejected narrowing")
         unit.narrowings.append(record)
         self._event("narrowing", unit, narrowing=deepcopy(record))
         return deepcopy(record)
@@ -541,6 +579,18 @@ class RecoveryService:
         unit = self.units[unit_id]
         if unit.state != "ready" or unit.pending:
             raise ValueError("reading review is incomplete")
+        from .ambiguity_patterns import PATTERNS
+        matched = {pattern.id for pattern in PATTERNS if pattern.matches(unit.source)}
+        if matched - set(unit.catalogue_reviewed):
+            raise ValueError("catalogue review is incomplete")
+        for pattern_id in matched:
+            result = unit.catalogue_results.get(pattern_id)
+            if result is None or result.get("pending") or result.get("residual") or result.get("next_cursor") is not None:
+                raise ValueError("catalogue review is incomplete")
+            disposition = result.get("disposition")
+            if disposition is not None and (disposition.get("disposition") != "not_applicable"
+                                            or not disposition.get("actor") or not disposition.get("reason")):
+                raise ValueError("catalogue disposition is invalid")
         if time.time() - unit.started >= TASK_SECONDS or unit.replies > MAX_REPLIES:
             unit.state, unit.reason = "unresolved", "clarification task cap"
             self._event("task_cap", unit)
@@ -611,6 +661,8 @@ class RecoveryService:
                 raise ValueError("considered reading wording changed meaning")
         proposed_readings = deepcopy(unit.readings)
         considered = {row.get("meaning_id") for row in proposed_readings}
+        if alternatives - considered:
+            raise ValueError("catalogue readings are missing from the considered set")
         if considered and mid not in considered:
             raise ValueError("selected meaning is outside the considered reading set")
         if not considered:
@@ -630,7 +682,19 @@ class RecoveryService:
             if (record is None or record["keeps"] != [mid]
                     or record["set_version"] != self.versions["reading_set"]
                     or record["source_digest"] != _digest(unit.source)
-                    or record["reading_set_digest"] != _digest(sorted(considered))):
+                    or record["reading_set_digest"] != _digest(sorted(considered))
+                    or record.get("document_unit", {}).get("id") != record["id"]
+                    or record["document_unit"].get("source") != unit.source
+                    or record["document_unit"].get("support") != [unit.id]
+                    or record["document_unit"].get("anchor") != record["cited_spans"]
+                    or record["document_unit"].get("kind") != "meta"
+                    or record["document_unit"].get("meaning_status") != "reviewed"
+                    or not isinstance(record["cited_spans"], list) or not record["cited_spans"]
+                    or any(not isinstance(span, dict) or type(span.get("start")) is not int
+                           or type(span.get("end")) is not int
+                           or not 0 <= span["start"] < span["end"] <= len(unit.source)
+                           for span in record["cited_spans"])
+                    or not record.get("actor") or not record.get("reason")):
                 raise ValueError("translation choice requires a separately recorded cited narrowing")
         elif narrowing is not None and not any(row["id"] == narrowing for row in unit.narrowings):
             raise ValueError("unknown narrowing")
@@ -656,16 +720,39 @@ class RecoveryService:
         unit = self.units[unit_id]
         if unit.state != "approved" or unit.approval is None:
             return False
-        snap = unit.approval["snapshot"]
-        return (snap["source"] == unit.source and snap["anchor"] == unit.anchor
-                and snap["presentation"] == unit.presentation and snap["meaning_id"] == unit.meaning_id
-                and snap["paraphrase"] == unit.paraphrase and snap["situation"] == unit.situation
-                and snap["considered"] == unit.readings and snap["rejected"] == unit.rejected
-                and snap["narrowings"] == unit.narrowings
-                and snap["catalogue_results"] == unit.catalogue_results
-                and snap["versions"] == self.versions
-                and snap["dependencies"] == [[d, self.units[d].revision] for d in unit.dependencies]
-                and _digest(snap) == unit.approval["digest"])
+        try:
+            snap = unit.approval["snapshot"]
+            bound = (snap["source"] == unit.source and snap["anchor"] == unit.anchor
+                    and snap["presentation"] == unit.presentation and snap["meaning_id"] == unit.meaning_id
+                    and snap["paraphrase"] == unit.paraphrase and snap["situation"] == unit.situation
+                    and snap["considered"] == unit.readings and snap["rejected"] == unit.rejected
+                    and snap["narrowings"] == unit.narrowings
+                    and snap["catalogue_results"] == unit.catalogue_results
+                    and snap["versions"] == self.versions
+                    and snap["dependencies"] == [[d, self.units[d].revision] for d in unit.dependencies]
+                    and _digest(snap) == unit.approval["digest"])
+        except (KeyError, TypeError, ValueError, IndexError):
+            return False
+        if not bound:
+            return False
+        try:
+            from ..english import parse_english_with_metadata
+            parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip("\n") + "\n")
+            if len(parsed.document.formulas) != 1:
+                return False
+            replay = RecoveryService(self.env, grammar_version=self.versions["grammar"],
+                glossary_version=self.versions["glossary"],
+                reading_set_version=self.versions["reading_set"])
+            replay.units = deepcopy(self.units)
+            selected = replay.units[unit_id]
+            selected.state, selected.approval = "ready", None
+            selected.started = time.time()
+            result = replay.approve(unit_id, parsed.document.formulas[0], actor=snap["actor"],
+                paraphrase=snap["paraphrase"], presentation=snap["presentation"],
+                situation=snap["situation"], narrowing=snap["narrowing"])
+            return result["digest"] == unit.approval["digest"]
+        except (KeyError, TypeError, ValueError, IndexError, VEError):
+            return False
 
     def add_unit(self, document, **kwargs):
         if self.document_adapter is None:
