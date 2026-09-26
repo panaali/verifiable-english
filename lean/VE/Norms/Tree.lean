@@ -58,14 +58,46 @@ structure Doc where
 
 /-! ## Rules, children and layer symbols -/
 
+/-- Stable insertion sort (structural, so concrete documents reduce in the
+kernel); on the unique names sorted here it agrees with Python's `sorted`. -/
+def insertBy {α : Type} (lt : α → α → Bool) (x : α) : List α → List α
+  | [] => [x]
+  | y :: ys => if lt x y then x :: y :: ys else y :: insertBy lt x ys
+
+def sortBy {α : Type} (lt : α → α → Bool) : List α → List α
+  | [] => []
+  | x :: xs => insertBy lt x (sortBy lt xs)
+
+theorem mem_insertBy {α : Type} (lt : α → α → Bool) (x a : α) :
+    ∀ l : List α, a ∈ insertBy lt x l ↔ a = x ∨ a ∈ l
+  | [] => by simp [insertBy]
+  | y :: ys => by
+    unfold insertBy
+    split
+    · simp
+    · simp only [List.mem_cons, mem_insertBy lt x a ys]
+      constructor
+      · rintro (h | h | h)
+        · exact Or.inr (Or.inl h)
+        · exact Or.inl h
+        · exact Or.inr (Or.inr h)
+      · rintro (h | h | h)
+        · exact Or.inr (Or.inl h)
+        · exact Or.inl h
+        · exact Or.inr (Or.inr h)
+
+theorem mem_sortBy {α : Type} (lt : α → α → Bool) (a : α) : ∀ l : List α, a ∈ sortBy lt l ↔ a ∈ l
+  | [] => by simp [sortBy]
+  | x :: xs => by simp [sortBy, mem_insertBy, mem_sortBy lt a xs]
+
 /-- The rules on `p`, in document order. -/
 def rulesOn (T : Tree) (p : String) : List Node := T.nodes.filter (·.pred == p)
 
 /-- The exceptions of `N` (rules on the same predicate taking precedence over
 it), sorted by name as Python `ve/norms.py` sorts them. -/
 def children (T : Tree) (N : Node) : List Node :=
-  (T.nodes.filter (fun C => C.pred == N.pred && C.over.contains N.name)).mergeSort
-    (fun a b => decide (a.name ≤ b.name))
+  sortBy (fun a b => decide (a.name < b.name))
+    (T.nodes.filter (fun C => C.pred == N.pred && C.over.contains N.name))
 
 def regulatedNames (T : Tree) : List String := T.regulated.map Regulated.name
 
@@ -139,9 +171,9 @@ structure Pair where
 
 /-- Declared pairs in sorted order of `r`, as Python `ve/background.py` sorts them. -/
 def pairs (T : Tree) : List Pair :=
-  (T.regulated.filterMap (fun r => match r.role, r.permission with
+  sortBy (fun a b => decide (a.req < b.req)) (T.regulated.filterMap (fun r => match r.role, r.permission with
     | .obligation, some m => some ⟨r.name, m, r.sorts⟩
-    | _, _ => none)).mergeSort (fun a b => decide (a.req ≤ b.req))
+    | _, _ => none))
 
 /-! ## The executable well-formedness check -/
 
