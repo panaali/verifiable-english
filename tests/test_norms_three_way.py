@@ -20,7 +20,8 @@ from ve.adapters.cedar import translate
 from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
-from ve.norms import NormDocument, _bind, _instantiate, check_conflict
+from ve.norms import (NormDocument, _bind, _instantiate, check_conflict,
+                      prove_norm_entailment, check_norm_entailment_certificate)
 from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -106,7 +107,37 @@ def test_noninitial_subject_act_rejected_across_languages(lean_executable, rust_
                                          "environment": raw, "norms": []}])[0]
     rust_result = run(rust_executable, [{"id": "act", "environment": raw, "ast": []}])[0]
     assert "invalid act phrase" in lean_result["error"]
-    assert "invalid act phrase" in rust_result["error"]
+    assert "invalid act phrase" in rust_result["error"]["message"]
+
+
+def test_norm_certificate_producer_and_canonical_identity_match_lean(lean_executable):
+    doc = NormDocument(environment({"permitted": permission()}),
+                       [rule("allow", "permitted", True)])
+    conclusion = doc.elaborate("permitted")
+    proof = prove_norm_entailment(doc, (Top(),), conclusion)
+    assert proof.status == "Found"
+    assert check_norm_entailment_certificate(doc, (Top(),), conclusion, proof.certificate).valid
+    raw_env = doc.env.to_dict()
+    raw_env["vocabulary"]["predicates"]["permitted"]["regulated"]["act"] = "{0}  be done"
+    case = {"id": "certificate", "kind": "norms-certificate", "environment": raw_env,
+            "norms": [r.to_dict() for r in doc.rules], "premises": [["top"]],
+            "conclusion": formula_to_data(doc.env, conclusion), "certificate": proof.certificate}
+    assert run(lean_executable, [case])[0]["valid"] is True
+    changed = json.loads(json.dumps(case))
+    changed["norms"][0]["norm"]["sign"] = False
+    assert run(lean_executable, [changed])[0]["status"] == "error"
+
+    from ve.entailment import prove_entailment
+    packages = {}
+    for target, sorts, formula in doc.conflict_targets():
+        inner = prove_entailment(doc.base_environment(), (), _bind(Not(formula), sorts))
+        assert inner.status == "Found"
+        packages[target] = {"environment_id": doc.env.environment_id,
+                            "document_hash": doc.document_hash, "target": target,
+                            "certificate": inner.certificate}
+    conflict_case = {"id": "conflict", "kind": "norms-conflict", "environment": raw_env,
+                     "norms": [r.to_dict() for r in doc.rules], "packages": packages}
+    assert run(lean_executable, [conflict_case])[0]["verdict"] == "CONFLICT-FREE"
 
 
 def test_1100_regenerated_documents_match_lean(lean_executable):

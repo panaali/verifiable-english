@@ -130,6 +130,25 @@ def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   pure ⟨rv, regs, e.profiles, environment⟩
 
+/-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
+Apply that same canonicalisation before any source environment binding. -/
+def canonicalEnvironmentJson (environment : Json) : Except String Json := do
+  let vocab ← environment.getObjVal? "vocabulary"
+  let predicates ← fields (← vocab.getObjVal? "predicates")
+  let canonical ← predicates.mapM fun (name, entry) => do
+    let entry ← match entry.getObjVal? "regulated" with
+      | .error _ => pure entry
+      | .ok reg =>
+        let reg ← match reg.getObjVal? "act" with
+          | .error _ => pure reg
+          | .ok act =>
+            let args ← strings (← entry.getObjVal? "arguments")
+            pure (reg.setObjVal! "act" (.str (← canonicalAct name args.length act)))
+        pure (entry.setObjVal! "regulated" reg)
+    pure (name, entry)
+  pure (environment.setObjVal! "vocabulary"
+    (vocab.setObjVal! "predicates" (Json.mkObj canonical)))
+
 /-- One norm object `{"norm": {...}}` (3.2). -/
 def decodeNorm (j : Json) : Except String Node := do
   exactFields j ["norm"]

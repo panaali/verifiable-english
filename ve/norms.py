@@ -333,6 +333,20 @@ def check_witness(document: NormDocument, target: str, model, values):
     raise VEError(f"UnknownSymbol: conflict target {target}")
 
 
+def prove_norm_entailment(document: NormDocument, premises, conclusion, **kwargs):
+    """Produce a certificate for Background ++ regenerated norm layers ++ Γ."""
+    from .entailment import prove_entailment
+    layers = tuple(formula for _, formula in document.premises())
+    return prove_entailment(document.env, (*layers, *premises), conclusion, **kwargs)
+
+
+def check_norm_entailment_certificate(document: NormDocument, premises, conclusion, certificate):
+    """Replay the same ordered premise list used by `norms-certificate`."""
+    from .entailment import check_entailment_certificate
+    layers = tuple(formula for _, formula in document.premises())
+    return check_entailment_certificate(document.env, (*layers, *premises), conclusion, certificate)
+
+
 def check_conflict(document: NormDocument, *, model=None, certificates=None,
                    max_evaluations=1_000_000, prove=False, tableau_steps=10_000):
     """A checked finite witness or certificates decide; exhaustion stays UNKNOWN."""
