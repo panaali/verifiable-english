@@ -32,9 +32,7 @@ theorem cedar_children_forbid {N : Node} (hN : N ∈ rulesOn T p) (hneg : N.sign
     children T N = [] := by
   apply List.eq_nil_iff_forall_not_mem.mpr
   intro C hC
-  simp only [children, mem_sortBy, List.mem_filter, Bool.and_eq_true, beq_iff_eq,
-    List.contains_iff_mem] at hC
-  obtain ⟨hC, hp, hover⟩ := hC
+  obtain ⟨hC, hp, hover⟩ := mem_children_iff.mp hC
   have hCp : C ∈ rulesOn T p := mem_rulesOn.mpr ⟨hC, hp.trans (mem_rulesOn.mp hN).2⟩
   cases hsC : C.sign
   · obtain ⟨M, hM, hMs, hMn⟩ := hs.forbidsOnlyOverPermits C hCp hsC N.name hover
@@ -52,8 +50,7 @@ theorem cedar_children_forbid {N : Node} (hN : N ∈ rulesOn T p) (hneg : N.sign
 
 theorem cedar_children_permit {N : Node} (hN : N ∈ rulesOn T p) (hpos : N.sign = true) (C : Node) :
     C ∈ children T N ↔ C ∈ rulesOn T p ∧ C.sign = false := by
-  simp only [children, mem_sortBy, List.mem_filter, Bool.and_eq_true, beq_iff_eq,
-    List.contains_iff_mem]
+  rw [mem_children_iff]
   have hNp := (mem_rulesOn.mp hN).2
   constructor
   · rintro ⟨hC, hp, hover⟩

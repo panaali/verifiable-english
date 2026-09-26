@@ -94,10 +94,28 @@ theorem mem_sortBy {α : Type} (lt : α → α → Bool) (a : α) : ∀ l : List
 def rulesOn (T : Tree) (p : String) : List Node := T.nodes.filter (·.pred == p)
 
 /-- The exceptions of `N` (rules on the same predicate taking precedence over
-it), sorted by name as Python `ve/norms.py` sorts them. -/
+it), sorted by name, one entry per occurrence of `N` in a rule's `over`, as
+Python `ve/norms.py` builds its children lists. -/
 def children (T : Tree) (N : Node) : List Node :=
   sortBy (fun a b => decide (a.name < b.name))
-    (T.nodes.filter (fun C => C.pred == N.pred && C.over.contains N.name))
+    (T.nodes.flatMap (fun C => if C.pred == N.pred then (C.over.filter (· == N.name)).map (fun _ => C) else []))
+
+theorem mem_children_iff {T : Tree} {N C : Node} :
+    C ∈ children T N ↔ C ∈ T.nodes ∧ C.pred = N.pred ∧ N.name ∈ C.over := by
+  simp only [children, mem_sortBy, List.mem_flatMap]
+  constructor
+  · rintro ⟨C', hC', hm⟩
+    split at hm
+    · rename_i hp
+      obtain ⟨_, hx, rfl⟩ := List.mem_map.mp hm
+      obtain ⟨hx, he⟩ := List.mem_filter.mp hx
+      simp only [beq_iff_eq] at hp he
+      exact ⟨hC', hp, he ▸ hx⟩
+    · cases hm
+  · rintro ⟨hC, hp, hn⟩
+    refine ⟨C, hC, ?_⟩
+    rw [if_pos (by simpa using hp)]
+    exact List.mem_map.mpr ⟨N.name, List.mem_filter.mpr ⟨hn, by simp⟩, rfl⟩
 
 def regulatedNames (T : Tree) : List String := T.regulated.map Regulated.name
 

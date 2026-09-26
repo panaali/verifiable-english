@@ -34,8 +34,15 @@ audit entries only.
   last argument. Relation tuples stay in argument order; `tupleVal vs = vs.reverse`
   is the valuation of a tuple (spec 6.1, Astra A2).
 * Generated formulas are exactly Python's: `anyF` is a left fold from `bottom`,
-  `allF` from `top`; children are sorted by name; the positive and negative
+  `allF` from `top`; children are sorted by name, one entry per occurrence in a
+  rule's `over` (Python appends per occurrence); the positive and negative
   selection lists keep the rules' document order.
+* Diagnostics follow Python's check order (environment declarations, then the
+  rule count, then each rule in order: name, duplicate, predicate, carve-out
+  count, typing; then `over`, the precedence DAG, depth, the stratum DAG) and
+  are rendered `<code>: <message>` as 11.1 writes them; Python's `VEError`
+  renders the same text as `f"{code}: {message}"` when the message does not
+  already begin with a code.
   `Checks.lean` compares the compact JSON of Lean's `elaborate`, conflict formulas
   and profile premises with Python's output string for string.
 * The layer order is `VE.Route.dependencyOrder` over defined ∪ regulated
