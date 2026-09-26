@@ -312,6 +312,18 @@ provenance even when the displayed report is unchanged.
 
 ### W2. Documents: format, 100% span accounting, content kinds, open terms, reading sets, pilots
 
+**2026-09-26 scope amendment.** The W2 code checkpoint consists of the format,
+CLI, admission integration, rendering, coverage calculation, and regression
+tests. It may merge before the empirical work. W2 acceptance remains **open**
+until all three named pilots have actual source documents and 100% byte
+coverage reports, an independent second rater has measured kind agreement,
+and a blind fidelity review has measured rendering disagreements. No
+historical claim count or synthetic fixture substitutes for those
+measurements. This amendment changes the merge dependency for the code
+checkpoint only; the pilot and fidelity gates below remain binding for W2
+completion. The no-model-calls W2 code run cannot produce independent human
+ratings or model-authored pilots.
+
 **Goal.** Turn a whole document into a checked spine with an explicit residual, measured after every merge.
 
 **Deliverables.** Format `ve-document@1` (`.ve.md`: JSON front matter with environment, units and open terms;
@@ -855,9 +867,10 @@ Dependencies and start conditions:
 | W7 | P0 registry (harness); Lean skeleton none | none | now | Opus 5.5 (Lean), Sol (harness) |
 | W8 | none (harness, sealed sets); per construct after its merge | offering of every construct | now | Sol; audits Astra xhigh |
 
-Merge order: **numbers2 → P0 → W2 baseline (format and pilots in today's language) → W3 → W4 stage 1 → W1 →
+Merge order: **numbers2 → P0 → W2 code checkpoint → W3 → W4 stage 1 → W1 →
 W6 → W5 stage 1 (Python earlier behind the gate; Rust after W4; joint Cedar gate with W1) → W7 harness (any time
-after P0) → W8 per construct**. Each merge re-runs the full suite, `lean/audit.py`, Rust conformance, the
+after P0) → W8 per construct**. W2 completion still requires the three pilots and independent ratings above.
+Each merge re-runs the full suite, `lean/audit.py`, Rust conformance, the
 per-input unambiguity check on every English fixture, the mixed English harness, the coverage dashboard and the
 vacuity report on every pilot.
 
