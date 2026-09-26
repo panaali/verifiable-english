@@ -4,9 +4,11 @@ Specification: [docs/spec/norms.md](../docs/spec/norms.md) sections 4 to 7 (draf
 READY TO BUILD). This file lists every definition the statement review reads and
 every theorem in plain words. All statements quantify universally over their
 displayed parameters. `lean/audit.py` audits every theorem below: no `sorry`, only
-`propext`, `Classical.choice` and `Quot.sound`. No frozen P0 file changed
-(`python3 VE/Route/frozen.py`); `VE.lean` and `VE/Audit.lean` gained imports and
-audit entries only.
+`propext`, `Classical.choice` and `Quot.sound`. No frozen P0 file and no
+`lean/VE/Route/*` source changed (`python3 VE/Route/frozen.py`); `VE.lean` and
+`VE/Audit.lean` gained imports and audit entries only, and `lakefile.toml` gained
+the `ve_norms_route` target (root `NormsMain.lean`) without changing existing
+targets.
 
 ## Files
 
@@ -36,15 +38,15 @@ audit entries only.
 * Generated formulas are exactly Python's: `anyF` is a left fold from `bottom`,
   `allF` from `top`; children are sorted by name, one entry per occurrence in a
   rule's `over` (Python appends per occurrence); the positive and negative
-  selection lists keep the rules' document order.
+  selection lists keep the rules' document order. `Checks.lean` compares the
+  compact JSON of Lean's `elaborate`, conflict formulas and profile premises with
+  Python's output string for string.
 * Diagnostics follow Python's check order (environment declarations, then the
   rule count, then each rule in order: name, duplicate, predicate, carve-out
   count, typing; then `over`, the precedence DAG, depth, the stratum DAG) and
   are rendered `<code>: <message>` as 11.1 writes them; Python's `VEError`
   renders the same text as `f"{code}: {message}"` when the message does not
   already begin with a code.
-  `Checks.lean` compares the compact JSON of Lean's `elaborate`, conflict formulas
-  and profile premises with Python's output string for string.
 * The layer order is `VE.Route.dependencyOrder` over defined ∪ regulated
   predicates. Pairs are sorted by the obligation's name (Python `sorted`).
 * **Premise order on the route** (the choice the Fable recheck asked W1 and W3 to
@@ -124,11 +126,12 @@ prefix positions, table lookups) audited with the same allowlist.
 
 ## Status and what is not claimed
 
-* Proved: every section 6.2 statement except the wire theorems of 11.4, the
-  proof-gated `conflict_smallModel` of 7.2, `cedar_decision`, the prefix
-  satisfaction and typed substitution lemmas of 6.1. `elaborate_iff_at` and
-  `elaborate_iff` are proved without the admissibility hypotheses the spec
-  lists (stronger statements).
+* Proved: every section 6.2 statement, the prefix satisfaction and typed
+  substitution lemmas of 6.1, the proof-gated `conflict_smallModel` of 7.2,
+  `cedar_decision`, and the conflict-package, witness and entailment halves of
+  the 11.4 wire theorems. `elaborate_iff_at` and `elaborate_iff` are proved
+  without the admissibility hypotheses the spec lists (stronger statements);
+  `conflict_smallModel` takes the environment's finite constant list `cs`.
 * `conflict_complete` (enumeration completeness) is deliberately not stated.
   CONFLICT-FREE still requires a tableau certificate (binding decision 9.4); a
   Lean enumerator proved against the 7.2 bound would be the next step.
@@ -163,10 +166,13 @@ shared diagnostic text.
 | `norms-certificate` | `premises`, `conclusion`, `certificate` bound to Background ++ layer premises ++ premises | `valid`, `background`, `layers` |
 
 Ad-hoc differential runs against the Python branch (`expand/w1-norms-py` at
-`e44fd27`): 5 fixed and 700 generated documents (nesting, carve-outs,
-multi-parent precedence, both defaults, pairs, lower regulated atoms and
-existential guards in guards, cycles, cross-predicate precedence) gave
-identical `norms-elaborate` output, including 200 identical diagnostics;
+`e44fd27`): 9 fixed and about 1,300 generated documents (nesting, carve-outs,
+multi-parent and duplicate precedence, both defaults, pairs, lower regulated
+atoms and existential guards, cycles, cross-predicate precedence) gave
+identical `norms-elaborate` output, including about 500 identical diagnostics,
+and 1,500 deliberately malformed documents (bad names, duplicates, unknown
+predicates and rules, arity, scope and sort errors, too many carve-outs) gave
+identical diagnostics;
 Python-proved conflict packages for four documents replay as CONFLICT-FREE and
 become UNKNOWN after flipping a default, dropping a rule, dropping a package or
 changing an inner binding; Python witnesses for 10.1(a) and (t) replay as
