@@ -1,0 +1,226 @@
+{
+  "rows": [
+    {
+      "theorem": "T5",
+      "environment_id": "2272a6c13daa5c7a1094a090b25bf7f743eaa490171941f4770a0d606e730625",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "antisymmetry"
+      ],
+      "status": "Found",
+      "python_valid": true
+    },
+    {
+      "theorem": "T6",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "reflexivity of le",
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true
+    },
+    {
+      "theorem": "T7a",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true
+    },
+    {
+      "theorem": "T7b",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true
+    },
+    {
+      "theorem": "T7",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "left congruence (T7a)",
+        "right congruence (T7b)"
+      ],
+      "status": "Found",
+      "python_valid": true
+    },
+    {
+      "theorem": "T8",
+      "environment_id": "32615a383b21de4b7eb5edba683d384ee8788dc339edaa7924afff36a87af713",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "totality"
+      ],
+      "status": "Found",
+      "python_valid": true
+    }
+  ],
+  "t7mono_by_citation": true,
+  "t7mono_leaves": [
+    {
+      "label": "background:definitions",
+      "ast": [
+        "forall",
+        "point",
+        [
+          "forall",
+          "point",
+          [
+            "and",
+            [
+              "implies",
+              [
+                "binary",
+                "sim",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ],
+              [
+                "binary",
+                "sim",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "label": "open:transitivity",
+      "ast": [
+        "forall",
+        "point",
+        [
+          "forall",
+          "point",
+          [
+            "forall",
+            "point",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    2
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "binary",
+                "le",
+                [
+                  "var",
+                  2
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    }
+  ],
+  "lean_defined_route": "UnsupportedProfile",
+  "c1": "uncertified"
+}
