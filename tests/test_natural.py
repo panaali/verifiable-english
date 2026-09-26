@@ -116,6 +116,20 @@ def test_it_requires_one_preceding_constant_referent():
         parse_english(env, 'The API is reviewed. Alice is ready. It is deployed.', **options)
 
 
+def test_existential_antecedent_blocks_unconfirmed_it_even_with_one_constant():
+    env = Environment(vocabulary())
+    options = _names(env, api='the API')
+    source = 'The API is reviewed. Some service is deployed. It is reviewed.'
+    with pytest.raises(Exception):
+        parse_english(env, source, **options)
+    document = Document((Unary('reviewed', Const('api')),
+                         Exists('item', Unary('active', Var(0))),
+                         Unary('reviewed', Const('api'))))
+    view = natural_document(env, document, **options)
+    assert view.text.endswith('The API is reviewed.')
+    assert parse_english(env, view.text, **options) == document
+
+
 def test_three_item_subject_and_predicate_lists_have_exact_ast():
     data = vocabulary()
     data['vocabulary']['constants']['beta'] = {

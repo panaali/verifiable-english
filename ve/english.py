@@ -68,6 +68,25 @@ def _mentioned_constants(value):
     return found
 
 
+def _has_discourse_binder(value):
+    """A prior quantified mention prevents automatic constant-only anaphora.
+
+    A binder does not introduce a named constant. Its witness may nevertheless
+    be what an ordinary reader takes a later ``it`` to denote. Until a scoped
+    discourse representation exists, the author must repeat an explicit name.
+    """
+    stack = [value]
+    while stack:
+        node = stack.pop()
+        if type(node) in (ast.Exists, ast.Forall):
+            return True
+        for field in ('body', 'left', 'right', 'edge', 'formula'):
+            child = getattr(node, field, None)
+            if child is not None:
+                stack.append(child)
+    return False
+
+
 def _fold_sentence_initials(source, words):
     def fold(match):
         word = match[2]
@@ -589,6 +608,9 @@ class EnglishParser:
         self.extension_readings = []
         self.conclusions = []
         self.referents = set()
+        self.incomplete_discourse = False
+        self.sentence_spans = []
+        self.paragraph_breaks = []
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -647,7 +669,7 @@ class EnglishParser:
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
         terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
-        if len(self.referents) == 1 and not scope:
+        if len(self.referents) == 1 and not scope and not self.incomplete_discourse:
             terms['it'] = ast.Const(next(iter(self.referents)))
         return terms
 
@@ -1145,12 +1167,19 @@ class EnglishParser:
         formulas = []
         self.source = _fold_sentence_initials(self.source, self.words)
         while self.i < len(self.source):
+            start = self.i
             if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
                 self.conclusions.append(len(formulas))
             formulas.append(self.formula())
             self.referents.update(_mentioned_constants(formulas[-1]))
+            self.incomplete_discourse |= _has_discourse_binder(formulas[-1])
             self.need('.')
-            if self.i < len(self.source): self.space()
+            self.sentence_spans.append((start, self.i))
+            if self.i < len(self.source):
+                gap_start = self.i
+                self.space()
+                if self.i < len(self.source) and re.search(r'\n\s*\n', self.source[gap_start:self.i]):
+                    self.paragraph_breaks.append(len(formulas))
         if not formulas: self.error('Write at least one statement ending with a period.')
         return ast.Document(tuple(formulas))
 
