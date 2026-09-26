@@ -14,17 +14,19 @@ above it).
 | `faithful` | The generated biconditionals hold exactly when every defined predicate agrees with its body. |
 | `conservative` | Every admissible structure of the base vocabulary has exactly one admissible expansion satisfying the definitions; forgetting the defined predicates gives it back. |
 | `conservative_entails` | For statements that do not mention defined predicates, reasoning with the definitions proves exactly what reasoning without them proves. |
-| `acceptance` | A checked certificate using the definitions (as Background, before the literals) proves its conclusion in every intended structure; for base-vocabulary statements, in every base structure; and for any statement, in the unique expansion of every base structure. |
+| `acceptance` | A checked certificate using the definitions (as Background, before the literals) proves its conclusion in every intended structure; for base-vocabulary statements, in every base structure; and for any statement, in an expansion of every base structure. `conservative` proves that expansion is unique. |
 | `closure_acceptance` | The same on the closure family. |
 | `countermodel` | A finite model satisfying the regenerated Background is intended, so a checked countermodel refutes the statement. |
 | `elaborate_chain` | The executable elaborator only returns admitted definition lists. |
-| `Bundle.bundle_sound` | Every lemma of an accepted bundle is true in every intended structure in which its non-background transitive leaves hold. |
+| `Bundle.bundle_sound` | Every accepted lemma has compatible reading labels across its transitive leaves, and is true in every intended structure in which its non-background transitive leaves hold. |
 | `Alias.faithful`, `Alias.conservative`, `Alias.alias_acceptance` | The earlier worked example: one fresh unary predicate named by an existing unary predicate. |
 
 The citation rule under review (`Bundle.checkLemma`, mirrored by
 `ve/bundle.py`): a lemma may cite only lemmas strictly earlier in the same
 bundle, under the same environment identity (hence the same definitions
-version); reading choices must agree on every shared unit; the lemma must list
+version); reading choices are derived from transitive leaf labels, including
+versions, and must be compatible; every cited non-background leaf must occur
+among the citing lemma's own hypotheses; the lemma must list
 exactly Background's labelled leaves, its own labelled hypotheses and every
 transitive leaf of what it cites, in that order without repeats; its
 certificate is replayed by the unchanged checker on Background ++ own

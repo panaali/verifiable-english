@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import subprocess
 
-from .admission import validate_label
+from .admission import parse_label, validate_label
 from .ast import formula_from_data, formula_to_data
 from .background import background
 from .entailment import check_entailment_certificate
@@ -30,6 +30,31 @@ def _english(env, cited, conclusion):
         return render_citation(env, cited, conclusion)
     except VEError:
         return None
+
+
+def _leaf_choices(leaves):
+    """Canonical choices from all transitive reading leaves, including versions.
+
+    An `all` leaf can coexist with a concrete choice at the same version;
+    the concrete choice is then the effective branch choice.
+    """
+    choices = {}
+    for leaf in leaves:
+        label = parse_label(leaf["label"])
+        if label.kind != "readings":
+            continue
+        unit, version, choice = label.args
+        previous = choices.get(unit)
+        if previous is not None:
+            old_version, old_choice = previous
+            if old_version != version or (old_choice is not None and choice is not None
+                                          and old_choice != choice):
+                raise VEError("Citation has incompatible reading choices")
+            if choice is None:
+                choice = old_choice
+        choices[unit] = (version, choice)
+    return {unit: f"{version}:{'all' if choice is None else choice}"
+            for unit, (version, choice) in choices.items()}
 
 
 def lean_bundle_verdict(lean_executable, environment, lemmas) -> dict:
@@ -77,26 +102,30 @@ def check_bundle(data, *, lean_executable=None):
             raise VEError("Reading choices must map unit names to readings")
         leaves = list(background_leaves)
         own = []
+        own_leaves = []
         for premise in item["premises"]:
             require_fields(premise, {"label", "ast"})
             label = validate_label(premise["label"])
             formula = formula_from_data(env, premise["ast"])
             own.append(formula)
-            leaves.append({"label": label, "ast": formula_to_data(env, formula)})
+            own_leaves.append({"label": label, "ast": formula_to_data(env, formula)})
+            leaves.append(own_leaves[-1])
         cited = []
-        inherited_choices = dict(choices)
         for reference in item["cites"]:
             if type(reference) is not str or reference not in known:
                 raise VEError("Citation is absent, cyclic, or not earlier in the bundle")
             lemma = known[reference]
-            for unit, reading in lemma["reading_choices"].items():
-                if unit in inherited_choices and inherited_choices[unit] != reading:
-                    raise VEError("Citation has incompatible reading choices")
-                inherited_choices[unit] = reading
             for leaf in lemma["transitive_leaves"]:
                 if leaf not in leaves:
                     leaves.append(leaf)
             cited.append(lemma["conclusion"])
+        for reference in item["cites"]:
+            for leaf in known[reference]["transitive_leaves"]:
+                if leaf not in background_leaves and leaf not in own_leaves:
+                    raise VEError("Citation hypothesis is absent from the citing branch")
+        inherited_choices = _leaf_choices(leaves)
+        if choices != inherited_choices:
+            raise VEError("Citation reading choices do not match transitive leaves")
         if item["transitive_leaves"] != leaves:
             raise VEError("Citation transitive leaf labels were changed or stripped")
         conclusion = formula_from_data(env, item["conclusion"])

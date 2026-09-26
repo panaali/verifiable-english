@@ -50,8 +50,40 @@ def mergeChoices (acc : List (String × String)) : List (String × String) →
     Except String (List (String × String))
   | [] => .ok acc
   | (u, r) :: cs => match VE.Bridge.lookup acc u with
-    | some r' => if r' == r then mergeChoices acc cs else .error "Citation has incompatible reading choices"
+    | some r' =>
+      let versionPrefix := (r.splitOn ":").head! ++ ":"
+      if r'.startsWith versionPrefix &&
+          (r' == r || r' == versionPrefix ++ "all" || r == versionPrefix ++ "all") then
+        let chosen := if r == versionPrefix ++ "all" then r' else r
+        mergeChoices (acc.map fun (s, value) => if s == u then (s, chosen) else (s, value)) cs
+      else .error "Citation has incompatible reading choices"
     | none => mergeChoices (acc ++ [(u, r)]) cs
+
+/-- Reading labels carry both a set version and a branch choice. `all` may
+coexist with a concrete choice at the same version. -/
+def addReading (acc : List (String × String)) (l : Leaf) :
+    Except String (List (String × String)) := do
+  match Admission.parseLabel l.1 with
+  | some (.readings set version choice) =>
+    let versionPrefix := toString version ++ ":"
+    let value := versionPrefix ++ (choice.map toString).getD "all"
+    match VE.Bridge.lookup acc set with
+    | none => pure (acc ++ [(set, value)])
+    | some old =>
+      unless old.startsWith versionPrefix && (old == value || old == versionPrefix ++ "all" || value == versionPrefix ++ "all") do
+        throw "Citation has incompatible reading choices"
+      if value == versionPrefix ++ "all" then pure acc
+      else pure (acc.map fun (s, r) => if s == set then (s, value) else (s, r))
+  | _ => pure acc
+
+def leafChoices (ls : List Leaf) : Except String (List (String × String)) :=
+  ls.foldlM addReading []
+
+def choicesEqual (a b : List (String × String)) : Bool :=
+  a.length == b.length && a.all (fun (u, r) => VE.Bridge.lookup b u == some r)
+
+/-- Every reading label in the transitive leaves is mutually compatible. -/
+def ReadingCompatible (ls : List Leaf) : Prop := (leafChoices ls).isOk
 
 /-- Resolve the citations in order: inherited leaves, merged choices, cited conclusions. -/
 def citeAll (known : List Known) :
@@ -70,14 +102,20 @@ certificate's identity binding of the full checked list and conclusion. -/
 def checkLemma (E : VE.Environment) (bg : List Leaf)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
     (known : List Known) (L : Lemma) : Except String Known := do
-  let (leaves, choices, cited) ← citeAll known (bg ++ L.premises) L.choices L.cites
+  let (leaves, _, cited) ← citeAll known (bg ++ L.premises) L.choices L.cites
   Gate.require (decide (L.leaves = leaves)) "Citation transitive leaf labels were changed or stripped"
+  Gate.require (known.all fun k =>
+    if L.cites.contains k.meaningId then
+      k.leaves.all fun l => (bg.contains l || L.premises.contains l)
+    else true) "Citation hypothesis is absent from the citing branch"
+  let derived ← leafChoices leaves
+  Gate.require (choicesEqual L.choices derived) "Citation reading choices do not match transitive leaves"
   Gate.require (!known.any (·.meaningId == L.meaningId)) "Lemma meaning ID is stale or duplicated"
   let checked := bg.map Prod.snd ++ (L.premises.map Prod.snd ++ cited)
   bind checked L.conclusion L.certificate
   Gate.require (VE.Tableau.checkCertificate E checked L.conclusion L.certificate)
     s!"Lemma {L.name} certificate failed"
-  pure ⟨L.meaningId, L.conclusion, choices, leaves⟩
+  pure ⟨L.meaningId, L.conclusion, derived, leaves⟩
 
 def checkAll (E : VE.Environment) (bg : List Leaf)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
@@ -165,6 +203,9 @@ theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good 
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hcert, h⟩ := bind_ok h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
@@ -199,6 +240,42 @@ theorem checkAll_sound : ∀ (known : List Known) (Ls : List Lemma) (res : List 
 
 end Soundness
 
+open VE.Order.ProfileGate in
+theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
+    (known : List Known) (L : Lemma) (k : Known)
+    (h : checkLemma E bg bind known L = .ok k) : ReadingCompatible k.leaves := by
+  unfold checkLemma at h
+  obtain ⟨⟨leaves, _, _⟩, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨derived, hd, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  cases h
+  simp only [ReadingCompatible, hd]
+  rfl
+
+open VE.Order.ProfileGate in
+theorem checkAll_reading (E : VE.Environment) (bg : List Leaf)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
+    ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
+    (∀ k ∈ known, ReadingCompatible k.leaves) →
+    checkAll E bg bind known Ls = .ok res → ∀ k ∈ res, ReadingCompatible k.leaves
+  | known, [], res, hk, h => by
+    simp only [checkAll, Except.ok.injEq] at h
+    subst h; exact hk
+  | known, L :: Ls, res, hk, h => by
+    unfold checkAll at h
+    obtain ⟨k, hL, h⟩ := bind_ok h
+    have hk' := checkLemma_reading E bg bind known L k hL
+    refine checkAll_reading E bg bind (known ++ [k]) Ls res (fun k₁ hm => ?_) h
+    rcases List.mem_append.mp hm with hm | hm
+    · exact hk k₁ hm
+    · rw [List.mem_singleton.mp hm]; exact hk'
+
 /-- Background's labelled leaves: definitions, then literals. -/
 def backgroundLeaves (ds : List Def) (lits : List String) : List Leaf :=
   (expand ds).map (fun a => ("background:definitions", a)) ++
@@ -223,8 +300,12 @@ theorem bundle_sound (E : VE.Environment) (ds : List Def) (h : Chain E ds)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
     (Ls : List Lemma) (res : List Known)
     (accepted : checkAll E (backgroundLeaves ds lits) bind [] Ls = .ok res) :
+    (∀ k ∈ res, ReadingCompatible k.leaves) ∧
     ∀ k ∈ res, ∀ S : VE.Structure.{u}, Intended E ds lits S →
       (∀ l ∈ k.leaves, l ∉ backgroundLeaves ds lits → l.2.denote S []) → k.conclusion.denote S [] := by
+  constructor
+  · exact checkAll_reading E (backgroundLeaves ds lits) bind [] Ls res
+      (fun _ h => nomatch h) accepted
   intro k hk S hS hl
   have := checkAll_sound.{u} E (backgroundLeaves ds lits) bind (Intended E ds lits)
     (fun S hS => hS.1.1) [] Ls res (fun _ h => nomatch h) accepted k hk S hS
