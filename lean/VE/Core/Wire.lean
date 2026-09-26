@@ -5,6 +5,7 @@ import VE.Route.Wire
 namespace VE.Core.Wire
 open Lean
 open VE.Route
+universe u
 
 def literals (v : VE.Bridge.Vocabulary) : List String :=
   (v.constants.filter (fun c => c.2 == "$string")).map Prod.fst
@@ -82,5 +83,63 @@ def run (profiles : List String) (environment : Json) (id kind : String)
     certificate.conclusion_meaning_id
   return VE.Route.Wire.ok id [("valid", .bool (Tableau.checkCertificate E
       (background.map embed ++ ps) c certificate)), ("background", toJson background.length)]
+
+private theorem validField (id : String) (b : Bool) (n : Nat) :
+    (VE.Route.Wire.ok id [("valid", .bool b), ("background", toJson n)]).getObjVal? "valid" =
+      .ok (.bool b) := by
+  rfl
+
+/-- Acceptance at the wire endpoint uses the decoded formulas and the
+regenerated literal premises. The identity check is part of the successful
+run, before the checker result is returned. -/
+theorem run_certificate_acceptance (profiles : List String) (environment : Json)
+    (id : String) (j result premisesJson conclusionJson certificateJson : Json)
+    (premiseArray : Array Json)
+    (v : VE.Bridge.Vocabulary) (ps : List Formula) (c : Formula)
+    (certificate : Tableau.Certificate)
+    (hv : Bridge.decodeEnvironment environment = .ok v)
+    (hpj : j.getObjVal? "premises" = .ok premisesJson)
+    (hpa : premisesJson.getArr? = .ok premiseArray)
+    (hps : Bridge.decodeFormulas v.environment premisesJson = .ok ps)
+    (hcj : j.getObjVal? "conclusion" = .ok conclusionJson)
+    (hc : Bridge.decodeFormula 64 conclusionJson = .ok c)
+    (hcc : Bridge.checkFormula v.environment c "conclusion" = .ok ())
+    (hcertj : j.getObjVal? "certificate" = .ok certificateJson)
+    (hcert : decodeCertificate certificateJson = .ok certificate)
+    (hrun : run profiles environment id "certificate" j = .ok result)
+    (hvalid : result.getObjVal? "valid" = .ok (.bool true)) :
+    VE.Route.Wire.bindingOk profiles environment
+      ((VE.Route.Background.literals (literals v)).map VE.Route.Wire.encodeFormula ++
+        premiseArray.toList) conclusionJson certificate.environment_id
+      certificate.premise_meaning_ids certificate.conclusion_meaning_id = .ok () ∧
+    ∀ S : VE.Structure.{u}, S.Admissible v.environment →
+      (∀ b ∈ VE.Route.Background.literals (literals v), b.denote S []) →
+      (∀ p ∈ ps, p.denote S []) → c.denote S [] := by
+  simp [run, hv, hpj, hps, hcj, hc, hcc, hpa, hcertj, hcert, bind, Except.bind,
+    pure, Except.pure] at hrun
+  split at hrun
+  · cases hrun
+  split at hrun
+  · cases hrun
+  rename_i _ outputUnit hbind
+  cases outputUnit
+  have hbound := hbind
+  cases hrun
+  have hcheck : Tableau.checkCertificate v.environment
+      ((VE.Route.Background.literals (literals v)).map embed ++ ps) c certificate = true := by
+    cases ht : Tableau.checkCertificate v.environment
+        ((VE.Route.Background.literals (literals v)).map embed ++ ps) c certificate
+    · simp [ht, validField] at hvalid
+    · rfl
+  refine ⟨hbound, ?_⟩
+  intro S hS hbgSat hp
+  have hall : ∀ p ∈ (VE.Route.Background.literals (literals v)).map embed ++ ps,
+      p.denote S [] := by
+    intro p hmem
+    rcases List.mem_append.mp hmem with hbg | hps'
+    · obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hbg
+      exact (conservativity S [] b).mpr (hbgSat b hb)
+    · exact hp p hps'
+  exact VE.Core.Tableau.checkCertificate_sound v.environment _ c certificate hcheck S hS hall
 
 end VE.Core.Wire
