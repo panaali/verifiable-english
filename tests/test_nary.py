@@ -161,6 +161,8 @@ def test_fret_user_sort_time_and_arity_six():
     ambiguous = fret.to_dict()
     ambiguous["vocabulary"]["predicates"]["value"]["verbalisation"] = "{0} red {1} blue {2}"
     assert "TEMPLATE_SHAPE" in {issue.code for issue in lint_vocabulary(Environment(ambiguous))}
+    ambiguous["vocabulary"]["predicates"]["value"]["verbalisation"] = "not {0} reports {1} to {2}"
+    assert "TEMPLATE_SHAPE" in {issue.code for issue in lint_vocabulary(Environment(ambiguous))}
 
     raw = environment(6).to_dict()
     raw["vocabulary"]["sorts"]["time"] = {"description": "Time"}
