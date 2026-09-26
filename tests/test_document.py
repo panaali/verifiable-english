@@ -2,10 +2,11 @@ import json
 
 import pytest
 
-from conformance.p0 import environment
+from conformance.p0 import VOCAB, envelope, environment
 from ve.document import check_document, coverage, load_document, render_document
+from ve.environment import Environment
 from ve.errors import VEError
-from ve.readings import plan_choices
+from ve.readings import check_readings, plan_choices
 
 
 def write_doc(tmp_path, text, units, **extra):
@@ -69,3 +70,19 @@ def test_unbound_fence_rejected(tmp_path):
     path = write_doc(tmp_path, b"text\n```ve a\ntrue.\n```\n", [unit("a", 0, 5)])
     with pytest.raises(VEError, match="unbound VE fence"):
         load_document(path)
+
+
+def test_assertion_readings_all_some_none_have_checked_evidence():
+    env = Environment(envelope(VOCAB))
+    p = ["unary", "senior", ["const", "alice"]]
+    q = ["not", p]
+    rs = [{"id": "s", "version": 1, "readings": [{"kind": "asserted", "content": p},
+                                                    {"kind": "asserted", "content": q}]}]
+    some = check_readings(env, rs, p)
+    assert some["verdict"] == "SOME"
+    assert some["proof"]["certificate"]
+    assert some["countermodel"]["model_id"]
+    assert check_readings(env, rs, ["top"])["verdict"] == "ALL"
+    compatible = [{"id": "t", "version": 1, "readings": [{"kind": "asserted", "content": p},
+                                                          {"kind": "asserted", "content": ["top"]}]}]
+    assert check_readings(env, compatible, ["bottom"])["verdict"] == "NONE"

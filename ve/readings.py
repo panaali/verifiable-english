@@ -97,3 +97,79 @@ def plan_choices(sets, *, limit=64):
             return {"route": "UNKNOWN", "budget": {"max_choices": limit}, "choice_count": count}
     return {"route": "enumerate", "choices": [dict(zip((s["id"] for s in sets), c))
              for c in product(*(range(len(s["readings"])) for s in sets))]}
+
+
+def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
+                   max_models=10_000, max_evaluations=100_000):
+    """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
+
+    Every positive proof is replayed by the certificate checker, and every
+    negative claim has an independently checked finite model. Failure of
+    bounded search means UNKNOWN. We never infer NONE from proof failure.
+    """
+    from .ast import Or
+    from .entailment import check_entailment_certificate, prove_entailment
+    from .search import check_countermodel, find_countermodel
+
+    plan = plan_choices(sets)
+    if plan["route"] == "UNKNOWN":
+        return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"]}
+    if plan["route"] == "enumerate":
+        return {"verdict": "UNKNOWN", "route": "enumerate", "choice_count": len(plan["choices"]),
+                "reason": "non-assertion elaborator is not yet available"}
+    conclusion = formula_from_data(env, conclusion_ast)
+    formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]] for s in sets]
+
+    def prove(premises):
+        result = prove_entailment(env, premises, conclusion, max_steps=max_steps)
+        if result.status != "Found":
+            return None
+        replay = check_entailment_certificate(env, premises, conclusion, result.certificate,
+                                               max_steps=max_steps)
+        return result.certificate if replay.valid else None
+
+    def witness(premises):
+        found = find_countermodel(env, premises, conclusion, max_domain_size=max_domain_size,
+                                  max_models=max_models, max_evaluations=max_evaluations)
+        if found.status != "Found":
+            return None
+        checked = check_countermodel(env, premises, conclusion, found.model,
+                                     max_evaluations=max_evaluations)
+        return found.model.model_id if checked.valid else None
+
+    disjunctions = []
+    for rs in formulas:
+        formula = rs[-1]
+        for other in reversed(rs[:-1]):
+            formula = Or(other, formula)
+        disjunctions.append(formula)
+    all_proof = prove(disjunctions)
+    if all_proof is not None:
+        return {"verdict": "ALL", "route": "assertion-disjunction", "certificate": all_proof,
+                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets]}
+    shared = witness([f for rs in formulas for f in rs])
+    if shared is not None:
+        return {"verdict": "NONE", "route": "assertion-shared-model", "model_id": shared,
+                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets]}
+    count = 1
+    for rs in formulas:
+        count *= len(rs)
+    if count > 64:
+        return {"verdict": "UNKNOWN", "route": "assertion-choices", "budget": {"max_choices": 64}}
+    positive = negative = None
+    for choice in product(*(range(len(rs)) for rs in formulas)):
+        premises = [formulas[i][j] for i, j in enumerate(choice)]
+        labels = [f"readings:{s['id']}@{s['version']}:{j}" for s, j in zip(sets, choice)]
+        if positive is None:
+            cert = prove(premises)
+            if cert is not None:
+                positive = {"choice": labels, "certificate": cert}
+        if negative is None:
+            model_id = witness(premises)
+            if model_id is not None:
+                negative = {"choice": labels, "model_id": model_id}
+        if positive is not None and negative is not None:
+            return {"verdict": "SOME", "route": "assertion-choices", "proof": positive,
+                    "countermodel": negative}
+    return {"verdict": "UNKNOWN", "route": "assertion-choices",
+            "reason": "no complete checked classification within the search budget"}
