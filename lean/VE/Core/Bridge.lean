@@ -39,7 +39,9 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
-    unless decide (1 ≤ ss.length) && decide (ss.length ≤ 6) && ss.all sortNames.contains do
+    unless ss.all sortNames.contains do
+      throw "UnknownSymbol: unknown predicate argument sort"
+    unless decide (1 ≤ ss.length) && decide (ss.length ≤ 6) do
       throw s!"invalid signature: {p}"
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
