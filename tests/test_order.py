@@ -342,7 +342,7 @@ def test_lean_order_route_rejects_malformed_declarations(lean_executable):
         "long-verbalisation": lambda v: v["predicates"]["p"].__setitem__("verbalisation", "x" * 257),
         "extra-predicate-field": lambda v: v["predicates"]["p"].__setitem__("note", "x"),
         "predicate-not-object": lambda v: v["predicates"].__setitem__("p", ["item"]),
-        "empty-constant-display": lambda v: v["constants"]["a"].__setitem__("verbalisation", ""),
+        "constant-display": lambda v: v["constants"]["a"].__setitem__("verbalisation", "a"),
         "constant-no-description": lambda v: v["constants"]["a"].pop("description"),
     }
     cases = [base]
@@ -362,14 +362,6 @@ def test_lean_order_route_rejects_malformed_declarations(lean_executable):
     assert rows[0]["valid"] is True, rows[0]
     for row in rows[1:]:
         assert row["valid"] is False and row["status"] == "error", row
-
-    display = copy.deepcopy(ENV.to_dict())
-    display["vocabulary"]["constants"]["a"]["verbalisation"] = "the A"
-    named = Environment(display)
-    proof = prove_entailment(named, [Top()], Top())
-    assert proof.status == "Found"
-    accepted = corpus.envelope("constant-display", named, [Top()], Top(), proof.certificate)
-    assert _invoke(lean_executable, [accepted])[0]["valid"] is True
 
 
 def test_lean_order_term_depth_matches_python(lean_executable):
