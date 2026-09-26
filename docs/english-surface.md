@@ -320,7 +320,9 @@ trees, so "exactly one derivation" means equal trees, not merely equal ASTs.
 | `Render.lean` | canonical core renderer mirroring `EnglishTraversal`, including per-sort `that`/`first`/`second`/label naming |
 | `Parse.lean` | executable parser (first token selects the production; clauses end at `,` `;` `.` `and` `or`) |
 | `Statements.lean` | the four frozen statements for any surface, and the core instance `coreSurface` |
+| `Check.lean` | the finite lexical check `admissible` and its soundness `admissible_sound` |
 | `ClauseProofs.lean`, `ParseProofs.lean`, `RenderProofs.lean`, `Proofs.lean` | the proofs |
+| `Run.lean` | harness entry point for `conformance/english_lean.py` (no theorems) |
 
 Proved for the core fragment, with standard axioms only (`python lean/audit.py`):
 
@@ -338,9 +340,15 @@ The hypotheses are `Covers L E` (every sort, predicate and constant has a noun,
 template of the declared arity, or spelling) and `Admitted L`: simple clauses
 have a unique lexical analysis, contain none of `, ; . and or`, and do not begin
 with `it both either if all at for there of`; sort nouns are prefix-free and do
-not begin with `first` or `second`. The clause conditions are properties of the
-finite vocabulary. Today their evidence is the Python finite vocabulary audit;
-a Lean decision procedure for them is pending.
+not begin with `first` or `second`. The finite check `admissible` decides a
+sufficient condition (`admissible_sound`), so `checked_parse_render`,
+`checked_render_injective` and `checked_unique_derivation` hold for every
+vocabulary that passes it. The check is conservative: it compares templates
+slot by slot, and a literal word that could begin a term (`that`, `the`, a
+constant's first word) where another template has a placeholder is rejected
+even if the continuation would differ. Templates containing `or` or commas,
+such as `abridges the privileges or immunities of {1}`, fail it; the Python
+surface still accepts them through its finite idioms and all-derivations check.
 
 The core renderer omits relative-clause contractions and validated negatives.
 Its output is still writable English that the Python parser accepts (for
@@ -374,7 +382,7 @@ A workstream adding wording appends its row to this legend.
 | Construct | Registry keyword | Lean coverage |
 |---|---|---|
 | `this holds in all cases`, `this is impossible` | clause | core (`core_parse_render`, `core_unique_derivation`) |
-| template clause, `… is the same as …` | clause | core, under `Admitted` |
+| template clause, `… is the same as …` | clause | core, for vocabularies passing `admissible` |
 | `it is not the case that …` | `not` | core |
 | `both … and …` (simple operands) | `and` | core |
 | `either … or …, or both` (simple operands) | `or` | core |

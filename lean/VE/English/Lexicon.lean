@@ -130,9 +130,8 @@ def formulaStops : List Tok := kws [",", ";", "."]
 def openers : List Tok := kws ["it", "both", "either", "if", "all", "at", "for", "there", "of"]
 
 /-- Lexical conditions for the core theorems. The first three are properties
-of the finite clause language of the vocabulary (the Python finite vocabulary
-audit is the evidence today; a Lean decision procedure is pending); the last
-two are finite checks on sort nouns. -/
+of the clause language of the vocabulary, the last two of its sort nouns. The
+finite check `admissible` (`Check.lean`) implies all five (`admissible_sound`). -/
 structure Admitted (L : Lexicon) : Prop where
   atom_unique : ∀ a b : Lit, a.ok L = true → b.ok L = true → a.yield L = b.yield L → a = b
   atom_delimited : ∀ a : Lit, a.ok L = true → ∀ x ∈ a.yield L, x ∉ atomStops
