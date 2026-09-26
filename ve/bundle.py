@@ -15,7 +15,7 @@ from .ast import formula_from_data, formula_to_data
 from .background import background
 from .entailment import check_entailment_certificate
 from .environment import Environment
-from .errors import VEError
+from .errors import ResourceLimit, VEError
 from .identity import meaning_id
 from .wire import canonical_json, digest, require_fields
 
@@ -24,10 +24,13 @@ def check_bundle(data, *, lean_executable=None):
     require_fields(data, {"version", "environment", "lemmas"})
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
         raise VEError("Unsupported lemma bundle version or lemmas array")
+    if len(data["lemmas"]) > 256:
+        raise ResourceLimit("Lemma bundle exceeds 256 lemmas")
     env = Environment(data["environment"])
     background_leaves = [{"label": "background:" + entry.generator,
                           "ast": formula_to_data(env, entry.formula)} for entry in background(env)]
     known = {}
+    names = set()
     reports = []
     lean_cases = []
     for index, item in enumerate(data["lemmas"]):
@@ -37,6 +40,9 @@ def check_bundle(data, *, lean_executable=None):
             raise VEError("Citation has another environment or definitions version")
         if type(item["name"]) is not str or not item["name"]:
             raise VEError("Lemma name must be nonempty")
+        if item["name"] in names:
+            raise VEError("Duplicate lemma name")
+        names.add(item["name"])
         if type(item["premises"]) is not list or type(item["cites"]) is not list:
             raise VEError("Premises and citations must be arrays")
         choices = item["reading_choices"]
@@ -77,7 +83,7 @@ def check_bundle(data, *, lean_executable=None):
         known[mid] = {"conclusion": conclusion, "reading_choices": inherited_choices,
                       "transitive_leaves": leaves}
         reports.append({"name": item["name"], "meaning_id": mid,
-                        "transitive_leaves": leaves})
+                        "reading_choices": inherited_choices, "transitive_leaves": leaves})
         lean_cases.append({"id": f"lemma-{index}", "kind": "certificate",
                            "environment": env.to_dict(), "premises": [formula_to_data(env, p) for p in premises],
                            "conclusion": formula_to_data(env, conclusion), "certificate": item["certificate"]})
