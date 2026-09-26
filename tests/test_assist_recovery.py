@@ -167,3 +167,17 @@ def test_proposer_reservation_and_explicit_retry():
     assert service.request_proposer("u", Offline())["status"] == "exhausted"
     assert service.units["u"].proposals == 2
     assert service.request_proposer("u", Offline())["status"] == "unresolved"
+
+
+def test_authoring_requires_explicit_rejection_of_distinct_reading():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {"start": 0})
+    service.start("u")
+    assert service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "service_a"]}}) == "ready"
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    with pytest.raises(ValueError, match="explicit rejection"):
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
