@@ -2524,6 +2524,99 @@
     }
   },
   {
+    "id": "data-defined-predicate-cannot-be-flagged",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true,
+            "defined": {
+              "arguments": [
+                "person",
+                "department"
+              ],
+              "body": [
+                "top"
+              ]
+            }
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  },
+  {
     "id": "order-literals-evaluate",
     "kind": "evaluate",
     "environment": {

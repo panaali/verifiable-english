@@ -74,6 +74,9 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   let allowed := fun (s : String) => sortNames.contains s || s == Background.stringSort
   let flagged := profiles.contains "data@0"
   let psAndFlags ← predicates.mapM fun (p, entry) => do
+    if (entry.getObjVal? "defined" |>.isOk) &&
+        ((entry.getObjVal? "functional" |>.isOk) || (entry.getObjVal? "total" |>.isOk)) then
+      throw "UnsupportedProfile: Defined predicates cannot carry functional or total flags"
     VE.Bridge.displayFields entry ["arguments", "description"]
       (["verbalisation", "negative_verbalisation"] ++
         (if flagged then ["functional", "total"] else []))

@@ -241,6 +241,9 @@ impl Environment {
         let mut predicate_flags = BTreeMap::new();
         for (name, decl) in preds {
             let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
+            if flagged && decl.get("defined").is_some() {
+                return error("UnsupportedProfile", "Defined predicates cannot carry functional or total flags");
+            }
             if flagged && !(route && profiles.iter().any(|p| p == "data@0")) {
                 return error("UnsupportedProfile", "Predicate flags require data@0");
             }
