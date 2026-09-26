@@ -120,7 +120,7 @@ def syms (T : Tree) : List Sym := (order T).filterMap (lookupSym T)
 def layerNames (T : Tree) : List String := (syms T).map Sym.name
 
 /-- `E_i`: the base vocabulary plus the first `i` layer symbols. -/
-def envAt (D : Doc) (i : Nat) : VE.Environment := hide D.E (((syms D.T).drop i).map Sym.name)
+def envAt (D : Doc) (i : Nat) : VE.Environment := hide D.E ((layerNames D.T).drop i)
 
 /-- The number of layer symbols; `envAt D (size D)` is the complete environment. -/
 def size (D : Doc) : Nat := (syms D.T).length
