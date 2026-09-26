@@ -15,7 +15,8 @@ EARLEY_SECONDS = 30
 @lru_cache(maxsize=32)
 def _parser(grammar):
     from lark import Lark
-    return Lark(grammar, parser="earley", lexer="dynamic_complete", ambiguity="explicit")
+    return Lark(grammar, parser="earley", lexer="dynamic_complete", ambiguity="explicit",
+                propagate_positions=True)
 
 
 def require_unique_derivation(env, source, **options):
@@ -69,17 +70,19 @@ def require_unique_derivation(env, source, **options):
 
 
 def require_correspondence(tree, readings, env, words) -> None:
-    """Each handwritten extension result must be decoded from its grammar rule."""
+    """Each extension result must match the grammar rule at its source span."""
     if not readings:
         return
     derived = []
     stack = [tree]
-    records = [record for record, _ in readings]
+    records = list({reading[0].wire_tag: reading[0] for reading in readings}.values())
     while stack:
         node = stack.pop()
         for record in records:
             if getattr(node, "data", None) == record.grammar_production:
-                derived.append((record, record.derivation_hook(node, env, words)))
+                meta = getattr(node, "meta", None)
+                derived.append((record, record.derivation_hook(node, env, words),
+                                getattr(meta, "start_pos", None), getattr(meta, "end_pos", None)))
         stack.extend(getattr(node, "children", ()))
     for reading in readings:
         if reading not in derived:

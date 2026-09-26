@@ -783,8 +783,9 @@ class EnglishParser:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
+            start = self.i
             result = matched[1].parser_hook(self, scope, depth, nesting)
-            self.extension_readings.append((matched[1], result))
+            self.extension_readings.append((matched[1], result, start, self.i))
             return result
         def child(inner=scope, listed=False):
             return self.formula(inner, depth + int(listed), nesting + 1)
