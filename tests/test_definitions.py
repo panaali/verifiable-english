@@ -9,6 +9,10 @@ from ve.errors import VEError
 from ve.errors import InvalidModel
 from ve.background import background
 from ve.model import FiniteModel
+from ve.parser import parse
+from ve.printer import print_document
+from ve.search import find_countermodel
+from ve.surface.definitions import wordings
 from ve.profiles import SPEC_REVISION
 
 
@@ -76,12 +80,19 @@ def test_bound_definition_changes_identity_and_validates_model():
     altered["vocabulary"]["predicates"]["middle"]["defined"]["body"] = ["top"]
     assert Environment(altered).environment_id != env.environment_id
     model = {"complete": True, "domains": {"point": ["p"]}, "constants": {},
-             "relations": {"base": [["p"]], "middle": [["p"]], "upper": []}}
-    FiniteModel.from_dict(env, model)
+             "relations": {"base": [["p"]], "upper": []}}
+    checked = FiniteModel.from_dict(env, model)
+    assert checked.relations["middle"] == frozenset({("p",)})
+    assert checked.to_dict() == model
     model["relations"]["middle"] = []
-    with pytest.raises(InvalidModel, match="defined predicate") as exc:
+    with pytest.raises(InvalidModel, match="defined tables are computed") as exc:
         FiniteModel.from_dict(env, model)
-    assert exc.value.generator == "definitions"
+    assert exc.value.path == "/relations"
+    conclusion = ast.Forall("point", ast.Not(ast.Unary("middle", ast.Var(0))))
+    witness = find_countermodel(env, (), conclusion, min_domain_size=1, max_domain_size=1,
+                                max_models=20)
+    assert witness.status == "Found"
+    assert witness.model.relations["base"] == witness.model.relations["middle"]
 
 
 def test_bound_definition_rejects_cycle_and_free_variable():
@@ -93,3 +104,27 @@ def test_bound_definition_rejects_cycle_and_free_variable():
     entry["defined"]["body"] = ["unary", "base", ["var", 1]]
     with pytest.raises(VEError, match="Variable index"):
         Environment(raw)
+
+
+def test_definition_statement_sugar_is_input_only():
+    raw = environment().to_dict()
+    raw["vocabulary"]["predicates"]["middle"]["defined"] = {
+        "arguments": ["point"], "body": ["unary", "base", ["var", 0]],
+    }
+    env = Environment(raw)
+    cases = (
+        "define middle(x) as (x is base).\n",
+        "(true) iff (true).\n",
+        "every point x that is middle, (x is base).\n",
+        "no point is middle.\n",
+    )
+    for source in cases:
+        document = parse(env, source)
+        printed = print_document(env, document)
+        assert parse(env, printed) == document
+        assert printed != source
+    with pytest.raises(VEError, match="differs"):
+        parse(env, "define middle(x) as (true).\n")
+    preview = wordings(env)
+    assert len(preview) == 1
+    assert "if that point is middle" in preview[0]["english"]
