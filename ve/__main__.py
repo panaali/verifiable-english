@@ -38,6 +38,9 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["adapter", "run"]:
+        from .adapters.cli import main as adapter_main
+        return adapter_main(argv[2:])
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
