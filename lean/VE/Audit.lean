@@ -19,6 +19,7 @@ import VE.Route.Run
 import VE.Route.Examples
 import Iceberg
 import VE.English.Proofs
+import VE.English.Check
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -489,3 +490,26 @@ import VE.English.Proofs
 #print axioms VE.English.mapM_denote_render
 #print axioms VE.English.core_parse_render
 #print axioms VE.English.core_render_injective
+#print axioms VE.English.facts_of_admissible
+#print axioms VE.English.kw_mem_kws
+#print axioms VE.English.label_not_mem_kws
+#print axioms VE.English.mem_kws
+#print axioms VE.English.term_tokens
+#print axioms VE.English.term_opens
+#print axioms VE.English.term_prefix_free
+#print axioms VE.English.mem_templateWords
+#print axioms VE.English.mem_templateHoles
+#print axioms VE.English.fill_word
+#print axioms VE.English.fill_hole
+#print axioms VE.English.mem_fill
+#print axioms VE.English.disj_sound
+#print axioms VE.English.fill_inj
+#print axioms VE.English.Lit.ext_key
+#print axioms VE.English.keyTemplates_unique
+#print axioms VE.English.keyTemplate_shape
+#print axioms VE.English.lit_template
+#print axioms VE.English.admitted_of_facts
+#print axioms VE.English.admissible_sound
+#print axioms VE.English.checked_unique_derivation
+#print axioms VE.English.checked_parse_render
+#print axioms VE.English.checked_render_injective

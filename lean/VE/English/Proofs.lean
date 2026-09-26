@@ -1,6 +1,7 @@
 import VE.English.Statements
 import VE.English.ParseProofs
 import VE.English.RenderProofs
+import VE.English.Check
 
 /-! # Core-fragment English theorems
 
@@ -16,7 +17,9 @@ all four statements of `Statements.lean`:
 
 Scope of these results: the core productions listed in `Grammar.lean`, token
 level (lexing and presentation Lean coverage pending), and the `Admitted`
-lexical hypotheses. -/
+lexical hypotheses, which the finite check `admissible` decides soundly
+(`admissible_sound`, `Check.lean`); the `checked_*` corollaries state the
+results for every vocabulary that passes the check. -/
 namespace VE.English
 
 variable {E : Environment} {L : Lexicon}
@@ -161,5 +164,18 @@ theorem core_parse_render (hL : Admitted L) (hC : Covers L E) : ParseRender (cor
 theorem core_render_injective (hL : Admitted L) (hC : Covers L E) :
     RenderInjective (coreSurface E L) :=
   renderInjective_of_parseRender (core_parse_render hL hC)
+
+/-! ## For every vocabulary that passes the finite check -/
+
+theorem checked_unique_derivation (h : admissible L = true) : UniqueDerivation (coreSurface E L) :=
+  core_unique_derivation (admissible_sound h)
+
+theorem checked_parse_render (h : admissible L = true) (hC : Covers L E) :
+    ParseRender (coreSurface E L) :=
+  core_parse_render (admissible_sound h) hC
+
+theorem checked_render_injective (h : admissible L = true) (hC : Covers L E) :
+    RenderInjective (coreSurface E L) :=
+  core_render_injective (admissible_sound h) hC
 
 end VE.English
