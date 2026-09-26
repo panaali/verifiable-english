@@ -186,7 +186,7 @@ def RulesTyped (p : String) : Prop :=
 variable {T E Γ}
 
 theorem mem_children {N C : Node} (h : C ∈ children T N) : C ∈ T.nodes ∧ C.pred = N.pred := by
-  simp only [children, List.mem_mergeSort, List.mem_filter, Bool.and_eq_true, beq_iff_eq] at h
+  simp only [children, mem_sortBy, List.mem_filter, Bool.and_eq_true, beq_iff_eq] at h
   exact ⟨h.1, h.2.1⟩
 
 theorem applies_wellFormed {N : Node} (h : N.guard.WellFormed E Γ ∧ ∀ U ∈ N.carveOuts, U.WellFormed E Γ) :

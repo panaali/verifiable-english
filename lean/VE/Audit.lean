@@ -20,6 +20,7 @@ import VE.Route.Examples
 import Iceberg
 import VE.Norms.Layer
 import VE.Norms.SmallModel
+import VE.Norms.Examples
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -617,3 +618,22 @@ import VE.Norms.SmallModel
 #print axioms VE.Norms.subModel_witness
 #print axioms VE.Norms.term_denote_subModel
 #print axioms VE.Norms.tupleTyped_of_mem_zip
+#print axioms VE.Norms.Examples.areq_mem_m
+#print axioms VE.Norms.Examples.bperm_mem_m
+#print axioms VE.Norms.Examples.doc_c_ground
+#print axioms VE.Norms.Examples.doc_c_wellFormed
+#print axioms VE.Norms.Examples.doc_m_ground
+#print axioms VE.Norms.Examples.doc_m_wellFormed
+#print axioms VE.Norms.Examples.doc_o_expands
+#print axioms VE.Norms.Examples.doc_o_ground
+#print axioms VE.Norms.Examples.doc_o_wellFormed
+#print axioms VE.Norms.Examples.layer_c_layers_compose
+#print axioms VE.Norms.Examples.layer_c_permitted_premises
+#print axioms VE.Norms.Examples.permitted_mem_c
+#print axioms VE.Norms.Examples.required_mem_c
+#print axioms VE.Norms.Examples.route_o_premises
+#print axioms VE.Norms.Examples.route_o_size
+#print axioms VE.Norms.groundValue_denote
+#print axioms VE.Norms.ground_conflictFree
+#print axioms VE.Norms.mem_insertBy
+#print axioms VE.Norms.mem_sortBy
