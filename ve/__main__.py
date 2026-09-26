@@ -38,6 +38,30 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["bundle", "check"]:
+        bundle_parser = argparse.ArgumentParser(prog="python -m ve bundle check")
+        bundle_parser.add_argument("bundle", help="ve-bundle@0 JSON file")
+        bundle_parser.add_argument("--lean", help="optional Lean ve_conformance executable")
+        options = bundle_parser.parse_args(argv[2:])
+        try:
+            from .bundle import check_bundle
+            _emit(check_bundle(loads_json(_read(options.bundle)), lean_executable=options.lean))
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
+    if argv[:1] == ["definitions"]:
+        definition_parser = argparse.ArgumentParser(prog="python -m ve definitions")
+        definition_parser.add_argument("--env", required=True)
+        options = definition_parser.parse_args(argv[1:])
+        try:
+            from .surface.definitions import wordings
+            env = Environment.from_json(_read(options.env))
+            _emit({"environment_id": env.environment_id, "definitions": wordings(env)})
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
