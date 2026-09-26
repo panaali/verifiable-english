@@ -62,6 +62,42 @@ def test_extension_reading_must_match_grammar_tree(monkeypatch):
         registry.KEYWORDS = old_keywords
 
 
+def test_extension_readings_cannot_swap_source_spans():
+    from ve.ast import Bottom, Top
+    from ve.surface import registry
+    from ve.surface.registry import SurfaceRecord, register
+    original = registry._records.copy(), registry._by_type.copy(), registry.KEYWORDS
+    swap = [True]
+    def parser(parser, _scope, _depth, _nesting):
+        if parser.take("this definitely holds"):
+            return Bottom() if swap[0] else Top()
+        parser.need("that definitely holds")
+        return Top() if swap[0] else Bottom()
+    def grammar(_env, _words):
+        return ['%extend formula: hostile_rule',
+                'hostile_rule: HOSTILE',
+                'HOSTILE: "this definitely holds" | "that definitely holds"']
+    def derivation(tree, _env, _words):
+        return Top() if tree.children[0].value == "this definitely holds" else Bottom()
+    for fn in (parser, grammar, derivation):
+        fn.__module__ = "ve.english"
+    try:
+        register(SurfaceRecord("hostile", "", ("this definitely holds", "that definitely holds"),
+                               "", "hostile_rule", parser_hook=parser,
+                               grammar_hook=grammar, derivation_hook=derivation))
+        env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+        with pytest.raises(SyntaxError, match="no matching grammar derivation"):
+            parse_english(env, "This definitely holds. That definitely holds.")
+        swap[0] = False
+        assert parse_english(env, "This definitely holds. That definitely holds.").formulas == (
+            Top(), Bottom())
+    finally:
+        records, by_type, old_keywords = original
+        registry._records.clear(); registry._records.update(records)
+        registry._by_type.clear(); registry._by_type.update(by_type)
+        registry.KEYWORDS = old_keywords
+
+
 def test_extension_grammar_must_participate():
     from ve.ast import Bottom
     from ve.surface import registry
