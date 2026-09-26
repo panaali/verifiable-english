@@ -13,6 +13,26 @@ from ve import ast  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
 from ve.profiles import SPEC_REVISION  # noqa: E402
+from ve.surface.definitions import wordings  # noqa: E402
+
+ROOT = HERE.parents[1]
+LEAN = ROOT / "lean/.lake/build/bin/ve_conformance"
+RUST = ROOT / "rust/target/release/ve"
+
+
+def other_checkers(env, model_json, asts):
+    """The same evaluation by the Lean route and the Rust conformance runner,
+    each regenerating Background and computing the defined tables itself."""
+    import subprocess
+    case = {"id": "constitution", "environment": env.to_dict(), "model": model_json, "ast": asts}
+    out = {}
+    for name, command in (("lean", [str(LEAN), "route", "-"]), ("rust", [str(RUST), "conformance"])):
+        if not Path(command[0]).exists():
+            out[name] = None
+            continue
+        run = subprocess.run(command, input=json.dumps([case]), capture_output=True, text=True, timeout=600)
+        out[name] = json.loads(run.stdout)[0].get("values")
+    return out
 
 
 def implication_guard(sort, guard, consequence):
@@ -64,7 +84,8 @@ def build_environment():
 def main():
     env = build_environment()
     (HERE / "definitions-environment.json").write_text(json.dumps(env.to_dict(), indent=2) + "\n")
-    model = FiniteModel.from_dict(env, json.loads((HERE / "model-true.json").read_text()))
+    model_json = json.loads((HERE / "model-true.json").read_text())
+    model = FiniteModel.from_dict(env, model_json)
     subject = model.constants["claude"]
     rows = []
     for constant, predicate in (("safety", "safety_content"), ("ethics", "ethics_content"),
@@ -74,11 +95,25 @@ def main():
         linked = (subject, model.constants[constant]) in model.relations["holds_property"]
         assert content == linked
         rows.append((constant, predicate, content))
+    asts = [["unary", predicate, ["const", "claude"]] for _, predicate, _ in rows] + [
+        ["binary", "holds_property", ["const", "claude"], ["const", constant]] for constant, _, _ in rows]
+    python_values = [value for _, _, value in rows] * 2
+    checkers = other_checkers(env, model_json, asts)
+    for name, values in checkers.items():
+        if values is not None and values != python_values:
+            raise RuntimeError(f"{name} disagrees: {values} != {python_values}")
+    agreed = [name for name, values in checkers.items() if values is not None]
     lines = ["# Identity-bound property content", "",
              "The four unary definitions encode the excerpt's recorded conditions. `holds_property(model, property)` links `@safety`, `@ethics`, `@guidelines`, and `@helpfulness` to those bodies. The definitions are Background premises, not extra theorem hypotheses.",
              "", "| Constant | Defined predicate | Value in existing true-model fixture |", "|---|---|---|"]
     lines += [f"| `@{constant}` | `{predicate}` | `{value}` |" for constant, predicate, value in rows]
-    lines += ["", "The priority sentence still needs the W1 norm profile for its defeasible reading; this definition rerun makes no priority-rule claim. Lean and Rust currently reject these `defined` declarations.", ""]
+    lines += ["", "Python, " + " and ".join(n.capitalize() for n in agreed) + " decode the declarations, compute every "
+              "defined table from its body and agree on all eight values above (four contents, four "
+              "`holds_property` links)." if agreed else "Only Python was run.",
+              "", "The definitions, as the English surface writes them:", ""]
+    lines += [f"- {row['english'].strip()}" for row in wordings(env)]
+    lines += ["", "The priority sentence still needs the W1 norm profile for its defeasible reading; this "
+              "definition rerun makes no priority-rule claim.", ""]
     (HERE / "definitions-report.md").write_text("\n".join(lines))
     print(env.environment_id, rows)
 

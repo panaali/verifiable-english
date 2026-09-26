@@ -8,7 +8,8 @@
         "antisymmetry"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     },
     {
       "theorem": "T6",
@@ -19,7 +20,8 @@
         "transitivity of le"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     },
     {
       "theorem": "T7a",
@@ -29,7 +31,8 @@
         "transitivity of le"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     },
     {
       "theorem": "T7b",
@@ -39,7 +42,8 @@
         "transitivity of le"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     },
     {
       "theorem": "T7",
@@ -50,7 +54,8 @@
         "right congruence (T7b)"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     },
     {
       "theorem": "T8",
@@ -60,10 +65,13 @@
         "totality"
       ],
       "status": "Found",
-      "python_valid": true
+      "python_valid": true,
+      "lean_valid": true
     }
   ],
   "t7mono_by_citation": true,
+  "t7mono_lean_bundle": true,
+  "t7mono_citation_english": "By T7a and T7b, for every point named P1, for every point named P2, for every point named P3, for every point named P4, if all of the following hold:\n  (a) P1 matches P2;\n  (b) both P3 matches P4 and P1 ranks below P3, then P2 ranks below P4.\n",
   "t7mono_leaves": [
     {
       "label": "background:definitions",
@@ -221,6 +229,33 @@
       ]
     }
   ],
-  "lean_defined_route": "UnsupportedProfile",
+  "definitions_english": {
+    "greatest": "By definition, for every first point, the first point is greatest exactly when every second point ranks below the first point.\n",
+    "least": "By definition, for every first point, the first point is minimum exactly when for every second point, if it is not the case that the second point is the same as the first point, then the first point precedes the second point.\n",
+    "minimal": "By definition, for every first point, the first point is minimal exactly when every second point does not precede the first point.\n",
+    "sim": "By definition, for every first point, for every second point, the first point matches the second point exactly when both the first point ranks below the second point and the second point ranks below the first point.\n"
+  },
+  "certified": [
+    "C2",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T7a",
+    "T7b",
+    "T7mono",
+    "T8",
+    "T9",
+    "T9a",
+    "T9b",
+    "T9c",
+    "T9d",
+    "T9e"
+  ],
+  "certified_count": 18,
+  "queries": 19,
   "c1": "uncertified"
 }
