@@ -161,6 +161,54 @@ def _run(command, cases):
     return results
 
 
+@pytest.mark.parametrize("size", [316, 317])
+def test_sparse_defined_table_candidate_boundary(size):
+    """Candidate pairs may exceed 100,000 while the computed table is empty."""
+    from ve import Environment, FiniteModel
+    env = {"language": LANGUAGE, "profiles": ["definitions@0", "relational-fol@0"],
+           "spec_revision": SPEC_REVISION,
+           "vocabulary": {"sorts": {"s": {"description": "items"}}, "constants": {},
+                          "predicates": {"d": {"arguments": ["s", "s"], "description": "empty",
+                                               "defined": {"arguments": ["s", "s"], "body": ["bottom"]}}}}}
+    model = {"complete": True, "domains": {"s": [f"e{i}" for i in range(size)]},
+             "constants": {}, "relations": {}}
+    assert FiniteModel.from_dict(Environment(env), model).relations["d"] == frozenset()
+    ast = [["top"]]
+    if LEAN.exists():
+        result = _run([str(LEAN), "route", "-"], [
+            {"id": "sparse", "kind": "evaluate", "environment": env, "model": model, "ast": ast}])[0]
+        assert result.get("values") == [True], result
+    rust = ROOT / "rust/target/release/ve"
+    if rust.exists():
+        result = _run([str(rust), "conformance"], [
+            {"id": "sparse", "environment": env, "model": model, "ast": ast}])[0]
+        assert result.get("values") == [True], result
+
+
+def test_populated_defined_table_limit_boundary():
+    """A populated 317² table exceeds the shared 100,000 tuple limit."""
+    from ve import Environment, FiniteModel
+    from ve.errors import ResourceLimit
+    env = {"language": LANGUAGE, "profiles": ["definitions@0", "relational-fol@0"],
+           "spec_revision": SPEC_REVISION,
+           "vocabulary": {"sorts": {"s": {"description": "items"}}, "constants": {},
+                          "predicates": {"d": {"arguments": ["s", "s"], "description": "full",
+                                               "defined": {"arguments": ["s", "s"], "body": ["top"]}}}}}
+    model = {"complete": True, "domains": {"s": [f"e{i}" for i in range(317)]},
+             "constants": {}, "relations": {}}
+    with pytest.raises(ResourceLimit):
+        FiniteModel.from_dict(Environment(env), model)
+    if LEAN.exists():
+        result = _run([str(LEAN), "route", "-"], [
+            {"id": "full", "kind": "evaluate", "environment": env, "model": model, "ast": [["top"]]}])[0]
+        assert result["status"] == "error" and "ResourceLimit" in result["error"], result
+    rust = ROOT / "rust/target/release/ve"
+    if rust.exists():
+        result = _run([str(rust), "conformance"], [
+            {"id": "full", "environment": env, "model": model, "ast": [["top"]]}])[0]
+        assert result["status"] == "error" and result["error"]["code"] == "ResourceLimit", result
+
+
 def test_generated_sets_cover_the_plan(generated):
     accepted = [row for row in generated if row[4] is None]
     assert len(accepted) == SETS

@@ -221,13 +221,35 @@ def tuples {α : Type} (M : VE.FiniteModel α) : List String → List (List α)
   | [] => [[]]
   | s :: ss => (M.domains s).flatMap (fun v => (tuples M ss).map (v :: ·))
 
-/-- Defined tables are computed from their bodies in dependency order, each
-over the tables already present (the base tables and the definitions below). -/
-def computeDefined (d : VE.Bridge.ModelData) : List VE.Definitions.Def → VE.Bridge.ModelData
-  | [] => d
+/-- Formula evaluations charged by Python and Rust, including the node visit
+and only branches reached by short-circuit evaluation. -/
+def formulaWork {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) :
+    VE.Formula → Nat
+  | .top | .bottom | .unary .. | .binary .. | .eq .. => 1
+  | .not a => 1 + formulaWork M ρ a
+  | .and a b => 1 + formulaWork M ρ a + (if a.eval M ρ then formulaWork M ρ b else 0)
+  | .or a b => 1 + formulaWork M ρ a + (if a.eval M ρ then 0 else formulaWork M ρ b)
+  | .implies a b => 1 + formulaWork M ρ a + (if a.eval M ρ then formulaWork M ρ b else 0)
+  | .all s a =>
+    let domain := M.domains s
+    let passed := domain.takeWhile (fun v => a.eval M (v :: ρ))
+    1 + (passed.map (fun v => formulaWork M (v :: ρ) a)).foldl (· + ·) 0 +
+      ((domain[passed.length]?).map (fun v => formulaWork M (v :: ρ) a)).getD 0
+  | .ex s a =>
+    let domain := M.domains s
+    let failed := domain.takeWhile (fun v => !(a.eval M (v :: ρ)))
+    1 + (failed.map (fun v => formulaWork M (v :: ρ) a)).foldl (· + ·) 0 +
+      ((domain[failed.length]?).map (fun v => formulaWork M (v :: ρ) a)).getD 0
+
+/-- Defined tables and evaluation work in dependency order. -/
+def computeDefined (d : VE.Bridge.ModelData) : List VE.Definitions.Def → VE.Bridge.ModelData × Nat
+  | [] => (d, 0)
   | x :: xs =>
-    let rows := (tuples d.toModel x.args).filter (fun row => x.body.eval d.toModel row.reverse)
-    computeDefined { d with relations := d.relations ++ [(x.name, rows)] } xs
+    let candidates := tuples d.toModel x.args
+    let rows := candidates.filter (fun row => x.body.eval d.toModel row.reverse)
+    let work := (candidates.map (fun row => formulaWork d.toModel row.reverse x.body)).foldl (· + ·) 0
+    let (data, rest) := computeDefined { d with relations := d.relations ++ [(x.name, rows)] } xs
+    (data, work + rest)
 
 /-- The candidate rows of every defined table, bounded like the supplied tables. -/
 def definitionWork (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) : Nat :=
@@ -249,8 +271,10 @@ literals is `InvalidModel(literals)`, a supplied defined table is
 def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
   noDefinedTables rv j
   let data₀ ← VE.Bridge.decodeModelData rv.baseModelVocabulary j
-  Gate.require (definitionWork data₀ rv.definitions ≤ 100000) "ResourceLimit: definition table size"
-  let data := computeDefined data₀ rv.definitions
+  let (data, work) := computeDefined data₀ rv.definitions
+  Gate.require (work ≤ 1000000) "ResourceLimit: Definition model evaluation budget exhausted"
+  Gate.require ((data.relations.map (fun p => p.2.length)).foldl (· + ·) 0 ≤ 100000)
+    "ResourceLimit: tuple count"
   Gate.require (data.valid rv.modelVocabulary) "model is not semantically admissible"
   let M := data.toModel
   match fullBackgroundViolation M rv with
@@ -288,6 +312,7 @@ theorem decodeModel_background (rv : RouteVocabulary) (j : Json) (M : VE.FiniteM
   unfold decodeModel at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨data, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hv, h⟩ := bind_ok h
   have hvalid := Gate.require_ok hv
