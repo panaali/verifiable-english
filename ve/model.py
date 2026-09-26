@@ -150,6 +150,9 @@ class FiniteModel:
                             table.add(row)
                 except _Exhausted as exc:
                     raise ResourceLimit("Definition model evaluation budget exhausted") from exc
+                tuple_count += len(table)
+                if tuple_count > MAX_TUPLES:
+                    raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
                 relations[definition.name] = frozenset(table)
 
         normalized = _normalized(domains, constants, relations, defined_names)

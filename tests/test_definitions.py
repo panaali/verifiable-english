@@ -128,3 +128,12 @@ def test_definition_statement_sugar_is_input_only():
     preview = wordings(env)
     assert len(preview) == 1
     assert "if that point is middle" in preview[0]["english"]
+
+
+def test_thousand_guarded_sugar_round_trips():
+    env = environment()
+    for index in range(1000):
+        name = f"v{index}"
+        source = f"every point {name} that is middle, ({name} is base).\n"
+        document = parse(env, source)
+        assert parse(env, print_document(env, document)) == document

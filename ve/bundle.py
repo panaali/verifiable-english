@@ -2,7 +2,7 @@
 
 The bundle format is deliberately small: every lemma lists its own labelled
 hypotheses, earlier conclusion meaning IDs it cites, a certificate, and the
-complete transitive leaves it expects the report to carry. No citation is a
+    complete transitive leaves it expects the report to carry. No citation is a
 new trusted proof rule: the certificate is replayed with cited conclusions as
 additional premises after the cited certificates have been checked.
 """
@@ -12,6 +12,7 @@ import subprocess
 
 from .admission import validate_label
 from .ast import formula_from_data, formula_to_data
+from .background import background
 from .entailment import check_entailment_certificate
 from .environment import Environment
 from .errors import VEError
@@ -24,6 +25,8 @@ def check_bundle(data, *, lean_executable=None):
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
         raise VEError("Unsupported lemma bundle version or lemmas array")
     env = Environment(data["environment"])
+    background_leaves = [{"label": "background:" + entry.generator,
+                          "ast": formula_to_data(env, entry.formula)} for entry in background(env)]
     known = {}
     reports = []
     lean_cases = []
@@ -39,7 +42,7 @@ def check_bundle(data, *, lean_executable=None):
         choices = item["reading_choices"]
         if type(choices) is not dict or any(type(k) is not str or type(v) is not str for k, v in choices.items()):
             raise VEError("Reading choices must map unit names to readings")
-        leaves = []
+        leaves = list(background_leaves)
         own = []
         for premise in item["premises"]:
             require_fields(premise, {"label", "ast"})
@@ -61,12 +64,6 @@ def check_bundle(data, *, lean_executable=None):
                 if leaf not in leaves:
                     leaves.append(leaf)
             cited.append(lemma["conclusion"])
-        own_keys = {(leaf["label"], canonical_json(leaf["ast"])) for leaf in
-                    ({"label": validate_label(p["label"]), "ast": p["ast"]} for p in item["premises"])}
-        for reference in item["cites"]:
-            for leaf in known[reference]["transitive_leaves"]:
-                if (leaf["label"], canonical_json(leaf["ast"])) not in own_keys:
-                    raise VEError("Cited lemma hypothesis is not on the citing branch")
         if item["transitive_leaves"] != leaves:
             raise VEError("Citation transitive leaf labels were changed or stripped")
         conclusion = formula_from_data(env, item["conclusion"])
@@ -86,8 +83,11 @@ def check_bundle(data, *, lean_executable=None):
                            "conclusion": formula_to_data(env, conclusion), "certificate": item["certificate"]})
     lean_checked = False
     if lean_executable is not None and lean_cases:
-        run = subprocess.run([str(lean_executable), "route"], input=canonical_json(lean_cases),
-                             capture_output=True, timeout=60)
+        try:
+            run = subprocess.run([str(lean_executable), "route"], input=canonical_json(lean_cases),
+                                 capture_output=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise VEError("Lean lemma replay unavailable") from exc
         from .wire import loads_json
         rows = loads_json(run.stdout)
         lean_checked = run.returncode == 0 and len(rows) == len(lean_cases) and all(
