@@ -17,7 +17,9 @@ from .environment import Environment
 from .errors import VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
-from .readings import check_readings, plan_choices, validate_narrowings, validate_reading_sets
+from .readings import (active_reading_sets, check_readings, plan_choices,
+                       validate_narrowings, validate_reading_sets)
+from .wire import digest
 from .vacuity import premise_status
 
 MAX_DOCUMENT_BYTES = 4_000_000
@@ -71,7 +73,7 @@ def _split(raw: bytes):
     if type(meta) is not dict or meta.get("format") != "ve-document@1":
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
-               "narrowings", "weights", "graph"}
+               "narrowings", "weights", "graph", "lemmas"}
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
@@ -173,6 +175,9 @@ def load_document(path: str | Path):
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
     validate_reading_sets(env, reading_sets, unit_ids)
+    active = active_reading_sets(reading_sets)
+    if "lemmas" in meta and type(meta["lemmas"]) is not list:
+        raise VEError("lemmas must be a list")
     for u in compiled:
         if (u["kind"] == "asserted" and u["content"] is None
                 and not any(r["unit"] == u["id"] for r in reading_sets)):
@@ -186,7 +191,29 @@ def load_document(path: str | Path):
     document_id = hashlib.sha256(b"ve-document@1\n" + raw).hexdigest()
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
-            "units": compiled, "reading_plan": plan_choices([r for r in reading_sets if r["status"] == "open"])}
+            "units": compiled, "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
+
+
+def _fixed_and_active(doc):
+    sets = active_reading_sets(doc["meta"].get("reading_sets", []))
+    units_with_sets = {r["unit"] for r in sets}
+    fixed = [u["content"] for u in doc["units"] if u["kind"] == "asserted"
+             and u["content"] is not None and u["id"] not in units_with_sets]
+    return fixed, sets
+
+
+def _assertion_disjunctions(env, sets):
+    from .ast import Or
+    result = []
+    for reading_set in sets:
+        if any(r["kind"] != "asserted" or r["content"] is None for r in reading_set["readings"]):
+            continue
+        formulas = [formula_from_data(env, r["content"]) for r in reading_set["readings"]]
+        formula = formulas[-1]
+        for previous in reversed(formulas[:-1]):
+            formula = Or(previous, formula)
+        result.append(formula)
+    return result
 
 
 def coverage(doc):
@@ -231,21 +258,34 @@ def _check_narrowing_choices(meta, labels):
 def check_document(path):
     doc = load_document(path)
     env = doc["environment"]
-    assertions = [formula_from_data(env, u["content"]) for u in doc["units"]
-                  if u["kind"] == "asserted" and u["content"] is not None]
+    fixed, active = _fixed_and_active(doc)
+    assertions = [formula_from_data(env, ast) for ast in fixed]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if "graph" in doc["meta"]:
+        from .admission import parse_label
+        active_keys = {(r["id"], r["version"]): r for r in active}
+        for node in doc["meta"]["graph"].get("nodes", []):
+            label = parse_label(node.get("label")) if type(node) is dict else None
+            if label is not None and label.kind == "readings":
+                reading_set = active_keys.get(label.args[:2])
+                if reading_set is None:
+                    raise VEError("graph cites a stale or unknown reading set version")
+                if any(c["kind"] != "asserted" or c["content"] is None
+                       for c in reading_set["readings"]):
+                    raise VEError("non-assertion reading admission needs an elaborator")
         admission = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
                                 **({"content": u["content"]} if u["content"] is not None else {})}
                                for u in doc["units"]],
                      "graph": doc["meta"]["graph"],
+                     "lemmas": doc["meta"].get("lemmas", []),
                      "open_terms": [o["name"] for o in doc["meta"].get("open_terms", [])],
                      "reading_sets": [{"id": r["id"], "version": r["version"],
                                        "readings": [c["content"] for c in r["readings"]]}
-                                      for r in doc["meta"].get("reading_sets", [])
-                                      if all(c["content"] is not None for c in r["readings"])],
+                                      for r in active
+                                      if all(c["kind"] == "asserted" and c["content"] is not None
+                                             for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
         result["admission"] = admit_document(env, admission)
         latest = {}
@@ -253,7 +293,6 @@ def check_document(path):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
         labels = [a.get("label") for a in result["admission"]["report"]["assumptions"]]
         _check_narrowing_choices(doc["meta"], labels)
-        from .admission import parse_label
         result["stale_reading_labels"] = [label for a in result["admission"]["report"]["assumptions"]
                                           if (label := a.get("label")) is not None
                                           and (parsed := parse_label(label)) is not None
@@ -261,7 +300,17 @@ def check_document(path):
                                           and parsed.args[1] < latest.get(parsed.args[0], 0)]
         assertions = [formula_from_data(env, a["ast"])
                       for a in result["admission"]["report"]["assumptions"]]
+        result["admission"]["core_report_id"] = result["admission"]["report_id"]
+        result["admission"]["report_id"] = digest(
+            f"ve-report-{env.identity_version}\n",
+            {"environment_id": env.environment_id, "document_id": doc["document_id"],
+             "report": result["admission"]["report"]})
+    assertions.extend(_assertion_disjunctions(env, active))
     result["premises"] = premise_status(env, assertions)
+    if (result["premises"]["status"] != "INCONSISTENT"
+            and any(c["kind"] != "asserted" or c["content"] is None
+                    for r in active for c in r["readings"])):
+        result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     if "admission" in result:
         result["admission"]["vacuous"] = result["premises"]["status"] == "INCONSISTENT"
     return result
@@ -276,22 +325,28 @@ def render_document(path):
         formula = formula_from_data(doc["environment"], ast)
         return render(Document((formula,)), doc["environment"], "ve_english").strip()
 
+    def kind_wording(kind, content):
+        claim = wording(content) if content is not None else "a meaning not yet formalised"
+        if type(kind) is str:
+            return claim if kind == "asserted" else f"[{kind}] {claim}"
+        tag = kind[0]
+        if tag == "attributed":
+            return f"According to {kind[1]}, who {kind[2]}: {kind_wording(kind[3], content)}"
+        if tag == "hedged":
+            return f"[{kind[1]}] {kind_wording(kind[2], content)}"
+        if tag == "causal":
+            return (f"[{kind[1]}: {kind_wording(kind[2], content)}; "
+                    f"{kind_wording(kind[3], content)}]")
+        return f"[unformalised: {kind[1].replace('_', ' ')}]"
+
     for u in doc["units"]:
-        kind = u["kind"] if type(u["kind"]) is str else u["kind"][0]
         lines.append(u["source"].strip())
-        if kind == "attributed":
-            lines.append(f"This is attributed to {u['kind'][1]} as something they {u['kind'][2]}.")
-        elif kind == "hedged":
-            lines.append(f"This is a {u['kind'][1]} statement.")
-        elif kind == "unformalised":
-            lines.append(f"This part is not yet formalised: {u['kind'][1].replace('_', ' ')}.")
-        if u["content"] is not None:
-            lines.append("Checked reading: " + wording(u["content"]))
+        prefix = "Checked reading: " if u["content"] is not None else "Recorded meaning: "
+        lines.append(prefix + kind_wording(u["kind"], u["content"]))
     for r in doc["meta"].get("reading_sets", []):
         choices = []
         for index, candidate in enumerate(r["readings"]):
-            description = (wording(candidate["content"]) if candidate["content"] is not None
-                           else "a meaning not yet formalised")
+            description = kind_wording(candidate["kind"], candidate["content"])
             label = chr(97 + index) if index < 26 else f"reading {index + 1}"
             choices.append(f"({label}) {description}")
         lines.append("This sentence could mean " + "; or ".join(choices) + ".")
@@ -318,7 +373,9 @@ def main(argv=None):
             data = coverage(doc)
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
-            sets = [r for r in doc["meta"].get("reading_sets", []) if r["status"] == "open"]
+            fixed, active = _fixed_and_active(doc)
+            sets = [{**r, "readings": [{**c, "original_index": i}
+                                      for i, c in enumerate(r["readings"])]} for r in active]
             if args.narrowing:
                 matching = [n for n in doc["meta"].get("narrowings", []) if n["id"] == args.narrowing]
                 if len(matching) != 1:
@@ -326,11 +383,11 @@ def main(argv=None):
                 narrowing = matching[0]
                 if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
                            for r in sets):
-                    raise VEError("narrowing does not target an open reading set")
+                    raise VEError("narrowing does not target an active reading set")
                 sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
                         if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
                         for r in sets]
-            data = check_readings(doc["environment"], sets, conclusion)
+            data = check_readings(doc["environment"], sets, conclusion, fixed=fixed)
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
         else:

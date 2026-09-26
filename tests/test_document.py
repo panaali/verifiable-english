@@ -10,6 +10,7 @@ from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.ast import Top
+from ve.ast import formula_from_data
 from ve.model import FiniteModel
 from ve.readings import check_readings, plan_choices
 
@@ -203,3 +204,189 @@ def test_narrowing_rejects_excluded_graph_choice():
     _check_narrowing_choices(meta, ["narrowing:n", "readings:s@1:0"])
     with pytest.raises(VEError, match="conflicts with narrowing"):
         _check_narrowing_choices(meta, ["narrowing:n", "readings:s@1:1"])
+
+
+def reading(env, rid, ast, kind="asserted"):
+    return {"id": rid, "kind": kind,
+            "meaning_id": meaning_id(env, formula_from_data(env, ast)), "content": ast,
+            "admission": {"who": "reviewer", "why": "recorded interpretation",
+                          "distinguishing_models": {}}}
+
+
+def separate_readings(env, rs):
+    from ve.evaluate import evaluate
+    candidates = [MODEL, {**MODEL, "relations": {**MODEL["relations"], "senior": []}}]
+    models = {FiniteModel.from_dict(env, data).model_id: data for data in candidates}
+    rs["models"] = models
+    for r in rs["readings"]:
+        for other in rs["readings"]:
+            if r is other:
+                continue
+            for mid, data in models.items():
+                model = FiniteModel.from_dict(env, data)
+                left = evaluate(env, formula_from_data(env, r["content"]), model, trace=False).value
+                right = evaluate(env, formula_from_data(env, other["content"]), model, trace=False).value
+                if left != right:
+                    r["admission"]["distinguishing_models"][other["id"]] = mid
+                    break
+            else:
+                raise AssertionError("test readings need a separating model")
+    used = {mid for r in rs["readings"]
+            for mid in r["admission"]["distinguishing_models"].values()}
+    rs["models"] = {mid: models[mid] for mid in used}
+
+
+def query(path, tmp_path, ast, narrowing=None):
+    conclusion = tmp_path / "conclusion.json"
+    conclusion.write_text(json.dumps(ast))
+    command = [sys.executable, "-m", "ve", "document", "readings", str(path),
+               "--conclusion", str(conclusion)]
+    if narrowing:
+        command += ["--narrowing", narrowing]
+    return json.loads(subprocess.run(command, check=True, capture_output=True, text=True).stdout)
+
+
+def test_quoted_candidate_cannot_enter_p0_as_assertion(tmp_path):
+    source = b"Alice says so.\n"
+    env = Environment(environment())
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": [reading(env, "r", ["top"], ["attributed", "alice", "says", "asserted"])]}
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"],
+                                           "label": "readings:s@1:0"}]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[rs], graph=graph)
+    with pytest.raises(VEError, match="non-assertion reading admission"):
+        check_document(path)
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[rs])
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
+
+
+def test_fixed_and_authored_premises_enter_every_readings_query(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    source = b"Fixed.\n"
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": p})],
+                     environment_json=env_json)
+    assert query(path, tmp_path, p)["verdict"] == "ALL"
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "authored", "signature": "alice",
+          "readings": [reading(env, "p", p)]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")], reading_sets=[rs],
+                     environment_json=env_json)
+    assert query(path, tmp_path, p)["verdict"] == "ALL"
+
+
+def test_false_reading_is_inconsistent_and_vacuous(tmp_path):
+    env = Environment(environment())
+    source = b"False.\n"
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": [reading(env, "false", ["bottom"])]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")], reading_sets=[rs])
+    assert check_document(path)["premises"]["status"] == "INCONSISTENT"
+    result = query(path, tmp_path, ["top"])
+    assert result["verdict"] == "ALL" and result["vacuous"] is True
+    assert result["premises"]["status"] == "INCONSISTENT"
+
+
+def test_only_latest_version_contributes_one_choice_per_unit(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    source = b"Claim.\n"
+    older = {"id": "s", "unit": "a", "version": 1, "status": "open",
+             "readings": [reading(env, "p", p)]}
+    current = {"id": "s", "unit": "a", "version": 2, "status": "open",
+               "readings": [reading(env, "p", p), reading(env, "notp", ["not", p])]}
+    separate_readings(env, current)
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[older, current], environment_json=env_json)
+    result = query(path, tmp_path, p)
+    assert result["verdict"] == "SOME"
+    assert result["proof"]["choice"] == ["readings:s@2:0"]
+    assert result["countermodel"]["choice"] == ["readings:s@2:1"]
+    stale_graph = {"root": "claim", "nodes": [{"name": "claim", "ast": p,
+                                                 "label": "readings:s@1:0"}]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[older, current], environment_json=env_json,
+                     graph=stale_graph)
+    with pytest.raises(VEError, match="stale or unknown reading set version"):
+        check_document(path)
+    other = {**current, "id": "other"}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[older, other], environment_json=env_json)
+    with pytest.raises(VEError, match="one reading set per source unit"):
+        load_document(path)
+
+
+def test_narrowing_keeps_original_choice_indices(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    source = b"Claim.\n"
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": [reading(env, "one", ["top"]), reading(env, "two", p),
+                       reading(env, "three", ["not", p])]}
+    separate_readings(env, rs)
+    n = {"id": "n", "set": "s", "version": 1, "keeps": ["two", "three"],
+         "by": "reviewer", "reason_spans": ["a"]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[rs], narrowings=[n], environment_json=env_json)
+    result = query(path, tmp_path, p, "n")
+    assert result["verdict"] == "SOME"
+    assert result["proof"]["choice"] == ["readings:s@1:1"]
+    assert result["countermodel"]["choice"] == ["readings:s@1:2"]
+
+
+def test_report_identity_binds_candidate_kind_and_narrowing(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    source = b"Claim.\n"
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "a"}]}
+    units = [unit("a", 0, len(source), content={"ast": ["top"]})]
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": [reading(env, "r", ["top"]), reading(env, "other", ["bottom"])]}
+    separate_readings(env, rs)
+    path = write_doc(tmp_path, source, units, graph=graph, reading_sets=[rs],
+                     environment_json=env_json)
+    first = check_document(path)["admission"]
+    rs["readings"][0]["kind"] = ["attributed", "alice", "says", "asserted"]
+    path = write_doc(tmp_path, source, units, graph=graph, reading_sets=[rs],
+                     environment_json=env_json)
+    second = check_document(path)["admission"]
+    assert first["report_id"] != second["report_id"]
+    assert first["core_report_id"] != second["core_report_id"]
+    n = {"id": "n", "set": "s", "version": 1, "keeps": ["r"],
+         "by": "reviewer", "reason_spans": ["a"]}
+    path = write_doc(tmp_path, source, units, graph=graph, reading_sets=[rs], narrowings=[n],
+                     environment_json=env_json)
+    narrowed = check_document(path)["admission"]
+    assert narrowed["report_id"] != second["report_id"]
+    n["keeps"] = ["other"]
+    path = write_doc(tmp_path, source, units, graph=graph, reading_sets=[rs], narrowings=[n],
+                     environment_json=env_json)
+    changed = check_document(path)["admission"]
+    assert changed["report_id"] != narrowed["report_id"]
+    assert changed["core_report_id"] == narrowed["core_report_id"]
+
+
+def test_render_keeps_nested_kind_and_candidate_attribution(tmp_path):
+    env = Environment(environment())
+    source = b"Maybe Alice.\n"
+    nested = ["attributed", "alice", "says", ["hedged", "likely", "asserted"]]
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": [reading(env, "r", ["top"], nested)]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), nested,
+                                             content={"ast": ["top"]})], reading_sets=[rs])
+    rendered = render_document(path)
+    assert rendered.count("According to alice, who says: [likely]") == 2
+
+
+def test_document_forwards_citation_manifests(tmp_path):
+    source = b"Citation.\n"
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"],
+                                           "label": "cite:library/truth"}]}
+    lemma = {"name": "library/truth", "conclusion": ["top"], "leaves": []}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     graph=graph, lemmas=[lemma])
+    assert check_document(path)["admission"]["admitted"] is True
