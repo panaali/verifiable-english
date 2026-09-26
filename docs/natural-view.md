@@ -21,14 +21,16 @@ a fallback reason where applicable.
 
 For the web app's first example, the old three line display was “Every reviewed
 service is safe. / Api is reviewed. / Api is safe.” The
-`examples/assist/environment.json` vocabulary now declares `the API`. A checked
-document with its third statement marked as a conclusion
+`examples/assist/environment.english.json` display lexicon declares `the API`
+for the unchanged assist environment. A checked document with its third
+statement marked as a conclusion
 now displays:
 
 > Every reviewed service is safe. The API is reviewed. Therefore the API is safe.
 
-`natural_document(env, document, conclusions=(2,))` produces this text; the
-equivalent `render(..., view='ve_natural', conclusions=(2,))` does too. The
+`natural_document(env, document, conclusions=(2,), vocabulary=lexicon)`
+produces this text; the equivalent `render(..., view='ve_natural',
+conclusions=(2,), vocabulary=lexicon)` does too. The
 writable parser accepts it with the same three formula ASTs. The API
 `parse_english_argument` builds a claim graph with a certificate-backed edge
 from the first two sentences to the third. An unproved marked conclusion is
@@ -42,12 +44,13 @@ one earlier premise and a replayable entailment certificate; an inconclusive
 proof search does not license it. The graph's only assumption leaves are the
 unmarked sentences.
 
-Constant display forms are declared once as optional `verbalisation` strings on
-environment constants: `the API`, `Alice`, and `the European Union` are examples.
+Constant display forms are declared once as optional `constants` entries in an
+English vocabulary overlay, each with a `verbalisation` string: `the API`,
+`Alice`, and `the European Union` are examples. The overlay names the exact
+`environment_id` and is passed to both renderer and parser.
 They change spelling, articles, and casing, while every parsed term remains the
 same declared `Const` symbol. Invalid or colliding names use the quoted
-identifier fallback. Environment metadata remains identity bound, as with sort
-and predicate display forms.
+identifier fallback. The logical environment and its identity remain unchanged.
 
 Three item distributive lists are writable for distinct constant subjects with
 one unary adjective predicate (“The API, Beta and Gamma are reviewed”) and for

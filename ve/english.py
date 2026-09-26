@@ -72,7 +72,7 @@ def _fold_sentence_initials(source, words):
     def fold(match):
         word = match[2]
         for name, value in words.constants.items():
-            if words.env.constants[name].verbalisation is None or value.startswith('"'):
+            if name not in words.declared_constants or value.startswith('"'):
                 continue
             display = value[0].upper() + value[1:]
             tail = source[match.start(2):]
@@ -276,8 +276,10 @@ class EnglishVocabulary:
         # Names are declared display data, never inferred from descriptions.
         # A rejected or colliding form retains its exact quoted identifier.
         aliases = {}
-        for name, decl in env.constants.items():
-            form = decl.verbalisation
+        self.declared_constants = {name: entry['verbalisation']
+                                   for name, entry in self.overlay['constants'].items()}
+        for name in env.constants:
+            form = self.declared_constants.get(name)
             if form is None:
                 continue
             self.constants[name] = quote(name)
@@ -288,7 +290,7 @@ class EnglishVocabulary:
         for names in aliases.values():
             if len(names) == 1:
                 name = names[0]
-                self.constants[name] = env.constants[name].verbalisation
+                self.constants[name] = self.declared_constants[name]
         # A display form may not reuse another constant's default spelling.
         counts = Counter(wording_key(value) for value in self.constants.values())
         for name, value in list(self.constants.items()):
