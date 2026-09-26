@@ -23,6 +23,15 @@ from .identity import meaning_id
 from .wire import canonical_json, digest, require_fields
 
 
+def _english(env, cited, conclusion):
+    """The citation sentence, when the vocabulary has an English rendering."""
+    from .surface.definitions import render_citation
+    try:
+        return render_citation(env, cited, conclusion)
+    except VEError:
+        return None
+
+
 def lean_bundle_verdict(lean_executable, environment, lemmas) -> dict:
     """The Lean route's verdict on a whole bundle, in one run."""
     from .wire import loads_json
@@ -49,6 +58,7 @@ def check_bundle(data, *, lean_executable=None):
                           "ast": formula_to_data(env, entry.formula)} for entry in background(env)]
     known = {}
     names = set()
+    names_by_id = {}
     reports = []
     for item in data["lemmas"]:
         require_fields(item, {"name", "environment_id", "premises", "cites", "conclusion",
@@ -100,7 +110,9 @@ def check_bundle(data, *, lean_executable=None):
         known[mid] = {"conclusion": conclusion, "reading_choices": inherited_choices,
                       "transitive_leaves": leaves}
         reports.append({"name": item["name"], "meaning_id": mid,
-                        "reading_choices": inherited_choices, "transitive_leaves": leaves})
+                        "reading_choices": inherited_choices, "transitive_leaves": leaves,
+                        "english": _english(env, [names_by_id[c] for c in item["cites"]], conclusion)})
+        names_by_id[mid] = item["name"]
     lean_checked = False
     if lean_executable is not None and data["lemmas"]:
         row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"])
