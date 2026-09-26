@@ -63,8 +63,8 @@ theorem valid_of_wellFormed (D : Doc) (h : WellFormed D = true) : Valid D :=
 
 /-! ## Prefix environments -/
 
-theorem getElem?_names {D : Doc} {k : Nat} {q : Sym} (hk : (syms D.T)[k]? = some q) :
-    (layerNames D.T)[k]? = some q.name := by
+theorem getElem?_names {T : Tree} {k : Nat} {q : Sym} (hk : (syms T)[k]? = some q) :
+    (layerNames T)[k]? = some q.name := by
   simp [layerNames, List.getElem?_map, hk]
 
 /-- A layer symbol's name is among the names dropped at `k` exactly when it is
