@@ -64,7 +64,8 @@ def canonicalAct (name : String) (arity : Nat) (raw : Json) : Except String Stri
   let act := " ".intercalate (words ((raw.getStr?).toOption.getD ""))
   let (slots, replaced) := scanSlots act.toList
   let ws := words (String.mk replaced)
-  unless act.length ≤ 80 && slots == (List.range arity).map toString && ws.length ≥ 2 &&
+  unless act.length ≤ 80 && act.startsWith "{0} " &&
+      slots == (List.range arity).map toString && ws.length ≥ 2 &&
       ws.all actWord && !(ws.any (fun w => w != "slot" && actReserved.contains w.toLower)) do
     throw s!"InvalidInput: invalid act phrase for {name}"
   pure act

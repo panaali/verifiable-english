@@ -75,7 +75,7 @@ def _consequence(rule, env, words):
     reg = decl.regulated
     scope, nouns = _bindings(decl, words)
     if reg.role == "plain":
-        template = words.predicates[rule.predicate]
+        template = (words.negatives.get(rule.predicate) if not rule.sign else None) or words.predicates[rule.predicate]
     else:
         if reg.role == "permission":
             modal = "may" if rule.sign else "must not"
@@ -84,8 +84,11 @@ def _consequence(rule, env, words):
         template = reg.act.replace("{0} ", "{0} " + modal + " ", 1)
     args = ["Every " + nouns[0]] + ["each " + noun for noun in nouns[1:]]
     text = template.format(*args)
-    if reg.role == "plain" and not rule.sign:
-        text = "It is not the case that " + text
+    if reg.role == "plain" and not rule.sign and rule.predicate not in words.negatives:
+        refs = [scope[len(scope) - i - 1][1] for i in range(len(nouns))]
+        body = template.format(*refs)
+        binders = ", ".join(["for every " + nouns[0]] + ["for each " + noun for noun in nouns[1:]])
+        text = binders.capitalize() + ", it is not the case that " + body
     return text, scope
 
 
@@ -99,7 +102,7 @@ def default_sentence(env, predicate):
     article = lambda noun: ("an " if noun[0].lower() in "aeiou" else "a ") + noun
     if reg.role == "plain":
         template = (words.predicates[predicate] if reg.default == "allow" else
-                    "it is not the case that " + words.predicates[predicate])
+                    words.negatives.get(predicate) or "it is not the case that " + words.predicates[predicate])
         return "By default, " + template.format(*(article(n) for n in nouns)) + "."
     modal = ("may" if reg.default == "allow" else "must not") if reg.role == "permission" else (
         "must" if reg.default == "allow" else "need not")
@@ -165,14 +168,14 @@ def _block_grammar(env, words):
             continue
         for sign in (True, False):
             wording, _ = _consequence(Norm("candidate", name, sign, ast.Top()), env, words)
-            nouns = [words.sorts[s] for s in decl.arguments]
+            _, nouns = _bindings(decl, words)
             variants = [wording]
             if len(nouns) == 2:
                 variants.append(wording.replace("each " + nouns[1], "any " + nouns[1]))
             if decl.regulated.role == "permission" and not sign:
                 variants.append(wording.replace("Every " + nouns[0] + " must not ",
                                                 "No " + nouns[0] + " may ", 1))
-            clauses.extend(json.dumps(v) + "i" for v in variants)
+            clauses.extend(json.dumps(v) + "i" for v in dict.fromkeys(variants))
     if not clauses:
         clauses = ["IMPOSSIBLE"]
     lines = base.splitlines()
@@ -197,14 +200,14 @@ def _parse_consequence(text, env, words):
         for sign in (True, False):
             dummy = Norm("candidate", name, sign, ast.Top())
             wording, scope = _consequence(dummy, env, words)
-            nouns = [words.sorts[s] for s in decl.arguments]
+            _, nouns = _bindings(decl, words)
             alternatives = [wording]
             if len(nouns) == 2:
                 alternatives.append(wording.replace("each " + nouns[1], "any " + nouns[1]))
             if decl.regulated.role == "permission" and not sign:
                 alternatives.append(wording.replace("Every " + nouns[0] + " must not ",
                                                     "No " + nouns[0] + " may ", 1))
-            for candidate in alternatives:
+            for candidate in dict.fromkeys(alternatives):
                 if text.casefold() == candidate.casefold():
                     matches.append((name, sign, scope))
     if len(matches) != 1:
@@ -231,6 +234,10 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
             precedence.setdefault(int(standalone[1]), []).append(int(standalone[2]))
         else:
             blocks.append(line)
+    if any(source_ref < 1 or source_ref > len(blocks) or
+           target_ref < 1 or target_ref > len(blocks)
+           for source_ref, targets in precedence.items() for target_ref in targets):
+        raise VEError("UnknownRule: display reference")
     if manifest is not None and len(manifest.get("blocks", [])) != len(blocks):
         raise VEError("IdentityMetadataMismatch: block count")
     parsed = []

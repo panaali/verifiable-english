@@ -60,6 +60,21 @@ def test_forbid_overrides_and_same_sign_overlap():
     assert check_conflict(permit_only.document, prove=True).status == "CONFLICT-FREE"
 
 
+@pytest.mark.parametrize("condition", [
+    '[1, 2] == [2, 1]',
+    '[1, 2] != [2, 1]',
+    '[[1, 2], [3]] == [[3], [2, 1]]',
+    '[[1, 2], [1, 2]] == [[2, 1]]',
+    '[[1, 2]] != [[2, 1]]',
+])
+def test_recursive_set_equality_matches_reference(condition):
+    source = f'permit(principal, action, resource) when {{ {condition} }};'
+    actual = translate(source, [], ENTITIES, [REQUEST]).decisions()[0]
+    expected = _parser_module().explain(source, [], ENTITIES, REQUEST)
+    assert actual['decision'] == expected['decision']
+    assert set(actual['errors']) == set(expected['errors'])
+
+
 def test_excluded_attribute_is_explicit():
     source = 'permit(principal, action, resource) when { principal.age == 18 };'
     translated = translate(source, [], ENTITIES, [REQUEST])

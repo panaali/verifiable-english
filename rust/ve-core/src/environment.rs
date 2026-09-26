@@ -95,7 +95,7 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     for slot in slots.iter().rev() {
         plain = plain.replace(slot, "slot");
     }
-    if act.len() > 80 || plain.split_whitespace().count() < 2 ||
+    if act.len() > 80 || !act.starts_with("{0} ") || plain.split_whitespace().count() < 2 ||
         plain.split_whitespace().any(|word|
             !word.as_bytes().first().is_some_and(u8::is_ascii_alphabetic)
             || !word.bytes().all(|b| b.is_ascii_alphabetic() || b == b'\'' || b == b'-')
