@@ -312,7 +312,9 @@ def check_document(path):
                     for r in active for c in r["readings"])):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     if "admission" in result:
-        result["admission"]["vacuous"] = result["premises"]["status"] == "INCONSISTENT"
+        status = result["premises"]["status"]
+        result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
+                                           False if status == "model" else None)
     return result
 
 
