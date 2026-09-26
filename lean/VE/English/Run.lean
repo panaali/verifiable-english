@@ -1,12 +1,15 @@
 import VE.English.Parse
 import VE.English.Render
+import VE.English.Check
 import VE.Bridge
 
 /-! # Differential runner for `conformance/english_lean.py`
 
 Reads one JSON object `{"environment", "lexicon", "cases"}` and prints, for each
 case, the Lean core parse of its tokens, the Lean core rendering of its
-formulas, and whether that rendering parses back. Run from `lean/` after
+formulas, and whether that rendering parses back, together with the result of
+the finite lexical check `admissible` (when it holds, `checked_parse_render`
+proves every such rendering parses back). Run from `lean/` after
 `lake build`:
 
     lake env lean --run VE/English/Run.lean cases.json
@@ -105,7 +108,7 @@ def run (input : String) : Except String Json := do
   let L ← decodeLexicon (← j.getObjVal? "lexicon")
   let cases ← (← j.getObjVal? "cases").getArr?
   let results ← cases.mapM (runCase E L)
-  pure <| Json.mkObj [("results", .arr results)]
+  pure <| Json.mkObj [("admissible", .bool (admissible L)), ("results", .arr results)]
 
 end VE.English.Run
 
