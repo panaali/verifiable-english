@@ -8,11 +8,16 @@ grammar and all-derivations admission check handle typed prose and displayed
 prose. A parsed presentation retains the exact source wording, sentence
 character spans, paragraph ranges, conclusion roles, premise dependencies,
 environment and meaning identities, and the vocabulary overlay digest.
+The new API raises `PresentationNeedsRepair` with per-statement reasons if a
+display would require explicit notation; it does not present that fallback as
+approved prose. The advanced inspector can still parse legacy explicit
+English with `allow_explicit=True`.
 Every conclusion depends on all earlier unmarked premises, including those
 in earlier paragraphs. The parser checks its derivation before recording the
 role; a marker is never treated as an assumption. `migrate_presentation`
 previews a legacy English paragraph using this version, reports whether the
-meaning identity is unchanged, and always requires renewed presentation
+meaning identity is unchanged, records unresolved repairs where needed, and
+always requires renewed presentation
 approval. An unchanged meaning can key reuse of its existing certificate.
 
 `ve_english` and `ve_natural` remain pinned legacy view names and retain their

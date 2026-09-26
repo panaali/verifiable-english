@@ -11,7 +11,8 @@ from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
 from ve.english import english_lark_grammar, parse_english
 from ve.ast import Body, Le, Lt, Num, Reach, Scale
 from ve.natural import (_NOTATION, natural_coverage, render_natural_sentence,
-                        parse_presentation, render_presentation, migrate_presentation)
+                        parse_presentation, render_presentation, migrate_presentation,
+                        PresentationNeedsRepair)
 from ve.errors import ResourceLimit
 from ve.printer import natural_document
 from test_views import ENV, vocabulary
@@ -285,6 +286,23 @@ def test_negative_arithmetic_is_audited_explicit_form():
     assert natural_coverage([Le(Num(3), Const('budget')), formula], env) == {
         'statements': 2, 'natural': 1, 'fallback': 1, 'natural_fraction': 0.5,
         'fallback_reasons': {'symbols_or_variable_names': 1}}
+
+
+def test_versioned_prose_keeps_notation_fallback_unresolved():
+    from conformance.english_surface import order_environment
+    env = order_environment()
+    formula = Le(Num(-3), Const('budget'))
+    document = Document((formula,))
+    with pytest.raises(PresentationNeedsRepair) as raised:
+        render_presentation(env, document)
+    assert raised.value.details == ({'statement': 1,
+                                     'reason': 'symbols_or_variable_names'},)
+    legacy = render(document, env, 've_english')
+    with pytest.raises(PresentationNeedsRepair):
+        parse_presentation(env, legacy)
+    preview = migrate_presentation(env, legacy)
+    assert preview['proposed'] is None and preview['unresolved']
+    assert preview['meaning_unchanged'] and preview['presentation_approval_required']
 
 
 def test_nested_word_lists_and_some_compound_roundtrip():

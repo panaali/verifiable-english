@@ -22,6 +22,12 @@ class NaturalResult:
 PRESENTATION_VERSION = 've.prose@1'
 
 
+class PresentationNeedsRepair(ValueError):
+    def __init__(self, details):
+        self.details = tuple(details)
+        super().__init__('Presentation needs an English repair or a confirmed display name')
+
+
 @dataclass(frozen=True)
 class ProsePresentation:
     """An admitted, editable prose snapshot bound to one checked meaning."""
@@ -41,7 +47,8 @@ class ProsePresentation:
                 'sentences': list(self.sentences), 'paragraphs': list(self.paragraphs)}
 
 
-def parse_presentation(env, text, *, version=PRESENTATION_VERSION, **options):
+def parse_presentation(env, text, *, version=PRESENTATION_VERSION,
+                       allow_explicit=False, **options):
     """Admit exactly one derivation and retain the author's exact wording.
 
     The returned spans refer to the original UTF-8-decoded source string. A
@@ -61,6 +68,12 @@ def parse_presentation(env, text, *, version=PRESENTATION_VERSION, **options):
         'dependencies': tuple(j for j in range(index) if j not in marked)
         if index in marked else (),
     } for index, (start, end) in enumerate(spans))
+    if not allow_explicit:
+        needs_repair = tuple({'statement': index + 1, 'reason': 'notation_in_prose'}
+                             for index, sentence in enumerate(sentences)
+                             if _NOTATION.search(sentence['text']))
+        if needs_repair:
+            raise PresentationNeedsRepair(needs_repair)
     boundaries = (0, *breaks, len(sentences))
     paragraphs = tuple({'start': a, 'end': b} for a, b in zip(boundaries, boundaries[1:]))
     return ProsePresentation(source, document, env.environment_id,
@@ -76,6 +89,11 @@ def render_presentation(env, document, *, version=PRESENTATION_VERSION,
     from .printer import natural_document
     view = natural_document(env, document, conclusions=conclusions,
                             paragraph_breaks=paragraph_breaks, **options)
+    needs_repair = tuple({'statement': index + 1, 'reason': sentence['fallback_reason']}
+                         for index, sentence in enumerate(view.sentences)
+                         if sentence['form'] != 'natural')
+    if needs_repair:
+        raise PresentationNeedsRepair(needs_repair)
     parsed = parse_presentation(env, view.text, version=version, **options)
     if (parsed.document != document or
             tuple(i for i, s in enumerate(parsed.sentences) if s['role'] == 'conclusion') != tuple(conclusions) or
@@ -90,16 +108,22 @@ def migrate_presentation(env, legacy_text, *, version=PRESENTATION_VERSION, **op
     Meaning identity is retained and can key certificate reuse. Presentation
     approval is intentionally never inferred from the old wording.
     """
-    previous = parse_presentation(env, legacy_text, version=version, **options)
+    previous = parse_presentation(env, legacy_text, version=version,
+                                  allow_explicit=True, **options)
     conclusions = tuple(i for i, s in enumerate(previous.sentences)
                         if s['role'] == 'conclusion')
     breaks = tuple(p['start'] for p in previous.paragraphs[1:])
-    proposed = render_presentation(env, previous.document, version=version,
-                                   conclusions=conclusions, paragraph_breaks=breaks,
-                                   **options)
+    try:
+        proposed = render_presentation(env, previous.document, version=version,
+                                       conclusions=conclusions, paragraph_breaks=breaks,
+                                       **options)
+        unresolved = ()
+    except PresentationNeedsRepair as exc:
+        proposed = None
+        unresolved = exc.details
     return {'previous': previous, 'proposed': proposed,
-            'meaning_unchanged': previous.meaning_id == proposed.meaning_id,
-            'presentation_approval_required': True}
+            'meaning_unchanged': proposed is None or previous.meaning_id == proposed.meaning_id,
+            'presentation_approval_required': True, 'unresolved': unresolved}
 
 
 def _adjective(words, value, sort):

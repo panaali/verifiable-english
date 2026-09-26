@@ -6,7 +6,8 @@ from pathlib import Path
 import random
 
 from ve import Environment, parse, ast, natural_document, parse_english_argument, check_argument
-from ve.natural import _NOTATION, render_natural_sentence, render_presentation
+from ve.natural import (_NOTATION, render_natural_sentence, render_presentation,
+                        parse_presentation, PresentationNeedsRepair)
 from ve.english import parse_english
 from ve.surface.unambiguity import require_unique_derivation
 from ve.printer import render
@@ -70,11 +71,19 @@ def _measure(name, formulas, env, *, options=None, examples=None, real_document=
             'accepted_wrong_readings': wrong}
     if real_document and formulas:
         try:
-            presentation = render_presentation(env, ast.Document(tuple(formulas)), **options)
+            legacy_view = natural_document(env, ast.Document(tuple(formulas)), **options)
+            presentation = parse_presentation(env, legacy_view.text,
+                                              allow_explicit=True, **options)
             assert presentation.document == ast.Document(tuple(formulas))
             assert all(sentence['role'] == 'premise' and not sentence['dependencies']
                        for sentence in presentation.sentences)
             row['prose_round_trip'] = 'exact'
+            try:
+                render_presentation(env, presentation.document, **options)
+                row['versioned_presentation'] = 'ready'
+            except PresentationNeedsRepair as exc:
+                row['versioned_presentation'] = 'needs_repair'
+                row['presentation_repairs'] = exc.details
         except Exception as exc:
             row['prose_round_trip'] = type(exc).__name__
     return row
@@ -149,6 +158,10 @@ def audit(random_per_vocabulary=100):
                                'notation_free': sum(row['natural'] for row in real_rows),
                                'exact_prose_round_trips': sum(row.get('prose_round_trip') == 'exact'
                                                               for row in real_rows),
+                               'ready_versioned_presentations': sum(row.get('versioned_presentation') == 'ready'
+                                                                    for row in real_rows),
+                               'documents_needing_repair': sum(row.get('versioned_presentation') == 'needs_repair'
+                                                               for row in real_rows),
                                'prose_failures': [{'source': row['corpus'],
                                                    'reason': row['prose_round_trip']}
                                                   for row in real_rows
