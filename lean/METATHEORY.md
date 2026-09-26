@@ -422,9 +422,14 @@ for `Background.LiteralsDistinct` / `StringAdmissible` (the stage-1 meaning of
 `$string`) and its order form `OrderLiteralsDistinct` / `OrderStringAdmissible`, for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
 `compatible` (the admission rules), and for `Gate.AllowedFamily`. The route
 theorems are about decoded values; the JSON boundary, identity digests and IO
-are tested, not proved, as for the existing routes. The closure+n-ary family is
-accepted by the gate and rejected by the runner until W4 stage 1 lands (Python
-and Rust reject it at every checking site with the same diagnostic). `$string`
+are tested, not proved, as for the existing routes. W4 stage 1 now dispatches
+the closure+n-ary family to `VE.Core.Wire.run` on the Lean route and enables the
+same family in Python and Rust. This required a reviewed change to the P0-owned
+route contract and fixtures: `VE/Route/Run.lean`, `conformance/p0.py`,
+`conformance/elaborated-document.json`, `tests/test_p0_three_way.py`, and
+`ve/profiles.py` now accept that family. The conformance case still named
+`closure-nary-gated` is a historical ID; its expected verdict is success.
+`$string`
 literals are available on every family: a literal's description is optional, and
 stage 1 is equality only (no `$string` predicate argument, no quantifier over it).
 The shared P0 families (`conformance/p0.py`) run through Python, Rust and
@@ -465,6 +470,14 @@ rejected with explicit `UnsupportedProfile` or gate diagnostics, identically in
 Python, Rust and Lean where they apply. Python and the Lean route regenerate
 identical Background lists on 1,000 generated definition sets
 (`tests/test_definitions_differential.py`).
+
+After W4, Python and Rust also elaborate defined predicates of arity 3–6
+over the `closure+nary` family: their bodies may contain n-ary atoms, and
+finite models compute the defined tables. Lean's `Definitions` layer still has
+unary and binary syntax, while the Core route has n-ary syntax without that
+definition layer. Thus this combination has no Lean definition proof or
+three-way definition elaboration parity yet; the theorem and differential
+claims above apply only to arities 1–2.
 
 ## Remaining obligations
 

@@ -2747,8 +2747,10 @@
    ]
   ],
   "expected": {
-   "status": "error",
-   "error": "UnsupportedProfile: the closure+n-ary checker is gated until W4 stage 1 lands"
+   "status": "ok",
+   "values": [
+    true
+   ]
   }
  },
  {

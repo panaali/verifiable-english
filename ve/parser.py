@@ -268,6 +268,23 @@ class _Parser:
             return self.node(start, constructor(left, right) if constructor is not None else
                              ast.And(ast.Implies(left, right), ast.Implies(right, left)))
 
+        if "nary@0" in self.env.profiles:
+            match = _IDENT.match(self.s, self.i)
+            if match is not None and self.s.startswith("(", match.end()):
+                predicate, position = self.identifier("n-ary predicate")
+                declaration = self.env.predicates.get(predicate)
+                if declaration is None or not 3 <= len(declaration.arguments) <= 6:
+                    self.error(f"unknown n-ary predicate {predicate!r}", position, UnknownSymbol)
+                self.literal("(")
+                terms = [self.term()]
+                while self.s.startswith(", ", self.i):
+                    self.i += 2
+                    terms.append(self.term())
+                    if len(terms) > 6:
+                        self.error("n-ary atom exceeds six arguments", start)
+                self.literal(")")
+                return self.node(start, ast.Atom(predicate, tuple(terms)))
+
         left = self.term()
         if self.s.startswith(" is ", self.i):
             self.i += 4; pred, pos = self.identifier("unary predicate")

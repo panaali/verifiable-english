@@ -49,6 +49,38 @@ def test_order_and_closed_biconditionals():
         definitions_id(env, definitions, version="one"))
 
 
+def test_nary_definition_elaborates_and_computes_model_table():
+    raw = environment().to_dict()
+    raw["profiles"] = ["closure@0", "definitions@0", "nary@0", "relational-fol@0"]
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["base"]["arguments"] = ["point"] * 3
+    predicates["middle"]["arguments"] = ["point"] * 3
+    predicates["middle"]["defined"] = {
+        "arguments": ["point"] * 3,
+        "body": ["atom", "base", [["var", 2], ["var", 1], ["var", 0]]],
+    }
+    env = Environment(raw)
+    definition, = compile_definitions(env, env.definition_entries, version=env.environment_id)
+    assert ast.check_formula(env, expand((definition,))[0]) == expand((definition,))[0]
+    assert expand((definition,))[0].body.body.body.left.left == ast.Atom(
+        "middle", (ast.Var(2), ast.Var(1), ast.Var(0)))
+    model = {"complete": True, "domains": {"point": ["a", "b"]}, "constants": {},
+             "relations": {"base": [["a", "a", "b"]], "upper": []}}
+    checked = FiniteModel.from_dict(env, model)
+    assert checked.relations["middle"] == frozenset({("a", "a", "b")})
+
+
+def test_nary_definition_rejects_self_reference():
+    raw = environment().to_dict()
+    raw["profiles"] = ["closure@0", "definitions@0", "nary@0", "relational-fol@0"]
+    raw["vocabulary"]["predicates"]["middle"]["arguments"] = ["point"] * 3
+    env = Environment(raw)
+    with pytest.raises(VEError, match="DependencyCycle"):
+        compile_definitions(env, {"middle": {"arguments": ["point"] * 3,
+                                "body": ["atom", "middle", [["var", 2], ["var", 1], ["var", 0]]]}},
+                            version="one")
+
+
 @pytest.mark.parametrize("body, diagnostic", [
     (["unary", "upper", ["var", 0]], "DependencyCycle"),
     (["unary", "base", ["var", 1]], "the body is not a typed formula over the symbols below it"),

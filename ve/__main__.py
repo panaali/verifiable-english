@@ -73,11 +73,15 @@ def main(argv=None):
         except VEError as exc:
             _emit({"status": "InvalidInput", "error": exc.to_dict()})
             return 2
+    if argv[:1] == ["document"]:
+        from .document import main as document_main
+        return document_main(argv[1:])
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
     commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
     commands.add_parser("definitions", help="preview definition wordings; --adopt English definitions and glossaries")
+    commands.add_parser("document", help="document check, render, coverage and readings")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
