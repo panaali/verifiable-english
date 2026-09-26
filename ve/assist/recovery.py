@@ -208,19 +208,36 @@ class RecoveryService:
         if action == "classify":
             from .ambiguity_patterns import PATTERNS
             matched = {p.id for p in PATTERNS if p.matches(snap["source"])}
-            remaining = snap["pending"].copy()
-            for row in previous["pending"]:
-                if not row.get("pattern_id"):
-                    if row not in remaining:
-                        return False
-                    remaining.remove(row)
+            if (event.get("matched_patterns") != [p.id for p in PATTERNS if p.matches(snap["source"])]
+                    or type(event.get("requested_pending")) is not list
+                    or event.get("parse_outcome") not in {"zero", "one", "multiple", "exhausted"}):
+                return False
+            expected_pending = ([row for row in previous["pending"] if not row.get("pattern_id")]
+                                + event["requested_pending"])
+            expected_readings = deepcopy(previous["readings"])
+            for pattern in event["matched_patterns"]:
+                result = snap["catalogue_results"].get(pattern)
+                if result is not None:
+                    for candidate in result.get("candidates", []):
+                        if not any(row.get("meaning_id") == candidate.get("meaning_id")
+                                   for row in expected_readings):
+                            expected_readings.append(candidate)
+                if (result is None or result.get("pending") or result.get("residual")
+                        or result.get("next_cursor") is not None):
+                    expected_pending.append({"pattern_id": pattern, "reason": "catalogue review incomplete"})
+            if event.get("discourse") != "complete":
+                expected_pending.append({"reason": "discourse reference unresolved"})
+            if event["parse_outcome"] == "multiple":
+                expected_pending.append({"reason": "multiple source readings unresolved"})
             if (previous["state"] != "analysing"
-                    or snap["readings"][:len(previous["readings"])] != previous["readings"]
+                    or snap["readings"] != expected_readings or snap["pending"] != expected_pending
                     or set(snap["catalogue_reviewed"]) - matched
                     or set(snap["catalogue_results"]) - matched
-                    or any(p not in snap["catalogue_reviewed"]
-                           and not any(row.get("pattern_id") == p for row in snap["pending"])
-                           for p in matched)
+                    or set(snap["catalogue_reviewed"]) != {
+                        p for p in matched if p in snap["catalogue_results"]
+                        and not snap["catalogue_results"][p].get("pending")
+                        and not snap["catalogue_results"][p].get("residual")
+                        and snap["catalogue_results"][p].get("next_cursor") is None}
                     or any(p not in snap["catalogue_results"] or snap["catalogue_results"][p].get("pending")
                            or snap["catalogue_results"][p].get("residual")
                            or snap["catalogue_results"][p].get("next_cursor") is not None
@@ -452,8 +469,9 @@ class RecoveryService:
         from .ambiguity_patterns import PATTERNS, review as review_pattern
         # A restart may refresh catalogue work, but cannot erase an unresolved
         # discourse or author clarification recorded by an earlier attempt.
+        requested_pending = deepcopy(list(pending))
         unit.pending = ([deepcopy(row) for row in unit.pending if not row.get("pattern_id")]
-                        + deepcopy(list(pending)))
+                        + requested_pending)
         matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
         bindings = catalogue_bindings or {}
         dispositions = catalogue_dispositions or {}
@@ -499,7 +517,7 @@ class RecoveryService:
             unit.state = "ready"
         self._event("classify", unit, parse_outcome=parse_outcome, vocabulary=vocabulary,
                     discourse=discourse, force=force, check=check, limit=unit.reason,
-                    matched_patterns=matched)
+                    matched_patterns=matched, requested_pending=deepcopy(requested_pending))
         return unit.state
 
     def continue_catalogue(self, unit_id, pattern_id, bindings, *, expected_revision=None):
