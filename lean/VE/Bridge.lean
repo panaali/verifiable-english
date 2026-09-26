@@ -107,8 +107,10 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
       throw s!"invalid signature: {p}"
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
-    exactFields entry ["sort", "description"]
+    displayFields entry ["sort", "description"] ["verbalisation"]
     description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      displayString words
     let s ← stringField entry "sort"
     unless sortNames.contains s do throw s!"unknown constant sort: {c}"
     pure (c, s)
