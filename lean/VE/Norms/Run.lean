@@ -1,4 +1,4 @@
-import VE.Norms.Replay
+import VE.Norms.Admission
 
 /-! The `ve_norms_route` executable (docs/spec/norms.md 11.4), invoked as
 `lean/.lake/build/bin/ve_norms_route <cases.json|->`. Each case is
@@ -24,8 +24,8 @@ import VE.Norms.Replay
   `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
 
-Admission of W2 documents with norm units is not implemented yet and is
-rejected explicitly. -/
+W2 documents containing norm units use regenerated layer leaves and the
+unchanged W2 graph checker. -/
 namespace VE.Norms.Run
 open Lean
 
@@ -40,11 +40,52 @@ def usesNormsPath (j : Json) : Bool :=
   let kind := match j.getObjValD "kind" with
     | .str k => k.startsWith "norms-"
     | _ => false
-  regulated || (j.getObjVal? "norms").toBool || kind
+  let normUnit := match (j.getObjValD "document").getObjValD "units" with
+    | .arr units => units.toList.any (fun u => ((u.getObjValD "content").getObjVal? "norm").toBool)
+    | _ => false
+  regulated || (j.getObjVal? "norms").toBool || kind || normUnit
+
+def runAdmission (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocument environment document
+  let report := Json.mkObj [("root", VE.Route.Run.claimJson res.report.root),
+    ("assumptions", Json.arr (res.report.assumptions.map VE.Route.Run.claimJson).toArray)]
+  let canonical ← Wire.canonicalEnvironmentJson environment
+  let envId ← VE.Route.Wire.environmentId res.src.ne.profiles canonical
+  let reportId ← VE.CertificateWire.digest
+    s!"ve-report-{VE.Route.Wire.identityVersion res.src.ne.profiles}\n"
+    (Json.mkObj [("environment_id", .str envId), ("document", document), ("report", report)])
+  return VE.Route.Wire.ok id [("admitted", .bool true), ("report", report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray)]
+
+/-- The executable admission result can only arise from a decoded, checked
+norm document with admitted leaves and a sound claim graph. -/
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    ∃ res : Admission.Admitted,
+      Admission.admitDocument environment document = .ok res ∧
+      VE.Graph.SoundReport.{0} res.src.ne.rv.environment res.graph res.report ∧
+      (∀ w ∈ res.wires, Admission.NodeAdmitted res.src res.doc w) ∧
+      (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
+        w.claim = leaf ∧ w.deduction = none ∧ Admission.NodeAdmitted res.src res.doc w) ∧
+      (∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
+        Sat S (elaborate res.src.D.T) →
+        (∀ leaf ∈ res.report.assumptions,
+          (¬ ∃ w ∈ res.wires, w.claim = leaf ∧ Admission.LayerLeaf res.src w) →
+          leaf.formula.denote S []) → res.report.root.formula.denote S []) := by
+  unfold runAdmission at h
+  obtain ⟨res, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨hsound, hnodes, hleaves⟩ :=
+    Admission.norms_wire_admission_sound environment document res hr
+  exact ⟨res, hr, hsound, hnodes, hleaves,
+    fun S hS hl ho => Admission.norms_wire_report_consequence environment document res hr S hS hl ho⟩
 
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
+  if kind == "admission" && usesNormsPath j then
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    return ← runAdmission id environment document
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
     let src ← Wire.decodeSource environment (j.getObjValD "norms")
@@ -68,6 +109,37 @@ def runCase (j : Json) : Except String Json := do
   if usesNormsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norms route"
   VE.Route.Run.runCase j
+
+/-- The public admission branch has the same provenance and graph-soundness
+guarantee as `runAdmission`; no successful norm input falls through to P0. -/
+theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesNormsPath j = true) :
+    ∃ res : Admission.Admitted,
+      Admission.admitDocument (j.getObjValD "environment")
+        (j.getObjValD "document") = .ok res ∧
+      VE.Graph.SoundReport.{0} res.src.ne.rv.environment res.graph res.report ∧
+      (∀ w ∈ res.wires, Admission.NodeAdmitted res.src res.doc w) ∧
+      (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
+        w.claim = leaf ∧ w.deduction = none ∧ Admission.NodeAdmitted res.src res.doc w) ∧
+      (∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
+        Sat S (elaborate res.src.D.T) →
+        (∀ leaf ∈ res.report.assumptions,
+          (¬ ∃ w ∈ res.wires, w.claim = leaf ∧ Admission.LayerLeaf res.src w) →
+          leaf.formula.denote S []) → res.report.root.formula.denote S []) := by
+  unfold runCase at h
+  obtain ⟨id, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [beq_self_eq_true, Bool.true_and, hn, ↓reduceIte] at h
+  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨document, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact runAdmission_sound id environment document answer (by simpa using h)
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j then

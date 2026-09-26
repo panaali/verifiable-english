@@ -136,13 +136,14 @@ prefix positions, table lookups) audited with the same allowlist.
   CONFLICT-FREE still requires a tableau certificate (binding decision 9.4); a
   Lean enumerator proved against the 7.2 bound would be the next step.
 * Wire path (11.4): `ve_norms_route <cases.json|->` implements
-  `norms-elaborate`, `norms-conflict` (packages or a witness) and
-  `norms-certificate`, and delegates P0 cases without norm constructs to
-  `Route.Run.runCase` unchanged. Not done: W2 document admission with norm units
-  (the `admission` kind, `layer:norms:<p>` leaves in reports, `ReportAdmitted`);
-  `norms_wire_acceptance` here covers entailment certificates, not W2 reports.
-  The JSON boundary itself (decoder faithfulness to the wire spec, digests) is
-  tested, not proved, as for the P0 routes.
+  `norms-elaborate`, `norms-conflict` (packages or a witness),
+  `norms-certificate`, and W2 FOL `admission` with active norm units and
+  `layer:norms:<p>` leaves. It delegates P0 cases without norm constructs to
+  `Route.Run.runCase` unchanged. `Norms.Run.norms_wire_acceptance` proves that
+  a successful public admission has a checked graph and exact admitted leaves;
+  `Norms.Admission.norms_wire_report_consequence` discharges its regenerated
+  layer leaves under the elaborations. The JSON boundary itself (decoder
+  faithfulness to the wire spec, digests) is tested, as for the P0 routes.
 * W5 flags (`functional`, `total`) and adapters do not exist in this tree:
   `Background_base` is literal distinctness only, and `InFragment` needs no flag
   clause yet. 10.1(h) (the `total` regression) waits for W5.
@@ -164,6 +165,7 @@ shared diagnostic text.
 | `norms-conflict` | `packages`: target → `{"environment_id", "document_hash", "target", "certificate"}` (Python `check_conflict(prove=True)`) | `verdict` `CONFLICT-FREE` or `UNKNOWN` with `detail` `missing certificate for <t>` / `invalid certificate for <t>`; `targets` |
 | `norms-conflict` | `witness`: `{"target", "model", "tuple"}` (base model, entity ids in argument order) | `verdict` `CONFLICT` or `UNKNOWN`, `target` |
 | `norms-certificate` | `premises`, `conclusion`, `certificate` bound to Background ++ layer premises ++ premises | `valid`, `background`, `layers` |
+| `admission` | `document` with norm units and W2 graph | `admitted`, `report`, `report_id`, `kinds` |
 
 Ad-hoc differential runs against the Python branch (`expand/w1-norms-py` at
 `e44fd27`): 9 fixed and about 1,300 generated documents (nesting, carve-outs,
