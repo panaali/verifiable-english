@@ -3,6 +3,19 @@ use serde_json::json;
 use ve_core::*;
 
 #[test]
+fn defined_declaration_is_explicitly_gated() {
+    let env = json!({"language":"ve.core@0.2",
+        "profiles":["definitions@0","relational-fol@0"],
+        "spec_revision":"ve-v0.2-expand2-2026-09-25",
+        "vocabulary":{"sorts":{"point":{"description":"point"}},
+            "predicates":{"base":{"arguments":["point"],"description":"base"},
+                "alias":{"arguments":["point"],"description":"alias",
+                    "defined":{"arguments":["point"],"body":["unary","base",["var",0]]}}},
+            "constants":{}}});
+    assert_eq!(Environment::from_value(&env).unwrap_err().code, "UnsupportedProfile");
+}
+
+#[test]
 fn shared_evaluation_corpus() {
     let cases = loads_json(include_bytes!("../../../conformance/evaluation.json")).unwrap();
     let mut count = 0;

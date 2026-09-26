@@ -32,6 +32,17 @@ private instance {ε α : Type} [BEq ε] [BEq α] : BEq (Except ε α) where
 #guard classify ["relational-fol@0", "relational-fol@0"] ==
   .error "UnsupportedProfile: profiles must be sorted and unique"
 
+private def definedVocabulary : Json := Json.mkObj [
+  ("sorts", Json.mkObj [("point", Json.mkObj [("description", .str "point")])]),
+  ("predicates", Json.mkObj [("alias", Json.mkObj [
+    ("arguments", toJson (["point"] : List String)), ("description", .str "alias"),
+    ("defined", Json.mkObj [("arguments", toJson (["point"] : List String)),
+      ("body", toJson (["top"] : List String))])])]),
+  ("constants", Json.mkObj [])]
+#guard (match VE.Route.Wire.decodeVocabulary definedVocabulary with
+  | .error message => message == "UnsupportedProfile: defined declarations require a Lean definition decoder"
+  | .ok _ => false)
+
 -- One dependency DAG: definitions above and below norms; cycles rejected.
 #guard dependencyOrder [⟨"violation", ["required", "done"]⟩, ⟨"required", ["safe"]⟩,
   ⟨"safe", ["base"]⟩] == .ok ["safe", "required", "violation"]
