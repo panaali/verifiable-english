@@ -18,14 +18,16 @@ above it).
 | `closure_acceptance` | The same on the closure family. |
 | `countermodel` | A finite model satisfying the regenerated Background is intended, so a checked countermodel refutes the statement. |
 | `elaborate_chain` | The executable elaborator only returns admitted definition lists. |
-| `Bundle.bundle_sound` | Every accepted lemma has compatible reading labels across its transitive leaves, and is true in every intended structure in which its non-background transitive leaves hold. |
+| `Bundle.bundle_sound` | Given a document reading-set registry, every accepted lemma has compatible reading labels and each reading leaf is bound to the unique registered formula at its set identity, version and index (or the registered disjunction for `all`). Its conclusion is true in every intended structure in which its non-background transitive leaves hold. |
 | `Alias.faithful`, `Alias.conservative`, `Alias.alias_acceptance` | The earlier worked example: one fresh unary predicate named by an existing unary predicate. |
 
 The citation rule under review (`Bundle.checkLemma`, mirrored by
 `ve/bundle.py`): a lemma may cite only lemmas strictly earlier in the same
 bundle, under the same environment identity (hence the same definitions
 version); reading choices are derived from transitive leaf labels, including
-versions, and must be compatible; every cited non-background leaf must occur
+versions, and must be compatible; every reading label is checked against the
+document's registered formula, including the disjunction for `all`; unresolved
+`cite:` premises are rejected; every cited non-background leaf must occur
 among the citing lemma's own hypotheses; the lemma must list
 exactly Background's labelled leaves, its own labelled hypotheses and every
 transitive leaf of what it cites, in that order without repeats; its
