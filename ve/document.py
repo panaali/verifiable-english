@@ -45,7 +45,10 @@ def _body(body: bytes):
                 i += 1
             if i == len(lines):
                 raise VEError("unclosed VE fence")
-            fences[uid] = content.decode("utf-8")
+            try:
+                fences[uid] = content.decode("utf-8")
+            except UnicodeDecodeError as exc:
+                raise VEError("VE fence is not UTF-8") from exc
         else:
             source.extend(line)
         i += 1
@@ -77,7 +80,7 @@ def _meaning(value, open_names):
     status, detail = next(iter(value.items()))
     if status == "contextual" and type(detail) is str and detail:
         return status
-    if status == "open" and type(detail) is list and detail and set(detail) <= open_names:
+    if status == "open" and type(detail) is list and detail and all(type(x) is str for x in detail) and set(detail) <= open_names:
         return status
     if status == "unformalised" and token(detail):
         return status
@@ -94,6 +97,8 @@ def _formula(env, unit, fences):
         return formula_from_data(env, content["ast"])
     if "fence" not in content or content["fence"] != unit["id"]:
         raise VEError("unit fence must match its id")
+    if unit["id"] not in fences:
+        raise VEError("missing VE fence")
     text = fences[unit["id"]]
     if unit.get("surface") == "english":
         from .english import parse_english
@@ -141,7 +146,7 @@ def load_document(path: str | Path):
         cursor = span[1]
         _check_kind(unit["kind"])
         status = _meaning(unit["meaning"], open_names)
-        if unit["support"] not in SUPPORTS:
+        if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
         formula = _formula(env, unit, fences)
         if status == "unformalised" and formula is not None:
