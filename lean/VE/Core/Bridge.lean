@@ -1,19 +1,17 @@
 import VE.Core.Consequence
 import VE.Core.RoundTrip
 import VE.ModelProofs
+import VE.Route.Gate
 
 namespace VE.Core.Bridge
 open Lean
 open VE.Bridge
 
 def decodeEnvironment (j : Json) : Except String Vocabulary := do
-  exactFields j ["language", "profiles", "spec_revision", "vocabulary"]
-  unless (← stringField j "language") == "ve.core@0.2" &&
-      (← strings (← j.getObjVal? "profiles")) ==
-        ["closure@0", "nary@0", "relational-fol@0"] &&
-      (← stringField j "spec_revision") == "ve-v0.2-expand2-2026-09-25" do
-    throw "unsupported closure+n-ary environment version/profiles"
-  let v ← j.getObjVal? "vocabulary"
+  let envelope ← VE.Route.Gate.decodeEnvelope j
+  unless envelope.family == .closureNary do
+    throw "unsupported closure+n-ary checker family"
+  let v := envelope.vocabulary
   exactFields v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
