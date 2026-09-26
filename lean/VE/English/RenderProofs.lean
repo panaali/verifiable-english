@@ -62,14 +62,14 @@ theorem built_nodup {M : String → Nat} : ∀ {Γ : List Ref}, Built M Γ → �
     rw [hr]
     exact bindRef_fresh hΓ hlt
 
-theorem idxOf?_getElem : ∀ {Γ : List Ref} {i : Nat} (h : i < Γ.length), Γ.Nodup → Γ.idxOf? Γ[i] = some i
+theorem idxOfOpt_getElem : ∀ {Γ : List Ref} {i : Nat} (h : i < Γ.length), Γ.Nodup → Γ.idxOf? Γ[i] = some i
   | [], _, h, _ => by simp at h
   | r :: Γ, 0, _, _ => by simp [List.idxOf?_cons]
   | r :: Γ, i + 1, h, hn => by
     obtain ⟨hr, hn⟩ := List.nodup_cons.mp hn
     have hi : i < Γ.length := by simpa using h
     have hne : r ≠ Γ[i] := fun e => hr (e ▸ List.getElem_mem hi)
-    simp [List.idxOf?_cons, hne, idxOf?_getElem hi hn]
+    simp [List.idxOf?_cons, hne, idxOfOpt_getElem hi hn]
 
 section
 variable {E : Environment} {L : Lexicon}
@@ -83,7 +83,7 @@ theorem renderTerm_correct (hC : Covers L E) {Γ : List Ref} {t : Term} {s : Str
     obtain ⟨r, hr, -⟩ := ht
     have hi : i < Γ.length := (List.getElem?_eq_some_iff.mp hr).1
     have hget : Γ[i]? = some Γ[i] := List.getElem?_eq_getElem hi
-    simp only [renderTerm, hget, Option.getD_some, TermTree.denote, idxOf?_getElem hi hn,
+    simp only [renderTerm, hget, Option.getD_some, TermTree.denote, idxOfOpt_getElem hi hn,
       Option.map_some, TermTree.ok, List.contains_iff_mem, true_and]
     exact hs _ (List.getElem_mem hi)
   | const c =>
