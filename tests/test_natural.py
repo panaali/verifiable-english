@@ -4,7 +4,8 @@ import pytest
 from lark import Lark
 
 from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
-                Implies, Not, Unary, Var, render)
+                Implies, Not, Or, Unary, Var, check_argument,
+                parse_english_argument, render)
 from ve.english import english_lark_grammar, parse_english
 from ve.ast import Le, Lt, Num, Scale
 from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
@@ -75,10 +76,53 @@ def test_web_app_first_example_is_one_checked_prose_argument():
         assert view.sentences[2]['role'] == 'conclusion'
         assert render(document, env, 've_natural', conclusions=(2,),
                       conclusion_marker=marker) == text
+        graph = parse_english_argument(env, text)
+        assert graph.deductions[0].premises == ('s1', 's2')
+        checked = check_argument(graph, search=False)
+        assert checked.findings['d3'] == ('follows',)
+        assert checked.remaining_assumptions == ('s1', 's2')
     with pytest.raises(Exception, match='no checked derivation'):
         parse_english(env, 'The API is reviewed. Therefore the API is safe.')
     with pytest.raises(Exception, match='earlier premise'):
         parse_english(env, 'Therefore the API is safe. The API is reviewed.')
+
+
+def test_it_requires_one_preceding_constant_referent():
+    data = vocabulary()
+    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
+    env = Environment(data)
+    one = Document((Unary('reviewed', Const('api')), Unary('active', Const('api'))))
+    assert natural_document(env, one).text == 'The API is reviewed. It is deployed.'
+    assert parse_english(env, 'The API is reviewed. It is deployed.') == one
+    with pytest.raises(Exception):
+        parse_english(env, 'It is deployed.')
+    many = Document((Unary('reviewed', Const('api')),
+                     Unary('ready', Const('alice')),
+                     Unary('active', Const('api'))))
+    assert 'It is deployed' not in natural_document(env, many).text
+    with pytest.raises(Exception):
+        parse_english(env, 'The API is reviewed. Alice is ready. It is deployed.')
+
+
+def test_three_item_subject_and_predicate_lists_have_exact_ast():
+    data = vocabulary()
+    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
+    data['vocabulary']['constants']['beta'] = {
+        'sort': 'item', 'description': 'Beta', 'verbalisation': 'Beta'}
+    data['vocabulary']['constants']['gamma'] = {
+        'sort': 'item', 'description': 'Gamma', 'verbalisation': 'Gamma'}
+    env = Environment(data)
+    for cls, connective, verb in ((And, 'and', 'are'), (Or, 'or', 'is')):
+        atoms = [Unary('reviewed', Const(n)) for n in ('api', 'beta', 'gamma')]
+        subjects = cls(atoms[0], cls(atoms[1], atoms[2]))
+        text = f'The API, Beta {connective} Gamma {verb} reviewed'
+        assert render_natural_sentence(subjects, env).text == text
+        assert parse_english(env, text + '.') == Document((subjects,))
+        atoms = [Unary(p, Const('api')) for p in ('reviewed', 'active', 'exempt')]
+        predicates = cls(atoms[0], cls(atoms[1], atoms[2]))
+        text = f'The API is reviewed, deployed {connective} exempt'
+        assert render_natural_sentence(predicates, env).text == text
+        assert parse_english(env, text + '.') == Document((predicates,))
 
 
 def test_writable_shared_copula_and_unqualified_owner():

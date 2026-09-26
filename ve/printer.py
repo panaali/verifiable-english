@@ -740,10 +740,25 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     if conclusion_marker not in ('Therefore', 'So', 'Hence', 'It follows that'):
         raise ValueError('Unsupported conclusion marker')
     marked = set(conclusions)
+    display_texts = [result.text for result in results]
+    from .english import EnglishVocabulary, _mentioned_constants
+    names = EnglishVocabulary(env, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary).constants
+    referents = set()
+    for i, formula in enumerate(document.formulas):
+        if (i not in marked and len(referents) == 1 and results[i].natural
+                and type(formula) is ast.Unary and type(formula.term) is ast.Const
+                and formula.term.name in referents):
+            head = names[formula.term.name]
+            head = head[0].upper() + head[1:]
+            if display_texts[i].startswith(head + ' '):
+                display_texts[i] = 'It' + display_texts[i][len(head):]
+        referents.update(_mentioned_constants(formula))
     def clause(result, index):
+        wording = display_texts[index]
         if index not in marked:
-            return result.text
-        tail = result.text
+            return wording
+        tail = wording
         if tail.startswith('The ') or tail.split(' ', 1)[0] in {
                 'Every', 'Some', 'No', 'For', 'There', 'It', 'If', 'Both',
                 'Either', 'Starting', 'All', 'At', 'This'}:
@@ -755,13 +770,22 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     if len(text) > MAX_NODES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
     from .english import _parse_english_document
-    parsed, _, _, parsed_conclusions = _parse_english_document(
-        env, text, vocabulary=vocabulary,
-        accept_suggested_vocabulary=accept_suggested_vocabulary)
+    try:
+        parsed, _, _, parsed_conclusions = _parse_english_document(
+            env, text, vocabulary=vocabulary,
+            accept_suggested_vocabulary=accept_suggested_vocabulary)
+    except Exception:
+        if display_texts == [result.text for result in results]:
+            raise
+        display_texts = [result.text for result in results]
+        text = ' '.join(clause(result, i) + '.' for i, result in enumerate(results))
+        parsed, _, _, parsed_conclusions = _parse_english_document(
+            env, text, vocabulary=vocabulary,
+            accept_suggested_vocabulary=accept_suggested_vocabulary)
     if parsed != document or parsed_conclusions != tuple(i for i in range(len(results)) if i in marked):
         raise ValueError('Rendered ve_natural document has a different reading')
     return NaturalView(text, env.environment_id, meaning_id(env, document),
-                       sentences=tuple({'text': result.text, 'form': result.form,
+                       sentences=tuple({'text': display_texts[i], 'form': result.form,
                                         'fallback_reason': result.reason,
                                         'role': 'conclusion' if i in marked else 'premise'}
                                        for i, result in enumerate(results)))

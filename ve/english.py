@@ -54,6 +54,21 @@ _SENTENCE_HEADS = frozenset('every for there some no if both either it starting 
 _CONCLUSION_MARKERS = ('therefore ', 'so ', 'hence ', 'it follows that ')
 
 
+def _mentioned_constants(value):
+    """Collect explicit constant references, including those under binders."""
+    found = set()
+    stack = [value]
+    while stack:
+        node = stack.pop()
+        if type(node) is ast.Const:
+            found.add(node.name)
+        for field in ('term', 'left', 'right', 'body'):
+            child = getattr(node, field, None)
+            if child is not None:
+                stack.append(child)
+    return found
+
+
 def _fold_sentence_initials(source, words):
     def fold(match):
         word = match[2]
@@ -549,6 +564,7 @@ class EnglishParser:
         self.nodes = 0
         self.extension_readings = []
         self.conclusions = []
+        self.referents = set()
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -607,6 +623,8 @@ class EnglishParser:
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
         terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
+        if len(self.referents) == 1 and not scope:
+            terms['it'] = ast.Const(next(iter(self.referents)))
         return terms
 
     def reference_pattern(self, ref, scope):
@@ -961,7 +979,7 @@ class EnglishParser:
             if listed:
                 self.need(' satisfies the following:'); self.space(); self.need('(a) ')
             return ast.Reach(kind, ast.Body(src[0], child((dst, src, *scope), listed=listed)), left, right)
-        return self.atom(scope)
+        return self.coordination(scope) or self.atom(scope)
 
     def natural_clause(self):
         start = self.i
@@ -1054,6 +1072,51 @@ class EnglishParser:
             return matches[0][1]
         return None
 
+    def coordination(self, scope):
+        """Parse a distributive three-item list with fixed right association."""
+        if scope:
+            return None
+        names = {text: name for name, text in self.words.constants.items()
+                 if re.fullmatch(r'(?:the )?[A-Za-z]+(?: [A-Za-z]+)*', text)}
+        names.update({text[0].upper() + text[1:]: name for text, name in tuple(names.items())
+                      if text.startswith('the ')})
+        adjectives = {template[len('{0} is '):]: name for name, template in self.words.predicates.items()
+                      if len(self.env.predicates[name].arguments) == 1
+                      and template.startswith('{0} is ')
+                      and re.fullmatch('[a-z]+', template[len('{0} is '):])}
+        if not names or not adjectives:
+            return None
+        term = '(?:' + '|'.join(re.escape(t) for t in sorted(names, key=len, reverse=True)) + ')'
+        adj = '(?:' + '|'.join(re.escape(t) for t in sorted(adjectives, key=len, reverse=True)) + ')'
+        subject = re.compile(f'({term}),\\s+({term})\\s+(and|or)\\s+({term})\\s+(are|is)\\s+({adj})\\b',
+                             re.I).match(self.source, self.i)
+        if subject:
+            a, b, join, c, verb, adjective = subject.groups()
+            symbols = (names.get(a), names.get(b), names.get(c))
+            predicate = adjectives.get(adjective.lower())
+            if (all(symbols) and len(set(symbols)) == 3 and predicate
+                    and verb.lower() == ('are' if join.lower() == 'and' else 'is')
+                    and all(self.env.constants[n].sort == self.env.predicates[predicate].arguments[0]
+                            for n in symbols)):
+                self.i = subject.end()
+                atoms = [ast.Unary(predicate, ast.Const(n)) for n in symbols]
+                cls = ast.And if join.lower() == 'and' else ast.Or
+                return cls(atoms[0], cls(atoms[1], atoms[2]))
+        predicates = re.compile(f'({term})\\s+is\\s+({adj}),\\s+({adj})\\s+(and|or)\\s+({adj})\\b',
+                                re.I).match(self.source, self.i)
+        if predicates:
+            name, a, b, join, c = predicates.groups()
+            symbol = names.get(name)
+            symbols = tuple(adjectives.get(x.lower()) for x in (a, b, c))
+            if (symbol and all(symbols) and len(set(symbols)) == 3
+                    and all(self.env.constants[symbol].sort == self.env.predicates[p].arguments[0]
+                            for p in symbols)):
+                self.i = predicates.end()
+                atoms = [ast.Unary(p, ast.Const(symbol)) for p in symbols]
+                cls = ast.And if join.lower() == 'and' else ast.Or
+                return cls(atoms[0], cls(atoms[1], atoms[2]))
+        return None
+
     def document(self):
         formulas = []
         self.source = _fold_sentence_initials(self.source, self.words)
@@ -1061,6 +1124,7 @@ class EnglishParser:
             if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
                 self.conclusions.append(len(formulas))
             formulas.append(self.formula())
+            self.referents.update(_mentioned_constants(formulas[-1]))
             self.need('.')
             if self.i < len(self.source): self.space()
         if not formulas: self.error('Write at least one statement ending with a period.')
@@ -1127,6 +1191,40 @@ def parse_english(env, source, **options):
     return _parse_english_document(env, source, **options)[0]
 
 
+def parse_english_argument(env, source, **options):
+    """Build checked claim-graph edges for marked conclusions.
+
+    Every unmarked sentence is an asserted premise. An edge references all
+    earlier unmarked premises in the document, including earlier paragraphs.
+    Marked conclusions never become assumptions or premises of later edges.
+    """
+    from .argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
+    from .entailment import prove_entailment
+    from .printer import print_formula
+    document, _, _, conclusions = _parse_english_document(env, source, **options)
+    marked = set(conclusions)
+    claims = tuple(Claim.create(env, f's{i + 1}', print_formula(env, formula) + '.\n',
+                                candidate_ast=formula)
+                   for i, formula in enumerate(document.formulas))
+    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in range(i) if j not in marked),
+                            f's{i + 1}') for i in conclusions)
+    graph = ArgumentGraph(env, claims, edges, claims[-1].name)
+    checked_edges = []
+    for i, edge in zip(conclusions, edges):
+        premises = tuple(document.formulas[j] for j in range(i) if j not in marked)
+        proof = prove_entailment(env, premises, document.formulas[i])
+        if proof.status != 'Found':
+            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises.')
+        checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
+                                       ({'edge_id': deduction_identity(graph, edge),
+                                         'direction': 'follows', 'proof': proof.certificate},)))
+    graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
+    result = check_argument(graph, search=False)
+    if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
+        raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
+    return graph
+
+
 def english_legend(env, style='json', **options):
     words = EnglishVocabulary(env, **options)
     record = {
@@ -1186,7 +1284,11 @@ def english_lark_grammar(env, **options):
         'start: (sentence ".")+',
         'sentence: formula | conclusion_marker formula',
         'conclusion_marker: "therefore" | "so" | "hence" | "it follows that"',
-        '?formula: atom | negation | compact | listing | universal | existential | reach',
+        '?formula: atom | negation | compact | listing | universal | existential | reach | coordination',
+        'coordination: term "," term "and" term "are" adjective -> subject_and\n'
+        '            | term "," term "or" term "is" adjective -> subject_or\n'
+        '            | term "is" adjective "," adjective "and" adjective -> predicate_and\n'
+        '            | term "is" adjective "," adjective "or" adjective -> predicate_or',
         'negation: "it is not the case that" formula',
         'compact: "both" atom "and" atom -> conjunction\n'
         '       | "either" atom "or" atom ", or both" -> disjunction\n'
@@ -1213,7 +1315,7 @@ def english_lark_grammar(env, **options):
         '           | "there is" article declaration "that" relative -> existential_relative',
         'article: "a" | "an"',
         'declaration: noun | ' + ' | '.join(lit(word) + 'i noun' for word in _ORDINALS) + ' | noun "named"i LABEL',
-        'term: constant | "that"i noun | ' + ' | '.join(lit('the ' + word) + 'i noun' for word in _ORDINALS) + ' | LABEL',
+        'term: constant | "it" | "that"i noun | ' + ' | '.join(lit('the ' + word) + 'i noun' for word in _ORDINALS) + ' | LABEL',
         'reach: "starting from" term "," term "is reachable by" count "or more" relation "steps" -> named_reach\n'
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies the following:" "(a)" formula -> body_reach',
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies this condition:" formula -> body_reach',
@@ -1269,6 +1371,11 @@ def english_lark_grammar(env, **options):
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
+    adjectives = sorted({template[len('{0} is '):] for name, template in words.predicates.items()
+                         if len(env.predicates[name].arguments) == 1
+                         and template.startswith('{0} is ')
+                         and re.fullmatch('[a-z]+', template[len('{0} is '):])})
+    rules.append('adjective: ' + (' | '.join(lit(a) + 'i' for a in adjectives) or 'IMPOSSIBLE'))
     for record in surface_registry.records():
         if record.grammar_hook is None or not surface_registry.enabled(record, env):
             continue
