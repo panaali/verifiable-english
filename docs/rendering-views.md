@@ -1,5 +1,10 @@
 # Deterministic rendering views, version 3
 
+This page records the historical five-view comparison cohort. Its former
+`ve_natural` member is now named `ve_explicit`; see [the audited natural view](natural-view.md)
+for the reader-facing `ve_natural` renderer. The examples and structural
+inverse rules below describe `ve_explicit`.
+
 The writable `ve_english` surface is specified separately in
 [English surface, version 1](english-surface.md). It preserves the canonical AST
 and all five historical renderings described here, while adding noun references,
@@ -10,17 +15,17 @@ input and output). An explicit `--view` takes precedence over the surface defaul
 The five-view experimental comparison cohort below is frozen for reproducibility.
 
 `ve.render(ast, env, view, naming="per_statement")` returns text for a closed formula or a `Document`.
-`view` is `fol_symbols`, `fol_keywords`, `ve_strict`, `ve_natural`, or `ve_fluent`. A single
+`view` is `fol_symbols`, `fol_keywords`, `ve_strict`, `ve_explicit`, or `ve_fluent`. A single
 formula has no final punctuation. Documents append a period and LF to every
 statement. All views preserve lexical case without sentence capitalization.
-`natural_formula(...).text` follows the same unpunctuated formula policy.
+`natural_formula(...).text` is now the audited natural rendering and follows the
+same unpunctuated formula policy.
 Every view has the same 65,536-byte UTF-8 output limit; formula checks reserve
 two bytes for the period and LF of a possible one-statement document. The
 legend is additional cell context and is not charged against this claim-text limit.
 `print_formula` and `print_document` retain the exact strict canonical bytes.
 `natural_formula` and `natural_document` additionally return environment and
-meaning IDs with renderer `ve.ace-explicit`, version `3`. Version 3 tightens
-lexical acceptance and unifies naming scope; regenerate prior view artifacts.
+meaning IDs with renderer `ve.natural-audited`, version `1`.
 
 The first four surfaces use **one recursive traversal** in `ve/printer.py`. It assigns
 `x0`, `x1`, ... to binders in preorder, follows the selected naming scope, resolves every
@@ -29,7 +34,7 @@ order. Every immediate **formula operand**, including an atomic operand, is
 parenthesized. No surface changes this grouping policy or elides a binder,
 operand, statement, or condition. FOL predicate application `p(t)` / `r(t,u)`
 has additional lexical argument-list delimiters; these do not group formulas.
-The natural surface retains the common grouping, even where fluent prose could
+The explicit surface retains the common grouping, even where fluent prose could
 omit parentheses. The fifth surface uses `ve/fluent.py`, follows the same binder
 and operand preorder, and contracts only structures with an explicit inverse
 (see below). None of these views reorders or simplifies the AST. All five views default to `per_statement`: counters restart in every statement.
@@ -39,7 +44,7 @@ cells; `render_cell` records it in the identical legend. Formula-only calls have
 one statement under either policy. Canonical serialization remains per-statement.
 Fluent version 3 uses distinct sort letters and mechanically checked negatives.
 
-| Constructor | FOL symbols | FOL keywords | VE strict | VE natural |
+| Constructor | FOL symbols | FOL keywords | VE strict | VE explicit |
 |---|---|---|---|---|
 | Top / Bottom | `⊤` / `⊥` | `true` / `false` | `true` / `false` | `true` / `false` |
 | Unary | `p(t)` | `p(t)` | `t is p` | template or strict atom |
@@ -466,7 +471,7 @@ the legend. CLI: `python -m ve render --env ENV.json --view ve_fluent --with-leg
 `import-fol`. `--legend-style compact|json` selects the legend format; it does not
 add a legend without `--with-legend`.
 The legacy `natural` alias emits its JSON wrapper without `--with-legend`; with
-that flag it emits the same complete plain-text cell as `ve_natural`.
+that flag it emits the same complete plain-text cell as `ve_explicit`.
 
 `render_vocabulary(env, view="ve_strict", naming="per_statement", style="compact")`
 returns just the compact legend. For example, entry lines can look like:
