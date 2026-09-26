@@ -89,8 +89,11 @@ def parse_definition(env: Environment, sentence: str) -> Definition:
     if not left.startswith("for every ") or cut < 0:
         raise VEError("A definition sentence introduces its arguments with 'for every'")
     prefix, head_text = left[:cut + 2], left[cut + 2:]
-    head = parse_english(env, prefix + head_text + ".").formulas[0]
-    body = parse_english(env, prefix + body_text + ".").formulas[0]
+    head_doc = parse_english(env, prefix + head_text + ".")
+    body_doc = parse_english(env, prefix + body_text + ".")
+    if len(head_doc.formulas) != 1 or len(body_doc.formulas) != 1:
+        raise VEError("A definition sentence has exactly one head and one body statement")
+    head, body = head_doc.formulas[0], body_doc.formulas[0]
     arguments = []
     while type(head) is ast.Forall and type(body) is ast.Forall and head.sort == body.sort:
         arguments.append(head.sort)
@@ -149,18 +152,9 @@ def parse_glossary(env: Environment, sentence: str) -> tuple[str, ...]:
     return tuple(names)
 
 
-def render_glossary(env: Environment, names) -> str:
-    words = EnglishVocabulary(env)
-    phrase = lambda name: re.sub(r"^is (?:an? )?", "", words.predicates[name]
-                                 .removeprefix("{0} ").removesuffix(" {1}"))
-    listed = [phrase(name) for name in names]
-    body = listed[0] if len(listed) == 1 else ", ".join(listed[:-1]) + " and " + listed[-1]
-    return GLOSSARY_PREFIX + body + GLOSSARY_SUFFIX + "\n"
-
-
 def _check_lemma_names(names) -> None:
     for name in names:
-        if not name or ", " in name or " and " in name or not name[0].isalnum():
+        if type(name) is not str or re.fullmatch(r"[A-Za-z0-9_.-]+", name) is None or not name[0].isalnum():
             raise VEError(f"Lemma name {name!r} cannot be cited in English")
 
 
@@ -178,20 +172,21 @@ def render_citation(env: Environment, cited, conclusion) -> str:
 
 def parse_citation(env: Environment, sentence: str, lemma_names) -> tuple[tuple[str, ...], ast.Formula]:
     """The cited lemma names and the conclusion of a citation sentence. The
-    names end at the first comma (names contain no list separators), and the
+    names end at the comma before the conclusion, and the
     conclusion passes the complete all-derivations check."""
     _check_lemma_names(lemma_names)
     text = sentence.strip()
     cited: tuple[str, ...] = ()
     if text.startswith("By "):
-        cut = text.find(", ")
-        if cut < 0:
+        names = set(lemma_names)
+        match = re.match(r"By ([A-Za-z0-9_.-]+(?:, [A-Za-z0-9_.-]+)* and [A-Za-z0-9_.-]+|[A-Za-z0-9_.-]+), ", text)
+        if match is None:
             raise VEError("A citation reads 'By T1 and T2, <statement>.'")
-        cited = tuple(re.split(r", and |, | and ", text[3:cut]))
-        unknown = [name for name in cited if name not in lemma_names]
+        cited = tuple(re.split(r", | and ", match[1]))
+        unknown = [name for name in cited if name not in names]
         if unknown:
             raise VEError(f"Citation names an unknown lemma: {unknown[0]}")
-        text = text[cut + 2:]
+        text = text[match.end():]
     document = parse_english(env, text)
     if len(document.formulas) != 1:
         raise VEError("A citation sentence has one conclusion")

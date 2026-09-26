@@ -154,6 +154,25 @@ def test_definition_sentence_parts_pass_the_all_derivations_check(monkeypatch):
                     "for every person, both that person is staff and that person is badged."]
 
 
+@pytest.mark.parametrize("sentence", [
+    "By definition, for every person, that person is trusted exactly when that person is staff. Ann is badged.",
+    "By definition, for every person, that person is trusted exactly when that person is staff. This is impossible.",
+])
+def test_definition_rejects_extra_english_statement(sentence):
+    env = Environment(staff_env(("definitions@0", "relational-fol@0")))
+    with pytest.raises(VEError):
+        parse_definition(env, sentence)
+    with pytest.raises(VEError):
+        adopt(staff_env(), sentence)
+
+
+def test_no_keyword_cannot_be_a_constant_in_definition_profile():
+    raw = staff_env(("definitions@0", "relational-fol@0"))
+    raw["vocabulary"]["constants"]["no"] = {"sort": "person", "description": "No"}
+    with pytest.raises(VEError, match="Reserved|reserved"):
+        Environment(raw)
+
+
 def test_citation_sentences_round_trip():
     data = json.loads((ROOT / "usecases/math-mini-paper/t7-definitions-bundle.json").read_text())
     env = Environment(data["environment"])
@@ -167,3 +186,5 @@ def test_citation_sentences_round_trip():
     assert report["lemmas"][-1]["english"].startswith("By T7a and T7b, for every point")
     with pytest.raises(VEError, match="unknown lemma"):
         parse_citation(env, report["lemmas"][-1]["english"].replace("T7b", "T9"), names)
+    three = render_citation(env, ["T7a", "T7b", "T7"], conclusion)
+    assert parse_citation(env, three, names) == (("T7a", "T7b", "T7"), conclusion)
