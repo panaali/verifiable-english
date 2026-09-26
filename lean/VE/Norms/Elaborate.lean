@@ -362,7 +362,7 @@ theorem elaborate_iff_at (D : Doc) (h : WellFormed D = true) (r : Regulated)
     (elabPremise D.T r).denote S [] ↔ IntendedAt D.T r S := by
   have hv := valid_of_wellFormed D h
   have hs := hv.regulated r hr
-  obtain ⟨k, hk⟩ := mem_syms_getElem? hs
+  obtain ⟨k, hk⟩ := mem_syms_index hs
   exact elab_iff_intended D.T r (regulated_arity hv hs) S
     (decides_forget hv hk [r.name] (self_hidden hv hk) S)
 

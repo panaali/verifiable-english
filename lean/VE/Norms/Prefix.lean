@@ -133,7 +133,7 @@ theorem pair_premise_iff (pr : Pair) (ha : Arity pr.sorts) (S : VE.Structure.{u}
 
 /-! ## Positions -/
 
-theorem idxOf_eq_of_getElem? {l : List String} (h : l.Nodup) :
+theorem idxOf_eq_of_getElemOpt {l : List String} (h : l.Nodup) :
     ∀ {j : Nat} {a : String}, l[j]? = some a → l.idxOf a = j := by
   induction l with
   | nil => intro j a h; simp at h
@@ -155,7 +155,7 @@ theorem idxOf_eq_of_getElem? {l : List String} (h : l.Nodup) :
 
 theorem idx_eq {D : Doc} (hv : Valid D) {k : Nat} {q : Sym} (hk : (syms D.T)[k]? = some q) :
     idx D.T q.name = k :=
-  idxOf_eq_of_getElem? hv.nodup (getElem?_names hk)
+  idxOf_eq_of_getElemOpt hv.nodup (names_getElemOpt hk)
 
 theorem before_eq {D : Doc} (hv : Valid D) {k : Nat} {q : Sym} (hk : (syms D.T)[k]? = some q) :
     before D q.name = k :=
@@ -169,8 +169,8 @@ theorem pair_members {D : Doc} (hv : Valid D) {pr : Pair} (hpr : pr ∈ pairs D.
     (∃ j m, (syms D.T)[j]? = some (.reg m) ∧ m.name = pr.perm ∧ m.sorts = pr.sorts ∧
       idx D.T pr.perm = j) := by
   obtain ⟨hne, ⟨r, hr, hrn, hrs⟩, ⟨m, hm, hmn, hms⟩⟩ := hv.pairs pr hpr
-  obtain ⟨i, hi⟩ := mem_syms_getElem? hr
-  obtain ⟨j, hj⟩ := mem_syms_getElem? hm
+  obtain ⟨i, hi⟩ := mem_syms_index hr
+  obtain ⟨j, hj⟩ := mem_syms_index hm
   exact ⟨hne, ⟨i, r, hi, hrn, hrs, hrn ▸ idx_eq hv hi⟩, ⟨j, m, hj, hmn, hms, hmn ▸ idx_eq hv hj⟩⟩
 
 theorem pair_arity {D : Doc} (hv : Valid D) {pr : Pair} (hpr : pr ∈ pairs D.T) : Arity pr.sorts := by
@@ -209,7 +209,7 @@ theorem envAt_succ {D : Doc} {k : Nat} {q : Sym} (hk : (syms D.T)[k]? = some q) 
   have hd : (layerNames D.T).drop k = q.name :: (layerNames D.T).drop (k + 1) := by
     rw [List.drop_eq_getElem_cons hlt]
     congr 1
-    have := getElem?_names hk
+    have := names_getElemOpt hk
     rw [List.getElem?_eq_getElem hlt] at this
     exact Option.some.inj this
   simp only [envAt, hide, hd]
@@ -238,7 +238,7 @@ theorem restrictAll_forget {T : Tree} {n : String} (hn : n ∈ layerNames T) (S 
 
 theorem name_mem_layerNames {T : Tree} {k : Nat} {q : Sym} (hk : (syms T)[k]? = some q) :
     q.name ∈ layerNames T :=
-  List.mem_of_getElem? (getElem?_names hk)
+  List.mem_of_getElem? (names_getElemOpt hk)
 
 /-- A base-admissible structure has no tuple of a layer symbol. -/
 theorem restrictAll_self {D : Doc} (S : VE.Structure.{u}) (h : S.Admissible (envAt D 0)) :
@@ -268,7 +268,7 @@ theorem meaning_forget {D : Doc} (hv : Valid D) {j k : Nat} {q q' : Sym} (hj : (
     (hk : (syms D.T)[k]? = some q') (hjk : j < k) (S : VE.Structure.{u}) :
     Meaning D.T q (forget [q'.name] S) ↔ Meaning D.T q S := by
   have hne : q.name ≠ q'.name := fun e => by
-    have := nodup_getElem?_inj hv.nodup (getElem?_names hj) (e ▸ getElem?_names hk); omega
+    have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hj) (e ▸ names_getElemOpt hk); omega
   have hid : ∀ r ∈ [q'.name], (envAt D j).predicates r = none := by
     intro r hr; rw [List.mem_singleton.mp hr]; exact envAt_later hv hk (Nat.le_of_lt hjk)
   unfold Meaning
@@ -405,7 +405,7 @@ theorem sat_document {D : Doc} (hv : Valid D) (S : VE.Structure.{u}) :
       Sat S (backgroundBase D) ∧ MeaningsBelow D (size D) S ∧ PairsBelow D (size D) S := by
   have hall : ∀ q ∈ syms D.T, (q.premise D.T).denote S [] ↔ Meaning D.T q S := by
     intro q hq
-    obtain ⟨k, hk⟩ := mem_syms_getElem? hq
+    obtain ⟨k, hk⟩ := mem_syms_index hq
     exact premise_iff_meaning hv hk S
   have hprem : Sat S (definitionPremises D.T ++ elaborate D.T) ↔ ∀ q ∈ syms D.T, Meaning D.T q S := by
     simp only [Sat, List.mem_append, definitionPremises, elaborate, List.mem_filterMap]
@@ -425,7 +425,7 @@ theorem sat_document {D : Doc} (hv : Valid D) (S : VE.Structure.{u}) :
   have hmb : MeaningsBelow D (size D) S ↔ ∀ q ∈ syms D.T, Meaning D.T q S := by
     constructor
     · intro h q hq
-      obtain ⟨k, hk⟩ := mem_syms_getElem? hq
+      obtain ⟨k, hk⟩ := mem_syms_index hq
       exact h k q (List.getElem?_eq_some_iff.mp hk).1 hk
     · intro h j q _ hq
       exact h q (List.mem_of_getElem? hq)

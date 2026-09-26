@@ -67,7 +67,7 @@ theorem expTable_none (T : Tree) : ∀ (k : Nat) (n : String), n ∉ (layerNames
     | some q =>
       simp only [expTable, hq]
       have hk : (layerNames T).take (k + 1) = (layerNames T).take k ++ [q.name] := by
-        rw [List.take_succ, getElem?_names hq]; rfl
+        rw [List.take_succ, names_getElemOpt hq]; rfl
       rw [hk] at hn
       simp only [List.mem_append, List.mem_singleton, not_or] at hn
       simp only [hn.2, if_false]
@@ -106,7 +106,7 @@ theorem expTable_at {D : Doc} (hv : Valid D) : ∀ (k j : Nat) (q : Sym), j < k 
     | some q' =>
       simp only [expTable, hq']
       by_cases he : q.name = q'.name
-      · have := nodup_getElem?_inj hv.nodup (getElem?_names hq) (he ▸ getElem?_names hq')
+      · have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hq) (he ▸ names_getElemOpt hq')
         subst this
         rw [hq] at hq'
         cases hq'
@@ -123,7 +123,7 @@ theorem expTable_at {D : Doc} (hv : Valid D) : ∀ (k j : Nat) (q : Sym), j < k 
 
 /-! ## Generic substitution lemmas -/
 
-theorem term_defined' {E : VE.Environment} {S : VE.Structure.{u}}
+theorem term_defined_consts {E : VE.Environment} {S : VE.Structure.{u}}
     (hc : ∀ c s, E.constants c = some s → ∃ v, S.constant c = some v ∧ S.domain s v)
     {Γ : List String} {ρ : VE.Valuation S} (hρ : VE.Valuation.Typed S Γ ρ)
     {t : VE.Term} {s : String} (ht : t.sortOf E Γ = some s) :
@@ -193,7 +193,7 @@ theorem substWith_denote (tbl : Table) (Ehi Elo : VE.Environment) (S : VE.Struct
     · rename_i F hF
       obtain ⟨ss, hss, hFw, hFa⟩ := htbl q F hF
       rw [hq] at hss; cases hss
-      obtain ⟨v, hv, hd⟩ := term_defined' hconst hρ ht
+      obtain ⟨v, hv, hd⟩ := term_defined_consts hconst hρ ht
       rw [inst_denote S Elo F [s] [t] ρ [v] hFw rfl ⟨rfl, fun i h₁ _ => by
         match i, h₁ with | 0, _ => exact hv⟩]
       have := hFa [v] ⟨hd, trivial⟩
@@ -209,8 +209,8 @@ theorem substWith_denote (tbl : Table) (Ehi Elo : VE.Environment) (S : VE.Struct
     · rename_i F hF
       obtain ⟨ss, hss, hFw, hFa⟩ := htbl q F hF
       rw [hq] at hss; cases hss
-      obtain ⟨v, hv, hd⟩ := term_defined' hconst hρ ht
-      obtain ⟨v', hv', hd'⟩ := term_defined' hconst hρ hw
+      obtain ⟨v, hv, hd⟩ := term_defined_consts hconst hρ ht
+      obtain ⟨v', hv', hd'⟩ := term_defined_consts hconst hρ hw
       rw [inst_denote S Elo F [s', s] [w, t] ρ [v', v] hFw rfl ⟨rfl, fun i h₁ _ => by
         match i, h₁ with
         | 0, _ => exact hv'

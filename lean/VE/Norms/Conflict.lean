@@ -132,7 +132,7 @@ theorem pairsAt_members {pr : Pair} (hpr : pr ∈ pairsAt D.T k) :
 
 theorem name_ne_of_lt {j : Nat} {q' : Sym} (hj : (syms D.T)[j]? = some q') (hjk : j < k) :
     q'.name ≠ q.name := fun e => by
-  have := nodup_getElem?_inj hv.nodup (getElem?_names hj) (e ▸ getElem?_names hk); omega
+  have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hj) (e ▸ names_getElemOpt hk); omega
 
 /-- Local unique expansion: an admissible prefix has exactly one admissible
 expansion by the next layer symbol iff it passes the local test. -/
@@ -243,7 +243,7 @@ theorem conflictFree_expands (D : Doc) (h : WellFormed D = true) (r : Regulated)
     Unique (fun S => forget [r.name] S = S₀ ∧ AdmissibleOut D r.name S ∧
       (elabPremise D.T r).denote S []) ↔ ConflictFreeAt D r.name S₀ := by
   have hv := valid_of_wellFormed D h
-  obtain ⟨k, hk⟩ := mem_syms_getElem? (hv.regulated r hr)
+  obtain ⟨k, hk⟩ := mem_syms_index (hv.regulated r hr)
   have hb : before D r.name = k := before_eq hv hk
   unfold ConflictFreeAt AdmissibleOut
   rw [hb] at h₀ ⊢
@@ -290,9 +290,9 @@ theorem find_regulated {D : Doc} (hv : Valid D) {k : Nat} {r : Regulated}
     simp at this
   | some r' =>
     have hn : r'.name = r.name := by simpa using List.find?_some hf
-    obtain ⟨k', hk'⟩ := mem_syms_getElem? (hv.regulated r' (List.mem_of_find?_eq_some hf))
-    have := nodup_getElem?_inj hv.nodup (getElem?_names hk')
-      (by show (layerNames D.T)[k]? = some r'.name; rw [hn]; exact getElem?_names hk)
+    obtain ⟨k', hk'⟩ := mem_syms_index (hv.regulated r' (List.mem_of_find?_eq_some hf))
+    have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hk')
+      (by show (layerNames D.T)[k]? = some r'.name; rw [hn]; exact names_getElemOpt hk)
     subst this
     rw [hk] at hk'
     cases hk'
@@ -389,7 +389,7 @@ theorem conflictFreeAt_of_base {D : Doc} (hv : Valid D) {k : Nat} {q : Sym}
       · have hms : m.sorts = pr.sorts := by
           have := (pair_members hv hpr').2.2
           obtain ⟨j', m', hj', hm'n, hm's, _⟩ := this
-          have := nodup_getElem?_inj hv.nodup (getElem?_names hj) (by simpa [Sym.name, hmn, ← hm'n] using getElem?_names hj')
+          have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hj) (by simpa [Sym.name, hmn, ← hm'n] using names_getElemOpt hj')
           subst this; rw [hj] at hj'; cases hj'; exact hm's
         rw [← hmn] at hp ⊢
         exact (outcomeBase_relation hv hj hjk S₀ hc hM vs (by simpa [hms, ← hrs] using hvs)).mp hp
@@ -397,7 +397,7 @@ theorem conflictFreeAt_of_base {D : Doc} (hv : Valid D) {k : Nat} {q : Sym}
         fun _ ⟨hreq, hno'⟩ => hno ⟨?_, fun hp => hno' ?_⟩⟩
       · have hms : m.sorts = pr.sorts := by
           obtain ⟨_, ⟨j', m', hj', hm'n, hm's, _⟩, _⟩ := pair_members hv hpr'
-          have := nodup_getElem?_inj hv.nodup (getElem?_names hj) (by simpa [Sym.name, hmn, ← hm'n] using getElem?_names hj')
+          have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hj) (by simpa [Sym.name, hmn, ← hm'n] using names_getElemOpt hj')
           subst this; rw [hj] at hj'; cases hj'; exact hm's
         rw [← hmn] at hreq ⊢
         exact (outcomeBase_relation hv hj hjk S₀ hc hM vs (by simpa [hms, ← hrs] using hvs)).mpr hreq
@@ -454,7 +454,7 @@ theorem conflictFree_expands_document (D : Doc) (h : WellFormed D = true) (B : V
     obtain ⟨hA, _, hM, hP⟩ := (prefix_char hv _ (Nat.le_refl _) S).mp hpa
     have hc : ConstantsTyped D S := hA.1
     refine ⟨fun r hr vs hvs hcon => ?_, fun pr hpr vs hvs hcon => ?_⟩
-    · obtain ⟨k, hk⟩ := mem_syms_getElem? (hv.regulated r hr)
+    · obtain ⟨k, hk⟩ := mem_syms_index (hv.regulated r hr)
       have hkl := (List.getElem?_eq_some_iff.mp hk).1
       rw [tupleTyped_restrictAll] at hvs
       exact (hM k _ hkl hk vs hvs).1 ((conflict_denote hv hk S hc
@@ -487,7 +487,7 @@ theorem conflictFree_prefix (D : Doc) (h : WellFormed D = true) (r : Regulated)
     (S₀ : VE.Structure.{u}) (h₀ : PrefixAdmissible D (before D r.name) S₀) :
     ConflictFreeAt D r.name S₀ := by
   have hv := valid_of_wellFormed D h
-  obtain ⟨k, hk⟩ := mem_syms_getElem? (hv.regulated r hr)
+  obtain ⟨k, hk⟩ := mem_syms_index (hv.regulated r hr)
   have hb : before D r.name = k := before_eq hv hk
   unfold ConflictFreeAt
   rw [hb] at h₀ ⊢
