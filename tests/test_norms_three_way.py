@@ -328,6 +328,17 @@ def test_profile_leaves_are_admitted_only_as_regenerated_pair_premises(lean_exec
         assert row["status"] == "error", row
 
 
+def test_regulated_environment_without_norm_units_matches_lean(lean_executable):
+    from ve.admission import admit_document
+    from tests.test_norm_admission import no_norm_unit_documents
+
+    env, documents = no_norm_unit_documents()
+    rows = run(lean_executable, [{"id": k, "kind": "admission", "environment": env.to_dict(),
+                                  "document": d} for k, d in documents.items()])
+    for row in rows:
+        assert row == {"id": row["id"], "status": "ok", **admit_document(env, documents[row["id"]])}
+
+
 def test_inactive_norm_content_is_rejected_by_lean(lean_executable):
     from ve.admission import admit_document
     from tests.test_norm_admission import inactive_norm_mutants, source

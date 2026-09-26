@@ -146,3 +146,25 @@ def test_non_string_rule_fields_are_diagnosed(field, value):
     content["norm"][field] = value
     with pytest.raises(VEError, match="must be strings"):
         NormDocument(env, [content])
+
+
+def no_norm_unit_documents():
+    """A regulated environment is a norm construct even without norm units: its
+    regenerated (default-only) layers are the admissible layer leaves."""
+    env, _ = source()
+    empty = formula_to_data(env, NormDocument(env, []).elaborate("permitted"))
+    leaf = {"name": "l", "ast": empty, "label": "layer:norms:permitted"}
+    asserted = {"id": "u", "span": [0, 1], "kind": "asserted", "content": ["top"]}
+    return env, {"no units": {"units": [], "graph": {"root": "l", "nodes": [leaf]}},
+                 "asserted unit": {"units": [asserted], "graph": {"root": "l", "nodes": [leaf]}}}
+
+
+def test_regulated_environment_routes_to_norm_admission_without_norm_units():
+    env, documents = no_norm_unit_documents()
+    for document in documents.values():
+        admitted = admit_document(env, document)
+        assert admitted["report"]["assumptions"][0]["label"] == "layer:norms:permitted"
+        stale = deepcopy(document)
+        stale["graph"]["nodes"][0]["ast"] = ["top"]
+        with pytest.raises(AdmissionError):
+            admit_document(env, stale)
