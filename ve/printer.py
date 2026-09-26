@@ -754,12 +754,14 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     breaks = set(paragraph_breaks)
     marked = set(conclusions)
     display_texts = [result.text for result in results]
-    from .english import EnglishVocabulary, _mentioned_constants
+    from .english import EnglishVocabulary, _mentioned_constants, _has_discourse_binder
     names = EnglishVocabulary(env, vocabulary=vocabulary,
                               accept_suggested_vocabulary=accept_suggested_vocabulary).constants
     referents = set()
+    incomplete_discourse = False
     for i, formula in enumerate(document.formulas):
-        if (i not in marked and len(referents) == 1 and results[i].natural
+        if (i not in marked and len(referents) == 1 and not incomplete_discourse
+                and results[i].natural
                 and type(formula) is ast.Unary and type(formula.term) is ast.Const
                 and formula.term.name in referents):
             head = names[formula.term.name]
@@ -767,6 +769,7 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
             if display_texts[i].startswith(head + ' '):
                 display_texts[i] = 'It' + display_texts[i][len(head):]
         referents.update(_mentioned_constants(formula))
+        incomplete_discourse |= _has_discourse_binder(formula)
     def clause(result, index):
         wording = display_texts[index]
         if index not in marked:
