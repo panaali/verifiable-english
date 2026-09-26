@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Callable, NamedTuple
 
 from .ast import Const, Eq, Formula, Not
-from .errors import InvalidModel
+from .errors import InvalidModel, ResourceLimit
 
 
 class Premise(NamedTuple):
@@ -57,6 +57,8 @@ def _valid_definitions(env, model):
     from .limits import MAX_EVALUATIONS
     for formula in _definition_premises(env):
         result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit("Definition background evaluation budget exhausted")
         if result.value is not True:
             raise InvalidModel("defined predicate table disagrees with its body",
                                generator="definitions")
