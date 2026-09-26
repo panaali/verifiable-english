@@ -12,12 +12,16 @@ import VE.Norms.Replay
   → `verdict` `CONFLICT-FREE` when every target's certificate is bound and
   accepted over the regenerated `E_base` and `Background_base`, else `UNKNOWN`
   with the first failing target (`Replay.norms_wire_conflict_sound`).
+* `norms-conflict` with `witness` (`target`, base `model`, `tuple` of entity ids
+  in argument order) → `verdict` `CONFLICT` when the regenerated target formula
+  is true at the typed tuple of the validated base model, else `UNKNOWN`
+  (`Replay.norms_wire_conflict_witness_sound`).
 * Any case without a norm construct (no `norms@0` profile, no `regulated`
   field, no `norms`) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
 
-Admission of W2 documents with norm units and CONFLICT witness packages are
-not implemented yet and are rejected explicitly. -/
+Admission of W2 documents with norm units is not implemented yet and is
+rejected explicitly. -/
 namespace VE.Norms.Run
 open Lean
 
@@ -37,13 +41,17 @@ def runCase (j : Json) : Except String Json := do
   let kind ← VE.Route.Run.caseKind j
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let (_, ⟨D, _⟩) ← Wire.decodeSource environment (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (Wire.regenerated D)
+    let src ← Wire.decodeSource environment (j.getObjValD "norms")
+    return VE.Route.Wire.ok id (Wire.regenerated src.D)
+  if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
+    let ⟨src, w⟩ ← Replay.replayWitness j
+    return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
+      ("target", .str w.target.1), ("targets", toJson ((targets src.D).map (·.1)))]
   if kind == "norms-conflict" then
     let res ← Replay.replayConflict j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
-      ("targets", toJson ((targets res.D.1).map (·.1)))] ++
+      ("targets", toJson ((targets res.src.D).map (·.1)))] ++
       match Replay.firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])

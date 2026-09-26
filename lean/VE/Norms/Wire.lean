@@ -151,10 +151,16 @@ def decodeNorm (j : Json) : Except String Node := do
   let carve ← unlessJ.mapM (VE.Bridge.decodeFormula 64)
   pure ⟨name, predicate, sign, guard, carve, over⟩
 
-/-- The decoded source: environment and a well-formed tree (no W3 definitions
-on this path). The diagnostics are those of `validate`. -/
-def decodeSource (environment norms : Json) :
-    Except String (NormsEnvironment × {D : Doc // WellFormed D = true}) := do
+/-- A decoded source: the norms environment and a well-formed tree over it. -/
+structure Source where
+  ne : NormsEnvironment
+  D : Doc
+  wf : WellFormed D = true
+  env : D.E = ne.rv.environment
+
+/-- Decode the environment and the norm objects (no W3 definitions on this
+path); the diagnostics are those of `validate`. -/
+def decodeSource (environment norms : Json) : Except String Source := do
   let ne ← decodeNormsEnvironment environment
   let units ← match norms with
     | .arr xs => pure xs.toList
@@ -164,7 +170,7 @@ def decodeSource (environment norms : Json) :
   let D : Doc := ⟨ne.rv.environment, ne.rv.literals, ⟨ne.regulated, [], nodes⟩⟩
   match hv : validate D with
   | .error e => throw e
-  | .ok () => pure (ne, ⟨D, by unfold WellFormed; rw [hv]⟩)
+  | .ok () => pure ⟨ne, D, by unfold WellFormed; rw [hv], rfl⟩
 
 /-! ## Regenerated outputs -/
 
