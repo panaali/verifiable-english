@@ -49,8 +49,9 @@ def _cedar_equal(left: object, right: object) -> bool:
         return left.keys() == right.keys() and all(
             _cedar_equal(left[key], right[key]) for key in left)
     if type(left) is list:
-        return len(left) == len(right) and all(
-            _cedar_equal(a, b) for a, b in zip(left, right, strict=True))
+        # Cedar sets ignore order and duplicate members.
+        return (all(any(_cedar_equal(a, b) for b in right) for a in left)
+                and all(any(_cedar_equal(b, a) for a in left) for b in right))
     return left == right
 
 

@@ -20,3 +20,4 @@ def test_cedar_comparisons_preserve_value_types():
     assert compare({"v": 1}, ("v",), True) == Value(True, False)
     assert compare({"v": [False]}, ("v",), [0]) == Value(True, False)
     assert compare({"v": {"a": False}}, ("v",), {"a": 0}) == Value(True, False)
+    assert compare({"v": [1, 2]}, ("v",), [2, 1, 1]) == Value(True, True)
