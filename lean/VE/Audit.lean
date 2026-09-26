@@ -18,6 +18,7 @@ import VE.ModelProofs
 import VE.Route.Run
 import VE.Route.Examples
 import Iceberg
+import VE.English.Proofs
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -429,3 +430,62 @@ import Iceberg
 #print axioms VE.Route.Examples.interpret_admissible
 #print axioms VE.Route.Examples.tupleTyped_relation
 #print axioms VE.Route.Examples.wf_extend
+
+#print axioms VE.English.renderInjective_of_parseRender
+#print axioms VE.English.consume_append
+#print axioms VE.English.consume_sound
+#print axioms VE.English.infixB_of_infix
+#print axioms VE.English.infix_flatMap
+#print axioms VE.English.mem_labelsIn
+#print axioms VE.English.mem_tuples
+#print axioms VE.English.mem_termPool
+#print axioms VE.English.arg_infix
+#print axioms VE.English.mem_litCandidates
+#print axioms VE.English.parseLit_yield
+#print axioms VE.English.parseLit_sound
+#print axioms VE.English.takeWhile_nonstop
+#print axioms VE.English.parseLitPrefix_yield
+#print axioms VE.English.parseLitPrefix_sound
+#print axioms VE.English.kw_eq_kw
+#print axioms VE.English.kws_nil
+#print axioms VE.English.kws_cons
+#print axioms VE.English.kw_ne_label
+#print axioms VE.English.length_kws
+#print axioms VE.English.Stop.atom
+#print axioms VE.English.stop_nil
+#print axioms VE.English.stop_cons
+#print axioms VE.English.atomStop_cons
+#print axioms VE.English.readNoun_yield
+#print axioms VE.English.readNoun_sound
+#print axioms VE.English.takeLabel_none
+#print axioms VE.English.takeLabel_sound
+#print axioms VE.English.parseDecl_yield
+#print axioms VE.English.parseDecl_sound
+#print axioms VE.English.not_opener
+#print axioms VE.English.parseF_lit
+#print axioms VE.English.consume_header_none
+#print axioms VE.English.size_pos
+#print axioms VE.English.parseF_complete
+#print axioms VE.English.listTail_sound
+#print axioms VE.English.parseF_sound
+#print axioms VE.English.bindRef_sort
+#print axioms VE.English.scopeCount_cons
+#print axioms VE.English.built_mem
+#print axioms VE.English.bindRef_fresh
+#print axioms VE.English.built_nodup
+#print axioms VE.English.idxOfOpt_getElem
+#print axioms VE.English.renderTerm_correct
+#print axioms VE.English.pred_ok
+#print axioms VE.English.renderLit_correct
+#print axioms VE.English.renderTree_correct
+#print axioms VE.English.renderStatement_correct
+#print axioms VE.English.size_le_length
+#print axioms VE.English.tree_unique
+#print axioms VE.English.length_le_docYield
+#print axioms VE.English.parseTrees_complete
+#print axioms VE.English.parseTrees_sound
+#print axioms VE.English.core_unique_derivation
+#print axioms VE.English.core_parse_sound
+#print axioms VE.English.mapM_denote_render
+#print axioms VE.English.core_parse_render
+#print axioms VE.English.core_render_injective
