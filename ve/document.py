@@ -325,6 +325,17 @@ def render_document(path):
         formula = formula_from_data(doc["environment"], ast)
         return render(Document((formula,)), doc["environment"], "ve_english").strip()
 
+    def kind_shape(kind):
+        if type(kind) is str:
+            return kind
+        if kind[0] == "attributed":
+            return f"{kind[1]} {kind[2]} ({kind_shape(kind[3])})"
+        if kind[0] == "hedged":
+            return f"{kind[1]} ({kind_shape(kind[2])})"
+        if kind[0] == "causal":
+            return f"{kind_shape(kind[2])} {kind[1]} {kind_shape(kind[3])}"
+        return f"unformalised: {kind[1].replace('_', ' ')}"
+
     def kind_wording(kind, content):
         claim = wording(content) if content is not None else "a meaning not yet formalised"
         if type(kind) is str:
@@ -335,8 +346,7 @@ def render_document(path):
         if tag == "hedged":
             return f"[{kind[1]}] {kind_wording(kind[2], content)}"
         if tag == "causal":
-            return (f"[{kind[1]}: {kind_wording(kind[2], content)}; "
-                    f"{kind_wording(kind[3], content)}]")
+            return f"[{kind_shape(kind)}] {claim}"
         return f"[unformalised: {kind[1].replace('_', ' ')}]"
 
     for u in doc["units"]:
