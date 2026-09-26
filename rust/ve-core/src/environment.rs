@@ -348,6 +348,9 @@ impl Environment {
     pub fn order(&self) -> bool {
         self.order
     }
+    pub(crate) fn has_profile(&self, name: &str) -> bool {
+        self.profiles.iter().any(|profile| profile == name)
+    }
     pub fn identity_version(&self) -> String {
         if self.route {
             return format!("v0.2:{}", self.profiles.join(","));

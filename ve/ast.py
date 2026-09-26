@@ -289,7 +289,7 @@ class _Checker:
         elif kind in (Forall, Exists):
             if type(node.sort) is not str or (node.sort not in self.env.sorts
                     and not (self.generated and node.sort == "$string" and "data@0" in self.env.profiles)):
-                if node.sort == "$string":
+                if node.sort == "$string" and "data@0" in self.env.profiles:
                     raise UnsupportedProfile("$string quantification requires data stage 2")
                 raise UnknownSymbol(f"Unknown binder sort {node.sort!r}")
             self.formula(node.body, (node.sort,) + context, depth + 1)
