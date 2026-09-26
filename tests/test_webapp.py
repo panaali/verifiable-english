@@ -16,7 +16,8 @@ TOKEN = 'test-only-random-token-' + 'x' * 32
 
 @pytest.fixture
 def setup(tmp_path):
-    settings = Settings(TOKEN, tmp_path, secure=False, assist=True, minute_cap=2)
+    settings = Settings(TOKEN, tmp_path, secure=False, assist=True, minute_cap=2,
+                        claude_cli_version='test CLI version')
     calls = []
     async def runner(action, data, settings):
         calls.append(action)
@@ -94,6 +95,60 @@ def test_mocked_assist_and_persistent_quota(setup):
     with pytest.raises(Exception) as exc: Quota(settings).reserve()
     assert exc.value.status_code==429
     assert calls==['propose','propose']
+
+
+def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch):
+    from ve_experiments.claude_cli import ClaudeCLI, MODELS
+    monkeypatch.setenv('VE_CLAUDE_ACCOUNT_CONFIG_DIR', str(tmp_path / 'account'))
+    monkeypatch.setattr('ve_webapp.server.subprocess.check_output',
+                        lambda args, **kwargs: '2.1.283 (Claude Code)\n')
+    settings = Settings(TOKEN, tmp_path / '.webapp-private', assist=True)
+    assert (settings.state / 'claude-empty').is_dir()
+    assert settings.claude_cli_version == '2.1.283 (Claude Code)'
+    seen = []
+    def sample(client, item_id, system, prompt, sample_index):
+        seen.append(client)
+        return {'text': json.dumps({'candidates': [{'ve': '@api is safe.', 'reading': 'The API is safe.'}]}),
+                'input_tokens': 1, 'output_tokens': 1, 'served_model': MODELS['haiku'],
+                'account_label': client.account_label, 'key': 'mocked'}
+    monkeypatch.setattr(ClaudeCLI, 'sample', sample)
+    config = {'state': str(settings.state), 'model': settings.model,
+              'cli_version': settings.claude_cli_version,
+              'account_config_dir': str(settings.account_config_dir)}
+    result = run('propose', {'example': 'policy', 'text': 'The API is safe.'}, config=config)
+    assert result['candidates'][0]['text'] == '@api is safe.'
+    assert len(seen) == 1
+    controls = seen[0].controls
+    assert controls.cli_version == '2.1.283 (Claude Code)'
+    assert controls.model == MODELS['haiku']
+    assert controls.working_directory == str(settings.state / 'claude-empty' / 'cwd')
+    assert not (settings.state / 'claude-empty' / 'cwd').exists()
+    assert seen[0].ledger.name.startswith('calls-')
+    assert seen[0].account_config == tmp_path / 'account'
+    assert seen[0].allow_builtin_agents_md is True
+
+
+def test_webapp_allows_only_cli_builtin_agents_md():
+    from ve_experiments.claude_cli import EndpointError, MODELS, parse_stream
+    model = MODELS['haiku']
+    records = [
+        {'type': 'system', 'subtype': 'init', 'model': model, 'tools': [], 'mcp_servers': [],
+         'agents': [], 'skills': [], 'plugins': [
+             {'name': 'agents-md', 'path': 'builtin', 'source': 'agents-md@builtin'}]},
+        {'type': 'assistant', 'message': {'id': 'm1', 'model': model,
+                                         'content': [{'type': 'text', 'text': 'ok'}]}},
+        {'type': 'result', 'subtype': 'success', 'is_error': False, 'num_turns': 1,
+         'result': 'ok', 'stop_reason': 'end_turn', 'modelUsage': {model: {}},
+         'usage': {'input_tokens': 1, 'cache_creation_input_tokens': 0,
+                   'cache_read_input_tokens': 0, 'output_tokens': 1}},
+    ]
+    raw = lambda: '\n'.join(json.dumps(record) for record in records)
+    with pytest.raises(EndpointError, match='Ambient agents'):
+        parse_stream(raw(), model)
+    assert parse_stream(raw(), model, allow_builtin_agents_md=True)['text'] == 'ok'
+    records[0]['plugins'].append({'name': 'other', 'path': '/tmp/other', 'source': 'other'})
+    with pytest.raises(EndpointError, match='Ambient agents'):
+        parse_stream(raw(), model, allow_builtin_agents_md=True)
 
 
 def test_daily_cap_and_disabled(tmp_path):

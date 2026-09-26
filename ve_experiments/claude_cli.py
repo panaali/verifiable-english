@@ -301,17 +301,17 @@ def reported_usage(raw):
     return out
 
 
-def parse_stream(raw, expected_model):
+def parse_stream(raw, expected_model, *, allow_builtin_agents_md=False):
     """Validate a complete stream. Any malformation surfaces as an EndpointError (never another type)."""
     try:
-        return _parse_stream(raw, expected_model)
+        return _parse_stream(raw, expected_model, allow_builtin_agents_md=allow_builtin_agents_md)
     except EndpointError:
         raise
     except Exception as exc:
         raise EndpointError(f"Malformed stream ({type(exc).__name__})") from None
 
 
-def _parse_stream(raw, expected_model):
+def _parse_stream(raw, expected_model, *, allow_builtin_agents_md=False):
     reason = infrastructure_failure(raw, expected_model)
     if reason:
         raise InfrastructureError(reason)
@@ -339,7 +339,10 @@ def _parse_stream(raw, expected_model):
         raise EndpointError(f"Served model mismatch: {sorted(map(str, served))}")
     if initial.get("tools") != [] or initial.get("mcp_servers") != []:
         raise EndpointError("Nonempty or missing tools/MCP inventory")
-    if (any(initial.get(k) for k in ("skills", "plugins", "slash_commands"))
+    plugins = initial.get("plugins", [])
+    builtin_agents_md = [{"name": "agents-md", "path": "builtin", "source": "agents-md@builtin"}]
+    if (any(initial.get(k) for k in ("skills", "slash_commands"))
+            or (plugins and not (allow_builtin_agents_md and plugins == builtin_agents_md))
             or set(initial.get("agents", [])) - {"claude", "Explore", "general-purpose", "Plan"}):
         raise EndpointError("Ambient agents, skills, or plugins loaded")
     if any(type(b) is not dict or b.get("type") not in ("text", "thinking", "redacted_thinking")
@@ -376,9 +379,11 @@ FINAL = ("ok", "error", "infrastructure_error")
 
 
 class ClaudeCLI:
-    def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None, infrastructure_retries=False):
+    def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None,
+                 infrastructure_retries=False, allow_builtin_agents_md=False):
         self.ledger, self.controls, self.max_calls = Path(ledger), controls, max_calls
         self.infrastructure_retries = infrastructure_retries
+        self.allow_builtin_agents_md = allow_builtin_agents_md
         self.account_config = account_config(account_config_dir)
         self.account_label = account_label(self.account_config)
         self._last_key = None
@@ -574,7 +579,8 @@ class ClaudeCLI:
                         raise InfrastructureError(reason)
                     if proc.returncode:
                         raise EndpointError(f"CLI exit {proc.returncode}")
-                    parsed = parse_stream(raw, self.controls.model)
+                    parsed = parse_stream(raw, self.controls.model,
+                                          allow_builtin_agents_md=self.allow_builtin_agents_md)
                     check_context_date(self.controls)
                 overhead = None if content_tokens is None else parsed["input_tokens"] - content_tokens
                 comparable = [r for r in history if r["status"] == "ok" and r["prompt_group"] == group]

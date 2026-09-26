@@ -8,6 +8,7 @@ from pathlib import Path
 import secrets
 import signal
 import sqlite3
+import subprocess
 import sys
 import time
 from dataclasses import dataclass
@@ -29,6 +30,8 @@ class Settings:
     model: str = "haiku"
     minute_cap: int = 3
     daily_cap: int = 30
+    claude_cli_version: str | None = None
+    account_config_dir: Path | None = None
 
     def __post_init__(self):
         if len(self.token) < 32:
@@ -37,6 +40,18 @@ class Settings:
         self.state.mkdir(parents=True, exist_ok=True, mode=0o700)
         if self.minute_cap < 1 or self.daily_cap < 1:
             raise ValueError("Call caps must be positive.")
+        if self.assist:
+            (self.state / "claude-empty").mkdir(mode=0o700, exist_ok=True)
+            if self.claude_cli_version is None:
+                try:
+                    self.claude_cli_version = subprocess.check_output(
+                        ["claude", "--version"], text=True, timeout=10).strip()
+                except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+                    raise ValueError("Could not detect claude --version; use --claude-cli-version.") from exc
+            if not self.claude_cli_version:
+                raise ValueError("Claude CLI version cannot be empty.")
+            self.account_config_dir = Path(self.account_config_dir or os.getenv(
+                "VE_CLAUDE_ACCOUNT_CONFIG_DIR", "~/.agent-accounts/claude-danielsaeedi37")).expanduser().resolve()
 
 
 class Quota:
@@ -62,7 +77,9 @@ class Quota:
 
 async def worker(action, data, settings):
     payload = {"action": action, "data": data,
-               "config": {"state": str(settings.state), "model": settings.model}}
+               "config": {"state": str(settings.state), "model": settings.model,
+                          "cli_version": settings.claude_cli_version,
+                          "account_config_dir": str(settings.account_config_dir) if settings.account_config_dir else None}}
     # Access token stays in the web process. CLI uses its own configured account.
     env = {k: v for k, v in os.environ.items() if k not in ("VE_WEB_TOKEN", "VE_WEB_TOKEN_FILE")}
     process = await asyncio.create_subprocess_exec(sys.executable, "-m", "ve_webapp.worker",

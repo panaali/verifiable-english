@@ -30,16 +30,21 @@ def resolve_account(account=None):
 
 class ClaudeProposer:
     def __init__(self, ledger, *, model=DEFAULT_MODEL, account=None, max_calls=None, output_tokens=2048,
-                 timeout_s=180, working_directory="/private/tmp/ve-assist-claude-empty"):
+                 timeout_s=180, working_directory="/private/tmp/ve-assist-claude-empty",
+                 controls=None, account_config_dir=None, allow_builtin_agents_md=False):
         if model not in PROPOSER_MODELS:
             raise ValueError("Proposer model must be one of: " + ", ".join(PROPOSER_MODELS))
         self.model, self.model_id = model, PROPOSER_MODELS[model]
-        controls = Controls(model=self.model_id, thinking_tokens=None, output_tokens=output_tokens,
-                            effort=None, timeout_s=timeout_s, working_directory=working_directory,
-                            context_date=datetime.now(timezone.utc).date().isoformat())
-        account = resolve_account(account)
-        config = account_dir_for_label(account) if account else None
-        self.client = ClaudeCLI(Path(ledger), controls, max_calls, account_config_dir=config)
+        if controls is None:
+            controls = Controls(model=self.model_id, thinking_tokens=None, output_tokens=output_tokens,
+                                effort=None, timeout_s=timeout_s, working_directory=working_directory,
+                                context_date=datetime.now(timezone.utc).date().isoformat())
+        elif controls.model != self.model_id:
+            raise ValueError("Proposer model and controls model must match")
+        account = resolve_account(account) if account_config_dir is None else None
+        config = account_config_dir or (account_dir_for_label(account) if account else None)
+        self.client = ClaudeCLI(Path(ledger), controls, max_calls, account_config_dir=config,
+                                allow_builtin_agents_md=allow_builtin_agents_md)
 
     def secret_needles(self):
         """What the canonical sanitizer must redact for this backend (its live token; in memory only)."""

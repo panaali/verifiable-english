@@ -17,6 +17,7 @@ def main():
     p.add_argument("--state-dir", type=Path, default=Path(".webapp-private"))
     p.add_argument("--assist", action="store_true", help="Enable subscription-spending Claude assistance")
     p.add_argument("--model", choices=("haiku", "sonnet", "opus"), default="haiku")
+    p.add_argument("--claude-cli-version", help="Expected output of claude --version (detected at startup by default)")
     p.add_argument("--minute-cap", type=int, default=3)
     p.add_argument("--daily-cap", type=int, default=30)
     args = p.parse_args()
@@ -30,7 +31,8 @@ def main():
     token = Path(args.token_file).read_text().strip() if args.token_file else os.getenv("VE_WEB_TOKEN", "")
     os.umask(0o077)
     try:
-        settings = Settings(token, args.state_dir, not args.http, args.assist, args.model, args.minute_cap, args.daily_cap)
+        settings = Settings(token, args.state_dir, not args.http, args.assist, args.model,
+                            args.minute_cap, args.daily_cap, args.claude_cli_version)
     except ValueError as exc:
         p.error(str(exc))
     uvicorn.run(create_app(settings), host=args.host, port=args.port, ssl_certfile=args.cert,
