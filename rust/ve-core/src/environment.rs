@@ -81,6 +81,7 @@ pub struct Environment {
     profiles: Vec<String>,
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
+    pub(crate) predicate_flags: BTreeMap<String, (bool, bool)>,
     pub(crate) constants: BTreeMap<String, String>,
     data: Value,
     id: String,
@@ -237,8 +238,16 @@ impl Environment {
             description(&d["description"])?;
         }
         let mut predicates = BTreeMap::new();
+        let mut predicate_flags = BTreeMap::new();
         for (name, decl) in preds {
-            let d = entry_fields(decl, &["arguments", "description"], true)?;
+            let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
+            if flagged && !(route && profiles.iter().any(|p| p == "data@0")) {
+                return error("UnsupportedProfile", "Predicate flags require data@0");
+            }
+            let mut keys = vec!["arguments", "description"];
+            if decl.get("functional").is_some() { keys.push("functional"); }
+            if decl.get("total").is_some() { keys.push("total"); }
+            let d = entry_fields(decl, &keys, true)?;
             let args = d["arguments"]
                 .as_array()
                 .filter(|a| matches!(a.len(), 1 | 2))
@@ -246,11 +255,25 @@ impl Environment {
             let mut signature = Vec::new();
             for arg in args {
                 let s = string(arg, "UnknownSymbol")?;
-                if !sorts.contains_key(s) && !(order && s == "$int") {
+                if !sorts.contains_key(s) && !(order && s == "$int")
+                    && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
                     return error("UnknownSymbol", "unknown predicate argument sort");
                 }
                 signature.push(s.to_owned());
             }
+            if flagged && signature.len() != 2 {
+                return error("InvalidInput", "Functional and total flags require a binary predicate");
+            }
+            let functional = match d.get("functional") {
+                None => false,
+                Some(Value::Bool(value)) => *value,
+                _ => return error("InvalidInput", "functional must be a Boolean"),
+            };
+            let total = match d.get("total") {
+                None => false,
+                Some(Value::Bool(value)) => *value,
+                _ => return error("InvalidInput", "total must be a Boolean"),
+            };
             for key in ["verbalisation", "negative_verbalisation"] {
                 if let Some(v) = d.get(key) {
                     verbalisation(v)?;
@@ -258,6 +281,7 @@ impl Environment {
             }
             description(&d["description"])?;
             predicates.insert(name.clone(), signature);
+            predicate_flags.insert(name.clone(), (functional, total));
         }
         let mut constants = BTreeMap::new();
         for (name, decl) in consts {
@@ -299,6 +323,7 @@ impl Environment {
             profiles,
             sorts: sorts.keys().cloned().collect(),
             predicates,
+            predicate_flags,
             constants,
             data: data.clone(),
             id: digest(&format!("ve-environment-{version}\n"), data)?,
@@ -330,7 +355,8 @@ impl Environment {
     }
     pub(crate) fn model_sorts(&self) -> BTreeSet<String> {
         let mut sorts = self.sorts.clone();
-        if self.constants.values().any(|sort| sort == "$string") {
+        if self.constants.values().any(|sort| sort == "$string")
+            || self.predicates.values().any(|args| args.iter().any(|sort| sort == "$string")) {
             sorts.insert("$string".into());
         }
         sorts

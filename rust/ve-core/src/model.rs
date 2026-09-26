@@ -109,6 +109,20 @@ impl FiniteModel {
             }
             relations.insert(name.clone(), relation);
         }
+        for (name, (functional, total)) in &env.predicate_flags {
+            if !*functional && !*total { continue; }
+            let relation = &relations[name];
+            let mut values = BTreeMap::new();
+            for row in relation {
+                if *functional && values.insert(row[0], row[1]).is_some_and(|prior| prior != row[1]) {
+                    return error("InvalidModel", format!("flags: {name} has two values"));
+                }
+                if !*functional { values.insert(row[0], row[1]); }
+            }
+            if *total && values.len() != domains[&env.predicates[name][0]].len() {
+                return error("InvalidModel", format!("flags: {name} is not total"));
+            }
+        }
         let constant_data: BTreeMap<_, _> = constants
             .iter()
             .map(|(n, i)| (n, &domains[&env.constants[n]][*i]))
