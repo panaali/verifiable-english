@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from conformance.p0 import MODEL, VOCAB, envelope, environment
+from conformance.p0 import MODEL, VOCAB, definitions_envelope, envelope, environment
 from ve.document import _check_narrowing_choices, check_document, coverage, load_document, render_document
 from ve.environment import Environment
 from ve.errors import VEError
@@ -536,11 +536,32 @@ def test_render_places_only_current_readings_beside_their_sentence(tmp_path):
     assert rendered.count("This is impossible.") == 1
 
 
-def test_document_forwards_citation_manifests(tmp_path):
+def test_document_rejects_unchecked_citation_manifests(tmp_path):
     source = b"Citation.\n"
     graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"],
                                            "label": "cite:library/truth"}]}
     lemma = {"name": "library/truth", "conclusion": ["top"], "leaves": []}
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      graph=graph, lemmas=[lemma])
-    assert check_document(path)["admission"]["admitted"] is True
+    with pytest.raises(VEError, match="document citations require a checked bundle binding"):
+        check_document(path)
+
+
+def test_definition_kind_uses_pinned_environment_and_graph_gap_is_explicit(tmp_path):
+    source = b"Lead means senior finance boss.\n"
+    raw_env = definitions_envelope()
+    env = Environment(raw_env)
+    from ve.definitions import compile_definitions, premise
+    from ve.ast import formula_to_data
+    lead = next(d for d in compile_definitions(env, env.definition_entries,
+                                                version=env.environment_id) if d.name == "lead")
+    unit_data = unit("definition", 0, len(source), "definition",
+                     content={"ast": formula_to_data(env, premise(lead))})
+    path = write_doc(tmp_path, source, [unit_data], environment_json=raw_env)
+    checked = check_document(path)
+    assert checked["premises"]["status"] == "model"
+    assert checked["coverage"]["bytes_by_kind"]["definition"] == len(source)
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"]}]}
+    path = write_doc(tmp_path, source, [unit_data], environment_json=raw_env, graph=graph)
+    with pytest.raises(VEError, match="admission of documents with definitions is deferred"):
+        check_document(path)

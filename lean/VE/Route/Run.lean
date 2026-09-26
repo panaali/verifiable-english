@@ -1,4 +1,5 @@
 import VE.Route.Admission
+import VE.Definitions.Bundle
 import VE.Json
 import VE.Core.Wire
 
@@ -13,6 +14,10 @@ checker family:
   receives regenerated Background, then the premises; the certificate binds
   both by meaning id);
 * `dependency-order`: `nodes` → `order`, or the shared cycle diagnostic;
+* `bundle` (FOL family): `lemmas` → every lemma checked in order with its
+  citations (`VE.Definitions.Bundle`), or the first citation diagnostic;
+* `background`: → the regenerated Background (definitions, then literals) and
+  each premise's generator (the W3 differential elaboration check);
 * `label`: `label` → the canonical label, or `AdmissionError: invalid label`;
 * `admission` (FOL family): `document` → the admitted report.
 
@@ -38,6 +43,10 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
     (j : Json) : Except String Json := do
   let document ← j.getObjVal? "document"
   let res ← Admission.admitDocument profiles environment rv document
+  unless res.wires.all (fun w => match Admission.parseLabel w.claim.label with
+    | some (.cite _ _) => false
+    | _ => true) do
+    throw (Gate.unsupported "document citations require a checked bundle binding")
   let report := Json.mkObj [("root", claimJson res.report.root),
     ("assumptions", Json.arr (res.report.assumptions.map claimJson).toArray)]
   let envId ← Wire.environmentId profiles environment
@@ -45,6 +54,13 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
     (Json.mkObj [("environment_id", .str envId), ("document", document), ("report", report)])
   pure (Wire.ok id [("admitted", .bool true), ("report", report), ("report_id", .str reportId),
     ("kinds", Json.arr res.kinds.toArray)])
+
+/-- The FOL/closure vocabulary; `defined` declarations need `definitions@0`. -/
+def decodeRouteVocabulary (e : Gate.Envelope) : Except String Wire.RouteVocabulary := do
+  let rv ← Wire.decodeVocabulary e.vocabulary
+  unless rv.definitions.isEmpty || e.profiles.contains "definitions@0" do
+    throw "defined declarations require the definitions@0 profile"
+  pure rv
 
 /-- Run a case whose envelope has been decoded and gated. -/
 def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) : Except String Json := do
@@ -72,14 +88,23 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   | .order =>
     if kind == "admission" then throw (Gate.unsupported "admission on the order family is deferred")
     let v ← Wire.decodeOrderVocabulary e.vocabulary
+    if kind == "background" then
+      return Wire.runBackground id ((Background.literals v.literals).map (·, "literals"))
     Wire.runOrder e.profiles environment v id kind j
   | .closure =>
     if kind == "admission" then throw (Gate.unsupported "admission on the closure family is deferred")
-    let rv ← Wire.decodeVocabulary e.vocabulary
+    if kind == "bundle" then throw (Gate.unsupported "lemma bundles on the closure family are deferred")
+    let rv ← decodeRouteVocabulary e
+    if kind == "background" then return Wire.runBackground id (Wire.fullBackground rv)
     Wire.runClosure e.profiles environment rv id kind j
   | .fol =>
-    let rv ← Wire.decodeVocabulary e.vocabulary
-    if kind == "admission" then runAdmit e.profiles environment rv id j
+    let rv ← decodeRouteVocabulary e
+    if kind == "background" then return Wire.runBackground id (Wire.fullBackground rv)
+    if kind == "bundle" then return ← VE.Definitions.Bundle.runBundle e.profiles environment rv id j
+    if kind == "admission" then
+      unless rv.definitions.isEmpty do
+        throw (Gate.unsupported "admission of documents with definitions is deferred")
+      runAdmit e.profiles environment rv id j
     else Wire.runFol e.profiles environment rv id kind j
 
 /-- Every case: the envelope is decoded and gated before anything else. -/

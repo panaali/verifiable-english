@@ -174,7 +174,7 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
                   for row in product(*(domains[s] for s in env.predicates[name].arguments)))
     for size in range(len(atoms) + 1):
         for subset in combinations(atoms, size):
-            relations = {name: [] for name in sorted(env.predicates)}
+            relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
             for name, row in subset:
                 relations[name].append(list(row))
             yield relations
@@ -287,7 +287,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
             choices = [domains[env.constants[name].sort] for name in object_constants]
             for size in range(len(atoms) + 1):
                 for subset in combinations(atoms, size):
-                    relations = {name: [] for name in sorted(env.predicates)}
+                    relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
                     for name, row in subset:
                         relations[name].append([str(x) if type(x) is int else x for x in row])
                     for denotations in product(*choices):
@@ -304,6 +304,19 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
 
 def _models(env: Any, minimum_size: int, maximum: int,
             used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+    if env.definition_entries:
+        from .definitions import _mentions
+        from .ast import _Decoder
+        relevant = set(used)
+        pending = list(used)
+        while pending:
+            name = pending.pop()
+            if name in env.definition_entries:
+                for dependency in _mentions(_Decoder().decode(env.definition_entries[name]["body"])):
+                    if dependency not in relevant:
+                        relevant.add(dependency)
+                        pending.append(dependency)
+        used = frozenset(relevant - env.definition_entries.keys())
     if getattr(env, "order", False):
         yield from _order_models(env, minimum_size, maximum, used, formulas)
         return

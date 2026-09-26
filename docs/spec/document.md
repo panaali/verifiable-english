@@ -56,6 +56,15 @@ are planned as complete choices up to 64; until their W1/W3 elaborators land,
 the verdict is UNKNOWN. The reading set is only the readings considered so far,
 not a claim that every plausible source interpretation has been found.
 
+After W3, an embedded environment may pin `defined` declarations and a unit
+may carry the `definition` kind. Python validates the declared bodies and
+computes definition Background for document premise checks. The unit's formula
+content does not itself declare or redefine a predicate; the environment is
+the versioned authority. Graph admission for documents with defined
+environments remains explicitly unsupported by both the Python and Lean
+routes. Definition readings also remain UNKNOWN until each choice can be
+elaborated against its own environment and bound to a certificate.
+
 If a claim graph is present, `ve document check` sends the compiled unit kinds,
 content, labels, background, citations and graph to P0 `admit_document`.
 Unsupported non-assertion readings cannot enter that P0 route. Quoted content
