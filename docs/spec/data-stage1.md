@@ -35,6 +35,9 @@ binary `member(element, collection)` relation, with no extra set axiom.
   admissible structure with those data meanings.
 - `closure_data_route_acceptance`: the same claim holds for an accepted
   closure-language certificate after embedding the generated background.
+- `fol_data_route_countermodel` and `closure_data_route_countermodel`: a
+  checked finite countermodel that satisfies the regenerated flag and literal
+  checks refutes the corresponding data consequence.
 - `decodeDataModel_valid`: a finite model accepted on the Lean route satisfies
   both literal distinctness and the declared functional and total meanings.
 

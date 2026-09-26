@@ -407,6 +407,8 @@ import Iceberg
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.fol_data_route_acceptance
 #print axioms VE.Data.Background.closure_data_route_acceptance
+#print axioms VE.Data.Background.fol_data_route_countermodel
+#print axioms VE.Data.Background.closure_data_route_countermodel
 #print axioms VE.Route.Background.mem_sortStrings
 #print axioms VE.Route.Background.orderLiteralPremise_denote
 #print axioms VE.Route.Background.orderLiteralsValid_sound
