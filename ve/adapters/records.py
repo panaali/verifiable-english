@@ -6,7 +6,10 @@ the checker does not interpret the host language's string operations.
 from __future__ import annotations
 
 import fnmatch
+import hashlib
+from pathlib import Path
 import re
+import sys
 
 from ..errors import ResourceLimit, VEError
 from ..wire import digest, require_fields
@@ -51,6 +54,8 @@ def run(function: str, parameters: dict, domain: list[str]) -> dict:
     input_hashes = [digest("ve-adapter-input-v1\n", value) for value in domain]
     table_hash = digest("ve-adapter-table-v1\n", rows)
     return {"function": function, "parameters": {"pattern": pattern},
+            "implementation": f"python-stdlib-{sys.version_info.major}.{sys.version_info.minor}",
+            "implementation_hash": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "domain": list(domain), "input_hashes": input_hashes,
             "rows": rows, "table_hash": table_hash,
             "label": "adapter:" + function}
@@ -58,7 +63,8 @@ def run(function: str, parameters: dict, domain: list[str]) -> dict:
 
 def verify(record: dict) -> dict:
     """Reject changed inputs, domain, rows, hashes, and unlisted functions."""
-    require_fields(record, {"function", "parameters", "domain", "input_hashes",
+    require_fields(record, {"function", "parameters", "implementation", "implementation_hash",
+                            "domain", "input_hashes",
                             "rows", "table_hash", "label"}, path="/adapter")
     expected = run(record["function"], record["parameters"], record["domain"])
     if record != expected:
