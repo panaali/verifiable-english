@@ -153,8 +153,9 @@ class Environment:
             _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}",
                           negative=True)
             args = entry["arguments"]
-            if type(args) is not list or len(args) not in (1, 2):
-                raise VEError("Predicate arguments must be an array of one or two sort identifiers")
+            maximum_arity = 6 if route and "nary@0" in data["profiles"] else 2
+            if type(args) is not list or not 1 <= len(args) <= maximum_arity:
+                raise VEError(f"Predicate arguments must be an array of one to {maximum_arity} sort identifiers")
             for sort in args:
                 if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
