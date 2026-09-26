@@ -380,6 +380,12 @@ def test_render_keeps_nested_kind_and_candidate_attribution(tmp_path):
                                              content={"ast": ["top"]})], reading_sets=[rs])
     rendered = render_document(path)
     assert rendered.count("According to alice, who says: [likely]") == 2
+    causal = ["causal", "because", ["hedged", "could", "asserted"], "asserted"]
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), causal,
+                                             content={"ast": ["top"]})])
+    rendered = render_document(path)
+    assert "[could (asserted) because asserted]" in rendered
+    assert rendered.count("This holds in all cases.") == 1
 
 
 def test_document_forwards_citation_manifests(tmp_path):
