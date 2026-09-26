@@ -195,3 +195,26 @@ def test_hostile_nary_wire_diagnostics_agree(lean_binary, rust_binary):
     rust_error = invoke(rust_binary, "conformance", bad_environment, errors=True)[0]["error"]
     assert lean_error.startswith("UnknownSymbol:")
     assert rust_error["code"] == "UnknownSymbol"
+
+
+def test_frozen_v0_and_closure_evaluation_corpora_replay_through_core(lean_binary):
+    cases, expected = [], []
+    for filename in ("evaluation.json", "closure.json"):
+        for old in json.loads((ROOT / "conformance" / filename).read_text()):
+            raw = {key: value for key, value in old["environment"].items() if key != "profile"}
+            raw.update(language=LANGUAGE, spec_revision=SPEC_REVISION,
+                       profiles=["closure@0", "nary@0", "relational-fol@0"])
+            env = Environment(raw)
+            model = FiniteModel.from_dict(env, old["model"])
+            formulas = [formula_from_data(env, wire) for wire in old["ast"]]
+            assert [evaluate(env, formula, model, trace=False).value
+                    for formula in formulas] == old["expected"]
+            cases.append({"id": old["id"], "kind": "evaluate", "environment": raw,
+                          "ast": old["ast"], "model": old["model"]})
+            expected.append(old["expected"])
+    observed = []
+    for start in range(0, len(cases), 100):
+        observed.extend(result.get("values") for result in
+                        invoke(lean_binary, "route", cases[start:start + 100]))
+    assert len(cases) == 747
+    assert observed == expected
