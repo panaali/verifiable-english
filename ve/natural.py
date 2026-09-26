@@ -3,13 +3,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from copy import copy
 import re
 
 from lark import Lark
 
 from . import ast
 from .english import EnglishTraversal, EnglishVocabulary, english_lark_grammar, parse_english
-from .errors import VEError
+
+_NOTATION = re.compile(r'[@()\[\]*<=>+{}|^_\\"]|\b[A-Z][0-9]*\b')
 
 
 @dataclass(frozen=True)
@@ -39,10 +41,16 @@ def _symbol_free_fallback(formula, env, words):
         text = text.replace(mark, word)
     text = text.replace('[', 'the quantity ').replace(']', ' end quantity')
     for mark, word in (('*', ' times '), ('+', ' plus '), ('<', ' less than '),
-                       ('>', ' greater than '), ('=', ' equals '), ('@', '')):
+                       ('>', ' greater than '), ('=', ' equals '), ('@', ''),
+                       (' - ', ' minus '), ('|', ' where ')):
         text = text.replace(mark, word)
     text = text.replace('(', '').replace(')', '')
-    text = re.sub(r'"([A-Za-z0-9_-]+)"', lambda m: 'the named ' + m[1].replace('_', ' '), text)
+    text = re.sub(r'"([^"\n]+)"', lambda m: 'the named ' + m[1].replace('_', ' '), text)
+    text = text.replace('_', ' ')
+    text = re.sub(r'(?<!\w)-(?=\d)', 'negative ', text)
+    for mark, word in (('{', ' begin '), ('}', ' end '), ('^', ' to the power of '),
+                       ('\\', ' backslash '), ('"', '')):
+        text = text.replace(mark, word)
     return re.sub(r'\s+', ' ', text).strip()
 
 
@@ -72,6 +80,16 @@ def _owner(words, value, sort):
 
 def _candidate(formula, env, words):
     noun = None
+    if type(formula) in (ast.Le, ast.Lt) and type(formula.left) is ast.Scale:
+        scale = formula.left
+        if (scale.coefficient == 2 and type(scale.term) is ast.Const
+                and type(formula.right) is ast.Const
+                and env.constants[scale.term.name].sort == ast.INT_SORT
+                and env.constants[formula.right.name].sort == ast.INT_SORT):
+            amount = words.constants[scale.term.name]
+            right = words.constants[formula.right.name]
+            if re.fullmatch('[a-z]+', amount):
+                return right.capitalize() + (' is at least ' if type(formula) is ast.Le else ' is more than ') + 'twice the ' + amount
     if type(formula) in (ast.Le, ast.Lt) and type(formula.left) is ast.Num:
         if type(formula.right) is ast.Const and env.constants[formula.right.name].sort == ast.INT_SORT:
             right = words.constants[formula.right.name]
@@ -125,9 +143,11 @@ def render_natural_sentence(formula, env, *, vocabulary=None, accept_suggested_v
     ast.check_formula(env, formula)
     options = dict(vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     words = EnglishVocabulary(env, **options)
-    candidate = _candidate(formula, env, words)
+    display_words = copy(words)
+    display_words.constants = {**words.constants, **words.natural_constants()}
+    candidate = _candidate(formula, env, display_words)
     reason = None
-    if re.search(r'[@()\[\]*<=>+]|\b[A-Z][0-9]*\b', candidate):
+    if _NOTATION.search(candidate):
         reason = 'symbols_or_variable_names'
     elif len(candidate.encode('utf-8')) + 2 > 4096:
         reason = 'earley_4096_byte_budget'

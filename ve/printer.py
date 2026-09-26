@@ -426,7 +426,7 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
     _check_view(view)
     _check_naming(naming)
     _check_legend_style(style)
-    if view == "ve_english":
+    if view in ("ve_english", "ve_natural"):
         from .english import english_legend
         return english_legend(env, style, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     selected = _NaturalVocabulary(env)
@@ -547,12 +547,12 @@ class _Traversal:
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
            naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
-    """Render a checked AST with shared binder and operand preorder.
+    """Render a checked AST in the selected display surface.
 
     A formula has no final punctuation; documents have a period and LF for each
     statement. All views preserve lexical case without sentence capitalization.
     All views use the selected naming scope, defaulting to per-statement resets.
-    No view rewrites or normalizes the AST.
+    No view changes the checked AST.
     """
     _check_view(view)
     _check_naming(naming)
@@ -706,16 +706,20 @@ class NaturalView:
                 "version": self.version}
 
 
-def natural_document(env: Any, document: ast.Document, *, naming: str = "per_statement") -> NaturalView:
+def natural_document(env: Any, document: ast.Document, *, naming: str = "per_statement",
+                     vocabulary=None, accept_suggested_vocabulary=False) -> NaturalView:
     """Render a validated read-only view with explicit scope and dependencies."""
     ast.check_document(env, document)
     from .identity import meaning_id
-    return NaturalView(render(document, env, "ve_natural", naming), env.environment_id,
+    return NaturalView(render(document, env, "ve_natural", naming, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary), env.environment_id,
                        meaning_id(env, document))
 
 
-def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement") -> NaturalView:
+def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement",
+                    vocabulary=None, accept_suggested_vocabulary=False) -> NaturalView:
     ast.check_formula(env, formula)
     from .identity import meaning_id
-    return NaturalView(render(formula, env, "ve_natural", naming), env.environment_id,
+    return NaturalView(render(formula, env, "ve_natural", naming, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary), env.environment_id,
                        meaning_id(env, formula))

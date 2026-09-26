@@ -5,7 +5,7 @@ from lark import Lark
 from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
                 Implies, Not, Unary, Var, render)
 from ve.english import english_lark_grammar, parse_english
-from ve.ast import Le, Num
+from ve.ast import Le, Lt, Num, Scale
 from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
 from test_views import ENV, vocabulary
 
@@ -64,6 +64,10 @@ def test_order_comparison_uses_at_least_without_operator_symbols():
     result = render_natural_sentence(formula, env)
     assert result.natural and result.text == 'Budget is at least 3'
     assert parse_english(env, result.text + '.') == Document((formula,))
+    twice = Lt(Scale(2, Const('budget')), Const('limit'))
+    result = render_natural_sentence(twice, env)
+    assert result.natural and result.text == 'Limit is more than twice the budget'
+    assert parse_english(env, result.text + '.') == Document((twice,))
 
 
 def test_repository_corpus_accepts_no_wrong_reading():
