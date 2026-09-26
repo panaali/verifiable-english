@@ -34,8 +34,9 @@ def RouteVocabulary.modelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabular
 /-- A declared `$string` literal: the sort is required and the description is
 optional (and nonempty when present). -/
 def literalEntry (entry : Json) : Except String Unit := do
-  VE.Bridge.displayFields entry ["sort"] ["description"]
+  VE.Bridge.displayFields entry ["sort"] ["description", "verbalisation"]
   if let .ok _ := entry.getObjVal? "description" then VE.Bridge.description entry
+  if let .ok words := entry.getObjVal? "verbalisation" then VE.Bridge.displayString words
 
 def isLiteralEntry (entry : Json) : Bool :=
   entry.getObjValD "sort" == .str Background.stringSort
@@ -76,8 +77,10 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   let cs ← constants.mapM fun (c, entry) => do
     if isLiteralEntry entry then literalEntry entry
     else
-      exactFields entry ["sort", "description"]
+      VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
       VE.Bridge.description entry
+      if let .ok words := entry.getObjVal? "verbalisation" then
+        VE.Bridge.displayString words
     let s ← stringField entry "sort"
     unless allowed s do throw s!"unknown constant sort: {c}"
     pure (c, s)
