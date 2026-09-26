@@ -169,6 +169,19 @@ def test_proposer_reservation_and_explicit_retry():
     assert service.request_proposer("u", Offline())["status"] == "unresolved"
 
 
+def test_clarification_reply_cap_is_separate_from_proposer_cap():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Unknown wording.", {"start": 0})
+    service.start("u")
+    for _ in range(8):
+        service.classify("u", parse_outcome="zero")
+        assert service.reply("u", "Please try this wording") == "analysing"
+    service.classify("u", parse_outcome="zero")
+    assert service.reply("u", "One more") == "unresolved"
+    assert service.units["u"].proposals == 0
+
+
 def test_authoring_requires_explicit_rejection_of_distinct_reading():
     env = environment()
     service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
