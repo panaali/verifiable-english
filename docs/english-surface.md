@@ -261,9 +261,10 @@ prefix forms recover the constructor; list arity preserves operand association;
 the finite lexicon identifies the predicate and ordered arguments; declarations
 and unique references invert scope-stack extension; each contracted guard has
 one prescribed inverse. From `parse(render(A)) = A`, injectivity follows by
-applying `parse` to an assumed equality of rendered texts. **This argument has
-not been mechanized, and the tests below are finite evidence, not a universal
-proof over every future vocabulary.**
+applying `parse` to an assumed equality of rendered texts. **This argument is
+mechanized only for the core fragment** (see "Lean model of the core fragment"
+below); for the rest of the surface the tests below are finite evidence, not a
+universal proof over every future vocabulary.
 
 ## Lexical precision and remaining limits
 
@@ -290,17 +291,114 @@ its domain. The legend preserves raw declarations, selected wording, identifiers
 descriptions, and argument order for oversight. Acceptance is not evidence of
 faithfulness to the world or to a source document.
 
-There is **no Lean proof for this surface**. The needed theorem is a round trip
-for the environment-indexed English grammar and its scope/typing judgments,
+There is **no Lean proof for the full surface**. The needed theorem is a round
+trip for the environment-indexed English grammar and its scope/typing judgments,
 `parseEnglish Γ (renderEnglish Γ A) = A` for every admitted checked AST, together
-with uniqueness of grammar derivations; renderer injectivity then follows.
-Existing Lean theorems concern canonical syntax and semantics, not this parser.
+with uniqueness of grammar derivations; renderer injectivity then follows. These
+statements are now frozen in Lean and proved for the core fragment only; every
+other construct is listed as "Lean coverage pending" in the legend below.
 There is **no human readability evidence**: no reader study, comprehension
 measurement, or comparison with strict/fluent prose has been run. Missing lexical
 metadata still produces conspicuous quoted identifiers. General morphology,
 plural agreement, arbitrary English input, and free pronouns are out of scope.
 Every checked constructor has an English production, subject to the existing
 64 KiB source/output, 64-level AST depth, and 10,000-node resource envelope.
+
+## Lean model of the core fragment
+
+`lean/VE/English/*` (PLAN-EXPAND2 W7, PLAN-ZERO-TRAINING Z6) models the surface
+at the token level: words, punctuation words such as `,` and `(a)`, and
+numbered labels such as `S1`. A lexicon gives each sort a noun and a label
+letter, each predicate a template (a token list with numbered placeholder
+positions) and each constant its displayed spelling. Derivations are parse
+trees, so "exactly one derivation" means equal trees, not merely equal ASTs.
+
+| File | Content |
+|---|---|
+| `Lexicon.lean` | tokens, templates, lexicon, naming forms, simple clauses, the `Admitted` and `Covers` conditions |
+| `Grammar.lean` | core productions, parse trees, token yield, readings (nearest-first reference resolution) |
+| `Render.lean` | canonical core renderer mirroring `EnglishTraversal`, including per-sort `that`/`first`/`second`/label naming |
+| `Parse.lean` | executable parser (first token selects the production; clauses end at `,` `;` `.` `and` `or`) |
+| `Statements.lean` | the four frozen statements for any surface, and the core instance `coreSurface` |
+| `ClauseProofs.lean`, `ParseProofs.lean`, `RenderProofs.lean`, `Proofs.lean` | the proofs |
+
+Proved for the core fragment, with standard axioms only (`python lean/audit.py`):
+
+* `core_unique_derivation`: a token text has at most one derivation, over all
+  grammatical trees (scope and typing are not needed for uniqueness);
+* `core_parse_sound`: the parser returns only the reading of a derivation of
+  exactly its input; this needs no lexical condition;
+* `core_parse_render`: parsing the canonical rendering of a nonempty document
+  of closed well-typed formulas returns that document;
+* `core_render_injective`: distinct documents render to distinct texts.
+  Synonymous inputs (for example `both of the following hold:` with two simple
+  items, or an article that does not agree) need not coincide.
+
+The hypotheses are `Covers L E` (every sort, predicate and constant has a noun,
+template of the declared arity, or spelling) and `Admitted L`: simple clauses
+have a unique lexical analysis, contain none of `, ; . and or`, and do not begin
+with `it both either if all at for there of`; sort nouns are prefix-free and do
+not begin with `first` or `second`. The clause conditions are properties of the
+finite vocabulary. Today their evidence is the Python finite vocabulary audit;
+a Lean decision procedure for them is pending.
+
+The core renderer omits relative-clause contractions and validated negatives.
+Its output is still writable English that the Python parser accepts (for
+example `for every person, that person is happy` where the Python renderer
+prints `every person is happy`). `conformance/english_lean.py` compares the two
+implementations (below).
+
+## Extension discipline
+
+Every new surface construct, in any workstream:
+
+1. is keyword-led: its English keywords are registered in the P0 surface
+   registry (`ve/surface/registry.py`), which orders them by longest match;
+2. ships a grammar production in the exported Earley grammar, with its
+   `grammar_hook` and `derivation_hook`, so that the parser reading and the
+   derivation correspond (`require_correspondence`);
+3. passes the per-input all-derivations check
+   (`ve.surface.unambiguity.require_unique_derivation`) on its fixtures: more
+   than one derivation rejects the input even when both derivations give the
+   same AST, and budget exhaustion rejects with a diagnostic naming the budget;
+4. is generated by the mixed harness `conformance/english_mixed.py`, which
+   combines every merged construct up to depth three and fails on any text with
+   more than one derivation;
+5. is either covered by a Lean lemma or listed below as **Lean coverage
+   pending**. That label records proof coverage only. It never replaces the
+   per-input check, which is what admits an input, and Python-only replay is
+   never labelled Lean-verified.
+
+A workstream adding wording appends its row to this legend.
+
+| Construct | Registry keyword | Lean coverage |
+|---|---|---|
+| `this holds in all cases`, `this is impossible` | clause | core (`core_parse_render`, `core_unique_derivation`) |
+| template clause, `… is the same as …` | clause | core, under `Admitted` |
+| `it is not the case that …` | `not` | core |
+| `both … and …` (simple operands) | `and` | core |
+| `either … or …, or both` (simple operands) | `or` | core |
+| `if …, then …` | `implies` | core |
+| `all of the following hold:`, `both of the following hold:`, `at least one of the following holds:` with `(a)`/`(b)`, `(i)`/`(ii)` by depth | `and`, `or` | core |
+| `for every NOUN, …` | `forall` | core |
+| `there is a`/`an NOUN such that …` | `exists` | core |
+| binder naming: `that NOUN`, `first`/`second`, `NOUN named S1` | none | core |
+| relative contractions: `every NOUN …`, guards with `who`/`that`, `there is a NOUN who …` | `forall`, `exists` | Lean coverage pending |
+| validated negative templates (`is not …`, `does not …`) | clause | Lean coverage pending |
+| legacy split lists `if the following holds: … then the following holds:` (parse only) | `implies` | Lean coverage pending |
+| closure `starting from …` | `reach` | Lean coverage pending |
+| order comparisons (`is less than`, `is at most`, integer terms) | clause | Lean coverage pending |
+| lexing: whitespace, capitalisation, indentation, quoted identifiers | none | Lean coverage pending |
+| every later profile's wording (W1-W6) | per workstream | Lean coverage pending until its row says otherwise |
+
+The full theorems over the whole lexicon wait for W7's trigger: no wording
+change for two weeks after W1, W3, W5 and W6 merge (PLAN-EXPAND2 section 7).
+Human readability is still unmeasured.
+
+```sh
+uv run python -m conformance.english_mixed
+cd lean && lake build && cd .. && uv run python -m conformance.english_lean
+```
 
 ## Reproducible evidence and worked examples
 
