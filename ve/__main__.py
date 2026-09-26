@@ -229,7 +229,10 @@ def main(argv=None):
             try:
                 if defer_display_options:
                     english_options, provenance = load_english_options()
-                display = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+                conclusions = record.get("conclusions", ())
+                view = "ve_natural" if conclusions else display_view
+                display = render(document_from_data(env, record["ast"]), env, view,
+                                 conclusions=conclusions, **english_options)
                 record.update(display_text=display, **provenance)
             except Exception as exc:
                 record["display_omitted"] = type(exc).__name__
@@ -241,17 +244,22 @@ def main(argv=None):
             from .english import parse_english_with_metadata
             parsed = parse_english_with_metadata(env, source, **english_options)
             document = parsed.document
+            conclusions = parsed.conclusions
             if parsed.paraphrase()["changed"]:
                 print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
         else:
             document = parse(env, source)
+            conclusions = ()
         if args.command == "render":
             if args.view == "natural" and not args.with_legend:
-                _emit(natural_document(env, document, naming=args.naming, **english_options).to_dict())
+                _emit(natural_document(env, document, naming=args.naming,
+                                       conclusions=conclusions, **english_options).to_dict())
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
             options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
+            if view == "ve_natural":
+                options["conclusions"] = conclusions
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
             print(print_document(env, document), end="")
