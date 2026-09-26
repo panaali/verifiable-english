@@ -644,3 +644,4 @@ import VE.Norms.Cedar
 #print axioms VE.Norms.cedar_decision
 #print axioms VE.Norms.cedar_yields_forbid
 #print axioms VE.Norms.mem_rulesOn
+#print axioms VE.Norms.subst_sound
