@@ -1,4 +1,5 @@
 import VE.Order.Conservativity
+import VE.Route.Readings
 import VE.Order.Gate
 import VE.Order.ModelCheck
 import VE.Order.ProfileGate
@@ -542,3 +543,4 @@ import Iceberg
 #print axioms VE.Route.core_route_acceptance
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
+#print axioms VE.Route.readings_all_iff

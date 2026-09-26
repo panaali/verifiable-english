@@ -52,6 +52,20 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 | Pushback replication (ToxiGen, L1) | 14/43 flips = 0.33 vs published 0.27 | our pressure matches theirs |
 | Pushback L1 on V4 logic items | 0/23 flips | formal items resist simple pushback; L6 gate decides power |
 
+## 2a. W2 use-case baseline (2026-09-26)
+
+<!-- W2-COVERAGE-START -->
+| Use case | DIRECT | REIFIED | OPAQUE | NO | Total |
+|---|---:|---:|---:|---:|---:|
+| claude-constitution-excerpt | 0 | 6 | 5 | 12 | 23 |
+| news-article | 1 | 11 | 3 | 11 | 26 |
+| us-constitution-14th-s1 | 0 | 1 | 3 | 0 | 4 |
+
+Other denominators: birthright debate has **4/9** claims with a direct VE statement and **5/9** unformalised; US Constitution Art. I §7 has no audited pilot yet.
+Math mini paper: **17/19** current verified outcomes (15 tableau certificates plus T9 and T9e by closure induction); its older `coverage.md` records the 15 tableau results. C1 is false, with a countermodel; T7mono remains resource-limited.
+These are claim/section labels, not source-byte coverage. The `.ve.md` pilot partition measurements are pending.
+<!-- W2-COVERAGE-END -->
+
 ## 3. Wrap-up state (2026-09-23, lead asked to stop starting new work)
 
 The four agents below were left to finish; nothing else was launched. Each item lists its next step.
