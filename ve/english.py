@@ -1184,7 +1184,7 @@ class EnglishParser:
         return ast.Document(tuple(formulas))
 
 
-def _parse_english_document(env, source, **options):
+def _parse_english_document(env, source, *, _with_structure=False, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1204,7 +1204,10 @@ def _parse_english_document(env, source, **options):
         if exc.span is None: exc.span = Span(0, len(source), 1, 1)
         raise
     _check_conclusions(env, document, parser.conclusions)
-    return document, source, parser.words, tuple(parser.conclusions)
+    result = document, source, parser.words, tuple(parser.conclusions)
+    if _with_structure:
+        return (*result, tuple(parser.sentence_spans), tuple(parser.paragraph_breaks))
+    return result
 
 
 def _check_conclusions(env, document, conclusions):
