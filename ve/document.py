@@ -204,8 +204,7 @@ def check_document(path):
     assertions = [formula_from_data(env, u["content"]) for u in doc["units"]
                   if u["kind"] == "asserted" and u["content"] is not None]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
-              "coverage": coverage(doc), "reading_plan": doc["reading_plan"],
-              "premises": premise_status(env, assertions)}
+              "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if "graph" in doc["meta"]:
         admission = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
                                 **({"content": u["content"]} if u["content"] is not None else {})}
@@ -218,6 +217,11 @@ def check_document(path):
                                       if all(c["content"] is not None for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
         result["admission"] = admit_document(env, admission)
+        assertions = [formula_from_data(env, a["ast"])
+                      for a in result["admission"]["report"]["assumptions"]]
+    result["premises"] = premise_status(env, assertions)
+    if "admission" in result:
+        result["admission"]["vacuous"] = result["premises"]["status"] == "INCONSISTENT"
     return result
 
 
@@ -244,6 +248,7 @@ def main(argv=None):
     for name in ("check", "render", "coverage", "readings"):
         sub.add_parser(name).add_argument("path")
     sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
+    sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -256,10 +261,24 @@ def main(argv=None):
             data = coverage(doc)
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
-            data = check_readings(doc["environment"],
-                                  [r for r in doc["meta"].get("reading_sets", []) if r["status"] == "open"],
-                                  conclusion)
+            sets = [r for r in doc["meta"].get("reading_sets", []) if r["status"] == "open"]
+            if args.narrowing:
+                matching = [n for n in doc["meta"].get("narrowings", []) if n["id"] == args.narrowing]
+                if len(matching) != 1:
+                    raise VEError("unknown narrowing")
+                narrowing = matching[0]
+                if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
+                           for r in sets):
+                    raise VEError("narrowing does not target an open reading set")
+                sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
+                        if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
+                        for r in sets]
+            data = check_readings(doc["environment"], sets, conclusion)
+            if args.narrowing:
+                data["narrowing"] = f"narrowing:{args.narrowing}"
         else:
+            if args.narrowing:
+                raise VEError("--narrowing requires --conclusion")
             data = doc["reading_plan"]
     print(json.dumps(data, ensure_ascii=False, indent=2))
     return 0

@@ -105,6 +105,21 @@ def test_document_p0_admission_and_cli(tmp_path):
     assert json.loads(output.stdout)["accounted_bytes"] == len(source)
 
 
+def test_quoted_content_needs_bridge_in_document(tmp_path):
+    source = b"Alice says so.\n"
+    quoted = unit("a", 0, len(source), ["attributed", "alice", "says", "asserted"],
+                  content={"ast": ["top"]})
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "a"}]}
+    path = write_doc(tmp_path, source, [quoted], graph=graph)
+    with pytest.raises(VEError, match="bridge leaf"):
+        check_document(path)
+    graph["nodes"][0]["label"] = "bridge:accepts(alice,a)"
+    path = write_doc(tmp_path, source, [quoted], graph=graph)
+    result = check_document(path)
+    assert result["coverage"]["residual"]["bridge_leaves"] == 1
+    assert result["premises"]["status"] == "model"
+
+
 def test_reading_identity_and_narrowing_schema(tmp_path):
     source = b"Maybe.\n"
     env = Environment(environment())
