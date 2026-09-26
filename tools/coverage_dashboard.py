@@ -6,6 +6,7 @@ date. Later verified closure results are recorded separately below.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import re
 
@@ -41,6 +42,20 @@ def baseline(root: Path = ROOT) -> str:
         "These are claim/section labels, not source-byte coverage. The `.ve.md` pilot "
         "partition measurements are pending.",
     ])
+    pilots = sorted((root / "usecases").glob("*/coverage.json"))
+    if pilots:
+        rows.extend(["", "Measured `.ve.md` pilot partitions:", "",
+                     "| Document | Accounted bytes | Source bytes | Residual |",
+                     "|---|---:|---:|---:|"])
+    for path in pilots:
+        data = json.loads(path.read_text())
+        source = data.get("source_bytes")
+        accounted = data.get("accounted_bytes")
+        residual = data.get("residual_total")
+        if (type(source) is not int or source <= 0 or accounted != source
+                or type(residual) is not int or residual < 0):
+            raise ValueError(f"invalid partition coverage: {path}")
+        rows.append(f"| {path.parent.name} | {accounted} | {source} | {residual} |")
     return "\n".join(rows)
 
 
