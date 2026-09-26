@@ -15,9 +15,11 @@ harness:
 3. gives that Lean text to the Python parser (which runs the all-derivations
    check) and requires the same AST.
 
-A Lean parse that differs from the Python AST, a Lean rendering that does not
-parse back in Lean, or a Lean rendering that Python rejects or reads
-differently is a failure. A Python text that the Lean core parser does not read
+For a vocabulary that passes the Lean lexical check `admissible` (so the
+Lean theorems apply), a Lean parse that differs from the Python AST, a Lean
+rendering that does not parse back in Lean, or a Lean rendering that Python
+rejects is a failure; for other vocabularies these are reported by kind. A
+Lean rendering that Python reads as a different AST is always a failure. A Python text that the Lean core parser does not read
 (contractions, validated negatives, closure, order) is counted as outside the
 core skeleton, as are ASTs outside the v0 constructors and vocabularies whose
 wording does not tokenize into core templates. Tokenization, capitalisation
@@ -148,6 +150,7 @@ def wire(formula):
 
 
 def run_lean(payload):
+    """Returns (admissible, per-case results) from the Lean runner."""
     with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as handle:
         json.dump(payload, handle)
         path = handle.name
@@ -158,7 +161,8 @@ def run_lean(payload):
         Path(path).unlink()
     if result.returncode:
         raise RuntimeError('Lean runner failed: ' + result.stderr[-2000:])
-    return json.loads(result.stdout)['results']
+    output = json.loads(result.stdout)
+    return output['admissible'], output['results']
 
 
 def corpus(env, words, name, per_vocabulary, offset):
@@ -201,7 +205,17 @@ def differential(per_vocabulary=200):
             text = render(ast.Document((formula,)), env, 've_english', **options)
             cases.append({'tokens': tokenize(lower_sentence_starts(text), letters), 'formulas': [wire(formula)]})
             formulas.append(formula)
-        results = run_lean({'environment': environment(env), 'lexicon': lex, 'cases': cases}) if cases else []
+        admissible, results = (run_lean({'environment': environment(env), 'lexicon': lex, 'cases': cases})
+                               if cases else (None, []))
+        # For an admitted lexicon the Lean theorems (checked_parse_render,
+        # checked_unique_derivation) apply; every divergence is a failure. For
+        # other lexicons Lean results are reported, and only Python's reading
+        # of the Lean text is required to be faithful when Python accepts it.
+        def problem(kind, **detail):
+            if admissible:
+                failures.append({'vocabulary': name, 'kind': kind, **detail})
+            else:
+                counts['outside admitted lexicon: ' + kind] += 1
         for formula, case, result in zip(formulas, cases, results):
             expected = [wire(formula)]
             if result['parsed'] is None:
@@ -209,32 +223,30 @@ def differential(per_vocabulary=200):
             elif result['parsed'] == expected:
                 counts['lean parse agrees'] += 1
             else:
-                failures.append({'vocabulary': name, 'kind': 'lean parse differs', 'tokens': case['tokens'],
-                                 'expected': expected, 'lean': result['parsed']})
+                problem('lean parse differs', tokens=case['tokens'], expected=expected, lean=result['parsed'])
             if not result['checked']:
                 failures.append({'vocabulary': name, 'kind': 'lean rejects checked AST', 'formula': expected})
                 continue
             if result['roundtrip']:
                 counts['lean core round trip'] += 1
             else:
-                counts['lean core round trip fails'] += 1
-                failures.append({'vocabulary': name, 'kind': 'lean round trip', 'formula': expected,
-                                 'rendered': result['rendered']})
+                problem('lean round trip', formula=expected, rendered=result['rendered'])
             if result['rendered'] == case['tokens']:
                 counts['identical canonical text'] += 1
             lean_text = detokenize(result['rendered'])
             try:
                 reread = parse_english(env, lean_text, **options)
             except Exception as exc:  # any rejection by the Python parser is a divergence
-                failures.append({'vocabulary': name, 'kind': 'python rejects lean core text',
-                                 'text': lean_text, 'error': f'{type(exc).__name__}: {exc}'[:500]})
+                problem('python rejects lean core text', text=lean_text,
+                        error=f'{type(exc).__name__}: {exc}'[:500])
                 continue
             if reread == ast.Document((formula,)):
                 counts['python reads lean core text'] += 1
             else:
                 failures.append({'vocabulary': name, 'kind': 'python reads lean core text differently',
                                  'text': lean_text, 'expected': expected})
-        rows.append({'vocabulary': name, 'status': 'compared', 'asts': len(formulas) + counts['outside core AST'],
+        rows.append({'vocabulary': name, 'status': 'compared', 'lean_admissible': admissible,
+                     'asts': len(formulas) + counts['outside core AST'],
                      **dict(sorted(counts.items()))})
         print(json.dumps(rows[-1]), flush=True)
     return {'method': 'Python render -> Lean core parse; Lean core render -> Lean parse and Python parse',
@@ -252,8 +264,10 @@ if __name__ == '__main__':
     if args.output:
         args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     agree = sum(r.get('lean parse agrees', 0) for r in report['vocabularies'])
+    admitted = [r['vocabulary'] for r in report['vocabularies'] if r.get('lean_admissible')]
     if report['failure_count']:
         print(json.dumps(report['failures'][:5], indent=2))
         raise SystemExit(f"FAIL: {report['failure_count']} Python/Lean core divergences")
     print(f'PASS: {agree} Python texts read identically by the Lean core parser; '
-          'every Lean core rendering parses back in Lean and in Python; no divergences')
+          f'{len(admitted)} vocabularies pass the Lean lexical check, and for them every Lean core '
+          'rendering parses back in Lean and in Python; no divergences')
