@@ -264,6 +264,13 @@ impl Environment {
             if flagged && signature.len() != 2 {
                 return error("InvalidInput", "Functional and total flags require a binary predicate");
             }
+            if flagged && signature.iter().any(|s| s == "$int") {
+                return error("UnsupportedProfile", "Data flags on $int slots are not supported");
+            }
+            if order && route && profiles.iter().any(|p| p == "data@0")
+                && (flagged || signature.iter().any(|s| s == "$string")) {
+                return error("UnsupportedProfile", "Data attributes on the order family are not enabled");
+            }
             let functional = match d.get("functional") {
                 None => false,
                 Some(Value::Bool(value)) => *value,
