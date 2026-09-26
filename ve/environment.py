@@ -153,6 +153,8 @@ class Environment:
             sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
             flagged = type(entry) is dict and ("functional" in entry or "total" in entry)
+            if flagged and "defined" in entry:
+                raise UnsupportedProfile("Defined predicates cannot carry functional or total flags")
             fields = {"arguments", "description"}
             if flagged:
                 if not route or "data@0" not in data["profiles"]:

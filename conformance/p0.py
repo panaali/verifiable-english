@@ -202,6 +202,12 @@ def elaborated_document_cases():
     case("data-dropped-flag-stales-certificate", "certificate",
          {"status": "ok", "valid": False}, changed_data,
          premises=[], conclusion=["top"], certificate=flag_cert)
+    defined_flag = deepcopy(data_env)
+    defined_flag["vocabulary"]["predicates"]["dept"]["defined"] = {
+        "arguments": ["person", "department"], "body": ["top"]}
+    case("data-defined-predicate-cannot-be-flagged", "evaluate",
+         {"status": "error", "code": "UnsupportedProfile"}, defined_flag,
+         model=data_model, ast=[["top"]])
 
     # The order family admits literals (plan 3.1: Background depends on env only).
     order = envelope(ORDER_VOCAB, ["order@0", "relational-fol@0"])
