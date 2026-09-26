@@ -74,7 +74,10 @@ def decodeFormula : Nat → Json → Except String Formula
     | [.str "unary", .str p, t] => return .unary p (← decodeTerm t)
     | [.str "binary", .str p, t, u] => return .binary p (← decodeTerm t) (← decodeTerm u)
     | [.str "atom", .str p, ts] =>
-      let terms ← (← ts.getArr?).toList.mapM decodeTerm
+      let termArray ← match ts.getArr? with
+        | .ok array => pure array
+        | .error _ => throw "Atom terms must be an array of three to six terms"
+      let terms ← termArray.toList.mapM decodeTerm
       unless decide (3 ≤ terms.length) && decide (terms.length ≤ 6) do
         throw "Atom terms must be an array of three to six terms"
       return .atom p terms
