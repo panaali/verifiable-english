@@ -138,21 +138,23 @@ class FiniteModel:
             from .definitions import compile_definitions
             from .evaluate import _Evaluator, _Exhausted
             from .limits import MAX_EVALUATIONS
+            work_remaining = MAX_EVALUATIONS
             for definition in compile_definitions(env, env.definition_entries, version=env.environment_id):
                 table = set()
                 temporary = cls(MappingProxyType(domains), MappingProxyType(constants),
                                 MappingProxyType(relations), env.environment_id, "")
-                evaluator = _Evaluator(env, temporary, MAX_EVALUATIONS, trace=False)
+                evaluator = _Evaluator(env, temporary, work_remaining, trace=False)
                 try:
                     for row in product(*(domains[s] for s in definition.arguments)):
                         bindings = tuple(reversed(tuple(zip(definition.arguments, row))))
                         if evaluator.formula(definition.body, bindings)[0]:
                             table.add(row)
+                            if tuple_count + len(table) > MAX_TUPLES:
+                                raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
                 except _Exhausted as exc:
                     raise ResourceLimit("Definition model evaluation budget exhausted") from exc
+                work_remaining -= evaluator.work
                 tuple_count += len(table)
-                if tuple_count > MAX_TUPLES:
-                    raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
                 relations[definition.name] = frozenset(table)
 
         normalized = _normalized(domains, constants, relations, defined_names)
