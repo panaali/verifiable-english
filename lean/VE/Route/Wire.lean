@@ -241,6 +241,29 @@ def decodeDataModel (rv : RouteVocabulary) (j : Json) :
   | some g => throw (invalidModel g)
   | none => pure M
 
+/-- Runtime model admission enforces both parts of the reviewed data meaning:
+distinct declared literals and functional/total relation tables. -/
+theorem decodeDataModel_valid (rv : RouteVocabulary) (j : Json)
+    (M : VE.FiniteModel VE.Bridge.Entity) (h : decodeDataModel rv j = .ok M) :
+    Background.StringAdmissible rv.environment rv.literals M.asStructure ∧
+      ∀ f ∈ rv.flags, VE.Data.Background.Intended M.asStructure f := by
+  unfold decodeDataModel at h
+  obtain ⟨data, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hv, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have hvalid : data.valid rv.modelVocabulary = true := Gate.require_ok hv
+  dsimp only at h
+  split at h
+  · rename_i hf
+    split at h
+    · cases h
+    · rename_i hl
+      cases h
+      refine ⟨⟨VE.Bridge.modelData_valid data rv.modelVocabulary hvalid,
+        Background.literalsValid_sound _ rv.literals rv.nodup
+          (backgroundViolation_none _ _ hl)⟩, ?_⟩
+      exact VE.Data.Background.flags_model_valid _ rv.flags (by simpa using hf)
+  · cases h
+
 def usesStringBinder : VE.Formula → Bool
   | .all s a | .ex s a => s == Background.stringSort || usesStringBinder a
   | .not a => usesStringBinder a

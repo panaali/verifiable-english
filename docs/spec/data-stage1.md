@@ -33,6 +33,8 @@ binary `member(element, collection)` relation, with no extra set axiom.
 - `fol_data_route_acceptance`: an accepted tableau certificate for the
   regenerated flag and literal background proves its conclusion in every
   admissible structure with those data meanings.
+- `decodeDataModel_valid`: a finite model accepted on the Lean route satisfies
+  both literal distinctness and the declared functional and total meanings.
 
 `StringAdmissible` means structural admissibility plus distinct denotations
 for different declared string literals. `DataAdmissible` adds the functional
