@@ -1,10 +1,13 @@
 """nary@0 wire and type checks, including repeated argument positions."""
 import pytest
 
-from ve.ast import Atom, Const, formula_from_data, formula_to_data
+from ve.ast import Atom, Const, Not, formula_from_data, formula_to_data
 from ve.environment import Environment
-from ve.errors import SyntaxError, TypeMismatch, UnknownSymbol, VEError
+from ve.errors import InvalidModel, SyntaxError, TypeMismatch, UnknownSymbol, VEError
+from ve.evaluate import evaluate
+from ve.model import FiniteModel
 from ve.profiles import LANGUAGE, SPEC_REVISION
+from ve.search import check_countermodel
 
 
 def environment(arity=3):
@@ -50,3 +53,20 @@ def test_environment_arity_cap_and_unknown_third_sort():
     data["vocabulary"]["predicates"]["p"]["arguments"][2] = "missing"
     with pytest.raises(UnknownSymbol):
         Environment(data)
+
+
+def test_finite_model_and_countermodel_with_nary_relation(monkeypatch):
+    # Exercise the untrusted finite-model path while the verified route is gated.
+    monkeypatch.setattr("ve.profiles.GATED", {})
+    env = environment()
+    model = FiniteModel.from_dict(env, {
+        "complete": True,
+        "domains": {"s": ["x"], "t": ["y"]},
+        "constants": {"a": "x", "b": "y"},
+        "relations": {"p": [["x", "x", "y"]]},
+    })
+    atom = Atom("p", (Const("a"), Const("a"), Const("b")))
+    assert evaluate(env, atom, model).value is True
+    assert check_countermodel(env, [atom], Not(atom), model).valid
+    with pytest.raises(InvalidModel):
+        FiniteModel.from_dict(env, {**model.to_dict(), "relations": {"p": [["x", "y", "x"]]}})

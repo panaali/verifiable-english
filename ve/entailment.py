@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
-from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
+from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                   Not, Or, Top, Unary, Var, Reach, Named, check_document)
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
@@ -173,6 +173,9 @@ def _closed(branch: _Branch) -> bool:
             atom = (f.predicate, find(_term_token(f.left, item.bindings)),
                     find(_term_token(f.right, item.bindings)))
             (positive if item.positive else negative).add(atom)
+        elif type(f) is Atom:
+            atom = (f.predicate, *(find(_term_token(t, item.bindings)) for t in f.terms))
+            (positive if item.positive else negative).add(atom)
     return bool(positive & negative)
 
 
@@ -249,6 +252,7 @@ def _instance_key(item: _Signed) -> tuple:
         if kind in (Top, Bottom): return (kind.__name__,)
         if kind is Unary: return ("Unary", f.predicate, term(f.term))
         if kind is Binary: return ("Binary", f.predicate, term(f.left), term(f.right))
+        if kind is Atom: return ("Atom", f.predicate, *(term(t) for t in f.terms))
         if kind is Eq: return ("Eq", term(f.left), term(f.right))
         if kind is Reach:
             edge = (("Named", f.edge.relation) if type(f.edge) is Named else
@@ -290,6 +294,7 @@ def _connection_key(item: _Signed, opposite: bool = False) -> tuple:
         if kind in (Top, Bottom): return ("truth", positive == (kind is Top))
         if kind is Unary: return ("unary", positive, f.predicate, term(f.term))
         if kind is Binary: return ("binary", positive, f.predicate, term(f.left), term(f.right))
+        if kind is Atom: return ("atom", positive, f.predicate, *(term(t) for t in f.terms))
         if kind is Eq: return ("eq", positive, frozenset((term(f.left), term(f.right))))
         if kind is Reach:
             # Edge truth is independent of the sign of the enclosing Reach.
