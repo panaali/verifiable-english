@@ -26,7 +26,8 @@ covers the complete numbered block using the declared consequence phrases and
 P0's formula grammar for conditions. The `ve.surface.norms` records reserve the statement keywords,
 but the standalone entry point is separate from the existing formula parser.
 The export manifest verifies environment, text and document hashes. Editing
-transactions and IDE example/rewrite explanations are not yet implemented.
+transactions and IDE example/rewrite explanations are not yet implemented;
+the concrete Z3/Z4 handoff is in `docs/W1-IDE-HANDOFF.md`.
 
 `ve.adapters.cedar.translate` handles the no-attribute fragment for a supplied
 finite request set, preserving Boolean tag errors, all-member set checks,
