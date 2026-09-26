@@ -190,6 +190,7 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
     Every unexamined or unresolved pair remains pending. Cursor is a pair index
     for display pagination only; approval requires zero pending pairs globally.
     """
+    stop = deadline if deadline is not None else time.monotonic() + OPERATION_SECONDS
     rows, residual = candidates(env, source, bindings, pattern_id=pattern_id)
     result = {"catalogue_version": CATALOGUE_VERSION, "pattern_id": pattern_id,
               "limits": {**SEARCH_LIMITS, "operation_seconds": OPERATION_SECONDS,
@@ -197,10 +198,16 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
                          "max_cards": MAX_CARDS}, "cards": [], "pending": [],
               "candidate_count": len(rows), "comparison_count": 0, "candidates": [],
               "cursor": cursor, "next_cursor": None, "residual": residual}
+    if time.monotonic() >= stop:
+        result["pending"].append({"reason": "operation deadline (8 seconds)"})
+        return result
     if residual:
         return result
     worded = []
     for name, formula in rows:
+        if time.monotonic() >= stop:
+            result["pending"].append({"reason": "operation deadline (8 seconds)"})
+            return result
         try:
             wording = checked_wording(env, render_english(formula, env) + ".", formula)
         except (VEError, ValueError) as exc:
@@ -220,7 +227,6 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
     if type(cursor) is not int or not 0 <= cursor <= len(pairs):
         raise ValueError("invalid comparison cursor")
     end = min(len(pairs), MAX_COMPARISONS)
-    stop = deadline if deadline is not None else time.monotonic() + OPERATION_SECONDS
     for index in range(cursor, end):
         if time.monotonic() >= stop:
             result["pending"].append({"reason": "operation deadline (8 seconds)", "pair": index})
@@ -272,4 +278,6 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
     if result["next_cursor"] is None and end < len(pairs):
         result["next_cursor"] = end
         result["pending"].append({"reason": "pair comparison limit (496)"})
+    if time.monotonic() >= stop and not result["pending"]:
+        result["pending"].append({"reason": "operation deadline (8 seconds)"})
     return result
