@@ -83,6 +83,9 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     let slots: Vec<_> = (0..arity).map(|i| format!("{{{i}}}")).collect();
     let mut cursor = 0;
     for slot in &slots {
+        if act.matches(slot).count() != 1 {
+            return error("InvalidInput", "invalid act phrase slots");
+        }
         let Some(i) = act[cursor..].find(slot) else {
             return error("InvalidInput", "invalid act phrase slots");
         };
@@ -93,8 +96,10 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
         plain = plain.replace(slot, "slot");
     }
     if act.len() > 80 || plain.split_whitespace().count() < 2 ||
-        plain.split_whitespace().any(|word| !word.bytes().all(|b|
-            b.is_ascii_alphabetic() || b == b'\'' || b == b'-')) {
+        plain.split_whitespace().any(|word|
+            !word.as_bytes().first().is_some_and(u8::is_ascii_alphabetic)
+            || !word.bytes().all(|b| b.is_ascii_alphabetic() || b == b'\'' || b == b'-')
+            || (word != "slot" && RESERVED.contains(&word.to_ascii_lowercase().as_str()))) {
         return error("InvalidInput", "invalid act phrase");
     }
     Ok(act)
