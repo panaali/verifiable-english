@@ -2916,90 +2916,9 @@
       ]
     },
     "expected": {
-      "status": "ok",
-      "admitted": true,
-      "report": {
-        "root": {
-          "name": "uses",
-          "ast": [
-            "unary",
-            "in_finance",
-            [
-              "const",
-              "alice"
-            ]
-          ]
-        },
-        "assumptions": [
-          {
-            "name": "cited",
-            "ast": [
-              "unary",
-              "in_finance",
-              [
-                "const",
-                "alice"
-              ]
-            ],
-            "label": "cite:b1/t1"
-          },
-          {
-            "name": "claim-u2",
-            "ast": [
-              "or",
-              [
-                "eq",
-                [
-                  "const",
-                  "finance"
-                ],
-                [
-                  "const",
-                  "legal"
-                ]
-              ],
-              [
-                "unary",
-                "in_finance",
-                [
-                  "const",
-                  "alice"
-                ]
-              ]
-            ],
-            "label": "bridge:accepts(bob,u2)"
-          }
-        ]
-      },
-      "report_id": "7aca7a5daac15d2c2b82691a7905bca9d2eea322dbcba875e7f96b5b4493c087",
-      "kinds": [
-        "asserted",
-        [
-          "attributed",
-          "bob",
-          "says",
-          "asserted"
-        ],
-        [
-          "attributed",
-          "alice",
-          "believes",
-          [
-            "hedged",
-            "likely",
-            [
-              "causal",
-              "because",
-              "asserted",
-              "asserted"
-            ]
-          ]
-        ],
-        [
-          "unformalised",
-          "rhetoric"
-        ]
-      ]
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: document citations require a checked bundle binding"
     }
   },
   {

@@ -172,6 +172,9 @@ disjunction of the readings); `narrowing:n` names a declared narrowing. After `G
 every leaf of every cited lemma appears among the report's assumptions with the same formula and
 label (so the citing step lists them as premises), and no two assumptions name the same reading set
 with different versions or different concrete choices (`all` is compatible with any choice).
+The Python and Lean route runners currently reject document-level `cite:` nodes after these
+checks with `UnsupportedProfile: document citations require a checked bundle binding`.
+The document's lemma declaration alone is an assumption and cannot discharge a checked bundle citation.
 The bridge rule applies to nodes that name a quoted unit. An independent
 `open` or `narrowing` leaf may have the same formula under its own provenance;
 formula equality alone does not identify a document unit.

@@ -42,6 +42,10 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
     (j : Json) : Except String Json := do
   let document ← j.getObjVal? "document"
   let res ← Admission.admitDocument profiles environment rv document
+  unless res.wires.all (fun w => match Admission.parseLabel w.claim.label with
+    | some (.cite _ _) => false
+    | _ => true) do
+    throw (Gate.unsupported "document citations require a checked bundle binding")
   let report := Json.mkObj [("root", claimJson res.report.root),
     ("assumptions", Json.arr (res.report.assumptions.map claimJson).toArray)]
   let envId ← Wire.environmentId profiles environment

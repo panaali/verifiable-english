@@ -415,6 +415,8 @@ def admit_document(environment, document) -> dict:
     require_checker(env)
     if env.closure or env.order:
         raise UnsupportedProfile(f"admission on the {'order' if env.order else 'closure'} family is deferred")
+    if env.definition_entries:
+        raise UnsupportedProfile("admission of documents with definitions is deferred")
     _fields(document, ("units", "graph"), ("lemmas", "open_terms", "reading_sets", "narrowings"))
     doc = _decode_doc(env, document)
     graph = document["graph"]
@@ -451,6 +453,8 @@ def admit_document(environment, document) -> dict:
                 raise AdmissionError("AdmissionError: a cited lemma's leaves are missing from the report")
     if not all(_compatible(a[2], b[2]) for a in assumptions for b in assumptions):
         raise AdmissionError("AdmissionError: incompatible reading choices")
+    if any((label := parse_label(n.label)) is not None and label.kind == "cite" for n in nodes):
+        raise UnsupportedProfile("document citations require a checked bundle binding")
     report = {"root": _claim_json(env, root), "assumptions": [_claim_json(env, a) for a in assumptions]}
     identity_payload = {"environment_id": env.environment_id, "document": document,
                         "report": report}

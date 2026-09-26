@@ -130,12 +130,12 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
             raise VEError(f"DependencyCycle: {name}")
         missing = mentions[name] - allowed
         if missing:
-            raise VEError(f"Definition {name!r} mentions a symbol not below it: {sorted(missing)[0]}")
+            raise VEError(f"Definition {name}: the body is not a typed formula over the symbols below it")
         lower_env = _restricted(env, allowed)
         try:
             ast._Checker(lower_env).formula(definition.body, tuple(reversed(definition.arguments)))
         except VEError as exc:
-            raise VEError(f"Definition {name!r}: {exc}") from exc
+            raise VEError(f"Definition {name}: the body is not a typed formula over the symbols below it") from exc
         ast.check_formula(env, premise(definition))
         ordered.append(definition)
         allowed.add(name)
