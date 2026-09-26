@@ -522,6 +522,8 @@ class EnglishParser:
     def term_options(self, scope):
         terms = {ref: ast.Var(index) for index, (_, ref) in reversed(list(enumerate(scope)))}
         terms.update({text: ast.Const(name) for name, text in self.words.constants.items()})
+        terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
+                      if re.fullmatch('[a-z]+', text)})
         return terms
 
     def reference_pattern(self, ref, scope):
@@ -778,6 +780,13 @@ class EnglishParser:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
         def child(inner=scope, listed=False):
             return self.formula(inner, depth + int(listed), nesting + 1)
+        # Natural clauses have their own statement-initial keywords.  The
+        # adjective form is tried before the historical `every <noun>` form;
+        # its noun slot is fixed by the predicate signature.
+        if not scope:
+            natural = self.natural_clause()
+            if natural is not None:
+                return natural
         if self.take('it is not the case that '):
             return ast.Not(child())
         for prefix, cls in [('all of the following hold:', ast.And),
@@ -848,6 +857,67 @@ class EnglishParser:
             return ast.Reach(kind, ast.Body(src[0], child((dst, src, *scope), listed=listed)), left, right)
         return self.atom(scope)
 
+    def natural_clause(self):
+        start = self.i
+        if self.take('some '):
+            binding = self.declaration(())
+            self.space()
+            return ast.Exists(binding[0], self.atom((binding,), relative=True))
+        self.i = start
+        if self.take('no '):
+            binding = self.declaration(())
+            self.space()
+            return ast.Not(ast.Exists(binding[0], self.atom((binding,), relative=True)))
+        self.i = start
+        if not self.take('every '):
+            return None
+        for guard_name, template in self.words.predicates.items():
+            decl = self.env.predicates[guard_name]
+            if len(decl.arguments) != 1 or not template.startswith('{0} is '):
+                continue
+            adjective = template[len('{0} is '):]
+            if not re.fullmatch('[a-z]+', adjective):
+                continue
+            noun = self.words.sorts[decl.arguments[0]]
+            self.i = start + len('every ')
+            if not self.take(adjective + ' ' + noun, content=True):
+                continue
+            self.space()
+            binding = (decl.arguments[0], 'that ' + noun)
+            guard = ast.Unary(guard_name, ast.Var(0))
+            owner = self.owner_clause(binding)
+            if owner is not None:
+                return ast.Forall(binding[0], ast.Implies(guard, owner))
+            body = self.atom((binding,), relative=True)
+            if self.take(' and '):
+                owner = self.owner_clause(binding)
+                if owner is None:
+                    self.error('Expected a uniquely declared ownership clause.')
+                body = ast.And(body, owner)
+            return ast.Forall(binding[0], ast.Implies(guard, body))
+        self.i = start
+        return None
+
+    def owner_clause(self, binding):
+        """Finite inverse of `{0} owns {1}`; no inferred converse relation."""
+        start = self.i
+        matches = []
+        for name, template in self.words.predicates.items():
+            declaration = self.env.predicates[name]
+            if (name != 'owns' or template != '{0} owns {1}'
+                    or len(declaration.arguments) != 2 or declaration.arguments[1] != binding[0]):
+                continue
+            noun = self.words.sorts[declaration.arguments[0]]
+            article = _article('owner')
+            if self.take('has ' + article + ' owner'):
+                matches.append((self.i, ast.Exists(declaration.arguments[0],
+                                                  ast.Binary(name, ast.Var(0), ast.Var(1)))))
+            self.i = start
+        if len(matches) == 1:
+            self.i = matches[0][0]
+            return matches[0][1]
+        return None
+
     def document(self):
         formulas = []
         while self.i < len(self.source):
@@ -872,6 +942,24 @@ def parse_english_with_metadata(env, source, **options):
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
     document = parser.document()
+    natural_prefix = bool(re.search(r'(?:^|\.\s+)(?:some|no)\s', parser.source))
+    natural_prefix |= any(re.search(r'(?:^|\.\s+)every\s+' + re.escape(template[len('{0} is '):])
+                                    + r'\s+' + re.escape(parser.words.sorts[env.predicates[name].arguments[0]]) + r'\b',
+                                    parser.source)
+                          for name, template in parser.words.predicates.items()
+                          if len(env.predicates[name].arguments) == 1 and template.startswith('{0} is ')
+                          and env.predicates[name].arguments[0] in parser.words.sorts
+                          and re.fullmatch('[a-z]+', template[len('{0} is '):]))
+    if natural_prefix:
+        if len(parser.source.encode('utf-8')) > 4096:
+            raise ResourceLimit('Natural English all-derivations audit exceeds the 4096-byte budget')
+        from .natural import _earley
+        try:
+            tree = _earley(english_lark_grammar(env, **options)).parse(parser.source)
+        except Exception as exc:
+            raise SyntaxError('Natural English all-derivations audit could not parse this text.') from exc
+        if any(True for _ in tree.find_data('_ambig')):
+            raise SyntaxError('Natural English has more than one derivation; use an explicit clause.')
     try:
         ast.check_document(env, document)
     except VEError as exc:
@@ -944,7 +1032,7 @@ def english_lark_grammar(env, **options):
                                     for p in re.split(r'("(?:[^"\\]|\\.)*")', s) if p.strip())
     rules = [
         'start: (formula ".")+',
-        '?formula: atom | negation | compact | listing | universal | existential | reach',
+        '?formula: atom | negation | compact | listing | universal | existential | reach | natural',
         'negation: "it is not the case that" formula',
         'compact: "both" atom "and" atom -> conjunction\n'
         '       | "either" atom "or" atom ", or both" -> disjunction\n'
@@ -965,6 +1053,10 @@ def english_lark_grammar(env, **options):
         'existential: "there is" article declaration "such that" formula -> existential_global\n'
         '           | "there is" article declaration "who" relative -> existential_relative\n'
         '           | "there is" article declaration "that" relative -> existential_relative',
+        'natural: "some" declaration relative -> natural_some\n'
+        '       | "no" declaration relative -> natural_no\n'
+        '       | "every" natural_subject natural_tail -> natural_every',
+        'natural_tail: relative | owner_clause | relative "and" owner_clause',
         'article: "a" | "an"',
         'declaration: noun | "first"i noun | "second"i noun | noun "named"i LABEL',
         'term: constant | "that"i noun | "the first"i noun | "the second"i noun | LABEL',
@@ -977,8 +1069,21 @@ def english_lark_grammar(env, **options):
          if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
     order = getattr(env, 'order', False)
+    modifiers = []
+    for name, template in words.predicates.items():
+        decl = env.predicates[name]
+        if (len(decl.arguments) == 1 and decl.arguments[0] in words.sorts and template.startswith('{0} is ')
+                and re.fullmatch('[a-z]+', template[len('{0} is '):])):
+            modifiers.append(content_lit(template[len('{0} is '):]) + ' ' + content_lit(words.sorts[decl.arguments[0]]))
+    rules.append('natural_subject: ' + (' | '.join(dict.fromkeys(modifiers)) or 'IMPOSSIBLE'))
+    owners = [name for name, template in words.predicates.items()
+              if name == 'owns' and template == '{0} owns {1}'
+              and len(env.predicates[name].arguments) == 2]
+    rules.append('owner_clause: ' + ('"has an owner"' if owners else 'IMPOSSIBLE'))
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
     constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
+    constants += [lit('the ' + v) for n, v in words.constants.items()
+                  if not is_int(n) and re.fullmatch('[a-z]+', v)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
     rules.append('constant: ' + (' | '.join(constants) or 'IMPOSSIBLE'))
     relations = [lit(quote(n)) for n, p in env.predicates.items()

@@ -94,7 +94,7 @@ def main(argv=None):
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
         if command in ("render", "import-fol"):
-            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent", "ve_english",
+            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_natural", "ve_fluent", "ve_english",
                                                  "canonical", "natural"), default=None)
             sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
             sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",

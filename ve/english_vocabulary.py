@@ -26,6 +26,7 @@ IDIOMS = {
         '{0} is an appropriately sanctioned human check',
     },
     2: {
+        '{0} may access {1}',
         '{0} undermines {1}',
         '{0} interacts with {1}',
         '{0} involves apparent conflict over {1}',

@@ -1,4 +1,4 @@
-"""Five deterministic, read-only surfaces of one checked AST."""
+"""Deterministic, read-only surfaces of one checked AST."""
 from __future__ import annotations
 
 from collections import Counter, defaultdict
@@ -14,11 +14,11 @@ from . import ast
 from .errors import ResourceLimit
 from .limits import MAX_SOURCE_BYTES
 
-VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
+VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_fluent")
 # VIEWS is the frozen five-view experimental comparison cohort.
-RENDERING_VIEWS = (*VIEWS, "ve_english")
-NATURAL_RENDERER = "ve.ace-explicit"
-NATURAL_RENDERER_VERSION = "3"
+RENDERING_VIEWS = (*VIEWS, "ve_natural", "ve_english")
+NATURAL_RENDERER = "ve.natural-audited"
+NATURAL_RENDERER_VERSION = "1"
 NAMING_POLICIES = ("per_statement", "per_document")
 LEGEND_STYLES = ("compact", "json")
 
@@ -46,7 +46,7 @@ _SURFACES = {
         ast.Or: "{left} or {right}", ast.Implies: "if {left}, then {right}",
         ast.Forall: "for every {sort} {name}, {body}", ast.Exists: "there exists {sort} {name}, {body}",
     },
-    "ve_natural": {
+    "ve_explicit": {
         ast.Top: "true", ast.Bottom: "false", ast.Eq: "{left} is equal to {right}",
         ast.Not: "it is not the case that {body}", ast.And: "{left} and {right}",
         ast.Or: "{left} or {right}, or both", ast.Implies: "if {left}, then {right}",
@@ -63,7 +63,7 @@ _COMPARISONS = {
     "fol_symbols": ("{left} < {right}", "{left} ≤ {right}"),
     "fol_keywords": ("{left} < {right}", "{left} <= {right}"),
     "ve_strict": ("{left} < {right}", "{left} <= {right}"),
-    "ve_natural": ("{left} is less than {right}", "{left} is at most {right}"),
+    "ve_explicit": ("{left} is less than {right}", "{left} is at most {right}"),
 }
 
 
@@ -478,7 +478,7 @@ class _Traversal:
         self.next_name = 0
         self.view = view
         self.surface = _SURFACES[view]
-        self.natural = _NaturalVocabulary(env) if view == "ve_natural" else None
+        self.natural = _NaturalVocabulary(env) if view == "ve_explicit" else None
 
     def term(self, value, scope):
         def leaf(value):
@@ -503,7 +503,7 @@ class _Traversal:
                 relation = value.edge.relation
                 if self.view == "fol_symbols":
                     return f"{relation}{'⁺' if value.kind == 'plus' else '*'}({left}, {right})"
-                if self.view == "ve_natural":
+                if self.view == "ve_explicit":
                     return f"{right} is reachable from {left} by {count} {relation} steps"
                 return f"{op}[{relation}]({left}, {right})"
             src, dst = f"x{self.next_name}", f"x{self.next_name + 1}"
@@ -512,7 +512,7 @@ class _Traversal:
             sort = value.edge.sort
             if self.view == "fol_symbols":
                 return f"({op.upper()} {src}:{sort},{dst}:{sort}.({body}))({left}, {right})"
-            if self.view == "ve_natural":
+            if self.view == "ve_explicit":
                 noun = self.natural.sorts[sort]
                 return f"{right} is reachable from {left} by {count} steps satisfying [{noun} {src}, {dst} | ({body})]"
             return f"{op}[{sort} {src}, {dst} | ({body})]({left}, {right})"
@@ -556,6 +556,20 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     """
     _check_view(view)
     _check_naming(naming)
+    if view == "ve_natural":
+        from .natural import render_natural_sentence
+        if isinstance(value, ast.Document):
+            ast.check_document(env, value)
+            text = ''.join(render_natural_sentence(f, env, vocabulary=vocabulary,
+                           accept_suggested_vocabulary=accept_suggested_vocabulary).text + '.\n'
+                           for f in value.formulas)
+        else:
+            ast.check_formula(env, value)
+            text = render_natural_sentence(value, env, vocabulary=vocabulary,
+                   accept_suggested_vocabulary=accept_suggested_vocabulary).text
+        if len(text.encode('utf-8')) + (0 if isinstance(value, ast.Document) else 2) > MAX_SOURCE_BYTES:
+            raise ResourceLimit(f'Rendered {view} text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+        return text
     if view == "ve_english":
         from .english import render_english
         return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
