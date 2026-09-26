@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from ve.ast import Atom, Const, formula_to_data
+from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
@@ -148,3 +149,49 @@ def test_mixed_nary_background_validation_agrees(lean_binary, rust_binary):
     assert lean[0]["values"] == rust[0]["values"] == [True]
     assert lean[1]["generator"] == "literals"
     assert rust[1]["error"]["code"] == "InvalidModel"
+
+
+def test_hostile_nary_wire_diagnostics_agree(lean_binary, rust_binary):
+    env = environment(3)
+    good = [["const", "a"], ["const", "a"], ["const", "b"]]
+    wires = [
+        (["atom", "p", good[:2]], "SyntaxError"),
+        (["atom", "p", good + good + good[:1]], "SyntaxError"),
+        (["atom", "p", "not-an-array"], "SyntaxError"),
+        (["atom", "p", good[:2] + [["const", "missing"]]], "UnknownSymbol"),
+    ]
+    cases = []
+    model = {"complete": True, "domains": {"item": ["x"]},
+             "constants": {c: "x" for c in LETTERS},
+             "relations": {"p": [["x", "x", "x"]]}}
+    for index, (wire, diagnostic) in enumerate(wires):
+        with pytest.raises(Exception) as error:
+            formula_from_data(env, wire)
+        assert type(error.value).__name__ == diagnostic
+        cases.append({"id": str(index), "kind": "evaluate", "environment": env.to_dict(),
+                      "ast": [wire], "model": model})
+    repeated = ["atom", "p", good]
+    assert formula_from_data(env, repeated) == Atom("p", (Const("a"), Const("a"), Const("b")))
+    cases.append({"id": "repeated", "kind": "evaluate", "environment": env.to_dict(),
+                  "ast": [repeated], "model": model})
+    lean = invoke(lean_binary, "route", cases, errors=True)
+    rust = invoke(rust_binary, "conformance", cases, errors=True)
+    for index, (_, diagnostic) in enumerate(wires):
+        assert rust[index]["error"]["code"] == diagnostic
+        if diagnostic == "SyntaxError":
+            assert lean[index]["error"] == rust[index]["error"]["message"]
+        else:
+            assert lean[index]["error"].startswith(diagnostic + ":")
+    assert lean[-1]["values"] == rust[-1]["values"] == [True]
+
+    wrong_sort = env.to_dict()
+    wrong_sort["vocabulary"]["predicates"]["p"]["arguments"][2] = "missing"
+    with pytest.raises(Exception) as error:
+        Environment(wrong_sort)
+    assert type(error.value).__name__ == "UnknownSymbol"
+    bad_environment = [{"id": "unknown-third-sort", "kind": "evaluate",
+                        "environment": wrong_sort, "ast": [repeated], "model": model}]
+    lean_error = invoke(lean_binary, "route", bad_environment, errors=True)[0]["error"]
+    rust_error = invoke(rust_binary, "conformance", bad_environment, errors=True)[0]["error"]
+    assert lean_error.startswith("UnknownSymbol:")
+    assert rust_error["code"] == "UnknownSymbol"
