@@ -68,12 +68,21 @@ def premise(definition: Definition) -> ast.Formula:
 
 
 def _restricted(env: Environment, allowed: set[str]) -> Environment:
+    """The signatures below a definition. Bodies of the kept definitions are
+    dropped: typing a body needs only signatures, and keeping them would
+    re-elaborate every lower definition."""
     raw = env.to_dict()
     raw["vocabulary"]["predicates"] = {
-        name: declaration for name, declaration in raw["vocabulary"]["predicates"].items()
+        name: {key: value for key, value in declaration.items() if key != "defined"}
+        for name, declaration in raw["vocabulary"]["predicates"].items()
         if name in allowed
     }
     return Environment(raw)
+
+
+# environment_id binds every definition body and version, so elaboration is a
+# function of it; bounded so hostile inputs cannot grow the cache.
+_COMPILED: dict[tuple[str, str], tuple[Definition, ...]] = {}
 
 
 def compile_definitions(env: Environment, entries: dict[str, dict], *,
@@ -84,6 +93,9 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     """
     if "definitions@0" not in env.profiles:
         raise VEError("Definitions require definitions@0")
+    key = (env.environment_id, version)
+    if entries == env.definition_entries and key in _COMPILED:
+        return _COMPILED[key]
     if type(version) is not str or not version:
         raise VEError("Definition version must be a nonempty string")
     if type(entries) is not dict:
@@ -127,6 +139,10 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
         ast.check_formula(env, premise(definition))
         ordered.append(definition)
         allowed.add(name)
+    if entries == env.definition_entries:
+        if len(_COMPILED) >= 256:
+            _COMPILED.clear()
+        _COMPILED[key] = tuple(ordered)
     return tuple(ordered)
 
 
