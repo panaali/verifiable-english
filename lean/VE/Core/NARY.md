@@ -19,6 +19,7 @@ The proof obligations that enable the route are stated here in plain words.
 - `VE.Route.coreValid_certificateSound`: The new Core checker satisfies P0’s parameterized checker-soundness contract.
 - `VE.Route.core_family_gate`: The declared closure plus n-ary profile list selects the Core checker family.
 - `VE.Route.core_route_acceptance`: When the Core checker accepts a certificate on the identity statement route, its exact ordered premises entail its conclusion in every admissible structure.
+- `VE.Core.Wire.run_certificate_acceptance`: If the Core wire runner accepts a certificate case and returns `valid: true`, the runner has checked the certificate's identity binding to the decoded environment, ordered user premises and regenerated literal premises, and the decoded conclusion follows in every admissible structure satisfying those generated premises and the user premises. The theorem is polymorphic over structure universes; its decoding hypotheses name the exact wire values returned by the decoders.
 
 ## Path and reachability helpers
 
