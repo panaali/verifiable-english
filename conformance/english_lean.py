@@ -225,6 +225,108 @@ def core_tokens(formula, lex):
     return sentence(formula) + ['.']
 
 
+def core_reading(formula, tokens, lex):
+    """Constructively recognize a core derivation of this AST, including synonyms.
+
+    This matcher uses only the Python AST, vocabulary and input tokens. It does
+    not consult the Lean renderer or parser. The binder scope determines each
+    variable's reference form; all four grammatical declaration forms are tried.
+    """
+    def take(at, words):
+        return at + len(words) if tokens[at:at + len(words)] == words else None
+
+    def term(value, scope):
+        if isinstance(value, ast.Const): return lex['constants'][value.name]
+        kind, sort, number = scope[value.index]
+        noun = lex['sorts'][sort]['noun']
+        if kind == 'plain': return ['that'] + noun
+        if kind in ('first', 'second'): return ['the', kind] + noun
+        return [[lex['sorts'][sort]['letter'], number]]
+
+    def literal(node, scope):
+        if isinstance(node, ast.Top): return ['this', 'holds', 'in', 'all', 'cases']
+        if isinstance(node, ast.Bottom): return ['this', 'is', 'impossible']
+        if isinstance(node, ast.Eq):
+            return term(node.left, scope) + ['is', 'the', 'same', 'as'] + term(node.right, scope)
+        args = [node.term] if isinstance(node, ast.Unary) else [node.left, node.right]
+        return [part for slot in lex['predicates'][node.predicate]
+                for part in ([slot] if isinstance(slot, str) else term(args[slot], scope))]
+
+    def simple(node): return isinstance(node, (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq))
+
+    def declarations(sort, at):
+        noun = lex['sorts'][sort]['noun']
+        for kind, words in (('plain', noun), ('first', ['first'] + noun),
+                            ('second', ['second'] + noun)):
+            end = take(at, words)
+            if end is not None:
+                yield (kind, sort, 0), end
+        end = take(at, noun + ['named'])
+        if end is not None and end < len(tokens):
+            label = tokens[end]
+            if (isinstance(label, list) and len(label) == 2 and
+                    label[0] == lex['sorts'][sort]['letter'] and
+                    isinstance(label[1], int) and label[1] > 0):
+                yield ('named', sort, label[1]), end + 1
+
+    def scan(node, at, scope=(), level=0):
+        if simple(node):
+            end = take(at, literal(node, scope))
+            return set() if end is None else {end}
+        if isinstance(node, ast.Not):
+            end = take(at, ['it', 'is', 'not', 'the', 'case', 'that'])
+            return set() if end is None else scan(node.body, end, scope, level)
+        if isinstance(node, (ast.Forall, ast.Exists)):
+            if isinstance(node, ast.Forall):
+                starts = [['for', 'every']]
+            else:
+                starts = [['there', 'is', 'a'], ['there', 'is', 'an']]
+            ends = set()
+            for start in starts:
+                pos = take(at, start)
+                if pos is None: continue
+                for binding, after_decl in declarations(node.sort, pos):
+                    if binding in scope: continue
+                    after_header = take(after_decl, [','] if isinstance(node, ast.Forall)
+                                        else ['such', 'that'])
+                    if after_header is not None:
+                        ends.update(scan(node.body, after_header, (binding,) + scope, level))
+            return ends
+        if isinstance(node, ast.Implies):
+            pos = take(at, ['if'])
+            if pos is None: return set()
+            ends = set()
+            for middle in scan(node.left, pos, scope, level):
+                after_then = take(middle, [',', 'then'])
+                if after_then is not None:
+                    ends.update(scan(node.right, after_then, scope, level))
+            return ends
+        ends = set()
+        if simple(node.left) and simple(node.right):
+            head = ['both'] if isinstance(node, ast.And) else ['either']
+            middle_word = ['and'] if isinstance(node, ast.And) else ['or']
+            pos = take(at, head + literal(node.left, scope) + middle_word + literal(node.right, scope))
+            if pos is not None:
+                tail = [] if isinstance(node, ast.And) else [',', 'or', 'both']
+                end = take(pos, tail)
+                if end is not None: ends.add(end)
+        headers = ([['all', 'of', 'the', 'following', 'hold', ':'],
+                    ['both', 'of', 'the', 'following', 'hold', ':']]
+                   if isinstance(node, ast.And) else
+                   [['at', 'least', 'one', 'of', 'the', 'following', 'holds', ':']])
+        first, second = (['(a)', '(b)'] if level % 2 == 0 else ['(i)', '(ii)'])
+        for header in headers:
+            pos = take(at, header + [first])
+            if pos is None: continue
+            for middle in scan(node.left, pos, scope, level + 1):
+                after_marker = take(middle, [';', second])
+                if after_marker is not None:
+                    ends.update(scan(node.right, after_marker, scope, level + 1))
+        return ends
+
+    return len(tokens) - 1 in scan(formula, 0) and tokens[-1:] == ['.']
+
+
 def run_lean(payload):
     """Returns (admissible, covers, per-case results) from the Lean runner."""
     with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as handle:
@@ -310,7 +412,7 @@ def differential(per_vocabulary=200, *, full=False):
             tokens = tokenize(lower_sentence_starts(text), letters)
             cases.append({'tokens': tokens, 'formulas': [wire(formula)]})
             formulas.append(formula)
-            is_core.append(tokens == core_tokens(formula, lex))
+            is_core.append(tokens == core_tokens(formula, lex) or core_reading(formula, tokens, lex))
         fixed = fixtures(lex)
         fixture_cases = [{'tokens': tokens, 'formulas': [wire(ast.Top())]}
                          for _, tokens, _ in fixed]
