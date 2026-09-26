@@ -199,13 +199,15 @@ def elaborated_document_cases():
             ("closure-order", ["closure@0", "order@0", "relational-fol@0"],
              "Unsupported profile combination closure@0 x order@0"),
             ("nary-without-closure", ["nary@0", "relational-fol@0"],
-             "Unsupported profile nary@0 without closure@0"),
-            ("closure-nary-gated", ["closure@0", "nary@0", "relational-fol@0"],
-             "the closure+n-ary checker is gated until W4 stage 1 lands")]:
+             "Unsupported profile nary@0 without closure@0")]:
         case(id_, "evaluate", {"status": "error", "code": "UnsupportedProfile",
                                "error": "UnsupportedProfile: " + message},
              envelope({"sorts": {}, "predicates": {}, "constants": {}}, profiles),
              model=EMPTY_MODEL, ast=[["top"]])
+    case("closure-nary-gated", "evaluate", {"status": "ok", "values": [True]},
+         envelope({"sorts": {}, "predicates": {}, "constants": {}},
+                  ["closure@0", "nary@0", "relational-fol@0"]),
+         model=EMPTY_MODEL, ast=[["top"]])
     case("revision-unsupported", "evaluate",
          {"status": "error", "code": "UnsupportedProfile",
           "error": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"},
