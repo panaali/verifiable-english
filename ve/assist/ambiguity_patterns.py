@@ -6,7 +6,9 @@ readings. Only independently checked separating models produce reading cards.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from contextlib import contextmanager
 import re
+import sys
 import time
 from typing import Callable, Mapping
 
@@ -25,6 +27,24 @@ MAX_CARDS = 3
 SEARCH_LIMITS = {"max_domain_size": 2, "min_domain_size": 0,
                  "max_models": 10_000, "max_evaluations": 1_000_000}
 OPERATION_SECONDS = 8
+
+
+class _Deadline(Exception):
+    pass
+
+
+@contextmanager
+def _operation_budget(stop):
+    previous = sys.gettrace()
+    def trace(_frame, _event, _arg):
+        if time.monotonic() >= stop:
+            raise _Deadline
+        return trace
+    sys.settrace(trace)
+    try:
+        yield
+    finally:
+        sys.settrace(previous)
 
 
 @dataclass(frozen=True)
@@ -79,6 +99,8 @@ def _reference(s):
 
 
 def _ellipsis(s):
+    if s.get("transitive"):
+        raise ValueError("transitive predicate copy requires a confirmed scoped completion")
     subject, predicates = s["subject"], tuple(s["predicates"])
     return tuple((p, ast.Unary(p, ast.Const(subject))) for p in predicates)
 
@@ -86,8 +108,8 @@ def _ellipsis(s):
 PATTERNS = (
     Pattern("scope.every_some@1", r"\b(every|each)\b.*\b(a|some)\b",
             ("every_sort", "some_sort", "relation"), _scope,
-            ("Each {every_sort} {relation}s at least one {some_sort}; choices may differ.",
-             "One {some_sort} is {relation}ed by every {every_sort}.")),
+            ("Each {every_sort} stands in {relation} to at least one {some_sort}; choices may differ.",
+             "One {some_sort} stands in {relation} to every {every_sort}.")),
     Pattern("scope.negation@1", r"\b(not|no|never)\b.*\b(all|every|some|any)\b|\b(not all|no)\b",
             ("sort", "predicate"), _negation,
             ("No {sort} is {predicate}.", "At least one {sort} is not {predicate}.")),
@@ -118,6 +140,8 @@ def candidates(env, source: str, bindings: Mapping, *, pattern_id: str):
     pattern = pattern_by_id(pattern_id)
     if not pattern.matches(source):
         return (), "pattern does not match source"
+    if pattern_id == "discourse.reference@1" and re.search(r"\b(some|an?|another)\s+\w+", source, re.I):
+        return (), "existential antecedent requires a confirmed scoped rewrite"
     missing = set(pattern.required) - set(bindings)
     if missing:
         return (), "missing bindings: " + ", ".join(sorted(missing))
@@ -164,13 +188,20 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
         left, right = rows[i], rows[j]
         result["comparison_count"] += 1
         try:
-            found = find_distinguishing_model(env, left[1], right[1], **SEARCH_LIMITS)
+            with _operation_budget(stop):
+                found = find_distinguishing_model(env, left[1], right[1], **SEARCH_LIMITS)
             if found.status != "Found" or found.model is None:
                 result["pending"].append({"pair": [left[0], right[0]],
                                           "reason": found.detail or found.status})
                 continue
-            # evaluate() regenerates and validates Background via _validate_model.
-            background(env)
+            # Regenerate Background, validate the model, and evaluate every premise.
+            premises = background(env)
+            if any(evaluate(env, premise.formula, found.model,
+                            max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False).value is not True
+                   for premise in premises):
+                result["pending"].append({"pair": [left[0], right[0]],
+                                          "reason": "model violates regenerated Background"})
+                continue
             a = evaluate(env, left[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
             b = evaluate(env, right[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
             if a.value is None or b.value is None or a.value == b.value:
@@ -179,12 +210,23 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
             card = {"pair": [left[0], right[0]], "meaning_ids": [meaning_id(env, left[1]),
                      meaning_id(env, right[1])], "model": found.model.to_dict(),
                      "values": [a.value, b.value], "pattern_id": pattern_id}
+            templates = pattern_by_id(pattern_id).paraphrases
+            if len(templates) == 2:
+                card["paraphrases"] = [template.format(**bindings) for template in templates]
+            else:
+                card["paraphrases"] = [f"{name}: {templates[0].format(**bindings)}"
+                                        for name in card["pair"]]
             if len(result["cards"]) < MAX_CARDS:
                 result["cards"].append(card)
             else:
                 result["pending"].append({"pair": card["pair"], "reason": "page card limit (3)"})
                 result["next_cursor"] = index
                 break
+        except _Deadline:
+            result["pending"].append({"pair": [left[0], right[0]],
+                                      "reason": "operation deadline (8 seconds)"})
+            result["next_cursor"] = index
+            break
         except VEError as exc:
             result["pending"].append({"pair": [left[0], right[0]], "reason": str(exc)})
     if result["next_cursor"] is None and end < len(pairs):

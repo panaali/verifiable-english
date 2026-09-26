@@ -6,7 +6,7 @@ document schema and W3 alias admission when those interfaces are available.
 from __future__ import annotations
 
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 import hashlib
 import json
 import time
@@ -46,6 +46,11 @@ class GlossaryAdapter(Protocol):
     def propose_alias(self, *, source, target, argument_types, direction, context): ...
 
 
+class ProposerAdapter(Protocol):
+    """Untrusted suggestions; the caller enforces the 50-second request timeout."""
+    def request(self, source: str, *, timeout_seconds: int): ...
+
+
 def nearest_wordings(query: str, registered: list[str] | tuple[str, ...]) -> list[str]:
     """Stable Levenshtein token edits, then lexical tie break; advisory only."""
     def distance(a, b):
@@ -75,6 +80,7 @@ class Unit:
     readings: list[dict] = field(default_factory=list)
     rejected: list[dict] = field(default_factory=list)
     pending: list[dict] = field(default_factory=list)
+    catalogue_reviewed: list[str] = field(default_factory=list)
     dependencies: list[str] = field(default_factory=list)
     approval: dict | None = None
     reason: str | None = None
@@ -103,9 +109,42 @@ class RecoveryService:
         unit.revision = self.revision
         event = {"revision": self.revision, "action": action, "unit": unit.id,
                  "state": unit.state, "source_digest": _digest(unit.source),
-                 "versions": deepcopy(self.versions), **detail}
+                 "versions": deepcopy(self.versions), "unit_snapshot": self._snapshot(unit),
+                 "previous_digest": self.events[-1]["event_digest"] if self.events else None,
+                 **detail}
+        event["event_digest"] = _digest(event)
         self.events.append(event)
         return event
+
+    @staticmethod
+    def _snapshot(unit):
+        snapshot = asdict(unit)
+        snapshot.pop("started")  # monotonic host time is not part of the ledger
+        return snapshot
+
+    def to_ledger(self):
+        return {"format": RECOVERY_VERSION, "versions": deepcopy(self.versions),
+                "revision": self.revision, "events": deepcopy(self.events)}
+
+    def verify_ledger(self, ledger=None):
+        ledger = self.to_ledger() if ledger is None else ledger
+        if ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions:
+            return False
+        events = ledger.get("events")
+        if type(events) is not list or ledger.get("revision") != len(events):
+            return False
+        previous = None
+        for number, event in enumerate(events, 1):
+            raw = {k: v for k, v in event.items() if k != "event_digest"}
+            if (event.get("revision") != number or event.get("previous_digest") != previous
+                    or event.get("event_digest") != _digest(raw)
+                    or event.get("source_digest") != _digest(event["unit_snapshot"]["source"])):
+                return False
+            previous = event["event_digest"]
+        latest = {e["unit"]: e["unit_snapshot"] for e in events}
+        if latest != {k: self._snapshot(v) for k, v in self.units.items()}:
+            return False
+        return all(self.approval_valid(k) for k, u in self.units.items() if u.state == "approved")
 
     def _invalidate(self, unit_id, seen=None):
         seen = set() if seen is None else seen
@@ -144,6 +183,7 @@ class RecoveryService:
         unit.meaning_id = None
         unit.readings.clear()
         unit.pending.clear()
+        unit.catalogue_reviewed.clear()
         unit.started = time.monotonic()
         self._event("edit", unit)
         return unit
@@ -166,13 +206,26 @@ class RecoveryService:
         self._event("start", unit)
 
     def classify(self, unit_id, *, parse_outcome, vocabulary="known", discourse="complete",
-                 force="supported", check="checked", pending=(), limit=None):
+                 force="supported", check="checked", pending=(), limit=None,
+                 catalogue_reviews=None):
         unit = self.units[unit_id]
         if unit.state != "analysing":
             raise ValueError("analyse first")
         if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
             raise ValueError("invalid parse outcome")
+        from .ambiguity_patterns import PATTERNS
         unit.pending = list(pending)
+        matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
+        reviewed = catalogue_reviews or {}
+        unit.catalogue_reviewed = []
+        for pattern_id in matched:
+            result = reviewed.get(pattern_id)
+            if (not isinstance(result, dict) or result.get("catalogue_version") != CATALOGUE_VERSION
+                    or result.get("pattern_id") != pattern_id or result.get("pending")
+                    or result.get("residual") or result.get("next_cursor") is not None):
+                unit.pending.append({"pattern_id": pattern_id, "reason": "catalogue review incomplete"})
+            else:
+                unit.catalogue_reviewed.append(pattern_id)
         if limit or parse_outcome == "exhausted":
             unit.state, unit.reason = "exhausted", limit or "parser/search exhausted"
         elif vocabulary != "known" or parse_outcome == "zero":
@@ -184,7 +237,8 @@ class RecoveryService:
         else:
             unit.state = "ready"
         self._event("classify", unit, parse_outcome=parse_outcome, vocabulary=vocabulary,
-                    discourse=discourse, force=force, check=check, limit=unit.reason)
+                    discourse=discourse, force=force, check=check, limit=unit.reason,
+                    matched_patterns=matched)
         return unit.state
 
     def reply(self, unit_id, text: str, *, proposer=False):
@@ -202,6 +256,33 @@ class RecoveryService:
             unit.state = "analysing"
         self._event("reply", unit, proposer=proposer)
         return unit.state
+
+    def request_proposer(self, unit_id, proposer: ProposerAdapter):
+        """Reserve before calling. Failure stays visible; an explicit retry is a new event."""
+        unit = self.units[unit_id]
+        if unit.state not in {"needs_word", "needs_repair", "reading_review", "exhausted"}:
+            raise ValueError("proposer request is unavailable in this state")
+        if unit.proposals >= MAX_PROPOSALS or time.monotonic() - unit.started >= TASK_SECONDS:
+            unit.state, unit.reason = "unresolved", "proposer/task cap"
+            self._event("proposer_cap", unit)
+            return {"status": "unresolved", "reason": unit.reason}
+        unit.proposals += 1
+        self._event("proposer_reserved", unit, request=unit.proposals,
+                    timeout_seconds=PROPOSAL_SECONDS)
+        started = time.monotonic()
+        try:
+            suggestion = proposer.request(unit.source, timeout_seconds=PROPOSAL_SECONDS)
+        except Exception as exc:
+            unit.state, unit.reason = "exhausted", f"proposer unavailable: {type(exc).__name__}"
+            self._event("proposer_failed", unit, reason=unit.reason)
+            return {"status": "exhausted", "reason": unit.reason}
+        if time.monotonic() - started > PROPOSAL_SECONDS:
+            unit.state, unit.reason = "exhausted", "proposer request deadline (50 seconds)"
+            self._event("proposer_timed_out", unit)
+            return {"status": "exhausted", "reason": unit.reason}
+        # Suggestions are never automatically admitted or selected.
+        self._event("proposer_suggested", unit)
+        return {"status": "suggestion", "text": suggestion}
 
     def cancel(self, unit_id):
         unit = self.units[unit_id]
@@ -224,7 +305,11 @@ class RecoveryService:
             raise ValueError("unit is not in reading review")
         self._invalidate(unit_id)
         unit.readings = deepcopy(list(readings))
+        from .ambiguity_patterns import PATTERNS
         unit.pending = deepcopy(list(pending))
+        unit.pending.extend({"pattern_id": p.id, "reason": "catalogue review incomplete"}
+                            for p in PATTERNS if p.matches(unit.source)
+                            and p.id not in unit.catalogue_reviewed)
         unit.state = "reading_review" if unit.pending else "ready"
         self._event("readings", unit)
 
@@ -235,6 +320,12 @@ class RecoveryService:
             raise ValueError("reading review is incomplete")
         if unit.mode == "translation" and len(unit.readings) > 1 and narrowing is None:
             raise ValueError("translation choice requires a cited narrowing")
+        if narrowing is not None:
+            required = {"set_id", "set_version", "keeps", "actor", "reason", "cited_spans"}
+            if (type(narrowing) is not dict or set(narrowing) != required
+                    or not narrowing["reason"] or not narrowing["cited_spans"]
+                    or not narrowing["keeps"]):
+                raise ValueError("narrowing needs set/version, kept readings, actor, reason and citations")
         if any(self.units[d].state in {"stale", "unresolved"} for d in unit.dependencies):
             raise ValueError("dependent unit is stale or unresolved")
         if not all((actor, paraphrase, presentation)) or not isinstance(situation, dict):
@@ -269,6 +360,8 @@ class RecoveryService:
         snap = unit.approval["snapshot"]
         return (snap["source"] == unit.source and snap["anchor"] == unit.anchor
                 and snap["presentation"] == unit.presentation and snap["meaning_id"] == unit.meaning_id
+                and snap["paraphrase"] == unit.paraphrase and snap["situation"] == unit.situation
+                and snap["considered"] == unit.readings and snap["rejected"] == unit.rejected
                 and snap["versions"] == self.versions
                 and snap["dependencies"] == [(d, self.units[d].revision) for d in unit.dependencies]
                 and _digest(snap) == unit.approval["digest"])
