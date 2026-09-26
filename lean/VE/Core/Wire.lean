@@ -67,7 +67,7 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   let premisesJson ← j.getObjVal? "premises"
   let ps ← Bridge.decodeFormulas E premisesJson
   let c ← Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
-  unless c.check E [] do throw "ill-typed or unbound conclusion"
+  Bridge.checkFormula E c "conclusion"
   if ((c :: ps).map Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
     throw "ResourceLimit: AST node count"
   if kind == "countermodel" then

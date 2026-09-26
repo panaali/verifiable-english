@@ -109,9 +109,18 @@ def formulaNodes : Formula → Nat
   | .reachNamed _ _ t u => 1 + termNodes t + termNodes u
   | .reachBody _ _ a t u => 1 + formulaNodes a + termNodes t + termNodes u
 
+def checkFormula (E : Environment) (a : Formula) (label : String) : Except String Unit := do
+  unless a.check E [] do
+    match a with
+    | .atom p ts =>
+      if (E.predicates p).isNone || ts.any (fun t => (t.sortOf E []).isNone) then
+        throw "UnknownSymbol: n-ary predicate or argument is undeclared"
+      throw "TypeMismatch: predicate argument sort mismatch"
+    | _ => throw s!"ill-typed or unbound {label}"
+
 def decodeFormulas (E : Environment) (j : Json) : Except String (List Formula) := do
   let fs ← (← j.getArr?).toList.mapM (decodeFormula 64)
-  unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
+  for a in fs do checkFormula E a "formula"
   if (fs.map formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
   pure fs
 
@@ -123,7 +132,7 @@ def runCase (j : Json) : Except String Json := do
     unless kind == .str "countermodel" do throw "unknown case kind"
     let ps ← decodeFormulas v.environment (← j.getObjVal? "premises")
     let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
-    unless c.check v.environment [] do throw "ill-typed or unbound conclusion"
+    checkFormula v.environment c "conclusion"
     if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
       throw "ResourceLimit: AST node count"
     return Json.mkObj [("id", .str id), ("status", .str "ok"),
