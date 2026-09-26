@@ -17,6 +17,8 @@ def validate_reading_sets(env, values, unit_ids):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
     seen = set()
+    owners = {}
+    units = {}
     for item in values:
         required = {"id", "unit", "version", "status", "readings"}
         if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history", "models"}:
@@ -27,6 +29,11 @@ def validate_reading_sets(env, values, unit_ids):
         seen.add(key)
         if item["unit"] not in unit_ids or item["status"] not in ("authored", "open"):
             raise VEError("invalid reading set unit or status")
+        if (item["id"] in owners and owners[item["id"]] != item["unit"]
+                or item["unit"] in units and units[item["unit"]] != item["id"]):
+            raise VEError("one reading set per source unit; versions must keep their unit")
+        owners[item["id"]] = item["unit"]
+        units[item["unit"]] = item["id"]
         readings = item["readings"]
         if type(readings) is not list or not 1 <= len(readings) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
@@ -84,6 +91,16 @@ def validate_reading_sets(env, values, unit_ids):
     return seen
 
 
+def active_reading_sets(sets):
+    """Only the latest version of each source unit contributes premises."""
+    latest = {}
+    for reading_set in sets:
+        unit = reading_set["unit"]
+        if unit not in latest or reading_set["version"] > latest[unit]["version"]:
+            latest[unit] = reading_set
+    return [r for r in sets if latest[r["unit"]] is r]
+
+
 def validate_narrowings(values, reading_sets, unit_ids):
     if type(values) is not list:
         raise VEError("narrowings must be a list")
@@ -128,7 +145,7 @@ def plan_choices(sets, *, limit=64):
 
 
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
-                   max_models=10_000, max_evaluations=100_000):
+                   max_models=10_000, max_evaluations=100_000, fixed=()):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
 
     Every positive proof is replayed by the certificate checker, and every
@@ -138,6 +155,7 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     from .ast import Or
     from .entailment import check_entailment_certificate, prove_entailment
     from .search import check_countermodel, find_countermodel
+    from .vacuity import premise_status
 
     plan = plan_choices(sets)
     if plan["route"] == "UNKNOWN":
@@ -146,6 +164,7 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         return {"verdict": "UNKNOWN", "route": "enumerate", "choice_count": len(plan["choices"]),
                 "reason": "non-assertion elaborator is not yet available"}
     conclusion = formula_from_data(env, conclusion_ast)
+    fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
     formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]] for s in sets]
 
     def prove(premises):
@@ -171,14 +190,20 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         for other in reversed(rs[:-1]):
             formula = Or(other, formula)
         disjunctions.append(formula)
-    all_proof = prove(disjunctions)
+    status = premise_status(env, [*fixed_formulas, *disjunctions],
+                            max_proof_steps=max_steps, max_domain_size=max_domain_size,
+                            max_models=max_models, max_evaluations=max_evaluations)
+    vacuous = status["status"] == "INCONSISTENT"
+    all_proof = prove([*fixed_formulas, *disjunctions])
     if all_proof is not None:
         return {"verdict": "ALL", "route": "assertion-disjunction", "certificate": all_proof,
-                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets]}
-    shared = witness([f for rs in formulas for f in rs])
+                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets],
+                "vacuous": vacuous, "premises": status}
+    shared = witness([*fixed_formulas, *(f for rs in formulas for f in rs)])
     if shared is not None:
         return {"verdict": "NONE", "route": "assertion-shared-model", "model_id": shared,
-                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets]}
+                "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets],
+                "vacuous": vacuous, "premises": status}
     count = 1
     for rs in formulas:
         count *= len(rs)
@@ -186,8 +211,9 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         return {"verdict": "UNKNOWN", "route": "assertion-choices", "budget": {"max_choices": 64}}
     positive = negative = None
     for choice in product(*(range(len(rs)) for rs in formulas)):
-        premises = [formulas[i][j] for i, j in enumerate(choice)]
-        labels = [f"readings:{s['id']}@{s['version']}:{j}" for s, j in zip(sets, choice)]
+        premises = [*fixed_formulas, *(formulas[i][j] for i, j in enumerate(choice))]
+        labels = [f"readings:{s['id']}@{s['version']}:{s['readings'][j].get('original_index', j)}"
+                  for s, j in zip(sets, choice)]
         if positive is None:
             cert = prove(premises)
             if cert is not None:
@@ -198,6 +224,6 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
                 negative = {"choice": labels, "model_id": model_id}
         if positive is not None and negative is not None:
             return {"verdict": "SOME", "route": "assertion-choices", "proof": positive,
-                    "countermodel": negative}
+                    "countermodel": negative, "vacuous": vacuous, "premises": status}
     return {"verdict": "UNKNOWN", "route": "assertion-choices",
             "reason": "no complete checked classification within the search budget"}
