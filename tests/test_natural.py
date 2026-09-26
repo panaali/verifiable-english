@@ -81,6 +81,11 @@ def test_web_app_first_example_is_one_checked_prose_argument():
     assert separated.text == expected.replace(' Therefore', '\n\nTherefore')
     assert separated.paragraphs == ({'start': 0, 'end': 2}, {'start': 2, 'end': 3})
     assert parse_english(env, separated.text) == document
+    repeated = Document((*document.formulas, document.formulas[-1]))
+    repeated_view = natural_document(env, repeated, conclusions=(2, 3))
+    repeated_graph = parse_english_argument(env, repeated_view.text)
+    assert tuple(edge.premises for edge in repeated_graph.deductions) == (
+        ('s1', 's2'), ('s1', 's2'))
     with pytest.raises(Exception, match='no checked derivation'):
         parse_english(env, 'The API is reviewed. Therefore the API is safe.')
     with pytest.raises(Exception, match='earlier premise'):
