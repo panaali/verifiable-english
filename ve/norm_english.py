@@ -182,7 +182,7 @@ def _block_grammar(env, words):
                 '| "(" "exception to rules"i rule_refs ")"\n'
                 'rule_refs: RULE_NUMBER ("," RULE_NUMBER | "and"i RULE_NUMBER)*\n'
                 'precedence_sentence: "Rule"i RULE_NUMBER "takes precedence over rule"i RULE_NUMBER "."\n'
-                'condition: ", if" formula | ", unless" formula\n'
+                'condition: ", if" formula | ", unless" formula | ", except when"i formula\n'
                 'carveout: "Except when"i formula "."\n'
                 'consequence: ' + ' | '.join(dict.fromkeys(clauses)) + '\n'
                 'RULE_NUMBER: /[1-9][0-9]*/')
@@ -263,8 +263,10 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         first = clauses[0][:-1]
         extra = [x[:-1] if x.endswith(".") else x for x in clauses[1:]]
         unless = []
-        if ", unless " in first:
-            first, u = first.split(", unless ", 1)
+        carve = re.search(r", (?:unless|except when) ", first, re.I)
+        if carve:
+            u = first[carve.end():]
+            first = first[:carve.start()]
             unless.append(u)
         guard_text = None
         if ", if " in first:
