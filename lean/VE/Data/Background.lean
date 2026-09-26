@@ -138,4 +138,35 @@ theorem closure_data_route_acceptance (E : VE.Environment) (lits : List String)
     · exact (VE.Route.Background.literals_sat_iff S lits hn).mpr hS.1.2 b hb
   · exact hΓ a ha
 
+/-- A checked finite countermodel satisfying both regenerated background
+checks refutes data consequence on the FOL route. -/
+theorem fol_data_route_countermodel {α : Type u} [DecidableEq α]
+    (E : VE.Environment) (lits : List String) (hn : lits.Nodup)
+    (flags : List Flag) (M : VE.FiniteModel α) (valid : M.Valid E)
+    (hl : VE.Route.Background.literalsValid M lits = true)
+    (hf : flagsValid M flags = true) (Γ : List VE.Formula) (φ : VE.Formula)
+    (checked : VE.countermodelCheck M Γ φ = true) :
+    ¬ EntailsData.{u} E lits flags Γ φ := by
+  obtain ⟨hp, hc⟩ := (VE.countermodelCheck_iff M Γ φ).mp checked
+  intro he
+  exact hc (he M.asStructure
+    ⟨⟨valid, VE.Route.Background.literalsValid_sound M lits hn hl⟩,
+      flags_model_valid M flags hf⟩ hp)
+
+/-- The same finite-model result holds on the closure route. -/
+theorem closure_data_route_countermodel {α : Type u} [DecidableEq α]
+    (E : VE.Environment) (lits : List String) (hn : lits.Nodup)
+    (flags : List Flag) (M : VE.FiniteModel α) (valid : M.Valid E)
+    (hl : VE.Route.Background.literalsValid M lits = true)
+    (hf : flagsValid M flags = true) (Γ : List VE.Closure.Formula)
+    (φ : VE.Closure.Formula)
+    (checked : VE.Closure.countermodelCheck M Γ φ = true) :
+    ¬ (∀ S : VE.Structure.{u}, DataAdmissible E lits flags S →
+        (∀ a ∈ Γ, a.denote S []) → φ.denote S []) := by
+  obtain ⟨hp, hc⟩ := (VE.Closure.countermodelCheck_iff M Γ φ).mp checked
+  intro he
+  exact hc (he M.asStructure
+    ⟨⟨valid, VE.Route.Background.literalsValid_sound M lits hn hl⟩,
+      flags_model_valid M flags hf⟩ hp)
+
 end VE.Data.Background
