@@ -30,4 +30,25 @@ def model : FiniteModel Nat := ⟨fun _ => [0, 1, 2], fun _ => some 0,
 #guard Surface.parse env "rtc[node a, b | (a edge b)](@start, @start).\n" ==
   some [.reachBody .star "node" (.binary "edge" (.var 1) (.var 0)) (.const "start") (.const "start")]
 
+def naryEnv : Environment := ⟨["signal", "time", "reading"],
+  fun p => if p = "value" then some ["signal", "time", "reading"] else none,
+  fun c => if c = "speed" then some "signal"
+    else if c = "instant" then some "time"
+    else if c = "high" then some "reading" else none⟩
+
+def naryModel : FiniteModel Nat := ⟨fun s =>
+    if s = "signal" then [0] else if s = "time" then [1] else [2],
+  fun c => if c = "speed" then some 0
+    else if c = "instant" then some 1
+    else if c = "high" then some 2 else none,
+  fun p => if p = "value" then [[0, 1, 2]] else []⟩
+
+def valueAtom : Formula := .atom "value" [.const "speed", .const "instant", .const "high"]
+
+#guard valueAtom.check naryEnv []
+#guard valueAtom.eval naryModel []
+#guard !(Formula.atom "value" [.const "speed", .const "high", .const "instant"]).check naryEnv []
+#guard Surface.parse naryEnv "value(@speed, @instant, @high).\n" == some [valueAtom]
+#guard Surface.parse naryEnv (Surface.print [valueAtom]) == some [valueAtom]
+
 end VE.Core.Checks
