@@ -247,16 +247,31 @@ def check_document(path):
 def render_document(path):
     doc = load_document(path)
     lines = []
+    from .printer import render
+
+    def wording(ast):
+        formula = formula_from_data(doc["environment"], ast)
+        return render(Document((formula,)), doc["environment"], "ve_english").strip()
+
     for u in doc["units"]:
         kind = u["kind"] if type(u["kind"]) is str else u["kind"][0]
-        lines.append(f"{u['id']} ({kind}; {u['support']}): {u['source'].strip()}")
+        lines.append(u["source"].strip())
+        if kind == "attributed":
+            lines.append(f"This is attributed to {u['kind'][1]} as something they {u['kind'][2]}.")
+        elif kind == "hedged":
+            lines.append(f"This is a {u['kind'][1]} statement.")
+        elif kind == "unformalised":
+            lines.append(f"This part is not yet formalised: {u['kind'][1].replace('_', ' ')}.")
         if u["content"] is not None:
-            from .printer import render
-            formula = formula_from_data(doc["environment"], u["content"])
-            lines.append("  VE: " + render(Document((formula,)), doc["environment"], "ve_english").strip())
+            lines.append("Checked reading: " + wording(u["content"]))
     for r in doc["meta"].get("reading_sets", []):
-        choices = "; ".join(c["id"] for c in r["readings"])
-        lines.append(f"{r['unit']} could mean {choices} (readings considered so far, version {r['version']}).")
+        choices = []
+        for index, candidate in enumerate(r["readings"]):
+            description = (wording(candidate["content"]) if candidate["content"] is not None
+                           else "a meaning not yet formalised")
+            label = chr(97 + index) if index < 26 else f"reading {index + 1}"
+            choices.append(f"({label}) {description}")
+        lines.append("This sentence could mean " + "; or ".join(choices) + ".")
     return "\n".join(lines) + "\n"
 
 
