@@ -21,6 +21,7 @@ from .order import Budget as _OrderBudget, InvalidTrace as _OrderInvalid
 
 ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
 CLOSURE_CHECKER_VERSION = "ve-tableau-closure-checker@1"
+CORE_CHECKER_VERSION = "ve-tableau-core-checker@1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -519,6 +520,7 @@ def _rule(item):
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
     from .order import CHECKER_VERSION as ORDER_CHECKER_VERSION
     return {"checker_version": (ORDER_CHECKER_VERSION if getattr(env, "order", False) else
+                                CORE_CHECKER_VERSION if "nary@0" in env.profiles else
                                 CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION),
             "environment_id": env.environment_id,
             "premise_meaning_ids": [meaning_id(env, x) for x in premises],
@@ -644,7 +646,7 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
         if type(certificate) is not dict or set(certificate) != set(_binding(env, premises, conclusion)) | {"trace"}:
             raise _InvalidTrace("certificate fields do not match the wire schema")
         expected = _binding(env, premises, conclusion)
-        if env.closure and certificate.get('checker_version') == 've-tableau-closure-checker@0':
+        if env.closure and "nary@0" not in env.profiles and certificate.get('checker_version') == 've-tableau-closure-checker@0':
             expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
@@ -655,7 +657,8 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
                 raise _InvalidTrace("order certificate does not replay")
             return EntailmentCertificateCheck(True, "Valid", steps)
         replayer = _Replayer(max_steps, env.closure, env=env,
-                            induction=env.closure and certificate['checker_version'] == CLOSURE_CHECKER_VERSION)
+                            induction=env.closure and certificate['checker_version'] in
+                            (CLOSURE_CHECKER_VERSION, CORE_CHECKER_VERSION))
         replayer.replay(_initial_branch(env, premises, conclusion), certificate["trace"])
         return EntailmentCertificateCheck(True, "Valid", replayer.steps)
     except _Budget:

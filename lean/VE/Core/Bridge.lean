@@ -43,11 +43,18 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
       throw s!"invalid signature: {p}"
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
-    exactFields entry ["sort", "description"]
-    description entry
+    let literal := (← stringField entry "sort") == "$string"
+    if literal then
+      displayFields entry ["sort"] ["description"]
+      if let .ok _ := entry.getObjVal? "description" then description entry
+    else
+      exactFields entry ["sort", "description"]
+      description entry
     let s ← stringField entry "sort"
-    unless sortNames.contains s do throw s!"unknown constant sort: {c}"
+    unless sortNames.contains s || s == "$string" do throw s!"unknown constant sort: {c}"
     pure (c, s)
+  if (cs.filter (fun c => c.2 == "$string")).length > 64 then
+    throw "ResourceLimit: At most 64 declared $string literals"
   let result : Vocabulary := ⟨sortNames, ps, cs⟩
   unless result.namesValid do throw "invalid declaration names"
   pure result
