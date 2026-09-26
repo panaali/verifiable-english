@@ -20,8 +20,9 @@ field of `natural` or `explicit form`, a `role` of `premise` or `conclusion`, an
 a fallback reason where applicable.
 
 For the web app's first example, the old three line display was “Every reviewed
-service is safe. / Api is reviewed. / Api is safe.” A checked document with the
-constant display form `the API` and its third statement marked as a conclusion
+service is safe. / Api is reviewed. / Api is safe.” The
+`examples/assist/environment.json` vocabulary now declares `the API`. A checked
+document with its third statement marked as a conclusion
 now displays:
 
 > Every reviewed service is safe. The API is reviewed. Therefore the API is safe.
