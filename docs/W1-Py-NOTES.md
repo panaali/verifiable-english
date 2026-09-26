@@ -20,10 +20,10 @@ section 11.6, it does not elaborate norms. Existing environments without a
 guards and carve-outs, a stable-name manifest, and bare import. `ve.norm_strict`
 round-trips named rules through the existing strict formula parser. The norm
 English parser counts declared consequence matches and rejects a non-unique
-match. It also closes each guard/carve-out with the rule binders and runs P0's
-independent Earley all-derivations check on that formula. The numbered block
-envelope itself is parsed deterministically; a single combined Earley grammar
-for the whole rule block remains to be added. The `ve.surface.norms` records reserve the statement keywords,
+match. It closes each guard/carve-out with the rule binders and runs P0's
+independent Earley all-derivations check on that formula. A second Earley check
+covers the complete numbered block using the declared consequence phrases and
+P0's formula grammar for conditions. The `ve.surface.norms` records reserve the statement keywords,
 but the standalone entry point is separate from the existing formula parser.
 The export manifest verifies environment, text and document hashes. Editing
 transactions and IDE example/rewrite explanations are not yet implemented.
@@ -38,9 +38,13 @@ a universal policy translation over arbitrary new requests. The W5 functional
 and total attribute layer has not landed in this worktree; attribute and
 context expressions remain explicit exclusions.
 
-The W2 document units, W3 definition substitution and interleaving, W5 flags,
-new `norms-route` Lean wire admission, and cross-language elaboration gate are
-not present in this branch. The legacy P0 checker is unchanged. `ve assist`
+Active W2 norm units can now enter Python's FOL admission path. Norm objects
+remain in the source document, and `layer:norms:<p>` leaves must equal regenerated
+premises. The existing W2 graph checker and report identity are reused. W3
+definition interleaving, a Lean `admission` case and wire acceptance theorem,
+and W5 flags remain outstanding. The committed cross-language gate compares
+1,000 Python/Lean elaborations, three conflict replays, and 96 Python/Rust
+formula evaluations. The legacy P0 checker is unchanged. `ve assist`
 has no W1 norm hooks yet; its norm support is explicitly **not yet**.
 These are remaining W1 acceptance obligations, not claims made by the Python
 certificate helper. No Lean theorem was added by this worker.
