@@ -399,6 +399,13 @@ import Iceberg
 #print axioms VE.Route.Background.literalsValid_sound
 #print axioms VE.Route.Background.literals_sat_iff
 #print axioms VE.Route.Background.mem_pairs
+#print axioms VE.Data.Background.functionalPremise_iff
+#print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Data.Background.premises_sat_iff
+#print axioms VE.Data.Background.generate_sat_iff
+#print axioms VE.Data.Background.flags_model_valid
+#print axioms VE.Data.Background.string_encoding_sound
+#print axioms VE.Data.Background.fol_data_route_acceptance
 #print axioms VE.Route.Background.mem_sortStrings
 #print axioms VE.Route.Background.orderLiteralPremise_denote
 #print axioms VE.Route.Background.orderLiteralsValid_sound

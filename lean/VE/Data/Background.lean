@@ -89,4 +89,32 @@ theorem string_encoding_sound (E : VE.Environment) (lits : List String)
     VE.Route.Background.EntailsString.{u} E lits Γ φ :=
   (VE.Route.Background.fol_route_entails_iff E lits hn Γ φ).mp h
 
+/-- String and flag meanings together are the admissible data structures. -/
+def DataAdmissible (E : VE.Environment) (lits : List String)
+    (flags : List Flag) (S : VE.Structure.{u}) : Prop :=
+  VE.Route.Background.StringAdmissible E lits S ∧ ∀ f ∈ flags, Intended S f
+
+def EntailsData (E : VE.Environment) (lits : List String) (flags : List Flag)
+    (Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
+  ∀ S : VE.Structure.{u}, DataAdmissible E lits flags S →
+    (∀ a ∈ Γ, a.denote S []) → φ.denote S []
+
+/-- An accepted certificate for regenerated data Background proves the
+reviewed data meaning over arbitrary admissible structures. -/
+theorem fol_data_route_acceptance (E : VE.Environment) (lits : List String)
+    (hn : lits.Nodup) (flags : List Flag) (Γ : List VE.Formula) (φ : VE.Formula)
+    (c : VE.Tableau.Certificate)
+    (accepted : VE.Tableau.checkCertificate E
+      (generate flags ++ VE.Route.Background.literals lits ++ Γ) φ c = true) :
+    EntailsData.{u} E lits flags Γ φ := by
+  have he := VE.Tableau.checkCertificate_sound E _ φ c accepted
+  intro S hS hΓ
+  apply he S hS.1.1
+  intro a ha
+  rcases List.mem_append.mp ha with ha | ha
+  · rcases List.mem_append.mp ha with ha | ha
+    · exact (generate_sat_iff S flags).mpr hS.2 a ha
+    · exact (VE.Route.Background.literals_sat_iff S lits hn).mpr hS.1.2 a ha
+  · exact hΓ a ha
+
 end VE.Data.Background
