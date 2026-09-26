@@ -5,8 +5,6 @@ import random
 import subprocess
 from pathlib import Path
 
-import pytest
-
 from ve.ast import And, Binary, Const, Not, formula_to_data
 from ve.background import background
 from ve.entailment import prove_entailment
@@ -27,12 +25,14 @@ def _run(cases):
     return json.loads(completed.stdout)
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")
 def test_1000_generated_flag_and_literal_sets():
+    assert LEAN.exists(), "lake build must produce the route runner"
+    assert RUST.exists(), "cargo build --release must produce the Rust runner"
     rng = random.Random(5)
     cases, expected, elaborated = [], [], []
     for index in range(1000):
         functional, total = rng.choice((False, True)), rng.choice((False, True))
+        backup_functional, backup_total = rng.choice((False, True)), rng.choice((False, True))
         count = rng.randrange(1, 4)
         literals = {f"lit{j}": {"sort": "$string"} for j in range(count)}
         env = Environment({"language": "ve.core@0.2",
@@ -40,13 +40,19 @@ def test_1000_generated_flag_and_literal_sets():
             "spec_revision": "ve-v0.2-expand2-2026-09-25",
             "vocabulary": {"sorts": {"person": {"description": "Person"}},
                 "predicates": {"field": {"arguments": ["person", "$string"],
-                    "description": "A field", "functional": functional, "total": total}},
+                    "description": "A field", "functional": functional, "total": total},
+                    **({"backup": {"arguments": ["person", "$string"],
+                        "description": "Backup field", "functional": backup_functional,
+                        "total": backup_total}} if index % 2 == 0 else {})},
                 "constants": literals}})
         chosen = rng.randrange(0, 4)
         rows = ["e0", "e1"][:chosen]
+        backup_rows = ["e1", "e2"][:rng.randrange(0, 3)]
         model = {"complete": True, "domains": {"person": ["p"], "$string": ["e0", "e1", "e2"]},
                  "constants": {name: f"e{rng.randrange(3)}" for name in literals},
-                 "relations": {"field": [["p", value] for value in rows]}}
+                 "relations": {"field": [["p", value] for value in rows],
+                     **({"backup": [["p", value] for value in backup_rows]}
+                        if index % 2 == 0 else {})}}
         try:
             FiniteModel.from_dict(env, model)
             expected.append(("ok", None))
@@ -64,21 +70,20 @@ def test_1000_generated_flag_and_literal_sets():
                                                    results[::2], results[1::2], strict=True):
         assert (got["status"], got.get("generator")) == want, (case["id"], want, got)
         assert {key: shown[key] for key in generated} == generated, (case["id"], shown)
-    if RUST.exists():
-        completed = subprocess.run([str(RUST), "conformance"],
-            input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=120)
-        assert completed.returncode in (0, 1), completed.stderr
-        rust_results = json.loads(completed.stdout)
-        assert len(rust_results) == 1000
-        for case, want, got in zip(cases[::2], expected, rust_results, strict=True):
-            assert got["status"] == want[0], (case["id"], want, got)
-            if want[0] == "error":
-                assert got["error"]["code"] == "InvalidModel"
-                assert want[1] in got["error"]["message"], (case["id"], want, got)
+    completed = subprocess.run([str(RUST), "conformance"],
+        input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=120)
+    assert completed.returncode in (0, 1), completed.stderr
+    rust_results = json.loads(completed.stdout)
+    assert len(rust_results) == 1000
+    for case, want, got in zip(cases[::2], expected, rust_results, strict=True):
+        assert got["status"] == want[0], (case["id"], want, got)
+        if want[0] == "error":
+            assert got["error"]["code"] == "InvalidModel"
+            assert want[1] in got["error"]["message"], (case["id"], want, got)
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")
 def test_flag_certificate_bound_to_generated_background():
+    assert LEAN.exists(), "lake build must produce the route runner"
     env = Environment({"language": "ve.core@0.2",
         "profiles": ["data@0", "relational-fol@0"],
         "spec_revision": "ve-v0.2-expand2-2026-09-25",
@@ -103,8 +108,8 @@ def test_flag_certificate_bound_to_generated_background():
     assert _run([case])[0].get("valid") is not True
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")
 def test_closure_family_replays_the_same_data_background():
+    assert LEAN.exists(), "lake build must produce the route runner"
     from tests.test_data_flags import environment
     data = environment().to_dict()
     data["profiles"] = ["closure@0", "data@0", "relational-fol@0"]
