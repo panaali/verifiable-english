@@ -1,7 +1,7 @@
 """Hand-written W1 counterexamples from norms spec 10.1."""
 import pytest
 
-from ve.ast import Binary, Not, Top, Unary, Var
+from ve.ast import Binary, Named, Not, Reach, Top, Unary, Var
 from ve.background import background
 from ve.environment import Environment
 from ve.errors import InvalidModel, VEError
@@ -65,6 +65,17 @@ def test_pair_rule_and_default_counterexamples():
     assert check_conflict(repaired, prove=True).status == "CONFLICT-FREE"
     assert value(repaired, "required", ("act0",), model(repaired))
     assert value(repaired, "permitted", ("act0",), model(repaired))
+
+
+def test_regulated_closure_edges_rejected_at_construction():
+    raw = environment({"permitted": permission(),
+                       "lower": {"arguments": ["act", "act"], "description": "lower",
+                                 "regulated": {"role": "plain", "default": "deny"}}}).to_dict()
+    raw["profiles"] = ["closure@0", "norms@0", "relational-fol@0"]
+    env = Environment(raw)
+    guard = Reach("plus", Named("lower"), Var(0), Var(0))
+    with pytest.raises(VEError, match="regulated closure edge"):
+        NormDocument(env, [rule("guarded", "permitted", True, guard)])
 
 
 def test_grandchild_diamond_and_carved_out_descendant():

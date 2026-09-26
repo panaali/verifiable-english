@@ -49,6 +49,18 @@ def test_quoted_norm_does_not_activate_a_layer():
         admit_document(env, document)
 
 
+def test_quoted_only_norm_content_uses_norm_decoder_and_keeps_provenance():
+    env, document = source()
+    document["units"][0]["kind"] = ["attributed", "alice", "says", "norm"]
+    document["units"].append({"id": "u2", "span": [20, 30], "kind": "asserted",
+                               "content": ["top"]})
+    document["graph"] = {"root": "asserted", "nodes": [
+        {"name": "asserted", "ast": ["top"], "unit": "u2"}]}
+    result = admit_document(env, document)
+    assert result["admitted"]
+    assert result["kinds"] == [["attributed", "alice", "says", "norm"], "asserted"]
+
+
 def test_norm_layer_and_asserted_unit_replay_in_w2_graph():
     env, document = source()
     premise = NormDocument(env, [rule("allow", "permitted", True)]).elaborate("permitted")
