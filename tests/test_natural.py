@@ -96,6 +96,9 @@ def test_web_app_first_example_is_one_checked_prose_argument():
     repeated_graph = parse_english_argument(env, repeated_view.text, **options)
     assert tuple(edge.premises for edge in repeated_graph.deductions) == (
         ('s1', 's2'), ('s1', 's2'))
+    repeated_prose = parse_presentation(env, repeated_view.text, **options)
+    assert repeated_prose.sentences[2]['dependencies'] == (0, 1)
+    assert repeated_prose.sentences[3]['dependencies'] == (0, 1)
     with pytest.raises(Exception, match='no checked derivation'):
         parse_english(env, 'The API is reviewed. Therefore the API is safe.', **options)
     with pytest.raises(Exception, match='earlier premise'):
