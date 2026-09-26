@@ -355,6 +355,9 @@ class RecoveryService:
         if (old_approval is not None and current.approval == old_approval
                 and current.source == prior["source"] and current.anchor == prior["anchor"]
                 and current.presentation == prior["presentation"] and self.approval_valid(unit_id)):
+            for child in list(self.units.values()):
+                if unit_id in child.dependencies:
+                    self._invalidate(child.id)
             self._event("undo", current, target_revision=target_revision)
             return current
         unit = self.edit(unit_id, source=prior["source"], anchor=prior["anchor"],
