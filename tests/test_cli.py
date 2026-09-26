@@ -286,6 +286,22 @@ def test_cli_keeps_checked_conclusion_roles_in_natural_views_and_check_records(t
     assert record['display_text'].endswith('Therefore the API is safe.')
 
 
+@pytest.mark.parametrize('view', ('fol_symbols', 'fol_keywords', 've_strict',
+                                  've_explicit', 've_fluent', 'canonical'))
+@pytest.mark.parametrize('with_legend', (False, True))
+def test_cli_rejects_english_conclusions_in_views_without_roles(tmp_path, view, with_legend):
+    example = ROOT / 'examples/assist'
+    source = tmp_path / 'argument.txt'
+    source.write_text('Every reviewed service is safe. The API is reviewed. '
+                      'Therefore the API is safe.')
+    flags = ('--with-legend',) if with_legend else ()
+    result = cli('render', '--env', example / 'environment.json',
+                 '--english-vocabulary', example / 'environment.english.json',
+                 '--surface', 'english', '--view', view, *flags, source)
+    assert result.returncode == 2
+    assert json.loads(result.stdout)['status'] == 'InvalidInput'
+
+
 @pytest.mark.parametrize('overlay', ['{', '{}'])
 def test_invalid_display_overlay_cannot_reject_strict_check(tmp_path, overlay):
     path = tmp_path / 'invalid-words.json'; path.write_text(overlay)
