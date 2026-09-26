@@ -20,8 +20,8 @@ import VE.Norms.Replay
   `valid`; the certificate binds the complete environment, the regenerated
   `Background ++ layer premises` followed by `premises`, and the conclusion
   (`Replay.norms_wire_acceptance`).
-* Any case without a norm construct (no `norms@0` profile, no `regulated`
-  field, no `norms`) is delegated unchanged to P0 `Route.Run.runCase`. A norm
+* Any case without a norm construct (no `regulated` field, no `norms`, not a
+  `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
 
 Admission of W2 documents with norm units is not implemented yet and is
@@ -29,16 +29,18 @@ rejected explicitly. -/
 namespace VE.Norms.Run
 open Lean
 
-/-- The executable dispatch test for norm profiles and constructs. -/
+/-- The executable dispatch test: a norm construct (a `regulated` declaration
+or norm content) or a norms case kind. The `norms@0` profile alone is not a
+construct; such P0 inputs delegate unchanged. -/
 def usesNormsPath (j : Json) : Bool :=
   let env := j.getObjValD "environment"
-  let profiles := match env.getObjValD "profiles" with
-    | .arr ps => ps.toList.any (· == .str "norms@0")
-    | _ => false
   let regulated := match (env.getObjValD "vocabulary").getObjValD "predicates" with
     | .obj kvs => kvs.toList.any (fun (_, e) => (e.getObjVal? "regulated").toBool)
     | _ => false
-  profiles || regulated || (j.getObjVal? "norms").toBool
+  let kind := match j.getObjValD "kind" with
+    | .str k => k.startsWith "norms-"
+    | _ => false
+  regulated || (j.getObjVal? "norms").toBool || kind
 
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
@@ -68,8 +70,7 @@ def runCase (j : Json) : Except String Json := do
   VE.Route.Run.runCase j
 
 def runCaseReported (j : Json) : Json :=
-  if usesNormsPath j || j.getObjValD "kind" == .str "norms-elaborate" ||
-      j.getObjValD "kind" == .str "norms-conflict" || j.getObjValD "kind" == .str "norms-certificate" then
+  if usesNormsPath j then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
