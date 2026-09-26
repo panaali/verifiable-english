@@ -164,6 +164,11 @@ impl<'a> Models<'a> {
         for f in problem.document.formulas() {
             f.predicates(&mut used);
         }
+        for (name, (functional, total)) in &env.predicate_flags {
+            if *functional || *total {
+                used.insert(name.clone());
+            }
+        }
         Self {
             env,
             maximum,
@@ -283,7 +288,8 @@ impl<'a> Models<'a> {
             self.advance();
             match model {
                 Ok(model) => return Ok(Some(model)),
-                Err(err) if err.code == "InvalidModel" && err.message.contains("(literals)") => {
+                Err(err) if err.code == "InvalidModel"
+                    && (err.message.starts_with("literals:") || err.message.starts_with("flags:")) => {
                     continue;
                 }
                 Err(err) => return Err(err),
