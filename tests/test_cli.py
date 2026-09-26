@@ -272,7 +272,9 @@ def test_cli_keeps_checked_conclusion_roles_in_natural_views_and_check_records(t
     assert view['text'].endswith('Therefore the API is safe.')
     assert [sentence['role'] for sentence in view['sentences']] == [
         'premise', 'premise', 'conclusion']
-    for flags in (('--view', 've_natural'), ('--view', 'natural', '--with-legend')):
+    for flags in ((), ('--view', 've_english'), ('--view', 've_natural'),
+                  ('--view', 'natural', '--with-legend'),
+                  ('--view', 've_english', '--with-legend')):
         rendered = cli('render', *common, *flags, source)
         assert rendered.returncode == 0, rendered.stdout
         assert 'Therefore the API is safe.' in rendered.stdout

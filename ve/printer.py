@@ -585,11 +585,14 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                              accept_suggested_vocabulary=accept_suggested_vocabulary) != value:
                 raise ValueError('Rendered ve_natural document has a different reading')
         return text
-    if conclusions or paragraph_breaks:
-        raise ValueError('Conclusion roles and paragraph breaks require the natural view')
     if view == "ve_english":
         from .english import render_english
-        return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
+        if paragraph_breaks:
+            raise ValueError('Paragraph breaks require the natural view')
+        return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary)
+    if conclusions or paragraph_breaks:
+        raise ValueError('Conclusion roles and paragraph breaks require an English view')
     if view == "ve_fluent":
         from .fluent import FluentTraversal
         traversal = FluentTraversal(env)
