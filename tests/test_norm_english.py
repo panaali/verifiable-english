@@ -3,6 +3,8 @@ import pytest
 from ve.ast import Not, Top, Unary, Var
 from ve.errors import VEError
 from ve.norms import NormDocument
+from ve.environment import Environment
+from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.norm_english import default_sentence, parse_english, render_english
 from ve.norm_strict import parse_strict, print_strict
 from tests.test_norms import environment, obligation, permission, rule
@@ -103,3 +105,36 @@ def test_inline_except_when_is_canonicalized_to_unless():
     env = environment({"permitted": permission()})
     doc = parse_english(env, "Rule 1. Every act may be done, except when this holds in all cases.")
     assert "unless this holds in all cases" in render_english(doc)[0]
+
+
+def test_plain_negative_is_inside_universal_and_uses_declared_negative():
+    def plain(negative=None):
+        predicate = {"arguments": ["item"], "description": "admitted",
+                     "verbalisation": "{0} is admitted", "regulated": {"role": "plain", "default": "deny"}}
+        if negative is not None:
+            predicate["negative_verbalisation"] = negative
+        return Environment({"language": LANGUAGE, "profiles": ["norms@0", "relational-fol@0"],
+                            "spec_revision": SPEC_REVISION,
+                            "vocabulary": {"sorts": {"item": {"description": "item"}},
+                                           "predicates": {"admitted": predicate}, "constants": {}}})
+    for negative in (None, "{0} is not admitted"):
+        env = plain(negative)
+        doc = NormDocument(env, [rule("ban", "admitted", False)])
+        source, manifest = render_english(doc)
+        assert "It is not the case that Every" not in source
+        assert ("Every item is not admitted" if negative else
+                "For every item, it is not the case that that item is admitted") in source
+        assert parse_english(env, source, manifest).rules == doc.rules
+
+
+def test_same_sort_binary_rule_round_trip_and_dangling_precedence():
+    env = environment({"permitted": permission(act="{0} help {1}", args=("act", "act"))})
+    doc = NormDocument(env, [rule("help", "permitted", True)])
+    source, manifest = render_english(doc)
+    assert "Every first act may help each second act" in source
+    assert parse_english(env, source, manifest).rules == doc.rules
+    assert parse_english(env, source.replace("each second act", "any second act")).rules[0].predicate == "permitted"
+    with pytest.raises(VEError, match="UnknownRule"):
+        parse_english(env, "Rule 9 takes precedence over rule 1.")
+    with pytest.raises(VEError, match="UnknownRule"):
+        parse_english(env, source + "\nRule 1 takes precedence over rule 9.")

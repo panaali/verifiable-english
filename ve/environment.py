@@ -109,7 +109,8 @@ def _regulated(raw, args, name):
         act = " ".join(raw["act"].split()) if type(raw["act"]) is str else ""
         slots = re.findall(r"\{([0-9]+)\}", act)
         words = re.sub(r"\{[0-9]+\}", "slot", act).split()
-        if (len(act) > 80 or slots != [str(i) for i in range(len(args))]
+        if (len(act) > 80 or not act.startswith("{0} ")
+                or slots != [str(i) for i in range(len(args))]
                 or len(words) < 2 or not all(re.fullmatch(r"[A-Za-z][A-Za-z'-]*", w) for w in words)
                 or any(w.lower() in RESERVED for w in words if w != "slot")):
             raise VEError(f"InvalidInput: invalid act phrase for {name}")

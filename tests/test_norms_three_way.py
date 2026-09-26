@@ -97,6 +97,18 @@ def lean_case(index, doc):
             "norms": [r.to_dict() for r in doc.rules]}
 
 
+def test_noninitial_subject_act_rejected_across_languages(lean_executable, rust_executable):
+    raw = environment({"permitted": permission()}).to_dict()
+    raw["vocabulary"]["predicates"]["permitted"]["regulated"]["act"] = "a report be filed about {0}"
+    with pytest.raises(Exception, match="invalid act phrase"):
+        Environment(raw)
+    lean_result = run(lean_executable, [{"id": "act", "kind": "norms-elaborate",
+                                         "environment": raw, "norms": []}])[0]
+    rust_result = run(rust_executable, [{"id": "act", "environment": raw, "ast": []}])[0]
+    assert "invalid act phrase" in lean_result["error"]
+    assert "invalid act phrase" in rust_result["error"]
+
+
 def test_1100_regenerated_documents_match_lean(lean_executable):
     docs = [*corpus(), *pair_corpus()]
     results = run(lean_executable, [lean_case(i, d) for i, d in enumerate(docs)])

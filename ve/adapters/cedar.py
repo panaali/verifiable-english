@@ -157,7 +157,7 @@ class _Compiler:
             members = [self.compile(x) for x in node[1]]
             cases = []
             for combo in product(*members):
-                values = tuple(dict.fromkeys(c.value for c in combo))
+                values = frozenset(c.value for c in combo)
                 guard = Top()
                 for c in combo:
                     guard = _and(guard, c.guard)
