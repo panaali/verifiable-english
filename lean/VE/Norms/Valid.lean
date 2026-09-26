@@ -14,14 +14,21 @@ theorem nodup_getElem_inj {α : Type} {l : List α} (h : l.Nodup) {i j : Nat} (h
   · exact heq
   · exact absurd e.symm (hp j i hj hi hgt)
 
-theorem nodup_getElem?_inj {α : Type} {l : List α} (h : l.Nodup) {i j : Nat} {a : α}
+theorem nodup_getElemOpt_inj {α : Type} {l : List α} (h : l.Nodup) {i j : Nat} {a : α}
     (hi : l[i]? = some a) (hj : l[j]? = some a) : i = j := by
   obtain ⟨hi', ei⟩ := List.getElem?_eq_some_iff.mp hi
   obtain ⟨hj', ej⟩ := List.getElem?_eq_some_iff.mp hj
   exact nodup_getElem_inj h hi' hj' (ei.trans ej.symm)
 
+theorem isOk_ok {ε α : Type} {x : Except ε α} (h : x.isOk = true) : ∃ a, x = .ok a := by
+  cases x with
+  | error _ => cases h
+  | ok a => exact ⟨a, rfl⟩
+
 /-- The facts about a well-formed document that the proofs use. -/
 structure Valid (D : Doc) : Prop where
+  precedence : ∃ o, dependencyOrder (precedenceNodes D.T) = .ok o
+  stratum : ∃ o, dependencyOrder (stratumNodes D.T) = .ok o
   nodup : (layerNames D.T).Nodup
   decl : ∀ q ∈ syms D.T, D.E.predicates q.name = some q.sorts ∧ Arity q.sorts ∧
     ∀ s ∈ q.sorts, s ∈ D.E.sorts
@@ -36,8 +43,8 @@ theorem valid_of_semanticCheck (D : Doc) (h : semanticCheck D = true) : Valid D 
   simp only [semanticCheck, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
     beq_iff_eq, Bool.or_eq_true, List.contains_iff_mem, List.mem_range, List.any_eq_true,
     bne_iff_ne, ne_eq] at h
-  obtain ⟨⟨⟨⟨hn, hd⟩, ht⟩, hr⟩, hp⟩ := h
-  refine ⟨hn, fun q hq => ?_, fun k q hk φ hφ => ?_, hr, fun pr hpr => ?_⟩
+  obtain ⟨⟨⟨⟨⟨⟨hpo, hso⟩, hn⟩, hd⟩, ht⟩, hr⟩, hp⟩ := h
+  refine ⟨isOk_ok hpo, isOk_ok hso, hn, fun q hq => ?_, fun k q hk φ hφ => ?_, hr, fun pr hpr => ?_⟩
   · obtain ⟨⟨h₁, h₂⟩, h₃⟩ := hd q hq
     exact ⟨h₁, h₂, h₃⟩
   · have hlt : k < (syms D.T).length := (List.getElem?_eq_some_iff.mp hk).1
@@ -61,9 +68,18 @@ theorem valid_of_semanticCheck (D : Doc) (h : semanticCheck D = true) : Valid D 
 theorem valid_of_wellFormed (D : Doc) (h : WellFormed D = true) : Valid D :=
   valid_of_semanticCheck D (semanticCheck_of_wellFormed D h)
 
+/-- `precedence_acyclic`: both DAGs of a well-formed document are acyclic
+(through the shared `VE.Route.dependencyOrder` and its `dag_acyclic`). -/
+theorem precedence_acyclic (D : Doc) (h : WellFormed D = true) :
+    DagAcyclic (precedenceNodes D.T) ∧ DagAcyclic (stratumNodes D.T) := by
+  have hv := valid_of_wellFormed D h
+  obtain ⟨o, ho⟩ := hv.precedence
+  obtain ⟨o', ho'⟩ := hv.stratum
+  exact ⟨(dag_acyclic _ _ ho).2.2.2, (dag_acyclic _ _ ho').2.2.2⟩
+
 /-! ## Prefix environments -/
 
-theorem getElem?_names {T : Tree} {k : Nat} {q : Sym} (hk : (syms T)[k]? = some q) :
+theorem names_getElemOpt {T : Tree} {k : Nat} {q : Sym} (hk : (syms T)[k]? = some q) :
     (layerNames T)[k]? = some q.name := by
   simp [layerNames, List.getElem?_map, hk]
 
@@ -75,13 +91,13 @@ theorem mem_drop_names {D : Doc} (hv : Valid D) {j k : Nat} {q : Sym}
   · intro hm
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hm
     rw [List.getElem?_drop] at hi
-    have := nodup_getElem?_inj hv.nodup hi (getElem?_names hj)
+    have := nodup_getElemOpt_inj hv.nodup hi (names_getElemOpt hj)
     omega
   · intro hkj
     apply List.mem_iff_getElem?.mpr
     refine ⟨j - k, ?_⟩
     rw [List.getElem?_drop, Nat.add_sub_cancel' hkj]
-    exact getElem?_names hj
+    exact names_getElemOpt hj
 
 theorem envAt_sorts (D : Doc) (k : Nat) : (envAt D k).sorts = D.E.sorts := rfl
 theorem envAt_constants (D : Doc) (k : Nat) : (envAt D k).constants = D.E.constants := rfl
@@ -98,7 +114,7 @@ theorem envAt_earlier {D : Doc} (hv : Valid D) {j k : Nat} {q : Sym}
   simp only [envAt, hide, this, if_false]
   exact (hv.decl q (List.mem_of_getElem? hj)).1
 
-theorem mem_syms_getElem? {D : Doc} {q : Sym} (hq : q ∈ syms D.T) :
+theorem mem_syms_index {D : Doc} {q : Sym} (hq : q ∈ syms D.T) :
     ∃ k : Nat, (syms D.T)[k]? = some q :=
   List.mem_iff_getElem?.mp hq
 

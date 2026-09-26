@@ -156,6 +156,7 @@ private def dupName (ns : List String) : Option String := ns.find? (fun n => ns.
 after every diagnostic check has passed. -/
 def semanticCheck (D : Doc) : Bool :=
   let ss := syms D.T
+  (dependencyOrder (precedenceNodes D.T)).isOk && (dependencyOrder (stratumNodes D.T)).isOk &&
   decide (layerNames D.T).Nodup &&
   ss.all (fun q => D.E.predicates q.name == some q.sorts &&
     (q.sorts.length == 1 || q.sorts.length == 2) && q.sorts.all D.E.sorts.contains) &&
