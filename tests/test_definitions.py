@@ -128,7 +128,9 @@ def test_definition_statement_sugar_is_input_only():
         parse(env, "define middle(x) as (true).\n")
     preview = wordings(env)
     assert len(preview) == 1
-    assert "if that point is middle" in preview[0]["english"]
+    assert preview[0]["english"] == (
+        "By definition, for every point, that point is middle exactly when that point is base.\n")
+    assert "if that point is middle" in preview[0]["biconditional"]
 
 
 def test_thousand_guarded_sugar_round_trips():

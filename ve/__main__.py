@@ -56,9 +56,17 @@ def main(argv=None):
     if argv[:1] == ["definitions"]:
         definition_parser = argparse.ArgumentParser(prog="python -m ve definitions")
         definition_parser.add_argument("--env", required=True)
+        definition_parser.add_argument(
+            "--adopt", help="English definition and glossary sentences; prints the new environment version")
         options = definition_parser.parse_args(argv[1:])
         try:
-            from .surface.definitions import wordings
+            from .surface.definitions import adopt, wordings
+            if options.adopt:
+                raw = adopt(loads_json(_read(options.env)), _read(options.adopt).decode("utf-8"))
+                env = Environment(raw)
+                _emit({"environment_id": env.environment_id, "environment": raw,
+                       "definitions": wordings(env)})
+                return 0
             env = Environment.from_json(_read(options.env))
             _emit({"environment_id": env.environment_id, "definitions": wordings(env)})
             return 0
@@ -69,7 +77,7 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
     commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
-    commands.add_parser("definitions", help="preview identity-bound definition wordings")
+    commands.add_parser("definitions", help="preview definition wordings; --adopt English definitions and glossaries")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
