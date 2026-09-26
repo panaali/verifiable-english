@@ -69,7 +69,7 @@ def test_exported_grammar_matches_nary_strict_parser():
     assert parse(env, valid).formulas
     grammar.parse(valid)
     for invalid in ("@a p @a.\n", "tc[p](@a, @a).\n"):
-        with pytest.raises(Exception):
+        with pytest.raises(VEError):
             parse(env, invalid)
         with pytest.raises(UnexpectedInput):
             grammar.parse(invalid)
