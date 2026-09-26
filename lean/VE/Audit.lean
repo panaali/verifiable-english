@@ -657,3 +657,4 @@ import VE.Norms.Replay
 #print axioms VE.Norms.Replay.target_refutes
 #print axioms VE.Norms.Replay.norms_wire_acceptance
 #print axioms VE.Norms.norms_route_intended
+#print axioms VE.Norms.mem_children_iff
