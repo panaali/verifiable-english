@@ -168,6 +168,10 @@ class Environment:
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
             if flagged and len(args) != 2:
                 raise VEError("Functional and total flags require a binary predicate")
+            if flagged and INT_SORT in args:
+                raise UnsupportedProfile("Data flags on $int slots are not supported")
+            if order and route and "data@0" in data["profiles"] and (flagged or STRING_SORT in args):
+                raise UnsupportedProfile("Data attributes on the order family are not enabled")
             for flag in ("functional", "total"):
                 if flag in entry and type(entry[flag]) is not bool:
                     raise VEError(f"{flag} must be a Boolean")

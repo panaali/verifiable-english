@@ -300,6 +300,8 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
 
 def _models(env: Any, minimum_size: int, maximum: int,
             used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+    used = used | frozenset(name for name, decl in env.predicates.items()
+                            if decl.functional or decl.total)
     if getattr(env, "order", False):
         yield from _order_models(env, minimum_size, maximum, used, formulas)
         return
