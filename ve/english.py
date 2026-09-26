@@ -61,7 +61,7 @@ def _mentioned_constants(value):
         node = stack.pop()
         if type(node) is ast.Const:
             found.add(node.name)
-        for field in ('term', 'left', 'right', 'body'):
+        for field in ('term', 'left', 'right', 'body', 'edge', 'formula'):
             child = getattr(node, field, None)
             if child is not None:
                 stack.append(child)
@@ -291,10 +291,27 @@ class EnglishVocabulary:
             if len(names) == 1:
                 name = names[0]
                 self.constants[name] = self.declared_constants[name]
-        # A display form may not reuse another constant's default spelling.
-        counts = Counter(wording_key(value) for value in self.constants.values())
-        for name, value in list(self.constants.items()):
-            if counts[wording_key(value)] > 1:
+        # The parser also accepts sentence-initial and definite-article forms.
+        # Compare every such spelling before selecting an alias: a declared
+        # "the api" otherwise shadows the generated "the api" for plain api.
+        def spellings(value):
+            forms = {value}
+            if value.startswith('the '):
+                forms.add(value[0].upper() + value[1:])
+            if re.fullmatch('[a-z]+', value):
+                forms.add('the ' + value)
+            return {wording_key(form) for form in forms}
+
+        while True:
+            owners = {}
+            for name, value in self.constants.items():
+                for form in spellings(value):
+                    owners.setdefault(form, set()).add(name)
+            collided = {name for names in owners.values() if len(names) > 1 for name in names
+                        if name in self.declared_constants and self.constants[name] != quote(name)}
+            if not collided:
+                break
+            for name in collided:
                 self.constants[name] = quote(name)
         for category in ('sorts', 'predicates'):
             for name, entry in self.overlay[category].items():

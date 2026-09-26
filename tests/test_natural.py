@@ -9,7 +9,7 @@ from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
                 Implies, Not, Or, Unary, Var, check_argument,
                 parse_english_argument, render)
 from ve.english import english_lark_grammar, parse_english
-from ve.ast import Le, Lt, Num, Scale
+from ve.ast import Body, Le, Lt, Num, Reach, Scale
 from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
 from ve.errors import ResourceLimit
 from ve.printer import natural_document
@@ -152,6 +152,43 @@ def test_colliding_declared_names_use_exact_identifiers():
     assert first.form == second.form == 'explicit form'
     assert '"api"' in first.text and '"alice"' in second.text
     assert parse_english(env, first.text + '.', **options) == Document((Unary('reviewed', Const('api')),))
+
+
+@pytest.mark.parametrize('alias', ['the api', 'The api', 'the API', 'api', 'API'])
+def test_declared_constant_cannot_shadow_generated_article_or_case(alias):
+    data = vocabulary()
+    data['vocabulary']['constants']['beta'] = {'sort': 'item', 'description': 'Beta'}
+    env = Environment(data)
+    options = _names(env, beta=alias)
+    from ve.english import EnglishVocabulary
+    words = EnglishVocabulary(env, **options)
+    assert words.constants['api'] == 'api'
+    assert words.constants['beta'] == '"beta"'
+    api = Document((Unary('reviewed', Const('api')),))
+    beta = Document((Unary('reviewed', Const('beta')),))
+    assert parse_english(env, 'The api is reviewed.', **options) == api
+    assert parse_english(env, 'the api is reviewed.', **options) == api
+    assert parse_english(env, '"beta" is reviewed.', **options) == beta
+    assert '"beta"' in natural_document(env, beta, **options).text
+
+
+def test_closure_body_referents_disable_ambiguous_it():
+    data = vocabulary()
+    data['vocabulary']['constants']['beta'] = {'sort': 'item', 'description': 'Beta'}
+    data.pop('profile')
+    data.update(language='ve.core@0.1', profiles=['closure@0', 'relational-fol@0'],
+                spec_revision='ve-v0.1-closure-2026-09-21')
+    env = Environment(data)
+    closure = Reach('plus', Body('item', Binary('links', Var(1), Const('beta'))),
+                    Const('api'), Const('api'))
+    followup = Unary('reviewed', Const('api'))
+    first = render(Document((closure,)), env, 've_natural')
+    assert parse_english(env, first) == Document((closure,))
+    view = natural_document(env, Document((closure, followup)))
+    assert 'It is reviewed' not in view.text
+    assert parse_english(env, view.text) == Document((closure, followup))
+    with pytest.raises(Exception):
+        parse_english(env, first + ' It is reviewed.')
 
 
 def test_writable_shared_copula_and_unqualified_owner():

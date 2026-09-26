@@ -623,7 +623,10 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
 def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                 naming: str = "per_statement", style: str = "json", **options) -> str:
     """Render an experimental cell, ALWAYS including the identical view legend."""
-    return render_vocabulary(env, view, naming, style, **options) + render(value, env, view, naming, **options)
+    vocabulary_options = {key: options[key] for key in ('vocabulary', 'accept_suggested_vocabulary')
+                          if key in options}
+    return (render_vocabulary(env, view, naming, style, **vocabulary_options)
+            + render(value, env, view, naming, **options))
 
 
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,
