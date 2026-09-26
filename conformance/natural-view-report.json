@@ -16,6 +16,8 @@
     "statements": 107,
     "notation_free": 84,
     "exact_prose_round_trips": 51,
+    "ready_versioned_presentations": 43,
+    "documents_needing_repair": 8,
     "prose_failures": []
   },
   "prose_argument": {
@@ -37,7 +39,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "examples/fluent/examples.ve",
@@ -48,7 +51,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "examples/premise.ve",
@@ -59,7 +63,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "examples/requirements.ve",
@@ -70,7 +75,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/claims.ve",
@@ -81,7 +87,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test1-conclusion.ve",
@@ -92,7 +99,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test1-premises.ve",
@@ -103,7 +111,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test2-conclusion.ve",
@@ -114,7 +123,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test2-premises.ve",
@@ -125,7 +135,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test3-conclusion.ve",
@@ -136,7 +147,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test3-premises.ve",
@@ -147,7 +159,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test4-conclusion.ve",
@@ -158,7 +171,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test4-premises.ve",
@@ -169,7 +183,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test5-conclusion.ve",
@@ -180,7 +195,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test5-premises.ve",
@@ -191,7 +207,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/claude-constitution-excerpt/claims.ve",
@@ -215,7 +232,18 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/boundary/euclid-statement.ve",
@@ -226,7 +254,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/C1/conclusion.ve",
@@ -237,7 +266,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/C1/premises.ve",
@@ -248,7 +278,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/C2/conclusion.ve",
@@ -259,7 +290,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/C2/premises.ve",
@@ -270,7 +302,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T1/conclusion.ve",
@@ -281,7 +314,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T1/premises.ve",
@@ -302,7 +336,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T2/premises.ve",
@@ -323,7 +358,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T3/premises.ve",
@@ -334,7 +370,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T4/conclusion.ve",
@@ -345,7 +382,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T4/premises.ve",
@@ -356,7 +394,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T5/conclusion.ve",
@@ -367,7 +406,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T5/premises.ve",
@@ -378,7 +418,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T6/conclusion.ve",
@@ -389,7 +430,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T6/premises.ve",
@@ -400,7 +442,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7/conclusion.ve",
@@ -411,7 +454,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7/premises.ve",
@@ -422,7 +466,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7a/conclusion.ve",
@@ -433,7 +478,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7a/premises.ve",
@@ -444,7 +490,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7b/conclusion.ve",
@@ -455,7 +502,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7b/premises.ve",
@@ -466,7 +514,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7mono/conclusion.ve",
@@ -477,7 +526,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T7mono/premises.ve",
@@ -488,7 +538,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T8/conclusion.ve",
@@ -499,7 +550,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T8/premises.ve",
@@ -510,7 +562,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9/conclusion.ve",
@@ -529,7 +582,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9/premises.ve",
@@ -540,7 +600,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9a/conclusion.ve",
@@ -559,7 +620,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9a/premises.ve",
@@ -588,7 +656,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9b/premises.ve",
@@ -617,7 +692,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9c/premises.ve",
@@ -646,7 +728,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9d/premises.ve",
@@ -675,7 +764,14 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/math-mini-paper/theorems/T9e/premises.ve",
@@ -686,7 +782,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "usecases/news-article/claims.ve",
@@ -775,7 +872,70 @@
         }
       ],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "needs_repair",
+      "presentation_repairs": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        }
+      ]
     },
     {
       "corpus": "usecases/us-constitution-14th-s1/claims.ve",
@@ -786,7 +946,8 @@
       "fallback_reasons": {},
       "fallback_details": [],
       "accepted_wrong_readings": 0,
-      "prose_round_trip": "exact"
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
     },
     {
       "corpus": "docs/fluent-examples.md",

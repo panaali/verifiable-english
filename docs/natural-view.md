@@ -165,7 +165,9 @@ from the 1,219 formula samples.
 
 The report additionally measures 57 real repository `.ve` documents with 107
 statements: 84 are notation-free (78.5%), and all 51 nonempty documents have
-exact whole-prose round trips. Six empty sources have no prose round trip. These
+exact whole-prose round trips through the advanced parser. Of those, 43 are
+ready for `ve.prose@1`; eight retain visible repair cases. Six empty sources
+have no prose round trip. These
 are AST/role checks, not independent source-fidelity or human-comprehension
 measurements.
 
@@ -185,3 +187,21 @@ notation, including underscores and depth-specific list markers.
 The web app is outside this branch; its reader-facing claim selector can use
 `ve_natural` with conclusion indices when integrated and keep `ve_strict` for
 the strict inspector.
+
+## Owner handoffs
+
+- **P0-Py registry/derivation owner:** review whether `ve.prose@1` needs a
+  registered surface version and expose derivation counts and the exact
+  resource-limit reason alongside `require_unique_derivation`. Keep the
+  existing English route, legacy grammar, identities, and frozen report bytes
+  unchanged; run the 85,000-pair and 12,750-text replay before admitting an
+  interface change. This branch makes no P0 registry or derivation edit.
+- **Z3 dialogue owner:** consume `PresentationNeedsRepair.details` as a
+  resumable unresolved unit and bind approval to the presentation snapshot.
+  Add confirmed scoped antecedent rewrites for existential, plural, and
+  possessive references; current prose admission only blocks incomplete
+  automatic resolution.
+- **Z4 web owner:** select `ve.prose@1` for new documents, keep old documents
+  on pinned view names, and show migration previews for renewed approval.
+- **W2/W3 owners:** provide reviewed real-document display names and admitted
+  aliases. The surface cannot infer either from descriptions or WordNet.
