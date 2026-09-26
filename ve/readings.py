@@ -193,7 +193,8 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     status = premise_status(env, [*fixed_formulas, *disjunctions],
                             max_proof_steps=max_steps, max_domain_size=max_domain_size,
                             max_models=max_models, max_evaluations=max_evaluations)
-    vacuous = status["status"] == "INCONSISTENT"
+    vacuous = (True if status["status"] == "INCONSISTENT" else
+               False if status["status"] == "model" else None)
     all_proof = prove([*fixed_formulas, *disjunctions])
     if all_proof is not None:
         return {"verdict": "ALL", "route": "assertion-disjunction", "certificate": all_proof,
