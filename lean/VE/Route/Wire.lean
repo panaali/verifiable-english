@@ -288,6 +288,12 @@ def ok (id : String) (fields : List (String × Json)) : Json :=
 def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
     (j : Json) : Except String Json := do
   let E := rv.environment
+  if kind == "background" then
+    let flagPremises := VE.Data.Background.generate rv.flags
+    let literalPremises := Background.literals rv.literals
+    return ok id [("premises", toJson ((flagPremises ++ literalPremises).map encodeFormula)),
+      ("generators", toJson ((List.replicate flagPremises.length "flags") ++
+        (List.replicate literalPremises.length "literals")))]
   if kind == "evaluate" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← decodeFormulas E (← j.getObjVal? "ast")
@@ -312,6 +318,12 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
 def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
     (j : Json) : Except String Json := do
   let E := rv.environment
+  if kind == "background" then
+    let flagPremises := VE.Data.Background.generate rv.flags
+    let literalPremises := Background.literals rv.literals
+    return ok id [("premises", toJson ((flagPremises ++ literalPremises).map encodeFormula)),
+      ("generators", toJson ((List.replicate flagPremises.length "flags") ++
+        (List.replicate literalPremises.length "literals")))]
   if kind == "evaluate" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")

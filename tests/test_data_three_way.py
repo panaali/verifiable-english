@@ -1,12 +1,14 @@
 """Generated data declarations and finite tables across Python and Lean."""
 import json
+import os
 import random
 import subprocess
 from pathlib import Path
 
 import pytest
 
-from ve.ast import And, Binary, Const, Not
+from ve.ast import And, Binary, Const, Not, formula_to_data
+from ve.background import background
 from ve.entailment import prove_entailment
 from ve.environment import Environment
 from ve.errors import InvalidModel
@@ -14,6 +16,8 @@ from ve.model import FiniteModel
 
 
 LEAN = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_conformance"
+RUST = Path(os.environ.get("VE_W5_RUST_BIN", str(Path(__file__).resolve().parents[1] /
+                                          "rust/target/release/ve")))
 
 
 def _run(cases):
@@ -26,7 +30,7 @@ def _run(cases):
 @pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")
 def test_1000_generated_flag_and_literal_sets():
     rng = random.Random(5)
-    cases, expected = [], []
+    cases, expected, elaborated = [], [], []
     for index in range(1000):
         functional, total = rng.choice((False, True)), rng.choice((False, True))
         count = rng.randrange(1, 4)
@@ -50,10 +54,27 @@ def test_1000_generated_flag_and_literal_sets():
             expected.append(("error", exc.generator))
         cases.append({"id": f"data-{index}", "kind": "evaluate", "environment": env.to_dict(),
                       "model": model, "ast": [["top"]]})
+        cases.append({"id": f"background-{index}", "kind": "background", "environment": env.to_dict()})
+        items = background(env)
+        elaborated.append({"premises": [formula_to_data(env, p.formula, _generated=True) for p in items],
+                           "generators": [p.generator for p in items]})
     results = _run(cases)
-    assert len(results) == 1000
-    for case, want, got in zip(cases, expected, results, strict=True):
+    assert len(results) == 2000
+    for case, want, generated, got, shown in zip(cases[::2], expected, elaborated,
+                                                   results[::2], results[1::2], strict=True):
         assert (got["status"], got.get("generator")) == want, (case["id"], want, got)
+        assert {key: shown[key] for key in generated} == generated, (case["id"], shown)
+    if RUST.exists():
+        completed = subprocess.run([str(RUST), "conformance"],
+            input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=120)
+        assert completed.returncode in (0, 1), completed.stderr
+        rust_results = json.loads(completed.stdout)
+        assert len(rust_results) == 1000
+        for case, want, got in zip(cases[::2], expected, rust_results, strict=True):
+            assert got["status"] == want[0], (case["id"], want, got)
+            if want[0] == "error":
+                assert got["error"]["code"] == "InvalidModel"
+                assert want[1] in got["error"]["message"], (case["id"], want, got)
 
 
 @pytest.mark.skipif(not LEAN.exists(), reason="lake build has not produced the route runner")

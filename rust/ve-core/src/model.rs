@@ -76,7 +76,6 @@ impl FiniteModel {
                 .map_err(|_| Error::new("InvalidModel", "constant outside its sort"))?;
             constants.insert(name.clone(), index);
         }
-        env.validate_background(&constants)?;
         let mut relations = BTreeMap::new();
         let mut count = 0;
         for (name, v) in rs {
@@ -123,6 +122,7 @@ impl FiniteModel {
                 return error("InvalidModel", format!("flags: {name} is not total"));
             }
         }
+        env.validate_background(&constants)?;
         let constant_data: BTreeMap<_, _> = constants
             .iter()
             .map(|(n, i)| (n, &domains[&env.constants[n]][*i]))
