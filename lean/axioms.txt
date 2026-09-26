@@ -427,9 +427,11 @@
 'VE.Definitions.Bundle.backgroundLeaves_hold' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Definitions.Bundle.checkAll_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Definitions.Bundle.checkAll_reading' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.checkLemma_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Definitions.Bundle.checkLemma_reading' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.citeAll_sound' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.lookupKnown_mem' depends on axioms: [propext]
 'VE.Definitions.Bundle.mem_appendNew_left' does not depend on any axioms
 'VE.Definitions.Bundle.mem_appendNew_right' depends on axioms: [propext, Quot.sound]
-PASS: 75 source files; 434 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 75 source files; 436 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
