@@ -453,14 +453,33 @@ def render_english(value, env, **options):
         ast.check_document(env, value)
     else:
         ast.check_formula(env, value)
-    traversal = EnglishTraversal(env, EnglishVocabulary(env, **options))
-    if traversal.words.review_status == 'unreviewed':
-        warnings.warn('English overlay ' + traversal.words.overlay_digest + ': unreviewed',
+    words = EnglishVocabulary(env, **options)
+    if words.review_status == 'unreviewed':
+        warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
-    text = (''.join(traversal.render(f) + '.\n' for f in value.formulas)
-            if type(value) is ast.Document else traversal.render(value))
+    formulas = value.formulas if type(value) is ast.Document else (value,)
+    sentences = []
+    for formula in formulas:
+        for settings in ({}, {'avoid_negative_universal': True},
+                         {'avoid_negative_universal': True, 'word_markers': True}):
+            sentence = EnglishTraversal(env, words, **settings).render(formula)
+            try:
+                if _parse_english_document(env, sentence + '.', **options)[0] == ast.Document((formula,)):
+                    sentences.append(sentence)
+                    break
+            except VEError:
+                continue
+        else:
+            raise ValueError('No writable English form passed the one-reading check')
+    text = (''.join(sentence + '.\n' for sentence in sentences)
+            if type(value) is ast.Document else sentences[0])
     if len(text.encode('utf-8')) + (0 if type(value) is ast.Document else 2) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'Rendered ve_english text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+    if type(value) is ast.Document:
+        if len(text) > MAX_NODES:
+            raise ResourceLimit(f'Rendered ve_english text exceeds the derivation budget MAX_NODES ({MAX_NODES})')
+        if _parse_english_document(env, text, **options)[0] != value:
+            raise ValueError('Rendered ve_english document has a different reading')
     return text
 
 
@@ -914,7 +933,21 @@ class EnglishParser:
             self.space()
             first = self.atom((binding,), relative=True)
             if self.take(' and '):
-                first = ast.And(first, self.atom((binding,), relative=True))
+                second = None
+                if (type(first) is ast.Unary and first.term == ast.Var(0)
+                        and self.words.predicates[first.predicate].startswith('{0} is ')):
+                    start_second = self.i
+                    matches = []
+                    for name, template in self.words.predicates.items():
+                        if (self.env.predicates[name].arguments == (binding[0],)
+                                and template.startswith('{0} is ')):
+                            adjective = template[len('{0} is '):]
+                            if re.fullmatch('[a-z]+', adjective) and self.take(adjective, content=True):
+                                matches.append((self.i, ast.Unary(name, ast.Var(0))))
+                            self.i = start_second
+                    if len(matches) == 1:
+                        self.i, second = matches[0]
+                first = ast.And(first, second if second is not None else self.atom((binding,), relative=True))
             return ast.Exists(binding[0], first)
         self.i = start
         if self.take('no '):
@@ -924,6 +957,16 @@ class EnglishParser:
         self.i = start
         if not self.take('every '):
             return None
+        subject_start = self.i
+        try:
+            binding = self.declaration(())
+            self.space()
+            owner = self.owner_clause(binding)
+            if owner is not None:
+                return ast.Forall(binding[0], owner)
+        except VEError:
+            pass
+        self.i = subject_start
         for guard_name, template in self.words.predicates.items():
             decl = self.env.predicates[guard_name]
             if (len(decl.arguments) != 1 or decl.arguments[0] not in self.words.sorts
@@ -988,7 +1031,7 @@ class EnglishParser:
         return ast.Document(tuple(formulas))
 
 
-def parse_english_with_metadata(env, source, **options):
+def _parse_english_document(env, source, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1007,14 +1050,25 @@ def parse_english_with_metadata(env, source, **options):
     except VEError as exc:
         if exc.span is None: exc.span = Span(0, len(source), 1, 1)
         raise
-    english = render_english(document, env, **options)
+    return document, source, parser.words
+
+
+def parse_english_with_metadata(env, source, **options):
+    document, source, words = _parse_english_document(env, source, **options)
+    try:
+        english = render_english(document, env, **options)
+        if english != source and _parse_english_document(env, english, **options)[0] != document:
+            english = source
+    except (VEError, ValueError):
+        # The input passed the complete audit. Never display an unchecked rewrite.
+        english = source
     from .printer import print_document
     return EnglishParseResult(document, source, english, print_document(env, document),
-                              **parser.words.provenance)
+                              **words.provenance)
 
 
 def parse_english(env, source, **options):
-    return parse_english_with_metadata(env, source, **options).document
+    return _parse_english_document(env, source, **options)[0]
 
 
 def english_legend(env, style='json', **options):
@@ -1180,6 +1234,8 @@ def _natural_grammar(env, words):
     lit = lambda s: json.dumps(s)
     content_lit = lambda s: '/' + _literal_pattern(s).replace('/', r'\/') + '/i'
     modifiers = []
+    copulas = []
+    adjectives = []
     for name, template in words.predicates.items():
         decl = env.predicates[name]
         if (len(decl.arguments) == 1 and decl.arguments[0] in words.sorts
@@ -1187,15 +1243,19 @@ def _natural_grammar(env, words):
                 and re.fullmatch('[a-z]+', template[len('{0} is '):])):
             modifiers.append(content_lit(template[len('{0} is '):]) + ' '
                              + content_lit(words.sorts[decl.arguments[0]]))
+            copulas.append(content_lit('is ' + template[len('{0} is '):]))
+            adjectives.append(content_lit(template[len('{0} is '):]))
     owners = any(name == 'owns' and template == '{0} owns {1}'
                  and len(env.predicates[name].arguments) == 2
                  for name, template in words.predicates.items())
     return ('%extend formula: natural',
             'natural: natural_some | natural_no | natural_every',
             'natural_some: "some" declaration some_tail',
-            'some_tail: relative | relative "and" relative',
+            'some_tail: relative | relative "and" relative | copula_relative "and" copula_adjective',
+            'copula_relative: ' + (' | '.join(dict.fromkeys(copulas)) or 'IMPOSSIBLE'),
+            'copula_adjective: ' + (' | '.join(dict.fromkeys(adjectives)) or 'IMPOSSIBLE'),
             'natural_no: "no" declaration relative',
-            'natural_every: "every" natural_subject natural_tail',
+            'natural_every: "every" natural_subject natural_tail | "every" declaration owner_clause',
             'natural_tail: relative | owner_clause | relative "and" owner_clause',
             'natural_subject: ' + (' | '.join(dict.fromkeys(modifiers)) or 'IMPOSSIBLE'),
             'owner_clause: ' + ('"has an owner"' if owners else 'IMPOSSIBLE'))
