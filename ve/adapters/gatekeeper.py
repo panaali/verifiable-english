@@ -18,7 +18,7 @@ def tables(patterns: list[str], images: list[str]) -> tuple[dict, ...]:
     return tuple(run("glob@1", {"pattern": pattern}, images) for pattern in patterns)
 
 
-def is_exempt(image: str, patterns: list[str], records: tuple[dict, ...] | None) -> Exemption:
+def is_exempt(image: str, patterns: list[str], records: tuple[dict | None, ...] | None) -> Exemption:
     """Return UNKNOWN if any required table is absent and no table matches."""
     if records is None:
         return Exemption(False if not patterns else None, ())
