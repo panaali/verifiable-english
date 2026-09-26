@@ -1,11 +1,13 @@
 """nary@0 wire and type checks, including repeated argument positions."""
 import pytest
 
-from ve.ast import Atom, Const, Not, formula_from_data, formula_to_data
+from ve.ast import Atom, Const, Document, Not, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import InvalidModel, SyntaxError, TypeMismatch, UnknownSymbol, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
+from ve.parser import parse
+from ve.printer import print_document
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.search import check_countermodel
 
@@ -31,6 +33,9 @@ def test_atom_wire_repeated_arguments():
     wire = ["atom", "p", [["const", "a"], ["const", "a"], ["const", "b"]]]
     assert formula_to_data(env, node) == wire
     assert formula_from_data(env, wire) == node
+    doc = Document((node,))
+    assert print_document(env, doc) == "p(@a, @a, @b).\n"
+    assert parse(env, print_document(env, doc)) == doc
 
 
 @pytest.mark.parametrize("wire,error", [
