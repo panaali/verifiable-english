@@ -993,3 +993,6 @@ whole-plan review. v3 applies that list and nothing else.
 6. VE's properties are unchanged by this plan: one reading per VE sentence (source ambiguity lives in reading
    sets), mechanical checking, a small Lean-verified checker changed only by W4 stage 1 (and numbers2), and
    Python, Rust and Lean agreement on every conformance family.
+
+### Amendment W4-FOLIO (2026-09-26, orchestrator as DRI)
+W4 acceptance item "216/216 direct parses" is clarified to: every well-formed FOLIO gold formula with an atom of arity > 2 translates and strict-parses without semantic repair (189/189), and each of the 27 malformed gold entries (10 malformed expressions, 11 free variables, 5 overloaded arities within one formula, 1 shadowed variable) is listed by ID and reason in `conformance/NARY-FOLIO.md`. Rationale: the 27 are source-annotation defects, not VE language gaps; counting repaired gold as direct parses would misstate the source. Reviews: Astra recheck (w4-recheck-astra) found all other A/B findings fixed.
