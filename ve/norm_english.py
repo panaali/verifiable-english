@@ -219,19 +219,20 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         if (type(manifest) is not dict or manifest.get("environment_id") != env.environment_id
                 or manifest.get("text_digest") != hashlib.sha256(source.encode()).hexdigest()):
             raise VEError("IdentityMetadataMismatch: stale English export")
+    words = _words(env)
+    grammar = _block_grammar(env, words)
     lines = source.split("\n") if source else []
     precedence = {}
     blocks = []
     for line in lines:
         standalone = re.fullmatch(r"Rule ([1-9][0-9]*) takes precedence over rule ([1-9][0-9]*)\.", line)
         if standalone:
+            require_unique_derivation(env, line, grammar=grammar)
             precedence.setdefault(int(standalone[1]), []).append(int(standalone[2]))
         else:
             blocks.append(line)
     if manifest is not None and len(manifest.get("blocks", [])) != len(blocks):
         raise VEError("IdentityMetadataMismatch: block count")
-    words = _words(env)
-    grammar = _block_grammar(env, words)
     parsed = []
     reserved = set(existing_names)
     seen_handles = set()
