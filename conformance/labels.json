@@ -1,0 +1,1130 @@
+[
+  {
+    "id": "valid-00",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "asserted",
+    "expected": {
+      "status": "ok",
+      "label": "asserted"
+    }
+  },
+  {
+    "id": "valid-01",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(bob,u2)",
+    "expected": {
+      "status": "ok",
+      "label": "bridge:accepts(bob,u2)"
+    }
+  },
+  {
+    "id": "valid-02",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(A.b-c_d,unit.1)",
+    "expected": {
+      "status": "ok",
+      "label": "bridge:accepts(A.b-c_d,unit.1)"
+    }
+  },
+  {
+    "id": "valid-03",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:flags",
+    "expected": {
+      "status": "ok",
+      "label": "background:flags"
+    }
+  },
+  {
+    "id": "valid-04",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:definitions",
+    "expected": {
+      "status": "ok",
+      "label": "background:definitions"
+    }
+  },
+  {
+    "id": "valid-05",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:literals",
+    "expected": {
+      "status": "ok",
+      "label": "background:literals"
+    }
+  },
+  {
+    "id": "valid-06",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:profile",
+    "expected": {
+      "status": "ok",
+      "label": "background:profile"
+    }
+  },
+  {
+    "id": "valid-07",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:bundle/lemma",
+    "expected": {
+      "status": "ok",
+      "label": "cite:bundle/lemma"
+    }
+  },
+  {
+    "id": "valid-08",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:b-1/l.2",
+    "expected": {
+      "status": "ok",
+      "label": "cite:b-1/l.2"
+    }
+  },
+  {
+    "id": "valid-09",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:reasonable",
+    "expected": {
+      "status": "ok",
+      "label": "open:reasonable"
+    }
+  },
+  {
+    "id": "valid-10",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@0:0",
+    "expected": {
+      "status": "ok",
+      "label": "readings:s1@0:0"
+    }
+  },
+  {
+    "id": "valid-11",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:all",
+    "expected": {
+      "status": "ok",
+      "label": "readings:s1@1:all"
+    }
+  },
+  {
+    "id": "valid-12",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s@12:340",
+    "expected": {
+      "status": "ok",
+      "label": "readings:s@12:340"
+    }
+  },
+  {
+    "id": "valid-13",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s@123456789012345678901234567890:7",
+    "expected": {
+      "status": "ok",
+      "label": "readings:s@123456789012345678901234567890:7"
+    }
+  },
+  {
+    "id": "valid-14",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "narrowing:n1",
+    "expected": {
+      "status": "ok",
+      "label": "narrowing:n1"
+    }
+  },
+  {
+    "id": "valid-15",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "expected": {
+      "status": "ok",
+      "label": "open:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  },
+  {
+    "id": "invalid-00",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label "
+    }
+  },
+  {
+    "id": "invalid-01",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "Asserted",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label Asserted"
+    }
+  },
+  {
+    "id": "invalid-02",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "asserted ",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label asserted "
+    }
+  },
+  {
+    "id": "invalid-03",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(bob)",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(bob)"
+    }
+  },
+  {
+    "id": "invalid-04",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(bob,u2,u3)",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(bob,u2,u3)"
+    }
+  },
+  {
+    "id": "invalid-05",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(,u2)",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(,u2)"
+    }
+  },
+  {
+    "id": "invalid-06",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(bob,u2",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(bob,u2"
+    }
+  },
+  {
+    "id": "invalid-07",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts (bob,u2)",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts (bob,u2)"
+    }
+  },
+  {
+    "id": "invalid-08",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(b b,u2)",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(b b,u2)"
+    }
+  },
+  {
+    "id": "invalid-09",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label background:"
+    }
+  },
+  {
+    "id": "invalid-10",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:Literals",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label background:Literals"
+    }
+  },
+  {
+    "id": "invalid-11",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "background:strings",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label background:strings"
+    }
+  },
+  {
+    "id": "invalid-12",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:bundle",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label cite:bundle"
+    }
+  },
+  {
+    "id": "invalid-13",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:a/b/c",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label cite:a/b/c"
+    }
+  },
+  {
+    "id": "invalid-14",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:/l",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label cite:/l"
+    }
+  },
+  {
+    "id": "invalid-15",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label open:"
+    }
+  },
+  {
+    "id": "invalid-16",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:a b",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label open:a b"
+    }
+  },
+  {
+    "id": "invalid-17",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:é",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label open:é"
+    }
+  },
+  {
+    "id": "invalid-18",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "open:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label open:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  },
+  {
+    "id": "invalid-19",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@01:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@01:0"
+    }
+  },
+  {
+    "id": "invalid-20",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:01",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1:01"
+    }
+  },
+  {
+    "id": "invalid-21",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1:"
+    }
+  },
+  {
+    "id": "invalid-22",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@:0"
+    }
+  },
+  {
+    "id": "invalid-23",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:@1:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:@1:0"
+    }
+  },
+  {
+    "id": "invalid-24",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:-1",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1:-1"
+    }
+  },
+  {
+    "id": "invalid-25",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1_0:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1_0:0"
+    }
+  },
+  {
+    "id": "invalid-26",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:ALL",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1:ALL"
+    }
+  },
+  {
+    "id": "invalid-27",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1:0:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1:0:0"
+    }
+  },
+  {
+    "id": "invalid-28",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@1@2:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@1@2:0"
+    }
+  },
+  {
+    "id": "invalid-29",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@+1:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@+1:0"
+    }
+  },
+  {
+    "id": "invalid-30",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "narrowing:",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label narrowing:"
+    }
+  },
+  {
+    "id": "invalid-31",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "narrowing:a/b",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label narrowing:a/b"
+    }
+  },
+  {
+    "id": "invalid-32",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "label:x",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label label:x"
+    }
+  },
+  {
+    "id": "invalid-33",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "bridge:accepts(bob,u2) ",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label bridge:accepts(bob,u2) "
+    }
+  },
+  {
+    "id": "invalid-34",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "cite:a/b\n",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label cite:a/b\n"
+    }
+  },
+  {
+    "id": "invalid-35",
+    "kind": "label",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "label": "readings:s1@١:0",
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label readings:s1@١:0"
+    }
+  }
+]

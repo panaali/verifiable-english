@@ -6,6 +6,7 @@ from types import MappingProxyType
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES, MAX_SORTS
 from .wire import canonical_json, digest, loads_json, require_fields
+from . import profiles as profile_registry
 
 LANGUAGE = "ve.core@0"
 PROFILE = "relational-fol@0"
@@ -21,6 +22,7 @@ ORDER_LANGUAGE = CLOSURE_LANGUAGE
 ORDER_PROFILES = ("order@0", PROFILE)
 ORDER_REVISION = "ve-v0.1-order-2026-09-22"
 INT_SORT = "$int"
+STRING_SORT = "$string"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
@@ -84,7 +86,7 @@ class PredicateDecl:
 @dataclass(frozen=True, slots=True)
 class ConstantDecl:
     sort: str
-    description: str
+    description: str | None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -99,10 +101,18 @@ class Environment:
 
     def __init__(self, data):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
-        closure = data.get("language") == CLOSURE_LANGUAGE if type(data) is dict else False
-        require_fields(data, {"language", "profiles" if closure else "profile", "spec_revision", "vocabulary"})
+        language = data.get("language") if type(data) is dict else None
+        modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
+        closure = language == CLOSURE_LANGUAGE
+        route = language == profile_registry.LANGUAGE
+        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"})
         order = False
-        if closure:
+        if route:
+            family = profile_registry.checker_family(data["profiles"])
+            if data["spec_revision"] != profile_registry.SPEC_REVISION:
+                raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
+            order = family == "order"
+        elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
             elif data["profiles"] != list(CLOSURE_PROFILES) or data["spec_revision"] != CLOSURE_REVISION:
@@ -154,13 +164,20 @@ class Environment:
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
                                              verbalisation, negative)
         for name, entry in vocab["constants"].items():
-            require_fields(entry, {"sort", "description"}, path=f"/vocabulary/constants/{name}")
+            literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+                           path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
-            if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
+            if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
+                                          and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
-            constants[name] = ConstantDecl(sort, _description(entry["description"]))
-        for field, value in (("language", data["language"]), ("profile", None if closure else PROFILE),
-                             ("profiles", (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
+            constants[name] = ConstantDecl(sort, _description(entry["description"])
+                                           if "description" in entry else None)
+        if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
+            raise ResourceLimit("At most 64 declared $string literals")
+        for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
+                             ("profiles", tuple(data["profiles"]) if route else
+                              (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
@@ -190,10 +207,11 @@ class Environment:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
             return entry
 
-        return {"language": self.language, **({"profiles": list(self.profiles)} if self.closure or self.order else {"profile": self.profile}), "spec_revision": self.spec_revision,
+        return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
-                               "constants": {k: {"sort": v.sort, "description": v.description}
+                               "constants": {k: {"sort": v.sort, **({"description": v.description}
+                                                                      if v.description is not None else {})}
                                              for k, v in self.constants.items()}}}
 
     @property
@@ -205,8 +223,14 @@ class Environment:
         return "order@0" in self.profiles
 
     @property
+    def model_sorts(self):
+        return (*self.sorts, *((STRING_SORT,) if any(d.sort == STRING_SORT for d in self.constants.values()) else ()))
+
+    @property
     def identity_version(self):
         # Domain-separated before any order meaning_id was minted.
+        if self.language == profile_registry.LANGUAGE:
+            return "v0.2:" + ",".join(self.profiles)
         return "v0.1-order" if self.order else "v0.1" if self.closure else "v0"
 
     @property

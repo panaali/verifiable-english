@@ -126,6 +126,12 @@ no leaves. The independent `Unfolds` inductive relation specifies this computati
 Acyclicity is specified independently as absence of a nonempty dependency path
 from any name to itself, not merely as success of the checker.
 
+A `Claim` is a name, an AST and a provenance `label` (PLAN-EXPAND2 3.6; default
+`asserted`, omitted on the wire). The label is part of `Claim` equality, so the
+existing theorems below, which quantify over `Claim`, now also state that the
+report and `Unfolds` carry every leaf's label unchanged; their names and
+statements are textually unchanged.
+
 `Graph.checkTableau E` instantiates the generic graph checker with
 `Tableau.checkCertificate` on the exact ordered formulas resolved for each edge.
 `tableau_certificateSound` discharges the old `CertificateSound` premise with
@@ -328,6 +334,101 @@ The independent disjoint-carrier interpretation is an **unproved external
 assumption for typed formulas**, with its intended construction explained in
 [README.md](README.md#typing-universes-and-the-carrier-interpretation-assumption).
 It introduces no Lean assumption and is not used by these proofs.
+
+## The route: `ve.core@0.2` (P0 of PLAN-EXPAND2)
+
+Source: `VE/Route/*`. The route elaborates statement-layer profiles into the
+checked language through typed layers; the checker is a parameter. `Semantics`
+abstracts environments, formulas, structures (universe `u`), structural
+admissibility, closed well-formedness and closed truth; `fol`, `closure` and
+`order` are its three instances, and their `Semantics.Entails` is definitionally
+the existing `Entails` of each logic (`fol_entails_iff`, `closure_entails_iff`,
+`order_entails_iff`).
+
+A `Layer` has input and output environments, executable premises over the
+output environment, input and output admissibility, a restriction map that
+forgets the new symbols, the reviewed meaning `Intended`, and two obligations:
+`faithful` (on every admissible output structure the premises hold iff
+`Intended` holds) and `expands` (every admissible input structure has exactly
+one admissible expansion satisfying the premises). Coherence fields state that
+the input vocabulary is contained in the output one, the premises are over the
+output vocabulary, output admissibility implies structural admissibility,
+restriction maps admissible outputs to admissible inputs, and restriction does
+not change the truth of an input formula. Uniqueness is equality of structures
+(core Lean has no `∃!`; `Unique P` is `∃ x, P x ∧ ∀ y, P y → y = x`).
+`Examples.copyLayer` shows the contract is inhabited by a genuine
+vocabulary-extending layer, not only by `Layer.id`.
+
+Names in this table have prefix `VE.Route.`.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `Semantics.sat_append` | A structure satisfies a concatenation of formula lists iff it satisfies both lists. |
+| `Layer.sat_restrict` | For an admissible output structure and a list of input-vocabulary formulas, the restriction satisfies the list iff the structure does. |
+| `Layer.comp_extends`, `comp_premises_wellFormed`, `comp_restrict_admissible`, `comp_restrict_holds` | For two layers where the second's input environment and admissibility are the first's output ones, the composite satisfies each coherence obligation. |
+| `Layer.comp_faithful` | Composition theorem (meaning): on an admissible output structure of the upper layer, the concatenated premises hold iff the lower layer's meaning holds of the restriction and the upper layer's meaning holds of the structure. |
+| `Layer.comp_expands` | Composition theorem (expansion): every admissible input structure of the lower layer has exactly one admissible upper output structure that restricts to it through both layers and satisfies the concatenated premises. |
+| `Layer.compose_premises` | The premises of a composed compatible chain are the concatenation of every layer's premises in chain order. |
+| `graph_certificateSound_iff` | The claim-graph contract `Graph.CertificateSound E valid` is literally the parametric `CertificateSound fol Claim.formula E valid`. |
+| `tableauValid_certificateSound` | Instance 1: the production claim-graph predicate `tableauValid E` is parametrically sound (by `Graph.tableau_certificateSound`). |
+| `folValid_certificateSound` | Instance 1 on bare formulas, by `Tableau.checkCertificate_sound`. |
+| `closureValid_certificateSound` | Instance 2: the closure checker is parametrically sound (by `Closure.Tableau.checkCertificate_sound`). |
+| `orderValid_certificateSound` | Instance 3: the order checker is parametrically sound (by `Order.Tableau.checkCertificate_sound`). |
+| `verifyOrder_sound` | If the independent order check accepts, the proposed order has no duplicates, has exactly the node names, and places every dependency strictly before its dependant. |
+| `depPath_rank` | Under such an order, every nonempty dependency path strictly decreases the position. |
+| `dag_acyclic` | If `dependencyOrder` accepts, the order is a duplicate-free permutation of the nodes, every mentioned node precedes its mentioner, and no symbol depends on itself directly or transitively. |
+| `sat_checked` | A structure satisfies Background ++ layer premises ++ document premises iff it satisfies all three. |
+| `route_intended` | If Background holds on the route (`BackgroundSound`) and the checked entailment holds, the conclusion holds in every admissible output structure that satisfies the route's meaning and the document premises. |
+| `route_base` | Under the same premises, for a statement over the input environment, the conclusion holds in every structure admissible below the route that satisfies the document premises (through unique expansion). |
+| `route_countermodel_restricts` | Every admissible output structure satisfying the input-vocabulary premises and refuting an input-vocabulary conclusion restricts to an admissible input structure that does the same. |
+| `route_countermodel_expands` | Every admissible input countermodel expands to an admissible output structure that satisfies the whole checked premise list and refutes the conclusion. |
+| `route_entails_iff` | Model correspondence: if Background holds on the route and characterises output admissibility (`BackgroundComplete`), then for input-vocabulary statements the checked entailment holds iff consequence holds over the input admissible structures. |
+| `route_acceptance` | The abstract acceptance theorem: an accepted certificate of any checker whose `CertificateSound` holds, on exactly Background ++ layer premises ++ document premises, gives the checked entailment, the statement in every intended output structure, and the statement over the input admissible structures for input-vocabulary statements. |
+| `Gate.classify_sound` | Every family the executable profile classifier returns is allowed for that list: strictly sorted, all registered, base present, and the checker profiles of that family only. |
+| `Gate.classify_complete` | Every allowed list is classified with its family (the four families are accepted). |
+| `Gate.require_ok` | A successful `require` check had a true condition. |
+| `Gate.decodeEnvelope_sound` | A decoded envelope has language `ve.core@0.2`, its decoded profiles are the environment's `profiles` field, and they form an allowed family. |
+| `Gate.route_gate_envelope` | An environment whose profiles form no allowed family never decodes. |
+| `Gate.legacy_routes_reject_v02` | No case whose environment has language `ve.core@0.2` succeeds on the certificate, evaluation or order routes. |
+| `Background.mem_pairs`, `pairs_complete`, `mem_sortStrings`, `literalPremise_denote` | Pair enumeration is sound and complete for distinct members; sorting preserves membership; one literal premise denotes that two constants share no denotation. |
+| `Background.literals_sat_iff` | For duplicate-free literals, a structure satisfies the generated literal premises iff distinct declared literals denote distinct elements (`LiteralsDistinct`). |
+| `Background.literalsValid_sound`, `literalsValid_complete` | The executable literal check on a finite model is true iff the model satisfies `LiteralsDistinct`. |
+| `Background.fol_background_sound`, `fol_background_complete` | On the P0 FOL route, the literal Background holds in and characterises string-admissible structures. |
+| `Background.fol_route_acceptance` | An accepted tableau certificate for literals ++ Γ ⊢ φ proves the entailment and φ in every string-admissible structure satisfying Γ. |
+| `Background.fol_route_entails_iff` | Consequence from literals ++ Γ equals consequence over string-admissible structures. |
+| `Background.fol_route_countermodel` | A checked finite countermodel that is admissible and passes the literal check refutes both. |
+| `Background.closure_route_acceptance` | An accepted closure certificate for embedded literals ++ Γ ⊢ φ proves φ in every string-admissible structure satisfying Γ. |
+| `Background.order_route_acceptance` | On the order family with no declared literals (empty Background), an accepted order certificate proves order consequence. |
+| `Background.orderLiteralPremise_denote`, `orderLiterals_sat_iff` | On order structures, one literal premise denotes that two constants share no denotation; for duplicate-free literals, a structure satisfies the generated order literal premises iff distinct declared literals denote distinct values (`OrderLiteralsDistinct`). |
+| `Background.orderLiteralsValid_sound` | If the executable literal check is true on a finite order model, the model satisfies `OrderLiteralsDistinct`. |
+| `Background.order_string_route_entails_iff` | Order consequence from literals ++ Γ equals consequence over string-admissible order structures (admissible and `OrderLiteralsDistinct`). |
+| `Background.order_string_route_acceptance` | An accepted order certificate for literals ++ Γ ⊢ φ proves the entailment and φ in every string-admissible order structure satisfying Γ. |
+| `Background.order_string_route_countermodel` | A finite order countermodel that is admissible, passes the literal check and satisfies the countermodel check refutes both the string-admissible statement and the entailment from literals ++ Γ. |
+| `Wire.backgroundViolation_none`, `Wire.decodeModel_valid` | A model decoded on the route is admissible for the environment and satisfies `LiteralsDistinct`: it is string-admissible. |
+| `Wire.decodeOrderModel_valid` | A decoded order model passes the regenerated `$string` literal check. |
+| `Admission.atomicKind_render`, `Admission.decodeKind_render` | A decoded kind tree (any depth within the fuel) renders back to exactly the JSON it was decoded from. |
+| `Admission.parseLabel_render` | Only canonical label strings parse: the parsed label renders back to the input. |
+| `Admission.admitNodes_ok`, `Admission.checkGraph_ok` | The executable node check implies `NodeAdmitted` for every node; the graph step is exactly `Graph.checkTableau`. |
+| `Admission.admit_report_sound` | An admitted document's report is a `SoundReport` for the decoded graph (acyclic, unique names, exact root, typed explicit leaves, entailment, exact unfolding); every node satisfies its admission rule; every assumption is a decoded leaf carrying exactly its decoded label and satisfying the leaf rule; cited lemmas' leaves are present with their labels; reading choices are compatible. |
+| `Admission.admit_labels_decoded` | Each assumption's name, formula and label are those of a decoded node. |
+| `Admission.admit_string_sound` | In every string-admissible structure, if every non-background assumption holds then the root holds (background leaves are regenerated Background premises). |
+| `Run.route_gate` | Every successful `route` case has a `ve.core@0.2` environment that decodes with an allowed family. |
+| `Run.route_gate_rejects` | A case whose profiles form no allowed family never succeeds on `route`. |
+| `Run.route_rejects_before_checking` | If the envelope fails to decode, the case's result is exactly the envelope diagnostic. |
+| `Examples.*` | The copy layer (`p := q` on one sort) satisfies every `Layer` obligation; the helpers are its typing, forgetting, interpretation and uniqueness lemmas. |
+
+Statement review (rule 1b) is required for `Layer.Intended` of every layer,
+for `Background.LiteralsDistinct` / `StringAdmissible` (the stage-1 meaning of
+`$string`) and its order form `OrderLiteralsDistinct` / `OrderStringAdmissible`, for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
+`compatible` (the admission rules), and for `Gate.AllowedFamily`. The route
+theorems are about decoded values; the JSON boundary, identity digests and IO
+are tested, not proved, as for the existing routes. The closure+n-ary family is
+accepted by the gate and rejected by the runner until W4 stage 1 lands (Python
+and Rust reject it at every checking site with the same diagnostic). `$string`
+literals are available on every family: a literal's description is optional, and
+stage 1 is equality only (no `$string` predicate argument, no quantifier over it).
+The shared P0 families (`conformance/p0.py`) run through Python, Rust and
+`route` with identical verdicts (`tests/test_p0_three_way.py`).
 
 ## Remaining obligations
 

@@ -3,10 +3,12 @@ import VE.Closure.Bridge
 import VE.CertificateWire
 import VE.Order.ProfileGate
 import VE.Order.Surface
+import VE.Route.Run
 
 open Lean
 
 def main (args : List String) : IO UInt32 := do
+  if let "route" :: rest := args then return ← VE.Route.Run.main rest
   let (certificates, order, paths) := match args with
     | "check-certificate" :: rest => (true, false, rest)
     | "order" :: rest => (false, true, rest)

@@ -142,7 +142,7 @@ KEYWORDS: the statement-initial keyword list extracted from ve/english.py:773-84
 **Per-input unambiguity (mandatory).** Every English input accepted on any route runs the all-derivations
 parser (the Lark Earley grammar of `docs/english-surface.md`, exported from the environment's profiles) before the
 AST is admitted: more than one derivation rejects the input with a diagnostic showing both derivations; exhaustion
-of the derivation budget (`MAX_NODES`, `ve/limits.py`) rejects the input with a diagnostic naming the budget, and
+of the derivation budget (`MAX_NODES`, `ve/limits.py`, plus the Earley time limit) rejects the input with a diagnostic naming the budget, and
 the author falls back to strict text. A sentence whose unambiguity is unverified is never admitted. The corpus
 (`conformance/english_mixed.py`, W7) remains regression evidence, never the guarantee.
 
@@ -238,7 +238,7 @@ omits the default label so every existing graph artefact hashes identically (tes
 mirrors it. Bridge admission is enforced twice: by Python and by the executable Lean admission of the new route
 (`lean/VE/Route/Admission.lean`): a JSON document on `ve.core@0.2` is decoded to units, nested kind trees
 (`attributed(agent, act, kind)`, `hedged(modality, kind)`, `causal(kind, kind)`), bridge leaves and a claim graph;
-admission checks that quoted content appears only as a bridge leaf whose label names the unit, that every cited
+admission checks that a node naming a quoted unit is a bridge leaf whose label names the unit (an independent formula-equal leaf retains its own provenance), that every cited
 lemma's transitive leaves are present with their labels, and that reading choices along a citation are compatible
 (3.6 of W2); the end-to-end theorem `admit_report_sound` states that an admitted document's report is a
 `SoundReport` whose assumption list carries exactly the decoded labels. A general-purpose decoder for legacy graph
@@ -259,6 +259,8 @@ it, and evaluates and searches over the elaborated premises. Rust never elaborat
 conformance family `elaborated-document`: Python, Lean and Rust verdicts (entailment, countermodel, invalid model,
 `UnsupportedProfile`) must agree on every case; P0 ships the family with `$string` literal cases and the envelope
 cases; W3, W4 and W5 add theirs. Rust work in P0 starts after numbers2's Rust `order@0` merges.
+The order route also checks supplied countermodels against the same declared
+model and formulas; Rust still does not replay order proof certificates.
 
 ### 3.8 Vacuity report
 
@@ -268,6 +270,15 @@ proved inconsistent is reported `vacuous` and never counted as coverage. Test: a
 reports INCONSISTENT and its dependent certificates `vacuous`; the existing fixtures report a model id.
 
 ### 3.9 Frozen interfaces (published on P0 day one)
+
+Certificate premise order is **Background(env) ++ composed layer premises in
+composition order ++ Γ**. Python's current layer segment is empty; every new
+generator must choose either the fixed Background hook order (flags,
+definitions, literals, profile) or a layer segment, and both routes must bind
+the identical ordered list before issuing a certificate. The report identity
+payload is `{"environment_id", "document", "report"}` under the v0.2 report
+domain. The full validated document binds unit kinds, reading sets and graph
+provenance even when the displayed report is unchanged.
 
 | Interface | Producer | Consumers |
 |---|---|---|
@@ -332,7 +343,7 @@ residual  := open terms + assumptions + bridge leaves + unresolved reading sets 
 ```
 
 Attributed and hedged content is quoted by `meaning_id`; the checker verifies the quoted formula is the displayed
-one and never infers content from attribution. Using such content in a deduction needs a bridge leaf
+one and never infers content from attribution. Using a quoted unit as a premise in a deduction needs a bridge leaf
 (`bridge:accepts(agent, unit)`), which is a labelled assumption (3.6), enforced by Python and by the Lean
 admission decoder.
 

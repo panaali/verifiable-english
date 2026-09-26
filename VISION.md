@@ -136,3 +136,12 @@ Adopted verbatim from the two-round convergence debate (`~/code/manage-agents/de
 > 7. Sibling results enter deductions only through a verified bridge keeping assumptions and kind; otherwise they are external support.
 > 8. Outside certification: empirical truth, interpretation choices, open-term adjudication, unsupported causal assumptions, unconstrained weighing. Their formalized conditional consequences may be checked.
 > 9. Admissibility is never decided by topic. A status table beside the rule lists what is not yet admitted and the criterion it fails. A profile no pilot uses at a stage boundary leaves `ve assist` and is kept for identity.
+
+## Lead principle: zero-training English (2026-09-26)
+
+The whole benefit of VE is that it is English. Any non-expert should be able to read **and write** it with zero tutorial or training. VE should be as close to regular English as possible while preserving its properties (one reading per sentence, mechanical checking, a small verified checker). Consequences:
+- Readable text carries no notation: no `@`, brackets, operators or variable letters where avoidable.
+- What you can read is what you can write: the writable language and the natural view converge.
+- When a sentence is ambiguous, the IDE resolves it in English: it shows each competing reading as a plain-English paraphrase with a concrete example situation, and suggests unambiguous rewrites the author can pick. Nobody is asked to read logic.
+- The one-reading guarantee stays mandatory and is checked automatically; readability never overrides it.
+This refines the earlier "writing goes through the assistant" split: the assistant is how ambiguity gets resolved, not a separate language.

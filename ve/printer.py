@@ -494,6 +494,10 @@ class _Traversal:
 
     def formula(self, value, scope):
         kind = type(value)
+        from .surface.registry import by_node
+        record = by_node(value)
+        if record is not None and record.printer_hook is not None:
+            return record.printer_hook(self, value, scope)
         fields = {}
         if kind is ast.Reach:
             left, right = self.term(value.left, scope), self.term(value.right, scope)
