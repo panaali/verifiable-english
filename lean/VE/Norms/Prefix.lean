@@ -451,3 +451,21 @@ theorem sat_document {D : Doc} (hv : Valid D) (S : VE.Structure.{u}) :
     · exact h₂ a (Or.inr ha)
 
 end VE.Norms
+
+namespace VE.Norms
+universe v
+
+/-- `subst_sound`: for an explicit prefix `i`, a structure admissible for
+`E_i` satisfying the prefix's premises, a formula typed over `E_i` and a typed
+valuation, the outcome-substituted formula has the same truth in the base
+restriction as the formula itself. -/
+theorem subst_sound (D : Doc) (h : WellFormed D = true) (i : Nat) (S : VE.Structure.{v})
+    (hS : S.Admissible (envAt D i)) (hlow : Sat S (PrefixPremises D i))
+    (Γ : List String) (φ : VE.Formula) (hφ : φ.WellFormed (envAt D i) Γ)
+    (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+    (subst D.T i φ).denote (restrictAll D.T S) ρ ↔ φ.denote S ρ := by
+  have hv := valid_of_wellFormed D h
+  exact subst_restrict_denote hv i S hS.1
+    (agreesBelow_of_meanings ((sat_prefixPremises hv i S).mp hlow).1) φ Γ hφ ρ hρ
+
+end VE.Norms

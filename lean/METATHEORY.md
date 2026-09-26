@@ -430,6 +430,39 @@ stage 1 is equality only (no `$string` predicate argument, no quantifier over it
 The shared P0 families (`conformance/p0.py`) run through Python, Rust and
 `route` with identical verdicts (`tests/test_p0_three_way.py`).
 
+## W1 norms (`VE/Norms/*`)
+
+Source: `VE/Norms/*`; the full inventory, conventions and statement-review
+definitions are in [NORMS.md](NORMS.md). Norm documents elaborate into one layer
+per regulated predicate on the P0 route, interleaved with W3 definitions in the
+one dependency order. The frozen `Layer`, `Layer.comp` and route theorems are
+used unchanged: `symLayer`/`layer` instantiate `Layer` per layer symbol, with
+output admissibility `PrefixAdmissible (k+1)` (own meaning, full lower prefix,
+pair premises closed there), so consecutive layers compose by construction.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `elaborate_iff_at`, `elaborate_iff` | The generated three-clause elaboration of a regulated predicate holds iff the direct Catala semantics (`IntendedAt`, by rule recursion independent of the generated formulas) holds; the document's elaborations hold iff `holdsCatala`. |
+| `elab_completion` | Without opposite selections, the elaboration is the completed-outcome biconditional. |
+| `prefix_satisfaction`, `subst_sound` | Prefix admissibility is admissibility plus a base-admissible restriction plus the prefix's premises; on such structures outcome substitution to base symbols preserves truth under typed valuations. |
+| `conflictFree_expands` | The local iff: a prefix-admissible structure has exactly one expansion by `p` satisfying `elab_p` iff it passes `ConflictFreeAt p`; this is the `expands` field of `p`'s layer under `hc`. |
+| `conflictFree_expands_document`, `conflictFree_expands_all` | Over each base-admissible structure, unique full expansion iff base conflict-freedom; and the universal form. |
+| `conflictFree_prefix` | Base conflict-freedom gives every layer's local hypothesis. |
+| `norms_route_acceptance`, `norms_route_countermodel`, `norms_route_entails_iff` | An accepted certificate for Background ++ norm elaborations ++ Γ ⊢ φ gives φ under the direct semantics, and (conflict-free, base formulas) over base-admissible structures, via the frozen `route_acceptance`; base countermodels expand; model correspondence. |
+| `conflict_witness_sound`, `conflict_pair_witness_sound` | A checked finite base witness refutes conflict-freedom and the document property. |
+| `conflict_smallModel` | In the quantifier-free fragment, a conflict witness restricts to a finite base model within the per-sort bound of 7.2. Completeness of enumeration is not claimed. |
+| `cedar_decision` | Cedar-shaped trees decide exactly "permit and not forbid" with no opposite selections. |
+| `precedence_acyclic` | Both DAGs of a well-formed document are acyclic. |
+
+Statement review is required for `Value`, `IntendedAt`, `holdsCatala`,
+`PrefixAdmissible`, `ConflictFreeAt`, `ConflictFree`, `InFragment` and
+`CedarShape`. The executable guards in `Norms/Checks.lean` compare Lean's
+elaborations and conflict formulas with Python `ve/norms.py` string for string
+and run the 10.1 regressions on finite models; `Norms/Examples.lean` builds the
+frozen layers of 10.1(c) and (m) as values. The 11.4 wire path (JSON decoder,
+admission, `ve_norms_route`, `norms_wire_acceptance`) is not yet implemented, so
+these theorems are about decoded values only.
+
 ## Remaining obligations
 
 No independent `ParseSpec` or general grammar soundness/completeness/uniqueness
