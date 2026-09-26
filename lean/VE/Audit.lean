@@ -472,3 +472,11 @@ import Iceberg
 #print axioms VE.Route.Wire.decodeModel_background
 #print axioms VE.Route.Wire.decodeModel_intended
 #print axioms VE.Route.Wire.fullBackgroundViolation_none
+#print axioms VE.Definitions.Bundle.backgroundLeaves_hold
+#print axioms VE.Definitions.Bundle.bundle_sound
+#print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkLemma_sound
+#print axioms VE.Definitions.Bundle.citeAll_sound
+#print axioms VE.Definitions.Bundle.lookupKnown_mem
+#print axioms VE.Definitions.Bundle.mem_appendNew_left
+#print axioms VE.Definitions.Bundle.mem_appendNew_right
