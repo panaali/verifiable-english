@@ -87,3 +87,13 @@ def test_standalone_precedence_and_persistent_handles():
     rendered, manifest = render_english(doc, handles=handles)
     assert [b["handle"] for b in manifest["blocks"]] == ["editor-a", "editor-b"]
     assert parse_english(env, rendered, manifest).rules == doc.rules
+
+
+def test_whole_block_earley_checks_multiple_parents_and_clause_boundary():
+    env = environment({"permitted": permission()})
+    text = ("Rule 1. Every act must not be done.\n"
+            "Rule 2. Every act must not be done.\n"
+            "Rule 3 (exception to rules 1 and 2). Every act may be done.")
+    assert parse_english(env, text).rules[2].over == ("rule-1", "rule-2")
+    with pytest.raises(VEError, match="all-derivations"):
+        parse_english(env, text.replace("rules 1 and 2", "rules 1, and 2"))
