@@ -104,6 +104,21 @@ def test_500_certificates_and_2000_mutations_agree_with_lean(lean_binary):
     assert observed == expected
 
 
+def test_statement_profile_preserves_core_family(lean_binary):
+    env = environment(3)
+    raw = env.to_dict()
+    raw["profiles"] = ["closure@0", "documents@1", "nary@0", "relational-fol@0"]
+    combined = Environment(raw)
+    atom = Atom("p", (Const("a"), Const("b"), Const("c")))
+    proof = prove_entailment(combined, [atom], atom)
+    assert proof.status == "Found"
+    case = {"id": "documents", "kind": "certificate", "environment": raw,
+            "premises": [formula_to_data(combined, atom)],
+            "conclusion": formula_to_data(combined, atom), "certificate": proof.certificate}
+    assert check_entailment_certificate(combined, [atom], atom, proof.certificate).valid
+    assert invoke(lean_binary, "route", [case])[0]["valid"] is True
+
+
 def test_5000_finite_table_pairs_agree_with_rust(rust_binary):
     randomizer = random.Random(4056)
     environments = {arity: environment(arity) for arity in range(3, 7)}
