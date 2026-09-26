@@ -1,0 +1,150 @@
+"""Generated n-ary certificates and cross-language finite tables."""
+from __future__ import annotations
+
+import json
+import os
+import random
+import shutil
+import subprocess
+from pathlib import Path
+
+import pytest
+
+from ve.ast import Atom, Const, formula_to_data
+from ve.entailment import check_entailment_certificate, prove_entailment
+from ve.environment import Environment
+from ve.evaluate import evaluate
+from ve.identity import meaning_id
+from ve.model import FiniteModel
+from ve.profiles import LANGUAGE, SPEC_REVISION
+
+ROOT = Path(__file__).resolve().parents[1]
+LETTERS = "abcdef"
+
+
+def environment(arity=6, *, literals=False):
+    constants = {c: {"sort": "item", "description": c} for c in LETTERS}
+    if literals:
+        constants.update({"litone": {"sort": "$string"}, "littwo": {"sort": "$string"}})
+    return Environment({
+        "language": LANGUAGE,
+        "profiles": ["closure@0", "nary@0", "relational-fol@0"],
+        "spec_revision": SPEC_REVISION,
+        "vocabulary": {"sorts": {"item": {"description": "Item"}},
+                       "predicates": {"p": {"arguments": ["item"] * arity,
+                                            "description": "Positional relation"}},
+                       "constants": constants},
+    })
+
+
+def invoke(binary, command, cases, *, errors=False):
+    result = subprocess.run([str(binary), command], input=json.dumps(cases), text=True,
+                            capture_output=True, timeout=120)
+    assert result.returncode == int(errors), result.stdout + result.stderr
+    return json.loads(result.stdout)
+
+
+@pytest.fixture(scope="module")
+def lean_binary():
+    binary = ROOT / "lean/.lake/build/bin/ve_conformance"
+    if not binary.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("Lean is unavailable")
+        result = subprocess.run([lake, "build", "ve_conformance"], cwd=ROOT / "lean",
+                                capture_output=True, text=True, timeout=240)
+        assert result.returncode == 0, result.stdout + result.stderr
+    return binary
+
+
+@pytest.fixture(scope="module")
+def rust_binary():
+    binary = ROOT / "rust/target/debug/ve"
+    if not binary.exists():
+        cargo = shutil.which("cargo")
+        if cargo is None:
+            pytest.skip("Rust is unavailable")
+        env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home")}
+        result = subprocess.run([cargo, "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
+                                env=env, capture_output=True, text=True, timeout=240)
+        assert result.returncode == 0, result.stdout + result.stderr
+    return binary
+
+
+def test_500_certificates_and_2000_mutations_agree_with_lean(lean_binary):
+    env = environment()
+    cases, expected = [], []
+    for index in range(500):
+        digits = [LETTERS[index // (6 ** power) % 6] for power in range(4)]
+        names = ["a", "b", *digits]
+        premise = Atom("p", tuple(Const(name) for name in names))
+        proof = prove_entailment(env, [premise], premise)
+        assert proof.status == "Found"
+        certificate = proof.certificate
+        queries = [(premise, certificate, True)]
+        for changed in (["b", "a", *digits], ["c", "b", *digits],
+                        ["a", "c", *digits],
+                        ["a", "b", LETTERS[(LETTERS.index(digits[0]) + 1) % 6], *digits[1:]]):
+            conclusion = Atom("p", tuple(Const(name) for name in changed))
+            mutant = {**certificate, "conclusion_meaning_id": meaning_id(env, conclusion)}
+            queries.append((conclusion, mutant, False))
+        for conclusion, cert, valid in queries:
+            assert check_entailment_certificate(env, [premise], conclusion, cert).valid is valid
+            cases.append({"id": str(len(cases)), "kind": "certificate",
+                          "environment": env.to_dict(),
+                          "premises": [formula_to_data(env, premise)],
+                          "conclusion": formula_to_data(env, conclusion),
+                          "certificate": cert})
+            expected.append(valid)
+    assert (sum(expected), len(expected) - sum(expected)) == (500, 2000)
+    observed = []
+    for start in range(0, len(cases), 250):
+        observed += [result.get("valid") for result in invoke(lean_binary, "route", cases[start:start + 250])]
+    assert observed == expected
+
+
+def test_5000_finite_table_pairs_agree_with_rust(rust_binary):
+    randomizer = random.Random(4056)
+    environments = {arity: environment(arity) for arity in range(3, 7)}
+    domain = ["x", "y", "z"]
+    constants = dict(zip(LETTERS, domain * 2, strict=True))
+    cases, expected = [], []
+    for index in range(5000):
+        arity = 3 + index % 4
+        env = environments[arity]
+        names = [randomizer.choice(LETTERS) for _ in range(arity)]
+        rows = {tuple(randomizer.choice(domain) for _ in range(arity))
+                for _ in range(randomizer.randrange(1, 4))}
+        model_wire = {"complete": True, "domains": {"item": domain},
+                      "constants": constants,
+                      "relations": {"p": [list(row) for row in sorted(rows)]}}
+        model = FiniteModel.from_dict(env, model_wire)
+        atom = Atom("p", tuple(Const(name) for name in names))
+        expected.append(evaluate(env, atom, model, trace=False).value)
+        cases.append({"id": str(index), "environment": env.to_dict(),
+                      "ast": [formula_to_data(env, atom)], "model": model_wire})
+    observed = []
+    for start in range(0, len(cases), 250):
+        observed += [result.get("values", [None])[0]
+                     for result in invoke(rust_binary, "conformance", cases[start:start + 250])]
+    assert observed == expected
+
+
+def test_mixed_nary_background_validation_agrees(lean_binary, rust_binary):
+    env = environment(3, literals=True)
+    atom = Atom("p", (Const("a"), Const("a"), Const("b")))
+    base = {"complete": True, "domains": {"item": ["x", "y"], "$string": ["one", "two"]},
+            "constants": {**{c: "x" for c in LETTERS}, "litone": "one", "littwo": "two"},
+            "relations": {"p": [["x", "x", "x"]]}}
+    cases = []
+    for alias in (False, True):
+        wire = json.loads(json.dumps(base))
+        if alias:
+            wire["constants"]["littwo"] = "one"
+        cases.append({"id": str(alias), "kind": "evaluate", "environment": env.to_dict(),
+                      "ast": [formula_to_data(env, atom)], "model": wire})
+    lean = invoke(lean_binary, "route", cases, errors=True)
+    rust = invoke(rust_binary, "conformance", cases, errors=True)
+    assert lean[0]["values"] == rust[0]["values"] == [True]
+    assert lean[1]["generator"] == "literals"
+    assert rust[1]["error"]["code"] == "InvalidModel"
