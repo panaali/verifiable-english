@@ -22,6 +22,7 @@ import VE.Norms.Layer
 import VE.Norms.SmallModel
 import VE.Norms.Examples
 import VE.Norms.Cedar
+import VE.Norms.Replay
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -645,3 +646,8 @@ import VE.Norms.Cedar
 #print axioms VE.Norms.cedar_yields_forbid
 #print axioms VE.Norms.mem_rulesOn
 #print axioms VE.Norms.subst_sound
+#print axioms VE.Norms.Replay.norms_wire_conflict_free_expands
+#print axioms VE.Norms.Replay.norms_wire_conflict_sound
+#print axioms VE.Norms.certified_target
+#print axioms VE.Norms.conflictFreeCheck_sound
+#print axioms VE.Norms.conflictFreeCheck_target
