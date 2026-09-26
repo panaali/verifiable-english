@@ -3,7 +3,7 @@ use serde_json::json;
 use ve_core::*;
 
 #[test]
-fn defined_declaration_is_explicitly_gated() {
+fn defined_declaration_computes_its_table() {
     let env = json!({"language":"ve.core@0.2",
         "profiles":["definitions@0","relational-fol@0"],
         "spec_revision":"ve-v0.2-expand2-2026-09-25",
@@ -12,7 +12,18 @@ fn defined_declaration_is_explicitly_gated() {
                 "alias":{"arguments":["point"],"description":"alias",
                     "defined":{"arguments":["point"],"body":["unary","base",["var",0]]}}},
             "constants":{}}});
-    assert_eq!(Environment::from_value(&env).unwrap_err().code, "UnsupportedProfile");
+    let env = Environment::from_value(&env).unwrap();
+    let model = FiniteModel::from_value(&env, &json!({"complete":true,"domains":{"point":["p","q"]},
+        "constants":{},"relations":{"base":[["p"]]}})).unwrap();
+    let doc = Document::from_value(&env, &json!([["unary","alias",["const","x"]]]));
+    assert!(doc.is_err());
+    let values = evaluate(&Document::from_value(&env, &json!([["exists","point",["unary","alias",["var",0]]],
+        ["forall","point",["unary","alias",["var",0]]]])).unwrap(), &model, 1000).unwrap();
+    assert_eq!(values.value, Some(false));
+    let supplied = FiniteModel::from_value(&env, &json!({"complete":true,"domains":{"point":["p"]},
+        "constants":{},"relations":{"base":[["p"]],"alias":[["p"]]}})).unwrap_err();
+    assert_eq!(supplied.code, "InvalidModel");
+    assert!(supplied.message.ends_with("(definitions)"));
 }
 
 #[test]

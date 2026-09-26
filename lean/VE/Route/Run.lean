@@ -12,6 +12,8 @@ checker family:
   receives regenerated Background, then the premises; the certificate binds
   both by meaning id);
 * `dependency-order`: `nodes` → `order`, or the shared cycle diagnostic;
+* `background`: → the regenerated Background (definitions, then literals) and
+  each premise's generator (the W3 differential elaboration check);
 * `label`: `label` → the canonical label, or `AdmissionError: invalid label`;
 * `admission` (FOL family): `document` → the admitted report.
 
@@ -45,6 +47,13 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
   pure (Wire.ok id [("admitted", .bool true), ("report", report), ("report_id", .str reportId),
     ("kinds", Json.arr res.kinds.toArray)])
 
+/-- The FOL/closure vocabulary; `defined` declarations need `definitions@0`. -/
+def decodeRouteVocabulary (e : Gate.Envelope) : Except String Wire.RouteVocabulary := do
+  let rv ← Wire.decodeVocabulary e.vocabulary
+  unless rv.definitions.isEmpty || e.profiles.contains "definitions@0" do
+    throw "defined declarations require the definitions@0 profile"
+  pure rv
+
 /-- Run a case whose envelope has been decoded and gated. -/
 def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) : Except String Json := do
   let kind ← caseKind j
@@ -68,14 +77,21 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   | .order =>
     if kind == "admission" then throw (Gate.unsupported "admission on the order family is deferred")
     let v ← Wire.decodeOrderVocabulary e.vocabulary
+    if kind == "background" then
+      return Wire.runBackground id ((Background.literals v.literals).map (·, "literals"))
     Wire.runOrder e.profiles environment v id kind j
   | .closure =>
     if kind == "admission" then throw (Gate.unsupported "admission on the closure family is deferred")
-    let rv ← Wire.decodeVocabulary e.vocabulary
+    let rv ← decodeRouteVocabulary e
+    if kind == "background" then return Wire.runBackground id (Wire.fullBackground rv)
     Wire.runClosure e.profiles environment rv id kind j
   | .fol =>
-    let rv ← Wire.decodeVocabulary e.vocabulary
-    if kind == "admission" then runAdmit e.profiles environment rv id j
+    let rv ← decodeRouteVocabulary e
+    if kind == "background" then return Wire.runBackground id (Wire.fullBackground rv)
+    if kind == "admission" then
+      unless rv.definitions.isEmpty do
+        throw (Gate.unsupported "admission of documents with definitions is deferred")
+      runAdmit e.profiles environment rv id j
     else Wire.runFol e.profiles environment rv id kind j
 
 /-- Every case: the envelope is decoded and gated before anything else. -/

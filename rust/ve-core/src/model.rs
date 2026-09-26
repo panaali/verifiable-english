@@ -1,5 +1,6 @@
 use crate::{
-    Environment, Error, Result, digest,
+    Environment, Error, MAX_EVALUATIONS, Result, digest,
+    eval::Evaluator,
     environment::{identifier, string},
     error, loads_json,
     wire::{fields, object},
@@ -40,11 +41,23 @@ impl FiniteModel {
         let rs = object(&obj["relations"], "InvalidModel")?;
         if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
             || cs.keys().ne(env.constants.keys())
-            || rs.keys().ne(env.predicates.keys())
         {
             return error(
                 "InvalidModel",
                 "model must contain exactly the declared sorts, constants and predicates",
+            );
+        }
+        // Defined tables are computed from their bodies; a supplied one is invalid.
+        if rs.keys().any(|k| env.is_defined(k)) {
+            return error(
+                "InvalidModel",
+                "supplied table for defined predicate (definitions)",
+            );
+        }
+        if rs.keys().ne(env.predicates.keys().filter(|p| !env.is_defined(p))) {
+            return error(
+                "InvalidModel",
+                "model must contain exactly the declared sorts, constants and base predicates",
             );
         }
         let mut domains = BTreeMap::new();
@@ -109,12 +122,58 @@ impl FiniteModel {
             }
             relations.insert(name.clone(), relation);
         }
+        let mut model = Self {
+            domains,
+            constants,
+            relations,
+            environment_id: String::new(),
+            model_id: String::new(),
+            data: Value::Null,
+        };
+        let mut budget = MAX_EVALUATIONS;
+        for (name, sig, body) in &env.definitions {
+            let sizes: Vec<usize> = sig.iter().map(|s| model.domains[s].len()).collect();
+            let mut table = BTreeSet::new();
+            let mut row = vec![0; sig.len()];
+            let mut more = sizes.iter().all(|n| *n > 0);
+            while more {
+                let mut ev = Evaluator::new(&model, budget);
+                let value = ev.formula(body, &mut row.clone()).map_err(|_| {
+                    Error::new("ResourceLimit", "Definition model evaluation budget exhausted")
+                })?;
+                budget -= ev.work;
+                if value {
+                    count += 1;
+                    if count > 100_000 {
+                        return error("ResourceLimit", "relation tuple limit");
+                    }
+                    table.insert(row.clone());
+                }
+                more = false;
+                for i in (0..row.len()).rev() {
+                    if row[i] + 1 < sizes[i] {
+                        row[i] += 1;
+                        more = true;
+                        break;
+                    }
+                    row[i] = 0;
+                }
+            }
+            model.relations.insert(name.clone(), table);
+        }
+        let Self {
+            domains,
+            constants,
+            relations,
+            ..
+        } = model;
         let constant_data: BTreeMap<_, _> = constants
             .iter()
             .map(|(n, i)| (n, &domains[&env.constants[n]][*i]))
             .collect();
         let relation_data: BTreeMap<_, Vec<Vec<&str>>> = relations
             .iter()
+            .filter(|(n, _)| !env.is_defined(n))
             .map(|(n, rows)| {
                 (
                     n,

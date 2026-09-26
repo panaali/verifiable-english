@@ -3,6 +3,7 @@ import VE.CertificateWire
 import VE.Order.Wire
 import VE.Order.ModelCheck
 import VE.Closure.Bridge
+import VE.Definitions.Elaborate
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -17,11 +18,14 @@ namespace VE.Route.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings identifier reserved generatedName)
 
-/-- A decoded FOL/closure vocabulary and its declared `$string` literals. -/
+/-- A decoded FOL/closure vocabulary, its declared `$string` literals and its
+identity-bound definitions (W3), elaborated in dependency order and checked. -/
 structure RouteVocabulary where
   vocabulary : VE.Bridge.Vocabulary
   literals : List String
   nodup : literals.Nodup
+  definitions : List VE.Definitions.Def
+  chain : VE.Definitions.Chain vocabulary.environment definitions
 
 def RouteVocabulary.environment (rv : RouteVocabulary) : VE.Environment := rv.vocabulary.environment
 
@@ -30,6 +34,29 @@ def RouteVocabulary.environment (rv : RouteVocabulary) : VE.Environment := rv.vo
 def RouteVocabulary.modelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabulary :=
   { rv.vocabulary with
     sorts := rv.vocabulary.sorts ++ (if rv.literals.isEmpty then [] else [Background.stringSort]) }
+
+/-- The model tables supplied on the wire: defined predicates are computed, never supplied. -/
+def RouteVocabulary.baseModelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabulary :=
+  { rv.modelVocabulary with
+    predicates := rv.modelVocabulary.predicates.filter
+      (fun p => !(VE.Definitions.names rv.definitions).contains p.1) }
+
+/-- A definition body: a v0 formula. Reachability bodies are not yet admitted
+by the Lean definitions layer. -/
+def decodeBody (j : Json) : Except String VE.Formula :=
+  match VE.Bridge.decodeFormula 64 j with
+  | .ok a => .ok a
+  | .error e => match VE.Closure.Bridge.decodeFormula 64 j with
+    | .ok _ => .error "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
+    | .error _ => .error e
+
+/-- The identity-bound `defined` payload of predicate `p` with signature `ss`. -/
+def decodeDefined (p : String) (ss : List String) (payload : Json) :
+    Except String (String × List String × VE.Formula) := do
+  exactFields payload ["arguments", "body"]
+  unless (← strings (← payload.getObjVal? "arguments")) == ss do
+    throw s!"Definition {p} arguments differ from its declaration"
+  pure (p, ss, ← decodeBody (← payload.getObjVal? "body"))
 
 /-- A declared `$string` literal: the sort is required and the description is
 optional (and nonempty when present). -/
@@ -64,9 +91,9 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   let sortNames := sorts.map Prod.fst
   let allowed := fun (s : String) => sortNames.contains s || s == Background.stringSort
   let ps ← predicates.mapM fun (p, entry) => do
-    if (entry.getObjVal? "defined").isOk then
-      throw "UnsupportedProfile: defined declarations require a Lean definition decoder"
-    VE.Bridge.displayFields entry ["arguments", "description"] ["verbalisation", "negative_verbalisation"]
+    let defined := (entry.getObjVal? "defined").isOk
+    VE.Bridge.displayFields entry (["arguments", "description"] ++ if defined then ["defined"] else [])
+      ["verbalisation", "negative_verbalisation"]
     VE.Bridge.description entry
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then
@@ -75,6 +102,10 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
     unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
       throw s!"invalid signature: {p}"
     pure (p, ss)
+  let entries ← predicates.filterMapM fun (p, entry) => do
+    match entry.getObjVal? "defined" with
+    | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
+    | .error _ => pure none
   let cs ← constants.mapM fun (c, entry) => do
     if isLiteralEntry entry then literalEntry entry
     else
@@ -87,7 +118,11 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
   let result : VE.Bridge.Vocabulary := ⟨sortNames, ps, cs⟩
   unless result.namesValid do throw "invalid declaration names"
-  if h : literals.Nodup then pure ⟨result, literals, h⟩ else throw "duplicate declaration"
+  if h : literals.Nodup then
+    match hd : VE.Definitions.elaborate result.environment entries with
+    | .ok ds => pure ⟨result, literals, h, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
+    | .error e => throw e
+  else throw "duplicate declaration"
 
 /-- A decoded order vocabulary and its declared `$string` literals. -/
 structure RouteOrderVocabulary where
@@ -109,7 +144,7 @@ def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
   let predicates ← fields (← v.getObjVal? "predicates")
   for (_, entry) in predicates do
     if (entry.getObjVal? "defined").isOk then
-      throw "UnsupportedProfile: defined declarations require a Lean definition decoder"
+      throw "UnsupportedProfile: definitions on the order family require an order definition layer"
   let constants ← fields (← v.getObjVal? "constants")
   let literalDecls := constants.filter (fun c => isLiteralEntry c.2)
   for (_, entry) in literalDecls do literalEntry entry
@@ -171,14 +206,54 @@ def backgroundViolation {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (li
 def invalidModel (generator : String) : String :=
   s!"InvalidModel({generator}): the model violates a background premise"
 
-/-- Decode finite tables, check structural admissibility, then Background: a
-model aliasing two declared literals is `InvalidModel(literals)`, never a truth
-value. -/
+/-- The regenerated Background with generators: definitions (W3), then literals. -/
+def fullBackground (rv : RouteVocabulary) : List (VE.Formula × String) :=
+  (VE.Definitions.expand rv.definitions).map (fun a => (a, "definitions")) ++
+    Background.background rv.literals
+
+/-- The first regenerated Background premise the model violates, with its generator. -/
+def fullBackgroundViolation {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (rv : RouteVocabulary) :
+    Option String :=
+  ((fullBackground rv).find? (fun p => !p.1.eval M [])).map Prod.snd
+
+/-- Every tuple over the listed sorts' domains, in domain order. -/
+def tuples {α : Type} (M : VE.FiniteModel α) : List String → List (List α)
+  | [] => [[]]
+  | s :: ss => (M.domains s).flatMap (fun v => (tuples M ss).map (v :: ·))
+
+/-- Defined tables are computed from their bodies in dependency order, each
+over the tables already present (the base tables and the definitions below). -/
+def computeDefined (d : VE.Bridge.ModelData) : List VE.Definitions.Def → VE.Bridge.ModelData
+  | [] => d
+  | x :: xs =>
+    let rows := (tuples d.toModel x.args).filter (fun row => x.body.eval d.toModel row.reverse)
+    computeDefined { d with relations := d.relations ++ [(x.name, rows)] } xs
+
+/-- The candidate rows of every defined table, bounded like the supplied tables. -/
+def definitionWork (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) : Nat :=
+  (ds.map (fun x => (x.args.map (fun s => (d.toModel.domains s).length)).foldl (· * ·) 1)).foldl (· + ·) 0
+
+/-- A supplied table for a defined predicate is an invalid model. -/
+def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
+  match j.getObjVal? "relations" with
+  | .ok rs =>
+    if (VE.Definitions.names rv.definitions).any (fun p => (rs.getObjVal? p).isOk) then
+      .error "InvalidModel(definitions): supplied table for defined predicate"
+    else .ok ()
+  | .error _ => .ok ()
+
+/-- Decode finite tables for the base predicates, compute the defined tables,
+check structural admissibility, then Background: a model aliasing two declared
+literals is `InvalidModel(literals)`, a supplied defined table is
+`InvalidModel(definitions)`, never a truth value. -/
 def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
-  let data ← VE.Bridge.decodeModelData rv.modelVocabulary j
+  noDefinedTables rv j
+  let data₀ ← VE.Bridge.decodeModelData rv.baseModelVocabulary j
+  Gate.require (definitionWork data₀ rv.definitions ≤ 100000) "ResourceLimit: definition table size"
+  let data := computeDefined data₀ rv.definitions
   Gate.require (data.valid rv.modelVocabulary) "model is not semantically admissible"
   let M := data.toModel
-  match backgroundViolation M rv.literals with
+  match fullBackgroundViolation M rv with
   | some g => throw (invalidModel g)
   | none => pure M
 
@@ -191,23 +266,59 @@ theorem backgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteMode
     (List.mem_map.mpr ⟨a, ha, rfl⟩)
   simpa using hn
 
+/-- A model with no violation satisfies every regenerated Background premise. -/
+theorem fullBackgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteModel α)
+    (rv : RouteVocabulary) (h : fullBackgroundViolation M rv = none) :
+    (VE.Definitions.background rv.definitions rv.literals).all (fun a => a.eval M []) = true := by
+  unfold fullBackgroundViolation at h
+  have hn := List.find?_eq_none.mp (Option.map_eq_none_iff.mp h)
+  apply List.all_eq_true.mpr
+  intro a ha
+  rcases List.mem_append.mp ha with ha | ha
+  · simpa using hn (a, "definitions") (List.mem_append_left _ (List.mem_map.mpr ⟨a, ha, rfl⟩))
+  · simpa using hn (a, "literals") (List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩))
+
+open VE.Order.ProfileGate in
+/-- A decoded model is structurally admissible for the full vocabulary and
+satisfies every regenerated Background premise. -/
+theorem decodeModel_background (rv : RouteVocabulary) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
+    (h : decodeModel rv j = .ok M) :
+    M.Valid rv.environment ∧
+      (VE.Definitions.background rv.definitions rv.literals).all (fun a => a.eval M []) = true := by
+  unfold decodeModel at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨data, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, hv, h⟩ := bind_ok h
+  have hvalid := Gate.require_ok hv
+  dsimp only at h
+  split at h
+  · cases h
+  · rename_i hn
+    cases h
+    exact ⟨VE.Bridge.modelData_valid _ rv.modelVocabulary hvalid, fullBackgroundViolation_none _ rv hn⟩
+
 open VE.Order.ProfileGate in
 /-- A decoded model is admissible for the environment and satisfies the
 stage-1 meaning of strings: it is a string-admissible structure. -/
 theorem decodeModel_valid (rv : RouteVocabulary) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
     (h : decodeModel rv j = .ok M) :
     Background.StringAdmissible rv.environment rv.literals M.asStructure := by
-  unfold decodeModel at h
-  obtain ⟨data, _, h⟩ := bind_ok h
-  obtain ⟨_, hv, h⟩ := bind_ok h
-  have hvalid : data.valid rv.modelVocabulary = true := Gate.require_ok hv
-  dsimp only at h
-  split at h
-  · cases h
-  · rename_i hn
-    cases h
-    exact ⟨VE.Bridge.modelData_valid data rv.modelVocabulary hvalid,
-      Background.literalsValid_sound _ rv.literals rv.nodup (backgroundViolation_none _ _ hn)⟩
+  obtain ⟨hv, hb⟩ := decodeModel_background rv j M h
+  refine ⟨hv, Background.literalsValid_sound _ rv.literals rv.nodup ?_⟩
+  apply List.all_eq_true.mpr
+  intro a ha
+  exact List.all_eq_true.mp hb a (List.mem_append_right _ ha)
+
+/-- A decoded model is an intended structure of the definitions: every defined
+table is its body's extension (W3), and the literals are distinct. -/
+theorem decodeModel_intended (rv : RouteVocabulary) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
+    (h : decodeModel rv j = .ok M) :
+    VE.Definitions.Intended rv.environment rv.definitions rv.literals M.asStructure := by
+  obtain ⟨_, hb⟩ := decodeModel_background rv j M h
+  refine ⟨decodeModel_valid rv j M h, (VE.Definitions.faithful rv.definitions
+    (VE.Definitions.chain_arity _ _ rv.chain) _).mp fun a ha => ?_⟩
+  exact (VE.eval_iff_denote M [] a).mp (List.all_eq_true.mp hb a (List.mem_append_left _ ha))
 
 /-! ## Formula decoding for the FOL family -/
 
@@ -253,7 +364,7 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
     return ok id [("refutes", .bool (VE.countermodelCheck M ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
-  let background := Background.literals rv.literals
+  let background := VE.Definitions.background rv.definitions rv.literals
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
@@ -280,7 +391,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
     return ok id [("refutes", .bool (VE.Closure.countermodelCheck M ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeClosureCertificate (← j.getObjVal? "certificate")
-  let background := Background.literals rv.literals
+  let background := VE.Definitions.background rv.definitions rv.literals
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
@@ -338,6 +449,12 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     certificate.conclusion_meaning_id
   return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
     ("background", toJson background.length)]
+
+/-- The `background` case (the differential elaboration check, PLAN-EXPAND2
+W3(7)): the regenerated Background, in order, with each premise's generator. -/
+def runBackground (id : String) (bg : List (VE.Formula × String)) : Json :=
+  ok id [("background", Json.arr (bg.map (fun p => encodeFormula p.1)).toArray),
+    ("generators", Json.arr (bg.map (fun p => Json.str p.2)).toArray)]
 
 /-- The dependency-order case: nodes `{"name", "mentions"}`; the result is the
 route order or the shared cycle diagnostic. -/

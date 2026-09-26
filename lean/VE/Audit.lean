@@ -469,3 +469,6 @@ import Iceberg
 #print axioms VE.Definitions.wf_mono
 #print axioms VE.Definitions.conservative
 #print axioms VE.Definitions.faithful
+#print axioms VE.Route.Wire.decodeModel_background
+#print axioms VE.Route.Wire.decodeModel_intended
+#print axioms VE.Route.Wire.fullBackgroundViolation_none

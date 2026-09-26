@@ -37,6 +37,18 @@ def _mentions(formula: ast.Formula) -> set[str]:
             return set()
 
 
+def _has_reach(formula: ast.Formula) -> bool:
+    match formula:
+        case ast.Reach():
+            return True
+        case ast.Not(body) | ast.Forall(_, body) | ast.Exists(_, body):
+            return _has_reach(body)
+        case ast.And(left, right) | ast.Or(left, right) | ast.Implies(left, right):
+            return _has_reach(left) or _has_reach(right)
+        case _:
+            return False
+
+
 def _atom(name: str, arity: int) -> ast.Formula:
     if arity == 1:
         return ast.Unary(name, ast.Var(0))
@@ -76,6 +88,8 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
         raise VEError("Definition version must be a nonempty string")
     if type(entries) is not dict:
         raise VEError("Definitions must be an object")
+    if env.order:
+        raise UnsupportedProfile("definitions on the order family require an order definition layer")
     result = {}
     for name, entry in entries.items():
         if name not in env.predicates:
@@ -90,6 +104,9 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
         body = entry["body"]
         if type(body) is list:
             body = ast._Decoder().decode(body)
+        if _has_reach(body):
+            raise UnsupportedProfile(
+                "definition bodies with reachability require a closure definition layer")
         result[name] = Definition(name, tuple(arguments), body)
     mentions = {name: _mentions(definition.body) for name, definition in result.items()}
     order = dependency_order(mentions)

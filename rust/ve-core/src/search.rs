@@ -164,6 +164,13 @@ impl<'a> Models<'a> {
         for f in problem.document.formulas() {
             f.predicates(&mut used);
         }
+        // A defined predicate's table is computed; search its base dependencies.
+        for (name, _, body) in env.definitions.iter().rev() {
+            if used.contains(name) {
+                body.predicates(&mut used);
+            }
+        }
+        used.retain(|p| !env.is_defined(p));
         Self {
             env,
             maximum,
@@ -269,6 +276,7 @@ impl<'a> Models<'a> {
                 .env
                 .predicates
                 .keys()
+                .filter(|p| !self.env.is_defined(p))
                 .map(|p| (p.clone(), Vec::new()))
                 .collect();
             for ((p, row), bit) in self.atoms.iter().zip(&self.bits) {
