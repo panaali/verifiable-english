@@ -19,7 +19,7 @@ def validate_reading_sets(env, values, unit_ids):
     seen = set()
     for item in values:
         required = {"id", "unit", "version", "status", "readings"}
-        if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history"}:
+        if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history", "models"}:
             raise VEError("invalid reading set")
         key = (item["id"], item["version"])
         if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1 or key in seen:
@@ -35,6 +35,7 @@ def validate_reading_sets(env, values, unit_ids):
         if item["status"] == "open" and "signature" in item:
             raise VEError("open reading set cannot have an author signature")
         ids = set()
+        model_ids = set()
         for reading in readings:
             if type(reading) is not dict or set(reading) != {"id", "kind", "meaning_id", "content", "admission"}:
                 raise VEError("invalid reading")
@@ -57,6 +58,27 @@ def validate_reading_sets(env, values, unit_ids):
                 raise VEError("each other reading needs a distinguishing model id")
             if not all(token(v) for v in admission["distinguishing_models"].values()):
                 raise VEError("invalid distinguishing model id")
+            model_ids.update(admission["distinguishing_models"].values())
+        models = item.get("models", {})
+        if type(models) is not dict or set(models) != model_ids:
+            raise VEError("distinguishing models must be supplied by id")
+        if model_ids:
+            from .evaluate import evaluate
+            from .model import FiniteModel
+            for name, data in models.items():
+                model = FiniteModel.from_dict(env, data)
+                if name != model.model_id:
+                    raise VEError("distinguishing model id does not match model")
+            for reading in readings:
+                for other_id, model_id in reading["admission"]["distinguishing_models"].items():
+                    other = next(r for r in readings if r["id"] == other_id)
+                    if reading["content"] is None or other["content"] is None:
+                        continue  # other-kind elaboration is pending; the checking route reports UNKNOWN
+                    model = FiniteModel.from_dict(env, models[model_id])
+                    a = evaluate(env, formula_from_data(env, reading["content"]), model, trace=False)
+                    b = evaluate(env, formula_from_data(env, other["content"]), model, trace=False)
+                    if a.value is None or b.value is None or a.value == b.value:
+                        raise VEError("distinguishing model does not separate readings")
         if "rejected_history" in item and type(item["rejected_history"]) is not list:
             raise VEError("invalid rejected reading history")
     return seen
