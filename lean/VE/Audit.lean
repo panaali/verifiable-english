@@ -432,6 +432,7 @@ import VE.English.Check
 #print axioms VE.Route.Examples.tupleTyped_relation
 #print axioms VE.Route.Examples.wf_extend
 
+#print axioms VE.English.oneReading_of
 #print axioms VE.English.renderInjective_of_parseRender
 #print axioms VE.English.consume_append
 #print axioms VE.English.consume_sound
@@ -490,6 +491,7 @@ import VE.English.Check
 #print axioms VE.English.mapM_denote_render
 #print axioms VE.English.core_parse_render
 #print axioms VE.English.core_render_injective
+#print axioms VE.English.core_one_reading
 #print axioms VE.English.facts_of_admissible
 #print axioms VE.English.kw_mem_kws
 #print axioms VE.English.label_not_mem_kws
@@ -511,5 +513,6 @@ import VE.English.Check
 #print axioms VE.English.admitted_of_facts
 #print axioms VE.English.admissible_sound
 #print axioms VE.English.checked_unique_derivation
+#print axioms VE.English.checked_one_reading
 #print axioms VE.English.checked_parse_render
 #print axioms VE.English.checked_render_injective

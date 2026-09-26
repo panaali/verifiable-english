@@ -165,10 +165,16 @@ theorem core_render_injective (hL : Admitted L) (hC : Covers L E) :
     RenderInjective (coreSurface E L) :=
   renderInjective_of_parseRender (core_parse_render hL hC)
 
+theorem core_one_reading (hL : Admitted L) : OneReading (coreSurface E L) :=
+  oneReading_of core_parse_sound (core_unique_derivation hL)
+
 /-! ## For every vocabulary that passes the finite check -/
 
 theorem checked_unique_derivation (h : admissible L = true) : UniqueDerivation (coreSurface E L) :=
   core_unique_derivation (admissible_sound h)
+
+theorem checked_one_reading (h : admissible L = true) : OneReading (coreSurface E L) :=
+  core_one_reading (admissible_sound h)
 
 theorem checked_parse_render (h : admissible L = true) (hC : Covers L E) :
     ParseRender (coreSurface E L) :=
