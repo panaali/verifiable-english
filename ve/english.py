@@ -1,7 +1,8 @@
 """Writable, scoped English. Canonical serialization remains in printer.py.
 
 The grammar uses prefix clauses, binary drafting lists and a finite, checked
-lexicon. No pronouns, implicit witnesses, reassociation or semantic rewriting.
+lexicon. Audited natural forms add a few fixed contractions; no reassociation
+or semantic rewriting is admitted.
 """
 from __future__ import annotations
 
@@ -251,6 +252,14 @@ class EnglishVocabulary:
         for i, term in enumerate(terms):
             text = text.replace('{' + str(i) + '}', term)
         return text
+
+    def natural_constants(self):
+        """Optional word-only constant aliases, omitted when two names would collide."""
+        proposed = {name: 'the named ' + name.replace('_', ' ')
+                    for name, text in self.constants.items()
+                    if text.startswith('"') and re.fullmatch('[a-z][a-z0-9_]*', name)}
+        counts = Counter(proposed.values())
+        return {name: phrase for name, phrase in proposed.items() if counts[phrase] == 1}
 
 
 def lint_english_vocabulary(env, **options):
@@ -524,6 +533,7 @@ class EnglishParser:
         terms.update({text: ast.Const(name) for name, text in self.words.constants.items()})
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
+        terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
         return terms
 
     def reference_pattern(self, ref, scope):
@@ -647,9 +657,11 @@ class EnglishParser:
 
     def int_leaf(self):
         constants = sorted(self.int_constants(), key=lambda t: -len(t))
+        twice = [name for name in constants if re.fullmatch('[a-z]+', name)]
         return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
             '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
-            for t in constants) + ')'
+            for t in constants) + ''.join('|twice\\s+the\\s+' + re.escape(t) + r'(?![A-Za-z0-9_])'
+                                            for t in twice) + ')'
 
     def int_pattern(self):
         """An integer term over the bracket-masked source: a leaf or one masked bracket group."""
@@ -695,6 +707,14 @@ class EnglishParser:
 
         def term():
             nonlocal position
+            if text.startswith('twice the ', position):
+                position += len('twice the ')
+                for display, name in sorted(constants.items(), key=lambda item: -len(item[0])):
+                    if re.fullmatch('[a-z]+', display) and text.startswith(display, position):
+                        end = position + len(display)
+                        if end == len(text) or not re.match(r'[A-Za-z0-9_]', text[end]):
+                            position = end
+                            return ast.Scale(2, ast.Const(name))
             if text.startswith('-', position) and not text[position + 1:position + 2].isdigit():
                 position += 1
                 return ast.Scale(-1, term())
@@ -873,7 +893,8 @@ class EnglishParser:
             return None
         for guard_name, template in self.words.predicates.items():
             decl = self.env.predicates[guard_name]
-            if len(decl.arguments) != 1 or not template.startswith('{0} is '):
+            if (len(decl.arguments) != 1 or decl.arguments[0] not in self.words.sorts
+                    or not template.startswith('{0} is ')):
                 continue
             adjective = template[len('{0} is '):]
             if not re.fullmatch('[a-z]+', adjective):
@@ -950,6 +971,8 @@ def parse_english_with_metadata(env, source, **options):
                           if len(env.predicates[name].arguments) == 1 and template.startswith('{0} is ')
                           and env.predicates[name].arguments[0] in parser.words.sorts
                           and re.fullmatch('[a-z]+', template[len('{0} is '):]))
+    natural_prefix |= any(alias in parser.source for alias in parser.words.natural_constants().values())
+    natural_prefix |= 'twice the ' in parser.source
     if natural_prefix:
         if len(parser.source.encode('utf-8')) > 4096:
             raise ResourceLimit('Natural English all-derivations audit exceeds the 4096-byte budget')
@@ -1084,6 +1107,7 @@ def english_lark_grammar(env, **options):
     constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
     constants += [lit('the ' + v) for n, v in words.constants.items()
                   if not is_int(n) and re.fullmatch('[a-z]+', v)]
+    constants += [lit(v) for n, v in words.natural_constants().items() if not is_int(n)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
     rules.append('constant: ' + (' | '.join(constants) or 'IMPOSSIBLE'))
     relations = [lit(quote(n)) for n, p in env.predicates.items()
@@ -1113,9 +1137,11 @@ def english_lark_grammar(env, **options):
             for text, _, _ in _COMPARISONS]
         ints = [lit(v) for n, v in words.constants.items() if is_int(n)]
         rules += ['int_term: int_atom | "-" int_neg',
-                  'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]"',
+                  'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]" | "twice" "the" int_plain_constant',
                   'int_neg: int_constant | "[" int_term INT_OP int_term "]" | "-" int_neg',
                   'int_constant: ' + (' | '.join(ints) or 'IMPOSSIBLE'),
+                  'int_plain_constant: ' + (' | '.join(lit(v) for n, v in words.constants.items()
+                                                     if is_int(n) and re.fullmatch('[a-z]+', v)) or 'IMPOSSIBLE'),
                   'NUMERAL: /-?(?:0|[1-9][0-9]*)(?![0-9])/',
                   'INT_OP: "+" | "-" | "*"']
     rules.append('atom: ' + ' | '.join(atoms))
