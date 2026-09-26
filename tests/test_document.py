@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from conformance.p0 import MODEL, VOCAB, envelope, environment
-from ve.document import check_document, coverage, load_document, render_document
+from ve.document import _check_narrowing_choices, check_document, coverage, load_document, render_document
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
@@ -114,6 +114,11 @@ def test_document_p0_admission_and_cli(tmp_path):
     output = subprocess.run([sys.executable, "-m", "ve", "document", "coverage", str(path)],
                             check=True, capture_output=True, text=True)
     assert json.loads(output.stdout)["accounted_bytes"] == len(source)
+    prior = result["document_id"]
+    changed = unit("a", 0, len(source), content={"ast": ["top"]})
+    changed["support"] = "observation"
+    path = write_doc(tmp_path, source, [changed], graph=graph)
+    assert check_document(path)["document_id"] != prior
 
 
 def test_quoted_content_needs_bridge_in_document(tmp_path):
@@ -189,3 +194,12 @@ def test_distinguishing_model_is_replayed(tmp_path):
                      environment_json=env_json, reading_sets=[rs])
     with pytest.raises(VEError, match="model id"):
         load_document(path)
+
+
+def test_narrowing_rejects_excluded_graph_choice():
+    meta = {"reading_sets": [{"id": "s", "version": 1,
+                               "readings": [{"id": "left"}, {"id": "right"}]}],
+            "narrowings": [{"id": "n", "set": "s", "version": 1, "keeps": ["left"]}]}
+    _check_narrowing_choices(meta, ["narrowing:n", "readings:s@1:0"])
+    with pytest.raises(VEError, match="conflicts with narrowing"):
+        _check_narrowing_choices(meta, ["narrowing:n", "readings:s@1:1"])
