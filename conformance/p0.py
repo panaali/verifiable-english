@@ -328,6 +328,12 @@ def definition_cases(case):
     case("defs-arguments-mismatch", "evaluate", rejected, definitions_envelope(mismatch),
          model=DEF_MODEL, ast=[["top"]])
     case("defs-profile-missing", "evaluate", rejected, envelope(DEF_VOCAB), model=DEF_MODEL, ast=[["top"]])
+    # Flags (W5) are never allowed on a defined predicate: its table is its body's.
+    flagged = deepcopy(DEF_VOCAB)
+    flagged["predicates"]["boss"]["functional"] = True
+    case("defs-flag-rejected", "evaluate", rejected,
+         definitions_envelope(flagged, ("data@0", "definitions@0", "relational-fol@0")),
+         model=DEF_MODEL, ast=[["top"]])
     order = definitions_envelope(
         {"sorts": {"point": {"description": "a point"}},
          "predicates": {"base": {"arguments": ["point"], "description": "base"},
