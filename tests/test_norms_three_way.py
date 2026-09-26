@@ -15,10 +15,12 @@ from pathlib import Path
 
 import pytest
 
-from ve.ast import Exists, Not, Top, Unary, Var, _to_data, formula_to_data
+from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
+from ve.adapters.cedar import translate
+from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
-from ve.norms import NormDocument, _bind, check_conflict
+from ve.norms import NormDocument, _bind, _instantiate, check_conflict
 from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -188,3 +190,36 @@ def test_rust_evaluates_python_generated_completions(rust_executable):
     got = run(rust_executable, cases)
     assert [row["values"][0] for row in got] == expected
     assert set(expected) == {False, True}
+
+
+def test_rust_agrees_on_22_pinned_cedar_decisions(rust_executable):
+    root = ROOT / "experiments/P3-formalisation-tax/items"
+    cases = []
+    expected = []
+    for path in sorted(root.glob("c*_cit_*/item.json")):
+        item = json.loads(path.read_text())
+        policy = (path.parent / "source.cedar").read_text()
+        questions = item["questions"]
+        translated = translate(policy, item["world"].get("linked", []),
+                               item["world"]["entities"], [q["request"] for q in questions])
+        if translated.exclusions:
+            continue
+        base_data = translated.document.base_environment().to_dict()
+        base_data["vocabulary"]["constants"]["query"] = {"sort": "request",
+                                                          "description": "chosen request"}
+        base = Environment(base_data)
+        outcome = _instantiate(translated.document.outcome("permitted", base=True),
+                               (Const("query"),))
+        for decision, request_id in zip(translated.decisions(), translated.request_ids, strict=True):
+            model_data = translated.model.to_dict()
+            model_data["relations"].pop("permitted")
+            model_data["constants"]["query"] = request_id
+            finite = FiniteModel.from_dict(base, model_data)
+            truth = decision["decision"] == "allow"
+            assert evaluate(base, outcome, finite).value == truth
+            cases.append({"id": f"cedar-{len(cases)}", "environment": base.to_dict(),
+                          "model": finite.to_dict(), "ast": [formula_to_data(base, outcome)]})
+            expected.append(truth)
+    assert len(cases) == 22
+    got = run(rust_executable, cases)
+    assert [row["values"][0] for row in got] == expected

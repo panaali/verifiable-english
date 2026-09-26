@@ -45,8 +45,8 @@ premises. The existing W2 graph checker and report identity are reused. W3
 definition interleaving, a Lean `admission` case and wire acceptance theorem,
 and W5 flags remain outstanding. The committed cross-language gate compares
 1,100 Python/Lean elaborations (including 100 paired acts), six conflict
-replays, and 96 Python/Rust
-formula evaluations. The legacy P0 checker is unchanged. `ve assist`
+replays, 96 Python/Rust norm formula evaluations, and 22 Rust evaluations of
+the pinned Cedar decisions. The legacy P0 checker is unchanged. `ve assist`
 has no W1 norm hooks yet; its norm support is explicitly **not yet**.
 These are remaining W1 acceptance obligations, not claims made by the Python
 certificate helper. No Lean theorem was added by this worker.
