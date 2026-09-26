@@ -6,6 +6,8 @@ import sys
 import threading
 import time
 
+from lark.exceptions import LarkError
+
 from ..errors import ResourceLimit, SyntaxError
 from ..limits import MAX_NODES
 
@@ -29,8 +31,11 @@ def require_unique_derivation(env, source, **options):
     text = re.sub(r"(^|(?<=\.)\s+)([A-Z])", lambda match: match[1] + match[2].lower(), source)
     def timeout(_signum, _frame):
         raise ResourceLimit("English Earley time budget exhausted")
-    timed = threading.current_thread() is threading.main_thread()
-    if timed:
+    # Leave an existing host alarm alone. A trace can enforce our deadline
+    # while the host's timer and handler retain their original schedule.
+    use_signal = (threading.current_thread() is threading.main_thread()
+                  and signal.getitimer(signal.ITIMER_REAL)[0] == 0)
+    if use_signal:
         previous = signal.getsignal(signal.SIGALRM)
         signal.signal(signal.SIGALRM, timeout)
         old_timer = signal.setitimer(signal.ITIMER_REAL, EARLEY_SECONDS)
@@ -46,10 +51,11 @@ def require_unique_derivation(env, source, **options):
         tree = _parser(grammar).parse(text)
     except ResourceLimit:
         raise
-    except Exception as exc:
+    # A host SIGALRM handler may raise an ordinary Exception. Let it escape.
+    except LarkError as exc:
         raise SyntaxError(f"English all-derivations check failed: {exc}") from exc
     finally:
-        if timed:
+        if use_signal:
             signal.setitimer(signal.ITIMER_REAL, *old_timer)
             signal.signal(signal.SIGALRM, previous)
         else:
