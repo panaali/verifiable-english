@@ -15,9 +15,9 @@ a parser, and a grammar whose derivations are data:
   two derivations would denote the same AST;
 * `ParseSound S`: whatever the parser returns is the reading of a derivation of
   exactly that text, so together with `UniqueDerivation` every accepted text has
-  exactly one reading.
+  exactly one reading (`OneReading S`, `oneReading_of`).
 
-`Proofs.lean` proves all four for the core fragment (`coreSurface`). The same
+`Proofs.lean` proves all of them for the core fragment (`coreSurface`). The same
 statements for the full lexicon (contractions, validated negatives, closure,
 order and later profiles) are deferred until W7's trigger (PLAN-EXPAND2
 section 7: no wording change for two weeks after W1, W3, W5 and W6 merge). -/
@@ -45,6 +45,17 @@ def UniqueDerivation (S : Surface) : Prop :=
 
 def ParseSound (S : Surface) : Prop :=
   ∀ text m, S.parse text = some m → ∃ d, S.derives d ∧ S.yield d = text ∧ S.reading d = some m
+
+/-- One reading per accepted text: every derivation of a text the parser
+accepts has the parser's reading. -/
+def OneReading (S : Surface) : Prop :=
+  ∀ text m, S.parse text = some m → ∀ d, S.derives d → S.yield d = text → S.reading d = some m
+
+theorem oneReading_of {S : Surface} (hs : ParseSound S) (hu : UniqueDerivation S) : OneReading S := by
+  intro text m hp d hd hy
+  obtain ⟨d', hd', hy', hr'⟩ := hs text m hp
+  rw [hu d d' hd hd' (hy.trans hy'.symm)]
+  exact hr'
 
 /-- Injectivity of the canonical renderer follows from the round trip. -/
 theorem renderInjective_of_parseRender {S : Surface} (h : ParseRender S) : RenderInjective S := by

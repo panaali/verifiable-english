@@ -385,6 +385,7 @@
 'VE.Route.Examples.interpret_admissible' depends on axioms: [propext]
 'VE.Route.Examples.tupleTyped_relation' depends on axioms: [propext]
 'VE.Route.Examples.wf_extend' depends on axioms: [propext]
+'VE.English.oneReading_of' does not depend on any axioms
 'VE.English.renderInjective_of_parseRender' does not depend on any axioms
 'VE.English.consume_append' depends on axioms: [propext]
 'VE.English.consume_sound' depends on axioms: [propext]
@@ -443,6 +444,7 @@
 'VE.English.mapM_denote_render' depends on axioms: [propext, Quot.sound]
 'VE.English.core_parse_render' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.core_render_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.English.core_one_reading' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.facts_of_admissible' depends on axioms: [propext, Quot.sound]
 'VE.English.kw_mem_kws' depends on axioms: [propext, Quot.sound]
 'VE.English.label_not_mem_kws' depends on axioms: [propext, Quot.sound]
@@ -464,6 +466,7 @@
 'VE.English.admitted_of_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.admissible_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.checked_unique_derivation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.English.checked_one_reading' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.checked_parse_render' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.English.checked_render_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 81 source files; 468 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 81 source files; 471 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
