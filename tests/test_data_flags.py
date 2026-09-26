@@ -1,11 +1,13 @@
 import pytest
 
-from ve.ast import Binary, Const, Top, check_formula
+from ve.ast import And, Binary, Bottom, Const, Forall, Not, Top, check_formula
 from ve.background import background
 from ve.environment import Environment
 from ve.errors import InvalidModel, UnknownSymbol, UnsupportedProfile, VEError
 from ve.evaluate import evaluate
+from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.model import FiniteModel
+from ve.search import find_countermodel
 
 
 def environment(*, functional=True, total=True):
@@ -51,3 +53,18 @@ def test_flags_are_identity_bound_and_restricted_to_data_profile():
         Environment(data)
     with pytest.raises(UnknownSymbol):
         check_formula(environment(), Binary("department", Const("alice"), Const("undeclared")))
+
+
+def test_flag_background_is_bound_into_proof_and_search():
+    env = environment()
+    both = And(Binary("department", Const("alice"), Const("finance")),
+               Binary("department", Const("alice"), Const("sales")))
+    conclusion = Not(both)
+    proof = prove_entailment(env, (), conclusion)
+    assert proof.status == "Found"
+    assert check_entailment_certificate(env, (), conclusion, proof.certificate).valid
+    witness = find_countermodel(env, (), Bottom(),
+                                max_domain_size=2, max_models=40)
+    assert witness.status == "Found" and witness.model.relations["department"]
+    with pytest.raises(UnsupportedProfile, match="stage 2"):
+        check_formula(env, Forall("$string", Top()))

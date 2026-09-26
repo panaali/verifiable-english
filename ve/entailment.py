@@ -11,7 +11,7 @@ from functools import lru_cache
 from typing import Any, Sequence
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
-                  Not, Or, Top, Unary, Var, Reach, Named, check_document)
+                  Not, Or, Top, Unary, Var, Reach, Named, check_document, _Checker)
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
 from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
@@ -93,9 +93,25 @@ def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any, *,
     whose Background premises are explicit labelled leaves."""
     premises = _premises(premises)
     if background:
-        from .background import checked_premises
-        premises = checked_premises(env, (), premises)
-    check_document(env, Document((*premises, conclusion)))
+        check_document(env, Document((*premises, conclusion)))
+    else:
+        from .background import background as generated_background
+        generated = tuple(p.formula for p in generated_background(env))
+        prefix = premises[:len(generated)]
+        if prefix == generated:
+            check_document(env, Document((*premises[len(generated):], conclusion)))
+            checker = _Checker(env, generated=True)
+            for formula in prefix:
+                checker.formula(formula)
+        else:
+            check_document(env, Document((*premises, conclusion)))
+    if background:
+        from .background import background as generated_background
+        generated = tuple(p.formula for p in generated_background(env))
+        checker = _Checker(env, generated=True)
+        for formula in generated:
+            checker.formula(formula)
+        premises = generated + premises
     return premises
 
 
@@ -513,10 +529,13 @@ def _rule(item):
 
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
     from .order import CHECKER_VERSION as ORDER_CHECKER_VERSION
+    from .background import background as generated_background
+    generated = tuple(p.formula for p in generated_background(env))
     return {"checker_version": (ORDER_CHECKER_VERSION if getattr(env, "order", False) else
                                 CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION),
             "environment_id": env.environment_id,
-            "premise_meaning_ids": [meaning_id(env, x) for x in premises],
+            "premise_meaning_ids": [meaning_id(env, x, _generated=i < len(generated) and x == generated[i])
+                                    for i, x in enumerate(premises)],
             "conclusion_meaning_id": meaning_id(env, conclusion)}
 
 
