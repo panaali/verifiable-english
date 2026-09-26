@@ -289,7 +289,8 @@ impl<'a> Models<'a> {
             match model {
                 Ok(model) => return Ok(Some(model)),
                 Err(err) if err.code == "InvalidModel"
-                    && (err.message.starts_with("literals:") || err.message.starts_with("flags:")) => {
+                    && (err.message.starts_with("literals:") || err.message.ends_with("(literals)")
+                        || err.message.starts_with("flags:") || err.message.ends_with("(flags)")) => {
                     continue;
                 }
                 Err(err) => return Err(err),

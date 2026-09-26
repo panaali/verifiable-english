@@ -139,7 +139,10 @@ def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
         error = result["error"]
-        generator = "literals" if error["message"].endswith("(literals)") else None
+        message = error["message"]
+        generator = ("literals" if message.startswith("literals:") or message.endswith("(literals)")
+                     else "flags" if message.startswith("flags:") or message.endswith("(flags)")
+                     else None)
         return error_verdict(error["code"], error["message"], generator)
     if kind == "label":
         return {"status": "ok", "label": result["label"]}
