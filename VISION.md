@@ -145,3 +145,7 @@ The whole benefit of VE is that it is English. Any non-expert should be able to 
 - When a sentence is ambiguous, the IDE resolves it in English: it shows each competing reading as a plain-English paraphrase with a concrete example situation, and suggests unambiguous rewrites the author can pick. Nobody is asked to read logic.
 - The one-reading guarantee stays mandatory and is checked automatically; readability never overrides it.
 This refines the earlier "writing goes through the assistant" split: the assistant is how ambiguity gets resolved, not a separate language.
+
+## Synonyms and varied wording (2026-09-26)
+
+Writers vary words for readability ("staff", "employees", "personnel"); VE allows it. A document glossary declares synonyms once ("In this document, staff, employees and personnel mean the same thing"); each is an alias definition (W3, conservative, Lean-proved) so the checker treats them as one concept, while the display keeps the author's word choice (meaning identity is separate from wording). Authoring mode: the IDE asks in plain English when a new word appears ("Does 'personnel' mean the same as 'staff' here?") and adds the alias on confirmation. Translation mode: an explicit statement in the source (a definition, "employees (staff)") is recorded with its citation; synonymy that is only "clear from context" is an interpretation, kept as a reading set (same / different) with the translator's cited reason, and the checker reports whether any conclusion depends on it.
