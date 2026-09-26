@@ -44,17 +44,82 @@ def test_no_contractor_with_definite_constant():
     assert parse_english(env, 'No contractor may access the server.') == Document((formula,))
 
 
-def test_fallback_is_per_sentence_records_reason_and_has_no_notation():
-    formula = Forall('item', Implies(
-        And(Unary('active', Var(0)), Not(Unary('exempt', Var(0)))),
-        Binary('owns', Const('alice'), Var(0))))
-    result = render_natural_sentence(formula, ENV)
+def test_negative_arithmetic_is_audited_explicit_form():
+    from conformance.english_surface import order_environment
+    env = order_environment()
+    formula = Le(Num(-3), Const('budget'))
+    result = render_natural_sentence(formula, env)
     assert not result.natural and result.reason == 'symbols_or_variable_names'
-    assert result.fluent_text == render(formula, ENV, 've_fluent')
-    assert not _NOTATION.search(result.text)
-    assert natural_coverage([Exists('item', Unary('active', Var(0))), formula], ENV) == {
+    assert result.fluent_text == render(formula, env, 've_fluent')
+    assert result.form == 'explicit form'
+    assert parse_english(env, result.text + '.') == Document((formula,))
+    assert natural_coverage([Le(Num(3), Const('budget')), formula], env) == {
         'statements': 2, 'natural': 1, 'fallback': 1, 'natural_fraction': 0.5,
         'fallback_reasons': {'symbols_or_variable_names': 1}}
+
+
+def test_nested_word_lists_and_some_compound_roundtrip():
+    from ve.printer import natural_document
+    nested = And(Unary('active', Const('api')),
+                 And(Unary('reviewed', Const('api')),
+                     Not(Unary('exempt', Const('api')))))
+    compound = Exists('item', And(Unary('active', Var(0)), Unary('reviewed', Var(0))))
+    document = Document((nested, compound))
+    view = natural_document(ENV, document)
+    assert 'first clause:' in view.text and 'end second clause' in view.text
+    assert view.sentences[1]['text'] == 'Some service is deployed and is reviewed'
+    assert parse_english(ENV, view.text) == document
+    assert all(item['form'] == 'natural' for item in view.to_dict()['sentences'])
+
+
+def test_three_bound_entities_use_writable_ordinals():
+    from ve import Eq
+    formula = Forall('item', Forall('item', Forall('item',
+              Eq(Var(2), Var(0)))))
+    result = render_natural_sentence(formula, ENV)
+    assert result.natural
+    assert 'third service' in result.text
+    assert parse_english(ENV, result.text + '.') == Document((formula,))
+
+
+def test_distinct_identifiers_survive_explicit_fallback():
+    data = vocabulary()
+    for name in ('flag_a', 'flag__a'):
+        data['vocabulary']['predicates'][name] = {
+            'arguments': ['item'], 'description': name}
+    data['vocabulary']['constants']['a__b'] = {'sort': 'item', 'description': 'A double underscore'}
+    env = Environment(data)
+    formulas = (Unary('flag_a', Const('api')), Unary('flag__a', Const('api')),
+                Unary('active', Const('a__b')))
+    results = [render_natural_sentence(formula, env) for formula in formulas]
+    assert len({r.text for r in results}) == 3
+    assert all(r.form == 'explicit form' for r in results)
+    for formula, result in zip(formulas, results):
+        assert parse_english(env, result.text + '.') == Document((formula,))
+
+
+def test_negative_universal_uses_explicit_scope():
+    formula = Forall('item', Not(Unary('reviewed', Var(0))))
+    result = render_natural_sentence(formula, ENV)
+    assert 'it is not the case that' in result.text
+    assert parse_english(ENV, result.text + '.') == Document((formula,))
+    assert not result.text.startswith('Every service is not')
+
+
+def test_forced_candidate_rejection_audits_final_fallback(monkeypatch):
+    import ve.natural as natural
+    real_parse = natural.parse_english
+    calls = []
+    def reject_once(env, text, **options):
+        calls.append(text)
+        if len(calls) == 1:
+            raise ValueError('forced budget rejection')
+        return real_parse(env, text, **options)
+    monkeypatch.setattr(natural, 'parse_english', reject_once)
+    formula = Exists('item', Unary('active', Var(0)))
+    result = natural.render_natural_sentence(formula, ENV)
+    assert result.form == 'explicit form' and len(calls) == 2
+    assert real_parse(ENV, result.text + '.') == Document((formula,))
 
 
 def test_order_comparison_uses_at_least_without_operator_symbols():

@@ -18,7 +18,7 @@ VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_fluent")
 # VIEWS is the frozen five-view experimental comparison cohort.
 RENDERING_VIEWS = (*VIEWS, "ve_natural", "ve_english")
 NATURAL_RENDERER = "ve.natural-audited"
-NATURAL_RENDERER_VERSION = "1"
+NATURAL_RENDERER_VERSION = "2"
 NAMING_POLICIES = ("per_statement", "per_document")
 LEGEND_STYLES = ("compact", "json")
 
@@ -169,7 +169,7 @@ class VocabularyLint:
     path: str
     code: str
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, Any]:
         return {"path": self.path, "code": self.code}
 
 
@@ -703,9 +703,11 @@ class NaturalView:
     meaning_id: str
     renderer: str = NATURAL_RENDERER
     version: str = NATURAL_RENDERER_VERSION
+    sentences: tuple[dict[str, str | None], ...] = ()
 
     def to_dict(self) -> dict[str, str]:
-        return {"text": self.text, "environment_id": self.environment_id,
+        return {"text": self.text, "sentences": list(self.sentences),
+                "environment_id": self.environment_id,
                 "meaning_id": self.meaning_id, "renderer": self.renderer,
                 "version": self.version}
 
@@ -715,15 +717,27 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     """Render a validated read-only view with explicit scope and dependencies."""
     ast.check_document(env, document)
     from .identity import meaning_id
-    return NaturalView(render(document, env, "ve_natural", naming, vocabulary=vocabulary,
-                              accept_suggested_vocabulary=accept_suggested_vocabulary), env.environment_id,
-                       meaning_id(env, document))
+    from .natural import render_natural_sentence
+    results = tuple(render_natural_sentence(formula, env, vocabulary=vocabulary,
+                    accept_suggested_vocabulary=accept_suggested_vocabulary)
+                    for formula in document.formulas)
+    text = ''.join(result.text + '.\n' for result in results)
+    if len(text.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+    return NaturalView(text, env.environment_id, meaning_id(env, document),
+                       sentences=tuple({'text': result.text, 'form': result.form,
+                                        'fallback_reason': result.reason} for result in results))
 
 
 def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement",
                     vocabulary=None, accept_suggested_vocabulary=False) -> NaturalView:
     ast.check_formula(env, formula)
     from .identity import meaning_id
-    return NaturalView(render(formula, env, "ve_natural", naming, vocabulary=vocabulary,
-                              accept_suggested_vocabulary=accept_suggested_vocabulary), env.environment_id,
-                       meaning_id(env, formula))
+    from .natural import render_natural_sentence
+    result = render_natural_sentence(formula, env, vocabulary=vocabulary,
+                                     accept_suggested_vocabulary=accept_suggested_vocabulary)
+    if len(result.text.encode('utf-8')) + 2 > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+    return NaturalView(result.text, env.environment_id, meaning_id(env, formula),
+                       sentences=({'text': result.text, 'form': result.form,
+                                   'fallback_reason': result.reason},))
