@@ -62,6 +62,7 @@ fn entry_fields<'a>(
     v: &'a Value,
     required: &[&str],
     negative: bool,
+    regulated: bool,
 ) -> Result<&'a serde_json::Map<String, Value>> {
     let mut keys = required.to_vec();
     if v.get("verbalisation").is_some() {
@@ -70,7 +71,33 @@ fn entry_fields<'a>(
     if negative && v.get("negative_verbalisation").is_some() {
         keys.push("negative_verbalisation");
     }
+    if regulated && v.get("regulated").is_some() {
+        keys.push("regulated");
+    }
     fields(v, &keys, "InvalidInput")
+}
+
+fn act_phrase(value: &Value, arity: usize) -> Result<String> {
+    let raw = string(value, "InvalidInput")?;
+    let act = raw.split_whitespace().collect::<Vec<_>>().join(" ");
+    let slots: Vec<_> = (0..arity).map(|i| format!("{{{i}}}")).collect();
+    let mut cursor = 0;
+    for slot in &slots {
+        let Some(i) = act[cursor..].find(slot) else {
+            return error("InvalidInput", "invalid act phrase slots");
+        };
+        cursor += i + slot.len();
+    }
+    let mut plain = act.clone();
+    for slot in slots.iter().rev() {
+        plain = plain.replace(slot, "slot");
+    }
+    if act.len() > 80 || plain.split_whitespace().count() < 2 ||
+        plain.split_whitespace().any(|word| !word.bytes().all(|b|
+            b.is_ascii_alphabetic() || b == b'\'' || b == b'-')) {
+        return error("InvalidInput", "invalid act phrase");
+    }
+    Ok(act)
 }
 
 #[derive(Clone, Debug)]
@@ -82,6 +109,7 @@ pub struct Environment {
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, String>,
+    pub(crate) profile_pairs: Vec<(String, String)>,
     data: Value,
     id: String,
 }
@@ -228,7 +256,7 @@ impl Environment {
             }
         }
         for decl in sorts.values() {
-            let d = entry_fields(decl, &["description"], false)?;
+            let d = entry_fields(decl, &["description"], false, false)?;
             if let Some(v) = d.get("verbalisation") {
                 let v = fields(v, &["singular", "plural"], "InvalidInput")?;
                 verbalisation(&v["singular"])?;
@@ -237,8 +265,11 @@ impl Environment {
             description(&d["description"])?;
         }
         let mut predicates = BTreeMap::new();
+        let mut regulated = BTreeMap::<String, (String, String, Option<String>, Option<String>)>::new();
+        let mut canonical_data = data.clone();
         for (name, decl) in preds {
-            let d = entry_fields(decl, &["arguments", "description"], true)?;
+            let d = entry_fields(decl, &["arguments", "description"], true,
+                                 route && profiles.iter().any(|p| p == "norms@0"))?;
             let args = d["arguments"]
                 .as_array()
                 .filter(|a| matches!(a.len(), 1 | 2))
@@ -257,7 +288,69 @@ impl Environment {
                 }
             }
             description(&d["description"])?;
+            if let Some(raw) = d.get("regulated") {
+                let r = object(raw, "InvalidInput")?;
+                let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
+                    .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
+                let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
+                    .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
+                if !["permission", "obligation", "plain"].contains(&role)
+                    || !["allow", "deny"].contains(&default) {
+                    return error("InvalidInput", "invalid regulated role or default");
+                }
+                let mut keys = vec!["role", "default"];
+                let act = if role == "plain" { None } else {
+                    keys.push("act");
+                    Some(act_phrase(r.get("act").ok_or_else(|| Error::new("InvalidInput", "act is required"))?,
+                                    signature.len())?)
+                };
+                if role == "obligation" && r.contains_key("permission") {
+                    keys.push("permission");
+                }
+                fields(raw, &keys, "InvalidInput")?;
+                let permission = r.get("permission").map(|v| string(v, "InvalidInput")
+                    .map(str::to_owned)).transpose()?;
+                if let Some(ref phrase) = act {
+                    canonical_data["vocabulary"]["predicates"][name]["regulated"]["act"] = json!(phrase);
+                }
+                regulated.insert(name.clone(), (role.into(), default.into(), act, permission));
+            }
             predicates.insert(name.clone(), signature);
+        }
+        if regulated.len() > 64 {
+            return error("ResourceLimit", "regulated predicates");
+        }
+        let mut acts = BTreeMap::new();
+        for (name, (role, _, act, _)) in &regulated {
+            if let Some(act) = act {
+                let key = (predicates[name].clone(), act.clone(), role.clone());
+                if acts.insert(key, name.clone()).is_some() {
+                    return error("InvalidInput", format!("DuplicateActRole: {role}, {act}"));
+                }
+            }
+        }
+        let mut profile_pairs = Vec::new();
+        for (name, (role, _, act, permission)) in &regulated {
+            if role != "obligation" { continue; }
+            let expected = acts.get(&(predicates[name].clone(), act.clone().unwrap(), "permission".into()));
+            if permission.is_none() && expected.is_some() {
+                return error("InvalidInput", format!("MissingPermissionDual: {name}, {}", expected.unwrap()));
+            }
+            if let Some(dual) = permission {
+                let Some((target_role, _, target_act, _)) = regulated.get(dual) else {
+                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+                };
+                if target_role != "permission" {
+                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+                }
+                if predicates[name] != predicates[dual] {
+                    return error("InvalidInput", format!("DualSortMismatch: {name}, {dual}"));
+                }
+                if act != target_act {
+                    return error("InvalidInput", format!("DualActMismatch: {name}, {dual}"));
+                }
+                profile_pairs.push((name.clone(), dual.clone()));
+            }
         }
         let mut constants = BTreeMap::new();
         for (name, decl) in consts {
@@ -300,8 +393,9 @@ impl Environment {
             sorts: sorts.keys().cloned().collect(),
             predicates,
             constants,
-            data: data.clone(),
-            id: digest(&format!("ve-environment-{version}\n"), data)?,
+            profile_pairs,
+            data: canonical_data.clone(),
+            id: digest(&format!("ve-environment-{version}\n"), &canonical_data)?,
         })
     }
     pub fn to_value(&self) -> Value {
