@@ -25,8 +25,8 @@ place where the spec was ambiguous and the conservative reading that was chosen.
 | Cross-family reviews (3.10(7)) | done: Astra reviewed P0-Lean (`~/code/manage-agents/p0-review-astra.final.md`); Fable reviewed P0-Py (`~/code/manage-agents/reviews/p0-review-fable.md`); A/B findings repaired on `expand/p0` |
 | `ROADMAP.md` freeze announcement (3.10(7)) | done after both P0 reviews and their interface fixes |
 
-Counts: `python3 lean/audit.py`: PASS, 70 source files, 380 named theorems (69 new under
-`VE.Route`), allowlist unchanged (`propext`, `Classical.choice`, `Quot.sound`), no `sorry`.
+Counts: `python3 lean/audit.py`: PASS, 70 source files, 387 named theorems;
+allowlist unchanged (`propext`, `Classical.choice`, `Quot.sound`), no `sorry`.
 
 ### Freeze announcement (for ROADMAP.md)
 
