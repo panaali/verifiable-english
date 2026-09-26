@@ -131,6 +131,10 @@ class FluentTraversal:
 
     def formula(self, value, scope=()):
         kind = type(value)
+        from .surface.registry import by_node
+        record = by_node(value)
+        if record is not None and record.fluent_hook is not None:
+            return record.fluent_hook(self, value, scope)
         if kind is ast.Top:
             return "true"
         if kind is ast.Bottom:

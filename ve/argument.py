@@ -29,10 +29,26 @@ MAX_REFERENCES = 512
 
 
 def _checker_build():
-    modules = ("argument", "entailment", "ast", "environment", "identity", "parser",
-               "printer", "model", "evaluate", "search", "wire", "limits", "errors", "closure")
-    payload = {name: hashlib.sha256(Path(__file__).with_name(name + ".py").read_bytes()).hexdigest()
-               for name in modules}
+    from .surface.registry import records
+    root = Path(__file__).parent
+    modules = sorted(path.relative_to(root).as_posix() for path in root.rglob("*.py"))
+    payload = {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in modules}
+    def symbol(value):
+        return "" if value is None else f"{value.__module__}.{value.__qualname__}"
+    payload["surface_records"] = [{
+        "tag": record.wire_tag, "strict": record.strict_form,
+        "english": list(record.english_keywords), "fluent": record.fluent_form,
+        "grammar": record.grammar_production, "arity": record.wire_arity or 0,
+        "node_type": symbol(record.node_type),
+        "profiles": list(record.profiles),
+        "hooks": {name: symbol(getattr(record, name)) for name in (
+            "evaluator_hook", "witness_renderer", "parser_hook", "strict_parser_hook",
+            "printer_hook", "fluent_hook", "english_renderer", "grammar_hook", "derivation_hook",
+            "strict_grammar_hook", "wire_encoder", "wire_decoder", "fol_import_hook",
+            "fol_export_hook", "typecheck_hook")},
+        "traversal_hooks": ({name: symbol(fn) for name, fn in record.traversal_hooks.items()}
+                            if record.traversal_hooks else {})}
+        for record in sorted(records(), key=lambda item: item.wire_tag)]
     payload["python"] = sys.version
     return digest("ve-python-checker-build-v1\n", payload)
 
@@ -41,6 +57,12 @@ def _sequence(value, label):
     if type(value) not in (tuple, list):
         raise VEError(f"{label} must be an ordered tuple or list")
     return tuple(value)
+
+
+def _label(value):
+    """Claim labels follow the route grammar (PLAN-EXPAND2 3.6), as in Lean."""
+    from .admission import validate_label
+    return validate_label(_text(value, "Claim label"))
 
 
 def _text(value, label):
@@ -58,12 +80,13 @@ class Claim:
     source_id: str
     meaning_id: str
     evidence_ids: tuple[str, ...] = ()
+    label: str = "asserted"
 
     def __post_init__(self):
         object.__setattr__(self, "evidence_ids", _sequence(self.evidence_ids, "Evidence ids"))
 
     @classmethod
-    def create(cls, env, name, source, *, candidate_ast=None, evidence_ids=()):
+    def create(cls, env, name, source, *, candidate_ast=None, evidence_ids=(), label="asserted"):
         validate_identifier(name)
         document = parse(env, source)
         if len(document.formulas) != 1:
@@ -76,26 +99,33 @@ class Claim:
                 raise VEError("Claim AST does not match its exact source")
         source = source.decode("ascii") if type(source) is bytes else source
         return cls(name, source, ast, env.environment_id, source_id(source, env),
-                   meaning_id(env, ast), evidence_ids)
+                   meaning_id(env, ast), evidence_ids, _label(label))
 
     @property
     def claim_id(self):
         # Aliases and factual support do not change the committed statement.
-        return digest("ve-claim-v1\n", {"environment_id": self.environment_id,
-                      "source_id": self.source_id, "meaning_id": self.meaning_id})
+        payload = {"environment_id": self.environment_id,
+                   "source_id": self.source_id, "meaning_id": self.meaning_id}
+        if self.label != "asserted":
+            payload["label"] = self.label
+        return digest("ve-claim-v1\n", payload)
 
     def to_dict(self, env):
-        return {"name": self.name, "source": self.source, "ast": formula_to_data(env, self.ast),
+        result = {"name": self.name, "source": self.source, "ast": formula_to_data(env, self.ast),
                 "environment_id": self.environment_id, "source_id": self.source_id,
                 "meaning_id": self.meaning_id, "claim_id": self.claim_id,
                 "evidence_ids": list(self.evidence_ids)}
+        if self.label != "asserted":
+            result["label"] = self.label
+        return result
 
     @classmethod
     def from_dict(cls, env, data):
         require_fields(data, {"name", "source", "ast", "environment_id", "source_id",
-                              "meaning_id", "claim_id", "evidence_ids"})
+                              "meaning_id", "claim_id", "evidence_ids"} |
+                       ({"label"} if type(data) is dict and "label" in data else set()))
         claim = cls.create(env, data["name"], data["source"], candidate_ast=data["ast"],
-                           evidence_ids=data["evidence_ids"])
+                           evidence_ids=data["evidence_ids"], label=data.get("label", "asserted"))
         if claim.to_dict(env) != data:
             raise VEError("Claim commitment is stale or substituted")
         return claim
@@ -230,7 +260,8 @@ def _validate_graph(graph):
         validate_identifier(c.name)
         if c.name in claims:
             raise VEError(f"Duplicate claim alias: {c.name}")
-        expected = Claim.create(graph.env, c.name, c.source, candidate_ast=c.ast, evidence_ids=c.evidence_ids)
+        expected = Claim.create(graph.env, c.name, c.source, candidate_ast=c.ast,
+                                evidence_ids=c.evidence_ids, label=c.label)
         if c != expected:
             raise VEError(f"Stale or substituted claim: {c.name}")
         for eid in c.evidence_ids:
@@ -330,6 +361,7 @@ class ArgumentResult:
     profiles: tuple[str, ...] = ()
     lean_checked: bool = False
     lean_detail: str = "Lean replay not requested"
+    premises: dict = field(default_factory=dict)
 
     def to_dict(self):
         data = {"version": ARGUMENT_VERSION, "assurance": "experimental", "status": self.status,
@@ -345,6 +377,8 @@ class ArgumentResult:
                 "composition": self.composition, "checker_build": self.checker_build,
                 "contradictory_premises": list(self.contradictory_premises),
                 "warnings": list(self.warnings)}
+        if self.premises:
+            data["premises"] = self.premises
         data["record_id"] = hashlib.sha256(b"ve-argument-diagnostic-record-v1\n" + json.dumps(
             data, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode("ascii")).hexdigest()
         return data
@@ -428,8 +462,17 @@ def _check_edge(graph, edge, claims, *, search, max_proof_steps, max_domain_size
             except ResourceLimit as exc:
                 attempts.append({"kind": "gap", "status": "ResourceLimit", "detail": exc.message})
     ordered = tuple(f for f in ("follows", "refuted", "gap") if f in findings)
+    from .vacuity import premise_status
+    premise_report = premise_status(env, premises, max_proof_steps=max_proof_steps,
+        max_domain_size=max_domain_size, max_models=max_models,
+        max_evaluations=max_evaluations)
+    if premise_report["status"] == "INCONSISTENT":
+        for artifact in artifacts:
+            if artifact["kind"] in ("follows", "refuted") and artifact.get("check", {}).get("valid"):
+                artifact["vacuous"] = True
     return {"name": edge.name, "edge_id": edge_id, "premises": list(edge.premises),
             "conclusion": edge.conclusion, "findings": list(ordered),
+            "premise_status": premise_report,
             "status": "established" if ordered else "unresolved",
             "contradictory_premises": "follows" in findings and "refuted" in findings,
             "checker_conflict": ("follows" in findings and "gap" in findings) or
@@ -457,10 +500,19 @@ def _lean_deductions(graph, claims, records, reachable, executable):
     if not cases:
         return False, "No deduction certificates to replay"
     try:
-        proc = subprocess.run([str(executable), 'check-certificate'], input=canonical_json(cases),
+        route = graph.env.language == 've.core@0.2'
+        if route:
+            cases = [{**case, 'kind': 'certificate'} for case in cases]
+        proc = subprocess.run([str(executable), 'route' if route else 'check-certificate'], input=canonical_json(cases),
                               capture_output=True, timeout=60)
         rows = loads_json(proc.stdout)
-        expected = [{'id': c['id'], 'status': 'ok', 'valid': True} for c in cases]
+        if route:
+            from .background import background
+            extra = {'background': len(background(graph.env))}
+        else:
+            extra = {}
+        expected = [{'id': c['id'], 'status': 'ok', 'valid': True,
+                     **extra} for c in cases]
         if proc.returncode == 0 and rows == expected:
             return True, f"{len(cases)} supporting deduction certificates accepted by Lean"
         return False, "Lean did not accept every supporting deduction certificate"
@@ -533,12 +585,30 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
                 "assumption_claim_ids": [claims[n].claim_id for n in leaves],
                 "supporting_edge_ids": [r["edge_id"] for r in records if r["conclusion"] in reachable],
                 "assumptions": [claims[n].to_dict(graph.env) for n in leaves]}
+            if graph.env.language == "ve.core@0.2":
+                from .background import background
+                composition["assumptions"].extend({
+                    "label": "background:" + item.generator,
+                    "ast": formula_to_data(graph.env, item.formula),
+                    "meaning_id": meaning_id(graph.env, item.formula)}
+                    for item in background(graph.env))
             composition["record_id"] = digest("ve-composition-v1\n", composition)
         lean_checked, lean_detail = (_lean_deductions(graph, claims, records, reachable, lean_executable)
                                      if composed else (False, "Root deductions are not established"))
+        from .vacuity import premise_status
+        root_premises = tuple(claims[name].ast for name in leaves)
+        premise_report = premise_status(graph.env, root_premises,
+            max_proof_steps=max_proof_steps, max_domain_size=max_domain_size,
+            max_models=max_models, max_evaluations=max_evaluations)
+        if premise_report["status"] == "INCONSISTENT":
+            for record in records:
+                for artifact in record["artifacts"]:
+                    if artifact["kind"] == "follows" and artifact.get("check", {}).get("valid"):
+                        artifact["vacuous"] = True
         return ArgumentResult(status, graph.graph_id, graph.env.environment_id, graph.root,
                               findings, leaves, unresolved, composed, records, errors, composition, checker_build,
-                              contradictory, warnings, tuple(graph.env.profiles), lean_checked, lean_detail)
+                              contradictory, warnings, tuple(graph.env.profiles), lean_checked, lean_detail,
+                              premise_report)
     except (VEError, RecursionError) as exc:
         if isinstance(exc, RecursionError):
             exc = ResourceLimit("Argument exceeds runtime recursion budget")
@@ -570,6 +640,14 @@ def outstanding_obligations(graph, result):
             "reported_assessment": assessment, "scope_matches_target": scopes_match,
             "outstanding": assessment != "accepted" or not scopes_match,
             "logical_assumption": True})
+    if graph.env.language == "ve.core@0.2":
+        from .background import background
+        assumptions.extend({"claim": "background:" + item.generator,
+            "label": "background:" + item.generator,
+            "ast": formula_to_data(graph.env, item.formula),
+            "meaning_id": meaning_id(graph.env, item.formula),
+            "logical_assumption": True, "outstanding": False}
+            for item in background(graph.env))
     return {"graph_id": result.graph_id, "assurance": "experimental", "status": result.status,
         "proof": "Python replay checked under listed assumptions" if result.composed else "not checked for the root",
         "profiles": list(result.profiles), "lean_checked": result.lean_checked,
@@ -580,14 +658,24 @@ def outstanding_obligations(graph, result):
                            "environment_id": graph.env.environment_id},
         "assumptions": assumptions, "unresolved_deductions": list(result.unresolved_obligations),
         "contradictory_premises": list(result.contradictory_premises),
+        **({"premises": result.premises} if result.premises else {}),
         "warnings": list(result.warnings),
         "approval": "unassessed", "evidence_assurance": "reported metadata; not authenticated or verified"}
 
 
 def _predicates(formula):
+    from .surface.registry import by_node
     found, pending = set(), [formula]
     while pending:
         node = pending.pop()
+        record = by_node(node)
+        if record is not None and record.traversal_hooks is not None:
+            hook = record.traversal_hooks.get("predicates")
+            if hook is not None:
+                names, children = hook(node)
+                found.update(names)
+                pending.extend(children)
+                continue
         if type(node) in (Unary, Binary):
             found.add(node.predicate)
         if type(node) is Reach:

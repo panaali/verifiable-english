@@ -18,6 +18,7 @@ from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOU
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
+from .surface import registry as surface_registry
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
@@ -345,6 +346,9 @@ class EnglishTraversal:
 
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
+        record = surface_registry.by_node(value)
+        if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
+            return record.english_renderer(self, value, scope, depth)
         if kind is ast.Top: return 'this holds in all cases'
         if kind is ast.Bottom: return 'this is impossible'
         if kind in (ast.Unary, ast.Binary):
@@ -470,6 +474,7 @@ class EnglishParser:
         self.env, self.source, self.i = env, source, 0
         self.words = words or EnglishVocabulary(env)
         self.nodes = 0
+        self.extension_readings = []
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -776,14 +781,22 @@ class EnglishParser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
+        matched = surface_registry.dispatch(self.source[self.i:], self.env)
+        if matched is not None and matched[1].parser_hook is not None:
+            start = self.i
+            result = matched[1].parser_hook(self, scope, depth, nesting)
+            self.extension_readings.append((matched[1], result, start, self.i))
+            return result
         def child(inner=scope, listed=False):
             return self.formula(inner, depth + int(listed), nesting + 1)
         if self.take('it is not the case that '):
             return ast.Not(child())
-        for prefix, cls in [('all of the following hold:', ast.And),
-                            ('both of the following hold:', ast.And),
-                            ('at least one of the following holds:', ast.Or),
-                            ('if the following holds:', ast.Implies)]:
+        listing_types = {"and": ast.And, "or": ast.Or, "implies": ast.Implies}
+        for prefix, record in surface_registry.KEYWORDS:
+            if prefix not in ('all of the following hold:', 'both of the following hold:',
+                              'at least one of the following holds:', 'if the following holds:'):
+                continue
+            cls = listing_types[record.wire_tag]
             if self.take(prefix):
                 a, b = _markers(depth)
                 self.space(); self.need(a + ' ')
@@ -793,9 +806,12 @@ class EnglishParser:
                     self.need('then the following holds:'); self.space()
                 self.need(b + ' ')
                 return cls(left, child(listed=True))
-        for prefix, cls, between, suffix in [('both ', ast.And, ' and ', ''),
-                                               ('either ', ast.Or, ' or ', ', or both'),
-                                               ('if ', ast.Implies, ', then ', '')]:
+        compact = {'both ': (ast.And, ' and ', ''), 'either ': (ast.Or, ' or ', ', or both'),
+                   'if ': (ast.Implies, ', then ', '')}
+        for prefix, _record in surface_registry.KEYWORDS:
+            if prefix not in compact:
+                continue
+            cls, between, suffix = compact[prefix]
             if self.take(prefix):
                 left = child() if cls is ast.Implies else self.atom(scope)
                 self.need(between)
@@ -872,6 +888,10 @@ def parse_english_with_metadata(env, source, **options):
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
     document = parser.document()
+    from .surface.unambiguity import require_unique_derivation
+    tree = require_unique_derivation(env, source, **options)
+    from .surface.unambiguity import require_correspondence
+    require_correspondence(tree, parser.extension_readings, env, parser.words)
     try:
         ast.check_document(env, document)
     except VEError as exc:
@@ -1016,5 +1036,16 @@ def english_lark_grammar(env, **options):
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
+    for record in surface_registry.records():
+        if record.grammar_hook is None or not surface_registry.enabled(record, env):
+            continue
+        extension = list(record.grammar_hook(env, words))
+        if record.parser_hook is not None:
+            production = record.grammar_production
+            if (not re.fullmatch(r"[a-z][a-z0-9_]*", production) or
+                    f"%extend formula: {production}" not in extension or
+                    not any(line.startswith(production + ":") for line in extension)):
+                raise SyntaxError(f"English grammar hook for {record.wire_tag} must extend formula via {production}")
+        rules.extend(extension)
     rules.extend(['IMPOSSIBLE: /[^\\s\\S]/', '%import common.WS', '%ignore WS'])
     return '\n'.join(rules) + '\n'

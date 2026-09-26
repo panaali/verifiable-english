@@ -3,6 +3,108 @@ use crate::{
     Result, Span, Term, environment::RESERVED, error,
 };
 
+/// Frozen core surface registrations. Statement-layer profiles can add records
+/// on their own routes without changing the legacy strict printer.
+pub(crate) struct SurfaceRecord {
+    pub wire_tag: &'static str,
+    pub strict_form: &'static str,
+    #[allow(dead_code)] // Rust evaluates elaborated documents; Python owns English admission.
+    pub english_keywords: &'static [&'static str],
+    pub wire_arity: usize,
+}
+
+pub(crate) const RECORDS: &[SurfaceRecord] = &[
+    SurfaceRecord {
+        wire_tag: "top",
+        strict_form: "true",
+        english_keywords: &[],
+        wire_arity: 1,
+    },
+    SurfaceRecord {
+        wire_tag: "bottom",
+        strict_form: "false",
+        english_keywords: &[],
+        wire_arity: 1,
+    },
+    SurfaceRecord {
+        wire_tag: "unary",
+        strict_form: "is",
+        english_keywords: &[],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "binary",
+        strict_form: "",
+        english_keywords: &[],
+        wire_arity: 4,
+    },
+    SurfaceRecord {
+        wire_tag: "eq",
+        strict_form: "equals",
+        english_keywords: &[],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "not",
+        strict_form: "not",
+        english_keywords: &["it is not the case that "],
+        wire_arity: 2,
+    },
+    SurfaceRecord {
+        wire_tag: "and",
+        strict_form: "and",
+        english_keywords: &[
+            "all of the following hold:",
+            "both of the following hold:",
+            "both ",
+        ],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "or",
+        strict_form: "or",
+        english_keywords: &["at least one of the following holds:", "either "],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "implies",
+        strict_form: "if",
+        english_keywords: &["if the following holds:", "if "],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "forall",
+        strict_form: "for every",
+        english_keywords: &["for every ", "every "],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "exists",
+        strict_form: "there exists",
+        english_keywords: &["there is "],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
+        wire_tag: "reach",
+        strict_form: "tc/rtc",
+        english_keywords: &["starting from "],
+        wire_arity: 5,
+    },
+];
+
+pub(crate) fn formula_record(tag: &str) -> Option<&'static SurfaceRecord> {
+    RECORDS.iter().find(|record| record.wire_tag == tag)
+}
+
+#[allow(dead_code)] // Reserved for a later Rust English route.
+pub(crate) fn english_keyword(source: &str) -> Option<&'static str> {
+    RECORDS
+        .iter()
+        .flat_map(|record| record.english_keywords.iter().copied())
+        .filter(|keyword| source.starts_with(keyword))
+        .max_by_key(|keyword| keyword.len())
+}
+
 #[derive(Clone, Debug)]
 pub struct SourceNode {
     pub span: Span,
@@ -164,10 +266,10 @@ impl Parser<'_> {
             let right = self.term()?;
             self.literal(")")?;
             f = Formula::Reach(kind, edge, left, right);
-        } else if self.keyword("true") {
+        } else if self.keyword(formula_record("top").unwrap().strict_form) {
             self.pos += 4;
             f = Formula::Top;
-        } else if self.keyword("false") {
+        } else if self.keyword(formula_record("bottom").unwrap().strict_form) {
             self.pos += 5;
             f = Formula::Bottom;
         } else if self.eat("not (") {
@@ -315,8 +417,8 @@ pub fn print_document(doc: &Document) -> Result<String> {
     }
     fn formula(f: &Formula, names: &mut Vec<String>, counter: &mut usize) -> String {
         match f {
-            Formula::Top => "true".into(),
-            Formula::Bottom => "false".into(),
+            Formula::Top => formula_record("top").unwrap().strict_form.into(),
+            Formula::Bottom => formula_record("bottom").unwrap().strict_form.into(),
             Formula::Unary(p, t) => format!("{} is {p}", term(t, names)),
             Formula::Binary(p, t, u) => format!("{} {p} {}", term(t, names), term(u, names)),
             Formula::Reach(kind, edge, t, u) => {

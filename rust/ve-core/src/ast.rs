@@ -112,7 +112,7 @@ impl Formula {
 pub struct Document {
     formulas: Vec<Formula>,
     environment_id: String,
-    identity_version: &'static str,
+    identity_version: String,
 }
 impl Document {
     pub fn check(env: &Environment, formulas: Vec<Formula>) -> Result<Self> {
@@ -339,14 +339,7 @@ impl AstDecoder {
     fn formula(&mut self, v: &Value, depth: usize) -> Result<Formula> {
         let a = self.node(v, depth, false)?;
         let tag = a[0].as_str().unwrap();
-        let arity = match tag {
-            "top" | "bottom" => 1,
-            "not" => 2,
-            "unary" | "eq" | "and" | "or" | "implies" | "forall" | "exists" => 3,
-            "binary" => 4,
-            "reach" => 5,
-            _ => 0,
-        };
+        let arity = crate::wire::formula_tag_arity(tag);
         if a.len() != arity {
             return error("SyntaxError", "invalid formula tag or arity");
         }
