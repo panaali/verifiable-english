@@ -79,6 +79,28 @@ def test_unbound_fence_rejected(tmp_path):
         load_document(path)
 
 
+@pytest.mark.parametrize("surface,formula", [("english", "This holds in all cases."),
+                                             ("strict", "true.")])
+def test_document_fence_parses_one_checked_sentence(tmp_path, monkeypatch, surface, formula):
+    from ve.surface import unambiguity
+    source = b"The claim.\n"
+    path = write_doc(tmp_path, source + b"```ve a\n" + formula.encode() + b"\n```\n",
+                     [{**unit("a", 0, len(source), content={"fence": "a"}),
+                       "surface": surface}])
+    calls = []
+    original = unambiguity.require_unique_derivation
+
+    def checked(*args, **kwargs):
+        calls.append(True)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(unambiguity, "require_unique_derivation", checked)
+    doc = load_document(path)
+    assert doc["units"][0]["content"] == ["top"]
+    assert calls == ([True] if surface == "english" else [])
+    assert check_document(path)["premises"]["status"] == "model"
+
+
 def test_assertion_cannot_disappear_into_metadata(tmp_path):
     source = b"A claim.\n"
     path = write_doc(tmp_path, source, [unit("a", 0, len(source))])
@@ -104,6 +126,22 @@ def test_assertion_readings_all_some_none_have_checked_evidence():
     compatible = [{"id": "t", "version": 1, "readings": [{"kind": "asserted", "content": p},
                                                           {"kind": "asserted", "content": ["top"]}]}]
     assert check_readings(env, compatible, ["bottom"])["verdict"] == "NONE"
+
+
+def test_some_reports_the_winning_choice_vacuity():
+    env = Environment(envelope(VOCAB))
+    p = ["unary", "senior", ["const", "alice"]]
+    q = ["unary", "in_finance", ["const", "alice"]]
+    rs = [{"id": "s", "version": 1,
+           "readings": [{"kind": "asserted", "content": p},
+                        {"kind": "asserted", "content": q}]}]
+    result = check_readings(env, rs, ["bottom"], fixed=[["not", p]])
+    assert result["verdict"] == "SOME"
+    assert result["proof"]["choice"] == ["readings:s@1:0"]
+    assert result["vacuous"] is True
+    assert result["premises"]["status"] == "INCONSISTENT"
+    assert result["proof"]["premises"] == result["premises"]
+    assert result["countermodel"]["choice"] == ["readings:s@1:1"]
 
 
 def test_document_p0_admission_and_cli(tmp_path):
@@ -158,11 +196,13 @@ def test_reading_identity_and_narrowing_schema(tmp_path):
     narrowed = json.loads(output.stdout)
     assert narrowed["verdict"] == "ALL"
     assert narrowed["narrowing"] == "narrowing:n1"
-    before = check_document(path)["reading_plan"]
+    before = check_document(path)
     weighted = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                          reading_sets=[rs], narrowings=[narrowing],
                          weights=[{"set": "s1", "by": "translator", "values": {"r1": 0.8}}])
-    assert before == check_document(weighted)["reading_plan"]
+    after = check_document(weighted)
+    assert before["reading_plan"] == after["reading_plan"]
+    assert before["document_id"] == after["document_id"]
     rs["readings"][0]["meaning_id"] = "wrong"
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      reading_sets=[rs], narrowings=[narrowing])
@@ -370,6 +410,20 @@ def test_report_identity_binds_candidate_kind_and_narrowing(tmp_path):
     assert changed["core_report_id"] == narrowed["core_report_id"]
 
 
+def test_report_identity_ignores_weights_and_json_layout(tmp_path):
+    source = b"Claim.\n"
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "a"}]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": ["top"]})],
+                     graph=graph)
+    before = check_document(path)
+    weighted = {**load_document(path)["meta"], "weights": []}
+    path.write_bytes(b"---\n" + json.dumps(weighted, indent=2).encode() + b"\n---\n" + source)
+    after = check_document(path)
+    assert before["document_id"] == after["document_id"]
+    assert before["admission"]["report_id"] == after["admission"]["report_id"]
+    assert before["admission"]["core_report_id"] == after["admission"]["core_report_id"]
+
+
 def test_render_keeps_nested_kind_and_candidate_attribution(tmp_path):
     env = Environment(environment())
     source = b"Maybe Alice.\n"
@@ -379,13 +433,34 @@ def test_render_keeps_nested_kind_and_candidate_attribution(tmp_path):
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), nested,
                                              content={"ast": ["top"]})], reading_sets=[rs])
     rendered = render_document(path)
-    assert rendered.count("According to alice, who says: [likely]") == 2
+    assert rendered.count("attributed to alice as something alice says") == 2
+    assert "qualified as likely" in rendered
+    assert "[" not in rendered and "]" not in rendered
     causal = ["causal", "because", ["hedged", "could", "asserted"], "asserted"]
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), causal,
                                              content={"ast": ["top"]})])
     rendered = render_document(path)
-    assert "[could (asserted) because asserted]" in rendered
+    assert "a causal statement connecting a direct assertion qualified as could" in rendered
+    assert "to a direct assertion with the relation because" in rendered
     assert rendered.count("This holds in all cases.") == 1
+
+
+def test_render_places_only_current_readings_beside_their_sentence(tmp_path):
+    source = b"First. Second."
+    env = Environment(environment())
+    old = {"id": "first", "unit": "a", "version": 1, "status": "open",
+           "readings": [reading(env, "old", ["bottom"])]}
+    current = {"id": "first", "unit": "a", "version": 2, "status": "open",
+               "readings": [reading(env, "new", ["top"])]}
+    second = {"id": "second", "unit": "b", "version": 1, "status": "open",
+              "readings": [reading(env, "other", ["bottom"])]}
+    path = write_doc(tmp_path, source,
+                     [unit("a", 0, 7, "meta"), unit("b", 7, len(source), "meta")],
+                     reading_sets=[old, current, second])
+    rendered = render_document(path)
+    assert rendered.index("First.") < rendered.index("This holds in all cases.") < rendered.index("Second.")
+    assert rendered.index("Second.") < rendered.index("This is impossible.")
+    assert rendered.count("This is impossible.") == 1
 
 
 def test_document_forwards_citation_manifests(tmp_path):
