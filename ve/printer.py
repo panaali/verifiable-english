@@ -758,8 +758,9 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     marked = set(conclusions)
     display_texts = [result.text for result in results]
     from .english import EnglishVocabulary, _mentioned_constants, _has_discourse_binder
-    names = EnglishVocabulary(env, vocabulary=vocabulary,
-                              accept_suggested_vocabulary=accept_suggested_vocabulary).constants
+    words = EnglishVocabulary(env, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary)
+    names = words.constants
     referents = set()
     incomplete_discourse = False
     for i, formula in enumerate(document.formulas):
@@ -778,9 +779,14 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
         if index not in marked:
             return wording
         tail = wording
-        if tail.startswith('The ') or tail.split(' ', 1)[0] in {
+        declared_name = any(
+            name in words.declared_constants and head[0].isupper()
+            and tail.startswith(head)
+            and (len(tail) == len(head) or not re.match(r'[A-Za-z0-9_]', tail[len(head)]))
+            for name, head in names.items() if head)
+        if not declared_name and (tail.startswith('The ') or tail.split(' ', 1)[0] in {
                 'Every', 'Some', 'No', 'For', 'There', 'It', 'If', 'Both',
-                'Either', 'Starting', 'All', 'At', 'This'}:
+                'Either', 'Starting', 'All', 'At', 'This'}):
             tail = tail[0].lower() + tail[1:]
         return conclusion_marker + ' ' + tail
     def prose_text():
