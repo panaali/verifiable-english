@@ -144,8 +144,6 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
           | .ok act =>
             let args ← strings (← entry.getObjVal? "arguments")
             pure (reg.setObjVal! "act" (.str (← canonicalAct name args.length act)))
-        let reg := Json.mkObj ((← fields reg).filter
-          (fun (key, value) => !(key == "permission" && value == .null)))
         pure (entry.setObjVal! "regulated" reg)
     pure (name, entry)
   pure (environment.setObjVal! "vocabulary"
