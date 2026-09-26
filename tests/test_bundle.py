@@ -1,5 +1,7 @@
 """Citation replay and transitive provenance checks."""
 from copy import deepcopy
+import json
+from pathlib import Path
 
 import pytest
 
@@ -49,3 +51,18 @@ def test_reject_forged_citation(mutation, diagnostic):
     mutation(data)
     with pytest.raises(VEError, match=diagnostic):
         check_bundle(data)
+
+
+def test_math_bundle_preserves_background_and_rejects_version_tampering():
+    path = Path(__file__).resolve().parents[1] / "usecases/math-mini-paper/t7-definitions-bundle.json"
+    data = json.loads(path.read_text())
+    assert [leaf["label"] for leaf in check_bundle(data)["lemmas"][-1]["transitive_leaves"]] == [
+        "background:definitions", "open:transitivity"]
+    forged = deepcopy(data)
+    forged["lemmas"][-1]["transitive_leaves"] = forged["lemmas"][-1]["transitive_leaves"][1:]
+    with pytest.raises(VEError, match="labels"):
+        check_bundle(forged)
+    forged = deepcopy(data)
+    forged["lemmas"][-1]["environment_id"] = "0" * 64
+    with pytest.raises(VEError, match="another environment"):
+        check_bundle(forged)
