@@ -564,9 +564,9 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
         from .natural import render_natural_sentence
         if isinstance(value, ast.Document):
             ast.check_document(env, value)
-            text = ''.join(render_natural_sentence(f, env, vocabulary=vocabulary,
-                           accept_suggested_vocabulary=accept_suggested_vocabulary).text + '.\n'
-                           for f in value.formulas)
+            text = ' '.join(render_natural_sentence(f, env, vocabulary=vocabulary,
+                            accept_suggested_vocabulary=accept_suggested_vocabulary).text + '.'
+                            for f in value.formulas)
         else:
             ast.check_formula(env, value)
             text = render_natural_sentence(value, env, vocabulary=vocabulary,
@@ -728,7 +728,7 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     results = tuple(render_natural_sentence(formula, env, vocabulary=vocabulary,
                     accept_suggested_vocabulary=accept_suggested_vocabulary)
                     for formula in document.formulas)
-    text = ''.join(result.text + '.\n' for result in results)
+    text = ' '.join(result.text + '.' for result in results)
     if len(text.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
     if len(text) > MAX_NODES:
