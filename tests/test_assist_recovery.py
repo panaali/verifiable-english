@@ -20,9 +20,10 @@ def environment():
                                   "engineer": {"description": "engineer"},
                                   "server": {"description": "server"}},
                        "predicates": {**{p: {"arguments": ["service"], "description": p}
-                                          for p in ("safe", "reviews", "checks")},
+                                          for p in ("safe", "reviews")},
                                       "checks_pair": {"arguments": ["engineer", "server"],
-                                                      "description": "checks"}},
+                                                      "description": "checks",
+                                                      "verbalisation": "{0} checks {1}"}},
                        "constants": {name: {"sort": "service", "description": name} for name in names}}})
 
 
@@ -122,7 +123,7 @@ def test_recovery_pending_translation_and_adapter_stubs():
                             cited_spans=[{"start": 0, "end": 3}])
     service.set_readings("u", [{"meaning_id": meaning_id(env, Unary("safe", Const(c))),
                                 "wording": render_english(Unary("safe", Const(c)), env) + "."}
-                               for c in ("api", "service_a")])
+                                   for c in ("api", "carol")])
     situation = find_countermodel(env, (), Not(Unary("safe", Const("api")))).model.to_dict()
     with pytest.raises(ValueError, match="narrowing"):
         service.approve("u", Unary("safe", Const("api")), actor="author",
@@ -195,6 +196,8 @@ def test_clarification_reply_cap_is_separate_from_proposer_cap():
     service.classify("u", parse_outcome="zero")
     assert service.reply("u", "One more") == "unresolved"
     assert service.units["u"].proposals == 0
+    service.edit("u", source="Api is safe.")
+    assert service.start("u") == "unresolved"
 
 
 def test_authoring_requires_explicit_rejection_of_distinct_reading():
@@ -203,7 +206,7 @@ def test_authoring_requires_explicit_rejection_of_distinct_reading():
     service.add("u", "It is safe.", {"start": 0})
     service.start("u")
     assert service.classify("u", parse_outcome="one", catalogue_bindings={
-        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "service_a"]}}) == "ready"
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}}) == "ready"
     formula = Unary("safe", Const("api"))
     situation = find_countermodel(env, (), Not(formula)).model.to_dict()
     with pytest.raises(ValueError, match="explicit rejection"):
@@ -235,13 +238,16 @@ def test_catalogue_wordings_are_writable_and_not_invented_readings():
     ):
         result = review(env, source, bindings, pattern_id=pattern)
         assert not result["cards"]
-    result = review(env, "It is safe.", {"predicate": "safe", "antecedents": ["api", "service_a"]},
+    result = review(env, "It is safe.", {"predicate": "safe", "antecedents": ["api", "carol"]},
                     pattern_id="discourse.reference@1")
     for candidate in result["candidates"]:
         parsed = parse_english_with_metadata(env, candidate["wording"] + "\n")
         assert meaning_id(env, parsed.document.formulas[0]) == candidate["meaning_id"]
     assert all("property" not in wording and "antecedent" not in wording
                for card in result["cards"] for wording in card["paraphrases"])
+    raw = review(env, "It is safe.", {"predicate": "safe", "antecedents": ["api", "service_a"]},
+                 pattern_id="discourse.reference@1")
+    assert not raw["cards"] and "plain English vocabulary" in raw["residual"]
 
 
 def test_pending_cannot_be_erased_and_pattern_disposition_is_attributed():
@@ -252,10 +258,15 @@ def test_pending_cannot_be_erased_and_pattern_disposition_is_attributed():
     assert service.classify("u", parse_outcome="one", discourse="incomplete") == "reading_review"
     service.set_readings("u", [])
     assert service.units["u"].pending and service.units["u"].state == "reading_review"
+    service.cancel("u")
+    service.start("u")
+    assert service.classify("u", parse_outcome="one", discourse="complete") == "reading_review"
     with pytest.raises(ValueError, match="incomplete"):
         service.approve("u", Unary("safe", Const("api")), actor="a",
                         paraphrase="Api is safe.", presentation="Api is safe.", situation={})
-    service.resolve_pending("u", 0, actor="author", reason="No pronoun in rewrite", disposition="not_applicable")
+    pattern_index = next(i for i, row in enumerate(service.units["u"].pending) if row.get("pattern_id"))
+    service.resolve_pending("u", pattern_index, actor="author", reason="No pronoun in rewrite",
+                            disposition="not_applicable")
     assert service.units["u"].pending
     service.resolve_pending("u", 0, actor="author", reason="Rewrote the antecedent explicitly",
                             disposition="resolved", wording="Api is safe.",
@@ -270,7 +281,7 @@ def test_translation_requires_separate_narrowing_and_keeps_source_set():
     service.add("u", "It is safe.", {}, mode="translation")
     service.start("u")
     assert service.classify("u", parse_outcome="one", catalogue_bindings={
-        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "service_a"]}}) == "ready"
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}}) == "ready"
     formula = Unary("safe", Const("api"))
     situation = find_countermodel(env, (), Not(formula)).model.to_dict()
     selected = dict(actor="translator", paraphrase="Api is safe.", presentation="Api is safe.", situation=situation)
@@ -287,12 +298,37 @@ def test_translation_requires_separate_narrowing_and_keeps_source_set():
     assert service.events[-2]["action"] == "narrowing"
 
 
+def test_narrowing_is_bound_to_exact_source_set_and_card_is_rechecked():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}})
+    formula = Unary("safe", Const("api"))
+    record = service.record_narrowing("u", keeps=[meaning_id(env, formula)], actor="translator",
+                                      reason="cited antecedent", cited_spans=[{"start": 0, "end": 2}])
+    extra = Unary("safe", Const("alice"))
+    service.set_readings("u", service.units["u"].readings + [{"meaning_id": meaning_id(env, extra),
+        "wording": "Alice is safe."}])
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    kwargs = dict(actor="translator", paraphrase="Api is safe.", presentation="Api is safe.",
+                  situation=situation, narrowing=record["id"])
+    with pytest.raises(ValueError, match="narrowing"):
+        service.approve("u", formula, **kwargs)
+    fresh = service.record_narrowing("u", keeps=[meaning_id(env, formula)], actor="translator",
+                                     reason="cited antecedent", cited_spans=[{"start": 0, "end": 2}])
+    service.units["u"].catalogue_results["discourse.reference@1"]["cards"][0]["paraphrases"][1] = "Api is safe."
+    with pytest.raises(ValueError, match="card wording changed meaning"):
+        service.approve("u", formula, **{**kwargs, "narrowing": fresh["id"]})
+
+
 def test_pagination_retains_cards_counts_and_cursor_until_complete():
     env = environment()
     service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
     service.add("u", "It is safe.", {})
     service.start("u")
-    bindings = {"predicate": "safe", "antecedents": ["api", "service_a", "carol", "alice"]}
+    bindings = {"predicate": "safe", "antecedents": ["api", "bob", "carol", "alice"]}
     assert service.classify("u", parse_outcome="one", catalogue_bindings={
         "discourse.reference@1": bindings}) == "reading_review"
     result = service.units["u"].catalogue_results["discourse.reference@1"]
