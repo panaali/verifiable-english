@@ -36,7 +36,7 @@ def active(name):
 
 
 def diagnostic(code, message):
-    return message if re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
+    return message if message.startswith("Definition ") or re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
 
 
 def error_verdict(code, message, generator=None):
@@ -78,6 +78,11 @@ def python_verdict(case):
             return {"status": "ok", "order": list(dependency_order_nodes(case["nodes"]))}
         if kind == "admission":
             return {"status": "ok", **admit_document(env, case["document"])}
+        if kind == "background":
+            from ve.ast import _to_data
+            items = background(env)
+            return {"status": "ok", "background": [_to_data(p.formula) for p in items],
+                    "generators": [p.generator for p in items]}
         if kind == "evaluate":
             model = FiniteModel.from_dict(env, case["model"])
             doc = document_from_data(env, case["ast"])
@@ -118,6 +123,8 @@ def rust_request(case):
     base = {"id": case["id"], "environment": env}
     if kind in ("label", "dependency-order"):
         return {**case}
+    if kind == "background":
+        return None
     if kind == "evaluate":
         return {**base, "model": case["model"], "ast": case["ast"]}
     if kind == "admission" or (order and kind != "countermodel"):
@@ -143,6 +150,8 @@ def rust_verdict(case, result):
         generator = ("literals" if message.startswith("literals:") or message.endswith("(literals)")
                      else "flags" if message.startswith("flags:") or message.endswith("(flags)")
                      else None)
+        suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
+        generator = generator or (suffix[1] if suffix else None)
         return error_verdict(error["code"], error["message"], generator)
     if kind == "label":
         return {"status": "ok", "label": result["label"]}
@@ -310,7 +319,7 @@ def test_checked_premise_order_includes_layer_segment():
     assert checked_premises(env, (layer,), (bg,)) == (bg, layer, bg)
 
 
-def test_disabled_family_gate_precedes_empty_search():
+def test_enabled_nary_family_reaches_empty_search_and_invalid_mix_still_gates():
     from conformance.p0 import environment
     from ve import Environment
     from ve.ast import Top
@@ -319,10 +328,11 @@ def test_disabled_family_gate_precedes_empty_search():
     raw = environment()
     raw["profiles"] = ["closure@0", "nary@0", "relational-fol@0"]
     env = Environment(raw)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_countermodel(env, (), Top(), max_domain_size=0)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_distinguishing_model(env, Top(), Top(), max_domain_size=0)
+    assert find_countermodel(env, (), Top(), max_domain_size=0).status == "NotFound"
+    assert find_distinguishing_model(env, Top(), Top(), max_domain_size=0).status == "NotFound"
+    raw["profiles"] = ["closure@0", "nary@0", "order@0", "relational-fol@0"]
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile combination"):
+        Environment(raw)
 
 
 def test_report_identity_binds_environment_and_document(lean_executable):

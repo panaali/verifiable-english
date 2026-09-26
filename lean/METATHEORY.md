@@ -422,13 +422,62 @@ for `Background.LiteralsDistinct` / `StringAdmissible` (the stage-1 meaning of
 `$string`) and its order form `OrderLiteralsDistinct` / `OrderStringAdmissible`, for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
 `compatible` (the admission rules), and for `Gate.AllowedFamily`. The route
 theorems are about decoded values; the JSON boundary, identity digests and IO
-are tested, not proved, as for the existing routes. The closure+n-ary family is
-accepted by the gate and rejected by the runner until W4 stage 1 lands (Python
-and Rust reject it at every checking site with the same diagnostic). `$string`
+are tested, not proved, as for the existing routes. W4 stage 1 now dispatches
+the closure+n-ary family to `VE.Core.Wire.run` on the Lean route and enables the
+same family in Python and Rust. This required a reviewed change to the P0-owned
+route contract and fixtures: `VE/Route/Run.lean`, `conformance/p0.py`,
+`conformance/elaborated-document.json`, `tests/test_p0_three_way.py`, and
+`ve/profiles.py` now accept that family. The conformance case still named
+`closure-nary-gated` is a historical ID; its expected verdict is success.
+`$string`
 literals are available on every family: a literal's description is optional, and
 stage 1 is equality only (no `$string` predicate argument, no quantifier over it).
 The shared P0 families (`conformance/p0.py`) run through Python, Rust and
 `route` with identical verdicts (`tests/test_p0_three_way.py`).
+
+## Definitions and lemma citation: `definitions@0` (W3 of PLAN-EXPAND2)
+
+Source: `VE/Definitions/*`, wired into `VE/Route/Wire.lean` and
+`VE/Route/Run.lean`. A definition `p(x̄) := φ(x̄)` is an identity-bound
+`defined` field of a unary or binary predicate declaration; the body is a v0
+formula typed in the argument context (index 0 is the last argument) over the
+symbols strictly below `p` in the one dependency DAG. Elaboration is the closed
+biconditional per definition, in DAG order; it is the `definitions` slice of
+Background (before `literals`). The checker is unchanged: definitions are
+premises. Names below have prefix `VE.Definitions.`.
+
+| Theorem | Plain statement |
+|---|---|
+| `premise_iff` | One generated biconditional holds in a structure exactly when the defined predicate agrees with its body on every well-typed argument tuple (`Agrees`). |
+| `faithful` | The generated premises (`expand ds`) all hold exactly when every defined predicate agrees with its body. |
+| `Step.expands` | For one definition, every admissible structure of the vocabulary below has exactly one admissible expansion interpreting the new predicate so that its biconditional holds; relation-free side conditions (distinct literals) are preserved. |
+| `conservative` | For a whole checked, dependency-ordered list, every admissible base structure has exactly one admissible expansion to the full vocabulary satisfying all the definitions; restriction forgets exactly the defined predicates. This is the `expands` field of the composed frozen `Layer`. |
+| `conservative_entails` | For premises and a conclusion over the base vocabulary, consequence with the definitions over the full vocabulary is exactly consequence without them over the base vocabulary. |
+| `acceptance` | The FOL route acceptance theorem for definitions: an accepted tableau certificate for definitions ++ literals ++ Γ ⊢ φ gives the checked entailment; φ in every intended structure (string-admissible, every defined predicate agreeing with its body) satisfying Γ; for base-vocabulary Γ and φ, φ in every string-admissible base structure satisfying Γ; and, for every string-admissible base structure, an expansion satisfies Γ → φ. `conservative` separately proves that expansion is unique. It is proved through `Layer.faithful`, `route_intended` and `route_base` of the composed layer. |
+| `closure_acceptance` | The same on the closure family (Background embedded): φ in every intended structure satisfying Γ, and in an expansion of every string-admissible base structure. `conservative` supplies uniqueness. |
+| `countermodel` | A finite model that is admissible and satisfies the regenerated Background is an intended structure, so a checked countermodel refutes the statement over intended structures. |
+| `chainOk_sound`, `elaborate_chain` | The executable elaborator (DAG order by `Route.dependencyOrder`, then one typing check per body over the symbols below it) establishes the layer's hypothesis `Chain`. |
+| `Bundle.bundle_sound` | Citation soundness with a document reading-set registry: accepted transitive leaves have compatible choices and every reading label is bound to its registered formula or `all` disjunction; each conclusion is true in every intended structure in which its non-background transitive leaves hold. |
+| `Bundle.checkAll_sound`, `checkLemma_sound`, `citeAll_sound` | The induction behind `bundle_sound` (the `entails_cut` pattern): each certificate is replayed on Background ++ own hypotheses ++ cited conclusions, and a citing lemma must list every leaf of what it cites. |
+| `Route.Wire.decodeModel_intended` | A model decoded on the FOL or closure route (defined tables computed from their bodies, a supplied defined table rejected) is an intended structure. |
+| `Alias.*` | The earlier single-atom alias instance, kept as a worked example. |
+
+Statement review (rule 1b) is required for `Agrees` / `Intended` (what a
+definition means), `Chain` / `Step` (which definitions are admitted) and
+`Bundle.Sound` (what a checked lemma means). The order family, reachability
+bodies, closure-family bundles and admission of documents with definitions are
+rejected with explicit `UnsupportedProfile` or gate diagnostics, identically in
+Python, Rust and Lean where they apply. Python and the Lean route regenerate
+identical Background lists on 1,000 generated definition sets
+(`tests/test_definitions_differential.py`).
+
+After W4, Python and Rust also elaborate defined predicates of arity 3–6
+over the `closure+nary` family: their bodies may contain n-ary atoms, and
+finite models compute the defined tables. Lean's `Definitions` layer still has
+unary and binary syntax, while the Core route has n-ary syntax without that
+definition layer. Thus this combination has no Lean definition proof or
+three-way definition elaboration parity yet; the theorem and differential
+claims above apply only to arities 1–2.
 
 ## Remaining obligations
 

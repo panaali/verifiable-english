@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Callable, NamedTuple
 
 from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Var
-from .errors import InvalidModel
+from .errors import InvalidModel, ResourceLimit
 
 
 class Premise(NamedTuple):
@@ -71,12 +71,31 @@ def _valid_flags(env, model):
             if missing:
                 raise InvalidModel(f"{name!r} has no value for {min(missing)!r}", generator="flags")
 
+def _definition_premises(env):
+    if not env.definition_entries:
+        return ()
+    from .definitions import compile_definitions, expand
+    return expand(compile_definitions(env, env.definition_entries, version=env.environment_id))
 
-# Each entry is (premise generator, validity checker). The three empty slots
-# are deliberately explicit extension points for W5, W3 and W1.
+
+def _valid_definitions(env, model):
+    if not env.definition_entries:
+        return
+    from .evaluate import _evaluate_validated
+    from .limits import MAX_EVALUATIONS
+    for formula in _definition_premises(env):
+        result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit("Definition background evaluation budget exhausted")
+        if result.value is not True:
+            raise InvalidModel("defined predicate table disagrees with its body",
+                               generator="definitions")
+
+
+# Each entry is (premise generator, validity checker).
 HOOKS: dict[str, tuple[Callable, Callable]] = {
     "flags": (_flag_premises, _valid_flags),
-    "definitions": (_empty, _valid),
+    "definitions": (_definition_premises, _valid_definitions),
     "literals": (_literal_premises, _valid_literals),
     "profile": (_empty, _valid),
 }

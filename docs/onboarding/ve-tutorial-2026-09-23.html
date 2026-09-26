@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A research onboarding guide to Verifiable English: checked reasoning, reviewed foundations, current evidence, and ways to contribute.">
+<title>Verifiable English, from first principles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F5F6F8; --surface:#FFFFFF; --sunk:#ECEFF3; --ink:#1A2130; --muted:#586273; --rule:#D5DBE3;
+  --accent:#2C4DA3; --accent-soft:#E3E9F8;
+  --checked:#1B7553; --checked-soft:#DDF1E8;
+  --untrusted:#A55F00; --untrusted-soft:#FBEBD2;
+  --human:#7438A0; --human-soft:#EFE3F7;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10141B; --surface:#171C25; --sunk:#1D2330; --ink:#E5E9F0; --muted:#9BA5B5; --rule:#2B3342;
+    --accent:#93AAF2; --accent-soft:#1F2A47;
+    --checked:#5CC79D; --checked-soft:#15352A;
+    --untrusted:#E8AA4C; --untrusted-soft:#3A2A12;
+    --human:#C79BE6; --human-soft:#2F2140;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10141B; --surface:#171C25; --sunk:#1D2330; --ink:#E5E9F0; --muted:#9BA5B5; --rule:#2B3342;
+  --accent:#93AAF2; --accent-soft:#1F2A47;
+  --checked:#5CC79D; --checked-soft:#15352A;
+  --untrusted:#E8AA4C; --untrusted-soft:#3A2A12;
+  --human:#C79BE6; --human-soft:#2F2140;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.62;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:0 64px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+main,.panel,.try .out>div{min-width:0}
+@media (min-width:1040px){.layout{grid-template-columns:220px minmax(0,1fr)}}
+header.top{padding-block:48px 28px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--serif);font-weight:650;font-size:clamp(2rem,5vw,3.1rem);line-height:1.1;margin:.3em 0 .35em;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-weight:650;font-size:clamp(1.55rem,3.4vw,2.05rem);line-height:1.2;margin:0 0 .5em;text-wrap:balance}
+h3{font-family:var(--serif);font-weight:650;font-size:1.22rem;line-height:1.3;margin:1.8em 0 .45em;text-wrap:balance}
+h4{font-family:var(--sans);font-weight:600;font-size:1rem;margin:1.3em 0 .3em}
+p,li{max-width:68ch}
+.lede{font-size:1.14rem;color:var(--ink);max-width:62ch}
+.meta{color:var(--muted);font-size:.92rem}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+code{background:var(--sunk);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.55;background:var(--sunk);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:1em 0}
+pre code{background:none;padding:0;overflow-wrap:normal}
+/* nav */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);margin-inline:-20px;padding:8px 20px;overflow-x:auto;white-space:nowrap}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+nav.toc a{display:block;text-decoration:none;color:var(--muted);font-size:14px;padding:6px 10px;border-radius:5px}
+nav.toc a .n{font-family:var(--mono);font-size:11px;margin-right:6px;opacity:.75}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a.on{color:var(--accent);background:var(--accent-soft)}
+@media (min-width:1040px){
+  nav.toc{top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;margin:0;padding:0;border:0;white-space:normal;overflow:visible}
+  nav.toc ol{flex-direction:column;gap:2px}
+  nav.toc .toc-h{display:block}
+}
+.toc-h{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main section{padding-block:40px 8px;border-top:1px solid var(--rule);scroll-margin-top:70px}
+main section:first-child{border-top:0;padding-top:24px}
+.secnum{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.06em;margin-bottom:6px;display:block}
+/* callouts: role-coloured, used sparingly */
+.note{border-left:3px solid var(--rule);padding:4px 0 4px 16px;margin:1.2em 0;color:var(--ink)}
+.note.warn{border-color:var(--untrusted)}
+.note.ok{border-color:var(--checked)}
+.note.human{border-color:var(--human)}
+.note strong:first-child{font-weight:600}
+.term{font-weight:600;color:var(--ink);border-bottom:1px dotted var(--muted)}
+/* figures */
+figure{margin:1.6em 0;padding:0}
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;overflow-x:auto;color:var(--ink)}
+.fig svg{display:block;width:100%;height:auto;min-width:var(--diagram-width,760px);max-width:none}
+.fig.compact{max-width:420px;margin-inline:auto}
+.fig.compact svg{min-width:0}
+.fig.compact .sm{font-size:13px}
+.fig.compact .md{font-size:14px}
+.scroll-hint{display:none}
+@media(max-width:900px){.scroll-hint{display:block;font-size:.85rem;margin-top:4px}}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:8px;max-width:72ch}
+svg text{font-family:var(--sans);fill:currentColor}
+svg .mono{font-family:var(--mono)}
+svg .sm{font-size:11px}
+svg .md{font-size:13px}
+svg .lg{font-size:15px;font-weight:600}
+svg .mut{fill:var(--muted)}
+svg .box{fill:var(--surface);stroke:currentColor;stroke-width:1.2}
+svg .sunk{fill:var(--sunk);stroke:var(--rule);stroke-width:1}
+svg .chk{fill:var(--checked-soft);stroke:var(--checked);stroke-width:1.6}
+svg .unt{fill:var(--untrusted-soft);stroke:var(--untrusted);stroke-width:1.6}
+svg .hum{fill:var(--human-soft);stroke:var(--human);stroke-width:1.6}
+svg .acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+svg .ln{stroke:currentColor;stroke-width:1.3;fill:none}
+svg .ln-chk{stroke:var(--checked);stroke-width:1.6;fill:none}
+svg .ln-unt{stroke:var(--untrusted);stroke-width:1.6;fill:none}
+svg .ln-hum{stroke:var(--human);stroke-width:1.6;fill:none}
+svg .dash{stroke-dasharray:5 4}
+svg .t-chk{fill:var(--checked)} svg .t-unt{fill:var(--untrusted)} svg .t-hum{fill:var(--human)} svg .t-acc{fill:var(--accent)}
+svg .head{fill:currentColor}
+svg .head-chk{fill:var(--checked)} svg .head-unt{fill:var(--untrusted)} svg .head-hum{fill:var(--human)}
+/* tables */
+.tbl{overflow-x:auto;margin:1.2em 0}
+table{border-collapse:collapse;width:100%;font-size:.94rem;min-width:520px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;font-size:.82rem;letter-spacing:.03em;color:var(--muted);text-transform:uppercase;background:var(--sunk)}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.86rem;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;line-height:1.6}
+.pill.ok{color:var(--checked)} .pill.warn{color:var(--untrusted)} .pill.hum{color:var(--human)} .pill.neu{color:var(--muted)}
+/* grids */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:16px;margin:1.2em 0}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
+.panel h4{margin-top:0}
+.panel p{margin:.4em 0}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.88rem;color:var(--muted);margin:.4em 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1.6px solid}
+.legend .l-chk::before{background:var(--checked-soft);border-color:var(--checked)}
+.legend .l-unt::before{background:var(--untrusted-soft);border-color:var(--untrusted)}
+.legend .l-hum::before{background:var(--human-soft);border-color:var(--human)}
+.legend .l-acc::before{background:var(--accent-soft);border-color:var(--accent)}
+/* try-it */
+.try{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;margin:1.4em 0}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.seg button{font:inherit;font-size:14px;padding:6px 12px;border-radius:6px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.try .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:14px}
+.try .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.verdict{font-weight:600}
+.verdict.ok{color:var(--checked)} .verdict.no{color:var(--untrusted)}
+/* glossary */
+dl.gloss{display:grid;grid-template-columns:1fr;gap:0;margin:1em 0}
+dl.gloss div{padding:12px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr;gap:2px}
+@media (min-width:720px){dl.gloss div{grid-template-columns:220px 1fr;gap:20px}}
+dl.gloss dt{font-weight:600;font-family:var(--serif);font-size:1.05rem}
+dl.gloss dd{margin:0;max-width:66ch}
+ol.steps{padding-left:1.3em}
+ol.steps li{margin:.5em 0}
+.tasks{display:grid;grid-template-columns:1fr;gap:12px;margin:1.2em 0}
+.task{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;display:grid;gap:4px}
+.task .hdr{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+.task h4{margin:0}
+.task p{margin:0}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);color:var(--muted);font-size:.88rem}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Onboarding guide · for new researchers · September 2026</div>
+  <h1>Verifiable English, from first principles</h1>
+  <p class="lede">A research prototype for AI oversight. Write a precise claim in an English-like language. Let an untrusted AI supply a proof. A small checker verifies the deduction; people still review the starting assumptions and whether the formal claim matches the intended question.</p>
+  <p class="meta">Start with sections 1–3; they need no logic background. Then follow the architecture, trust limits and experiments. The final sections explain the vision and how to contribute. Use the <a href="#glossary">glossary</a> as needed. Results and proposals are distinguished throughout.</p>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Sections">
+  <span class="toc-h">Contents</span>
+  <ol>
+    <li><a href="#problem"><span class="n">1</span>The problem</a></li>
+    <li><a href="#five-minutes"><span class="n">2</span>VE in 5 minutes</a></li>
+    <li><a href="#logic"><span class="n">3</span>Logic primer</a></li>
+    <li><a href="#architecture"><span class="n">4</span>Architecture</a></li>
+    <li><a href="#trust"><span class="n">5</span>Proved vs tested</a></li>
+    <li><a href="#crypto"><span class="n">6</span>Cryptography lens</a></li>
+    <li><a href="#frontier"><span class="n">7</span>Where judges fail</a></li>
+    <li><a href="#experiments"><span class="n">8</span>Results &amp; next studies</a></li>
+    <li><a href="#vision"><span class="n">9</span>Commitments &amp; judgement</a></li>
+    <li><a href="#process"><span class="n">10</span>How it is run</a></li>
+    <li><a href="#contribute"><span class="n">11</span>Contribute</a></li>
+    <li><a href="#glossary"><span class="n">12</span>Glossary</a></li>
+  </ol>
+</nav>
+
+<main>
+<!-- 1 -->
+<section id="problem">
+<span class="secnum">SECTION 1</span>
+<h2>The problem: overseeing work you cannot redo yourself</h2>
+<p>As AI systems get more capable, they will produce work (code, plans, legal or scientific arguments) that a human reviewer cannot fully reproduce. <span class="term">Scalable oversight</span> is the research area asking how a weaker overseer, a person or a weaker model, can still reliably tell good work from bad work produced by a stronger system.</p>
+<p>Two families of protocols dominate the literature:</p>
+<ul>
+  <li><span class="term">Consultancy</span>: one AI argues for an answer, and a judge (human or model) questions it and decides. The AI may be honest or may be arguing for the wrong answer.</li>
+  <li><span class="term">Debate</span>: two AIs argue opposite sides in front of a judge. The hope is that it is easier to point out a flaw in an argument than to hide one, so the honest side has the advantage.</li>
+</ul>
+<p>Debate has a failure mode called <span class="term">obfuscated arguments</span> (Barnes and Christiano, 2020; BC20). A dishonest debater builds a long argument containing a few false sub-claims or invalid steps. The honest debater knows the conclusion is wrong but cannot cheaply find the flaw. Throughout this page, a <span class="term">leaf</span> is a starting claim with no further supporting steps shown. A false leaf and an invalid step are the two kinds of flaw, and the distinction matters for everything that follows: a checker can catch the second kind, never the first.</p>
+
+<h3>VE's core idea: factor the decision</h3>
+<p>Reviewing an argument mixes three questions: <em>Do the steps follow?</em> <em>Are the starting premises true?</em> <em>Does the formal statement say what the author meant?</em> Verifiable English (VE) separates the first question from the other two. Deductions use a small formal logic and are checked mechanically. The <span class="term">residual</span> is what remains for judgement: explicit premises, meaning and omitted requirements. Making these visible does not guarantee that they are few or easy.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:760px" viewBox="0 0 760 330" role="img" aria-label="Without VE a judge must assess premises, translation and every deduction step at once. With VE the deduction steps go to a mechanical checker and only premises and translation go to the judge.">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker>
+    <marker id="a1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-chk"/></marker>
+    <marker id="a1h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-hum"/></marker>
+  </defs>
+  <text x="20" y="24" class="md mut">BEFORE: one undivided judgment</text>
+  <rect x="20" y="36" width="250" height="100" rx="6" class="unt"/>
+  <text x="145" y="62" text-anchor="middle" class="lg">AI's argument (prose)</text>
+  <text x="145" y="84" text-anchor="middle" class="md">premises, meaning of words,</text>
+  <text x="145" y="102" text-anchor="middle" class="md">200 steps of reasoning,</text>
+  <text x="145" y="120" text-anchor="middle" class="md">all interleaved</text>
+  <line x1="270" y1="86" x2="468" y2="86" class="ln" marker-end="url(#a1)"/>
+  <text x="369" y="78" text-anchor="middle" class="sm">judge must check everything</text>
+  <rect x="472" y="56" width="268" height="60" rx="6" class="hum"/>
+  <text x="606" y="82" text-anchor="middle" class="lg">Judge</text>
+  <text x="606" y="101" text-anchor="middle" class="md">accept or reject?</text>
+
+  <line x1="20" y1="160" x2="740" y2="160" stroke="var(--rule)" stroke-width="1"/>
+  <text x="20" y="186" class="md mut">AFTER: the decision factored by VE</text>
+  <rect x="20" y="198" width="250" height="36" rx="5" class="unt"/>
+  <text x="145" y="221" text-anchor="middle" class="md">deduction steps (in VE logic)</text>
+  <rect x="20" y="242" width="250" height="36" rx="5" class="unt"/>
+  <text x="145" y="265" text-anchor="middle" class="md">explicit premises (leaves)</text>
+  <rect x="20" y="286" width="250" height="36" rx="5" class="unt"/>
+  <text x="145" y="309" text-anchor="middle" class="md">translation: English ↔ VE</text>
+  <line x1="270" y1="216" x2="468" y2="216" class="ln-chk" marker-end="url(#a1c)"/>
+  <text x="369" y="208" text-anchor="middle" class="sm t-chk">certificate replayed</text>
+  <rect x="472" y="196" width="268" height="40" rx="6" class="chk"/>
+  <text x="606" y="221" text-anchor="middle" class="md">Checker: mechanical, no judgment</text>
+  <path d="M270,260 L420,260 L420,284 L468,284" class="ln-hum" marker-end="url(#a1h)"/>
+  <path d="M270,304 L420,304 L420,292 L468,292" class="ln-hum"/>
+  <text x="345" y="252" text-anchor="middle" class="sm t-hum">residual</text>
+  <rect x="472" y="252" width="268" height="72" rx="6" class="hum"/>
+  <text x="606" y="276" text-anchor="middle" class="md">Judge: only the residual</text>
+  <text x="606" y="295" text-anchor="middle" class="sm">Are these premises true?</text>
+  <text x="606" y="312" text-anchor="middle" class="sm">Is the translation faithful?</text>
+</svg>
+</div>
+<div class="legend"><span class="l-unt">produced by the untrusted AI</span><span class="l-chk">mechanically checked</span><span class="l-hum">human (or judge model) decides</span></div>
+<figcaption>Figure 1. The checker removes deduction checking from the judge's workload. Whether the remaining review is easier is an empirical question.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3 id="obfuscation">Obfuscation: the acceptance rule matters</h3>
+<div class="note ok"><strong>The project's corrected position (22 September 2026).</strong> Under a <span class="term">mandatory-proof rule</span>, nothing is accepted unless the verified checker derives it from declared, reviewed foundations. A dishonest prover then cannot win by assuming false sub-claims. This defeats the Barnes–Christiano construction for fully formalised claims, conditional on those foundations. Earlier project notes said that VE contributes nothing against obfuscated arguments; that was too broad. It holds only for a protocol that accepts leaves without proof.</div>
+<p>For a toy example, suppose there are only two boxes, A and B, and the reviewed facts say that box A contains a red token. An arguer claims there are no red tokens, using “box A has none” and “box B has none”. The deduction from those two premises can be valid. Checking that deduction alone misses the false premise. Mandatory proof also requires support for “box A has none”; that obligation cannot pass a sound checker using the reviewed facts.</p>
+<p>BC20 itself says that, with enough checking budget, one can <q>just have both debaters write out their entire proof, and run a checker</q>. BC20 takes that checker as given; VE's aim is a checker whose soundness is a proved theorem rather than a capability assumption. <a href="https://www.alignmentforum.org/posts/PJLABqQ962hZEqhdB/debate-update-obfuscated-arguments-problem">BC20, cryptographic example</a>. <a href="https://arxiv.org/html/2506.13609v2#S8">Prover-estimator debate (PE), section 8</a>, already proposes machine-verifiable mathematical proofs alongside debate for fuzzier claims. PE is a protocol that uses probability estimates for uncertain sub-claims. Combining proofs and debate is not a new VE idea.</p>
+<ul>
+  <li><strong>Soundness is not completion.</strong> Soundness means acceptance implies a valid deduction. An honest claim still needs an affordable proof. If it cannot supply one, the result is <strong>unresolved</strong>, not acceptance of the opposing claim.</li>
+  <li><strong>Proofs can exceed the budget.</strong> Full checking does not reach every problem targeted by debate theory, including its PSPACE setting: problems solvable with polynomial memory whose explicit proofs may be too long.</li>
+  <li><strong>Foundations remain assumptions.</strong> Physical laws, measurements, idealisations and tolerances may be reviewed but unproved. False or inconsistent foundations can support a bad conclusion.</li>
+  <li><strong>Meaning still needs review.</strong> A train modelled as a point particle and one modelled as a rotating rigid body can give different answers. A correct proof of the wrong model does not answer the intended question.</li>
+  <li><strong>Cost matters.</strong> One pilot on BC20's iceberg physics example proved its root claim, inside a reviewed physical model, in 912 seconds, using about 2.1 million input tokens, mostly cached, with four failed Lean attempts out of six. It was reviewed only by its author. This is feasibility evidence for one model, not a cost or reliability benchmark.</li>
+</ul>
+<p>The benefit comes from sound proof checking, not from English wording. VE also exposes unstated premises and pins definitions across sub-claims. For the latter, compare against <span class="term">cross-examination</span>: questioning a debater's earlier answers in separate contexts to expose inconsistent definitions. Existing debate work already credits it with this benefit.</p>
+
+<h3 id="vex">VEX: require evidence for uncertain claims too</h3>
+<p><span class="term">VEX</span> is a proposed extension, not an implemented result. Every accepted claim would need either a proof from reviewed foundations or checkable evidence with explicit uncertainty. Statistical claims carry data and a test to recompute. Approximate physical claims state a model and a proved error bound. Heuristics become estimates that can be revised when new evidence arrives. Data provenance, test assumptions and model applicability still need review.</p>
+<p><strong>Worked example:</strong> a conclusion needs all 100 supporting claims to hold. Suppose each has a justified probability lower bound of 0.99. Without evidence that they are independent, the safe lower bound for their conjunction is <code>max(0, 1 − 100 × 0.01) = 0</code>. Even with independence, the lower bound supplied by these numbers is only <code>0.99^100 ≈ 0.366</code>. Neither establishes a 95% confidence requirement. A lower bound of zero means the evidence gives no guarantee; it does not mean the conclusion is false.</p>
+<p>This is the proposed move from <strong>deception to abstention</strong>: a long chain of plausible leaves becomes “not established”. True claims with equally uncertain support also fail. The mechanism depends on justified input bounds and correct evidence checks; it is not yet an empirical guarantee.</p>
+<p>Residual attacks remain: cherry-picking which considerations to include; hiding dependence between evidence sources; getting false foundations approved; formalising the wrong test or model; and flooding the system with costly proof obligations. Suggested responses include letting opponents add considerations, requiring support for independence, auditing translations, and charging certification cost to the claimant. These do not eliminate the residual.</p>
+<p class="meta">Source trail: <code>design/positioning-vs-debate-theory.md</code>, “Correction 2”; <code>reviews/obfuscation-recheck.md</code> in the companion review repository; <code>design/vex-mandatory-evidence.md</code>. The positioning note also works through prover-estimator debate's “stability” condition and finds that a long conjunction of <em>estimated</em> leaves is its worst case; that objection does not apply to proved leaves.</p>
+<div class="note warn"><strong>A separate negative result remains.</strong> VE's English surface is intended for human readers. No benefit over symbolic logic was demonstrated for the capable 32B model judge tested; a human review benefit remains untested. See <a href="#experiments">the results</a>.</div>
+</section>
+
+<!-- 2 -->
+<section id="five-minutes">
+<span class="secnum">SECTION 2</span>
+<h2>VE in five minutes</h2>
+<p>Take the classic bad argument:</p>
+<pre><code>Every cat is an animal.
+Tom is an animal.
+Therefore, Tom is a cat.</code></pre>
+<p>It sounds reasonable for about a second. VE's job is to turn "sounds reasonable" into a definite answer with evidence you can check. It happens in four steps.</p>
+
+<ol class="steps">
+<li><strong>Declare an environment.</strong> A small vocabulary: a <em>sort</em> (a kind of thing) called <code>pet</code>, two properties <code>cat</code> and <code>animal</code>, and a named individual <code>tom</code> (written <code>@tom</code> in claims; the <code>@</code> marks a constant). Each word has a written description, and the whole vocabulary gets a hash called the <code>environment_id</code>.</li>
+<li><strong>Write the claims</strong> in the strict canonical surface (or the writable English surface, which parses to the same thing). Illustratively:
+<pre><code>for every pet x0, (if (x0 is cat), then (x0 is animal)).
+(@tom is animal).
+conclusion: (@tom is cat).</code></pre>
+Each parsed claim gets a <code>meaning_id</code>: a hash of its canonical structure, so renaming a variable does not change it but changing the logic does.</li>
+<li><strong>Ask for a verdict.</strong> An untrusted search procedure tries to find either a proof or a counterexample.</li>
+<li><strong>Check the evidence.</strong> Here it finds a <span class="term">countermodel</span>: a tiny world where the premises are true and the conclusion is false. Tom is a dog. Every cat is an animal (true, there are no cats at all), Tom is an animal (true), Tom is a cat (false). The evaluator re-checks that world in milliseconds, so you do not have to trust the search.</li>
+</ol>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:780px" viewBox="0 0 780 250" role="img" aria-label="Pipeline: English claims are parsed to strict form with identities, an untrusted search returns either a proof certificate that the checker verifies or a countermodel that the evaluator verifies.">
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker></defs>
+  <rect x="10" y="90" width="140" height="70" rx="6" class="box"/>
+  <text x="80" y="118" text-anchor="middle" class="lg">English</text>
+  <text x="80" y="138" text-anchor="middle" class="sm mut">claims + conclusion</text>
+  <line x1="150" y1="125" x2="196" y2="125" class="ln" marker-end="url(#a2)"/>
+  <text x="173" y="116" text-anchor="middle" class="sm">parse</text>
+  <rect x="200" y="90" width="150" height="70" rx="6" class="acc"/>
+  <text x="275" y="116" text-anchor="middle" class="lg">Strict form</text>
+  <text x="275" y="136" text-anchor="middle" class="sm mono">meaning_id</text>
+  <text x="275" y="151" text-anchor="middle" class="sm mono">environment_id</text>
+  <line x1="350" y1="125" x2="396" y2="125" class="ln" marker-end="url(#a2)"/>
+  <rect x="400" y="90" width="130" height="70" rx="6" class="unt"/>
+  <text x="465" y="118" text-anchor="middle" class="lg">Search</text>
+  <text x="465" y="138" text-anchor="middle" class="sm">untrusted</text>
+  <path d="M530,110 L570,110 L570,50 L606,50" class="ln" marker-end="url(#a2)"/>
+  <text x="564" y="80" text-anchor="end" class="sm">certificate</text>
+  <path d="M530,140 L570,140 L570,200 L606,200" class="ln" marker-end="url(#a2)"/>
+  <text x="564" y="180" text-anchor="end" class="sm">countermodel</text>
+  <rect x="610" y="18" width="160" height="64" rx="6" class="chk"/>
+  <text x="690" y="44" text-anchor="middle" class="lg">Checker</text>
+  <text x="690" y="64" text-anchor="middle" class="sm t-chk">✓ follows from premises</text>
+  <rect x="610" y="168" width="160" height="64" rx="6" class="chk"/>
+  <text x="690" y="194" text-anchor="middle" class="lg">Evaluator</text>
+  <text x="690" y="214" text-anchor="middle" class="sm t-chk">✓ does not follow</text>
+</svg>
+</div>
+<figcaption>Figure 2. Every verdict arrives with evidence that a small trusted component re-checks. The search may be arbitrarily clever (or an AI); it is never trusted. If it finds neither within its budget, the answer is UNKNOWN.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3>Try it: three tiny arguments</h3>
+<div class="try" id="tryit">
+  <div class="seg" role="group" aria-label="Choose an argument">
+    <button type="button" id="try-bad" aria-pressed="true" data-k="bad">Tom is an animal ⇒ cat?</button>
+    <button type="button" id="try-good" aria-pressed="false" data-k="good">Tom is a cat ⇒ animal?</button>
+    <button type="button" id="try-empty" aria-pressed="false" data-k="empty">All reviewed ⇒ some reviewed?</button>
+  </div>
+  <div class="out" aria-live="polite">
+    <div><div class="lbl">Argument</div><pre id="try-arg" style="margin:0"></pre></div>
+    <div><div class="lbl">Verdict and evidence</div><p id="try-verdict" class="verdict" style="margin:.2em 0"></p><p id="try-ev" style="margin:.2em 0"></p></div>
+  </div>
+</div>
+
+<p>The third case is the repository's own first example (<code>examples/premise.ve</code>, <code>examples/conclusion.ve</code>) and a good first surprise: VE allows sorts to be <em>empty</em>, so "every service is reviewed" does not entail "some service is reviewed". The countermodel is a world with no services. That is the kind of hidden assumption ("there is at least one service") VE forces into the open.</p>
+</section>
+
+<!-- 3 -->
+<section id="logic">
+<span class="secnum">SECTION 3</span>
+<h2>Logic primer</h2>
+<p>You need only a small slice of logic to work on VE. This section builds it from the cat example.</p>
+
+<h3>First-order logic, piece by piece</h3>
+<p><span class="term">First-order logic</span> (FOL) is a language for statements about objects and their properties and relations. Its parts:</p>
+<div class="tbl" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead><tr><th>Part</th><th>What it is</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Constant</td><td>A name for one specific object</td><td><code>tom</code></td></tr>
+<tr><td>Variable</td><td>A placeholder that ranges over objects</td><td><code>x0</code></td></tr>
+<tr><td><span class="term">Predicate</span></td><td>A property (unary, one argument) or relation (binary, two arguments) that is true or false of objects</td><td><code>cat(x)</code>, <code>owns(p, s)</code></td></tr>
+<tr><td>Connectives</td><td>and, or, not, if-then</td><td><code>cat(x) → animal(x)</code></td></tr>
+<tr><td><span class="term">Quantifier</span></td><td>"for every" (∀) and "there exists" (∃), binding a variable</td><td><code>∀x. cat(x) → animal(x)</code></td></tr>
+<tr><td>Equality</td><td>Two names denote the same object</td><td><code>x = legacy</code></td></tr>
+</tbody></table></div>
+<p>VE uses a deliberately restricted fragment: <strong>many-sorted</strong> (every variable ranges over a declared sort such as <code>person</code> or <code>service</code>, and sorts may be empty), <strong>function-free</strong> (no terms like <code>father(tom)</code> or <code>x + y</code>), with equality, constants, and only unary and binary predicates. An optional <em>closure profile</em> adds reachability (transitive closure <code>tc</code> and reflexive-transitive closure <code>rtc</code>, "B is reachable from A by following R-steps"); an integer <em>order profile</em> (<code>order@0</code>) is proved in Lean but gated off in the tools while the numbers extension is built.</p>
+
+<h3>Meaning: structures and entailment</h3>
+<p>A <span class="term">structure</span> (also called a model or world) fixes, for each sort, a set of objects, and for each predicate, which objects it holds of. A claim is true or false <em>in a structure</em>.</p>
+<p>Premises <span class="term">entail</span> a conclusion when the conclusion is true in <strong>every</strong> structure that makes all the premises true. To show entailment you need a proof. To show non-entailment, one structure is enough: a countermodel.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:640px" viewBox="0 0 640 230" role="img" aria-label="Countermodel for the bad cat argument: a world where the animal set contains Tom and Felix, the cat set contains only Felix, so every cat is an animal and Tom is an animal but Tom is not a cat.">
+  <rect x="10" y="10" width="360" height="210" rx="10" class="sunk"/>
+  <text x="26" y="32" class="sm mut">sort pet = { Felix, Tom }</text>
+  <ellipse cx="190" cy="128" rx="160" ry="78" class="acc"/>
+  <text x="190" y="72" text-anchor="middle" class="md t-acc">animal</text>
+  <ellipse cx="130" cy="140" rx="70" ry="44" class="chk"/>
+  <text x="130" y="116" text-anchor="middle" class="md t-chk">cat</text>
+  <circle cx="130" cy="150" r="5" class="head"/>
+  <text x="130" y="170" text-anchor="middle" class="md">Felix</text>
+  <circle cx="275" cy="140" r="5" class="head"/>
+  <text x="275" y="162" text-anchor="middle" class="md">Tom (a dog)</text>
+  <text x="392" y="60" class="md">Premise 1: every cat is an animal</text>
+  <text x="392" y="80" class="md t-chk">true: cat sits inside animal</text>
+  <text x="392" y="112" class="md">Premise 2: Tom is an animal</text>
+  <text x="392" y="132" class="md t-chk">true</text>
+  <text x="392" y="164" class="md">Conclusion: Tom is a cat</text>
+  <text x="392" y="184" class="md t-unt">false: Tom is outside cat</text>
+</svg>
+</div>
+<figcaption>Figure 3. A countermodel is a concrete, finite world. Checking it only requires evaluating each claim in it, which is mechanical. Felix is optional; the smallest countermodel has Tom alone and no cats.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3>Proofs and proof certificates</h3>
+<p>Now the good version: "Every cat is an animal. Tom is a cat. So Tom is an animal." To prove it, VE uses a <span class="term">tableau</span>: assume the premises <em>and the negation of the conclusion</em>, then break formulas apart; if every branch ends in a contradiction, no world can make the premises true and the conclusion false, so the entailment holds.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:560px" viewBox="0 0 560 300" role="img" aria-label="Tableau proof: start from the premises and not animal(tom); instantiate the universal at tom; split the implication into two branches; both branches close with a contradiction.">
+  <rect x="160" y="10" width="240" height="84" rx="6" class="box"/>
+  <text x="280" y="32" text-anchor="middle" class="md mono">1. ∀x. cat(x) → animal(x)</text>
+  <text x="280" y="52" text-anchor="middle" class="md mono">2. cat(tom)</text>
+  <text x="280" y="72" text-anchor="middle" class="md mono">3. ¬animal(tom)   (negated goal)</text>
+  <line x1="280" y1="94" x2="280" y2="120" class="ln"/>
+  <text x="290" y="112" class="sm mut">instantiate 1 at tom</text>
+  <rect x="150" y="120" width="260" height="34" rx="6" class="box"/>
+  <text x="280" y="142" text-anchor="middle" class="md mono">4. cat(tom) → animal(tom)</text>
+  <path d="M280,154 L280,170 L140,170 L140,194" class="ln"/>
+  <path d="M280,170 L420,170 L420,194" class="ln"/>
+  <text x="290" y="186" class="sm mut">split 4</text>
+  <rect x="60" y="194" width="160" height="34" rx="6" class="box"/>
+  <text x="140" y="216" text-anchor="middle" class="md mono">5a. ¬cat(tom)</text>
+  <rect x="340" y="194" width="160" height="34" rx="6" class="box"/>
+  <text x="420" y="216" text-anchor="middle" class="md mono">5b. animal(tom)</text>
+  <line x1="140" y1="228" x2="140" y2="248" class="ln-chk"/>
+  <line x1="420" y1="228" x2="420" y2="248" class="ln-chk"/>
+  <rect x="50" y="248" width="180" height="40" rx="6" class="chk"/>
+  <text x="140" y="273" text-anchor="middle" class="md">closed: 5a vs 2</text>
+  <rect x="330" y="248" width="180" height="40" rx="6" class="chk"/>
+  <text x="420" y="273" text-anchor="middle" class="md">closed: 5b vs 3</text>
+</svg>
+</div>
+<figcaption>Figure 4. A closed tableau. Written down as data (which rule, applied to which line, with which object), it becomes a proof certificate that a short program can replay line by line.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<p>A <span class="term">proof certificate</span> is exactly that record, as data. The asymmetry that makes VE possible:</p>
+<div class="cols">
+  <div class="panel"><h4>Checking a certificate</h4><p><span class="pill ok">easy</span></p><p>Replay each recorded step and confirm every branch closes. Time roughly proportional to the certificate's size. The checker can be small enough to prove correct.</p></div>
+  <div class="panel"><h4>Finding a proof</h4><p><span class="pill warn">hard</span></p><p>For full first-order logic, validity is only semi-decidable: a search can confirm entailment eventually but may run forever when there is none. So search is budgeted and untrusted, and can be done by an AI.</p></div>
+  <div class="panel"><h4>Finding a countermodel</h4><p><span class="pill warn">bounded</span></p><p>VE searches finite worlds up to a size budget. Some non-entailments have only infinite countermodels, so a failed search means UNKNOWN, never "valid".</p></div>
+</div>
+
+<h3>Soundness</h3>
+<p>A deductive checker is <span class="term">sound</span> if accepting a certificate guarantees that the premises entail the conclusion. This is conditional: false premises can still imply a false conclusion. <span class="term">Completeness</span> means that every true entailment has an accepted certificate; finding it within a practical budget is a further requirement. VE's central theorem, <code>checkCertificate_sound</code>, proves soundness in <span class="term">Lean</span>, a programming language and proof assistant whose small kernel mechanically checks proofs. Its companion <code>countermodel_sound</code> proves that an accepted countermodel really refutes the entailment.</p>
+<div class="note"><strong>Why "admissible structures".</strong> Soundness is stated for all admissible structures, including ones with empty sorts. This is why the "all reviewed, so some reviewed" example fails: a proof that silently assumed a nonempty sort would be rejected.</div>
+</section>
+
+<!-- 4 -->
+<section id="architecture">
+<span class="secnum">SECTION 4</span>
+<h2>Architecture: how every part fits</h2>
+<p>The repository splits into a language layer (what a claim is and how it reads), a reasoning layer (proofs, countermodels, comparison), a composition layer (claim graphs), and a verification layer (the Lean reference against which the fast implementations are tested). An <span class="term">abstract syntax tree</span> (AST) is the structured data a parser builds from a claim's text.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:820px" viewBox="0 0 820 560" role="img" aria-label="Component architecture: writable English and strict surface parse to a typed AST with identities, which feeds renderings, untrusted proof and countermodel search, and the compare oracle. Search output passes a small trusted checker and evaluator, and checked edges compose into claim graphs. A Lean reference defines and proves the checker; Python and Rust implementations are tested against it.">
+  <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker></defs>
+  <text x="14" y="22" class="sm mut">LANGUAGE</text>
+  <rect x="14" y="34" width="200" height="62" rx="6" class="box"/>
+  <text x="114" y="58" text-anchor="middle" class="lg">Writable English</text>
+  <text x="114" y="78" text-anchor="middle" class="sm mono">ve_english</text>
+  <rect x="234" y="34" width="200" height="62" rx="6" class="box"/>
+  <text x="334" y="58" text-anchor="middle" class="lg">Strict surface</text>
+  <text x="334" y="78" text-anchor="middle" class="sm mono">ve_strict (canonical)</text>
+  <rect x="454" y="34" width="180" height="62" rx="6" class="unt"/>
+  <text x="544" y="58" text-anchor="middle" class="lg">ve propose</text>
+  <text x="544" y="78" text-anchor="middle" class="sm">new property words</text>
+  <rect x="654" y="34" width="152" height="62" rx="6" class="sunk"/>
+  <text x="730" y="58" text-anchor="middle" class="md">WordNet lexicon</text>
+  <text x="730" y="78" text-anchor="middle" class="sm mut">classifier only</text>
+  <line x1="654" y1="65" x2="638" y2="65" class="ln" marker-end="url(#a4)"/>
+  <path d="M544,96 L544,112 L420,112 L420,124" class="ln dash" marker-end="url(#a4)"/>
+  <text x="552" y="116" class="sm mut">adopted after review → new environment_id</text>
+  <line x1="114" y1="96" x2="114" y2="124" class="ln" marker-end="url(#a4)"/>
+  <line x1="334" y1="96" x2="334" y2="124" class="ln" marker-end="url(#a4)"/>
+  <rect x="14" y="128" width="620" height="60" rx="6" class="acc"/>
+  <text x="324" y="152" text-anchor="middle" class="lg">Parser + type checker → typed AST with identities</text>
+  <text x="324" y="174" text-anchor="middle" class="sm mono">environment_id (vocabulary hash) · meaning_id (canonical AST hash)</text>
+  <rect x="654" y="128" width="152" height="60" rx="6" class="box"/>
+  <text x="730" y="152" text-anchor="middle" class="md">5 read-only views</text>
+  <text x="730" y="172" text-anchor="middle" class="sm mut">symbols … fluent</text>
+  <line x1="634" y1="158" x2="650" y2="158" class="ln" marker-end="url(#a4)"/>
+
+  <text x="14" y="222" class="sm mut">REASONING</text>
+  <line x1="120" y1="188" x2="120" y2="234" class="ln" marker-end="url(#a4)"/>
+  <line x1="500" y1="188" x2="500" y2="234" class="ln" marker-end="url(#a4)"/>
+  <rect x="14" y="238" width="250" height="62" rx="6" class="unt"/>
+  <text x="139" y="262" text-anchor="middle" class="lg">Prover / countermodel search</text>
+  <text x="139" y="282" text-anchor="middle" class="sm">untrusted, budgeted (or an AI)</text>
+  <rect x="394" y="238" width="240" height="62" rx="6" class="box"/>
+  <text x="514" y="262" text-anchor="middle" class="lg">Compare oracle</text>
+  <text x="514" y="282" text-anchor="middle" class="sm mono">SAME / DIFFERENT / UNKNOWN</text>
+  <line x1="139" y1="300" x2="139" y2="338" class="ln" marker-end="url(#a4)"/>
+  <text x="148" y="324" class="sm">certificate or finite world</text>
+  <rect x="14" y="342" width="620" height="62" rx="6" class="chk"/>
+  <text x="324" y="366" text-anchor="middle" class="lg">Trusted core: certificate checker + model evaluator</text>
+  <text x="324" y="388" text-anchor="middle" class="sm">small, replays evidence, no search</text>
+  <path d="M514,300 L514,338" class="ln dash" marker-end="url(#a4)"/>
+  <text x="522" y="324" class="sm mut">uses both directions</text>
+
+  <text x="14" y="438" class="sm mut">COMPOSITION</text>
+  <line x1="324" y1="404" x2="324" y2="446" class="ln" marker-end="url(#a4)"/>
+  <text x="334" y="430" class="sm">accepted edges</text>
+  <rect x="14" y="450" width="620" height="62" rx="6" class="box"/>
+  <text x="324" y="474" text-anchor="middle" class="lg">Claim graph</text>
+  <text x="324" y="496" text-anchor="middle" class="sm">root claim ⇐ checked edges ⇐ every undischarged assumption kept</text>
+
+  <rect x="654" y="238" width="152" height="274" rx="6" class="sunk"/>
+  <text x="730" y="264" text-anchor="middle" class="sm mut">VERIFICATION</text>
+  <rect x="666" y="276" width="128" height="96" rx="6" class="chk"/>
+  <text x="730" y="300" text-anchor="middle" class="lg">Lean 4</text>
+  <text x="730" y="320" text-anchor="middle" class="sm">reference semantics</text>
+  <text x="730" y="338" text-anchor="middle" class="sm">11 headline theorems</text>
+  <text x="730" y="356" text-anchor="middle" class="sm">axiom-audited</text>
+  <line x1="666" y1="360" x2="638" y2="360" class="ln dash" marker-end="url(#a4)"/>
+  <line x1="730" y1="372" x2="730" y2="402" class="ln dash" marker-end="url(#a4)"/>
+  <text x="738" y="392" class="sm mut">tested vs</text>
+  <rect x="666" y="406" width="128" height="94" rx="6" class="box"/>
+  <text x="730" y="430" text-anchor="middle" class="lg">Python</text>
+  <text x="730" y="450" text-anchor="middle" class="lg">+ Rust</text>
+  <text x="730" y="472" text-anchor="middle" class="sm">production</text>
+  <text x="730" y="488" text-anchor="middle" class="sm">implementations</text>
+  <text x="14" y="540" class="sm mut">Dashed arrows: optional or offline paths. The Lean reference defines and proves the trusted core; the shipped Python and Rust are tested against it.</text>
+</svg>
+</div>
+<div class="legend"><span class="l-unt">untrusted producer</span><span class="l-chk">trusted, checked</span><span class="l-acc">canonical representation</span></div>
+<figcaption>Figure 5. Components. Trust flows only through the green boxes: everything amber may be wrong or adversarial, and the design is correct only if a wrong amber output can never pass green.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3>The language layer</h3>
+<h4>Strict canonical surface</h4>
+<p>One claim has exactly one strict text. Parentheses show every scope; variables are numbered <code>x0, x1…</code> in binding order. The Lean reference proves the printer and parser are inverse (parse/print round trip), so the text and the syntax tree carry the same information.</p>
+<h4>Identities</h4>
+<p><code>environment_id</code> hashes the vocabulary (sorts, predicates, constants, and their descriptions). <code>meaning_id</code> hashes a claim's canonical structure under that environment. If a word's description changes, the environment_id changes and every earlier sign-off visibly no longer applies. This is the mechanism against shifting definitions: two sub-arguments either use the same identity for "jurisdiction" or they visibly do not.</p>
+<h4>Five read-only renderings</h4>
+<p>The same claim can be displayed as <code>fol_symbols</code>, <code>fol_keywords</code>, <code>ve_strict</code>, <code>ve_natural</code>, and <code>ve_fluent</code>. For example (from <code>docs/fluent-examples.md</code>):</p>
+<pre><code>fol_symbols: ∀ x0:service, ((deployed(x0)) → (∃ x1:person, (owns(x1, x0)))).
+ve_strict:   for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).
+ve_fluent:   for every service S that is deployed, there is a person P such that P owns S.</code></pre>
+<h4>Writable regular-English surface</h4>
+<p><code>ve_english</code> is a controlled drafting language: determiners, relative clauses, and enumerated provisions ("all of the following hold: (a) …; (b) …") instead of formula brackets. No pronouns, no implicit witnesses, no simplification. A real sentence from the birthright-citizenship use case:</p>
+<pre><code>Every person who is born in the United States and is subject to US jurisdiction is a US citizen.</code></pre>
+<p>Its unambiguity (every accepted sentence has exactly one parse) is <strong>tested</strong>, on about 80,000 round trips and about 12,000 all-derivations checks, but <strong>not proved</strong>. New property words enter through <code>ve propose</code>, which previews the new predicate, flags near-duplicates (for instance <code>uk_citizen</code> next to <code>us_citizen</code>), and requires an explicit acknowledgement before adoption. A WordNet lexicon (Open English WordNet 2025, 72,780 entries) is used only as a classifier to decide which words are nouns or adjectives; it contributes no semantics.</p>
+<h4>Authoring loop: <code>ve assist</code></h4>
+<p><code>ve assist</code> (added September 2026) formalises a source text one sentence at a time. Each formal node is anchored to the sentence it formalises, every step must be certified by the checker, and the session reports success only when each target sentence is derived and no unanchored assumption carries the argument. An untrusted model may propose candidate formalisations, but nothing enters the graph unless the author adds it, and the session ledger replays every action. A re-review found five certification loopholes; fixes were in progress at the time of writing. The motivation is the P5 pilot, which found one-shot VE authoring infeasible (see <a href="#experiments">section 8</a>).</p>
+
+<h3>The reasoning layer</h3>
+<p>The prover and countermodel search are ordinary, fallible programs. The <strong>compare oracle</strong> asks whether two claims mean the same thing and answers with evidence: <code>SAME</code> (reported as EQUIVALENT: certificates in both directions), <code>DIFFERENT</code> (a finite world where one is true and the other false), or <code>UNKNOWN</code> (budget exhausted; reported, never guessed). This is how you check that a paraphrase, a translation, or a compacted summary still says what the original said.</p>
+
+<h3>Claim graphs</h3>
+<p>A <span class="term">claim graph</span> is a directed graph of claims in which each edge is a deduction with its own certificate. Leaves that are not derived from anything are <em>assumptions</em>, and the graph never drops them: a conclusion is reported as "follows from exactly these open assumptions". A Lean theorem proves graph composition sound (accepted edges compose without assuming anything about certificates in general).</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:620px" viewBox="0 0 620 270" role="img" aria-label="Toy claim graph: release is allowed follows from service reviewed and reviewed implies release allowed. Those claims depend on audit and policy assumptions shown as four dashed leaves.">
+  <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-chk"/></marker></defs>
+  <rect x="200" y="12" width="220" height="44" rx="6" class="acc"/>
+  <text x="310" y="39" text-anchor="middle" class="md">C: release is allowed</text>
+  <rect x="40" y="108" width="230" height="44" rx="6" class="box"/>
+  <text x="155" y="135" text-anchor="middle" class="md">B1: service is reviewed</text>
+  <rect x="350" y="108" width="230" height="44" rx="6" class="box"/>
+  <text x="465" y="135" text-anchor="middle" class="md">B2: reviewed ⇒ release allowed</text>
+  <line x1="155" y1="108" x2="270" y2="60" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="465" y1="108" x2="350" y2="60" class="ln-chk" marker-end="url(#a5)"/>
+  <text x="310" y="88" text-anchor="middle" class="sm t-chk">✓ certificate</text>
+  <rect x="10" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="80" y="226" text-anchor="middle" class="sm">L1: audit complete</text>
+  <text x="80" y="241" text-anchor="middle" class="sm">for this service</text>
+  <rect x="164" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="234" y="226" text-anchor="middle" class="sm">L2: audit complete</text>
+  <text x="234" y="241" text-anchor="middle" class="sm">⇒ reviewed</text>
+  <rect x="318" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="388" y="233" text-anchor="middle" class="sm">L3: policy signed</text>
+  <rect x="472" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="542" y="226" text-anchor="middle" class="sm">L4: signed policy</text>
+  <text x="542" y="241" text-anchor="middle" class="sm">⇒ rule B2</text>
+  <line x1="80" y1="206" x2="130" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="234" y1="206" x2="180" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="388" y1="206" x2="440" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="542" y1="206" x2="490" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+</svg>
+</div>
+<figcaption>Figure 6. An illustrative service-release graph. From L1 and L2 derive B1; from L3 and L4 derive B2; together B1 and B2 imply C. Green edges are checked. Dashed leaves still need review. A mandatory-proof protocol accepts only leaves in its reviewed foundations; merely drawing a checked graph is not enough.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3>An oversight protocol, end to end</h3>
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:800px" viewBox="0 0 800 300" role="img" aria-label="Oversight data flow: an untrusted AI produces a VE claim graph with certificates and a translation table; a trusted checker verifies deductions and reports open leaves; a critic may supply countermodels; the judge decides only the residual questions.">
+  <defs>
+    <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker>
+  </defs>
+  <rect x="10" y="100" width="130" height="80" rx="6" class="unt"/>
+  <text x="75" y="134" text-anchor="middle" class="lg">Untrusted AI</text>
+  <text x="75" y="154" text-anchor="middle" class="sm">arguer / debater</text>
+  <line x1="140" y1="140" x2="176" y2="140" class="ln" marker-end="url(#a6)"/>
+  <rect x="180" y="70" width="170" height="140" rx="6" class="box"/>
+  <text x="265" y="98" text-anchor="middle" class="lg">Submission</text>
+  <text x="265" y="124" text-anchor="middle" class="sm">English ↔ VE translation table</text>
+  <text x="265" y="146" text-anchor="middle" class="sm">claim graph</text>
+  <text x="265" y="168" text-anchor="middle" class="sm">certificates per edge</text>
+  <text x="265" y="190" text-anchor="middle" class="sm mono">ids pinned</text>
+  <line x1="350" y1="140" x2="386" y2="140" class="ln" marker-end="url(#a6)"/>
+  <rect x="390" y="90" width="160" height="100" rx="6" class="chk"/>
+  <text x="470" y="120" text-anchor="middle" class="lg">Trusted checker</text>
+  <text x="470" y="142" text-anchor="middle" class="sm">replays every edge</text>
+  <text x="470" y="162" text-anchor="middle" class="sm">rejects forged steps</text>
+  <line x1="550" y1="140" x2="586" y2="140" class="ln" marker-end="url(#a6)"/>
+  <text x="568" y="130" text-anchor="middle" class="sm">report</text>
+  <rect x="590" y="60" width="200" height="160" rx="6" class="hum"/>
+  <text x="690" y="88" text-anchor="middle" class="lg">Judge: residual only</text>
+  <text x="690" y="114" text-anchor="middle" class="sm">Are the open leaves true?</text>
+  <text x="690" y="134" text-anchor="middle" class="sm">Is the translation faithful?</text>
+  <text x="690" y="154" text-anchor="middle" class="sm">Were words defined the</text>
+  <text x="690" y="170" text-anchor="middle" class="sm">same way everywhere?</text>
+  <text x="690" y="200" text-anchor="middle" class="md">→ decision</text>
+  <rect x="390" y="236" width="160" height="50" rx="6" class="unt"/>
+  <text x="470" y="258" text-anchor="middle" class="md">Critic (optional)</text>
+  <text x="470" y="275" text-anchor="middle" class="sm">submits countermodels</text>
+  <line x1="470" y1="236" x2="470" y2="194" class="ln" marker-end="url(#a6)"/>
+  <text x="478" y="222" class="sm mut">also checked</text>
+  <text x="10" y="40" class="sm mut">Anything that crosses into the judge's box has either been checked or is explicitly marked as unchecked.</text>
+</svg>
+</div>
+<figcaption>Figure 7. The intended protocol (the now historical PLAN-V4 called the single-arguer version "VE-consultancy"). The decisive failure mode is a certified graph built on a <em>mistranslated</em> premise: every edge checks, and the judge must still notice that the formal leaf does not say what the English said.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<h3>Related systems, and where VE differs</h3>
+<div class="tbl" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead><tr><th>System</th><th>What it has</th><th>What it lacks, relative to VE's goal</th></tr></thead>
+<tbody>
+<tr><td>Attempto Controlled English (ACE)</td><td>Mature controlled English, ~100k-entry lexicon, maps to first-order logic</td><td>No verified checker; scope interpretation by rules rather than a proved-unambiguous surface</td></tr>
+<tr><td>Canonical English</td><td>Every content word bound to a WordNet sense</td><td>No semantics of its own: no entailment, no proof rules</td></tr>
+<tr><td>Catala</td><td>Law as code; default logic for exceptions; numbers and dates</td><td>Aimed at executable computation, not at checked argument graphs for oversight. VE plans to borrow its exception handling.</td></tr>
+<tr><td>Lean / mathlib</td><td>The standard for machine-checked mathematics</td><td>Statements are hard for non-experts to read. VE's working position: for serious mathematics use Lean, and offer VE as a readable statement layer.</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- 5 -->
+<section id="trust">
+<span class="secnum">SECTION 5</span>
+<h2>What is proved, what is tested, what is only judged</h2>
+<p>A research artifact is only as honest as its trust boundary. VE keeps three categories strictly apart, and so should anything you write about it.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:800px" viewBox="0 0 800 330" role="img" aria-label="Three columns: proved in Lean (checker soundness, countermodel soundness, strict round trip, graph composition, closure semantics and closure induction); tested but not proved (Python and Rust against the reference, English surface unambiguity, experiment replay); judged by humans only (premise truth, translation fidelity, vocabulary descriptions, intent).">
+  <rect x="10" y="10" width="250" height="310" rx="8" class="chk"/>
+  <text x="135" y="38" text-anchor="middle" class="lg">Proved in Lean</text>
+  <text x="135" y="56" text-anchor="middle" class="sm t-chk">machine-checked theorems</text>
+  <text x="26" y="92" class="md mono">checkCertificate_sound</text>
+  <text x="26" y="110" class="sm mut">acceptance ⇒ entailment</text>
+  <text x="26" y="140" class="md mono">countermodel_sound</text>
+  <text x="26" y="158" class="sm mut">accepted world really refutes</text>
+  <text x="26" y="188" class="md">parse ∘ print = id</text>
+  <text x="26" y="206" class="sm mut">strict surface round trip</text>
+  <text x="26" y="236" class="md">graph composition</text>
+  <text x="26" y="254" class="sm mut">checked edges compose soundly</text>
+  <text x="26" y="284" class="md">closure semantics + induction rule</text>
+  <text x="26" y="302" class="sm mut">tc / rtc, Warshall; closure-induct@1</text>
+
+  <rect x="275" y="10" width="250" height="310" rx="8" class="acc"/>
+  <text x="400" y="38" text-anchor="middle" class="lg">Tested, not proved</text>
+  <text x="400" y="56" text-anchor="middle" class="sm t-acc">evidence, not guarantees</text>
+  <text x="291" y="92" class="md">Python + Rust vs Lean reference</text>
+  <text x="291" y="110" class="sm mut">8,000 fuzzed agreements</text>
+  <text x="291" y="140" class="md">Lean re-checks certificates</text>
+  <text x="291" y="158" class="sm mut">732/732 pass; 150/150 forgeries fail</text>
+  <text x="291" y="188" class="md">English surface unambiguity</text>
+  <text x="291" y="206" class="sm mut">~80k round trips, ~12k all-derivations</text>
+  <text x="291" y="236" class="md">Experiment replay</text>
+  <text x="291" y="254" class="sm mut">Python replay; 500 P1 certificates in Lean</text>
+  <text x="291" y="284" class="md">JSON decoding, hashing, display</text>
+  <text x="291" y="302" class="sm mut">outside the proofs</text>
+
+  <rect x="540" y="10" width="250" height="310" rx="8" class="hum"/>
+  <text x="665" y="38" text-anchor="middle" class="lg">Still needs judgement</text>
+  <text x="665" y="56" text-anchor="middle" class="sm t-hum">the residual</text>
+  <text x="556" y="92" class="md">Are the premises true?</text>
+  <text x="556" y="110" class="sm mut">empirical evidence</text>
+  <text x="556" y="140" class="md">Is the translation faithful?</text>
+  <text x="556" y="158" class="sm mut">English intent ↔ VE formula</text>
+  <text x="556" y="188" class="md">Do descriptions match the world?</text>
+  <text x="556" y="206" class="sm mut">what "reviewed" means</text>
+  <text x="556" y="236" class="md">Is the spec the right spec?</text>
+  <text x="556" y="254" class="sm mut">omitted requirements</text>
+  <text x="556" y="284" class="md">Consistent premises?</text>
+  <text x="556" y="302" class="sm mut">contradictions prove anything</text>
+</svg>
+</div>
+<figcaption>Figure 8. The trust boundary. Lean proves the reference definitions correct; the code that runs in experiments is tested against that reference, not proved; and the right-hand column is, by design, the human's job.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<div class="note warn"><strong>Phrasing to use.</strong> Say "the Lean reference checker is proved sound" and "the Python and Rust implementations are differentially tested against it". Do not say "VE is formally verified". The Lean trust base also includes its kernel, compiler and runtime, and the JSON/AST decoding boundary. See <code>lean/README.md</code>, <code>lean/METATHEORY.md</code> and <code>lean/CLOSURE.md</code> for exact theorem statements in plain words.</div>
+</section>
+
+<section id="crypto">
+<span class="secnum">SECTION 6</span>
+<h2>The cryptography lens: check the evidence, bind the action</h2>
+<p>The useful asymmetry is between <strong>checking</strong> evidence and <strong>redoing</strong> the work that produced it. A stronger model adds little on a small task a judge already solves. Certificates become useful when search is expensive but the supplied evidence is cheap to check. This is a design lens borrowed from cryptography, not a claim that every VE task has this asymmetry.</p>
+
+<h3>A certificate for a “no” answer</h3>
+<p>In an access policy, a path of grants proves “account A can reach secret X”. “A cannot reach X” needs more than a search that happened to find nothing. A <span class="term">separating certificate</span> supplies a set <code>S</code> with three properties: A is in S; every edge starting in S ends in S; X is outside S. Any path from A must stay inside S, so it cannot reach X.</p>
+<pre><code>Complete toy policy: A → team, team → report
+Claim: A cannot access secret X
+Certificate: S = {A, team, report}
+
+Check: A is in S. Both edges stay in S. X is not in S.
+If a grant report → X is added, the certificate fails.</code></pre>
+<p>The set is an <span class="term">inductive invariant</span>: a property that holds at the start and is preserved by every allowed step. Checking it takes one pass over the policy's edges, plus set membership checks. This assumes the graph contains all relevant grants. A plain graph-search script can also decide reachability efficiently; the experiment must include that baseline. The advantage over an LLM reading a long policy is not an automatic advantage over conventional software.</p>
+
+<h3>Four rules for a certificate protocol</h3>
+<ol class="steps">
+  <li><strong>Authenticate the verdict.</strong> A digital signature lets the receiving system verify that the trusted checker issued a record and that its contents were not changed. The gate verifies it mechanically. A printed “checker says” line is not authentication, and a signature does not establish premise truth.</li>
+  <li><strong>Commit to meaning.</strong> A commitment fixes what was agreed before the argument or action. Pin <code>meaning_id</code> and <code>environment_id</code>; a changed claim or definition requires a new approval. These hashes bind formal structure, not the intended real-world meaning. Their protection also depends on correct hashing and identity checks.</li>
+  <li><strong>Define a security game.</strong> Give an attacker the system design and a clear win condition: getting a false claim or unsafe action approved. Measure attack success under a stated budget, alongside honest completion. Average accuracy on random mistakes is insufficient.</li>
+  <li><strong>Bind proof to execution.</strong> A <span class="term">proof-carrying action</span> is an exact tool call accompanied by evidence that it satisfies an approved policy. The gate executes only the call named in the checked record, against the relevant state. Trusted facts, tool behaviour and state changes remain part of the design.</li>
+</ol>
+<figure>
+<div class="fig compact" tabindex="0" role="region" aria-label="Proof-carrying action diagram">
+<svg style="--diagram-width:280px" viewBox="0 0 280 466" role="img" aria-label="Proposed proof-carrying action protocol: an agent submits an exact call, pinned meaning and evidence; the checker issues a signed verdict; a gate checks the signature and call binding; only then can it execute. Missing or mismatched evidence stops the action.">
+  <defs><marker id="crypto-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker></defs>
+  <rect x="10" y="10" width="260" height="94" rx="7" class="unt"/>
+  <text x="140" y="36" text-anchor="middle" class="lg">Agent submits</text>
+  <text x="140" y="57" text-anchor="middle" class="md">exact call + pinned claim</text>
+  <text x="140" y="77" text-anchor="middle" class="md">+ evidence</text>
+  <text x="140" y="96" text-anchor="middle" class="sm mut">untrusted proposal</text>
+  <line x1="140" y1="104" x2="140" y2="132" class="ln" marker-end="url(#crypto-arrow)"/>
+  <rect x="10" y="136" width="260" height="78" rx="7" class="chk"/>
+  <text x="140" y="162" text-anchor="middle" class="lg">Checker verifies evidence</text>
+  <text x="140" y="183" text-anchor="middle" class="md">issues a signed verdict</text>
+  <text x="140" y="203" text-anchor="middle" class="md">bound to this proposal</text>
+  <line x1="140" y1="214" x2="140" y2="242" class="ln" marker-end="url(#crypto-arrow)"/>
+  <rect x="10" y="246" width="260" height="78" rx="7" class="acc"/>
+  <text x="140" y="272" text-anchor="middle" class="lg">Gate verifies the record</text>
+  <text x="140" y="294" text-anchor="middle" class="md">signature + call</text>
+  <text x="140" y="314" text-anchor="middle" class="md">+ policy + state</text>
+  <line x1="75" y1="324" x2="75" y2="330" class="ln"/>
+  <line x1="75" y1="356" x2="75" y2="376" class="ln" marker-end="url(#crypto-arrow)"/>
+  <line x1="205" y1="324" x2="205" y2="330" class="ln"/>
+  <line x1="205" y1="356" x2="205" y2="376" class="ln" marker-end="url(#crypto-arrow)"/>
+  <text x="75" y="348" text-anchor="middle" class="sm t-chk">all checks pass</text>
+  <text x="205" y="348" text-anchor="middle" class="sm t-unt">otherwise</text>
+  <rect x="10" y="380" width="126" height="66" rx="7" class="chk"/>
+  <text x="73" y="408" text-anchor="middle" class="md">Execute</text>
+  <text x="73" y="430" text-anchor="middle" class="md">exact call</text>
+  <rect x="144" y="380" width="126" height="66" rx="7" class="unt"/>
+  <text x="207" y="408" text-anchor="middle" class="md">Stop /</text>
+  <text x="207" y="430" text-anchor="middle" class="md">unresolved</text>
+</svg>
+</div>
+<figcaption>Figure 9. Proposed proof-carrying actions. Review approves the policy and its meaning before this flow. Signatures protect the verdict's origin; proof checking protects the deduction. Neither makes the policy correct.</figcaption>
+</figure>
+<div class="note"><strong>Status.</strong> Claim identities and proof checking exist. Signed verdict gates and proof-carrying actions are design directions in <code>design/crypto-inspired-oversight.md</code>. The “cannot access” rule needed a closure-induction rule with a Lean soundness proof. That rule now exists as <code>closure-induct@1</code> (<code>docs/spec/closure-induction.md</code>): if the invariant holds at the source and every edge preserves it, it holds at everything reachable. <code>usecases/closure-induction/</code> holds two cyclic-policy certificates of “no member of group G reaches resource R” that replay in both Python and Lean. Whether such certificates help a judge is the T1c question, whose gate was running at the time of writing.</div>
+</section>
+
+<section id="frontier">
+<span class="secnum">SECTION 7</span>
+<h2>Where frontier judges fail</h2>
+<p>A <span class="term">frontier judge</span> is a model near the current capability frontier used to assess another system's work. A <span class="term">monitor</span> checks an agent's actions or log for problems. Neither is reliable in every setting. The literature points to conditions missing from VE's short, clean development items.</p>
+
+<h3>Pushback changes verdicts</h3>
+<p><a href="https://arxiv.org/html/2608.12645">Jagged Judges</a> reports <strong>25–71% verdict flips under static pushback and 62–91% with an adaptive persuader</strong> across its judging tasks. Among flips on labelled tasks, 56–63% under static pressure moved away from the correct answer; the adaptive level reached 70%. These are task-dependent flip rates, not one overall error rate. Reasoning settings also differed across model families.</p>
+<p><strong>VE can:</strong> make a checked deduction immune to persuasion if the system enforces the authenticated verdict. <strong>VE cannot:</strong> decide the subjective classifications in that paper or stop pressure on premise truth and translation. A model that merely reads a checker-looking label can still be misled.</p>
+
+<h3>Long logs hide important events</h3>
+<p>In <a href="https://arxiv.org/html/2605.12366v1">Classifier Context Rot</a>, Opus 4.6 with thinking detected an obvious attack 99.7% of the time in a 100,000-token transcript, but 69% in an 800,000-token transcript. Attacks in the middle were especially hard to detect.</p>
+<p><strong>VE can:</strong> check every submitted formal step without attention fading in the middle of a log. Runtime still grows with the evidence. <strong>VE cannot:</strong> guarantee that a model extracting claims from the log included the relevant event. Complete action mediation, checking every action before execution, would need an enforced gate.</p>
+
+<h3>The judge may lack the needed capability</h3>
+<p><a href="https://arxiv.org/html/2504.18530v2">Scaling Laws for Scalable Oversight</a> estimates oversight success at a 400-point general Elo gap as 51.7% for debate and 10.0% for backdoor-code detection. Elo is a comparative performance rating. These are fitted-model predictions for its oversight games, not direct error rates for every frontier judge.</p>
+<p><strong>VE can:</strong> let a weak verifier check evidence produced by a stronger prover, when that evidence is affordable. <strong>VE cannot:</strong> remove the capability gap in reviewing foundations, choosing the right specification, or recognising a mistranslation. Proof production can also fail within the budget.</p>
+
+<h3>“No” and “every” need coverage</h3>
+<p>A <span class="term">negative claim</span> says something is absent, such as “no access path exists”. A <span class="term">universal claim</span> covers every member of a set, such as “every account is blocked from secrets”. Checking a few examples cannot establish either. <a href="https://arxiv.org/abs/2506.11440">AbsenceBench</a> reports 69.6% F1 for Claude 3.7 Sonnet at about 5,000 tokens when detecting omitted material; F1 combines precision and recall. That is evidence about omissions, not a test of current frontier judges on universal policy claims. The supplied literature review found no such frontier study.</p>
+<p><strong>VE can:</strong> check an invariant or separating certificate covering all paths in a declared policy graph, now that the closure-induction rule exists. <strong>VE cannot:</strong> prove that the graph includes every real permission or that the policy asks the right question. T1c is the study designed to test this narrower certificate effect.</p>
+<div class="note warn"><strong>The boundary stays visible.</strong> A checker does not obey prompt injections in prose, but the extractor and the judge still might. A certified conclusion can also be true but misleading because an important requirement was omitted. VE does not establish the faithfulness of an agent's hidden reasoning.</div>
+<p class="meta">Project interpretation and study designs: <code>design/frontier-failure-modes-and-ve.md</code>. Literature scope and unverified items: <code>reviews/lit-frontier-judge-failures.md</code> in the companion review repository. These mechanisms are hypotheses about oversight benefit, not results of the cited studies.</p>
+</section>
+
+<!-- 8 -->
+<section id="experiments">
+<span class="secnum">SECTION 8</span>
+<h2>Experiments, and what they actually showed</h2>
+<p>The project has more negative and corrected results than positive ones. That is normal and valuable; learn to read them the way the project reports them: effect sizes with intervals, which judge, which items, and what the design can and cannot identify.</p>
+
+<div class="tbl" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead><tr><th>Study</th><th>Question</th><th>Finding</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>E0 coverage</td><td>How much real specification text fits VE?</td><td>Strict fit for logic benchmarks was 73–87% (second rater: FOLIO 22/30, ProofWriter 26/30). Real policy languages: Cedar 0/30 and Gatekeeper 1/30 strict, blocked by missing numbers, strings, attributes, sets and priorities; 13/30 and 6/30 with explicit encodings. The two raters disagreed on 77 of 210 items, so read these as a spread, not a rate. A closure profile has since added reachability, which covers nested groups; numbers are in progress.</td><td><span class="pill warn">mixed</span></td></tr>
+<tr><td>E1 renderings</td><td>Does English rendering help a model judge sign off specifications?</td><td>No demonstrated benefit for a capable 32B judge (Qwen2.5-32B) over symbolic FOL: false approval 0.293 with VE against 0.296 with FOL. Some surface effects for a weaker 14B judge. An honest structured description of the candidate cut 32B false approval from 0.31 to 0.05 on development data, a bigger effect than any rendering.</td><td><span class="pill neu">negative</span></td></tr>
+<tr><td>E4 checked countermodels</td><td>Does checked critic feedback help a weak judge reject bad arguments?</td><td>For the 14B judge, false approval fell by 0.117 under post hoc lenient parsing (interval −0.231 to −0.002); the 7B judge mostly stopped rejecting everything. Caveat: the checked arm displays the finding that defines the label, so this is uptake of checker output, not comprehension of countermodels. No forged-checker control was run; P1 added one.</td><td><span class="pill ok">positive, bounded</span></td></tr>
+<tr><td>P1 deference</td><td>Do judges defer to things that <em>look</em> like checker output?</td><td>1,128/1,128 initial Qwen judgements completed; 119/120 pushback trajectories usable. Forged formatting harmed accuracy in E4. Pushback resistance is not established; see the confounds below.</td><td><span class="pill warn">exploratory</span></td></tr>
+<tr><td>P2 flaw taxonomy</td><td>Where do the flaws in real arguments live?</td><td>One rater labelled 228 flaws from five annotated corpora: invalid steps 35% (interval 29–41), false or unjustified premises 20%, wrong statements 16%, other 25%. A deduction checker alone addresses about a third. Equivocation was rare (2/228). Single rater, about 30% of labels marked unsure.</td><td><span class="pill warn">indicative</span></td></tr>
+<tr><td>Frontier ceiling</td><td>Do short, clean deduction items leave room for improvement?</td><td>Frontier judges were near ceiling in two further internal pilots: a formalisation-fidelity audit (called V4; 87% of translations faithful) and a consultancy pilot (called D), where a dishonest Opus consultant won 0/24 items. P1 Gemini made 0/112 E4 and 0/96 E5 development errors, repeating 16 items per panel across arms. These are 208 judgements, not 208 independent items.</td><td><span class="pill neu">limited setting</span></td></tr>
+<tr><td>T1 and T1b access gates</td><td>Can long policies induce false “no access” approvals?</td><td>At 1,500 grants Opus wrongly approved 2/30 sabotaged claims (6.7%). At 5,000 grants Opus approved 1/30; Haiku approved 6/30 sabotaged claims but also only 6/30 honest ones. Headroom exists only for a weak monitor. These motivate T1c; they are not certificate results.</td><td><span class="pill warn">pilot</span></td></tr>
+<tr><td>P3 policy properties</td><td>Can VE certify claims about all accounts?</td><td>On 40 real policies, formalisations were faithful 40/40 after repair, at about 1.5× the tokens and 4× the time. 6/12 universal properties were certified. Sampled translation checks caught 66% of seeded mistranslations, leaving substantial gaps. No benefit for single requests that a frontier judge could solve directly.</td><td><span class="pill warn">partial</span></td></tr>
+<tr><td>Iceberg proof</td><td>Can mandatory proof handle a BC20 physics example?</td><td>One root theorem proved inside the reviewed physical model: 912 seconds, about 2.1M input tokens (mostly cached), four failed attempts of six. Foundations remain unproved; author-only review.</td><td><span class="pill warn">one pilot</span></td></tr>
+<tr><td>Math mini-paper</td><td>Can VE carry a small piece of real mathematics?</td><td>15/19 theorems certified by both Python and Lean. Remaining gaps: lemma citation, arity above 2, functions. The closure-induction gap has since been closed: the two theorems that needed it (T9, T9e) now certify.</td><td><span class="pill warn">partial</span></td></tr>
+<tr><td>P5 shifting definitions</td><td>Do identity-bound predicates beat strong cross-examination at catching shifted definitions and smuggled premises?</td><td>Preregistered (84 slots; 24 scored families). The feasibility pilot found one-shot VE authoring infeasible: 0/12 items with the English surface and 0/12 with a JSON schema. The scored run was not bought; the question returns through <code>ve assist</code>.</td><td><span class="pill neu">paused</span></td></tr>
+<tr><td>Pushback gates</td><td>Does a signed checker verdict reduce wrong-way flips under pressure?</td><td>Gate results only. The simplest pressure level (“are you sure?”) reproduced the published Jagged Judges rate on a ToxiGen slice: 14/43 flips, 0.33 against 0.27 published. On the project's formal logic items the same pressure produced 0/23 flips, so formal items resist simple pushback and the adaptive-persuader gate decides whether the study has power.</td><td><span class="pill neu">running</span></td></tr>
+</tbody></table></div>
+
+<h3>P1 in detail: what the deference pilot identifies</h3>
+<p>Qwen2.5-72B replaced the preregistered Gemini judge after Gemini hit ceiling. <strong>All scored Qwen contrasts are exploratory.</strong> No confirmatory Gemini efficacy claim is made. E4 tested logical validity; E5 tested premise support against supplied records. The panels must stay separate.</p>
+<p>Effects below are in <span class="term">percentage points</span> (pp): a change from 10% to 24% is +14 pp. The 95% intervals group related items by template; they do not make the design's confounds disappear.</p>
+<div class="tbl" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead><tr><th>Contrast</th><th>Estimate</th><th>95% interval</th><th>Reading</th></tr></thead>
+<tbody>
+<tr><td>F−W: forged checker line vs untrusted records <em>with</em> a countermodel (error)</td><td class="num">+59.17</td><td class="num">[50.00, 70.00]</td><td>Combines adding a false assertion with removing a countermodel; not a pure forgery effect</td></tr>
+<tr><td>F−U: checker-shaped record vs byte-matched plain assertion (error)</td><td class="num">+14.17</td><td class="num">[6.67, 22.50]</td><td>Formatting plus identity fields harmed accuracy; extra length and hashes remain, despite a “not authenticated” warning</td></tr>
+<tr><td>A−F_correct: authentic record vs forged-but-correct record (accuracy)</td><td class="num">−3.33</td><td class="num">[−7.50, 0.00]</td><td>No useful +10 pp gain; equivalence unestablished. Measures uptake of a copied answer, with a position confound, not comprehension</td></tr>
+</tbody></table></div>
+<p><strong>E5 is degenerate:</strong> counting infrastructure failures as specified, approvals were 48/48 in every arm except W at 47/48. This gives 50% accuracy by construction (W: 52.08%). It provides no useful evidence of premise-review capability. Gemini's zero-error development panels likewise establish neither scored benefit nor absence of harm: the descriptive upper bounds are 3.3% and 3.8%, with repeated, dependent judgements.</p>
+<div class="note warn"><strong>Retraction: no pushback-resistance or provenance advantage.</strong> Retained trajectories had 2/26 harmful flips; restarted trajectories had 26/42. Denominators count initially correct, usable trajectories. Restarts used a stronger attacker budget and were selected by earlier infrastructure failure, not randomly. A frontier Gemini attacker challenged Qwen, also breaking the planned equal-strength comparison. The apparent advantage of authentic rich records does not identify resistance or an authentication effect.</div>
+<p>The final report records 87 attacker concessions, 32 completed two-turn trajectories and one infrastructure-incomplete trajectory. Usable coverage is 119/120. Do not convert that last failure into a successful defence. Nor do the rich-record and bare-verdict arms isolate provenance: both arrived through trusted channels.</p>
+<p>The design lesson is to authenticate output in the system. A <span class="term">trusted channel</span> is a route the arguer cannot forge. This is a protocol requirement, not an established causal benefit of P1's wording. Source: <code>experiments/P1-deference/RESULTS.md</code>, “Summary for the paper”, final Amendment 15 analysis.</p>
+
+<h3 id="next-studies">Two headline experiments, now at their gate stage</h3>
+<p>These were recommended in the September design notes and have since been reviewed, preregistered and started. At the time of writing only gate results existed (table above), <strong>not completed results</strong>. Honest completion means the fraction of valid requests the system successfully accepts. Measure it alongside false approvals: a system that rejects everything is safe on that metric but useless.</p>
+<ol class="steps">
+  <li><strong>Pushback with signed checker verdicts</strong> (<code>PLAN-PUSHBACK.md</code>). Reuse the Jagged Judges pressure ladder exactly: doubt, counterargument, asserted expertise, fabricated consensus, a random mix and an adaptive persuader, over ten turns. Items mix a checker-decided part (entailment) with a judge-decided part (translation faithfulness, with planted mistranslations), so the judge always has something real to decide. Three arms: a holistic verdict with no checker; the same verdict decomposed into VE leaves with a named catch-all judgement slot; and the decomposed version plus a signed verdict that the system will not let the judge override. The first two isolate decomposition; the last two isolate the lock. A locked verdict cannot flip by construction, so the primary endpoint is wrong-way flips of the <em>system's final verdict</em> (checker verdict combined with the judge's residual verdict), with residual flips reported separately. Harm controls: forged verdicts that look signed, injected in the user channel; and corrective pushback towards the right answer, which the locked arm must not resist. Gate: if the no-checker arm flips less than 10% of the time on the project's logic items, the residual becomes the primary endpoint.</li>
+  <li><strong>T1c: certificates for “cannot access”</strong> (<code>PLAN-V5-DEMO.md</code>). The closure-induction rule from <a href="#crypto">section 6</a> is built and proved. An untrusted agent, sabotaging on half the items, claims that a user cannot reach a resource in a synthetic policy given in mixed formats; ground truth comes from a trusted graph search. Arms: the judge reads the raw policy; the agent submits its own script, run by the harness; the agent transcribes the policy to an edge list for a trusted search; the agent submits a VE formalisation plus certificate, with a coverage check and an adaptive mistranslation attack; and the judge writes and runs its own code. Judges are Opus 5.5 and Haiku 4.5. Score false approval of sabotaged claims against honest completion. The crypto note proposed 5,000 and 20,000 grants; the reviewed plan and its preregistration fix the final sizes. If a plain script does as well as the VE arm, attribute the gain to certificate checking, not to VE.</li>
+</ol>
+<p>If residual errors remain as frequent as the original errors, the protocol has relocated the problem. Neither study by itself establishes safe oversight in open-ended tasks.</p>
+
+<h3>Planned obfuscation study: measure rejection and its cost</h3>
+<p>The VEX note proposes BC20-style arguments with long chains of plausible leaves, including statistical and approximate claims. Compare judge alone, debate, and VEX with mandatory evidence and propagated bounds. Include both dishonest arguments with a false leaf and honest arguments with uncertain support. Measure <strong>false certifications</strong> and <strong>honest claims left unestablished</strong>, plus authoring and checking cost. Near-zero false certification is a prediction conditional on correct foundations and checks, not a measured result. Classify failures into bad deductions, unsupported leaves, wrong foundations and unfaithful translations. This tests where obfuscation moves as well as whether it is blocked.</p>
+<p>After review (<code>PLAN-OBFUSCATION.md</code>) the pilot was cut to fully formalisable chains only: 8 or 32 steps over 4 leaves, 24 items, with mandatory proof as the only VE arm, since mandatory evidence adds nothing when every leaf is proved. The dishonest prover may iterate against Lean and a proxy judge with a library of misformalisation tricks, and a programmatic set of planted misformalisations measures judge recall independently. Gates require that the judge alone is actually fooled at 32 steps and that an honest prover certifies at least 70% of short honest items. One reviewer's verdict was “conditional go for diagnostics, not comparative claims”. It is scheduled after the pushback study and T1c.</p>
+
+<h3>What PLAN-V4 taught, and what replaced it</h3>
+<p>PLAN-V4 (September 2026, now historical) aimed to show a VE benefit for frontier models close to published protocols. Both frontier reviewers found that its first draft let VE arms win by construction: on closed-world items with given premises, “certified, and every leaf is among the facts” <em>is</em> the label. The revision studied <em>adversarially induced</em> errors instead, and its four rules remain the project's methodology:</p>
+<ol class="steps">
+<li><strong>A. Endpoint audit.</strong> Make sure each model call is exactly the model and context claimed.</li>
+<li><strong>B. Formalisation-fidelity audit.</strong> How often does a frontier model translate free English into VE faithfully? Everything downstream depends on this rate.</li>
+<li><strong>C. Calibration.</strong> Use fresh logic items with proof by cases, nested quantifiers and near-miss distractors at roughly constant length. Count errors recurring across at least three samples. Select item types on a Sonnet development split; test on a held-out split without selecting Opus failures. Disclose any judge reasoning cap.</li>
+<li><strong>D. Matched-budget comparison.</strong> Judge alone (majority of repeated calls), consultancy, debate, judge-formalises-and-checks, VE-consultancy and VE-debate all receive free-English premises at matched total reasoning and authoring budgets. An adaptive attacker can use the checker to build a certified graph on a mistranslated premise; the judge must assess the translation. Independently switch premise lookup and proof checking on or off while holding presentation fixed. Success requires beating both debate and the strong direct baseline, with adequate sample size and no unacceptable loss of honest completion. An underpowered null result is inconclusive.</li>
+</ol>
+<p>Its fidelity audit and phase-D pilot then found frontier judges near ceiling (table above). On 22 September 2026 the plan was superseded by <code>PLAN-V5-DEMO.md</code>, which reframes the claim as <em>trusted verification of untrusted work</em>: an untrusted agent supplies evidence, a small checker verifies it, and the honest comparisons are against the agent's own script and against the judge writing its own code. Its first task is the T1c access audit above. <code>ROADMAP.md</code> is the single entry point for status and the queue: the pushback study, T1c, the <code>ve assist</code> evaluation, the obfuscation pilot, the numbers profile, a Lean proof of surface unambiguity, and the paper revision.</p>
+<div class="note human"><strong>Reading the abstract.</strong> <code>paper/sections/00-abstract.md</code> opens with a negative result: strict controlled English did not improve a capable model judge's sign-off. Human sign-off and scalable oversight remain untested. That candour is deliberate; keep it.</div>
+</section>
+
+<section id="vision">
+<span class="secnum">SECTION 9</span>
+<h2>The vision: a commitment layer with room for judgement</h2>
+<p>The long-term idea is a <span class="term">commitment layer</span>: a precise record of statements that people or agents will be held to. A law, contract, scientific method, safety procedure or agent instruction would have an approved formal meaning. Ordinary conversation, art and brainstorming remain ordinary language. A translator could draft the formal version; its author would approve an unambiguous paraphrase and take responsibility for corrections.</p>
+<p>This is a vision for an extended language, not today's VE coverage. It needs numbers, probabilities, tolerances, time, obligations, exceptions and versioned definitions. It also needs translator audits, readable approval interfaces and a way to propagate corrections through dependent claims. Adding expressive power can make proof search harder and increase UNKNOWN outcomes.</p>
+
+<h3>Open texture: where the world still needs a judge</h3>
+<p><span class="term">Open texture</span> means that a term can be clear in ordinary cases yet need judgement in a new one. “Reasonable”, “harmful” and “demeaning” have this property. A precise rule using such a term does not decide whether it applies to a particular event.</p>
+<p><strong>Example:</strong> a rule forbids demeaning messages. Break out narrow questions where possible: does the message name its target, quote a threat, or repeat a prohibited slur? Keep “or otherwise demeans, as judged by the review panel” as an explicit catch-all. Otherwise an adversary could satisfy every narrow test while evading the purpose of the rule.</p>
+<p>The <span class="term">designated-judgement design</span> gives each unresolved predicate a named decision-maker, an evidence requirement, a recorded ruling and an appeal route. Decompose until judges agree enough for the stakes. Keep truly holistic terms intact when needed, but use one definition consistently and record relevant factors. Later rulings can refine definitions, as precedents do; version them so old documents retain their meaning.</p>
+<div class="note human"><strong>Testable hypothesis, not a promise.</strong> Smaller, explicit judgement questions may yield fewer pushback flips and better agreement between judges. The proposed pushback study tests this. A named decision-maker can still be wrong or biased; designation makes responsibility visible.</div>
+
+<h3>The island thought experiment</h3>
+<p>Imagine an island whose constitution, laws and binding written commitments use this extended VE. An author approves a readable translation; agents supply policy proofs before acting; disputes over vague terms go to designated decision-makers. The hoped-for gains are fewer hidden contradictions, clearer disputes and more reproducible methods. None has been established by the thought experiment.</p>
+<p>The island would still need social choices: who decides, how to appeal, which tolerances count as “around”, how to audit common translators and how to avoid approval fatigue. Analogies, suggestions and deliberate ambiguity could have explicitly marked forms. The vision is precise commitments with visible judgement, not a claim that all human meaning can be mechanically decided.</p>
+<p class="meta">Source: <code>design/vision-and-open-texture.md</code>, a position note, not an implementation plan.</p>
+</section>
+
+<!-- 10 -->
+<section id="process">
+<span class="secnum">SECTION 10</span>
+<h2>How the project is run</h2>
+<p>Most code is written by AI coding agents, directed by an orchestrator model, with the project lead setting priorities. The process exists to catch the mistakes such a setup makes: optimistic claims, experiments that win by construction, and silent changes to analysis after seeing data.</p>
+
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:800px" viewBox="0 0 800 300" role="img" aria-label="Process loop: a plan is reviewed by two frontier models, preregistered and timestamped with OpenTimestamps, then an orchestrator dispatches coding agents to separate git worktrees; each change is reviewed by the other model family before merge; results and corrections feed the backlog and the next plan.">
+  <defs><marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker></defs>
+  <rect x="10" y="30" width="140" height="64" rx="6" class="box"/>
+  <text x="80" y="58" text-anchor="middle" class="lg">Plan</text>
+  <text x="80" y="78" text-anchor="middle" class="sm mono">PLAN-V*.md</text>
+  <line x1="150" y1="62" x2="186" y2="62" class="ln" marker-end="url(#a7)"/>
+  <rect x="190" y="30" width="170" height="64" rx="6" class="hum"/>
+  <text x="275" y="56" text-anchor="middle" class="lg">Two frontier</text>
+  <text x="275" y="76" text-anchor="middle" class="lg">reviews</text>
+  <line x1="360" y1="62" x2="396" y2="62" class="ln" marker-end="url(#a7)"/>
+  <text x="378" y="52" text-anchor="middle" class="sm">revise</text>
+  <rect x="400" y="30" width="170" height="64" rx="6" class="acc"/>
+  <text x="485" y="56" text-anchor="middle" class="lg">Preregister</text>
+  <text x="485" y="76" text-anchor="middle" class="sm">hash + OpenTimestamps</text>
+  <line x1="570" y1="62" x2="606" y2="62" class="ln" marker-end="url(#a7)"/>
+  <rect x="610" y="30" width="180" height="64" rx="6" class="box"/>
+  <text x="700" y="56" text-anchor="middle" class="lg">Orchestrator</text>
+  <text x="700" y="76" text-anchor="middle" class="sm">dispatches tasks</text>
+  <line x1="700" y1="94" x2="700" y2="130" class="ln" marker-end="url(#a7)"/>
+  <rect x="560" y="134" width="230" height="64" rx="6" class="unt"/>
+  <text x="675" y="160" text-anchor="middle" class="lg">Coding agents</text>
+  <text x="675" y="180" text-anchor="middle" class="sm">one git worktree each</text>
+  <line x1="560" y1="166" x2="484" y2="166" class="ln" marker-end="url(#a7)"/>
+  <text x="522" y="156" text-anchor="middle" class="sm">diff</text>
+  <rect x="310" y="134" width="170" height="64" rx="6" class="chk"/>
+  <text x="395" y="160" text-anchor="middle" class="lg">Cross-family</text>
+  <text x="395" y="180" text-anchor="middle" class="lg">review → merge</text>
+  <line x1="310" y1="166" x2="234" y2="166" class="ln" marker-end="url(#a7)"/>
+  <rect x="60" y="134" width="170" height="64" rx="6" class="box"/>
+  <text x="145" y="160" text-anchor="middle" class="lg">Run + analyse</text>
+  <text x="145" y="180" text-anchor="middle" class="sm">per preregistration</text>
+  <line x1="145" y1="198" x2="145" y2="234" class="ln" marker-end="url(#a7)"/>
+  <rect x="60" y="238" width="400" height="50" rx="6" class="box"/>
+  <text x="260" y="268" text-anchor="middle" class="md">Results, amendments, retractions → ROADMAP.md (status, queue)</text>
+  <path d="M60,263 L30,263 L30,110 L80,110 L80,98" class="ln dash" marker-end="url(#a7)"/>
+  <text x="48" y="226" class="sm mut" transform="rotate(-90 48 226)">next plan</text>
+</svg>
+</div>
+<figcaption>Figure 10. The working loop. Deviations from a preregistration are recorded as numbered amendments (P1 reached amendment 15) rather than silently applied.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+
+<div class="cols">
+  <div class="panel"><h4>Orchestrator and worktrees</h4><p>One orchestrating model breaks work into self-contained tasks and hands each to a coding agent working in its own git worktree, to keep edits separate until they are reviewed and integrated. State lives in plain files (a run log, <code>ROADMAP.md</code> for status and the queue, one specification file per study), so any session can resume.</p></div>
+  <div class="panel"><h4>Cross-family review</h4><p>Every change is reviewed by an agent from a <em>different</em> model family than its author before merge. Different families make different mistakes, and a model reviewing its own family's work tends to share its blind spots.</p></div>
+  <div class="panel"><h4>Plans reviewed twice</h4><p>Every research plan is reviewed by two frontier models from different families at high reasoning effort before any money is spent, and a plan's “after review” section is binding. The PLAN-V4 revision is a direct product: both reviewers said "proceed with changes, large". When one family is unavailable a substitute reviews, and a merge reviewed only by the substitute is re-checked before it counts.</p></div>
+  <div class="panel"><h4>Preregistration</h4><p>Hypotheses, items, analysis and stopping rules are written and hashed before data collection, and the hashes are anchored with OpenTimestamps (a free service that stamps a hash into the Bitcoin blockchain), so anyone can verify the plan predates the results. See <code>experiments/PREREG-HASHES.txt</code> and its <code>.ots</code> proof. Frozen preregistrations are never edited; corrections go in <code>experiments/CORRECTIONS.md</code> and per-experiment correction files.</p></div>
+</div>
+</section>
+
+<!-- 11 -->
+<section id="contribute">
+<span class="secnum">SECTION 11</span>
+<h2>Open problems and how to start contributing</h2>
+
+<h3>Your first afternoon</h3>
+<p>Run these commands from the VE integration repository, not the directory containing this onboarding page. They reproduce the empty-sort example and build the Lean reference. The commands are a starting workflow; this page revision did not rerun the project's full build.</p>
+<pre><code>uv sync
+uv run python -m pytest
+uv run python -m ve countermodel --env examples/environment.json \
+    --premises examples/premise.ve --conclusion examples/conclusion.ve
+uv run python -m ve render --env examples/environment.json --view ve_fluent examples/requirements.ve
+(cd lean &amp;&amp; lake build)</code></pre>
+<p>Then read, in this order: <code>README.md</code>, <code>docs/spec/v0-language.md</code>, <code>docs/architecture-and-design.md</code>, <code>docs/english-surface.md</code>, <code>lean/METATHEORY.md</code>, <code>design/positioning-vs-debate-theory.md</code> (including “Correction 2”), <code>experiments/P1-deference/RESULTS.md</code> (“Summary for the paper”), then <code>ROADMAP.md</code> for status and the queue, and the active study specifications <code>PLAN-PUSHBACK.md</code>, <code>PLAN-V5-DEMO.md</code> and <code>PLAN-OBFUSCATION.md</code> (their “after review” sections are binding; <code>PLAN-V4.md</code> is historical). For the new directions, read <code>design/frontier-failure-modes-and-ve.md</code>, <code>design/crypto-inspired-oversight.md</code>, <code>design/vex-mandatory-evidence.md</code>, <code>design/vision-and-open-texture.md</code> and <code>docs/spec/closure-induction.md</code>.</p>
+
+<h3>Starter tasks</h3>
+<div class="tasks">
+  <div class="task"><div class="hdr"><h4>Audit the pushback study against P1's confounds</h4><span class="pill hum">days · experiments</span></div><p>Read P1's “Summary for the paper”, then the final design in <code>PLAN-PUSHBACK.md</code>. Check, item by item, that it fixes what P1 could not identify: equal attacker budgets across arms, forged records that look signed, honest completion and corrective pushback, and how infrastructure failures are scored. Write any gap up as a proposed amendment before the scored run, not after.</p></div>
+  <div class="task"><div class="hdr"><h4>Work through a separating certificate</h4><span class="pill warn">days · logic + Lean</span></div><p>Start with the toy graph in section 6. Read the closure-induction rule in <code>docs/spec/closure-induction.md</code> and its Lean proof (<code>lean/CLOSURE.md</code>), then replay the two cyclic-policy certificates in <code>usecases/closure-induction/</code>. Write a separating-set certificate for the toy graph, construct a rejection example (add a grant that breaks the invariant), and compare the certificate's scope and cost with a plain reachability script. Then read the T1c design in <code>PLAN-V5-DEMO.md</code>.</p></div>
+  <div class="task"><div class="hdr"><h4>Attack <code>ve assist</code></h4><span class="pill warn">days · Python + logic</span></div><p>Run the worked example in <code>README.md</code>. A re-review found five ways a session could report success without a faithful formalisation. Read the fix, then try to construct a session that reaches success while a load-bearing assumption is unanchored or a target is weakened. Every loophole you find is a test case.</p></div>
+  <div class="task"><div class="hdr"><h4>Formalise a new use case</h4><span class="pill ok">days · no prior logic needed</span></div><p>Copy the layout of <code>usecases/us-constitution-14th-s1/</code> (<code>source.md</code>, <code>environment.json</code>, <code>claims.ve</code>, <code>claims.map.md</code>, <code>coverage.md</code>, <code>GAPS.md</code>) for a short text you care about. The most useful output is <code>GAPS.md</code>: what you could not say.</p></div>
+  <div class="task"><div class="hdr"><h4>Design arity above two</h4><span class="pill warn">weeks · logic</span></div><p><code>usecases/math-mini-paper/GAPS.md</code> (G2) calls this the cheapest high-value extension: <code>between(a, b, c)</code>, <code>sum(a, b, c)</code>. Semantics and tableau rules barely change; the surface syntax and fluent templates do. Write the design against <code>docs/spec/v0.1-profiles.md</code>.</p></div>
+  <div class="task"><div class="hdr"><h4>Template linter precision pass</h4><span class="pill ok">days · Python</span></div><p>The linter rejects many natural predicate templates (seen in all four prose use cases; <code>ROADMAP.md</code> section 5, “Language usability”). Collect rejected templates from <code>usecases/*/environment.english.json</code> work, classify false rejections, and propose rules.</p></div>
+  <div class="task"><div class="hdr"><h4>Formalisation-fidelity audit materials</h4><span class="pill hum">weeks · experiments</span></div><p>PLAN-V4's step B ran once: items in free English, a model writes the English→VE table and graph, and the faithful-translation rate was 87% on its items. A reusable audit needs written annotation guidelines and an independent-model check against gold logic. Draft them and re-score the existing items.</p></div>
+  <div class="task"><div class="hdr"><h4>Differential testing of Rust</h4><span class="pill ok">days · Rust</span></div><p>Extend <code>conformance/fuzz.py</code> and <code>rust/fuzz_closure.py</code> coverage to new constructs; every disagreement with the Lean reference is a bug somewhere.</p></div>
+  <div class="task"><div class="hdr"><h4>Lemma citation in claim graphs</h4><span class="pill warn">months · logic + Lean</span></div><p>Let a proof cite an already-certified lemma instead of re-proving it (a math mini-paper gap, planned as round 2 of <code>PLAN-EXPAND.md</code>). Needs a soundness argument in <code>lean/VE/ClaimGraph.lean</code> style.</p></div>
+</div>
+
+<h3>Longer-term roadmap</h3>
+<div class="tbl" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead><tr><th>Item</th><th>Horizon</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Authoring IDE: an LLM drafts VE, then paraphrases it back in plain English for the author to confirm</td><td class="num">partly built</td><td><code>ve assist</code> covers the sentence-at-a-time loop; a fluent paraphrase-back and a blind fidelity audit are the remaining pieces. Targets the translation-fidelity residual directly</td></tr>
+<tr><td>Pushback study and T1c</td><td class="num">running</td><td>Both reviewed, preregistered and timestamped; only gate results so far (section 8)</td></tr>
+<tr><td><code>ve assist</code> held-out evaluation</td><td class="num">queued</td><td>12 held-out P5 items; success means the ledger replays, targets certify and a blind fidelity audit passes</td></tr>
+<tr><td>Obfuscation pilot (mandatory proof)</td><td class="num">after the two above</td><td>Fully formalisable chains only, diagnostics not comparative claims; the VEX evidence layer waits for statistical leaves</td></tr>
+<tr><td>Policy-grade extensions: numbers, dates, attributes, sets, exceptions</td><td class="num">months</td><td>Numbers profile in progress (<code>PLAN-EXPAND.md</code>); needed for Cedar/Gatekeeper-style policies; borrow exceptions and dates from Catala</td></tr>
+<tr><td>Lemma citation</td><td class="num">months</td><td>Round 2 of the numbers plan; unblocks longer mathematics</td></tr>
+<tr><td>Lean proof of English-surface unambiguity</td><td class="num">after grammar settles</td><td>Only once the numbers grammar is stable; today it is tested, not proved</td></tr>
+<tr><td>Demonstration tasks (<code>PLAN-V5-DEMO.md</code>)</td><td class="num">active</td><td>Replaces PLAN-V4; access audit first (T1c), rule-set consistency later, requirement-drift task cut</td></tr>
+<tr><td>Proof-carrying actions</td><td class="num">conditional</td><td>Only if the pushback study or T1c shows signal</td></tr>
+</tbody></table></div>
+
+<h3>Research questions nobody has answered</h3>
+<ul>
+<li>Is judging translation faithfulness actually easier than judging the original argument? This is the load-bearing assumption of the whole thesis.</li>
+<li>Does identity binding beat cross-examination at catching shifted definitions (P5), at matched cost and without hurting honest arguments?</li>
+<li>Does the signed-verdict protocol reduce final false approvals while preserving honest completion, or do errors simply move to the residual?</li>
+<li>Does T1c add anything beyond a plain graph script, and at what authoring cost?</li>
+<li>Can a readable statement layer over Lean help reviewers catch a weakened theorem statement (<code>ROADMAP.md</code> section 5, “Lean statement layer for mathematics”)? A first gate found witnesses for only 4/33 unfaithful statements; most unfaithful statements were true but weaker.</li>
+<li>Where do real flaws live? P2's single-rater estimate (invalid steps about 35%) needs a second rater and a frontier-scale version; the answer bounds what any deduction checker can contribute.</li>
+</ul>
+</section>
+
+<!-- 12 -->
+<section id="glossary">
+<span class="secnum">SECTION 12</span>
+<h2>Glossary</h2>
+<dl class="gloss">
+<div><dt>Abstract syntax tree (AST)</dt><dd>Structured data representing a parsed claim, including its predicates, variables and logical connections.</dd></div>
+<div><dt>Admissible structure</dt><dd>A structure that respects the environment's sorts and predicate types; VE admits empty sorts.</dd></div>
+<div><dt>Claim graph</dt><dd>A directed graph of claims whose edges are checked deductions, with every undischarged assumption kept visible as a leaf.</dd></div>
+<div><dt>Closure induction</dt><dd>A proof rule (<code>closure-induct@1</code>) for claims about everything reachable: if a property holds at the source and every edge preserves it, it holds at every reachable object. Proved sound in Lean; it is what makes a separating certificate checkable inside VE.</dd></div>
+<div><dt>Commitment layer</dt><dd>An approved, versioned record of the formal statements people or agents agree to be held to.</dd></div>
+<div><dt>Compare oracle</dt><dd>A procedure that decides whether two claims mean the same, answering SAME (certificates both ways), DIFFERENT (a distinguishing finite world) or UNKNOWN.</dd></div>
+<div><dt>Completeness / honest completion</dt><dd>Logical completeness: every true entailment has an accepted certificate. Practical honest completion: the fraction of valid requests successfully accepted within the protocol's budget. Soundness alone guarantees neither.</dd></div>
+<div><dt>Consultancy</dt><dd>An oversight protocol in which one AI argues for an answer (honestly or not) and a judge questions it and decides.</dd></div>
+<div><dt>Countermodel</dt><dd>A structure in which all premises are true and the conclusion is false; one countermodel proves non-entailment.</dd></div>
+<div><dt>Cross-examination</dt><dd>In debate, questioning a debater's earlier answers in separate contexts to expose inconsistency; the baseline VE must beat on shifting definitions.</dd></div>
+<div><dt>Debate</dt><dd>An oversight protocol in which two AIs argue opposite sides before a judge, on the hope that exposing a flaw is easier than hiding one.</dd></div>
+<div><dt>Decidability</dt><dd>Whether an algorithm always answers yes or no. Checking a certificate is decidable and cheap; first-order validity is only semi-decidable; VE's countermodel search is bounded by budget.</dd></div>
+<div><dt>Designated judgement</dt><dd>An explicit decision slot naming who judges a predicate, using which evidence, with what record and appeal process.</dd></div>
+<div><dt>Digital signature</dt><dd>A cryptographic check of a record's issuer and integrity. It authenticates a verdict; it does not establish the truth of the premises.</dd></div>
+<div><dt>Entailment</dt><dd>Premises entail a conclusion if the conclusion is true in every admissible structure where the premises are true.</dd></div>
+<div><dt>environment_id / meaning_id</dt><dd>Hashes identifying a vocabulary and a claim's canonical meaning under it; a change in either is visible.</dd></div>
+<div><dt>First-order logic</dt><dd>A language of constants, variables, predicates, connectives and quantifiers over individual objects. VE uses a many-sorted, function-free fragment with equality and unary and binary predicates.</dd></div>
+<div><dt>Frontier judge / monitor</dt><dd>A model near the current capability frontier used to assess another system's work. A monitor checks an agent's actions or log for problems.</dd></div>
+<div><dt>Inductive invariant</dt><dd>A property true initially and preserved by every permitted step; for access paths, staying inside a closed set.</dd></div>
+<div><dt>Leaf / foundation</dt><dd>A leaf has no further supporting deduction in the graph. Under mandatory proof, any accepted unproved leaf must belong to the declared, reviewed foundations. Review is not proof of truth.</dd></div>
+<div><dt>Lean</dt><dd>A programming language and proof assistant (version 4 here) whose small kernel checks proofs; VE's reference definitions and soundness theorems live in <code>lean/</code>.</dd></div>
+<div><dt>Mandatory proof</dt><dd>Accept a claim only when the verified checker derives it from reviewed foundations. Unsupported claims remain unresolved.</dd></div>
+<div><dt>Obfuscated arguments</dt><dd>Arguments whose few flaws are expensive to locate. Mandatory proof blocks false sub-claims in fully formalised arguments relative to sound foundations; accepting unproved leaves reopens the problem. Affordable honest proofs remain necessary.</dd></div>
+<div><dt>Open texture</dt><dd>The need for judgement when a term such as “reasonable” meets an unforeseen case, even if the surrounding rule is precise.</dd></div>
+<div><dt>Percentage point (pp)</dt><dd>The unit for a difference between two percentages: a change from 10% to 24% is +14 pp.</dd></div>
+<div><dt>Predicate</dt><dd>A property (unary, like <code>cat</code>) or relation (binary, like <code>owns</code>) that is true or false of objects.</dd></div>
+<div><dt>Preregistration</dt><dd>Publishing hypotheses, materials and analysis before collecting data, so the analysis cannot be tuned to the results. VE timestamps preregistration hashes with OpenTimestamps.</dd></div>
+<div><dt>Proof certificate</dt><dd>A proof written as data (here, a tableau) that a small checker can replay without any search.</dd></div>
+<div><dt>Proof-carrying action</dt><dd>An exact proposed action accompanied by checked evidence that it complies with an approved policy; an enforcement gate binds the evidence to execution.</dd></div>
+<div><dt>Prover-estimator debate (PE)</dt><dd>A debate protocol using probability estimates for uncertain sub-claims. Its section 8 proposes combining mathematical proofs with debate for fuzzier claims.</dd></div>
+<div><dt>Quantifier</dt><dd>"For every" (∀) or "there exists" (∃), binding a variable over a sort.</dd></div>
+<div><dt>Residual</dt><dd>What remains for the judge after mechanical checking: are the premises true, and is the translation faithful.</dd></div>
+<div><dt>Scalable oversight</dt><dd>Research on how weaker overseers can reliably supervise stronger AI systems on tasks they cannot fully verify themselves.</dd></div>
+<div><dt>Security game</dt><dd>An evaluation with an explicit attacker, information, budget and win condition, such as obtaining approval for an unsafe action.</dd></div>
+<div><dt>Separating certificate</dt><dd>A set containing a source, excluding a target, and closed under every policy edge. It proves there is no path from source to target in that graph.</dd></div>
+<div><dt>Sort</dt><dd>A declared kind of object (person, service); each variable ranges over one sort.</dd></div>
+<div><dt>Soundness</dt><dd>For a deductive checker, acceptance implies entailment from the stated premises. It does not establish that the premises are true in the world.</dd></div>
+<div><dt>Structure</dt><dd>An assignment of objects to sorts and truth values to predicates; also called a model or world.</dd></div>
+<div><dt>Tableau</dt><dd>A proof method that assumes the premises and the negated conclusion and splits formulas until every branch contains a contradiction.</dd></div>
+<div><dt>Transitive closure (tc / rtc)</dt><dd>Reachability by one or more steps (<code>tc</code>) or by zero or more steps (<code>rtc</code>) of a relation. VE's closure profile adds it to the base logic; it is how “A can reach X” is written.</dd></div>
+<div><dt>Trusted channel</dt><dd>A route by which checker output reaches the judge that an arguer cannot forge or imitate.</dd></div>
+<div><dt><code>ve assist</code></dt><dd>The sentence-at-a-time authoring tool: formal nodes anchored to source sentences, every step certified, success only when each target is derived without a load-bearing unanchored assumption.</dd></div>
+<div><dt>VEX</dt><dd>A proposed VE extension requiring checkable evidence and propagated uncertainty for statistical, approximate and heuristic claims. Not an implemented result.</dd></div>
+</dl>
+</section>
+</main>
+</div>
+
+<footer>Revised against the supplied design notes, PLAN-V4's final revision and P1's final results summary as of 22 September 2026, with current status taken from <code>ROADMAP.md</code>, the active study specifications and the repository documentation of the same date. Primary literature is linked beside the relevant claims. Other project numbers are reported from the named local sources, not independently reproduced here. Figures marked illustrative simplify the syntax. Paths without a repository prefix refer to the VE integration repository; <code>reviews/</code> refers to the companion review repository.</footer>
+</div>
+
+<script>
+(function(){
+  var data={
+    bad:{arg:"Every cat is an animal.\nTom is an animal.\n────────────\nTom is a cat?",v:"Does not follow.",cls:"no",ev:"Countermodel: one pet, Tom, who is an animal and not a cat (a dog). Both premises are true there; the conclusion is false. The evaluator re-checks this in one pass."},
+    good:{arg:"Every cat is an animal.\nTom is a cat.\n────────────\nTom is an animal?",v:"Follows.",cls:"ok",ev:"Certificate: assume ¬animal(tom); instantiate premise 1 at tom; split the implication; both branches close (figure 4). The checker replays these four steps."},
+    empty:{arg:"for every service s, (s is reviewed).\n────────────\nthere exists service s, (s is reviewed)?",v:"Does not follow.",cls:"no",ev:"Countermodel: a world with no services. \"Every service is reviewed\" is vacuously true; \"some service is reviewed\" is false. The hidden assumption, that at least one service exists, must be stated."}
+  };
+  var btns=document.querySelectorAll('#tryit .seg button');
+  function show(k){
+    var d=data[k];
+    document.getElementById('try-arg').textContent=d.arg;
+    var v=document.getElementById('try-verdict');v.textContent=d.v;v.className='verdict '+d.cls;
+    document.getElementById('try-ev').textContent=d.ev;
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false');});
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.k);});});
+  show('bad');
+  var links=document.querySelectorAll('nav.toc a');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){
+        links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id);});
+      }});
+    },{rootMargin:'-30% 0px -60% 0px'});
+    document.querySelectorAll('main section').forEach(function(s){io.observe(s);});
+  }
+})();
+</script>
+
+</body>
+</html>

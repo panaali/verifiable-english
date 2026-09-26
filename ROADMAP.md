@@ -52,6 +52,20 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 | Pushback replication (ToxiGen, L1) | 14/43 flips = 0.33 vs published 0.27 | our pressure matches theirs |
 | Pushback L1 on V4 logic items | 0/23 flips | formal items resist simple pushback; L6 gate decides power |
 
+## 2a. W2 use-case baseline (2026-09-26)
+
+<!-- W2-COVERAGE-START -->
+| Use case | DIRECT | REIFIED | OPAQUE | NO | Total |
+|---|---:|---:|---:|---:|---:|
+| claude-constitution-excerpt | 0 | 6 | 5 | 12 | 23 |
+| news-article | 1 | 11 | 3 | 11 | 26 |
+| us-constitution-14th-s1 | 0 | 1 | 3 | 0 | 4 |
+
+Other denominators: birthright debate has **4/9** claims with a direct VE statement and **5/9** unformalised; US Constitution Art. I §7 has no audited pilot yet.
+Math mini paper: **17/19** current verified outcomes (15 tableau certificates plus T9 and T9e by closure induction); its older `coverage.md` records the 15 tableau results. C1 is false, with a countermodel; T7mono remains resource-limited.
+These are claim/section labels, not source-byte coverage. The `.ve.md` pilot partition measurements are pending.
+<!-- W2-COVERAGE-END -->
+
 ## 3. Wrap-up state (2026-09-23, lead asked to stop starting new work)
 
 The four agents below were left to finish; nothing else was launched. Each item lists its next step.
@@ -99,6 +113,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Human studies | E1/E5 packages; "valid proof of the wrong model" study from the formal-proof handoff | deferred by the lead |
 | Rust as a trusted checker | prove the Rust checker equals the Lean spec via Aeneas (Rust->Lean); remaining trust: rustc/LLVM (RustCompCert/Rustlight, arXiv 2602.07455, 2026: verified Rustlight->asm in Rocq, but no generics/traits/closures and Rocq not Lean; a later option to drop rustc/LLVM trust); today Rust is deliberately untrusted (evaluation/search only, never certificates) | if Lean checking speed becomes the bottleneck |
 | Rustlight trusted-kernel pilot | port the smallest certificate checker (v0 tableau) to the Rustlight subset (monomorphic, no traits/closures, hand-written bignum on Box), compile with RustCompCert, measure size/speed and what a Rocq soundness proof (or Lean-Rocq bridge) would need; RustCompCert proves compilation only, not checker correctness | after expansion round 2, if highest-assurance binaries become a goal |
+| Corpus priors (transparent common-sense ranking of readings, lead idea; Astra+Fable converged 2026-09-26, debates/corpus-priors) | advisory weights unit on reading sets, attributed `corpus-prior:<method>@<version>/<corpus>@<hash>`, never preselects/reorders or affects certification; start with PP attachment on pinned UD EWT with declared features + fixed backoff, recomputable (`ve prior recompute`); abstain (<50 documents, CI width >0.30, unsupported genre); calibration (Brier, reliability) vs majority baseline before any IDE use; never claims author intent | after W2 reading sets; trigger: >=3 PP ambiguities on load-bearing conclusions in one translated pilot; 2-4 engineer-weeks + annotation |
 | Grant-scale runs | 5,000-step sizes, size scaling, requirement retention under compaction (S1), multi-agent hand-off, adaptive attackers, judge ladders, RL with checked rewards (GPUs later) | grant (~$20K) |
 
 ## 6. Paused or dropped

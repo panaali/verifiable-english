@@ -73,6 +73,24 @@ string cases pass. These helpers do not yet implement the whole policy flow.
 
 ## Remaining integration gates
 
+W3 definitions compose with W5 flags when the flags belong to base binary
+predicates: the background order is flags, definitions, then literal
+distinctness; finite models supply only base tables and compute defined tables.
+The combined Python, Rust and Lean route fixture checks evaluation and
+certificate binding. A defined predicate itself cannot carry either flag.
+W2 document admission accepts regenerated `background:flags` leaves, while
+document admission with W3 definitions remains explicitly deferred.
+
+W4's Lean Core route currently accepts n-ary syntax but its vocabulary decoder
+does not accept flagged predicates, defined predicates, or `$string` predicate
+slots. Python and Rust handle the corresponding binary data and definition
+declarations in an environment that also enables `nary@0`; the three-way
+checker contract for those mixed declarations remains open. Lean rejects the
+declarations rather than ignoring their generated background. W3's bundle
+runtime includes flag premises in certificate binding, but the reviewed
+`bundle_sound` theorem still states the definitions-and-literals fragment;
+the combined theorem remains open.
+
 The English surface renders and parses `the r of t is v` for a total,
 functional attribute as the binary atom, and `the r of t is P` for a unary
 target property as an existential witness on a user sort. A non-total

@@ -23,7 +23,7 @@ ORDER_PROFILES = ("order@0", PROFILE)
 ORDER_REVISION = "ve-v0.1-order-2026-09-22"
 INT_SORT = "$int"
 STRING_SORT = "$string"
-RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually".split())
+RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually no".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
 
@@ -83,6 +83,7 @@ class PredicateDecl:
     negative_verbalisation: str | None = None
     functional: bool | None = None
     total: bool | None = None
+    defined: bytes | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -155,15 +156,19 @@ class Environment:
             flagged = type(entry) is dict and ("functional" in entry or "total" in entry)
             if flagged and "defined" in entry:
                 raise UnsupportedProfile("Defined predicates cannot carry functional or total flags")
+            defined = route and "definitions@0" in data["profiles"] and type(entry) is dict and "defined" in entry
             fields = {"arguments", "description"}
+            if defined:
+                fields.add("defined")
             if flagged:
                 if not route or "data@0" not in data["profiles"]:
                     raise UnsupportedProfile("Predicate flags require data@0")
                 fields |= {key for key in ("functional", "total") if key in entry}
             _entry_fields(entry, fields, path=f"/vocabulary/predicates/{name}", negative=True)
             args = entry["arguments"]
-            if type(args) is not list or len(args) not in (1, 2):
-                raise VEError("Predicate arguments must be an array of one or two sort identifiers")
+            maximum_arity = 6 if route and "nary@0" in data["profiles"] else 2
+            if type(args) is not list or not 1 <= len(args) <= maximum_arity:
+                raise VEError(f"Predicate arguments must be an array of one to {maximum_arity} sort identifiers")
             for sort in args:
                 if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                              and not (route and "data@0" in data["profiles"] and sort == STRING_SORT)):
@@ -180,9 +185,15 @@ class Environment:
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
+            if defined:
+                payload = entry["defined"]
+                require_fields(payload, {"arguments", "body"}, path=f"/vocabulary/predicates/{name}/defined")
+                if payload["arguments"] != args:
+                    raise VEError(f"Definition {name!r} arguments differ from its declaration")
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
                                              verbalisation, negative,
-                                             entry.get("functional"), entry.get("total"))
+                                             entry.get("functional"), entry.get("total"),
+                                             canonical_json(entry["defined"]) if defined else None)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
             require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
@@ -202,6 +213,9 @@ class Environment:
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
             object.__setattr__(self, field, value)
+        if any(decl.defined is not None for decl in predicates.values()):
+            from .definitions import compile_definitions
+            compile_definitions(self, self.definition_entries, version=self.environment_id)
 
     @classmethod
     def from_dict(cls, data):
@@ -229,6 +243,8 @@ class Environment:
                 entry["functional"] = declaration.functional
             if declaration.total is not None:
                 entry["total"] = declaration.total
+            if declaration.defined is not None:
+                entry["defined"] = loads_json(declaration.defined)
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
@@ -241,6 +257,11 @@ class Environment:
     @property
     def closure(self):
         return "closure@0" in self.profiles
+
+    @property
+    def definition_entries(self):
+        return {name: loads_json(decl.defined) for name, decl in self.predicates.items()
+                if decl.defined is not None}
 
     @property
     def order(self):

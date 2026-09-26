@@ -6,7 +6,7 @@ from itertools import combinations, product
 import math
 from typing import Any, Iterator, Sequence
 
-from .ast import (Reach, Named, Body, And, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
+from .ast import (Reach, Named, Body, And, Atom, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
                        _validate_model)
@@ -28,6 +28,7 @@ def _node_count(root: Any) -> int:
         for field in ("body", "left", "right", "term"):
             child = getattr(node, field, None)
             if child is not None: stack.append(child)
+        stack.extend(getattr(node, "terms", ()))
     return total
 
 
@@ -139,7 +140,7 @@ def _used_predicates(*formulas: Any) -> frozenset[str]:
                 names.update(found)
                 stack.extend(children)
                 continue
-        if isinstance(node, (Unary, Binary)):
+        if isinstance(node, (Unary, Binary, Atom)):
             names.add(node.predicate)
         elif isinstance(node, Reach):
             if type(node.edge) is Named:
@@ -173,7 +174,7 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
                   for row in product(*(domains[s] for s in env.predicates[name].arguments)))
     for size in range(len(atoms) + 1):
         for subset in combinations(atoms, size):
-            relations = {name: [] for name in sorted(env.predicates)}
+            relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
             for name, row in subset:
                 relations[name].append(list(row))
             yield relations
@@ -225,6 +226,9 @@ def _int_terms(formulas, int_constants) -> tuple[list[Any], set[int]]:
             term(node.term, True)
         elif isinstance(node, Binary):
             term(node.left, True); term(node.right, True)
+        elif isinstance(node, Atom):
+            for argument in node.terms:
+                term(argument, True)
         elif isinstance(node, (Eq, Lt, Le)):
             term(node.left, False); term(node.right, False)
         elif isinstance(node, (And, Or, Implies)):
@@ -283,7 +287,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
             choices = [domains[env.constants[name].sort] for name in object_constants]
             for size in range(len(atoms) + 1):
                 for subset in combinations(atoms, size):
-                    relations = {name: [] for name in sorted(env.predicates)}
+                    relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
                     for name, row in subset:
                         relations[name].append([str(x) if type(x) is int else x for x in row])
                     for denotations in product(*choices):
@@ -302,6 +306,19 @@ def _models(env: Any, minimum_size: int, maximum: int,
             used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
     used = used | frozenset(name for name, decl in env.predicates.items()
                             if decl.functional or decl.total)
+    if env.definition_entries:
+        from .definitions import _mentions
+        from .ast import _Decoder
+        relevant = set(used)
+        pending = list(used)
+        while pending:
+            name = pending.pop()
+            if name in env.definition_entries:
+                for dependency in _mentions(_Decoder().decode(env.definition_entries[name]["body"])):
+                    if dependency not in relevant:
+                        relevant.add(dependency)
+                        pending.append(dependency)
+        used = frozenset(relevant - env.definition_entries.keys())
     if getattr(env, "order", False):
         yield from _order_models(env, minimum_size, maximum, used, formulas)
         return
@@ -386,7 +403,7 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
             for entity in domain:
                 walk(node.body, ((node.sort, entity),) + bindings, path + (0,),
                      universal or isinstance(node, Forall))
-        elif isinstance(node, (Unary, Binary, Eq)):
+        elif isinstance(node, (Unary, Binary, Atom, Eq)):
             return
 
     try:
