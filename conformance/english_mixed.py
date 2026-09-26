@@ -16,9 +16,9 @@ and the reviewed, suggested and adopted overlays), it renders
 and parses each text with `parse_english`, which runs the complete Earley
 all-derivations check. Any text with more than one derivation fails, as does
 a round trip to a different AST or an exhausted derivation budget. Every node
-type registered in `ve.surface.registry` must occur in the corpus of some
-vocabulary whose profiles enable it; a newly registered construct without a
-generator fails here until the harness generates it.
+type registered in `ve.surface.registry` must have an exercising configuration
+and occur in that configuration's corpus. A newly registered profile therefore
+fails until the harness supplies a configuration and a generator for it.
 
 The per-input check at admission, not this corpus, is what admits English.
 No model calls.
@@ -35,7 +35,7 @@ import warnings
 
 from ve import ast, render
 from ve.english import UnreviewedVocabularyWarning, parse_english
-from ve.errors import ResourceLimit, SyntaxError
+from ve.errors import AmbiguousDerivation, ResourceLimit, SyntaxError
 from ve.surface import registry
 
 from conformance.english_surface import SEED, configurations, formula_depth, random_formula
@@ -96,6 +96,7 @@ def closed(formula, env):
 def mixed(per_vocabulary=40):
     warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
     rows, failures, covered = [], [], set()
+    registered = {r.node_type for r in registry.records() if r.node_type is not None}
     enabled_anywhere = set()
     for offset, (name, env, options) in enumerate(configurations()):
         rng = random.Random(MIXED_SEED + offset)
@@ -121,9 +122,13 @@ def mixed(per_vocabulary=40):
             digest.update(text.encode())
             try:
                 copied = parse_english(env, text, **options)
+            except AmbiguousDerivation as exc:
+                counts['multiple_derivations'] += 1
+                failures.append({'vocabulary': name, 'kind': 'multiple derivations',
+                                 'text': text, 'error': str(exc)[:1000]})
+                continue
             except SyntaxError as exc:
-                kind = 'multiple derivations' if 'two derivations' in str(exc) else 'rejected'
-                failures.append({'vocabulary': name, 'kind': kind, 'text': text, 'error': str(exc)[:1000]})
+                failures.append({'vocabulary': name, 'kind': 'rejected', 'text': text, 'error': str(exc)[:1000]})
                 continue
             except ResourceLimit as exc:
                 failures.append({'vocabulary': name, 'kind': 'budget exhausted', 'text': text, 'error': str(exc)})
@@ -134,15 +139,20 @@ def mixed(per_vocabulary=40):
             counts['paragraphs' if len(document.formulas) > 1 else 'sentences'] += 1
         covered |= seen & enabled
         rows.append({'vocabulary': name, 'seed': MIXED_SEED + offset, 'texts': len(documents),
-                     **dict(sorted(counts.items())), 'multiple_derivations': 0,
+                     **dict(sorted(counts.items())), 'multiple_derivations': counts['multiple_derivations'],
                      'node_types': sorted(t.__name__ for t in seen & enabled),
                      'corpus_sha256': digest.hexdigest()})
         print(json.dumps(rows[-1]), flush=True)
-    missing = sorted(t.__name__ for t in enabled_anywhere - covered)
+    unexercised_profiles = sorted(t.__name__ for t in registered - enabled_anywhere)
+    if unexercised_profiles:
+        failures.append({'kind': 'registered construct has no exercising configuration',
+                         'node_types': unexercised_profiles})
+    missing = sorted(t.__name__ for t in registered - covered)
     if missing:
         failures.append({'kind': 'registered construct not generated', 'node_types': missing})
     return {'method': 'rendered mixed-construct sentences and paragraphs; parse_english all-derivations check',
             'vocabularies': rows, 'missing_constructs': missing,
+            'unexercised_profiles': unexercised_profiles, 'seed': MIXED_SEED,
             'texts': sum(r['texts'] for r in rows), 'failures': failures[:200], 'failure_count': len(failures)}
 
 
