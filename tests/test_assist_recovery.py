@@ -1,6 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -9,6 +10,7 @@ from ve.assist.recovery import RecoveryService, nearest_wordings
 from ve.ast import Unary, Const, Not
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
 from ve.search import find_countermodel
+from ve.errors import InvalidModel
 from ve.identity import meaning_id
 from ve.english import render_english, parse_english_with_metadata
 
@@ -380,3 +382,58 @@ def test_ledger_json_restore_and_revision_guard():
     ledger["events"][-1]["unit_snapshot"]["paraphrase"] = "Api is not safe."
     with pytest.raises(ValueError, match="invalid recovery ledger"):
         RecoveryService.from_ledger(env, ledger)
+
+
+def test_versions_exhaustion_and_undo_review_transition():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                    presentation="Api is safe.", situation=situation)
+    approved_revision = service.units["u"].revision
+    service.update_versions(glossary="v2")
+    assert service.units["u"].state == "stale" and not service.approval_valid("u")
+    other = env.to_dict()
+    other["vocabulary"]["predicates"].pop("safe")
+    service.env = Environment(other)
+    assert service.undo("u", approved_revision).state == "stale"
+    assert service.events[-1]["action"] == "undo_requires_review"
+
+    capped = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    capped.add("x", "Unknown wording.", {})
+    capped.start("x")
+    assert capped.classify("x", parse_outcome="exhausted", limit="parser budget") == "exhausted"
+    assert capped.units["x"].reason == "parser budget"
+
+
+def test_catalogue_unknown_background_and_pair_limit_are_visible(monkeypatch):
+    import ve.assist.ambiguity_patterns as catalogue
+
+    env = environment()
+    bindings = {"predicate": "safe", "antecedents": ["api", "bob", "carol"]}
+    pattern = "discourse.reference@1"
+    monkeypatch.setattr(catalogue, "find_distinguishing_model", lambda *a, **k:
+                        SimpleNamespace(status="Unknown", model=None, detail="search budget"))
+    unknown = catalogue.review(env, "It is safe.", bindings, pattern_id=pattern)
+    assert not unknown["cards"] and len(unknown["pending"]) == 3
+    assert all(row["reason"] == "search budget" for row in unknown["pending"])
+
+    model = find_countermodel(env, (), Not(Unary("safe", Const("api")))).model
+    monkeypatch.setattr(catalogue, "find_distinguishing_model", lambda *a, **k:
+                        SimpleNamespace(status="Found", model=model, detail=""))
+    def invalid_background(*args):
+        raise InvalidModel("invalid Background")
+    monkeypatch.setattr(catalogue, "validate_background", invalid_background)
+    invalid = catalogue.review(env, "It is safe.", bindings, pattern_id=pattern)
+    assert not invalid["cards"] and len(invalid["pending"]) == 3
+    assert all("invalid Background" in row["reason"] for row in invalid["pending"])
+
+    monkeypatch.setattr(catalogue, "validate_background", lambda *args: None)
+    monkeypatch.setattr(catalogue, "MAX_COMPARISONS", 1)
+    limited = catalogue.review(env, "It is safe.", bindings, pattern_id=pattern)
+    assert limited["next_cursor"] == 1 and limited["comparison_count"] == 1
+    assert any(row["reason"].startswith("pair comparison limit") for row in limited["pending"])
