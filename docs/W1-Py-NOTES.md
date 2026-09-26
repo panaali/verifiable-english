@@ -43,7 +43,7 @@ remain in the source document, and `layer:norms:<p>` leaves must equal regenerat
 premises. The existing W2 graph checker and report identity are reused. W3
 definition interleaving, a Lean `admission` case and wire acceptance theorem,
 and W5 flags remain outstanding. The committed cross-language gate compares
-1,100 Python/Lean elaborations (including 100 paired acts), three conflict
+1,100 Python/Lean elaborations (including 100 paired acts), six conflict
 replays, and 96 Python/Rust
 formula evaluations. The legacy P0 checker is unchanged. `ve assist`
 has no W1 norm hooks yet; its norm support is explicitly **not yet**.

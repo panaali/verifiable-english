@@ -88,9 +88,16 @@ def test_conflict_witness_and_certificates_match_lean():
                       base={"condition": {"arguments": ["act"], "description": "condition"}})
     yes = rule("yes", "permitted", True)
     no = rule("no", "permitted", False)
+    pair = environment({"permitted": permission(), "required": obligation()})
+    default_pair = environment({"permitted": permission(),
+                                "required": obligation("allow")})
     examples = [NormDocument(env, [yes, no]),
                 NormDocument(env, [no, rule("exception", "permitted", True, over=("no",))]),
-                NormDocument(env, [no, rule("carved", "permitted", True, unless=(Top(),))])]
+                NormDocument(env, [no, rule("carved", "permitted", True, unless=(Top(),))]),
+                NormDocument(pair, [rule("must", "required", True)]),
+                NormDocument(default_pair, []),
+                NormDocument(pair, [rule("must", "required", True),
+                                    rule("may", "permitted", True)])]
     cases = []
     expected = []
     for i, doc in enumerate(examples):
