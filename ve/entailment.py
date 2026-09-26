@@ -86,13 +86,23 @@ def _premises(value: Sequence[Any]) -> tuple[Any, ...]:
 
 
 def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any, *,
-                     background: bool = True) -> tuple[Any, ...]:
+                     background: bool = True,
+                     generated_premises: Sequence[bool] | None = None) -> tuple[Any, ...]:
     """The checked list is Background ++ layer premises ++ caller premises.
     P0 has no executable layers, so its layer segment is empty. `background`
     is False only for an already expanded list or for admission graph edges,
     whose Background premises are explicit labelled leaves."""
     premises = _premises(premises)
-    if background:
+    if generated_premises is not None:
+        if background or len(generated_premises) != len(premises):
+            raise ValueError("generated premise labels must match the explicit premises")
+        checker = _Checker(env)
+        for formula, generated in zip(premises, generated_premises, strict=True):
+            checker.generated = generated
+            checker.formula(formula)
+        checker.generated = False
+        checker.formula(conclusion)
+    elif background:
         check_document(env, Document((*premises, conclusion)))
     else:
         from .background import background as generated_background
@@ -527,14 +537,17 @@ def _rule(item):
     return "expand"
 
 
-def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
+def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any, *,
+             generated_premises: Sequence[bool] | None = None) -> dict[str, Any]:
     from .order import CHECKER_VERSION as ORDER_CHECKER_VERSION
     from .background import background as generated_background
     generated = tuple(p.formula for p in generated_background(env))
     return {"checker_version": (ORDER_CHECKER_VERSION if getattr(env, "order", False) else
                                 CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION),
             "environment_id": env.environment_id,
-            "premise_meaning_ids": [meaning_id(env, x, _generated=i < len(generated) and x == generated[i])
+            "premise_meaning_ids": [meaning_id(env, x, _generated=(generated_premises[i]
+                                    if generated_premises is not None else
+                                    i < len(generated) and x == generated[i]))
                                     for i, x in enumerate(premises)],
             "conclusion_meaning_id": meaning_id(env, conclusion)}
 
@@ -646,18 +659,21 @@ class _Replayer:
 
 def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: Any,
                                  certificate: Any, *, max_steps: int = 10_000,
-                                 _background: bool = True) -> EntailmentCertificateCheck:
+                                 _background: bool = True,
+                                 _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
     """Replay a certificate against the exact environment and ordered formulas."""
     try:
         # Validate data before equality comparisons: even binding fields cannot
         # carry arbitrary Python objects or their overloaded comparison methods.
         canonical_json(certificate)
-        premises = _validate_inputs(env, premises, conclusion, background=_background)
+        premises = _validate_inputs(env, premises, conclusion, background=_background,
+                                    generated_premises=_generated_premises)
         if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
             raise ValueError("max_steps must be a nonnegative integer")
-        if type(certificate) is not dict or set(certificate) != set(_binding(env, premises, conclusion)) | {"trace"}:
+        if type(certificate) is not dict or set(certificate) != set(_binding(
+                env, premises, conclusion, generated_premises=_generated_premises)) | {"trace"}:
             raise _InvalidTrace("certificate fields do not match the wire schema")
-        expected = _binding(env, premises, conclusion)
+        expected = _binding(env, premises, conclusion, generated_premises=_generated_premises)
         if env.closure and certificate.get('checker_version') == 've-tableau-closure-checker@0':
             expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
