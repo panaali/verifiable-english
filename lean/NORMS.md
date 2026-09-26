@@ -24,6 +24,9 @@ audit entries only.
 | `Cedar.lean` | `CedarShape`; `cedar_decision` |
 | `Checks.lean` | executable guards: byte-identical agreement with Python `ve/norms.py` on five documents; the 10.1 regressions on finite models |
 | `Examples.lean` | actual `Layer` values for 10.1(c) and (m), the composed routes of (c) and (o) |
+| `Wire.lean` | the norms decoder: `regulated` declarations beside the frozen P0 vocabulary decoder, norm objects, `Source`, regenerated outputs |
+| `Replay.lean` | conflict-package replay (CONFLICT-FREE), witness replay (CONFLICT), entailment-certificate replay, and their theorems from raw JSON |
+| `Run.lean`, `../NormsMain.lean` | the `ve_norms_route` executable (Lake target added; existing targets unchanged) |
 
 ## Conventions (agreed with Python through the spec's wire format)
 
@@ -101,6 +104,13 @@ Names have prefix `VE.Norms.`.
 | `cedar_decision` | For a deny-by-default predicate whose rules have the Cedar shape, on every structure the completed outcome is "some permit applies and no forbid applies", and the two sides never both decide. |
 | `ground_conflictFree` | If every conflict formula of a document is constantly false, every base structure is conflict-free. |
 | `Examples.*` | The documents of 10.1(c), (m) and (o) are well-formed (by kernel reduction); both frozen layers of (c) and of (m), and the composed routes of (c) and (o), exist as values. |
+| `norms_route_intended` | The certificate half of acceptance that needs no conflict-freedom. |
+| `conflictFreeCheck_sound` | If every conflict target has an accepted certificate for `Background_base ⊢ ∀x̄. ¬conflict` over the regenerated `E_base`, every base-admissible structure is conflict-free. |
+| `Replay.norms_wire_conflict_sound` | A successful raw conflict-package replay whose every target certificate is accepted: the input decodes to exactly the replayed well-formed document, and every base-admissible structure is conflict-free. |
+| `Replay.norms_wire_conflict_free_expands` | Then every base-admissible structure has exactly one full document expansion. |
+| `Replay.norms_wire_conflict_witness_sound` | A successful raw witness replay whose regenerated target formula is true at the typed tuple of the validated base model: the input decodes to that document, and the model refutes conflict-freedom, unique expansion and the document property. |
+| `Replay.target_refutes` | A valid finite base witness of any conflict target refutes the document property. |
+| `Replay.norms_wire_acceptance` | A successful raw entailment replay with an accepted certificate (bound to the complete environment, the regenerated Background ++ layer premises, the case's premises and the conclusion): the input decodes to that document; the conclusion holds under the direct semantics; and, given conflict-freedom and base formulas, over every base-admissible structure satisfying the premises. |
 
 The remaining theorems are helper lemmas (typing, forgetting, instantiation,
 prefix positions, table lookups) audited with the same allowlist.
@@ -115,13 +125,45 @@ prefix positions, table lookups) audited with the same allowlist.
 * `conflict_complete` (enumeration completeness) is deliberately not stated.
   CONFLICT-FREE still requires a tableau certificate (binding decision 9.4); a
   Lean enumerator proved against the 7.2 bound would be the next step.
-* Not done: the norms-route wire path of 11.4 (`Norms/Wire.lean`,
-  `Admission.lean`, `Run.lean`, the `ve_norms_route` executable,
-  `norms_wire_acceptance`, `norms_wire_conflict_sound`). The theorems above are
-  about decoded values; nothing here decodes JSON.
+* Wire path (11.4): `ve_norms_route <cases.json|->` implements
+  `norms-elaborate`, `norms-conflict` (packages or a witness) and
+  `norms-certificate`, and delegates P0 cases without norm constructs to
+  `Route.Run.runCase` unchanged. Not done: W2 document admission with norm units
+  (the `admission` kind, `layer:norms:<p>` leaves in reports, `ReportAdmitted`);
+  `norms_wire_acceptance` here covers entailment certificates, not W2 reports.
+  The JSON boundary itself (decoder faithfulness to the wire spec, digests) is
+  tested, not proved, as for the P0 routes.
 * W5 flags (`functional`, `total`) and adapters do not exist in this tree:
   `Background_base` is literal distinctness only, and `InFragment` needs no flag
   clause yet. 10.1(h) (the `total` regression) waits for W5.
 * W3 definitions are modelled by `Definition` (the shape of `VE.Definitions.Def`
   on the W3 branch) and are proved through the same prefix machinery; W3's own
   decoder feeds them once merged.
+
+## The `ve_norms_route` cases (for the Python harness)
+
+Every case is `{"id", "kind", "environment", "norms", ...}` with a `ve.core@0.2`
+environment including `norms@0` and Python's canonical `regulated` fields, and
+`norms` the array of norm objects of 3.2. Results are
+`{"id", "status": "ok", ...}` or `{"id", "status": "error", "error"}` with the
+shared diagnostic text.
+
+| Kind | Extra input | Output |
+|---|---|---|
+| `norms-elaborate` | none | `order`, `background` (`generator`, `ast`), `premises` (`label` `layer:norms:<p>`, `ast`), `conflict_targets` (`target` `p` or `r->m`, `sorts`, `ast`), `fragment` |
+| `norms-conflict` | `packages`: target → `{"environment_id", "document_hash", "target", "certificate"}` (Python `check_conflict(prove=True)`) | `verdict` `CONFLICT-FREE` or `UNKNOWN` with `detail` `missing certificate for <t>` / `invalid certificate for <t>`; `targets` |
+| `norms-conflict` | `witness`: `{"target", "model", "tuple"}` (base model, entity ids in argument order) | `verdict` `CONFLICT` or `UNKNOWN`, `target` |
+| `norms-certificate` | `premises`, `conclusion`, `certificate` bound to Background ++ layer premises ++ premises | `valid`, `background`, `layers` |
+
+Ad-hoc differential runs against the Python branch (`expand/w1-norms-py` at
+`e44fd27`): 5 fixed and 700 generated documents (nesting, carve-outs,
+multi-parent precedence, both defaults, pairs, lower regulated atoms and
+existential guards in guards, cycles, cross-predicate precedence) gave
+identical `norms-elaborate` output, including 200 identical diagnostics;
+Python-proved conflict packages for four documents replay as CONFLICT-FREE and
+become UNKNOWN after flipping a default, dropping a rule, dropping a package or
+changing an inner binding; Python witnesses for 10.1(a) and (t) replay as
+CONFLICT and the reversed (t) tuple is rejected; a Python route certificate
+replays as valid and is stale after dropping a rule. These runs are not yet a
+committed test (the norms conformance family and `tests/test_norms*.py` are the
+Python workstream's).

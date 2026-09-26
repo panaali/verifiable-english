@@ -1,4 +1,5 @@
 import VE.Norms.Wire
+import VE.Norms.Layer
 
 /-! Conflict-package replay on the norms route (docs/spec/norms.md 5.2 and
 11.4 steps 3-5, the CONFLICT-FREE half).
@@ -313,6 +314,77 @@ theorem norms_wire_conflict_witness_sound (j : Json) (src : Wire.Source) (w : Wi
   exact ⟨by rw [he]; exact hd, target_refutes src.D src.wf w.target w.mem w.M.asStructure
     ⟨w.valid, fun a ha => (VE.eval_iff_denote w.M [] a).mp (List.all_eq_true.mp w.background a ha)⟩
     w.tuple w.typed ((VE.eval_iff_denote w.M _ _).mp hw)⟩
+
+/-! ## Entailment certificates on the norms route -/
+
+/-- A replayed entailment case: the decoded source, the document's own premises
+and conclusion (typed over the complete environment) and the bound certificate. -/
+structure EntailmentReplay where
+  src : Wire.Source
+  premises : List VE.Formula
+  conclusion : VE.Formula
+  cert : VE.Tableau.Certificate
+
+/-- The unchanged checker on the regenerated `Background ++ layer premises ++ Γ`. -/
+def EntailmentReplay.valid (r : EntailmentReplay) : Bool :=
+  VE.Tableau.checkCertificate (envAt r.src.D (size r.src.D))
+    (background r.src.D ++ elaborate r.src.D.T ++ r.premises) r.conclusion r.cert
+
+/-- Decode the source, the case's premises and conclusion and the certificate;
+the certificate must bind the complete source environment, every regenerated
+Background and layer premise followed by the case's premises, and the
+conclusion (P0 meaning ids). A supplied elaboration is never read. -/
+def replayEntailment (j : Json) : Except String EntailmentReplay := do
+  let environment ← j.getObjVal? "environment"
+  let src ← Wire.decodeSource environment (j.getObjValD "norms")
+  let E := envAt src.D (size src.D)
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← VE.Route.Wire.decodeFormulas E premisesJson
+  let conclusionJson ← j.getObjVal? "conclusion"
+  let c ← VE.Route.Wire.decodeClosed E conclusionJson
+  let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
+  VE.Route.Wire.bindingOk src.ne.profiles environment
+    ((background src.D ++ elaborate src.D.T).map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
+    conclusionJson cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
+  pure ⟨src, ps, c, cert⟩
+
+/-- `norms_wire_acceptance` for entailment certificates (the certificate half of
+11.4): from a successful raw replay with an accepted certificate, for the
+document decoded from that very input, (1) the conclusion holds in every
+admissible structure satisfying the direct semantics, the definitions, the
+profile, `Background_base` and the premises; and (2) if the document is
+conflict-free (for instance by `norms_wire_conflict_sound`) and the premises
+and conclusion are base formulas, the conclusion holds in every base-admissible
+structure satisfying the premises. -/
+theorem norms_wire_acceptance (j : Json) (r : EntailmentReplay) (h : replayEntailment j = .ok r)
+    (hv : r.valid = true) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
+    (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) → holdsCatala r.src.D.T S →
+      definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
+      Sat S r.premises → r.conclusion.denote S []) ∧
+    ((∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
+      (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
+      ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) := by
+  have hdec : Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src := by
+    unfold replayEntailment at h
+    obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨src, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    cases h
+    have he : j.getObjValD "environment" = env := by
+      simp only [Json.getObjValD, henv]
+      rfl
+    rw [he]; exact hd
+  refine ⟨hdec, fun S hS hcat hdef hprof hbase hΓ => ?_, fun hc hΓ hφ => ?_⟩
+  · exact norms_route_intended r.src.D r.src.wf r.premises r.conclusion r.cert hv S hS hcat hdef hprof hbase hΓ
+  · exact (norms_route_acceptance r.src.D r.src.wf hc r.premises r.conclusion r.cert hv).2 hΓ hφ
 
 end Replay
 end VE.Norms

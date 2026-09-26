@@ -232,6 +232,26 @@ theorem route_backgroundComplete {D : Doc} (hv : Valid D)
 def definitionsHold (D : Doc) (S : VE.Structure.{u}) : Prop := Sat S (definitionPremises D.T)
 def profileHold (D : Doc) (S : VE.Structure.{u}) : Prop := Sat S (pairPremises D.T)
 
+/-- The first half of `norms_route_acceptance`, which needs no conflict-freedom:
+an accepted certificate for Background ++ norm elaborations ++ Γ ⊢ φ gives φ in
+every admissible structure satisfying the direct semantics, the definitions,
+the profile, `Background_base` and `Γ`. -/
+theorem norms_route_intended (D : Doc) (h : WellFormed D = true)
+    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
+    (accepted : VE.Tableau.checkCertificate (envAt D (size D)) (background D ++ elaborate D.T ++ Γ) φ c = true)
+    (S : VE.Structure.{u}) (hS : S.Admissible (envAt D (size D))) (hcat : holdsCatala D.T S)
+    (hdef : definitionsHold D S) (hprof : profileHold D S) (hbase : Sat S (backgroundBase D))
+    (hΓ : Sat S Γ) : φ.denote S [] := by
+  apply VE.Tableau.checkCertificate_sound.{u} _ _ _ c accepted S hS
+  intro a ha
+  simp only [List.mem_append, background] at ha
+  rcases ha with (((ha | ha) | ha) | ha) | ha
+  · exact hdef a ha
+  · exact hbase a ha
+  · exact hprof a ha
+  · exact (elaborate_iff D h S).mpr hcat a ha
+  · exact hΓ a ha
+
 /-- `norms_route_acceptance`: an accepted FOL certificate for
 `Background ++ layer premises ++ Γ ⊢ φ` over the complete environment gives
 (1) `φ` in every admissible structure satisfying the direct semantics, the
@@ -247,16 +267,8 @@ theorem norms_route_acceptance (D : Doc) (h : WellFormed D = true)
     ((∀ a ∈ Γ, a.WellFormed (envAt D 0) []) → φ.WellFormed (envAt D 0) [] →
       ∀ B : VE.Structure.{u}, BaseAdmissible D B → Sat B Γ → φ.denote B []) := by
   have hv := valid_of_wellFormed D h
-  refine ⟨fun S hS hcat hdef hprof hbase hΓ => ?_, fun hΓ hφ => ?_⟩
-  · apply VE.Tableau.checkCertificate_sound.{u} _ _ _ c accepted S hS
-    intro a ha
-    simp only [List.mem_append, background] at ha
-    rcases ha with (((ha | ha) | ha) | ha) | ha
-    · exact hdef a ha
-    · exact hbase a ha
-    · exact hprof a ha
-    · exact (elaborate_iff D h S).mpr hcat a ha
-    · exact hΓ a ha
+  refine ⟨fun S hS hcat hdef hprof hbase hΓ =>
+    norms_route_intended D h Γ φ c accepted S hS hcat hdef hprof hbase hΓ, fun hΓ hφ => ?_⟩
   · let C := route D hv hc
     have hacc : (Checker.tableau C.R.E_out).valid c
         (checkedPremises C.R (background D) () Γ) φ := by
