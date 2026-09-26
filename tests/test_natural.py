@@ -53,6 +53,34 @@ def test_prose_paragraph_and_declared_constant_display_forms():
     assert len(natural_document(env, document).sentences) == 3
 
 
+def test_web_app_first_example_is_one_checked_prose_argument():
+    data = vocabulary()
+    data['vocabulary']['sorts']['item']['verbalisation'] = {
+        'singular': 'service', 'plural': 'services'}
+    data['vocabulary']['predicates']['safe'] = {
+        'arguments': ['item'], 'description': 'Safe', 'verbalisation': '{0} is safe'}
+    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
+    env = Environment(data)
+    document = Document((
+        Forall('item', Implies(Unary('reviewed', Var(0)), Unary('safe', Var(0)))),
+        Unary('reviewed', Const('api')),
+        Unary('safe', Const('api'))))
+    expected = ('Every reviewed service is safe. The API is reviewed. '
+                'Therefore the API is safe.')
+    for marker in ('Therefore', 'So', 'Hence', 'It follows that'):
+        text = expected.replace('Therefore', marker)
+        assert parse_english(env, text) == document
+        view = natural_document(env, document, conclusions=(2,), conclusion_marker=marker)
+        assert view.text == text
+        assert view.sentences[2]['role'] == 'conclusion'
+        assert render(document, env, 've_natural', conclusions=(2,),
+                      conclusion_marker=marker) == text
+    with pytest.raises(Exception, match='no checked derivation'):
+        parse_english(env, 'The API is reviewed. Therefore the API is safe.')
+    with pytest.raises(Exception, match='earlier premise'):
+        parse_english(env, 'Therefore the API is safe. The API is reviewed.')
+
+
 def test_writable_shared_copula_and_unqualified_owner():
     compound = Exists('item', And(Unary('active', Var(0)), Unary('reviewed', Var(0))))
     owner = Forall('item', Exists('agent', Binary('owns', Var(0), Var(1))))

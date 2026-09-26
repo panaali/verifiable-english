@@ -18,7 +18,7 @@ VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_fluent")
 # VIEWS is the frozen five-view experimental comparison cohort.
 RENDERING_VIEWS = (*VIEWS, "ve_natural", "ve_english")
 NATURAL_RENDERER = "ve.natural-audited"
-NATURAL_RENDERER_VERSION = "2"
+NATURAL_RENDERER_VERSION = "3"
 NAMING_POLICIES = ("per_statement", "per_document")
 LEGEND_STYLES = ("compact", "json")
 
@@ -550,7 +550,8 @@ class _Traversal:
 
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
+           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False,
+           conclusions=(), conclusion_marker="Therefore") -> str:
     """Render a checked AST in the selected display surface.
 
     A formula has no final punctuation; documents have a period and LF for each
@@ -563,11 +564,12 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     if view == "ve_natural":
         from .natural import render_natural_sentence
         if isinstance(value, ast.Document):
-            ast.check_document(env, value)
-            text = ' '.join(render_natural_sentence(f, env, vocabulary=vocabulary,
-                            accept_suggested_vocabulary=accept_suggested_vocabulary).text + '.'
-                            for f in value.formulas)
+            return natural_document(env, value, vocabulary=vocabulary,
+                                    accept_suggested_vocabulary=accept_suggested_vocabulary,
+                                    conclusions=conclusions, conclusion_marker=conclusion_marker).text
         else:
+            if conclusions:
+                raise ValueError('Conclusion roles require a document')
             ast.check_formula(env, value)
             text = render_natural_sentence(value, env, vocabulary=vocabulary,
                    accept_suggested_vocabulary=accept_suggested_vocabulary).text
@@ -581,6 +583,8 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                              accept_suggested_vocabulary=accept_suggested_vocabulary) != value:
                 raise ValueError('Rendered ve_natural document has a different reading')
         return text
+    if conclusions:
+        raise ValueError('Conclusion roles require the natural view')
     if view == "ve_english":
         from .english import render_english
         return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
@@ -720,7 +724,8 @@ class NaturalView:
 
 
 def natural_document(env: Any, document: ast.Document, *, naming: str = "per_statement",
-                     vocabulary=None, accept_suggested_vocabulary=False) -> NaturalView:
+                     vocabulary=None, accept_suggested_vocabulary=False,
+                     conclusions=(), conclusion_marker="Therefore") -> NaturalView:
     """Render a validated read-only view with explicit scope and dependencies."""
     ast.check_document(env, document)
     from .identity import meaning_id
@@ -728,18 +733,38 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     results = tuple(render_natural_sentence(formula, env, vocabulary=vocabulary,
                     accept_suggested_vocabulary=accept_suggested_vocabulary)
                     for formula in document.formulas)
-    text = ' '.join(result.text + '.' for result in results)
+    conclusions = tuple(conclusions)
+    if len(set(conclusions)) != len(conclusions) or any(type(i) is not int or not 0 <= i < len(results)
+                                                      for i in conclusions):
+        raise ValueError('Conclusion indices must identify distinct document statements')
+    if conclusion_marker not in ('Therefore', 'So', 'Hence', 'It follows that'):
+        raise ValueError('Unsupported conclusion marker')
+    marked = set(conclusions)
+    def clause(result, index):
+        if index not in marked:
+            return result.text
+        tail = result.text
+        if tail.startswith('The ') or tail.split(' ', 1)[0] in {
+                'Every', 'Some', 'No', 'For', 'There', 'It', 'If', 'Both',
+                'Either', 'Starting', 'All', 'At', 'This'}:
+            tail = tail[0].lower() + tail[1:]
+        return conclusion_marker + ' ' + tail
+    text = ' '.join(clause(result, i) + '.' for i, result in enumerate(results))
     if len(text.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
     if len(text) > MAX_NODES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
-    from .english import parse_english
-    if parse_english(env, text, vocabulary=vocabulary,
-                     accept_suggested_vocabulary=accept_suggested_vocabulary) != document:
+    from .english import _parse_english_document
+    parsed, _, _, parsed_conclusions = _parse_english_document(
+        env, text, vocabulary=vocabulary,
+        accept_suggested_vocabulary=accept_suggested_vocabulary)
+    if parsed != document or parsed_conclusions != tuple(i for i in range(len(results)) if i in marked):
         raise ValueError('Rendered ve_natural document has a different reading')
     return NaturalView(text, env.environment_id, meaning_id(env, document),
                        sentences=tuple({'text': result.text, 'form': result.form,
-                                        'fallback_reason': result.reason} for result in results))
+                                        'fallback_reason': result.reason,
+                                        'role': 'conclusion' if i in marked else 'premise'}
+                                       for i, result in enumerate(results)))
 
 
 def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement",
