@@ -14,8 +14,8 @@ supplies an elaboration: premises, Background and conflict formulas are
 regenerated from the decoded values.
 
 Scope: FOL documents without W3 definitions (W3's decoder is not on this
-branch). Full W2 document admission, certificate bindings and the wire theorems
-of 11.4 are not implemented here. -/
+branch). W2 admission and report theorems are in `Norms.Admission` and
+`Norms.Run`. -/
 namespace VE.Norms.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings)
@@ -144,6 +144,8 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
           | .ok act =>
             let args ← strings (← entry.getObjVal? "arguments")
             pure (reg.setObjVal! "act" (.str (← canonicalAct name args.length act)))
+        let reg := Json.mkObj ((← fields reg).filter
+          (fun (key, value) => !(key == "permission" && value == .null)))
         pure (entry.setObjVal! "regulated" reg)
     pure (name, entry)
   pure (environment.setObjVal! "vocabulary"

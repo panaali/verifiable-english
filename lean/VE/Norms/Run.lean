@@ -20,6 +20,8 @@ import VE.Norms.Admission
   `valid`; the certificate binds the complete environment, the regenerated
   `Background ++ layer premises` followed by `premises`, and the conclusion
   (`Replay.norms_wire_acceptance`).
+* `admission`: a W2 FOL `document` containing norm units → a checked report,
+  source-bound report id and unit kinds (`Run.norms_wire_acceptance`).
 * Any case without a norm construct (no `regulated` field, no `norms`, not a
   `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
