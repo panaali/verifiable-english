@@ -187,8 +187,11 @@ class _NaturalVocabulary:
     Inspect all declarations, including unusable templates and unused symbols.
     """
     def __init__(self, env):
-        strict = {name: "{0} is " + name if len(p.arguments) == 1
-                  else "{0} " + name + " {1}" for name, p in env.predicates.items()}
+        strict = {name: ("{0} is " + name if len(p.arguments) == 1 else
+                         "{0} " + name + " {1}" if len(p.arguments) == 2 else
+                         "{0} has recorded relation " + name + " with " +
+                         " and ".join("{" + str(i) + "}" for i in range(1, len(p.arguments))))
+                  for name, p in env.predicates.items()}
         owners = defaultdict(set)
         predicate_heads = set(env.predicates)
         for declarations in (env.sorts, env.predicates, env.constants):
@@ -251,10 +254,26 @@ class _NaturalVocabulary:
                 continue
             path = f"/vocabulary/predicates/{name}/verbalisation"
             before = len(issues)
-            template_checks(value, path)
+            arity = len(p.arguments)
+            if arity <= 2:
+                template_checks(value, path)
             if counts[value] > 1:
                 report(path, "DUPLICATE_TEMPLATE")
-            arity = len(p.arguments)
+            if arity > 2:
+                from .surface.nary import template_parts
+                parts = template_parts(value, arity)
+                if parts is None:
+                    report(path, "TEMPLATE_SHAPE")
+                if len(value) > 160 or len(value.split()) > 24:
+                    report(path, "TEMPLATE_LENGTH")
+                if parts is not None:
+                    for phrase in parts[1:]:
+                        if phrase.strip():
+                            phrase_checks(name, phrase.strip(), path)
+                if len(issues) == before:
+                    self.predicates[name] = value
+                    accepted.add(name)
+                continue
             # Anchors and the positive phrase grammar also exclude repeated,
             # reordered, missing, converted, or attribute-access placeholders.
             shape = (r"\{0\} (.+)" if arity == 1 else r"\{0\} (.+) \{1\}")

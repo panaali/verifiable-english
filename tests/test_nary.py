@@ -3,11 +3,13 @@ import pytest
 
 from ve.ast import Atom, Const, Document, Not, formula_from_data, formula_to_data
 from ve.environment import Environment
+from ve.english import parse_english, render_english
 from ve.errors import InvalidModel, SyntaxError, TypeMismatch, UnknownSymbol, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.parser import parse
 from ve.printer import print_document
+from ve.printer import lint_vocabulary
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.search import check_countermodel
 
@@ -73,3 +75,26 @@ def test_finite_model_and_countermodel_with_nary_relation():
     assert check_countermodel(env, [atom], Not(atom), model).valid
     with pytest.raises(InvalidModel):
         FiniteModel.from_dict(env, {**model.to_dict(), "relations": {"p": [["x", "y", "x"]]}})
+
+
+def test_english_template_round_trip_and_lint():
+    raw = environment().to_dict()
+    raw["vocabulary"]["predicates"]["p"]["verbalisation"] = "{0} reports {1} to {2}"
+    env = Environment(raw)
+    atom = Atom("p", (Const("a"), Const("a"), Const("b")))
+    rendered = render_english(Document((atom,)), env)
+    assert parse_english(env, rendered) == Document((atom,))
+    assert not lint_vocabulary(env)
+    raw["vocabulary"]["predicates"]["p"]["verbalisation"] = "{0} reports {2} to {1}"
+    assert {i.code for i in lint_vocabulary(Environment(raw))} == {"TEMPLATE_SHAPE"}
+
+
+def test_fret_user_sort_time_and_arity_six():
+    raw = environment(6).to_dict()
+    raw["vocabulary"]["sorts"]["time"] = {"description": "Time"}
+    raw["vocabulary"]["predicates"]["p"]["arguments"][1] = "time"
+    raw["vocabulary"]["constants"]["clock"] = {"sort": "time", "description": "Clock"}
+    env = Environment(raw)
+    atom = Atom("p", (Const("a"), Const("clock"), Const("a"),
+                      Const("a"), Const("a"), Const("b")))
+    assert parse(env, print_document(env, Document((atom,)))) == Document((atom,))
