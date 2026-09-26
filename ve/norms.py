@@ -181,12 +181,15 @@ class NormDocument:
                                     {"environment_id": env.environment_id,
                                      "document": [r.to_dict() for r in self.rules]})
 
-    def _decode(self, data):
+    @staticmethod
+    def _decode(data):
         require_fields(data, {"norm"})
         raw = data["norm"]
         require_fields(raw, {"name", "predicate", "sign", "guard", "unless", "over"})
         if type(raw["unless"]) is not list or type(raw["over"]) is not list:
             raise VEError("InvalidInput: unless and over must be arrays")
+        if type(raw["predicate"]) is not str or not all(type(p) is str for p in raw["over"]):
+            raise VEError("InvalidInput: rule predicate and precedence edges must be strings")
         decoder = _Decoder()
         return Norm(raw["name"], raw["predicate"], raw["sign"], decoder.decode(raw["guard"]),
                     tuple(decoder.decode(x) for x in raw["unless"]), tuple(raw["over"]))
