@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 import random
@@ -149,8 +150,83 @@ def wire(formula):
     return ['forall' if kind is ast.Forall else 'exists', formula.sort, wire(formula.body)]
 
 
+def core_tokens(formula, lex):
+    """Independent Python model of the core renderer's token grammar.
+
+    This is computed before looking at any Lean result. Equality here is a
+    sufficient (not necessary) test that Python produced core wording.
+    """
+    def depth(node, sort):
+        if isinstance(node, (ast.Forall, ast.Exists)):
+            return (node.sort == sort) + depth(node.body, sort)
+        if isinstance(node, ast.Not): return depth(node.body, sort)
+        if isinstance(node, (ast.And, ast.Or, ast.Implies)):
+            return max(depth(node.left, sort), depth(node.right, sort))
+        return 0
+
+    limits = {sort: depth(formula, sort) for sort in lex['sorts']}
+
+    def ref(sort, scope):
+        noun = lex['sorts'][sort]['noun']
+        count = sum(s == sort for s, _ in scope)
+        if limits[sort] <= 1: return ('plain', sort), noun
+        if limits[sort] == 2:
+            return (('first' if count == 0 else 'second'), sort), []
+        return ('named', sort, count + 1), noun + ['named', [lex['sorts'][sort]['letter'], count + 1]]
+
+    def declaration(sort, scope):
+        binding, named = ref(sort, scope)
+        if binding[0] in ('first', 'second'):
+            named = [binding[0]] + lex['sorts'][sort]['noun']
+        return binding, named
+
+    def term(value, scope):
+        if isinstance(value, ast.Const): return lex['constants'][value.name]
+        binding = scope[value.index][1]
+        kind, sort = binding[:2]
+        noun = lex['sorts'][sort]['noun']
+        if kind == 'plain': return ['that'] + noun
+        if kind in ('first', 'second'): return ['the', kind] + noun
+        return [[lex['sorts'][sort]['letter'], binding[2]]]
+
+    def clause(node, scope):
+        if isinstance(node, ast.Top): return ['this', 'holds', 'in', 'all', 'cases']
+        if isinstance(node, ast.Bottom): return ['this', 'is', 'impossible']
+        if isinstance(node, ast.Eq): return term(node.left, scope) + ['is', 'the', 'same', 'as'] + term(node.right, scope)
+        args = [node.term] if isinstance(node, ast.Unary) else [node.left, node.right]
+        return [part
+                for word in lex['predicates'][node.predicate]
+                for part in ([word] if isinstance(word, str) else term(args[word], scope))]
+
+    def simple(node): return isinstance(node, (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq))
+
+    def sentence(node, scope=(), level=0):
+        if simple(node): return clause(node, scope)
+        if isinstance(node, ast.Not): return ['it', 'is', 'not', 'the', 'case', 'that'] + sentence(node.body, scope, level)
+        if isinstance(node, (ast.Forall, ast.Exists)):
+            binding, decl = declaration(node.sort, scope)
+            body = sentence(node.body, ((node.sort, binding),) + scope, level)
+            if isinstance(node, ast.Forall): return ['for', 'every'] + decl + [','] + body
+            article = 'an' if decl[0][0] in 'aeiou' else 'a'
+            return ['there', 'is', article] + decl + ['such', 'that'] + body
+        left, right = node.left, node.right
+        if isinstance(node, ast.Implies):
+            return ['if'] + sentence(left, scope, level) + [',', 'then'] + sentence(right, scope, level)
+        if simple(left) and simple(right):
+            if isinstance(node, ast.And): return ['both'] + clause(left, scope) + ['and'] + clause(right, scope)
+            return ['either'] + clause(left, scope) + ['or'] + clause(right, scope) + [',', 'or', 'both']
+        if isinstance(node, ast.Or): header = ['at', 'least', 'one', 'of', 'the', 'following', 'holds', ':']
+        elif isinstance(left, (ast.And, ast.Or, ast.Implies)) or isinstance(right, (ast.And, ast.Or, ast.Implies)):
+            header = ['all', 'of', 'the', 'following', 'hold', ':']
+        else: header = ['both', 'of', 'the', 'following', 'hold', ':']
+        markers = ['(a)', '(b)'] if level % 2 == 0 else ['(i)', '(ii)']
+        return header + [markers[0]] + sentence(left, scope, level + 1) + [';', markers[1]] + sentence(right, scope, level + 1)
+
+    return sentence(formula) + ['.']
+
+
 def run_lean(payload):
-    """Returns (admissible, per-case results) from the Lean runner."""
+    """Returns (admissible, covers, per-case results) from the Lean runner."""
     with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as handle:
         json.dump(payload, handle)
         path = handle.name
@@ -162,7 +238,7 @@ def run_lean(payload):
     if result.returncode:
         raise RuntimeError('Lean runner failed: ' + result.stderr[-2000:])
     output = json.loads(result.stdout)
-    return output['admissible'], output['results']
+    return output['admissible'], output['covers'], output['results']
 
 
 def corpus(env, words, name, per_vocabulary, offset):
@@ -183,10 +259,35 @@ def corpus(env, words, name, per_vocabulary, offset):
     return result
 
 
-def differential(per_vocabulary=200):
+def fixtures(lex):
+    """Expected readings are fixed here, independently of the Lean response."""
+    top, bottom = ['top'], ['bottom']
+    rows = [
+        ('noncanonical list', ['both', 'of', 'the', 'following', 'hold', ':', '(a)',
+                               'this', 'holds', 'in', 'all', 'cases', ';', '(b)',
+                               'this', 'is', 'impossible', '.'], [['and', top, bottom]]),
+        ('noncanonical article', None, None),
+        ('missing period', ['this', 'holds', 'in', 'all', 'cases'], None),
+    ]
+    sorts = [s for s in lex['sorts'] if s != '$int']
+    if sorts:
+        sort = sorts[0]
+        noun = lex['sorts'][sort]['noun']
+        article = 'a' if noun[0][0] in 'aeiou' else 'an'
+        rows[1] = ('noncanonical article', ['there', 'is', article] + noun +
+                   ['such', 'that', 'this', 'holds', 'in', 'all', 'cases', '.'],
+                   [['exists', sort, top]])
+        rows.append(('shadowed binder', ['for', 'every'] + noun + [',', 'there', 'is', 'a'] +
+                     noun + ['such', 'that', 'this', 'holds', 'in', 'all', 'cases', '.'], None))
+    return [(name, tokens, expected) for name, tokens, expected in rows if tokens is not None]
+
+
+def differential(per_vocabulary=200, *, full=False):
     # Suggested overlays are accepted explicitly by their configurations.
     warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
     rows, failures = [], []
+    corpus_digest = hashlib.sha256()
+    total_pairs = 0
     for offset, (name, env, options) in enumerate(configurations()):
         words = EnglishVocabulary(env, **options)
         counts = Counter()
@@ -194,19 +295,32 @@ def differential(per_vocabulary=200):
             lex = lexicon(env, words)
         except Untokenizable as exc:
             rows.append({'vocabulary': name, 'status': 'outside core lexicon', 'reason': str(exc)})
+            total_pairs += per_vocabulary
             print(json.dumps(rows[-1]), flush=True)
             continue
         letters = tuple(words.letters.values())
-        cases, formulas = [], []
+        cases, formulas, is_core = [], [], []
         for formula in corpus(env, words, name, per_vocabulary, offset):
+            total_pairs += 1
+            corpus_digest.update(json.dumps([name, repr(formula)], separators=(',', ':')).encode() + b'\n')
             if not v0_only(formula):
                 counts['outside core AST'] += 1
                 continue
             text = render(ast.Document((formula,)), env, 've_english', **options)
-            cases.append({'tokens': tokenize(lower_sentence_starts(text), letters), 'formulas': [wire(formula)]})
+            tokens = tokenize(lower_sentence_starts(text), letters)
+            cases.append({'tokens': tokens, 'formulas': [wire(formula)]})
             formulas.append(formula)
-        admissible, results = (run_lean({'environment': environment(env), 'lexicon': lex, 'cases': cases})
-                               if cases else (None, []))
+            is_core.append(tokens == core_tokens(formula, lex))
+        fixed = fixtures(lex)
+        fixture_cases = [{'tokens': tokens, 'formulas': [wire(ast.Top())]}
+                         for _, tokens, _ in fixed]
+        admissible, covers, all_results = run_lean({'environment': environment(env), 'lexicon': lex,
+                                                    'cases': cases + fixture_cases})
+        if not covers:
+            failures.append({'vocabulary': name, 'kind': 'lexicon does not cover environment'})
+        results, fixture_results = all_results[:len(cases)], all_results[len(cases):]
+        if len(all_results) != len(cases) + len(fixed):
+            raise RuntimeError('Lean runner returned the wrong number of results')
         # For an admitted lexicon the Lean theorems (checked_parse_render,
         # checked_unique_derivation) apply; every divergence is a failure. For
         # other lexicons Lean results are reported, and only Python's reading
@@ -216,10 +330,19 @@ def differential(per_vocabulary=200):
                 failures.append({'vocabulary': name, 'kind': kind, **detail})
             else:
                 counts['outside admitted lexicon: ' + kind] += 1
-        for formula, case, result in zip(formulas, cases, results):
+        for (fixture_name, tokens, expected), result in zip(fixed, fixture_results, strict=True):
+            if (expected is None or admissible) and result['parsed'] != expected:
+                failures.append({'vocabulary': name, 'kind': 'fixture reading', 'fixture': fixture_name,
+                                 'tokens': tokens, 'expected': expected, 'lean': result['parsed']})
+            counts['fixture ' + ('accepted' if expected is not None else 'rejected')] += 1
+        for formula, case, core, result in zip(formulas, cases, is_core, results, strict=True):
             expected = [wire(formula)]
             if result['parsed'] is None:
-                counts['python text outside core wording'] += 1
+                if core or result['rendered'] == case['tokens']:
+                    failures.append({'vocabulary': name, 'kind': 'missing core parse',
+                                     'tokens': case['tokens'], 'expected': expected})
+                else:
+                    counts['python text outside core wording'] += 1
             elif result['parsed'] == expected:
                 counts['lean parse agrees'] += 1
             else:
@@ -233,6 +356,8 @@ def differential(per_vocabulary=200):
                 problem('lean round trip', formula=expected, rendered=result['rendered'])
             if result['rendered'] == case['tokens']:
                 counts['identical canonical text'] += 1
+            if core:
+                counts['independently identified core text'] += 1
             lean_text = detokenize(result['rendered'])
             try:
                 reread = parse_english(env, lean_text, **options)
@@ -246,11 +371,16 @@ def differential(per_vocabulary=200):
                 failures.append({'vocabulary': name, 'kind': 'python reads lean core text differently',
                                  'text': lean_text, 'expected': expected})
         rows.append({'vocabulary': name, 'status': 'compared', 'lean_admissible': admissible,
+                     'lean_covers': covers,
                      'asts': len(formulas) + counts['outside core AST'],
                      **dict(sorted(counts.items()))})
         print(json.dumps(rows[-1]), flush=True)
-    return {'method': 'Python render -> Lean core parse; Lean core render -> Lean parse and Python parse',
-            'per_vocabulary': per_vocabulary, 'vocabularies': rows, 'failures': failures[:200],
+    if full and (per_vocabulary != 5000 or total_pairs != 85000 or len(rows) != 17):
+        failures.append({'kind': 'full corpus gate', 'pairs': total_pairs,
+                         'vocabularies': len(rows), 'per_vocabulary': per_vocabulary})
+    return {'method': 'independent Python core classification; Python render -> Lean core parse; Lean core render -> Lean parse and Python parse',
+            'seed': SEED, 'corpus_sha256': corpus_digest.hexdigest(), 'pairs': total_pairs,
+            'full_gate': full, 'per_vocabulary': per_vocabulary, 'vocabularies': rows, 'failures': failures[:200],
             'failure_count': len(failures)}
 
 
@@ -258,9 +388,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--per-vocabulary', type=int, default=200,
                         help='ASTs per vocabulary; 5000 replays the full 85,000-pair corpus')
+    parser.add_argument('--full', action='store_true', help='require exactly 17 x 5000 = 85,000 pairs')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
-    report = differential(args.per_vocabulary)
+    report = differential(args.per_vocabulary, full=args.full)
     if args.output:
         args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     agree = sum(r.get('lean parse agrees', 0) for r in report['vocabularies'])
