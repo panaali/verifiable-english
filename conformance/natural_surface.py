@@ -7,6 +7,8 @@ import random
 
 from ve import Environment, parse, ast
 from ve.natural import _NOTATION, render_natural_sentence
+from ve.english import parse_english
+from ve.surface.unambiguity import require_unique_derivation
 from ve.printer import render
 from conformance.english_surface import ROOT, SEED, vocabularies, order_environment, random_formula
 
@@ -23,26 +25,34 @@ def _measure(name, formulas, env, *, options=None, examples=None):
     options = options or {}
     reasons, fallback_details = {}, []
     natural = 0
+    wrong = 0
     for index, formula in enumerate(formulas):
         result = render_natural_sentence(formula, env, **options)
-        assert not _NOTATION.search(result.text), result.text
+        sentence = result.text + '.'
+        try:
+            require_unique_derivation(env, sentence, **options)
+            if parse_english(env, sentence, **options) != ast.Document((formula,)):
+                wrong += 1
+        except Exception:
+            wrong += 1
         if result.natural:
+            assert not _NOTATION.search(result.text), result.text
             assert result.reason is None and result.fluent_text is None
             natural += 1
         else:
-            assert result.reason and result.fluent_text
+            assert result.reason and result.fluent_text and result.form == 'explicit form'
             reasons[result.reason] = reasons.get(result.reason, 0) + 1
             fallback_details.append({'statement': index + 1, 'reason': result.reason})
         if examples is not None and len(examples) < 30:
             examples.append({'corpus': name, 'before': render(formula, env, 've_fluent'),
-                             'after': result.text, 'natural': result.natural,
+                             'after': result.text, 'natural': result.natural, 'form': result.form,
                              'fallback_reason': result.reason})
     count = len(formulas)
     return {'corpus': name, 'statements': count, 'natural': natural,
             'fallback': count - natural,
             'natural_fraction': natural / count if count else 0.0,
             'fallback_reasons': reasons, 'fallback_details': fallback_details,
-            'accepted_wrong_readings': 0}
+            'accepted_wrong_readings': wrong}
 
 
 def audit(random_per_vocabulary=100):
@@ -89,7 +99,8 @@ def audit(random_per_vocabulary=100):
     return {'method': 'per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance',
             'statements': total, 'natural': natural, 'fallback': total - natural,
             'natural_fraction': natural / total if total else 0.0,
-            'accepted_wrong_readings': 0, 'rows': rows, 'skipped': skipped,
+            'accepted_wrong_readings': sum(row['accepted_wrong_readings'] for row in rows),
+            'rows': rows, 'skipped': skipped,
             'examples': examples[:10]}
 
 
