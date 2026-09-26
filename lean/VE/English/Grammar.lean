@@ -76,7 +76,7 @@ def Tree.size : Tree → Nat
   | .neg b | .all _ b | .ex _ _ b => b.size + 1
   | .cond a b | .list _ a b => a.size + b.size + 1
 
-/-! ## Readings: references resolve to the nearest declaration with that form. -/
+/-! ## Readings: scoped declaration forms must be distinct, as in the Python parser. -/
 
 def TermTree.denote (Γ : List Ref) : TermTree → Option Term
   | .const c => some (.const c)
@@ -100,8 +100,8 @@ def Tree.denote : List Ref → Tree → Option Formula
       let x ← a.denote Γ
       let y ← b.denote Γ
       some (if h = .atLeastOne then .or x y else .and x y)
-  | Γ, .all r b => (b.denote (r :: Γ)).map (.all r.sort)
-  | Γ, .ex _ r b => (b.denote (r :: Γ)).map (.ex r.sort)
+  | Γ, .all r b => if r ∈ Γ then none else (b.denote (r :: Γ)).map (.all r.sort)
+  | Γ, .ex _ r b => if r ∈ Γ then none else (b.denote (r :: Γ)).map (.ex r.sort)
 
 /-! ## Documents: sentences end with a period. -/
 

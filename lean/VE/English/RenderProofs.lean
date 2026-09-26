@@ -201,7 +201,8 @@ theorem renderTree_correct (hC : Covers L E) (M : String → Nat) :
       · simp [sdepth, hst] at this ⊢; omega
     have hwa' : a.WellFormed E ((bindRef M Γ s :: Γ).map Ref.sort) := by simpa [hsort] using hwa
     obtain ⟨h1, h2⟩ := ih _ hwa' hb' hs' hm'
-    refine ⟨by simp [renderTree, Tree.denote, h1, hsort], ?_, h2⟩
+    have hfresh : bindRef M Γ s ∉ Γ := bindRef_fresh hb hlt
+    refine ⟨by simp [renderTree, Tree.denote, h1, hsort, hfresh], ?_, h2⟩
     rw [hsort]; exact hC.sorts s hsE
 
 /-- The canonical rendering of a closed well-typed formula is a derivation of it. -/
