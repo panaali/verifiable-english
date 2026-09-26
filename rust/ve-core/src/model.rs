@@ -109,6 +109,12 @@ impl FiniteModel {
             }
             relations.insert(name.clone(), relation);
         }
+        for (required, permitted) in &env.profile_pairs {
+            if !relations[required].is_subset(&relations[permitted]) {
+                return error("InvalidModel", format!(
+                    "required relation {required} exceeds permission {permitted} (profile)"));
+            }
+        }
         let constant_data: BTreeMap<_, _> = constants
             .iter()
             .map(|(n, i)| (n, &domains[&env.constants[n]][*i]))
