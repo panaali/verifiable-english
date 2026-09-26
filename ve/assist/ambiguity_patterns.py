@@ -199,14 +199,19 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
               "cursor": cursor, "next_cursor": None, "residual": residual}
     if residual:
         return result
+    worded = []
     for name, formula in rows:
         try:
             wording = checked_wording(env, render_english(formula, env) + ".", formula)
         except (VEError, ValueError) as exc:
             result["residual"] = f"candidate {name} has no checked writable wording: {exc}"
             return result
-        result["candidates"].append({"name": name, "meaning_id": meaning_id(env, formula),
-                                     "wording": wording})
+        if "has the recorded relation" in wording or re.search(r'"[a-z][a-z0-9_]*"', wording):
+            result["residual"] = f"candidate {name} needs admitted plain English vocabulary"
+            return result
+        worded.append({"name": name, "meaning_id": meaning_id(env, formula),
+                       "wording": wording})
+    result["candidates"] = worded
     if len(rows) > MAX_CANDIDATES:
         result["residual"] = "candidate limit (32)"
         result["pending"].append({"reason": result["residual"]})
