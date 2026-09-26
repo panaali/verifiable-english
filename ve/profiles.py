@@ -46,15 +46,14 @@ def checker_family(profiles):
         pair = next(p for p in checker if p != "order@0")
         raise UnsupportedProfile(f"Unsupported profile combination {pair} x order@0")
     if "nary@0" in checker and "closure@0" not in checker:
-        # Core's n-ary-only checker has not been gated yet.
+        # Stage 1 requires the closure+n-ary Core family.
         raise UnsupportedProfile("Unsupported profile nary@0 without closure@0")
     return ("order" if "order@0" in checker else
             "closure+n-ary" if "nary@0" in checker else
             "closure" if "closure@0" in checker else "fol")
 
 
-# A family the gate accepts whose checker has not landed: every checking site
-# rejects it (the Lean `route` runner rejects it with the same diagnostic).
+# No allowed checker family remains gated after W4 stage 1.
 GATED = {}
 
 
