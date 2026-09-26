@@ -119,6 +119,9 @@ Names have prefix `VE.Norms.`.
 | `Replay.norms_wire_conflict_free_expands` | Then every base-admissible structure has exactly one full document expansion. |
 | `Replay.norms_wire_conflict_witness_sound` | A successful raw witness replay whose regenerated target formula is true at the typed tuple of the validated base model: the input decodes to that document, and the model refutes conflict-freedom, unique expansion and the document property. |
 | `Replay.target_refutes` | A valid finite base witness of any conflict target refutes the document property. |
+| `Admission.admitDocument_spec` | A successful norms admission from raw JSON: the active norm objects decode to the well-formed source whose layers are regenerated; every quoted norm passes the single-rule checks; the W2 document and every graph node are decoded from the same source (each node with the source AST its claim formula decodes from); every certificate names the recomputed canonical environment id and its premise and conclusion ASTs by meaning id; the graph is sound, every node admitted and every assumption an exact decoded leaf; citations are closed and reading choices compatible. |
+| `Admission.norms_wire_report_consequence` | In every admissible structure satisfying the regenerated Background and layer premises, the report's non-layer, non-Background assumptions entail its root. |
+| `Run.norms_wire_acceptance`, `Run.runAdmission_sound` | 11.4 from the public entry point: a successful norms `admission` answer is exactly `encodeAdmitted` of the checked admission for the case's id; the report id is the digest of the recomputed environment id, the complete source document and that report; and the admission and semantic facts above hold (`AdmissionAnswer`). |
 | `Replay.norms_wire_acceptance` | A successful raw entailment replay with an accepted certificate (bound to the complete environment, the regenerated Background ++ layer premises, the case's premises and the conclusion): the input decodes to that document; the conclusion holds under the direct semantics; and, given conflict-freedom and base formulas, over every base-admissible structure satisfying the premises. |
 
 The remaining theorems are helper lemmas (typing, forgetting, instantiation,
@@ -142,10 +145,12 @@ prefix positions, table lookups) audited with the same allowlist.
   quoted kind is rejected, never discarded; quoted norm content is inactive but
   passes every single-rule check (`Admission.checkQuoted`). It delegates P0 cases without norm constructs to
   `Route.Run.runCase` unchanged. `Norms.Run.norms_wire_acceptance` proves that
-  a successful public admission has a checked graph and exact admitted leaves;
-  `Norms.Admission.norms_wire_report_consequence` discharges its regenerated
-  layer leaves under the elaborations. The JSON boundary itself (decoder
-  faithfulness to the wire spec, digests) is tested, as for the P0 routes.
+  a successful public admission answer is exactly the encoding of a checked
+  admission whose bindings equal the recomputed digests and regenerated
+  formulas, with exact admitted leaves, and whose report follows from the
+  regenerated Background and layers plus its remaining assumptions. Digest
+  equality is not a claim that SHA-256 is injective, and decoder faithfulness
+  to the wire spec is tested, as for the P0 routes.
 * W5 flags (`functional`, `total`) and adapters do not exist in this tree:
   `Background_base` is literal distinctness only, and `InFragment` needs no flag
   clause yet. 10.1(h) (the `total` regression) waits for W5.

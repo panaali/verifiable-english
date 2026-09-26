@@ -187,6 +187,7 @@ structure Source where
   D : Doc
   wf : WellFormed D = true
   env : D.E = ne.rv.environment
+  lits : D.lits = ne.rv.literals
 
 /-- Decode the environment and the norm objects (no W3 definitions on this
 path); the diagnostics are those of `validate`. -/
@@ -200,7 +201,7 @@ def decodeSource (environment norms : Json) : Except String Source := do
   let D : Doc := ⟨ne.rv.environment, ne.rv.literals, ⟨ne.regulated, [], nodes⟩⟩
   match hv : validate D with
   | .error e => throw e
-  | .ok () => pure ⟨ne, D, by unfold WellFormed; rw [hv], rfl⟩
+  | .ok () => pure ⟨ne, D, by unfold WellFormed; rw [hv], rfl, rfl⟩
 
 /-! ## Regenerated outputs -/
 

@@ -658,6 +658,13 @@ import VE.Norms.Run
 #print axioms VE.Norms.Replay.target_refutes
 #print axioms VE.Norms.Replay.norms_wire_acceptance
 #print axioms VE.Norms.Admission.admitNodes_ok
+#print axioms VE.Norms.Admission.mapM_ok_mem
+#print axioms VE.Norms.Admission.forM_ok
+#print axioms VE.Norms.Admission.nodeBinding_bound
+#print axioms VE.Norms.Admission.checkBindings_bound
+#print axioms VE.Norms.Admission.decodeNode_ast
+#print axioms VE.Norms.Admission.getArr_ok
+#print axioms VE.Norms.Admission.admitDocument_spec
 #print axioms VE.Norms.Admission.norms_wire_admission_sound
 #print axioms VE.Norms.Admission.layerLeaf_formula
 #print axioms VE.Norms.Admission.norms_wire_report_consequence

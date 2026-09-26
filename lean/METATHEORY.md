@@ -462,8 +462,9 @@ and run the 10.1 regressions on finite models; `Norms/Examples.lean` builds the
 frozen layers of 10.1(c) and (m) as values. The `ve_norms_route` executable
 replays conflict packages, witnesses and entailment certificates from raw JSON
 (`Replay.norms_wire_conflict_sound`, `norms_wire_conflict_witness_sound`,
-`norms_wire_acceptance`); W2 document admission with norm units is not yet
-implemented.
+`norms_wire_acceptance`), and admits W2 documents with norm units
+(`Run.norms_wire_acceptance`: the answer is the encoding of the checked
+admission, with recomputed bindings and regenerated layer leaves).
 
 ## Remaining obligations
 

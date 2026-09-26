@@ -18,6 +18,7 @@ import pytest
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
 from ve.environment import Environment
+from ve.errors import VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.norms import (NormDocument, _bind, _instantiate, check_conflict,
@@ -224,6 +225,79 @@ def test_norm_document_admission_and_provenance_match_lean(lean_executable):
     expected = admit_document(env, joined)
     result = run(lean_executable, [joined_case])[0]
     assert {k: result[k] for k in expected} == expected
+
+
+def test_admission_answer_is_the_bound_encoding_of_the_checked_report(lean_executable):
+    """11.4: the answer encodes the checked report; its id binds the canonical
+    environment and the complete source document; Background and layer leaves
+    are regenerated; certificates are bound to the recomputed inputs."""
+    from ve.admission import admit_document
+    from ve.ast import And, Const, Eq
+    from ve.entailment import prove_entailment
+    from ve.wire import digest
+
+    raw = environment({"permitted": permission()}).to_dict()
+    raw["vocabulary"]["constants"] = {"alpha": {"sort": "$string"}, "beta": {"sort": "$string"}}
+    env = Environment(raw)
+    layer = NormDocument(env, [rule("allow", "permitted", True)]).elaborate("permitted")
+    literal = Not(Eq(Const("alpha"), Const("beta")))
+    joined = And(layer, literal)
+    # The certificate's premises are Background (the literal) ++ (layer,).
+    proof = prove_entailment(env, (layer,), joined)
+    assert proof.status == "Found"
+    document = {"units": [{"id": "u1", "span": [0, 20], "kind": "norm",
+                           "content": rule("allow", "permitted", True).to_dict()}],
+                "graph": {"root": "joined", "nodes": [
+                    {"name": "layer", "ast": formula_to_data(env, layer),
+                     "label": "layer:norms:permitted"},
+                    {"name": "literal", "ast": formula_to_data(env, literal),
+                     "label": "background:literals"},
+                    {"name": "joined", "ast": formula_to_data(env, joined),
+                     "premises": ["literal", "layer"], "certificate": proof.certificate}]}}
+    respanned = json.loads(json.dumps(document))
+    respanned["units"][0]["span"] = [0, 21]
+    quoted = json.loads(json.dumps(document))
+    quoted["units"].append({"id": "u2", "span": [30, 40],
+                            "kind": ["attributed", "alice", "says", "norm"],
+                            "content": rule("deny", "permitted", False).to_dict()})
+    # A non-canonical but equivalent act phrase keeps every binding.
+    spaced = json.loads(json.dumps(raw))
+    spaced["vocabulary"]["predicates"]["permitted"]["regulated"]["act"] = "{0}  be done"
+    variants = [(raw, document), (raw, respanned), (raw, quoted), (spaced, document)]
+    rows = run(lean_executable, [{"id": f"v{i}", "kind": "admission", "environment": e,
+                                  "document": d} for i, (e, d) in enumerate(variants)])
+    ids = []
+    for (e, d), row in zip(variants, rows):
+        expected = admit_document(Environment(e), d)
+        assert row["status"] == "ok", row
+        assert row == {"id": row["id"], "status": "ok", **expected}
+        assert [a["label"] for a in row["report"]["assumptions"]] == [
+            "background:literals", "layer:norms:permitted"]
+        assert row["report_id"] == digest(
+            f"ve-report-{env.identity_version}\n",
+            {"environment_id": env.environment_id, "document": d, "report": row["report"]})
+        ids.append(row["report_id"])
+    assert len(set(ids[:3])) == 3 and ids[3] == ids[0]
+
+    tampered = []
+    stale_env = json.loads(json.dumps(document))
+    stale_env["graph"]["nodes"][2]["certificate"]["environment_id"] = "0" * 64
+    tampered.append(stale_env)
+    stale_premise = json.loads(json.dumps(document))
+    stale_premise["graph"]["nodes"][2]["certificate"]["premise_meaning_ids"].reverse()
+    tampered.append(stale_premise)
+    wrong_literal = json.loads(json.dumps(document))
+    wrong_literal["graph"]["nodes"][1]["ast"] = ["top"]
+    tampered.append(wrong_literal)
+    wrong_label = json.loads(json.dumps(document))
+    wrong_label["graph"]["nodes"][1]["label"] = "layer:norms:permitted"
+    tampered.append(wrong_label)
+    rows = run(lean_executable, [{"id": f"t{i}", "kind": "admission", "environment": raw,
+                                  "document": d} for i, d in enumerate(tampered)])
+    for d, row in zip(tampered, rows):
+        with pytest.raises(VEError):
+            admit_document(env, d)
+        assert row["status"] == "error", row
 
 
 def test_inactive_norm_content_is_rejected_by_lean(lean_executable):
