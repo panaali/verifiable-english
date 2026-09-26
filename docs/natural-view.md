@@ -171,6 +171,18 @@ have no prose round trip. These
 are AST/role checks, not independent source-fidelity or human-comprehension
 measurements.
 
+The final-tree checks on 2026-09-26 passed `lake build`, `python3
+lean/audit.py` (387 theorems, standard axiom allowlist), the P0 frozen-source
+check, Rust workspace tests, and the full Python suite (1,734 passed, four
+skipped, one deselected). A separate historical English replay was stopped
+after a long batch stalled: 12 valid vocabulary rows completed, covering
+60,000 exact round trips and 9,000 Earley texts. All 12 rendered, random,
+and paragraph corpus digests match the frozen English report. The remaining
+25,000 pairs and 3,750 Earley texts are **not verified by this run**. The
+current grammar hashes match the pre-work commit for all 17 environments;
+their difference from hashes in the committed English report predates this
+branch. The frozen report bytes were not changed.
+
 ## Reader-facing notation audit
 
 The historical `ve_fluent` printer puts `@` before constants in
