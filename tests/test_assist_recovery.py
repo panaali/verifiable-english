@@ -561,3 +561,57 @@ def test_narrowing_uses_w2_and_records_document_dependency():
                                presentation="Api is safe.", situation=situation, narrowing=record["id"])
     assert approval["snapshot"]["narrowing"] == record["document_unit"]["id"]
     assert RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger()))).approval_valid("u")
+
+
+def _rehash_ledger(ledger):
+    previous = None
+    for event in ledger["events"]:
+        event["previous_digest"] = previous
+        event["event_digest"] = hashlib.sha256(json.dumps(
+            {k: v for k, v in event.items() if k != "event_digest"}, sort_keys=True,
+            ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+        previous = event["event_digest"]
+    return ledger
+
+
+@pytest.mark.parametrize("obligation", ["catalogue", "pending"])
+def test_import_rejects_forged_cancel_erasing_review_obligations(obligation):
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    if obligation == "catalogue":
+        service.classify("u", parse_outcome="one", catalogue_bindings={
+            "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}})
+        assert len(service.units["u"].readings) == 2
+    else:
+        service.classify("u", parse_outcome="one", discourse="incomplete")
+        assert service.units["u"].pending
+    service.cancel("u")
+    ledger = service.to_ledger()
+    snapshot = ledger["events"][-1]["unit_snapshot"]
+    if obligation == "catalogue":
+        snapshot["readings"] = []
+        snapshot["catalogue_reviewed"] = []
+        snapshot["catalogue_results"] = {}
+    else:
+        snapshot["pending"] = []
+    forged = _rehash_ledger(ledger)
+    assert not service.verify_ledger(forged)
+    with pytest.raises(ValueError, match="invalid recovery ledger"):
+        RecoveryService.from_ledger(env, forged)
+
+
+def test_import_rejects_forged_catalogue_page_erasing_other_pending_review():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {})
+    service.start("u")
+    bindings = {"predicate": "safe", "antecedents": ["api", "bob", "carol", "alice"]}
+    service.classify("u", parse_outcome="one", discourse="incomplete", catalogue_bindings={
+        "discourse.reference@1": bindings})
+    service.continue_catalogue("u", "discourse.reference@1", bindings)
+    assert any(not row.get("pattern_id") for row in service.units["u"].pending)
+    ledger = service.to_ledger()
+    ledger["events"][-1]["unit_snapshot"]["pending"] = []
+    assert not service.verify_ledger(_rehash_ledger(ledger))

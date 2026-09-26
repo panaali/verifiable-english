@@ -162,6 +162,125 @@ class RecoveryService:
         except (KeyError, TypeError, ValueError, IndexError, VEError):
             return False
 
+    @staticmethod
+    def _valid_transition(event, previous):
+        """An event may change only the fields owned by its recorded action."""
+        snap = event["unit_snapshot"]
+        action = event["action"]
+        if snap["id"] != event["unit"] or snap["revision"] != event["revision"] or snap["state"] != event["state"]:
+            return False
+        if previous is None:
+            return action == "add" and snap["state"] == "draft" and snap["approval"] is None
+        allowed = {
+            "invalidate": {"state", "approval"},
+            "edit": {"source", "anchor", "presentation", "state", "meaning_id", "readings",
+                     "rejected", "narrowings", "pending", "catalogue_reviewed", "catalogue_results"},
+            "undo": set(), "undo_requires_review": {"state"},
+            "start": {"state"}, "task_cap": {"state", "reason"},
+            "classify": {"state", "reason", "pending", "readings", "catalogue_reviewed", "catalogue_results"},
+            "catalogue_page": {"state", "pending", "catalogue_reviewed", "catalogue_results"},
+            "reply": {"state", "reason", "replies", "rejected"},
+            "proposer_cap": {"state", "reason"}, "proposer_reserved": {"proposals"},
+            "proposer_failed": {"state", "reason"}, "proposer_timed_out": {"state", "reason"},
+            "proposer_suggested": set(), "cancel": {"state"}, "unresolved": {"state", "reason"},
+            "readings": {"state", "readings", "pending"},
+            "resolve_pending": {"state", "pending", "readings", "catalogue_results", "catalogue_reviewed"},
+            "narrowing": {"narrowings"},
+            "approve": {"state", "meaning_id", "paraphrase", "presentation", "situation",
+                        "readings", "rejected", "approval"},
+        }.get(action)
+        if allowed is None or any(snap[k] != previous[k] for k in snap.keys() - allowed - {"revision"}):
+            return False
+        if action == "start" and (previous["state"] not in {"draft", "stale", "unresolved", "exhausted"}
+                                  or snap["state"] != "analysing"):
+            return False
+        if action == "invalidate" and (not previous["approval"] or snap["approval"] is not None
+                                       or snap["state"] != "stale"):
+            return False
+        if action == "edit":
+            if snap["source"] == previous["source"]:
+                if any(snap[k] != previous[k] for k in ("meaning_id", "readings", "rejected",
+                        "narrowings", "pending", "catalogue_reviewed", "catalogue_results")):
+                    return False
+            elif any(snap[k] for k in ("meaning_id", "readings", "rejected", "narrowings",
+                                        "pending", "catalogue_reviewed", "catalogue_results")):
+                return False
+        if action == "classify":
+            from .ambiguity_patterns import PATTERNS
+            matched = {p.id for p in PATTERNS if p.matches(snap["source"])}
+            remaining = snap["pending"].copy()
+            for row in previous["pending"]:
+                if not row.get("pattern_id"):
+                    if row not in remaining:
+                        return False
+                    remaining.remove(row)
+            if (previous["state"] != "analysing"
+                    or snap["readings"][:len(previous["readings"])] != previous["readings"]
+                    or set(snap["catalogue_reviewed"]) - matched
+                    or set(snap["catalogue_results"]) - matched
+                    or any(p not in snap["catalogue_reviewed"]
+                           and not any(row.get("pattern_id") == p for row in snap["pending"])
+                           for p in matched)
+                    or any(p not in snap["catalogue_results"] or snap["catalogue_results"][p].get("pending")
+                           or snap["catalogue_results"][p].get("residual")
+                           or snap["catalogue_results"][p].get("next_cursor") is not None
+                           for p in snap["catalogue_reviewed"])):
+                return False
+        if action == "readings":
+            if (previous["state"] not in {"reading_review", "ready"}
+                    or {row["meaning_id"] for row in previous["readings"]}
+                    - {row["meaning_id"] for row in snap["readings"]}
+                    or snap["pending"][:len(previous["pending"])] != previous["pending"]):
+                return False
+        if action == "catalogue_page":
+            pattern = event["pattern_id"]
+            before = previous["catalogue_results"].get(pattern)
+            after = snap["catalogue_results"].get(pattern)
+            retained = [row for row in previous["pending"] if row.get("pattern_id") != pattern]
+            if (previous["state"] != "reading_review" or not before or not after
+                    or before.get("next_cursor") is None
+                    or any(row not in snap["pending"] for row in retained)
+                    or set(snap["catalogue_reviewed"]) - set(previous["catalogue_reviewed"]) - {pattern}
+                    or (pattern in snap["catalogue_reviewed"] and (after.get("pending") or after.get("residual")
+                        or after.get("next_cursor") is not None))
+                    or snap["catalogue_results"].keys() != previous["catalogue_results"].keys()
+                    or any(snap["catalogue_results"][p] != result for p, result in previous["catalogue_results"].items()
+                           if p != pattern)
+                    or after.get("candidates") != before.get("candidates")
+                    or after.get("cards", [])[:len(before.get("cards", []))] != before.get("cards", [])
+                    or after.get("comparison_count", 0) < before.get("comparison_count", 0)):
+                return False
+        if action == "resolve_pending":
+            if (previous["state"] != "reading_review" or not event.get("actor") or not event.get("reason")
+                    or event["item"] not in previous["pending"] or len(snap["pending"]) != len(previous["pending"]) - 1
+                    or snap["readings"][:len(previous["readings"])] != previous["readings"]):
+                return False
+            removed = previous["pending"].copy()
+            removed.remove(event["item"])
+            if snap["pending"] != removed:
+                return False
+            if event["item"].get("pattern_id"):
+                if (event["disposition"] != "not_applicable"
+                        or snap["catalogue_results"].get(event["item"]["pattern_id"], {}).get("disposition") != {
+                            "actor": event["actor"], "reason": event["reason"], "disposition": "not_applicable"}):
+                    return False
+            elif event["disposition"] != "resolved" or not event.get("wording") or not event.get("cited_spans"):
+                return False
+        if action == "reply" and (snap["replies"] != previous["replies"] + 1
+                                  or snap["rejected"][:len(previous["rejected"])] != previous["rejected"]):
+            return False
+        if action == "proposer_reserved" and snap["proposals"] != previous["proposals"] + 1:
+            return False
+        if action == "narrowing" and snap["narrowings"] != previous["narrowings"] + [event["narrowing"]]:
+            return False
+        if action == "approve" and (snap["state"] != "approved" or previous["state"] != "ready"
+                                    or previous["pending"] or snap["readings"][:len(previous["readings"])] != previous["readings"]
+                                    or snap["rejected"][:len(previous["rejected"])] != previous["rejected"]):
+            return False
+        if action == "cancel" and (previous["state"] == "approved" or snap["state"] != "draft"):
+            return False
+        return True
+
     def _verify_ledger(self, ledger=None):
         ledger = self.to_ledger() if ledger is None else ledger
         if (ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions
@@ -179,6 +298,9 @@ class RecoveryService:
             if (event.get("revision") != number or event.get("previous_digest") != previous
                     or event.get("event_digest") != _digest(raw)
                     or event.get("source_digest") != _digest(event["unit_snapshot"]["source"])):
+                return False
+            prior = history.units.get(event["unit"])
+            if not self._valid_transition(event, self._snapshot(prior) if prior else None):
                 return False
             history.versions = deepcopy(event["versions"])
             history.units[event["unit"]] = Unit(**deepcopy(event["unit_snapshot"]))
@@ -247,9 +369,11 @@ class RecoveryService:
             formula = parsed.document.formulas[0]
             if len(parsed.document.formulas) != 1 or meaning_id(self.env, formula) != snap["meaning_id"]:
                 raise ValueError("restored meaning changed")
-            unit.readings = deepcopy(snap["considered"])
             self.start(unit_id)
             self.classify(unit_id, parse_outcome="one")
+            if unit.state != "ready":
+                raise ValueError("restored reading review is incomplete")
+            self.set_readings(unit_id, deepcopy(snap["considered"]))
             self.approve(unit_id, formula, actor=snap["actor"], paraphrase=snap["paraphrase"],
                          presentation=snap["presentation"], situation=snap["situation"],
                          rejected=snap["rejected"], narrowing=snap["narrowing"])
