@@ -8,10 +8,11 @@ from __future__ import annotations
 
 from collections import Counter
 import hashlib
+import json
 import re
 
 from . import ast
-from .english import EnglishParser, EnglishTraversal, EnglishVocabulary
+from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
@@ -150,6 +151,43 @@ def render_english(document: NormDocument, *, handles=None):
 _HEADER = re.compile(r"Rule ([1-9][0-9]*)(?: \(exception to rules? ([0-9, and]+)\))?\. (.*)\Z", re.S)
 
 
+def _block_grammar(env, words):
+    """Audit the complete rule syntax with P0's independent formula grammar.
+
+    Consequences are declared phrases, never a catch-all terminal. The guard
+    and carve-out positions use the same unrestricted formula productions as
+    ordinary English, so punctuation and connective ambiguity remain visible.
+    """
+    base = english_lark_grammar(env)
+    clauses = []
+    for name, decl in env.predicates.items():
+        if decl.regulated is None:
+            continue
+        for sign in (True, False):
+            wording, _ = _consequence(Norm("candidate", name, sign, ast.Top()), env, words)
+            nouns = [words.sorts[s] for s in decl.arguments]
+            variants = [wording]
+            if len(nouns) == 2:
+                variants.append(wording.replace("each " + nouns[1], "any " + nouns[1]))
+            if decl.regulated.role == "permission" and not sign:
+                variants.append(wording.replace("Every " + nouns[0] + " must not ",
+                                                "No " + nouns[0] + " may ", 1))
+            clauses.extend(json.dumps(v) + "i" for v in variants)
+    if not clauses:
+        clauses = ["IMPOSSIBLE"]
+    lines = base.splitlines()
+    lines[0] = ('start: rule_block | precedence_sentence\n'
+                'rule_block: "Rule"i RULE_NUMBER header? "." consequence condition* "." carveout*\n'
+                'header: "(" "exception to rule"i RULE_NUMBER ")" '
+                '| "(" "exception to rules"i RULE_NUMBER ("," RULE_NUMBER)* ")"\n'
+                'precedence_sentence: "Rule"i RULE_NUMBER "takes precedence over rule"i RULE_NUMBER "."\n'
+                'condition: ", if" formula | ", unless" formula\n'
+                'carveout: "Except when"i formula "."\n'
+                'consequence: ' + ' | '.join(dict.fromkeys(clauses)) + '\n'
+                'RULE_NUMBER: /[1-9][0-9]*/')
+    return "\n".join(lines) + "\n"
+
+
 def _parse_consequence(text, env, words):
     matches = []
     for name, decl in env.predicates.items():
@@ -192,6 +230,7 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
     if manifest is not None and len(manifest.get("blocks", [])) != len(blocks):
         raise VEError("IdentityMetadataMismatch: block count")
     words = _words(env)
+    grammar = _block_grammar(env, words)
     parsed = []
     reserved = set(existing_names)
     seen_handles = set()
@@ -232,6 +271,7 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         predicate, sign, scope = _parse_consequence(first, env, words)
         guard = _parse_guard(guard_text, env, words, scope) if guard_text else ast.Top()
         carveouts = tuple(_parse_guard(x, env, words, scope) for x in (*unless, *extra))
+        require_unique_derivation(env, block, grammar=grammar)
         parsed.append((name, predicate, sign, guard, carveouts, refs))
     names = [x[0] for x in parsed]
     rules = []

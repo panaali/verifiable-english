@@ -21,11 +21,11 @@ def _parser(grammar):
                 propagate_positions=True)
 
 
-def require_unique_derivation(env, source, **options):
+def require_unique_derivation(env, source, *, grammar=None, **options):
     from ..english import english_lark_grammar
     if len(source) > MAX_NODES:
         raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
-    grammar = english_lark_grammar(env, **options)
+    grammar = grammar if grammar is not None else english_lark_grammar(env, **options)
     # The handwritten parser folds the first letter of every sentence before
     # matching; the independent grammar must see the same lexical input.
     text = re.sub(r"(^|(?<=\.)\s+)([A-Z])", lambda match: match[1] + match[2].lower(), source)
