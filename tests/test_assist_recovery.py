@@ -615,3 +615,26 @@ def test_import_rejects_forged_catalogue_page_erasing_other_pending_review():
     ledger = service.to_ledger()
     ledger["events"][-1]["unit_snapshot"]["pending"] = []
     assert not service.verify_ledger(_rehash_ledger(ledger))
+
+
+def test_noop_undo_invalidates_approved_dependents_before_parent_revision():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    for unit_id, name, dependencies in (("parent", "api", ()), ("child", "carol", ("parent",))):
+        service.add(unit_id, f"{name.title()} is safe.", {}, dependencies=dependencies)
+        service.start(unit_id)
+        service.classify(unit_id, parse_outcome="one")
+        formula = Unary("safe", Const(name))
+        situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+        service.approve(unit_id, formula, actor="author", paraphrase=f"{name.title()} is safe.",
+                        presentation=f"{name.title()} is safe.", situation=situation)
+        if unit_id == "parent":
+            parent_revision = service.units[unit_id].revision
+    service.undo("parent", parent_revision)
+    assert service.units["parent"].state == "approved"
+    assert service.approval_valid("parent")
+    assert service.units["child"].state == "stale"
+    assert not service.approval_valid("child")
+    assert service.verify_ledger()
+    restored = RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger())))
+    assert restored.verify_ledger() and restored.units["child"].state == "stale"
