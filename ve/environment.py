@@ -23,7 +23,7 @@ ORDER_PROFILES = ("order@0", PROFILE)
 ORDER_REVISION = "ve-v0.1-order-2026-09-22"
 INT_SORT = "$int"
 STRING_SORT = "$string"
-RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually".split())
+RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually no".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
 
