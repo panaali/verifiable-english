@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Callable, NamedTuple
 
-from .ast import Const, Eq, Formula, Not
+from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Var
 from .errors import InvalidModel
 
 
@@ -43,10 +43,39 @@ def _valid_literals(env, model):
         denotations[value] = name
 
 
+def _flag_premises(env):
+    result = []
+    for name, decl in sorted(env.predicates.items()):
+        if decl.functional:
+            result.append(Forall(decl.arguments[0], Forall(decl.arguments[1],
+                Forall(decl.arguments[1], Implies(
+                    And(Binary(name, Var(2), Var(1)), Binary(name, Var(2), Var(0))),
+                    Eq(Var(1), Var(0)))))))
+        if decl.total:
+            result.append(Forall(decl.arguments[0], Exists(decl.arguments[1],
+                Binary(name, Var(1), Var(0)))))
+    return tuple(result)
+
+
+def _valid_flags(env, model):
+    for name, decl in env.predicates.items():
+        if not (decl.functional or decl.total):
+            continue
+        values = {}
+        for source, target in model.relations[name]:
+            if decl.functional and source in values and values[source] != target:
+                raise InvalidModel(f"{name!r} has two values for {source!r}", generator="flags")
+            values[source] = target
+        if decl.total:
+            missing = set(model.domains[decl.arguments[0]]) - values.keys()
+            if missing:
+                raise InvalidModel(f"{name!r} has no value for {min(missing)!r}", generator="flags")
+
+
 # Each entry is (premise generator, validity checker). The three empty slots
 # are deliberately explicit extension points for W5, W3 and W1.
 HOOKS: dict[str, tuple[Callable, Callable]] = {
-    "flags": (_empty, _valid),
+    "flags": (_flag_premises, _valid_flags),
     "definitions": (_empty, _valid),
     "literals": (_literal_premises, _valid_literals),
     "profile": (_empty, _valid),
