@@ -214,6 +214,29 @@ def test_lowercase_alias_and_conclusion_initials_roundtrip():
         assert english.endswith('Therefore api is reviewed.\n')
 
 
+@pytest.mark.parametrize('alias', ('The API', 'The Api', 'The api'))
+@pytest.mark.parametrize('marker', ('Therefore', 'So', 'Hence', 'It follows that'))
+def test_capitalized_article_alias_keeps_exact_case_in_conclusions(alias, marker):
+    env = Environment(vocabulary())
+    options = _names(env, api=alias)
+    premise = Unary('reviewed', Const('api'))
+    document = Document((premise, premise))
+    source = f'{alias} is reviewed. {marker} {alias} is reviewed.'
+    parsed = parse_presentation(env, source, **options)
+    assert parsed.document == document
+    assert [sentence['role'] for sentence in parsed.sentences] == ['premise', 'conclusion']
+    view = natural_document(env, document, conclusions=(1,),
+                            conclusion_marker=marker, **options)
+    assert view.text == source
+    assert render(document, env, 've_natural', conclusions=(1,),
+                  conclusion_marker=marker, **options) == source
+    assert render_presentation(env, document, conclusions=(1,),
+                               conclusion_marker=marker, **options).document == document
+    migration = migrate_presentation(env, source, **options)
+    assert migration['proposed'].document == document
+    assert migration['meaning_unchanged']
+
+
 def test_plural_and_possessive_references_require_explicit_repair():
     env = Environment(vocabulary())
     options = _names(env, api='the API', alice='Alice')

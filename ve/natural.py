@@ -82,12 +82,14 @@ def parse_presentation(env, text, *, version=PRESENTATION_VERSION,
 
 
 def render_presentation(env, document, *, version=PRESENTATION_VERSION,
-                        conclusions=(), paragraph_breaks=(), **options):
+                        conclusions=(), conclusion_marker='Therefore',
+                        paragraph_breaks=(), **options):
     """Render the new versioned default with the same parser as author input."""
     if version != PRESENTATION_VERSION:
         raise ValueError('Unsupported prose presentation version')
     from .printer import natural_document
     view = natural_document(env, document, conclusions=conclusions,
+                            conclusion_marker=conclusion_marker,
                             paragraph_breaks=paragraph_breaks, **options)
     needs_repair = tuple({'statement': index + 1, 'reason': sentence['fallback_reason']}
                          for index, sentence in enumerate(view.sentences)
