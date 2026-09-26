@@ -23,6 +23,7 @@ import VE.Norms.SmallModel
 import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
+import VE.Norms.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -656,5 +657,11 @@ import VE.Norms.Replay
 #print axioms VE.Norms.Replay.norms_wire_conflict_witness_sound
 #print axioms VE.Norms.Replay.target_refutes
 #print axioms VE.Norms.Replay.norms_wire_acceptance
+#print axioms VE.Norms.Admission.admitNodes_ok
+#print axioms VE.Norms.Admission.norms_wire_admission_sound
+#print axioms VE.Norms.Admission.layerLeaf_formula
+#print axioms VE.Norms.Admission.norms_wire_report_consequence
+#print axioms VE.Norms.Run.runAdmission_sound
+#print axioms VE.Norms.Run.norms_wire_acceptance
 #print axioms VE.Norms.norms_route_intended
 #print axioms VE.Norms.mem_children_iff

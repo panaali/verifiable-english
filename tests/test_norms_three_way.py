@@ -140,6 +140,56 @@ def test_norm_certificate_producer_and_canonical_identity_match_lean(lean_execut
     assert run(lean_executable, [conflict_case])[0]["verdict"] == "CONFLICT-FREE"
 
 
+def test_norm_document_admission_and_provenance_match_lean(lean_executable):
+    from copy import deepcopy
+    from tests.test_norm_admission import source
+    from ve.admission import admit_document
+
+    env, document = source()
+    cases = []
+    for i, doc in enumerate((document,)):
+        cases.append({"id": str(i), "kind": "admission", "environment": env.to_dict(),
+                      "document": doc})
+    expected = admit_document(env, document)
+    result = run(lean_executable, cases)[0]
+    assert result["status"] == "ok"
+    assert {k: result[k] for k in expected} == expected
+
+    quoted = deepcopy(document)
+    quoted["units"][0]["kind"] = ["attributed", "alice", "says", "norm"]
+    quoted["units"].append({"id": "u2", "span": [20, 30], "kind": "asserted",
+                            "content": ["top"]})
+    quoted["graph"] = {"root": "asserted", "nodes": [
+        {"name": "asserted", "ast": ["top"], "unit": "u2"}]}
+    quoted_case = {"id": "quoted", "kind": "admission", "environment": env.to_dict(),
+                   "document": quoted}
+    quoted_expected = admit_document(env, quoted)
+    quoted_result = run(lean_executable, [quoted_case])[0]
+    assert {k: quoted_result[k] for k in quoted_expected} == quoted_expected
+
+    stale = deepcopy(cases[0])
+    stale["document"]["graph"]["nodes"][0]["ast"] = ["top"]
+    assert run(lean_executable, [stale])[0]["status"] == "error"
+
+    from ve.ast import And, formula_to_data
+    from ve.entailment import prove_entailment
+    joined = deepcopy(document)
+    layer = NormDocument(env, [rule("allow", "permitted", True)]).elaborate("permitted")
+    joined["units"].append({"id": "u2", "span": [20, 30], "kind": "asserted",
+                             "content": ["top"]})
+    joined["graph"]["nodes"].extend([
+        {"name": "asserted", "ast": ["top"], "unit": "u2"},
+        {"name": "joined", "ast": formula_to_data(env, And(layer, Top())),
+         "premises": ["layer", "asserted"],
+         "certificate": prove_entailment(env, (layer, Top()), And(layer, Top())).certificate}])
+    joined["graph"]["root"] = "joined"
+    joined_case = {"id": "joined", "kind": "admission", "environment": env.to_dict(),
+                   "document": joined}
+    expected = admit_document(env, joined)
+    result = run(lean_executable, [joined_case])[0]
+    assert {k: result[k] for k in expected} == expected
+
+
 def test_1100_regenerated_documents_match_lean(lean_executable):
     docs = [*corpus(), *pair_corpus()]
     results = run(lean_executable, [lean_case(i, d) for i, d in enumerate(docs)])
