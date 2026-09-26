@@ -118,6 +118,22 @@ def test_english_template_round_trip_and_lint():
     assert {i.code for i in lint_vocabulary(Environment(raw))} == {"TEMPLATE_SHAPE"}
 
 
+def test_english_fallback_names_each_argument_position():
+    env = environment(4)
+    # Use two distinct same-sort constants in positions two and three.
+    raw = env.to_dict()
+    raw["vocabulary"]["constants"]["c"] = {"sort": "s", "description": "C"}
+    env = Environment(raw)
+    left = Atom("p", (Const("a"), Const("a"), Const("c"), Const("b")))
+    right = Atom("p", (Const("a"), Const("c"), Const("a"), Const("b")))
+    first = render_english(Document((left,)), env)
+    second = render_english(Document((right,)), env)
+    assert first != second
+    assert "argument two" in first and "argument three" in first
+    assert parse_english(env, first) == Document((left,))
+    assert parse_english(env, second) == Document((right,))
+
+
 def test_fret_user_sort_time_and_arity_six():
     fret = Environment({
         "language": LANGUAGE,

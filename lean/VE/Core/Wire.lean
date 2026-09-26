@@ -84,7 +84,7 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   return VE.Route.Wire.ok id [("valid", .bool (Tableau.checkCertificate E
       (background.map embed ++ ps) c certificate)), ("background", toJson background.length)]
 
-private theorem validField (id : String) (b : Bool) (n : Nat) :
+theorem validField (id : String) (b : Bool) (n : Nat) :
     (VE.Route.Wire.ok id [("valid", .bool b), ("background", toJson n)]).getObjVal? "valid" =
       .ok (.bool b) := by
   rfl
