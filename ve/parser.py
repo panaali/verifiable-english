@@ -202,13 +202,14 @@ class _Parser:
                 self.error(f"unknown unary predicate {predicate!r}", pos, UnknownSymbol)
             return self.node(start, ast.Forall(sort, ast.Not(ast.Unary(predicate, ast.Var(0)))))
         if definitions and self.s.startswith("every ", self.i):
+            from .environment import RESERVED
             self.i += 6
             sort, pos = self.identifier("sort identifier")
             if sort not in self.env.sorts:
                 self.error(f"unknown sort {sort!r}", pos, UnknownSymbol)
             self.literal(" ")
             name, pos = self.identifier("binder name")
-            if name in self.env.sorts or name in self.env.predicates or name in self.env.constants or any(
+            if name in RESERVED or name in self.env.sorts or name in self.env.predicates or name in self.env.constants or any(
                     active == name for active, _ in self.binders):
                 self.error(f"invalid binder name {name!r}", pos)
             self.literal(" that is ")
@@ -296,6 +297,7 @@ class _Parser:
             self.error("document must contain at least one statement", 0)
         while self.i < len(self.s):
             if "definitions@0" in self.env.profiles and self.s.startswith("define ", self.i):
+                from .environment import RESERVED
                 from .definitions import Definition, premise
                 self.i += 7
                 predicate, pos = self.identifier("defined predicate")
@@ -308,7 +310,7 @@ class _Parser:
                     if index:
                         self.literal(", ")
                     name, pos = self.identifier("definition argument")
-                    if name in names:
+                    if name in RESERVED or name in self.env.sorts or name in self.env.predicates or name in self.env.constants or name in names:
                         self.error(f"repeated definition argument {name!r}", pos)
                     names.append(name)
                     self.binders.append((name, sort))
