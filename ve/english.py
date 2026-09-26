@@ -50,7 +50,6 @@ _COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', 
 # exactly as the type checker does (MAX_DEPTH), so every renderable integer
 # term of a valid AST parses back.
 _INT_MASK = '\x00'
-_SENTENCE_HEADS = frozenset('every for there some no if both either it starting all at this therefore so hence'.split())
 _CONCLUSION_MARKERS = ('therefore ', 'so ', 'hence ', 'it follows that ')
 
 
@@ -72,10 +71,13 @@ def _mentioned_constants(value):
 def _fold_sentence_initials(source, words):
     def fold(match):
         word = match[2]
-        if (word.lower() in _SENTENCE_HEADS or
-                any(value == word.lower() for value in words.constants.values())):
-            return match[1] + word[0].lower() + word[1:]
-        return match[0]
+        for value in words.constants.values():
+            display = value[0].upper() + value[1:]
+            tail = source[match.start(2):]
+            if (tail.startswith(display) and
+                    (len(tail) == len(display) or not re.match(r'[A-Za-z0-9_]', tail[len(display)]))):
+                return match[0]
+        return match[1] + word[0].lower() + word[1:]
     return re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
 
 
