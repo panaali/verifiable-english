@@ -257,16 +257,17 @@ def closureUsesStringBinder : VE.Closure.Formula → Bool
 
 /-! ## Formula decoding for the FOL family -/
 
-def decodeFormulas (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
+def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
+    Except String (List VE.Formula) := do
   let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
-  if fs.any usesStringBinder then throw "$string quantification requires data stage 2"
+  if data && fs.any usesStringBinder then throw "$string quantification requires data stage 2"
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
   if (fs.map VE.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
   pure fs
 
-def decodeClosed (E : VE.Environment) (j : Json) : Except String VE.Formula := do
+def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
   let a ← VE.Bridge.decodeFormula 64 j
-  if usesStringBinder a then throw "$string quantification requires data stage 2"
+  if data && usesStringBinder a then throw "$string quantification requires data stage 2"
   unless a.check E [] do throw "ill-typed or unbound conclusion"
   pure a
 
@@ -296,12 +297,12 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
         (List.replicate literalPremises.length "literals")))]
   if kind == "evaluate" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    let fs ← decodeFormulas E (← j.getObjVal? "ast")
+    let fs ← decodeFormulas E (← j.getObjVal? "ast") (profiles.contains "data@0")
     if fs.isEmpty then throw "empty document"
     return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
   let premisesJson ← j.getObjVal? "premises"
-  let ps ← decodeFormulas E premisesJson
-  let c ← decodeClosed E (← j.getObjVal? "conclusion")
+  let ps ← decodeFormulas E premisesJson (profiles.contains "data@0")
+  let c ← decodeClosed E (← j.getObjVal? "conclusion") (profiles.contains "data@0")
   if kind == "countermodel" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
     return ok id [("refutes", .bool (VE.countermodelCheck M ps c))]
@@ -327,14 +328,17 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   if kind == "evaluate" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")
-    if fs.any closureUsesStringBinder then throw "$string quantification requires data stage 2"
+    if profiles.contains "data@0" && fs.any closureUsesStringBinder then
+      throw "$string quantification requires data stage 2"
     if fs.isEmpty then throw "empty document"
     return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
-  if ps.any closureUsesStringBinder then throw "$string quantification requires data stage 2"
+  if profiles.contains "data@0" && ps.any closureUsesStringBinder then
+    throw "$string quantification requires data stage 2"
   let c ← VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
-  if closureUsesStringBinder c then throw "$string quantification requires data stage 2"
+  if profiles.contains "data@0" && closureUsesStringBinder c then
+    throw "$string quantification requires data stage 2"
   unless c.check E [] do throw "ill-typed or unbound conclusion"
   if ((c :: ps).map VE.Closure.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
     throw "ResourceLimit: AST node count"
