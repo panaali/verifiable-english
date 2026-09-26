@@ -311,16 +311,6 @@ def test_three_bound_entities_use_writable_ordinals():
     assert parse_english(ENV, result.text + '.') == Document((formula,))
 
 
-def test_ninth_bound_entity_uses_typed_ordinal_without_variable_letter():
-    from ve import Eq
-    formula = Eq(Var(8), Var(0))
-    for _ in range(9):
-        formula = Forall('item', formula)
-    result = render_natural_sentence(formula, ENV)
-    assert result.natural and 'ninth service' in result.text
-    assert parse_english(ENV, result.text + '.') == Document((formula,))
-
-
 def test_distinct_identifiers_survive_explicit_fallback():
     data = vocabulary()
     for name in ('flag_a', 'flag__a'):
@@ -405,3 +395,6 @@ def test_repository_corpus_accepts_no_wrong_reading():
     assert report['accepted_wrong_readings'] == 0
     assert not report['skipped']
     assert report['natural'] and report['fallback']
+    assert sum(report['fallback_dispositions'].values()) == report['fallback']
+    assert report['real_documents']['exact_prose_round_trips'] > 0
+    assert not report['real_documents']['prose_failures']

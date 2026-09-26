@@ -1,5 +1,32 @@
 # Audited natural view
 
+## Versioned writable prose
+
+`ve.natural.parse_presentation` and `render_presentation` use
+`ve.prose@1`. This is the new-document prose contract: the same English
+grammar and all-derivations admission check handle typed prose and displayed
+prose. A parsed presentation retains the exact source wording, sentence
+character spans, paragraph ranges, conclusion roles, premise dependencies,
+environment and meaning identities, and the vocabulary overlay digest.
+Every conclusion depends on all earlier unmarked premises, including those
+in earlier paragraphs. The parser checks its derivation before recording the
+role; a marker is never treated as an assumption. `migrate_presentation`
+previews a legacy English paragraph using this version, reports whether the
+meaning identity is unchanged, and always requires renewed presentation
+approval. An unchanged meaning can key reuse of its existing certificate.
+
+`ve_english` and `ve_natural` remain pinned legacy view names and retain their
+existing output. The new API is opt-in by version. The ordinary IDE must
+select `ve.prose@1` explicitly for new documents; the web owner integrates
+that selection. This code does not silently convert an old document.
+
+An earlier existential or universal mention now makes bare `it` incomplete
+for automatic resolution even when one named constant was also mentioned.
+The author must repeat an explicit name or supply a separately confirmed
+scoped rewrite. Plural and possessive pronouns have no admitted automatic
+resolution in this version; they remain repair cases. Relative-clause
+references keep their local binder.
+
 `ve render --view ve_natural` renders checked statements as prose paragraphs.
 Sentence boundaries remain in the `Document` AST and the view's `sentences` data;
 they are spaces rather than forced line breaks in the display. Callers can pass
@@ -93,6 +120,14 @@ comparison wordings in `order@0`; “more than twice the budget” is writable f
 literal doubling of a named integer constant. A counting quantifier is not in this branch's
 AST, so the view cannot invent one.
 
+Nested compounds use explicit first/second clause words and keep their binary
+tree. Repeated binders of one sort use typed ordinals through the eighth
+entity; beyond that, the audited renderer may use its explicit numbered-name
+form. A quoted identifier becomes notation-free only after a unique,
+confirmed display name is provided in the versioned vocabulary overlay.
+Colliding names remain quoted. These repairs preserve the AST and do not
+assume that an unreviewed description is an approved name.
+
 ## Coverage
 
 Reproduce with `uv run python -m conformance.natural_surface`. The committed
@@ -109,13 +144,25 @@ report is `conformance/natural-view-report.json`. The round-trip row samples
 | **Total** | **599** | **1,219** | **49.1%** | **50.9%** |
 
 Of the 620 explicit forms, 618 needed structural notation or quoted identifiers;
-one candidate changed the AST and one failed the English audit. The final output
+one candidate changed the AST and one failed the English audit. The current
+disposition ledger identifies 551 needing confirmed display names or vocabulary,
+67 needing notation-free order or closure forms, one candidate AST mismatch,
+and one failed candidate audit. All 620 have per-statement dispositions in the
+report. The fixed cohort remains at 599/1,219 (49.1%), below the adopted 90%
+gate; the adversarial generated environments have many intentionally colliding
+or unconfirmed names, and this branch does not invent names for them. The final output
 was independently checked sentence by sentence for exact AST identity and one
 derivation, with zero wrong readings and no skipped corpus source.
 The report also records the three statement web app example as a complete
 paragraph: exact document round trip, one English derivation, and replay of its
 single claim graph deduction all pass. That prose probe is reported separately
 from the 1,219 formula samples.
+
+The report additionally measures 57 real repository `.ve` documents with 107
+statements: 84 are notation-free (78.5%), and all 51 nonempty documents have
+exact whole-prose round trips. Six empty sources have no prose round trip. These
+are AST/role checks, not independent source-fidelity or human-comprehension
+measurements.
 
 ## Reader-facing notation audit
 
