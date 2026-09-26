@@ -88,6 +88,20 @@ def encodeFormula : Formula → Json
   | .all s a => .arr #[.str "forall", .str s, encodeFormula a]
   | .ex s a => .arr #[.str "exists", .str s, encodeFormula a]
 
+/-- Decide `Covers L E` over the finite environment entries in the runner input. -/
+def covers (L : Lexicon) (j : Json) : Except String Bool := do
+  let sorts ← strings (← j.getObjVal? "sorts")
+  let preds ← (← entries (← j.getObjVal? "predicates")).mapM fun (p, e) => do
+    pure (p, ← strings e)
+  let consts ← entries (← j.getObjVal? "constants")
+  pure <| sorts.all (L.sorts.contains ·) &&
+    consts.all (fun (c, _) => L.constants.contains c) &&
+    preds.all (fun (p, ss) =>
+      match L.template p with
+      | none => false
+      | some T => L.predicates.contains p && T.arity == ss.length &&
+          (List.range ss.length).all (fun i => T.contains (.hole i)))
+
 def runCase (E : Environment) (L : Lexicon) (j : Json) : Except String Json := do
   let tokens ← (← (← j.getObjVal? "tokens").getArr?).toList.mapM decodeTok
   let formulas ← (← (← j.getObjVal? "formulas").getArr?).toList.mapM (Bridge.decodeFormula 64)
@@ -104,11 +118,13 @@ def runCase (E : Environment) (L : Lexicon) (j : Json) : Except String Json := d
 
 def run (input : String) : Except String Json := do
   let j ← Json.parse input
-  let E ← decodeEnvironment (← j.getObjVal? "environment")
+  let envJson ← j.getObjVal? "environment"
+  let E ← decodeEnvironment envJson
   let L ← decodeLexicon (← j.getObjVal? "lexicon")
   let cases ← (← j.getObjVal? "cases").getArr?
   let results ← cases.mapM (runCase E L)
-  pure <| Json.mkObj [("admissible", .bool (admissible L)), ("results", .arr results)]
+  pure <| Json.mkObj [("admissible", .bool (admissible L)),
+                     ("covers", .bool (← covers L envJson)), ("results", .arr results)]
 
 end VE.English.Run
 
