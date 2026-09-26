@@ -2,6 +2,7 @@
 
 import pytest
 from lark import Lark
+from pathlib import Path
 
 from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
                 Implies, Not, Or, Unary, Var, check_argument,
@@ -55,15 +56,10 @@ def test_prose_paragraph_and_declared_constant_display_forms():
 
 
 def test_web_app_first_example_is_one_checked_prose_argument():
-    data = vocabulary()
-    data['vocabulary']['sorts']['item']['verbalisation'] = {
-        'singular': 'service', 'plural': 'services'}
-    data['vocabulary']['predicates']['safe'] = {
-        'arguments': ['item'], 'description': 'Safe', 'verbalisation': '{0} is safe'}
-    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
-    env = Environment(data)
+    env = Environment.from_json((Path(__file__).resolve().parents[1] /
+                                 'examples/assist/environment.json').read_bytes())
     document = Document((
-        Forall('item', Implies(Unary('reviewed', Var(0)), Unary('safe', Var(0)))),
+        Forall('service', Implies(Unary('reviewed', Var(0)), Unary('safe', Var(0)))),
         Unary('reviewed', Const('api')),
         Unary('safe', Const('api'))))
     expected = ('Every reviewed service is safe. The API is reviewed. '
@@ -134,6 +130,18 @@ def test_relative_who_and_that_bind_the_local_quantifier():
                                       Unary('ready', Var(0))))
     for pronoun in ('who', 'that'):
         assert parse_english(ENV, f'Every person {pronoun} is ready is ready.') == Document((formula,))
+
+
+def test_colliding_declared_names_use_exact_identifiers():
+    data = vocabulary()
+    data['vocabulary']['constants']['api']['verbalisation'] = 'Alice'
+    data['vocabulary']['constants']['alice']['verbalisation'] = 'Alice'
+    env = Environment(data)
+    first = render_natural_sentence(Unary('reviewed', Const('api')), env)
+    second = render_natural_sentence(Unary('ready', Const('alice')), env)
+    assert first.form == second.form == 'explicit form'
+    assert '"api"' in first.text and '"alice"' in second.text
+    assert parse_english(env, first.text + '.') == Document((Unary('reviewed', Const('api')),))
 
 
 def test_writable_shared_copula_and_unqualified_owner():

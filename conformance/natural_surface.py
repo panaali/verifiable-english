@@ -96,19 +96,7 @@ def audit(random_per_vocabulary=100):
         rows.append(_measure('roundtrip/' + name, formulas, env, examples=examples))
     total = sum(row['statements'] for row in rows)
     natural = sum(row['natural'] for row in rows)
-    demo_env = Environment({
-        'language': 've.core@0', 'profile': 'relational-fol@0',
-        'spec_revision': 've-v0-draft-2026-09-20',
-        'vocabulary': {
-            'sorts': {'service': {'description': 'Service',
-                                  'verbalisation': {'singular': 'service', 'plural': 'services'}}},
-            'predicates': {
-                'reviewed': {'arguments': ['service'], 'description': 'Reviewed',
-                             'verbalisation': '{0} is reviewed'},
-                'safe': {'arguments': ['service'], 'description': 'Safe',
-                         'verbalisation': '{0} is safe'}},
-            'constants': {'api': {'sort': 'service', 'description': 'Public API',
-                                  'verbalisation': 'the API'}}}})
+    demo_env = Environment.from_json((ROOT / 'examples/assist/environment.json').read_bytes())
     demo = ast.Document((
         ast.Forall('service', ast.Implies(ast.Unary('reviewed', ast.Var(0)),
                                           ast.Unary('safe', ast.Var(0)))),

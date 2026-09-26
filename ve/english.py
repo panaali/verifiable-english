@@ -276,6 +276,7 @@ class EnglishVocabulary:
             form = decl.verbalisation
             if form is None:
                 continue
+            self.constants[name] = quote(name)
             if (re.fullmatch(r'(?:the )?[A-Za-z][A-Za-z]*(?: [A-Za-z][A-Za-z]*)*', form)
                     and not set(form.lower().split()) & (_RESERVED - {'the'})
                     and not any(wording_key(form) == wording_key(noun) for noun in self.sorts.values())):
