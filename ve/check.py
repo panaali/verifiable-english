@@ -42,4 +42,8 @@ def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_
         evaluation = evaluate(env, document, model, max_evaluations=max_evaluations, trace=trace)
         result["model_id"] = model.model_id
         result["evaluation"] = evaluation.to_dict()
+    from .vacuity import premise_status
+    result["premises"] = ({"status": "model", "model_id": model.model_id}
+                          if model is not None and result["evaluation"]["value"] is True else
+                          premise_status(env, document.formulas))
     return result

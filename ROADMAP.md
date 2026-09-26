@@ -79,6 +79,7 @@ Frontier claims are protocol effects; language expansion alone is not expected t
 | C | Persuasion/injection vs the bridge (replaces the pushback study as specified) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | after B; items correct in both arms; eligible-item gate |
 | - | Obfuscation class F: G0/G1 diagnostics only | [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | diagnostics, no comparative claims |
 | - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](PLAN-EXPAND.md) | round 2: grammar export, Rust AST/source evaluation and Lean order parser built locally; unbounded integer quantifiers and order parser round-trip proof remain; tests and cross-family review before merge |
+| - | P0 expansion interfaces frozen (2026-09-25) | [PLAN-EXPAND2](PLAN-EXPAND2.md), [P0-Lean notes](docs/P0-Lean-NOTES.md) | `Layer`, `CertificateSound`, route gate, Background and admission identities checked after Astra P0-Lean and Fable P0-Py reviews; W1/W2/W3/W5 use the pinned premise order and provenance-bound report identity |
 | - | Paper rev3 (Astra) | `paper/` | after A |
 | - | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed |
 
@@ -96,6 +97,8 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Language usability | IDE loop (assistant drafts, author approves), fluent input with legal-style sub-clauses, linter precision pass, sense-bound vocabulary | ongoing |
 | Protocol ideas | `meaning_id` commitments before cross-examination; security-game reporting; amplified sampled fidelity checks; append-only verdict log | as arms in existing studies |
 | Human studies | E1/E5 packages; "valid proof of the wrong model" study from the formal-proof handoff | deferred by the lead |
+| Rust as a trusted checker | prove the Rust checker equals the Lean spec via Aeneas (Rust->Lean); remaining trust: rustc/LLVM (RustCompCert/Rustlight, arXiv 2602.07455, 2026: verified Rustlight->asm in Rocq, but no generics/traits/closures and Rocq not Lean; a later option to drop rustc/LLVM trust); today Rust is deliberately untrusted (evaluation/search only, never certificates) | if Lean checking speed becomes the bottleneck |
+| Rustlight trusted-kernel pilot | port the smallest certificate checker (v0 tableau) to the Rustlight subset (monomorphic, no traits/closures, hand-written bignum on Box), compile with RustCompCert, measure size/speed and what a Rocq soundness proof (or Lean-Rocq bridge) would need; RustCompCert proves compilation only, not checker correctness | after expansion round 2, if highest-assurance binaries become a goal |
 | Grant-scale runs | 5,000-step sizes, size scaling, requirement retention under compaction (S1), multi-agent hand-off, adaptive attackers, judge ladders, RL with checked rewards (GPUs later) | grant (~$20K) |
 
 ## 6. Paused or dropped

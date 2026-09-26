@@ -1,0 +1,3325 @@
+{
+  "method": "per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance",
+  "statements": 1219,
+  "natural": 599,
+  "fallback": 620,
+  "natural_fraction": 0.4913863822805578,
+  "accepted_wrong_readings": 0,
+  "rows": [
+    {
+      "corpus": "examples/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "statements": 6,
+      "natural": 6,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "examples/premise.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "examples/requirements.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/claims.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test1-conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test1-premises.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test2-conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test2-premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test3-conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test3-premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test4-conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test4-premises.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test5-conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/birthright-citizenship-debate/countermodel/test5-premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/claude-constitution-excerpt/claims.ve",
+      "statements": 11,
+      "natural": 9,
+      "fallback": 2,
+      "natural_fraction": 0.8181818181818182,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 2
+      },
+      "fallback_details": [
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/boundary/euclid-statement.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/C1/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/C1/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/C2/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/C2/premises.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T1/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T1/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T2/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T2/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T3/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T3/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T4/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T4/premises.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T5/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T5/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T6/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T6/premises.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7a/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7a/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7b/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7b/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7mono/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T7mono/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T8/conclusion.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T8/premises.ve",
+      "statements": 3,
+      "natural": 3,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9/premises.ve",
+      "statements": 2,
+      "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9a/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9a/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9b/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9b/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9c/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9c/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9d/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9d/premises.ve",
+      "statements": 0,
+      "natural": 0,
+      "fallback": 0,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9e/conclusion.ve",
+      "statements": 1,
+      "natural": 0,
+      "fallback": 1,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/math-mini-paper/theorems/T9e/premises.ve",
+      "statements": 1,
+      "natural": 1,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/news-article/claims.ve",
+      "statements": 15,
+      "natural": 0,
+      "fallback": 15,
+      "natural_fraction": 0.0,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 15
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "usecases/us-constitution-14th-s1/claims.ve",
+      "statements": 4,
+      "natural": 4,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "docs/fluent-examples.md",
+      "statements": 6,
+      "natural": 6,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "tests/data/fluent-items.jsonl",
+      "statements": 6,
+      "natural": 6,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/ordinary",
+      "statements": 100,
+      "natural": 100,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/closure",
+      "statements": 100,
+      "natural": 86,
+      "fallback": 14,
+      "natural_fraction": 0.86,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 14
+      },
+      "fallback_details": [
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/colliding_aliases",
+      "statements": 100,
+      "natural": 8,
+      "fallback": 92,
+      "natural_fraction": 0.08,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 92
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 17,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 20,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 21,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 24,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 32,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 37,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 41,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 42,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 46,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 54,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 55,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 57,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 58,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 61,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 62,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 66,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 68,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 70,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 93,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/function_words",
+      "statements": 100,
+      "natural": 4,
+      "fallback": 96,
+      "natural_fraction": 0.04,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 96
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 17,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 20,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 21,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 24,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 25,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 32,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 37,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 38,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 41,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 43,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 46,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 54,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 55,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 57,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 58,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 61,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 62,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 66,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 68,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 70,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 79,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 87,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 93,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/function_identifiers",
+      "statements": 100,
+      "natural": 4,
+      "fallback": 96,
+      "natural_fraction": 0.04,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 96
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 17,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 20,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 21,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 24,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 25,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 32,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 37,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 38,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 41,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 42,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 43,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 46,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 54,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 55,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 57,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 58,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 61,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 62,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 66,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 68,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 70,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 79,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 87,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 93,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/precision_templates",
+      "statements": 100,
+      "natural": 99,
+      "fallback": 1,
+      "natural_fraction": 0.99,
+      "fallback_reasons": {
+        "different_ast": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 42,
+          "reason": "different_ast"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/birthright-citizenship-debate",
+      "statements": 100,
+      "natural": 22,
+      "fallback": 78,
+      "natural_fraction": 0.22,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 78
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 7,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 17,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 24,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 37,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 38,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 43,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 54,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 55,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 57,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 66,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 68,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 70,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 79,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 87,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/claude-constitution-excerpt",
+      "statements": 100,
+      "natural": 35,
+      "fallback": 65,
+      "natural_fraction": 0.35,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 65
+      },
+      "fallback_details": [
+        {
+          "statement": 1,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 6,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 17,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 20,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 21,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 25,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 46,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 55,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 58,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 61,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 70,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/news-article",
+      "statements": 100,
+      "natural": 13,
+      "fallback": 87,
+      "natural_fraction": 0.13,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 87
+      },
+      "fallback_details": [
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 8,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 11,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 13,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 14,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 20,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 22,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 24,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 25,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 32,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 37,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 38,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 42,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 43,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 44,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 45,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 46,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 47,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 53,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 54,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 57,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 62,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 63,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 66,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 67,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 68,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 71,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 79,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 80,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 82,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 87,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 88,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 93,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/us-constitution-14th-s1",
+      "statements": 100,
+      "natural": 100,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0
+    },
+    {
+      "corpus": "roundtrip/order",
+      "statements": 100,
+      "natural": 32,
+      "fallback": 68,
+      "natural_fraction": 0.32,
+      "fallback_reasons": {
+        "symbols_or_variable_names": 67,
+        "english_audit_SyntaxError": 1
+      },
+      "fallback_details": [
+        {
+          "statement": 2,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 3,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 4,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 5,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 9,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 10,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 12,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 15,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 16,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 18,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 19,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 21,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 23,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 25,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 26,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 27,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 28,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 29,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 30,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 31,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 33,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 34,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 35,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 36,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 38,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 39,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 40,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 41,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 43,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 48,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 49,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 50,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 51,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 52,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 56,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 58,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 59,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 60,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 61,
+          "reason": "english_audit_SyntaxError"
+        },
+        {
+          "statement": 62,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 64,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 65,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 69,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 72,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 73,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 74,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 75,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 76,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 77,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 78,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 81,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 83,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 84,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 85,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 86,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 87,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 89,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 90,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 91,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 92,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 93,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 94,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 95,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 96,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 97,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 98,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 99,
+          "reason": "symbols_or_variable_names"
+        },
+        {
+          "statement": 100,
+          "reason": "symbols_or_variable_names"
+        }
+      ],
+      "accepted_wrong_readings": 0
+    }
+  ],
+  "skipped": [],
+  "examples": [
+    {
+      "corpus": "examples/conclusion.ve",
+      "before": "there is a service S such that S is reviewed",
+      "after": "Some service is reviewed",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "for every service S that is deployed, S is reviewed",
+      "after": "Every deployed service is reviewed",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "for every service S that is deployed, there is a person P such that P owns S",
+      "after": "Every deployed service has an owner",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "there is a person P such that for every service S that is deployed, P owns S",
+      "after": "There is a person such that for every service that is deployed, that person owns that service",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "it is false that (there is a service S such that both S is deployed and S is not reviewed)",
+      "after": "It is not the case that there is a service such that both that service is deployed and that service is not reviewed",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "for every service S that is deployed and that is not the same service as @legacy, @alice does not own S",
+      "after": "For every service, if both of the following hold: first clause: that service is deployed; end first clause; second clause: it is not the case that that service is the same as legacy; end second clause, then alice does not own that service",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/fluent/examples.ve",
+      "before": "for every service S and every person P and every person P2, if (both P owns S and P2 owns S) then P is the same person as P2",
+      "after": "For every service, for every first person, for every second person, if both the first person owns that service and the second person owns that service, then the first person is the same as the second person",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/premise.ve",
+      "before": "for every service S, S is reviewed",
+      "after": "Every service is reviewed",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/requirements.ve",
+      "before": "there is a service S such that S is deployed",
+      "after": "Some service is deployed",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    },
+    {
+      "corpus": "examples/requirements.ve",
+      "before": "for every service S such that S is deployed, there is a person P such that P owns S",
+      "after": "Every deployed service has an owner",
+      "natural": true,
+      "form": "natural",
+      "fallback_reason": null
+    }
+  ]
+}

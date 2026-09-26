@@ -13,7 +13,7 @@ from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
 from .model import FiniteModel
 from .identity import meaning_id
 from .limits import MAX_ENTITIES, MAX_EVALUATIONS, MAX_NODES, MAX_TUPLES
-from .errors import ResourceLimit, VEError
+from .errors import InvalidModel, ResourceLimit, VEError
 
 
 class _SearchSpaceLimit(Exception):
@@ -127,9 +127,18 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
+    from .surface.registry import by_node
     names, stack = set(), [f for f in formulas if f is not None]
     while stack:
         node = stack.pop()
+        record = by_node(node)
+        if record is not None and record.traversal_hooks is not None:
+            hook = record.traversal_hooks.get("predicates")
+            if hook is not None:
+                found, children = hook(node)
+                names.update(found)
+                stack.extend(children)
+                continue
         if isinstance(node, (Unary, Binary)):
             names.add(node.predicate)
         elif isinstance(node, Reach):
@@ -244,7 +253,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
     argument terms actually occurring. These are search bounds, not semantic
     integer bounds: exhaustion is NotFound, never entailment."""
     from .ast import INT_SORT
-    sorts = sorted(env.sorts)
+    sorts = sorted(env.model_sorts)
     constants = sorted(env.constants)
     int_constants = [c for c in constants if env.constants[c].sort == INT_SORT]
     object_constants = [c for c in constants if env.constants[c].sort != INT_SORT]
@@ -256,6 +265,9 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
     minimum = {sort: minimum_size for sort in sorts}
     for name in object_constants:
         minimum[env.constants[name].sort] = max(minimum[env.constants[name].sort], 1)
+    if "$string" in minimum:
+        minimum["$string"] = max(minimum["$string"],
+                                 sum(d.sort == "$string" for d in env.constants.values()))
     for sizes in _domain_sizes([minimum[s] for s in sorts], maximum):
         domains = {sort: [f"e{i}" for i in range(size)] for sort, size in zip(sorts, sizes, strict=True)}
         for assignment in product(values, repeat=len(int_constants)):
@@ -277,9 +289,13 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
                     for denotations in product(*choices):
                         constant_map = {name: str(value) for name, value in numbers.items()}
                         constant_map.update(zip(object_constants, denotations, strict=True))
-                        yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
-                                                          "constants": constant_map,
-                                                          "relations": relations})
+                        try:
+                            yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
+                                                              "constants": constant_map,
+                                                              "relations": relations})
+                        except InvalidModel as exc:
+                            if exc.generator is None:
+                                raise
 
 
 def _models(env: Any, minimum_size: int, maximum: int,
@@ -287,19 +303,26 @@ def _models(env: Any, minimum_size: int, maximum: int,
     if getattr(env, "order", False):
         yield from _order_models(env, minimum_size, maximum, used, formulas)
         return
-    sorts = sorted(env.sorts)
+    sorts = sorted(env.model_sorts)
     constants = sorted(env.constants)
     minimum = {sort: minimum_size for sort in sorts}
     for declaration in env.constants.values():
         minimum[declaration.sort] = max(minimum[declaration.sort], 1)
+    if "$string" in minimum:
+        minimum["$string"] = max(minimum["$string"],
+                                 sum(d.sort == "$string" for d in env.constants.values()))
     for sizes in _domain_sizes([minimum[s] for s in sorts], maximum):
         domains = {sort: [f"e{i}" for i in range(size)] for sort, size in zip(sorts, sizes, strict=True)}
         choices = [domains[env.constants[name].sort] for name in constants]
         for relations in _relation_assignments(env, domains, used):
             for denotations in product(*choices):
                 constant_map = dict(zip(constants, denotations, strict=True))
-                yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
-                                                  "constants": constant_map, "relations": relations})
+                try:
+                    yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
+                                                      "constants": constant_map, "relations": relations})
+                except InvalidModel as exc:
+                    if exc.generator is None:
+                        raise
 
 
 def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
@@ -397,6 +420,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                       max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Search used-relation interpretations; fix all unused predicates to empty."""
     premises = _premises(premises)
+    from .profiles import require_checker
+    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)
@@ -464,6 +489,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                               max_models: int = 10_000,
                               max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Find a bounded finite model on which two closed formulas differ."""
+    from .profiles import require_checker
+    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)

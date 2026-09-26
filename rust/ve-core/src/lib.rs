@@ -6,6 +6,7 @@ mod environment;
 mod eval;
 mod model;
 mod order;
+mod route;
 mod search;
 mod surface;
 mod wire;
@@ -18,6 +19,7 @@ pub use eval::EvaluationKernel;
 pub use eval::{Evaluation, evaluate, evaluate_formula};
 pub use model::FiniteModel;
 pub use order::order_case;
+pub use route::{check_label, dependency_order, label_is_canonical};
 pub use search::{
     CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
 };

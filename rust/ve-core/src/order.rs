@@ -194,7 +194,7 @@ impl Model {
             .get("relations")
             .and_then(Value::as_object)
             .ok_or_else(|| Error::new("InvalidModel", "relations required"))?;
-        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.sorts
+        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
             || cs.keys().ne(env.constants.keys())
             || rs.keys().ne(env.predicates.keys())
         {
@@ -222,6 +222,15 @@ impl Model {
         let mut constants = BTreeMap::new();
         for (name, raw) in cs {
             constants.insert(name.clone(), cell(raw, &env.constants[name], &domains)?);
+        }
+        let mut literal_values = BTreeSet::new();
+        for (name, sort) in &env.constants {
+            if sort == "$string" && !literal_values.insert(&constants[name]) {
+                return error(
+                    "InvalidModel",
+                    format!("$string literals alias at {name} (literals)"),
+                );
+            }
         }
         let mut relations = BTreeMap::new();
         let mut count = 0;
@@ -664,6 +673,39 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if !env.order() {
         return error("UnsupportedProfile", "order profile required");
     }
+    if v.get("kind") == Some(&json!("countermodel")) {
+        let premises = array(
+            v.get("premises")
+                .ok_or_else(|| Error::new("InvalidInput", "premises missing"))?,
+        )?;
+        let conclusion = v
+            .get("conclusion")
+            .ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
+        let mut nodes = 0;
+        for premise in premises {
+            formula_check(&env, premise, &[], 1, &mut nodes)?;
+        }
+        formula_check(&env, conclusion, &[], 1, &mut nodes)?;
+        let model = Model::decode(
+            &env,
+            v.get("model")
+                .ok_or_else(|| Error::new("InvalidInput", "model missing"))?,
+        )?;
+        let mut work = 0;
+        let mut valid = true;
+        for premise in premises {
+            if !eval(premise, &model, &[], &mut work, crate::MAX_EVALUATIONS)? {
+                valid = false;
+                break;
+            }
+        }
+        if valid {
+            valid = !eval(conclusion, &model, &[], &mut work, crate::MAX_EVALUATIONS)?;
+        }
+        return Ok(
+            json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","valid":valid}),
+        );
+    }
     if v.get("kind").is_some_and(|kind| kind != "evaluate")
         || v.get("certificate").is_some()
         || v.get("premises").is_some()
@@ -671,7 +713,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     {
         return error(
             "UnsupportedProfile",
-            "Rust order route supports checked AST evaluation only",
+            "Rust order route supports evaluation and supplied countermodel checking only",
         );
     }
     let parsed = v
@@ -701,7 +743,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     }
     let meaning = |a: &Value| {
         digest(
-            "ve-meaning-v0.1-order\n",
+            &format!("ve-meaning-{}\n", env.identity_version()),
             &json!({"environment_id":env.environment_id(),"ast":a}),
         )
     };
@@ -730,7 +772,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
         out["canonical_model"] =
             json!(String::from_utf8(crate::canonical_json(&model.canonical)?).unwrap());
         out["model_id"] = json!(digest(
-            "ve-model-v0.1-order\n",
+            &format!("ve-model-{}\n", env.identity_version()),
             &json!({"environment_id":env.environment_id(),"model":model.canonical})
         )?);
     }

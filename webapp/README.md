@@ -51,8 +51,8 @@ The private `calls.jsonl` ledger records backend usage and may contain submitted
 
 ## Use
 
-- **Learn:** four curated, scoped examples; English, strict VE, fluent, and logic views; evaluate a tiny world and replay a certificate or display a checked countermodel.
-- **Writing desk:** request sentence-level model readings; review a deterministic paraphrase and alternatives; accept/edit explicitly; live strict parsing with line/column diagnostics; separate assumptions from the conclusion; Ctrl/⌘+Enter checks the consequence.
+- **Learn:** four curated, scoped examples; audited natural English opens first, with per-sentence **explicit form** badges where the library cannot certify a symbol-free reading. Strict VE, fluent, and logic views have separate tabs. Evaluate a tiny world and replay a certificate or display a checked countermodel in plain English.
+- **Writing desk:** request sentence-level model readings; review the checked natural reading and alternatives; accept/edit explicitly; live strict parsing with line/column diagnostics; separate assumptions from the conclusion; Ctrl/⌘+Enter checks the consequence. The strict source editor is under an advanced disclosure.
 - Expand **Vocabulary & small world** to edit the library's environment/world JSON. The selected example is the starting vocabulary, not an unrestricted natural-language vocabulary. Each strict statement ends in a period and separate statements use separate lines. The app supplies a trailing newline for the parser.
 - Light/dark theme, keyboard focus, responsive layout, four-step tour, and JSON draft export. Drafts live only in the current tab; switching examples replaces the draft and reloading loses it (the UI warns about unsaved edits). Export first to keep work. Only the theme is saved in local storage.
 

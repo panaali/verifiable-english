@@ -77,6 +77,8 @@ fn entry_fields<'a>(
 pub struct Environment {
     closure: bool,
     order: bool,
+    route: bool,
+    profiles: Vec<String>,
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, String>,
@@ -89,9 +91,10 @@ impl Environment {
     }
     pub fn from_value(data: &Value) -> Result<Self> {
         canonical_json(data)?;
-        let modern = data.get("language") == Some(&json!("ve.core@0.1"));
+        let route = data.get("language") == Some(&json!("ve.core@0.2"));
+        let modern = route || data.get("language") == Some(&json!("ve.core@0.1"));
         let order = data.get("profiles") == Some(&json!(["order@0", "relational-fol@0"]));
-        let closure = modern && !order;
+        let closure = modern && !route && !order;
         let obj = fields(
             data,
             &[
@@ -102,7 +105,79 @@ impl Environment {
             ],
             "InvalidInput",
         )?;
-        let supported = if order {
+        let profiles: Vec<String> = if route {
+            obj["profiles"]
+                .as_array()
+                .ok_or_else(|| {
+                    Error::new(
+                        "UnsupportedProfile",
+                        "profiles must be a sorted unique array",
+                    )
+                })?
+                .iter()
+                .map(|p| string(p, "UnsupportedProfile").map(str::to_owned))
+                .collect::<Result<_>>()?
+        } else {
+            Vec::new()
+        };
+        if route {
+            let mut sorted = profiles.clone();
+            sorted.sort();
+            sorted.dedup();
+            if profiles != sorted {
+                return error("UnsupportedProfile", "profiles must be sorted and unique");
+            }
+            const ALLOWED: &[&str] = &[
+                "closure@0",
+                "data@0",
+                "definitions@0",
+                "documents@1",
+                "nary@0",
+                "norms@0",
+                "order@0",
+                "relational-fol@0",
+                "time@0",
+            ];
+            for p in &profiles {
+                if !ALLOWED.contains(&p.as_str()) {
+                    return error("UnsupportedProfile", format!("Unsupported profile {p}"));
+                }
+            }
+            if !profiles.iter().any(|p| p == "relational-fol@0") {
+                return error("UnsupportedProfile", "Missing profile relational-fol@0");
+            }
+            let has = |name: &str| profiles.iter().any(|p| p == name);
+            if has("order@0") && (has("closure@0") || has("nary@0")) {
+                let pair = if has("closure@0") {
+                    "closure@0"
+                } else {
+                    "nary@0"
+                };
+                return error(
+                    "UnsupportedProfile",
+                    format!("Unsupported profile combination {pair} x order@0"),
+                );
+            }
+            if has("nary@0") && !has("closure@0") {
+                return error(
+                    "UnsupportedProfile",
+                    "Unsupported profile nary@0 without closure@0",
+                );
+            }
+        }
+        let order = if route {
+            profiles.iter().any(|p| p == "order@0")
+        } else {
+            order
+        };
+        let closure = if route {
+            profiles.iter().any(|p| p == "closure@0")
+        } else {
+            closure
+        };
+        let supported = if route {
+            obj["spec_revision"] == "ve-v0.2-expand2-2026-09-25"
+        } else if order {
             obj["language"] == "ve.core@0.1" && obj["spec_revision"] == "ve-v0.1-order-2026-09-22"
         } else if closure {
             obj["profiles"] == json!(["closure@0", "relational-fol@0"])
@@ -112,6 +187,16 @@ impl Environment {
                 && obj["profile"] == "relational-fol@0"
                 && obj["spec_revision"] == "ve-v0-draft-2026-09-20"
         };
+        if !supported && route {
+            let revision = match &obj["spec_revision"] {
+                Value::String(r) => r.clone(),
+                other => other.to_string(),
+            };
+            return error(
+                "UnsupportedProfile",
+                format!("Unsupported specification revision {revision}"),
+            );
+        }
         if !supported {
             return error(
                 "UnsupportedProfile",
@@ -176,31 +261,47 @@ impl Environment {
         }
         let mut constants = BTreeMap::new();
         for (name, decl) in consts {
-            let d = fields(decl, &["sort", "description"], "InvalidInput")?;
+            let literal = route && decl.get("sort") == Some(&json!("$string"));
+            let d = fields(
+                decl,
+                if literal && decl.get("description").is_none() {
+                    &["sort"]
+                } else {
+                    &["sort", "description"]
+                },
+                "InvalidInput",
+            )?;
             let s = string(&d["sort"], "UnknownSymbol")?;
-            if !sorts.contains_key(s) && !(order && s == "$int") {
+            if !sorts.contains_key(s) && !(order && s == "$int") && !(route && s == "$string") {
                 return error("UnknownSymbol", "unknown constant sort");
             }
-            description(&d["description"])?;
+            if let Some(value) = d.get("description") {
+                description(value)?;
+            }
             constants.insert(name.clone(), s.into());
         }
+        if route && constants.values().filter(|s| *s == "$string").count() > 64 {
+            return error("ResourceLimit", "At most 64 declared $string literals");
+        }
+        let version = if route {
+            format!("v0.2:{}", profiles.join(","))
+        } else if order {
+            "v0.1-order".into()
+        } else if closure {
+            "v0.1".into()
+        } else {
+            "v0".into()
+        };
         Ok(Self {
             closure,
             order,
+            route,
+            profiles,
             sorts: sorts.keys().cloned().collect(),
             predicates,
             constants,
             data: data.clone(),
-            id: digest(
-                if order {
-                    "ve-environment-v0.1-order\n"
-                } else if closure {
-                    "ve-environment-v0.1\n"
-                } else {
-                    "ve-environment-v0\n"
-                },
-                data,
-            )?,
+            id: digest(&format!("ve-environment-{version}\n"), data)?,
         })
     }
     pub fn to_value(&self) -> Value {
@@ -215,14 +316,51 @@ impl Environment {
     pub fn order(&self) -> bool {
         self.order
     }
-    pub fn identity_version(&self) -> &'static str {
-        if self.order {
-            "v0.1-order"
-        } else if self.closure {
-            "v0.1"
-        } else {
-            "v0"
+    pub fn identity_version(&self) -> String {
+        if self.route {
+            return format!("v0.2:{}", self.profiles.join(","));
         }
+        if self.order {
+            "v0.1-order".into()
+        } else if self.closure {
+            "v0.1".into()
+        } else {
+            "v0".into()
+        }
+    }
+    pub(crate) fn model_sorts(&self) -> BTreeSet<String> {
+        let mut sorts = self.sorts.clone();
+        if self.constants.values().any(|sort| sort == "$string") {
+            sorts.insert("$string".into());
+        }
+        sorts
+    }
+    /// A family the envelope gate accepts but whose checker has not landed:
+    /// every checking site rejects it (same diagnostic as Python and Lean).
+    pub(crate) fn require_checker(&self) -> Result<()> {
+        if self.route
+            && self.profiles.iter().any(|p| p == "nary@0")
+            && self.profiles.iter().any(|p| p == "closure@0")
+        {
+            return error(
+                "UnsupportedProfile",
+                "the closure+n-ary checker is gated until W4 stage 1 lands",
+            );
+        }
+        Ok(())
+    }
+    pub(crate) fn validate_background(&self, constants: &BTreeMap<String, usize>) -> Result<()> {
+        self.require_checker()?;
+        let mut seen = BTreeSet::new();
+        for (name, sort) in &self.constants {
+            if sort == "$string" && !seen.insert(constants[name]) {
+                return error(
+                    "InvalidModel",
+                    format!("$string literals alias at {name} (literals)"),
+                );
+            }
+        }
+        Ok(())
     }
     pub(crate) fn schema_name(&self, s: &str) -> bool {
         self.sorts.contains(s) || self.predicates.contains_key(s) || self.constants.contains_key(s)

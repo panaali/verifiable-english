@@ -5,11 +5,17 @@ import VE.TableauChecker
 namespace VE.Graph
 universe u
 
-/-- Identity here is the exact name/AST pair; wire hashes are not substituted
-for mathematical identity. All claims live under the checker's one environment. -/
+/-- Identity here is the exact name/AST/label triple; wire hashes are not
+substituted for mathematical identity. All claims live under the checker's one
+environment. The provenance `label` (PLAN-EXPAND2 3.6) is one of `asserted`
+(the default, omitted on the wire), `bridge:accepts(<agent>,<unit>)`,
+`background:<generator>`, `cite:<bundle>/<lemma>`, `open:<term>`,
+`readings:<set>@<version>:<choice|all>` or `narrowing:<id>`. It is part of
+equality, so it travels unchanged through `Report.assumptions` and `Unfolds`. -/
 structure Claim where
   name : String
   formula : Formula
+  label : String := "asserted"
   deriving DecidableEq, BEq, Repr
 
 structure Edge (Certificate : Type) where

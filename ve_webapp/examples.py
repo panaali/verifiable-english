@@ -2,10 +2,22 @@
 from ve.environment import LANGUAGE, PROFILE, SPEC_REVISION
 
 
+READINGS = {
+    "reviewed": "{0} is reviewed", "safe": "{0} is safe",
+    "born_us": "{0} is born in the United States",
+    "naturalized_us": "{0} was naturalized in the United States",
+    "subject_jurisdiction": "{0} is subject to the jurisdiction of the United States",
+    "citizen_us": "{0} is a citizen of the United States",
+    "precedes": "{0} precedes {1}",
+    "reported_drop": "{0} reported a drop",
+}
+
+
 def example(id, title, category, english, note, sort, predicates, constants, premises, claim, true):
     env = {"language": LANGUAGE, "profile": PROFILE, "spec_revision": SPEC_REVISION,
            "vocabulary": {"sorts": {sort: {"description": f"Objects of type {sort} in this example."}},
-                          "predicates": {p: {"arguments": [sort] * arity, "description": gloss}
+                          "predicates": {p: {"arguments": [sort] * arity, "description": gloss,
+                                             "verbalisation": READINGS[p]}
                                          for p, arity, gloss in predicates},
                           "constants": {c: {"sort": sort, "description": gloss} for c, gloss in constants}}}
     names = [c for c, _ in constants]

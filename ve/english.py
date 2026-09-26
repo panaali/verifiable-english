@@ -1,7 +1,8 @@
 """Writable, scoped English. Canonical serialization remains in printer.py.
 
 The grammar uses prefix clauses, binary drafting lists and a finite, checked
-lexicon. No pronouns, implicit witnesses, reassociation or semantic rewriting.
+lexicon. Audited natural forms add a few fixed contractions; no reassociation
+or semantic rewriting is admitted.
 """
 from __future__ import annotations
 
@@ -18,6 +19,7 @@ from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOU
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
+from .surface import registry as surface_registry
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
@@ -35,6 +37,8 @@ _ACTIVE = (
     r"has (?:access to|authority over|responsibility for)",
 )
 _EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end".split())
+_ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth')
+_EXTRA_RESERVED |= frozenset(_ORDINALS)
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 # order@0 comparison wording ("at least n" is a comparison, never a counting quantifier).
 _COMPARISON_WORDS = frozenset('less more than least most same'.split())
@@ -252,6 +256,10 @@ class EnglishVocabulary:
             text = text.replace('{' + str(i) + '}', term)
         return text
 
+    def natural_constants(self):
+        """Identifiers remain exact: spacing aliases lose repeated underscores."""
+        return {}
+
 
 def lint_english_vocabulary(env, **options):
     return EnglishVocabulary(env, **options).issues
@@ -284,9 +292,12 @@ def _markers(depth):
 
 
 class EnglishTraversal:
-    def __init__(self, env, words=None):
+    def __init__(self, env, words=None, *, word_markers=False,
+                 avoid_negative_universal=False):
         self.env = env
         self.words = words or EnglishVocabulary(env)
+        self.word_markers = word_markers
+        self.avoid_negative_universal = avoid_negative_universal
 
     def binding(self, sort, scope):
         noun = self.words.sorts[sort]
@@ -294,8 +305,8 @@ class EnglishTraversal:
         mode = self.maximum[sort]
         if mode <= 1:
             return (sort, 'that ' + noun), noun
-        if mode == 2:
-            noun = ('first ' if index == 0 else 'second ') + noun
+        if mode == 2 or (self.word_markers and index < len(_ORDINALS)):
+            noun = _ORDINALS[index] + ' ' + noun
             return (sort, 'the ' + noun), noun
         label = self.words.letters[sort] + str(index + 1)
         return (sort, label), noun + ' named ' + label
@@ -345,6 +356,9 @@ class EnglishTraversal:
 
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
+        record = surface_registry.by_node(value)
+        if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
+            return record.english_renderer(self, value, scope, depth)
         if kind is ast.Top: return 'this holds in all cases'
         if kind is ast.Bottom: return 'this is impossible'
         if kind in (ast.Unary, ast.Binary):
@@ -371,14 +385,22 @@ class EnglishTraversal:
                     guard = self.guard(value.body.left, inner)
                     if guard:
                         pronoun = ' who ' if self.words.sorts[value.sort] == 'person' else ' that '
-                        consequent = self.relative(value.body.right, inner)
+                        consequent = (None if self.avoid_negative_universal and type(value.body.right) is ast.Not
+                                      else self.relative(value.body.right, inner))
                         if consequent:
                             return 'every ' + noun + pronoun + guard + ' ' + consequent
+                        explicit_body = ('it is not the case that ' + self.formula(value.body.right.body, inner, depth)
+                                         if self.avoid_negative_universal and type(value.body.right) is ast.Not
+                                         else self.formula(value.body.right, inner, depth))
                         return ('for every ' + noun + pronoun + guard + ', '
-                                + self.formula(value.body.right, inner, depth))
-                consequent = self.relative(value.body, inner)
+                                + explicit_body)
+                consequent = (None if self.avoid_negative_universal and type(value.body) is ast.Not
+                              else self.relative(value.body, inner))
                 if consequent:
                     return 'every ' + noun + ' ' + consequent
+                if self.avoid_negative_universal and type(value.body) is ast.Not:
+                    return ('for every ' + noun + ', it is not the case that '
+                            + self.formula(value.body.body, inner, depth))
                 return 'for every ' + noun + ', ' + self.formula(value.body, inner, depth)
             relative = self.relative(value.body, inner)
             if relative:
@@ -402,6 +424,9 @@ class EnglishTraversal:
             header = 'all of the following hold' if kind is ast.And else 'at least one of the following holds'
             if kind is ast.And and not any(type(v) in (ast.And, ast.Or, ast.Implies) for v in (value.left, value.right)):
                 header = 'both of the following hold'
+            if self.word_markers:
+                return (f'{header}: first clause: {left}; end first clause; '
+                        f'second clause: {right}; end second clause')
             return f'{header}:\n{indent}{a} {left};\n{indent}{b} {right}'
         if kind is ast.Reach:
             # The source comes first, preserving endpoint order even in closure prose.
@@ -470,6 +495,7 @@ class EnglishParser:
         self.env, self.source, self.i = env, source, 0
         self.words = words or EnglishVocabulary(env)
         self.nodes = 0
+        self.extension_readings = []
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -502,9 +528,9 @@ class EnglishParser:
     def declaration(self, scope):
         candidates = []
         for sort, noun in self.words.sorts.items():
-            candidates.extend([(noun, (sort, 'that ' + noun)),
-                               ('first ' + noun, (sort, 'the first ' + noun)),
-                               ('second ' + noun, (sort, 'the second ' + noun))])
+            candidates.append((noun, (sort, 'that ' + noun)))
+            candidates.extend((ordinal + ' ' + noun, (sort, 'the ' + ordinal + ' ' + noun))
+                              for ordinal in _ORDINALS)
             # Names are bound in lexical scope; the paraphrase shows canonical numbering.
             prefix = noun + ' named '
             match = re.compile(_content_pattern(prefix) + '(' + re.escape(self.words.letters[sort]) + r'[1-9][0-9]*)').match(self.source, self.i)
@@ -522,6 +548,9 @@ class EnglishParser:
     def term_options(self, scope):
         terms = {ref: ast.Var(index) for index, (_, ref) in reversed(list(enumerate(scope)))}
         terms.update({text: ast.Const(name) for name, text in self.words.constants.items()})
+        terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
+                      if re.fullmatch('[a-z]+', text)})
+        terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
         return terms
 
     def reference_pattern(self, ref, scope):
@@ -645,9 +674,11 @@ class EnglishParser:
 
     def int_leaf(self):
         constants = sorted(self.int_constants(), key=lambda t: -len(t))
+        twice = [name for name in constants if re.fullmatch('[a-z]+', name)]
         return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
             '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
-            for t in constants) + ')'
+            for t in constants) + ''.join('|twice\\s+the\\s+' + re.escape(t) + r'(?![A-Za-z0-9_])'
+                                            for t in twice) + ')'
 
     def int_pattern(self):
         """An integer term over the bracket-masked source: a leaf or one masked bracket group."""
@@ -693,6 +724,14 @@ class EnglishParser:
 
         def term():
             nonlocal position
+            if text.startswith('twice the ', position):
+                position += len('twice the ')
+                for display, name in sorted(constants.items(), key=lambda item: -len(item[0])):
+                    if re.fullmatch('[a-z]+', display) and text.startswith(display, position):
+                        end = position + len(display)
+                        if end == len(text) or not re.match(r'[A-Za-z0-9_]', text[end]):
+                            position = end
+                            return ast.Scale(2, ast.Const(name))
             if text.startswith('-', position) and not text[position + 1:position + 2].isdigit():
                 position += 1
                 return ast.Scale(-1, term())
@@ -776,26 +815,46 @@ class EnglishParser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
+        matched = surface_registry.dispatch(self.source[self.i:], self.env)
+        if matched is not None and matched[1].parser_hook is not None:
+            start = self.i
+            result = matched[1].parser_hook(self, scope, depth, nesting)
+            if result is not None:
+                self.extension_readings.append((matched[1], result, start, self.i))
+                return result
+            self.i = start
         def child(inner=scope, listed=False):
             return self.formula(inner, depth + int(listed), nesting + 1)
         if self.take('it is not the case that '):
             return ast.Not(child())
-        for prefix, cls in [('all of the following hold:', ast.And),
-                            ('both of the following hold:', ast.And),
-                            ('at least one of the following holds:', ast.Or),
-                            ('if the following holds:', ast.Implies)]:
+        listing_types = {"and": ast.And, "or": ast.Or, "implies": ast.Implies}
+        for prefix, record in surface_registry.KEYWORDS:
+            if prefix not in ('all of the following hold:', 'both of the following hold:',
+                              'at least one of the following holds:', 'if the following holds:'):
+                continue
+            cls = listing_types[record.wire_tag]
             if self.take(prefix):
+                self.space()
+                if self.take('first clause: '):
+                    left = child(listed=True)
+                    self.need('; end first clause; second clause: ')
+                    right = child(listed=True)
+                    self.need('; end second clause')
+                    return cls(left, right)
                 a, b = _markers(depth)
-                self.space(); self.need(a + ' ')
+                self.need(a + ' ')
                 left = child(listed=True)
                 self.need(';'); self.space()
                 if cls is ast.Implies:
                     self.need('then the following holds:'); self.space()
                 self.need(b + ' ')
                 return cls(left, child(listed=True))
-        for prefix, cls, between, suffix in [('both ', ast.And, ' and ', ''),
-                                               ('either ', ast.Or, ' or ', ', or both'),
-                                               ('if ', ast.Implies, ', then ', '')]:
+        compact = {'both ': (ast.And, ' and ', ''), 'either ': (ast.Or, ' or ', ', or both'),
+                   'if ': (ast.Implies, ', then ', '')}
+        for prefix, _record in surface_registry.KEYWORDS:
+            if prefix not in compact:
+                continue
+            cls, between, suffix = compact[prefix]
             if self.take(prefix):
                 left = child() if cls is ast.Implies else self.atom(scope)
                 self.need(between)
@@ -848,6 +907,73 @@ class EnglishParser:
             return ast.Reach(kind, ast.Body(src[0], child((dst, src, *scope), listed=listed)), left, right)
         return self.atom(scope)
 
+    def natural_clause(self):
+        start = self.i
+        if self.take('some '):
+            binding = self.declaration(())
+            self.space()
+            first = self.atom((binding,), relative=True)
+            if self.take(' and '):
+                first = ast.And(first, self.atom((binding,), relative=True))
+            return ast.Exists(binding[0], first)
+        self.i = start
+        if self.take('no '):
+            binding = self.declaration(())
+            self.space()
+            return ast.Not(ast.Exists(binding[0], self.atom((binding,), relative=True)))
+        self.i = start
+        if not self.take('every '):
+            return None
+        for guard_name, template in self.words.predicates.items():
+            decl = self.env.predicates[guard_name]
+            if (len(decl.arguments) != 1 or decl.arguments[0] not in self.words.sorts
+                    or not template.startswith('{0} is ')):
+                continue
+            adjective = template[len('{0} is '):]
+            if not re.fullmatch('[a-z]+', adjective):
+                continue
+            noun = self.words.sorts[decl.arguments[0]]
+            self.i = start + len('every ')
+            if not self.take(adjective + ' ' + noun, content=True):
+                continue
+            self.space()
+            binding = (decl.arguments[0], 'that ' + noun)
+            guard = ast.Unary(guard_name, ast.Var(0))
+            owner = self.owner_clause(binding)
+            if owner is not None:
+                return ast.Forall(binding[0], ast.Implies(guard, owner))
+            body = self.atom((binding,), relative=True)
+            if type(body) is ast.Not:
+                self.error('Use an explicit for every clause for negation.')
+            if self.take(' and '):
+                owner = self.owner_clause(binding)
+                if owner is None:
+                    self.error('Expected a uniquely declared ownership clause.')
+                body = ast.And(body, owner)
+            return ast.Forall(binding[0], ast.Implies(guard, body))
+        self.i = start
+        return None
+
+    def owner_clause(self, binding):
+        """Finite inverse of `{0} owns {1}`; no inferred converse relation."""
+        start = self.i
+        matches = []
+        for name, template in self.words.predicates.items():
+            declaration = self.env.predicates[name]
+            if (name != 'owns' or template != '{0} owns {1}'
+                    or len(declaration.arguments) != 2 or declaration.arguments[1] != binding[0]):
+                continue
+            noun = self.words.sorts[declaration.arguments[0]]
+            article = _article('owner')
+            if self.take('has ' + article + ' owner'):
+                matches.append((self.i, ast.Exists(declaration.arguments[0],
+                                                  ast.Binary(name, ast.Var(0), ast.Var(1)))))
+            self.i = start
+        if len(matches) == 1:
+            self.i = matches[0][0]
+            return matches[0][1]
+        return None
+
     def document(self):
         formulas = []
         while self.i < len(self.source):
@@ -872,6 +998,10 @@ def parse_english_with_metadata(env, source, **options):
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
     document = parser.document()
+    from .surface.unambiguity import require_unique_derivation
+    tree = require_unique_derivation(env, source, **options)
+    from .surface.unambiguity import require_correspondence
+    require_correspondence(tree, parser.extension_readings, env, parser.words, parser.source)
     try:
         ast.check_document(env, document)
     except VEError as exc:
@@ -949,7 +1079,11 @@ def english_lark_grammar(env, **options):
         'compact: "both" atom "and" atom -> conjunction\n'
         '       | "either" atom "or" atom ", or both" -> disjunction\n'
         '       | "if" formula ", then" formula -> implication',
-        'listing: "all of the following hold:" marker formula ";" marker formula -> conjunction_list\n'
+        'listing: "all of the following hold:" "first clause:" formula "; end first clause; second clause:" formula "; end second clause" -> conjunction_list\n'
+        '       | "both of the following hold:" "first clause:" formula "; end first clause; second clause:" formula "; end second clause" -> conjunction_list\n'
+        '       | "at least one of the following holds:" "first clause:" formula "; end first clause; second clause:" formula "; end second clause" -> disjunction_list\n'
+        '       | "if the following holds:" "first clause:" formula "; end first clause; second clause:" formula "; end second clause" -> implication_list\n'
+        '       | "all of the following hold:" marker formula ";" marker formula -> conjunction_list\n'
         '       | "both of the following hold:" marker formula ";" marker formula -> conjunction_list\n'
         '       | "at least one of the following holds:" marker formula ";" marker formula -> disjunction_list\n'
         '       | "if the following holds:" marker formula ";" "then the following holds:" marker formula -> implication_list',
@@ -966,8 +1100,8 @@ def english_lark_grammar(env, **options):
         '           | "there is" article declaration "who" relative -> existential_relative\n'
         '           | "there is" article declaration "that" relative -> existential_relative',
         'article: "a" | "an"',
-        'declaration: noun | "first"i noun | "second"i noun | noun "named"i LABEL',
-        'term: constant | "that"i noun | "the first"i noun | "the second"i noun | LABEL',
+        'declaration: noun | ' + ' | '.join(lit(word) + 'i noun' for word in _ORDINALS) + ' | noun "named"i LABEL',
+        'term: constant | "that"i noun | ' + ' | '.join(lit('the ' + word) + 'i noun' for word in _ORDINALS) + ' | LABEL',
         'reach: "starting from" term "," term "is reachable by" count "or more" relation "steps" -> named_reach\n'
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies the following:" "(a)" formula -> body_reach',
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies this condition:" formula -> body_reach',
@@ -979,6 +1113,9 @@ def english_lark_grammar(env, **options):
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
     constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
+    constants += [lit('the ' + v) for n, v in words.constants.items()
+                  if not is_int(n) and re.fullmatch('[a-z]+', v)]
+    constants += [lit(v) for n, v in words.natural_constants().items() if not is_int(n)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
     rules.append('constant: ' + (' | '.join(constants) or 'IMPOSSIBLE'))
     relations = [lit(quote(n)) for n, p in env.predicates.items()
@@ -1008,13 +1145,72 @@ def english_lark_grammar(env, **options):
             for text, _, _ in _COMPARISONS]
         ints = [lit(v) for n, v in words.constants.items() if is_int(n)]
         rules += ['int_term: int_atom | "-" int_neg',
-                  'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]"',
+                  'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]" | "twice" "the" int_plain_constant',
                   'int_neg: int_constant | "[" int_term INT_OP int_term "]" | "-" int_neg',
                   'int_constant: ' + (' | '.join(ints) or 'IMPOSSIBLE'),
+                  'int_plain_constant: ' + (' | '.join(lit(v) for n, v in words.constants.items()
+                                                     if is_int(n) and re.fullmatch('[a-z]+', v)) or 'IMPOSSIBLE'),
                   'NUMERAL: /-?(?:0|[1-9][0-9]*)(?![0-9])/',
                   'INT_OP: "+" | "-" | "*"']
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
+    for record in surface_registry.records():
+        if record.grammar_hook is None or not surface_registry.enabled(record, env):
+            continue
+        extension = list(record.grammar_hook(env, words))
+        if record.parser_hook is not None:
+            production = record.grammar_production
+            if (not re.fullmatch(r"[a-z][a-z0-9_]*", production) or
+                    f"%extend formula: {production}" not in extension or
+                    not any(line.startswith(production + ":") for line in extension)):
+                raise SyntaxError(f"English grammar hook for {record.wire_tag} must extend formula via {production}")
+        rules.extend(extension)
     rules.extend(['IMPOSSIBLE: /[^\\s\\S]/', '%import common.WS', '%ignore WS'])
     return '\n'.join(rules) + '\n'
+
+
+def _natural_parser(parser, scope, _depth, _nesting):
+    if scope:
+        return None
+    return parser.natural_clause()
+
+
+def _natural_grammar(env, words):
+    lit = lambda s: json.dumps(s)
+    content_lit = lambda s: '/' + _literal_pattern(s).replace('/', r'\/') + '/i'
+    modifiers = []
+    for name, template in words.predicates.items():
+        decl = env.predicates[name]
+        if (len(decl.arguments) == 1 and decl.arguments[0] in words.sorts
+                and template.startswith('{0} is ')
+                and re.fullmatch('[a-z]+', template[len('{0} is '):])):
+            modifiers.append(content_lit(template[len('{0} is '):]) + ' '
+                             + content_lit(words.sorts[decl.arguments[0]]))
+    owners = any(name == 'owns' and template == '{0} owns {1}'
+                 and len(env.predicates[name].arguments) == 2
+                 for name, template in words.predicates.items())
+    return ('%extend formula: natural',
+            'natural: natural_some | natural_no | natural_every',
+            'natural_some: "some" declaration some_tail',
+            'some_tail: relative | relative "and" relative',
+            'natural_no: "no" declaration relative',
+            'natural_every: "every" natural_subject natural_tail',
+            'natural_tail: relative | owner_clause | relative "and" owner_clause',
+            'natural_subject: ' + (' | '.join(dict.fromkeys(modifiers)) or 'IMPOSSIBLE'),
+            'owner_clause: ' + ('"has an owner"' if owners else 'IMPOSSIBLE'))
+
+
+def _natural_derivation(tree, env, words, source):
+    fragment = source[tree.meta.start_pos:tree.meta.end_pos]
+    parser = EnglishParser(env, fragment, words)
+    value = parser.natural_clause()
+    if value is None or parser.i != len(fragment):
+        raise SyntaxError('Natural registry derivation disagrees with its source span')
+    return value
+
+
+surface_registry.register(surface_registry.SurfaceRecord(
+    'natural_clause', '', ('some ', 'no ', 'every '), '', 'natural',
+    parser_hook=_natural_parser, grammar_hook=_natural_grammar,
+    derivation_hook=_natural_derivation))

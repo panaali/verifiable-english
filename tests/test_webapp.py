@@ -1,6 +1,7 @@
 """Security boundary and library integration tests: no real model calls."""
 import asyncio
 import json
+import re
 import subprocess
 import sys
 import time
@@ -72,6 +73,49 @@ def test_examples(setup,id,expected):
     assert data['evaluation']['value']==(id!='news')
     if expected=='certified': assert data['replay']['valid']
     else: assert data['countermodel']['complete']
+
+
+def test_reader_facing_example_outputs_are_symbol_free_except_checked_fallbacks(setup):
+    client, _, _ = setup
+    headers = login(client)
+    forbidden = re.compile(r'[@()\[\]*<=]')
+    for example in EXAMPLES:
+        assert not forbidden.search(example['english'])
+        for text in (example['premises'] + '\n' + example['claim'], example['claim']):
+            response = client.post('/api/validate', json={'example': example['id'], 'text': text}, headers=headers)
+            assert response.status_code == 200, response.text
+            for sentence in response.json()['natural']['sentences']:
+                if sentence['form'] == 'explicit form':
+                    assert sentence['fallback_reason']
+                else:
+                    assert sentence['form'] == 'natural'
+                    assert not forbidden.search(sentence['text'])
+        result = client.post('/api/check', json={'example': example['id']}, headers=headers)
+        assert result.status_code == 200, result.text
+        for sentence in result.json().get('countermodel_summary', []):
+            assert not forbidden.search(sentence)
+    response = client.post('/api/propose', json={'example':'policy','text':'The API is safe.'}, headers=headers)
+    assert response.status_code == 200, response.text
+    for candidate in response.json()['candidates']:
+        assert candidate['natural']['sentences']
+        for sentence in candidate['natural']['sentences']:
+            if sentence['form'] == 'natural':
+                assert not forbidden.search(sentence['text'])
+            else:
+                assert sentence['form'] == 'explicit form' and sentence['fallback_reason']
+
+
+def test_candidate_distinguishing_worlds_have_plain_readings():
+    proposals = {'candidates': [
+        {'ve': '@api is safe.', 'reading': 'The API is safe.'},
+        {'ve': '@api is reviewed.', 'reading': 'The API is reviewed.'},
+    ]}
+    result = run('propose', {'example': 'policy', 'text': 'The API is safe.'},
+                 proposer=lambda *args: {'text': json.dumps(proposals)})
+    assert result['comparisons'][0]['distinguishing_models']
+    for model in result['comparisons'][0]['distinguishing_models']:
+        assert any('It is true that' in sentence for sentence in model['reader_summary'])
+        assert all(not re.search(r'[@()\[\]*<=]', sentence) for sentence in model['reader_summary'])
 
 
 def test_removed_rule_and_diagnostics(setup):
