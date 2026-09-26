@@ -1178,13 +1178,15 @@ def _natural_parser(parser, scope, _depth, _nesting):
 
 def _natural_grammar(env, words):
     lit = lambda s: json.dumps(s)
+    content_lit = lambda s: '/' + _literal_pattern(s).replace('/', r'\/') + '/i'
     modifiers = []
     for name, template in words.predicates.items():
         decl = env.predicates[name]
         if (len(decl.arguments) == 1 and decl.arguments[0] in words.sorts
                 and template.startswith('{0} is ')
                 and re.fullmatch('[a-z]+', template[len('{0} is '):])):
-            modifiers.append(lit(template[len('{0} is '):]) + ' ' + lit(words.sorts[decl.arguments[0]]))
+            modifiers.append(content_lit(template[len('{0} is '):]) + ' '
+                             + content_lit(words.sorts[decl.arguments[0]]))
     owners = any(name == 'owns' and template == '{0} owns {1}'
                  and len(env.predicates[name].arguments) == 2
                  for name, template in words.predicates.items())

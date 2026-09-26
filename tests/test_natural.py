@@ -1,5 +1,6 @@
 """The natural view only accepts exact, uniquely parsed English sentences."""
 
+import pytest
 from lark import Lark
 
 from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
@@ -104,6 +105,19 @@ def test_negative_universal_uses_explicit_scope():
     assert 'it is not the case that' in result.text
     assert parse_english(ENV, result.text + '.') == Document((formula,))
     assert not result.text.startswith('Every service is not')
+
+
+def test_case_varied_and_nested_adjective_ambiguity_rejects():
+    data = vocabulary()
+    data['vocabulary']['sorts']['deployed_item'] = {
+        'description': 'Deployed item',
+        'verbalisation': {'singular': 'deployed service', 'plural': 'deployed services'}}
+    env = Environment(data)
+    for sentence in ('Every deployed service is reviewed.',
+                     'It is not the case that every deployed service is reviewed.',
+                     'Every DEPLOYED service is reviewed.'):
+        with pytest.raises(Exception, match='two derivations'):
+            parse_english(env, sentence)
 
 
 def test_forced_candidate_rejection_audits_final_fallback(monkeypatch):
