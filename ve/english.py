@@ -36,7 +36,7 @@ _ACTIVE = (
     r"(?:communicates|collaborates) with",
     r"has (?:access to|authority over|responsibility for)",
 )
-_EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end".split())
+_EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end therefore so hence".split())
 _ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth')
 _EXTRA_RESERVED |= frozenset(_ORDINALS)
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
@@ -50,7 +50,8 @@ _COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', 
 # exactly as the type checker does (MAX_DEPTH), so every renderable integer
 # term of a valid AST parses back.
 _INT_MASK = '\x00'
-_SENTENCE_HEADS = frozenset('every for there some no if both either it starting all at this'.split())
+_SENTENCE_HEADS = frozenset('every for there some no if both either it starting all at this therefore so hence'.split())
+_CONCLUSION_MARKERS = ('therefore ', 'so ', 'hence ', 'it follows that ')
 
 
 def _fold_sentence_initials(source, words):
@@ -522,6 +523,7 @@ class EnglishParseResult:
     canonical_text: str
     overlay_digest: str | None
     review_status: str
+    conclusions: tuple[int, ...] = ()
 
     def paraphrase(self):
         return {'overlay_digest': self.overlay_digest, 'review_status': self.review_status,
@@ -546,6 +548,7 @@ class EnglishParser:
         self.words = words or EnglishVocabulary(env)
         self.nodes = 0
         self.extension_readings = []
+        self.conclusions = []
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -1055,6 +1058,8 @@ class EnglishParser:
         formulas = []
         self.source = _fold_sentence_initials(self.source, self.words)
         while self.i < len(self.source):
+            if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
+                self.conclusions.append(len(formulas))
             formulas.append(self.formula())
             self.need('.')
             if self.i < len(self.source): self.space()
@@ -1081,13 +1086,33 @@ def _parse_english_document(env, source, **options):
     except VEError as exc:
         if exc.span is None: exc.span = Span(0, len(source), 1, 1)
         raise
-    return document, source, parser.words
+    _check_conclusions(env, document, parser.conclusions)
+    return document, source, parser.words, tuple(parser.conclusions)
+
+
+def _check_conclusions(env, document, conclusions):
+    """A marker uses every earlier unmarked premise in this document."""
+    if not conclusions:
+        return
+    from .entailment import prove_entailment
+    marked = set(conclusions)
+    for index in conclusions:
+        premises = tuple(formula for i, formula in enumerate(document.formulas[:index])
+                         if i not in marked)
+        if not premises:
+            raise SyntaxError('A conclusion needs an earlier premise.')
+        result = prove_entailment(env, premises, document.formulas[index])
+        if result.status != 'Found':
+            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises: '
+                              + result.status)
 
 
 def parse_english_with_metadata(env, source, **options):
-    document, source, words = _parse_english_document(env, source, **options)
+    document, source, words, conclusions = _parse_english_document(env, source, **options)
     try:
         english = render_english(document, env, **options)
+        if conclusions:
+            english = source
         if english != source and _parse_english_document(env, english, **options)[0] != document:
             english = source
     except (VEError, ValueError):
@@ -1095,7 +1120,7 @@ def parse_english_with_metadata(env, source, **options):
         english = source
     from .printer import print_document
     return EnglishParseResult(document, source, english, print_document(env, document),
-                              **words.provenance)
+                              **words.provenance, conclusions=conclusions)
 
 
 def parse_english(env, source, **options):
@@ -1158,7 +1183,9 @@ def english_lark_grammar(env, **options):
                                     '/' + _literal_pattern(p.strip()).replace('/', r'\/') + '/i'
                                     for p in re.split(r'("(?:[^"\\]|\\.)*")', s) if p.strip())
     rules = [
-        'start: (formula ".")+',
+        'start: (sentence ".")+',
+        'sentence: formula | conclusion_marker formula',
+        'conclusion_marker: "therefore" | "so" | "hence" | "it follows that"',
         '?formula: atom | negation | compact | listing | universal | existential | reach',
         'negation: "it is not the case that" formula',
         'compact: "both" atom "and" atom -> conjunction\n'
