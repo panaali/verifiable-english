@@ -85,15 +85,18 @@ def choicesEqual (a b : List (String × String)) : Bool :=
 /-- Every reading label in the transitive leaves is mutually compatible. -/
 def ReadingCompatible (ls : List Leaf) : Prop := (leafChoices ls).isOk
 
-/-- Every reading label names its document reading formula. `all` names the
-right-nested disjunction. Citation labels cannot be independent hypotheses. -/
+/-- Every reading label names the latest registered version and its formula.
+`all` names the right-nested disjunction. Citation labels cannot be independent
+hypotheses. -/
 def leafBoundCheck (sets : List Admission.ReadingSet) (l : Leaf) : Bool :=
   match Admission.parseLabel l.1 with
   | some (.readings s v c) =>
     match sets.filter (fun rs => rs.id == s && rs.version == v) with
-    | [rs] => match c with
-      | some i => decide (rs.readings[i]? = some l.2)
-      | none => decide (Admission.disjunction rs.readings = some l.2)
+    | [rs] =>
+      if sets.any (fun other => other.id == s && other.version > v) then false
+      else match c with
+        | some i => decide (rs.readings[i]? = some l.2)
+        | none => decide (Admission.disjunction rs.readings = some l.2)
     | _ => false
   | some (.cite _ _) => false
   | some _ => true
@@ -355,10 +358,11 @@ theorem backgroundLeaves_hold (E : VE.Environment) (ds : List Def) (h : Chain E 
   · obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hl
     exact (Background.literals_sat_iff S lits hn).mpr hS.1.2 a ha
 
-/-- `bundle_sound`, citation soundness: every lemma of an accepted bundle is
-true in every intended structure (string-admissible, every defined predicate
-agreeing with its body) in which its non-background transitive leaves hold,
-whatever lemmas it cites. -/
+/-- `bundle_sound`, citation soundness: every accepted lemma has compatible
+reading choices and reading leaves bound to the latest registry versions.
+Its conclusion is true in every intended structure (string-admissible, every
+defined predicate agreeing with its body) in which its non-background
+transitive leaves hold, whatever lemmas it cites. -/
 theorem bundle_sound (E : VE.Environment) (ds : List Def) (h : Chain E ds)
     (lits : List String) (hn : lits.Nodup)
     (sets : List Admission.ReadingSet)

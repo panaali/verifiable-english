@@ -6,7 +6,8 @@ hypotheses, earlier conclusion meaning IDs it cites, a certificate, and the
 new trusted proof rule: the certificate is replayed with cited conclusions as
 additional premises after the cited certificates have been checked. With
 ``document.reading_sets`` a reading label names exactly the registered formula
-at its set version and index; ``all`` names that set's disjunction. A bundle
+at its set version and index, which must be the latest registered version;
+``all`` names that set's disjunction. A bundle
 with reading labels requires this registry. With ``lean_executable`` the whole
 bundle is re-checked in one Lean `route` run
 (`VE.Definitions.Bundle`), which enforces the same citation rules and proves
@@ -70,6 +71,8 @@ def _bind_leaf(label, formula, reading_sets):
     matches = [readings for rid, v, readings in reading_sets if rid == unit and v == version]
     if len(matches) != 1:
         raise VEError("Reading label has no unique registered reading set")
+    if any(rid == unit and v > version for rid, v, _ in reading_sets):
+        raise VEError("Reading label depends on a superseded reading set version")
     readings = matches[0]
     expected = _disjunction(readings) if index is None else (
         readings[index] if index < len(readings) else None)
