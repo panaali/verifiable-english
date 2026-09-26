@@ -9,6 +9,8 @@ from ve.assist.recovery import RecoveryService, nearest_wordings
 from ve.ast import Unary, Const, Not
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
 from ve.search import find_countermodel
+from ve.identity import meaning_id
+from ve.english import render_english, parse_english_with_metadata
 
 
 def environment():
@@ -40,7 +42,14 @@ def test_catalogue_fixtures_match_and_negative_cases():
         if row["pattern_id"] == "scope.every_some@1":
             bindings["relation"] = "checks_pair"
         rows, residual = candidates(env, row["source"], bindings, pattern_id=row["pattern_id"])
-        assert not residual and len(rows) >= 2, (row["pattern_id"], residual)
+        if row["pattern_id"] == "attachment.modifier@1":
+            assert not rows and "no supported source reading" in residual
+        else:
+            assert not residual and len(rows) >= (1 if row["pattern_id"] in {
+                "scope.negation@1", "coordination.list@1"} else 2)
+        boundary_rows, boundary_residual = candidates(env, row["boundary"], bindings,
+                                                       pattern_id=row["pattern_id"])
+        assert boundary_residual or len(boundary_rows) <= len(rows)
 
 
 def test_scope_card_requires_checked_distinction():
@@ -80,7 +89,7 @@ def test_revisioned_approval_and_invalidation():
     service.start("u1")
     assert service.classify("u1", parse_outcome="one") == "ready"
     service.approve("u1", Unary("safe", Const("api")), actor="author",
-                    paraphrase="The API is safe.", presentation="Api is safe.", situation=situation)
+                    paraphrase="Api is safe.", presentation="Api is safe.", situation=situation)
     assert service.approval_valid("u1")
     approved_revision = service.units["u1"].revision
     ledger = service.to_ledger()
@@ -108,10 +117,16 @@ def test_recovery_pending_translation_and_adapter_stubs():
     service.add("u", "The API is safe.", {"start": 0}, mode="translation")
     service.start("u")
     assert service.classify("u", parse_outcome="one", discourse="incomplete") == "reading_review"
-    service.set_readings("u", [{"id": "a"}, {"id": "b"}])
+    service.resolve_pending("u", 0, actor="translator", reason="antecedent supplied",
+                            disposition="resolved", wording="Api is safe.",
+                            cited_spans=[{"start": 0, "end": 3}])
+    service.set_readings("u", [{"meaning_id": meaning_id(env, Unary("safe", Const(c))),
+                                "wording": render_english(Unary("safe", Const(c)), env) + "."}
+                               for c in ("api", "service_a")])
+    situation = find_countermodel(env, (), Not(Unary("safe", Const("api")))).model.to_dict()
     with pytest.raises(ValueError, match="narrowing"):
         service.approve("u", Unary("safe", Const("api")), actor="author",
-            paraphrase="API safe", presentation="API safe", situation={"checked": True})
+            paraphrase="Api is safe.", presentation="Api is safe.", situation=situation)
     assert service.alias_prompt(source="staff", target="employees", argument_types=["person"],
                                 direction="same", context="document")["status"] == "pending"
     with pytest.raises(RuntimeError, match="W2"):
@@ -143,11 +158,11 @@ def test_invalid_situation_and_presentation_cannot_be_approved():
     formula = Unary("safe", Const("api"))
     situation = find_countermodel(env, (), Not(formula)).model.to_dict()
     with pytest.raises(ValueError, match="correspondence"):
-        service.approve("u", formula, actor="author", paraphrase="API safe",
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Carol is safe.", situation=situation)
     situation["relations"]["safe"] = []
     with pytest.raises(ValueError, match="does not satisfy"):
-        service.approve("u", formula, actor="author", paraphrase="API safe",
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
 
 
@@ -194,3 +209,138 @@ def test_authoring_requires_explicit_rejection_of_distinct_reading():
     with pytest.raises(ValueError, match="explicit rejection"):
         service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
+
+
+def test_every_displayed_meaning_is_checked_again_at_approval():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    with pytest.raises(ValueError, match="displayed meaning fails"):
+        service.approve("u", formula, actor="author", paraphrase="Api is not safe.",
+                        presentation="Api is safe.", situation=situation)
+    assert service.units["u"].state == "ready" and not service.units["u"].readings
+
+
+def test_catalogue_wordings_are_writable_and_not_invented_readings():
+    env = environment()
+    for source, pattern, bindings in (
+        ("Not all services are safe.", "scope.negation@1", {"sort": "service", "predicate": "safe"}),
+        ("Alice and Bob are safe.", "coordination.list@1", {"predicate": "safe", "left": "alice", "right": "bob"}),
+        ("The service with the API is safe.", "attachment.modifier@1",
+         {"modifier": "safe", "left": "service_a", "right": "api"}),
+    ):
+        result = review(env, source, bindings, pattern_id=pattern)
+        assert not result["cards"]
+    result = review(env, "It is safe.", {"predicate": "safe", "antecedents": ["api", "service_a"]},
+                    pattern_id="discourse.reference@1")
+    for candidate in result["candidates"]:
+        parsed = parse_english_with_metadata(env, candidate["wording"] + "\n")
+        assert meaning_id(env, parsed.document.formulas[0]) == candidate["meaning_id"]
+    assert all("property" not in wording and "antecedent" not in wording
+               for card in result["cards"] for wording in card["paraphrases"])
+
+
+def test_pending_cannot_be_erased_and_pattern_disposition_is_attributed():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {})
+    service.start("u")
+    assert service.classify("u", parse_outcome="one", discourse="incomplete") == "reading_review"
+    service.set_readings("u", [])
+    assert service.units["u"].pending and service.units["u"].state == "reading_review"
+    with pytest.raises(ValueError, match="incomplete"):
+        service.approve("u", Unary("safe", Const("api")), actor="a",
+                        paraphrase="Api is safe.", presentation="Api is safe.", situation={})
+    service.resolve_pending("u", 0, actor="author", reason="No pronoun in rewrite", disposition="not_applicable")
+    assert service.units["u"].pending
+    service.resolve_pending("u", 0, actor="author", reason="Rewrote the antecedent explicitly",
+                            disposition="resolved", wording="Api is safe.",
+                            cited_spans=[{"start": 0, "end": 2}])
+    assert service.units["u"].state == "ready"
+    assert service.events[-2]["actor"] == "author"
+
+
+def test_translation_requires_separate_narrowing_and_keeps_source_set():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    assert service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "service_a"]}}) == "ready"
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    selected = dict(actor="translator", paraphrase="Api is safe.", presentation="Api is safe.", situation=situation)
+    assert len(service.units["u"].readings) == 2
+    with pytest.raises(ValueError, match="narrowing"):
+        service.approve("u", formula, **selected)
+    with pytest.raises(ValueError, match="invalid attributed"):
+        service.record_narrowing("u", keeps=["unknown"], actor="translator", reason="source span",
+                                 cited_spans=[{"start": 0, "end": 2}])
+    record = service.record_narrowing("u", keeps=[meaning_id(env, formula)], actor="translator",
+                                      reason="antecedent resolved by cited phrase", cited_spans=[{"start": 0, "end": 2}])
+    service.approve("u", formula, narrowing=record["id"], **selected)
+    assert len(service.units["u"].readings) == 2
+    assert service.events[-2]["action"] == "narrowing"
+
+
+def test_pagination_retains_cards_counts_and_cursor_until_complete():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {})
+    service.start("u")
+    bindings = {"predicate": "safe", "antecedents": ["api", "service_a", "carol", "alice"]}
+    assert service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": bindings}) == "reading_review"
+    result = service.units["u"].catalogue_results["discourse.reference@1"]
+    assert len(result["cards"]) == 3 and result["next_cursor"] == 3
+    assert len(service.units["u"].readings) == 4
+    result = service.continue_catalogue("u", "discourse.reference@1", bindings)
+    assert len(result["cards"]) == 6 and result["comparison_count"] == 6
+    assert result["next_cursor"] is None and service.units["u"].state == "ready"
+
+
+def test_none_of_these_reply_history_proposer_and_task_cap():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    assert service.reply("u", "None of these; Api is reviewed.", rejected=[
+        {"meaning_id": "candidate-1", "reason": "source disagrees"}]) == "analysing"
+    assert service.events[-1]["text"].startswith("None of these")
+    assert service.units["u"].rejected[0]["meaning_id"] == "candidate-1"
+    class Suggest:
+        def request(self, source, *, timeout_seconds):
+            return "Api is safe."
+    service.classify("u", parse_outcome="zero")
+    service.request_proposer("u", Suggest())
+    assert service.events[-1]["text"] == "Api is safe."
+    service.units["u"].started -= 301
+    service.cancel("u")
+    assert service.start("u") == "unresolved"
+    service.edit("u", source="Api is safe.")
+    assert service.start("u") == "unresolved"
+
+
+def test_ledger_json_restore_and_revision_guard():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                    presentation="Api is safe.", situation=situation)
+    ledger = json.loads(json.dumps(service.to_ledger()))
+    restored = RecoveryService.from_ledger(env, ledger)
+    assert restored.verify_ledger() and restored.approval_valid("u")
+    with pytest.raises(ValueError, match="stale recovery revision"):
+        restored.edit("u", source="Api is reviewed.", expected_revision=0)
+    ledger["events"][-1]["unit_snapshot"]["paraphrase"] = "Api is not safe."
+    with pytest.raises(ValueError, match="invalid recovery ledger"):
+        RecoveryService.from_ledger(env, ledger)
