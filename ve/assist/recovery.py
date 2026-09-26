@@ -729,6 +729,19 @@ class RecoveryService:
     def approve(self, unit_id, formula, *, actor, paraphrase, presentation, situation,
                 rejected=(), narrowing=None, expected_revision=None):
         self._expect(expected_revision)
+        stop = time.monotonic() + OPERATION_SECONDS
+        from .ambiguity_patterns import _Deadline, _operation_budget
+        def within_deadline(operation, *args):
+            if time.monotonic() >= stop:
+                raise ValueError("approval operation deadline")
+            try:
+                with _operation_budget(stop):
+                    result = operation(*args)
+            except _Deadline as exc:
+                raise ValueError("approval operation deadline") from exc
+            if time.monotonic() >= stop:
+                raise ValueError("approval operation deadline")
+            return result
         unit = self.units[unit_id]
         if unit.state != "ready" or unit.pending:
             raise ValueError("reading review is incomplete")
@@ -748,25 +761,13 @@ class RecoveryService:
             unit.state, unit.reason = "unresolved", "clarification task cap"
             self._event("task_cap", unit)
             raise ValueError("clarification task cap")
-        if any(self.units[d].state != "approved" or not self.approval_valid(d)
-               for d in unit.dependencies):
+        if within_deadline(lambda: any(
+                self.units[d].state != "approved" or not self.approval_valid(d)
+                for d in unit.dependencies)):
             raise ValueError("dependent unit is not approved")
         if not all((actor, paraphrase, presentation)) or not isinstance(situation, dict):
             raise ValueError("actor, paraphrase, presentation and checked situation required")
-        check_formula(self.env, formula)
-        stop = time.monotonic() + OPERATION_SECONDS
-        from .ambiguity_patterns import _Deadline, _operation_budget
-        def within_deadline(operation, *args):
-            if time.monotonic() >= stop:
-                raise ValueError("approval operation deadline")
-            try:
-                with _operation_budget(stop):
-                    result = operation(*args)
-            except _Deadline as exc:
-                raise ValueError("approval operation deadline") from exc
-            if time.monotonic() >= stop:
-                raise ValueError("approval operation deadline")
-            return result
+        within_deadline(check_formula, self.env, formula)
         within_deadline(checked_wording, self.env, presentation, formula)
         within_deadline(checked_wording, self.env, paraphrase, formula)
         model = FiniteModel.from_dict(self.env, situation)
