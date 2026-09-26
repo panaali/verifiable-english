@@ -67,9 +67,10 @@ pub fn check_label(s: &str) -> Result<()> {
     }
 }
 
-/// Bind a reading leaf to the registered formula at its set identity, version,
-/// and index. `all` is the right-nested disjunction of that set. Bundle citation
-/// labels must be resolved through checked citations, not accepted as leaves.
+/// Bind a reading leaf to the latest registered version of its set and the
+/// formula at its index. `all` is the right-nested disjunction of that set.
+/// Bundle citation labels must be resolved through checked citations, not
+/// accepted as leaves.
 pub fn check_reading_binding(
     label: &str,
     formula: &Formula,
@@ -98,6 +99,12 @@ pub fn check_reading_binding(
         return error(
             "AdmissionError",
             "Reading label has no unique registered reading set",
+        );
+    }
+    if sets.iter().any(|(id, v, _)| id == set && *v > version) {
+        return error(
+            "AdmissionError",
+            "Reading label depends on a superseded reading set version",
         );
     }
     if readings.is_empty() || readings.len() > 64 {
@@ -194,5 +201,17 @@ mod reading_binding_tests {
         ];
         assert!(check_reading_binding("readings:u@0:0", &p, &duplicates).is_err());
         assert!(check_reading_binding("cite:local/A", &p, &sets).is_err());
+    }
+
+    #[test]
+    fn superseded_reading_version_is_rejected() {
+        let p = Formula::Top;
+        let not_p = Formula::Not(Box::new(p.clone()));
+        let sets = vec![
+            ("u".to_string(), 0, vec![p.clone()]),
+            ("u".to_string(), 1, vec![p.clone(), not_p]),
+        ];
+        assert!(check_reading_binding("readings:u@0:all", &p, &sets).is_err());
+        assert!(check_reading_binding("readings:u@1:0", &p, &sets).is_ok());
     }
 }

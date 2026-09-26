@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.ast import Top, Bottom, Not, And, Or, formula_to_data
+from ve.ast import Top, Bottom, Not, And, Or, Const, Unary, formula_to_data
 from ve.bundle import check_bundle
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -149,6 +149,44 @@ def test_reading_choices_are_derived_from_label_and_version():
     assert check_bundle(compatible)["status"] == "Checked"
     if LEAN.exists():
         assert lean_bundle_verdict(LEAN, compatible["environment"], compatible["lemmas"], compatible["document"])["status"] == "ok"
+
+
+def test_superseded_reading_set_rejects_cited_dependants():
+    from ve.bundle import lean_bundle_verdict
+    data = bundle()
+    data["environment"]["vocabulary"] = {
+        "sorts": {"thing": {"description": "A thing."}},
+        "predicates": {"p": {"arguments": ["thing"], "description": "P."}},
+        "constants": {"a": {"sort": "thing", "description": "A."}},
+    }
+    env = Environment(data["environment"])
+    p = Unary("p", Const("a"))
+    result = And(p, Top())
+    leaf = {"label": "readings:u@0:all", "ast": formula_to_data(env, p)}
+    first, second = data["lemmas"]
+    first.update(environment_id=env.environment_id, premises=[deepcopy(leaf)],
+                 conclusion=formula_to_data(env, p), meaning_id=meaning_id(env, p),
+                 reading_choices={"u": "0:all"}, transitive_leaves=[deepcopy(leaf)],
+                 certificate=prove_entailment(env, (p,), p).certificate)
+    second.update(environment_id=env.environment_id, premises=[deepcopy(leaf)],
+                  cites=[first["meaning_id"]], conclusion=formula_to_data(env, result),
+                  meaning_id=meaning_id(env, result), reading_choices={"u": "0:all"},
+                  transitive_leaves=[deepcopy(leaf)],
+                  certificate=prove_entailment(env, (p, p), result).certificate)
+    data["document"] = {"reading_sets": [
+        {"id": "u", "version": 0, "readings": [formula_to_data(env, p)]}]}
+    assert check_bundle(data)["status"] == "Checked"
+    if LEAN.exists():
+        assert lean_bundle_verdict(LEAN, data["environment"], data["lemmas"], data["document"])["status"] == "ok"
+
+    data["document"]["reading_sets"].append(
+        {"id": "u", "version": 1,
+         "readings": [formula_to_data(env, p), formula_to_data(env, Not(p))]})
+    with pytest.raises(VEError, match="superseded"):
+        check_bundle(data)
+    if LEAN.exists():
+        verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"], data["document"])
+        assert verdict["status"] == "error" and "Reading label is not bound" in verdict["error"]
 
 
 def test_cited_hypothesis_must_be_on_branch_even_with_fresh_certificate():
