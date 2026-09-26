@@ -1,4 +1,4 @@
-import VE.Norms.Wire
+import VE.Norms.Replay
 
 /-! The `ve_norms_route` executable (docs/spec/norms.md 11.4), invoked as
 `lean/.lake/build/bin/ve_norms_route <cases.json|->`. Each case is
@@ -8,12 +8,16 @@ import VE.Norms.Wire
   layer order, Background (with generators), labelled layer premises
   (`layer:norms:<p>`), conflict targets (`p` and `r->m`, with argument sorts)
   and the fragment flag; or the shared diagnostic of `validate`.
+* `norms-conflict`: `norms` and `packages` (target → Python's conflict package)
+  → `verdict` `CONFLICT-FREE` when every target's certificate is bound and
+  accepted over the regenerated `E_base` and `Background_base`, else `UNKNOWN`
+  with the first failing target (`Replay.norms_wire_conflict_sound`).
 * Any case without a norm construct (no `norms@0` profile, no `regulated`
   field, no `norms`) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
 
-Admission of W2 documents with norm units and conflict-certificate packages
-(11.4 steps 2-5) are not implemented yet and are rejected explicitly. -/
+Admission of W2 documents with norm units and CONFLICT witness packages are
+not implemented yet and are rejected explicitly. -/
 namespace VE.Norms.Run
 open Lean
 
@@ -35,12 +39,21 @@ def runCase (j : Json) : Except String Json := do
     let environment ← j.getObjVal? "environment"
     let (_, ⟨D, _⟩) ← Wire.decodeSource environment (j.getObjValD "norms")
     return VE.Route.Wire.ok id (Wire.regenerated D)
+  if kind == "norms-conflict" then
+    let res ← Replay.replayConflict j
+    let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
+    return VE.Route.Wire.ok id ([("verdict", .str verdict),
+      ("targets", toJson ((targets res.D.1).map (·.1)))] ++
+      match Replay.firstFailure res with
+      | some d => if res.conflictFree then [] else [("detail", .str d)]
+      | none => [])
   if usesNormsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norms route"
   VE.Route.Run.runCase j
 
 def runCaseReported (j : Json) : Json :=
-  if usesNormsPath j || j.getObjValD "kind" == .str "norms-elaborate" then
+  if usesNormsPath j || j.getObjValD "kind" == .str "norms-elaborate" ||
+      j.getObjValD "kind" == .str "norms-conflict" then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
