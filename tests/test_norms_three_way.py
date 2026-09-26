@@ -7,7 +7,9 @@ by Python and Lean, while Rust independently evaluates the generated formulas.
 from __future__ import annotations
 
 import json
+import os
 import random
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -22,6 +24,32 @@ from tests.test_norms import environment, model, obligation, permission, rule
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
 RUST = ROOT / "rust/target/release/ve"
+
+
+@pytest.fixture(scope="module")
+def lean_executable():
+    if not LEAN.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("lake is required for the W1 wire gate")
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
+                               text=True, timeout=600)
+        assert built.returncode == 0, built.stdout + built.stderr
+    return LEAN
+
+
+@pytest.fixture(scope="module")
+def rust_executable():
+    cargo = shutil.which("cargo")
+    if cargo is None:
+        pytest.skip("cargo is required for the W1 wire gate")
+    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
+           "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
+                            "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)
+    assert built.returncode == 0, built.stdout + built.stderr
+    return RUST
 
 
 def run(executable, cases):
@@ -67,10 +95,9 @@ def lean_case(index, doc):
             "norms": [r.to_dict() for r in doc.rules]}
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="lake build required")
-def test_1100_regenerated_documents_match_lean():
+def test_1100_regenerated_documents_match_lean(lean_executable):
     docs = [*corpus(), *pair_corpus()]
-    results = run(LEAN, [lean_case(i, d) for i, d in enumerate(docs)])
+    results = run(lean_executable, [lean_case(i, d) for i, d in enumerate(docs)])
     for i, (doc, got) in enumerate(zip(docs, results, strict=True)):
         assert got["status"] == "ok", (i, got)
         assert got["order"] == list(doc.order), i
@@ -82,8 +109,7 @@ def test_1100_regenerated_documents_match_lean():
             for target, sorts, ast in doc.conflict_targets()], i
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="lake build required")
-def test_conflict_witness_and_certificates_match_lean():
+def test_conflict_witness_and_certificates_match_lean(lean_executable):
     env = environment({"permitted": permission()},
                       base={"condition": {"arguments": ["act"], "description": "condition"}})
     yes = rule("yes", "permitted", True)
@@ -118,15 +144,14 @@ def test_conflict_witness_and_certificates_match_lean():
             assert check_conflict(doc, certificates=packages).status == "CONFLICT-FREE"
             cases.append({**lean_case(i, doc), "kind": "norms-conflict", "packages": packages})
         expected.append("CONFLICT" if report.status == "CONFLICT" else "CONFLICT-FREE")
-    results = run(LEAN, cases)
+    results = run(lean_executable, cases)
     assert [r["verdict"] for r in results] == expected
     stale = json.loads(json.dumps(cases[1]))
     stale["packages"]["permitted"]["document_hash"] = "0" * 64
-    assert run(LEAN, [stale])[0]["verdict"] == "UNKNOWN"
+    assert run(lean_executable, [stale])[0]["verdict"] == "UNKNOWN"
 
 
-@pytest.mark.skipif(not RUST.exists(), reason="Rust release binary required")
-def test_rust_evaluates_python_generated_conflicts():
+def test_rust_evaluates_python_generated_conflicts(rust_executable):
     docs = list(corpus(48))
     cases = []
     expected = []
@@ -138,12 +163,11 @@ def test_rust_evaluates_python_generated_conflicts():
         cases.append({"id": str(i), "environment": base.to_dict(), "model": witness.to_dict(),
                       "ast": [formula_to_data(base, closed)]})
         expected.append(evaluate(base, closed, witness).value)
-    got = run(RUST, cases)
+    got = run(rust_executable, cases)
     assert [row["values"][0] for row in got] == expected
 
 
-@pytest.mark.skipif(not RUST.exists(), reason="Rust release binary required")
-def test_rust_evaluates_python_generated_completions():
+def test_rust_evaluates_python_generated_completions(rust_executable):
     from ve.evaluate import _Evaluator
     docs = list(corpus(48))
     cases = []
@@ -161,6 +185,6 @@ def test_rust_evaluates_python_generated_completions():
         expected.append(evaluate(doc.env, premise, full).value)
         cases.append({"id": str(i), "environment": doc.env.to_dict(), "model": full.to_dict(),
                       "ast": [formula_to_data(doc.env, premise)]})
-    got = run(RUST, cases)
+    got = run(rust_executable, cases)
     assert [row["values"][0] for row in got] == expected
     assert set(expected) == {False, True}
