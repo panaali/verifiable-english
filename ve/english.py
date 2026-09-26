@@ -118,6 +118,11 @@ class EnglishVocabulary:
             path = f"/vocabulary/predicates/{name}/verbalisation"
             codes = {i.code for i in issues if i.path == path}
             accepted = template is not None and not codes
+            if len(decl.arguments) > 2:
+                self.predicates[name] = template if accepted else old.predicates[name]
+                if accepted:
+                    issues = {i for i in issues if i.path != path}
+                continue
             if template and (not accepted or template in IDIOMS[len(decl.arguments)]):
                 phrase = template.removeprefix('{0} ')
                 unary = len(decl.arguments) == 1
@@ -644,9 +649,9 @@ class EnglishParser:
             slot = slots(name, omitted)
             if slot is False:
                 continue
-            parts = re.split(r'(\{[01]\})', template)
+            parts = re.split(r'(\{[0-5]\})', template)
             pattern = ''.join(('(' + (term_pattern if slot is None else slot[int(part[1])]) + ')')
-                              if part in ('{0}', '{1}') else _content_pattern(part) for part in parts)
+                              if re.fullmatch(r'\{[0-5]\}', part) else _content_pattern(part) for part in parts)
             match = re.compile(pattern).match(subject, start)
             if not match:
                 continue
@@ -675,7 +680,8 @@ class EnglishParser:
             elif name is None:
                 node = ast.Eq(*args)
             else:
-                node = (ast.Unary if len(args) == 1 else ast.Binary)(name, *args)
+                node = (ast.Unary(name, args[0]) if len(args) == 1 else
+                        ast.Binary(name, *args) if len(args) == 2 else ast.Atom(name, tuple(args)))
                 if negative: node = ast.Not(node)
             choices.append((end, node))
         if not choices:
@@ -1077,8 +1083,8 @@ def english_lark_grammar(env, **options):
         for name, template in templates.items():
             sorts = env.predicates[name].arguments
             slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
-            parts = re.split(r'(\{[01]\})', template)
-            rule = ' '.join(slot(p) if p in ('{0}', '{1}') else content_lit(p.strip())
+            parts = re.split(r'(\{[0-5]\})', template)
+            rule = ' '.join(slot(p) if re.fullmatch(r'\{[0-5]\}', p) else content_lit(p.strip())
                             for p in parts if p.strip())
             atoms.append(rule)
             if slot('{0}') == 'term':

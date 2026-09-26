@@ -32,6 +32,50 @@ private instance {ε α : Type} [BEq ε] [BEq α] : BEq (Except ε α) where
 #guard classify ["relational-fol@0", "relational-fol@0"] ==
   .error "UnsupportedProfile: profiles must be sorted and unique"
 
+private def definedVocabulary : Json := Json.mkObj [
+  ("sorts", Json.mkObj [("point", Json.mkObj [("description", .str "point")])]),
+  ("predicates", Json.mkObj [("alias", Json.mkObj [
+    ("arguments", toJson (["point"] : List String)), ("description", .str "alias"),
+    ("defined", Json.mkObj [("arguments", toJson (["point"] : List String)),
+      ("body", toJson (["top"] : List String))])])]),
+  ("constants", Json.mkObj [])]
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] definedVocabulary with
+  | .ok rv => VE.Definitions.names rv.definitions == ["alias"]
+  | .error _ => false)
+
+/-- Two definitions `a` and `b` over a base predicate, with the given bodies. -/
+private def twoDefinitions (a b : Json) : Json := Json.mkObj [
+  ("sorts", Json.mkObj [("point", Json.mkObj [("description", .str "point")])]),
+  ("predicates", Json.mkObj [
+    ("base", Json.mkObj [("arguments", toJson (["point"] : List String)), ("description", .str "base")]),
+    ("a", Json.mkObj [("arguments", toJson (["point"] : List String)), ("description", .str "a"),
+      ("defined", Json.mkObj [("arguments", toJson (["point"] : List String)), ("body", a)])]),
+    ("b", Json.mkObj [("arguments", toJson (["point"] : List String)), ("description", .str "b"),
+      ("defined", Json.mkObj [("arguments", toJson (["point"] : List String)), ("body", b)])])]),
+  ("constants", Json.mkObj [])]
+
+private def atom (p : String) (i : Nat) : Json :=
+  Json.arr #[.str "unary", .str p, Json.arr #[.str "var", toJson i]]
+
+private def decodeError (v : Json) : String :=
+  match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] v with
+  | .ok _ => "ok"
+  | .error e => e
+
+-- Definitions are ordered below their dependents (`b` mentions `a`)...
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] (twoDefinitions (atom "base" 0) (atom "a" 0)) with
+  | .ok rv => VE.Definitions.names rv.definitions == ["a", "b"]
+  | .error _ => false)
+-- ...whatever the declaration order.
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] (twoDefinitions (atom "b" 0) (atom "base" 0)) with
+  | .ok rv => VE.Definitions.names rv.definitions == ["b", "a"]
+  | .error _ => false)
+-- Recursion, a mutual cycle and a free variable are rejected with the Python diagnostics' shape.
+#guard decodeError (twoDefinitions (atom "a" 0) (atom "base" 0)) == "DependencyCycle: a"
+#guard decodeError (twoDefinitions (atom "b" 0) (atom "a" 0)) == "DependencyCycle: a, b"
+#guard decodeError (twoDefinitions (atom "base" 1) (atom "base" 0)) ==
+  "Definition a: the body is not a typed formula over the symbols below it"
+
 -- One dependency DAG: definitions above and below norms; cycles rejected.
 #guard dependencyOrder [⟨"violation", ["required", "done"]⟩, ⟨"required", ["safe"]⟩,
   ⟨"safe", ["base"]⟩] == .ok ["safe", "required", "violation"]
