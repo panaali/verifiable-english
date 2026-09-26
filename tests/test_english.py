@@ -75,6 +75,42 @@ def test_located_diagnostics_and_paraphrase_back():
     with pytest.raises(ResourceLimit): parse_english(ENV, 'It is not the case that ' + 'it is not the case that ' * 65 + 'this is impossible.\n')
 
 
+def test_paraphrase_never_displays_unchecked_universal_negation(tmp_path):
+    from test_cli import cli
+    source = 'For every service, it is not the case that that service is reviewed.'
+    parsed = parse_english_with_metadata(ENV, source)
+    assert parse_english(ENV, parsed.english_text) == parsed.document
+    assert 'Every service is not reviewed' not in parsed.english_text
+    assert 'Every service is not reviewed' not in render(parsed.document, ENV, 've_english')
+    env_path, source_path = tmp_path / 'env.json', tmp_path / 'claim.txt'
+    env_path.write_text(json.dumps(vocabulary()))
+    source_path.write_text(source)
+    result = cli('render', '--env', env_path, '--surface', 'english', '--view', 've_natural', source_path)
+    assert result.returncode == 0, result.stdout
+    assert 'Every service is not reviewed' not in result.stderr
+    if result.stderr:
+        shown = json.loads(result.stderr)['paraphrase']['english_text']
+        assert parse_english(ENV, shown) == parsed.document
+
+
+def test_paraphrase_rejects_colliding_sort_noun():
+    data = vocabulary()
+    data['vocabulary']['sorts']['deployed_item'] = {
+        'description': 'Deployed item',
+        'verbalisation': {'singular': 'deployed service', 'plural': 'deployed services'}}
+    del data['vocabulary']['predicates']['reviewed']
+    data['vocabulary']['predicates']['reviewed_deployed'] = {
+        'arguments': ['deployed_item'], 'description': 'Reviewed',
+        'verbalisation': '{0} is reviewed'}
+    env = Environment(data)
+    source = 'For every deployed service, that deployed service is reviewed.'
+    parsed = parse_english_with_metadata(env, source)
+    assert parsed.english_text == source
+    assert parse_english(env, parsed.english_text) == parsed.document
+    with pytest.raises(ValueError, match='No writable English form'):
+        render(parsed.document, env, 've_english')
+
+
 def test_closure_named_and_body_endpoints_in_order():
     data = vocabulary()
     data.pop('profile')

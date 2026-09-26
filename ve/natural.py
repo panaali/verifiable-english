@@ -94,6 +94,8 @@ def _candidate(formula, env, words):
         body = formula.body.body
         if type(body) is ast.Unary and body.term == ast.Var(0):
             return 'No ' + words.sorts[formula.sort] + ' ' + words.predicates[body.predicate].removeprefix('{0} ')
+    if type(formula) is ast.Forall and _owner(words, formula.body, formula.sort):
+        return 'Every ' + words.sorts[formula.sort] + ' has an owner'
     if type(formula) is ast.Forall and type(formula.body) is ast.Implies:
         guard, consequent = formula.body.left, formula.body.right
         adjective = _adjective(words, guard, formula.sort)
