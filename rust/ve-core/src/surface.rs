@@ -39,6 +39,12 @@ pub(crate) const RECORDS: &[SurfaceRecord] = &[
         wire_arity: 4,
     },
     SurfaceRecord {
+        wire_tag: "atom",
+        strict_form: "p(t1, ..., tk)",
+        english_keywords: &[],
+        wire_arity: 3,
+    },
+    SurfaceRecord {
         wire_tag: "eq",
         strict_form: "equals",
         english_keywords: &[],
@@ -326,6 +332,24 @@ impl Parser<'_> {
             } else {
                 Formula::Or(left, right)
             };
+        } else if self.env.nary() && self.s[self.pos..].find('(').is_some_and(|offset| {
+            let prefix = &self.s[self.pos..self.pos + offset];
+            !prefix.is_empty() && prefix.bytes().all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
+        }) {
+            let (predicate, pos) = self.ident()?;
+            if self.env.predicates.get(&predicate).is_none_or(|d| !(3..=6).contains(&d.len())) {
+                return Err(self.err("UnknownSymbol", "unknown n-ary predicate", pos));
+            }
+            self.literal("(")?;
+            let mut terms = vec![self.term()?];
+            while self.eat(", ") {
+                terms.push(self.term()?);
+                if terms.len() > 6 {
+                    return Err(self.err("SyntaxError", "n-ary atom exceeds six arguments", start));
+                }
+            }
+            self.literal(")")?;
+            f = Formula::Atom(predicate, terms);
         } else {
             let left = self.term()?;
             if self.eat(" is ") {
@@ -421,6 +445,8 @@ pub fn print_document(doc: &Document) -> Result<String> {
             Formula::Bottom => formula_record("bottom").unwrap().strict_form.into(),
             Formula::Unary(p, t) => format!("{} is {p}", term(t, names)),
             Formula::Binary(p, t, u) => format!("{} {p} {}", term(t, names), term(u, names)),
+            Formula::Atom(p, ts) => format!("{p}({})", ts.iter().map(|t| term(t, names))
+                .collect::<Vec<_>>().join(", ")),
             Formula::Reach(kind, edge, t, u) => {
                 let left = term(t, names);
                 let right = term(u, names);
