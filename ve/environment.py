@@ -81,6 +81,8 @@ class PredicateDecl:
     description: str
     verbalisation: str | None = None
     negative_verbalisation: str | None = None
+    functional: bool | None = None
+    total: bool | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,19 +152,31 @@ class Environment:
                                                   _verbalisation(raw["plural"]))
             sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
-            _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}",
-                          negative=True)
+            flagged = type(entry) is dict and ("functional" in entry or "total" in entry)
+            fields = {"arguments", "description"}
+            if flagged:
+                if not route or "data@0" not in data["profiles"]:
+                    raise UnsupportedProfile("Predicate flags require data@0")
+                fields |= {key for key in ("functional", "total") if key in entry}
+            _entry_fields(entry, fields, path=f"/vocabulary/predicates/{name}", negative=True)
             args = entry["arguments"]
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
             for sort in args:
-                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
+                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
+                                             and not (route and "data@0" in data["profiles"] and sort == STRING_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
+            if flagged and len(args) != 2:
+                raise VEError("Functional and total flags require a binary predicate")
+            for flag in ("functional", "total"):
+                if flag in entry and type(entry[flag]) is not bool:
+                    raise VEError(f"{flag} must be a Boolean")
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
-                                             verbalisation, negative)
+                                             verbalisation, negative,
+                                             entry.get("functional"), entry.get("total"))
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
             require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
@@ -205,6 +219,10 @@ class Environment:
                 entry["verbalisation"] = declaration.verbalisation
             if declaration.negative_verbalisation is not None:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
+            if declaration.functional is not None:
+                entry["functional"] = declaration.functional
+            if declaration.total is not None:
+                entry["total"] = declaration.total
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
@@ -224,7 +242,8 @@ class Environment:
 
     @property
     def model_sorts(self):
-        return (*self.sorts, *((STRING_SORT,) if any(d.sort == STRING_SORT for d in self.constants.values()) else ()))
+        return (*self.sorts, *((STRING_SORT,) if any(d.sort == STRING_SORT for d in self.constants.values())
+                or any(STRING_SORT in d.arguments for d in self.predicates.values()) else ()))
 
     @property
     def identity_version(self):
