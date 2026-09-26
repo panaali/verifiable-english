@@ -55,6 +55,12 @@ def test_atom_registry_traversal_and_named_fol_round_trip():
     from ve.argument import _predicates
     assert _predicates(path) == {"p"}
 
+    from ve import ArgumentGraph, Claim, predicate_use_panel
+    claim = Claim.create(env, "leaf", "p(@a, @a, @b).\n")
+    graph = ArgumentGraph(env, (claim,), (), "leaf")
+    panel = predicate_use_panel(graph)
+    assert [row["claim"] for row in panel["predicates"][0]["premises"]] == ["leaf"]
+
 
 def test_exported_grammar_matches_nary_strict_parser():
     env = environment()
