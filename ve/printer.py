@@ -190,7 +190,8 @@ class _NaturalVocabulary:
         strict = {name: ("{0} is " + name if len(p.arguments) == 1 else
                          "{0} " + name + " {1}" if len(p.arguments) == 2 else
                          "{0} has recorded relation " + name + " with " +
-                         " and ".join("{" + str(i) + "}" for i in range(1, len(p.arguments))))
+                         " and ".join("argument " + ("two", "three", "four", "five", "six")[i - 1] +
+                                      " {" + str(i) + "}" for i in range(1, len(p.arguments))))
                   for name, p in env.predicates.items()}
         owners = defaultdict(set)
         predicate_heads = set(env.predicates)
@@ -230,11 +231,14 @@ class _NaturalVocabulary:
                                   for i in range(len(words) - len(tokens) + 1)):
                     report(path, "SORT_NOUN")
 
-        def phrase_checks(name, phrase, path):
+        def phrase_checks(name, phrase, path, *, nary_connector=False):
             words = _TOKENS.findall(phrase)
             if not _WORDS.fullmatch(phrase):
                 report(path, "PHRASE_SYNTAX")
-            if (_LOGICAL_WORDS | (frozenset("reachable reachability steps satisfying zero more from".split()) if env.closure else frozenset())).intersection(words):
+            forbidden = _LOGICAL_WORDS | (frozenset("reachable reachability steps satisfying zero more from".split()) if env.closure else frozenset())
+            if nary_connector and phrase == "at":
+                forbidden = forbidden - {"at"}
+            if forbidden.intersection(words):
                 report(path, "LOGICAL_WORD")
             if any(_VARIABLE.fullmatch(word) for word in words):
                 report(path, "VARIABLE_TOKEN")
@@ -269,7 +273,7 @@ class _NaturalVocabulary:
                 if parts is not None:
                     for phrase in parts[1:]:
                         if phrase.strip():
-                            phrase_checks(name, phrase.strip(), path)
+                            phrase_checks(name, phrase.strip(), path, nary_connector=True)
                 if len(issues) == before:
                     self.predicates[name] = value
                     accepted.add(name)
