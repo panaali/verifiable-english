@@ -18,6 +18,10 @@ import VE.GraphChecks
 import VE.ModelProofs
 import VE.Route.Run
 import VE.Route.Examples
+import VE.Definitions.Alias
+import VE.Definitions.Elaborate
+import VE.Definitions.Route
+import VE.Definitions.Layer
 import VE.Core.Checks
 import VE.Core.Route
 import VE.Core.Wire
@@ -433,6 +437,57 @@ import Iceberg
 #print axioms VE.Route.Examples.interpret_admissible
 #print axioms VE.Route.Examples.tupleTyped_relation
 #print axioms VE.Route.Examples.wf_extend
+#print axioms VE.Definitions.Alias.faithful
+#print axioms VE.Definitions.Alias.conservative
+#print axioms VE.Definitions.Alias.alias_acceptance
+#print axioms VE.Definitions.Step.body_interpret
+#print axioms VE.Definitions.Step.expands
+#print axioms VE.Definitions.Step.extends
+#print axioms VE.Definitions.Step.forget_admissible
+#print axioms VE.Definitions.Step.forget_interpret
+#print axioms VE.Definitions.Step.head_wellFormed
+#print axioms VE.Definitions.Step.interpret_admissible
+#print axioms VE.Definitions.Step.interpret_agrees
+#print axioms VE.Definitions.Step.premise_wellFormed
+#print axioms VE.Definitions.Step.restrict_holds
+#print axioms VE.Definitions.acceptance
+#print axioms VE.Definitions.chainOk_sound
+#print axioms VE.Definitions.chain_arity
+#print axioms VE.Definitions.closure_acceptance
+#print axioms VE.Definitions.conservative_entails
+#print axioms VE.Definitions.countermodel
+#print axioms VE.Definitions.denote_congr
+#print axioms VE.Definitions.elaborate_chain
+#print axioms VE.Definitions.finish_chain
+#print axioms VE.Definitions.firstBad_none
+#print axioms VE.Definitions.forget_forget
+#print axioms VE.Definitions.forget_nil
+#print axioms VE.Definitions.hide_nil
+#print axioms VE.Definitions.iff_denote
+#print axioms VE.Definitions.literalsFree
+#print axioms VE.Definitions.premise_iff
+#print axioms VE.Definitions.routeLayer_background_sound
+#print axioms VE.Definitions.sat_background_iff
+#print axioms VE.Definitions.sortOf_congr
+#print axioms VE.Definitions.stepOk_sound
+#print axioms VE.Definitions.wf_mono
+#print axioms VE.Definitions.conservative
+#print axioms VE.Definitions.faithful
+#print axioms VE.Route.Wire.decodeModel_background
+#print axioms VE.Route.Wire.decodeModel_intended
+#print axioms VE.Route.Wire.fullBackgroundViolation_none
+#print axioms VE.Definitions.Bundle.backgroundLeaves_hold
+#print axioms VE.Definitions.Bundle.bundle_sound
+#print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkAll_reading
+#print axioms VE.Definitions.Bundle.checkAll_binding
+#print axioms VE.Definitions.Bundle.checkLemma_sound
+#print axioms VE.Definitions.Bundle.checkLemma_reading
+#print axioms VE.Definitions.Bundle.checkLemma_binding
+#print axioms VE.Definitions.Bundle.citeAll_sound
+#print axioms VE.Definitions.Bundle.lookupKnown_mem
+#print axioms VE.Definitions.Bundle.mem_appendNew_left
+#print axioms VE.Definitions.Bundle.mem_appendNew_right
 
 -- Core stage 1: new statements and helper proofs.
 #print axioms VE.Core.Path.first

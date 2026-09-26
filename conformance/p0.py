@@ -67,6 +67,69 @@ ORDER_ALIAS["constants"]["legal"] = "f"
 LIMIT_SMALL = ["le", ["const", "limit"], ["num", "3"]]
 
 
+# W3: identity-bound definitions over a base vocabulary, with literals beside
+# them (Background is definitions, then literals). Bodies are typed in the
+# argument context, index 0 being the last argument.
+def _unary(p, i):
+    return ["unary", p, ["var", i]]
+
+
+def _binary(p, i, j):
+    return ["binary", p, ["var", i], ["var", j]]
+
+
+def defined(arguments, body, description):
+    return {"arguments": arguments, "description": description,
+            "defined": {"arguments": arguments, "body": body}}
+
+
+DEF_VOCAB = {
+    "sorts": {"person": {"description": "a person"}},
+    "predicates": {
+        "in_finance": {"arguments": ["person"], "description": "works in finance"},
+        "senior": {"arguments": ["person"], "description": "is senior"},
+        "supervises": {"arguments": ["person", "person"], "description": "supervises"},
+        "lead": defined(["person"], ["and", _unary("boss", 0), _unary("senior_finance", 0)],
+                        "is a senior finance boss"),
+        "boss": defined(["person"], ["exists", "person", _binary("supervises", 1, 0)],
+                        "supervises someone"),
+        "senior_finance": defined(["person"], ["and", _unary("senior", 0), _unary("in_finance", 0)],
+                                  "is senior and works in finance"),
+        "above": defined(["person", "person"],
+                         ["or", _binary("supervises", 1, 0),
+                          ["exists", "person", ["and", _binary("supervises", 2, 0),
+                                                _binary("supervises", 0, 1)]]],
+                         "supervises directly or through one person")},
+    "constants": {"alice": {"sort": "person", "description": "Alice"},
+                  "bob": {"sort": "person", "description": "Bob"},
+                  "finance": {"sort": STRING}, "legal": {"sort": STRING}},
+}
+DEF_MODEL = {"complete": True, "domains": {"person": ["a", "b", "c"], STRING: ["f", "l"]},
+             "constants": {"alice": "a", "bob": "b", "finance": "f", "legal": "l"},
+             "relations": {"in_finance": [["a"]], "senior": [["a"], ["b"]],
+                           "supervises": [["a", "b"], ["b", "c"]]}}
+LEAD_A = ["unary", "lead", ["const", "alice"]]
+LEAD_B = ["unary", "lead", ["const", "bob"]]
+BOSS_A = ["unary", "boss", ["const", "alice"]]
+SF_A = ["unary", "senior_finance", ["const", "alice"]]
+SUP_AB = ["binary", "supervises", ["const", "alice"], ["const", "bob"]]
+ABOVE_AB = ["binary", "above", ["const", "alice"], ["const", "bob"]]
+NOBODY_ABOVE_A = ["forall", "person", ["not", ["binary", "above", ["var", 0], ["const", "alice"]]]]
+
+
+def definitions_envelope(vocabulary=DEF_VOCAB, profiles=("definitions@0", "relational-fol@0")):
+    return envelope(vocabulary, profiles)
+
+
+def two_definitions(a_body, b_body):
+    vocabulary = {"sorts": {"point": {"description": "a point"}},
+                  "predicates": {"base": {"arguments": ["point"], "description": "base"},
+                                 "a": defined(["point"], a_body, "a"),
+                                 "b": defined(["point"], b_body, "b")},
+                  "constants": {}}
+    return definitions_envelope(vocabulary)
+
+
 def _python_env(env_json):
     from ve import Environment
     return Environment(env_json)
@@ -213,6 +276,7 @@ def elaborated_document_cases():
           "error": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"},
          dict(envelope({"sorts": {}, "predicates": {}, "constants": {}}), spec_revision="ve-v0.2-other"),
          model=EMPTY_MODEL, ast=[["top"]])
+    definition_cases(case)
     for id_, profiles in [("family-fol", ["definitions@0", "documents@1", "relational-fol@0"]),
                           ("family-closure", ["closure@0", "relational-fol@0"]),
                           ("family-order", ["order@0", "relational-fol@0"])]:
@@ -220,6 +284,82 @@ def elaborated_document_cases():
              envelope({"sorts": {}, "predicates": {}, "constants": {}}, profiles),
              model=EMPTY_MODEL, ast=[["top"]])
     return cases
+
+
+def definition_cases(case):
+    """W3: defined tables computed from bodies, Background = definitions ++
+    literals, the shared cycle diagnostic, and the explicit gates."""
+    env = definitions_envelope()
+    rejected = {"status": "error", "code": "rejected"}
+    case("defs-evaluate", "evaluate", {"status": "ok", "values": [True, False, True, True]}, env,
+         model=DEF_MODEL, ast=[LEAD_A, LEAD_B, ABOVE_AB, NOBODY_ABOVE_A])
+    case("defs-countermodel", "countermodel", {"status": "ok", "refutes": True}, env,
+         model=DEF_MODEL, premises=[BOSS_A], conclusion=LEAD_B)
+    case("defs-search", "search", {"status": "ok", "found": True}, env, max_domain_size=2,
+         premises=[BOSS_A], conclusion=LEAD_A)
+    gamma = [SF_A, SUP_AB]
+    bg = _background_count(env)
+    case("defs-certificate-uses-definitions", "certificate",
+         {"status": "ok", "valid": True, "background": bg}, env,
+         premises=gamma, conclusion=LEAD_A, certificate=certificate(env, gamma, LEAD_A))
+    changed = deepcopy(DEF_VOCAB)
+    changed["predicates"]["boss"]["defined"]["body"] = ["top"]
+    case("defs-certificate-other-version", "certificate", {"status": "ok", "valid": False}, env,
+         premises=gamma, conclusion=LEAD_A,
+         certificate=certificate(definitions_envelope(changed), gamma, LEAD_A))
+    closure = definitions_envelope(DEF_VOCAB, ("closure@0", "definitions@0", "relational-fol@0"))
+    case("defs-closure-certificate", "certificate",
+         {"status": "ok", "valid": True, "background": bg}, closure,
+         premises=gamma, conclusion=LEAD_A, certificate=certificate(closure, gamma, LEAD_A))
+    case("defs-closure-evaluate", "evaluate", {"status": "ok", "values": [True, False]}, closure,
+         model=DEF_MODEL, ast=[LEAD_A, LEAD_B])
+    case("defs-background", "background", {"status": "ok", "background": _background_data(env),
+                                           "generators": ["definitions"] * 4 + ["literals"]}, env)
+    case("defs-cycle", "evaluate",
+         {"status": "error", "code": "DependencyCycle", "error": "DependencyCycle: a, b"},
+         two_definitions(_unary("b", 0), _unary("a", 0)), model=EMPTY_MODEL, ast=[["top"]])
+    case("defs-self-reference", "evaluate",
+         {"status": "error", "code": "DependencyCycle", "error": "DependencyCycle: a"},
+         two_definitions(_unary("a", 0), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
+    typed_error = {"status": "error", "error":
+                   "Definition a: the body is not a typed formula over the symbols below it"}
+    case("defs-free-variable", "evaluate", typed_error,
+         two_definitions(_unary("base", 1), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
+    case("defs-unknown-symbol", "evaluate", typed_error,
+         two_definitions(_unary("missing", 0), _unary("base", 0)), model=EMPTY_MODEL, ast=[["top"]])
+    mismatch = deepcopy(DEF_VOCAB)
+    mismatch["predicates"]["boss"]["defined"]["arguments"] = ["person", "person"]
+    case("defs-arguments-mismatch", "evaluate", rejected, definitions_envelope(mismatch),
+         model=DEF_MODEL, ast=[["top"]])
+    case("defs-profile-missing", "evaluate", rejected, envelope(DEF_VOCAB), model=DEF_MODEL, ast=[["top"]])
+    # Flags (W5) are never allowed on a defined predicate: its table is its body's.
+    flagged = deepcopy(DEF_VOCAB)
+    flagged["predicates"]["boss"]["functional"] = True
+    case("defs-flag-rejected", "evaluate", rejected,
+         definitions_envelope(flagged, ("data@0", "definitions@0", "relational-fol@0")),
+         model=DEF_MODEL, ast=[["top"]])
+    order = definitions_envelope(
+        {"sorts": {"point": {"description": "a point"}},
+         "predicates": {"base": {"arguments": ["point"], "description": "base"},
+                        "a": defined(["point"], _unary("base", 0), "a")}, "constants": {}},
+        ("definitions@0", "order@0", "relational-fol@0"))
+    case("defs-order-family-gated", "evaluate",
+         {"status": "error", "code": "UnsupportedProfile", "error":
+          "UnsupportedProfile: definitions on the order family require an order definition layer"},
+         order, model=EMPTY_MODEL, ast=[["top"]])
+    reach = deepcopy(closure)
+    reach["vocabulary"]["predicates"]["boss"]["defined"]["body"] = [
+        "exists", "person", ["reach", "plus", ["named", "supervises"], ["var", 1], ["var", 0]]]
+    case("defs-reach-body-gated", "evaluate",
+         {"status": "error", "code": "UnsupportedProfile", "error":
+          "UnsupportedProfile: definition bodies with reachability require a closure definition layer"},
+         reach, model=DEF_MODEL, ast=[["top"]])
+
+
+def _background_data(env_json):
+    from ve.ast import _to_data
+    from ve.background import background
+    return [_to_data(p.formula) for p in background(_python_env(env_json))]
 
 
 def invalid_background_model_cases():
@@ -232,9 +372,9 @@ def invalid_background_model_cases():
                                                     "description": "Department of person.",
                                                     "functional": True, "total": True}},
                             "constants": {}}
-    defined = deepcopy(env)
-    defined["profiles"] = ["definitions@0", "relational-fol@0"]
-    defined["vocabulary"] = {"sorts": {"person": {"description": "Person."}},
+    defined_env = deepcopy(env)
+    defined_env["profiles"] = ["definitions@0", "relational-fol@0"]
+    defined_env["vocabulary"] = {"sorts": {"person": {"description": "Person."}},
                              "predicates": {"base": {"arguments": ["person"], "description": "Base."},
                                             "derived": {"arguments": ["person"],
                                                         "description": "Defined from base.",
@@ -262,7 +402,7 @@ def invalid_background_model_cases():
              "model": {"complete": True, "domains": {"person": ["alice"],
                         "department": ["finance"]}, "constants": {}, "relations": {"dept": []}},
              "ast": [["top"]], "expected": {"status": "error", "code": "InvalidModel", "generator": "flags"}},
-            {"id": "supplied-defined-table", "kind": "evaluate", "pending": "W3", "environment": defined,
+            {"id": "supplied-defined-table", "kind": "evaluate", "environment": defined_env,
              "model": {"complete": True, "domains": {"person": ["alice"]},
                        "constants": {}, "relations": {"base": [["alice"]],
                                                      "derived": [["alice"]]}},
@@ -371,8 +511,8 @@ def admission_cases():
         fragment of any other rejection."""
         if error is None:
             expected = {"status": "ok", **admit_document(environment, document)}
-        elif error.startswith("AdmissionError"):
-            expected = {"status": "error", "code": "AdmissionError", "error": error}
+        elif error.startswith(("AdmissionError", "UnsupportedProfile:")):
+            expected = {"status": "error", "code": error.split(":", 1)[0], "error": error}
         else:
             expected = {"status": "error",
                         "code": error if error in ("ResourceLimit", "UnsupportedProfile") else "rejected"}
@@ -454,7 +594,8 @@ def admission_cases():
         nodes[0], {"name": "cited", "ast": FIN_A, "label": "cite:b1/t1"},
         {"name": "uses", "ast": FIN_A, "premises": ["cited", "claim-u2"],
          "certificate": raw([FIN_A, ["or", SAME, FIN_A]], FIN_A)}]}
-    case("citation-with-leaves", cited)
+    case("citation-with-leaves", cited,
+         "UnsupportedProfile: document citations require a checked bundle binding")
     missing = deepcopy(cited)
     missing["graph"] = {"root": "cited", "nodes": [missing["graph"]["nodes"][1]]}
     case("citation-missing-leaf", missing, "AdmissionError: a cited lemma's leaves are missing from the report")

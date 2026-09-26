@@ -36,7 +36,7 @@ def active(name):
 
 
 def diagnostic(code, message):
-    return message if re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
+    return message if message.startswith("Definition ") or re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
 
 
 def error_verdict(code, message, generator=None):
@@ -78,6 +78,11 @@ def python_verdict(case):
             return {"status": "ok", "order": list(dependency_order_nodes(case["nodes"]))}
         if kind == "admission":
             return {"status": "ok", **admit_document(env, case["document"])}
+        if kind == "background":
+            from ve.ast import _to_data
+            items = background(env)
+            return {"status": "ok", "background": [_to_data(p.formula) for p in items],
+                    "generators": [p.generator for p in items]}
         if kind == "evaluate":
             model = FiniteModel.from_dict(env, case["model"])
             doc = document_from_data(env, case["ast"])
@@ -118,6 +123,8 @@ def rust_request(case):
     base = {"id": case["id"], "environment": env}
     if kind in ("label", "dependency-order"):
         return {**case}
+    if kind == "background":
+        return None
     if kind == "evaluate":
         return {**base, "model": case["model"], "ast": case["ast"]}
     if kind == "admission" or (order and kind != "countermodel"):
@@ -139,7 +146,8 @@ def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
         error = result["error"]
-        generator = "literals" if error["message"].endswith("(literals)") else None
+        suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
+        generator = suffix[1] if suffix else None
         return error_verdict(error["code"], error["message"], generator)
     if kind == "label":
         return {"status": "ok", "label": result["label"]}

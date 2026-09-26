@@ -1,5 +1,7 @@
 use crate::{
-    Error, Result, canonical_json, digest, error, loads_json,
+    Error, Formula, Result,
+    ast::{check_in_context, decode_formula, has_reach},
+    canonical_json, dependency_order, digest, error, loads_json,
     wire::{fields, object},
 };
 use serde_json::{Value, json};
@@ -82,6 +84,8 @@ pub struct Environment {
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, String>,
+    /// Identity-bound definitions (W3), in dependency order.
+    pub(crate) definitions: Vec<(String, Vec<String>, Formula)>,
     data: Value,
     id: String,
 }
@@ -237,8 +241,25 @@ impl Environment {
             description(&d["description"])?;
         }
         let mut predicates = BTreeMap::new();
+        let mut defined = Vec::new();
+        let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
         for (name, decl) in preds {
-            let d = entry_fields(decl, &["arguments", "description"], true)?;
+            let is_defined = definitions_profile && decl.get("defined").is_some();
+            if is_defined && order {
+                return error(
+                    "UnsupportedProfile",
+                    "definitions on the order family require an order definition layer",
+                );
+            }
+            let d = entry_fields(
+                decl,
+                if is_defined {
+                    &["arguments", "description", "defined"]
+                } else {
+                    &["arguments", "description"]
+                },
+                true,
+            )?;
             let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
             let args = d["arguments"]
                 .as_array()
@@ -258,6 +279,9 @@ impl Environment {
                 }
             }
             description(&d["description"])?;
+            if is_defined {
+                defined.push((name.clone(), signature.clone(), d["defined"].clone()));
+            }
             predicates.insert(name.clone(), signature);
         }
         let mut constants = BTreeMap::new();
@@ -293,7 +317,7 @@ impl Environment {
         } else {
             "v0".into()
         };
-        Ok(Self {
+        let mut env = Self {
             closure,
             order,
             route,
@@ -301,9 +325,59 @@ impl Environment {
             sorts: sorts.keys().cloned().collect(),
             predicates,
             constants,
+            definitions: Vec::new(),
             data: data.clone(),
             id: digest(&format!("ve-environment-{version}\n"), data)?,
-        })
+        };
+        env.definitions = env.elaborate(defined)?;
+        Ok(env)
+    }
+    /// Order the identity-bound definitions by the one dependency DAG and check
+    /// each body over the symbols strictly below it (Python `compile_definitions`).
+    fn elaborate(
+        &self,
+        raw: Vec<(String, Vec<String>, Value)>,
+    ) -> Result<Vec<(String, Vec<String>, Formula)>> {
+        let mut decoded = BTreeMap::new();
+        let mut nodes = Vec::new();
+        for (name, signature, payload) in raw {
+            let p = fields(&payload, &["arguments", "body"], "InvalidInput")?;
+            if p["arguments"] != json!(signature) {
+                return error(
+                    "InvalidInput",
+                    format!("Definition {name:?} arguments differ from its declaration"),
+                );
+            }
+            let body = decode_formula(&p["body"])?;
+            if has_reach(&body) {
+                return error(
+                    "UnsupportedProfile",
+                    "definition bodies with reachability require a closure definition layer",
+                );
+            }
+            let mut mentions = BTreeSet::new();
+            body.predicates(&mut mentions);
+            nodes.push((name.clone(), mentions.into_iter().collect()));
+            decoded.insert(name, (signature, body));
+        }
+        let order = dependency_order(&nodes)?;
+        let mut below = self.clone();
+        below
+            .predicates
+            .retain(|name, _| !decoded.contains_key(name));
+        let mut result = Vec::new();
+        for name in order {
+            let (signature, body) = decoded.remove(&name).expect("ordered node");
+            check_in_context(&below, &body, &signature)
+                .map_err(|_| Error::new("InvalidInput",
+                    format!("Definition {name}: the body is not a typed formula over the symbols below it")))?;
+            below.predicates.insert(name.clone(), signature.clone());
+            result.push((name, signature, body));
+        }
+        Ok(result)
+    }
+    pub(crate) fn is_defined(&self, name: &str) -> bool {
+        self.definitions.iter().any(|(n, _, _)| n == name)
     }
     pub fn to_value(&self) -> Value {
         self.data.clone()
