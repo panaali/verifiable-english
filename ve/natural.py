@@ -2,16 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import lru_cache
-from copy import copy
 import re
 
-from lark import Lark
-
 from . import ast
-from .english import EnglishTraversal, EnglishVocabulary, english_lark_grammar, parse_english
+from .english import EnglishTraversal, EnglishVocabulary, parse_english
 
-_NOTATION = re.compile(r'[@()\[\]*<=>+{}|^_\\"]|\b[A-Z][0-9]*\b')
+_NOTATION = re.compile(r'[@()\[\]*<=>+{}|^_\\"-]|\b[A-Z][0-9]*\b')
 
 
 @dataclass(frozen=True)
@@ -20,38 +16,7 @@ class NaturalResult:
     natural: bool
     reason: str | None = None
     fluent_text: str | None = None
-
-
-def _symbol_free_fallback(formula, env, words):
-    """Spell the explicit English fallback without display notation."""
-    text = EnglishTraversal(env, words).render(formula)
-    ordinals = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth')
-    for sort, letter in words.letters.items():
-        noun = words.sorts[sort]
-        pattern = r'\b' + re.escape(letter) + r'([1-9][0-9]*)\b'
-        def replace(match):
-            index = int(match[1])
-            order = ordinals[index - 1] if index <= len(ordinals) else str(index) + 'th'
-            return 'the ' + order + ' ' + noun
-        text = re.sub(re.escape(noun) + r' named ' + pattern,
-                      lambda match: replace(match).removeprefix('the '), text)
-        text = re.sub(pattern, replace, text)
-    for mark, word in (('(a)', 'first,'), ('(b)', 'second,'),
-                       ('(i)', 'first,'), ('(ii)', 'second,')):
-        text = text.replace(mark, word)
-    text = text.replace('[', 'the quantity ').replace(']', ' end quantity')
-    for mark, word in (('*', ' times '), ('+', ' plus '), ('<', ' less than '),
-                       ('>', ' greater than '), ('=', ' equals '), ('@', ''),
-                       (' - ', ' minus '), ('|', ' where ')):
-        text = text.replace(mark, word)
-    text = text.replace('(', '').replace(')', '')
-    text = re.sub(r'"([^"\n]+)"', lambda m: 'the named ' + m[1].replace('_', ' '), text)
-    text = text.replace('_', ' ')
-    text = re.sub(r'(?<!\w)-(?=\d)', 'negative ', text)
-    for mark, word in (('{', ' begin '), ('}', ' end '), ('^', ' to the power of '),
-                       ('\\', ' backslash '), ('"', '')):
-        text = text.replace(mark, word)
-    return re.sub(r'\s+', ' ', text).strip()
+    form: str = 'natural'
 
 
 def _adjective(words, value, sort):
@@ -78,6 +43,20 @@ def _owner(words, value, sort):
             and words.env.predicates['owns'].arguments[1] == sort)
 
 
+def _relative_phrase(words, value):
+    if type(value) is ast.Unary and value.term == ast.Var(0):
+        template = words.predicates[value.predicate]
+        return template[len('{0} '):] if template.startswith('{0} ') else None
+    if type(value) is ast.Binary and value.left == ast.Var(0) and type(value.right) is ast.Const:
+        template = words.predicates[value.predicate]
+        if template.startswith('{0} ') and template.endswith(' {1}'):
+            object_name = words.constants[value.right.name]
+            if re.fullmatch('[a-z]+', object_name):
+                object_name = 'the ' + object_name
+            return template[len('{0} '):-len(' {1}')] + ' ' + object_name
+    return None
+
+
 def _candidate(formula, env, words):
     noun = None
     if type(formula) in (ast.Le, ast.Lt) and type(formula.left) is ast.Scale:
@@ -96,23 +75,25 @@ def _candidate(formula, env, words):
             return right.capitalize() + (' is at least ' if type(formula) is ast.Le else ' is more than ') + str(formula.left.value)
     if type(formula) is ast.Exists:
         noun = words.sorts[formula.sort]
-        if type(formula.body) is ast.Unary and formula.body.term == ast.Var(0):
-            relative = words.predicates[formula.body.predicate].removeprefix('{0} ')
-            if relative != words.predicates[formula.body.predicate]:
-                return 'Some ' + noun + ' ' + relative
+        relative = _relative_phrase(words, formula.body)
+        if relative:
+            return 'Some ' + noun + ' ' + relative
+        if type(formula.body) is ast.And:
+            left = _relative_phrase(words, formula.body.left)
+            right = _relative_phrase(words, formula.body.right)
+            if left and right:
+                return 'Some ' + noun + ' ' + left + ' and ' + right
     if type(formula) is ast.Not and type(formula.body) is ast.Exists:
         quantified = formula.body
         noun = words.sorts[quantified.sort]
         body = quantified.body
+        relative = _relative_phrase(words, body)
+        if relative:
+            return 'No ' + noun + ' ' + relative
+    if type(formula) is ast.Forall and type(formula.body) is ast.Not:
+        body = formula.body.body
         if type(body) is ast.Unary and body.term == ast.Var(0):
-            return 'No ' + noun + ' ' + words.predicates[body.predicate].removeprefix('{0} ')
-        if type(body) is ast.Binary and body.left == ast.Var(0) and type(body.right) is ast.Const:
-            template = words.predicates[body.predicate]
-            if template.startswith('{0} ') and template.endswith(' {1}'):
-                object_name = words.constants[body.right.name]
-                if re.fullmatch('[a-z]+', object_name):
-                    object_name = 'the ' + object_name
-                return 'No ' + noun + ' ' + template[len('{0} '):-len(' {1}')] + ' ' + object_name
+            return 'No ' + words.sorts[formula.sort] + ' ' + words.predicates[body.predicate].removeprefix('{0} ')
     if type(formula) is ast.Forall and type(formula.body) is ast.Implies:
         guard, consequent = formula.body.left, formula.body.right
         adjective = _adjective(words, guard, formula.sort)
@@ -130,44 +111,40 @@ def _candidate(formula, env, words):
                 template = words.predicates[consequent.predicate]
                 if template.startswith('{0} '):
                     return prefix + template[len('{0} '):]
-    return EnglishTraversal(env, words).render(formula)
-
-
-@lru_cache(maxsize=32)
-def _earley(grammar):
-    return Lark(grammar, parser='earley', lexer='dynamic_complete', ambiguity='explicit')
+    return EnglishTraversal(env, words, word_markers=True,
+                            avoid_negative_universal=True).render(formula)
 
 
 def render_natural_sentence(formula, env, *, vocabulary=None, accept_suggested_vocabulary=False):
-    """Return an audited sentence or the fluent sentence and a rejection reason."""
+    """Audit the exact displayed sentence through the writable English parser."""
     ast.check_formula(env, formula)
     options = dict(vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     words = EnglishVocabulary(env, **options)
-    display_words = copy(words)
-    display_words.constants = {**words.constants, **words.natural_constants()}
-    candidate = _candidate(formula, env, display_words)
+    candidate = _candidate(formula, env, words)
     reason = None
     if _NOTATION.search(candidate):
         reason = 'symbols_or_variable_names'
-    elif len(candidate.encode('utf-8')) + 2 > 4096:
-        reason = 'earley_4096_byte_budget'
     else:
-        sentence = candidate + '.\n'
         try:
-            parsed = parse_english(env, sentence, **options)
+            parsed = parse_english(env, candidate + '.', **options)
             if parsed != ast.Document((formula,)):
                 reason = 'different_ast'
-            else:
-                tree = _earley(english_lark_grammar(env, **options)).parse(sentence[0].lower() + sentence[1:])
-                if any(True for _ in tree.find_data('_ambig')):
-                    reason = 'multiple_derivations'
         except Exception as exc:
-            reason = 'english_audit_' + type(exc).__name__
+            reason = ('multiple_derivations' if 'two derivations' in str(exc)
+                      else 'english_audit_' + type(exc).__name__)
     if reason is None:
         return NaturalResult(candidate, True)
     from .printer import render
     fluent = render(formula, env, 've_fluent')
-    return NaturalResult(_symbol_free_fallback(formula, env, words), False, reason, fluent)
+    for explicit in (EnglishTraversal(env, words, avoid_negative_universal=True).render(formula),
+                     EnglishTraversal(env, words, word_markers=True,
+                                      avoid_negative_universal=True).render(formula)):
+        try:
+            if parse_english(env, explicit + '.', **options) == ast.Document((formula,)):
+                return NaturalResult(explicit, False, reason, fluent, 'explicit form')
+        except Exception:
+            continue
+    raise ValueError('No writable English form passed the one-reading check')
 
 
 def natural_coverage(formulas, env, **options):

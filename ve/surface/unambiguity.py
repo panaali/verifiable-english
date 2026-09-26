@@ -1,6 +1,7 @@
 """Admit English only after the complete Earley derivation check."""
 from functools import lru_cache
 import re
+import inspect
 import signal
 import sys
 import threading
@@ -75,7 +76,7 @@ def require_unique_derivation(env, source, **options):
     return tree
 
 
-def require_correspondence(tree, readings, env, words) -> None:
+def require_correspondence(tree, readings, env, words, source=None) -> None:
     """Each extension result must match the grammar rule at its source span."""
     if not readings:
         return
@@ -87,7 +88,11 @@ def require_correspondence(tree, readings, env, words) -> None:
         for record in records:
             if getattr(node, "data", None) == record.grammar_production:
                 meta = getattr(node, "meta", None)
-                derived.append((record, record.derivation_hook(node, env, words),
+                hook = record.derivation_hook
+                value = (hook(node, env, words, source)
+                         if len(inspect.signature(hook).parameters) == 4
+                         else hook(node, env, words))
+                derived.append((record, value,
                                 getattr(meta, "start_pos", None), getattr(meta, "end_pos", None)))
         stack.extend(getattr(node, "children", ()))
     for reading in readings:
