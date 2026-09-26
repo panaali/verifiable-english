@@ -258,7 +258,7 @@ def main(argv=None):
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
             options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
-            if view == "ve_natural":
+            if view in ("ve_natural", "ve_english"):
                 options["conclusions"] = conclusions
             print(renderer(document, env, view, args.naming, **options), end="")
         else:

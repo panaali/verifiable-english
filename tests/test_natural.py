@@ -161,6 +161,41 @@ def test_existential_antecedent_blocks_unconfirmed_it_even_with_one_constant():
     assert parse_english(env, view.text, **options) == document
 
 
+def test_it_cannot_skip_referents_inside_the_current_sentence():
+    data = vocabulary()
+    data['vocabulary']['constants']['beta'] = {'sort': 'item', 'description': 'Beta'}
+    env = Environment(data)
+    for source in (
+        'Api is reviewed. If beta is reviewed, then it is deployed.',
+        'Api is reviewed. If some service is deployed, then it is reviewed.',
+    ):
+        with pytest.raises(Exception):
+            parse_english(env, source)
+        with pytest.raises(Exception):
+            parse_presentation(env, source)
+    # An explicit name still makes the intended claim writable.
+    assert parse_english(env, 'Api is reviewed. If beta is reviewed, then api is deployed.')
+
+
+def test_lowercase_alias_and_conclusion_initials_roundtrip():
+    env = Environment(vocabulary())
+    options = _names(env, api='api')
+    premise = Unary('reviewed', Const('api'))
+    document = Document((premise, premise))
+    assert parse_english(env, 'Api is reviewed.', **options) == Document((premise,))
+    assert render(document, env, 've_english', **options) == 'Api is reviewed.\nApi is reviewed.\n'
+    assert natural_document(env, document, **options).text == 'Api is reviewed. It is reviewed.'
+    for selected in ({}, options):
+        text = 'Api is reviewed. Therefore api is reviewed.'
+        parsed = parse_presentation(env, text, **selected)
+        view = natural_document(env, parsed.document, conclusions=(1,), **selected)
+        assert view.text.endswith('Therefore Api is reviewed.')
+        assert parse_presentation(env, view.text, **selected).sentences[1]['role'] == 'conclusion'
+        assert render_presentation(env, parsed.document, conclusions=(1,), **selected).document == document
+        english = render(document, env, 've_english', conclusions=(1,), **selected)
+        assert english.endswith('Therefore api is reviewed.\n')
+
+
 def test_plural_and_possessive_references_require_explicit_repair():
     env = Environment(vocabulary())
     options = _names(env, api='the API', alice='Alice')

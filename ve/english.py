@@ -88,18 +88,27 @@ def _has_discourse_binder(value):
 
 
 def _fold_sentence_initials(source, words):
-    def fold(match):
-        word = match[2]
+    def initial(word, tail):
         for name, value in words.constants.items():
             if name not in words.declared_constants or value.startswith('"'):
                 continue
-            display = value[0].upper() + value[1:]
-            tail = source[match.start(2):]
-            if (tail.startswith(display) and
-                    (len(tail) == len(display) or not re.match(r'[A-Za-z0-9_]', tail[len(display)]))):
-                return match[0]
-        return match[1] + word[0].lower() + word[1:]
-    return re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
+            # Only a genuinely capitalized declared name needs its case kept.
+            # A lowercase alias such as "api" must accept sentence-initial Api.
+            if value[0].isupper() and tail.startswith(value) and (
+                    len(tail) == len(value) or not re.match(r'[A-Za-z0-9_]', tail[len(value)])):
+                return word
+        return word[0].lower() + word[1:]
+
+    def fold(match):
+        return match[1] + initial(match[2], source[match.start(2):])
+
+    source = re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
+    # A conclusion marker begins a second sentence-initial position. The
+    # marker itself is folded above, but the claim's first word also needs it.
+    def fold_conclusion(match):
+        return match[1] + match[2] + ' ' + initial(match[3], source[match.start(3):])
+    return re.sub(r'(^|(?<=\.)\s+)(therefore|so|hence|it follows that) ([A-Z][A-Za-z]*)',
+                  fold_conclusion, source)
 
 
 def _mask_brackets(source):
@@ -538,7 +547,7 @@ class EnglishTraversal:
         return text[0].upper() + text[1:]
 
 
-def render_english(value, env, **options):
+def render_english(value, env, *, conclusions=(), **options):
     if type(value) is ast.Document:
         ast.check_document(env, value)
     else:
@@ -548,13 +557,27 @@ def render_english(value, env, **options):
         warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
     formulas = value.formulas if type(value) is ast.Document else (value,)
+    conclusions = tuple(conclusions)
+    if (type(value) is not ast.Document and conclusions
+            or len(set(conclusions)) != len(conclusions)
+            or any(type(i) is not int or not 0 <= i < len(formulas) for i in conclusions)):
+        raise ValueError('Conclusion indices must identify distinct document statements')
+    marked = set(conclusions)
     sentences = []
-    for formula in formulas:
+    for index, formula in enumerate(formulas):
         for settings in ({}, {'avoid_negative_universal': True},
                          {'avoid_negative_universal': True, 'word_markers': True}):
             sentence = EnglishTraversal(env, words, **settings).render(formula)
             try:
                 if _parse_english_document(env, sentence + '.', **options)[0] == ast.Document((formula,)):
+                    if index in marked:
+                        proper_name = any(
+                            name in words.declared_constants and display[0].isupper()
+                            and sentence.startswith(display)
+                            and (len(sentence) == len(display) or
+                                 not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
+                            for name, display in words.constants.items() if display)
+                        sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
                     sentences.append(sentence)
                     break
             except VEError:
@@ -568,7 +591,8 @@ def render_english(value, env, **options):
     if type(value) is ast.Document:
         if len(text) > MAX_NODES:
             raise ResourceLimit(f'Rendered ve_english text exceeds the derivation budget MAX_NODES ({MAX_NODES})')
-        if _parse_english_document(env, text, **options)[0] != value:
+        parsed, _, _, parsed_conclusions = _parse_english_document(env, text, **options)
+        if parsed != value or parsed_conclusions != tuple(sorted(marked)):
             raise ValueError('Rendered ve_english document has a different reading')
     return text
 
@@ -669,7 +693,10 @@ class EnglishParser:
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
         terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
-        if len(self.referents) == 1 and not scope and not self.incomplete_discourse:
+        # Without a scoped discourse model, only a sentence-initial pronoun
+        # can inherit the preceding sentence's sole explicit referent.
+        if (len(self.referents) == 1 and not scope and not self.incomplete_discourse
+                and self.i == self.sentence_formula_start):
             terms['it'] = ast.Const(next(iter(self.referents)))
         return terms
 
@@ -1178,6 +1205,7 @@ class EnglishParser:
             start = self.i
             if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
                 self.conclusions.append(len(formulas))
+            self.sentence_formula_start = self.i
             formulas.append(self.formula())
             self.referents.update(_mentioned_constants(formulas[-1]))
             self.incomplete_discourse |= _has_discourse_binder(formulas[-1])
