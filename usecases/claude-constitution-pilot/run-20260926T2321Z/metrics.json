@@ -1,0 +1,81 @@
+{
+  "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
+  "source_bytes": 184893,
+  "bytes_accounted": 184893,
+  "bytes_accounted_percent": 100,
+  "checked_bytes_percent": 0.0119,
+  "units_total": 299,
+  "unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 39,
+    "OPEN": 1,
+    "UNFORMALISED": 258
+  },
+  "bytes_by_status": {
+    "CHECKED": 22,
+    "LABELLED": 1348,
+    "OPEN": 282,
+    "UNFORMALISED": 183241
+  },
+  "open_terms": [
+    {
+      "name": "broad_safety",
+      "decided_by": "anthropic_reviewer",
+      "necessary": [],
+      "sufficient": [],
+      "unit_count": 46
+    },
+    {
+      "name": "appropriate_oversight",
+      "decided_by": "anthropic_reviewer",
+      "necessary": [],
+      "sufficient": [],
+      "unit_count": 10
+    },
+    {
+      "name": "genuine_helpfulness",
+      "decided_by": "anthropic_reviewer",
+      "necessary": [],
+      "sufficient": [],
+      "unit_count": 25
+    },
+    {
+      "name": "ethical_harm",
+      "decided_by": "anthropic_reviewer",
+      "necessary": [],
+      "sufficient": [],
+      "unit_count": 56
+    },
+    {
+      "name": "good_judgment",
+      "decided_by": "anthropic_reviewer",
+      "necessary": [],
+      "sufficient": [],
+      "unit_count": 11
+    }
+  ],
+  "reading_sets": {
+    "count": 0,
+    "unresolved": 0
+  },
+  "missing_feature_tally": {
+    "attribution": 3,
+    "causation": 17,
+    "counting": 8,
+    "defaults": 13,
+    "modality/belief": 7,
+    "norms": 154,
+    "other:discourse": 23,
+    "quantities": 31,
+    "time": 2
+  },
+  "check_verdicts": {
+    "document_loaded_and_english_fence_parsed": true,
+    "graph_admitted": true,
+    "premises_status": "model",
+    "premises_vacuous": false,
+    "reading_plan": "single",
+    "source_id": "020ee8c0546bad306cbd8a87ae2e7933f136386bc5880d6c8f6b4bb34ce6f449",
+    "document_id": "29aabffc64f05a683fa165f8cffe8f6784b8f91c133dd7629d8fa7b38ce38bfb"
+  }
+}
