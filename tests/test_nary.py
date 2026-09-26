@@ -90,6 +90,26 @@ def test_english_template_round_trip_and_lint():
 
 
 def test_fret_user_sort_time_and_arity_six():
+    fret = Environment({
+        "language": LANGUAGE,
+        "profiles": ["closure@0", "nary@0", "relational-fol@0"],
+        "spec_revision": SPEC_REVISION,
+        "vocabulary": {
+            "sorts": {name: {"description": name.title()}
+                      for name in ("signal", "time", "reading")},
+            "predicates": {"value": {
+                "arguments": ["signal", "time", "reading"],
+                "description": "Signal value at a time",
+                "verbalisation": "the value of {0} at {1} is {2}"}},
+            "constants": {"speed": {"sort": "signal", "description": "speed"},
+                          "instant": {"sort": "time", "description": "instant"},
+                          "high": {"sort": "reading", "description": "high"}},
+        },
+    })
+    value = Atom("value", (Const("speed"), Const("instant"), Const("high")))
+    assert parse(fret, print_document(fret, Document((value,)))) == Document((value,))
+    assert parse_english(fret, render_english(Document((value,)), fret)) == Document((value,))
+
     raw = environment(6).to_dict()
     raw["vocabulary"]["sorts"]["time"] = {"description": "Time"}
     raw["vocabulary"]["predicates"]["p"]["arguments"][1] = "time"
