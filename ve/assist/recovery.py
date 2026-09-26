@@ -156,6 +156,12 @@ class RecoveryService:
                 "revision": self.revision, "events": deepcopy(self.events)}
 
     def verify_ledger(self, ledger=None):
+        try:
+            return self._verify_ledger(ledger)
+        except (KeyError, TypeError, ValueError, IndexError):
+            return False
+
+    def _verify_ledger(self, ledger=None):
         ledger = self.to_ledger() if ledger is None else ledger
         if (ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions
                 or ledger.get("limits") != self.limits):
@@ -294,7 +300,10 @@ class RecoveryService:
         if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
             raise ValueError("invalid parse outcome")
         from .ambiguity_patterns import PATTERNS, review as review_pattern
-        unit.pending = list(pending)
+        # A restart may refresh catalogue work, but cannot erase an unresolved
+        # discourse or author clarification recorded by an earlier attempt.
+        unit.pending = ([deepcopy(row) for row in unit.pending if not row.get("pattern_id")]
+                        + deepcopy(list(pending)))
         matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
         bindings = catalogue_bindings or {}
         dispositions = catalogue_dispositions or {}
@@ -380,6 +389,8 @@ class RecoveryService:
         for row in rejected:
             if not isinstance(row, dict) or not row.get("meaning_id") or not row.get("reason"):
                 raise ValueError("rejection needs meaning_id and reason")
+            if unit.readings and row["meaning_id"] not in {item["meaning_id"] for item in unit.readings}:
+                raise ValueError("rejected meaning is outside the considered reading set")
             unit.rejected.append(deepcopy(row))
         elapsed = time.time() - unit.started
         if unit.replies > MAX_REPLIES or unit.proposals > MAX_PROPOSALS or elapsed > TASK_SECONDS:
@@ -516,6 +527,8 @@ class RecoveryService:
             raise ValueError("invalid attributed narrowing")
         record = {"id": f"{unit.id}:narrowing:{len(unit.narrowings)+1}",
                   "set_id": unit.id, "set_version": self.versions["reading_set"],
+                  "source_digest": _digest(unit.source),
+                  "reading_set_digest": _digest(sorted(ids)),
                   "keeps": kept, "actor": actor, "reason": reason,
                   "cited_spans": deepcopy(cited_spans)}
         unit.narrowings.append(record)
@@ -544,8 +557,11 @@ class RecoveryService:
         if time.monotonic() >= stop:
             raise ValueError("approval operation deadline")
         model = FiniteModel.from_dict(self.env, situation)
-        from ..background import validate_background
+        from ..background import background, validate_background
         validate_background(self.env, model)
+        if any(evaluate(self.env, premise.formula, model, trace=False).value is not True
+               for premise in background(self.env)):
+            raise ValueError("example situation violates Background")
         checked = evaluate(self.env, formula, model, trace=False)
         if checked.status != "Satisfied" or checked.value is not True:
             raise ValueError("example situation does not satisfy selected meaning")
@@ -563,8 +579,15 @@ class RecoveryService:
                     raise ValueError("catalogue wording changed meaning")
                 alternatives.add(candidate["meaning_id"])
             for card in result.get("cards", []):
+                if (len(card["paraphrases"]) != 2 or len(card["meaning_ids"]) != 2
+                        or len(card["values"]) != 2
+                        or set(card["meaning_ids"]) - alternatives):
+                    raise ValueError("card reading set is invalid")
                 card_model = FiniteModel.from_dict(self.env, card["model"])
                 validate_background(self.env, card_model)
+                if any(evaluate(self.env, premise.formula, card_model, trace=False).value is not True
+                       for premise in background(self.env)):
+                    raise ValueError("card situation violates Background")
                 values = []
                 for wording, candidate_id in zip(card["paraphrases"], card["meaning_ids"]):
                     if not wording.endswith((".", ".\n")):
@@ -578,6 +601,14 @@ class RecoveryService:
                     raise ValueError("card situation does not distinguish its readings")
         if time.monotonic() >= stop:
             raise ValueError("approval operation deadline")
+        from ..english import parse_english_with_metadata
+        for row in unit.readings:
+            wording = row.get("wording")
+            if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
+                raise ValueError("considered reading wording is not writable")
+            parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
+            if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != row.get("meaning_id"):
+                raise ValueError("considered reading wording changed meaning")
         proposed_readings = deepcopy(unit.readings)
         considered = {row.get("meaning_id") for row in proposed_readings}
         if considered and mid not in considered:
@@ -588,13 +619,18 @@ class RecoveryService:
         for row in rejected:
             if not isinstance(row, dict) or not row.get("meaning_id") or not row.get("reason"):
                 raise ValueError("explicit rejection needs meaning_id and reason")
+            if row["meaning_id"] not in considered:
+                raise ValueError("rejected meaning is outside the considered reading set")
         all_rejected = unit.rejected + deepcopy(list(rejected))
         rejected_ids = {row["meaning_id"] for row in all_rejected}
         if unit.mode == "authoring" and (alternatives | considered) - {mid} - rejected_ids:
             raise ValueError("every distinct alternative needs an explicit rejection")
         if unit.mode == "translation" and len(alternatives | considered) > 1:
             record = next((row for row in unit.narrowings if row["id"] == narrowing), None)
-            if record is None or record["keeps"] != [mid]:
+            if (record is None or record["keeps"] != [mid]
+                    or record["set_version"] != self.versions["reading_set"]
+                    or record["source_digest"] != _digest(unit.source)
+                    or record["reading_set_digest"] != _digest(sorted(considered))):
                 raise ValueError("translation choice requires a separately recorded cited narrowing")
         elif narrowing is not None and not any(row["id"] == narrowing for row in unit.narrowings):
             raise ValueError("unknown narrowing")
