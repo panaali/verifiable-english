@@ -71,7 +71,9 @@ def _mentioned_constants(value):
 def _fold_sentence_initials(source, words):
     def fold(match):
         word = match[2]
-        for value in words.constants.values():
+        for name, value in words.constants.items():
+            if words.env.constants[name].verbalisation is None or value.startswith('"'):
+                continue
             display = value[0].upper() + value[1:]
             tail = source[match.start(2):]
             if (tail.startswith(display) and
