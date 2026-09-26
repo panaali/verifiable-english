@@ -4,17 +4,19 @@ import sys
 
 import pytest
 
-from conformance.p0 import VOCAB, envelope, environment
+from conformance.p0 import MODEL, VOCAB, envelope, environment
 from ve.document import check_document, coverage, load_document, render_document
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.ast import Top
+from ve.model import FiniteModel
 from ve.readings import check_readings, plan_choices
 
 
 def write_doc(tmp_path, text, units, **extra):
-    front = {"format": "ve-document@1", "environment": environment(), "units": units, **extra}
+    env_json = extra.pop("environment_json", environment())
+    front = {"format": "ve-document@1", "environment": env_json, "units": units, **extra}
     path = tmp_path / "sample.ve.md"
     path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + text)
     return path
@@ -119,4 +121,31 @@ def test_reading_identity_and_narrowing_schema(tmp_path):
     path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
                      reading_sets=[rs], narrowings=[narrowing])
     with pytest.raises(VEError, match="meaning id"):
+        load_document(path)
+
+
+def test_distinguishing_model_is_replayed(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    q = ["not", p]
+    model = FiniteModel.from_dict(env, MODEL)
+    mid = model.model_id
+    readings = []
+    for rid, ast, other in (("p", p, "notp"), ("notp", q, "p")):
+        from ve.ast import formula_from_data
+        readings.append({"id": rid, "kind": "asserted",
+                         "meaning_id": meaning_id(env, formula_from_data(env, ast)), "content": ast,
+                         "admission": {"who": "alice", "why": "competing interpretation",
+                                       "distinguishing_models": {other: mid}}})
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
+          "readings": readings, "models": {mid: MODEL}}
+    source = b"Claim.\n"
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     environment_json=env_json, reading_sets=[rs])
+    assert load_document(path)["reading_plan"]["route"] == "assertion-disjunction"
+    rs["models"][mid] = {**MODEL, "relations": {**MODEL["relations"], "senior": []}}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     environment_json=env_json, reading_sets=[rs])
+    with pytest.raises(VEError, match="model id"):
         load_document(path)
