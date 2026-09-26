@@ -291,3 +291,7 @@ pub(crate) fn fields<'a>(
     }
     Ok(obj)
 }
+
+pub(crate) fn formula_tag_arity(tag: &str) -> usize {
+    crate::surface::formula_record(tag).map_or(0, |record| record.wire_arity)
+}

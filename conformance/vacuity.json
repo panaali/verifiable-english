@@ -1,0 +1,602 @@
+[
+  {
+    "id": "background-makes-inconsistent",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "legal"
+        ]
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "1d0747b4293e5973d5874dfd4d4d919a8e9605bc9d2b337c6404bc6d553f295e"
+      ],
+      "conclusion_meaning_id": "6a7cbf66c9ecaff4c94ae13c28c147f09241154a256ef781e89579923e5a6822",
+      "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "INCONSISTENT"
+    }
+  },
+  {
+    "id": "plain-contradiction",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "senior",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "not",
+        [
+          "unary",
+          "senior",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "ea4c43c21d603b2c0c2c9f0824d3e5faa2f834f5d8ba06753c3b38fd2d61d1d6",
+        "b2aa9b51d9140c7e7481cfebaf40f4a6119a992124eefe57a6ffa0df8b6915e6"
+      ],
+      "conclusion_meaning_id": "6a7cbf66c9ecaff4c94ae13c28c147f09241154a256ef781e89579923e5a6822",
+      "trace": {
+        "rule": "expand",
+        "at": 2,
+        "children": [
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "INCONSISTENT"
+    }
+  },
+  {
+    "id": "consistent-with-background",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ]
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "model"
+    }
+  },
+  {
+    "id": "empty-premises",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [],
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "model"
+    }
+  },
+  {
+    "id": "order-background-inconsistent",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "legal"
+        ]
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-order-farkas-checker@1",
+      "environment_id": "2929d662efb5f2f8b7a7df54dff7488b4e789be13dee59139e49fac47e880fd7",
+      "premise_meaning_ids": [
+        "38288ba30332fbdba9ae7ce292ad17d3451e056ddbf2824395e98c1ac3c2f1bd",
+        "358eea6954d8fa1431f082dc949a613e90fd08aad32761d4a3bbb0c2f71c60a9"
+      ],
+      "conclusion_meaning_id": "e288f3a7b30af17051ffb25b6f7421d0697436707b26279f2c9d2d0c0a4ae5fa",
+      "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "INCONSISTENT"
+    }
+  },
+  {
+    "id": "order-arithmetic-inconsistent",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "le",
+        [
+          "const",
+          "limit"
+        ],
+        [
+          "num",
+          "3"
+        ]
+      ],
+      [
+        "lt",
+        [
+          "num",
+          "3"
+        ],
+        [
+          "const",
+          "limit"
+        ]
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-order-farkas-checker@1",
+      "environment_id": "2929d662efb5f2f8b7a7df54dff7488b4e789be13dee59139e49fac47e880fd7",
+      "premise_meaning_ids": [
+        "38288ba30332fbdba9ae7ce292ad17d3451e056ddbf2824395e98c1ac3c2f1bd",
+        "3af658d52e3ba2d4ee7e523f584ff8af557077095d38009c522780d4fde5718c",
+        "eb3514886c9387fe3810e6b159221e80c0bf261e5ce89c77d3e4087a1faff378"
+      ],
+      "conclusion_meaning_id": "e288f3a7b30af17051ffb25b6f7421d0697436707b26279f2c9d2d0c0a4ae5fa",
+      "trace": {
+        "rule": "order-farkas@1",
+        "cuts": [],
+        "literals": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ]
+        ],
+        "final_cuts": []
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "INCONSISTENT"
+    }
+  },
+  {
+    "id": "order-consistent",
+    "kind": "vacuity",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "le",
+        [
+          "const",
+          "limit"
+        ],
+        [
+          "num",
+          "3"
+        ]
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {}
+    },
+    "expected": {
+      "status": "ok",
+      "premises": "model"
+    }
+  }
+]

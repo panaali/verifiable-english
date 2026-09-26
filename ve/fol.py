@@ -68,6 +68,10 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
         if count[0] > MAX_NODES: raise ResourceLimit("AST node limit exceeded", path=path)
         if not isinstance(raw, Mapping) or not isinstance(raw.get("op"), str): _fail("formula requires string 'op'", path)
         op = raw["op"]
+        from .surface.registry import by_tag
+        record = by_tag(op)
+        if record is not None and record.fol_import_hook is not None:
+            return record.fol_import_hook(raw, scope, path, depth, formula)
         expected = {
             "top":{"op"}, "bottom":{"op"}, "unary":{"op","predicate","term"},
             "binary":{"op","predicate","left","right"}, "eq":{"op","left","right"},
@@ -125,6 +129,10 @@ def document_to_named_fol(env: Any, document: ast.Document) -> dict[str, list[di
 
     def export_formula(value: ast.Formula, scope: list[str], counter: list[int]) -> dict[str, Any]:
         kind = type(value)
+        from .surface.registry import by_node
+        record = by_node(value)
+        if record is not None and record.fol_export_hook is not None:
+            return record.fol_export_hook(value, scope, counter, export_formula)
         if kind is ast.Top: return {"op": "top"}
         if kind is ast.Bottom: return {"op": "bottom"}
         if kind is ast.Unary:

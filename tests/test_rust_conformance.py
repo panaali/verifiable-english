@@ -22,6 +22,9 @@ def fixture(name):
     return json.loads((ROOT / f'conformance/{name}.json').read_text())
 
 
+# The P0 families run three-way (Python, Rust, Lean) in tests/test_p0_three_way.py.
+
+
 @pytest.fixture(scope='session')
 def rust_executable():
     cargo = shutil.which('cargo')

@@ -1,0 +1,2868 @@
+[
+  {
+    "id": "literals-distinct",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "alpha"
+          ],
+          [
+            "const",
+            "beta"
+          ]
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "literals-equal-false",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "eq",
+        [
+          "const",
+          "alpha"
+        ],
+        [
+          "const",
+          "beta"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        false
+      ]
+    }
+  },
+  {
+    "id": "literals-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "premises": [],
+    "conclusion": [
+      "eq",
+      [
+        "const",
+        "alpha"
+      ],
+      [
+        "const",
+        "beta"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "literals-search",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "max_domain_size": 2,
+    "premises": [],
+    "conclusion": [
+      "eq",
+      [
+        "const",
+        "alpha"
+      ],
+      [
+        "const",
+        "beta"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "found": true
+    }
+  },
+  {
+    "id": "order-with-literals",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "alpha"
+          ],
+          [
+            "const",
+            "beta"
+          ]
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "eval-literals",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "legal"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true,
+        false
+      ]
+    }
+  },
+  {
+    "id": "countermodel-refutes",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_legal",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "search-respects-background",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "max_domain_size": 2,
+    "premises": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "not",
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "found": true
+    }
+  },
+  {
+    "id": "string-quantifier-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "$string",
+        [
+          "top"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "undeclared-literal-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "marketing"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "string-predicate-argument-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "dept": {
+            "arguments": [
+              "person",
+              "$string"
+            ],
+            "description": "department"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "literal-empty-description-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string",
+            "description": ""
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "literal-extra-field-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string",
+            "value": "legal"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "too-many-literals",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "lit0": {
+            "sort": "$string"
+          },
+          "lit1": {
+            "sort": "$string"
+          },
+          "lit2": {
+            "sort": "$string"
+          },
+          "lit3": {
+            "sort": "$string"
+          },
+          "lit4": {
+            "sort": "$string"
+          },
+          "lit5": {
+            "sort": "$string"
+          },
+          "lit6": {
+            "sort": "$string"
+          },
+          "lit7": {
+            "sort": "$string"
+          },
+          "lit8": {
+            "sort": "$string"
+          },
+          "lit9": {
+            "sort": "$string"
+          },
+          "lit10": {
+            "sort": "$string"
+          },
+          "lit11": {
+            "sort": "$string"
+          },
+          "lit12": {
+            "sort": "$string"
+          },
+          "lit13": {
+            "sort": "$string"
+          },
+          "lit14": {
+            "sort": "$string"
+          },
+          "lit15": {
+            "sort": "$string"
+          },
+          "lit16": {
+            "sort": "$string"
+          },
+          "lit17": {
+            "sort": "$string"
+          },
+          "lit18": {
+            "sort": "$string"
+          },
+          "lit19": {
+            "sort": "$string"
+          },
+          "lit20": {
+            "sort": "$string"
+          },
+          "lit21": {
+            "sort": "$string"
+          },
+          "lit22": {
+            "sort": "$string"
+          },
+          "lit23": {
+            "sort": "$string"
+          },
+          "lit24": {
+            "sort": "$string"
+          },
+          "lit25": {
+            "sort": "$string"
+          },
+          "lit26": {
+            "sort": "$string"
+          },
+          "lit27": {
+            "sort": "$string"
+          },
+          "lit28": {
+            "sort": "$string"
+          },
+          "lit29": {
+            "sort": "$string"
+          },
+          "lit30": {
+            "sort": "$string"
+          },
+          "lit31": {
+            "sort": "$string"
+          },
+          "lit32": {
+            "sort": "$string"
+          },
+          "lit33": {
+            "sort": "$string"
+          },
+          "lit34": {
+            "sort": "$string"
+          },
+          "lit35": {
+            "sort": "$string"
+          },
+          "lit36": {
+            "sort": "$string"
+          },
+          "lit37": {
+            "sort": "$string"
+          },
+          "lit38": {
+            "sort": "$string"
+          },
+          "lit39": {
+            "sort": "$string"
+          },
+          "lit40": {
+            "sort": "$string"
+          },
+          "lit41": {
+            "sort": "$string"
+          },
+          "lit42": {
+            "sort": "$string"
+          },
+          "lit43": {
+            "sort": "$string"
+          },
+          "lit44": {
+            "sort": "$string"
+          },
+          "lit45": {
+            "sort": "$string"
+          },
+          "lit46": {
+            "sort": "$string"
+          },
+          "lit47": {
+            "sort": "$string"
+          },
+          "lit48": {
+            "sort": "$string"
+          },
+          "lit49": {
+            "sort": "$string"
+          },
+          "lit50": {
+            "sort": "$string"
+          },
+          "lit51": {
+            "sort": "$string"
+          },
+          "lit52": {
+            "sort": "$string"
+          },
+          "lit53": {
+            "sort": "$string"
+          },
+          "lit54": {
+            "sort": "$string"
+          },
+          "lit55": {
+            "sort": "$string"
+          },
+          "lit56": {
+            "sort": "$string"
+          },
+          "lit57": {
+            "sort": "$string"
+          },
+          "lit58": {
+            "sort": "$string"
+          },
+          "lit59": {
+            "sort": "$string"
+          },
+          "lit60": {
+            "sort": "$string"
+          },
+          "lit61": {
+            "sort": "$string"
+          },
+          "lit62": {
+            "sort": "$string"
+          },
+          "lit63": {
+            "sort": "$string"
+          },
+          "lit64": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "ResourceLimit"
+    }
+  },
+  {
+    "id": "certificate-uses-background",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+      ],
+      "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+      "trace": {
+        "rule": "expand",
+        "at": 1,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 1
+    }
+  },
+  {
+    "id": "certificate-background-prefix-not-merged",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ]
+      ],
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+      ],
+      "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+      "trace": {
+        "rule": "expand",
+        "at": 2,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 1
+    }
+  },
+  {
+    "id": "certificate-premise-list-mismatch",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ]
+      ],
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+      ],
+      "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+      "trace": {
+        "rule": "expand",
+        "at": 1,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "certificate-without-background-binding",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+      "premise_meaning_ids": [
+        "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+      ],
+      "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+      "trace": {
+        "rule": "expand",
+        "at": 1,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "certificate-stale-environment",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "premise_meaning_ids": [
+        "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+        "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+      ],
+      "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+      "trace": {
+        "rule": "expand",
+        "at": 1,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "closure-literals",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "legal"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true,
+        false
+      ]
+    }
+  },
+  {
+    "id": "closure-certificate-uses-background",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "unary",
+          "in_finance",
+          [
+            "const",
+            "alice"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_finance",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-closure-checker@1",
+      "environment_id": "f3db7b94691ef2274965a22ae9da4244cdd577e3943ac438b052d35e8b4b7eaa",
+      "premise_meaning_ids": [
+        "ac5802a414c5c3d06d9111795a5722efdef9ea1666eaf8e2c34df9a46cde3172",
+        "2db1d90f083a030dc5c6fdfefaaf0d40a834e16b22eb0d92c6754b10637c2a4e"
+      ],
+      "conclusion_meaning_id": "311af78a068bea0efcccd33c4d9e85a1e5ef12d470e55ec32bf99a035f01b1d2",
+      "trace": {
+        "rule": "expand",
+        "at": 1,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "close"
+              }
+            ]
+          },
+          {
+            "rule": "close"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 1
+    }
+  },
+  {
+    "id": "order-literals-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "le",
+        [
+          "const",
+          "limit"
+        ],
+        [
+          "num",
+          "3"
+        ]
+      ],
+      [
+        "eq",
+        [
+          "const",
+          "finance"
+        ],
+        [
+          "const",
+          "legal"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true,
+        false
+      ]
+    }
+  },
+  {
+    "id": "order-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {}
+    },
+    "premises": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "lt",
+      [
+        "const",
+        "limit"
+      ],
+      [
+        "num",
+        "0"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "order-certificate-uses-background",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "or",
+        [
+          "eq",
+          [
+            "const",
+            "finance"
+          ],
+          [
+            "const",
+            "legal"
+          ]
+        ],
+        [
+          "le",
+          [
+            "const",
+            "limit"
+          ],
+          [
+            "num",
+            "3"
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "le",
+      [
+        "const",
+        "limit"
+      ],
+      [
+        "num",
+        "3"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-order-farkas-checker@1",
+      "environment_id": "2929d662efb5f2f8b7a7df54dff7488b4e789be13dee59139e49fac47e880fd7",
+      "premise_meaning_ids": [
+        "38288ba30332fbdba9ae7ce292ad17d3451e056ddbf2824395e98c1ac3c2f1bd",
+        "b01db51822e9303d48f4d96805d745ef3fb28445715cb77da94c1ab5ceac1072"
+      ],
+      "conclusion_meaning_id": "3af658d52e3ba2d4ee7e523f584ff8af557077095d38009c522780d4fde5718c",
+      "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 1,
+            "children": [
+              {
+                "rule": "close"
+              },
+              {
+                "rule": "close"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 1
+    }
+  },
+  {
+    "id": "order-string-quantifier-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "forall",
+        "$string",
+        [
+          "top"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "unknown-profile",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "mystery@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Unsupported profile mystery@0"
+    }
+  },
+  {
+    "id": "profile-unsorted",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0",
+        "closure@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: profiles must be sorted and unique"
+    }
+  },
+  {
+    "id": "profile-duplicate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: profiles must be sorted and unique"
+    }
+  },
+  {
+    "id": "profile-missing-base",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Missing profile relational-fol@0"
+    }
+  },
+  {
+    "id": "order-nary",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "nary@0",
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Unsupported profile combination nary@0 x order@0"
+    }
+  },
+  {
+    "id": "closure-order",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Unsupported profile combination closure@0 x order@0"
+    }
+  },
+  {
+    "id": "nary-without-closure",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "nary@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Unsupported profile nary@0 without closure@0"
+    }
+  },
+  {
+    "id": "closure-nary-gated",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "nary@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: the closure+n-ary checker is gated until W4 stage 1 lands"
+    }
+  },
+  {
+    "id": "revision-unsupported",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-other",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
+    }
+  },
+  {
+    "id": "family-fol",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "documents@1",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "family-closure",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "family-order",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  }
+]

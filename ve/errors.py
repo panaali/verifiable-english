@@ -53,6 +53,17 @@ class TypeMismatch(VEError):
 class InvalidModel(VEError):
     code = "InvalidModel"
 
+    def __init__(self, message: str, *, generator: str | None = None,
+                 span: Span | None = None, path: str = ""):
+        super().__init__(message, span=span, path=path)
+        self.generator = generator
+
+    def to_dict(self) -> dict:
+        result = super().to_dict()
+        if self.generator is not None:
+            result["generator"] = self.generator
+        return result
+
 
 class UnsupportedProfile(VEError):
     code = "UnsupportedProfile"

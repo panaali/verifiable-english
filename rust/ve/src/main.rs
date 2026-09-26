@@ -34,9 +34,46 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
         }),
     }
 }
+/// The route kinds that need only a gated envelope: the label grammar and the
+/// dependency-DAG order (same diagnostics as Python and the Lean `route`).
+fn route_case(v: &Value, kind: &str) -> Result<Value> {
+    Environment::from_value(field(v, "environment")?)?;
+    let id = v.get("id").cloned().unwrap_or(json!(""));
+    if kind == "label" {
+        let label = field(v, "label")?
+            .as_str()
+            .ok_or_else(|| Error::new("InvalidInput", "label must be a string"))?;
+        check_label(label)?;
+        return Ok(json!({"id":id,"status":"ok","label":label}));
+    }
+    let bad = || Error::new("InvalidInput", "dependency nodes are {name, mentions}");
+    let nodes = field(v, "nodes")?
+        .as_array()
+        .ok_or_else(bad)?
+        .iter()
+        .map(|node| {
+            let object = node.as_object().filter(|o| o.len() == 2).ok_or_else(bad)?;
+            let name = object.get("name").and_then(Value::as_str).ok_or_else(bad)?;
+            let mentions = object
+                .get("mentions")
+                .and_then(Value::as_array)
+                .ok_or_else(bad)?
+                .iter()
+                .map(|m| m.as_str().map(str::to_owned).ok_or_else(bad))
+                .collect::<Result<Vec<_>>>()?;
+            Ok((name.to_owned(), mentions))
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
+}
 fn case(v: &Value) -> Result<Value> {
-    if v.get("environment").and_then(|e| e.get("profiles"))
-        == Some(&json!(["order@0", "relational-fol@0"]))
+    if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
+        return route_case(v, kind);
+    }
+    if v.get("environment")
+        .and_then(|e| e.get("profiles"))
+        .and_then(Value::as_array)
+        .is_some_and(|profiles| profiles.contains(&json!("order@0")))
     {
         return order_case(v);
     }
