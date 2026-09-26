@@ -239,10 +239,11 @@ impl Environment {
         let mut predicates = BTreeMap::new();
         for (name, decl) in preds {
             let d = entry_fields(decl, &["arguments", "description"], true)?;
+            let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
             let args = d["arguments"]
                 .as_array()
-                .filter(|a| matches!(a.len(), 1 | 2))
-                .ok_or_else(|| Error::new("InvalidInput", "predicate arity must be one or two"))?;
+                .filter(|a| (1..=maximum_arity).contains(&a.len()))
+                .ok_or_else(|| Error::new("InvalidInput", format!("predicate arity must be one to {maximum_arity}")))?;
             let mut signature = Vec::new();
             for arg in args {
                 let s = string(arg, "UnknownSymbol")?;
@@ -312,6 +313,9 @@ impl Environment {
     }
     pub fn closure(&self) -> bool {
         self.closure
+    }
+    pub fn nary(&self) -> bool {
+        self.route && self.profiles.iter().any(|p| p == "nary@0")
     }
     pub fn order(&self) -> bool {
         self.order
