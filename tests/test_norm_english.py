@@ -97,3 +97,9 @@ def test_whole_block_earley_checks_multiple_parents_and_clause_boundary():
     assert parse_english(env, text).rules[2].over == ("rule-1", "rule-2")
     with pytest.raises(VEError, match="all-derivations"):
         parse_english(env, text.replace("rules 1 and 2", "rules 1, and 2"))
+
+
+def test_inline_except_when_is_canonicalized_to_unless():
+    env = environment({"permitted": permission()})
+    doc = parse_english(env, "Rule 1. Every act may be done, except when this holds in all cases.")
+    assert "unless this holds in all cases" in render_english(doc)[0]
