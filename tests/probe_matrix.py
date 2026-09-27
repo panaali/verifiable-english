@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom,
                 Unary, Const, check_argument, deduction_identity)
 from ve.ast import Document, _to_data, check_formula, formula_from_data, formula_to_data
+from ve.identity import meaning_id
 from ve.background import background, dependency_order
 from ve.definitions import compile_definitions
 from ve.entailment import check_entailment_certificate, prove_entailment
@@ -39,6 +40,8 @@ from ve.vacuity import premise_status
 from ve.profiles import SPEC_REVISION
 from ve.english import parse_english
 from ve.printer import render
+from ve import limits
+from ve.wire import canonical_json
 
 OUT = ROOT / "conformance/baseline-2026-09"
 LAYERS = ("data@0", "definitions@0", "documents@1", "norms@0", "time@0")
@@ -231,8 +234,84 @@ def graph_baselines():
     edge = replace(g.deductions[0], certificates=({"edge_id": deduction_identity(g, g.deductions[0]),
         "direction": "follows", "proof": proof.certificate},))
     cases["background_dependent_certificate"] = replace(g, deductions=(edge,))
-    return {name: {"package": graph.to_dict(), "output": check_argument(graph, search=False).to_dict()}
+    rows = {name: {"package": graph.to_dict(), "output": check_argument(graph, search=False).to_dict()}
             for name, graph in cases.items()}
+    from ve.argument_fixtures import worked_examples, infinite_only_example
+    for name, graph in {**worked_examples(), "infinite_only": infinite_only_example()}.items():
+        rows[f"worked_{name}"] = {"package": graph.to_dict(), "output": check_argument(graph).to_dict()}
+    return rows
+
+
+def boundary_baselines():
+    """Exact cap and first-over-cap inputs for structural and public work limits."""
+    env = Environment(raw_environment(()))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    rows = {}
+    def pair(name, cap, build):
+        rows[name] = {"cap": cap, "at": outcome(lambda: build(cap)),
+                      "over": outcome(lambda: build(cap + 1))}
+    def work_pair(name, needed, build):
+        rows[name] = {"cap": needed, "at": outcome(lambda: build(needed)),
+                      "under": outcome(lambda: build(needed - 1))}
+    source_at_cap = "true.\n" * 4464 + "false.\n" * 5536
+    assert len(source_at_cap) == limits.MAX_SOURCE_BYTES
+    pair("MAX_SOURCE_BYTES", limits.MAX_SOURCE_BYTES,
+         lambda size: len(parse(env, source_at_cap + " " * (size - limits.MAX_SOURCE_BYTES)).formulas))
+    pair("MAX_IDENTIFIER_BYTES", limits.MAX_IDENTIFIER_BYTES,
+         lambda size: __import__("ve.environment", fromlist=["validate_identifier"]).validate_identifier("a" * size))
+    def vocab_size(size, field):
+        raw = raw_environment(())
+        if field == "sorts":
+            raw["vocabulary"][field].update({f"s{i}": {"description": "s"} for i in range(size - 1)})
+        else:
+            raw["vocabulary"][field].update({f"p{i}": {"arguments": ["item"], "description": "p"}
+                                              for i in range(size - 1)})
+        return Environment(raw).environment_id
+    pair("MAX_SORTS", limits.MAX_SORTS, lambda size: vocab_size(size, "sorts"))
+    pair("MAX_PREDICATES", limits.MAX_PREDICATES, lambda size: vocab_size(size, "predicates"))
+    def entities(size):
+        data = model_wire(env)
+        data["domains"]["item"] = ["i"] + [f"j{i}" for i in range(size - 1)]
+        return FiniteModel.from_dict(env, data).model_id
+    pair("MAX_ENTITIES", limits.MAX_ENTITIES, entities)
+    pair("MAX_PACKAGE_BYTES", limits.MAX_PACKAGE_BYTES,
+         lambda size: len(canonical_json("x" * (size - 2))))
+    work_pair("max_evaluations", 1,
+         lambda size: evaluate(env, Top(), model, trace=False, max_evaluations=size))
+    work_pair("max_trace_nodes", 1,
+         lambda size: evaluate(env, Top(), model, trace=True, max_trace_nodes=size))
+    pair("shared_countermodel_evaluations", 2,
+         lambda size: check_countermodel(env, (Top(), Top()), Bottom(), model, max_evaluations=size))
+    pair("max_models", 0,
+         lambda size: find_countermodel(env, (), Bottom(), max_domain_size=1, max_models=size))
+    proof = prove_entailment(env, (), Top(), max_steps=100)
+    exact = check_entailment_certificate(env, (), Top(), proof.certificate, max_steps=100).steps
+    rows["tableau_max_steps"] = {"cap": exact,
+        "at": outcome(lambda: check_entailment_certificate(env, (), Top(), proof.certificate, max_steps=exact)),
+        "under": outcome(lambda: check_entailment_certificate(env, (), Top(), proof.certificate, max_steps=exact - 1))}
+    return rows
+
+
+def feature_baselines():
+    rows = {}
+    for family in FAMILIES:
+        env = Environment(raw_environment(family))
+        top = Top()
+        leaf = {"label": "open:assumption", "ast": formula_to_data(env, top)}
+        lemma = {"name": "first", "environment_id": env.environment_id,
+                 "premises": [leaf], "cites": [], "conclusion": formula_to_data(env, top),
+                 "meaning_id": meaning_id(env, top), "reading_choices": {},
+                 "transitive_leaves": [leaf],
+                 "certificate": prove_entailment(env, (top,), top).certificate}
+        key = "+".join(family) or "fol"
+        rows[f"bundle_nonempty:{key}"] = outcome(lambda: check_bundle({"version": "ve-bundle@0",
+            "environment": env.to_dict(), "lemmas": [lemma]}))
+    for layers in (("norms@0", "definitions@0"), ("norms@0", "data@0"),
+                   ("norms@0", "definitions@0", "data@0")):
+        env = Environment(raw_environment(layers))
+        rows[f"norms_layers:{'+'.join(layers)}"] = outcome(
+            lambda: check_conflict(NormDocument(env, []), prove=True))
+    return rows
 
 
 def generate():
@@ -290,7 +369,8 @@ def generate():
                          "operation": "parse_accept", "input_class": kind, **result})
     source_commit = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", "tests/probe_matrix.py"], cwd=ROOT, text=True).strip()
     return {"schema": "ve-stage0-baseline@1", "source_commit": source_commit,
-            "python": sys.version.split()[0], "cells": rows, "graph_probes": graph_baselines()}
+            "python": sys.version.split()[0], "cells": rows, "graph_probes": graph_baselines(),
+            "budget_boundaries": boundary_baselines(), "feature_probes": feature_baselines()}
 
 
 def render_matrix(data):
@@ -311,6 +391,19 @@ def render_matrix(data):
     for name, record in data["graph_probes"].items():
         out = record["output"]
         lines.append(f"| `{name}` | `{out['status']}` | {out['composed']} | `{out['remaining_assumptions']}` | `{out['unresolved_obligations']}` |")
+    lines += ["", "## Boundary probes", "",
+        "Each row records the exact cap and first over-cap input, or the exact work required and one fewer for tableau replay.",
+        "", "| Limit | Cap | At | Over / under |", "|---|---:|---|---|"]
+    for name, pair in data["budget_boundaries"].items():
+        other = pair.get("over", pair.get("under"))
+        lines.append(f"| `{name}` | {pair['cap']} | `{pair['at']['status']}` | `{other['status']}` |")
+    lines += ["", "## Compatibility findings", "",
+        "- A nonempty lemma bundle is `Checked` by Python on closure, closure+nary, order and FOL profiles. The plan's closure-bundle Lean gap is therefore a Stage 2 coverage task.",
+        "- Python accepts norms with definitions and data flags, including both together; Lean's documented norms route gate must be closed before authority switches for those cells.",
+        "- Sixteen ve.core@0.2 profile envelopes combining order and definitions fail during environment construction. They are U for all operations; `profiles.checker_family` alone does not describe this gate.",
+        "", "| Feature probe | Cell/status |", "|---|---|"]
+    for name, result in data["feature_probes"].items():
+        lines.append(f"| `{name}` | {result['cell']}: `{result['status']}` |")
     return "\n".join(lines) + "\n"
 
 

@@ -36,7 +36,7 @@ AUTHORITY = {
     "ast": {"_Checker", "check_formula", "check_document"},
     "environment": {"Environment.__init__", "Environment.from_dict", "Environment.from_json"},
     "model": {"FiniteModel.from_dict", "FiniteModel.from_json"},
-    "evaluate": {"_Evaluator", "_evaluate_validated", "evaluate", "_validate_model"},
+    "evaluate": {"_evaluate_validated", "evaluate", "_validate_model"},
     "search": {"check_countermodel", "_check_countermodel_values", "find_countermodel", "find_distinguishing_model"},
     "entailment": {"_Replayer", "check_entailment_certificate"},
     "order": {"decode_trace", "_Replayer", "replay_trace"},
@@ -45,15 +45,14 @@ AUTHORITY = {
     "norms": {"NormDocument.elaborate", "NormDocument.premises", "NormDocument.conflict_targets", "check_witness", "check_norm_entailment_certificate", "check_conflict"},
     "norm_admission": {"admit_norm_document"},
     "admission": {"_check_graph", "admit_document"},
-    "bundle": {"lean_bundle_verdict", "check_bundle"},
+    "bundle": {"check_bundle"},
     "profiles": {"checker_family"},
-    "parser": {"_Parser", "parse_with_metadata", "parse", "canonicalize", "is_canonical"},
-    "printer": {"print_formula", "print_document"},
+    "parser": {"parse_with_metadata", "parse", "canonicalize", "is_canonical"},
     "argument": {"_check_edge", "_lean_deductions", "check_argument"},
 }
 UNTRUSTED = {
     "ast": {"_Decoder", "formula_from_data", "document_from_data", "doc_from_json", "_to_data", "formula_to_data", "document_to_data"},
-    "evaluate": {"Explanation", "EvaluationResult"},
+    "evaluate": {"Explanation", "EvaluationResult", "_Evaluator", "_Exhausted"},
     "search": {"_used_predicates", "_models", "_order_models", "_nonvacuous", "_SearchSpaceLimit"},
     "entailment": {"_Signed", "_Branch", "_InvalidTrace", "_term_token", "_derive", "_apply", "_closed", "_Searcher", "prove_entailment", "_prove_order"},
     "closure": {"InductionInvariant", "derive_extra", "extra_candidates", "derive_induction", "induction_candidates"},
@@ -62,8 +61,8 @@ UNTRUSTED = {
     "definitions": {"Definition", "_atom", "premise"},
     "norms": {"Norm", "_atom", "prove_norm_entailment"},
     "admission": {"token", "_check_kind", "parse_label", "validate_label", "_decode_reading_set"},
-    "parser": {"SourceMetadata", "ParseResult"},
-    "printer": {"_Traversal"},
+    "parser": {"SourceMetadata", "ParseResult", "_Parser"},
+    "printer": {"_Traversal", "print_formula", "print_document"},
     "argument": {"_validate_graph"},
 }
 SURFACE = {
@@ -180,7 +179,8 @@ def generate():
              "", "## Coverage", "", f"Parsed {len(sources)} Python files; found {len(graph)} import edges into section 1.1 modules."]
     if missing:
         lines += ["Missing optional external trees: " + ", ".join(missing) + "."]
-    lines += ["", "## Symbols", "", "| Module | Symbol | Line | Class | Stage 2 interface for A | Direct import consumers |", "|---|---|---:|:---:|---|---|"]
+    lines += ["", "## Symbols", "", "Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from plan §3 stage 2a; the interface column names its backend target.",
+              "", "| Module | Symbol | Line | Class | Stage 2 adapter → interface for A | Direct import consumers |", "|---|---|---:|:---:|---|---|"]
     for module in sorted(TARGETS):
         path = ROOT / "ve" / f"{module}.py"
         for symbol, node in definitions(sources[path]):
@@ -189,7 +189,8 @@ def generate():
             consumer = ", ".join(f"`{r}`" for r in direct[:6])
             if len(direct) > 6:
                 consumer += f" (+{len(direct)-6})"
-            lines.append(f"| `ve/{module}.py` | `{symbol}` | {node.lineno} | {cls} | {INTERFACES[module] if cls == 'A' else '—'} | {consumer or '—'} |")
+            iface = f"`ve/backends/dispatch.py` → {INTERFACES[module]}" if cls == "A" else "—"
+            lines.append(f"| `ve/{module}.py` | `{symbol}` | {node.lineno} | {cls} | {iface} | {consumer or '—'} |")
     lines += ["", "## Other `ve/` functions", "",
               "Section 1.2 combination functions are C; single-verdict relabelling is L; other retained surface, authoring, diagnostic and transport functions are S. This covers functions outside the section 1.1 deletion list.",
               "", "| Module | Function | Line | Class |", "|---|---|---:|:---:|"]
@@ -198,10 +199,25 @@ def generate():
         if module is None or module.split(".")[1] in TARGETS:
             continue
         for symbol, node in definitions(sources[path]):
-            cls = ("C" if module in {"ve.readings", "ve.equivalence"} and symbol in {"check_readings", "compare"}
+            cls = ("C" if (module, symbol) in {("ve.readings", "check_readings"),
+                                               ("ve.equivalence", "compare"),
+                                               ("ve.document", "check_document")}
                    else "L" if module in {"ve.check", "ve.vacuity", "ve.identity", "ve.wire"}
                    else "S")
             lines.append(f"| `{path.relative_to(ROOT)}` | `{symbol}` | {node.lineno} | {cls} |")
+    lines += ["", "## Combination roles inside section 1.1 modules", "",
+              "These roles are additional to A/U/S/D: the class-A adapter must ask Lean for the combined verdict, while diagnostic-only code stays a trusted display rule.",
+              "", "| Function | Role | Reason |", "|---|:---:|---|",
+              "| `argument.check_argument` | C | Root reachability, ordered leaves, status and composition combine edge checks; Lean `graph` owns consequence. |",
+              "| `argument._check_edge` | L | Displays each checked certificate or countermodel with diagnostic attempts. |",
+              "| `admission.admit_document` | C | Document graph admission combines labelled leaves, citations and certificates; Lean `admission` owns verdict. |",
+              "| `bundle.check_bundle` | C | Transitive citation and certificate replay combine into one bundle verdict; Lean `bundle` owns verdict. |",
+              "| `norms.check_conflict` | C | Combines generated targets and checked witnesses/certificates; Lean `norms-conflict` owns verdict. |"]
+    lines += ["", "## Plan revision findings", "",
+              "- `FiniteModel.from_dict` builds defined-predicate tables by calling `_Evaluator.formula` with open bodies and explicit bindings. `norms.py` also calls `_Evaluator` for selected rules, conflict witnesses and overlap checks. The stage 2 adapter contract must provide an open-formula/bindings evaluation path before `_Evaluator` can become D; closed-document `evaluate` alone cannot replace these consumers.",
+              "- `norm_strict.py` imports `_Parser` directly. Keep this untrusted parser for norm-unit surface reading even after Lean owns public parse acceptance; only its verdict authority moves.",
+              "- Searchers in `entailment.py`, `closure.py` and `order.py` share rule helpers with replay. Keep them U until the generator path has a replacement, then reclassify individually.",
+              "- The AST graph records explicit imports, including `from` aliases and relative imports. It cannot prove that a dynamically imported or reflected name is unused; D is a candidate for Stage 5 review, not a deletion instruction by itself."]
     lines += ["", "## AST import graph", "", "One row per import statement binding. `*module*` and `*` need a later use-site review; AST imports cannot detect reflection or dynamic imports.",
               "", "| Consumer | Provider | Imported symbol | Line |", "|---|---|---|---:|"]
     lines += [f"| `{p}` | `{m}` | `{s}` | {n} |" for p, m, s, n in sorted(graph)]
