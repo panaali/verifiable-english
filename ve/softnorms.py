@@ -289,6 +289,23 @@ class SoftNormDocument:
                                         if left.mode == right.mode == 'default'
                                         and self._incompatible(left, right)),
                                        key=lambda pair: (pair[0].core.name, pair[1].core.name)))
+        warnings = []
+        for rule in self.rules:
+            for parent_name in rule.core.over:
+                parent = by_name[parent_name]
+                if (rule.mode == parent.mode == 'default' and
+                        self._incompatible(rule, parent) and
+                        parent.rank is not None and rule.rank is not None and
+                        parent.rank in env.ranks_above[rule.rank]):
+                    warnings.append(f'RankAgainstPrecedence: rule {rule.core.name} over {parent_name}')
+        ranks = tuple(env.soft.get('ranks', []))
+        ties = {frozenset(pair) for pair in env.soft.get('ties', [])}
+        for a in ranks:
+            for b in ranks:
+                if (a < b and a not in env.ranks_above[b] and
+                        b not in env.ranks_above[a] and frozenset((a, b)) not in ties):
+                    warnings.append(f'undeclared tie: {a}, {b}')
+        self.warnings = tuple(warnings)
         self.extended_env = self._extended_environment()
         self.elaborated = self._soften()
         self.exception_premises = self._exception_premises()

@@ -33,19 +33,9 @@ def _run(case):
     return row
 
 
-def admit_soft_document(environment, document, *, soft_document=None):
-    """Check Python regeneration, then return Lean's admission verdict.
-
-    Both calls use the original source environment and norm objects. Lean
-    independently regenerates E′ and T′; no Python-generated premise is sent
-    as an authority for admission.
-    """
-    env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
-    if soft_document is None:
-        active = [u["content"] for u in document["units"]
-                  if u["kind"] == "norm" and type(u.get("content")) is dict
-                  and "norm" in u["content"]]
-        soft_document = SoftNormDocument(env, active)
+def elaborate_soft_document(soft_document: SoftNormDocument):
+    """Check both regenerators before exposing any proved soft route result."""
+    env = soft_document.env
     norms = [rule.to_dict() for rule in soft_document.rules]
     elaborated = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
                        "environment": env.to_dict(), "norms": norms})
@@ -65,6 +55,47 @@ def admit_soft_document(environment, document, *, soft_document=None):
                  if item.get("generator") == "soft"]
     if py_soft != lean_soft:
         raise VEError("soft route regeneration mismatch: soft background")
+    if list(soft_document.warnings) != elaborated["warnings"]:
+        raise VEError("soft route regeneration mismatch: warnings")
+    return elaborated
+
+
+def classify_soft_pairs(soft_document: SoftNormDocument, *, pairs=None):
+    """Replay the pair certificates or witnesses over the regenerated base."""
+    elaborate_soft_document(soft_document)
+    return _run({"id": "soft-pairs", "kind": "soft-pairs",
+                 "environment": soft_document.env.to_dict(),
+                 "norms": [rule.to_dict() for rule in soft_document.rules],
+                 "pairs": {} if pairs is None else pairs})
+
+
+def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witness=None):
+    """Replay a conflict package or finite witness against the soft route."""
+    elaborate_soft_document(soft_document)
+    case = {"id": "soft-conflict", "kind": "soft-conflict",
+            "environment": soft_document.env.to_dict(),
+            "norms": [rule.to_dict() for rule in soft_document.rules]}
+    if witness is not None:
+        case["witness"] = witness
+    else:
+        case["packages"] = {} if packages is None else packages
+    return _run(case)
+
+
+def admit_soft_document(environment, document, *, soft_document=None):
+    """Check Python regeneration, then return Lean's admission verdict.
+
+    Both calls use the original source environment and norm objects. Lean
+    independently regenerates E′ and T′; no Python-generated premise is sent
+    as an authority for admission.
+    """
+    env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
+    if soft_document is None:
+        active = [u["content"] for u in document["units"]
+                  if u["kind"] == "norm" and type(u.get("content")) is dict
+                  and "norm" in u["content"]]
+        soft_document = SoftNormDocument(env, active)
+    elaborate_soft_document(soft_document)
     # The restricted Lean JSON input has no null literal. The wire's null
     # inherited-decider spelling is canonicalized to the equivalent omission.
     normalized_units = []
