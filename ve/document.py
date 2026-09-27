@@ -252,14 +252,14 @@ def load_document(path: str | Path):
         if unit.pop("explicit_status") not in (None, unit["status"]):
             raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
-    quoted_norms.extend(u["content"] for u in compiled if u["kind"] == "norm"
-                        and u["id"] in reading_units)
+    norm_units = [u for u in compiled if u["kind"] == "norm"
+                  and type(u["content"]) is dict and "norm" in u["content"]]
+    quoted_norms.extend(u["content"] for u in norm_units if u["id"] in reading_units)
     if quoted_norms:
         from .norm_admission import _check_quoted
         for content in quoted_norms:
             _check_quoted(env, content)
-    selected_norms = [u["content"] for u in compiled if u["kind"] == "norm"
-                      and u["id"] not in reading_units]
+    selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units]
     norms = (NormDocument(env, selected_norms)
              if selected_norms or any(d.regulated is not None for d in env.predicates.values()) else None)
     if "lemmas" in meta and type(meta["lemmas"]) is not list:

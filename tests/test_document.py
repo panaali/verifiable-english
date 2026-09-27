@@ -180,7 +180,8 @@ def test_active_norm_layer_enters_readings_queries(tmp_path):
     assert query(path, tmp_path, conclusion)["verdict"] == "ALL"
 
 
-def test_narrowing_away_pending_norm_restores_active_layer(tmp_path):
+@pytest.mark.parametrize("explicit_null", [False, True])
+def test_narrowing_away_pending_norm_restores_active_layer(tmp_path, explicit_null):
     env = norm_environment({"permitted": permission()})
     source = b"All acts may be done.\nThe other sentence has two readings.\n"
     cut = len(b"All acts may be done.\n")
@@ -202,12 +203,16 @@ def test_narrowing_away_pending_norm_restores_active_layer(tmp_path):
         {"id": "keep-pending", "set": "readings", "version": 1,
          "keeps": ["pending"], "by": "reviewer", "reason_spans": ["ambiguous"]},
     ]
+    ambiguous = unit("ambiguous", cut, len(source), "norm")
+    if not explicit_null:
+        ambiguous.pop("content")
     path = write_doc(tmp_path, source, [
         unit("rule", 0, cut, "norm", content=norm.to_dict()),
-        unit("ambiguous", cut, len(source), "meta")],
+        ambiguous],
         environment_json=env.to_dict(), reading_sets=[reading_set], narrowings=narrowings)
     conclusion = formula_to_data(env, NormDocument(env, [norm]).elaborate("permitted"))
 
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
     assert query(path, tmp_path, conclusion)["verdict"] == "UNKNOWN"
     assert query(path, tmp_path, conclusion, "keep-pending")["verdict"] == "UNKNOWN"
     narrowed = query(path, tmp_path, conclusion, "keep-true")
@@ -215,6 +220,41 @@ def test_narrowing_away_pending_norm_restores_active_layer(tmp_path):
     assert narrowed["vacuous"] is False
     assert narrowed["premises"]["status"] == "model"
     assert narrowed["narrowing"] == "narrowing:keep-true"
+
+
+@pytest.mark.parametrize("explicit_null", [False, True])
+def test_pending_norm_unit_with_authored_assertion_reading(tmp_path, explicit_null):
+    env = norm_environment({"permitted": permission()})
+    source = b"The rule needs a reading.\n"
+    norm_unit = unit("rule", 0, len(source), "norm")
+    if not explicit_null:
+        norm_unit.pop("content")
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "authored", "signature": "reviewer",
+                   "readings": [reading(env, "chosen", ["top"])]}
+    path = write_doc(tmp_path, source, [norm_unit], environment_json=env.to_dict(),
+                     reading_sets=[reading_set])
+
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert coverage(loaded)["bytes_by_status"] == {"CHECKED": len(source)}
+    assert check_document(path)["premises"]["status"] == "model"
+    result = query(path, tmp_path, ["top"])
+    assert result["verdict"] == "ALL"
+    assert result["vacuous"] is False
+
+
+@pytest.mark.parametrize("content", [None, {"ast": ["top"]}])
+def test_norm_unit_without_norm_block_does_not_enter_norm_validation(tmp_path, content):
+    env = norm_environment({"permitted": permission()})
+    source = b"This norm has no norm block.\n"
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=content)],
+                     environment_json=env.to_dict())
+
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert check_document(path)["premises"]["status"] == "model"
 
 
 def test_quoted_norm_renders_its_own_opposite_content(tmp_path):
