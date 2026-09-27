@@ -256,6 +256,8 @@ def test_gamma_completion_conflict_and_delta_weighing_point(lean):
     assert rows[0]["verdict"] == "CONFLICT"
     assert rows[0]["witness_kind"] == "pair conflict on x_required->x_permitted"
     assert rows[1]["verdict"] == "UNKNOWN"
+    assert rows[0]["status_text"].startswith("CONFLICT: pair conflict")
+    assert rows[0]["status_text"].endswith("at a")
     assert rows[2]["pairs"][0]["status"] == "WEIGHING POINT"
     assert rows[2]["weighing_points"] == ["soft:coherence:a,b"]
     # the same witness violates Coh_T, so it is no countermodel to the conditional claim
