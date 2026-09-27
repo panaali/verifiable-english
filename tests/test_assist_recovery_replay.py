@@ -186,6 +186,22 @@ def test_import_rejects_extra_missing_or_retyped_ledger_fields():
         assert rejected(rehash(ledger)), number
 
 
+def test_import_keeps_prior_deadline_layout_and_accepts_new_commands():
+    recovery = service()
+    recovery.add("u", "Api is safe.", {})
+    recovery.start("u")
+    recovery.classify("u", parse_outcome="one")
+    recovery.approve("u", API, **SELECT_API)
+    ledger = recovery.to_ledger()
+    # Before the command-entry budget, add and start had no deadline slot.
+    for command in ledger["commands"][:2]:
+        command["observed"]["deadlines"] = []
+    restored = RecoveryService.from_ledger(ENV, rehash(ledger))
+    assert restored.approval_valid("u")
+    restored.edit("u", source="Carol is safe.")
+    assert restored.verify_ledger()
+
+
 def test_recorded_command_failures_must_recur_on_replay():
     recovery = service()
     recovery.add("u", "Api is safe.", {})
