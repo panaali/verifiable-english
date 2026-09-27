@@ -9,7 +9,7 @@ from ve.document import _check_narrowing_choices, check_document, coverage, load
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
-from ve.ast import Top
+from ve.ast import Top, Exists, Unary, Var
 from ve.ast import formula_from_data
 from ve.model import FiniteModel
 from ve.readings import check_readings, plan_choices
@@ -123,6 +123,115 @@ def test_unresolved_norm_reading_does_not_activate_stale_unit_content(tmp_path):
     assert loaded["norms"].rules == ()
     assert coverage(loaded)["bytes_by_status"] == {"OPEN": len(source)}
     assert check_document(path)["premises"]["status"] == "UNKNOWN"
+
+
+@pytest.mark.parametrize("env,broken,diagnostic", [
+    (norm_environment({}), rule("bad", "missing", True), "regulated predicate missing"),
+    (norm_environment({"permitted": permission()}),
+     rule("bad", "permitted", True, Unary("missing", Var(0))), "Unknown predicate"),
+    (Environment(environment()), rule("bad", "missing", True), "norms@0 is required"),
+])
+def test_every_active_norm_is_validated_without_a_graph(tmp_path, env, broken, diagnostic):
+    source = b"Rule.\n"
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=broken.to_dict())],
+                     environment_json=env.to_dict())
+    with pytest.raises(VEError, match=diagnostic):
+        check_document(path)
+
+
+def test_unresolved_norm_never_produces_a_false_inconsistency_or_layer(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"Rule.\nSome act is permitted.\n"
+    cut = len(b"Rule.\n")
+    candidate = {"id": "choice", "kind": "norm", "meaning_id": "pending",
+                 "content": None, "admission": {"who": "reviewer", "why": "pending",
+                                                 "distinguishing_models": {}}}
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "open", "readings": [candidate]}
+    existence = formula_to_data(env, Exists("act", Unary("permitted", Var(0))))
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, cut, "norm", content=rule("allow", "permitted", True).to_dict()),
+                      unit("claim", cut, len(source), content={"ast": existence})],
+                     environment_json=env.to_dict(), reading_sets=[reading_set])
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
+    assert query(path, tmp_path, existence)["verdict"] == "UNKNOWN"
+    graph = {"root": "layer", "nodes": [{"name": "layer", "ast": ["top"],
+                                           "label": "layer:norms:permitted"}]}
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, cut, "norm", content=rule("allow", "permitted", True).to_dict()),
+                      unit("claim", cut, len(source), content={"ast": existence})],
+                     environment_json=env.to_dict(), reading_sets=[reading_set], graph=graph)
+    with pytest.raises(VEError, match="needs an elaborator"):
+        check_document(path)
+
+
+def test_active_norm_layer_enters_readings_queries(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"All acts may be done.\n"
+    norm = rule("allow", "permitted", True)
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=norm.to_dict())],
+                     environment_json=env.to_dict())
+    loaded = load_document(path)
+    assert loaded["units"][0]["meaning_id"] == loaded["norms"].meaning_id("allow")
+    conclusion = formula_to_data(env, loaded["norms"].elaborate("permitted"))
+    assert check_document(path)["premises"]["status"] == "model"
+    assert query(path, tmp_path, conclusion)["verdict"] == "ALL"
+
+
+def test_quoted_norm_renders_its_own_opposite_content(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"Allow.\nAlice forbids.\n"
+    cut = len(b"Allow.\n")
+    path = write_doc(tmp_path, source,
+                     [unit("allow", 0, cut, "norm", content=rule("same", "permitted", True).to_dict()),
+                      unit("quote", cut, len(source), ["attributed", "alice", "says", "norm"],
+                           content=rule("same", "permitted", False).to_dict())],
+                     environment_json=env.to_dict())
+    rendered = render_document(path)
+    assert "may be done" in rendered
+    assert "must not be done" in rendered
+    assert rendered.index("may be done") < rendered.index("must not be done")
+
+
+@pytest.mark.parametrize("meaning,content", [
+    ({"unformalised": "future_profile"}, None),
+    ({"open": ["uncertain"]}, None),
+])
+def test_explicit_label_cannot_hide_unresolved_meaning(tmp_path, meaning, content):
+    env = environment()
+    open_terms = [{"name": "uncertain", "arguments": [], "decided_by": "reviewer",
+                   "necessary": [], "sufficient": [], "factors": [], "precedents": [],
+                   "jurisdiction": "local", "version": 1}] if "open" in meaning else []
+    source = b"Text.\n"
+    path = write_doc(tmp_path, source,
+                     [{**unit("part", 0, len(source), "meta", meaning, content),
+                       "status": "LABELLED"}], open_terms=open_terms)
+    with pytest.raises(VEError, match="status contradicts"):
+        load_document(path)
+
+
+def test_explicit_status_must_match_active_reading_override(tmp_path):
+    env = Environment(environment())
+    source = b"Claim.\n"
+    rs = {"id": "s", "unit": "claim", "version": 1, "status": "open",
+          "readings": [reading(env, "r", ["top"])]}
+    path = write_doc(tmp_path, source,
+                     [{**unit("claim", 0, len(source), "asserted", content={"ast": ["top"]}),
+                       "status": "CHECKED"}], reading_sets=[rs])
+    with pytest.raises(VEError, match="status contradicts"):
+        load_document(path)
+
+
+def test_mixed_parent_span_requires_integer_byte_offsets(tmp_path):
+    source = b"abcdef"
+    parts = [{**unit("a", 0, 3), "status": "LABELLED"},
+             {**unit("b", 3, 6), "status": "LABELLED"}]
+    path = write_doc(tmp_path, source,
+                     [{"id": "whole", "span": [0.0, 6.0], "status": "MIXED", "parts": parts}])
+    with pytest.raises(VEError, match="partitioned parts"):
+        load_document(path)
 
 
 @pytest.mark.parametrize("spans", [[[0, 2], [3, 6]], [[0, 4], [3, 6]], [[3, 6], [0, 3]],

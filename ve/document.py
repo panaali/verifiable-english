@@ -103,6 +103,8 @@ def _content(env, unit, fences):
         raise VEError("unit content must bind one formula or norm")
     if "norm" in content:
         from .norms import NormDocument
+        if "norms@0" not in env.profiles:
+            raise VEError("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
     if "ast" in content:
@@ -145,6 +147,7 @@ def _parts(units):
             raise VEError("invalid MIXED unit schema")
         span, parts = unit["span"], unit["parts"]
         if (type(span) is not list or len(span) != 2 or
+                any(type(x) is not int for x in span) or
                 type(parts) is not list or len(parts) < 2):
             raise VEError("MIXED unit needs partitioned parts")
         cursor = span[0]
@@ -206,13 +209,13 @@ def load_document(path: str | Path):
         content, mid = _content(env, unit, fences) if unit.get("content") is not None else (None, None)
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
+            from .norms import norm_meaning_id, NormDocument
             from .admission import _quoted
             if _quoted(kind):
                 quoted_norms.append(content)
             elif kind != "norm":
                 raise VEError("norm content requires a norm or quoted kind")
-            mid = digest(f"ve-norm-unit-{env.identity_version}\n",
-                         {"environment_id": env.environment_id, "content": content})
+            mid = norm_meaning_id(env, NormDocument._decode(content))
         if status == "unformalised" and content is not None:
             raise VEError("unformalised unit cannot assert content")
         if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
@@ -220,21 +223,15 @@ def load_document(path: str | Path):
         if "meaning_id" in unit and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")
-        if explicit_status is not None:
-            if explicit_status not in STATUSES:
-                raise VEError("invalid unit status")
-            if (explicit_status == "CHECKED" and (content is None or status != "specified") or
-                    explicit_status == "OPEN" and status != "open" or
-                    explicit_status == "UNFORMALISED" and status != "unformalised" or
-                    explicit_status == "LABELLED" and content is not None):
-                raise VEError("unit status contradicts content or meaning")
-        else:
-            explicit_status = ("CHECKED" if content is not None and status == "specified" else
-                               "OPEN" if status == "open" else
-                               "UNFORMALISED" if status == "unformalised" else "LABELLED")
+        if explicit_status is not None and explicit_status not in STATUSES:
+            raise VEError("invalid unit status")
+        inferred_status = ("CHECKED" if content is not None and status == "specified" else
+                           "OPEN" if status == "open" else
+                           "UNFORMALISED" if status == "unformalised" else "LABELLED")
         compiled.append({"id": uid, "span": span, "kind": unit["kind"], "meaning": unit["meaning"],
                          "support": unit["support"], "source": source[span[0]:span[1]].decode("utf-8"),
-                         "content": content, "meaning_id": mid, "status": explicit_status,
+                         "content": content, "meaning_id": mid, "status": inferred_status,
+                         "explicit_status": explicit_status,
                          **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
@@ -251,6 +248,9 @@ def load_document(path: str | Path):
         unit["status"] = ("CHECKED" if reading_set["status"] == "authored"
                           and all(c["kind"] == "asserted" and c["content"] is not None
                                   for c in reading_set["readings"]) else "OPEN")
+    for unit in compiled:
+        if unit.pop("explicit_status") not in (None, unit["status"]):
+            raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
     quoted_norms.extend(u["content"] for u in compiled if u["kind"] == "norm"
                         and u["id"] in reading_units)
@@ -261,7 +261,7 @@ def load_document(path: str | Path):
     selected_norms = [u["content"] for u in compiled if u["kind"] == "norm"
                       and u["id"] not in reading_units]
     norms = (NormDocument(env, selected_norms)
-             if any(d.regulated is not None for d in env.predicates.values()) else None)
+             if selected_norms or any(d.regulated is not None for d in env.predicates.values()) else None)
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
         raise VEError("lemmas must be a list")
     for u in compiled:
@@ -294,7 +294,15 @@ def _fixed_and_active(doc):
     units_with_sets = {r["unit"] for r in sets}
     fixed = [u["content"] for u in doc["units"] if u["kind"] == "asserted"
              and u["content"] is not None and u["id"] not in units_with_sets]
+    if doc["norms"] is not None and not _unresolved_norm_reading(sets):
+        fixed.extend(formula_to_data(doc["environment"], formula)
+                     for _, formula in doc["norms"].premises())
     return fixed, sets
+
+
+def _unresolved_norm_reading(sets):
+    return any(c["kind"] == "norm" or c["content"] is None and c["kind"] != "asserted"
+               for r in sets for c in r["readings"])
 
 
 def _assertion_disjunctions(env, sets):
@@ -358,12 +366,15 @@ def check_document(path):
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
-    if doc["norms"] is not None:
-        assertions.extend(formula for _, formula in doc["norms"].premises())
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if "graph" in doc["meta"]:
+        if (_unresolved_norm_reading(active) and
+                any(type(node) is dict and type(node.get("label")) is str
+                    and node["label"].startswith("layer:norms:")
+                    for node in doc["meta"]["graph"].get("nodes", []))):
+            raise VEError("non-assertion norm reading admission needs an elaborator")
         from .admission import parse_label
         active_keys = {(r["id"], r["version"]): r for r in active}
         for node in doc["meta"]["graph"].get("nodes", []):
@@ -411,11 +422,14 @@ def check_document(path):
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     assertions.extend(_assertion_disjunctions(env, active))
-    result["premises"] = premise_status(env, assertions)
-    if (result["premises"]["status"] != "INCONSISTENT"
-            and any(c["kind"] != "asserted" or c["content"] is None
-                    for r in active for c in r["readings"])):
+    if _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
+    else:
+        result["premises"] = premise_status(env, assertions)
+        if (result["premises"]["status"] != "INCONSISTENT"
+                and any(c["kind"] != "asserted" or c["content"] is None
+                        for r in active for c in r["readings"])):
+            result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     if "admission" in result:
         status = result["premises"]["status"]
         result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
@@ -438,13 +452,6 @@ def render_document(path):
         "exposition": "background information", "analogy": "an analogy",
         "explanation": "an explanation", "meta": "a comment about the text",
     }
-    norm_blocks = {}
-    if doc["norms"] is not None:
-        from .norm_english import render_english
-        rendered, _ = render_english(doc["norms"])
-        norm_blocks = {rule.name: block for rule, block in
-                       zip(doc["norms"].rules, rendered.splitlines())}
-
     def kind_description(kind):
         if type(kind) is str:
             return descriptions[kind]
@@ -463,8 +470,11 @@ def render_document(path):
             return f"The passage is recorded as {kind_description(kind)}."
         if type(content) is dict and "norm" in content:
             from .norms import NormDocument
+            from .norm_english import render_rule_sentence
             rule = NormDocument._decode(content)
-            claim = norm_blocks.get(rule.name, f"Quoted norm {rule.name} ({rule.predicate}).")
+            claim = render_rule_sentence(rule, doc["environment"])
+            if rule.over:
+                claim += " Exception to " + ", ".join(rule.over) + "."
             return claim if kind == "norm" else f"{claim} The source presents this as {kind_description(kind)}."
         claim = wording(content)
         if kind == "asserted":
