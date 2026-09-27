@@ -1,30 +1,32 @@
 # Lean service latency (stage 1)
 
-Commit `04aac0c`; AMD EPYC 7B12, 8 logical CPUs; load average [7.24560546875, 6.1416015625, 5.8779296875] before, [6.0263671875, 6.10791015625, 5.8994140625] after; Python 3.14.7; full bench corpus.
+Commit `9eaec60`; AMD EPYC 7B12, 8 logical CPUs; load average [3.1513671875, 4.35595703125, 5.29052734375] before, [3.76904296875, 4.1103515625, 5.0244140625] after; Python 3.14.7; full bench corpus.
 
 Persistent: `LeanService.run(mode, [case])` on one warm `ve_service` process, timed at the Python boundary (JSON, IPC, supervision included). One-shot: one executable process per case, as ve-bench measured Lean. Bracketed values are 95% bootstrap intervals.
 
-Cold start (spawn to handshake, n=20): p50 53.827 ms, p95 91.265 ms.
+Cold start (spawn to handshake, n=20): p50 75.466 ms, p95 151.561 ms.
 
-| Workload | Mode | Persistent p50 ms | Persistent p95 ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |
-|---|---|---:|---:|---:|---:|---:|
-| certificate/tableau | check-certificate | 0.965 [0.945, 0.985] | 1.447 [1.385, 1.537] | 84.47 | 115.986 | 87.5x |
-| certificate/tableau-large | check-certificate | 30.892 [28.784, 33.021] | 45.652 [44.265, 47.597] | 78.438 | 115.6 | 2.5x |
-| certificate/closure | check-certificate | 1.281 [1.252, 1.325] | 2.428 [2.239, 2.616] | 85.985 | 98.233 | 67.1x |
-| certificate/order-farkas | order | 1.246 [1.211, 1.284] | 1.996 [1.903, 2.172] | 69.319 | 109.075 | 55.6x |
-| finite-model/evaluation | evaluate | 0.775 [0.757, 0.787] | 1.496 [1.36, 1.627] | 65.386 | 90.044 | 84.4x |
-| W1/norm-elaboration | norms | 0.618 [0.593, 0.648] | 1.509 [1.33, 1.711] | 79.552 | 92.426 | 128.7x |
-| W1/conflict-check | norms | 1.699 [1.657, 1.753] | 2.745 [2.64, 2.95] | 75.587 | 84.26 | 44.5x |
-| W3/definitions | route | 1.391 [1.352, 1.449] | 4.857 [4.494, 5.198] | 81.108 | 131.487 | 58.3x |
-| W3/bundle | route | 1.659 [1.622, 1.732] | 2.816 [2.653, 3.007] | 84.114 | 104.575 | 50.7x |
-| English/parse | english | 0.597 [0.59, 0.602] | 1.183 [1.093, 1.251] | 55.468 | 82.553 | 92.9x |
-| English/admission | english | 0.647 [0.626, 0.675] | 1.448 [1.285, 1.511] | 56.129 | 82.51 | 86.8x |
+First 100 service requests are timed separately before workload sampling: {'n': 100, 'p50_ms': 1.148, 'p50_ci_ms': [0.975, 1.359], 'p95_ms': 31.302, 'p95_ci_ms': [2.652, 34.318], 'p99_ms': 35.826, 'p99_ci_ms': [31.2, 36.602], 'max_ms': 36.602}.
+
+| Workload | Mode | Persistent p50 ms | Persistent p95 ms | Persistent p99 ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |
+|---|---|---:|---:|---:|---:|---:|---:|
+| certificate/tableau | check-certificate | 1.118 [1.087, 1.175] | 2.217 [2.062, 2.388] | 2.907 [2.469, 3.232] | 87.879 | 96.323 | 78.6x |
+| certificate/tableau-large | check-certificate | 35.501 [34.87, 36.262] | 46.529 [44.95, 50.645] | 57.985 [52.951, 60.365] | 111.334 | 140.624 | 3.1x |
+| certificate/closure | check-certificate | 1.878 [1.787, 1.972] | 3.521 [3.261, 3.705] | 4.434 [3.916, 5.007] | 117.41 | 145.416 | 62.5x |
+| certificate/order-farkas | order | 1.969 [1.908, 2.039] | 3.25 [3.09, 3.689] | 4.557 [3.922, 6.02] | 109.522 | 132.607 | 55.6x |
+| finite-model/evaluation | evaluate | 1.411 [1.339, 1.51] | 3.58 [3.281, 4.198] | 5.044 [4.409, 5.465] | 185.453 | 701.551 | 131.4x |
+| W1/norm-elaboration | norms | 0.869 [0.816, 0.919] | 1.76 [1.572, 1.968] | 2.584 [2.132, 2.914] | 63.901 | 78.121 | 73.5x |
+| W1/conflict-check | norms | 1.519 [1.456, 1.587] | 2.497 [2.295, 2.624] | 3.38 [2.736, 3.825] | 57.965 | 68.072 | 38.2x |
+| W3/definitions | route | 1.482 [1.449, 1.546] | 2.326 [2.178, 2.527] | 2.907 [2.558, 3.034] | 59.745 | 67.359 | 40.3x |
+| W3/bundle | route | 1.62 [1.593, 1.656] | 2.362 [2.201, 2.475] | 3.1 [2.72, 4.555] | 57.761 | 74.814 | 35.7x |
+| English/parse | english | 0.695 [0.657, 0.725] | 1.258 [1.156, 1.412] | 1.619 [1.444, 1.757] | 61.463 | 70.384 | 88.4x |
+| English/admission | english | 0.827 [0.79, 0.851] | 1.346 [1.283, 1.401] | 1.823 [1.497, 2.202] | 62.045 | 71.8 | 75.0x |
 
 Batches (section 4 gates; the client splits at 256 cases per request):
 
 | Workload | Cases | Gate s | Persistent median s | Persistent p95 s | One-shot median s |
 |---|---:|---:|---:|---:|---:|
-| certificate/tableau-large | 8 | 0.3 | 0.343 | 0.474 | 0.333 |
-| W1/conflict-check | 256 | 0.5 | 0.315 | 0.353 | 0.368 |
-| W3/definitions | 2048 | 1.0 | 2.227 | 2.319 | 1.937 |
-| W3/bundle | 256 | 0.25 | 0.322 | 0.373 | 0.241 |
+| certificate/tableau-large | 8 | 0.3 | 0.310 | 0.361 | 0.329 |
+| W1/conflict-check | 256 | 0.5 | 0.186 | 0.216 | 0.224 |
+| W3/definitions | 2048 | 1.0 | 1.197 | 1.291 | 1.094 |
+| W3/bundle | 256 | 0.25 | 0.210 | 0.248 | 0.237 |
