@@ -13,7 +13,7 @@ from ve.norm_strict import parse_strict, print_strict
 from ve.norms import NormDocument, prove_norm_entailment, check_norm_entailment_certificate
 from ve.softnorms import SoftNormDocument
 from ve.softnorms import SoftEnvironment
-from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict
+from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict, elaborate_soft_document
 from ve.surface.softnorms import SoftNorm
 from ve.surface.softnorms import rule_paraphrase
 from tests.test_english_unambiguity import _soft_env
@@ -196,3 +196,15 @@ def test_rank_resolved_pair_counts_override_but_no_weighing_point():
     assert report["residual"]["default_exceptions"] == 2
     assert report["residual"]["holistic_overrides"] == 1
     assert report["residual"]["weighing_points"] == 0
+
+
+def test_python_and_lean_report_rank_warning_and_undeclared_tie():
+    raw = env({"ranks": ["high", "low", "other"], "outranks": [["high", "low"]],
+               "outranking": {"mode": "strict"}})
+    rules = [should("m", "x_required", True, rank="high"),
+             should("n", "x_required", False, rank="low", over=["m"])]
+    soft = SoftNormDocument(SoftEnvironment(raw), rules)
+    row = elaborate_soft_document(soft)
+    assert row["warnings"] == list(soft.warnings)
+    assert "RankAgainstPrecedence: rule n over m" in row["warnings"]
+    assert "undeclared tie: high, other" in row["warnings"]
