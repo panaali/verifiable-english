@@ -137,6 +137,15 @@ def load_document(path: str | Path):
     units = meta.get("units")
     if type(units) is not list or not units:
         raise VEError("document needs units")
+    soft_document = None
+    formula_env = env
+    if soft_enabled:
+        from .softnorms import SoftNormDocument
+        soft_document = SoftNormDocument(env, [u.get("content") for u in units
+                                              if type(u) is dict and u.get("kind") == "norm"
+                                              and type(u.get("content")) is dict
+                                              and "norm" in u["content"]])
+        formula_env = soft_document.extended_env
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -170,7 +179,7 @@ def load_document(path: str | Path):
             norm_content = decode_rule(env, unit["content"]).to_dict()
             formula = None
         else:
-            formula = _formula(env, unit, fences)
+            formula = _formula(formula_env, unit, fences)
         if status == "unformalised" and formula is not None:
             raise VEError("unformalised unit cannot assert formula content")
         if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
@@ -180,26 +189,21 @@ def load_document(path: str | Path):
             mid = soft_digest(f"ve-meaning-{env.identity_version}\n",
                               {"environment_id": env.environment_id, "ast": norm_content})
         else:
-            mid = meaning_id(env, formula) if formula is not None else None
+            mid = meaning_id(formula_env, formula) if formula is not None else None
         if mid is not None and "meaning_id" in unit and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         compiled.append({"id": uid, "span": span, "kind": unit["kind"], "meaning": unit["meaning"],
                          "support": unit["support"], "source": source[span[0]:span[1]].decode("utf-8"),
                          "content": norm_content if norm_content is not None else
-                                    formula_to_data(env, formula) if formula is not None else None,
+                                    formula_to_data(formula_env, formula) if formula is not None else None,
                          "meaning_id": mid})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
-    soft_document = None
-    if soft_enabled:
-        from .softnorms import SoftNormDocument
-        soft_document = SoftNormDocument(env, [u["content"] for u in compiled
-                                          if u["kind"] == "norm" and u["content"] is not None])
     if set(fences) != {u["id"] for u in units if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(env, reading_sets, unit_ids)
+    validate_reading_sets(formula_env, reading_sets, unit_ids)
     active = active_reading_sets(reading_sets)
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
         raise VEError("lemmas must be a list")
@@ -291,24 +295,18 @@ def _check_narrowing_choices(meta, labels):
 
 def check_document(path):
     doc = load_document(path)
-    env = doc["environment"]
     soft = doc["soft_document"]
+    env = soft.extended_env if soft is not None else doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if soft is not None:
-        result["soft"] = {"environment_id": env.environment_id,
+        result["soft"] = {"environment_id": doc["environment"].environment_id,
                           "soft_document_hash": soft.document_hash,
                           "decision_predicates": sorted(soft.extended_env.decision_names),
                           "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
-        # The graph admission route is supplied with the Lean executable in
-        # item 4. Never admit a graph against the W1 tree by accident.
-        if "graph" in doc["meta"]:
-            result["premises"] = {"status": "UNKNOWN", "reason": "soft graph admission pending"}
-            return result
-        env = soft.extended_env
         assertions.extend(formula for _, formula in soft.elaborated.premises())
     if "graph" in doc["meta"]:
         from .admission import parse_label
@@ -338,7 +336,8 @@ def check_document(path):
                                       if all(c["kind"] == "asserted" and c["content"] is not None
                                              for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
-        result["admission"] = admit_document(env, admission)
+        result["admission"] = (admit_document(doc["environment"], admission) if soft is not None
+                               else admit_document(env, admission))
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
