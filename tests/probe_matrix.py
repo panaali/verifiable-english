@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT))
 
 from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom,
                 Unary, Const, check_argument, deduction_identity)
-from ve.ast import Document, _to_data, check_formula, formula_from_data, formula_to_data
+from ve.ast import Document, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
 from ve.identity import meaning_id
 from ve.background import background, dependency_order
 from ve.definitions import compile_definitions
@@ -118,20 +118,22 @@ def operation(name, kind, env, model):
     budget = kind == "budget"
     bad = kind == "rejection"
     source = "broken.\n" if bad else "true.\n"
-    if name == "parse_accept": return lambda: formula_to_data(env, parse(env, source).formulas[0])
+    if name == "parse_accept": return lambda: document_to_data(env, parse(env, source))
     if name == "canonicalize": return lambda: canonicalize(env, source)
     if name == "typing": return lambda: formula_to_data(env, formula_from_data(env, ["not", ["top"]] if not bad else ["unary", "missing", ["const", "x"]]))
     if name == "environment_validation":
         def check_env():
             data = env.to_dict()
             if bad: data["profiles"] = ["missing@0", *data["profiles"]]
-            return Environment(data).environment_id
+            checked = Environment(data)
+            return {"environment_id": checked.environment_id, "environment": checked.to_dict()}
         return check_env
     if name == "model_validation":
         def check_model():
             data = model_wire(env)
             if bad: data["constants"]["x"] = "absent"
-            return FiniteModel.from_dict(env, data).model_id
+            checked = FiniteModel.from_dict(env, data)
+            return {"model_id": checked.model_id, "model": checked.to_dict()}
         return check_model
     if name == "evaluate": return lambda: evaluate(env, Top(), replace(model, model_id="0" * 64) if bad else model, trace=False, max_evaluations=0 if budget else 8)
     if name == "evaluate_trace": return lambda: evaluate(env, Top(), replace(model, model_id="0" * 64) if bad else model, trace=True, max_trace_nodes=0 if budget else 8)
@@ -377,7 +379,7 @@ def generate():
         english = render(Document((Top(),)), env, "ve_english")
         for kind in INPUT_CLASSES:
             source = "broken.\n" if kind == "rejection" else "x" * (limits.MAX_SOURCE_BYTES + 1) if kind == "budget" else english
-            result = outcome(lambda: formula_to_data(env, parse_english(env, source).formulas[0]))
+            result = outcome(lambda: document_to_data(env, parse_english(env, source)))
             rows.append({"language": language, "profiles": [*profiles, "english-surface"],
                          "operation": "parse_accept", "input_class": kind, **result})
     source_commit = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", "tests/probe_matrix.py"], cwd=ROOT, text=True).strip()
