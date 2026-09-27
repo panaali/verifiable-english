@@ -13,6 +13,7 @@ fn replay_untrusted_soft_elaborations() {
     assert_eq!(cases.as_array().unwrap().len(), 24);
     for case in cases.as_array().unwrap() {
         let name = case["id"].as_str().unwrap();
+        assert_eq!(case["untrusted"], Value::Bool(true), "{name} source trust flag");
         let environment = Environment::from_value(&case["environment"]).unwrap();
         let document = Document::from_value(&environment, &case["formulas"]).unwrap();
         let model = FiniteModel::from_value(&environment, &case["model"]).unwrap();

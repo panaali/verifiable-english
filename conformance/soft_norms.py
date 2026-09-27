@@ -162,6 +162,7 @@ def rust_fixture_rows():
             expected = [evaluate(environment, formula_from_data(environment, formula),
                                  model, trace=False).value for formula in formulas]
             result.append({"id": name + f"-{int(required)}{int(permitted)}",
+                           "untrusted": True,
                            "source": {"environment": raw, "norms": rules},
                            "environment": stripped, "formulas": formulas,
                            "model": model_data, "expected": expected,
