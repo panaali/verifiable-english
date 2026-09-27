@@ -9,10 +9,13 @@ from ve.document import _check_narrowing_choices, check_document, coverage, load
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
-from ve.ast import Top
+from ve.ast import Top, Exists, Unary, Var
 from ve.ast import formula_from_data
 from ve.model import FiniteModel
 from ve.readings import check_readings, plan_choices
+from tests.test_norms import environment as norm_environment, permission, rule
+from ve.norms import NormDocument
+from ve.ast import formula_to_data
 
 
 def write_doc(tmp_path, text, units, **extra):
@@ -40,6 +43,272 @@ def test_byte_partition_and_vacuity(tmp_path):
     assert report["unformalised_reasons"] == {"future_profile": 1}
     assert check_document(path)["premises"]["status"] == "model"
     assert "Café" in render_document(path)
+
+
+def test_mixed_csam_norm_is_checked_without_losing_rest_of_paragraph(tmp_path):
+    env = norm_environment({"generate_csam_permitted": permission(
+        act="{0} generate child sexual abuse material", args=("assistant",))},
+        sorts=("assistant",))
+    norm = rule("no-csam", "generate_csam_permitted", False)
+    norm_doc = NormDocument(env, [norm])
+    header = b"Claude should never:\n"
+    bullets = (
+        "* Provide serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties.\n"
+        "* Provide serious uplift to attacks on critical infrastructure (power grids, water systems, financial systems) or critical safety systems.\n"
+        "* Create cyberweapons or malicious code that could cause significant damage if deployed.\n"
+        "* Take actions that clearly and substantially undermine Anthropic’s ability to oversee and correct advanced AI models (see [Being broadly safe](#being-broadly-safe) below).\n"
+        "* Engage or assist in an attempt to kill or disempower the vast majority of humanity or the human species as whole.\n"
+        "* Engage or assist any individual or group with an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or economic control.\n"
+        "* Generate child sexual abuse material (CSAM).\n\n").encode()
+    assert len(bullets) == 874  # The pilot review's complete u0165 span.
+    source = header + bullets
+    cut = source.index(b"* Generate child sexual abuse material")
+    parts = [
+        {**unit("remaining-text", len(header), cut, ["unformalised", "causation"],
+                 {"unformalised": "causation"}), "status": "UNFORMALISED"},
+        {**unit("csam-rule", cut, len(source), "norm", content=norm.to_dict()),
+         "status": "CHECKED"},
+    ]
+    graph = {"root": "layer", "nodes": [{
+        "name": "layer", "ast": formula_to_data(env, norm_doc.elaborate("generate_csam_permitted")),
+        "label": "layer:norms:generate_csam_permitted"}]}
+    classification = {"name": "csam-classification", "arguments": ["material"],
+                      "decided_by": "policy-reviewer", "necessary": [], "sufficient": [],
+                      "factors": ["Which material falls within this class is unresolved."],
+                      "precedents": [], "jurisdiction": "policy", "version": 1}
+    path = write_doc(tmp_path, source, [
+        {**unit("u0164", 0, len(header), "meta"), "status": "LABELLED"},
+        {"id": "u0165", "span": [len(header), len(source)],
+         "status": "MIXED", "parts": parts}],
+                     environment_json=env.to_dict(), graph=graph,
+                     open_terms=[classification])
+    loaded = load_document(path)
+    assert [u.get("parent_id") for u in loaded["units"]] == [None, "u0165", "u0165"]
+    result = check_document(path)
+    assert result["admission"]["admitted"]
+    assert result["admission"]["kinds"] == ["meta", ["unformalised", "causation"], "norm"]
+    assert result["admission"]["report"]["assumptions"][0]["label"] == graph["nodes"][0]["label"]
+    assert result["coverage"]["bytes_by_status"] == {
+        "LABELLED": len(header), "UNFORMALISED": cut - len(header),
+        "CHECKED": len(source) - cut}
+    assert result["coverage"]["accounted_bytes"] == len(source)
+    assert result["coverage"]["residual"]["open_terms"] == 1
+    assert "must not generate child sexual abuse material" in render_document(path)
+
+
+@pytest.mark.parametrize("spans", [[[0, 2], [3, 6]], [[0, 4], [3, 6]],
+                                   [[0, 3], [3, 5]]])
+def test_mixed_parts_reject_gap_overlap_and_tail(tmp_path, spans):
+    parts = [{**unit("a", *spans[0]), "status": "LABELLED"},
+             {**unit("b", *spans[1]), "status": "LABELLED"}]
+    path = write_doc(tmp_path, b"abcdef", [{"id": "whole", "span": [0, 6],
+                                              "status": "MIXED", "parts": parts}])
+    with pytest.raises(VEError, match="partition"):
+        load_document(path)
+
+
+def test_unresolved_norm_reading_does_not_activate_stale_unit_content(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"This rule has another reading.\n"
+    old = rule("old", "permitted", True).to_dict()
+    candidate = {"id": "choice", "kind": "norm", "meaning_id": "pending",
+                 "content": None, "admission": {"who": "reviewer", "why": "pending",
+                                                 "distinguishing_models": {}}}
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "open", "readings": [candidate]}
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=old)],
+                     environment_json=env.to_dict(), reading_sets=[reading_set])
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert coverage(loaded)["bytes_by_status"] == {"OPEN": len(source)}
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
+
+
+@pytest.mark.parametrize("env,broken,diagnostic", [
+    (norm_environment({}), rule("bad", "missing", True), "regulated predicate missing"),
+    (norm_environment({"permitted": permission()}),
+     rule("bad", "permitted", True, Unary("missing", Var(0))), "Unknown predicate"),
+    (Environment(environment()), rule("bad", "missing", True), "norms@0 is required"),
+])
+def test_every_active_norm_is_validated_without_a_graph(tmp_path, env, broken, diagnostic):
+    source = b"Rule.\n"
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=broken.to_dict())],
+                     environment_json=env.to_dict())
+    with pytest.raises(VEError, match=diagnostic):
+        check_document(path)
+
+
+def test_unresolved_norm_never_produces_a_false_inconsistency_or_layer(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"Rule.\nSome act is permitted.\n"
+    cut = len(b"Rule.\n")
+    candidate = {"id": "choice", "kind": "norm", "meaning_id": "pending",
+                 "content": None, "admission": {"who": "reviewer", "why": "pending",
+                                                 "distinguishing_models": {}}}
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "open", "readings": [candidate]}
+    existence = formula_to_data(env, Exists("act", Unary("permitted", Var(0))))
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, cut, "norm", content=rule("allow", "permitted", True).to_dict()),
+                      unit("claim", cut, len(source), content={"ast": existence})],
+                     environment_json=env.to_dict(), reading_sets=[reading_set])
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
+    assert query(path, tmp_path, existence)["verdict"] == "UNKNOWN"
+    graph = {"root": "layer", "nodes": [{"name": "layer", "ast": ["top"],
+                                           "label": "layer:norms:permitted"}]}
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, cut, "norm", content=rule("allow", "permitted", True).to_dict()),
+                      unit("claim", cut, len(source), content={"ast": existence})],
+                     environment_json=env.to_dict(), reading_sets=[reading_set], graph=graph)
+    with pytest.raises(VEError, match="needs an elaborator"):
+        check_document(path)
+
+
+def test_active_norm_layer_enters_readings_queries(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"All acts may be done.\n"
+    norm = rule("allow", "permitted", True)
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=norm.to_dict())],
+                     environment_json=env.to_dict())
+    loaded = load_document(path)
+    assert loaded["units"][0]["meaning_id"] == loaded["norms"].meaning_id("allow")
+    conclusion = formula_to_data(env, loaded["norms"].elaborate("permitted"))
+    assert check_document(path)["premises"]["status"] == "model"
+    assert query(path, tmp_path, conclusion)["verdict"] == "ALL"
+
+
+@pytest.mark.parametrize("explicit_null", [False, True])
+def test_narrowing_away_pending_norm_restores_active_layer(tmp_path, explicit_null):
+    env = norm_environment({"permitted": permission()})
+    source = b"All acts may be done.\nThe other sentence has two readings.\n"
+    cut = len(b"All acts may be done.\n")
+    norm = rule("allow", "permitted", True)
+    model = {"complete": True, "domains": {"act": ["act0"]},
+             "constants": {}, "relations": {"permitted": []}}
+    model_id = FiniteModel.from_dict(env, model).model_id
+    pending = {"id": "pending", "kind": "norm", "meaning_id": "pending",
+               "content": None, "admission": {"who": "reviewer", "why": "awaiting elaboration",
+                                               "distinguishing_models": {"true": model_id}}}
+    asserted = reading(env, "true", ["top"])
+    asserted["admission"]["distinguishing_models"] = {"pending": model_id}
+    reading_set = {"id": "readings", "unit": "ambiguous", "version": 1,
+                   "status": "open", "readings": [pending, asserted],
+                   "models": {model_id: model}}
+    narrowings = [
+        {"id": "keep-true", "set": "readings", "version": 1, "keeps": ["true"],
+         "by": "reviewer", "reason_spans": ["ambiguous"]},
+        {"id": "keep-pending", "set": "readings", "version": 1,
+         "keeps": ["pending"], "by": "reviewer", "reason_spans": ["ambiguous"]},
+    ]
+    ambiguous = unit("ambiguous", cut, len(source), "norm")
+    if not explicit_null:
+        ambiguous.pop("content")
+    path = write_doc(tmp_path, source, [
+        unit("rule", 0, cut, "norm", content=norm.to_dict()),
+        ambiguous],
+        environment_json=env.to_dict(), reading_sets=[reading_set], narrowings=narrowings)
+    conclusion = formula_to_data(env, NormDocument(env, [norm]).elaborate("permitted"))
+
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
+    assert query(path, tmp_path, conclusion)["verdict"] == "UNKNOWN"
+    assert query(path, tmp_path, conclusion, "keep-pending")["verdict"] == "UNKNOWN"
+    narrowed = query(path, tmp_path, conclusion, "keep-true")
+    assert narrowed["verdict"] == "ALL"
+    assert narrowed["vacuous"] is False
+    assert narrowed["premises"]["status"] == "model"
+    assert narrowed["narrowing"] == "narrowing:keep-true"
+
+
+@pytest.mark.parametrize("explicit_null", [False, True])
+def test_pending_norm_unit_with_authored_assertion_reading(tmp_path, explicit_null):
+    env = norm_environment({"permitted": permission()})
+    source = b"The rule needs a reading.\n"
+    norm_unit = unit("rule", 0, len(source), "norm")
+    if not explicit_null:
+        norm_unit.pop("content")
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "authored", "signature": "reviewer",
+                   "readings": [reading(env, "chosen", ["top"])]}
+    path = write_doc(tmp_path, source, [norm_unit], environment_json=env.to_dict(),
+                     reading_sets=[reading_set])
+
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert coverage(loaded)["bytes_by_status"] == {"CHECKED": len(source)}
+    assert check_document(path)["premises"]["status"] == "model"
+    result = query(path, tmp_path, ["top"])
+    assert result["verdict"] == "ALL"
+    assert result["vacuous"] is False
+
+
+@pytest.mark.parametrize("content", [None, {"ast": ["top"]}])
+def test_norm_unit_without_norm_block_does_not_enter_norm_validation(tmp_path, content):
+    env = norm_environment({"permitted": permission()})
+    source = b"This norm has no norm block.\n"
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=content)],
+                     environment_json=env.to_dict())
+
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert check_document(path)["premises"]["status"] == "model"
+
+
+def test_quoted_norm_renders_its_own_opposite_content(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"Allow.\nAlice forbids.\n"
+    cut = len(b"Allow.\n")
+    path = write_doc(tmp_path, source,
+                     [unit("allow", 0, cut, "norm", content=rule("same", "permitted", True).to_dict()),
+                      unit("quote", cut, len(source), ["attributed", "alice", "says", "norm"],
+                           content=rule("same", "permitted", False).to_dict())],
+                     environment_json=env.to_dict())
+    rendered = render_document(path)
+    assert "may be done" in rendered
+    assert "must not be done" in rendered
+    assert rendered.index("may be done") < rendered.index("must not be done")
+
+
+@pytest.mark.parametrize("meaning,content", [
+    ({"unformalised": "future_profile"}, None),
+    ({"open": ["uncertain"]}, None),
+])
+def test_explicit_label_cannot_hide_unresolved_meaning(tmp_path, meaning, content):
+    env = environment()
+    open_terms = [{"name": "uncertain", "arguments": [], "decided_by": "reviewer",
+                   "necessary": [], "sufficient": [], "factors": [], "precedents": [],
+                   "jurisdiction": "local", "version": 1}] if "open" in meaning else []
+    source = b"Text.\n"
+    path = write_doc(tmp_path, source,
+                     [{**unit("part", 0, len(source), "meta", meaning, content),
+                       "status": "LABELLED"}], open_terms=open_terms)
+    with pytest.raises(VEError, match="status contradicts"):
+        load_document(path)
+
+
+def test_explicit_status_must_match_active_reading_override(tmp_path):
+    env = Environment(environment())
+    source = b"Claim.\n"
+    rs = {"id": "s", "unit": "claim", "version": 1, "status": "open",
+          "readings": [reading(env, "r", ["top"])]}
+    path = write_doc(tmp_path, source,
+                     [{**unit("claim", 0, len(source), "asserted", content={"ast": ["top"]}),
+                       "status": "CHECKED"}], reading_sets=[rs])
+    with pytest.raises(VEError, match="status contradicts"):
+        load_document(path)
+
+
+def test_mixed_parent_span_requires_integer_byte_offsets(tmp_path):
+    source = b"abcdef"
+    parts = [{**unit("a", 0, 3), "status": "LABELLED"},
+             {**unit("b", 3, 6), "status": "LABELLED"}]
+    path = write_doc(tmp_path, source,
+                     [{"id": "whole", "span": [0.0, 6.0], "status": "MIXED", "parts": parts}])
+    with pytest.raises(VEError, match="partitioned parts"):
+        load_document(path)
 
 
 @pytest.mark.parametrize("spans", [[[0, 2], [3, 6]], [[0, 4], [3, 6]], [[3, 6], [0, 3]],
