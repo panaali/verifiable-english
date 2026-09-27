@@ -106,6 +106,12 @@ def rust_fixture_rows():
         environment = Environment(stripped)
         formulas = [p["ast"] for p in row["premises"]] + [
             p["ast"] for p in row["background"] if p.get("generator") == "soft"]
+        target_start = len(formulas)
+        for target in row["conflict_targets"]:
+            existential = target["ast"]
+            for sort in reversed(target["sorts"]):
+                existential = ["exists", sort, existential]
+            formulas.append(existential)
         for required, permitted in ((False, False), (False, True), (True, True)):
             relations = {p: [] for p in environment.predicates}
             relations["x_required"] = [["a"]] if required else []
@@ -120,14 +126,17 @@ def rust_fixture_rows():
             result.append({"id": name + f"-{int(required)}{int(permitted)}",
                            "source": {"environment": raw, "norms": rules},
                            "environment": stripped, "formulas": formulas,
-                           "model": model_data, "expected": expected})
+                           "model": model_data, "expected": expected,
+                           "target_start": target_start,
+                           "conflict": any(expected[target_start:])})
     return result
 
 
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "--write-rust-fixtures":
         rows = rust_fixture_rows()
-        RUST_FIXTURES.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
+        RUST_FIXTURES.write_text(json.dumps(rows, sort_keys=True, ensure_ascii=False,
+                                            separators=(",", ":")) + "\n")
         print(json.dumps({"rust_cases": len(rows), "path": str(RUST_FIXTURES)}))
         return
     compared = 0
