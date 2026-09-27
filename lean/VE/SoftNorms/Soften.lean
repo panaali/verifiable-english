@@ -272,6 +272,8 @@ def softSemanticCheck (D : SoftDoc) : Bool :=
   (decisionNames D).all (fun n => (D.E.predicates n).isNone) &&
   D.T.nodes.all (fun N => (N.guard :: N.carveOuts).all (fun φ => φ.check D.E (sortsOf D N.pred).reverse)) &&
   (softPremises D).all (fun φ => φ.check (envAt (soften D) 0) []) &&
+  D.T.nodes.all (fun N => (selects' D N).check (envAt (soften D) (size (soften D))) (sortsOf D N.pred).reverse) &&
+  (collidingPairs D).all (fun x => sortsOf D x.1.pred == sortsOf D x.2.pred) &&
   D.T.regulated.all (fun r =>
     [strictPos D r.name, strictNeg D r.name, defaultPos D r.name, defaultNeg D r.name].all
       (fun φ => φ.check (envAt (soften D) (size (soften D))) r.sorts.reverse))
@@ -315,6 +317,8 @@ structure SoftValid (D : SoftDoc) : Prop where
   decFresh : ∀ n ∈ decisionNames D, D.E.predicates n = none
   typed : ∀ N ∈ D.T.nodes, ∀ φ ∈ N.guard :: N.carveOuts, φ.WellFormed D.E (sortsOf D N.pred).reverse
   premTyped : ∀ φ ∈ softPremises D, φ.WellFormed (envAt (soften D) 0) []
+  selTyped : ∀ N ∈ D.T.nodes, (selects' D N).WellFormed (envAt (soften D) (size (soften D))) (sortsOf D N.pred).reverse
+  cpSorts : ∀ x ∈ collidingPairs D, sortsOf D x.1.pred = sortsOf D x.2.pred
   decTyped : ∀ r ∈ D.T.regulated, ∀ φ ∈ [strictPos D r.name, strictNeg D r.name, defaultPos D r.name,
     defaultNeg D r.name], φ.WellFormed (envAt (soften D) (size (soften D))) r.sorts.reverse
 
@@ -323,12 +327,13 @@ theorem softValid_of_wellFormed (D : SoftDoc) (h : WellFormedSoft D = true) : So
   simp only [softSemanticCheck, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
     Bool.not_eq_true', List.contains_iff_mem, Bool.or_eq_true, bne_iff_ne, ne_eq,
     Option.all_eq_true, Option.isNone_iff_eq_none, beq_iff_eq] at hs
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hwf, hn⟩, hr⟩, hpr⟩, hpp⟩, hpn⟩, hpred⟩, hout⟩, hord⟩, hsoh⟩, hdn⟩, hdf⟩, hty⟩, hpt⟩,
-    hdt⟩ := hs
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hwf, hn⟩, hr⟩, hpr⟩, hpp⟩, hpn⟩, hpred⟩, hout⟩, hord⟩, hsoh⟩, hdn⟩, hdf⟩, hty⟩, hpt⟩,
+    hst⟩, hcs⟩, hdt⟩ := hs
   refine ⟨hwf, hn, hr, hpr, hpp, fun pr hpr' hm => ?_, hpred, ⟨hout, VE.Norms.isOk_ok hord⟩,
     fun N hN hd m hm M hM => ?_, hdn, hdf,
     fun N hN φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hty N hN φ hφ),
     fun φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hpt φ hφ),
+    fun N hN => (VE.check_iff_wellFormed _ _ _).mp (hst N hN), hcs,
     fun r hr' φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hdt r hr' φ hφ)⟩
   · have := hpn pr hpr'
     simp_all
