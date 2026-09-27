@@ -180,6 +180,43 @@ def test_active_norm_layer_enters_readings_queries(tmp_path):
     assert query(path, tmp_path, conclusion)["verdict"] == "ALL"
 
 
+def test_narrowing_away_pending_norm_restores_active_layer(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"All acts may be done.\nThe other sentence has two readings.\n"
+    cut = len(b"All acts may be done.\n")
+    norm = rule("allow", "permitted", True)
+    model = {"complete": True, "domains": {"act": ["act0"]},
+             "constants": {}, "relations": {"permitted": []}}
+    model_id = FiniteModel.from_dict(env, model).model_id
+    pending = {"id": "pending", "kind": "norm", "meaning_id": "pending",
+               "content": None, "admission": {"who": "reviewer", "why": "awaiting elaboration",
+                                               "distinguishing_models": {"true": model_id}}}
+    asserted = reading(env, "true", ["top"])
+    asserted["admission"]["distinguishing_models"] = {"pending": model_id}
+    reading_set = {"id": "readings", "unit": "ambiguous", "version": 1,
+                   "status": "open", "readings": [pending, asserted],
+                   "models": {model_id: model}}
+    narrowings = [
+        {"id": "keep-true", "set": "readings", "version": 1, "keeps": ["true"],
+         "by": "reviewer", "reason_spans": ["ambiguous"]},
+        {"id": "keep-pending", "set": "readings", "version": 1,
+         "keeps": ["pending"], "by": "reviewer", "reason_spans": ["ambiguous"]},
+    ]
+    path = write_doc(tmp_path, source, [
+        unit("rule", 0, cut, "norm", content=norm.to_dict()),
+        unit("ambiguous", cut, len(source), "meta")],
+        environment_json=env.to_dict(), reading_sets=[reading_set], narrowings=narrowings)
+    conclusion = formula_to_data(env, NormDocument(env, [norm]).elaborate("permitted"))
+
+    assert query(path, tmp_path, conclusion)["verdict"] == "UNKNOWN"
+    assert query(path, tmp_path, conclusion, "keep-pending")["verdict"] == "UNKNOWN"
+    narrowed = query(path, tmp_path, conclusion, "keep-true")
+    assert narrowed["verdict"] == "ALL"
+    assert narrowed["vacuous"] is False
+    assert narrowed["premises"]["status"] == "model"
+    assert narrowed["narrowing"] == "narrowing:keep-true"
+
+
 def test_quoted_norm_renders_its_own_opposite_content(tmp_path):
     env = norm_environment({"permitted": permission()})
     source = b"Allow.\nAlice forbids.\n"

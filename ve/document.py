@@ -291,13 +291,18 @@ def load_document(path: str | Path):
 
 def _fixed_and_active(doc):
     sets = active_reading_sets(doc["meta"].get("reading_sets", []))
+    return _fixed_premises(doc, sets), sets
+
+
+def _fixed_premises(doc, sets):
+    """Select fixed claims against the reading choices used by this check."""
     units_with_sets = {r["unit"] for r in sets}
     fixed = [u["content"] for u in doc["units"] if u["kind"] == "asserted"
              and u["content"] is not None and u["id"] not in units_with_sets]
     if doc["norms"] is not None and not _unresolved_norm_reading(sets):
         fixed.extend(formula_to_data(doc["environment"], formula)
                      for _, formula in doc["norms"].premises())
-    return fixed, sets
+    return fixed
 
 
 def _unresolved_norm_reading(sets):
@@ -516,7 +521,7 @@ def main(argv=None):
             data = coverage(doc)
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
-            fixed, active = _fixed_and_active(doc)
+            active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]
             if args.narrowing:
@@ -530,7 +535,8 @@ def main(argv=None):
                 sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
                         if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
                         for r in sets]
-            data = check_readings(doc["environment"], sets, conclusion, fixed=fixed)
+            data = check_readings(doc["environment"], sets, conclusion,
+                                  fixed=_fixed_premises(doc, sets))
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
         else:
