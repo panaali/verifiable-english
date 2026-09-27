@@ -17,7 +17,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom,
+from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom, And, Not,
                 Unary, Const, check_argument, deduction_identity)
 from ve.ast import Document, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
 from ve.identity import meaning_id
@@ -42,6 +42,7 @@ from ve.english import parse_english
 from ve.printer import render
 from ve import limits
 from ve.wire import canonical_json
+from ve.order import decode_trace
 
 OUT = ROOT / "conformance/baseline-2026-09"
 LAYERS = ("data@0", "definitions@0", "documents@1", "norms@0", "time@0")
@@ -290,6 +291,38 @@ def boundary_baselines():
     pair("MAX_ENTITIES", limits.MAX_ENTITIES, entities)
     pair("MAX_PACKAGE_BYTES", limits.MAX_PACKAGE_BYTES,
          lambda size: len(canonical_json("x" * (size - 2))))
+    pair("MAX_INDEX", limits.MAX_INDEX, lambda size: len(canonical_json(size)))
+    pair("MAX_JSON_DEPTH", limits.MAX_JSON_DEPTH,
+         lambda size: len(canonical_json([0] if size == 1 else nested_json(size))))
+    def nested_formula(leaves):
+        level = [Top() for _ in range(leaves)]
+        while len(level) > 1:
+            level = [And(level[i], level[i + 1]) if i + 1 < len(level) else level[i]
+                     for i in range(0, len(level), 2)]
+        return level[0]
+    at_nodes = Not(nested_formula(5000))  # 5000 leaves + 4999 And + one Not
+    pair("MAX_NODES", limits.MAX_NODES,
+         lambda size: check_formula(env, at_nodes if size == limits.MAX_NODES else Not(at_nodes)).__class__.__name__)
+    pair("MAX_DEPTH", limits.MAX_DEPTH,
+         lambda size: check_formula(env, repeated_not(size - 1)).__class__.__name__)
+    pair("MAX_EVALUATIONS_request", limits.MAX_EVALUATIONS,
+         lambda size: evaluate(env, Top(), model, trace=False, max_evaluations=size))
+    pair("MAX_TABLEAU_DEPTH", limits.MAX_TABLEAU_DEPTH,
+         lambda size: decode_trace(nested_trace(size))["rule"])
+    pair("order_trace_decoder_fuel", 125,
+         lambda size: decode_trace(nested_trace(size))["rule"])
+    def tuples(size):
+        raw = raw_environment(())
+        raw["vocabulary"]["predicates"]["edge"] = {"arguments": ["item", "item"], "description": "edge"}
+        tuple_env = Environment(raw)
+        data = model_wire(tuple_env)
+        data["domains"]["item"] = [f"i{i}" for i in range(317)]
+        data["constants"]["x"] = "i0"
+        data["relations"]["base"] = []
+        data["relations"]["edge"] = [[a, b] for a, b in itertools.islice(
+            itertools.product(data["domains"]["item"], repeat=2), size)]
+        return FiniteModel.from_dict(tuple_env, data).model_id
+    pair("MAX_TUPLES", limits.MAX_TUPLES, tuples)
     work_pair("max_evaluations", 1,
          lambda size: evaluate(env, Top(), model, trace=False, max_evaluations=size))
     work_pair("max_trace_nodes", 1,
@@ -303,7 +336,37 @@ def boundary_baselines():
     rows["tableau_max_steps"] = {"cap": exact,
         "at": outcome(lambda: check_entailment_certificate(env, (), Top(), proof.certificate, max_steps=exact)),
         "under": outcome(lambda: check_entailment_certificate(env, (), Top(), proof.certificate, max_steps=exact - 1))}
+    trace_model_data = model_wire(env)
+    trace_model_data["domains"]["item"] = ["i", "j"]
+    trace_model = FiniteModel.from_dict(env, trace_model_data)
+    rows["trace_exhaustion_10000"] = {"cap": 10000,
+        "at": outcome(lambda: evaluate(env, Document((Top(),) * 10000), model,
+                                trace=True, max_trace_nodes=10000)),
+        "over": outcome(lambda: evaluate(env, Document((Top(),) * 9998 +
+                                             (formula_from_data(env, ["forall", "item", ["top"]]),)),
+                                        trace_model, trace=True, max_trace_nodes=10000))}
     return rows
+
+
+def repeated_not(count):
+    node = Top()
+    for _ in range(count):
+        node = Not(node)
+    return node
+
+
+def nested_json(depth):
+    value = 0
+    for _ in range(depth):
+        value = [value]
+    return value
+
+
+def nested_trace(depth):
+    node = {"rule": "close"}
+    for _ in range(depth - 1):
+        node = {"rule": "expand", "at": 0, "children": [node]}
+    return node
 
 
 def feature_baselines():
@@ -417,6 +480,7 @@ def render_matrix(data):
         "- A nonempty lemma bundle is `Checked` by Python on closure, closure+nary, order and FOL profiles. The plan's closure-bundle Lean gap is therefore a Stage 2 coverage task.",
         "- Python accepts norms with definitions and data flags, including both together; Lean's documented norms route gate must be closed before authority switches for those cells.",
         "- Sixteen ve.core@0.2 profile envelopes combining order and definitions fail during environment construction. They are U for all operations; `profiles.checker_family` alone does not describe this gate.",
+        "- The order trace decoder accepts 125 nested nodes even though `MAX_TABLEAU_DEPTH` is 124; it rejects 126. Stage 2 must preserve this public boundary or make a recorded product decision.",
         "", "| Feature probe | Cell/status |", "|---|---|"]
     for name, result in data["feature_probes"].items():
         lines.append(f"| `{name}` | {result['cell']}: `{result['status']}` |")
