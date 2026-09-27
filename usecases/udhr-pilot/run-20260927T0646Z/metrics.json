@@ -1,0 +1,263 @@
+{
+  "source": {
+    "path": "source/udhr.md",
+    "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
+    "bytes": 10916,
+    "fetch_date_utc": "2026-09-27"
+  },
+  "baseline": "ve-green-z6",
+  "unit_scale": "sentence or clause; headings and standalone speaker/transition fragments separate",
+  "previous_run": null,
+  "old_boundary_aggregation": "not applicable; no previous run",
+  "bytes_accounted": 10916,
+  "bytes_accounted_percent": 100,
+  "unit_count": 114,
+  "unit_counts_by_status": {
+    "LABELLED": 34,
+    "OPEN": 3,
+    "READINGS": 5,
+    "UNFORMALISED": 72
+  },
+  "bytes_by_status": {
+    "LABELLED": 535,
+    "OPEN": 226,
+    "READINGS": 650,
+    "UNFORMALISED": 9505
+  },
+  "open_terms": [
+    {
+      "name": "equal_before_law",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "equal legal standing",
+        "equal legal protection",
+        "scope of comparators"
+      ]
+    },
+    {
+      "name": "inherent_dignity",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of dignity",
+        "scope of inherence"
+      ]
+    },
+    {
+      "name": "inalienable_rights",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which rights",
+        "conditions on transfer or loss"
+      ]
+    },
+    {
+      "name": "essential",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "essential for which end",
+        "degree of necessity"
+      ]
+    },
+    {
+      "name": "greatest_importance",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "comparison class",
+        "measure of importance"
+      ]
+    },
+    {
+      "name": "natural_group_unit",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of natural",
+        "meaning of fundamental",
+        "what counts as family"
+      ]
+    },
+    {
+      "name": "arbitrary",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "legality",
+        "reasonableness",
+        "procedural safeguards"
+      ]
+    },
+    {
+      "name": "fair",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "procedural fairness",
+        "public access",
+        "independence"
+      ]
+    },
+    {
+      "name": "adequate",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "health needs",
+        "living conditions",
+        "resources"
+      ]
+    },
+    {
+      "name": "just",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "fairness criteria",
+        "comparison group"
+      ]
+    },
+    {
+      "name": "reasonable",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "hours",
+        "work setting",
+        "health and rest"
+      ]
+    },
+    {
+      "name": "genuine",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "authenticity of election or prosecution",
+        "procedural evidence"
+      ]
+    }
+  ],
+  "reading_sets": [
+    {
+      "id": "rs_u017",
+      "unit": "u017",
+      "status": "open",
+      "candidates": [
+        "strict",
+        "default"
+      ],
+      "formula_elaborated": false
+    },
+    {
+      "id": "rs_u052",
+      "unit": "u052",
+      "status": "open",
+      "candidates": [
+        "permission",
+        "possibility"
+      ],
+      "formula_elaborated": false
+    },
+    {
+      "id": "rs_u074",
+      "unit": "u074",
+      "status": "open",
+      "candidates": [
+        "permission",
+        "possibility"
+      ],
+      "formula_elaborated": false
+    },
+    {
+      "id": "rs_u112",
+      "unit": "u112",
+      "status": "open",
+      "candidates": [
+        "permission",
+        "possibility"
+      ],
+      "formula_elaborated": false
+    },
+    {
+      "id": "rs_u114",
+      "unit": "u114",
+      "status": "open",
+      "candidates": [
+        "permission",
+        "possibility"
+      ],
+      "formula_elaborated": false
+    }
+  ],
+  "missing_feature_tally": {
+    "attribution": 3,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 63,
+    "other:metaphorical_endowment": 1,
+    "time": 1
+  },
+  "unresolved_reading_feature_tally": {
+    "defaults": 1,
+    "modality/belief": 4,
+    "norms": 5
+  },
+  "check_verdicts": {
+    "document_load": "PASS",
+    "byte_partition": "PASS",
+    "document_check": "PASS",
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "non-assertion reading elaboration pending"
+    },
+    "reading_plan_route": "enumerate",
+    "formal_formula_units": 0,
+    "assertion_admission": "not applicable; no formal assertion graph",
+    "render": "PASS",
+    "reading_models": "schema references only; null-content candidates have no semantic separating model"
+  },
+  "document_id": "89550c63e179754135309a26afb1fbfc03ed8285cd17c4017fd4ede8cd0405f7",
+  "source_id": "d03c35983a7b6e4cb5bc20bb758c699a1da7d0d494390350ad86e6f4ce3b95df",
+  "coverage_tool": {
+    "source_bytes": 10916,
+    "accounted_bytes": 10916,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "meta": 535,
+      "unformalised": 1383,
+      "exposition": 226,
+      "attributed": 556,
+      "norm": 8216
+    },
+    "unformalised_reasons": {
+      "causation": 2,
+      "attribution": 3,
+      "modality_belief": 2,
+      "norms": 63,
+      "time": 1,
+      "other_metaphorical_endowment": 1
+    },
+    "residual": {
+      "open_terms": 12,
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 5
+    },
+    "residual_total": 17
+  }
+}
