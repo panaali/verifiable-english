@@ -45,17 +45,17 @@ def test_four_views_exact_example_and_legacy_entry_points():
         "fol_symbols": "∀ x0:item, ((active(x0)) → (∃ x1:agent, (owns(x1, x0))))",
         "fol_keywords": "forall x0:item, ((active(x0)) implies (exists x1:agent, (owns(x1, x0))))",
         "ve_strict": "for every item x0, (if (x0 is active), then (there exists agent x1, (x1 owns x0)))",
-        "ve_natural": "for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0)))",
+        "ve_explicit": "for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0)))",
     }
     for view, expected in texts.items():
         assert render(formula, ENV, view) == expected
         doc_text = expected
         assert render(Document((formula,)), ENV, view) == doc_text + ".\n"
         assert render_fol(ENV, Document((formula,)), view=view) == doc_text + ".\n"
-    assert natural_formula(ENV, formula).text == texts["ve_natural"]
+    assert natural_formula(ENV, formula).text == "Every deployed service has an owner"
     document = Document((formula, formula))
     assert render(document, ENV, "ve_strict") == print_document(ENV, document)
-    assert natural_document(ENV, document).text.count("for every service x0") == 2
+    assert natural_document(ENV, document).text.count("Every deployed service has an owner") == 2
     assert "x2" not in natural_document(ENV, document).text
     with pytest.raises(ValueError):
         render(formula, ENV, "informal")
@@ -151,8 +151,8 @@ def test_adversarial_pairs_differ_in_text_and_in_a_checked_model():
                         witnesses[i] |= evaluate(ENV, left, model).value != evaluate(ENV, right, model).value
     assert all(witnesses)
     for left, right in pairs:
-        assert render(left, ENV, "ve_natural") != render(right, ENV, "ve_natural")
-    exception_text = render(pairs[7][0], ENV, "ve_natural")
+        assert render(left, ENV, "ve_explicit") != render(right, ENV, "ve_explicit")
+    exception_text = render(pairs[7][0], ENV, "ve_explicit")
     assert "it is not the case that (@api is exempt)" in exception_text
     assert "then (@api is reviewed)" in exception_text
 
@@ -167,22 +167,22 @@ def test_unsafe_or_inexpressible_template_falls_back_to_strict_atom(template):
     data = vocabulary()
     data["vocabulary"]["predicates"]["active"]["verbalisation"] = template
     env = Environment(data)
-    assert render(Unary("active", Const("api")), env, "ve_natural") == "@api is active"
+    assert render(Unary("active", Const("api")), env, "ve_explicit") == "@api is active"
 
 
 def test_collision_fallback_including_other_symbols_strict_forms():
     data = vocabulary()
     data["vocabulary"]["predicates"]["active"]["verbalisation"] = "{0} is reviewed"
     env = Environment(data)
-    assert render(Unary("active", Const("api")), env, "ve_natural") == "@api is active"
-    assert render(Unary("reviewed", Const("api")), env, "ve_natural") == "@api is reviewed"
+    assert render(Unary("active", Const("api")), env, "ve_explicit") == "@api is active"
+    assert render(Unary("reviewed", Const("api")), env, "ve_explicit") == "@api is reviewed"
     data["vocabulary"]["sorts"]["item"]["verbalisation"]["singular"] = "agent"
     env = Environment(data)
-    assert render(Exists("item", Top()), env, "ve_natural").startswith("there is an item x0")
+    assert render(Exists("item", Top()), env, "ve_explicit").startswith("there is an item x0")
     data["vocabulary"]["sorts"]["item"]["verbalisation"]["singular"] = "person"
     env = Environment(data)
-    assert "item x0" in render(Forall("item", Top()), env, "ve_natural")
-    assert "agent x0" in render(Forall("agent", Top()), env, "ve_natural")
+    assert "item x0" in render(Forall("item", Top()), env, "ve_explicit")
+    assert "agent x0" in render(Forall("agent", Top()), env, "ve_explicit")
 
 
 def test_verbalisation_roundtrip_identity_and_defensive_copy():
@@ -235,7 +235,7 @@ def test_injectivity_across_template_collisions_and_sort_aliases():
             atoms.append(Unary(name, *terms) if len(terms) == 1 else Binary(name, *terms))
         formulas = atoms + [cls(sort, body) for cls in (Forall, Exists)
                             for sort in env.sorts for body in atoms]
-        assert len({render(f, env, "ve_natural") for f in formulas}) == len(formulas)
+        assert len({render(f, env, "ve_explicit") for f in formulas}) == len(formulas)
 
 
 def review_vocabulary():
@@ -285,7 +285,7 @@ def test_review_template_reproductions_fall_back_and_lint(predicate, template, c
     env = Environment(data)
     formula = (Unary(predicate, Const('api')) if predicate == 'deployed'
                else Binary(predicate, Const('alice'), Const('api')))
-    assert render(formula, env, 've_natural') == render(formula, env, 've_strict')
+    assert render(formula, env, 've_explicit') == render(formula, env, 've_strict')
     assert render(formula, env, 've_fluent') == render(formula, env, 've_strict')
     path = f'/vocabulary/predicates/{predicate}/verbalisation'
     assert (path, code) in {(issue.path, issue.code) for issue in lint_vocabulary(env)}
@@ -298,7 +298,7 @@ def test_all_binary_auxiliaries_rejected(word):
     data['vocabulary']['predicates']['owns']['verbalisation'] = f'{{0}} {word} owning {{1}}'
     env = Environment(data)
     assert any(i.code == 'BINARY_AUXILIARY' for i in lint_vocabulary(env))
-    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_natural') == '@alice owns @api'
+    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_explicit') == '@alice owns @api'
 
 
 @pytest.mark.parametrize('word', 'by to of from with for'.split())
@@ -331,7 +331,7 @@ def test_forbidden_words_checked_in_templates_and_both_sort_nouns(word):
         formula = (Binary('owns', Const('alice'), Const('api')) if field == 'predicate'
                    else Forall('service', Top()))
         expected = '@alice owns @api' if field == 'predicate' else 'for every service x0: (true)'
-        assert render(formula, env, 've_natural') == expected
+        assert render(formula, env, 've_explicit') == expected
 
 
 @pytest.mark.parametrize('noun', ['x', 'service x', 'x1', 'X'])
@@ -340,7 +340,7 @@ def test_review_variable_sort_nouns_rejected(noun):
     data = review_vocabulary()
     data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': noun, 'plural': 'services'}
     env = Environment(data)
-    assert render(Forall('service', Top()), env, 've_natural') == 'for every service x0: (true)'
+    assert render(Forall('service', Top()), env, 've_explicit') == 'for every service x0: (true)'
     assert any(i.code == 'VARIABLE_TOKEN' for i in lint_vocabulary(env))
 
 
@@ -351,8 +351,8 @@ def test_template_head_and_identifier_collisions_across_all_categories():
     data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} inspects carefully {1}'
     data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': 'inspects', 'plural': 'services'}
     env = Environment(data)
-    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_natural') == '@alice owns @api'
-    assert render(Forall('service', Top()), env, 've_natural') == 'for every service x0: (true)'
+    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_explicit') == '@alice owns @api'
+    assert render(Forall('service', Top()), env, 've_explicit') == 'for every service x0: (true)'
     assert len([i for i in lint_vocabulary(env) if i.code == 'SYMBOL_COLLISION']) >= 2
     # Exact duplicate templates are explicitly diagnosed for both declarations.
     data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} inspects {1}'
@@ -375,7 +375,7 @@ def test_review_sort_aliases_remain_visible_and_declared_collisions_reject(sort,
     # If the name belongs to another declared sort, it is rejected outright.
     data['vocabulary']['sorts'][noun] = {'description': noun}
     env = Environment(data)
-    assert render(Forall(sort, Top()), env, 've_natural') == f'for every {sort} x0: (true)'
+    assert render(Forall(sort, Top()), env, 've_explicit') == f'for every {sort} x0: (true)'
     assert any(i.code == 'SORT_COLLISION' for i in lint_vocabulary(env))
     # The same check covers another sort's noun even when its identifier differs.
     data['vocabulary']['sorts'].pop(noun)
@@ -390,7 +390,7 @@ def test_legend_identical_deterministic_complete_and_lint_order_stable():
     data = review_vocabulary()
     data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} is owned by {1}'
     env = Environment(data)
-    text = render_vocabulary(env, 've_natural')
+    text = render_vocabulary(env, 've_explicit')
     assert all(render_vocabulary(env, view) == text for view in VIEWS)
     legend = json.loads(text)
     owns = next(p for p in legend['predicates'] if p['identifier'] == 'owns')
