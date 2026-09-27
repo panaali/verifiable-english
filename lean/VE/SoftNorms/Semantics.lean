@@ -382,4 +382,326 @@ theorem soft_elaborate_iff (D : SoftDoc) (h : WellFormedSoft D = true) (S : VE.S
   exact ⟨fun hc r hr => (soft_intended_iff D h r hr S).mp (hc r hr),
     fun hs r hr => (soft_intended_iff D h r hr S).mpr (hs r hr)⟩
 
+/-! ## Declarations under `SoftValid` -/
+
+theorem find_key {α : Type} (key : α → String) : ∀ (l : List α), (l.map key).Nodup → ∀ x ∈ l,
+    l.find? (fun y => key y == key x) = some x
+  | [], _, _, h => by cases h
+  | y :: ys, hn, x, hx => by
+    rw [List.map_cons, List.nodup_cons] at hn
+    obtain ⟨hy, hys⟩ := hn
+    by_cases hk : key y = key x
+    · have hxy : x = y := by
+        rcases List.mem_cons.mp hx with rfl | hx'
+        · rfl
+        · exact absurd (hk ▸ List.mem_map_of_mem hx') hy
+      subst hxy
+      simp
+    · have hx' : x ∈ ys := by
+        rcases List.mem_cons.mp hx with rfl | h
+        · exact absurd rfl hk
+        · exact h
+      rw [List.find?_cons_of_neg (by simpa using hk)]
+      exact find_key key ys hys x hx'
+
+theorem str_lt_or_gt (a b : String) (h : a ≠ b) : a < b ∨ b < a := by
+  by_cases h1 : a < b
+  · exact Or.inl h1
+  · right
+    exact Classical.byContradiction fun h2 =>
+      h (String.le_antisymm (String.not_lt.mp h2) (String.not_lt.mp h1))
+
+section Valid
+variable {D : SoftDoc} (hv : SoftValid D)
+include hv
+
+theorem dualPerm_pair {pr : Pair} (hpr : pr ∈ pairs D.base.T) : dualPerm D pr.req = some pr.perm := by
+  unfold dualPerm
+  rw [find_key (·.req) _ hv.pairReq pr hpr]
+  rfl
+
+theorem dualOblig_pair {pr : Pair} (hpr : pr ∈ pairs D.base.T) : dualOblig D pr.perm = some pr.req := by
+  unfold dualOblig
+  rw [find_key (·.perm) _ hv.pairPerm pr hpr]
+  rfl
+
+theorem dualPerm_perm {pr : Pair} (hpr : pr ∈ pairs D.base.T) : dualPerm D pr.perm = none := by
+  unfold dualPerm
+  have : (pairs D.base.T).find? (·.req == pr.perm) = none := by
+    rw [List.find?_eq_none]
+    intro x hx he
+    simp only [beq_iff_eq] at he
+    exact hv.permNotReq pr hpr (he ▸ List.mem_map_of_mem hx)
+  rw [this]
+  rfl
+
+omit hv in
+theorem dualPerm_some {r m : String} (h : dualPerm D r = some m) :
+    ∃ pr ∈ pairs D.base.T, pr.req = r ∧ pr.perm = m := by
+  unfold dualPerm at h
+  obtain ⟨pr, hf, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨pr, List.mem_of_find?_eq_some hf, by simpa using List.find?_some hf, rfl⟩
+
+theorem act_eq {M N : SoftNode} (hi : Incompatible D M N = true) : act D M = act D N := by
+  unfold Incompatible at hi
+  simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, bne_iff_ne, ne_eq, Bool.not_eq_true'] at hi
+  unfold act actKey
+  rcases hi with (⟨hp, _⟩ | ⟨⟨_, _⟩, hd⟩) | ⟨⟨_, _⟩, hd⟩
+  · rw [hp]
+  · obtain ⟨pr, hpr, _, hm⟩ := dualPerm_some hd
+    rw [hd, ← hm, dualPerm_perm hv hpr]
+    rfl
+  · obtain ⟨pr, hpr, _, hm⟩ := dualPerm_some hd
+    rw [hd, ← hm, dualPerm_perm hv hpr]
+    rfl
+
+end Valid
+
+theorem mem_rulesOn {D : SoftDoc} {p : String} {N : SoftNode} : N ∈ rulesOn D p ↔ N ∈ D.T.nodes ∧ N.pred = p := by
+  simp [rulesOn]
+
+theorem mem_rulesOnAct {D : SoftDoc} {a : String} {N : SoftNode} :
+    N ∈ rulesOnAct D a ↔ N ∈ D.T.nodes ∧ act D N = a := by
+  simp [rulesOnAct]
+
+/-! ## Effectiveness, fuel and rank resolution -/
+
+section Rank
+variable {D : SoftDoc} {S : VE.Structure.{u}} {ρ : VE.Valuation S}
+
+theorem effD_eligible : ∀ {g : Nat} {N : SoftNode}, EffD D S ρ g N → EligibleD D S ρ N
+  | 0, _, h => h
+  | _ + 1, _, h => h.1
+
+theorem selectsSoft_eff {f : Nat} {N : SoftNode} (hd : N.mode = .default) (h : SelectsSoftD D S ρ f N) :
+    EffD D S ρ (rankFuel D) N := by
+  have h1 := h.1
+  simp only [AppliesSoftD, hd] at h1
+  exact h1
+
+theorem domWith_congr {eff eff' : SoftNode → Prop} (N : SoftNode)
+    (h : ∀ M ∈ D.T.nodes, higher D M N = true → (eff M ↔ eff' M)) :
+    DomWithD D S ρ eff N ↔ DomWithD D S ρ eff' N := by
+  unfold DomWithD
+  constructor
+  · rintro ⟨M, hM, hi, hd, hc, (⟨hh, he, ho⟩ | hB)⟩
+    · exact ⟨M, hM, hi, hd, hc, Or.inl ⟨hh, (h M hM hh).mp he, ho⟩⟩
+    · exact ⟨M, hM, hi, hd, hc, Or.inr hB⟩
+  · rintro ⟨M, hM, hi, hd, hc, (⟨hh, he, ho⟩ | hB)⟩
+    · exact ⟨M, hM, hi, hd, hc, Or.inl ⟨hh, (h M hM hh).mpr he, ho⟩⟩
+    · exact ⟨M, hM, hi, hd, hc, Or.inr hB⟩
+
+theorem eff_stable (hv : RanksValid D.soft) : ∀ (k : Nat) (N : SoftNode), N ∈ D.T.nodes → rankHeight D N < k →
+    ∀ a b, rankHeight D N < a → rankHeight D N < b → (EffD D S ρ a N ↔ EffD D S ρ b N)
+  | 0, _, _, hk => absurd hk (Nat.not_lt_zero _)
+  | k + 1, N, _, hk => by
+    intro a b ha hb
+    match a, b, ha, hb with
+    | a + 1, b + 1, ha, hb =>
+      simp only [EffD]
+      apply and_congr_right
+      intro _
+      apply not_congr
+      apply domWith_congr
+      intro M hM hh
+      have hlt := rankHeight_lt_of_higher hv hh
+      exact eff_stable hv k M hM (by omega) a b (by omega) (by omega)
+
+/-- Fuel stability: for a well-formed document the rank recursion is stable at `rankFuel`. -/
+theorem eff_fuel (D : SoftDoc) (h : WellFormedSoft D = true) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
+    (N : SoftNode) (hN : N ∈ D.T.nodes) (g : Nat) (hg : rankHeight D N < g) :
+    EffD D S ρ g N ↔ EffD D S ρ (rankFuel D) N :=
+  eff_stable (softValid_of_wellFormed D h).ranks (rankHeight D N + 1) N hN (by omega) g (rankFuel D) hg
+    (rankHeight_lt_fuel D N)
+
+/-- A higher effective rule and a lower effective colliding rule cannot coexist. -/
+theorem resolve_higher (hv : SoftValid D) {H L : SoftNode} (hH : H ∈ D.T.nodes) (hL : L ∈ D.T.nodes)
+    (hHd : H.mode = .default) (hLd : L.mode = .default) (hi : Incompatible D H L = true)
+    (hh : higher D H L = true) : ¬ (EffD D S ρ (rankFuel D) H ∧ EffD D S ρ (rankFuel D) L) := by
+  rintro ⟨eH, eL⟩
+  have hcHL : Comparable D H L = true := by simp [Comparable, hh]
+  have hcLH : Comparable D L H = true := by simp [Comparable, hh]
+  have hiLH : Incompatible D L H = true := by rw [incompatible_symm]; exact hi
+  have hlt := rankHeight_lt_of_higher hv.ranks hh
+  have hLf := rankHeight_lt_fuel D L
+  have eHn : EffD D S ρ D.soft.ranks.length H :=
+    (eff_stable hv.ranks (rankHeight D H + 1) H hH (by omega) _ _ (by unfold rankFuel at hLf; omega)
+      (rankHeight_lt_fuel D H)).mpr eH
+  unfold rankFuel at eH eL
+  simp only [EffD] at eH eL
+  by_cases ho : D.soft.outranking = .holistic ∧ OutweighsD D S ρ (act D L) (rk L) (rk H)
+  · apply eH.2
+    refine ⟨L, hL, hiLH, hLd, hcLH, Or.inr ⟨ho.1, hh, eL.1, ?_⟩⟩
+    rw [act_eq hv hi]
+    exact ho.2
+  · apply eL.2
+    exact ⟨H, hH, hi, hHd, hcHL, Or.inl ⟨hh, eHn, fun hol hw => ho ⟨hol, hw⟩⟩⟩
+
+end Rank
+
+/-- 4.2 step 3: comparable colliding defaults never both select. -/
+theorem rank_resolves (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNode)
+    (hc : (M, N) ∈ collidingPairs D) (hcmp : Comparable D M N = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) :
+    ¬ (SelectsSoftD D S ρ (fuel D) M ∧ SelectsSoftD D S ρ (fuel D) N) := by
+  have hv := softValid_of_wellFormed D h
+  obtain ⟨hM, hN, hMd, hNd, _, hi⟩ := mem_collidingPairs.mp hc
+  rintro ⟨sM, sN⟩
+  have eM := selectsSoft_eff hMd sM
+  have eN := selectsSoft_eff hNd sN
+  unfold Comparable at hcmp
+  rcases Bool.or_eq_true_iff.mp hcmp with hh | hh
+  · exact resolve_higher hv hM hN hMd hNd hi hh ⟨eM, eN⟩
+  · exact resolve_higher hv hN hM hNd hMd (by rw [incompatible_symm]; exact hi) hh ⟨eN, eM⟩
+
+/-- 4.3: an eligible default guarantees an effective default on the same act, before author precedence. -/
+theorem eligible_effective (D : SoftDoc) (h : WellFormedSoft D = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) (a : String) (hex : ∃ N ∈ rulesOnAct D a, EligibleD D S ρ N) :
+    ∃ N ∈ rulesOnAct D a, EffD D S ρ (rankFuel D) N := by
+  have hv := softValid_of_wellFormed D h
+  refine Classical.byContradiction fun hno => ?_
+  have hno' : ∀ N ∈ rulesOnAct D a, ¬ EffD D S ρ (rankFuel D) N := fun N hN he => hno ⟨N, hN, he⟩
+  have key : ∀ k (N : SoftNode), rankFuel D - rankHeight D N < k → N ∈ rulesOnAct D a →
+      EligibleD D S ρ N → False := by
+    intro k
+    induction k with
+    | zero => intro N hk; exact absurd hk (Nat.not_lt_zero _)
+    | succ k ih =>
+      intro N hk hN he
+      have hN' := mem_rulesOnAct.mp hN
+      apply hno' N hN
+      unfold rankFuel
+      refine ⟨he, fun hdom => ?_⟩
+      obtain ⟨M, hM, hi, hMd, _, hcase⟩ := hdom
+      have hMa : M ∈ rulesOnAct D a := mem_rulesOnAct.mpr ⟨hM, (act_eq hv hi).trans hN'.2⟩
+      rcases hcase with ⟨hh, heM, _⟩ | ⟨_, hh, helM, _⟩
+      · have hlt := rankHeight_lt_of_higher hv.ranks hh
+        have hNf := rankHeight_lt_fuel D N
+        apply hno' M hMa
+        exact (eff_fuel D h S ρ M hM _ (by unfold rankFuel at hNf; omega)).mp heM
+      · have hlt := rankHeight_lt_of_higher hv.ranks hh
+        have hMf := rankHeight_lt_fuel D M
+        exact ih M (by omega) hMa helM
+  obtain ⟨N, hN, he⟩ := hex
+  exact key _ N (Nat.lt_succ_self _) hN he
+
+/-! ## Hard over soft -/
+
+theorem default_not_blocked {D : SoftDoc} {S : VE.Structure.{u}} {ρ : VE.Valuation S} {f : Nat}
+    {N : SoftNode} (hd : N.mode = .default) (h : SelectsSoftD D S ρ f N) : ¬ BlockedD D S ρ N :=
+  (effD_eligible (selectsSoft_eff hd h)).2.2
+
+/-- 4.2 step 2 as a theorem about `soften`: a strict decision silences every default on the
+predicate, and a strict decision against a default's effect across the pair silences it. -/
+theorem hard_over_soft (D : SoftDoc) (h : WellFormedSoft D = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) :
+    (∀ p sign, StrictDecidesD D S ρ p sign → ¬ DefaultDecidesD D S ρ p true ∧ ¬ DefaultDecidesD D S ρ p false) ∧
+    (∀ pr ∈ pairs (soften D).T, StrictDecidesD D S ρ pr.perm false → ¬ DefaultDecidesD D S ρ pr.req true) ∧
+    (∀ pr ∈ pairs (soften D).T, StrictDecidesD D S ρ pr.req true → ¬ DefaultDecidesD D S ρ pr.perm false) := by
+  have hv := softValid_of_wellFormed D h
+  refine ⟨fun p sign hs => ?_, fun pr hpr hs => ?_, fun pr hpr hs => ?_⟩
+  · have hb : ∀ s, ¬ DefaultDecidesD D S ρ p s := by
+      rintro s ⟨N, hN, hd, _, hsel⟩
+      apply default_not_blocked hd hsel
+      obtain ⟨_, rfl⟩ := mem_rulesOn.mp hN
+      cases sign
+      · exact Or.inr (Or.inl hs)
+      · exact Or.inl hs
+    exact ⟨hb true, hb false⟩
+  · rintro ⟨N, hN, hd, hsgn, hsel⟩
+    apply default_not_blocked hd hsel
+    refine Or.inr (Or.inr (Or.inl ⟨hsgn, pr.perm, ?_, hs⟩))
+    obtain ⟨_, hp⟩ := mem_rulesOn.mp hN
+    rw [hp]
+    exact dualPerm_pair hv hpr
+  · rintro ⟨N, hN, hd, hsgn, hsel⟩
+    apply default_not_blocked hd hsel
+    refine Or.inr (Or.inr (Or.inr ⟨hsgn, pr.req, ?_, hs⟩))
+    obtain ⟨_, hp⟩ := mem_rulesOn.mp hN
+    rw [hp]
+    exact dualOblig_pair hv hpr
+
+/-- `φ°`: outcome substitution to `E′_base` at the full prefix. -/
+def circ (D : SoftDoc) (φ : VE.Formula) : VE.Formula := subst (soften D).T (size (soften D)) φ
+
+theorem substWith_foldl_or (tbl : Table) : ∀ (l : List VE.Formula) (acc : VE.Formula),
+    substWith tbl (l.foldl .or acc) = (l.map (substWith tbl)).foldl .or (substWith tbl acc)
+  | [], _ => rfl
+  | a :: l, acc => by
+    simp only [List.foldl_cons, List.map_cons]
+    rw [substWith_foldl_or tbl l]
+    rfl
+
+theorem substWith_anyF (tbl : Table) (l : List VE.Formula) :
+    substWith tbl (anyF l) = anyF (l.map (substWith tbl)) :=
+  substWith_foldl_or tbl l .bottom
+
+/-- Syntactically: where a default rule selects on `T′` (after substitution), its
+blocking formula is false. -/
+theorem subst_selects_blocked (D : SoftDoc) (k : Nat) (N : SoftNode) (hd : N.mode = .default)
+    (B : VE.Structure.{u}) (ρ : VE.Valuation B) :
+    (subst (soften D).T k (selects' D N)).denote B ρ → ¬ (subst (soften D).T k (blockedF D N)).denote B ρ := by
+  intro hs hb
+  simp only [selects', VE.Norms.selects, VE.Norms.applies, subst, substWith, VE.Formula.denote,
+    substWith_anyF, anyF_denote] at hs
+  apply hs.1.2
+  refine ⟨substWith (expTable (soften D).T k) (derived D N),
+    List.mem_map_of_mem (by simp [primeNode, derivedList, hd]), ?_⟩
+  simp only [derived, hd, substWith, VE.Formula.denote]
+  exact Or.inl (Or.inr hb)
+
+theorem circ_defaultDecides {D : SoftDoc} {p : String} {sign : Bool} {B : VE.Structure.{u}}
+    {ρ : VE.Valuation B} (h : (circ D (defaultDecidesF D p sign)).denote B ρ) :
+    ∃ N ∈ rulesOn D p, N.mode = .default ∧ N.sign = sign ∧ (circ D (selects' D N)).denote B ρ := by
+  simp only [circ, subst, defaultDecidesF, substWith_anyF, anyF_denote, List.mem_map, List.mem_filter,
+    beq_iff_eq] at h
+  obtain ⟨_, ⟨_, ⟨N, ⟨⟨hN, hd⟩, hs⟩, rfl⟩, rfl⟩, h⟩ := h
+  exact ⟨N, hN, hd, hs, h⟩
+
+/-- Its base-formula corollary: no conflict point of `T′` has a strict rule on one side and a
+default rule on the other, on one predicate or across a pair. -/
+theorem hard_over_soft_base (D : SoftDoc) (h : WellFormedSoft D = true) (B : VE.Structure.{u})
+    (vs : List B.Carrier) :
+    (∀ r ∈ D.T.regulated,
+      ¬ (VE.Formula.and (circ D (strictPos D r.name)) (circ D (defaultNeg D r.name))).denote B (tupleVal vs) ∧
+      ¬ (VE.Formula.and (circ D (defaultPos D r.name)) (circ D (strictNeg D r.name))).denote B (tupleVal vs)) ∧
+    (∀ pr ∈ pairs (soften D).T,
+      ¬ (VE.Formula.and (circ D (defaultPos D pr.req)) (circ D (strictNeg D pr.perm))).denote B (tupleVal vs) ∧
+      ¬ (VE.Formula.and (circ D (strictPos D pr.req)) (circ D (defaultNeg D pr.perm))).denote B (tupleVal vs)) := by
+  have hv := softValid_of_wellFormed D h
+  have blk : ∀ N : SoftNode, N.mode = .default → (circ D (selects' D N)).denote B (tupleVal vs) →
+      ¬ (circ D (blockedF D N)).denote B (tupleVal vs) :=
+    fun N hd hs => subst_selects_blocked D _ N hd B _ hs
+  have unfoldB : ∀ N : SoftNode, (circ D (blockedF D N)).denote B (tupleVal vs) ↔
+      (((circ D (strictPos D N.pred)).denote B (tupleVal vs) ∨ (circ D (strictNeg D N.pred)).denote B (tupleVal vs)) ∨
+        (circ D (if N.sign then (match dualPerm D N.pred with
+          | some m => strictNeg D m
+          | none => .bottom) else .bottom)).denote B (tupleVal vs)) ∨
+        (circ D (if N.sign then .bottom else (match dualOblig D N.pred with
+          | some r => strictPos D r
+          | none => .bottom))).denote B (tupleVal vs) := by
+    intro N
+    exact Iff.rfl
+  refine ⟨fun r _ => ⟨?_, ?_⟩, fun pr hpr => ⟨?_, ?_⟩⟩
+  · rintro ⟨hsp, hdn⟩
+    obtain ⟨N, hN, hd, _, hs⟩ := circ_defaultDecides hdn
+    apply blk N hd hs
+    rw [unfoldB, (mem_rulesOn.mp hN).2]
+    exact Or.inl (Or.inl (Or.inl hsp))
+  · rintro ⟨hdp, hsn⟩
+    obtain ⟨N, hN, hd, _, hs⟩ := circ_defaultDecides hdp
+    apply blk N hd hs
+    rw [unfoldB, (mem_rulesOn.mp hN).2]
+    exact Or.inl (Or.inl (Or.inr hsn))
+  · rintro ⟨hdp, hsn⟩
+    obtain ⟨N, hN, hd, hsg, hs⟩ := circ_defaultDecides hdp
+    apply blk N hd hs
+    rw [unfoldB, (mem_rulesOn.mp hN).2, hsg, dualPerm_pair hv hpr]
+    exact Or.inl (Or.inr hsn)
+  · rintro ⟨hsp, hdn⟩
+    obtain ⟨N, hN, hd, hsg, hs⟩ := circ_defaultDecides hdn
+    apply blk N hd hs
+    rw [unfoldB, (mem_rulesOn.mp hN).2, hsg, dualOblig_pair hv hpr]
+    exact Or.inr hsp
+
 end VE.SoftNorms
