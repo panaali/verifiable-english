@@ -189,7 +189,11 @@ def operation(name, kind, env, model):
     if name == "evaluate_trace": return lambda: evaluate(env, p, replace(model, model_id="0" * 64) if bad else model, trace=True, max_trace_nodes=0 if budget else 8)
     if name == "countermodel_check": return lambda: check_countermodel(env, (p,), Bottom(), replace(model, model_id="0" * 64) if bad else model, max_evaluations=0 if budget else 8)
     if name.startswith("countermodel_search"):
-        opts = {"max_domain_size": 1, "max_models": 0 if budget else 2, "max_evaluations": 100}
+        # The extra n-ary table needs a third deterministic model attempt when
+        # data@0 adds its functional edge. Keep positive probes successful.
+        opts = {"max_domain_size": 1,
+                "max_models": 0 if budget else 4 if "nary@0" in env.profiles else 2,
+                "max_evaluations": 100}
         if name.endswith("nonempty"): opts["nonempty_domains"] = True
         if name.endswith("nonvacuous"): opts["nonvacuous_for"] = p
         if name.endswith("min_domain"): opts["min_domain_size"] = 1

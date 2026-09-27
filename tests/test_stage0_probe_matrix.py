@@ -114,3 +114,7 @@ def test_nary_probe_distinguishes_argument_positions():
     reversed_atom = Atom("triple", (Const("y"), Const("x"), Const("x")))
     assert evaluate(env, positive, model).value is True
     assert evaluate(env, reversed_atom, model).value is False
+    env_with_data = Environment(probe.raw_environment(("closure@0", "nary@0", "data@0")))
+    model_with_data = FiniteModel.from_dict(env_with_data, probe.model_wire(env_with_data))
+    result = probe.outcome(probe.operation("countermodel_search", "positive", env_with_data, model_with_data))
+    assert result["status"] == "Found"
