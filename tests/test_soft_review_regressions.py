@@ -7,14 +7,16 @@ from ve.ast import Top
 from ve.document import check_document, render_document
 from ve.errors import VEError
 from ve.norm_english import parse_english, render_english
+from ve.norm_strict import parse_strict, print_strict
 from ve.norms import NormDocument, prove_norm_entailment, check_norm_entailment_certificate
 from ve.softnorms import SoftNormDocument
 from ve.softnorms import SoftEnvironment
 from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict
 from ve.surface.softnorms import SoftNorm
+from ve.surface.softnorms import rule_paraphrase
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should
-from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows
+from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows, main as conformance_main
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -96,3 +98,41 @@ def test_public_soft_pair_and_conflict_entrypoints():
 
 def test_rust_soft_fixture_matches_both_regenerators():
     assert json.loads(RUST_FIXTURES.read_text()) == rust_fixture_rows()
+
+
+def test_generated_soft_conformance_is_part_of_suite(capsys):
+    conformance_main()
+    report = json.loads(capsys.readouterr().out)
+    assert report["accepted_trees"] == 1000
+
+
+@pytest.mark.parametrize("role,sign,effect", [
+    ("obligation", True, "required"),
+    ("obligation", False, "not required"),
+    ("permission", True, "permitted"),
+    ("permission", False, "not permitted"),
+])
+def test_default_paraphrase_names_its_actual_effect(role, sign, effect):
+    wording = rule_paraphrase(12, "default", role=role, sign=sign, decider="assistant")
+    assert f"act {effect} unless" in wording
+    assert "assistant decides" in wording
+
+
+def test_soft_strict_text_round_trip_and_hard_identity():
+    environment = _soft_env()
+    authored = SoftNormDocument(environment, [
+        SoftNorm("hard", "required", True, Top(), hard=True).to_dict(),
+        SoftNorm("default", "permitted", False, Top(), mode="default",
+                 decided_by="assistant", rank="helpfulness", alterable=("user",),
+                 sufficient=(Top(),), necessary=(Top(),),
+                 factors=("safety, honesty",)).to_dict(),
+    ])
+    source = print_strict(authored)
+    assert "rule default default serves helpfulness alterable by user:" in source
+    assert 'factor "safety, honesty"' in source
+    parsed = parse_strict(environment, source)
+    assert [r.to_dict() for r in parsed.rules] == [r.to_dict() for r in authored.rules]
+    assert print_strict(parsed) == source
+    tricky = source.replace('decided by "assistant"',
+                            'decided by "assistant factor safety"')
+    assert parse_strict(environment, tricky).rules[1].exception["decided_by"] == "assistant factor safety"

@@ -88,13 +88,16 @@ def frequency_readings(word: str, act: str) -> tuple[str, str]:
             f"{act.capitalize()} occurs in most relevant situations; this is a frequency claim.")
 
 
-def rule_paraphrase(number: int, mode: str, *, decider: str | None = None,
+def rule_paraphrase(number: int | str, mode: str, *, role: str = "obligation",
+                    sign: bool = True, decider: str | None = None,
                     alterable=(), rank: str | None = None) -> str:
     """The fixed, one-reading explanation displayed beside a rule."""
     if mode == "default":
-        who = decider if decider else "the source names none"
-        main = (f"Rule {number} is required unless its exception applies here; "
-                f"{who} decides whether it applies.")
+        effect = ("required" if sign else "not required") if role == "obligation" else (
+            "permitted" if sign else "not permitted")
+        who = f"{decider} decides whether it applies" if decider else "the source names no decider"
+        main = (f"Rule {number} makes the act {effect} unless its named exception applies here; "
+                f"{who}.")
     elif mode == "strict":
         main = f"Rule {number} has no exception decision."
     else:
@@ -102,10 +105,14 @@ def rule_paraphrase(number: int, mode: str, *, decider: str | None = None,
     if alterable:
         main += " " + ", ".join(alterable) + " may turn it off for this situation."
     elif mode == "strict":
-        main += " No instruction switch exists; only a strict exception rule can override it."
+        main += " No instruction switch exists; only a strict exception rule written in this document can override it."
     if rank:
         main += (f" It serves {rank} where default rules collide." if mode == "default" else
                  f" It records rank {rank}, but a strict rule is never weighed.")
+    if mode == "default":
+        main += (" It gives way to strict decisions and to higher-ranked effective opponents "
+                 "unless holistically outweighed; a lower-ranked opponent that the decider "
+                 "finds outweighs it need only be eligible.")
     return main
 
 
