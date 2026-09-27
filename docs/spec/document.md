@@ -30,6 +30,27 @@ These fields are independent: a question with no formula is still a unit.
 fence goes through the existing all-derivations parser. The optional
 `meaning_id` must match the environment-bound formula identity.
 
+With `norms@0`, a unit of kind `norm` may instead carry the W1 `{"norm":{...}}`
+block from [the norm specification](norms.md#32-norm-units-document-content).
+The loader validates all active rules together, including precedence and
+typing, and passes their canonical blocks to the W1 document admission route.
+Quoted norm content retains its kind and source provenance but contributes no
+active layer. `ve document check` includes regenerated norm layers in its
+premise check; graph leaves may cite them with `layer:norms:<predicate>`.
+The compiled norm unit's `meaning_id` binds its canonical W1 block and the
+environment ID under the `ve-norm-unit-<identity-version>` digest domain.
+
+A source unit that contains both checked and unresolved text has
+`{"id", "span", "status":"MIXED", "parts":[...]}`. Each part has the ordinary
+unit fields plus a unique ID and one status: `CHECKED`, `OPEN`, `LABELLED`, or
+`UNFORMALISED`. Part spans use absolute byte offsets and exactly partition the
+parent span in order, including whitespace and punctuation. The parent has no
+independent content. Admission uses the part IDs; the checked document identity
+binds the parent and parts, and the loader retains `parent_id` on each compiled
+part. Coverage reports `bytes_by_status` alongside `bytes_by_kind`; the two
+tables each total the source byte count. Existing unsplit units may also set a
+status; otherwise it is inferred from content and meaning.
+
 An open term declares `name`, `arguments`, `decided_by`, `necessary`,
 `sufficient`, `factors`, `precedents`, `jurisdiction`, and `version`. Conditions
 are existing closed VE formulas; precedents are pinned meaning IDs. An open
