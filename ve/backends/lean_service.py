@@ -26,6 +26,7 @@ from __future__ import annotations
 import hashlib
 import itertools
 import json
+from decimal import Decimal
 import os
 from pathlib import Path
 import queue
@@ -79,7 +80,192 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant)
+    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
+                      parse_int=_json_integer)
+
+
+def _json_integer(digits: str) -> int | Decimal:
+    """Accept Lean's unbounded JSON integers without changing small wire integers."""
+    try:
+        return int(digits)
+    except ValueError:
+        # Python's decimal-digit guard is an implementation limit, not a JSON or
+        # Lean limit. Decimal preserves the value without disabling that guard.
+        return Decimal(digits)
+
+
+def _strings(value: object) -> bool:
+    return isinstance(value, list) and all(isinstance(x, str) for x in value)
+
+
+def _booleans(value: object) -> bool:
+    return isinstance(value, list) and all(type(x) is bool for x in value)
+
+
+def _nat(value: object) -> bool:
+    return type(value) is int and value >= 0
+
+
+def _term(value: object) -> bool:
+    if not isinstance(value, list) or not value:
+        return False
+    if value[0] == "var":
+        return len(value) == 2 and _nat(value[1])
+    if value[0] == "const":
+        return len(value) == 2 and isinstance(value[1], str)
+    if value[0] == "num":
+        return len(value) == 2 and _integer_text(value[1])
+    if value[0] == "add":
+        return len(value) == 3 and _term(value[1]) and _term(value[2])
+    if value[0] == "scale":
+        return len(value) == 3 and _integer_text(value[1]) and _term(value[2])
+    return False
+
+
+def _integer_text(value: object) -> bool:
+    return (isinstance(value, str) and bool(value)
+            and (value.isascii() and value.isdecimal() or
+                 value[0] == "-" and len(value) > 1 and value[1:].isascii()
+                 and value[1:].isdecimal()))
+
+
+def _formula(value: object) -> bool:
+    if not isinstance(value, list) or not value:
+        return False
+    tag = value[0]
+    if tag in ("top", "bottom"):
+        return len(value) == 1
+    if tag == "unary":
+        return len(value) == 3 and isinstance(value[1], str) and _term(value[2])
+    if tag == "binary":
+        return (len(value) == 4 and isinstance(value[1], str)
+                and _term(value[2]) and _term(value[3]))
+    if tag in ("eq", "lt", "le"):
+        return len(value) == 3 and _term(value[1]) and _term(value[2])
+    if tag == "not":
+        return len(value) == 2 and _formula(value[1])
+    if tag in ("and", "or", "implies"):
+        return len(value) == 3 and _formula(value[1]) and _formula(value[2])
+    if tag in ("forall", "exists"):
+        return len(value) == 3 and isinstance(value[1], str) and _formula(value[2])
+    return False
+
+
+def _formulas(value: object) -> bool:
+    return isinstance(value, list) and all(_formula(x) for x in value)
+
+
+def _claim(value: object) -> bool:
+    return (isinstance(value, dict) and set(value) in ({"name", "ast"}, {"name", "ast", "label"})
+            and isinstance(value["name"], str) and _formula(value["ast"])
+            and ("label" not in value or isinstance(value["label"], str)))
+
+
+def _report(value: object) -> bool:
+    return (isinstance(value, dict) and set(value) == {"root", "assumptions"}
+            and _claim(value["root"]) and isinstance(value["assumptions"], list)
+            and all(_claim(x) for x in value["assumptions"]))
+
+
+def _kind(value: object) -> bool:
+    if isinstance(value, str):
+        return value in {"asserted", "norm", "definition", "question", "instruction",
+                         "example", "exposition", "analogy", "explanation", "meta"}
+    if not isinstance(value, list) or not value:
+        return False
+    if value[0] == "attributed":
+        return (len(value) == 4 and isinstance(value[1], str)
+                and isinstance(value[2], str) and _kind(value[3]))
+    if value[0] == "hedged":
+        return len(value) == 3 and isinstance(value[1], str) and _kind(value[2])
+    if value[0] == "causal":
+        return (len(value) == 4 and isinstance(value[1], str)
+                and _kind(value[2]) and _kind(value[3]))
+    return value[0] == "unformalised" and len(value) == 2 and isinstance(value[1], str)
+
+
+def _valid_route_result(row: dict, kind: object, mode: str, case: object) -> bool:
+    fields = set(row) - {"id", "status"}
+    if kind == "evaluate":
+        return fields == {"values"} and _booleans(row["values"])
+    if kind == "countermodel":
+        return fields == {"refutes"} and type(row["refutes"]) is bool
+    if kind == "certificate":
+        return (fields == {"valid", "background"} and type(row["valid"]) is bool
+                and _nat(row["background"]))
+    if kind == "dependency-order":
+        return fields == {"order"} and _strings(row["order"])
+    if kind == "bundle":
+        return (fields == {"checked", "lemmas"} and _nat(row["checked"])
+                and _strings(row["lemmas"]) and row["checked"] == len(row["lemmas"]))
+    if kind == "background":
+        return (fields == {"background", "premises", "generators"}
+                and _formulas(row["background"]) and row["background"] == row["premises"]
+                and _strings(row["generators"])
+                and len(row["background"]) == len(row["generators"]))
+    if kind == "label":
+        return fields == {"label"} and isinstance(row["label"], str)
+    if kind == "admission":
+        report_id = row.get("report_id")
+        return (fields == {"admitted", "report", "report_id", "kinds"}
+                and row["admitted"] is True and _report(row["report"])
+                and isinstance(report_id, str) and len(report_id) == 64
+                and all(c in "0123456789abcdef" for c in report_id)
+                and isinstance(row["kinds"], list) and all(_kind(x) for x in row["kinds"]))
+    if mode != "norms":
+        return False
+    if kind == "norms-elaborate":
+        if fields != {"order", "background", "premises", "conflict_targets", "fragment"}:
+            return False
+        return (_strings(row["order"]) and type(row["fragment"]) is bool
+                and isinstance(row["background"], list)
+                and all(isinstance(x, dict) and set(x) == {"generator", "ast"}
+                        and isinstance(x["generator"], str) and _formula(x["ast"])
+                        for x in row["background"])
+                and isinstance(row["premises"], list)
+                and all(isinstance(x, dict) and set(x) == {"label", "ast"}
+                        and isinstance(x["label"], str) and _formula(x["ast"])
+                        for x in row["premises"])
+                and isinstance(row["conflict_targets"], list)
+                and all(isinstance(x, dict) and set(x) == {"target", "sorts", "ast"}
+                        and isinstance(x["target"], str) and _strings(x["sorts"])
+                        and _formula(x["ast"]) for x in row["conflict_targets"]))
+    if kind == "norms-certificate":
+        return (fields == {"valid", "background", "layers"}
+                and type(row["valid"]) is bool and _nat(row["background"])
+                and _nat(row["layers"]))
+    if kind == "norms-conflict":
+        verdict = row.get("verdict")
+        if verdict not in ("CONFLICT", "CONFLICT-FREE", "UNKNOWN") or not _strings(row.get("targets")):
+            return False
+        witness = isinstance(case, dict) and "witness" in case
+        if witness:
+            return (fields == {"verdict", "target", "targets"}
+                    and verdict in ("CONFLICT", "UNKNOWN")
+                    and isinstance(row["target"], str))
+        return (fields in ({"verdict", "targets"}, {"verdict", "targets", "detail"})
+                and verdict in ("CONFLICT-FREE", "UNKNOWN")
+                and ("detail" not in row or
+                     (verdict == "UNKNOWN" and isinstance(row["detail"], str))))
+    return False
+
+
+def _uses_norms_path(case: object) -> bool:
+    if not isinstance(case, dict):
+        return False
+    env = case.get("environment")
+    vocab = env.get("vocabulary") if isinstance(env, dict) else None
+    preds = vocab.get("predicates") if isinstance(vocab, dict) else None
+    regulated = (isinstance(preds, dict) and any(
+        isinstance(entry, dict) and "regulated" in entry for entry in preds.values()))
+    document = case.get("document")
+    units = document.get("units") if isinstance(document, dict) else None
+    norm_unit = (isinstance(units, list) and any(
+        isinstance(unit, dict) and isinstance(unit.get("content"), dict)
+        and "norm" in unit["content"] for unit in units))
+    kind = case.get("kind")
+    return bool(regulated or "norms" in case or
+                (isinstance(kind, str) and kind.startswith("norms-")) or norm_unit)
 
 
 _hashes: dict[tuple, str] = {}
@@ -349,7 +535,7 @@ class LeanService:
         results = response.get("results")
         counts = response.get("counts")
         try:
-            cases = json.loads(cases_text)
+            cases = json.loads(cases_text, parse_int=_json_integer)
         except ValueError:
             cases = None
         if (set(response) != {"id", "status", "mode", "results", "counts"}
@@ -360,7 +546,7 @@ class LeanService:
                        for index, row in enumerate(results))
                 or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
                 or type(counts["cases"]) is not int or counts["cases"] != count
-                or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.encode())
+                or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.strip().encode())
                 or type(counts["errors"]) is not int
                 or counts["errors"] != sum(row.get("status") == "error" for row in results)):
             raise _Failure(f"malformed response {raw[:200]!r}")
@@ -384,13 +570,13 @@ class LeanService:
                             {"parsed", "checked", "rendered", "roundtrip"}
                             and (item["parsed"] is None or
                                  (isinstance(item["parsed"], list)
-                                  and all(isinstance(formula, list) for formula in item["parsed"])))
+                                  and all(_formula(formula) for formula in item["parsed"])))
                             and type(item["checked"]) is bool
                             and (item["rendered"] is None or
                                  (isinstance(item["rendered"], list)
                                   and all(isinstance(token, str) or
                                           (isinstance(token, list) and len(token) == 2
-                                           and isinstance(token[0], str) and type(token[1]) is int)
+                                           and isinstance(token[0], str) and _nat(token[1]))
                                           for token in item["rendered"])))
                             and type(item["roundtrip"]) is bool
                             and (item["checked"] or item["rendered"] is None)
@@ -418,9 +604,16 @@ class LeanService:
                 return set(row) == {"id", "status", "error", "valid"} and row["valid"] is False
             if mode == "evaluate":
                 return set(row) == {"id", "status", "error"}
-            return (set(row) <= {"id", "status", "error", "generator", "valid"}
-                    and ("valid" not in row or row["valid"] is False)
-                    and ("generator" not in row or isinstance(row["generator"], str)))
+            kind = case.get("kind") if isinstance(case, dict) else None
+            norms_path = mode == "norms" and _uses_norms_path(case)
+            fields = {"id", "status", "error"}
+            if not norms_path and kind == "certificate":
+                fields.add("valid")
+            if not norms_path and row["error"].startswith("InvalidModel("):
+                fields.add("generator")
+            return (set(row) == fields and ("valid" not in fields or row["valid"] is False)
+                    and ("generator" not in fields or
+                         row["generator"] == row["error"][13:].split(")", 1)[0]))
         if not isinstance(expected_id, str) or "error" in row:
             return False
         if mode == "check-certificate":
@@ -429,9 +622,10 @@ class LeanService:
             if isinstance(case, dict) and case.get("kind") == "countermodel":
                 return set(row) == {"id", "status", "refutes"} and type(row["refutes"]) is bool
             return (set(row) == {"id", "status", "values", "value", "canonical"}
-                    and isinstance(row.get("values"), list)
-                    and all(type(value) is bool for value in row["values"])
-                    and type(row.get("value")) is bool and isinstance(row.get("canonical"), str))
+                    and _booleans(row["values"]) and bool(row["values"])
+                    and type(row["value"]) is bool
+                    and row["value"] == all(row["values"])
+                    and isinstance(row["canonical"], str))
         if mode == "order":
             kind = case.get("kind") if isinstance(case, dict) else None
             key = {"evaluate": "values", "countermodel": "refutes", "certificate": "valid",
@@ -441,22 +635,11 @@ class LeanService:
             value = row.get(key)
             return (set(row) == {"id", "status", key} and
                     (type(value) is bool if key in ("refutes", "valid") else
-                     isinstance(value, list) and (key != "values" or all(type(v) is bool for v in value))))
+                     _booleans(value) if key == "values" else _formulas(value)))
         kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
-        key = {"evaluate": "values", "countermodel": "refutes", "certificate": "valid",
-               "dependency-order": "order", "bundle": "lemmas", "background": "premises",
-               "label": "label", "admission": "admitted", "norms-elaborate": "background",
-               "norms-certificate": "valid", "norms-conflict": "verdict"}.get(kind)
-        if key is None:
-            return False
-        value = row.get(key)
-        if key in ("refutes", "valid", "admitted"):
-            return type(value) is bool
-        if key == "label" or key == "verdict":
-            return isinstance(value, str)
-        if key == "lemmas":
-            return type(row.get("checked")) is int and isinstance(value, list)
-        return isinstance(value, list)
+        if mode in ("route", "norms"):
+            return _valid_route_result(row, kind, mode, case)
+        return False
 
     def _after_request(self) -> None:
         self._served += 1

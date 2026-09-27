@@ -171,6 +171,43 @@ def test_english_consumed_number_keeps_one_shot_decoding(service_executable, num
     assert response["results"] == [expected]
 
 
+def test_english_ignored_large_integer_matches_one_shot(service_executable):
+    payload = {"environment": {"sorts": ["thing"], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {"thing": {"noun": ["thing"], "letter": "x"}},
+                           "predicates": {}, "constants": {}},
+               "cases": [{"tokens": [], "formulas": [["top"]]}]}
+    raw = json.dumps(payload, separators=(",", ":"))
+    raw = raw[:-1] + ',"ignored":' + "9" * 4500 + "}"
+    one_shot = subprocess.run([str(BIN / "ve_english_run")], input=raw.encode(),
+                              capture_output=True, timeout=HANG_TIMEOUT)
+    assert one_shot.returncode == 0, one_shot.stderr
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw + "]", 1)
+        assert service.stats["retries"] == 0
+    assert response["results"] == [json.loads(one_shot.stdout)]
+
+
+@pytest.mark.parametrize("mode,case", [
+    ("evaluate", CASES[0]),
+    ("english", {"environment": {"sorts": [], "predicates": {}, "constants": {}},
+                 "lexicon": {"sorts": {}, "predicates": {}, "constants": {}}, "cases": []}),
+])
+def test_whitespace_around_cases_matches_one_shot(service_executable, mode, case):
+    text = " \t[" + json.dumps(case, separators=(",", ":")) + "] \r"
+    with LeanService(service_executable) as service:
+        _, response = service.exchange(mode, text, 1)
+        assert service.stats["retries"] == 0
+    assert response["counts"]["bytes"] == len(text.strip().encode())
+    assert response["status"] == "ok"
+
+
+def test_whitespace_empty_batch_has_trimmed_count(service_executable):
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("evaluate", " [] ", 0)
+        assert service.stats["retries"] == 0
+    assert response["counts"] == {"cases": 0, "bytes": 2, "errors": 0}
+
+
 def test_killed_process_is_replaced_between_requests(service_executable):
     with LeanService(service_executable) as service:
         first = service.pid
@@ -306,8 +343,26 @@ for line in sys.stdin:
                           "results": [row], "counts": {"cases": 1,
                           "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                           "errors": 0}}), flush=True); continue
+    malformed = {
+        "route-string-values": {"id": "c", "status": "ok", "values": ["false"]},
+        "route-extra-field": {"id": "c", "status": "ok", "values": [False], "extra": 1},
+        "order-bad-surface": {"id": "c", "status": "ok", "ast": [["garbage"]]},
+        "admission-no-report": {"id": "c", "status": "ok", "admitted": True},
+        "norms-bad-verdict": {"id": "c", "status": "ok", "verdict": "garbage", "targets": []},
+        "english-bad-formula": {"admissible": True, "covers": True,
+                                "results": [{"parsed": [["garbage"]], "checked": False,
+                                             "rendered": None, "roundtrip": False}]},
+        "english-negative-label": {"admissible": True, "covers": True,
+                                   "results": [{"parsed": None, "checked": True,
+                                                "rendered": [["x", -1]], "roundtrip": False}]},
+    }
+    if behaviour in malformed:
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [malformed[behaviour]], "counts": {"cases": 1,
+                          "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                          "errors": 0}}), flush=True); continue
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                      "results": [{"id": case.get("id"), "status": "ok", "values": [],
+                      "results": [{"id": case.get("id"), "status": "ok", "values": [True],
                                    "value": True, "canonical": ""} for case in request["cases"]],
                       "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
 '''
@@ -340,8 +395,8 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
         assert service.run("evaluate", [{"id": "a"}, {"id": "b"}]) == [
-            {"id": "a", "status": "ok", "values": [], "value": True, "canonical": ""},
-            {"id": "b", "status": "ok", "values": [], "value": True, "canonical": ""}]
+            {"id": "a", "status": "ok", "values": [True], "value": True, "canonical": ""},
+            {"id": "b", "status": "ok", "values": [True], "value": True, "canonical": ""}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
 
 
@@ -355,6 +410,13 @@ def test_one_retry_recovers_a_hung_batch(tmp_path):
     ("wrong-case-id", "route", {"id": "c", "kind": "certificate"}),
     ("wrong-case-id", "norms", {"id": "c", "kind": "norms-certificate"}),
     ("english-nested-bool", "english", {"cases": [{}]}),
+    ("route-string-values", "route", {"id": "c", "kind": "evaluate"}),
+    ("route-extra-field", "route", {"id": "c", "kind": "evaluate"}),
+    ("order-bad-surface", "order", {"id": "c", "kind": "surface"}),
+    ("admission-no-report", "route", {"id": "c", "kind": "admission"}),
+    ("norms-bad-verdict", "norms", {"id": "c", "kind": "norms-conflict"}),
+    ("english-bad-formula", "english", {"cases": [{}]}),
+    ("english-negative-label", "english", {"cases": [{}]}),
 ])
 def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mode, case):
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
