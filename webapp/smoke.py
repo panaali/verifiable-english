@@ -1,5 +1,6 @@
 """Browser acceptance smoke with a disposable loopback server and no model calls."""
 import os
+import re
 import secrets
 import socket
 import subprocess
@@ -107,6 +108,10 @@ def main():
                 page.locator('#rulesText').fill(page.locator('#rulesText').input_value().replace(' (exception to rule 1)', ''))
                 page.locator('#checkRules').click()
                 expect(page.locator('#rulesResult')).to_contain_text('Conflict found')
+                page.locator('#learnNav').click()
+                page.locator('[data-example="news"]').click()
+                expect(page.locator('#lessonViews .explicit-badge').first).to_be_visible()
+                assert not re.search(r'[@()\[\]*<=]', page.locator('#lessonViews .natural-view').inner_text())
                 page.locator('#ideNav').click()
                 with page.expect_download() as download:
                     page.locator('#export').click()

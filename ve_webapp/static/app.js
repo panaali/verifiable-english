@@ -50,7 +50,9 @@ function view(title, text, prose = false) { const box=el('div',undefined,'view')
 function naturalView(natural) {
   const box=el('div',undefined,'view natural-view');box.append(el('h3','Natural English'));
   for(const sentence of natural.sentences){
-    const line=el('p',sentence.text+'.','reader-sentence');
+    const line=el('p',sentence.form==='explicit form'
+      ? 'A checked natural reading is unavailable here. Open the advanced view to inspect the exact form.'
+      : sentence.text+'.','reader-sentence');
     if(sentence.form==='explicit form')line.append(el('span','explicit form','badge explicit-badge'));
     box.append(line);
   }
