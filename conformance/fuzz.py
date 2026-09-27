@@ -9,6 +9,7 @@ import copy
 import hashlib
 import itertools
 import json
+import os
 from pathlib import Path
 import random
 import subprocess
@@ -117,7 +118,8 @@ def reduce_failure(case, executable):
             except VEError: continue
             if len(json.dumps(candidate)) >= len(json.dumps(case)): continue
             run = subprocess.run([str(executable), 'conformance'], input=json.dumps(candidate), text=True,
-                                 capture_output=True, timeout=10)
+                                 capture_output=True,
+                                 timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "10")))
             if run.stdout and mismatch(candidate, json.loads(run.stdout)[0]):
                 case = candidate; break
         else: return case
@@ -129,7 +131,8 @@ def run(executable, count, seed, output):
     raw = ''.join(json.dumps(c, separators=(',', ':')) + '\n' for c in cases)
     output.write_text(raw)
     process = subprocess.run([str(executable), 'jsonl', str(output)], text=True,
-                             capture_output=True, timeout=180)
+                             capture_output=True,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "180")))
     results = [json.loads(line) for line in process.stdout.splitlines()]
     if len(results) != len(cases): raise AssertionError(f'Rust produced {len(results)}/{len(cases)} records: {process.stderr}')
     for case, result in zip(cases, results, strict=True):

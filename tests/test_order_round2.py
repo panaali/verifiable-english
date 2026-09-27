@@ -1,6 +1,7 @@
 """The order surface and finite evaluation agree in Python, Rust and Lean."""
 import copy
 import json
+from subprocesses import HANG_TIMEOUT
 import subprocess
 
 import pytest
@@ -21,7 +22,7 @@ from ve.wire import canonical_json
 
 def invoke(executable, command, cases):
     result = subprocess.run([str(executable), command], input=json.dumps(cases),
-                            capture_output=True, text=True, timeout=120)
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     return json.loads(result.stdout)
 

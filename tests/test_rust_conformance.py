@@ -5,6 +5,7 @@ import copy
 import os
 from pathlib import Path
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 import sys
 
@@ -31,14 +32,14 @@ def rust_executable():
     if not cargo: pytest.skip('cargo is not available')
     env = {**os.environ, 'CARGO_HOME': str(ROOT/'.cargo-home'), 'CARGO_TARGET_DIR': str(ROOT/'rust/target')}
     run = subprocess.run([cargo, 'build', '-j', '2', '--locked', '--release', '--manifest-path', str(ROOT/'rust/Cargo.toml')],
-                         cwd=ROOT, env=env, capture_output=True, text=True, timeout=180)
+                         cwd=ROOT, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
     return ROOT/'rust/target/release/ve'
 
 
 def invoke(executable, cases, errors=False):
     run = subprocess.run([str(executable),'conformance'], input=json.dumps(cases), text=True,
-                         capture_output=True, timeout=60)
+                         capture_output=True, timeout=HANG_TIMEOUT)
     assert run.returncode == int(errors), run.stdout + run.stderr
     return json.loads(run.stdout)
 
@@ -210,7 +211,7 @@ def test_rust_closure_search(rust_executable):
 
 def test_seeded_3000_closure_case_fuzz(rust_executable):
     run = subprocess.run([sys.executable, str(ROOT/'rust/fuzz_closure.py'), '--rust', str(rust_executable),
-                          '--count', '3000'], cwd=ROOT, text=True, capture_output=True, timeout=240)
+                          '--count', '3000'], cwd=ROOT, text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
     summary = json.loads(run.stdout)
     assert summary['agreements'] == summary['identity_agreements'] == 3000
@@ -260,7 +261,7 @@ def test_rust_shared_identities(rust_executable):
 
 def test_rust_shared_wire(rust_executable):
     for c in fixture('wire'):
-        run = subprocess.run([str(rust_executable),'canonical-json'],input=c['raw'],text=True,capture_output=True,timeout=10)
+        run = subprocess.run([str(rust_executable),'canonical-json'],input=c['raw'],text=True,capture_output=True,timeout=HANG_TIMEOUT)
         if c.get('reject'):
             with pytest.raises(VEError) as exc: loads_json(c['raw'])
             assert run.returncode == 2, c['id']
@@ -320,7 +321,7 @@ def test_rust_shared_search(rust_executable):
 
 def test_seeded_5000_case_fuzz(rust_executable):
     run = subprocess.run([sys.executable,str(ROOT/'conformance/fuzz.py'),'--rust',str(rust_executable),
-                          '--count','5000'],cwd=ROOT,text=True,capture_output=True,timeout=240)
+                          '--count','5000'],cwd=ROOT,text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
     result = json.loads(run.stdout)
     assert result['agreements'] == 5000
@@ -331,7 +332,7 @@ def lean_shared_executable():
     lake = shutil.which('lake')
     if not lake: pytest.skip('lake is not available')
     if not os.environ.get('VE_LEAN_PREBUILT'):
-        run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=180)
+        run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=HANG_TIMEOUT)
         assert run.returncode == 0, run.stdout + run.stderr
     assert (ROOT/'lean/.lake/build/bin/ve_conformance').exists()
     return ROOT/'lean/.lake/build/bin/ve_conformance'
@@ -341,7 +342,7 @@ def lean_shared_executable():
 def test_lean_same_extended_files(lean_shared_executable,name):
     cases = fixture(name)
     run = subprocess.run([str(lean_shared_executable),str(ROOT/f'conformance/{name}.json')],
-                         cwd=ROOT,text=True,capture_output=True,timeout=90)
+                         cwd=ROOT,text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == int(name in ('parser','validation')), run.stdout + run.stderr
     for c,r in zip(cases,json.loads(run.stdout),strict=True):
         expected_error = ('expected_error' in c or 'error_code' in c.get('expected_parser',{}))
@@ -363,7 +364,7 @@ def test_rust_source_binding_and_cli_outcomes(rust_executable,tmp_path):
     for text,code,status in [('true.\n',0,'Satisfied'),('false.\n',1,'Violated'),('true.\r\n',2,'error')]:
         source.write_bytes(text.encode())
         run = subprocess.run([str(rust_executable),'evaluate','--env',str(env),'--model',str(model),
-                              '--source',str(source)],text=True,capture_output=True,timeout=10)
+                              '--source',str(source)],text=True,capture_output=True,timeout=HANG_TIMEOUT)
         assert run.returncode == code
         assert json.loads(run.stdout or run.stderr)['status'] == status
     premises = tmp_path/'premises.ve'; premises.write_text('')
@@ -373,19 +374,19 @@ def test_rust_source_binding_and_cli_outcomes(rust_executable,tmp_path):
     for check in (False, True):
         args = ([str(rust_executable), 'check-countermodel', *command[2:], '--model', str(model)]
                 if check else command)
-        run = subprocess.run(args,text=True,capture_output=True,timeout=10)
+        run = subprocess.run(args,text=True,capture_output=True,timeout=HANG_TIMEOUT)
         assert run.returncode == 2
         assert json.loads(run.stderr)['error']['code'] == 'SyntaxError'
     premises.write_text('true.\n')
-    run = subprocess.run(command,text=True,capture_output=True,timeout=10)
+    run = subprocess.run(command,text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stderr
     found = json.loads(run.stdout); assert found['status'] == 'Found'
     model.write_text(json.dumps(found['model']))
     run = subprocess.run([str(rust_executable),'check-countermodel',*command[2:],'--model',str(model)],
-                         text=True,capture_output=True,timeout=10)
+                         text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stderr
     assert json.loads(run.stdout)['valid']
-    run = subprocess.run([*command,'--max-models','0'],text=True,capture_output=True,timeout=10)
+    run = subprocess.run([*command,'--max-models','0'],text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == 2
     assert json.loads(run.stdout)['status'] == 'ResourceLimit'
 
@@ -400,7 +401,7 @@ def test_jsonl_continues_after_oversized_record(rust_executable, tmp_path, overs
     valid = json.dumps(case).encode() + b'\n'
     stream = tmp_path / 'oversized.jsonl'
     stream.write_bytes(valid + b'x' * oversized_bytes + (b'\n' + valid + valid if terminated else b''))
-    run = subprocess.run([str(rust_executable), 'jsonl', str(stream)], capture_output=True, text=True, timeout=30)
+    run = subprocess.run([str(rust_executable), 'jsonl', str(stream)], capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 1, run.stderr
     records = [json.loads(line) for line in run.stdout.splitlines()]
     assert len(records) == (4 if terminated else 2)

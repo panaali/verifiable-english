@@ -2,6 +2,7 @@
 import json
 import os
 import random
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
@@ -20,7 +21,7 @@ RUST = Path(os.environ.get("VE_W5_RUST_BIN", str(Path(__file__).resolve().parent
 
 def _run(cases):
     completed = subprocess.run([str(LEAN), "route", "-"], input=json.dumps(cases),
-                               text=True, capture_output=True, timeout=120)
+                               text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     return json.loads(completed.stdout)
 
@@ -71,7 +72,7 @@ def test_1000_generated_flag_and_literal_sets():
         assert (got["status"], got.get("generator")) == want, (case["id"], want, got)
         assert {key: shown[key] for key in generated} == generated, (case["id"], shown)
     completed = subprocess.run([str(RUST), "conformance"],
-        input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=120)
+        input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     rust_results = json.loads(completed.stdout)
     assert len(rust_results) == 1000
