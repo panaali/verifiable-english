@@ -1,0 +1,7192 @@
+{
+  "format": "ve-web-copy@1",
+  "sources": {
+    "ve_webapp/static/index.html": "79aba26aa411570955d951c689c99b7cc185a314c5708d6e86f5ad70b752301a",
+    "ve_webapp/static/app.js": "b48f16ac1f44b0310d58e3d39b32061b2eb1c08b1ba877a5b95bb49ed2e29072",
+    "ve_webapp/server.py": "16c4140b3ae42c564dd854ab66784d975b98a6efcd3c99bbb39a5f2db2198417",
+    "ve_webapp/worker.py": "db363fe1ab680d67a38bd6dfe2dc4137e704f3b0d7b9fe9d1210b2f3cfc6b9c0",
+    "ve_webapp/drafts.py": "78fc21ca526c488bb8363b0a5f479c89ae4d316958780859be1939db51f27576",
+    "ve_webapp/rules.py": "65847f56a2552b0b0f46588698510c8b5eaf1d8186715015e099211f42c8143e",
+    "ve_webapp/examples.py": "d39de409076ebeba175c4bb9b57dd5744de8675f1b5d96342bed771505a138e0"
+  },
+  "entries": [
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "1",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "2",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "2"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "A proof establishes a consequence of these assumptions. It does not establish their truth or the fidelity of a translation.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A proof establishes a consequence of these assumptions.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "It does not establish their truth or the fidelity of a translation.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Advanced model proposals",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Advanced model proposals"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Approve selected meaning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Approve selected meaning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Ask assistant",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Ask assistant"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Authoring",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Authoring"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Cancel review",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Cancel review"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Check consequence →",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Check consequence →"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Check rule conflict",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Check rule conflict"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Check this example",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Check this example"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Checked consequences",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Checked consequences"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Clear reasoning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Clear reasoning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Close tour",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Close tour"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Compare proposals",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Compare proposals"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Confirm new word",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Confirm new word"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Confirm synonym meaning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Confirm synonym meaning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Confirmed synonym",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Confirmed synonym"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Confirmed synonyms",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Confirmed synonyms"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Ctrl / ⌘ + Enter",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Ctrl / ⌘ + Enter"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "DRAFT WORDING",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "DRAFT WORDING"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Described kind",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Described kind"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Document status",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Document status"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Document words",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Document words"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Draft in English",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Draft in English"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "EXACT ENGLISH READING",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "EXACT ENGLISH READING"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "English is ambiguous. The reading is explicit. The checker checks the conclusion.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "English is ambiguous."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is explicit."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The checker checks the conclusion."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "English sentence",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "English sentence"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "English writing",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "English writing"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Environment JSON",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Environment JSON"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Established consequences",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Established consequences"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Evaluate in world",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Evaluate in world"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Evaluate the conclusion in a tiny world, then ask whether it follows from the assumptions in every world.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Evaluate the conclusion in a tiny world, then ask whether it follows from the assumptions in every world.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Exact meaning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Exact meaning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Example vocabulary",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Example vocabulary"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Export this document ↓",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Export this document ↓"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Finite world JSON",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Finite world JSON"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "First to second",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "First to second"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Four views",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Four views"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Import a saved document",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Import a saved document"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Learn",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Learn"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Negative example",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Negative example"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "New blank document",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "New blank document"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "New word",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "New word"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Next →",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Next →"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "None selected",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "None selected"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "One reading, several views",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "One reading, several views"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Open writing desk →",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Open writing desk →"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "PRIVATE WORKSPACE",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "PRIVATE WORKSPACE"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Person or thing",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Person or thing"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Positive example",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Positive example"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Property",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Property"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Purpose",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Purpose"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Quick tour",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Quick tour"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "RULE EXAMPLE",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "RULE EXAMPLE"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Reading approval",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Reading approval"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Relation",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Relation"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Relation direction",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Relation direction"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Review meaning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Review meaning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Rule conflicts",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Rule conflicts"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Rules",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Rules"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Save unresolved",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Save unresolved"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Second to first",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Second to first"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Sign out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Sign out"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Skip to workspace",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Skip to workspace"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Source translation",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Source translation"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Strict VE assumptions",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strict VE assumptions"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Strict VE conclusion",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strict VE conclusion"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Strict VE source",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strict VE source"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The checker is independent.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The checker is independent."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The document is saved. The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is saved."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The example is untrusted. The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The example is untrusted."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The export is unsigned. The import is checked.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The export is unsigned."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The import is checked."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The meaning is precise. The evidence is relevant.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The meaning is precise."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The evidence is relevant."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The meaning needs approval. The consequence is checked.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The meaning needs approval."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The consequence is checked."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The reading is precise.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is precise."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The result is pending.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The result is pending."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The sentence uses the structure. The logic uses the structure.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The sentence uses the structure."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The logic uses the structure."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The token is private. Your session expires after eight hours.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The token is private."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Your session expires after eight hours.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The word needs the kind. The synonym needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The word needs the kind."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The synonym needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The workspace shows the sentence. The checker checks the conclusion.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The workspace shows the sentence."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The checker checks the conclusion."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "These declarations give words their types and descriptions. Edit JSON to bring your own vocabulary or world. Views and proofs are always recomputed.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "These declarations give words their types and descriptions.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Edit JSON to bring your own vocabulary or world.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Views and proofs are always recomputed.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Toggle light or dark theme",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Toggle light or dark theme"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Try the reasoning",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Try the reasoning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Undo last change",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Undo last change"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Unlock workspace",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Unlock workspace"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "VE CHECKER",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "VE CHECKER"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "VE experimental checker",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "VE experimental checker"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Validate",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Validate"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Verifiable English",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Verifiable English"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Verifiable English home",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Verifiable English home"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Verifiable English · Writing desk",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Verifiable English · Writing desk"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Vocabulary & small world",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Vocabulary & small world"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "WRITING DESK",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "WRITING DESK"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Word type",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Word type"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Workspace",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Workspace"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Workspace access token",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Workspace access token"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Write what must, must not, or may happen. Add an exception or precedence, then check for a conflict in plain English.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Write what must, must not, or may happen.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Add an exception or precedence, then check for a conflict in plain English.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Writing desk",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Writing desk"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Your statement",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Your statement"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "personnel",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "personnel"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "ve",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "ve"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "→",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "→"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "◐",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "◐"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "✓",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "✓"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": " ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": " (line {}, column {})",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": " Revision {}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": " The world is checked. The proof is separate.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "(prefers-color-scheme: dark)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": ", ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "-",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "/api/",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "A possible world",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "A possible world"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Accept this reading",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Accept this reading"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Alternative readings",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Alternative readings"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Assistant readings",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Assistant readings"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Assistant suggestion · untrusted",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Assistant suggestion · untrusted"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Certified means a Python-replayed proof from your assumptions. Countermodel means a checked exception to that inference. Unknown means the budget did not decide. None certifies real-world evidence. Export to keep your draft.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Certified means a Python-replayed proof from your assumptions.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Countermodel means a checked exception to that inference.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Unknown means the budget did not decide.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "None certifies real-world evidence.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Export to keep your draft.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Check “{}”. {}",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Check “{}”. {}",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Content-Type",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Enter",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Exact comparison and checked worlds",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Exact comparison and checked worlds"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Exact meaning identity",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Exact meaning identity"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Exact world & name mapping",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Exact world & name mapping"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Fluent",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Fluent"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "GET",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Inspect proof certificate & replay",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Inspect proof certificate & replay"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Invalid request",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Keep assumptions visible",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Keep assumptions visible"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Logic",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Logic"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "MODEL PROPOSAL · UNTRUSTED",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "MODEL PROPOSAL · UNTRUSTED"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Meaning approved at this revision. {}",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Meaning approved at this revision. {}",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Model proposal accepted by you for this draft. Fidelity is your responsibility; checking is separate.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Model proposal accepted by you for this draft.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Fidelity is your responsibility; checking is separate.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Natural English",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Natural English"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Nearby declared words: {}. These are suggestions, not replacements.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Nearby declared words: {}.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "These are suggestions, not replacements.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Next →",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Next →"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "None of these means what you intended. Restate the sentence or give an example.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "None of these means what you intended.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Restate the sentence or give an example.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "One reading, several views",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "One reading, several views"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Open the writing desk. The conclusion is separate from the assumptions. Remove the policy rule and check again: the checker can show a world where the conclusion fails.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Open the writing desk.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The conclusion is separate from the assumptions.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Remove the policy rule and check again: the checker can show a world where the conclusion fails.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "POST",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Pick an example in Learn. Natural English gives the checked reading. Strict VE, fluent, and logic views are available in separate tabs.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Pick an example in Learn.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Natural English gives the checked reading.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Strict VE, fluent, and logic views are available in separate tabs.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "QUICK TOUR / {} OF {}",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "QUICK TOUR / {} OF {}"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Read the verdict precisely",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Read the verdict precisely"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Readings considered so far, not an exhaustive list. Acceptance applies to this local draft; it is not an audited assist-session sign-off.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Readings considered so far, not an exhaustive list.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Acceptance applies to this local draft; it is not an audited assist-session sign-off.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Source English",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Source English"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Source alternatives stay together. A cited narrowing has not been reviewed here, so this unit cannot be approved as one reading.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Source alternatives stay together.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "A cited narrowing has not been reviewed here, so this unit cannot be approved as one reading.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Start exploring ✓",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Start exploring ✓"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Strict VE",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strict VE"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Strict VE and model gloss",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strict VE and model gloss"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The app shows the example.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The app shows the example."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The assistant is disabled. The checker is available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The assistant is disabled."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The checker is available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The assistant shows the candidate. The candidate is untrusted.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The assistant shows the candidate."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The candidate is untrusted."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The budget is exhausted.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The budget is exhausted."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The candidate is not available. The sentence needs the vocabulary.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The candidate is not available."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The sentence needs the vocabulary."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The candidate is rejected.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The candidate is rejected."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The checker checks the proof.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The checker checks the proof."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The conclusion is refuted.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The conclusion is refuted."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The conclusion is satisfied.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The conclusion is satisfied."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The conflict is absent.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The conflict is absent."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The conflict is present.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The conflict is present."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The consequence is certified.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The consequence is certified."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The counterexample is present.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The counterexample is present."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document accepts the sentence.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document accepts the sentence."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document accepts the sentence. The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document accepts the sentence."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document is current. The paraphrase needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is current."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The paraphrase needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document is not available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is not available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document is pending.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is pending."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The document is saved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is saved."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The draft is available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The draft is available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The draft is empty.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The draft is empty."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The example is untrusted. The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The example is untrusted."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The proof is replayed. The conclusion follows the assumptions.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The proof is replayed."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The conclusion follows the assumptions."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is approved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is approved."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is approved. The consequence needs checking.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is approved."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The consequence needs checking."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is checked. The proof is not checked.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is checked."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The proof is not checked."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is not available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is not available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is not available. The view shows the logic.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is not available."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The view shows the logic."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is pending.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is pending."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is ready.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is ready."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is ready. The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is ready."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is refuted.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is refuted."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is satisfied.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is satisfied."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading is unresolved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading is unresolved."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The reading needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The request is rejected.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request is rejected."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The result is not current.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The result is not current."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The result is not current. The checker needs the document.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The result is not current."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The checker needs the document."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The result is pending.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The result is pending."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The result is unresolved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The result is unresolved."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The revision is not available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The revision is not available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The sentence is unresolved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The sentence is unresolved."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The statement is not available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The statement is not available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The statement is unresolved. The statement is visible.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The statement is unresolved."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The statement is visible."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The synonym is approved. The sentence needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The synonym is approved."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The sentence needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The synonym needs approval.\n",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The synonym needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The word is known. The sentence needs approval.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The word is known."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The sentence needs approval."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The word is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The word is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "The word needs approval. The reading needs review.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The word needs approval."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The reading needs review."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "This example situation makes one reading true and the other false.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This example situation makes one reading true and the other false.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "This import exceeds the 32 KiB limit.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This import exceeds the 32 KiB limit.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Two checked readings",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two checked readings"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Use this restatement",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Use this restatement"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Use this wording",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Use this wording"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Vocabulary or world JSON is invalid. Open “Vocabulary & small world” to fix it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Vocabulary or world JSON is invalid.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Open “Vocabulary & small world” to fix it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Word help",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Word help"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Write one English sentence and request readings. This spends one model call when enabled. Compare the paraphrase and alternatives before accepting or editing.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Write one English sentence and request readings.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "This spends one model call when enabled.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Compare the paraphrase and alternatives before accepting or editing.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "X-VE-CSRF",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Your latest words are still saving. Change example now?",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Your latest words are still saving.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Change example now?",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "[data-example]",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "_",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "a",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "active",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "analyse",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "analyze",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "another tab",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "application/json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "approve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "approveReading",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "approved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "aria-current",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "aria-pressed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "article",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "askRepair",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "assistStatus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "authoring",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "badge",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "badge explicit-badge",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "badge model",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "beforeunload",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "button",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "cancel",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "cancelReview",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "candidate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "candidate checked-card",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "candidates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "card-reading",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "certified",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "check",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "checkResult",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "checkRules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "claim",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "clear",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "code",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "confirmGlossary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "conflict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "dark",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "define",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "defineWord",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "details",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "div",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "document-unit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "documentMode",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "documentRevision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "documentStatus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "documentUnits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts/import",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts/{}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts/{}/assist",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts/{}/commands",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "drafts/{}/export",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "empty",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "error",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "exampleSelect",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "examples",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "explicit form",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "explicit form"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "export",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "false",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "false"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "gallery",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "glossary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "glossarySentence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "glossaryStatus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "h2",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "h3",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ide",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ideNav",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "importFile",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "input",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "keydown",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "learn",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "learnNav",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "lessonCategory",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "lessonNote",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "lessonResult",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "lessonTitle",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "lessonViews",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "light",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "login",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "loginError",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "loginForm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "logout",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "newDocument",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "newWord",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "noneReading",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "note",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "notice",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "openExample",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "option",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "p",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "page",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "pre",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "premises",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "property",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "propose",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "prose",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "provenance",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "reader-sentence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "reading-group",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "reading-tabs",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ready",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "recovery",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "relation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "reply",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "result-detail",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "rules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "rulesNav",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "rulesResult",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "rulesText",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "runLesson",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "save",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "selected",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "session",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "small",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "span",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "stale",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "strictEditor",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "string",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "strong",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "summary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "theme",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "token",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tour",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourButton",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourClose",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourCount",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourNext",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourText",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "tourTitle",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "translation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "undo",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "undoReview",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "unresolved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "unresolvedReading",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "use strict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "useWorld",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "validate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "validation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ve-document.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ve-theme",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "verdict ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "view",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "view natural-view",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "wordDirection",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "wordExample",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "wordKind",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "wordNegative",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "wordSort",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "workspace",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "world",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "{} · one paid call per request",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "{} · one paid call per request",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "{}: {}{}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": " must be text of at most 6000 characters.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "--version",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "-m",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts/import",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts/{draft_id}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts/{draft_id}/assist",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts/{draft_id}/commands",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/drafts/{draft_id}/export",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/examples",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/login",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/logout",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/rules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/session",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/api/{action}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "/assets/{name}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "://",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": ";",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Access token must contain at least 32 characters; generate a random token.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Another operation is running. Try again shortly.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Another operation is running.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Try again shortly.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Assistant call allowance reached. Try later; the daily cap resets at UTC midnight.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Assistant call allowance reached.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Try later; the daily cap resets at UTC midnight.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Assistant request superseded by a newer document revision.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "BEGIN IMMEDIATE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Bound streamed bodies too, not only Content-Length; add headers to all responses.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "CREATE TABLE IF NOT EXISTS calls (at REAL NOT NULL)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Call caps must be positive.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "CallAllowanceReached",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Claude CLI version cannot be empty.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Could not detect claude --version; use --claude-cli-version.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "DELETE FROM calls WHERE at < ?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Enter rules in English, up to 6000 characters.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Enter rules in English, up to 6000 characters.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "INSERT INTO calls VALUES (?)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Request exceeds 32 KiB.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Request exceeds 32 KiB.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Request timed out.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Request timed out.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Reserve before spawning; failures count, restarts and new sessions do not reset spend.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "SELECT count(*) FROM calls WHERE at > ?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "SELECT count(*) FROM calls WHERE at >= ?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Session limit reached.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Session limit reached.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Single-process HTTPS server; secrets never cross the semantic worker boundary.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The CSRF header is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The CSRF header is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The JSON is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The JSON is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The action is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The action is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The assistant is disabled.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The assistant is disabled."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The field is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The field is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The operation is not complete.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The operation is not complete."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The origin is foreign. The request is rejected.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The origin is foreign."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request is rejected."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The request needs the JSON.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the JSON."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The request needs the object.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the object."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The request needs the revision. The request needs the request ID.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the revision."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the request ID."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The request needs the revision. The request needs the request ID. The request needs the action. The request needs the arguments.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the revision."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the request ID."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the action."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the arguments."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The request needs the sentence.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the sentence."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The session is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The session is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The site is foreign. The request is rejected.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The site is foreign."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The request is rejected."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The token is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The token is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "The vocabulary is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The vocabulary is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "This document changed in another tab. Reload its latest revision.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This document changed in another tab.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Reload its latest revision.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Time budget exhausted. Simplify the statement and try again.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Time budget exhausted.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Simplify the statement and try again.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Too many login attempts. Wait a minute.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Too many login attempts.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Wait a minute.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Unavailable",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Use the document assistant control.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Use the document assistant control.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "VE_CLAUDE_ACCOUNT_CONFIG_DIR",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "VE_WEB_TOKEN",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "VE_WEB_TOKEN_FILE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "account_config_dir",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "app.js",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "application/json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "args",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "assist",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "body",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "candidates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "check",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "claude",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "claude-empty",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "cli_version",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "config",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "content-type",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "cross-site",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "csrf",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "data",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "detail",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "error",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "expires",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "failed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "finish",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "form",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "haiku",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "headers",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "history",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "http",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "http.disconnect",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "http.request",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "http.response.start",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "index.html",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "kind",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "login",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "model",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "more_body",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "natural",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "ok",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "origin",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "outcome",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "policy",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "premises",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "propose",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "proposer_finish",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "proposer_reserve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "proposer_reserved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "quota.sqlite3",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "reason",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "request_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "reserve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "result",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "sec-fetch-site",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "sentences",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "source",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "stale",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "state",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "static",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "status",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "strict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "style.css",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "suggestion",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "token",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "type",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "units",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "unresolved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "validate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "ve_session",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "ve_webapp.worker",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "world",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "x-ve-csrf",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "~/.agent-accounts/claude-danielsaeedi37",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": " ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": " and ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": " holds",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "(?!\\w)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "(?<![@\\w])",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": ", ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": ".\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": ".jsonl",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": ": ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "@",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "A plain-language summary; exact model data remains available to experts.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Check exactly one conclusion at a time.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Check exactly one conclusion at a time.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Disposable, time-limited process. All semantic decisions belong to ve.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Every assumption is true in this world; the conclusion is false.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every assumption is true in this world; the conclusion is false.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Every relationship not listed here is false in this world.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every relationship not listed here is false in this world.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Experimental Python certificate replay; not a Lean runtime check. Premises and fidelity to English require human review.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Experimental Python certificate replay; not a Lean runtime check.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Premises and fidelity to English require human review.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "It is false that ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "It is false that"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "It is true that ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "It is true that"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "No proof or countermodel found within the search budget.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No proof or countermodel found within the search budget.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "Select one sentence at a time for assistance.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Select one sentence at a time for assistance.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "The assistant is not available. Check the private server calls ledger.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The assistant is not available."
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Check the private server calls ledger.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "The operation could not complete within the supported limits.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The operation could not complete within the supported limits.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "There are no true cases of ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "There are no true cases of",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "This checked world makes one reading true and the other false.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This checked world makes one reading true and the other false.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "This world has ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "This world has"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "This world has no ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This world has no",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "[@()\\[\\]*<=>+{}|^\\\\/-]",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "_",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "__main__",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "account_config_dir",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "assurance",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "calls-",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "candidates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "certified",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "claim",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "claude-empty",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "cli_version",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "comparisons",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "constants",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "countermodel",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "countermodel_summary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "cwd",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "distinguishing_models",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "domains",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "error",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "evaluation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "false",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "fol_symbols",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "form",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "formula",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "k",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "max_evaluations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "max_models",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "max_proof_steps",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "meaning_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "message",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "model",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "natural",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "ok",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "parsed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "premises",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "propose",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "propose_repair_rounds",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "reader_summary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "relations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "s",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "sentence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "sentences",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "state",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "status",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "target",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "true",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "unknown",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "validate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "ve_fluent",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "ve_natural",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "ve_strict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "views",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "world",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " Applies: ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " Does not apply: ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " and ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " {0}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": " {1}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": ",",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": ":",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": ": ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "A declared English sentence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Approve one reading at a time.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Approve one reading at a time.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "BEGIN IMMEDIATE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "CREATE TABLE IF NOT EXISTS draft_events (\n                draft TEXT NOT NULL, revision INTEGER NOT NULL, request_id TEXT NOT NULL,\n                action TEXT NOT NULL, payload TEXT NOT NULL, previous TEXT NOT NULL,\n                hash TEXT NOT NULL, PRIMARY KEY(draft, revision), UNIQUE(draft, request_id))",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "CREATE TABLE IF NOT EXISTS drafts (\n                id TEXT PRIMARY KEY, owner TEXT NOT NULL, example TEXT NOT NULL,\n                environment TEXT NOT NULL, revision INTEGER NOT NULL,\n                ledger TEXT NOT NULL, head TEXT NOT NULL)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Choose a unit revision to restore.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Choose a unit revision to restore.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Choose authoring or translation mode.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Choose authoring or translation mode.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Choose declared kinds of things for the new word.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Choose declared kinds of things for the new word.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Choose person, property, or relation.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Choose person, property, or relation.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Confirm who acts on whom for a relation.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Confirm who acts on whom for a relation.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Describe the new word in at most 300 characters.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Describe the new word in at most 300 characters.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Document export exceeds limits.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Document export exceeds limits.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Document history failed replay.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Document history failed replay.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Document history limit reached.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Document history limit reached.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Document ledger differs from history.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Document ledger differs from history.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Document limit reached.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Document limit reached.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Durable, token-scoped writing desk over Z3's revisioned recovery ledger.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Enter a clarification or restatement.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Enter a clarification or restatement.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Enter a reason to keep this unit unresolved.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Enter a reason to keep this unit unresolved.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Enter one glossary sentence.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Enter one glossary sentence.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Enter up to 6000 characters of English.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Enter up to 6000 characters of English.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Explicit checked paraphrase selected after reading review",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Give one positive and one negative example for the new word.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Give one positive and one negative example for the new word.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "INSERT INTO draft_events VALUES (?,?,?,?,?,?,?)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "INSERT INTO drafts VALUES (?,?,?,?,?,?,?)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Invalid proposer outcome.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Invalid proposer outcome.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Mode is fixed for this document; start a new document to change it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Mode is fixed for this document; start a new document to change it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Reading is outside the considered set.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Reading is outside the considered set.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT * FROM draft_events WHERE draft=? ORDER BY revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT * FROM drafts WHERE id=?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT * FROM drafts WHERE id=? AND owner=?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT count(*) FROM drafts WHERE owner=?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT id FROM drafts WHERE owner=? ORDER BY rowid DESC LIMIT 20",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "SELECT revision FROM draft_events WHERE draft=? AND request_id=?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The action is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The action is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The action is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The action is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The document is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The document is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The export is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The export is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The export is unsigned. The export does not prove the authorship.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The request ID is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request ID is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The request is not valid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request is not valid."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The request needs the reading.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the reading."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The request needs the revision.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the revision."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The request needs the sentence.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The request needs the sentence."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The situation is not available.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The situation is not available."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The vocabulary is not known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The vocabulary is not known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "The word is known.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The word is known."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "This document changed in another tab. Reload its latest revision.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This document changed in another tab.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Reload its latest revision.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "This situation has ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "UPDATE drafts SET environment=?, revision=?, ledger=?, head=? WHERE id=? AND owner=?",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Undo requested an earlier unapproved draft.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Unknown English phrase",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Unknown English phrase '([^']+)'",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "Use one lower-case word for the new term.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Use one lower-case word for the new term.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "[A-Za-z0-9_-]{30,60}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "[A-Za-z0-9_-]{8,100}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "[a-z][a-z-]{0,40}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "\\b(caused|probably|reasonable|should|generally)\\b",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "\\b(it|they|her|his)\\b|\\bdoes too\\b",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "_",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "actor",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "analyze",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "approval",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "approve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "approved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "args",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "arguments",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "authoring",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "authorship",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "cancel",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "candidates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "cards",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "catalogue_results",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "checks_pair",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "complete",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "declared",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "define",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "description",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "direction",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "disposition",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "document",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "document_units",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "domains",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "draft",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "drafts.sqlite3",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "end",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "engineer",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "environment_hash",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "every engineer checks a server",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "every_sort",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "exhausted",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "first_to_second",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "format",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "glossary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "hash",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "head",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "history",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "import",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "incomplete",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "kind",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "known",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "language",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ledger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ledger_hash",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "limits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "main",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "meaning_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "mode",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "model",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "multiple",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "needs_repair",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "needs_word",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "negative_example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "not_applicable",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "one",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "outcome",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "payload",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "pending",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "person",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "policy",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "positive_example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "predicates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "previous",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "profile",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "profiles",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "property",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "proposer_finish",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "proposer_reserve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "proposer_result",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "proposer_suggested",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "reason",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "rejected",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "relation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "relations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "reply",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "request_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "request_proposer",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "s",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "save",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "scope.every_some@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "second_to_first",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "sentence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "server",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "situation_text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "some_sort",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "sorts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "source",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "spec_revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "stale",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "start",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "state",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "status",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "suggestions",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "supported",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "target_revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "templates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "translation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "undo",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "undo_target",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unit_snapshot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "units",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unknown",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unresolved",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unsigned_import",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "unsupported",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ve-draft@1:",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ve-web-draft@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ve.english@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "ve.readings@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "verbalisation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "versions",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "vocabulary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "word",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "word_prompt",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "wording",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "workspace author",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "zero",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "{0} ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "{0} is ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/drafts.py",
+      "raw": "{1} ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "CONFLICT",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "CONFLICT-FREE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "Conflict situation failed independent validation.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "For an urgent act, these selected rules give incompatible decisions. ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "For an urgent act, these selected rules give incompatible decisions.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "Rule 1. Every act must not be done.\nRule 2 (exception to rule 1). Every act may be done, if that act is urgent.\nRule 3. Every act must be done, if that act is urgent.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Rule 1.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Every act must not be done.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Rule 2 (exception to rule 1).",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Every act may be done, if that act is urgent.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Rule 3.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Every act must be done, if that act is urgent.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "Small W1 teaching example with checked, plain-English conflict results.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "The check ran out of budget; no conclusion about conflict was established.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The check ran out of budget; no conclusion about conflict was established.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "The checked rules have no conflict across all cases.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The checked rules have no conflict across all cases.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "act",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "act urgent_action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "arguments",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "canonical",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "clear",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "complete",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "conflict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "constants",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "default",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "deny",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "description",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "document_hash",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "domains",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "explanation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "identity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "language",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "norms@0",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "obligation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "permission",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "permitted",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "predicates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "profiles",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "regulated",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "relational-fol@0",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "relations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "required",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "role",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "rules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "sorts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "spec_revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "status",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "the urgent act",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "unknown",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "urgent",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "urgent_action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "verbalisation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "vocabulary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "{0} be done",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "raw": "{0} is urgent",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": " in this example.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "01 / POLICY",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "01 / POLICY"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "02 / 14TH AMENDMENT",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "02 / 14TH AMENDMENT"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "03 / MATHEMATICS",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "03 / MATHEMATICS"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "04 / NEWS CLAIM",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "04 / NEWS CLAIM"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "05 / AMBIGUITY",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "05 / AMBIGUITY"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "@a precedes @c.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "@alex is citizen_us.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "@alice checks_pair @atlas.\n@bob checks_pair @beacon.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "@api is safe.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "@north is reported_drop.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "A citizen of the United States.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A citizen of the United States.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "A fictional person.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A fictional person.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "A person who checks servers.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person who checks servers.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "A relational math statement. Transitivity is an explicit assumption, not a hidden property of the word ‘precedes’.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A relational math statement.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Transitivity is an explicit assumption, not a hidden property of the word ‘precedes’.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "A server being checked.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A server being checked.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Alice.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Alice.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States…",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States…",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Atlas.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Atlas.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Beacon.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Beacon.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Bob.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Bob.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Born in the United States.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Born in the United States.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Checks the server.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Checks the server.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Classified as safe under the stated policy.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Classified as safe under the stated policy.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Every engineer checks a server.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every engineer checks a server.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Every reviewed service is safe. The API is reviewed. Therefore the API is safe.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every reviewed service is safe.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The API is reviewed.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Therefore the API is safe.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Fictional reporting example. A countermodel disproves the inference, not the actual headline. VE does not verify the underlying data.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Fictional reporting example.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "A countermodel disproves the inference, not the actual headline.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE does not verify the underlying data.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Follow a transitive relation",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Follow a transitive relation"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "From a rule to a reason",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "From a rule to a reason"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Has passed the team's review.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Has passed the team's review.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Headline inference",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Headline inference"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "If a precedes b and b precedes c, then a precedes c, provided precedes is transitive.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "If a precedes b and b precedes c, then a precedes c, provided precedes is transitive.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Make the conditions visible",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Make the conditions visible"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Naturalized in the United States.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Naturalized in the United States.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "North district.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "North district.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Objects of type ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "One sampled district reported a drop. Did every sampled district report a drop?",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "One sampled district reported a drop.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Did every sampled district report a drop?",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Point a.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Point a.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Point b.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Point b.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Point c.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Point c.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Reported a drop in the metric during the specified period.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Reported a drop in the metric during the specified period.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Safe is a declared predicate, not a security audit. Remove the review rule in the IDE to find a countermodel.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Safe is a declared predicate, not a security audit.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Remove the review rule in the IDE to find a countermodel.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Server scope",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Server scope"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Small, explicitly scoped teaching examples; no inferred real-world facts.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "South district.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "South district.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Subject to the jurisdiction thereof.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Subject to the jurisdiction thereof.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "Teaching formalisation of part of Section 1, not the full amendment or legal advice. State citizenship is omitted. The predicates leave legal interpretation explicit.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Teaching formalisation of part of Section 1, not the full amendment or legal advice.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "State citizenship is omitted.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The predicates leave legal interpretation explicit.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "The API service.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The API service.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "The abstract relation under study.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The abstract relation under study.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "The checked situations can separate a shared server from a different server for each engineer.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The checked situations can separate a shared server from a different server for each engineer.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "The web service.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The web service.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "a",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "alex",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "alice",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "api",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "arguments",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "atlas",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "b",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "beacon",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "bob",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "born_us",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "c",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "category",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "checks_pair",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "citizen_us",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "citizenship",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "claim",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "complete",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "constants",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "description",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "district",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "domains",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "engineer",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "english",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "for every district d, (d is reported_drop).",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "for every engineer x0, (there exists server x1, (x0 checks_pair x1)).",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "for every person p, (if (((p is born_us) or (p is naturalized_us)) and (p is subject_jurisdiction)), then (p is citizen_us)).\n@alex is born_us.\n@alex is subject_jurisdiction.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "for every point x, (for every point y, (for every point z, (if ((x precedes y) and (y precedes z)), then (x precedes z)))).\n@a precedes @b.\n@b precedes @c.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "for every service x, (if (x is reviewed), then (x is safe)).\n@api is reviewed.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "language",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "math",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "naturalized_us",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "news",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "north",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "note",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "person",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "point",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "policy",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "precedes",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "predicates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "premises",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "profile",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "relations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "reported_drop",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "reviewed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "safe",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "scope",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "server",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "service",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "sort",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "sorts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "south",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "spec_revision",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "subject_jurisdiction",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "title",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "verbalisation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "vocabulary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "web",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "world",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} checks {1}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} is a citizen of the United States",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} is born in the United States",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} is reviewed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} is safe",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} is subject to the jurisdiction of the United States",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} precedes {1}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} reported a drop",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/examples.py",
+      "raw": "{0} was naturalized in the United States",
+      "visibility": "INTERNAL"
+    }
+  ],
+  "dynamic_gaps": [
+    {
+      "source": "ve_webapp/static/app.js",
+      "expression": "data.error.message and data.detail",
+      "reason": "Core and framework diagnostics are displayed without a VE parse."
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "expression": "user text, model glosses, draft reasons and situation summaries",
+      "reason": "Unbounded external or user-authored text reaches visible nodes."
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "expression": "document state, revision number, model and evaluation values",
+      "reason": "Status fragments and interpolated numbers are not VE sentences."
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "expression": "_reader_world and _comparison_summary",
+      "reason": "Generated world prose uses undeclared names, counts and truth wording."
+    },
+    {
+      "source": "ve_webapp/rules.py",
+      "expression": "RULES_TEXT",
+      "reason": "Norm examples use the separate norm grammar, not the writable English parser."
+    }
+  ]
+}
