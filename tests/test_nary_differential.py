@@ -5,6 +5,7 @@ import json
 import os
 import random
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
@@ -41,7 +42,7 @@ def environment(arity=6, *, literals=False):
 
 def invoke(binary, command, cases, *, errors=False):
     result = subprocess.run([str(binary), command], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=120)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode == int(errors), result.stdout + result.stderr
     return json.loads(result.stdout)
 
@@ -54,7 +55,7 @@ def lean_binary():
         if lake is None:
             pytest.skip("Lean is unavailable")
         result = subprocess.run([lake, "build", "ve_conformance"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=240)
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return binary
 
@@ -68,7 +69,7 @@ def rust_binary():
             pytest.skip("Rust is unavailable")
         env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home")}
         result = subprocess.run([cargo, "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
-                                env=env, capture_output=True, text=True, timeout=240)
+                                env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return binary
 

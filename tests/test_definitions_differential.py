@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import random
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from copy import deepcopy
 from pathlib import Path
@@ -154,7 +155,7 @@ def _python(env, model, ast):
 
 def _run(command, cases):
     completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True,
-                               timeout=600)
+                               timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
@@ -241,7 +242,7 @@ def test_rust_computes_the_same_tables(generated):
     env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
                             str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
-                           text=True, timeout=600)
+                           text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stderr
     requests, expected = [], []
     for index, env, model, _, _ in generated:
