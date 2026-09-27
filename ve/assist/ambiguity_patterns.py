@@ -31,22 +31,71 @@ SEARCH_LIMITS = {"max_domain_size": 2, "min_domain_size": 0,
 OPERATION_SECONDS = 8
 
 
-class _Deadline(Exception):
-    pass
+class _Deadline(BaseException):
+    """Raised inside a guarded region; BaseException so broad handlers cannot swallow it."""
 
 
-@contextmanager
-def _operation_budget(stop):
-    previous = sys.gettrace()
-    def trace(_frame, _event, _arg):
-        if time.monotonic() >= stop:
+class Budget:
+    """One operation deadline shared by every nested step of that operation.
+
+    Checkpoints are numbered in execution order. A live budget reads the
+    monotonic clock and records the first expired checkpoint; a replayed budget
+    fires at exactly that recorded checkpoint, so ledger replay reproduces
+    deadline outcomes without reading the clock. Expiry is sticky.
+    """
+    def __init__(self, seconds=None, *, stop=None, replay=False, fire_at=None):
+        self.stop = stop if stop is not None else (
+            float("inf") if seconds is None else time.monotonic() + seconds)
+        self.replay, self.fire_at = replay, fire_at
+        self.checks = 0
+        self.fired = None
+        self._regions = []
+
+    def _hit(self, ordinal):
+        if self.fired is None and ((ordinal == self.fire_at) if self.replay
+                                   else time.monotonic() >= self.stop):
+            self.fired = ordinal
+        return self.fired is not None
+
+    def expired(self) -> bool:
+        self.checks += 1
+        return self._hit(self.checks)
+
+    @contextmanager
+    def guard(self):
+        """Run a region that raises _Deadline once this budget expires.
+
+        Nested regions keep the outermost trace, so an inner step can neither
+        extend the deadline nor displace the enclosing enforcement.
+        """
+        if self.expired():
             raise _Deadline
-        return trace
-    sys.settrace(trace)
-    try:
-        yield
-    finally:
-        sys.settrace(previous)
+        self._regions.append(self.checks)
+        if self.replay or len(self._regions) > 1 or self.stop == float("inf"):
+            try:
+                yield
+            finally:
+                self._regions.pop()
+            return
+        previous = sys.gettrace()
+        def trace(_frame, _event, _arg):
+            if time.monotonic() >= self.stop:
+                if self.fired is None:
+                    self.fired = self._regions[-1]
+                raise _Deadline
+            return trace
+        sys.settrace(trace)
+        try:
+            yield
+        finally:
+            sys.settrace(previous)
+            self._regions.pop()
+
+
+def _budget(deadline) -> Budget:
+    return deadline if isinstance(deadline, Budget) else Budget(
+        OPERATION_SECONDS if deadline is None else None,
+        stop=None if deadline is None else deadline)
 
 
 @dataclass(frozen=True)
@@ -184,40 +233,47 @@ def checked_wording(env, wording: str, formula) -> str:
 
 
 def review(env, source: str, bindings: Mapping, *, pattern_id: str,
-           cursor: int = 0, deadline: float | None = None) -> dict:
+           cursor: int = 0, deadline: "float | Budget | None" = None) -> dict:
     """Return distinct cards only after search and independent model validation.
 
     Every unexamined or unresolved pair remains pending. Cursor is a pair index
     for display pagination only; approval requires zero pending pairs globally.
+    Every step, including wording parses and model replay, runs inside the
+    operation budget; an expired budget leaves the remaining work pending.
     """
-    stop = deadline if deadline is not None else time.monotonic() + OPERATION_SECONDS
-    rows, residual = candidates(env, source, bindings, pattern_id=pattern_id)
+    budget = _budget(deadline)
+    expired = {"reason": "operation deadline (8 seconds)"}
     result = {"catalogue_version": CATALOGUE_VERSION, "pattern_id": pattern_id,
               "limits": {**SEARCH_LIMITS, "operation_seconds": OPERATION_SECONDS,
                          "max_candidates": MAX_CANDIDATES, "max_comparisons": MAX_COMPARISONS,
                          "max_cards": MAX_CARDS}, "cards": [], "pending": [],
-              "candidate_count": len(rows), "comparison_count": 0, "candidates": [],
-              "cursor": cursor, "next_cursor": None, "residual": residual}
-    if time.monotonic() >= stop:
-        result["pending"].append({"reason": "operation deadline (8 seconds)"})
+              "candidate_count": 0, "comparison_count": 0, "candidates": [],
+              "cursor": cursor, "next_cursor": None, "residual": None}
+    try:
+        with budget.guard():
+            rows, residual = candidates(env, source, bindings, pattern_id=pattern_id)
+    except _Deadline:
+        result["pending"].append(dict(expired))
         return result
+    result["candidate_count"], result["residual"] = len(rows), residual
     if residual:
         return result
     worded = []
     for name, formula in rows:
-        if time.monotonic() >= stop:
-            result["pending"].append({"reason": "operation deadline (8 seconds)"})
-            return result
         try:
-            wording = checked_wording(env, render_english(formula, env) + ".", formula)
+            with budget.guard():
+                wording = checked_wording(env, render_english(formula, env) + ".", formula)
+                mid = meaning_id(env, formula)
+        except _Deadline:
+            result["pending"].append(dict(expired))
+            return result
         except (VEError, ValueError) as exc:
             result["residual"] = f"candidate {name} has no checked writable wording: {exc}"
             return result
         if "has the recorded relation" in wording or re.search(r'"[a-z][a-z0-9_]*"', wording):
             result["residual"] = f"candidate {name} needs admitted plain English vocabulary"
             return result
-        worded.append({"name": name, "meaning_id": meaning_id(env, formula),
-                       "wording": wording})
+        worded.append({"name": name, "meaning_id": mid, "wording": wording})
     result["candidates"] = worded
     if len(rows) > MAX_CANDIDATES:
         result["residual"] = "candidate limit (32)"
@@ -228,56 +284,54 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
         raise ValueError("invalid comparison cursor")
     end = min(len(pairs), MAX_COMPARISONS)
     for index in range(cursor, end):
-        if time.monotonic() >= stop:
-            result["pending"].append({"reason": "operation deadline (8 seconds)", "pair": index})
-            result["next_cursor"] = index
-            break
         i, j = pairs[index]
         left, right = rows[i], rows[j]
-        result["comparison_count"] += 1
+        pair = [left[0], right[0]]
         try:
-            with _operation_budget(stop):
-                found = find_distinguishing_model(env, left[1], right[1], **SEARCH_LIMITS)
-            if found.status != "Found" or found.model is None:
-                result["pending"].append({"pair": [left[0], right[0]],
-                                          "reason": found.detail or found.status})
-                continue
-            # Regenerate Background, validate the model, and evaluate every premise.
-            premises = background(env)
-            validate_background(env, found.model)
-            if any(evaluate(env, premise.formula, found.model,
-                            max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False).value is not True
-                   for premise in premises):
-                result["pending"].append({"pair": [left[0], right[0]],
-                                          "reason": "model violates regenerated Background"})
-                continue
-            a = evaluate(env, left[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
-            b = evaluate(env, right[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
-            if a.value is None or b.value is None or a.value == b.value:
-                result["pending"].append({"pair": [left[0], right[0]], "reason": "model replay failed"})
-                continue
-            card = {"pair": [left[0], right[0]], "meaning_ids": [meaning_id(env, left[1]),
-                     meaning_id(env, right[1])], "model": found.model.to_dict(),
-                     "values": [a.value, b.value], "pattern_id": pattern_id}
-            card["paraphrases"] = [result["candidates"][i]["wording"],
-                                    result["candidates"][j]["wording"]]
-            if len(result["cards"]) < MAX_CARDS:
-                result["cards"].append(card)
-            else:
-                result["comparison_count"] -= 1  # this pair is retried on the next page
-                result["pending"].append({"pair": card["pair"], "reason": "page card limit (3)"})
-                result["next_cursor"] = index
-                break
+            with budget.guard():
+                card, reason = _compare(env, left, right, pattern_id)
         except _Deadline:
-            result["pending"].append({"pair": [left[0], right[0]],
-                                      "reason": "operation deadline (8 seconds)"})
+            # The interrupted pair is retried on the next page and not counted.
+            result["pending"].append({"pair": pair, **expired})
             result["next_cursor"] = index
             break
         except VEError as exc:
-            result["pending"].append({"pair": [left[0], right[0]], "reason": str(exc)})
+            card, reason = None, str(exc)
+        if card is None:
+            result["comparison_count"] += 1
+            result["pending"].append({"pair": pair, "reason": reason})
+            continue
+        if len(result["cards"]) >= MAX_CARDS:
+            # This pair is retried on the next page.
+            result["pending"].append({"pair": pair, "reason": "page card limit (3)"})
+            result["next_cursor"] = index
+            break
+        result["comparison_count"] += 1
+        card["paraphrases"] = [worded[i]["wording"], worded[j]["wording"]]
+        result["cards"].append(card)
     if result["next_cursor"] is None and end < len(pairs):
         result["next_cursor"] = end
         result["pending"].append({"reason": "pair comparison limit (496)"})
-    if time.monotonic() >= stop and not result["pending"]:
-        result["pending"].append({"reason": "operation deadline (8 seconds)"})
+    if budget.expired() and not result["pending"]:
+        result["pending"].append(dict(expired))
     return result
+
+
+def _compare(env, left, right, pattern_id):
+    """Search and independently replay one separating model: (card, None) or (None, reason)."""
+    found = find_distinguishing_model(env, left[1], right[1], **SEARCH_LIMITS)
+    if found.status != "Found" or found.model is None:
+        return None, found.detail or found.status
+    # Regenerate Background, validate the model, and evaluate every premise.
+    validate_background(env, found.model)
+    if any(evaluate(env, premise.formula, found.model,
+                    max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False).value is not True
+           for premise in background(env)):
+        return None, "model violates regenerated Background"
+    a = evaluate(env, left[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
+    b = evaluate(env, right[1], found.model, max_evaluations=SEARCH_LIMITS["max_evaluations"], trace=False)
+    if a.value is None or b.value is None or a.value == b.value:
+        return None, "model replay failed"
+    return {"pair": [left[0], right[0]], "meaning_ids": [meaning_id(env, left[1]),
+            meaning_id(env, right[1])], "model": found.model.to_dict(),
+            "values": [a.value, b.value], "pattern_id": pattern_id}, None
