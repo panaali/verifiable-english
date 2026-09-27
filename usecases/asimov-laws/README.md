@@ -15,7 +15,9 @@ These are the checked rules in [rules.ve](rules.ve). An `action` is one proposed
 act by one robot. Rule numbers are display order; [the manifest](rules.manifest.json)
 preserves their stable names. The permission rules form the W1 precedence
 chain **0 > 1 > 2 > 3** (Rules 4 > 3 > 2 > 1). Rule 5 and Rule 6 require an
-action only when it is permitted.
+action only when it is permitted. Rule 6 is an illustrative assumption: it
+requires every permitted protective action, while the source requires the robot
+to preserve its existence without requiring every available means.
 
 ```text
 Rule 1. Every action may be performed, if that action is protective.
@@ -35,7 +37,7 @@ The natural English reading of each checked rule is:
 | 3 (Law 1) | An action judged to injure a human is forbidden, taking precedence over Rule 2. |
 | 4 (Law 0) | An action judged to injure humanity is forbidden, taking precedence over Rule 3. |
 | 5 (Law 2) | An ordered action is required if it is permitted. |
-| 6 (Law 3) | A protective action is required if it is permitted. |
+| 6 (Law 3, illustrative assumption) | Every protective action is required if it is permitted. |
 
 ## Boundary and result
 
@@ -55,6 +57,11 @@ The natural English reading of each checked rule is:
   account. The difference between *injure* and *come to harm* also remains
   open. The checked direct injury bans are not counted as a faithful rendering
   of the inaction clauses.
+- **UNFORMALISED:** The source's Law 3 preservation obligation concerns keeping
+  the robot in existence. Rule 6 does not faithfully express that obligation:
+  it requires *each* permitted protective action, even when two compatible
+  alternatives are available and either one would suffice. Both actions can be
+  required while the W1 conflict check still returns **CONFLICT-FREE**.
 - **UNFORMALISED:** Competing *different* actions, such as obeying an order
   versus saving the robot, are not compared. W1 precedence is per regulated
   predicate and per candidate action. Rules 5 and 6 can both require different

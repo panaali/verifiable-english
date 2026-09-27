@@ -33,9 +33,9 @@ def scenario(doc, *, ordered=False, protects=False, human_harm=False, humanity_h
     })
 
 
-def outcome(doc, model, predicate):
+def outcome(doc, model, predicate, action="act"):
     evaluator = _Evaluator(doc.base_environment(), model, 100_000, trace=False)
-    return evaluator.formula(doc.outcome(predicate, base=True), (("action", "act"),))[0]
+    return evaluator.formula(doc.outcome(predicate, base=True), (("action", action),))[0]
 
 
 def test_authoring_round_trip_priority_and_conflict_certificate():
@@ -82,3 +82,21 @@ def test_harmful_order_without_first_law_precedence_has_plain_english_witness():
     assert witness.target == "permitted"
     assert "rule law-2-permission permits" in witness.situation
     assert "rule law-1-direct forbids" in witness.situation
+
+
+def test_two_compatible_protective_alternatives_expose_law_three_approximation():
+    doc, _, _ = load()
+    relations = {p: [] for p in doc.base_environment().predicates}
+    relations["protects_robot"] = [["shield"], ["retreat"]]
+    model = FiniteModel.from_dict(doc.base_environment(), {
+        "complete": True, "domains": {"action": ["shield", "retreat"]},
+        "constants": {}, "relations": relations,
+    })
+    for action in ("shield", "retreat"):
+        assert outcome(doc, model, "permitted", action)
+        assert outcome(doc, model, "required", action)
+    assert check_conflict(doc, model=model, prove=True).status == "CONFLICT-FREE"
+
+    readme = (ROOT / "README.md").read_text()
+    assert "Rule 6 is an illustrative assumption" in readme
+    assert "**UNFORMALISED:** The source's Law 3 preservation obligation" in readme
