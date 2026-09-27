@@ -277,6 +277,7 @@ structure ReadingSet where
 
 structure Doc where
   literals : List String
+  flags : List VE.Data.Background.Flag
   units : List DocUnit
   lemmas : List Lemma
   openTerms : List String
@@ -326,7 +327,8 @@ def LeafAdmitted (D : Doc) (w : WireNode) : Prop :=
   | some .asserted => ∃ u, w.unit = some u ∧ AssertedUnit D u w.claim.formula
   | some (.bridge a u) => (w.unit = none ∨ w.unit = some u) ∧ QuotedUnit D a u w.claim.formula
   | some (.background g) => w.unit = none ∧
-      ∃ p ∈ Background.background D.literals, p = (w.claim.formula, g)
+      ∃ p ∈ (VE.Data.Background.generate D.flags).map (fun a => (a, "flags")) ++
+        Background.background D.literals, p = (w.claim.formula, g)
   | some (.cite b l) => w.unit = none ∧ ∃ m ∈ D.lemmas, m.name = b ++ "/" ++ l ∧ m.conclusion = w.claim.formula
   | some (.openTerm t) => w.unit = none ∧ t ∈ D.openTerms
   | some (.readings s v c) => w.unit = none ∧ ReadingContent D s v c w.claim.formula
@@ -416,7 +418,7 @@ def nodeDiagnostic (D : Doc) (w : WireNode) : String :=
 /-- A small `require` helper so every check is one bind step. -/
 abbrev require := Gate.require
 
-def decodeUnit (E : VE.Environment) (j : Json) : Except String DocUnit := do
+def decodeUnit (E : VE.Environment) (data : Bool) (j : Json) : Except String DocUnit := do
   VE.Bridge.displayFields j ["id", "span", "kind"] ["content"]
   let id ← stringField j "id"
   require (token id) s!"invalid unit id {id}"
@@ -426,7 +428,7 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String DocUnit := do
   require (start ≤ stop) "invalid span"
   let kind ← decodeKind 16 (← j.getObjVal? "kind")
   let content ← match j.getObjVal? "content" with
-    | .ok ast => some <$> Wire.decodeClosed E ast
+    | .ok ast => some <$> Wire.decodeClosed E ast data
     | .error _ => pure none
   pure ⟨id, start, stop, kind, content⟩
 
@@ -434,32 +436,34 @@ def sortedSpans : List DocUnit → Bool
   | a :: b :: rest => a.stop ≤ b.start && sortedSpans (b :: rest)
   | _ => true
 
-def decodeLeaf (E : VE.Environment) (j : Json) : Except String (VE.Formula × String) := do
+def decodeLeaf (E : VE.Environment) (data : Bool) (j : Json) : Except String (VE.Formula × String) := do
   exactFields j ["ast", "label"]
-  let a ← Wire.decodeClosed E (← j.getObjVal? "ast")
   let l ← stringField j "label"
   match parseLabel l with
   | none => throw s!"AdmissionError: invalid label {l}"
   | some (.cite _ _) => throw "AdmissionError: lemma leaves must be transitive (no cite labels)"
-  | some _ => pure (a, l)
+  | some _ =>
+    let a ← Wire.decodeClosed E (← j.getObjVal? "ast") (data && !l.startsWith "background:")
+    pure (a, l)
 
-def decodeLemma (E : VE.Environment) (j : Json) : Except String Lemma := do
+def decodeLemma (E : VE.Environment) (data : Bool) (j : Json) : Except String Lemma := do
   exactFields j ["name", "conclusion", "leaves"]
   let name ← stringField j "name"
   match parseLabel ("cite:" ++ name) with
   | some (.cite _ _) => pure ()
   | _ => throw s!"invalid lemma name {name}"
-  let c ← Wire.decodeClosed E (← j.getObjVal? "conclusion")
-  let leaves ← (← (← j.getObjVal? "leaves").getArr?).toList.mapM (decodeLeaf E)
+  let c ← Wire.decodeClosed E (← j.getObjVal? "conclusion") data
+  let leaves ← (← (← j.getObjVal? "leaves").getArr?).toList.mapM (decodeLeaf E data)
   require (leaves.length ≤ 1000) "ResourceLimit: lemma leaves"
   pure ⟨name, c, leaves⟩
 
-def decodeReadingSet (E : VE.Environment) (j : Json) : Except String ReadingSet := do
+def decodeReadingSet (E : VE.Environment) (data : Bool) (j : Json) : Except String ReadingSet := do
   exactFields j ["id", "version", "readings"]
   let id ← stringField j "id"
   require (token id) s!"invalid reading set id {id}"
   let version ← (← j.getObjVal? "version").getNat?
-  let readings ← (← (← j.getObjVal? "readings").getArr?).toList.mapM (Wire.decodeClosed E)
+  let readings ← (← (← j.getObjVal? "readings").getArr?).toList.mapM
+    (fun a => Wire.decodeClosed E a data)
   require (!readings.isEmpty && readings.length ≤ 64) "reading sets hold 1 to 64 readings"
   pure ⟨id, version, readings⟩
 
@@ -471,18 +475,18 @@ def tokens (j : Json) : Except String (List String) := do
 /-- Decode one graph node. Premises and certificate come together; the
 default label `asserted` is omitted on the wire (an explicit default is
 non-canonical and rejected). -/
-def decodeNode (E : VE.Environment) (j : Json) :
+def decodeNode (E : VE.Environment) (data : Bool) (j : Json) :
     Except String (WireNode × Json) := do
   VE.Bridge.displayFields j ["name", "ast"] ["label", "unit", "premises", "certificate"]
   let name ← stringField j "name"
   let astJson ← j.getObjVal? "ast"
-  let formula ← Wire.decodeClosed E astJson
   let label ← match j.getObjVal? "label" with
     | .ok l => do
       let s ← l.getStr?
       require (s != "asserted") "non-canonical label: the default label asserted is omitted"
       pure s
     | .error _ => pure "asserted"
+  let formula ← Wire.decodeClosed E astJson (data && !label.startsWith "background:")
   let unit ← match j.getObjVal? "unit" with
     | .ok u => some <$> u.getStr?
     | .error _ => pure none
@@ -515,23 +519,23 @@ structure Admitted where
   report : Report
   kinds : List Json
 
-def decodeDoc (rv : Wire.RouteVocabulary) (j : Json) : Except String Doc := do
+def decodeDoc (rv : Wire.RouteVocabulary) (data : Bool) (j : Json) : Except String Doc := do
   let E := rv.environment
-  let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM (decodeUnit E)
+  let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM (decodeUnit E data)
   require (units.length ≤ 10000) "ResourceLimit: unit count"
   require ((units.map DocUnit.id).eraseDups.length == units.length) "duplicate unit id"
   require (sortedSpans units) "unit spans must be sorted and non-overlapping"
   let optional := fun (key : String) => match j.getObjVal? key with
     | .ok v => v.getArr?.map Array.toList
     | .error _ => pure []
-  let lemmas ← (← optional "lemmas").mapM (decodeLemma E)
+  let lemmas ← (← optional "lemmas").mapM (decodeLemma E data)
   require ((lemmas.map Lemma.name).eraseDups.length == lemmas.length) "duplicate lemma"
   let openTerms ← tokens (Json.arr (← optional "open_terms").toArray)
-  let readingSets ← (← optional "reading_sets").mapM (decodeReadingSet E)
+  let readingSets ← (← optional "reading_sets").mapM (decodeReadingSet E data)
   require ((readingSets.map (fun r => (r.id, r.version))).eraseDups.length == readingSets.length)
     "duplicate reading set version"
   let narrowings ← tokens (Json.arr (← optional "narrowings").toArray)
-  pure ⟨rv.literals, units, lemmas, openTerms, readingSets, narrowings⟩
+  pure ⟨rv.literals, rv.flags, units, lemmas, openTerms, readingSets, narrowings⟩
 
 /-- The first node that is not admitted, if any. -/
 def firstUnadmitted (D : Doc) (ws : List WireNode) : Option WireNode :=
@@ -551,14 +555,14 @@ def checkGraph (E : VE.Environment) (g : VE.Graph.ClaimGraph VE.Tableau.Certific
 def admitDocument (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
     Except String Admitted := do
   VE.Bridge.displayFields j ["units", "graph"] ["lemmas", "open_terms", "reading_sets", "narrowings"]
-  let D₀ ← decodeDoc rv j
-  let D := { D₀ with literals := rv.literals }
+  let D₀ ← decodeDoc rv (profiles.contains "data@0") j
+  let D := { D₀ with literals := rv.literals, flags := rv.flags }
   let graphJson ← j.getObjVal? "graph"
   exactFields graphJson ["root", "nodes"]
   let root ← stringField graphJson "root"
   let nodeArray ← (← graphJson.getObjVal? "nodes").getArr?
   require (nodeArray.size ≤ 1000) "ResourceLimit: graph node count"
-  let decoded ← nodeArray.toList.mapM (decodeNode rv.environment)
+  let decoded ← nodeArray.toList.mapM (decodeNode rv.environment (profiles.contains "data@0"))
   checkBindings profiles environment decoded
   let wires := decoded.map Prod.fst
   admitNodes D wires
@@ -596,7 +600,7 @@ rule for that label; cited lemmas' leaves are present with their labels; and
 reading choices are compatible. -/
 theorem admit_report_sound (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary)
     (j : Json) (res : Admitted) (h : admitDocument profiles environment rv j = .ok res) :
-    res.rv = rv ∧ res.doc.literals = rv.literals ∧
+    res.rv = rv ∧ res.doc.literals = rv.literals ∧ res.doc.flags = rv.flags ∧
     res.graph.nodes = res.wires.map WireNode.toNode ∧
     VE.Graph.Acyclic res.graph ∧ (res.graph.nodes.map (fun n => n.claim.name)).Nodup ∧
     res.report.root.name = res.graph.root ∧
@@ -624,7 +628,7 @@ theorem admit_report_sound (profiles : List String) (environment : Json) (rv : W
   have hnodes := admitNodes_ok _ _ _ hadm
   obtain ⟨hacyc, hnd, hroot, hsound⟩ :=
     VE.Graph.check_sound.{u} rv.environment _ r (checkGraph_ok _ _ r hr)
-  refine ⟨rfl, rfl, rfl, hacyc, hnd, hroot, hsound, hnodes, ?_,
+  refine ⟨rfl, rfl, rfl, rfl, hacyc, hnd, hroot, hsound, hnodes, ?_,
     of_decide_eq_true (Gate.require_ok hc), of_decide_eq_true (Gate.require_ok hch)⟩
   intro leaf hl
   obtain ⟨node, hn, hcl, hde⟩ := (hsound.2.2.1 leaf hl).2
@@ -644,22 +648,21 @@ theorem admit_labels_decoded (profiles : List String) (environment : Json) (rv :
     ∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires, w.claim.label = leaf.label ∧
       w.claim.name = leaf.name ∧ w.claim.formula = leaf.formula := by
   intro leaf hl
-  obtain ⟨w, hw, rfl, _, _⟩ := (admit_report_sound.{0} profiles environment rv j res h).2.2.2.2.2.2.2.2.1 leaf hl
+  obtain ⟨w, hw, rfl, _, _⟩ := (admit_report_sound.{0} profiles environment rv j res h).2.2.2.2.2.2.2.2.2.1 leaf hl
   exact ⟨w, hw, rfl, rfl, rfl⟩
 
-/-- The route statement of an admitted document: in every string-admissible
-structure (the stage-1 meaning of `$string`), if every non-background leaf of
-the report holds then the root holds. Background leaves are discharged by the
-structure's admissibility, because each is a regenerated Background premise. -/
+/-- Admitted background leaves are discharged by the decoded literal and flag
+meanings. Author formulas still pass the stage-1 `$string` binder restriction. -/
 theorem admit_string_sound (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary)
     (j : Json) (res : Admitted) (h : admitDocument profiles environment rv j = .ok res)
-    (S : VE.Structure.{u}) (hS : Background.StringAdmissible rv.environment rv.literals S)
+    (S : VE.Structure.{u})
+    (hS : VE.Data.Background.DataAdmissible rv.environment rv.literals rv.flags S)
     (hleaves : ∀ leaf ∈ res.report.assumptions,
       (∀ g, parseLabel leaf.label ≠ some (.background g)) → leaf.formula.denote S []) :
     res.report.root.formula.denote S [] := by
-  obtain ⟨_, hlit, _, _, _, _, hsound, _, hleaf, _, _⟩ :=
+  obtain ⟨_, hlit, hflags, _, _, _, _, hsound, _, hleaf, _, _⟩ :=
     admit_report_sound.{u} profiles environment rv j res h
-  apply hsound.2.2.2.1 S hS.1
+  apply hsound.2.2.2.1 S hS.1.1
   intro a ha
   obtain ⟨leaf, hl, rfl⟩ := List.mem_map.mp ha
   by_cases hb : ∃ g, parseLabel leaf.label = some (.background g)
@@ -669,11 +672,16 @@ theorem admit_string_sound (profiles : List String) (environment : Json) (rv : W
     rw [hwl, hg] at hadm
     obtain ⟨_, p, hp, hpe⟩ := hadm
     subst hpe
-    obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hp
-    simp only [Prod.mk.injEq] at hbe
-    rw [← hbe.1]
-    rw [hlit] at hbm
-    exact (Background.literals_sat_iff S rv.literals rv.nodup).mpr hS.2 b hbm
+    rw [hlit, hflags] at hp
+    rcases List.mem_append.mp hp with hf | hl
+    · obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hf
+      simp only [Prod.mk.injEq] at hbe
+      rw [← hbe.1]
+      exact (VE.Data.Background.generate_sat_iff S rv.flags).mpr hS.2 b hbm
+    · obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hl
+      simp only [Prod.mk.injEq] at hbe
+      rw [← hbe.1]
+      exact (Background.literals_sat_iff S rv.literals rv.nodup).mpr hS.1.2 b hbm
   · exact hleaves leaf hl (fun g hg => hb ⟨g, hg⟩)
 
 end VE.Route.Admission

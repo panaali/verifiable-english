@@ -1,6 +1,7 @@
 """Induction replay, hostile certificates, compatibility and cyclic policies."""
 import copy
 import json
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
@@ -105,7 +106,7 @@ def test_negative_index_rejected_at_both_wire_boundaries():
     case['certificate']['trace']['at'] = -1
     assert not replay_python(case)
     proc = subprocess.run([str(LEAN), 'check-certificate'], input=json.dumps(case),
-                          capture_output=True, text=True, timeout=30)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode != 0
 
 

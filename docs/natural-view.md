@@ -1,5 +1,37 @@
 # Audited natural view
 
+## Versioned writable prose
+
+`ve.natural.parse_presentation` and `render_presentation` use
+`ve.prose@1`. This is the new-document prose contract: the same English
+grammar and all-derivations admission check handle typed prose and displayed
+prose. A parsed presentation retains the exact source wording, sentence
+character spans, paragraph ranges, conclusion roles, premise dependencies,
+environment and meaning identities, and the vocabulary overlay digest.
+The new API raises `PresentationNeedsRepair` with per-statement reasons if a
+display would require explicit notation; it does not present that fallback as
+approved prose. The advanced inspector can still parse legacy explicit
+English with `allow_explicit=True`.
+Every conclusion depends on all earlier unmarked premises, including those
+in earlier paragraphs. The parser checks its derivation before recording the
+role; a marker is never treated as an assumption. `migrate_presentation`
+previews a legacy English paragraph using this version, reports whether the
+meaning identity is unchanged, records unresolved repairs where needed, and
+always requires renewed presentation
+approval. An unchanged meaning can key reuse of its existing certificate.
+
+`ve_english` and `ve_natural` remain pinned legacy view names and retain their
+existing output. The new API is opt-in by version. The ordinary IDE must
+select `ve.prose@1` explicitly for new documents; the web owner integrates
+that selection. This code does not silently convert an old document.
+
+An earlier existential or universal mention now makes bare `it` incomplete
+for automatic resolution even when one named constant was also mentioned.
+The author must repeat an explicit name or supply a separately confirmed
+scoped rewrite. Plural and possessive pronouns have no admitted automatic
+resolution in this version; they remain repair cases. Relative-clause
+references keep their local binder.
+
 `ve render --view ve_natural` renders checked statements as prose paragraphs.
 Sentence boundaries remain in the `Document` AST and the view's `sentences` data;
 they are spaces rather than forced line breaks in the display. Callers can pass
@@ -93,6 +125,14 @@ comparison wordings in `order@0`; “more than twice the budget” is writable f
 literal doubling of a named integer constant. A counting quantifier is not in this branch's
 AST, so the view cannot invent one.
 
+Nested compounds use explicit first/second clause words and keep their binary
+tree. Repeated binders of one sort use typed ordinals through the eighth
+entity; beyond that, the audited renderer may use its explicit numbered-name
+form. A quoted identifier becomes notation-free only after a unique,
+confirmed display name is provided in the versioned vocabulary overlay.
+Colliding names remain quoted. These repairs preserve the AST and do not
+assume that an unreviewed description is an approved name.
+
 ## Coverage
 
 Reproduce with `uv run python -m conformance.natural_surface`. The committed
@@ -109,13 +149,38 @@ report is `conformance/natural-view-report.json`. The round-trip row samples
 | **Total** | **599** | **1,219** | **49.1%** | **50.9%** |
 
 Of the 620 explicit forms, 618 needed structural notation or quoted identifiers;
-one candidate changed the AST and one failed the English audit. The final output
+one candidate changed the AST and one failed the English audit. The current
+disposition ledger identifies 551 needing confirmed display names or vocabulary,
+67 needing notation-free order or closure forms, one candidate AST mismatch,
+and one failed candidate audit. All 620 have per-statement dispositions in the
+report. The fixed cohort remains at 599/1,219 (49.1%), below the adopted 90%
+gate; the adversarial generated environments have many intentionally colliding
+or unconfirmed names, and this branch does not invent names for them. The final output
 was independently checked sentence by sentence for exact AST identity and one
 derivation, with zero wrong readings and no skipped corpus source.
 The report also records the three statement web app example as a complete
 paragraph: exact document round trip, one English derivation, and replay of its
 single claim graph deduction all pass. That prose probe is reported separately
 from the 1,219 formula samples.
+
+The report additionally measures 57 real repository `.ve` documents with 107
+statements: 84 are notation-free (78.5%), and all 51 nonempty documents have
+exact whole-prose round trips through the advanced parser. Of those, 43 are
+ready for `ve.prose@1`; eight retain visible repair cases. Six empty sources
+have no prose round trip. These
+are AST/role checks, not independent source-fidelity or human-comprehension
+measurements.
+
+The final-tree checks on 2026-09-26 passed `lake build`, `python3
+lean/audit.py` (387 theorems, standard axiom allowlist), the P0 frozen-source
+check, Rust workspace tests, and the full Python suite (1,734 passed, four
+skipped, one deselected). The historical English replay completed 85,000 exact
+round trips, 8,500 prefix plus 4,250 random Earley texts, and 850
+multi-statement documents, with zero multiple derivations. All 17 rendered,
+random, and paragraph corpus digests match the frozen English report. The
+current grammar hashes match the pre-work commit for all 17 environments;
+their difference from hashes in the committed English report predates this
+branch. The frozen report bytes were not changed.
 
 ## Reader-facing notation audit
 
@@ -133,3 +198,21 @@ notation, including underscores and depth-specific list markers.
 The web app is outside this branch; its reader-facing claim selector can use
 `ve_natural` with conclusion indices when integrated and keep `ve_strict` for
 the strict inspector.
+
+## Owner handoffs
+
+- **P0-Py registry/derivation owner:** review whether `ve.prose@1` needs a
+  registered surface version and expose derivation counts and the exact
+  resource-limit reason alongside `require_unique_derivation`. Keep the
+  existing English route, legacy grammar, identities, and frozen report bytes
+  unchanged; run the 85,000-pair and 12,750-text replay before admitting an
+  interface change. This branch makes no P0 registry or derivation edit.
+- **Z3 dialogue owner:** consume `PresentationNeedsRepair.details` as a
+  resumable unresolved unit and bind approval to the presentation snapshot.
+  Add confirmed scoped antecedent rewrites for existential, plural, and
+  possessive references; current prose admission only blocks incomplete
+  automatic resolution.
+- **Z4 web owner:** select `ve.prose@1` for new documents, keep old documents
+  on pinned view names, and show migration previews for renewed approval.
+- **W2/W3 owners:** provide reviewed real-document display names and admitted
+  aliases. The surface cannot infer either from descriptions or WordNet.

@@ -7,9 +7,11 @@ verification against the dossier and the calls ledger).
 """
 from .api import call_tool, tool_schemas, tools_for_session
 from .session import AssistError, AssistSession, LedgerReplayError
+from .recovery import RecoveryService, DocumentAdapter, GlossaryAdapter, ProposerAdapter
 from .sources import load_source, p5_environment, select_p5_item, source_from_p5, source_from_text, split_sentences
 from .verify import verify_session
 
-__all__ = ["AssistError", "AssistSession", "LedgerReplayError", "call_tool", "load_source", "p5_environment",
+__all__ = ["AssistError", "AssistSession", "LedgerReplayError", "RecoveryService", "DocumentAdapter",
+           "GlossaryAdapter", "ProposerAdapter", "call_tool", "load_source", "p5_environment",
            "select_p5_item", "source_from_p5", "source_from_text", "split_sentences", "tool_schemas",
            "tools_for_session", "verify_session"]

@@ -61,26 +61,108 @@ def _mentioned_constants(value):
         node = stack.pop()
         if type(node) is ast.Const:
             found.add(node.name)
-        for field in ('term', 'left', 'right', 'body'):
+        for field in ('term', 'left', 'right', 'body', 'edge', 'formula'):
             child = getattr(node, field, None)
             if child is not None:
                 stack.append(child)
     return found
 
 
+def _has_discourse_binder(value):
+    """A prior quantified mention prevents automatic constant-only anaphora.
+
+    A binder does not introduce a named constant. Its witness may nevertheless
+    be what an ordinary reader takes a later ``it`` to denote. Until a scoped
+    discourse representation exists, the author must repeat an explicit name.
+    """
+    stack = [value]
+    while stack:
+        node = stack.pop()
+        if type(node) in (ast.Exists, ast.Forall):
+            return True
+        for field in ('body', 'left', 'right', 'edge', 'formula'):
+            child = getattr(node, field, None)
+            if child is not None:
+                stack.append(child)
+    return False
+
+
 def _fold_sentence_initials(source, words):
-    def fold(match):
-        word = match[2]
+    quoted_positions = set()
+    quoted = escaped = False
+    for index, char in enumerate(source):
+        if quoted:
+            quoted_positions.add(index)
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+            quoted_positions.add(index)
+
+    def initial(word, tail):
         for name, value in words.constants.items():
             if name not in words.declared_constants or value.startswith('"'):
                 continue
-            display = value[0].upper() + value[1:]
-            tail = source[match.start(2):]
-            if (tail.startswith(display) and
-                    (len(tail) == len(display) or not re.match(r'[A-Za-z0-9_]', tail[len(display)]))):
-                return match[0]
-        return match[1] + word[0].lower() + word[1:]
-    return re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
+            # Only a genuinely capitalized declared name needs its case kept.
+            # A lowercase alias such as "api" must accept sentence-initial Api.
+            if value[0].isupper() and re.match(
+                    _literal_pattern(value) + r'(?![A-Za-z0-9_])', tail):
+                return word
+        return word[0].lower() + word[1:]
+
+    def fold(match):
+        if match.start(2) in quoted_positions:
+            return match[0]
+        return match[1] + initial(match[2], source[match.start(2):])
+
+    source = re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
+    # A conclusion marker begins a second sentence-initial position. The
+    # marker itself is folded above, but the claim's first word also needs it.
+    def fold_conclusion(match):
+        if match.start(3) in quoted_positions:
+            return match[0]
+        return match[1] + match[2] + initial(match[3], source[match.start(3):])
+    return re.sub(r'(^|(?<=\.)\s+)((?:therefore|so|hence|it\s+follows\s+that)\s+)([A-Z][A-Za-z]*)',
+                  fold_conclusion, source)
+
+
+def _normalise_english_source(source, words):
+    """Give every English reader the same editable whitespace and initial case.
+
+    Keep quoted identifiers byte-for-byte. The boundary map lets presentation
+    spans continue to refer to the author's original text after whitespace is
+    collapsed for parsing and the independent derivation check.
+    """
+    chars, boundaries = [], [0]
+    quoted = escaped = False
+    i = 0
+    while i < len(source):
+        char = source[i]
+        if not quoted and char.isspace():
+            end = i + 1
+            while end < len(source) and source[end].isspace():
+                end += 1
+            chars.append(' ')
+            boundaries.append(end)
+            i = end
+            continue
+        chars.append(char)
+        boundaries.append(i + 1)
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+        i += 1
+    return _fold_sentence_initials(''.join(chars), words), boundaries
 
 
 def _mask_brackets(source):
@@ -152,6 +234,11 @@ class EnglishVocabulary:
             path = f"/vocabulary/predicates/{name}/verbalisation"
             codes = {i.code for i in issues if i.path == path}
             accepted = template is not None and not codes
+            if len(decl.arguments) > 2:
+                self.predicates[name] = template if accepted else old.predicates[name]
+                if accepted:
+                    issues = {i for i in issues if i.path != path}
+                continue
             if template and (not accepted or template in IDIOMS[len(decl.arguments)]):
                 phrase = template.removeprefix('{0} ')
                 unary = len(decl.arguments) == 1
@@ -291,10 +378,27 @@ class EnglishVocabulary:
             if len(names) == 1:
                 name = names[0]
                 self.constants[name] = self.declared_constants[name]
-        # A display form may not reuse another constant's default spelling.
-        counts = Counter(wording_key(value) for value in self.constants.values())
-        for name, value in list(self.constants.items()):
-            if counts[wording_key(value)] > 1:
+        # The parser also accepts sentence-initial and definite-article forms.
+        # Compare every such spelling before selecting an alias: a declared
+        # "the api" otherwise shadows the generated "the api" for plain api.
+        def spellings(value):
+            forms = {value}
+            if value.startswith('the '):
+                forms.add(value[0].upper() + value[1:])
+            if re.fullmatch('[a-z]+', value):
+                forms.add('the ' + value)
+            return {wording_key(form) for form in forms}
+
+        while True:
+            owners = {}
+            for name, value in self.constants.items():
+                for form in spellings(value):
+                    owners.setdefault(form, set()).add(name)
+            collided = {name for names in owners.values() if len(names) > 1 for name in names
+                        if name in self.declared_constants and self.constants[name] != quote(name)}
+            if not collided:
+                break
+            for name in collided:
                 self.constants[name] = quote(name)
         for category in ('sorts', 'predicates'):
             for name, entry in self.overlay[category].items():
@@ -303,6 +407,16 @@ class EnglishVocabulary:
                 if (selected != (expected['singular'] if category == 'sorts' else expected)
                         or any(i.path.startswith(f'/vocabulary/{category}/{name}/') for i in self.issues)):
                     raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
+        # A regulated atom in a norm guard has one deontic spelling. The norm
+        # consequence parser handles must not / need not separately; ordinary
+        # formula parsing and the independent Earley grammar share these atoms.
+        if 'norms@0' in env.profiles:
+            for name, decl in env.predicates.items():
+                reg = decl.regulated
+                if reg is not None and reg.role in ('permission', 'obligation'):
+                    modal = 'may' if reg.role == 'permission' else 'must'
+                    self.predicates[name] = reg.act.replace('{0} ', '{0} ' + modal + ' ', 1)
+                    self.negatives.pop(name, None)
 
     def atom(self, name, terms, negative=False):
         text = (self.negatives if negative else self.predicates)[name]
@@ -410,6 +524,21 @@ class EnglishTraversal:
 
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
+        if kind is ast.Exists and 'data@0' in self.env.profiles and type(value.body) is ast.And:
+            relation, property_atom = value.body.left, value.body.right
+            if (type(relation) is ast.Binary and type(property_atom) is ast.Unary
+                    and relation.right == ast.Var(0) and property_atom.term == ast.Var(0)
+                    and relation.predicate in self.env.predicates
+                    and property_atom.predicate in self.env.predicates):
+                declaration = self.env.predicates[relation.predicate]
+                if (declaration.functional and declaration.total and declaration.arguments[1] == value.sort
+                        and self.env.predicates[property_atom.predicate].arguments == (value.sort,)
+                        and (type(relation.left) is ast.Const or
+                             type(relation.left) is ast.Var and relation.left.index > 0)):
+                    source = (ast.Var(relation.left.index - 1) if type(relation.left) is ast.Var
+                              else relation.left)
+                    return ('the ' + relation.predicate + ' of ' + self.term(source, scope)
+                            + ' is ' + property_atom.predicate)
         record = surface_registry.by_node(value)
         if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
             return record.english_renderer(self, value, scope, depth)
@@ -417,6 +546,11 @@ class EnglishTraversal:
         if kind is ast.Bottom: return 'this is impossible'
         if kind in (ast.Unary, ast.Binary):
             terms = (value.term,) if kind is ast.Unary else (value.left, value.right)
+            if kind is ast.Binary and 'data@0' in self.env.profiles:
+                declaration = self.env.predicates[value.predicate]
+                if declaration.functional and declaration.total:
+                    return ('the ' + value.predicate + ' of ' + self.term(value.left, scope)
+                            + ' is ' + self.term(value.right, scope))
             return self.words.atom(value.predicate, [self.term(t, scope) for t in terms])
         if kind is ast.Eq:
             return self.term(value.left, scope) + ' is the same as ' + self.term(value.right, scope)
@@ -502,7 +636,7 @@ class EnglishTraversal:
         return text[0].upper() + text[1:]
 
 
-def render_english(value, env, **options):
+def render_english(value, env, *, conclusions=(), **options):
     if type(value) is ast.Document:
         ast.check_document(env, value)
     else:
@@ -512,13 +646,27 @@ def render_english(value, env, **options):
         warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
     formulas = value.formulas if type(value) is ast.Document else (value,)
+    conclusions = tuple(conclusions)
+    if (type(value) is not ast.Document and conclusions
+            or len(set(conclusions)) != len(conclusions)
+            or any(type(i) is not int or not 0 <= i < len(formulas) for i in conclusions)):
+        raise ValueError('Conclusion indices must identify distinct document statements')
+    marked = set(conclusions)
     sentences = []
-    for formula in formulas:
+    for index, formula in enumerate(formulas):
         for settings in ({}, {'avoid_negative_universal': True},
                          {'avoid_negative_universal': True, 'word_markers': True}):
             sentence = EnglishTraversal(env, words, **settings).render(formula)
             try:
                 if _parse_english_document(env, sentence + '.', **options)[0] == ast.Document((formula,)):
+                    if index in marked:
+                        proper_name = any(
+                            name in words.declared_constants and display[0].isupper()
+                            and sentence.startswith(display)
+                            and (len(sentence) == len(display) or
+                                 not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
+                            for name, display in words.constants.items() if display)
+                        sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
                     sentences.append(sentence)
                     break
             except VEError:
@@ -532,7 +680,8 @@ def render_english(value, env, **options):
     if type(value) is ast.Document:
         if len(text) > MAX_NODES:
             raise ResourceLimit(f'Rendered ve_english text exceeds the derivation budget MAX_NODES ({MAX_NODES})')
-        if _parse_english_document(env, text, **options)[0] != value:
+        parsed, _, _, parsed_conclusions = _parse_english_document(env, text, **options)
+        if parsed != value or parsed_conclusions != tuple(sorted(marked)):
             raise ValueError('Rendered ve_english document has a different reading')
     return text
 
@@ -572,13 +721,18 @@ class EnglishParser:
         self.extension_readings = []
         self.conclusions = []
         self.referents = set()
+        self.incomplete_discourse = False
+        self.sentence_spans = []
+        self.paragraph_breaks = []
         self.farthest = 0
+
+    def _span(self, start, end):
+        return Span(start, end, self.source.count('\n', 0, start) + 1,
+                    start - self.source.rfind('\n', 0, start))
 
     def error(self, message, cls=SyntaxError):
         pos = max(self.i, self.farthest)
-        raise cls(message, span=Span(pos, min(pos + 1, len(self.source)),
-                                   self.source.count('\n', 0, pos) + 1,
-                                   pos - self.source.rfind('\n', 0, pos)))
+        raise cls(message, span=self._span(pos, min(pos + 1, len(self.source))))
 
     def take(self, text, *, content=False):
         match = re.compile(_content_pattern(text) if content else _literal_pattern(text)).match(self.source, self.i)
@@ -630,7 +784,10 @@ class EnglishParser:
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
         terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
-        if len(self.referents) == 1 and not scope:
+        # Without a scoped discourse model, only a sentence-initial pronoun
+        # can inherit the preceding sentence's sole explicit referent.
+        if (len(self.referents) == 1 and not scope and not self.incomplete_discourse
+                and self.i == self.sentence_formula_start):
             terms['it'] = ast.Const(next(iter(self.referents)))
         return terms
 
@@ -654,6 +811,42 @@ class EnglishParser:
         if order and getattr(self, '_masked_for', None) is not self.source:
             self._masked_for, self._masked = self.source, _mask_brackets(self.source)
         subject = self._masked if order else self.source
+
+        if not relative and 'data@0' in self.env.profiles and self.source.startswith('the ', start):
+            for name, declaration in sorted(self.env.predicates.items(), key=lambda item: -len(item[0])):
+                if len(declaration.arguments) != 2:
+                    continue
+                pattern = (r'the ' + re.escape(name) + r' of (' + term_pattern +
+                           r') is (' + term_pattern + r')(?![A-Za-z0-9_])')
+                match = re.compile(pattern).match(self.source, start)
+                if match is not None:
+                    if not (declaration.functional and declaration.total):
+                        self.error('The ' + name + ' of a term requires functional and total declarations.')
+                    arguments = [next(value for ref, value in terms.items()
+                                      if re.fullmatch(term_literal(ref), term))
+                                 for term in match.groups()]
+                    self.i = match.end()
+                    self.farthest = max(self.farthest, self.i)
+                    return ast.Binary(name, *arguments)
+                for property_name, prop in self.env.predicates.items():
+                    if prop.arguments != (declaration.arguments[1],):
+                        continue
+                    property_pattern = (r'the ' + re.escape(name) + r' of (' + term_pattern +
+                                        r') is ' + re.escape(property_name) + r'(?![A-Za-z0-9_])')
+                    property_match = re.compile(property_pattern).match(self.source, start)
+                    if property_match is None:
+                        continue
+                    if not (declaration.functional and declaration.total):
+                        self.error('The ' + name + ' of a term requires functional and total declarations.')
+                    if declaration.arguments[1] == '$string':
+                        self.error('String-valued attribute properties require data stage 2.')
+                    source = next(value for ref, value in terms.items()
+                                  if re.fullmatch(term_literal(ref), property_match[1]))
+                    lifted = ast.Var(source.index + 1) if type(source) is ast.Var else source
+                    self.i = property_match.end()
+                    self.farthest = max(self.farthest, self.i)
+                    return ast.Exists(declaration.arguments[1], ast.And(
+                        ast.Binary(name, lifted, ast.Var(0)), ast.Unary(property_name, ast.Var(0))))
 
         def slots(name, omitted):
             """Per-placeholder patterns: integer slots take bracketed integer terms."""
@@ -693,14 +886,19 @@ class EnglishParser:
             slot = slots(name, omitted)
             if slot is False:
                 continue
-            parts = re.split(r'(\{[01]\})', template)
+            parts = re.split(r'(\{[0-5]\})', template)
             pattern = ''.join(('(' + (term_pattern if slot is None else slot[int(part[1])]) + ')')
-                              if part in ('{0}', '{1}') else _content_pattern(part) for part in parts)
+                              if re.fullmatch(r'\{[0-5]\}', part) else _content_pattern(part) for part in parts)
             match = re.compile(pattern).match(subject, start)
             if not match:
                 continue
             end = match.end()
             if end < len(self.source) and re.match(r'[A-Za-z0-9_]', self.source[end]):
+                continue
+            # term_options is built at the start of the atom. An initial "it"
+            # must not leak into a later argument slot of the same atom.
+            if any(match.group(g) == 'it' and match.start(g) != self.sentence_formula_start
+                   for g in range(1, len(match.groups()) + 1)):
                 continue
             groups = [self.source[a:b] for a, b in (match.span(g) for g in range(1, len(match.groups()) + 1))]
             if slot not in (None, False):
@@ -724,7 +922,8 @@ class EnglishParser:
             elif name is None:
                 node = ast.Eq(*args)
             else:
-                node = (ast.Unary if len(args) == 1 else ast.Binary)(name, *args)
+                node = (ast.Unary(name, args[0]) if len(args) == 1 else
+                        ast.Binary(name, *args) if len(args) == 2 else ast.Atom(name, tuple(args)))
                 if negative: node = ast.Not(node)
             choices.append((end, node))
         if not choices:
@@ -757,7 +956,7 @@ class EnglishParser:
         constants = sorted(self.int_constants(), key=lambda t: -len(t))
         twice = [name for name in constants if re.fullmatch('[a-z]+', name)]
         return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
-            '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
+            '|' + _literal_pattern(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
             for t in constants) + ''.join('|twice\\s+the\\s+' + re.escape(t) + r'(?![A-Za-z0-9_])'
                                             for t in twice) + ')'
 
@@ -835,8 +1034,9 @@ class EnglishParser:
                     return ast.Scale(left.value, right)
                 return ast.Add(left, ast.Scale(-1, right) if operator == ' - ' else right)
             for display in sorted(constants, key=lambda t: -len(t)):
-                if text.startswith(display, position):
-                    position += len(display)
+                match = re.compile(_literal_pattern(display)).match(text, position)
+                if match:
+                    position = match.end()
                     return ast.Const(constants[display])
             self.error('Expected an integer term.')
         value = term()
@@ -861,8 +1061,7 @@ class EnglishParser:
         matches = nearest(phrase, self.words)[:3]
         suggestions = '; '.join(repr(row['wording']) for row in matches)
         raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
-                          span=Span(start, end, self.source.count('\n', 0, start) + 1,
-                                    start - self.source.rfind('\n', 0, start)))
+                          span=self._span(start, end))
 
     def term(self, scope):
         for text, value in sorted(self.term_options(scope).items(), key=lambda item: -len(item[0])):
@@ -896,6 +1095,14 @@ class EnglishParser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
+        remainder = self.source[self.i:].lower()
+        if not scope and remainder.startswith('it ') and not remainder.startswith('it is not the case that '):
+            if 'it' not in self.term_options(scope):
+                self.error('The referent of it is incomplete. Repeat the explicit name or confirm a scoped rewrite.')
+        if not scope and re.match(r'(?:they|them|their|her|him|his)\b', remainder):
+            word = remainder.split(maxsplit=1)[0]
+            if word not in self.term_options(scope):
+                self.error('Plural or possessive reference needs an explicit-name or scoped-referent confirmation.')
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
             start = self.i
@@ -1126,19 +1333,26 @@ class EnglishParser:
 
     def document(self):
         formulas = []
-        self.source = _fold_sentence_initials(self.source, self.words)
         while self.i < len(self.source):
+            start = self.i
             if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
                 self.conclusions.append(len(formulas))
+            self.sentence_formula_start = self.i
             formulas.append(self.formula())
             self.referents.update(_mentioned_constants(formulas[-1]))
+            self.incomplete_discourse |= _has_discourse_binder(formulas[-1])
             self.need('.')
-            if self.i < len(self.source): self.space()
+            self.sentence_spans.append((start, self.i))
+            if self.i < len(self.source):
+                gap_start = self.i
+                self.space()
+                if self.i < len(self.source) and re.search(r'\n\s*\n', self.source[gap_start:self.i]):
+                    self.paragraph_breaks.append(len(formulas))
         if not formulas: self.error('Write at least one statement ending with a period.')
         return ast.Document(tuple(formulas))
 
 
-def _parse_english_document(env, source, **options):
+def _parse_english_document(env, source, *, _with_structure=False, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1146,10 +1360,20 @@ def _parse_english_document(env, source, **options):
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
-    parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
-    document = parser.document()
+    words = EnglishVocabulary(env, **options)
+    normalised, boundaries = _normalise_english_source(source, words)
+    parser = EnglishParser(env, normalised, words)
+    try:
+        document = parser.document()
+    except VEError as exc:
+        if exc.span is not None:
+            start = boundaries[exc.span.start]
+            end = boundaries[exc.span.end]
+            exc.span = Span(start, end, source.count('\n', 0, start) + 1,
+                            start - source.rfind('\n', 0, start))
+        raise
     from .surface.unambiguity import require_unique_derivation
-    tree = require_unique_derivation(env, source, **options)
+    tree = require_unique_derivation(env, normalised, **options)
     from .surface.unambiguity import require_correspondence
     require_correspondence(tree, parser.extension_readings, env, parser.words, parser.source)
     try:
@@ -1158,7 +1382,13 @@ def _parse_english_document(env, source, **options):
         if exc.span is None: exc.span = Span(0, len(source), 1, 1)
         raise
     _check_conclusions(env, document, parser.conclusions)
-    return document, source, parser.words, tuple(parser.conclusions)
+    result = document, source, parser.words, tuple(parser.conclusions)
+    if _with_structure:
+        spans = tuple((boundaries[start], boundaries[end]) for start, end in parser.sentence_spans)
+        breaks = tuple(index for index in range(1, len(spans))
+                       if re.search(r'\n\s*\n', source[spans[index - 1][1]:spans[index][0]]))
+        return (*result, spans, breaks)
+    return result
 
 
 def _check_conclusions(env, document, conclusions):
@@ -1281,6 +1511,8 @@ def english_lark_grammar(env, **options):
     """
     words = EnglishVocabulary(env, **options)
     lit = lambda s: json.dumps(s)
+    constant_lit = lambda s: ('/' + _literal_pattern(s).replace('/', r'\/') + '/'
+                              if ' ' in s and not s.startswith('"') else lit(s))
     # Each regex is one declared literal phrase with editable whitespace, never
     # an open atom token. Keep quoted symbols exact and avoid word-level lexer
     # proliferation in the all-derivations audit.
@@ -1333,10 +1565,10 @@ def english_lark_grammar(env, **options):
     ]
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
-    constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
-    constants += [lit(v[0].upper() + v[1:]) for n, v in words.constants.items()
+    constants = [constant_lit(v) for n, v in words.constants.items() if not is_int(n)]
+    constants += [constant_lit(v[0].upper() + v[1:]) for n, v in words.constants.items()
                   if not is_int(n) and v.startswith('the ')]
-    constants += [lit('the ' + v) for n, v in words.constants.items()
+    constants += [constant_lit('the ' + v) for n, v in words.constants.items()
                   if not is_int(n) and re.fullmatch('[a-z]+', v)]
     constants += [lit(v) for n, v in words.natural_constants().items() if not is_int(n)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
@@ -1345,14 +1577,24 @@ def english_lark_grammar(env, **options):
                  if len(p.arguments) == 2 and p.arguments[0] == p.arguments[1]]
     rules.append('relation: ' + (' | '.join(relations) or 'IMPOSSIBLE'))
     atoms = ['"this holds in all cases"', '"this is impossible"', 'term "is the same as"i term']
+    if 'data@0' in env.profiles:
+        atoms.extend('"the" ' + lit(name) + ' "of" term "is" term'
+                     for name, declaration in env.predicates.items()
+                     if len(declaration.arguments) == 2 and declaration.functional and declaration.total)
+        atoms.extend('"the" ' + lit(name) + ' "of" term "is" ' + lit(property_name)
+                     for name, declaration in env.predicates.items()
+                     if len(declaration.arguments) == 2 and declaration.functional and declaration.total
+                     and declaration.arguments[1] != '$string'
+                     for property_name, prop in env.predicates.items()
+                     if prop.arguments == (declaration.arguments[1],))
     relatives = []
     object_relatives = []
     for templates in (words.predicates, words.negatives):
         for name, template in templates.items():
             sorts = env.predicates[name].arguments
             slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
-            parts = re.split(r'(\{[01]\})', template)
-            rule = ' '.join(slot(p) if p in ('{0}', '{1}') else content_lit(p.strip())
+            parts = re.split(r'(\{[0-5]\})', template)
+            rule = ' '.join(slot(p) if re.fullmatch(r'\{[0-5]\}', p) else content_lit(p.strip())
                             for p in parts if p.strip())
             atoms.append(rule)
             if slot('{0}') == 'term':
@@ -1366,7 +1608,7 @@ def english_lark_grammar(env, **options):
         atoms += ['int_term "is the same as"i int_term'] + [
             'int_term ' + content_lit(text.removeprefix('{0} ').removesuffix(' {1}')) + ' int_term'
             for text, _, _ in _COMPARISONS]
-        ints = [lit(v) for n, v in words.constants.items() if is_int(n)]
+        ints = [constant_lit(v) for n, v in words.constants.items() if is_int(n)]
         rules += ['int_term: int_atom | "-" int_neg',
                   'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]" | "twice" "the" int_plain_constant',
                   'int_neg: int_constant | "[" int_term INT_OP int_term "]" | "-" int_neg',

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping
 import re
+from itertools import product
 
 from .errors import InvalidModel, ResourceLimit
 from .limits import MAX_ENTITIES, MAX_IDENTIFIER_BYTES, MAX_PACKAGE_BYTES, MAX_TUPLES
@@ -44,6 +45,7 @@ class FiniteModel:
     relations: Mapping[str, frozenset[tuple[str, ...]]]
     environment_id: str
     model_id: str
+    defined_predicates: tuple[str, ...] = ()
 
     @classmethod
     def from_json(cls, env: Any, data: str | bytes) -> "FiniteModel":
@@ -60,14 +62,18 @@ class FiniteModel:
                 _fail("expected an object", f"/{field}")
 
         sort_names = set(env.model_sorts)
-        predicate_names = set(env.predicates)
+        defined_names = set(env.definition_entries)
+        predicate_names = set(env.predicates) - defined_names
         constant_names = set(env.constants)
         if set(wire["domains"]) != sort_names:
             _fail("domains must contain exactly the declared sorts", "/domains")
         if set(wire["constants"]) != constant_names:
             _fail("constants must contain exactly the declared constants", "/constants")
+        if defined_names.intersection(wire["relations"]):
+            raise InvalidModel("supplied table for defined predicate", generator="definitions",
+                               path="/relations")
         if set(wire["relations"]) != predicate_names:
-            _fail("relations must contain exactly the declared predicates", "/relations")
+            _fail("relations must contain exactly the base predicates; defined tables are computed", "/relations")
 
         domains: dict[str, tuple[str, ...]] = {}
         for sort in sorted(sort_names):
@@ -131,17 +137,41 @@ class FiniteModel:
                 raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
             relations[name] = frozenset(tuples)
 
-        normalized = _normalized(domains, constants, relations)
+        if defined_names:
+            from .definitions import compile_definitions
+            from .evaluate import _Evaluator, _Exhausted
+            from .limits import MAX_EVALUATIONS
+            work_remaining = MAX_EVALUATIONS
+            for definition in compile_definitions(env, env.definition_entries, version=env.environment_id):
+                table = set()
+                temporary = cls(MappingProxyType(domains), MappingProxyType(constants),
+                                MappingProxyType(relations), env.environment_id, "")
+                evaluator = _Evaluator(env, temporary, work_remaining, trace=False)
+                try:
+                    for row in product(*(domains[s] for s in definition.arguments)):
+                        bindings = tuple(reversed(tuple(zip(definition.arguments, row))))
+                        if evaluator.formula(definition.body, bindings)[0]:
+                            table.add(row)
+                            if tuple_count + len(table) > MAX_TUPLES:
+                                raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
+                except _Exhausted as exc:
+                    raise ResourceLimit("Definition model evaluation budget exhausted") from exc
+                work_remaining -= evaluator.work
+                tuple_count += len(table)
+                relations[definition.name] = frozenset(table)
+
+        normalized = _normalized(domains, constants, relations, defined_names)
         from .wire import digest
         environment_id = env.environment_id
         model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
-        model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations), environment_id, model_id)
+        model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations),
+                    environment_id, model_id, tuple(sorted(defined_names)))
         from .background import validate_background
         validate_background(env, model)
         return model
 
     def to_dict(self) -> dict[str, Any]:
-        return _normalized(self.domains, self.constants, self.relations)
+        return _normalized(self.domains, self.constants, self.relations, set(self.defined_predicates))
 
 
 def _cell(value):
@@ -149,10 +179,11 @@ def _cell(value):
     return str(value) if type(value) is int else value
 
 
-def _normalized(domains, constants, relations) -> dict[str, Any]:
+def _normalized(domains, constants, relations, excluded=frozenset()) -> dict[str, Any]:
     return {
         "complete": True,
         "domains": {k: list(domains[k]) for k in sorted(domains)},
         "constants": {k: _cell(constants[k]) for k in sorted(constants)},
-        "relations": {k: [[_cell(c) for c in x] for x in sorted(relations[k])] for k in sorted(relations)},
+        "relations": {k: [[_cell(c) for c in x] for x in sorted(relations[k])]
+                      for k in sorted(relations) if k not in excluded},
     }

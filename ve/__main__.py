@@ -38,9 +38,53 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["adapter", "run"]:
+        from .adapters.cli import main as adapter_main
+        return adapter_main(argv[2:])
+    if argv[:1] == ["bundle"]:
+        if argv[:2] != ["bundle", "check"]:
+            print("usage: python -m ve bundle check BUNDLE [--lean EXECUTABLE]", file=sys.stderr)
+            return 2
+        bundle_parser = argparse.ArgumentParser(prog="python -m ve bundle check")
+        bundle_parser.add_argument("bundle", help="ve-bundle@0 JSON file")
+        bundle_parser.add_argument("--lean", help="optional Lean ve_conformance executable")
+        options = bundle_parser.parse_args(argv[2:])
+        try:
+            from .bundle import check_bundle
+            _emit(check_bundle(loads_json(_read(options.bundle)), lean_executable=options.lean))
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
+    if argv[:1] == ["definitions"]:
+        definition_parser = argparse.ArgumentParser(prog="python -m ve definitions")
+        definition_parser.add_argument("--env", required=True)
+        definition_parser.add_argument(
+            "--adopt", help="English definition and glossary sentences; prints the new environment version")
+        options = definition_parser.parse_args(argv[1:])
+        try:
+            from .surface.definitions import adopt, wordings
+            if options.adopt:
+                raw = adopt(loads_json(_read(options.env)), _read(options.adopt).decode("utf-8"))
+                env = Environment(raw)
+                _emit({"environment_id": env.environment_id, "environment": raw,
+                       "definitions": wordings(env)})
+                return 0
+            env = Environment.from_json(_read(options.env))
+            _emit({"environment_id": env.environment_id, "definitions": wordings(env)})
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
+    if argv[:1] == ["document"]:
+        from .document import main as document_main
+        return document_main(argv[1:])
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
+    commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
+    commands.add_parser("definitions", help="preview definition wordings; --adopt English definitions and glossaries")
+    commands.add_parser("document", help="document check, render, coverage and readings")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
@@ -229,7 +273,10 @@ def main(argv=None):
             try:
                 if defer_display_options:
                     english_options, provenance = load_english_options()
-                display = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+                conclusions = record.get("conclusions", ())
+                view = "ve_natural" if conclusions else display_view
+                display = render(document_from_data(env, record["ast"]), env, view,
+                                 conclusions=conclusions, **english_options)
                 record.update(display_text=display, **provenance)
             except Exception as exc:
                 record["display_omitted"] = type(exc).__name__
@@ -241,19 +288,25 @@ def main(argv=None):
             from .english import parse_english_with_metadata
             parsed = parse_english_with_metadata(env, source, **english_options)
             document = parsed.document
+            conclusions = parsed.conclusions
             if parsed.paraphrase()["changed"]:
                 print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
         else:
             document = parse(env, source)
+            conclusions = ()
         if args.command == "render":
             if args.view == "natural" and not args.with_legend:
-                _emit(natural_document(env, document, naming=args.naming, **english_options).to_dict())
+                _emit(natural_document(env, document, naming=args.naming,
+                                       conclusions=conclusions, **english_options).to_dict())
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
+            options = dict(english_options, conclusions=conclusions,
+                           **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
+            if conclusions:
+                raise ValueError('Format cannot export English conclusion roles to strict VE')
             print(print_document(env, document), end="")
         return 0
     except VEError as exc:

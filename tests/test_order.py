@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import random
+from subprocesses import HANG_TIMEOUT
 import subprocess
 
 import pytest
@@ -295,7 +296,7 @@ def test_english_integer_terms_round_trip_beyond_four_brackets():
 
 def _invoke(executable, cases, command="order"):
     proc = subprocess.run([str(executable), command], input=json.dumps(cases), capture_output=True,
-                          text=True, timeout=120)
+                          text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode in (0, 1), proc.stderr
     return json.loads(proc.stdout)
 

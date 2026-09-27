@@ -62,6 +62,27 @@ def test_assuming_root_does_not_discharge_it():
     assert display["approval"] == "unassessed"
 
 
+def test_data_background_composes_and_renders_with_generated_string_binders():
+    from tests.test_data_flags import environment
+    from ve.ast import formula_to_data
+    from ve.background import background
+    from ve.identity import meaning_id
+
+    env = environment()
+    graph = ArgumentGraph(env, (Claim.create(env, "root", "true.\n"),), (), "root")
+    result = check_argument(graph, search=False)
+    assert result.status == "Checked" and result.composed
+    premises = background(env)
+    rows = result.composition["assumptions"]
+    assert len(rows) == 1 + len(premises)
+    for row, premise in zip(rows[1:], premises, strict=True):
+        assert row["label"] == "background:" + premise.generator
+        assert row["ast"] == formula_to_data(env, premise.formula, _generated=True)
+        assert row["meaning_id"] == meaning_id(env, premise.formula, _generated=True)
+    assert [row["ast"] for row in outstanding_obligations(graph, result)["assumptions"][1:]] == [
+        row["ast"] for row in rows[1:]]
+
+
 def test_unchecked_intermediate_is_obligation_not_leaf():
     graph = simple({"leaf": "true.\n", "middle": "false.\n", "root": "true.\n"},
         [("bad", ("leaf",), "middle"), ("final", ("middle",), "root")], "root")

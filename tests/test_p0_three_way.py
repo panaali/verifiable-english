@@ -14,6 +14,7 @@ from copy import deepcopy
 import os
 import re
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
@@ -36,7 +37,7 @@ def active(name):
 
 
 def diagnostic(code, message):
-    return message if re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
+    return message if message.startswith("Definition ") or re.match(r"[A-Z][A-Za-z]+(: |\()", message) else f"{code}: {message}"
 
 
 def error_verdict(code, message, generator=None):
@@ -78,6 +79,11 @@ def python_verdict(case):
             return {"status": "ok", "order": list(dependency_order_nodes(case["nodes"]))}
         if kind == "admission":
             return {"status": "ok", **admit_document(env, case["document"])}
+        if kind == "background":
+            from ve.ast import _to_data
+            items = background(env)
+            return {"status": "ok", "background": [_to_data(p.formula) for p in items],
+                    "generators": [p.generator for p in items]}
         if kind == "evaluate":
             model = FiniteModel.from_dict(env, case["model"])
             doc = document_from_data(env, case["ast"])
@@ -118,6 +124,8 @@ def rust_request(case):
     base = {"id": case["id"], "environment": env}
     if kind in ("label", "dependency-order"):
         return {**case}
+    if kind == "background":
+        return None
     if kind == "evaluate":
         return {**base, "model": case["model"], "ast": case["ast"]}
     if kind == "admission" or (order and kind != "countermodel"):
@@ -139,7 +147,12 @@ def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
         error = result["error"]
-        generator = "literals" if error["message"].endswith("(literals)") else None
+        message = error["message"]
+        generator = ("literals" if message.startswith("literals:") or message.endswith("(literals)")
+                     else "flags" if message.startswith("flags:") or message.endswith("(flags)")
+                     else None)
+        suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
+        generator = generator or (suffix[1] if suffix else None)
         return error_verdict(error["code"], error["message"], generator)
     if kind == "label":
         return {"status": "ok", "label": result["label"]}
@@ -176,7 +189,7 @@ def lean_verdict(case, result):
 
 
 def run(command, cases):
-    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True, timeout=600)
+    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
@@ -198,7 +211,7 @@ def rust_executable():
     env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
                             str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env, capture_output=True,
-                           text=True, timeout=600)
+                           text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return ROOT / "rust/target/release/ve"
 
@@ -307,7 +320,7 @@ def test_checked_premise_order_includes_layer_segment():
     assert checked_premises(env, (layer,), (bg,)) == (bg, layer, bg)
 
 
-def test_disabled_family_gate_precedes_empty_search():
+def test_enabled_nary_family_reaches_empty_search_and_invalid_mix_still_gates():
     from conformance.p0 import environment
     from ve import Environment
     from ve.ast import Top
@@ -316,10 +329,11 @@ def test_disabled_family_gate_precedes_empty_search():
     raw = environment()
     raw["profiles"] = ["closure@0", "nary@0", "relational-fol@0"]
     env = Environment(raw)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_countermodel(env, (), Top(), max_domain_size=0)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_distinguishing_model(env, Top(), Top(), max_domain_size=0)
+    assert find_countermodel(env, (), Top(), max_domain_size=0).status == "NotFound"
+    assert find_distinguishing_model(env, Top(), Top(), max_domain_size=0).status == "NotFound"
+    raw["profiles"] = ["closure@0", "nary@0", "order@0", "relational-fol@0"]
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile combination"):
+        Environment(raw)
 
 
 def test_report_identity_binds_environment_and_document(lean_executable):
@@ -347,6 +361,44 @@ def test_report_identity_binds_environment_and_document(lean_executable):
     assert [row["report_id"] for row in lean] == [row["report_id"] for row in python]
     assert len({row["report_id"] for row in python}) == len(variants)
     assert all(row["report"] == python[0]["report"] for row in python)
+
+
+def test_data_background_deduction_admission_matches_lean(lean_executable):
+    """Explicit generated leaves remain generated at every graph edge position."""
+    from tests.test_data_flags import environment
+    from ve.admission import admit_document
+    from ve.ast import Top, formula_to_data
+    from ve.background import background
+    from ve.entailment import prove_entailment
+    from ve.identity import meaning_id
+
+    env = environment()
+    generated = background(env)
+    proof = prove_entailment(env, (), Top())
+    assert proof.status == "Found"
+    leaves = [{"name": f"bg{i}", "ast": formula_to_data(env, item.formula, _generated=True),
+               "label": f"background:{item.generator}"}
+              for i, item in enumerate(generated)]
+    ordinary = {"name": "ordinary", "ast": ["top"], "unit": "u"}
+    units = [{"id": "u", "span": [0, 1], "kind": "asserted", "content": ["top"]}]
+    orders = (leaves, list(reversed(leaves)), [leaves[0], ordinary, *leaves[1:]])
+    cases = []
+    for i, ordered in enumerate(orders):
+        certificate = deepcopy(proof.certificate)
+        certificate["premise_meaning_ids"] = [
+            meaning_id(env, generated[int(node["name"][2:])].formula, _generated=True)
+            if node["name"].startswith("bg") else meaning_id(env, Top())
+            for node in ordered]
+        document = {"units": units, "graph": {"root": "result", "nodes": [*ordered, {
+            "name": "result", "ast": ["top"], "premises": [node["name"] for node in ordered],
+            "certificate": certificate}]}}
+        cases.append({"id": str(i), "kind": "admission", "environment": env.to_dict(),
+                      "document": document})
+    lean = run([str(lean_executable), "route", "-"], cases)
+    python = [admit_document(env, case["document"]) for case in cases]
+    assert all(row["status"] == "ok" for row in lean)
+    assert [row["report"] for row in lean] == [row["report"] for row in python]
+    assert [row["report_id"] for row in lean] == [row["report_id"] for row in python]
 
 
 def test_frozen_lean_sources_are_in_suite():

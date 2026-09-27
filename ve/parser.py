@@ -148,6 +148,7 @@ class _Parser:
         if depth > MAX_DEPTH:
             self.error(f"formula exceeds nesting limit {MAX_DEPTH}", cls=ResourceLimit)
         start = self.i
+        definitions = "definitions@0" in self.env.profiles
         from .surface.registry import strict_dispatch
         matched = strict_dispatch(self.s[self.i:], self.env)
         if matched is not None:
@@ -189,6 +190,40 @@ class _Parser:
             self.i += 4; left = self.formula(depth + 1); self.literal("), then (")
             right = self.formula(depth + 1); self.literal(")")
             return self.node(start, ast.Implies(left, right))
+        if definitions and self.s.startswith("no ", self.i):
+            self.i += 3
+            sort, pos = self.identifier("sort identifier")
+            if sort not in self.env.sorts:
+                self.error(f"unknown sort {sort!r}", pos, UnknownSymbol)
+            self.literal(" is ")
+            predicate, pos = self.identifier("unary predicate")
+            decl = self.env.predicates.get(predicate)
+            if decl is None or decl.arguments != (sort,):
+                self.error(f"unknown unary predicate {predicate!r}", pos, UnknownSymbol)
+            return self.node(start, ast.Forall(sort, ast.Not(ast.Unary(predicate, ast.Var(0)))))
+        if definitions and self.s.startswith("every ", self.i):
+            from .environment import RESERVED
+            self.i += 6
+            sort, pos = self.identifier("sort identifier")
+            if sort not in self.env.sorts:
+                self.error(f"unknown sort {sort!r}", pos, UnknownSymbol)
+            self.literal(" ")
+            name, pos = self.identifier("binder name")
+            if name in RESERVED or name in self.env.sorts or name in self.env.predicates or name in self.env.constants or any(
+                    active == name for active, _ in self.binders):
+                self.error(f"invalid binder name {name!r}", pos)
+            self.literal(" that is ")
+            predicate, pos = self.identifier("unary predicate")
+            decl = self.env.predicates.get(predicate)
+            if decl is None or decl.arguments != (sort,):
+                self.error(f"unknown unary predicate {predicate!r}", pos, UnknownSymbol)
+            self.literal(", (")
+            self.binders.append((name, sort))
+            body = self.formula(depth + 1)
+            self.binders.pop()
+            self.literal(")")
+            guard = ast.Unary(predicate, ast.Var(0))
+            return self.node(start, ast.Forall(sort, ast.Implies(guard, body)), name)
         for prefix, constructor in (("for every ", ast.Forall),
                                     ("there exists ", ast.Exists)):
             if self.s.startswith(prefix, self.i):
@@ -225,10 +260,30 @@ class _Parser:
                 self.i += 7; constructor = ast.And
             elif self.s.startswith(") or (", self.i):
                 self.i += 6; constructor = ast.Or
+            elif definitions and self.s.startswith(") iff (", self.i):
+                self.i += 7; constructor = None
             else:
                 self.error("expected ') and (' or ') or ('")
             right = self.formula(depth + 1); self.literal(")")
-            return self.node(start, constructor(left, right))
+            return self.node(start, constructor(left, right) if constructor is not None else
+                             ast.And(ast.Implies(left, right), ast.Implies(right, left)))
+
+        if "nary@0" in self.env.profiles:
+            match = _IDENT.match(self.s, self.i)
+            if match is not None and self.s.startswith("(", match.end()):
+                predicate, position = self.identifier("n-ary predicate")
+                declaration = self.env.predicates.get(predicate)
+                if declaration is None or not 3 <= len(declaration.arguments) <= 6:
+                    self.error(f"unknown n-ary predicate {predicate!r}", position, UnknownSymbol)
+                self.literal("(")
+                terms = [self.term()]
+                while self.s.startswith(", ", self.i):
+                    self.i += 2
+                    terms.append(self.term())
+                    if len(terms) > 6:
+                        self.error("n-ary atom exceeds six arguments", start)
+                self.literal(")")
+                return self.node(start, ast.Atom(predicate, tuple(terms)))
 
         left = self.term()
         if self.s.startswith(" is ", self.i):
@@ -258,7 +313,35 @@ class _Parser:
         if not self.s:
             self.error("document must contain at least one statement", 0)
         while self.i < len(self.s):
-            formulas.append(self.formula())
+            if "definitions@0" in self.env.profiles and self.s.startswith("define ", self.i):
+                from .environment import RESERVED
+                from .definitions import Definition, premise
+                self.i += 7
+                predicate, pos = self.identifier("defined predicate")
+                if predicate not in self.env.definition_entries:
+                    self.error(f"unknown defined predicate {predicate!r}", pos, UnknownSymbol)
+                sorts = self.env.predicates[predicate].arguments
+                self.literal("(")
+                names = []
+                for index, sort in enumerate(sorts):
+                    if index:
+                        self.literal(", ")
+                    name, pos = self.identifier("definition argument")
+                    if name in RESERVED or name in self.env.sorts or name in self.env.predicates or name in self.env.constants or name in names:
+                        self.error(f"repeated definition argument {name!r}", pos)
+                    names.append(name)
+                    self.binders.append((name, sort))
+                self.literal(") as (")
+                body = self.formula()
+                self.literal(")")
+                del self.binders[-len(sorts):]
+                from . import ast as formula_ast
+                expected = formula_ast._Decoder().decode(self.env.definition_entries[predicate]["body"])
+                if body != expected:
+                    self.error("definition body differs from identity-bound declaration")
+                formulas.append(premise(Definition(predicate, sorts, body)))
+            else:
+                formulas.append(self.formula())
             self.literal(".\n")
         return ast.Document(tuple(formulas))
 

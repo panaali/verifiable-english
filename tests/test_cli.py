@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from subprocesses import HANG_TIMEOUT
 import subprocess
 import sys
 
@@ -21,7 +22,7 @@ MODEL = ROOT / "examples/model.json"
 
 def cli(*args):
     return subprocess.run([sys.executable, "-m", "ve", *map(str, args)], cwd=ROOT,
-                          text=True, capture_output=True, timeout=20)
+                          text=True, capture_output=True, timeout=HANG_TIMEOUT)
 
 
 def test_cli_evaluation_and_source_binding():
@@ -256,6 +257,63 @@ def test_render_default_is_canonical_strict_and_english_is_explicit(tmp_path):
     source = tmp_path / 'english.txt'; source.write_text(english)
     assert cli('render', '--env', ENV, '--surface', 'english', source).stdout == english
     assert cli('render', '--env', ENV, '--surface', 'english', '--view', 've_strict', source).stdout == strict
+
+
+def test_cli_keeps_checked_conclusion_roles_in_natural_views_and_check_records(tmp_path):
+    example = ROOT / 'examples/assist'
+    env = example / 'environment.json'
+    overlay = example / 'environment.english.json'
+    source = tmp_path / 'argument.txt'
+    source.write_text('Every reviewed service is safe. The API is reviewed. '
+                      'Therefore the API is safe.')
+    common = ('--env', env, '--english-vocabulary', overlay, '--surface', 'english')
+    structured = cli('render', *common, '--view', 'natural', source)
+    assert structured.returncode == 0, structured.stdout
+    view = json.loads(structured.stdout)
+    assert view['text'].endswith('Therefore the API is safe.')
+    assert [sentence['role'] for sentence in view['sentences']] == [
+        'premise', 'premise', 'conclusion']
+    for flags in ((), ('--view', 've_english'), ('--view', 've_natural'),
+                  ('--view', 'natural', '--with-legend'),
+                  ('--view', 've_english', '--with-legend')):
+        rendered = cli('render', *common, *flags, source)
+        assert rendered.returncode == 0, rendered.stdout
+        assert 'Therefore the API is safe.' in rendered.stdout
+    checked = cli('check', *common, source)
+    assert checked.returncode == 0, checked.stdout
+    record = json.loads(checked.stdout)
+    assert record['conclusions'] == [2]
+    assert record['sentence_roles'] == ['premise', 'premise', 'conclusion']
+    assert record['display_text'].endswith('Therefore the API is safe.')
+
+
+@pytest.mark.parametrize('view', ('fol_symbols', 'fol_keywords', 've_strict',
+                                  've_explicit', 've_fluent', 'canonical'))
+@pytest.mark.parametrize('with_legend', (False, True))
+def test_cli_rejects_english_conclusions_in_views_without_roles(tmp_path, view, with_legend):
+    example = ROOT / 'examples/assist'
+    source = tmp_path / 'argument.txt'
+    source.write_text('Every reviewed service is safe. The API is reviewed. '
+                      'Therefore the API is safe.')
+    flags = ('--with-legend',) if with_legend else ()
+    result = cli('render', '--env', example / 'environment.json',
+                 '--english-vocabulary', example / 'environment.english.json',
+                 '--surface', 'english', '--view', view, *flags, source)
+    assert result.returncode == 2
+    assert json.loads(result.stdout)['status'] == 'InvalidInput'
+
+
+def test_cli_format_rejects_english_conclusions_without_roles(tmp_path):
+    example = ROOT / 'examples/assist'
+    source = tmp_path / 'argument.txt'
+    source.write_text('Every reviewed service is safe. The API is reviewed. '
+                      'Therefore the API is safe.')
+    result = cli('format', '--env', example / 'environment.json',
+                 '--english-vocabulary', example / 'environment.english.json',
+                 '--surface', 'english', source)
+    assert result.returncode == 2
+    assert json.loads(result.stdout)['status'] == 'InvalidInput'
+    assert '@api is safe.' not in result.stdout
 
 
 @pytest.mark.parametrize('overlay', ['{', '{}'])

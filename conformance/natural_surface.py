@@ -6,7 +6,8 @@ from pathlib import Path
 import random
 
 from ve import Environment, parse, ast, natural_document, parse_english_argument, check_argument
-from ve.natural import _NOTATION, render_natural_sentence
+from ve.natural import (_NOTATION, render_natural_sentence, render_presentation,
+                        parse_presentation, PresentationNeedsRepair)
 from ve.english import parse_english
 from ve.surface.unambiguity import require_unique_derivation
 from ve.printer import render
@@ -21,7 +22,21 @@ def _source_files(root):
             yield path, environment
 
 
-def _measure(name, formulas, env, *, options=None, examples=None):
+def _disposition(result):
+    if result.reason == 'different_ast':
+        return 'candidate_ast_mismatch_explicit_repair'
+    if result.reason != 'symbols_or_variable_names':
+        return 'candidate_audit_failed_explicit_repair'
+    if '"' in result.text or '@' in result.text or '_' in result.text:
+        return 'needs_confirmed_display_name_or_vocabulary'
+    if any(char in result.text for char in '[]*+-'):
+        return 'needs_notation_free_order_or_closure_form'
+    if '(' in result.text or ')' in result.text:
+        return 'needs_word_scope_or_binder_form'
+    return 'needs_audited_english_rewrite'
+
+
+def _measure(name, formulas, env, *, options=None, examples=None, real_document=False):
     options = options or {}
     reasons, fallback_details = {}, []
     natural = 0
@@ -42,17 +57,36 @@ def _measure(name, formulas, env, *, options=None, examples=None):
         else:
             assert result.reason and result.fluent_text and result.form == 'explicit form'
             reasons[result.reason] = reasons.get(result.reason, 0) + 1
-            fallback_details.append({'statement': index + 1, 'reason': result.reason})
+            fallback_details.append({'statement': index + 1, 'reason': result.reason,
+                                     'disposition': _disposition(result)})
         if examples is not None and len(examples) < 30:
             examples.append({'corpus': name, 'before': render(formula, env, 've_fluent'),
                              'after': result.text, 'natural': result.natural, 'form': result.form,
                              'fallback_reason': result.reason})
     count = len(formulas)
-    return {'corpus': name, 'statements': count, 'natural': natural,
+    row = {'corpus': name, 'statements': count, 'natural': natural,
             'fallback': count - natural,
             'natural_fraction': natural / count if count else 0.0,
             'fallback_reasons': reasons, 'fallback_details': fallback_details,
             'accepted_wrong_readings': wrong}
+    if real_document and formulas:
+        try:
+            legacy_view = natural_document(env, ast.Document(tuple(formulas)), **options)
+            presentation = parse_presentation(env, legacy_view.text,
+                                              allow_explicit=True, **options)
+            assert presentation.document == ast.Document(tuple(formulas))
+            assert all(sentence['role'] == 'premise' and not sentence['dependencies']
+                       for sentence in presentation.sentences)
+            row['prose_round_trip'] = 'exact'
+            try:
+                render_presentation(env, presentation.document, **options)
+                row['versioned_presentation'] = 'ready'
+            except PresentationNeedsRepair as exc:
+                row['versioned_presentation'] = 'needs_repair'
+                row['presentation_repairs'] = exc.details
+        except Exception as exc:
+            row['prose_round_trip'] = type(exc).__name__
+    return row
 
 
 def audit(random_per_vocabulary=100):
@@ -73,7 +107,8 @@ def audit(random_per_vocabulary=100):
             overlay = environment.with_name('environment.english.json')
             options = {'vocabulary': json.loads(overlay.read_text())} if overlay.is_file() else {}
             rows.append(_measure(str(path.relative_to(ROOT)), formulas, env,
-                                 options=options, examples=examples))
+                                 options=options, examples=examples,
+                                 real_document=True))
     fluent_path = ROOT / 'examples/fluent/examples.ve'
     env = Environment.from_json((fluent_path.parent / 'environment.json').read_bytes())
     rows.append(_measure('docs/fluent-examples.md', parse(env, fluent_path.read_bytes()).formulas, env,
@@ -96,6 +131,12 @@ def audit(random_per_vocabulary=100):
         rows.append(_measure('roundtrip/' + name, formulas, env, examples=examples))
     total = sum(row['statements'] for row in rows)
     natural = sum(row['natural'] for row in rows)
+    disposition_counts = {}
+    for row in rows:
+        for detail in row['fallback_details']:
+            key = detail['disposition']
+            disposition_counts[key] = disposition_counts.get(key, 0) + 1
+    real_rows = [row for row in rows if row['corpus'].startswith(('examples/', 'usecases/'))]
     demo_env = Environment.from_json((ROOT / 'examples/assist/environment.json').read_bytes())
     demo_options = {'vocabulary': json.loads((ROOT / 'examples/assist/environment.english.json').read_text())}
     demo = ast.Document((
@@ -111,6 +152,20 @@ def audit(random_per_vocabulary=100):
             'statements': total, 'natural': natural, 'fallback': total - natural,
             'natural_fraction': natural / total if total else 0.0,
             'accepted_wrong_readings': sum(row['accepted_wrong_readings'] for row in rows),
+            'fallback_dispositions': disposition_counts,
+            'real_documents': {'documents': len(real_rows),
+                               'statements': sum(row['statements'] for row in real_rows),
+                               'notation_free': sum(row['natural'] for row in real_rows),
+                               'exact_prose_round_trips': sum(row.get('prose_round_trip') == 'exact'
+                                                              for row in real_rows),
+                               'ready_versioned_presentations': sum(row.get('versioned_presentation') == 'ready'
+                                                                    for row in real_rows),
+                               'documents_needing_repair': sum(row.get('versioned_presentation') == 'needs_repair'
+                                                               for row in real_rows),
+                               'prose_failures': [{'source': row['corpus'],
+                                                   'reason': row['prose_round_trip']}
+                                                  for row in real_rows
+                                                  if row.get('prose_round_trip') not in ('exact', None)]},
             'prose_argument': {'before': 'Every reviewed service is safe. / Api is reviewed. / Api is safe.',
                                'after': prose.text, 'statements': len(demo.formulas),
                                'checked_conclusions': 1, 'round_trip': True,

@@ -187,8 +187,12 @@ class _NaturalVocabulary:
     Inspect all declarations, including unusable templates and unused symbols.
     """
     def __init__(self, env):
-        strict = {name: "{0} is " + name if len(p.arguments) == 1
-                  else "{0} " + name + " {1}" for name, p in env.predicates.items()}
+        strict = {name: ("{0} is " + name if len(p.arguments) == 1 else
+                         "{0} " + name + " {1}" if len(p.arguments) == 2 else
+                         "{0} has recorded relation " + name + " with " +
+                         " and ".join("argument " + ("two", "three", "four", "five", "six")[i - 1] +
+                                      " {" + str(i) + "}" for i in range(1, len(p.arguments))))
+                  for name, p in env.predicates.items()}
         owners = defaultdict(set)
         predicate_heads = set(env.predicates)
         for declarations in (env.sorts, env.predicates, env.constants):
@@ -227,11 +231,14 @@ class _NaturalVocabulary:
                                   for i in range(len(words) - len(tokens) + 1)):
                     report(path, "SORT_NOUN")
 
-        def phrase_checks(name, phrase, path):
+        def phrase_checks(name, phrase, path, *, nary_connector=False):
             words = _TOKENS.findall(phrase)
             if not _WORDS.fullmatch(phrase):
                 report(path, "PHRASE_SYNTAX")
-            if (_LOGICAL_WORDS | (frozenset("reachable reachability steps satisfying zero more from".split()) if env.closure else frozenset())).intersection(words):
+            forbidden = _LOGICAL_WORDS | (frozenset("reachable reachability steps satisfying zero more from".split()) if env.closure else frozenset())
+            if nary_connector and phrase == "at":
+                forbidden = forbidden - {"at"}
+            if forbidden.intersection(words):
                 report(path, "LOGICAL_WORD")
             if any(_VARIABLE.fullmatch(word) for word in words):
                 report(path, "VARIABLE_TOKEN")
@@ -251,10 +258,26 @@ class _NaturalVocabulary:
                 continue
             path = f"/vocabulary/predicates/{name}/verbalisation"
             before = len(issues)
-            template_checks(value, path)
+            arity = len(p.arguments)
+            if arity <= 2:
+                template_checks(value, path)
             if counts[value] > 1:
                 report(path, "DUPLICATE_TEMPLATE")
-            arity = len(p.arguments)
+            if arity > 2:
+                from .surface.nary import template_parts
+                parts = template_parts(value, arity)
+                if parts is None:
+                    report(path, "TEMPLATE_SHAPE")
+                if len(value) > 160 or len(value.split()) > 24:
+                    report(path, "TEMPLATE_LENGTH")
+                if parts is not None:
+                    for phrase in parts[1:]:
+                        if phrase.strip():
+                            phrase_checks(name, phrase.strip(), path, nary_connector=True)
+                if len(issues) == before:
+                    self.predicates[name] = value
+                    accepted.add(name)
+                continue
             # Anchors and the positive phrase grammar also exclude repeated,
             # reordered, missing, converted, or attribute-access placeholders.
             shape = (r"\{0\} (.+)" if arity == 1 else r"\{0\} (.+) \{1\}")
@@ -585,11 +608,14 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                              accept_suggested_vocabulary=accept_suggested_vocabulary) != value:
                 raise ValueError('Rendered ve_natural document has a different reading')
         return text
-    if conclusions or paragraph_breaks:
-        raise ValueError('Conclusion roles and paragraph breaks require the natural view')
     if view == "ve_english":
         from .english import render_english
-        return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
+        if paragraph_breaks:
+            raise ValueError('Paragraph breaks require the natural view')
+        return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary)
+    if conclusions or paragraph_breaks:
+        raise ValueError('Conclusion roles and paragraph breaks require an English view')
     if view == "ve_fluent":
         from .fluent import FluentTraversal
         traversal = FluentTraversal(env)
@@ -623,7 +649,10 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
 def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                 naming: str = "per_statement", style: str = "json", **options) -> str:
     """Render an experimental cell, ALWAYS including the identical view legend."""
-    return render_vocabulary(env, view, naming, style, **options) + render(value, env, view, naming, **options)
+    vocabulary_options = {key: options[key] for key in ('vocabulary', 'accept_suggested_vocabulary')
+                          if key in options}
+    return (render_vocabulary(env, view, naming, style, **vocabulary_options)
+            + render(value, env, view, naming, **options))
 
 
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,
@@ -751,12 +780,15 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     breaks = set(paragraph_breaks)
     marked = set(conclusions)
     display_texts = [result.text for result in results]
-    from .english import EnglishVocabulary, _mentioned_constants
-    names = EnglishVocabulary(env, vocabulary=vocabulary,
-                              accept_suggested_vocabulary=accept_suggested_vocabulary).constants
+    from .english import EnglishVocabulary, _mentioned_constants, _has_discourse_binder
+    words = EnglishVocabulary(env, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary)
+    names = words.constants
     referents = set()
+    incomplete_discourse = False
     for i, formula in enumerate(document.formulas):
-        if (i not in marked and len(referents) == 1 and results[i].natural
+        if (i not in marked and len(referents) == 1 and not incomplete_discourse
+                and results[i].natural
                 and type(formula) is ast.Unary and type(formula.term) is ast.Const
                 and formula.term.name in referents):
             head = names[formula.term.name]
@@ -764,14 +796,20 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
             if display_texts[i].startswith(head + ' '):
                 display_texts[i] = 'It' + display_texts[i][len(head):]
         referents.update(_mentioned_constants(formula))
+        incomplete_discourse |= _has_discourse_binder(formula)
     def clause(result, index):
         wording = display_texts[index]
         if index not in marked:
             return wording
         tail = wording
-        if tail.startswith('The ') or tail.split(' ', 1)[0] in {
+        declared_name = any(
+            name in words.declared_constants and head[0].isupper()
+            and tail.startswith(head)
+            and (len(tail) == len(head) or not re.match(r'[A-Za-z0-9_]', tail[len(head)]))
+            for name, head in names.items() if head)
+        if not declared_name and (tail.startswith('The ') or tail.split(' ', 1)[0] in {
                 'Every', 'Some', 'No', 'For', 'There', 'It', 'If', 'Both',
-                'Either', 'Starting', 'All', 'At', 'This'}:
+                'Either', 'Starting', 'All', 'At', 'This'}):
             tail = tail[0].lower() + tail[1:]
         return conclusion_marker + ' ' + tail
     def prose_text():
