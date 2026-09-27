@@ -361,3 +361,28 @@ def test_theta_dual_guard_cycle_on_t_prime(lean):
     assert rows[0]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[1]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[2]["status"] == "ok" and rows[3]["status"] == "ok"
+
+
+def test_admission_with_soft_units_and_regenerated_leaves(lean):
+    environment_json = env()
+    delta = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    row = elaborate(lean, environment_json, delta)
+    coherence = next(b for b in row["background"] if b.get("label") == "soft:coherence:a,b")
+    layer = next(p for p in row["premises"] if p["label"] == "layer:norms:x_required")
+
+    def document(label, ast):
+        return {"units": [{"id": f"u{i}", "span": [10 * i, 10 * i + 5], "kind": "norm", "content": n}
+                          for i, n in enumerate(delta)],
+                "graph": {"root": "leaf", "nodes": [{"name": "leaf", "ast": ast, "label": label}]}}
+
+    cases = [document("soft:coherence:a,b", coherence["ast"]),
+             document("layer:norms:x_required", layer["ast"]),
+             document("soft:coherence:a,b", ["top"]),
+             document("soft:coherence:b,a", coherence["ast"])]
+    rows = run(lean, [{"id": str(i), "kind": "admission", "environment": environment_json, "document": d}
+                      for i, d in enumerate(cases)])
+    assert rows[0]["status"] == "ok" and rows[0]["admitted"] is True, rows[0]
+    assert rows[0]["conditional_on"] == ["soft:coherence:a,b"]
+    assert [a["label"] for a in rows[0]["report"]["assumptions"]] == ["soft:coherence:a,b"]
+    assert rows[1]["status"] == "ok" and rows[1]["conditional_on"] == []
+    assert rows[2]["status"] == "error" and rows[3]["status"] == "error"
