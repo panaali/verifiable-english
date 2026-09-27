@@ -340,3 +340,24 @@ def test_alpha_rank_resolved_conflict_free_unconditionally(lean):
     verdict = run(lean, [{"id": "c", "kind": "soft-conflict", "environment": environment_json,
                           "norms": alpha, "packages": certified}])[0]
     assert verdict["verdict"] == "CONFLICT-FREE" and verdict["conditional_on"] == []
+
+
+def test_theta_dual_guard_cycle_on_t_prime(lean):
+    not_required = ("not", ["unary", "x_required", ["var", 0]])
+    not_permitted = ("not", ["unary", "x_permitted", ["var", 0]])
+    rows = run(lean, [
+        {"id": "1", "kind": "soft-elaborate", "environment": env(),
+         "norms": [norm("s", "x_permitted", False, guard=not_required), should("d", "x_required", True)]},
+        {"id": "2", "kind": "soft-elaborate", "environment": env(),
+         "norms": [norm("s", "x_required", True, guard=not_permitted), should("d", "x_permitted", False)]},
+        {"id": "3", "kind": "soft-elaborate", "environment": env(),
+         "norms": [norm("s", "x_permitted", True, guard=not_required), should("d", "x_required", True)]},
+        {"id": "4", "kind": "soft-elaborate", "environment": env(),
+         "norms": [norm("s", "x_permitted", False, guard=not_required), norm("d", "x_required", True)]},
+    ])
+    # the shared dependencyOrder diagnostic names every node that cannot be placed: the
+    # self-edge is on the defaulted predicate, and the strict rule's predicate depends on it
+    # (spec fixture θ writes only the first name; see lean/SOFT-NORMS.md)
+    assert rows[0]["error"] == "DependencyCycle: x_permitted, x_required"
+    assert rows[1]["error"] == "DependencyCycle: x_permitted, x_required"
+    assert rows[2]["status"] == "ok" and rows[3]["status"] == "ok"
