@@ -8,7 +8,7 @@ import time
 
 from lark.exceptions import LarkError
 
-from ..errors import ResourceLimit, SyntaxError
+from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError
 from ..limits import MAX_NODES
 
 EARLEY_SECONDS = 30
@@ -69,7 +69,7 @@ def require_unique_derivation(env, source, *, grammar=None, **options):
             raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
         if getattr(node, "data", None) == "_ambig":
             first, second = node.children[:2]
-            raise SyntaxError("English has two derivations:\n" + first.pretty()[:1000]
+            raise AmbiguousDerivation("English has two derivations:\n" + first.pretty()[:1000]
                               + "\n---\n" + second.pretty()[:1000])
         stack.extend(getattr(node, "children", ()))
     return tree
