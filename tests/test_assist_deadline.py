@@ -193,3 +193,115 @@ def test_classify_deadline_outcome_replays_without_reading_the_clock(monkeypatch
     restored = RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger())))
     assert restored.units["u"].pending == service.units["u"].pending
     assert restored.units["u"].catalogue_results == service.units["u"].catalogue_results
+
+
+# -- z3b recheck 1, finding B: undo restoration parsed before its deadline ---
+
+def _approved_then(path):
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                    presentation="Api is safe.", situation=situation)
+    approved = service.revision
+    if path == "restore":
+        service.edit("u", source="Carol is safe.")
+    return service, approved
+
+
+def _delay_parse_call(monkeypatch, number):
+    """CPU-delay only the ``number``-th parse; return the list of parse calls."""
+    import ve.assist.ambiguity_patterns as catalogue
+    import ve.english as english
+    original = english.parse_english_with_metadata
+    calls = []
+    def parse(*args, **kwargs):
+        calls.append(args[1])
+        if len(calls) == number:
+            _busy(0.5)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(english, "parse_english_with_metadata", parse)
+    monkeypatch.setattr(catalogue, "parse_english_with_metadata", parse)
+    return calls
+
+
+# Parses in a successful undo: restoring after an edit, or revalidating in place.
+UNDO_PARSES = {"restore": 5, "revalidate": 4}
+
+
+@pytest.mark.parametrize("path", sorted(UNDO_PARSES))
+def test_undo_restoration_counts_every_parse(monkeypatch, path):
+    service, approved = _approved_then(path)
+    calls = _delay_parse_call(monkeypatch, 0)
+    service.undo("u", approved)
+    assert service.units["u"].state == "approved" and len(calls) == UNDO_PARSES[path]
+
+
+@pytest.mark.parametrize("path,number", [(path, number) for path, count in sorted(UNDO_PARSES.items())
+                                         for number in range(1, count + 1)])
+def test_every_undo_restoration_parse_is_inside_one_operation_deadline(monkeypatch, path, number):
+    import ve.assist.recovery as recovery
+
+    service, approved = _approved_then(path)
+    _delay_parse_call(monkeypatch, number)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    started = time.monotonic()
+    service.undo("u", approved)
+    assert time.monotonic() - started < 0.1 + 0.15
+    assert service.units["u"].state == "stale"
+    assert service.events[-1]["action"] == "undo_requires_review"
+    assert service.to_ledger()["commands"][-1]["observed"]["deadlines"] != [None]
+    monkeypatch.undo()
+    assert not service.approval_valid("u")
+    assert service.verify_ledger()
+
+
+def test_set_readings_parses_inside_the_deadline_before_any_change(monkeypatch):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    from ve.identity import meaning_id
+    readings = [{"meaning_id": meaning_id(env, Unary("safe", Const(name))), "wording": f"{name.title()} is safe."}
+                for name in ("api", "carol")]
+    before = service.to_ledger()
+    _delay_parse_call(monkeypatch, 2)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    started = time.monotonic()
+    with pytest.raises(ValueError, match="reading operation deadline"):
+        service.set_readings("u", readings)
+    assert time.monotonic() - started < 0.1 + 0.15
+    assert service.to_ledger() == before
+    monkeypatch.undo()
+    assert service.verify_ledger()
+
+
+def test_resolution_rewrite_parses_inside_the_deadline(monkeypatch):
+    import ve.assist.recovery as recovery
+    import ve.assist.ambiguity_patterns as catalogue
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one", pending=[{"reason": "author check"}])
+    before = service.to_ledger()
+    original = catalogue.checked_wording
+    def slow(*args, **kwargs):
+        _busy(0.5)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(recovery, "checked_wording", slow)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    started = time.monotonic()
+    with pytest.raises(ValueError, match="resolution operation deadline"):
+        service.resolve_pending("u", 0, actor="author", reason="checked", disposition="resolved",
+                                wording="Api is safe.", cited_spans=[{"start": 0, "end": 3}])
+    assert time.monotonic() - started < 0.1 + 0.15
+    assert service.to_ledger() == before

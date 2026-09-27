@@ -265,7 +265,8 @@ class RecoveryService:
         except (TypeError, ValueError) as exc:
             raise ValueError("recovery command arguments must be JSON data") from exc
         operation = getattr(self, "_" + _name)
-        if set(args) != set(inspect.signature(operation).parameters):
+        # ``budget`` lets undo share its operation budget; it is never an input.
+        if set(args) != set(inspect.signature(operation).parameters) - {"budget"}:
             raise ValueError("recovery command arguments do not match the command")
         saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
                  self.revision, deepcopy(self.versions))
@@ -461,6 +462,10 @@ class RecoveryService:
             raise ValueError("unknown unit revision")
         old_approval = deepcopy(prior["approval"])
         current = self.units[unit_id]
+        # One budget covers the whole undo: revalidating the current approval
+        # and every restoration step (parse, catalogue review, readings,
+        # approval). Expiry can only leave the unit for review.
+        budget = self._budget()
         # The undo event always advances this unit's revision, including when
         # edit sees identical fields or the requested snapshot was preapproval.
         for child in list(self.units.values()):
@@ -469,7 +474,7 @@ class RecoveryService:
         if (old_approval is not None and current.approval == old_approval
                 and current.source == prior["source"] and current.anchor == prior["anchor"]
                 and current.presentation == prior["presentation"]
-                and self._approval_valid(unit_id, Budget())):
+                and self._approval_still_valid(unit_id, budget)):
             self._event("undo", current, target_revision=target_revision)
             return current
         unit = self._edit(unit_id, prior["source"], prior["anchor"], prior["presentation"], None)
@@ -479,21 +484,30 @@ class RecoveryService:
         snap = old_approval["snapshot"]
         try:
             from ..english import parse_english_with_metadata
-            parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip(".\n") + ".\n")
-            formula = parsed.document.formulas[0]
-            if len(parsed.document.formulas) != 1 or meaning_id(self.env, formula) != snap["meaning_id"]:
-                raise ValueError("restored meaning changed")
+            with budget.guard():
+                parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip(".\n") + ".\n")
+                formula = parsed.document.formulas[0]
+                if len(parsed.document.formulas) != 1 or meaning_id(self.env, formula) != snap["meaning_id"]:
+                    raise ValueError("restored meaning changed")
+            self._invalidate(unit_id)
             self._start(unit_id, None)
-            self._classify(unit_id, "one")
+            self._classify(unit_id, "one", budget=budget)
             if unit.state != "ready":
                 raise ValueError("restored reading review is incomplete")
-            self._set_readings(unit_id, deepcopy(snap["considered"]), [], None)
+            self._set_readings(unit_id, deepcopy(snap["considered"]), [], None, budget=budget)
             self._approve(unit_id, formula_to_data(self.env, formula), snap["actor"], snap["paraphrase"],
-                          snap["presentation"], snap["situation"], snap["rejected"], snap["narrowing"], None)
-        except (ValueError, KeyError, IndexError):
+                          snap["presentation"], snap["situation"], snap["rejected"], snap["narrowing"], None,
+                          budget=budget)
+        except (ValueError, KeyError, IndexError, _Deadline):
             unit.state = "stale"
             self._event("undo_requires_review", unit)
         return unit
+
+    def _approval_still_valid(self, unit_id, budget) -> bool:
+        try:
+            return self._approval_valid(unit_id, budget)
+        except _Deadline:
+            return False
 
     def edit(self, unit_id, *, source=None, anchor=None, presentation=None, expected_revision=None):
         return self._command("edit", unit_id=unit_id, source=source, anchor=anchor,
@@ -574,7 +588,8 @@ class RecoveryService:
 
     def _classify(self, unit_id, parse_outcome, vocabulary="known", discourse="complete",
                   force="supported", check="checked", pending=(), limit=None,
-                  catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None):
+                  catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None,
+                  budget=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state != "analysing":
@@ -592,7 +607,7 @@ class RecoveryService:
         matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
         bindings = catalogue_bindings or {}
         dispositions = catalogue_dispositions or {}
-        budget = self._budget()
+        budget = self._budget() if budget is None else budget
         unit.catalogue_reviewed = []
         unit.catalogue_results = {}
         for pattern_id in matched:
@@ -783,27 +798,35 @@ class RecoveryService:
         return self._command("set_readings", unit_id=unit_id, readings=list(readings),
                              pending=list(pending), expected_revision=expected_revision)
 
-    def _set_readings(self, unit_id, readings, pending, expected_revision):
+    def _set_readings(self, unit_id, readings, pending, expected_revision, budget=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state not in {"reading_review", "ready"}:
             raise ValueError("unit is not in reading review")
         if any(not isinstance(row, dict) for row in pending):
             raise ValueError("pending items must be records")
-        self._invalidate(unit_id)
         supplied = deepcopy(list(readings))
         from ..english import parse_english_with_metadata
-        for row in supplied:
-            if not isinstance(row, dict) or not row.get("meaning_id") or not isinstance(row.get("wording"), str):
-                raise ValueError("reading needs checked meaning_id and wording")
-            if not row["wording"].endswith((".", ".\n")):
-                raise ValueError("reading wording is not a writable sentence")
-            parsed = parse_english_with_metadata(self.env, row["wording"].rstrip("\n") + "\n")
-            if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != row["meaning_id"]:
-                raise ValueError("reading wording fails AST correspondence")
+        # Every wording is checked inside the operation budget before any change.
+        budget = self._budget() if budget is None else budget
+        try:
+            with budget.guard():
+                for row in supplied:
+                    if (not isinstance(row, dict) or not row.get("meaning_id")
+                            or not isinstance(row.get("wording"), str)):
+                        raise ValueError("reading needs checked meaning_id and wording")
+                    if not row["wording"].endswith((".", ".\n")):
+                        raise ValueError("reading wording is not a writable sentence")
+                    parsed = parse_english_with_metadata(self.env, row["wording"].rstrip("\n") + "\n")
+                    if (len(parsed.document.formulas) != 1
+                            or meaning_id(self.env, parsed.document.formulas[0]) != row["meaning_id"]):
+                        raise ValueError("reading wording fails AST correspondence")
+        except _Deadline as exc:
+            raise ValueError("reading operation deadline") from exc
         existing = {row.get("meaning_id") for row in unit.readings}
         if existing - {row.get("meaning_id") for row in supplied}:
             raise ValueError("considered readings cannot be erased")
+        self._invalidate(unit_id)
         unit.readings = supplied
         from .ambiguity_patterns import PATTERNS
         unit.pending.extend(deepcopy(list(pending)))
@@ -845,12 +868,16 @@ class RecoveryService:
             from ..english import parse_english_with_metadata
             if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
                 raise ValueError("resolution rewrite is not writable")
-            parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
-            if len(parsed.document.formulas) != 1:
-                raise ValueError("resolution needs one meaning")
-            formula = parsed.document.formulas[0]
-            checked_wording(self.env, wording, formula)
-            mid = meaning_id(self.env, formula)
+            try:
+                with self._budget().guard():
+                    parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
+                    if len(parsed.document.formulas) != 1:
+                        raise ValueError("resolution needs one meaning")
+                    formula = parsed.document.formulas[0]
+                    checked_wording(self.env, wording, formula)
+                    mid = meaning_id(self.env, formula)
+            except _Deadline as exc:
+                raise ValueError("resolution operation deadline") from exc
             if not any(item.get("meaning_id") == mid for item in unit.readings):
                 unit.readings.append({"meaning_id": mid, "wording": wording, "name": "resolution"})
         unit.pending.pop(index)
@@ -938,7 +965,7 @@ class RecoveryService:
                              expected_revision=expected_revision)
 
     def _approve(self, unit_id, formula, actor, paraphrase, presentation, situation,
-                 rejected, narrowing, expected_revision):
+                 rejected, narrowing, expected_revision, budget=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state != "ready" or unit.pending:
@@ -949,7 +976,7 @@ class RecoveryService:
             self._event("task_cap", unit)
             raise ValueError("clarification task cap")
         # One budget covers every step, including dependency revalidation.
-        budget = self._budget()
+        budget = self._budget() if budget is None else budget
         try:
             with budget.guard():
                 outcome = self._approval(unit_id, formula_from_data(self.env, formula), actor=actor,
