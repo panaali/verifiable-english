@@ -150,6 +150,17 @@ def test_recycling_after_max_requests(service_executable):
         assert service.stats["recycles"] == 2 and service.stats["restarts"] == 0
 
 
+def test_chunks_fit_their_byte_budget(service_executable):
+    service = LeanService(service_executable, batch_bytes=3000)
+    texts = [json.dumps(case, separators=(",", ":")) for case in CASES[:40]]
+    chunks = list(service._chunks(texts))
+    assert [t for chunk in chunks for t in chunk] == texts
+    assert all(len(("[" + ",".join(chunk) + "]").encode()) <= 3000 for chunk in chunks if len(chunk) > 1)
+    with service:
+        assert [r["id"] for r in service.run("evaluate", CASES[:40])] == [c["id"] for c in CASES[:40]]
+        assert service.stats["requests"] == len(chunks) and service.stats["restarts"] == 0
+
+
 def test_build_mismatch_is_refused(service_executable):
     assert len(executable_sha256(service_executable)) == 64
     with pytest.raises(CheckerUnavailable, match="expected 0000"):
