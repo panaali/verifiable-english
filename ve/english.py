@@ -88,6 +88,21 @@ def _has_discourse_binder(value):
 
 
 def _fold_sentence_initials(source, words):
+    quoted_positions = set()
+    quoted = escaped = False
+    for index, char in enumerate(source):
+        if quoted:
+            quoted_positions.add(index)
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+            quoted_positions.add(index)
+
     def initial(word, tail):
         for name, value in words.constants.items():
             if name not in words.declared_constants or value.startswith('"'):
@@ -100,15 +115,54 @@ def _fold_sentence_initials(source, words):
         return word[0].lower() + word[1:]
 
     def fold(match):
+        if match.start(2) in quoted_positions:
+            return match[0]
         return match[1] + initial(match[2], source[match.start(2):])
 
     source = re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
     # A conclusion marker begins a second sentence-initial position. The
     # marker itself is folded above, but the claim's first word also needs it.
     def fold_conclusion(match):
+        if match.start(3) in quoted_positions:
+            return match[0]
         return match[1] + match[2] + initial(match[3], source[match.start(3):])
     return re.sub(r'(^|(?<=\.)\s+)((?:therefore|so|hence|it\s+follows\s+that)\s+)([A-Z][A-Za-z]*)',
                   fold_conclusion, source)
+
+
+def _normalise_english_source(source, words):
+    """Give every English reader the same editable whitespace and initial case.
+
+    Keep quoted identifiers byte-for-byte. The boundary map lets presentation
+    spans continue to refer to the author's original text after whitespace is
+    collapsed for parsing and the independent derivation check.
+    """
+    chars, boundaries = [], [0]
+    quoted = escaped = False
+    i = 0
+    while i < len(source):
+        char = source[i]
+        if not quoted and char.isspace():
+            end = i + 1
+            while end < len(source) and source[end].isspace():
+                end += 1
+            chars.append(' ')
+            boundaries.append(end)
+            i = end
+            continue
+        chars.append(char)
+        boundaries.append(i + 1)
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+        i += 1
+    return _fold_sentence_initials(''.join(chars), words), boundaries
 
 
 def _mask_brackets(source):
@@ -1206,7 +1260,6 @@ class EnglishParser:
 
     def document(self):
         formulas = []
-        self.source = _fold_sentence_initials(self.source, self.words)
         while self.i < len(self.source):
             start = self.i
             if any(self.take(marker) for marker in _CONCLUSION_MARKERS):
@@ -1234,10 +1287,20 @@ def _parse_english_document(env, source, *, _with_structure=False, **options):
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
-    parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
-    document = parser.document()
+    words = EnglishVocabulary(env, **options)
+    normalised, boundaries = _normalise_english_source(source, words)
+    parser = EnglishParser(env, normalised, words)
+    try:
+        document = parser.document()
+    except VEError as exc:
+        if exc.span is not None:
+            start = boundaries[exc.span.start]
+            end = boundaries[exc.span.end]
+            exc.span = Span(start, end, source.count('\n', 0, start) + 1,
+                            start - source.rfind('\n', 0, start))
+        raise
     from .surface.unambiguity import require_unique_derivation
-    tree = require_unique_derivation(env, source, **options)
+    tree = require_unique_derivation(env, normalised, **options)
     from .surface.unambiguity import require_correspondence
     require_correspondence(tree, parser.extension_readings, env, parser.words, parser.source)
     try:
@@ -1248,7 +1311,10 @@ def _parse_english_document(env, source, *, _with_structure=False, **options):
     _check_conclusions(env, document, parser.conclusions)
     result = document, source, parser.words, tuple(parser.conclusions)
     if _with_structure:
-        return (*result, tuple(parser.sentence_spans), tuple(parser.paragraph_breaks))
+        spans = tuple((boundaries[start], boundaries[end]) for start, end in parser.sentence_spans)
+        breaks = tuple(index for index in range(1, len(spans))
+                       if re.search(r'\n\s*\n', source[spans[index - 1][1]:spans[index][0]]))
+        return (*result, spans, breaks)
     return result
 
 

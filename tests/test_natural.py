@@ -1,6 +1,8 @@
 """The natural view only accepts exact, uniquely parsed English sentences."""
 
 import json
+import random
+import re
 import pytest
 from lark import Lark
 from pathlib import Path
@@ -8,7 +10,8 @@ from pathlib import Path
 from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
                 Implies, Not, Or, Unary, Var, check_argument,
                 parse_english_argument, render)
-from ve.english import english_lark_grammar, parse_english
+from ve.english import english_lark_grammar, parse_english, _normalise_english_source, EnglishVocabulary
+from ve.surface.unambiguity import require_unique_derivation
 from ve.ast import Body, Le, Lt, Num, Reach, Scale
 from ve.natural import (_NOTATION, natural_coverage, render_natural_sentence,
                         parse_presentation, render_presentation, migrate_presentation,
@@ -259,6 +262,70 @@ def test_declared_names_keep_case_with_extra_whitespace():
     comparison = Le(Num(3), Const('budget'))
     assert parse_presentation(order, 'Annual  Budget is at least 3.',
                               **order_options).document == Document((comparison,))
+
+
+def test_list_alias_conclusion_marker_and_doubling_accept_editable_whitespace():
+    env = Environment(vocabulary())
+    options = _names(env, api='The API')
+    list_formula = And(Unary('reviewed', Const('api')),
+                       And(Unary('active', Const('api')), Unary('exempt', Const('api'))))
+    list_source = 'The  API is reviewed, deployed and exempt.'
+    assert parse_english(env, list_source, **options) == Document((list_formula,))
+    assert parse_presentation(env, list_source, **options).document == Document((list_formula,))
+    require_unique_derivation(env, list_source, **options)
+
+    premise = Unary('reviewed', Const('api'))
+    conclusion_source = 'The API is reviewed. It  follows\tthat The API is reviewed.'
+    presented = parse_presentation(env, conclusion_source, **options)
+    assert presented.document == Document((premise, premise))
+    assert [row['role'] for row in presented.sentences] == ['premise', 'conclusion']
+    assert parse_english(env, conclusion_source, **options) == presented.document
+    require_unique_derivation(env, conclusion_source, **options)
+
+    from conformance.english_surface import order_environment
+    order = order_environment()
+    doubled = Lt(Scale(2, Const('budget')), Const('limit'))
+    doubled_source = 'Limit is more than twice  the\tbudget.'
+    assert parse_english(order, doubled_source) == Document((doubled,))
+    assert parse_presentation(order, doubled_source).document == Document((doubled,))
+    require_unique_derivation(order, doubled_source)
+
+
+def test_accepted_corpus_whitespace_perturbations_share_one_reading():
+    data = vocabulary()
+    for name in ('beta', 'gamma'):
+        data['vocabulary']['constants'][name] = {'sort': 'item', 'description': name}
+    env = Environment(data)
+    options = _names(env, api='The API', beta='Beta', gamma='Gamma')
+    from conformance.english_surface import order_environment
+    order = order_environment()
+    corpus = [
+        (env, options, 'The API is reviewed.'),
+        (env, options, 'The API is reviewed, deployed and exempt.'),
+        (env, options, 'The API, Beta and Gamma are reviewed.'),
+        (env, options, 'The API is reviewed. It follows that The API is reviewed.'),
+        (env, options, 'Some service is deployed.'),
+        (env, options, 'Every deployed service is reviewed.'),
+        (env, options, 'For every service, that service is reviewed.'),
+        (order, {}, 'Limit is more than twice the budget.'),
+    ]
+    rng = random.Random(20260927)
+    for selected_env, selected_options, source in corpus:
+        expected = parse_english(selected_env, source, **selected_options)
+        for _ in range(3):
+            changed = re.sub(r' +', lambda _match: rng.choice(('  ', '\t', '\n', ' \t ')), source)
+            assert parse_english(selected_env, changed, **selected_options) == expected
+            assert parse_presentation(selected_env, changed, **selected_options).document == expected
+            require_unique_derivation(selected_env, changed, **selected_options)
+
+
+def test_normalisation_preserves_quoted_identifier_and_source_offsets():
+    env = Environment(vocabulary())
+    words = EnglishVocabulary(env, **_names(env, api='The API'))
+    source = 'The  API is reviewed.\n\n"a.  B" is reviewed.'
+    normalised, boundaries = _normalise_english_source(source, words)
+    assert normalised == 'The API is reviewed. "a.  B" is reviewed.'
+    assert source[boundaries[normalised.index('"')]:].startswith('"a.  B"')
 
 
 def test_plural_and_possessive_references_require_explicit_repair():
