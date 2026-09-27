@@ -6,7 +6,7 @@ import json
 import pytest
 
 from ve.ast import formula_to_data
-from ve.document import check_document
+from ve.document import check_document, render_document
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 from ve.soft_route import _run, admit_soft_document
 from tests.test_soft_norms_lean import env, norm, should, ranks, values, obligation, permission
@@ -124,6 +124,7 @@ def test_decision_finding_in_asserted_unit(tmp_path):
     checked = check_document(path)
     assert checked["admission"]["admitted"] is True
     assert checked["admission"]["report"]["root"]["ast"] == finding
+    assert "Checked reading:" in render_document(path)
 
 
 def test_nu_typed_acts_rho_conditions_and_tau_coherence():

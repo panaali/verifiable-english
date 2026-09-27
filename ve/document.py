@@ -373,10 +373,12 @@ def render_document(path):
     doc = load_document(path)
     lines = []
     from .printer import render
+    render_env = (doc["soft_document"].extended_env if doc["soft_document"] is not None
+                  else doc["environment"])
 
     def wording(ast):
-        formula = formula_from_data(doc["environment"], ast)
-        return render(Document((formula,)), doc["environment"], "ve_english").strip()
+        formula = formula_from_data(render_env, ast)
+        return render(Document((formula,)), render_env, "ve_english").strip()
 
     descriptions = {
         "asserted": "a direct assertion", "norm": "a rule", "definition": "a definition",
