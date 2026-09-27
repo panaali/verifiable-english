@@ -100,6 +100,8 @@ def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment :
   unless profiles.contains "norms@0" do throw "UnsupportedProfile: soft-norms@0 requires norms@0"
   let vocab ← environment.getObjVal? "vocabulary"
   let preds ← fields (← vocab.getObjVal? "predicates")
+  for (p, _) in preds do
+    if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
   let io ← preds.filterMapM fun (p, e) => match e.getObjVal? "instruction_of" with
     | .error _ => pure none
     | .ok (.str π) => pure (some (p, π))
