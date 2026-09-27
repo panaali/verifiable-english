@@ -170,9 +170,13 @@ These are the Lean executable's current choices where the spec leaves bytes open
 * Proved: every theorem of spec 9.2 and 9.3 as listed above (with the deviations recorded),
   and the three wire theorems of 9.3 plus `Run.soft_wire_acceptance`.
 * Tested: `tests/test_soft_norms_lean.py` drives the executable on the item-1 fixtures
-  α, γ, δ, ε, η, θ, κ, λ, μ, ν, ξ, π, ρ, σ, υ (outcomes read off the regenerated `T′`
-  premises with the Python evaluator, diagnostics, witnesses, pair classification, W1
-  delegation).
+  α, γ, δ, ε, η, θ, κ, λ, μ, ν, ξ, π, σ, υ and the invalid-condition half of ρ: outcomes read
+  off the regenerated `T′` premises with the Python evaluator, diagnostics (including the
+  dual-guard cycle on `T′`), witnesses, the pair classification, a soft admission with
+  regenerated soft and layer leaves, W1 delegation, and an end-to-end CONFLICT-FREE replay of
+  certificates found by Python's unchanged prover over the Lean-regenerated `E′_base` and
+  `Background_base′` (δ conditional on `soft:coherence:a,b`, α unconditional; without
+  `Coh_T` the pair target has no certificate).
 * Not done here (handoffs): the Python/Lean differential on generated soft trees and
   byte-for-byte agreement of the regenerated outputs with Python (needs item 2); certificate
   replay against Python-produced packages; the `Overlap`, `override_cycles` and
