@@ -93,8 +93,9 @@ def rule_paraphrase(number: int | str, mode: str, *, role: str = "obligation",
                     alterable=(), rank: str | None = None) -> str:
     """The fixed, one-reading explanation displayed beside a rule."""
     if mode == "default":
-        effect = ("required" if sign else "not required") if role == "obligation" else (
-            "permitted" if sign else "not permitted")
+        effect = (("required" if sign else "not required") if role == "obligation" else
+                  ("permitted" if sign else "not permitted") if role == "permission" else
+                  ("true" if sign else "false"))
         who = (f"{decider} decides whether it applies" if decider and decider != "unstated"
                else "the source names no decider")
         main = (f"Rule {number} makes the act {effect} unless its named exception applies here; "
