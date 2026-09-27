@@ -486,6 +486,25 @@ def test_order_comparison_uses_at_least_without_operator_symbols():
     assert parse_english(env, result.text + '.') == Document((twice,))
 
 
+def test_order_comparison_preserves_internal_capitals_in_declared_names():
+    from conformance.english_surface import order_environment
+    env = order_environment()
+    options = _names(env, budget='Annual Budget', limit='Quarterly Limit')
+    comparison = Le(Num(3), Const('budget'))
+    doubled = Lt(Scale(2, Const('budget')), Const('limit'))
+    document = Document((comparison, comparison))
+    source = 'Annual Budget is at least 3. Therefore Annual Budget is at least 3.'
+    assert parse_english(env, source, **options) == document
+    assert render_natural_sentence(comparison, env, **options).text == 'Annual Budget is at least 3'
+    presentation = render_presentation(env, document, conclusions=(1,), **options)
+    assert presentation.text == source
+    assert migrate_presentation(env, source, **options)['proposed'].document == document
+    doubled_options = _names(env, limit='Quarterly Limit')
+    assert render_natural_sentence(doubled, env, **doubled_options).text == 'Quarterly Limit is more than twice the budget'
+    assert parse_english(env, 'Quarterly Limit is more than twice the budget.',
+                         **doubled_options) == Document((doubled,))
+
+
 def test_repository_corpus_accepts_no_wrong_reading():
     from conformance.natural_surface import audit
     report = audit(random_per_vocabulary=5)
