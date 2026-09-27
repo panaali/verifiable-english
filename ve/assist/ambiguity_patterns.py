@@ -34,6 +34,9 @@ OPERATION_SECONDS = 8
 class _Deadline(BaseException):
     """Raised inside a guarded region; BaseException so broad handlers cannot swallow it."""
 
+    def __init__(self, budget=None):
+        self.budget = budget
+
 
 class Budget:
     """One operation deadline shared by every nested step of that operation.
@@ -69,7 +72,7 @@ class Budget:
         extend the deadline nor displace the enclosing enforcement.
         """
         if self.expired():
-            raise _Deadline
+            raise _Deadline(self)
         self._regions.append(self.checks)
         if self.replay or len(self._regions) > 1 or self.stop == float("inf"):
             try:
@@ -82,7 +85,7 @@ class Budget:
             if time.monotonic() >= self.stop:
                 if self.fired is None:
                     self.fired = self._regions[-1]
-                raise _Deadline
+                raise _Deadline(self)
             return trace
         sys.settrace(trace)
         try:
@@ -252,7 +255,9 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
     try:
         with budget.guard():
             rows, residual = candidates(env, source, bindings, pattern_id=pattern_id)
-    except _Deadline:
+    except _Deadline as exc:
+        if exc.budget is not budget:
+            raise
         result["pending"].append(dict(expired))
         return result
     result["candidate_count"], result["residual"] = len(rows), residual
@@ -264,7 +269,9 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
             with budget.guard():
                 wording = checked_wording(env, render_english(formula, env) + ".", formula)
                 mid = meaning_id(env, formula)
-        except _Deadline:
+        except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
             result["pending"].append(dict(expired))
             return result
         except (VEError, ValueError) as exc:
@@ -290,7 +297,9 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
         try:
             with budget.guard():
                 card, reason = _compare(env, left, right, pattern_id)
-        except _Deadline:
+        except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
             # The interrupted pair is retried on the next page and not counted.
             result["pending"].append({"pair": pair, **expired})
             result["next_cursor"] = index

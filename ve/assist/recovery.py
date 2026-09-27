@@ -302,8 +302,13 @@ class RecoveryService:
                     result = operation(**args)
             if _name not in {"classify", "continue_catalogue", "undo"}:
                 if budget.expired():
-                    raise _Deadline
-        except _Deadline:
+                    raise _Deadline(budget)
+        except _Deadline as exc:
+            if exc.budget is not budget:
+                self._observed, self._operation_budget = None, None
+                if saved is not None:
+                    self._restore(saved)
+                raise
             error = deadline_error
         except Exception as exc:
             error = exc
@@ -342,7 +347,12 @@ class RecoveryService:
             try:
                 with budget.guard():
                     self._seal()
-            except _Deadline:
+            except _Deadline as exc:
+                if exc.budget is not budget:
+                    self.commands.pop()
+                    self._restore(saved)
+                    self._sealed = previous_seal
+                    raise
                 self.commands.pop()
                 self._restore(saved)
                 self._sealed = previous_seal
@@ -446,7 +456,10 @@ class RecoveryService:
         """Derive a service from genesis by replaying every recorded command."""
         budget = Budget(OPERATION_SECONDS) if budget is None else budget
         with budget.guard():
-            return cls._replay_inner(env, ledger, clock)
+            service = cls._replay_inner(env, ledger, clock)
+            if budget.expired():
+                raise _Deadline(budget)
+            return service
 
     @classmethod
     def _replay_inner(cls, env, ledger, clock):
@@ -527,7 +540,8 @@ class RecoveryService:
         try:
             with budget.guard():
                 derived = self._derived(budget)
-                return ledger is None or self._replay(self.env, ledger, budget=budget)._sealed == derived._sealed
+                matches = ledger is None or self._replay(self.env, ledger, budget=budget)._sealed == derived._sealed
+                return matches and not budget.expired()
         except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError, _Deadline):
             return False
 
@@ -622,7 +636,12 @@ class RecoveryService:
             self._approve(unit_id, formula_to_data(self.env, formula), snap["actor"], snap["paraphrase"],
                           snap["presentation"], snap["situation"], snap["rejected"], snap["narrowing"], None,
                           budget=budget)
-        except (ValueError, KeyError, IndexError, _Deadline):
+        except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
+            unit.state = "stale"
+            self._event("undo_requires_review", unit)
+        except (ValueError, KeyError, IndexError):
             unit.state = "stale"
             self._event("undo_requires_review", unit)
         return unit
@@ -630,7 +649,9 @@ class RecoveryService:
     def _approval_still_valid(self, unit_id, budget) -> bool:
         try:
             return self._approval_valid(unit_id, budget)
-        except _Deadline:
+        except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
             return False
 
     def edit(self, unit_id, *, source=None, anchor=None, presentation=None, expected_revision=None):
@@ -960,6 +981,8 @@ class RecoveryService:
                             or meaning_id(self.env, parsed.document.formulas[0]) != row["meaning_id"]):
                         raise ValueError("reading wording fails AST correspondence")
         except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
             raise ValueError("reading operation deadline") from exc
         existing = {row.get("meaning_id") for row in unit.readings}
         if existing - {row.get("meaning_id") for row in supplied}:
@@ -1007,8 +1030,9 @@ class RecoveryService:
             from ..english import parse_english_with_metadata
             if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
                 raise ValueError("resolution rewrite is not writable")
+            budget = self._budget()
             try:
-                with self._budget().guard():
+                with budget.guard():
                     parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
                     if len(parsed.document.formulas) != 1:
                         raise ValueError("resolution needs one meaning")
@@ -1016,6 +1040,8 @@ class RecoveryService:
                     checked_wording(self.env, wording, formula)
                     mid = meaning_id(self.env, formula)
             except _Deadline as exc:
+                if exc.budget is not budget:
+                    raise
                 raise ValueError("resolution operation deadline") from exc
             if not any(item.get("meaning_id") == mid for item in unit.readings):
                 unit.readings.append({"meaning_id": mid, "wording": wording, "name": "resolution"})
@@ -1128,6 +1154,8 @@ class RecoveryService:
             if budget.expired():
                 raise ValueError("approval operation deadline")
         except _Deadline as exc:
+            if exc.budget is not budget:
+                raise
             raise ValueError("approval operation deadline") from exc
         for key, value in outcome.items():
             setattr(unit, key, value)
