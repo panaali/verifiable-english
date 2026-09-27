@@ -70,6 +70,11 @@ Draft writes use SQLite transactions, content hashes, idempotent request IDs, an
 
 ## Verification
 
+The web copy measurement is in [vocabulary/README.md](vocabulary/README.md).
+Its strict all-derivations gate currently exits nonzero for recorded language
+gaps. The app's regular tests keep that measurement reproducible; a green
+Python suite does not certify that the entire page is VE.
+
 ```bash
 # Existing conformance tests require the local Lean executable when lake is installed.
 (cd lean && lake build)
