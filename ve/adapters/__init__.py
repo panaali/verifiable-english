@@ -1,4 +1,4 @@
-"""Audited, deterministic adapters for data outside the checked logic."""
+"""Audited statement-layer and data adapters."""
 
 from .records import run, verify, lookup
 

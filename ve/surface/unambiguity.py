@@ -1,6 +1,6 @@
 """Admit English only after the complete Earley derivation check."""
 from functools import lru_cache
-import re
+import inspect
 import signal
 import sys
 import threading
@@ -8,8 +8,8 @@ import time
 
 from lark.exceptions import LarkError
 
-from ..errors import ResourceLimit, SyntaxError
-from ..limits import MAX_NODES
+from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError
+from ..limits import MAX_NODES, MAX_SOURCE_BYTES
 
 EARLEY_SECONDS = 30
 _monotonic = time.monotonic
@@ -22,14 +22,14 @@ def _parser(grammar):
                 propagate_positions=True)
 
 
-def require_unique_derivation(env, source, **options):
-    from ..english import english_lark_grammar
-    if len(source) > MAX_NODES:
+def require_unique_derivation(env, source, *, grammar=None, **options):
+    from ..english import english_lark_grammar, EnglishVocabulary, _normalise_english_source
+    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
+    text, _ = _normalise_english_source(source, EnglishVocabulary(env, **options))
+    if len(text) > MAX_NODES:
         raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
-    grammar = english_lark_grammar(env, **options)
-    # The handwritten parser folds the first letter of every sentence before
-    # matching; the independent grammar must see the same lexical input.
-    text = re.sub(r"(^|(?<=\.)\s+)([A-Z])", lambda match: match[1] + match[2].lower(), source)
+    grammar = grammar if grammar is not None else english_lark_grammar(env, **options)
     def timeout(_signum, _frame):
         raise ResourceLimit("English Earley time budget exhausted")
     # Leave an existing host alarm alone. A trace can enforce our deadline
@@ -70,13 +70,13 @@ def require_unique_derivation(env, source, **options):
             raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
         if getattr(node, "data", None) == "_ambig":
             first, second = node.children[:2]
-            raise SyntaxError("English has two derivations:\n" + first.pretty()[:1000]
+            raise AmbiguousDerivation("English has two derivations:\n" + first.pretty()[:1000]
                               + "\n---\n" + second.pretty()[:1000])
         stack.extend(getattr(node, "children", ()))
     return tree
 
 
-def require_correspondence(tree, readings, env, words) -> None:
+def require_correspondence(tree, readings, env, words, source=None) -> None:
     """Each extension result must match the grammar rule at its source span."""
     if not readings:
         return
@@ -88,7 +88,11 @@ def require_correspondence(tree, readings, env, words) -> None:
         for record in records:
             if getattr(node, "data", None) == record.grammar_production:
                 meta = getattr(node, "meta", None)
-                derived.append((record, record.derivation_hook(node, env, words),
+                hook = record.derivation_hook
+                value = (hook(node, env, words, source)
+                         if len(inspect.signature(hook).parameters) == 4
+                         else hook(node, env, words))
+                derived.append((record, value,
                                 getattr(meta, "start_pos", None), getattr(meta, "end_pos", None)))
         stack.extend(getattr(node, "children", ()))
     for reading in readings:

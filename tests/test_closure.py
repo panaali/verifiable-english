@@ -37,7 +37,7 @@ def test_closure_corpus_python_and_inverse_views():
         assert [evaluate(env, f, model, trace=False).value for f in doc.formulas] == case['expected']
         assert document_from_named_fol(env, document_to_named_fol(env, doc)) == doc
         for f in doc.formulas:
-            for view in ('fol_symbols', 'fol_keywords', 've_strict', 've_natural'):
+            for view in ('fol_symbols', 'fol_keywords', 've_strict', 've_explicit'):
                 text = render(f, env, view)
                 assert parse_explicit(env, text, view) == f, (case['id'], view, text)
             text = render(f, env, 've_fluent')
@@ -165,7 +165,7 @@ def test_outer_parameter_capture_nested_closure_and_unfolding():
         for case in CASES[1:]:
             e, _, m = load(case)
             assert evaluate(e, f, m, trace=False).value == evaluate(e, expanded, m, trace=False).value
-        for view in ('fol_symbols', 'fol_keywords', 've_strict', 've_natural'):
+        for view in ('fol_symbols', 'fol_keywords', 've_strict', 've_explicit'):
             assert parse_explicit(env, render(f,env,view),view) == f
         assert parse_fluent(env, render(f,env,'ve_fluent')) == f
     assert evaluate(env, parse(env, sources[0]), model).value is False
@@ -179,13 +179,13 @@ def test_fluent_locals_retained_no_relative_closure_guard_and_collisions():
     assert 'steps satisfying [vertex' in text and ' | (true)]' in text
     assert 'such that' not in text  # closure guards never enter the relative-guard contraction
     assert parse_fluent(env, text) == f
-    legends = {render_vocabulary(env, view) for view in ('fol_symbols','fol_keywords','ve_strict','ve_natural','ve_fluent')}
+    legends = {render_vocabulary(env, view) for view in ('fol_symbols','fol_keywords','ve_strict','ve_explicit','ve_fluent')}
     assert len(legends) == 1
     assert json.loads(legends.pop())['closure']['relations'] == ['edge']
     raw = env.to_dict(); raw['vocabulary']['predicates']['edge']['verbalisation'] = '{1} is reachable from {0}'
     rejected = Environment(raw)
     assert lint_vocabulary(rejected)
-    assert render(Reach('plus', Named('edge'), Const('start'),Const('end')),rejected,'ve_natural') == '@end is reachable from @start by one or more edge steps'
+    assert render(Reach('plus', Named('edge'), Const('start'),Const('end')),rejected,'ve_explicit') == '@end is reachable from @start by one or more edge steps'
 
 
 def test_grammar_two_local_transition_and_outer_endpoint_scope():
@@ -337,7 +337,7 @@ def test_seeded_extended_formulas_all_view_inverses_and_lean():
         f=formula(4,0); check_formula(env,f)
         source=print_document(env,Document((f,)))
         assert parse(env,source).formulas==(f,)
-        for view in ('fol_symbols','fol_keywords','ve_strict','ve_natural'):
+        for view in ('fol_symbols','fol_keywords','ve_strict','ve_explicit'):
             assert parse_explicit(env,render(f,env,view),view)==f
         assert parse_fluent(env,render(f,env,'ve_fluent'))==f
         value=evaluate(env,f,model,trace=False).value
