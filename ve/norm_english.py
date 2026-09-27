@@ -17,6 +17,7 @@ from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
 from .surface import norms as _registered_surface  # noqa: F401
+from .surface import softnorms as _soft_surface
 
 
 def _words(env):
@@ -110,7 +111,9 @@ def default_sentence(env, predicate):
     return "By default, " + template.format(*(article(n) for n in nouns)) + "."
 
 
-def render_english(document: NormDocument, *, handles=None):
+def render_english(document: NormDocument, *, handles=None, _w1=False):
+    if not _w1 and _soft_surface.SOFT_PROFILE in document.env.profiles:
+        return _render_soft_english(document, handles=handles)
     env = document.env
     if handles is not None and (set(handles) != {r.name for r in document.rules}
                                 or len(set(handles.values())) != len(handles)
@@ -215,7 +218,9 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
-def parse_english(env, source, manifest=None, *, existing_names=()):
+def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
+    if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
+        return _parse_soft_english(env, source, manifest, existing_names=existing_names)
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")
     if manifest is not None:
@@ -295,3 +300,228 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
+
+
+_SOFT_NOTE = re.compile(
+    r"Rule ([1-9][0-9]*) (serves ([a-z][a-z0-9_]*)|is excepted (only )?when (.+))\.")
+_SOFT_DECIDER = re.compile(r"The exception to rule ([1-9][0-9]*) is decided by ([^.]+)\.")
+_SOFT_FACTORS = re.compile(r"The exception to rule ([1-9][0-9]*) takes account of ([^.]+)\.")
+_SOFT_HEADER = re.compile(r"Rule ([1-9][0-9]*)(?: \(([^()]*)\))?\. (.*)\Z", re.S)
+
+
+def _soft_consequence(rule, env, words):
+    strict, scope = _consequence(rule, env, words)
+    reg = env.predicates[rule.predicate].regulated
+    if getattr(rule, "mode", "strict") != "default":
+        return strict, scope
+    if reg.role == "plain":
+        raise SyntaxError("A default rule needs a declared obligation or permission act")
+    modal = ("should" if rule.sign else "generally need not") if reg.role == "obligation" else (
+        "generally may" if rule.sign else "should not")
+    strict_modal = ("must" if rule.sign else "need not") if reg.role == "obligation" else (
+        "may" if rule.sign else "must not")
+    return strict.replace(" " + strict_modal + " ", " " + modal + " ", 1), scope
+
+
+def _soft_rewrite_consequence(sentence, env, words):
+    """Find exactly one declared deontic reading and its W1 equivalent."""
+    matches = []
+    for name, decl in env.predicates.items():
+        if decl.regulated is None:
+            continue
+        for sign in (True, False):
+            base = Norm("candidate", name, sign, ast.Top())
+            strict, _ = _consequence(base, env, words)
+            candidates = [(strict, "strict")]
+            _, nouns = _bindings(decl, words)
+            if len(nouns) == 2:
+                candidates.append((strict.replace("each " + nouns[1], "any " + nouns[1]), "strict"))
+            if decl.regulated.role == "permission" and not sign:
+                candidates.append((strict.replace("Every " + nouns[0] + " must not ",
+                                                  "No " + nouns[0] + " may ", 1), "strict"))
+            if decl.regulated.role != "plain":
+                soft, _ = _soft_consequence(_soft_surface.SoftNorm(
+                    "candidate", name, sign, ast.Top(), mode="default"), env, words)
+                candidates.append((soft, "default"))
+                if len(nouns) == 2:
+                    candidates.append((soft.replace("each " + nouns[1], "any " + nouns[1]), "default"))
+                if " should not " in soft:
+                    candidates.append((soft.replace(" should not ", " generally must not ", 1), "default"))
+                elif " should " in soft:
+                    candidates.append((soft.replace(" should ", " generally must ", 1), "default"))
+            for wording, mode in candidates:
+                if sentence.casefold().startswith(wording.casefold()) and (
+                    len(sentence) == len(wording) or sentence[len(wording):].startswith(", ")):
+                    matches.append((name, sign, mode, wording, strict))
+    if len(matches) != 1:
+        if re.search(r"\b(?:normally|typically|usually|as a rule)\b", sentence, re.I):
+            raise SyntaxError("Frequency wording has two readings; choose a default rule or a frequency claim")
+        raise SyntaxError("Norm consequence has no single declared reading; use a declared act phrase")
+    name, sign, mode, wording, strict = matches[0]
+    return name, sign, mode, strict + sentence[len(wording):]
+
+
+def _soft_note_parts(tail, number):
+    """Separate W1 carve-outs from the soft annotations in one rule block."""
+    markers = (" Rule ", " The exception to rule ")
+    pos = min((tail.find(x) for x in markers if x in tail), default=-1)
+    if pos < 0:
+        return tail, ""
+    return tail[:pos], tail[pos + 1:]
+
+
+def _parse_soft_notes(notes, number, env, words, scope):
+    result = {"rank": None, "decided_by": None, "sufficient": [], "necessary": [], "factors": []}
+    if not notes:
+        return result
+    remaining = notes
+    while remaining:
+        point = remaining.find(". ")
+        statement = remaining if point < 0 else remaining[:point + 1]
+        remaining = "" if point < 0 else remaining[point + 2:]
+        m = _SOFT_NOTE.fullmatch(statement)
+        if m:
+            if int(m[1]) != number:
+                raise SyntaxError("Soft annotation names another rule")
+            if m[3] is not None:
+                if result["rank"] is not None:
+                    raise SyntaxError("Duplicate rank attribution")
+                result["rank"] = m[3]
+            else:
+                key = "necessary" if m[4] else "sufficient"
+                result[key].append(_parse_guard(m[5], env, words, scope))
+            continue
+        m = _SOFT_DECIDER.fullmatch(statement)
+        if m and int(m[1]) == number:
+            if result["decided_by"] is not None:
+                raise SyntaxError("Duplicate exception decider")
+            result["decided_by"] = m[2]
+            continue
+        m = _SOFT_FACTORS.fullmatch(statement)
+        if m and int(m[1]) == number:
+            if result["factors"]:
+                raise SyntaxError("Duplicate exception factors")
+            result["factors"] = [s.strip() for s in m[2].split(", ")]
+            continue
+        raise SyntaxError(f"Unknown soft annotation {statement!r}")
+    return result
+
+
+def _parse_soft_english(env, source, manifest, *, existing_names):
+    if type(source) is not str:
+        raise SyntaxError("Norm English must be text")
+    if manifest is not None and (type(manifest) is not dict or
+                                 manifest.get("environment_id") != env.environment_id or
+                                 manifest.get("text_digest") != hashlib.sha256(source.encode()).hexdigest()):
+        raise VEError("IdentityMetadataMismatch: stale English export")
+    words = _words(env)
+    transformed = []
+    metadata = []
+    for line in source.split("\n") if source else []:
+        if re.fullmatch(r"Rule [1-9][0-9]* takes precedence over rule [1-9][0-9]*\.", line):
+            transformed.append(line)
+            continue
+        m = _SOFT_HEADER.fullmatch(line)
+        if m is None:
+            raise SyntaxError("Expected a numbered soft rule block")
+        number = int(m[1])
+        refs, parties = _soft_surface.parse_header_options(m[2] or "")
+        first, notes = _soft_note_parts(m[3], number)
+        sentence_end = first.find(". ")
+        consequence = first if sentence_end < 0 else first[:sentence_end + 1]
+        carveouts = "" if sentence_end < 0 else first[sentence_end + 1:]
+        if not consequence.endswith("."):
+            raise SyntaxError("Expected a complete soft rule sentence")
+        name, sign, mode, strict = _soft_rewrite_consequence(consequence[:-1], env, words)
+        decl = env.predicates[name]
+        scope, _ = _bindings(decl, words)
+        fields = _parse_soft_notes(notes, number, env, words, scope)
+        if mode == "strict" and (fields["decided_by"] is not None or fields["sufficient"] or
+                                 fields["necessary"] or fields["factors"]):
+            raise SyntaxError("A strict rule has no exception decision")
+        header = ("Rule " + str(number) +
+                  _soft_surface.render_header_options(refs, ()) + ". ")
+        transformed.append(header + strict + "." + (" " + carveouts if carveouts else ""))
+        metadata.append((mode, parties, fields))
+    w1 = parse_english(env, "\n".join(transformed), None, existing_names=existing_names, _w1=True)
+    if len(w1.rules) != len(metadata):
+        raise SyntaxError("Soft annotation count does not match rule count")
+    rules = []
+    for rule, (mode, parties, fields) in zip(w1.rules, metadata):
+        rules.append(_soft_surface.SoftNorm(
+            rule.name, rule.predicate, rule.sign, rule.guard, rule.unless, rule.over,
+            mode, fields["rank"], parties, fields["decided_by"],
+            tuple(fields["sufficient"]), tuple(fields["necessary"]), tuple(fields["factors"])))
+    if manifest is not None:
+        blocks = [line for line in source.split("\n") if not re.fullmatch(
+            r"Rule [1-9][0-9]* takes precedence over rule [1-9][0-9]*\.", line)]
+        entries = manifest.get("blocks")
+        if type(entries) is not list or len(entries) != len(rules):
+            raise VEError("IdentityMetadataMismatch: block count")
+        names = []
+        handles = set()
+        offset = 0
+        for i, (block, entry) in enumerate(zip(blocks, entries), 1):
+            if type(entry) is not dict or entry.get("number") != i or entry.get("span") != [offset, offset + len(block)]:
+                raise VEError("IdentityMetadataMismatch: block mapping")
+            handle = entry.get("handle")
+            name = entry.get("name")
+            if (type(handle) is not str or not handle or handle in handles or
+                    type(name) is not str or name in names or name in existing_names):
+                raise VEError("IdentityMetadataMismatch: block mapping")
+            handles.add(handle)
+            names.append(name)
+            offset += len(block) + 1
+        w1_positions = {rule.name: i for i, rule in enumerate(w1.rules)}
+        restored = []
+        for i, rule in enumerate(rules):
+            restored.append(_soft_surface.SoftNorm(
+                names[i], rule.predicate, rule.sign, rule.guard, rule.unless,
+                tuple(names[w1_positions[parent]] for parent in rule.over),
+                rule.mode, rule.rank, rule.alterable,
+                rule.decided_by, rule.sufficient, rule.necessary, rule.factors))
+        rules = restored
+    document = NormDocument(env, rules)
+    if manifest is not None and manifest.get("document_hash") != document.document_hash:
+        raise VEError("IdentityMetadataMismatch: norm document hash")
+    return document
+
+
+def _render_soft_english(document, *, handles=None):
+    text, manifest = render_english(document, handles=handles, _w1=True)
+    words = _words(document.env)
+    lines = []
+    numbers = {rule.name: i for i, rule in enumerate(document.rules, 1)}
+    for i, (line, rule) in enumerate(zip(text.split("\n"), document.rules), 1):
+        m = _SOFT_HEADER.fullmatch(line)
+        if m is None:
+            raise SyntaxError("Invalid W1 rule block in soft export")
+        consequence, _ = _consequence(rule, document.env, words)
+        soft, scope = _soft_consequence(rule, document.env, words)
+        body = m[3].replace(consequence, soft, 1)
+        header = ("Rule " + str(i) +
+                  _soft_surface.render_header_options(tuple(numbers[n] for n in rule.over),
+                                                       tuple(getattr(rule, "alterable", ()))) + ". ")
+        annotations = []
+        rank = getattr(rule, "rank", None)
+        if rank:
+            annotations.append(f"Rule {i} serves {rank}.")
+        if getattr(rule, "mode", "strict") == "default":
+            decider = getattr(rule, "decided_by", None)
+            if decider:
+                annotations.append(f"The exception to rule {i} is decided by {decider}.")
+            for formula in getattr(rule, "sufficient", ()):
+                annotations.append(f"Rule {i} is excepted when {_guard_text(formula, document.env, words, scope)}.")
+            for formula in getattr(rule, "necessary", ()):
+                annotations.append(f"Rule {i} is excepted only when {_guard_text(formula, document.env, words, scope)}.")
+            factors = getattr(rule, "factors", ())
+            if factors:
+                annotations.append(f"The exception to rule {i} takes account of {', '.join(factors)}.")
+        lines.append(header + body + (" " + " ".join(annotations) if annotations else ""))
+    source = "\n".join(lines)
+    start = 0
+    for entry, line in zip(manifest["blocks"], lines):
+        entry["span"] = [start, start + len(line)]
+        start += len(line) + 1
+    manifest["text_digest"] = hashlib.sha256(source.encode()).hexdigest()
+    return source, manifest
