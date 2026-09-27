@@ -44,6 +44,14 @@ def new_session(**options):
     return AssistSession.create(ENV, source, [{"id": "t_main", "sentence": "p2.1"}], options=options)
 
 
+def test_paraphrase_display_requires_ast_round_trip(monkeypatch):
+    import ve.english as english
+    session = new_session()
+    formula = parse(session.env, "@api is safe.\n").formulas[0]
+    monkeypatch.setattr(english, "render_english", lambda *args, **kwargs: "Web is safe")
+    assert session.paraphrase_formula(formula) == session._canonical(formula)
+
+
 def build_success(session):
     ok = lambda r: (r["ok"] or pytest.fail(json.dumps(r))) and r
     ok(session.apply("freeze_target", {"target": "t_main", "text": "@api is safe."}))

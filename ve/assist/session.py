@@ -269,15 +269,20 @@ class AssistSession:
         raise AssistError(f"Unknown surface {surface!r}: use auto, strict or english")
 
     def paraphrase_formula(self, formula):
-        """Deterministic English paraphrase (ve_english), strict text on failure."""
-        from ..english import render_english
+        """Display English only when its full parse recovers the requested AST."""
+        from ..english import parse_english_with_metadata, render_english
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                return render_english(formula, self.env, vocabulary=self.overlay,
-                                      accept_suggested_vocabulary=True) + "."
+                wording = render_english(formula, self.env, vocabulary=self.overlay,
+                                         accept_suggested_vocabulary=True) + "."
+                parsed = parse_english_with_metadata(self.env, wording + "\n", vocabulary=self.overlay,
+                                                     accept_suggested_vocabulary=True)
+                if len(parsed.document.formulas) == 1 and parsed.document.formulas[0] == formula:
+                    return wording
         except Exception:  # display only; never part of a verdict
-            return self._canonical(formula)
+            pass
+        return self._canonical(formula)
 
     def _sentence_view(self, sid):
         s = self.sentences[sid]

@@ -1,0 +1,96 @@
+{
+  "version": "ve.ambiguity-patterns@1",
+  "scope": "Patterns considered so far; source intent and completeness are not certified.",
+  "fixtures": [
+    {
+      "pattern_id": "scope.every_some@1",
+      "source": "Every engineer checks a server.",
+      "bindings": {
+        "every_sort": "engineer",
+        "some_sort": "server",
+        "relation": "checks"
+      },
+      "boundary": "An engineer checks a server.",
+      "negative": "Every engineer checks the server.",
+      "seal_sha256": "41149771f41aa2017d0e0caff173f240f927ed127c28a1dc89351be08fbea4b3"
+    },
+    {
+      "pattern_id": "scope.negation@1",
+      "source": "Not all services are safe.",
+      "bindings": {
+        "sort": "service",
+        "predicate": "safe"
+      },
+      "boundary": "All services are safe.",
+      "negative": "Services are safe.",
+      "seal_sha256": "2838be500ed721859f4482c2cba15a009f5fe692e1e464d3ae560a4e4ced1aad"
+    },
+    {
+      "pattern_id": "coordination.list@1",
+      "source": "Alice and Bob are safe.",
+      "bindings": {
+        "predicate": "safe",
+        "left": "alice",
+        "right": "bob"
+      },
+      "boundary": "Alice is safe.",
+      "negative": "Alice, Bob.",
+      "seal_sha256": "b1331f4cde243295bbb319b8775e0e56fda22a3c3784d5078d9e1dc758a6251d"
+    },
+    {
+      "pattern_id": "coordination.collective@1",
+      "source": "The team is safe together.",
+      "bindings": {
+        "predicate": "safe",
+        "group": "team",
+        "members": [
+          "alice",
+          "bob"
+        ]
+      },
+      "boundary": "The team is safe.",
+      "negative": "People exist.",
+      "seal_sha256": "acadce7c759991d74d7607e164b051729f4e87adbaa02a84f11563a86ab055b9"
+    },
+    {
+      "pattern_id": "attachment.modifier@1",
+      "source": "The service with the API is safe.",
+      "bindings": {
+        "modifier": "safe",
+        "left": "service_a",
+        "right": "api"
+      },
+      "boundary": "The service is safe.",
+      "negative": "Safe service.",
+      "seal_sha256": "de3db3a6988eaf45328dc9f72edabe84e2547e78d00a56f9c256bdf52a7f929f"
+    },
+    {
+      "pattern_id": "discourse.reference@1",
+      "source": "The API is deployed. The service is reviewed. It is safe.",
+      "bindings": {
+        "predicate": "safe",
+        "antecedents": [
+          "api",
+          "service_a"
+        ]
+      },
+      "boundary": "The API is safe.",
+      "negative": "This is safe.",
+      "seal_sha256": "3b96d1fe61983adf7d1bdeb0fc7296dd0e2b66eafdfd1c78d9196e97d3a84824"
+    },
+    {
+      "pattern_id": "ellipsis.predicate_copy@1",
+      "source": "Alice is safe. Bob reviews. Carol does too.",
+      "bindings": {
+        "subject": "carol",
+        "predicates": [
+          "safe",
+          "reviews"
+        ]
+      },
+      "boundary": "Carol reviews.",
+      "negative": "Carol also works.",
+      "seal_sha256": "49de587543312c67cc8f1cff371a57313074489e8ccb7900925fcfdbb75aa795"
+    }
+  ]
+}
