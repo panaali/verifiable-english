@@ -1,0 +1,11 @@
+# W1 upgrade review
+
+The W1 norm surface expresses strict obligations, prohibitions, permissions, and releases. It explicitly rejects “should,” “generally,” and holistic weighing. The previous ledger assigns “norms” as one representative blocker to 154 units, but that label does not mean W1 can now express every clause in each unit.
+
+I tested the shortest direct hard constraint in `u0165`. The source bullet says “Generate child sexual abuse material (CSAM).” The preceding `u0164` supplies “Claude should never:”. With a declared permission predicate for that act, W1 parsed the authored test wording “Rule 1. Every assistant must not generate child sexual abuse material.” Its canonical rendering was identical and `check_conflict(..., prove=True)` returned `CONFLICT-FREE`. This test establishes the isolated W1 route only; it is not a checked translation of either complete source unit. “Child sexual abuse material” would also require an explicit open classification criterion in a full translation.
+
+The full `u0165` span is 874 bytes and contains seven bullets, including “serious uplift,” “significant damage,” and “unprecedented and illegitimate” power. Those terms are open, and several bullets depend on causal effects. `u0164` is a header, not an independent prohibition. Other short `norms` units likewise contain context, qualification, descriptive claims, or soft “should” wording. Changing a whole unit to CHECKED or OPEN for one extracted rule would silently discard the remaining readings.
+
+The `ve-document@1` loader also accepts formula content, not W1 norm objects. W1's separate `admit_norm_document` route cannot make one of these unchanged document units a checked norm through `ve document check`. I therefore retained the previous translation and spans byte for byte. The measured status delta is zero; the isolated parser result is recorded in `metrics.json` as capability evidence outside counted coverage.
+
+The previous audit flagged `u0214` as incompletely classified and questioned its named decider. It remains unchanged under the instruction to keep non-W1 units fixed; this limits any claim of translation fidelity beyond the checked clause and labelled headings.

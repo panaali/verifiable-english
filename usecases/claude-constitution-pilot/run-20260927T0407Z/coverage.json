@@ -1,0 +1,30 @@
+{
+  "source_bytes": 184893,
+  "accounted_bytes": 184893,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 1348,
+    "unformalised": 180760,
+    "attributed": 2481,
+    "definition": 282,
+    "asserted": 22
+  },
+  "unformalised_reasons": {
+    "other.discourse": 23,
+    "quantities": 31,
+    "norms": 154,
+    "causation": 17,
+    "time": 2,
+    "counting": 8,
+    "defaults": 13,
+    "modality_belief": 7,
+    "attribution": 3
+  },
+  "residual": {
+    "open_terms": 5,
+    "assumptions": 1,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 0
+  },
+  "residual_total": 6
+}
