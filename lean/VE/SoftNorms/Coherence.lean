@@ -57,7 +57,7 @@ variable {Dd : Doc} (hv : Valid Dd) (B : VE.Structure.{u})
 include hv
 
 omit hv in
-theorem canon_off' {n : String} (h : expTable Dd.T (size Dd) n = none) (vs : List B.Carrier) :
+theorem canon_off_none {n : String} (h : expTable Dd.T (size Dd) n = none) (vs : List B.Carrier) :
     (canon Dd B).relation n vs ↔ B.relation n vs := by
   simp [canon, h]
 
@@ -123,7 +123,7 @@ theorem defaultDecides_denote (p : String) (sign : Bool) :
     rw [selects', selects_denote, fuel_soften]
     exact (selectsD_prime D S ρ _ N).mpr h
 
-theorem selects'_denote (N : SoftNode) : (selects' D N).denote S ρ ↔ SelectsSoftD D S ρ (fuel D) N := by
+theorem selectsPrime_denote (N : SoftNode) : (selects' D N).denote S ρ ↔ SelectsSoftD D S ρ (fuel D) N := by
   rw [selects', selects_denote, fuel_soften]
   exact selectsD_prime D S ρ _ N
 
@@ -250,7 +250,7 @@ theorem coh_canon {M N : SoftNode} (hc : (M, N) ∈ collidingPairs D) :
   have hρ := tupleVal_typed B _ vs hvs
   simp only [VE.Formula.denote]
   rw [circ_canon hv B hB _ _ (hv.selTyped M hM) _ hρ, circ_canon hv B hB _ _ (by
-      have := hv.selTyped N hN; rwa [← hs] at this) _ hρ, selects'_denote, selects'_denote]
+      have := hv.selTyped N hN; rwa [← hs] at this) _ hρ, selectsPrime_denote, selectsPrime_denote]
 
 end Decomposition
 
@@ -431,7 +431,7 @@ theorem softConflictFreeCheck_target {D : SoftDoc} {certs : List (Option VE.Tabl
   | none => rw [hci] at this; cases this
   | some c => rw [hci] at this; exact ⟨c, this⟩
 
-theorem sat_backgroundBase' {D : SoftDoc} {B : VE.Structure.{u}} (hB : BaseAdmissible' D B) :
+theorem sat_backgroundBasePrime {D : SoftDoc} {B : VE.Structure.{u}} (hB : BaseAdmissible' D B) :
     ∀ a ∈ backgroundBase' D, a.denote B [] := by
   intro a ha
   rcases List.mem_append.mp ha with ha | ha
@@ -447,7 +447,7 @@ theorem soft_conflict_free (D : SoftDoc) (h : WellFormedSoft D = true)
   have cert : ∀ t ∈ targets (soften D), ∀ vs, VE.TupleTyped B t.2.1 vs → ¬ t.2.2.denote B (tupleVal vs) := by
     intro t ht vs hvs
     obtain ⟨c, hcc⟩ := softConflictFreeCheck_target hc ht
-    have he := VE.Tableau.checkCertificate_sound.{u} _ _ _ c hcc B hB.1.1 (sat_backgroundBase' hB)
+    have he := VE.Tableau.checkCertificate_sound.{u} _ _ _ c hcc B hB.1.1 (sat_backgroundBasePrime hB)
     exact (bindAll_denote_nil B _ _).mp he vs hvs
   refine ⟨fun r hr vs hvs => ?_, fun pr hpr vs hvs => ?_⟩
   · exact cert (r.name, r.sorts, conflict (soften D) r)
@@ -465,7 +465,7 @@ def backgroundValid' {α : Type u} [DecidableEq α] (D : SoftDoc) (M : VE.Finite
 def classificationBackgroundValid {α : Type u} [DecidableEq α] (D : SoftDoc) (M : VE.FiniteModel α) : Bool :=
   VE.Norms.backgroundValid (soften D) M && (excPremises D).all (fun a => a.eval M [])
 
-theorem baseAdmissible'_of_valid {α : Type u} [DecidableEq α] (D : SoftDoc) (M : VE.FiniteModel α)
+theorem baseAdmissiblePrime_of_valid {α : Type u} [DecidableEq α] (D : SoftDoc) (M : VE.FiniteModel α)
     (valid : M.Valid (envAt (soften D) 0)) (hb : backgroundValid' D M = true) :
     BaseAdmissible' D M.asStructure := by
   simp only [backgroundValid', Bool.and_eq_true, List.all_eq_true] at hb
@@ -480,7 +480,7 @@ theorem soft_conflict_witness_sound {α : Type u} [DecidableEq α] (D : SoftDoc)
     ¬ VE.Norms.ConflictFree (soften D) M.asStructure ∧
     ¬ VE.Route.Unique (VE.Norms.DocumentExpansion (soften D) M.asStructure) ∧ ¬ SoftConflictFree.{u} D ∧
     (¬ NoStrictCollision D M.asStructure ∨ ¬ NoHardPairConflict D M.asStructure) := by
-  have hB := baseAdmissible'_of_valid D M valid hb
+  have hB := baseAdmissiblePrime_of_valid D M valid hb
   obtain ⟨hn, hu, _⟩ := Replay.target_refutes (soften D) (soften_wellFormed D h) t ht M.asStructure hB.1 vs typed
     ((VE.eval_iff_denote M _ _).mp hw)
   exact ⟨hn, hu, fun hc => hn (hc _ hB), soft_witness_classified D h _ hB hn⟩
@@ -676,7 +676,7 @@ def softChain (D : SoftDoc) (hv : Valid (soften D))
         rw [C.premises, List.take_succ, hq]
         simp [L, softSymLayer] }
 
-theorem prefixAdmissible'_zero (D : SoftDoc) (B : VE.Structure.{u}) :
+theorem prefixAdmissiblePrime_zero (D : SoftDoc) (B : VE.Structure.{u}) :
     PrefixAdmissible' D 0 B ↔ BaseAdmissible' D B := by
   constructor
   · rintro ⟨hB, hs⟩
@@ -715,7 +715,7 @@ def softRoute (D : SoftDoc) (h : WellFormedSoft D = true) (hc : SoftConflictFree
       (∀ B, R.Admissible_in B ↔ BaseAdmissible' D B) ∧ R.E_out = envAt (soften D) (size (soften D)) ∧
       R.premises () = VE.Norms.elaborate (soften D).T } :=
   ⟨(softRouteChain D h hc).R, (softRouteChain D h hc).E_in,
-    fun B => ((softRouteChain D h hc).A_in B).trans (prefixAdmissible'_zero D B),
+    fun B => ((softRouteChain D h hc).A_in B).trans (prefixAdmissiblePrime_zero D B),
     (softRouteChain D h hc).E_out, softRouteChain_premises D h hc ()⟩
 
 theorem sat_soft_restrict {D : SoftDoc} (hv : SoftValid D) (S : VE.Structure.{u}) :
