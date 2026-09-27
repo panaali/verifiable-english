@@ -148,10 +148,11 @@ These are the Lean executable's current choices where the spec leaves bytes open
   `mode: "strict"`, `alterable: []`, `hard: false` and absent `rank`/`exception`.
 * Labels: `soft:exception:<rule>:sufficient|necessary:<i>`, `soft:coherence:<a>,<b>` (names
   sorted); classification packages use the coherence label as `target`.
-* `conditional_on` is conservative on `soft-conflict`/`soft-certificate`/`soft-elaborate`:
-  every coherence conjunct whose pair is not comparable (DISJOINT discharge is reported by
-  `soft-pairs`, which needs the classification evidence). On `admission` it is the open
-  coherence labels actually used as report leaves.
+* `conditional_on` on `soft-elaborate` lists every noncomparable pair, since it has no
+  classification evidence. `soft-conflict` and `soft-certificate` accept optional `pairs`
+  evidence and omit a coherence label when its pair has a checked DISJOINT certificate;
+  absent evidence leaves the label open. On `admission` it is the open coherence labels
+  actually used as report leaves.
 * New diagnostic texts the spec leaves open: `InvalidInput: invalid soft name <x>` (`__` in a
   rank, party or regulated name, `soft__` prefix on any declared predicate),
   `InvalidInput: invalid soft block`, `InvalidInput: invalid soft fields for environment`.
