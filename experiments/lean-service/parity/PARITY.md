@@ -1,6 +1,6 @@
 # Lean service parity (stage 1, gate 1)
 
-Commit `06856ca`; full corpora. 16552/16552 cases byte-identical to the one-shot executables; service restarts 0.
+Commit `e2a412d`; full corpora. 16556/16556 cases byte-identical to the one-shot executables; service restarts 0.
 
 | Mode | Corpus | Cases | Requests | Identical | One-shot exit codes (cases) |
 |---|---|---:|---:|---:|---|
@@ -50,3 +50,4 @@ Commit `06856ca`; full corpora. 16552/16552 cases byte-identical to the one-shot
 | norms | batch rejected: fraction (norms) | 1 | 1 | 1 | 2: 1 |
 | english | english_lean differential payloads | 17 | 1 | 17 | 0: 17 |
 | english | adversarial (english) | 3 | 1 | 3 | 0: 1, 2: 2 |
+| english | one-shot JSON acceptance | 4 | 4 | 4 | 0: 4 |
