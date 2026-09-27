@@ -51,20 +51,22 @@ The private `calls.jsonl` ledger records backend usage and may contain submitted
 
 ## Use
 
-- **Learn:** four curated, scoped examples; audited natural English opens first, with per-sentence **explicit form** badges where the library cannot certify a symbol-free reading. Strict VE, fluent, and logic views have separate tabs. Evaluate a tiny world and replay a certificate or display a checked countermodel in plain English.
-- **Writing desk:** request sentence-level model readings; review the checked natural reading and alternatives; accept/edit explicitly; live strict parsing with line/column diagnostics; separate assumptions from the conclusion; Ctrl/⌘+Enter checks the consequence. The strict source editor is under an advanced disclosure.
+- **Writing desk:** opens on a blank, server-saved English document. Review meaning to see diagnostics and only ambiguity cards with a checked separating situation. Choose an explicit rewrite, then approve its meaning. Cancel, undo, unresolved, and assistant outage remain visible in the revision history. Reloads and a server restart preserve acknowledged revisions. A second tab with a stale revision must reload before writing.
+- **Words:** declare a new kind, property, or relation explicitly, or confirm synonyms with a W3 glossary sentence. A vocabulary revision invalidates earlier approval. The example vocabulary is only a starting point.
+- **Rules:** edit the W1 example using must, must not, may, exception, and precedence sentences. The result is a checked conflict situation or a conflict-free proof, stated in English.
+- **Learn:** curated, scoped examples; audited natural English opens first, with per-sentence **explicit form** badges where the library cannot certify a symbol-free reading. Strict VE, fluent, and logic views have separate tabs. Evaluate a tiny world and replay a certificate or display a checked countermodel in plain English.
 - Expand **Vocabulary & small world** to edit the library's environment/world JSON. The selected example is the starting vocabulary, not an unrestricted natural-language vocabulary. Each strict statement ends in a period and separate statements use separate lines. The app supplies a trailing newline for the parser.
-- Light/dark theme, keyboard focus, responsive layout, four-step tour, and JSON draft export. Drafts live only in the current tab; switching examples replaces the draft and reloading loses it (the UI warns about unsaved edits). Export first to keep work. Only the theme is saved in local storage.
+- Light/dark theme, keyboard focus, responsive layout, four-step tour, and JSON document export/import. An export is unsigned and cannot prove authorship; import replays Z3's ledger before accepting it. The browser saves English edits after a short pause and warns if an edit is still unacknowledged.
 
 “Certified” means the **experimental Python certificate checker** replayed an exact deduction. The app does not run Lean. “Countermodel” means the library independently checked a finite world where the assumptions hold and the conclusion fails. “Unknown” is never a success. Proofs from inconsistent assumptions can be vacuously valid; this workspace does not perform a separate consistency audit. A finite-world evaluation is neither an entailment proof nor empirical evidence. Predicate descriptions, legal interpretation, source fidelity, and the truth of premises remain human responsibilities.
 
-Candidate acceptance is a local drafting action, not a persistent audited `AssistSession` approval ledger. The app uses assist's proposal/paraphrase/comparison machinery; it does not expose the full CLI graph workflow, freeze-target protocol, or session verification. Backend usage is ledgered. Exported provenance is explanatory metadata, not a signed certificate of authorship.
+Meaning approval uses the revisioned Z3 recovery ledger and is stored server-side per access token. It binds the source, chosen meaning, checked situation, and vocabulary versions. A proof does not approve an author's intent. The advanced strict editor remains a separate consequence checker.
 
 ## Security and limits
 
 HttpOnly, SameSite=Strict cookies; Secure cookies on HTTPS; per-session CSRF headers plus same-origin checks; JSON-only writes; restrictive CSP; no CORS; no access logs; static asset allowlist; bounded request bodies (including streamed bodies); body and computation deadlines; fixed worker command with JSON stdin, never shell interpolation; no client-controlled file paths. Login attempts are limited globally to 15/minute and at most 100 active sessions. HTTPS sets HSTS for the hostname.
 
-One operation runs at a time; excess work receives 429. Semantic work is killed after eight seconds; assist after 50 seconds (CLI deadline 40 seconds), including its process group. Library search budgets also apply. An internet service can still need upstream volumetric abuse protection. The shared token provides one access role, not individual accounts.
+Draft writes use SQLite transactions, content hashes, idempotent request IDs, and compare-and-swap revisions. Z3 replays the recovery ledger on every read. Drafts have a 100-document and 300-revision limit per token; each source is at most 6,000 characters. The shared token provides one access role, not individual accounts.
 
 ## Verification
 

@@ -1,6 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let csrf = '', examples = [], selected, assist = false, revision = 0, validationTimer, lessonRevision = 0, dirty = false;
+let activeDraft = null, draftTimer, draftQueue = Promise.resolve();
 const el = (tag, text, className) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (className) n.className = className; return n; };
 function notify(text) { $('notice').textContent = text; setTimeout(() => { $('notice').textContent = ''; }, 5000); }
 async function api(path, body, login = false) {
@@ -28,12 +29,22 @@ async function signedIn(data) {
     const option = el('option',item.title); option.value = item.id; $('exampleSelect').append(option);
   }
   await choose(examples[0]);
+  const saved = await api('drafts');
+  activeDraft = saved[0] || await api('drafts',{example:selected.id});
+  selected = examples.find(e=>e.id===activeDraft.example) || selected;
+  if(selected.id!==examples[0].id)await choose(selected);
+  $('exampleSelect').value=selected.id;
+  renderDraft(activeDraft,true);
+  const rules=await api('rules');$('rulesText').value=rules.text;$('rulesResult').replaceChildren(el('p',rules.result.explanation));
+  tab('ide');
 }
 function tab(name) {
-  $('learn').hidden = name !== 'learn'; $('ide').hidden = name !== 'ide';
+  $('learn').hidden = name !== 'learn'; $('ide').hidden = name !== 'ide'; $('rules').hidden = name !== 'rules';
   $('learnNav').classList.toggle('active',name === 'learn'); $('ideNav').classList.toggle('active',name === 'ide');
+  $('rulesNav').classList.toggle('active',name === 'rules');
   $('learnNav').setAttribute('aria-current',name === 'learn' ? 'page' : 'false');
   $('ideNav').setAttribute('aria-current',name === 'ide' ? 'page' : 'false');
+  $('rulesNav').setAttribute('aria-current',name === 'rules' ? 'page' : 'false');
 }
 function view(title, text, prose = false) { const box=el('div',undefined,'view'); box.append(el('h3',title),el(prose?'p':'pre',text)); return box; }
 function naturalView(natural) {
@@ -57,7 +68,7 @@ function readingTabs(data) {
   group.append(tabs,...panels.map(([,panel])=>panel));return group;
 }
 async function choose(item) {
-  if(dirty && !confirm("Replace this draft with another example? Export first to keep your work.")) { $('exampleSelect').value=selected.id; return; }
+  if(dirty && !confirm("Your latest words are still saving. Change example now?")) { $('exampleSelect').value=selected.id; return false; }
   dirty=false; selected = item; revision++; const version=++lessonRevision;$('runLesson').disabled=true;
   $('exampleSelect').value = item.id;
   document.querySelectorAll('[data-example]').forEach(b=>{b.classList.toggle('selected',b.dataset.example===item.id);b.setAttribute('aria-pressed',String(b.dataset.example===item.id));});
@@ -73,6 +84,7 @@ async function choose(item) {
   } catch(e) { notify(e.message); }
   await validate();
   if(version===lessonRevision)$('runLesson').disabled=false;
+  return true;
 }
 function payload(includeWorld=false) {
   let environment, world;
@@ -108,8 +120,8 @@ async function check() {
 }
 $('loginForm').onsubmit=e=>{e.preventDefault();task(e.submitter,async()=>{try{await signedIn(await api('login',{token:$('token').value},true));$('token').value='';}catch(err){$('loginError').textContent=err.message;}});};
 $('logout').onclick=()=>task($('logout'),async()=>{await api('logout',{});signedOut();});
-$('learnNav').onclick=()=>tab('learn');$('ideNav').onclick=()=>tab('ide');$('openExample').onclick=()=>tab('ide');
-$('exampleSelect').onchange=()=>choose(examples.find(e=>e.id===$('exampleSelect').value));
+$('learnNav').onclick=()=>tab('learn');$('ideNav').onclick=()=>tab('ide');$('rulesNav').onclick=()=>tab('rules');$('openExample').onclick=async()=>{tab('ide');await newDocument(selected.id);};
+$('exampleSelect').onchange=async()=>{const item=examples.find(e=>e.id===$('exampleSelect').value);try{await saveDraft();if(await choose(item))await newDocument(item.id);}catch(e){notify(e.message);$('exampleSelect').value=selected.id;}};
 $('runLesson').onclick=()=>task($('runLesson'),async()=>{const v=lessonRevision;const d=await api('check',{example:selected.id});if(v===lessonRevision)verdict($('lessonResult'),d);});
 $('validate').onclick=()=>task($('validate'),validate);$('check').onclick=()=>task($('check'),check);
 for(const id of ['claim','premises','environment','world','useWorld']) $(id).addEventListener('input',()=>{
@@ -144,7 +156,8 @@ $('propose').onclick=()=>task($('propose'),async()=>{
     $('candidates').append(el('p','Readings considered so far, not an exhaustive list. Acceptance applies to this local draft; it is not an audited assist-session sign-off.','note'));
   }catch(e){$('candidates').replaceChildren(el('p',e.message,'error'));}
 });
-$('export').onclick=()=>{try{const a=el('a');const url=URL.createObjectURL(new Blob([JSON.stringify({...payload(true),english:$('prose').value,provenance:$('provenance').textContent},null,2)],{type:'application/json'}));a.href=url;a.download='ve-draft.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){notify(e.message);}};
+$('export').onclick=()=>task($('export'),async()=>{await saveDraft();const data=await api(`drafts/${activeDraft.id}/export`);const a=el('a');const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=url;a.download='ve-document.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>32000)throw new Error('This import exceeds the 32 KiB limit.');const data=JSON.parse(await file.text());renderDraft(await api('drafts/import',data),true);tab('ide');}catch(err){notify(err.message);}finally{e.target.value='';}};
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&!$('ide').hidden&&!$('workspace').hidden){e.preventDefault();if(!$('check').disabled)task($('check'),check);}});
 let theme;try{theme=localStorage.getItem('ve-theme');}catch{}document.documentElement.dataset.theme=theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 $('theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ve-theme',t);}catch{}};
@@ -152,3 +165,128 @@ const steps=[['One reading, several views','Pick an example in Learn. Natural En
 function showTour(){ $('tourCount').textContent=`QUICK TOUR / ${tourIndex+1} OF ${steps.length}`;$('tourTitle').textContent=steps[tourIndex][0];$('tourText').textContent=steps[tourIndex][1];$('tourNext').textContent=tourIndex===steps.length-1?'Start exploring ✓':'Next →'; }
 $('tourButton').onclick=()=>{tourIndex=0;showTour();$('tour').showModal();};$('tourClose').onclick=()=>$('tour').close();$('tourNext').onclick=()=>{if(++tourIndex===steps.length)$('tour').close();else showTour();};
 api('session').then(signedIn).catch(()=>signedOut());
+
+function renderDraft(doc, overwrite=false) {
+  activeDraft=doc;
+  const unit=doc.units[0];
+  if(overwrite)$('prose').value=unit?.source || '';
+  $('documentRevision').textContent=`Saved revision ${doc.revision}`;
+  $('documentStatus').textContent=unit ? unit.state.replaceAll('_',' ') : 'blank draft';
+  $('recovery').replaceChildren();
+  $('wordSort').replaceChildren();
+  for(const sort of Object.keys(doc.environment.vocabulary.sorts)) {
+    const opt=el('option',sort.replaceAll('_',' '));opt.value=sort;$('wordSort').append(opt);
+  }
+  if(!unit){$('recovery').append(el('p','Start with any English sentence. Nothing is approved until you review its meaning.','note'));return;}
+  if(unit.reason)$('recovery').append(el('p',unit.reason,'error'));
+  if(unit.word_prompt){
+    const p=unit.word_prompt;
+    $('recovery').append(el('h3','A word or construction needs your help'),el('p',`Check “${p.term}”. ${p.expected_construction}`,'note'));
+    if(p.nearest_registered_wordings.length)$('recovery').append(el('p',`Nearby declared words: ${p.nearest_registered_wordings.join(', ')}. These are suggestions, not replacements.`,'note'));
+  }
+  if(unit.pending.length)for(const pending of unit.pending)$('recovery').append(el('p',pending.reason || 'A reading is still unresolved.','note'));
+  if(unit.state==='ready')$('recovery').append(el('p','One checked reading is ready. Confirm that it says what you intend.','note'));
+  if(unit.state==='approved')$('recovery').append(el('p',`Meaning approved at this revision. ${unit.paraphrase || ''}`,'note'));
+  if(unit.state==='unresolved')$('recovery').append(el('p','This unit remains visible and can be resumed by reviewing it again.','note'));
+  for(const card of unit.cards || []){
+    const box=el('article',undefined,'candidate checked-card');
+    box.append(el('h3','Two checked readings'),el('p','This example situation makes one reading true and the other false.','note'));
+    for(let i=0;i<card.paraphrases.length;i++){
+      const row=el('div',undefined,'card-reading');row.append(el('p',card.paraphrases[i]));
+      row.append(el('p',card.values[i]?'True in this situation':'False in this situation','badge'));
+      const use=el('button','Use this wording');use.onclick=()=>task(use,async()=>{
+        await changeDraft('reply',{text:card.paraphrases[i],rejected:card.meaning_ids.filter((_,j)=>j!==i).map(meaning_id=>({meaning_id,reason:'Author chose the other checked reading.'}))});
+        await changeDraft('analyze',{});
+      });row.append(use);box.append(row);
+    }
+    for(const line of card.situation_text)box.append(el('p',line,'note'));
+    $('recovery').append(box);
+  }
+  for(const suggestion of unit.suggestions || []){
+    const box=el('article',undefined,'candidate');box.append(el('h3','Assistant suggestion · untrusted'),el('p',suggestion));
+    const use=el('button','Use this restatement');use.onclick=()=>task(use,async()=>{await changeDraft('reply',{text:suggestion});await changeDraft('analyze',{});});
+    box.append(use);$('recovery').append(box);
+  }
+  $('approveReading').disabled=unit.state!=='ready';
+}
+async function changeDraft(action,args) {
+  const operation=async()=>{
+    if(!activeDraft)throw new Error('Open a document first.');
+    const before=activeDraft;
+    try {
+      const next=await api(`drafts/${before.id}/commands`,{revision:before.revision,request_id:crypto.randomUUID(),action,args});
+      const sameText=$('prose').value===args.source;
+      renderDraft(next,action!=='save' || sameText);
+      if(action==='save'&&sameText)dirty=false;
+      return next;
+    } catch(e) {
+      if(e.message.includes('another tab'))renderDraft(await api(`drafts/${before.id}`),true);
+      throw e;
+    }
+  };
+  const pending=draftQueue.then(operation);
+  draftQueue=pending.catch(()=>{});
+  return pending;
+}
+async function saveDraft() {
+  if(!activeDraft || !$('prose').value.trim())return;
+  if(activeDraft.units[0]?.source===$('prose').value)return;
+  await changeDraft('save',{source:$('prose').value});
+}
+async function newDocument(example=selected.id) {
+  await saveDraft();
+  clearTimeout(draftTimer);
+  await draftQueue;
+  activeDraft=await api('drafts',{example});
+  renderDraft(activeDraft,true);
+  $('recovery').replaceChildren(el('p','Start with any English sentence.','note'));
+  dirty=false;
+}
+$('newDocument').onclick=()=>task($('newDocument'),()=>newDocument());
+$('prose').addEventListener('input',()=>{
+  dirty=true;clearTimeout(draftTimer);
+  draftTimer=setTimeout(()=>saveDraft().catch(e=>notify(e.message)),700);
+  $('documentStatus').textContent='saving';
+});
+$('analyse').onclick=()=>task($('analyse'),async()=>{clearTimeout(draftTimer);await saveDraft();await changeDraft('analyze',{});});
+$('approveReading').onclick=()=>task($('approveReading'),async()=>{
+  await saveDraft();const unit=activeDraft.units[0];await changeDraft('approve',{wording:unit.source.trim()});
+});
+$('noneReading').onclick=()=>task($('noneReading'),async()=>{
+  const text=prompt('None of these means what you intended. Restate the sentence or give an example.');
+  if(!text)return;
+  const unit=activeDraft.units[0];const rejected=Object.values(unit.catalogue_results).flatMap(r=>r.candidates || []).map(r=>({meaning_id:r.meaning_id,reason:'None matches the author’s intent.'}));
+  await changeDraft('reply',{text,rejected});await changeDraft('analyze',{});
+});
+$('askRepair').onclick=()=>task($('askRepair'),async()=>{
+  clearTimeout(draftTimer);await saveDraft();
+  const doc=activeDraft;
+  const result=await api(`drafts/${doc.id}/assist`,{revision:doc.revision,request_id:crypto.randomUUID().replaceAll('-','')});
+  if(result.status==='stale'){renderDraft(await api(`drafts/${doc.id}`),true);notify(result.reason);return;}
+  renderDraft(result,false);
+});
+$('cancelReview').onclick=()=>task($('cancelReview'),()=>changeDraft('cancel',{}));
+$('undoReview').onclick=()=>task($('undoReview'),async()=>{
+  const events=activeDraft.history;
+  const target=events.length>1?events[events.length-2].revision:events[0]?.revision;
+  if(target===undefined)throw new Error('There is no earlier revision.');
+  await changeDraft('undo',{target_revision:target});
+});
+$('unresolvedReading').onclick=()=>task($('unresolvedReading'),async()=>{
+  const reason=prompt('Why is this sentence still unresolved?');if(reason)await changeDraft('unresolved',{reason});
+});
+$('defineWord').onclick=()=>task($('defineWord'),async()=>{
+  const word=$('newWord').value.trim().toLowerCase(),kind=$('wordKind').value,sort=$('wordSort').value;
+  const args={word,kind,description:$('wordExample').value.trim(),sorts:kind==='relation'?[sort,sort]:kind==='property'?[sort]:[]};
+  if(!confirm(`Add “${word}” as ${kind} with this meaning? Existing approvals will need review.`))return;
+  await changeDraft('define',args);$('glossaryStatus').textContent=`“${word}” was declared. Review the sentence again.`;
+});
+$('confirmGlossary').onclick=()=>task($('confirmGlossary'),async()=>{
+  const sentence=$('glossarySentence').value.trim();
+  if(!confirm(`Confirm this synonym statement for this document?\n${sentence}`))return;
+  await changeDraft('glossary',{sentence});$('glossaryStatus').textContent='Synonyms confirmed. Review the sentence again.';
+});
+$('checkRules').onclick=()=>task($('checkRules'),async()=>{
+  const result=await api('rules',{text:$('rulesText').value});
+  $('rulesResult').replaceChildren(el('h2',result.status==='clear'?'No conflict found':result.status==='conflict'?'Conflict found':'Unknown within budget'),el('p',result.explanation));
+});
