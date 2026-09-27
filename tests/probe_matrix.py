@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT))
 from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom, And, Not,
                 Or, Forall, Var, Unary, Binary, Reach, Named, Const,
                 check_argument, deduction_identity)
-from ve.ast import Document, Le, Num, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
+from ve.ast import Atom, Document, Le, Num, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
 from ve.identity import meaning_id
 from ve.background import background, dependency_order
 from ve.definitions import compile_definitions
@@ -77,6 +77,10 @@ def raw_environment(profiles):
                                              "functional": True}
     if "closure@0" in profiles:
         vocab["predicates"]["step"] = {"arguments": ["item", "item"], "description": "step"}
+    if "nary@0" in profiles:
+        vocab["constants"]["y"] = {"sort": "item", "description": "y"}
+        vocab["predicates"]["triple"] = {"arguments": ["item"] * 3,
+                                            "description": "ordered triple"}
     if "norms@0" in profiles:
         vocab["predicates"]["permitted"] = {"arguments": ["item"], "description": "permitted",
             "regulated": {"role": "plain", "default": "deny"}}
@@ -85,8 +89,11 @@ def raw_environment(profiles):
 
 
 def model_wire(env):
-    return {"complete": True, "domains": {"item": ["i"]}, "constants": {"x": "i"},
-            "relations": {name: ([["i"]] if name == "base" else [["i", "i"]] if name in {"edge", "step"} else [])
+    nary = "nary@0" in env.profiles
+    return {"complete": True, "domains": {"item": ["i", "j"] if nary else ["i"]},
+            "constants": {"x": "i", **({"y": "j"} if nary else {})},
+            "relations": {name: ([["i"]] if name == "base" else [["i", "i"]] if name in {"edge", "step"}
+                                 else [["i", "j", "i"]] if name == "triple" else [])
                           for name, decl in env.predicates.items()
                           if decl.defined is None}}
 
@@ -95,6 +102,8 @@ def semantic_formula(env):
     """A true positive that actually uses the family's additional semantics."""
     if env.order:
         return Le(Num(0), Num(1))
+    if "nary@0" in env.profiles:
+        return Atom("triple", (Const("x"), Const("y"), Const("x")))
     if env.closure and "step" in env.predicates:
         return Reach("star", Named("step"), Const("x"), Const("x"))
     if "definitions@0" in env.profiles:
@@ -544,6 +553,13 @@ def feature_baselines():
     assert order_proof.status == "Found"
     rows["replay:order_farkas"] = outcome(lambda: check_entailment_certificate(
         order_env, order_ps, order_goal, order_proof.certificate))
+    nary_env = Environment(raw_environment(("closure@0", "nary@0")))
+    nary_atom = semantic_formula(nary_env)
+    nary_ps = (Forall("item", Atom("triple", (Var(0), Const("y"), Const("x")))),)
+    nary_proof = prove_entailment(nary_env, nary_ps, nary_atom)
+    assert nary_proof.status == "Found"
+    rows["replay:nary_instantiation"] = outcome(lambda: check_entailment_certificate(
+        nary_env, nary_ps, nary_atom, nary_proof.certificate))
     return rows
 
 

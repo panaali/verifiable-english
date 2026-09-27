@@ -4,6 +4,8 @@ import pytest
 
 from tests import probe_matrix as probe
 from ve import Environment, FiniteModel
+from ve.ast import Atom, Const
+from ve.evaluate import evaluate
 from ve.environment import (LANGUAGE, PROFILE, SPEC_REVISION,
                             CLOSURE_LANGUAGE, CLOSURE_PROFILES, CLOSURE_REVISION)
 
@@ -55,7 +57,8 @@ def test_reading_choices_options_and_replay_have_discriminating_evidence():
     assert len(cases["search:min_domain_size_1"]["output"]["model"]["domains"]["item"]) == 1
     assert cases["search:syntactic_nonvacuity"]["output"]["models_checked"] == 1
     assert cases["search:semantic_nonvacuity"]["output"]["models_checked"] == 2
-    for name in ("replay:closure_transitivity", "replay:closure_induction", "replay:order_farkas"):
+    for name in ("replay:closure_transitivity", "replay:closure_induction", "replay:order_farkas",
+                 "replay:nary_instantiation"):
         assert cases[name]["output"]["valid"] is True
 
 
@@ -93,6 +96,7 @@ def test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence():
 @pytest.mark.parametrize("profiles,tag", [
     (("data@0",), "binary"), (("definitions@0",), "unary"),
     (("closure@0",), "reach"), (("order@0",), "le"),
+    (("closure@0", "nary@0"), "atom"),
 ])
 def test_profile_positive_uses_its_semantics(profiles, tag):
     env = Environment(probe.raw_environment(profiles))
@@ -101,3 +105,12 @@ def test_profile_positive_uses_its_semantics(profiles, tag):
     for name in ("parse_accept", "typing", "evaluate", "countermodel_check"):
         result = probe.outcome(probe.operation(name, "positive", env, model))
         assert result["cell"] == "S", (profiles, name, result)
+
+
+def test_nary_probe_distinguishes_argument_positions():
+    env = Environment(probe.raw_environment(("closure@0", "nary@0")))
+    model = FiniteModel.from_dict(env, probe.model_wire(env))
+    positive = probe.semantic_formula(env)
+    reversed_atom = Atom("triple", (Const("y"), Const("x"), Const("x")))
+    assert evaluate(env, positive, model).value is True
+    assert evaluate(env, reversed_atom, model).value is False
