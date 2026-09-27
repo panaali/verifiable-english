@@ -428,3 +428,111 @@ def test_random_histories_and_tampering_never_approve_without_review(seed):
             consistent = regenerate(ledger)
             restored = RecoveryService.from_ledger(ENV, consistent)
             assert obligations_hold(restored, consistent), path
+
+
+# -- z3b recheck 1, finding A: approval validity trusted the live cache ------
+
+def observable(recovery):
+    """What a transition could read: the ledger and every unit's fields."""
+    try:
+        return json.dumps({"ledger": recovery.to_ledger(), "revision": recovery.revision,
+                           "units": {k: vars(u) | {f: getattr(u, f) for f in vars(type(u))
+                                                   .get("__dataclass_fields__", {})}
+                                     for k, u in recovery.units.items()}},
+                          sort_keys=True)
+    except (AttributeError, TypeError, ValueError):
+        return None
+
+
+def test_edited_cache_after_import_cannot_approve_without_narrowing():
+    recovery = service()
+    recovery.add("t", "It is safe.", {}, mode="translation")
+    recovery.add("p", "Api is safe.", {}, dependencies=["t"])
+    for unit_id in ("t", "p"):
+        recovery.start(unit_id)
+    recovery.classify("t", parse_outcome="one", catalogue_bindings=BINDINGS)
+    recovery.classify("p", parse_outcome="one")
+    imported = RecoveryService.from_ledger(ENV, json.loads(json.dumps(recovery.to_ledger())))
+    assert imported.units["t"].state == "ready" and len(imported.units["t"].readings) == 2
+    unit = imported.units["t"]
+    unit.readings.clear()
+    result = unit.catalogue_results["discourse.reference@1"]
+    result["candidates"].clear()
+    result["cards"].clear()
+    before = imported.to_ledger()
+    for unit_id in ("t", "p"):
+        with pytest.raises(ValueError, match="ledger replay"):
+            imported.approve(unit_id, API, **SELECT_API)
+    assert imported.to_ledger() == before
+    assert not any(e["action"] in {"approve", "narrowing"} for e in imported.events)
+    assert not imported.approval_valid("t") and not imported.approval_valid("p")
+    assert not imported.verify_ledger()
+
+
+def test_edited_cache_invalidates_an_approved_parent_and_its_dependent():
+    recovery = service()
+    recovery.add("t", "It is safe.", {}, mode="translation")
+    recovery.add("p", "Api is safe.", {}, dependencies=["t"])
+    recovery.start("t")
+    recovery.classify("t", parse_outcome="one", catalogue_bindings=BINDINGS)
+    record = recovery.record_narrowing("t", keeps=[API_ID], actor="translator", reason="cited",
+                                       cited_spans=[{"start": 0, "end": 2}])
+    recovery.approve("t", API, narrowing=record["id"], **SELECT_API)
+    recovery.start("p")
+    recovery.classify("p", parse_outcome="one")
+    recovery.approve("p", API, **SELECT_API)
+    assert recovery.approval_valid("t") and recovery.approval_valid("p")
+    edits = [lambda r: r.units["t"].narrowings.clear(),
+             lambda r: r.units["t"].readings.pop(),
+             lambda r: r.units["t"].catalogue_results.clear(),
+             lambda r: r.units["t"].approval["snapshot"].update(narrowing=None),
+             lambda r: setattr(r, "revision", r.revision + 1),
+             lambda r: r.events.pop(),
+             lambda r: r.commands[-1]["args"].update(actor="someone"),
+             lambda r: r.versions.update(reading_set="r2"),
+             lambda r: r.limits.update(max_replies=99)]
+    for number, edit in enumerate(edits):
+        live = RecoveryService.from_ledger(ENV, recovery.to_ledger())
+        edit(live)
+        assert not live.approval_valid("t") and not live.approval_valid("p"), number
+        assert not live.verify_ledger(), number
+        with pytest.raises(ValueError, match="ledger replay"):
+            live.undo("p", live.units["p"].revision)
+        with pytest.raises(ValueError, match="ledger replay"):
+            live.edit("t", presentation="Api is safe.")
+
+
+def test_substituted_cache_objects_are_replaced_by_derived_state():
+    recovery = service()
+    recovery.add("u", "Api is safe.", {})
+    recovery.start("u")
+    unit = recovery.units["u"]
+    unit.pending = ()  # serialises like the derived [] but is not a list
+    recovery.classify("u", parse_outcome="one", pending=[{"reason": "author check"}])
+    assert recovery.units["u"] is unit and type(unit.pending) is list
+    assert recovery.verify_ledger() and unit.state == "reading_review"
+
+
+@pytest.mark.parametrize("seed", range(5))
+def test_random_live_cache_edits_never_reach_a_transition_or_validate(seed):
+    rng = random.Random(1000 + seed)
+    ledger = random_history(rng).to_ledger()
+    for _ in range(6):
+        live = RecoveryService.from_ledger(ENV, deepcopy(ledger))
+        before = observable(live)
+        while True:
+            cache = {"units": {k: vars(u) for k, u in live.units.items()}, "events": live.events,
+                     "commands": live.commands, "versions": live.versions,
+                     "genesis_versions": live.genesis_versions, "limits": live.limits}
+            path = _tamper(cache, rng, False)
+            if observable(live) != before:
+                break
+        assert not any(live.approval_valid(unit_id) for unit_id in UNITS), path
+        assert not live.verify_ledger(), path
+        tampered = observable(live)
+        for unit_id in UNITS:
+            for attempt in (lambda: live.approve(unit_id, API, **SELECT_API),
+                            lambda: live.start(unit_id), lambda: live.cancel(unit_id)):
+                with pytest.raises(ValueError, match="ledger replay"):
+                    attempt()
+        assert observable(live) == tampered, path
