@@ -100,3 +100,14 @@ def test_two_compatible_protective_alternatives_expose_law_three_approximation()
     readme = (ROOT / "README.md").read_text()
     assert "Rule 6 is an illustrative assumption" in readme
     assert "**UNFORMALISED:** The source's Law 3 preservation obligation" in readme
+
+
+def test_completion_defaults_allow_unclassified_action_without_requiring_it():
+    doc, _, _ = load()
+    unclassified = scenario(doc)
+    assert outcome(doc, unclassified, "permitted")
+    assert not outcome(doc, unclassified, "required")
+
+    readme = (ROOT / "README.md").read_text()
+    assert "permission defaults to allow" in readme
+    assert "obligation defaults to not required" in readme
