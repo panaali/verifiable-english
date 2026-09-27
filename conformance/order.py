@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 from collections import Counter
 from pathlib import Path
 import random
@@ -435,7 +436,8 @@ def invoke(executable, cases):
     for start in range(0, len(cases), 40):
         chunk = cases[start:start + 40]
         proc = subprocess.run([str(executable), "order"], input=json.dumps(chunk),
-                              text=True, capture_output=True, timeout=120)
+                              text=True, capture_output=True,
+                              timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         assert proc.returncode in (0, 1), proc.stderr + proc.stdout
         rows = json.loads(proc.stdout)
         assert len(rows) == len(chunk), proc.stdout

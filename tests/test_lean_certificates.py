@@ -1,6 +1,7 @@
 """The Python prover searches; the independently proved Lean checker decides."""
 import copy
 import json
+from subprocesses import HANG_TIMEOUT
 import subprocess
 
 import pytest
@@ -38,7 +39,7 @@ def test_certificate_json_rejects_duplicate_keys_null_and_invalid_index(lean_exe
                  raw.replace('"at": 0', '"at": null', 1)]
     for text in malformed:
         proc = subprocess.run([str(lean_executable), "check-certificate"], input=text,
-                              capture_output=True, text=True, timeout=10)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert proc.returncode == 2, proc.stdout + proc.stderr
 
 
@@ -52,7 +53,7 @@ def test_wrong_order_and_duplicate_premises_are_bound(lean_executable):
     for index, premises in enumerate(([p, Top(), p], [Top(), p], [p, p, Top()])):
         cases.append(envelope(f"changed_{index}", env, premises, p, cert))
     proc = subprocess.run([str(lean_executable), "check-certificate"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=10)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode == 1
     assert [r["valid"] for r in json.loads(proc.stdout)] == [True, False, False, False]
 
@@ -78,7 +79,7 @@ def test_compound_closure_versions_and_parameter_bindings(lean_executable):
     assert not check_entailment_certificate(env, ps, goal, forged).valid
     cases.append(envelope("different_bindings", env, ps, goal, forged))
     proc = subprocess.run([str(lean_executable), "check-certificate"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=10)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode == 0, proc.stderr
     assert [r["valid"] for r in json.loads(proc.stdout)] == [True, False] * 6 + [False]
 
@@ -100,7 +101,7 @@ def test_depth_limit_is_per_case_and_matches_python(lean_executable, depth):
     # The good case on BOTH sides must survive a certificate/JSON depth error.
     proc = subprocess.run([str(lean_executable), "check-certificate"],
                           input=json.dumps([good, deep, good]),
-                          capture_output=True, text=True, timeout=10)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode == int(depth > MAX_TABLEAU_DEPTH), proc.stderr + proc.stdout
     rows = json.loads(proc.stdout)
     assert len(rows) == 3
@@ -114,5 +115,5 @@ def test_depth_limit_is_per_case_and_matches_python(lean_executable, depth):
                                   '["unterminated]', '[{"a":1,"a":2},{}]'])
 def test_batch_splitting_preserves_strict_json_rejection(lean_executable, raw):
     proc = subprocess.run([str(lean_executable), "check-certificate"], input=raw,
-                          capture_output=True, text=True, timeout=10)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert proc.returncode == 2
