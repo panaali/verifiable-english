@@ -64,10 +64,10 @@ class DraftStore:
 
     def _read(self, db, draft_id):
         if not isinstance(draft_id, str) or not re.fullmatch(r'[A-Za-z0-9_-]{30,60}', draft_id):
-            raise ValueError('Unknown document.')
+            raise ValueError('The document is not known.')
         row = db.execute('SELECT * FROM drafts WHERE id=? AND owner=?', (draft_id, self.owner)).fetchone()
         if row is None:
-            raise ValueError('Unknown document.')
+            raise ValueError('The document is not known.')
         # The database is trusted storage, but detect damage and edited rows at every read.
         events = db.execute('SELECT * FROM draft_events WHERE draft=? ORDER BY revision', (draft_id,)).fetchall()
         previous = digest('ve-draft@1:' + draft_id + ':' + self.owner)
@@ -171,7 +171,7 @@ class DraftStore:
 
     def create(self, example='policy'):
         if type(example) is not str or example not in BY_ID:
-            raise ValueError('Choose a known example vocabulary.')
+            raise ValueError('The vocabulary is not known.')
         env_json = BY_ID[example]['environment']
         env = Environment(env_json)
         service = RecoveryService(env, grammar_version='ve.english@1',
@@ -189,13 +189,13 @@ class DraftStore:
 
     def change(self, draft_id, expected, request_id, action, args):
         if type(expected) is not int or expected < 0:
-            raise ValueError('A document revision is required.')
+            raise ValueError('The request needs the revision.')
         if type(request_id) is not str or not re.fullmatch(r'[A-Za-z0-9_-]{8,100}', request_id):
-            raise ValueError('Invalid request ID.')
+            raise ValueError('The request ID is not valid.')
         if type(args) is not dict or len(canonical(args)) > 20000:
-            raise ValueError('Invalid document command.')
+            raise ValueError('The request is not valid.')
         if type(action) is not str:
-            raise ValueError('Invalid document action.')
+            raise ValueError('The action is not valid.')
         with self._db() as db:
             db.execute('BEGIN IMMEDIATE')
             row, service = self._read(db, draft_id)
@@ -312,7 +312,7 @@ class DraftStore:
             self._needs_unit(unit)
             wording = args.get('wording')
             if type(wording) is not str or len(wording) > MAX_SOURCE:
-                raise ValueError('Choose a checked English reading.')
+                raise ValueError('The request needs the reading.')
             parsed = parse_english_with_metadata(service.env, wording.rstrip() + '\n')
             if len(parsed.document.formulas) != 1:
                 raise ValueError('Approve one reading at a time.')
@@ -322,7 +322,7 @@ class DraftStore:
             search = find_countermodel(service.env, (), Not(formula), max_domain_size=2,
                                        max_models=10000, max_evaluations=1000000)
             if search.model is None:
-                raise ValueError('No checked example situation was found within budget.')
+                raise ValueError('The situation is not available.')
             service.approve('main', formula, actor='workspace author', paraphrase=wording,
                             presentation=wording, situation=search.model.to_dict(),
                             rejected=args.get('rejected', []))
@@ -355,7 +355,7 @@ class DraftStore:
                 description = (description + ' Applies: ' + positive.strip() +
                                ' Does not apply: ' + negative.strip())
                 if word in vocabulary['sorts'] or word in vocabulary['predicates']:
-                    raise ValueError('This term is already declared.')
+                    raise ValueError('The word is known.')
                 if kind == 'person':
                     vocabulary['sorts'][word] = {'description': description}
                 else:
@@ -380,12 +380,12 @@ class DraftStore:
             replacement.add('main', unit.source, unit.anchor, mode=unit.mode)
             return replacement, new_json
         else:
-            raise ValueError('Unknown document action.')
+            raise ValueError('The action is not known.')
 
     @staticmethod
     def _needs_unit(unit):
         if unit is None:
-            raise ValueError('Write a sentence first.')
+            raise ValueError('The request needs the sentence.')
 
     @staticmethod
     def _bindings(row_example, source):
@@ -404,15 +404,15 @@ class DraftStore:
             row, service = self._read(db, draft_id)
             return {'format': 've-web-draft@1', 'document': self._view(row, service),
                     'ledger': service.to_ledger(), 'head': row['head'],
-                    'authorship': 'Unsigned copy; access to this export does not prove authorship.'}
+                    'authorship': 'The export is unsigned. The export does not prove the authorship.'}
 
     def import_copy(self, value):
         if type(value) is not dict or value.get('format') != 've-web-draft@1' or type(value.get('document')) is not dict:
-            raise ValueError('Invalid document export.')
+            raise ValueError('The export is not valid.')
         source = value['document']
         example, env_json = source.get('example'), source.get('environment')
         if type(example) is not str or example not in BY_ID or type(env_json) is not dict or type(value.get('ledger')) is not dict:
-            raise ValueError('Invalid document export.')
+            raise ValueError('The export is not valid.')
         env = Environment(env_json)
         service = RecoveryService.from_ledger(env, value['ledger'])
         if len(service.units) > 20 or any(len(u.source) > MAX_SOURCE for u in service.units.values()):

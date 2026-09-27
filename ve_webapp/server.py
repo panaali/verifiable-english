@@ -92,7 +92,7 @@ async def worker(action, data, settings):
         raw, _ = await asyncio.wait_for(process.communicate(json.dumps(payload).encode()),
                                        timeout=50 if action == "propose" else 8)
         if process.returncode or len(raw) > 2_000_000:
-            raise HTTPException(503, "Operation could not complete.")
+            raise HTTPException(503, "The operation is not complete.")
         return json.loads(raw)
     except asyncio.TimeoutError:
         raise HTTPException(504, "Time budget exhausted. Simplify the statement and try again.")
@@ -158,28 +158,28 @@ def create_app(settings, runner=worker):
         value = sessions.get(sid)
         if not value or value["expires"] < time.time():
             sessions.pop(sid, None)
-            raise HTTPException(401, "Please sign in.")
+            raise HTTPException(401, "The session is not valid.")
         return value
 
     def csrf(request, expected=None):
         origin = request.headers.get("origin")
         if origin and origin != f"{request.url.scheme}://{request.url.netloc}":
-            raise HTTPException(403, "Cross-origin request rejected.")
+            raise HTTPException(403, "The origin is foreign. The request is rejected.")
         if request.headers.get("sec-fetch-site") == "cross-site":
-            raise HTTPException(403, "Cross-site request rejected.")
+            raise HTTPException(403, "The site is foreign. The request is rejected.")
         supplied = request.headers.get("x-ve-csrf", "")
         if not hmac.compare_digest(supplied.encode(), (expected or "login").encode()):
-            raise HTTPException(403, "Missing or invalid CSRF header.")
+            raise HTTPException(403, "The CSRF header is not valid.")
         if request.headers.get("content-type", "").split(";")[0] != "application/json":
-            raise HTTPException(415, "Use application/json.")
+            raise HTTPException(415, "The request needs the JSON.")
 
     async def data(request):
         try:
             body = await request.json()
         except (ValueError, UnicodeError, RecursionError):
-            raise HTTPException(400, "Invalid JSON.")
+            raise HTTPException(400, "The JSON is not valid.")
         if not isinstance(body, dict):
-            raise HTTPException(400, "Expected an object.")
+            raise HTTPException(400, "The request needs the object.")
         return body
 
     @app.get("/")
@@ -203,7 +203,7 @@ def create_app(settings, runner=worker):
         body = await data(request)
         token = body.get("token")
         if not isinstance(token, str) or not hmac.compare_digest(hashlib.sha256(token.encode()).digest(), hashlib.sha256(settings.token.encode()).digest()):
-            raise HTTPException(401, "Access token not recognised.")
+            raise HTTPException(401, "The token is not known.")
         for key in list(sessions):
             if sessions[key]["expires"] < now:
                 del sessions[key]
@@ -243,7 +243,7 @@ def create_app(settings, runner=worker):
         csrf(request, session(request)['csrf'])
         body = await data(request)
         if set(body) - {'example'}:
-            raise HTTPException(400, 'Unknown document field.')
+            raise HTTPException(400, 'The field is not known.')
         try:
             return drafts.create(body.get('example', 'policy'))
         except ValueError as exc:
@@ -279,9 +279,9 @@ def create_app(settings, runner=worker):
         csrf(request, session(request)['csrf'])
         body = await data(request)
         if set(body) != {'revision', 'request_id', 'action', 'args'}:
-            raise HTTPException(400, 'Document command needs revision, request ID, action and arguments.')
+            raise HTTPException(400, 'The request needs the revision. The request needs the request ID. The request needs the action. The request needs the arguments.')
         if type(body['action']) is not str:
-            raise HTTPException(400, 'Invalid document action.')
+            raise HTTPException(400, 'The action is not valid.')
         if body['action'] in {'proposer_reserve', 'proposer_finish'}:
             raise HTTPException(400, 'Use the document assistant control.')
         try:
@@ -296,7 +296,7 @@ def create_app(settings, runner=worker):
         csrf(request, session(request)['csrf'])
         body = await data(request)
         if set(body) != {'revision', 'request_id'} or type(body['request_id']) is not str:
-            raise HTTPException(400, 'Assistant request needs revision and request ID.')
+            raise HTTPException(400, 'The request needs the revision. The request needs the request ID.')
         try:
             current = drafts.get(draft_id)
             if body['revision'] != current['revision']:
@@ -358,20 +358,20 @@ def create_app(settings, runner=worker):
             raise HTTPException(404)
         body = await data(request)
         if set(body) - {"example", "text", "premises", "environment", "world"}:
-            raise HTTPException(400, "Unknown request field.")
+            raise HTTPException(400, "The field is not known.")
         if not isinstance(body.get("example"), str) or body["example"] not in BY_ID:
-            raise HTTPException(400, "Choose a known example vocabulary.")
+            raise HTTPException(400, "The vocabulary is not known.")
         for field in ("text", "premises"):
             if field in body and (not isinstance(body[field], str) or len(body[field]) > 6000):
                 raise HTTPException(400, f"{field} must be text of at most 6000 characters.")
         if action == "propose" and not body.get("text", "").strip():
-            raise HTTPException(400, "Enter a sentence.")
+            raise HTTPException(400, "The request needs the sentence.")
         if busy.locked():
             raise HTTPException(429, "Another operation is running. Try again shortly.")
         async with busy:
             if action == "propose":
                 if not settings.assist:
-                    raise HTTPException(503, "Live assistance is disabled by the server administrator.")
+                    raise HTTPException(503, "The assistant is disabled.")
                 quota.reserve()
             result = await runner(action, body, settings)
         return JSONResponse(result, 422 if "error" in result else 200)

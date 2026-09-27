@@ -84,7 +84,7 @@ def run(action, data, config=None, proposer=None):
         result = call_tool(session, "propose", {"sentence": session.sentence_order[0], "k": 3})
         # Do not expose backend diagnostics or credentials through HTTP.
         if not result.get("ok"):
-            raise ve.VEError("Assistant unavailable. Check the private server calls ledger.")
+            raise ve.VEError("The assistant is not available. Check the private server calls ledger.")
         for candidate in result["candidates"]:
             formula = session.candidates[candidate["id"]]["formula"]
             candidate["natural"] = ve.natural_formula(env, formula).to_dict()

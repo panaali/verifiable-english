@@ -1,0 +1,17 @@
+{
+  "format": "ve.english-vocabulary@1",
+  "environment_id": "feb703cd25f80540f990f0ad4dbee3fda0f171f11cb059da9ee6d5e1d3f983c4",
+  "sorts": {},
+  "predicates": {},
+  "constants": {
+    "json": {
+      "verbalisation": "the JSON"
+    },
+    "csrf_header": {
+      "verbalisation": "the CSRF header"
+    },
+    "request_id": {
+      "verbalisation": "the request ID"
+    }
+  }
+}

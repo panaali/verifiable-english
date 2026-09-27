@@ -67,21 +67,24 @@
           "app_item"
         ],
         "description": "Available in the current application state.",
-        "verbalisation": "{0} is available"
+        "verbalisation": "{0} is available",
+        "negative_verbalisation": "{0} is not available"
       },
       "valid": {
         "arguments": [
           "app_item"
         ],
         "description": "Valid under the relevant application check.",
-        "verbalisation": "{0} is valid"
+        "verbalisation": "{0} is valid",
+        "negative_verbalisation": "{0} is not valid"
       },
       "saved": {
         "arguments": [
           "app_item"
         ],
         "description": "Saved on the server.",
-        "verbalisation": "{0} is saved"
+        "verbalisation": "{0} is saved",
+        "negative_verbalisation": "{0} is not saved"
       },
       "temporary": {
         "arguments": [
@@ -109,7 +112,8 @@
           "app_item"
         ],
         "description": "Checked by the specified application procedure.",
-        "verbalisation": "{0} is checked"
+        "verbalisation": "{0} is checked",
+        "negative_verbalisation": "{0} is not checked"
       },
       "approved": {
         "arguments": [
@@ -257,7 +261,8 @@
           "app_item"
         ],
         "description": "Applies to the current document revision.",
-        "verbalisation": "{0} is current"
+        "verbalisation": "{0} is current",
+        "negative_verbalisation": "{0} is not current"
       },
       "required": {
         "arguments": [
@@ -271,7 +276,8 @@
           "app_item"
         ],
         "description": "Known to this application vocabulary.",
-        "verbalisation": "{0} is known"
+        "verbalisation": "{0} is known",
+        "negative_verbalisation": "{0} is not known"
       },
       "successful": {
         "arguments": [
@@ -316,6 +322,93 @@
         ],
         "description": "Gives a description of the object.",
         "verbalisation": "{0} describes {1}"
+      },
+      "large": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Larger than the permitted import size.",
+        "verbalisation": "{0} is large"
+      },
+      "present": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "The present status for the current check.",
+        "verbalisation": "{0} is present"
+      },
+      "absent": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "The absent status for the current check.",
+        "verbalisation": "{0} is absent"
+      },
+      "certified": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "The certified status for the current check.",
+        "verbalisation": "{0} is certified"
+      },
+      "satisfied": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "True in the current finite world only.",
+        "verbalisation": "{0} is satisfied"
+      },
+      "refuted": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "False in the current finite world only.",
+        "verbalisation": "{0} is refuted"
+      },
+      "complete": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Completed.",
+        "verbalisation": "{0} is complete",
+        "negative_verbalisation": "{0} is not complete"
+      },
+      "foreign": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Comes from a different web origin or site.",
+        "verbalisation": "{0} is foreign"
+      },
+      "proves": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Establishes the object.",
+        "verbalisation": "{0} proves {1}",
+        "negative_verbalisation": "{0} does not prove {1}"
+      },
+      "empty": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has no statement yet.",
+        "verbalisation": "{0} is empty"
+      },
+      "exhausted": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has no remaining budget for this check.",
+        "verbalisation": "{0} is exhausted"
+      },
+      "replayed": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Independently replayed by the Python checker.",
+        "verbalisation": "{0} is replayed"
       }
     },
     "constants": {
@@ -518,6 +611,66 @@
       "kind": {
         "sort": "app_item",
         "description": "An application kind."
+      },
+      "wording": {
+        "sort": "app_item",
+        "description": "The wording needed for the current action."
+      },
+      "checking": {
+        "sort": "app_item",
+        "description": "The checking needed for the current action."
+      },
+      "review": {
+        "sort": "app_item",
+        "description": "The current review."
+      },
+      "counterexample": {
+        "sort": "app_item",
+        "description": "The current counterexample."
+      },
+      "origin": {
+        "sort": "app_item",
+        "description": "The current origin."
+      },
+      "site": {
+        "sort": "app_item",
+        "description": "The current site."
+      },
+      "json": {
+        "sort": "app_item",
+        "description": "The current json."
+      },
+      "action": {
+        "sort": "app_item",
+        "description": "The current action."
+      },
+      "field": {
+        "sort": "app_item",
+        "description": "The current field."
+      },
+      "object": {
+        "sort": "app_item",
+        "description": "The current object."
+      },
+      "csrf_header": {
+        "sort": "app_item",
+        "description": "The current csrf header."
+      },
+      "request_id": {
+        "sort": "app_item",
+        "description": "The current request id."
+      },
+      "arguments": {
+        "sort": "app_item",
+        "description": "The current arguments."
+      },
+      "authorship": {
+        "sort": "app_item",
+        "description": "The identity of the document author."
+      },
+      "assumptions": {
+        "sort": "app_item",
+        "description": "The full set of current assumptions."
       }
     }
   }

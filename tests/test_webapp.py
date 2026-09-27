@@ -349,7 +349,7 @@ def test_checked_cards_recovery_and_export_tampering(setup):
     doc = _command(client, headers, doc, 'approve', {'wording': card['paraphrases'][0]}).json()
     assert doc['units'][0]['state'] == 'approved'
     exported = client.get(f"/api/drafts/{doc['id']}/export").json()
-    assert exported['authorship'].startswith('Unsigned')
+    assert exported['authorship'] == 'The export is unsigned. The export does not prove the authorship.'
     imported = client.post('/api/drafts/import', json=exported, headers=headers)
     assert imported.status_code == 200, imported.text
     assert imported.json()['units'][0]['state'] == 'approved'

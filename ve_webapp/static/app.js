@@ -10,7 +10,7 @@ async function api(path, body, login = false) {
   if (!response.ok) {
     if (response.status === 401 && !login) signedOut();
     const err = data.error;
-    throw new Error(err ? `${err.code || 'Invalid input'}: ${err.message}${err.span ? ` (line ${err.span.line}, column ${err.span.column})` : ''}` : data.detail || 'Request failed.');
+    throw new Error(err ? `${err.code || 'Invalid request'}: ${err.message}${err.span ? ` (line ${err.span.line}, column ${err.span.column})` : ''}` : data.detail || 'The request is rejected.');
   }
   return data;
 }
@@ -20,7 +20,7 @@ async function signedIn(data) {
   csrf = data.csrf; assist = data.assist;
   examples = await api('examples');
   $('workspace').hidden = false; $('login').hidden = true; $('logout').hidden = false;
-  $('assistStatus').textContent = assist ? `${data.model} · one paid call per request` : 'Live assistance disabled · local checking available';
+  $('assistStatus').textContent = assist ? `${data.model} · one paid call per request` : 'The assistant is disabled. The checker is available.';
   $('propose').disabled = !assist;
   $('gallery').replaceChildren(); $('exampleSelect').replaceChildren();
   for (const item of examples) {
@@ -51,7 +51,7 @@ function naturalView(natural) {
   const box=el('div',undefined,'view natural-view');box.append(el('h3','Natural English'));
   for(const sentence of natural.sentences){
     const line=el('p',sentence.form==='explicit form'
-      ? 'A checked natural reading is unavailable here. Open the advanced view to inspect the exact form.'
+      ? 'The reading is not available. The view shows the logic.'
       : sentence.text+'.','reader-sentence');
     if(sentence.form==='explicit form')line.append(el('span','explicit form','badge explicit-badge'));
     box.append(line);
@@ -77,8 +77,8 @@ async function choose(item) {
   $('lessonCategory').textContent=item.category; $('lessonTitle').textContent=item.title; $('lessonNote').textContent=item.note;
   $('lessonResult').replaceChildren(); $('lessonViews').replaceChildren(view('Source English',item.english,true));
   $('claim').value=item.claim; $('premises').value=item.premises; $('prose').value=''; $('environment').value=JSON.stringify(item.environment,null,2); $('world').value=JSON.stringify(item.world,null,2); $('useWorld').checked=true;
-  $('candidates').replaceChildren(); $('checkResult').replaceChildren(el('div','Your verdict will appear here.','empty')); $('validation').replaceChildren();
-  $('provenance').textContent='Example supplied by the app. Review its meaning before using it.';
+  $('candidates').replaceChildren(); $('checkResult').replaceChildren(el('div','The result is pending.','empty')); $('validation').replaceChildren();
+  $('provenance').textContent='The example is untrusted. The reading needs approval.';
   try {
     const d=await api('validate',{example:item.id,text:item.premises+'\n'+item.claim});
     if(version!==lessonRevision)return;
@@ -102,21 +102,23 @@ function worldView(parent, world, summary) {
 }
 function verdict(target, data) {
   target.replaceChildren();
-  const titles={certified:'✓ Certified consequence',countermodel:'↗ A countermodel exists',unknown:'? Unknown within budget'};
+  const titles={certified:'The consequence is certified.',countermodel:'The counterexample is present.',unknown:'The result is unresolved.'};
   const box=el('div',undefined,'verdict '+data.status);
-  box.append(el('h3',titles[data.status]),el('p',data.status==='certified'?'The Python checker replayed a proof of this exact conclusion from these assumptions.':data.detail));target.append(box);
-  if(data.evaluation) target.append(el('p',`Small-world evaluation: ${data.evaluation.value===null?'unknown':data.evaluation.value?'true':'false'}. This is one world, not a proof of entailment.`,'note'));
+  box.append(el('h3',titles[data.status]),el('p',data.status==='certified'?'The proof is replayed. The conclusion follows the assumptions.':data.detail));target.append(box);
+  if(data.evaluation) target.append(el('p',(data.evaluation.value===null?'The result is unresolved.':
+    data.evaluation.value?'The conclusion is satisfied.':'The conclusion is refuted.')+
+    ' The world is checked. The proof is separate.','note'));
   if(data.countermodel) worldView(target,data.countermodel,data.countermodel_summary);
   if(data.certificate) detail(target,'Inspect proof certificate & replay',{replay:data.replay,certificate:data.certificate});
   target.append(el('p',data.assurance,'note'));detail(target,'Exact meaning identity',data.meaning_id);
 }
 async function validate() {
   const v=revision;
-  try { const data=await api('validate',payload()); if(v!==revision)return; $('validation').replaceChildren(el('p','✓ Parsed and type-checked · no proof checked yet','badge'),readingTabs(data)); }
+  try { const data=await api('validate',payload()); if(v!==revision)return; $('validation').replaceChildren(el('p','The reading is checked. The proof is not checked.','badge'),readingTabs(data)); }
   catch(e) { if(v===revision)$('validation').replaceChildren(el('p',e.message,'error')); }
 }
 async function check() {
-  const v=revision; $('checkResult').replaceChildren(el('p','Checking proof and countermodel budgets…','note'));
+  const v=revision; $('checkResult').replaceChildren(el('p','The checker checks the proof.','note'));
   try { const data=await api('check',payload(true));if(v===revision)verdict($('checkResult'),data); }
   catch(e) {if(v===revision)$('checkResult').replaceChildren(el('p',e.message,'error'));}
 }
@@ -127,27 +129,27 @@ $('exampleSelect').onchange=async()=>{const item=examples.find(e=>e.id===$('exam
 $('runLesson').onclick=()=>task($('runLesson'),async()=>{const v=lessonRevision;const d=await api('check',{example:selected.id});if(v===lessonRevision)verdict($('lessonResult'),d);});
 $('validate').onclick=()=>task($('validate'),validate);$('check').onclick=()=>task($('check'),check);
 for(const id of ['claim','premises','environment','world','useWorld']) $(id).addEventListener('input',()=>{
-  dirty=true;revision++;$('checkResult').replaceChildren(el('div','Inputs changed. Check again for a current verdict.','empty'));$('validation').replaceChildren();
+  dirty=true;revision++;$('checkResult').replaceChildren(el('div','The result is not current. The checker needs the document.','empty'));$('validation').replaceChildren();
   if(id==='environment')$('candidates').replaceChildren();
-  if(id==='claim'){$('provenance').textContent='Edited by you · review the updated paraphrase.';clearTimeout(validationTimer);validationTimer=setTimeout(validate,650);}
+  if(id==='claim'){$('provenance').textContent='The document is current. The paraphrase needs approval.';clearTimeout(validationTimer);validationTimer=setTimeout(validate,650);}
 });
 $('prose').addEventListener('input',()=>{dirty=true;$('candidates').replaceChildren();});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 $('propose').onclick=()=>task($('propose'),async()=>{
   const v=revision, source=$('prose').value;const body=payload();body.text=source;delete body.premises;
-  $('candidates').replaceChildren(el('p','Asking the assistant for readings… Nothing is accepted automatically.','note'));
+  $('candidates').replaceChildren(el('p','The assistant shows the candidate. The candidate is untrusted.','note'));
   try {
     const response=await api('propose',body);if(v!==revision || source!==$('prose').value)return;
     const data=response; $('candidates').replaceChildren();
-    if(!data.candidates.length)$('candidates').append(el('p','No valid candidates returned. Try a simpler sentence using the declared vocabulary.','note'));
+    if(!data.candidates.length)$('candidates').append(el('p','The candidate is not available. The sentence needs the vocabulary.','note'));
     for(const c of data.candidates){
       const box=el('article',undefined,'candidate');box.append(el('span','MODEL PROPOSAL · UNTRUSTED','badge model'));
       if(c.natural)box.append(naturalView(c.natural));
-      else box.append(el('p','A checked natural reading is unavailable.','note'));
+      else box.append(el('p','The reading is not available.','note'));
       const advanced=el('details');advanced.append(el('summary','Strict VE and model gloss'),el('code',c.text));
       if(c.reading)advanced.append(el('p',c.reading,'note'));
       box.append(advanced);
-      const accept=el('button','Accept this reading');accept.onclick=()=>{dirty=true;revision++;$('claim').value=c.text;$('provenance').textContent='Model proposal accepted by you for this draft. Fidelity is your responsibility; checking is separate.';$('checkResult').replaceChildren(el('div','New reading accepted. Check its consequences.','empty'));validate();$('strictEditor').open=true;$('claim').focus();};box.append(accept);$('candidates').append(box);
+      const accept=el('button','Accept this reading');accept.onclick=()=>{dirty=true;revision++;$('claim').value=c.text;$('provenance').textContent='Model proposal accepted by you for this draft. Fidelity is your responsibility; checking is separate.';$('checkResult').replaceChildren(el('div','The reading is approved. The consequence needs checking.','empty'));validate();$('strictEditor').open=true;$('claim').focus();};box.append(accept);$('candidates').append(box);
     }
     for(const comparison of data.comparisons){
       const box=el('div',undefined,'view');box.append(el('h3','Alternative readings'));
@@ -163,24 +165,32 @@ $('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&!$('ide').hidden&&!$('workspace').hidden){e.preventDefault();if(!$('check').disabled)task($('check'),check);}});
 let theme;try{theme=localStorage.getItem('ve-theme');}catch{}document.documentElement.dataset.theme=theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 $('theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ve-theme',t);}catch{}};
-const steps=[['One reading, several views','Pick an example in Learn. Natural English gives the checked reading. Strict VE, fluent, and logic views are available in separate tabs.'],['Keep assumptions visible','Open the writing desk. The conclusion is separate from the assumptions. Remove the policy rule and check again: the checker can show a world where the conclusion fails.'],['The assistant drafts. You decide.','Write one English sentence and request readings. This spends one model call when enabled. Compare the paraphrase and alternatives before accepting or editing.'],['Read the verdict precisely','Certified means a Python-replayed proof from your assumptions. Countermodel means a checked exception to that inference. Unknown means the budget did not decide. None certifies real-world evidence. Export to keep your draft.']];let tourIndex=0;
+const steps=[['One reading, several views','Pick an example in Learn. Natural English gives the checked reading. Strict VE, fluent, and logic views are available in separate tabs.'],['Keep assumptions visible','Open the writing desk. The conclusion is separate from the assumptions. Remove the policy rule and check again: the checker can show a world where the conclusion fails.'],['Assistant readings','Write one English sentence and request readings. This spends one model call when enabled. Compare the paraphrase and alternatives before accepting or editing.'],['Read the verdict precisely','Certified means a Python-replayed proof from your assumptions. Countermodel means a checked exception to that inference. Unknown means the budget did not decide. None certifies real-world evidence. Export to keep your draft.']];let tourIndex=0;
 function showTour(){ $('tourCount').textContent=`QUICK TOUR / ${tourIndex+1} OF ${steps.length}`;$('tourTitle').textContent=steps[tourIndex][0];$('tourText').textContent=steps[tourIndex][1];$('tourNext').textContent=tourIndex===steps.length-1?'Start exploring ✓':'Next →'; }
 $('tourButton').onclick=()=>{tourIndex=0;showTour();$('tour').showModal();};$('tourClose').onclick=()=>$('tour').close();$('tourNext').onclick=()=>{if(++tourIndex===steps.length)$('tour').close();else showTour();};
 api('session').then(signedIn).catch(()=>signedOut());
 
+const documentStates={
+  draft:'The draft is available.', analysing:'The reading is pending.',
+  needs_word:'The word is not known.', needs_repair:'The reading is unresolved.',
+  reading_review:'The reading needs approval.', ready:'The reading is ready.',
+  approved:'The reading is approved.', unresolved:'The reading is unresolved.',
+  exhausted:'The budget is exhausted.', stale:'The result is not current.'
+};
+function stateSentence(state) { return documentStates[state] || 'The result is unresolved.'; }
 function renderDraft(doc, overwrite=false) {
   activeDraft=doc;
   const unit=doc.units[0];
   if(overwrite)$('prose').value=unit?.source || '';
   $('documentMode').disabled=Boolean(unit);
   if(unit)$('documentMode').value=unit.mode;
-  $('documentRevision').textContent=`Saved revision ${doc.revision}`;
-  $('documentStatus').textContent=unit ? unit.state.replaceAll('_',' ') : 'blank draft';
+  $('documentRevision').replaceChildren(el('span','The document is saved.'),el('span',` Revision ${doc.revision}`));
+  $('documentStatus').textContent=unit ? stateSentence(unit.state) : 'The draft is empty.';
   $('documentUnits').replaceChildren();
-  if(!doc.document_units.length)$('documentUnits').append(el('p','No statement yet.','note'));
+  if(!doc.document_units.length)$('documentUnits').append(el('p','The statement is not available.','note'));
   for(const item of doc.document_units){
     const row=el('div',undefined,'document-unit');
-    row.append(el('span',item.source),el('strong',item.status.replaceAll('_',' ')));
+    row.append(el('span',item.source),el('strong',stateSentence(item.status)));
     if(item.reason)row.append(el('p',item.reason,'note'));
     $('documentUnits').append(row);
   }
@@ -189,21 +199,21 @@ function renderDraft(doc, overwrite=false) {
   for(const sort of Object.keys(doc.environment.vocabulary.sorts)) {
     const opt=el('option',sort.replaceAll('_',' '));opt.value=sort;$('wordSort').append(opt);
   }
-  if(!unit){$('recovery').append(el('p','Start with any English sentence. Nothing is approved until you review its meaning.','note'));return;}
+  if(!unit){$('recovery').append(el('p','The document accepts the sentence. The reading needs approval.','note'));return;}
   if(unit.reason)$('recovery').append(el('p',unit.reason,'error'));
   if(unit.word_prompt){
     const p=unit.word_prompt;
-    $('recovery').append(el('h3','A word or construction needs your help'),el('p',`Check “${p.term}”. ${p.expected_construction}`,'note'));
+    $('recovery').append(el('h3','Word help'),el('p',`Check “${p.term}”. ${p.expected_construction}`,'note'));
     if(p.nearest_registered_wordings.length)$('recovery').append(el('p',`Nearby declared words: ${p.nearest_registered_wordings.join(', ')}. These are suggestions, not replacements.`,'note'));
     if(unit.templates?.length){
-      $('recovery').append(el('p','Try a checked sentence shape using this vocabulary:','note'));
+      $('recovery').append(el('p','The app shows the example.','note'));
       for(const template of unit.templates){const button=el('button',template);button.onclick=()=>{$('prose').value=template;$('prose').dispatchEvent(new Event('input',{bubbles:true}));};$('recovery').append(button);}
     }
   }
-  if(unit.pending.length)for(const pending of unit.pending)$('recovery').append(el('p',pending.reason || 'A reading is still unresolved.','note'));
-  if(unit.state==='ready')$('recovery').append(el('p','One checked reading is ready. Confirm that it says what you intend.','note'));
+  if(unit.pending.length)for(const pending of unit.pending)$('recovery').append(el('p',pending.reason || 'The reading is unresolved.','note'));
+  if(unit.state==='ready')$('recovery').append(el('p','The reading is ready. The reading needs approval.','note'));
   if(unit.state==='approved')$('recovery').append(el('p',`Meaning approved at this revision. ${unit.paraphrase || ''}`,'note'));
-  if(unit.state==='unresolved')$('recovery').append(el('p','This unit remains visible and can be resumed by reviewing it again.','note'));
+  if(unit.state==='unresolved')$('recovery').append(el('p','The statement is unresolved. The statement is visible.','note'));
   if(unit.mode==='translation' && (unit.readings.length>1 || unit.cards?.length))
     $('recovery').append(el('p','Source alternatives stay together. A cited narrowing has not been reviewed here, so this unit cannot be approved as one reading.','note'));
   for(const card of unit.cards || []){
@@ -211,10 +221,10 @@ function renderDraft(doc, overwrite=false) {
     box.append(el('h3','Two checked readings'),el('p','This example situation makes one reading true and the other false.','note'));
     for(let i=0;i<card.paraphrases.length;i++){
       const row=el('div',undefined,'card-reading');row.append(el('p',card.paraphrases[i]));
-      row.append(el('p',card.values[i]?'True in this situation':'False in this situation','badge'));
+      row.append(el('p',card.values[i]?'The reading is satisfied.':'The reading is refuted.','badge'));
       if(unit.mode==='authoring'){
         const use=el('button','Use this wording');use.onclick=()=>task(use,async()=>{
-          await changeDraft('reply',{text:card.paraphrases[i],rejected:card.meaning_ids.filter((_,j)=>j!==i).map(meaning_id=>({meaning_id,reason:'Author chose the other checked reading.'}))});
+          await changeDraft('reply',{text:card.paraphrases[i],rejected:card.meaning_ids.filter((_,j)=>j!==i).map(meaning_id=>({meaning_id,reason:'The candidate is rejected.'}))});
           await changeDraft('analyze',{});
         });row.append(use);
       }
@@ -232,7 +242,7 @@ function renderDraft(doc, overwrite=false) {
 }
 async function changeDraft(action,args) {
   const operation=async()=>{
-    if(!activeDraft)throw new Error('Open a document first.');
+    if(!activeDraft)throw new Error('The document is not available.');
     const before=activeDraft;
     try {
       const next=await api(`drafts/${before.id}/commands`,{revision:before.revision,request_id:crypto.randomUUID(),action,args});
@@ -261,14 +271,14 @@ async function newDocument(example=selected.id) {
   activeDraft=await api('drafts',{example});
   $('documentMode').value='authoring';
   renderDraft(activeDraft,true);
-  $('recovery').replaceChildren(el('p','Start with any English sentence.','note'));
+  $('recovery').replaceChildren(el('p','The document accepts the sentence.','note'));
   dirty=false;
 }
 $('newDocument').onclick=()=>task($('newDocument'),()=>newDocument());
 $('prose').addEventListener('input',()=>{
   dirty=true;clearTimeout(draftTimer);
   draftTimer=setTimeout(()=>saveDraft().catch(e=>notify(e.message)),700);
-  $('documentStatus').textContent='saving';
+  $('documentStatus').textContent='The document is pending.';
 });
 $('analyse').onclick=()=>task($('analyse'),async()=>{clearTimeout(draftTimer);await saveDraft();await changeDraft('analyze',{});});
 $('approveReading').onclick=()=>task($('approveReading'),async()=>{
@@ -277,7 +287,7 @@ $('approveReading').onclick=()=>task($('approveReading'),async()=>{
 $('noneReading').onclick=()=>task($('noneReading'),async()=>{
   const text=prompt('None of these means what you intended. Restate the sentence or give an example.');
   if(!text)return;
-  const unit=activeDraft.units[0];const rejected=Object.values(unit.catalogue_results).flatMap(r=>r.candidates || []).map(r=>({meaning_id:r.meaning_id,reason:'None matches the author’s intent.'}));
+  const unit=activeDraft.units[0];const rejected=Object.values(unit.catalogue_results).flatMap(r=>r.candidates || []).map(r=>({meaning_id:r.meaning_id,reason:'The candidate is rejected.'}));
   await changeDraft('reply',{text,rejected});await changeDraft('analyze',{});
 });
 $('askRepair').onclick=()=>task($('askRepair'),async()=>{
@@ -291,25 +301,25 @@ $('askRepair').onclick=()=>task($('askRepair'),async()=>{
 $('cancelReview').onclick=()=>task($('cancelReview'),()=>changeDraft('cancel',{}));
 $('undoReview').onclick=()=>task($('undoReview'),async()=>{
   const target=activeDraft.undo_target;
-  if(target==null)throw new Error('There is no earlier revision.');
+  if(target==null)throw new Error('The revision is not available.');
   await changeDraft('undo',{target_revision:target});
 });
 $('unresolvedReading').onclick=()=>task($('unresolvedReading'),async()=>{
-  const reason=prompt('Why is this sentence still unresolved?');if(reason)await changeDraft('unresolved',{reason});
+  const reason=prompt('The sentence is unresolved.');if(reason)await changeDraft('unresolved',{reason});
 });
 $('defineWord').onclick=()=>task($('defineWord'),async()=>{
   const word=$('newWord').value.trim().toLowerCase(),kind=$('wordKind').value,sort=$('wordSort').value;
   const args={word,kind,positive_example:$('wordExample').value.trim(),negative_example:$('wordNegative').value.trim(),
     direction:$('wordDirection').value,sorts:kind==='relation'?[sort,sort]:kind==='property'?[sort]:[]};
-  if(!confirm(`Add “${word}” as ${kind} with this meaning? Existing approvals will need review.`))return;
-  await changeDraft('define',args);$('glossaryStatus').textContent=`“${word}” was declared. Review the sentence again.`;
+  if(!confirm('The word needs approval. The reading needs review.'))return;
+  await changeDraft('define',args);$('glossaryStatus').textContent='The word is known. The sentence needs approval.';
 });
 $('confirmGlossary').onclick=()=>task($('confirmGlossary'),async()=>{
   const sentence=$('glossarySentence').value.trim();
-  if(!confirm(`Confirm this synonym statement for this document?\n${sentence}`))return;
-  await changeDraft('glossary',{sentence});$('glossaryStatus').textContent='Synonyms confirmed. Review the sentence again.';
+  if(!confirm('The synonym needs approval.\n'+sentence))return;
+  await changeDraft('glossary',{sentence});$('glossaryStatus').textContent='The synonym is approved. The sentence needs approval.';
 });
 $('checkRules').onclick=()=>task($('checkRules'),async()=>{
   const result=await api('rules',{text:$('rulesText').value});
-  $('rulesResult').replaceChildren(el('h2',result.status==='clear'?'No conflict found':result.status==='conflict'?'Conflict found':'Unknown within budget'),el('p',result.explanation));
+  $('rulesResult').replaceChildren(el('h2',result.status==='clear'?'The conflict is absent.':result.status==='conflict'?'The conflict is present.':'The result is unresolved.'),el('p',result.explanation));
 });
