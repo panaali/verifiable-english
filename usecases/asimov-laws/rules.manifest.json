@@ -1,0 +1,61 @@
+{
+  "environment_id": "cc40df6b6002314113e79210a9d3e3db78b39687ddb4d3b299db0df731d976c6",
+  "document_hash": "2b5b5e59316e98ffc025e03ccd7af29d25970cb6ebbf179a0a14cc608bb2d541",
+  "text_digest": "fbf4a0c266d337eebb7905212264951f689f65ca1aa8a254b2f1c138d1b3db1d",
+  "blocks": [
+    {
+      "handle": "handle-law-3-permission",
+      "name": "law-3-permission",
+      "number": 1,
+      "span": [
+        0,
+        68
+      ]
+    },
+    {
+      "handle": "handle-law-2-permission",
+      "name": "law-2-permission",
+      "number": 2,
+      "span": [
+        69,
+        156
+      ]
+    },
+    {
+      "handle": "handle-law-1-direct",
+      "name": "law-1-direct",
+      "number": 3,
+      "span": [
+        157,
+        271
+      ]
+    },
+    {
+      "handle": "handle-law-0-direct",
+      "name": "law-0-direct",
+      "number": 4,
+      "span": [
+        272,
+        389
+      ]
+    },
+    {
+      "handle": "handle-law-2-obey",
+      "name": "law-2-obey",
+      "number": 5,
+      "span": [
+        390,
+        494
+      ]
+    },
+    {
+      "handle": "handle-law-3-preserve",
+      "name": "law-3-preserve",
+      "number": 6,
+      "span": [
+        495,
+        602
+      ]
+    }
+  ]
+}
