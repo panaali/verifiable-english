@@ -54,9 +54,9 @@ def admit_soft_document(environment, document, *, soft_document=None):
     decisions = {item["name"] for item in elaborated["decisions"]}
     if decisions != soft_document.extended_env.decision_names:
         raise VEError("soft route regeneration mismatch: decision predicates")
-    py_layers = {label: formula_to_data(soft_document.extended_env, formula, _generated=True)
-                 for label, formula in soft_document.elaborated.premises()}
-    lean_layers = {item["label"]: item["ast"] for item in elaborated["premises"]}
+    py_layers = [(label, formula_to_data(soft_document.extended_env, formula, _generated=True))
+                 for label, formula in soft_document.elaborated.premises()]
+    lean_layers = [(item["label"], item["ast"]) for item in elaborated["premises"]]
     if py_layers != lean_layers:
         raise VEError("soft route regeneration mismatch: norm layers")
     py_soft = [(label, formula_to_data(soft_document.extended_env, formula, _generated=True))
