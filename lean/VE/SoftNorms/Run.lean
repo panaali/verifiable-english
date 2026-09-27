@@ -112,6 +112,13 @@ def pairsResult (src : SoftSource) (environment norms pairs : Json) : Except Str
   pure [("pairs", Json.arr (rows.map (·.2.2)).toArray), ("discharged", toJson discharged),
     ("weighing_points", toJson open_)]
 
+def openAfterClassification (src : SoftSource) (environment norms pairs : Json) : Except String (List String) := do
+  let rows ← (collidingPairs src.D).mapM fun (M, N) => do
+    let (status, _) ← classify src environment norms pairs M N
+    pure (cohLabel M N, status)
+  pure (rows.filterMap fun (label, status) =>
+    if status == .rankResolved || status == .disjoint then none else some label)
+
 /-! ## Admission -/
 
 /-- The answer for an admitted document: W1's fields and `conditional_on`. -/
@@ -191,9 +198,11 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id (← pairsResult src environment norms (j.getObjValD "pairs"))
   if kind == "soft-certificate" then
     let r ← replaySoftEntailment j
+    let conditional ← openAfterClassification r.src (j.getObjValD "environment")
+      (j.getObjValD "norms") (j.getObjValD "pairs")
     return VE.Route.Wire.ok id [("valid", .bool r.valid),
       ("background", toJson (background' r.src.D).length), ("layers", toJson (elaborate (soften r.src.D).T).length),
-      ("conditional_on", toJson (openCoherence r.src.D))]
+      ("conditional_on", toJson conditional)]
   if kind == "soft-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨src, w⟩ ← replaySoftWitness j
     return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
@@ -202,9 +211,25 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "soft-conflict" then
     let res ← replaySoftConflict j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
+    let conditional ← openAfterClassification res.src (j.getObjValD "environment")
+      (j.getObjValD "norms") (j.getObjValD "pairs")
+    let budget := (j.getObjValD "budget").getNat?.toOption.getD 10000
+    let exhibit ← if (j.getObjVal? "coherent_model").toBool then do
+      let ⟨model, _⟩ ← decodeModel res.src
+        (Json.mkObj [("model", j.getObjValD "coherent_model")])
+      unless backgroundValid' res.src.D model do
+        throw (VE.Route.Wire.invalidModel "soft background")
+      pure true
+    else pure false
+    let statusText := if res.conflictFree then
+      s!"CONFLICT-FREE among rules on the same act, conditional on {conditional.length} coherence premises; {conditional.length} weighing points open; coherent situation exhibited: {if exhibit then "yes" else s!"UNKNOWN (budget {budget})"}"
+      else s!"UNKNOWN: {(firstFailure res).getD "target unspecified"}, budget {budget}"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
+      ("status_text", .str statusText),
+      ("coherent_exhibit", .bool exhibit),
+      ("budget", toJson budget),
       ("targets", toJson ((targets (soften res.src.D)).map (·.1))),
-      ("conditional_on", toJson (openCoherence res.src.D))] ++
+      ("conditional_on", toJson conditional)] ++
       match firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
