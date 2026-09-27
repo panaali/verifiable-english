@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import itertools
 import json
+import os
 from pathlib import Path
 import random
 import subprocess
@@ -139,7 +140,8 @@ def run(executable, count, seed, output, summary_path=None):
     raw = ''.join(json.dumps(c, separators=(',', ':')) + '\n' for c in cases)
     output.write_text(raw)
     process = subprocess.run([str(executable), 'jsonl', str(output)], text=True,
-                             capture_output=True, timeout=180)
+                             capture_output=True,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "180")))
     results = [json.loads(line) for line in process.stdout.splitlines()]
     assert len(results) == count, (len(results), count, process.stderr)
     for case, result in zip(cases, results, strict=True):

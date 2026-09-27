@@ -1,6 +1,6 @@
 """Admit English only after the complete Earley derivation check."""
 from functools import lru_cache
-import re
+import inspect
 import signal
 import sys
 import threading
@@ -9,9 +9,10 @@ import time
 from lark.exceptions import LarkError
 
 from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError
-from ..limits import MAX_NODES
+from ..limits import MAX_NODES, MAX_SOURCE_BYTES
 
 EARLEY_SECONDS = 30
+_monotonic = time.monotonic
 
 
 @lru_cache(maxsize=32)
@@ -22,13 +23,13 @@ def _parser(grammar):
 
 
 def require_unique_derivation(env, source, *, grammar=None, **options):
-    from ..english import english_lark_grammar
-    if len(source) > MAX_NODES:
+    from ..english import english_lark_grammar, EnglishVocabulary, _normalise_english_source
+    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
+    text, _ = _normalise_english_source(source, EnglishVocabulary(env, **options))
+    if len(text) > MAX_NODES:
         raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
     grammar = grammar if grammar is not None else english_lark_grammar(env, **options)
-    # The handwritten parser folds the first letter of every sentence before
-    # matching; the independent grammar must see the same lexical input.
-    text = re.sub(r"(^|(?<=\.)\s+)([A-Z])", lambda match: match[1] + match[2].lower(), source)
     def timeout(_signum, _frame):
         raise ResourceLimit("English Earley time budget exhausted")
     # Leave an existing host alarm alone. A trace can enforce our deadline
@@ -41,9 +42,9 @@ def require_unique_derivation(env, source, *, grammar=None, **options):
         old_timer = signal.setitimer(signal.ITIMER_REAL, EARLEY_SECONDS)
     else:
         previous_trace = sys.gettrace()
-        started = time.monotonic()
+        started = _monotonic()
         def trace(_frame, _event, _arg):
-            if time.monotonic() - started > EARLEY_SECONDS:
+            if _monotonic() - started > EARLEY_SECONDS:
                 raise ResourceLimit("English Earley time budget exhausted")
             return trace
         sys.settrace(trace)
@@ -75,7 +76,7 @@ def require_unique_derivation(env, source, *, grammar=None, **options):
     return tree
 
 
-def require_correspondence(tree, readings, env, words) -> None:
+def require_correspondence(tree, readings, env, words, source=None) -> None:
     """Each extension result must match the grammar rule at its source span."""
     if not readings:
         return
@@ -87,7 +88,11 @@ def require_correspondence(tree, readings, env, words) -> None:
         for record in records:
             if getattr(node, "data", None) == record.grammar_production:
                 meta = getattr(node, "meta", None)
-                derived.append((record, record.derivation_hook(node, env, words),
+                hook = record.derivation_hook
+                value = (hook(node, env, words, source)
+                         if len(inspect.signature(hook).parameters) == 4
+                         else hook(node, env, words))
+                derived.append((record, value,
                                 getattr(meta, "start_pos", None), getattr(meta, "end_pos", None)))
         stack.extend(getattr(node, "children", ()))
     for reading in readings:

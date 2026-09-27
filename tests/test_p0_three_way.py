@@ -14,6 +14,7 @@ from copy import deepcopy
 import os
 import re
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
@@ -188,7 +189,7 @@ def lean_verdict(case, result):
 
 
 def run(command, cases):
-    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True, timeout=600)
+    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
@@ -210,7 +211,7 @@ def rust_executable():
     env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
                             str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env, capture_output=True,
-                           text=True, timeout=600)
+                           text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return ROOT / "rust/target/release/ve"
 

@@ -52,6 +52,40 @@ def test_preview_requires_named_acknowledgement_and_never_writes_when_blocked(tm
     assert not list(tmp_path.iterdir())
 
 
+def test_proposal_uses_shared_whitespace_without_changing_source_spans():
+    source = SENTENCE.replace('Every person', 'Every\t person').replace('a UK citizen', 'a  UK citizen')
+    preview = propose(ENV, source, OVERLAY, acknowledge=['us_citizen'])
+    row, = preview['introduced']
+    start, end = row['source_span']['start'], row['source_span']['end']
+    assert row['source_text'] == source[start:end] == 'is a  UK citizen'
+    assert preview['source'] == source
+
+
+@pytest.mark.parametrize('source, bad_text', [
+    ('Every\n  person is a UK citizen.\n\nOops.', 'Oops'),
+    ('Every person is a UK citizen. \n\tOops.', 'Oops'),
+])
+def test_proposal_parser_errors_use_original_source_positions(source, bad_text):
+    with pytest.raises(VEError) as caught:
+        propose(ENV, source, OVERLAY)
+    span = caught.value.span
+    assert span is not None
+    assert (span.start, span.end) == (source.index(bad_text), source.index(bad_text) + len(bad_text))
+    assert source[span.start:span.end] == bad_text
+    assert (span.line, span.column) == (
+        source.count('\n', 0, span.start) + 1,
+        span.start - source.rfind('\n', 0, span.start),
+    )
+
+
+def test_proposal_expected_token_error_uses_original_eof_position():
+    source = 'Every\n  person is a UK citizen'
+    with pytest.raises(VEError, match="Expected '\\.'") as caught:
+        propose(ENV, source, OVERLAY)
+    assert caught.value.span.start == caught.value.span.end == len(source)
+    assert (caught.value.span.line, caught.value.span.column) == (2, 25)
+
+
 def test_adoption_roundtrip_provenance_and_all_derivations(tmp_path):
     preview = proposal()
     write_proposal(preview, tmp_path / 'candidate')
