@@ -275,16 +275,31 @@ def coverage(doc):
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
     soft = doc.get("soft_document")
     if soft is not None:
-        residual["soft_decisions"] = len(soft.extended_env.decision_names)
-        residual["soft_coherence"] = len(soft.coherence_premises)
-        residual["soft_exception_premises"] = len(soft.exception_premises)
+        decisions = soft.extended_env.decision_names
+        open_pairs = [
+            f"soft:coherence:{left.core.name},{right.core.name}"
+            for left, right in soft.collisions
+            if (left.rank is None or right.rank is None or
+                (left.rank not in soft.env.ranks_above[right.rank] and
+                 right.rank not in soft.env.ranks_above[left.rank]))]
+        residual["default_exceptions"] = sum(r.mode == "default" for r in soft.rules)
+        residual["instruction_switches"] = sum(len(r.alterable) for r in soft.rules)
+        residual["holistic_overrides"] = sum(name.startswith("soft__outweighs__") for name in decisions)
+        residual["weighing_points"] = len(open_pairs)
+        by_decider = {}
+        for rule in soft.rules:
+            if rule.mode == "default":
+                who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
+                by_decider[who] = by_decider.get(who, 0) + 1
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "unformalised_reasons": reasons,
             "residual": residual, "residual_total": sum(residual.values()),
-            **({"soft_residual_labels": [
+            **({"default_exceptions_by_decider": by_decider,
+                "soft_residual_labels": [
                 *sorted(soft.extended_env.decision_names),
-                *(label for label, _ in soft.exception_premises),
-                *(label for label, _ in soft.coherence_premises)]} if soft is not None else {})}
+                *open_pairs],
+                "soft_background_labels": [label for label, _ in soft.exception_premises]}
+               if soft is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):

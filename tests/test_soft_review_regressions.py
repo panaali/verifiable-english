@@ -5,7 +5,7 @@ import pytest
 
 from ve.ast import Forall, Top, Unary, Var
 from ve.ast import formula_from_data
-from ve.document import check_document, render_document
+from ve.document import check_document, coverage, render_document
 from ve.entailment import prove_entailment
 from ve.errors import VEError
 from ve.norm_english import parse_english, render_english
@@ -17,7 +17,7 @@ from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict
 from ve.surface.softnorms import SoftNorm
 from ve.surface.softnorms import rule_paraphrase
 from tests.test_english_unambiguity import _soft_env
-from tests.test_soft_norms_lean import env, norm, should, base_prime
+from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
 from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows, main as conformance_main
 
 
@@ -62,7 +62,7 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
     path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
     result = check_document(path)
     assert result["coverage"]["accounted_bytes"] == 2
-    assert result["coverage"]["residual"]["soft_decisions"] == 1
+    assert result["coverage"]["residual"]["default_exceptions"] == 1
     assert result["coverage"]["residual_total"] > 0
     assert "soft__excepted__a" in result["coverage"]["soft_residual_labels"]
     rendered = render_document(path)
@@ -70,7 +70,7 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
     assert "open decision by assistant" in rendered
     meta["units"][0]["meaning"] = {"open": ["soft__excepted__a"]}
     path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
-    assert check_document(path)["coverage"]["residual"]["soft_decisions"] == 1
+    assert check_document(path)["coverage"]["residual"]["default_exceptions"] == 1
 
 
 @pytest.mark.parametrize("raw,rules,diagnostic", [
@@ -165,3 +165,13 @@ def test_disjoint_pair_is_removed_from_conditional_report():
     evidence = {pair["label"]: package}
     assert classify_soft_pairs(soft, pairs=evidence)["discharged"] == [pair["label"]]
     assert check_soft_conflict(soft, pairs=evidence)["conditional_on"] == []
+
+
+def test_rank_resolved_pair_counts_override_but_no_weighing_point():
+    soft = SoftNormDocument(SoftEnvironment(env(ranks(["high", "low"], "holistic"))),
+                            [should("h", "x_required", True, rank="high"),
+                             should("l", "x_required", False, rank="low")])
+    report = coverage({"units": [], "source": b"", "meta": {}, "soft_document": soft})
+    assert report["residual"]["default_exceptions"] == 2
+    assert report["residual"]["holistic_overrides"] == 1
+    assert report["residual"]["weighing_points"] == 0
