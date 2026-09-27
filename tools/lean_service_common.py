@@ -87,7 +87,8 @@ def summary(xs_seconds, rng=None, resamples=1000):
         return [round(boots[int(0.025 * resamples)], 3), round(boots[int(0.975 * resamples) - 1], 3)]
     return {"n": len(ms), "p50_ms": round(statistics.median(ms), 3), "p50_ci_ms": interval(0.5),
             "p95_ms": round(percentile(ms, 0.95), 3), "p95_ci_ms": interval(0.95),
-            "p99_ms": round(percentile(ms, 0.99), 3), "max_ms": round(max(ms), 3)}
+            "p99_ms": round(percentile(ms, 0.99), 3), "p99_ci_ms": interval(0.99),
+            "max_ms": round(max(ms), 3)}
 
 
 def machine():
