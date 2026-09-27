@@ -1,0 +1,629 @@
+{
+  "machine": {
+    "cpu": "AMD EPYC 7B12",
+    "logical_cpus": 8,
+    "loadavg": [
+      3.2138671875,
+      3.0322265625,
+      2.12353515625
+    ],
+    "python": "3.14.7",
+    "commit": "06856ca"
+  },
+  "full": true,
+  "corpora": [
+    {
+      "mode": "evaluate",
+      "corpus": "evaluation.json",
+      "cases": 701,
+      "requests": 3,
+      "identical": 701,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 701
+      },
+      "one_shot_s": 0.5816743340110406,
+      "service_s": 0.5085209089738782
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "countermodels.json",
+      "cases": 708,
+      "requests": 3,
+      "identical": 708,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 708
+      },
+      "one_shot_s": 0.33678296400466934,
+      "service_s": 0.2236444010050036
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "parser.json",
+      "cases": 742,
+      "requests": 3,
+      "identical": 742,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 512,
+        "1": 230
+      },
+      "one_shot_s": 1.2220003819675185,
+      "service_s": 1.3293821140250657
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "identity.json",
+      "cases": 706,
+      "requests": 3,
+      "identical": 706,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 706
+      },
+      "one_shot_s": 0.8940602479851805,
+      "service_s": 0.8627933720126748
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "validation.json",
+      "cases": 43,
+      "requests": 1,
+      "identical": 43,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 43
+      },
+      "one_shot_s": 0.06492415399407037,
+      "service_s": 0.010653589997673407
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "closure.json + countermodel variants",
+      "cases": 92,
+      "requests": 1,
+      "identical": 92,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 92
+      },
+      "one_shot_s": 0.16591069599962793,
+      "service_s": 0.13040505899698474
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "P1 lean-replay countermodels",
+      "cases": 136,
+      "requests": 1,
+      "identical": 136,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 136
+      },
+      "one_shot_s": 0.07573933398816735,
+      "service_s": 0.028893967013573274
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "forged evaluation fields",
+      "cases": 360,
+      "requests": 2,
+      "identical": 360,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 360
+      },
+      "one_shot_s": 0.18179604603210464,
+      "service_s": 0.09028609198867343
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "adversarial (evaluate)",
+      "cases": 6,
+      "requests": 1,
+      "identical": 6,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 6
+      },
+      "one_shot_s": 0.049871984985657036,
+      "service_s": 0.0009671089937910438
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "batch rejected: null (evaluate)",
+      "cases": 2,
+      "requests": 1,
+      "identical": 2,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 2
+      },
+      "one_shot_s": 0.05106064598658122,
+      "service_s": 0.0006505399942398071
+    },
+    {
+      "mode": "evaluate",
+      "corpus": "batch rejected: fraction (evaluate)",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 1
+      },
+      "one_shot_s": 0.0513835960009601,
+      "service_s": 0.0006580000044777989
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "v0-replay-baseline.json",
+      "cases": 882,
+      "requests": 4,
+      "identical": 882,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 512,
+        "1": 370
+      },
+      "one_shot_s": 0.567785744991852,
+      "service_s": 0.4172703670046758
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "P1 lean-replay certificates",
+      "cases": 364,
+      "requests": 2,
+      "identical": 364,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 364
+      },
+      "one_shot_s": 0.3083543249813374,
+      "service_s": 0.21721546299522743
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "closure-induction and iceberg queries",
+      "cases": 5,
+      "requests": 1,
+      "identical": 5,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 5
+      },
+      "one_shot_s": 0.06175926499417983,
+      "service_s": 0.010509409999940544
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "certificates.py positive",
+      "cases": 732,
+      "requests": 3,
+      "identical": 732,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 732
+      },
+      "one_shot_s": 0.458944422978675,
+      "service_s": 0.35412501299288124
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "certificates.py forged",
+      "cases": 150,
+      "requests": 1,
+      "identical": 150,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 150
+      },
+      "one_shot_s": 0.10940197098534554,
+      "service_s": 0.05726894599501975
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "closure_certificates.py positive",
+      "cases": 63,
+      "requests": 1,
+      "identical": 63,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 63
+      },
+      "one_shot_s": 0.08011474399245344,
+      "service_s": 0.03567061701323837
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "closure_certificates.py forged",
+      "cases": 442,
+      "requests": 2,
+      "identical": 442,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 442
+      },
+      "one_shot_s": 0.3053897460049484,
+      "service_s": 0.2444268200197257
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "induction.py positive",
+      "cases": 36,
+      "requests": 1,
+      "identical": 36,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 36
+      },
+      "one_shot_s": 0.07680945302126929,
+      "service_s": 0.034369398024864495
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "induction.py forged",
+      "cases": 17,
+      "requests": 1,
+      "identical": 17,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 17
+      },
+      "one_shot_s": 0.06023822500719689,
+      "service_s": 0.01139566901838407
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "adversarial (check-certificate)",
+      "cases": 6,
+      "requests": 1,
+      "identical": 6,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 6
+      },
+      "one_shot_s": 0.0497572059975937,
+      "service_s": 0.0007103100069798529
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "batch rejected: null (check-certificate)",
+      "cases": 2,
+      "requests": 1,
+      "identical": 2,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 2
+      },
+      "one_shot_s": 0.05115567601751536,
+      "service_s": 0.0004170600150246173
+    },
+    {
+      "mode": "check-certificate",
+      "corpus": "batch rejected: fraction (check-certificate)",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 1
+      },
+      "one_shot_s": 0.05074880598112941,
+      "service_s": 0.00037730997428297997
+    },
+    {
+      "mode": "order",
+      "corpus": "order.evaluation_cases(200)",
+      "cases": 200,
+      "requests": 1,
+      "identical": 200,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 200
+      },
+      "one_shot_s": 0.11856853001518175,
+      "service_s": 0.07093304401496425
+    },
+    {
+      "mode": "order",
+      "corpus": "order surface variants",
+      "cases": 200,
+      "requests": 1,
+      "identical": 200,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 200
+      },
+      "one_shot_s": 0.09369909198721871,
+      "service_s": 0.04992161600966938
+    },
+    {
+      "mode": "order",
+      "corpus": "order.py positive",
+      "cases": 546,
+      "requests": 3,
+      "identical": 546,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 546
+      },
+      "one_shot_s": 0.7461161309911404,
+      "service_s": 0.5882284529798198
+    },
+    {
+      "mode": "order",
+      "corpus": "order.py forged",
+      "cases": 4496,
+      "requests": 18,
+      "identical": 4496,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 3984,
+        "0": 512
+      },
+      "one_shot_s": 3.2351176029478665,
+      "service_s": 2.610646513028769
+    },
+    {
+      "mode": "order",
+      "corpus": "order.py refuted",
+      "cases": 106,
+      "requests": 1,
+      "identical": 106,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 106
+      },
+      "one_shot_s": 0.07828541297931224,
+      "service_s": 0.03448010698775761
+    },
+    {
+      "mode": "order",
+      "corpus": "adversarial (order)",
+      "cases": 6,
+      "requests": 1,
+      "identical": 6,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 6
+      },
+      "one_shot_s": 0.04856280697276816,
+      "service_s": 0.0007922390068415552
+    },
+    {
+      "mode": "order",
+      "corpus": "batch rejected: null (order)",
+      "cases": 2,
+      "requests": 1,
+      "identical": 2,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 2
+      },
+      "one_shot_s": 0.05274630602798425,
+      "service_s": 0.00046032998943701386
+    },
+    {
+      "mode": "order",
+      "corpus": "batch rejected: fraction (order)",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 1
+      },
+      "one_shot_s": 0.050069666001945734,
+      "service_s": 0.0005451600009109825
+    },
+    {
+      "mode": "route",
+      "corpus": "route-cases.json",
+      "cases": 356,
+      "requests": 2,
+      "identical": 356,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 356
+      },
+      "one_shot_s": 0.16784957697382197,
+      "service_s": 0.07289110400597565
+    },
+    {
+      "mode": "route",
+      "corpus": "definitions differential (1000 sets)",
+      "cases": 2000,
+      "requests": 8,
+      "identical": 2000,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 2000
+      },
+      "one_shot_s": 1.1684168570209295,
+      "service_s": 0.9035177269834094
+    },
+    {
+      "mode": "route",
+      "corpus": "nary core replay of evaluation + closure",
+      "cases": 747,
+      "requests": 3,
+      "identical": 747,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 747
+      },
+      "one_shot_s": 0.5647362340241671,
+      "service_s": 0.4533594730019104
+    },
+    {
+      "mode": "route",
+      "corpus": "dag_differential (200)",
+      "cases": 200,
+      "requests": 1,
+      "identical": 200,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 200
+      },
+      "one_shot_s": 0.07930888398550451,
+      "service_s": 0.017747108009643853
+    },
+    {
+      "mode": "route",
+      "corpus": "math-mini-paper definitions bundle",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 1
+      },
+      "one_shot_s": 0.07698744302615523,
+      "service_s": 0.012678458995651454
+    },
+    {
+      "mode": "route",
+      "corpus": "adversarial (route)",
+      "cases": 6,
+      "requests": 1,
+      "identical": 6,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 6
+      },
+      "one_shot_s": 0.06841982499463484,
+      "service_s": 0.0008734999864827842
+    },
+    {
+      "mode": "route",
+      "corpus": "batch rejected: null (route)",
+      "cases": 2,
+      "requests": 1,
+      "identical": 2,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 2
+      },
+      "one_shot_s": 0.06258578499546275,
+      "service_s": 0.00037411999073810875
+    },
+    {
+      "mode": "route",
+      "corpus": "batch rejected: fraction (route)",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 1
+      },
+      "one_shot_s": 0.06228235401795246,
+      "service_s": 0.0011767800024244934
+    },
+    {
+      "mode": "norms",
+      "corpus": "norms 1100 regenerated documents",
+      "cases": 1100,
+      "requests": 5,
+      "identical": 1100,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 1100
+      },
+      "one_shot_s": 0.640638768003555,
+      "service_s": 0.49980245996266603
+    },
+    {
+      "mode": "norms",
+      "corpus": "route-cases.json through ve_norms_route",
+      "cases": 356,
+      "requests": 2,
+      "identical": 356,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 356
+      },
+      "one_shot_s": 0.16802007702062838,
+      "service_s": 0.09616170197841711
+    },
+    {
+      "mode": "norms",
+      "corpus": "adversarial (norms)",
+      "cases": 6,
+      "requests": 1,
+      "identical": 6,
+      "mismatches": [],
+      "exit_codes": {
+        "1": 6
+      },
+      "one_shot_s": 0.04916584602324292,
+      "service_s": 0.0010882499918807298
+    },
+    {
+      "mode": "norms",
+      "corpus": "batch rejected: null (norms)",
+      "cases": 2,
+      "requests": 1,
+      "identical": 2,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 2
+      },
+      "one_shot_s": 0.05375282600289211,
+      "service_s": 0.0003899199946317822
+    },
+    {
+      "mode": "norms",
+      "corpus": "batch rejected: fraction (norms)",
+      "cases": 1,
+      "requests": 1,
+      "identical": 1,
+      "mismatches": [],
+      "exit_codes": {
+        "2": 1
+      },
+      "one_shot_s": 0.05727872499846853,
+      "service_s": 0.0006068100046832114
+    },
+    {
+      "mode": "english",
+      "corpus": "english_lean differential payloads",
+      "cases": 17,
+      "requests": 1,
+      "identical": 17,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 17
+      },
+      "one_shot_s": 1.6317328879667912,
+      "service_s": 1.2114023629983421
+    },
+    {
+      "mode": "english",
+      "corpus": "adversarial (english)",
+      "cases": 3,
+      "requests": 1,
+      "identical": 3,
+      "mismatches": [],
+      "exit_codes": {
+        "0": 1,
+        "2": 2
+      },
+      "one_shot_s": 0.1766897849738598,
+      "service_s": 0.0005885499995201826
+    }
+  ],
+  "service_stats": {
+    "starts": 1,
+    "restarts": 0,
+    "recycles": 0,
+    "requests": 96,
+    "retries": 0
+  },
+  "total": {
+    "cases": 16552,
+    "identical": 16552
+  }
+}
