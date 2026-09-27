@@ -1,0 +1,7 @@
+# W1 norms integration gaps
+
+The merge keeps the W1 norms implementation and the integration branch's document, definition, n-ary, and data implementations. The shared declaration decoders now accept their fields together; a regulated predicate cannot also be defined or carry a functional/total flag, as the norms spec requires.
+
+The Lean `ve_norms_route` still constructs its `Norms.Tree` with an empty definition list and uses a Background that omits W5 flags. Passing such inputs through that route would silently omit premises. The route therefore returns `UnsupportedProfile` when a norms construct is used with a defined predicate or with a functional/total data flag. W3 definition and W5 flag cases without a norms construct continue through the P0 route. The Python norms path can use definition and flag Background premises, but its norm dependency order is over regulated symbols alone and its conflict expansion does not substitute defined bodies; the mixed W1/W3 correctness and three-way parity required by `docs/spec/norms.md` sections 5–6 remain open. The Rust core validates regulated declarations, definitions, and flags, but does not implement norm document elaboration.
+
+The FOL W2 admission path composes with active norm units. Closure or n-ary norm document admission remains explicitly deferred in both Python and Lean. These gaps need a shared dependency order over defined and regulated predicates, interleaved layer premises, flag-aware conflict bases, and corresponding Lean proofs and differential tests.

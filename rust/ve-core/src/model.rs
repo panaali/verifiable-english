@@ -175,6 +175,12 @@ impl FiniteModel {
             }
             model.relations.insert(name.clone(), table);
         }
+        for (required, permitted) in &env.profile_pairs {
+            if !model.relations[required].is_subset(&model.relations[permitted]) {
+                return error("InvalidModel", format!(
+                    "required relation {required} exceeds permission {permitted} (profile)"));
+            }
+        }
         let Self {
             domains,
             constants,
