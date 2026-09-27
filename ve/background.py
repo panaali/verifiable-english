@@ -143,8 +143,13 @@ HOOKS: dict[str, tuple[Callable, Callable]] = {
     "definitions": (_definition_premises, _valid_definitions),
     "literals": (_literal_premises, _valid_literals),
     "profile": (_profile_premises, _valid_profile),
-    "soft": (_soft_premises, _valid_soft),
 }
+
+
+def _background_hooks(env):
+    yield from HOOKS.items()
+    if getattr(env, "soft_premises", ()):
+        yield "soft", (_soft_premises, _valid_soft)
 
 
 def background(env) -> tuple[Premise, ...]:
@@ -153,7 +158,7 @@ def background(env) -> tuple[Premise, ...]:
     from .profiles import require_checker
     require_checker(env)
     return tuple(Premise(formula, generator)
-                 for generator, (make, _) in HOOKS.items() for formula in make(env))
+                 for generator, (make, _) in _background_hooks(env) for formula in make(env))
 
 
 def checked_premises(env, layer_premises, case_premises):
@@ -168,7 +173,7 @@ def checked_premises(env, layer_premises, case_premises):
 def validate_background(env, model) -> None:
     from .profiles import require_checker
     require_checker(env)
-    for generator, (_, validate) in HOOKS.items():
+    for generator, (_, validate) in _background_hooks(env):
         try:
             validate(env, model)
         except InvalidModel as exc:

@@ -10,7 +10,7 @@ from copy import deepcopy
 import hashlib
 import json
 
-from .ast import And, Implies, Not, Or, Top, Bottom, _Checker, _Decoder, _to_data
+from .ast import And, Implies, Not, Or, Top, Bottom, _Checker, _Decoder, _to_data, formula_to_data
 from .background import dependency_order
 from .environment import Environment, validate_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
@@ -117,6 +117,8 @@ class SoftEnvironment(Environment):
         for a, b in ties:
             if a in above[b] or b in above[a]:
                 raise VEError(f'TieAgainstOrder: {a}, {b}')
+        if len({frozenset(pair) for pair in ties}) != len(ties):
+            raise DuplicateDeclaration('tie')
         instructions = {}
         for name, entry in vocab.get('predicates', {}).items():
             if type(entry) is not dict:
@@ -285,6 +287,11 @@ class SoftNormDocument:
         self.elaborated = self._soften()
         self.exception_premises = self._exception_premises()
         self.coherence_premises = self._coherence_premises()
+        for label, formula in (*self.exception_premises, *self.coherence_premises):
+            try:
+                formula_to_data(self.extended_env, formula, _generated=True)
+            except ResourceLimit as exc:
+                raise ResourceLimit(f'generated soft premise {label}') from exc
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
@@ -295,7 +302,8 @@ class SoftNormDocument:
 
     def _incompatible(self, left, right):
         l, r = left.core, right.core
-        if self._act(left) != self._act(right):
+        if (self._act(left) != self._act(right) or
+                self.env.predicates[l.predicate].arguments != self.env.predicates[r.predicate].arguments):
             return False
         if l.predicate == r.predicate:
             return l.sign != r.sign
@@ -312,10 +320,11 @@ class SoftNormDocument:
             return (left.rank, right.rank)
         return None
 
-    def _outweighs_name(self, low, high, act):
+    def _outweighs_name(self, low, high, act, sorts):
         # Act key is the permission predicate, or the only regulated predicate.
         keys = [name for name, decl in self.env.predicates.items()
-                if decl.regulated is not None and (decl.regulated.act or name) == act]
+                if decl.regulated is not None and (decl.regulated.act or name) == act
+                and decl.arguments == sorts]
         permission = [name for name in keys
                       if self.env.predicates[name].regulated.role == 'permission']
         key = permission[0] if permission else keys[0]
@@ -335,7 +344,8 @@ class SoftNormDocument:
             for left, right in self.collisions:
                 pair = self._rank_pair(left, right)
                 if pair is not None:
-                    name = self._outweighs_name(*pair, self._act(left))
+                    name = self._outweighs_name(*pair, self._act(left),
+                                                self.env.predicates[left.core.predicate].arguments)
                     generated[name] = list(self.env.predicates[left.core.predicate].arguments)
         for name, args in generated.items():
             if name in predicates:
@@ -407,7 +417,8 @@ class SoftNormDocument:
                 if pair is None:
                     continue
                 low, high = pair
-                override = (_atom(self._outweighs_name(low, high, self._act(rule)),
+                override = (_atom(self._outweighs_name(low, high, self._act(rule),
+                                                      self.env.predicates[rule.core.predicate].arguments),
                                   arity[rule.core.predicate])
                             if self.env.soft['outranking']['mode'] == 'holistic' else Bottom())
                 if other.rank == high:
