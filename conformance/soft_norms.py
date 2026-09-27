@@ -10,6 +10,7 @@ import sys
 from ve.ast import formula_to_data
 from ve.ast import formula_from_data
 from ve.environment import Environment
+from ve.errors import VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument
@@ -82,6 +83,43 @@ def rust_sources():
         ("open-pair", env(), [should("a", "x_required", True),
                                should("b", "x_permitted", False)], []),
     ]
+
+
+def rejected_sources():
+    """Wire inputs both regenerators must reject with identical diagnostics."""
+    return [
+        (env({"ranks": ["Bad!"], "outranking": {"mode": "strict"}}), []),
+        (env({"ranks": ["a", "a"], "outranking": {"mode": "strict"}}), []),
+        (env({"parties": ["a", "a"], "outranking": {"mode": "strict"}}), []),
+        (env({"ranks": ["x", "y", "z"], "outranks": [["x", "y"], ["y", "z"], ["z", "y"]],
+              "outranking": {"mode": "strict"}}), []),
+        (env(), [norm("a", "x_required", True, alterable=["user"])]),
+        (env(), [norm("a", "x_required", True, mode="default", exception={
+            "decided_by": "", "sufficient": [], "necessary": [], "factors": []})]),
+    ]
+
+
+def compare_rejected():
+    cases = rejected_sources()
+    expected = []
+    for raw, rules in cases:
+        try:
+            SoftNormDocument(SoftEnvironment(raw), rules)
+        except VEError as exc:
+            expected.append(str(exc))
+        else:
+            raise AssertionError("Python unexpectedly accepted a rejected soft source")
+    wire = [{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": rules}
+            for i, (raw, rules) in enumerate(cases)]
+    run = subprocess.run([str(LEAN), "-"], input=json.dumps(wire), text=True,
+                         capture_output=True, timeout=120, check=False)
+    rows = json.loads(run.stdout)
+    if len(rows) != len(cases):
+        raise AssertionError("Lean returned the wrong rejected row count")
+    for i, (row, error) in enumerate(zip(rows, expected)):
+        if row.get("status") != "error" or row.get("error") != error:
+            raise AssertionError((i, error, row))
+    return len(cases)
 
 
 def rust_fixture_rows():
@@ -178,7 +216,8 @@ def main():
         compared += len(batch)
     print(json.dumps({"accepted_trees": compared, "seeds_examined": seed,
                       "environment_matches": compared, "layer_matches": compared,
-                      "soft_background_matches": compared, "decision_matches": compared}))
+                      "soft_background_matches": compared, "decision_matches": compared,
+                      "rejected_inputs": compare_rejected()}))
 
 
 if __name__ == "__main__":
