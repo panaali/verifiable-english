@@ -94,8 +94,8 @@ def _fold_sentence_initials(source, words):
                 continue
             # Only a genuinely capitalized declared name needs its case kept.
             # A lowercase alias such as "api" must accept sentence-initial Api.
-            if value[0].isupper() and tail.startswith(value) and (
-                    len(tail) == len(value) or not re.match(r'[A-Za-z0-9_]', tail[len(value)])):
+            if value[0].isupper() and re.match(
+                    _literal_pattern(value) + r'(?![A-Za-z0-9_])', tail):
                 return word
         return word[0].lower() + word[1:]
 
@@ -106,8 +106,8 @@ def _fold_sentence_initials(source, words):
     # A conclusion marker begins a second sentence-initial position. The
     # marker itself is folded above, but the claim's first word also needs it.
     def fold_conclusion(match):
-        return match[1] + match[2] + ' ' + initial(match[3], source[match.start(3):])
-    return re.sub(r'(^|(?<=\.)\s+)(therefore|so|hence|it follows that) ([A-Z][A-Za-z]*)',
+        return match[1] + match[2] + initial(match[3], source[match.start(3):])
+    return re.sub(r'(^|(?<=\.)\s+)((?:therefore|so|hence|it\s+follows\s+that)\s+)([A-Z][A-Za-z]*)',
                   fold_conclusion, source)
 
 
@@ -828,7 +828,7 @@ class EnglishParser:
         constants = sorted(self.int_constants(), key=lambda t: -len(t))
         twice = [name for name in constants if re.fullmatch('[a-z]+', name)]
         return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
-            '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
+            '|' + _literal_pattern(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
             for t in constants) + ''.join('|twice\\s+the\\s+' + re.escape(t) + r'(?![A-Za-z0-9_])'
                                             for t in twice) + ')'
 
@@ -906,8 +906,9 @@ class EnglishParser:
                     return ast.Scale(left.value, right)
                 return ast.Add(left, ast.Scale(-1, right) if operator == ' - ' else right)
             for display in sorted(constants, key=lambda t: -len(t)):
-                if text.startswith(display, position):
-                    position += len(display)
+                match = re.compile(_literal_pattern(display)).match(text, position)
+                if match:
+                    position = match.end()
                     return ast.Const(constants[display])
             self.error('Expected an integer term.')
         value = term()
@@ -1371,6 +1372,8 @@ def english_lark_grammar(env, **options):
     """
     words = EnglishVocabulary(env, **options)
     lit = lambda s: json.dumps(s)
+    constant_lit = lambda s: ('/' + _literal_pattern(s).replace('/', r'\/') + '/'
+                              if ' ' in s and not s.startswith('"') else lit(s))
     # Each regex is one declared literal phrase with editable whitespace, never
     # an open atom token. Keep quoted symbols exact and avoid word-level lexer
     # proliferation in the all-derivations audit.
@@ -1423,10 +1426,10 @@ def english_lark_grammar(env, **options):
     ]
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
-    constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
-    constants += [lit(v[0].upper() + v[1:]) for n, v in words.constants.items()
+    constants = [constant_lit(v) for n, v in words.constants.items() if not is_int(n)]
+    constants += [constant_lit(v[0].upper() + v[1:]) for n, v in words.constants.items()
                   if not is_int(n) and v.startswith('the ')]
-    constants += [lit('the ' + v) for n, v in words.constants.items()
+    constants += [constant_lit('the ' + v) for n, v in words.constants.items()
                   if not is_int(n) and re.fullmatch('[a-z]+', v)]
     constants += [lit(v) for n, v in words.natural_constants().items() if not is_int(n)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
@@ -1456,7 +1459,7 @@ def english_lark_grammar(env, **options):
         atoms += ['int_term "is the same as"i int_term'] + [
             'int_term ' + content_lit(text.removeprefix('{0} ').removesuffix(' {1}')) + ' int_term'
             for text, _, _ in _COMPARISONS]
-        ints = [lit(v) for n, v in words.constants.items() if is_int(n)]
+        ints = [constant_lit(v) for n, v in words.constants.items() if is_int(n)]
         rules += ['int_term: int_atom | "-" int_neg',
                   'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]" | "twice" "the" int_plain_constant',
                   'int_neg: int_constant | "[" int_term INT_OP int_term "]" | "-" int_neg',
