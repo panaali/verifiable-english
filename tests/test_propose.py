@@ -52,6 +52,15 @@ def test_preview_requires_named_acknowledgement_and_never_writes_when_blocked(tm
     assert not list(tmp_path.iterdir())
 
 
+def test_proposal_uses_shared_whitespace_without_changing_source_spans():
+    source = SENTENCE.replace('Every person', 'Every\t person').replace('a UK citizen', 'a  UK citizen')
+    preview = propose(ENV, source, OVERLAY, acknowledge=['us_citizen'])
+    row, = preview['introduced']
+    start, end = row['source_span']['start'], row['source_span']['end']
+    assert row['source_text'] == source[start:end] == 'is a  UK citizen'
+    assert preview['source'] == source
+
+
 def test_adoption_roundtrip_provenance_and_all_derivations(tmp_path):
     preview = proposal()
     write_proposal(preview, tmp_path / 'candidate')
