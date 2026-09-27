@@ -304,8 +304,8 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
 
 _SOFT_NOTE = re.compile(
     r"Rule ([1-9][0-9]*) (serves ([a-z][a-z0-9_]*)|is excepted (only )?when (.+))\.")
-_SOFT_DECIDER = re.compile(r"The exception to rule ([1-9][0-9]*) is decided by ([^.]+)\.")
-_SOFT_FACTORS = re.compile(r"The exception to rule ([1-9][0-9]*) takes account of ([^.]+)\.")
+_SOFT_DECIDER = re.compile(r"The exception to rule ([1-9][0-9]*) is decided by (.+)\.", re.S)
+_SOFT_FACTORS = re.compile(r"The exception to rule ([1-9][0-9]*) takes account of (.+)\.", re.S)
 _SOFT_HEADER = re.compile(r"Rule ([1-9][0-9]*)(?: \(([^()]*)\))?\. (.*)\Z", re.S)
 
 
@@ -376,7 +376,18 @@ def _parse_soft_notes(notes, number, env, words, scope):
         return result
     remaining = notes
     while remaining:
-        point = remaining.find(". ")
+        quoted = escaped = False
+        point = -1
+        for index, char in enumerate(remaining):
+            if escaped:
+                escaped = False
+            elif quoted and char == "\\":
+                escaped = True
+            elif char == '"':
+                quoted = not quoted
+            elif not quoted and remaining.startswith(". ", index):
+                point = index
+                break
         statement = remaining if point < 0 else remaining[:point + 1]
         remaining = "" if point < 0 else remaining[point + 2:]
         m = _SOFT_NOTE.fullmatch(statement)
@@ -395,21 +406,33 @@ def _parse_soft_notes(notes, number, env, words, scope):
         if m and int(m[1]) == number:
             if result["decided_by"] is not None:
                 raise SyntaxError("Duplicate exception decider")
-            result["decided_by"] = m[2]
+            if m[2].startswith('"'):
+                try:
+                    result["decided_by"] = json.loads(m[2])
+                except ValueError as exc:
+                    raise SyntaxError("Invalid quoted exception decider") from exc
+                if type(result["decided_by"]) is not str:
+                    raise SyntaxError("Invalid quoted exception decider")
+            else:
+                result["decided_by"] = m[2]
             continue
         m = _SOFT_FACTORS.fullmatch(statement)
         if m and int(m[1]) == number:
             if result["factors"]:
                 raise SyntaxError("Duplicate exception factors")
-            # A factor can itself contain a comma.  Canonical output quotes
-            # every factor as a JSON string, which fixes the boundaries.
-            try:
-                result["factors"] = json.loads("[" + m[2] + "]")
-            except (ValueError, TypeError) as exc:
-                raise SyntaxError("Exception factors must be quoted strings") from exc
-            if (type(result["factors"]) is not list or
-                    any(type(factor) is not str for factor in result["factors"])):
-                raise SyntaxError("Exception factors must be quoted strings")
+            # Canonical output quotes each factor, preserving embedded commas.
+            # The source's natural list spelling is accepted for authoring.
+            if m[2].startswith('"'):
+                try:
+                    result["factors"] = json.loads("[" + m[2] + "]")
+                except (ValueError, TypeError) as exc:
+                    raise SyntaxError("Invalid quoted exception factors") from exc
+                if (type(result["factors"]) is not list or
+                        any(type(factor) is not str for factor in result["factors"])):
+                    raise SyntaxError("Invalid quoted exception factors")
+            else:
+                result["factors"] = [piece.strip() for piece in
+                                     re.split(r", (?:and )?| and ", m[2])]
             continue
         raise SyntaxError(f"Unknown soft annotation {statement!r}")
     return result
@@ -542,8 +565,10 @@ def _render_soft_english(document, *, handles=None):
             annotations.append(f"Rule {i} serves {rank}.")
         if getattr(rule, "mode", "strict") == "default":
             decider = getattr(rule, "decided_by", None)
-            if decider:
-                annotations.append(f"The exception to rule {i} is decided by {decider}.")
+            if decider and (decider != "unstated" or
+                            getattr(document.env, "soft", {}).get("exception_decider")):
+                annotations.append(f"The exception to rule {i} is decided by " +
+                                   json.dumps(decider, ensure_ascii=False) + ".")
             for formula in getattr(rule, "sufficient", ()):
                 annotations.append(f"Rule {i} is excepted when {_guard_text(formula, document.env, words, scope)}.")
             for formula in getattr(rule, "necessary", ()):
