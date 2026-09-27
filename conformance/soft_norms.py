@@ -5,13 +5,19 @@ import json
 from pathlib import Path
 import random
 import subprocess
+import sys
 
 from ve.ast import formula_to_data
+from ve.ast import formula_from_data
+from ve.environment import Environment
+from ve.evaluate import evaluate
+from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument
-from tests.test_soft_norms_lean import env, norm
+from tests.test_soft_norms_lean import env, norm, should, ranks
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
+RUST_FIXTURES = ROOT / "conformance/soft_norms_rust.json"
 
 
 def generated(seed):
@@ -56,7 +62,74 @@ def generated(seed):
     return raw, rules
 
 
+def rust_sources():
+    """Identity-bound soft sources and decision assignments for Rust replay."""
+    return [
+        ("default-live", env(), [should("a", "x_required", True)], []),
+        ("default-excepted", env(), [should("a", "x_required", True)], ["soft__excepted__a"]),
+        ("hard", env(), [norm("h", "x_required", True, hard=True)], []),
+        ("switch-live", env({"parties": ["user"], "outranking": {"mode": "strict"}}),
+         [norm("h", "x_required", True, alterable=["user"])], []),
+        ("switch-off", env({"parties": ["user"], "outranking": {"mode": "strict"}}),
+         [norm("h", "x_required", True, alterable=["user"])], ["soft__off__h__user"]),
+        ("holistic-high", env(ranks(["high", "low"], "holistic")),
+         [should("h", "x_required", True, rank="high"),
+          should("l", "x_required", False, rank="low")], []),
+        ("holistic-low", env(ranks(["high", "low"], "holistic")),
+         [should("h", "x_required", True, rank="high"),
+          should("l", "x_required", False, rank="low")],
+         ["soft__outweighs__low__high__x_permitted"]),
+        ("open-pair", env(), [should("a", "x_required", True),
+                               should("b", "x_permitted", False)], []),
+    ]
+
+
+def rust_fixture_rows():
+    result = []
+    for name, raw, rules, present in rust_sources():
+        soft = SoftNormDocument(SoftEnvironment(raw), rules)
+        case = {"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
+        run = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), text=True,
+                             capture_output=True, timeout=120, check=False)
+        row = json.loads(run.stdout)[0]
+        if row.get("status") != "ok":
+            raise AssertionError((name, row))
+        py_layers = [(label, formula_to_data(soft.extended_env, formula, _generated=True))
+                     for label, formula in soft.elaborated.premises()]
+        if py_layers != [(p["label"], p["ast"]) for p in row["premises"]]:
+            raise AssertionError(f"Python/Lean layers differ: {name}")
+        stripped = json.loads(json.dumps(row["environment_prime"]))
+        stripped["profiles"] = [p for p in stripped["profiles"] if p != "soft-norms@0"]
+        stripped["vocabulary"].pop("soft", None)
+        for predicate in stripped["vocabulary"]["predicates"].values():
+            predicate.pop("instruction_of", None)
+        environment = Environment(stripped)
+        formulas = [p["ast"] for p in row["premises"]] + [
+            p["ast"] for p in row["background"] if p.get("generator") == "soft"]
+        for required, permitted in ((False, False), (False, True), (True, True)):
+            relations = {p: [] for p in environment.predicates}
+            relations["x_required"] = [["a"]] if required else []
+            relations["x_permitted"] = [["a"]] if permitted else []
+            for decision in present:
+                relations[decision] = [["a"]]
+            model_data = {"complete": True, "domains": {"assistant": ["a"], "user": []},
+                          "constants": {}, "relations": relations}
+            model = FiniteModel.from_dict(environment, model_data)
+            expected = [evaluate(environment, formula_from_data(environment, formula),
+                                 model, trace=False).value for formula in formulas]
+            result.append({"id": name + f"-{int(required)}{int(permitted)}",
+                           "source": {"environment": raw, "norms": rules},
+                           "environment": stripped, "formulas": formulas,
+                           "model": model_data, "expected": expected})
+    return result
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--write-rust-fixtures":
+        rows = rust_fixture_rows()
+        RUST_FIXTURES.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
+        print(json.dumps({"rust_cases": len(rows), "path": str(RUST_FIXTURES)}))
+        return
     compared = 0
     seed = 0
     while compared < 1000:
@@ -89,6 +162,7 @@ def main():
                          if p["generator"] == "soft"]
             if (soft.extended_env.to_dict() != row["environment_prime"] or
                     py_layers != lean_layers or py_soft != lean_soft or
+                    list(soft.warnings) != row["warnings"] or
                     set(soft.extended_env.decision_names) !=
                     {d["name"] for d in row["decisions"]}):
                 raise AssertionError(f"regeneration mismatch at seed {seed - len(batch) + i}")

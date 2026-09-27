@@ -146,6 +146,7 @@ def load_document(path: str | Path):
                                               and type(u.get("content")) is dict
                                               and "norm" in u["content"]])
         formula_env = soft_document.extended_env
+        open_names = set(open_names) | soft_document.extended_env.decision_names
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -312,11 +313,14 @@ def check_document(path):
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if soft is not None:
+        from .soft_route import elaborate_soft_document
+        elaborate_soft_document(soft)
         result["soft"] = {"environment_id": doc["environment"].environment_id,
                           "soft_document_hash": soft.document_hash,
                           "decision_predicates": sorted(soft.extended_env.decision_names),
                           "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
         assertions.extend(formula for _, formula in soft.elaborated.premises())
+        assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
     if "graph" in doc["meta"]:
         from .admission import parse_label
         active_keys = {(r["id"], r["version"]): r for r in active}

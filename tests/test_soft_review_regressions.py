@@ -10,10 +10,11 @@ from ve.norm_english import parse_english, render_english
 from ve.norms import NormDocument, prove_norm_entailment, check_norm_entailment_certificate
 from ve.softnorms import SoftNormDocument
 from ve.softnorms import SoftEnvironment
-from ve.soft_route import _run
+from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict
 from ve.surface.softnorms import SoftNorm
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should
+from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -61,6 +62,9 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
     rendered = render_document(path)
     assert "Open rule reading:" in rendered
     assert "open decision by assistant" in rendered
+    meta["units"][0]["meaning"] = {"open": ["soft__excepted__a"]}
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
+    assert check_document(path)["coverage"]["residual"]["soft_decisions"] == 1
 
 
 @pytest.mark.parametrize("raw,rules,diagnostic", [
@@ -78,3 +82,17 @@ def test_python_lean_reject_same_soft_input(raw, rules, diagnostic):
     with pytest.raises(VEError) as lean_error:
         _run({"id": "invalid", "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert str(python_error.value) == str(lean_error.value) == diagnostic
+
+
+def test_public_soft_pair_and_conflict_entrypoints():
+    soft = SoftNormDocument(SoftEnvironment(env()),
+                            [should("a", "x_required", True),
+                             should("b", "x_permitted", False)])
+    pairs = classify_soft_pairs(soft)
+    assert pairs["pairs"][0]["status"] == "UNKNOWN"
+    conflict = check_soft_conflict(soft)
+    assert conflict["verdict"] == "UNKNOWN"
+
+
+def test_rust_soft_fixture_matches_both_regenerators():
+    assert json.loads(RUST_FIXTURES.read_text()) == rust_fixture_rows()
