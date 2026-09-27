@@ -437,9 +437,11 @@ def render_document(path):
                 decider = rule["exception"].get("decided_by") or doc["environment"].soft.get("exception_decider")
                 from .surface.softnorms import rule_paraphrase
                 role = doc["environment"].predicates[rule["predicate"]].regulated.role
+                decision_source = (f"an open decision by {decider}" if decider != "unstated"
+                                   else "an open decision whose decider the source does not name")
                 return (f"Rule {rule['name']} is a default rule on {rule['predicate']} with sign "
-                        f"{'positive' if rule['sign'] else 'negative'}. Its exception is an open "
-                        f"decision by {decider}; the rule applies only if that exception does not apply. "
+                        f"{'positive' if rule['sign'] else 'negative'}. Its exception is {decision_source}; "
+                        "the rule applies only if that exception does not apply. "
                         + rule_paraphrase(rule["name"], "default", role=role, sign=rule["sign"],
                                           decider=decider, alterable=rule.get("alterable", ()),
                                           rank=rule.get("rank")))

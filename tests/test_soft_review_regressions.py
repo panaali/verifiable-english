@@ -44,12 +44,18 @@ def test_soft_manifest_preserves_hard_and_factor_boundaries():
     source, manifest = render_english(hard)
     assert manifest["blocks"][0]["hard"] is True
     assert parse_english(environment, source, manifest).rules[0].hard is True
-    for factors in (("safety, honesty",), ("safety", "honesty")):
+    for factors in (("safety, honesty",), ("safety", "honesty"),
+                    ('safety. honesty', 'the "user" said Rule 1')):
         authored = NormDocument(environment, [SoftNorm("n", "required", True, Top(),
-            mode="default", decided_by="assistant", factors=factors)])
+            mode="default", decided_by="Dr. Ada", factors=factors)])
         source, manifest = render_english(authored)
         parsed = parse_english(environment, source, manifest)
         assert tuple(parsed.rules[0].exception["factors"]) == factors
+        assert parsed.rules[0].exception["decided_by"] == "Dr. Ada"
+    prose = ("Rule 1. Every act should be done. The exception to rule 1 "
+             "takes account of safety, honesty, and care.")
+    assert parse_english(environment, prose).rules[0].exception["factors"] == [
+        "safety", "honesty", "care"]
 
 
 def test_document_coverage_and_render_show_open_exception(tmp_path):
@@ -123,6 +129,7 @@ def test_default_paraphrase_names_its_actual_effect(role, sign, effect):
     wording = rule_paraphrase(12, "default", role=role, sign=sign, decider="assistant")
     assert f"act {effect} unless" in wording
     assert "assistant decides" in wording
+    assert "source names no decider" in rule_paraphrase(12, "default", decider="unstated")
 
 
 def test_soft_strict_text_round_trip_and_hard_identity():
