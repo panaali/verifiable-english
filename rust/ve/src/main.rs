@@ -214,6 +214,11 @@ fn run(args: &[String]) -> Result<i32> {
                 };
                 failed |= out["status"] == "error";
                 writeln!(stdout, "{out}").map_err(|e| Error::new("InvalidInput", e.to_string()))?;
+                if args.iter().any(|arg| arg == "--flush") {
+                    stdout
+                        .flush()
+                        .map_err(|e| Error::new("InvalidInput", e.to_string()))?;
+                }
                 if count > MAX_PACKAGE_BYTES {
                     // Drop only the rest of this record, using the reader's
                     // fixed-size buffer rather than allocating the whole line.
