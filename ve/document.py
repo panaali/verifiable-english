@@ -175,10 +175,11 @@ def load_document(path: str | Path):
     unit_ids = set()
     cursor = 0
     parents = [u["id"] for u in units if type(u) is dict and u.get("status") == "MIXED"]
+    if not all(token(uid) for uid in parents):
+        raise VEError("invalid MIXED unit id")
     if len(set(parents)) != len(parents):
         raise VEError("duplicate MIXED unit id")
     parent_ids = set(parents)
-    active_norms = []
     quoted_norms = []
     for unit, parent_id in _parts(units):
         required = {"id", "span", "kind", "meaning", "support"}
@@ -206,11 +207,9 @@ def load_document(path: str | Path):
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
             from .admission import _quoted
-            if kind == "norm":
-                active_norms.append(content)
-            elif _quoted(kind):
+            if _quoted(kind):
                 quoted_norms.append(content)
-            else:
+            elif kind != "norm":
                 raise VEError("norm content requires a norm or quoted kind")
             mid = digest(f"ve-norm-unit-{env.identity_version}\n",
                          {"environment_id": env.environment_id, "content": content})
@@ -240,19 +239,25 @@ def load_document(path: str | Path):
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
     from .norms import NormDocument
-    if active_norms:
-        NormDocument(env, active_norms)
-    if quoted_norms:
-        from .norm_admission import _check_quoted
-        for content in quoted_norms:
-            _check_quoted(env, content)
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
     validate_reading_sets(env, reading_sets, unit_ids)
     active = active_reading_sets(reading_sets)
+    units_by_id = {u["id"]: u for u in compiled}
+    for reading_set in active:
+        unit = units_by_id[reading_set["unit"]]
+        unit["status"] = ("CHECKED" if reading_set["status"] == "authored"
+                          and all(c["kind"] == "asserted" and c["content"] is not None
+                                  for c in reading_set["readings"]) else "OPEN")
     reading_units = {r["unit"] for r in active}
+    quoted_norms.extend(u["content"] for u in compiled if u["kind"] == "norm"
+                        and u["id"] in reading_units)
+    if quoted_norms:
+        from .norm_admission import _check_quoted
+        for content in quoted_norms:
+            _check_quoted(env, content)
     selected_norms = [u["content"] for u in compiled if u["kind"] == "norm"
                       and u["id"] not in reading_units]
     norms = (NormDocument(env, selected_norms)

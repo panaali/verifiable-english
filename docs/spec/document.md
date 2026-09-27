@@ -49,7 +49,9 @@ independent content. Admission uses the part IDs; the checked document identity
 binds the parent and parts, and the loader retains `parent_id` on each compiled
 part. Coverage reports `bytes_by_status` alongside `bytes_by_kind`; the two
 tables each total the source byte count. Existing unsplit units may also set a
-status; otherwise it is inferred from content and meaning.
+status; otherwise it is inferred from content and meaning. An active reading
+set determines the compiled status: an open or non-assertion choice is `OPEN`,
+and an authored assertion singleton with content is `CHECKED`.
 
 An open term declares `name`, `arguments`, `decided_by`, `necessary`,
 `sufficient`, `factors`, `precedents`, `jurisdiction`, and `version`. Conditions
