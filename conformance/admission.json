@@ -2916,90 +2916,9 @@
       ]
     },
     "expected": {
-      "status": "ok",
-      "admitted": true,
-      "report": {
-        "root": {
-          "name": "uses",
-          "ast": [
-            "unary",
-            "in_finance",
-            [
-              "const",
-              "alice"
-            ]
-          ]
-        },
-        "assumptions": [
-          {
-            "name": "cited",
-            "ast": [
-              "unary",
-              "in_finance",
-              [
-                "const",
-                "alice"
-              ]
-            ],
-            "label": "cite:b1/t1"
-          },
-          {
-            "name": "claim-u2",
-            "ast": [
-              "or",
-              [
-                "eq",
-                [
-                  "const",
-                  "finance"
-                ],
-                [
-                  "const",
-                  "legal"
-                ]
-              ],
-              [
-                "unary",
-                "in_finance",
-                [
-                  "const",
-                  "alice"
-                ]
-              ]
-            ],
-            "label": "bridge:accepts(bob,u2)"
-          }
-        ]
-      },
-      "report_id": "7aca7a5daac15d2c2b82691a7905bca9d2eea322dbcba875e7f96b5b4493c087",
-      "kinds": [
-        "asserted",
-        [
-          "attributed",
-          "bob",
-          "says",
-          "asserted"
-        ],
-        [
-          "attributed",
-          "alice",
-          "believes",
-          [
-            "hedged",
-            "likely",
-            [
-              "causal",
-              "because",
-              "asserted",
-              "asserted"
-            ]
-          ]
-        ],
-        [
-          "unformalised",
-          "rhetoric"
-        ]
-      ]
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: document citations require a checked bundle binding"
     }
   },
   {
@@ -4542,6 +4461,351 @@
             "name": "t",
             "ast": [
               "top"
+            ],
+            "unit": "u"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  },
+  {
+    "id": "data-flag-background-leaf",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "$string"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          }
+        },
+        "constants": {}
+      }
+    },
+    "document": {
+      "units": [],
+      "graph": {
+        "root": "f",
+        "nodes": [
+          {
+            "name": "f",
+            "ast": [
+              "forall",
+              "person",
+              [
+                "forall",
+                "$string",
+                [
+                  "forall",
+                  "$string",
+                  [
+                    "implies",
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "dept",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          1
+                        ]
+                      ],
+                      [
+                        "binary",
+                        "dept",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "var",
+                        1
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "label": "background:flags"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "f",
+          "ast": [
+            "forall",
+            "person",
+            [
+              "forall",
+              "$string",
+              [
+                "forall",
+                "$string",
+                [
+                  "implies",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "dept",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "dept",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "var",
+                      1
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "label": "background:flags"
+        },
+        "assumptions": [
+          {
+            "name": "f",
+            "ast": [
+              "forall",
+              "person",
+              [
+                "forall",
+                "$string",
+                [
+                  "forall",
+                  "$string",
+                  [
+                    "implies",
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "dept",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          1
+                        ]
+                      ],
+                      [
+                        "binary",
+                        "dept",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "var",
+                        1
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "label": "background:flags"
+          }
+        ]
+      },
+      "report_id": "29327f4f50946056046df7955d6d558bbc84964e253852cf80b7283ff1c696e8",
+      "kinds": []
+    }
+  },
+  {
+    "id": "data-fake-background-leaf",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "$string"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          }
+        },
+        "constants": {}
+      }
+    },
+    "document": {
+      "units": [],
+      "graph": {
+        "root": "f",
+        "nodes": [
+          {
+            "name": "f",
+            "ast": [
+              "forall",
+              "$string",
+              [
+                "top"
+              ]
+            ],
+            "label": "background:flags"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: node f is not admitted under label background:flags"
+    }
+  },
+  {
+    "id": "data-author-string-binder",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "$string"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          }
+        },
+        "constants": {}
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u",
+          "span": [
+            0,
+            1
+          ],
+          "kind": "asserted",
+          "content": [
+            "forall",
+            "$string",
+            [
+              "top"
+            ]
+          ]
+        }
+      ],
+      "graph": {
+        "root": "a",
+        "nodes": [
+          {
+            "name": "a",
+            "ast": [
+              "forall",
+              "$string",
+              [
+                "top"
+              ]
             ],
             "unit": "u"
           }

@@ -70,6 +70,18 @@ class Binary:
 
 
 @dataclass(frozen=True, slots=True)
+class Atom:
+    """An n-ary relation application. Arity one and two retain their old nodes."""
+    predicate: str
+    terms: tuple[Term, ...]
+
+    def __post_init__(self):
+        if type(self.terms) not in (tuple, list):
+            raise TypeMismatch("Atom terms must be a list or tuple")
+        object.__setattr__(self, "terms", tuple(self.terms))
+
+
+@dataclass(frozen=True, slots=True)
 class Eq:
     left: Term
     right: Term
@@ -144,7 +156,7 @@ class Le:
     right: Term
 
 
-Formula: TypeAlias = Top | Bottom | Unary | Binary | Eq | Not | And | Or | Implies | Forall | Exists | Reach | Lt | Le
+Formula: TypeAlias = Top | Bottom | Unary | Binary | Atom | Eq | Not | And | Or | Implies | Forall | Exists | Reach | Lt | Le
 
 INT_SORT = "$int"
 MAX_NUMERAL_CHARS = 40
@@ -186,10 +198,10 @@ class Document:
 
 
 class _Checker:
-    def __init__(self, env):
+    def __init__(self, env, *, generated=False):
         if not isinstance(env, Environment):
             raise VEError("Expected a validated Environment")
-        self.env, self.nodes = env, 0
+        self.env, self.nodes, self.generated = env, 0, generated
 
     def tick(self):
         self.nodes += 1
@@ -239,11 +251,14 @@ class _Checker:
             return
         if kind in (Top, Bottom):
             return
-        if kind in (Unary, Binary):
+        if kind in (Unary, Binary, Atom):
             p = node.predicate
             if type(p) is not str or p not in self.env.predicates:
                 raise UnknownSymbol(f"Unknown predicate {p!r}")
-            terms = (node.term,) if kind is Unary else (node.left, node.right)
+            terms = ((node.term,) if kind is Unary else (node.left, node.right)
+                     if kind is Binary else node.terms)
+            if kind is Atom and ("nary@0" not in self.env.profiles or not 3 <= len(terms) <= 6):
+                raise UnsupportedProfile("Atom requires nary@0 and arity from three to six")
             signature = self.env.predicates[p].arguments
             if len(signature) != len(terms):
                 raise TypeMismatch(f"Predicate {p!r} has arity {len(signature)}, not {len(terms)}")
@@ -287,7 +302,10 @@ class _Checker:
             self.formula(node.left, context, depth + 1)
             self.formula(node.right, context, depth + 1)
         elif kind in (Forall, Exists):
-            if type(node.sort) is not str or node.sort not in self.env.sorts:
+            if type(node.sort) is not str or (node.sort not in self.env.sorts
+                    and not (self.generated and node.sort == "$string" and "data@0" in self.env.profiles)):
+                if node.sort == "$string" and "data@0" in self.env.profiles:
+                    raise UnsupportedProfile("$string quantification requires data stage 2")
                 raise UnknownSymbol(f"Unknown binder sort {node.sort!r}")
             self.formula(node.body, (node.sort,) + context, depth + 1)
         else:
@@ -333,6 +351,8 @@ def _to_data(node):
         return ["unary", node.predicate, _to_data(node.term)]
     if kind is Binary:
         return ["binary", node.predicate, _to_data(node.left), _to_data(node.right)]
+    if kind is Atom:
+        return ["atom", node.predicate, [_to_data(t) for t in node.terms]]
     if kind is Reach:
         edge = (["named", node.edge.relation] if type(node.edge) is Named else
                 ["body", node.edge.sort, _to_data(node.edge.formula)])
@@ -346,8 +366,8 @@ def _to_data(node):
     return [record.wire_tag, node.sort, _to_data(node.body)]
 
 
-def formula_to_data(env: Environment, formula: Formula):
-    check_formula(env, formula)
+def formula_to_data(env: Environment, formula: Formula, *, _generated=False):
+    _Checker(env, generated=_generated).formula(formula)
     return _to_data(formula)
 
 
@@ -400,6 +420,10 @@ class _Decoder:
             return Unary(data[1], self.decode(data[2], 1, True))
         if tag == "binary":
             return Binary(data[1], self.decode(data[2], 1, True), self.decode(data[3], 1, True))
+        if tag == "atom":
+            if type(data[2]) is not list or not 3 <= len(data[2]) <= 6:
+                raise SyntaxError("Atom terms must be an array of three to six terms")
+            return Atom(data[1], tuple(self.decode(t, 1, True) for t in data[2]))
         if tag == "eq":
             return Eq(self.decode(data[1], 1, True), self.decode(data[2], 1, True))
         if tag == "reach":
@@ -422,8 +446,10 @@ class _Decoder:
         return record.node_type(data[1], self.decode(data[2], depth + 1))
 
 
-def formula_from_data(env: Environment, data) -> Formula:
-    return check_formula(env, _Decoder().decode(data))
+def formula_from_data(env: Environment, data, *, _generated=False) -> Formula:
+    formula = _Decoder().decode(data)
+    _Checker(env, generated=_generated).formula(formula)
+    return formula
 
 
 def document_from_data(env: Environment, data) -> Document:
@@ -435,3 +461,8 @@ def document_from_data(env: Environment, data) -> Document:
 
 def doc_from_json(env: Environment, data: str | bytes) -> Document:
     return document_from_data(env, loads_json(data))
+
+
+# Registration happens after the constructors and decoder exist. Importing ast
+# is the common entry point for Python consumers of the n-ary wire form.
+from .surface import nary as _nary  # noqa: E402,F401

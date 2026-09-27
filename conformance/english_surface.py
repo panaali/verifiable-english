@@ -199,7 +199,10 @@ def random_formula(rng, env, depth, scope=()):
     if choice == 'bottom': return ast.Bottom()
     if choice == 'atom':
         name, decl = rng.choice(eligible)
-        return (ast.Unary if len(decl.arguments) == 1 else ast.Binary)(name, *(term(s) for s in decl.arguments))
+        args = tuple(term(s) for s in decl.arguments)
+        if len(args) == 1: return ast.Unary(name, args[0])
+        if len(args) == 2: return ast.Binary(name, *args)
+        return ast.Atom(name, args)
     if choice == 'eq':
         sort = rng.choice(sorts + (['$int'] if env.order else []))
         return ast.Eq(term(sort), term(sort))
