@@ -9,6 +9,7 @@ from ve import Environment, parse, ast, natural_document, parse_english_argument
 from ve.natural import (_NOTATION, render_natural_sentence, render_presentation,
                         parse_presentation, PresentationNeedsRepair)
 from ve.english import parse_english
+from ve.norm_english import parse_english as parse_norm_english, render_english as render_norm_english
 from ve.surface.unambiguity import require_unique_derivation
 from ve.printer import render
 from conformance.english_surface import ROOT, SEED, vocabularies, order_environment, random_formula
@@ -90,7 +91,7 @@ def _measure(name, formulas, env, *, options=None, examples=None, real_document=
 
 
 def audit(random_per_vocabulary=100):
-    rows, examples, skipped = [], [], []
+    rows, examples, skipped, non_formula_documents = [], [], [], []
     for group in ('examples', 'usecases'):
         for path, environment in _source_files(ROOT / group):
             try:
@@ -100,6 +101,20 @@ def audit(random_per_vocabulary=100):
                         environment = closure_environment
                 env = Environment.from_json(environment.read_bytes())
                 raw = path.read_bytes()
+                manifest_path = path.with_suffix('.manifest.json')
+                if manifest_path.is_file():
+                    manifest = json.loads(manifest_path.read_text())
+                    source = raw.decode('utf-8')
+                    norm_document = parse_norm_english(env, source, manifest)
+                    if render_norm_english(norm_document) != (source, manifest):
+                        raise ValueError('norm document did not round trip')
+                    non_formula_documents.append({
+                        'source': str(path.relative_to(ROOT)),
+                        'surface': 'norms@0',
+                        'rules': len(norm_document.rules),
+                        'round_trip': 'exact',
+                    })
+                    continue
                 formulas = parse(env, raw).formulas if raw.strip() else ()
             except Exception as exc:
                 skipped.append({'source': str(path.relative_to(ROOT)), 'reason': type(exc).__name__})
@@ -170,7 +185,8 @@ def audit(random_per_vocabulary=100):
                                'after': prose.text, 'statements': len(demo.formulas),
                                'checked_conclusions': 1, 'round_trip': True,
                                'one_reading': True, 'claim_graph_replay': True},
-            'rows': rows, 'skipped': skipped,
+            'rows': rows, 'non_formula_documents': non_formula_documents,
+            'skipped': skipped,
             'examples': examples[:10]}
 
 
