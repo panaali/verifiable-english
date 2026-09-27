@@ -310,6 +310,16 @@ def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
     service.close()
 
 
+def test_spawn_error_is_supervised_and_cleans_up(tmp_path):
+    executable = tmp_path / "not-executable"
+    executable.write_text("not an executable")
+    service = LeanService(executable, allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="startup"):
+        service.start()
+    assert service.pid is None and service.stats["retries"] == 1
+    assert service._stderr is None
+
+
 def test_unlisted_build_is_refused_by_default(tmp_path):
     service = LeanService(fake(tmp_path, "normal"))
     with pytest.raises(CheckerUnavailable, match="unlisted build"):
