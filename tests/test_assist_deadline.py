@@ -278,7 +278,8 @@ def test_set_readings_parses_inside_the_deadline_before_any_change(monkeypatch):
     with pytest.raises(ValueError, match="reading operation deadline"):
         service.set_readings("u", readings)
     assert time.monotonic() - started < 0.1 + 0.15
-    assert service.to_ledger() == before
+    assert service.to_ledger()["events"] == before["events"]
+    assert service.to_ledger()["commands"][-1]["error"]["message"] == "reading operation deadline"
     monkeypatch.undo()
     assert service.verify_ledger()
 
@@ -304,4 +305,172 @@ def test_resolution_rewrite_parses_inside_the_deadline(monkeypatch):
         service.resolve_pending("u", 0, actor="author", reason="checked", disposition="resolved",
                                 wording="Api is safe.", cited_spans=[{"start": 0, "end": 3}])
     assert time.monotonic() - started < 0.1 + 0.15
-    assert service.to_ledger() == before
+    assert service.to_ledger()["events"] == before["events"]
+    assert service.to_ledger()["commands"][-1]["error"]["message"] == "resolution operation deadline"
+    monkeypatch.undo()
+    assert service.verify_ledger()
+
+
+def test_catalogue_completeness_counts_from_approval_entry(monkeypatch):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    original = recovery.RecoveryService._catalogue_complete
+    calls = []
+    def slow(self, unit):
+        calls.append(unit.id)
+        if len(calls) == 1:
+            _busy(0.5)
+        return original(self, unit)
+    monkeypatch.setattr(recovery.RecoveryService, "_catalogue_complete", slow)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    with pytest.raises(ValueError, match="approval operation deadline"):
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+    assert calls == ["u"]
+    assert service.units["u"].state == "ready"
+    assert service.to_ledger()["commands"][-1]["error"]["message"] == "approval operation deadline"
+    monkeypatch.undo()
+    assert not service.approval_valid("u")
+    assert service.verify_ledger()
+
+
+def test_large_accepted_anchor_cannot_escape_approval_deadline(monkeypatch):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {"accepted": "x" * 5_000_000})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    with pytest.raises(ValueError, match="approval operation deadline"):
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+    assert service.units["u"].state == "ready"
+    assert service.to_ledger()["commands"][-1]["observed"]["deadlines"] != [None]
+    monkeypatch.undo()
+    assert not service.approval_valid("u")
+    assert service.verify_ledger()
+
+
+def test_approval_sealing_is_inside_the_operation_deadline(monkeypatch):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    original = recovery.RecoveryService._seal
+    calls = []
+    def slow_first_seal(self):
+        calls.append(None)
+        if len(calls) == 1:
+            _busy(0.5)
+        return original(self)
+    monkeypatch.setattr(recovery.RecoveryService, "_seal", slow_first_seal)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.3)
+    with pytest.raises(ValueError, match="approval operation deadline"):
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+    assert len(calls) == 2
+    assert service.units["u"].state == "ready"
+    assert service.to_ledger()["commands"][-1]["error"]["message"] == "approval operation deadline"
+    monkeypatch.undo()
+    assert not service.approval_valid("u")
+    assert service.verify_ledger()
+
+
+@pytest.mark.parametrize("operation", ["import", "verify", "approval_valid"])
+def test_replay_based_public_reads_share_one_deadline(monkeypatch, operation):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                    presentation="Api is safe.", situation=situation)
+    ledger = service.to_ledger()
+    original = recovery.RecoveryService._replay_inner.__func__
+    def slow(cls, *args):
+        _busy(0.5)
+        return original(cls, *args)
+    monkeypatch.setattr(recovery.RecoveryService, "_replay_inner", classmethod(slow))
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    if operation == "import":
+        with pytest.raises(ValueError, match="import operation deadline"):
+            RecoveryService.from_ledger(env, ledger)
+    elif operation == "verify":
+        assert not service.verify_ledger()
+    else:
+        assert not service.approval_valid("u")
+    monkeypatch.undo()
+    assert service.approval_valid("u")
+    assert service.verify_ledger()
+
+
+def test_classification_pattern_matching_cannot_finish_ready_after_deadline(monkeypatch):
+    import ve.assist.recovery as recovery
+    import ve.assist.ambiguity_patterns as catalogue
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    original = catalogue.Pattern.matches
+    calls = []
+    def slow(self, source):
+        calls.append(self.id)
+        if len(calls) == 1:
+            _busy(0.5)
+        return original(self, source)
+    monkeypatch.setattr(catalogue.Pattern, "matches", slow)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    with pytest.raises(ValueError, match="classify operation deadline"):
+        service.classify("u", parse_outcome="one")
+    assert service.units["u"].state == "analysing"
+    assert service.to_ledger()["commands"][-1]["observed"]["deadlines"] != [None]
+    monkeypatch.undo()
+    assert service.verify_ledger()
+
+
+@pytest.mark.parametrize("step", ["formula_to_data", "_resume", "formula_from_data", "_event"])
+def test_approval_deadline_covers_reconstruction_conversion_and_event(monkeypatch, step):
+    import ve.assist.recovery as recovery
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    owner = recovery if step in {"formula_to_data", "formula_from_data"} else recovery.RecoveryService
+    original = getattr(owner, step)
+    def slow(*args, **kwargs):
+        _busy(0.5)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(owner, step, slow)
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
+    with pytest.raises(ValueError, match="approval operation deadline"):
+        service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+    assert service.units["u"].state == "ready"
+    assert service.to_ledger()["commands"][-1]["observed"]["deadlines"] != [None]
+    monkeypatch.undo()
+    assert service.verify_ledger()
