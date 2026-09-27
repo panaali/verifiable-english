@@ -124,9 +124,9 @@ class _Observations:
         self._fire_at = list(recorded["deadlines"])
         self._external = list(recorded["external"])
 
-    def budget(self, seconds) -> Budget:
+    def budget(self, seconds, *, stop=None) -> Budget:
         if not self.replay:
-            budget = Budget(seconds)
+            budget = Budget(seconds, stop=stop)
         elif not self._fire_at:
             raise ValueError("replayed command used an unrecorded deadline")
         else:
@@ -189,6 +189,7 @@ class RecoveryService:
         self.commands: list[dict] = []
         self.revision = 0
         self._observed: _Observations | None = None
+        self._operation_budget: Budget | None = None
         self._replaying: dict | None = None
         self._document = None
         self._seal()
@@ -214,6 +215,10 @@ class RecoveryService:
             live = None
         if live != self._sealed:
             raise ValueError(DIVERGED)
+        self._load_sealed()
+
+    def _load_sealed(self):
+        """Restore the last committed state after an interrupted preparation."""
         sealed = json.loads(self._sealed)
         units = {}
         for unit_id, data in sealed["units"].items():
@@ -232,13 +237,14 @@ class RecoveryService:
         self.limits, self.revision = ledger["limits"], ledger["revision"]
         self.commands, self.events = ledger["commands"], ledger["events"]
 
-    def _derived(self):
+    def _derived(self, budget):
         """Replay the recorded commands from genesis; the live state must equal that replay."""
         try:
-            live = self._state()
-            if live != self._sealed:
-                raise ValueError(DIVERGED)
-            replayed = self._replay(self.env, json.loads(live)["ledger"])
+            with budget.guard():
+                live = self._state()
+                if live != self._sealed:
+                    raise ValueError(DIVERGED)
+                replayed = self._replay(self.env, json.loads(live)["ledger"], budget=budget)
         except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError) as exc:
             raise ValueError(DIVERGED) from exc
         if live != replayed._sealed:
@@ -247,7 +253,7 @@ class RecoveryService:
 
     # -- command log -------------------------------------------------------
 
-    def _command(self, _name, /, **args):
+    def _command(self, _name, /, _started_at=None, **args):
         """Run one top-level command as a transaction and append its record.
 
         Live and replayed commands both run on the JSON-decoded arguments, so
@@ -258,34 +264,72 @@ class RecoveryService:
         """
         if self._observed is not None:
             raise RuntimeError("recovery commands cannot run inside another command")
-        if self._replaying is None:
-            self._resume()
-        try:
-            args = json.loads(_canonical(args))
-        except (TypeError, ValueError) as exc:
-            raise ValueError("recovery command arguments must be JSON data") from exc
-        operation = getattr(self, "_" + _name)
-        # ``budget`` lets undo share its operation budget; it is never an input.
-        if set(args) != set(inspect.signature(operation).parameters) - {"budget"}:
-            raise ValueError("recovery command arguments do not match the command")
-        saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
-                 self.revision, deepcopy(self.versions))
+        stop = (time.monotonic() if _started_at is None else _started_at) + OPERATION_SECONDS
+        recorded = self._replaying
+        self._observed = (_Observations(self.clock) if recorded is None else
+                          _Observations(self.clock, replay=True, recorded=recorded.get("observed")))
+        self._operation_budget = self._observed.budget(OPERATION_SECONDS, stop=stop)
+        budget = self._operation_budget
+        deadline_label = {"approve": "approval", "set_readings": "reading",
+                          "resolve_pending": "resolution"}.get(_name, _name)
+        deadline_error = ValueError(f"{deadline_label} operation deadline")
+        saved = None
+        previous_seal = self._sealed
         error = None
         try:
-            recorded = self._replaying
-            self._observed = (_Observations(self.clock) if recorded is None else
-                              _Observations(self.clock, replay=True, recorded=recorded.get("observed")))
-            result = operation(**args)
+            # The replay takes the same checkpoint even though its state was
+            # reconstructed by the caller. The live command starts its clock
+            # before reconstructing the sealed cache.
+            with budget.guard():
+                if recorded is None:
+                    self._resume()
+                try:
+                    args = json.loads(_canonical(args))
+                except (TypeError, ValueError) as exc:
+                    raise ValueError("recovery command arguments must be JSON data") from exc
+                operation = getattr(self, "_" + _name)
+                if set(args) != set(inspect.signature(operation).parameters) - {"budget"}:
+                    raise ValueError("recovery command arguments do not match the command")
+                saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
+                         self.revision, deepcopy(self.versions))
+            # Catalogue and undo have their own pending/stale deadline outcomes.
+            # Other commands are interrupted throughout their transition.
+            if _name in {"classify", "continue_catalogue", "undo"}:
+                result = operation(**args)
+            else:
+                with budget.guard():
+                    result = operation(**args)
+            if _name not in {"classify", "continue_catalogue", "undo"}:
+                if budget.expired():
+                    raise _Deadline
+        except _Deadline:
+            error = deadline_error
         except Exception as exc:
             error = exc
         except BaseException:
-            self._observed = None
-            self._restore(saved)
+            self._observed, self._operation_budget = None, None
+            if saved is not None:
+                self._restore(saved)
             raise
-        observed, self._observed = self._observed, None
-        if error is not None and (observed is None or len(self.events) == saved[1]):
+        observed, self._observed, self._operation_budget = self._observed, None, None
+        if saved is None:
+            if budget.fired is None:
+                raise error
+            # A timeout can interrupt cache reconstruction. Rebuild only from
+            # the prior seal, then record the deadline at that checkpoint.
+            self._load_sealed()
+            args = json.loads(_canonical(args))
+            operation = getattr(self, "_" + _name)
+            if set(args) != set(inspect.signature(operation).parameters) - {"budget"}:
+                raise ValueError("recovery command arguments do not match the command")
+            saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
+                     self.revision, deepcopy(self.versions))
+        if error is not None and (len(self.events) == saved[1] or budget.fired is not None):
             self._restore(saved)
-            raise error
+            # A deadline is an observable command outcome even when no event
+            # was emitted. Its checkpoint is required to reproduce the failure.
+            if budget.fired is None:
+                raise error
         record = {"sequence": len(self.commands) + 1, "command": _name, "args": args,
                   "observed": observed.record(), "revision": self.revision,
                   "error": None if error is None else {"type": type(error).__name__,
@@ -293,7 +337,22 @@ class RecoveryService:
                   "previous_digest": self.commands[-1]["command_digest"] if self.commands else None}
         record["command_digest"] = _digest(record)
         self.commands.append(record)
-        if self._replaying is None:
+        if error is None and budget.fired is None:
+            try:
+                with budget.guard():
+                    self._seal()
+            except _Deadline:
+                self.commands.pop()
+                self._restore(saved)
+                self._sealed = previous_seal
+                error = deadline_error
+                record["observed"] = observed.record()
+                record["revision"] = self.revision
+                record["error"] = {"type": "ValueError", "message": str(error)}
+                record["command_digest"] = _digest({k: v for k, v in record.items()
+                                                    if k != "command_digest"})
+                self.commands.append(record)
+        if error is not None or budget.fired is not None:
             self._seal()
         if error is not None:
             raise error
@@ -315,7 +374,7 @@ class RecoveryService:
         return self._observed.now
 
     def _budget(self) -> Budget:
-        return self._observed.budget(OPERATION_SECONDS)
+        return self._operation_budget
 
     def _event(self, action, unit: Unit, **detail):
         self.revision += 1
@@ -340,8 +399,14 @@ class RecoveryService:
             raise ValueError("stale recovery revision")
 
     @classmethod
-    def _replay(cls, env, ledger, clock=time.time):
+    def _replay(cls, env, ledger, clock=time.time, budget=None):
         """Derive a service from genesis by replaying every recorded command."""
+        budget = Budget(OPERATION_SECONDS) if budget is None else budget
+        with budget.guard():
+            return cls._replay_inner(env, ledger, clock)
+
+    @classmethod
+    def _replay_inner(cls, env, ledger, clock):
         if type(ledger) is not dict or set(ledger) != LEDGER_KEYS or ledger["format"] != RECOVERY_VERSION:
             raise _InvalidLedger("invalid recovery ledger")
         genesis = ledger["genesis_versions"]
@@ -384,6 +449,8 @@ class RecoveryService:
             service = cls._replay(env, ledger, clock)
         except _InvalidLedger:
             raise
+        except _Deadline as exc:
+            raise ValueError("recovery import operation deadline") from exc
         except ValueError as exc:
             if str(exc) == "recovery ledger versions or limits changed":
                 raise
@@ -402,10 +469,12 @@ class RecoveryService:
 
     def verify_ledger(self, ledger=None):
         """Replay ``ledger`` (default: this service's) and require it to be this state."""
+        budget = Budget(OPERATION_SECONDS)
         try:
-            derived = self._derived()
-            return ledger is None or self._replay(self.env, ledger)._sealed == derived._sealed
-        except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError):
+            with budget.guard():
+                derived = self._derived(budget)
+                return ledger is None or self._replay(self.env, ledger, budget=budget)._sealed == derived._sealed
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError, _Deadline):
             return False
 
     # -- transitions -------------------------------------------------------
@@ -425,7 +494,8 @@ class RecoveryService:
                 self._invalidate(child.id, seen)
 
     def add(self, unit_id: str, source: str, anchor: dict, *, mode="authoring", dependencies=(), expected_revision=None):
-        return self._command("add", unit_id=unit_id, source=source, anchor=anchor, mode=mode,
+        started = time.monotonic()
+        return self._command("add", _started_at=started, unit_id=unit_id, source=source, anchor=anchor, mode=mode,
                              dependencies=list(dependencies), expected_revision=expected_revision)
 
     def _add(self, unit_id, source, anchor, mode, dependencies, expected_revision):
@@ -580,7 +650,8 @@ class RecoveryService:
     def classify(self, unit_id, *, parse_outcome, vocabulary="known", discourse="complete",
                  force="supported", check="checked", pending=(), limit=None,
                  catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None):
-        return self._command("classify", unit_id=unit_id, parse_outcome=parse_outcome,
+        started = time.monotonic()
+        return self._command("classify", _started_at=started, unit_id=unit_id, parse_outcome=parse_outcome,
                              vocabulary=vocabulary, discourse=discourse, force=force, check=check,
                              pending=list(pending), limit=limit, catalogue_bindings=catalogue_bindings,
                              catalogue_dispositions=catalogue_dispositions,
@@ -590,24 +661,25 @@ class RecoveryService:
                   force="supported", check="checked", pending=(), limit=None,
                   catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None,
                   budget=None):
-        self._expect(expected_revision)
-        unit = self.units[unit_id]
-        if unit.state != "analysing":
-            raise ValueError("analyse first")
-        if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
-            raise ValueError("invalid parse outcome")
-        if any(not isinstance(row, dict) for row in pending):
-            raise ValueError("pending items must be records")
-        from .ambiguity_patterns import PATTERNS, review as review_pattern
-        # A restart may refresh catalogue work, but cannot erase an unresolved
-        # discourse or author clarification recorded by an earlier attempt.
-        requested_pending = deepcopy(list(pending))
-        unit.pending = ([deepcopy(row) for row in unit.pending if not row.get("pattern_id")]
-                        + requested_pending)
-        matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
-        bindings = catalogue_bindings or {}
-        dispositions = catalogue_dispositions or {}
         budget = self._budget() if budget is None else budget
+        with budget.guard():
+            self._expect(expected_revision)
+            unit = self.units[unit_id]
+            if unit.state != "analysing":
+                raise ValueError("analyse first")
+            if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
+                raise ValueError("invalid parse outcome")
+            if any(not isinstance(row, dict) for row in pending):
+                raise ValueError("pending items must be records")
+            from .ambiguity_patterns import PATTERNS, review as review_pattern
+            # A restart may refresh catalogue work, but cannot erase an unresolved
+            # discourse or author clarification recorded by an earlier attempt.
+            requested_pending = deepcopy(list(pending))
+            unit.pending = ([deepcopy(row) for row in unit.pending if not row.get("pattern_id")]
+                            + requested_pending)
+            matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
+            bindings = catalogue_bindings or {}
+            dispositions = catalogue_dispositions or {}
         unit.catalogue_reviewed = []
         unit.catalogue_results = {}
         for pattern_id in matched:
@@ -637,6 +709,8 @@ class RecoveryService:
             unit.pending.append({"reason": "discourse reference unresolved"})
         if parse_outcome == "multiple":
             unit.pending.append({"reason": "multiple source readings unresolved"})
+        if budget.expired() and not any("deadline" in row.get("reason", "") for row in unit.pending):
+            unit.pending.append({"reason": "operation deadline (8 seconds)"})
         if limit or parse_outcome == "exhausted":
             unit.state, unit.reason = "exhausted", limit or "parser/search exhausted"
         elif vocabulary != "known" or parse_outcome == "zero":
@@ -663,8 +737,9 @@ class RecoveryService:
         if unit.state != "reading_review" or not previous or previous.get("next_cursor") is None:
             raise ValueError("no catalogue page to continue")
         from .ambiguity_patterns import review
+        budget = self._budget()
         page = review(self.env, unit.source, bindings, pattern_id=pattern_id,
-                      cursor=previous["next_cursor"], deadline=self._budget())
+                      cursor=previous["next_cursor"], deadline=budget)
         if page["candidates"] != previous["candidates"] or page["candidate_count"] != previous["candidate_count"]:
             raise ValueError("catalogue bindings changed between pages")
         previous["cards"].extend(page["cards"])
@@ -677,13 +752,20 @@ class RecoveryService:
         if not previous["pending"] and not previous["residual"] and previous["next_cursor"] is None:
             unit.catalogue_reviewed.append(pattern_id)
             unit.pending = [p for p in unit.pending if p.get("pattern_id") != pattern_id]
+        if budget.expired() and not previous["pending"]:
+            previous["pending"].append({"reason": "operation deadline (8 seconds)"})
+            if not any(row.get("pattern_id") == pattern_id for row in unit.pending):
+                unit.pending.append({"pattern_id": pattern_id, "reason": "catalogue review incomplete"})
+            if pattern_id in unit.catalogue_reviewed:
+                unit.catalogue_reviewed.remove(pattern_id)
         unit.state = "reading_review" if unit.pending else "ready"
         self._event("catalogue_page", unit, pattern_id=pattern_id,
                     cursor=page["cursor"], next_cursor=page["next_cursor"])
         return deepcopy(previous)
 
     def reply(self, unit_id, text: str, *, rejected=(), expected_revision=None):
-        return self._command("reply", unit_id=unit_id, text=text, rejected=list(rejected),
+        started = time.monotonic()
+        return self._command("reply", _started_at=started, unit_id=unit_id, text=text, rejected=list(rejected),
                              expected_revision=expected_revision)
 
     def _reply(self, unit_id, text, rejected, expected_revision):
@@ -795,7 +877,8 @@ class RecoveryService:
         self._event("unresolved", unit)
 
     def set_readings(self, unit_id, readings, pending=(), *, expected_revision=None):
-        return self._command("set_readings", unit_id=unit_id, readings=list(readings),
+        started = time.monotonic()
+        return self._command("set_readings", _started_at=started, unit_id=unit_id, readings=list(readings),
                              pending=list(pending), expected_revision=expected_revision)
 
     def _set_readings(self, unit_id, readings, pending, expected_revision, budget=None):
@@ -840,7 +923,8 @@ class RecoveryService:
     def resolve_pending(self, unit_id, index, *, actor, reason, disposition,
                         wording=None, cited_spans=(),
                         expected_revision=None):
-        return self._command("resolve_pending", unit_id=unit_id, index=index, actor=actor,
+        started = time.monotonic()
+        return self._command("resolve_pending", _started_at=started, unit_id=unit_id, index=index, actor=actor,
                              reason=reason, disposition=disposition, wording=wording,
                              cited_spans=list(cited_spans), expected_revision=expected_revision)
 
@@ -889,9 +973,10 @@ class RecoveryService:
     def record_narrowing(self, unit_id, *, keeps, actor, reason, cited_spans,
                          document=None, expected_revision=None):
         """The W2 document is external; the ledger records that W2 accepted it."""
+        started = time.monotonic()
         self._document = document
         try:
-            return self._command("record_narrowing", unit_id=unit_id, keeps=list(keeps), actor=actor,
+            return self._command("record_narrowing", _started_at=started, unit_id=unit_id, keeps=list(keeps), actor=actor,
                                  reason=reason, cited_spans=cited_spans,
                                  expected_revision=expected_revision)
         finally:
@@ -959,7 +1044,9 @@ class RecoveryService:
 
     def approve(self, unit_id, formula, *, actor, paraphrase, presentation, situation,
                 rejected=(), narrowing=None, expected_revision=None):
-        return self._command("approve", unit_id=unit_id, formula=formula_to_data(self.env, formula),
+        started = time.monotonic()
+        return self._command("approve", _started_at=started, unit_id=unit_id,
+                             formula=formula_to_data(self.env, formula),
                              actor=actor, paraphrase=paraphrase, presentation=presentation,
                              situation=situation, rejected=list(rejected), narrowing=narrowing,
                              expected_revision=expected_revision)
@@ -1123,11 +1210,13 @@ class RecoveryService:
         """
         if self._observed is not None:
             raise RuntimeError("approval_valid cannot run inside a command")
+        budget = Budget(OPERATION_SECONDS)
         try:
-            derived = self._derived()
-        except ValueError:
+            with budget.guard():
+                derived = self._derived(budget)
+                return derived._approval_valid(unit_id, budget) and not budget.expired()
+        except (ValueError, _Deadline):
             return False
-        return derived._approval_valid(unit_id, Budget())
 
     def _approval_valid(self, unit_id, budget) -> bool:
         unit = self.units.get(unit_id)
