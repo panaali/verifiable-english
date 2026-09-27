@@ -261,6 +261,8 @@ def main(argv=None):
                            **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
+            if conclusions:
+                raise ValueError('Format cannot export English conclusion roles to strict VE')
             print(print_document(env, document), end="")
         return 0
     except VEError as exc:
