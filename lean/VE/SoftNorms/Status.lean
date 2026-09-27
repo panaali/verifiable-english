@@ -42,7 +42,7 @@ theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNo
   simp only [VE.Formula.denote]
   rw [canon_subst hv' B hB.1 _ _ _ (hv.selTyped M hM) _ hρ,
     canon_subst hv' B hB.1 _ _ _ (by have := hv.selTyped N hN; rwa [← hs] at this) _ hρ,
-    selects'_denote, selects'_denote]
+    selectsPrime_denote, selectsPrime_denote]
   exact rank_resolves D h M N hc hcmp _ _
 
 /-- 6.2: a DISJOINT certificate proves the conjunct in every base-admissible structure

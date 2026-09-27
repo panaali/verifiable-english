@@ -1099,7 +1099,7 @@ theorem authority_independent (D : SoftDoc) (h : WellFormedSoft D = true) (p : S
       (outcomeBase (soften D) p).denote B (tupleVal vs) :=
   cone_independent D h p hp (attributed D π) hcone B R hR vs
 
-/-- 1.2: the closed `outranks` order is a strict partial order. -/
+/-- 1.2: the closed `outranks` order is irreflexive and transitive (a strict order on ranks). -/
 theorem rank_acyclic (D : SoftDoc) (h : WellFormedSoft D = true) :
     VE.Route.DagAcyclic (rankNodes D.soft) ∧
     (∀ a, outranksPlus D.soft a a = false) ∧

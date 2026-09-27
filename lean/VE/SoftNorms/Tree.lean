@@ -11,7 +11,7 @@ generated formulas, `soften` and `WellFormedSoft` are in `Soften.lean`.
 
 The rank closure is computed by `belowF` with fuel `ranks.length`; on a document
 whose rank graph passes the shared `VE.Route.dependencyOrder` check it is exactly
-reachability (`outranksPlus_iff_path`), hence a strict partial order. `rankHeight`
+reachability (`outranksPlus_iff_path`), hence irreflexive and transitive. `rankHeight`
 is the spec's longest ascending chain, computed with the same fuel; `rankHeight_lt`
 is the fact that makes the dominance recursion well-founded. -/
 namespace VE.SoftNorms
