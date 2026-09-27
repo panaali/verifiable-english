@@ -17,6 +17,7 @@ from ve.natural import (_NOTATION, natural_coverage, render_natural_sentence,
                         parse_presentation, render_presentation, migrate_presentation,
                         PresentationNeedsRepair)
 from ve.errors import ResourceLimit
+from ve.limits import MAX_NODES, MAX_SOURCE_BYTES
 from ve.printer import natural_document
 from test_views import ENV, vocabulary
 
@@ -289,6 +290,22 @@ def test_list_alias_conclusion_marker_and_doubling_accept_editable_whitespace():
     assert parse_english(order, doubled_source) == Document((doubled,))
     assert parse_presentation(order, doubled_source).document == Document((doubled,))
     require_unique_derivation(order, doubled_source)
+
+
+def test_derivation_admission_uses_normalized_whitespace_and_raw_source_limit():
+    env = Environment(vocabulary())
+    options = _names(env, api='The API')
+    source = 'The API is reviewed.'.replace(' ', ' ' * 3334)
+    expected = Document((Unary('reviewed', Const('api')),))
+    assert len(source) > MAX_NODES
+    assert len(source.encode('utf-8')) < MAX_SOURCE_BYTES
+    assert parse_english(env, source, **options) == expected
+    assert parse_presentation(env, source, **options).document == expected
+    require_unique_derivation(env, source, **options)
+    with pytest.raises(ResourceLimit, match='English source exceeds'):
+        require_unique_derivation(env, source + ' ' * MAX_SOURCE_BYTES, **options)
+    with pytest.raises(ResourceLimit, match='MAX_NODES'):
+        require_unique_derivation(env, '"' + ' ' * MAX_NODES + '"', **options)
 
 
 def test_accepted_corpus_whitespace_perturbations_share_one_reading():
