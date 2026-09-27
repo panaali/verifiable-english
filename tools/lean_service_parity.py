@@ -272,6 +272,34 @@ def compare_english(service, payloads):
     return stats
 
 
+def compare_english_raw(service, payloads):
+    """Exercise JSON accepted by the English runner but not the restricted decoder."""
+    stats = {"cases": len(payloads), "requests": 0, "identical": 0, "mismatches": [], "exit_codes": {},
+             "one_shot_s": 0.0, "service_s": 0.0}
+    for payload in payloads:
+        started = time.perf_counter()
+        proc = subprocess.run([str(x) for x in COMMAND["english"]], input=payload.encode(),
+                              capture_output=True, timeout=600)
+        stats["one_shot_s"] += time.perf_counter() - started
+        stats["exit_codes"][proc.returncode] = stats["exit_codes"].get(proc.returncode, 0) + 1
+        started = time.perf_counter()
+        raw, response = service.exchange("english", "[" + payload + "]", 1, timeout=600)
+        stats["service_s"] += time.perf_counter() - started
+        stats["requests"] += 1
+        row = response.get("results", [None])[0]
+        if proc.returncode == 0:
+            ok = response["status"] == "ok" and proc.stdout.strip() in results_text(raw) and row == json.loads(proc.stdout)
+        else:
+            ok = row == {"status": "error", "error": proc.stderr.decode().strip()}
+        if ok:
+            stats["identical"] += 1
+        else:
+            stats["mismatches"].append({"input": payload[:300], "one_shot": proc.stdout[:300].decode(errors="replace"),
+                                        "stderr": proc.stderr[:300].decode(errors="replace"),
+                                        "service": raw[:300].decode(errors="replace")})
+    return stats
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", type=Path, required=True)
@@ -297,6 +325,13 @@ def main(argv=None):
         report["corpora"].append({"mode": "english", "corpus": name, **stats})
         print(f"{'english':18} {name:45} {stats['identical']}/{stats['cases']} identical "
               f"in {stats['requests']} requests; exits {stats['exit_codes']}", flush=True)
+    base = json.dumps(adversarial("english")[0], separators=(",", ":"))
+    specimens = [base[:-1] + suffix for suffix in (
+        ',"ignored":null}', ',"ignored":1.5}', ',"ignored":1e2}',
+        ',"ignored":1,"ignored":2}')]
+    stats = compare_english_raw(service, specimens)
+    report["corpora"].append({"mode": "english", "corpus": "one-shot JSON acceptance", **stats})
+    print(f"{'english':18} one-shot JSON acceptance{'':22} {stats['identical']}/{stats['cases']} identical", flush=True)
     report["service_stats"] = service.stats
     service.close()
     total = sum(c["cases"] for c in report["corpora"])

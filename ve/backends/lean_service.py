@@ -40,6 +40,7 @@ from ..errors import ResourceLimit, VEError
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
+BUILD_LOCK = ROOT / "lean/checkers.lock"
 SERVICE = "ve-lean@1"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english")
 MAX_LINE_BYTES = 16 * 1024 * 1024
@@ -100,11 +101,13 @@ class LeanService:
                  timeout: float = INTERACTIVE_TIMEOUT, startup_timeout: float = STARTUP_TIMEOUT,
                  address_space: int | None = ADDRESS_SPACE, max_requests: int = MAX_REQUESTS,
                  max_rss: int | None = MAX_RSS, expected_sha256: str | None = None,
+                 allow_unlisted_build: bool = False,
                  batch_cases: int = BATCH_CASES, batch_bytes: int = BATCH_BYTES, retries: int = 1):
         self.executable = Path(executable or os.environ.get("VE_LEAN_SERVICE") or DEFAULT_EXECUTABLE)
         self.timeout, self.startup_timeout = timeout, startup_timeout
         self.address_space, self.max_requests, self.max_rss = address_space, max_requests, max_rss
         self.expected_sha256 = expected_sha256
+        self.allow_unlisted_build = allow_unlisted_build
         self.batch_cases, self.batch_bytes = min(batch_cases, MAX_CASES), batch_bytes
         self.retries = retries
         self.handshake: dict | None = None
@@ -131,7 +134,14 @@ class LeanService:
 
     def start(self) -> dict:
         with self._lock:
-            self._ensure()
+            attempt = 0
+            while True:
+                try:
+                    self._ensure()
+                    break
+                except _Failure as failure:
+                    self._failed_attempt(failure, attempt)
+                    attempt += 1
             return self.handshake
 
     def close(self) -> None:
@@ -161,9 +171,18 @@ class LeanService:
     def _spawn(self) -> None:
         if not self.executable.exists():
             raise CheckerUnavailable(f"CheckerUnavailable: missing Lean service executable {self.executable}")
-        if self.expected_sha256 is not None and self.build != self.expected_sha256:
-            raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has build {self.build}, "
-                                     f"expected {self.expected_sha256}")
+        if self.expected_sha256 is not None:
+            allowed = {self.expected_sha256}
+        elif self.allow_unlisted_build:
+            allowed = None
+        else:
+            try:
+                allowed = set(json.loads(BUILD_LOCK.read_text())["ve_service"])
+            except (OSError, ValueError, KeyError, TypeError):
+                raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {BUILD_LOCK}") from None
+        if allowed is not None and self.build not in allowed:
+            raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {self.build}, "
+                                     f"expected {', '.join(sorted(allowed))}")
         if self._stderr is not None:
             self._stderr.close()
         self._stderr = tempfile.TemporaryFile()
@@ -173,52 +192,59 @@ class LeanService:
             def preexec():
                 import resource
                 resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
-        self._proc = subprocess.Popen([str(self.executable)], stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE, stderr=self._stderr,
-                                      bufsize=0, close_fds=True, preexec_fn=preexec)
-        if limit is not None and preexec is None:
-            import resource
-            try:
-                resource.prlimit(self._proc.pid, resource.RLIMIT_AS, (limit, limit))
-            except OSError:
-                pass
-        os.set_blocking(self._proc.stdout.fileno(), False)
-        os.set_blocking(self._proc.stdin.fileno(), False)
-        self._buffer.clear()
-        self._served, self._recycle = 0, False
-        self.stats["starts"] += 1
         try:
+            self._proc = subprocess.Popen([str(self.executable)], stdin=subprocess.PIPE,
+                                          stdout=subprocess.PIPE, stderr=self._stderr,
+                                          bufsize=0, close_fds=True, preexec_fn=preexec)
+            if limit is not None and preexec is None:
+                import resource
+                resource.prlimit(self._proc.pid, resource.RLIMIT_AS, (limit, limit))
+            os.set_blocking(self._proc.stdout.fileno(), False)
+            os.set_blocking(self._proc.stdin.fileno(), False)
+            self._buffer.clear()
+            self._served, self._recycle = 0, False
+            self.stats["starts"] += 1
             line = self._read_line(time.monotonic() + self.startup_timeout)
             handshake = json.loads(line)
-        except (_Failure, ValueError) as exc:
+            limits = handshake.get("limits") if isinstance(handshake, dict) else None
+            if (not isinstance(handshake, dict) or handshake.get("service") != SERVICE
+                    or type(handshake.get("protocol")) is not int or handshake["protocol"] != 1
+                    or not isinstance(handshake.get("modes"), list)
+                    or not set(MODES) <= set(m for m in handshake["modes"] if isinstance(m, str))
+                    or not isinstance(limits, dict)
+                    or any(type(limits.get(k)) is not int or limits[k] < v for k, v in
+                           (("max_line_bytes", MAX_LINE_BYTES), ("max_cases", MAX_CASES),
+                            ("json_depth", 256)))):
+                raise _Failure(f"unexpected handshake {line[:200]!r}")
+        except (_Failure, OSError, ValueError, TypeError, OverflowError) as exc:
             self._stop(graceful=False)
-            raise CheckerUnavailable(f"CheckerUnavailable: no handshake from {self.executable}: {exc}") from None
-        if (not isinstance(handshake, dict) or handshake.get("service") != SERVICE
-                or not set(MODES) <= set(handshake.get("modes", ()))):
-            self._stop(graceful=False)
-            raise CheckerUnavailable(f"CheckerUnavailable: unexpected handshake {line[:200]!r}")
+            raise _Failure(f"handshake/startup from {self.executable}: {exc}") from None
         self.handshake = handshake
 
     def _stop(self, graceful: bool) -> None:
         proc, self._proc = self._proc, None
-        if proc is None:
-            return
+        self.handshake = None
         try:
-            if graceful and proc.poll() is None:
-                try:
-                    proc.stdin.close()
-                    proc.wait(timeout=2)
-                except (OSError, subprocess.TimeoutExpired):
-                    pass
-            if proc.poll() is None:
-                proc.kill()
-            proc.wait(timeout=10)
+            if proc is not None:
+                if graceful and proc.poll() is None:
+                    try:
+                        proc.stdin.close()
+                        proc.wait(timeout=2)
+                    except (OSError, subprocess.TimeoutExpired):
+                        pass
+                if proc.poll() is None:
+                    proc.kill()
+                proc.wait(timeout=10)
         finally:
-            for stream in (proc.stdin, proc.stdout):
-                try:
-                    stream.close()
-                except OSError:
-                    pass
+            if proc is not None:
+                for stream in (proc.stdin, proc.stdout):
+                    try:
+                        stream.close()
+                    except OSError:
+                        pass
+            if self._stderr is not None:
+                self._stderr.close()
+                self._stderr = None
             self._buffer.clear()
 
     def _stderr_tail(self) -> str:
@@ -283,6 +309,8 @@ class LeanService:
         nonce = f"{self._nonce}-{next(self._counter)}"
         line = ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
+        if len(line) > MAX_LINE_BYTES + 1:
+            raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
         deadline = time.monotonic() + timeout
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
@@ -296,11 +324,37 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         if response.get("status") == "error":
+            if set(response) != {"id", "status", "error"} or not isinstance(response["error"], str) or not response["error"]:
+                raise _Failure(f"malformed error response {raw[:200]!r}")
             return raw, response
         results = response.get("results")
-        if response.get("status") != "ok" or not isinstance(results, list) or len(results) != count:
+        counts = response.get("counts")
+        if (set(response) != {"id", "status", "mode", "results", "counts"}
+                or response.get("status") != "ok" or response.get("mode") != mode
+                or not isinstance(results, list) or len(results) != count
+                or any(not self._valid_result(mode, row) for row in results)
+                or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
+                or type(counts["cases"]) is not int or counts["cases"] != count
+                or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.encode())
+                or type(counts["errors"]) is not int
+                or counts["errors"] != sum(row.get("status") == "error" for row in results)):
             raise _Failure(f"malformed response {raw[:200]!r}")
         return raw, response
+
+    @staticmethod
+    def _valid_result(mode: str, row: object) -> bool:
+        if not isinstance(row, dict):
+            return False
+        if mode == "english":
+            if row.get("status") == "error":
+                return (set(row) == {"status", "error"}
+                        and isinstance(row["error"], str) and bool(row["error"]))
+            return (set(row) == {"admissible", "covers", "results"}
+                    and type(row["admissible"]) is bool and type(row["covers"]) is bool
+                    and isinstance(row["results"], list))
+        return (row.get("status") in ("ok", "error")
+                and (row.get("status") != "error" or
+                     (isinstance(row.get("error"), str) and bool(row["error"]))))
 
     def _after_request(self) -> None:
         self._served += 1
@@ -325,6 +379,8 @@ class LeanService:
         timeout = self.timeout if timeout is None else timeout
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
+        if len(cases_text.encode()) > MAX_LINE_BYTES - ENVELOPE_BYTES:
+            raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
         with self._lock:
             attempt = 0
             while True:
@@ -332,17 +388,20 @@ class LeanService:
                     self._ensure()
                     raw, response = self._roundtrip(mode, cases_text, count, budget, timeout)
                 except _Failure as failure:
-                    detail = self._stderr_tail()
-                    self._stop(graceful=False)
-                    self.stats["restarts"] += 1
-                    if attempt >= self.retries:
-                        raise CheckerUnavailable(
-                            f"CheckerUnavailable: {failure}" + (f"; stderr: {detail}" if detail else "")) from None
+                    self._failed_attempt(failure, attempt)
                     attempt += 1
-                    self.stats["retries"] += 1
                     continue
                 self._after_request()
                 return raw, response
+
+    def _failed_attempt(self, failure: _Failure, attempt: int) -> None:
+        detail = self._stderr_tail()
+        self._stop(graceful=False)
+        self.stats["restarts"] += 1
+        if attempt >= self.retries:
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: {failure}" + (f"; stderr: {detail}" if detail else "")) from None
+        self.stats["retries"] += 1
 
     def _chunks(self, texts: list[str]):
         # `size` is the byte length of "[" + ",".join(chunk) + "]".
