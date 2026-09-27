@@ -280,6 +280,8 @@ def create_app(settings, runner=worker):
         body = await data(request)
         if set(body) != {'revision', 'request_id', 'action', 'args'}:
             raise HTTPException(400, 'Document command needs revision, request ID, action and arguments.')
+        if type(body['action']) is not str:
+            raise HTTPException(400, 'Invalid document action.')
         if body['action'] in {'proposer_reserve', 'proposer_finish'}:
             raise HTTPException(400, 'Use the document assistant control.')
         try:

@@ -137,7 +137,7 @@ class DraftStore:
             return self._view(row, service)
 
     def create(self, example='policy'):
-        if example not in BY_ID:
+        if type(example) is not str or example not in BY_ID:
             raise ValueError('Choose a known example vocabulary.')
         env_json = BY_ID[example]['environment']
         env = Environment(env_json)
@@ -161,6 +161,8 @@ class DraftStore:
             raise ValueError('Invalid request ID.')
         if type(args) is not dict or len(canonical(args)) > 20000:
             raise ValueError('Invalid document command.')
+        if type(action) is not str:
+            raise ValueError('Invalid document action.')
         with self._db() as db:
             db.execute('BEGIN IMMEDIATE')
             row, service = self._read(db, draft_id)
@@ -295,7 +297,7 @@ class DraftStore:
                 word, kind = args.get('word'), args.get('kind')
                 if type(word) is not str or not re.fullmatch(r'[a-z][a-z-]{0,40}', word):
                     raise ValueError('Use one lower-case word for the new term.')
-                if kind not in {'person', 'property', 'relation'}:
+                if type(kind) is not str or kind not in {'person', 'property', 'relation'}:
                     raise ValueError('Choose person, property, or relation.')
                 vocabulary = raw['vocabulary']
                 if word in vocabulary['sorts'] or word in vocabulary['predicates']:
@@ -305,7 +307,8 @@ class DraftStore:
                 else:
                     sorts = args.get('sorts')
                     count = 1 if kind == 'property' else 2
-                    if type(sorts) is not list or len(sorts) != count or any(s not in vocabulary['sorts'] for s in sorts):
+                    if (type(sorts) is not list or len(sorts) != count
+                            or any(type(s) is not str or s not in vocabulary['sorts'] for s in sorts)):
                         raise ValueError('Choose declared kinds of things for the new word.')
                     vocabulary['predicates'][word] = {
                         'arguments': sorts, 'description': args.get('description') or word,
@@ -349,7 +352,7 @@ class DraftStore:
             raise ValueError('Invalid document export.')
         source = value['document']
         example, env_json = source.get('example'), source.get('environment')
-        if example not in BY_ID or type(env_json) is not dict or type(value.get('ledger')) is not dict:
+        if type(example) is not str or example not in BY_ID or type(env_json) is not dict or type(value.get('ledger')) is not dict:
             raise ValueError('Invalid document export.')
         env = Environment(env_json)
         service = RecoveryService.from_ledger(env, value['ledger'])

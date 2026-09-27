@@ -287,6 +287,7 @@ def test_blank_document_persists_approval_across_session_and_restart(tmp_path):
     settings = Settings(TOKEN, tmp_path, secure=False)
     with TestClient(create_app(settings)) as client:
         headers = login(client)
+        assert client.post('/api/drafts', json={'example': []}, headers=headers).status_code == 400
         doc = client.post('/api/drafts', json={}, headers=headers).json()
         assert doc['units'] == [] and doc['revision'] == 0
         for action, args in [('save', {'source': 'Api is safe.'}), ('analyze', {}),
@@ -313,6 +314,7 @@ def test_draft_security_stale_idempotency_and_token_isolation(tmp_path):
         body = {'revision': 0, 'request_id': 'same-request-1', 'action': 'save',
                 'args': {'source': 'Api is safe.'}}
         assert client.post(path, json=body).status_code == 403
+        assert client.post(path, json={**body, 'action': []}, headers=headers).status_code == 400
         assert client.post(path, json=body, headers={**headers, 'origin': 'https://evil.test'}).status_code == 403
         first = client.post(path, json=body, headers=headers)
         assert first.status_code == 200
