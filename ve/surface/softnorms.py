@@ -154,6 +154,61 @@ def render_header_options(refs: tuple[int, ...], parties: tuple[str, ...]) -> st
     return " (" + "; ".join(parts) + ")" if parts else ""
 
 
+_IDENT = r"[a-z][a-z0-9_]*"
+
+
+def parse_declaration(sentence: str) -> tuple[str, object]:
+    """Read one environment legend or rank sentence without changing ``E``.
+
+    The resulting value is compared with the identity-bound environment by
+    the environment editor.  A rank name is lowercased only at the displayed
+    initial capital; identifiers elsewhere retain their exact spelling.
+    """
+    m = re.fullmatch(rf"([A-Z][a-z0-9_]*) outranks ({_IDENT})\.", sentence)
+    if m:
+        return "outranks", (m[1].lower(), m[2])
+    m = re.fullmatch(rf"([A-Z][a-z0-9_]*) and ({_IDENT}) are not ranked\.", sentence)
+    if m:
+        return "tie", (m[1].lower(), m[2])
+    if sentence == "Outranking in this document is strict.":
+        return "outranking", {"mode": "strict"}
+    m = re.fullmatch(
+        r"Outranking in this document is holistic; ([^.]+) decides when a "
+        r"lower-ranked rule outweighs a higher-ranked one in a situation\.", sentence)
+    if m:
+        return "outranking", {"mode": "holistic", "decided_by": m[1]}
+    m = re.fullmatch(
+        r"Exceptions to rules in this document are decided by ([^.]+), "
+        r"unless a rule says otherwise\.", sentence)
+    if m:
+        return "exception_decider", m[1]
+    m = re.fullmatch(r'"(.+) records an instruction of (' + _IDENT + r')\."', sentence)
+    if m:
+        return "instruction_of", (m[1], m[2])
+    raise SyntaxError(f"No single soft declaration reading for {sentence!r}")
+
+
+def render_declaration(kind: str, value: object) -> str:
+    if kind == "outranks":
+        high, low = value
+        return f"{high.capitalize()} outranks {low}."
+    if kind == "tie":
+        left, right = value
+        return f"{left.capitalize()} and {right} are not ranked."
+    if kind == "outranking":
+        if value["mode"] == "strict":
+            return "Outranking in this document is strict."
+        if value["mode"] == "holistic":
+            return ("Outranking in this document is holistic; " + value["decided_by"] +
+                    " decides when a lower-ranked rule outweighs a higher-ranked one in a situation.")
+    if kind == "exception_decider":
+        return f"Exceptions to rules in this document are decided by {value}, unless a rule says otherwise."
+    if kind == "instruction_of":
+        verbalisation, party = value
+        return f'"{verbalisation} records an instruction of {party}."'
+    raise SyntaxError(f"Unknown soft declaration {kind!r}")
+
+
 @dataclass(frozen=True, slots=True)
 class SoftNorm(Norm):
     """Surface value for a norm with the item-2 extension fields.
@@ -172,14 +227,15 @@ class SoftNorm(Norm):
     hard: bool = False
 
     def to_dict(self):
-        data = super().to_dict()
+        data = Norm.to_dict(self)
         raw = data["norm"]
         if self.mode != "strict":
             raw["mode"] = self.mode
-            raw["exception"] = {"decided_by": self.decided_by,
-                                "sufficient": [_to_data(x) for x in self.sufficient],
+            raw["exception"] = {"sufficient": [_to_data(x) for x in self.sufficient],
                                 "necessary": [_to_data(x) for x in self.necessary],
                                 "factors": list(self.factors)}
+            if self.decided_by is not None:
+                raw["exception"]["decided_by"] = self.decided_by
         if self.rank is not None:
             raw["rank"] = self.rank
         if self.alterable:

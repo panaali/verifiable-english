@@ -333,10 +333,18 @@ def _soft_rewrite_consequence(sentence, env, words):
             base = Norm("candidate", name, sign, ast.Top())
             strict, _ = _consequence(base, env, words)
             candidates = [(strict, "strict")]
+            _, nouns = _bindings(decl, words)
+            if len(nouns) == 2:
+                candidates.append((strict.replace("each " + nouns[1], "any " + nouns[1]), "strict"))
+            if decl.regulated.role == "permission" and not sign:
+                candidates.append((strict.replace("Every " + nouns[0] + " must not ",
+                                                  "No " + nouns[0] + " may ", 1), "strict"))
             if decl.regulated.role != "plain":
                 soft, _ = _soft_consequence(_soft_surface.SoftNorm(
                     "candidate", name, sign, ast.Top(), mode="default"), env, words)
                 candidates.append((soft, "default"))
+                if len(nouns) == 2:
+                    candidates.append((soft.replace("each " + nouns[1], "any " + nouns[1]), "default"))
                 if " should not " in soft:
                     candidates.append((soft.replace(" should not ", " generally must not ", 1), "default"))
                 elif " should " in soft:
@@ -445,17 +453,32 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
             mode, fields["rank"], parties, fields["decided_by"],
             tuple(fields["sufficient"]), tuple(fields["necessary"]), tuple(fields["factors"])))
     if manifest is not None:
-        if len(manifest.get("blocks", [])) != len(rules):
+        blocks = [line for line in source.split("\n") if not re.fullmatch(
+            r"Rule [1-9][0-9]* takes precedence over rule [1-9][0-9]*\.", line)]
+        entries = manifest.get("blocks")
+        if type(entries) is not list or len(entries) != len(rules):
             raise VEError("IdentityMetadataMismatch: block count")
-        restored = []
-        for i, (rule, entry) in enumerate(zip(rules, manifest["blocks"]), 1):
-            if entry.get("number") != i or entry.get("name") in existing_names:
+        names = []
+        handles = set()
+        offset = 0
+        for i, (block, entry) in enumerate(zip(blocks, entries), 1):
+            if type(entry) is not dict or entry.get("number") != i or entry.get("span") != [offset, offset + len(block)]:
                 raise VEError("IdentityMetadataMismatch: block mapping")
+            handle = entry.get("handle")
+            name = entry.get("name")
+            if (type(handle) is not str or not handle or handle in handles or
+                    type(name) is not str or name in names or name in existing_names):
+                raise VEError("IdentityMetadataMismatch: block mapping")
+            handles.add(handle)
+            names.append(name)
+            offset += len(block) + 1
+        w1_positions = {rule.name: i for i, rule in enumerate(w1.rules)}
+        restored = []
+        for i, rule in enumerate(rules):
             restored.append(_soft_surface.SoftNorm(
-                entry["name"], rule.predicate, rule.sign, rule.guard, rule.unless,
-                tuple(manifest["blocks"][int(x.split("-")[-1]) - 1]["name"]
-                      if x.startswith("rule-") and x.split("-")[-1].isdigit() else x
-                      for x in rule.over), rule.mode, rule.rank, rule.alterable,
+                names[i], rule.predicate, rule.sign, rule.guard, rule.unless,
+                tuple(names[w1_positions[parent]] for parent in rule.over),
+                rule.mode, rule.rank, rule.alterable,
                 rule.decided_by, rule.sufficient, rule.necessary, rule.factors))
         rules = restored
     document = NormDocument(env, rules)
