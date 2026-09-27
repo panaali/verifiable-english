@@ -191,20 +191,21 @@ theorem checkBindings_bound (profiles : List String) (environment : Json)
   nodeBinding_bound profiles environment nodes x (forM_ok _ nodes h x hx)
 
 /-- A decoded node carries the source AST its claim formula was decoded from. -/
-theorem decodeNode_ast (E : VE.Environment) (j : Json) (x : WireNode × Json)
-    (h : VE.Route.Admission.decodeNode E j = .ok x) :
-    j.getObjVal? "ast" = .ok x.2 ∧ VE.Route.Wire.decodeClosed E x.2 = .ok x.1.claim.formula := by
+theorem decodeNode_ast (E : VE.Environment) (data : Bool) (j : Json) (x : WireNode × Json)
+    (h : VE.Route.Admission.decodeNode E data j = .ok x) :
+    j.getObjVal? "ast" = .ok x.2 ∧
+      VE.Route.Wire.decodeClosed E x.2 (data && !x.1.claim.label.startsWith "background:") =
+        .ok x.1.claim.formula := by
   unfold VE.Route.Admission.decodeNode at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨a, ha, h⟩ := bind_ok h
-  obtain ⟨f, hf, h⟩ := bind_ok h
-  -- Label, unit and deduction only fill the other fields of the result.
+  -- Label, formula, unit and deduction are decoded in sequence.
   simp only [bind, Except.bind, pure, Except.pure, Functor.map, Except.map] at h
   repeat' split at h
   all_goals first
     | (cases h; done)
-    | (injection h with h; subst h; exact ⟨ha, hf⟩)
+    | (injection h with h; subst h; simp_all)
 
 theorem getArr_ok {j : Json} {a : Array Json} (h : j.getArr? = .ok a) : j = .arr a := by
   cases j <;> simp [Json.getArr?] at h
@@ -234,14 +235,14 @@ def admitDocument (environment document : Json) : Except String Admitted := do
   let (clean, norms, quoted) ← splitDocument document
   let src ← Wire.decodeSource environment norms
   quoted.forM (checkQuoted src)
-  let D₀ ← VE.Route.Admission.decodeDoc src.ne.rv clean
+  let D₀ ← VE.Route.Admission.decodeDoc src.ne.rv (src.ne.profiles.contains "data@0") clean
   let D := { D₀ with literals := src.ne.rv.literals }
   let graphJson ← document.getObjVal? "graph"
   exactFields graphJson ["root", "nodes"]
   let root ← stringField graphJson "root"
   let nodeArray ← (← graphJson.getObjVal? "nodes").getArr?
   VE.Route.Admission.require (nodeArray.size ≤ 1000) "ResourceLimit: graph node count"
-  let decoded ← nodeArray.toList.mapM (VE.Route.Admission.decodeNode src.ne.rv.environment)
+  let decoded ← nodeArray.toList.mapM (VE.Route.Admission.decodeNode src.ne.rv.environment (src.ne.profiles.contains "data@0"))
   let canonical ← Wire.canonicalEnvironmentJson environment
   checkBindings src.ne.profiles canonical decoded
   let wires := decoded.map Prod.fst
@@ -264,7 +265,7 @@ def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
   (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧
     Wire.decodeSource environment norms = .ok res.src ∧
     (∀ q ∈ quoted, checkQuoted res.src q = .ok ()) ∧
-    ∃ D₀, VE.Route.Admission.decodeDoc res.src.ne.rv clean = .ok D₀ ∧
+    ∃ D₀, VE.Route.Admission.decodeDoc res.src.ne.rv (res.src.ne.profiles.contains "data@0") clean = .ok D₀ ∧
       res.doc = { D₀ with literals := res.src.ne.rv.literals }) ∧
   WellFormed res.src.D = true ∧ res.src.D.E = res.src.ne.rv.environment ∧
   res.src.D.lits = res.src.ne.rv.literals ∧
@@ -273,9 +274,11 @@ def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
   stringField res.graphJson "root" = .ok res.graph.root ∧
   res.wires = res.decoded.map Prod.fst ∧ res.graph.nodes = res.wires.map WireNode.toNode ∧
   (∀ x ∈ res.decoded, ∃ j ∈ res.nodes.toList,
-    VE.Route.Admission.decodeNode res.src.ne.rv.environment j = .ok x ∧
+    VE.Route.Admission.decodeNode res.src.ne.rv.environment (res.src.ne.profiles.contains "data@0") j = .ok x ∧
     j.getObjVal? "ast" = .ok x.2 ∧
-    VE.Route.Wire.decodeClosed res.src.ne.rv.environment x.2 = .ok x.1.claim.formula)
+    VE.Route.Wire.decodeClosed res.src.ne.rv.environment x.2
+      ((res.src.ne.profiles.contains "data@0") && !x.1.claim.label.startsWith "background:") =
+        .ok x.1.claim.formula)
 
 /-- Every certificate is bound to the recomputed canonical source environment
 and the source ASTs of its premises and conclusion. -/
@@ -336,7 +339,7 @@ theorem admitDocument_spec (environment document : Json) (res : Admitted)
     of_decide_eq_true (VE.Route.Gate.require_ok hch)⟩
   · intro x hx
     obtain ⟨j, hj, hd⟩ := mapM_ok_mem _ _ decoded hdec x hx
-    exact ⟨j, hj, hd, decodeNode_ast _ j x hd⟩
+    exact ⟨j, hj, hd, decodeNode_ast _ _ j x hd⟩
   · intro leaf hl
     obtain ⟨node, hn, hcl, hde⟩ := (hsound.2.2.1 leaf hl).2
     obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hn
@@ -392,6 +395,7 @@ Background leaves by the regenerated literal and pair premises. -/
 theorem norms_wire_report_consequence (environment document : Json) (res : Admitted)
     (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
     (hS : S.Admissible res.src.ne.rv.environment)
+    (hflags : Sat S (VE.Data.Background.generate res.doc.flags))
     (hregen : Sat S (background res.src.D ++ elaborate res.src.D.T))
     (hother : Sat S ((otherAssumptions res).map (·.formula))) :
     res.report.root.formula.denote S [] := by
@@ -417,16 +421,21 @@ theorem norms_wire_report_consequence (environment document : Json) (res : Admit
         rw [hg] at hadm
         obtain ⟨_, p, hp, hpe⟩ := hadm
         subst hpe
-        obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hp
-        simp only [Prod.mk.injEq] at hbe
-        rw [← hbe.1]
-        apply hregen
-        apply List.mem_append_left
-        unfold background backgroundBase
-        apply List.mem_append_left
-        apply List.mem_append_right
-        rw [hlits, ← (show res.doc.literals = res.src.ne.rv.literals by rw [hdoc])]
-        exact hbm
+        rcases List.mem_append.mp hp with hp | hp
+        · obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hp
+          simp only [Prod.mk.injEq] at hbe
+          rw [← hbe.1]
+          exact hflags b hbm
+        · obtain ⟨b, hbm, hbe⟩ := List.mem_map.mp hp
+          simp only [Prod.mk.injEq] at hbe
+          rw [← hbe.1]
+          apply hregen
+          apply List.mem_append_left
+          unfold background backgroundBase
+          apply List.mem_append_left
+          apply List.mem_append_right
+          rw [hlits, ← (show res.doc.literals = res.src.ne.rv.literals by rw [hdoc])]
+          exact hbm
       · cases hb
     · exact absurd ⟨w, hw, hwl, hadm⟩ hlayer
     · simp only [ProfileLeaf, Bool.and_eq_true] at hadm

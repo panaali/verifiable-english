@@ -1,0 +1,261 @@
+{
+  "rows": [
+    {
+      "theorem": "T5",
+      "environment_id": "2272a6c13daa5c7a1094a090b25bf7f743eaa490171941f4770a0d606e730625",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "antisymmetry"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    },
+    {
+      "theorem": "T6",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "reflexivity of le",
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    },
+    {
+      "theorem": "T7a",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    },
+    {
+      "theorem": "T7b",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "transitivity of le"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    },
+    {
+      "theorem": "T7",
+      "environment_id": "b4f9e0c2f79e9d2262c58fc25d0930f254a26b74133b8008ef1f6e65b98f0cfb",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "left congruence (T7a)",
+        "right congruence (T7b)"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    },
+    {
+      "theorem": "T8",
+      "environment_id": "32615a383b21de4b7eb5edba683d384ee8788dc339edaa7924afff36a87af713",
+      "copied_definition_hypotheses": 0,
+      "premises": [
+        "totality"
+      ],
+      "status": "Found",
+      "python_valid": true,
+      "lean_valid": true
+    }
+  ],
+  "t7mono_by_citation": true,
+  "t7mono_lean_bundle": true,
+  "t7mono_citation_english": "By T7a and T7b, for every point named P1, for every point named P2, for every point named P3, for every point named P4, if all of the following hold:\n  (a) P1 matches P2;\n  (b) both P3 matches P4 and P1 ranks below P3, then P2 ranks below P4.\n",
+  "t7mono_leaves": [
+    {
+      "label": "background:definitions",
+      "ast": [
+        "forall",
+        "point",
+        [
+          "forall",
+          "point",
+          [
+            "and",
+            [
+              "implies",
+              [
+                "binary",
+                "sim",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ],
+              [
+                "binary",
+                "sim",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "label": "open:transitivity",
+      "ast": [
+        "forall",
+        "point",
+        [
+          "forall",
+          "point",
+          [
+            "forall",
+            "point",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    2
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ],
+                [
+                  "binary",
+                  "le",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "binary",
+                "le",
+                [
+                  "var",
+                  2
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    }
+  ],
+  "definitions_english": {
+    "greatest": "By definition, for every first point, the first point is greatest exactly when every second point ranks below the first point.\n",
+    "least": "By definition, for every first point, the first point is minimum exactly when for every second point, if it is not the case that the second point is the same as the first point, then the first point precedes the second point.\n",
+    "minimal": "By definition, for every first point, the first point is minimal exactly when every second point does not precede the first point.\n",
+    "sim": "By definition, for every first point, for every second point, the first point matches the second point exactly when both the first point ranks below the second point and the second point ranks below the first point.\n"
+  },
+  "certified": [
+    "C2",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T7a",
+    "T7b",
+    "T7mono",
+    "T8",
+    "T9",
+    "T9a",
+    "T9b",
+    "T9c",
+    "T9d",
+    "T9e"
+  ],
+  "certified_count": 18,
+  "queries": 19,
+  "c1": "uncertified"
+}

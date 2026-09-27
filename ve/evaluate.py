@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
+from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
                   Num, Add, Scale, Lt, Le)
 from .model import FiniteModel
@@ -86,6 +86,10 @@ class _Evaluator:
         if isinstance(f, Binary):
             row = (self.term(f.left, bindings), self.term(f.right, bindings)); value = row in self.model.relations[f.predicate]
             return value, self.explanation("binary", value, shown, f"{f.predicate}{row}")
+        if isinstance(f, Atom):
+            row = tuple(self.term(t, bindings) for t in f.terms)
+            value = row in self.model.relations[f.predicate]
+            return value, self.explanation("atom", value, shown, f"{f.predicate}{row}")
         if isinstance(f, Reach):
             key = (f.edge, bindings)
             if key not in self.closures:

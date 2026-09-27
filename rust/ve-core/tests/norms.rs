@@ -61,3 +61,25 @@ fn act_phrase_whitespace_matches_python_split() {
     // Not a Python separator: zero-width space stays inside the word.
     assert!(Environment::from_value(&env("{0}\u{200b}be done")).is_err());
 }
+
+#[test]
+fn regulated_predicate_cannot_be_defined_or_flagged() {
+    let mut env = json!({
+        "language": "ve.core@0.2",
+        "profiles": ["data@0", "definitions@0", "norms@0", "relational-fol@0"],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+            "sorts": {"act": {"description": "act"}},
+            "predicates": {"permitted": {"arguments": ["act"], "description": "permission",
+                "regulated": {"role": "permission", "default": "deny", "act": "{0} be done"}}},
+            "constants": {}
+        }
+    });
+    let predicate = &mut env["vocabulary"]["predicates"]["permitted"];
+    predicate["defined"] = json!({"arguments": ["act"], "body": ["top"]});
+    assert!(Environment::from_value(&env).unwrap_err().message.contains("RegulatedDefinedPredicate"));
+    env["vocabulary"]["predicates"]["permitted"]
+        .as_object_mut().unwrap().remove("defined");
+    env["vocabulary"]["predicates"]["permitted"]["functional"] = json!(false);
+    assert!(Environment::from_value(&env).unwrap_err().message.contains("RegulatedFlag"));
+}

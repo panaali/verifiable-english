@@ -151,12 +151,10 @@ prefix positions, table lookups) audited with the same allowlist.
   regenerated Background and layers plus its remaining assumptions. Digest
   equality is not a claim that SHA-256 is injective, and decoder faithfulness
   to the wire spec is tested, as for the P0 routes.
-* W5 flags (`functional`, `total`) and adapters do not exist in this tree:
-  `Background_base` is literal distinctness only, and `InFragment` needs no flag
-  clause yet. 10.1(h) (the `total` regression) waits for W5.
-* W3 definitions are modelled by `Definition` (the shape of `VE.Definitions.Def`
-  on the W3 branch) and are proved through the same prefix machinery; W3's own
-  decoder feeds them once merged.
+* W5 flags and W3 definitions are present in the merged tree, but the executable
+  norms route does not yet compose their premises with norm layers. It rejects
+  norms inputs containing actual definitions or flags. The remaining work is
+  described in [INTEGRATION-GAPS.md](../docs/INTEGRATION-GAPS.md).
 
 ## The `ve_norms_route` cases (for the Python harness)
 

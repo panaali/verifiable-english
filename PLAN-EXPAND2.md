@@ -312,6 +312,18 @@ provenance even when the displayed report is unchanged.
 
 ### W2. Documents: format, 100% span accounting, content kinds, open terms, reading sets, pilots
 
+**2026-09-26 scope amendment.** The W2 code checkpoint consists of the format,
+CLI, admission integration, rendering, coverage calculation, and regression
+tests. It may merge before the empirical work. W2 acceptance remains **open**
+until all three named pilots have actual source documents and 100% byte
+coverage reports, an independent second rater has measured kind agreement,
+and a blind fidelity review has measured rendering disagreements. No
+historical claim count or synthetic fixture substitutes for those
+measurements. This amendment changes the merge dependency for the code
+checkpoint only; the pilot and fidelity gates below remain binding for W2
+completion. The no-model-calls W2 code run cannot produce independent human
+ratings or model-authored pilots.
+
 **Goal.** Turn a whole document into a checked spine with an explicit residual, measured after every merge.
 
 **Deliverables.** Format `ve-document@1` (`.ve.md`: JSON front matter with environment, units and open terms;
@@ -839,6 +851,15 @@ the P0 hooks.
 | `lean/VE/English/*`, `conformance/english_mixed.py`, `conformance/english_lean.py`, `docs/english-surface.md` | W7 | all append a section | registry keyword list, per-input check |
 | `ve/assist/*`, `ve/propose.py`, `ve/deelaborate.py`, `tests/test_assist*.py`, `experiments/authoring-gates/` | W8 | each workstream sends tool specs and examples | registry witness renderers, unit schema |
 
+**W4 stage-1 integration amendment (2026-09-26).** Enabling the fourth P0 checker
+family required W4 to edit P0-owned dispatch and gate files:
+`lean/VE/Route/Run.lean` and `ve/profiles.py`. W4 also updated the corresponding
+P0 conformance fixtures and tests in `conformance/p0.py`,
+`conformance/elaborated-document.json`, and `tests/test_p0_three_way.py`.
+These edits lift the closure+n-ary gate after the Core checker landed; the
+v0, closure, and order checker contracts remain frozen. The gate-lift regression
+runs the shared P0 family through Python, Rust, and Lean.
+
 Dependencies and start conditions:
 
 | Workstream | Depends on | Blocks | Starts | Model |
@@ -855,9 +876,10 @@ Dependencies and start conditions:
 | W7 | P0 registry (harness); Lean skeleton none | none | now | Opus 5.5 (Lean), Sol (harness) |
 | W8 | none (harness, sealed sets); per construct after its merge | offering of every construct | now | Sol; audits Astra xhigh |
 
-Merge order: **numbers2 → P0 → W2 baseline (format and pilots in today's language) → W3 → W4 stage 1 → W1 →
+Merge order: **numbers2 → P0 → W2 code checkpoint → W3 → W4 stage 1 → W1 →
 W6 → W5 stage 1 (Python earlier behind the gate; Rust after W4; joint Cedar gate with W1) → W7 harness (any time
-after P0) → W8 per construct**. Each merge re-runs the full suite, `lean/audit.py`, Rust conformance, the
+after P0) → W8 per construct**. W2 completion still requires the three pilots and independent ratings above.
+Each merge re-runs the full suite, `lean/audit.py`, Rust conformance, the
 per-input unambiguity check on every English fixture, the mixed English harness, the coverage dashboard and the
 vacuity report on every pilot.
 
@@ -984,3 +1006,6 @@ whole-plan review. v3 applies that list and nothing else.
 6. VE's properties are unchanged by this plan: one reading per VE sentence (source ambiguity lives in reading
    sets), mechanical checking, a small Lean-verified checker changed only by W4 stage 1 (and numbers2), and
    Python, Rust and Lean agreement on every conformance family.
+
+### Amendment W4-FOLIO (2026-09-26, orchestrator as DRI)
+W4 acceptance item "216/216 direct parses" is clarified to: every well-formed FOLIO gold formula with an atom of arity > 2 translates and strict-parses without semantic repair (189/189), and each of the 27 malformed gold entries (10 malformed expressions, 11 free variables, 5 overloaded arities within one formula, 1 shadowed variable) is listed by ID and reason in `conformance/NARY-FOLIO.md`. Rationale: the 27 are source-annotation defects, not VE language gaps; counting repaired gold as direct parses would misstate the source. Reviews: Astra recheck (w4-recheck-astra) found all other A/B findings fixed.

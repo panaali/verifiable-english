@@ -118,6 +118,11 @@ class EnglishVocabulary:
             path = f"/vocabulary/predicates/{name}/verbalisation"
             codes = {i.code for i in issues if i.path == path}
             accepted = template is not None and not codes
+            if len(decl.arguments) > 2:
+                self.predicates[name] = template if accepted else old.predicates[name]
+                if accepted:
+                    issues = {i for i in issues if i.path != path}
+                continue
             if template and (not accepted or template in IDIOMS[len(decl.arguments)]):
                 phrase = template.removeprefix('{0} ')
                 unary = len(decl.arguments) == 1
@@ -356,6 +361,21 @@ class EnglishTraversal:
 
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
+        if kind is ast.Exists and 'data@0' in self.env.profiles and type(value.body) is ast.And:
+            relation, property_atom = value.body.left, value.body.right
+            if (type(relation) is ast.Binary and type(property_atom) is ast.Unary
+                    and relation.right == ast.Var(0) and property_atom.term == ast.Var(0)
+                    and relation.predicate in self.env.predicates
+                    and property_atom.predicate in self.env.predicates):
+                declaration = self.env.predicates[relation.predicate]
+                if (declaration.functional and declaration.total and declaration.arguments[1] == value.sort
+                        and self.env.predicates[property_atom.predicate].arguments == (value.sort,)
+                        and (type(relation.left) is ast.Const or
+                             type(relation.left) is ast.Var and relation.left.index > 0)):
+                    source = (ast.Var(relation.left.index - 1) if type(relation.left) is ast.Var
+                              else relation.left)
+                    return ('the ' + relation.predicate + ' of ' + self.term(source, scope)
+                            + ' is ' + property_atom.predicate)
         record = surface_registry.by_node(value)
         if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
             return record.english_renderer(self, value, scope, depth)
@@ -363,6 +383,11 @@ class EnglishTraversal:
         if kind is ast.Bottom: return 'this is impossible'
         if kind in (ast.Unary, ast.Binary):
             terms = (value.term,) if kind is ast.Unary else (value.left, value.right)
+            if kind is ast.Binary and 'data@0' in self.env.profiles:
+                declaration = self.env.predicates[value.predicate]
+                if declaration.functional and declaration.total:
+                    return ('the ' + value.predicate + ' of ' + self.term(value.left, scope)
+                            + ' is ' + self.term(value.right, scope))
             return self.words.atom(value.predicate, [self.term(t, scope) for t in terms])
         if kind is ast.Eq:
             return self.term(value.left, scope) + ' is the same as ' + self.term(value.right, scope)
@@ -560,6 +585,42 @@ class EnglishParser:
             self._masked_for, self._masked = self.source, _mask_brackets(self.source)
         subject = self._masked if order else self.source
 
+        if not relative and 'data@0' in self.env.profiles and self.source.startswith('the ', start):
+            for name, declaration in sorted(self.env.predicates.items(), key=lambda item: -len(item[0])):
+                if len(declaration.arguments) != 2:
+                    continue
+                pattern = (r'the ' + re.escape(name) + r' of (' + term_pattern +
+                           r') is (' + term_pattern + r')(?![A-Za-z0-9_])')
+                match = re.compile(pattern).match(self.source, start)
+                if match is not None:
+                    if not (declaration.functional and declaration.total):
+                        self.error('The ' + name + ' of a term requires functional and total declarations.')
+                    arguments = [next(value for ref, value in terms.items()
+                                      if re.fullmatch(term_literal(ref), term))
+                                 for term in match.groups()]
+                    self.i = match.end()
+                    self.farthest = max(self.farthest, self.i)
+                    return ast.Binary(name, *arguments)
+                for property_name, prop in self.env.predicates.items():
+                    if prop.arguments != (declaration.arguments[1],):
+                        continue
+                    property_pattern = (r'the ' + re.escape(name) + r' of (' + term_pattern +
+                                        r') is ' + re.escape(property_name) + r'(?![A-Za-z0-9_])')
+                    property_match = re.compile(property_pattern).match(self.source, start)
+                    if property_match is None:
+                        continue
+                    if not (declaration.functional and declaration.total):
+                        self.error('The ' + name + ' of a term requires functional and total declarations.')
+                    if declaration.arguments[1] == '$string':
+                        self.error('String-valued attribute properties require data stage 2.')
+                    source = next(value for ref, value in terms.items()
+                                  if re.fullmatch(term_literal(ref), property_match[1]))
+                    lifted = ast.Var(source.index + 1) if type(source) is ast.Var else source
+                    self.i = property_match.end()
+                    self.farthest = max(self.farthest, self.i)
+                    return ast.Exists(declaration.arguments[1], ast.And(
+                        ast.Binary(name, lifted, ast.Var(0)), ast.Unary(property_name, ast.Var(0))))
+
         def slots(name, omitted):
             """Per-placeholder patterns: integer slots take bracketed integer terms."""
             if name is None or not order:
@@ -598,9 +659,9 @@ class EnglishParser:
             slot = slots(name, omitted)
             if slot is False:
                 continue
-            parts = re.split(r'(\{[01]\})', template)
+            parts = re.split(r'(\{[0-5]\})', template)
             pattern = ''.join(('(' + (term_pattern if slot is None else slot[int(part[1])]) + ')')
-                              if part in ('{0}', '{1}') else _content_pattern(part) for part in parts)
+                              if re.fullmatch(r'\{[0-5]\}', part) else _content_pattern(part) for part in parts)
             match = re.compile(pattern).match(subject, start)
             if not match:
                 continue
@@ -629,7 +690,8 @@ class EnglishParser:
             elif name is None:
                 node = ast.Eq(*args)
             else:
-                node = (ast.Unary if len(args) == 1 else ast.Binary)(name, *args)
+                node = (ast.Unary(name, args[0]) if len(args) == 1 else
+                        ast.Binary(name, *args) if len(args) == 2 else ast.Atom(name, tuple(args)))
                 if negative: node = ast.Not(node)
             choices.append((end, node))
         if not choices:
@@ -1015,14 +1077,24 @@ def english_lark_grammar(env, **options):
                  if len(p.arguments) == 2 and p.arguments[0] == p.arguments[1]]
     rules.append('relation: ' + (' | '.join(relations) or 'IMPOSSIBLE'))
     atoms = ['"this holds in all cases"', '"this is impossible"', 'term "is the same as"i term']
+    if 'data@0' in env.profiles:
+        atoms.extend('"the" ' + lit(name) + ' "of" term "is" term'
+                     for name, declaration in env.predicates.items()
+                     if len(declaration.arguments) == 2 and declaration.functional and declaration.total)
+        atoms.extend('"the" ' + lit(name) + ' "of" term "is" ' + lit(property_name)
+                     for name, declaration in env.predicates.items()
+                     if len(declaration.arguments) == 2 and declaration.functional and declaration.total
+                     and declaration.arguments[1] != '$string'
+                     for property_name, prop in env.predicates.items()
+                     if prop.arguments == (declaration.arguments[1],))
     relatives = []
     object_relatives = []
     for templates in (words.predicates, words.negatives):
         for name, template in templates.items():
             sorts = env.predicates[name].arguments
             slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
-            parts = re.split(r'(\{[01]\})', template)
-            rule = ' '.join(slot(p) if p in ('{0}', '{1}') else content_lit(p.strip())
+            parts = re.split(r'(\{[0-5]\})', template)
+            rule = ' '.join(slot(p) if re.fullmatch(r'\{[0-5]\}', p) else content_lit(p.strip())
                             for p in parts if p.strip())
             atoms.append(rule)
             if slot('{0}') == 'term':

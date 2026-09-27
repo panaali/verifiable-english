@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from typing import Callable, NamedTuple
 
-from .ast import Const, Eq, Formula, Not, And, Implies, Forall, Unary, Binary, Var
-from .errors import InvalidModel
+from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Unary, Var
+from .errors import InvalidModel, ResourceLimit
 
 
 class Premise(NamedTuple):
@@ -69,9 +69,59 @@ def _valid_profile(env, model):
 
 # Each entry is (premise generator, validity checker). The three empty slots
 # are deliberately explicit extension points for W5, W3 and W1.
+def _flag_premises(env):
+    result = []
+    for name, decl in sorted(env.predicates.items()):
+        if decl.functional:
+            result.append(Forall(decl.arguments[0], Forall(decl.arguments[1],
+                Forall(decl.arguments[1], Implies(
+                    And(Binary(name, Var(2), Var(1)), Binary(name, Var(2), Var(0))),
+                    Eq(Var(1), Var(0)))))))
+        if decl.total:
+            result.append(Forall(decl.arguments[0], Exists(decl.arguments[1],
+                Binary(name, Var(1), Var(0)))))
+    return tuple(result)
+
+
+def _valid_flags(env, model):
+    for name, decl in env.predicates.items():
+        if not (decl.functional or decl.total):
+            continue
+        values = {}
+        for source, target in model.relations[name]:
+            if decl.functional and source in values and values[source] != target:
+                raise InvalidModel(f"{name!r} has two values for {source!r}", generator="flags")
+            values[source] = target
+        if decl.total:
+            missing = set(model.domains[decl.arguments[0]]) - values.keys()
+            if missing:
+                raise InvalidModel(f"{name!r} has no value for {min(missing)!r}", generator="flags")
+
+def _definition_premises(env):
+    if not env.definition_entries:
+        return ()
+    from .definitions import compile_definitions, expand
+    return expand(compile_definitions(env, env.definition_entries, version=env.environment_id))
+
+
+def _valid_definitions(env, model):
+    if not env.definition_entries:
+        return
+    from .evaluate import _evaluate_validated
+    from .limits import MAX_EVALUATIONS
+    for formula in _definition_premises(env):
+        result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit("Definition background evaluation budget exhausted")
+        if result.value is not True:
+            raise InvalidModel("defined predicate table disagrees with its body",
+                               generator="definitions")
+
+
+# Each entry is (premise generator, validity checker).
 HOOKS: dict[str, tuple[Callable, Callable]] = {
-    "flags": (_empty, _valid),
-    "definitions": (_empty, _valid),
+    "flags": (_flag_premises, _valid_flags),
+    "definitions": (_definition_premises, _valid_definitions),
     "literals": (_literal_premises, _valid_literals),
     "profile": (_profile_premises, _valid_profile),
 }
@@ -89,8 +139,7 @@ def background(env) -> tuple[Premise, ...]:
 def checked_premises(env, layer_premises, case_premises):
     """The certificate order: Background ++ composed layer premises ++ Γ.
 
-    Layer premises are in composition order. P0 has no executable layers, so
-    current callers pass an empty layer list. Keep this order when they land.
+    Layer premises are in composition order after the regenerated Background.
     """
     return (tuple(item.formula for item in background(env)) +
             tuple(layer_premises) + tuple(case_premises))

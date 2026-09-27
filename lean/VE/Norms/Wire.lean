@@ -130,11 +130,15 @@ def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment
   let stripped ← predicates.mapM fun (p, entry) => do
     pure (p, Json.mkObj ((← fields entry).filter (·.1 != "regulated")))
   let vocab' := vocab.setObjVal! "predicates" (Json.mkObj stripped)
-  let rv ← VE.Route.Wire.decodeVocabulary vocab'
+  let rv ← VE.Route.Wire.decodeVocabulary e.profiles vocab'
   let regs ← predicates.filterMapM fun (p, entry) => do
     match entry.getObjVal? "regulated" with
     | .error _ => pure none
     | .ok raw =>
+      if (entry.getObjVal? "defined").isOk then
+        throw s!"RegulatedDefinedPredicate: {p}"
+      if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
+        throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
       some <$> decodeRegulated p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
@@ -193,6 +197,10 @@ structure Source where
 path); the diagnostics are those of `validate`. -/
 def decodeSource (environment norms : Json) : Except String Source := do
   let ne ← decodeNormsEnvironment environment
+  unless ne.rv.definitions.isEmpty do
+    throw "UnsupportedProfile: norms route with definitions is not implemented"
+  unless ne.rv.flags.isEmpty do
+    throw "UnsupportedProfile: norms route with data flags is not implemented"
   let units ← match norms with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"

@@ -98,6 +98,7 @@ def AdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
     BindingsMatchSourceAndRegeneration environment document res reportId ∧
     Admission.ReportAdmitted res ∧
     (∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
+      Sat S (VE.Data.Background.generate res.doc.flags) →
       Sat S (background res.src.D ++ elaborate res.src.D.T) →
       Sat S ((Admission.otherAssumptions res).map (·.formula)) →
       res.report.root.formula.denote S [])
@@ -114,7 +115,7 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
     Admission.admitDocument_spec.{0} environment document res hr
   exact ⟨res, reportId, hr, res.src.wf, rfl, hsrc, ⟨hbound, envId, he, hd⟩,
     ⟨hsound, hnodes, hleaves, hcit, hch⟩,
-    fun S hS hg ho => Admission.norms_wire_report_consequence environment document res hr S hS hg ho⟩
+    fun S hS hf hg ho => Admission.norms_wire_report_consequence environment document res hr S hS hf hg ho⟩
 
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
