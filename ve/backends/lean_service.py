@@ -152,6 +152,8 @@ class LeanService:
         if self._proc is not None and (self._recycle or self._proc.poll() is not None):
             if self._recycle:
                 self.stats["recycles"] += 1
+            else:  # died since the last request
+                self.stats["restarts"] += 1
             self._stop(graceful=self._recycle)
         if self._proc is None:
             self._spawn()
@@ -162,6 +164,8 @@ class LeanService:
         if self.expected_sha256 is not None and self.build != self.expected_sha256:
             raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has build {self.build}, "
                                      f"expected {self.expected_sha256}")
+        if self._stderr is not None:
+            self._stderr.close()
         self._stderr = tempfile.TemporaryFile()
         limit = self.address_space
         preexec = None
@@ -341,15 +345,16 @@ class LeanService:
                 return raw, response
 
     def _chunks(self, texts: list[str]):
+        # `size` is the byte length of "[" + ",".join(chunk) + "]".
         chunk: list[str] = []
-        size = 0
+        size = 1
         for text in texts:
             n = len(text.encode())
             if n + 2 + ENVELOPE_BYTES > MAX_LINE_BYTES:
                 raise ResourceLimit(f"ResourceLimit: case exceeds {MAX_LINE_BYTES} bytes")
             if chunk and (len(chunk) >= self.batch_cases or size + n + 1 > self.batch_bytes):
                 yield chunk
-                chunk, size = [], 0
+                chunk, size = [], 1
             chunk.append(text)
             size += n + 1
         if chunk:
