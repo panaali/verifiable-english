@@ -255,7 +255,7 @@ for line in sys.stdin:
                           "results": [True], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
     if behaviour == "empty-result":
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                          "results": [{}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+                          "results": [{"status": "ok"}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
     if behaviour == "duplicate-response":
         print('{"id":' + json.dumps(request["id"]) + ',"id":' + json.dumps(request["id"]) +
               ',"status":"error","error":"forged"}', flush=True); continue
@@ -265,7 +265,7 @@ for line in sys.stdin:
               '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
     n = len(request["cases"])
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                      "results": [{"n": i, "status": "ok"} for i in range(n)],
+                      "results": [{"id": i, "n": i, "status": "ok"} for i in range(n)],
                       "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
 '''
 
@@ -296,7 +296,8 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
 
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
-        assert service.run("evaluate", [{}, {}]) == [{"n": 0, "status": "ok"}, {"n": 1, "status": "ok"}]
+        assert service.run("evaluate", [{}, {}]) == [{"id": 0, "n": 0, "status": "ok"},
+                                                      {"id": 1, "n": 1, "status": "ok"}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
 
 

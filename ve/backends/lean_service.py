@@ -347,7 +347,7 @@ class LeanService:
         if (set(response) != {"id", "status", "mode", "results", "counts"}
                 or response.get("status") != "ok" or response.get("mode") != mode
                 or not isinstance(results, list) or len(results) != count
-                or any(not self._valid_result(mode, row) for row in results)
+                or any(not self._valid_result(mode, row, index) for index, row in enumerate(results))
                 or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
                 or type(counts["cases"]) is not int or counts["cases"] != count
                 or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.encode())
@@ -357,7 +357,7 @@ class LeanService:
         return raw, response
 
     @staticmethod
-    def _valid_result(mode: str, row: object) -> bool:
+    def _valid_result(mode: str, row: object, index: int) -> bool:
         if not isinstance(row, dict):
             return False
         if mode == "english":
@@ -367,7 +367,10 @@ class LeanService:
             return (set(row) == {"admissible", "covers", "results"}
                     and type(row["admissible"]) is bool and type(row["covers"]) is bool
                     and isinstance(row["results"], list))
-        return (row.get("status") in ("ok", "error")
+        identity = ("id" in row or
+                    (type(row.get("case_index")) is int and row["case_index"] == index
+                     and row.get("status") == "error"))
+        return (identity and row.get("status") in ("ok", "error")
                 and (row.get("status") != "error" or
                      (isinstance(row.get("error"), str) and bool(row["error"]))))
 
