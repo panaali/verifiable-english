@@ -9,9 +9,11 @@ from ve.errors import VEError
 from ve.norm_english import parse_english, render_english
 from ve.norms import NormDocument, prove_norm_entailment, check_norm_entailment_certificate
 from ve.softnorms import SoftNormDocument
+from ve.softnorms import SoftEnvironment
+from ve.soft_route import _run
 from ve.surface.softnorms import SoftNorm
 from tests.test_english_unambiguity import _soft_env
-from tests.test_soft_norms_lean import env, should
+from tests.test_soft_norms_lean import env, norm, should
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -59,3 +61,20 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
     rendered = render_document(path)
     assert "Open rule reading:" in rendered
     assert "open decision by assistant" in rendered
+
+
+@pytest.mark.parametrize("raw,rules,diagnostic", [
+    (env({"ranks": ["Bad!"], "outranking": {"mode": "strict"}}), [],
+     "InvalidInput: invalid soft name Bad!"),
+    (env(), [norm("a", "x_required", True, mode="default", exception={
+        "decided_by": "", "sufficient": [], "necessary": [], "factors": []})],
+     "InvalidInput: invalid decider for rule a"),
+    (env({"ranks": ["x", "y", "z"], "outranks": [["x", "y"], ["y", "z"], ["z", "y"]],
+          "outranking": {"mode": "strict"}}), [], "DependencyCycle: x, y, z"),
+])
+def test_python_lean_reject_same_soft_input(raw, rules, diagnostic):
+    with pytest.raises(VEError) as python_error:
+        SoftNormDocument(SoftEnvironment(raw), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "invalid", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert str(python_error.value) == str(lean_error.value) == diagnostic
