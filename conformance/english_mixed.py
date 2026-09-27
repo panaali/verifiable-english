@@ -28,14 +28,16 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import hashlib
+from itertools import chain
 import json
 from pathlib import Path
 import random
 import warnings
 
-from ve import ast, render
+from ve import ast, Environment, render
 from ve.english import UnreviewedVocabularyWarning, parse_english
 from ve.errors import AmbiguousDerivation, ResourceLimit, SyntaxError
+from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.surface import registry
 
 from conformance.english_surface import SEED, configurations, formula_depth, random_formula
@@ -93,17 +95,38 @@ def closed(formula, env):
         return False
 
 
+def nary_configuration():
+    """Exercise the registered n-ary atom in a mixed profile."""
+    return 'nary', Environment({
+        'language': LANGUAGE,
+        'profiles': ['closure@0', 'nary@0', 'relational-fol@0'],
+        'spec_revision': SPEC_REVISION,
+        'vocabulary': {
+            'sorts': {'item': {'description': 'An item.'}},
+            'predicates': {'reports': {'arguments': ['item'] * 3,
+                                       'description': 'A report from one item to another.',
+                                       'verbalisation': '{0} reports {1} to {2}'}},
+            'constants': {name: {'sort': 'item', 'description': name}
+                          for name in ('alice', 'bob', 'carol')},
+        },
+    }), {}
+
+
 def mixed(per_vocabulary=40):
     warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
     rows, failures, covered = [], [], set()
     registered = {r.node_type for r in registry.records() if r.node_type is not None}
     enabled_anywhere = set()
-    for offset, (name, env, options) in enumerate(configurations()):
+    for offset, (name, env, options) in enumerate(chain(configurations(), (nary_configuration(),))):
         rng = random.Random(MIXED_SEED + offset)
         enabled = {r.node_type for r in registry.records()
                    if r.node_type is not None and registry.enabled(r, env)}
         enabled_anywhere |= enabled
         formulas = [f for f in compositions(rng, env) if closed(f, env)]
+        if name == 'nary':
+            atom = ast.Atom('reports', (ast.Const('alice'), ast.Const('bob'), ast.Const('carol')))
+            premise = ast.Atom('reports', (ast.Var(0), ast.Const('bob'), ast.Const('carol')))
+            formulas.extend((atom, ast.Forall('item', ast.Implies(premise, atom))))
         sampled = attempts = 0
         while sampled < per_vocabulary and attempts < 50 * per_vocabulary:
             attempts += 1

@@ -36,6 +36,7 @@ pub enum Formula {
     Bottom,
     Unary(String, Term),
     Binary(String, Term, Term),
+    Atom(String, Vec<Term>),
     Reach(ReachKind, Edge, Term, Term),
     Eq(Term, Term),
     Not(Box<Formula>),
@@ -60,6 +61,7 @@ impl Formula {
             Self::Bottom => json!(["bottom"]),
             Self::Unary(p, t) => json!(["unary", p, t.to_value()]),
             Self::Binary(p, t, u) => json!(["binary", p, t.to_value(), u.to_value()]),
+            Self::Atom(p, ts) => json!(["atom", p, ts.iter().map(Term::to_value).collect::<Vec<_>>()]),
             Self::Reach(k, e, t, u) => {
                 let edge = match e {
                     Edge::Named(p) => json!(["named", p]),
@@ -91,7 +93,7 @@ impl Formula {
     }
     pub(crate) fn predicates(&self, result: &mut std::collections::BTreeSet<String>) {
         match self {
-            Self::Unary(p, _) | Self::Binary(p, _, _) => {
+            Self::Unary(p, _) | Self::Binary(p, _, _) | Self::Atom(p, _) => {
                 result.insert(p.clone());
             }
             Self::Reach(_, Edge::Named(p), _, _) => {
@@ -240,6 +242,20 @@ impl Checker<'_> {
                     return error("TypeMismatch", "predicate argument sort mismatch");
                 }
             }
+            Formula::Atom(p, terms) => {
+                if !self.env.nary() || !(3..=6).contains(&terms.len()) {
+                    return error("UnsupportedProfile", "Atom requires nary@0 and arity from three to six");
+                }
+                let signature = self.env.predicates.get(p)
+                    .ok_or_else(|| Error::new("UnknownSymbol", format!("unknown predicate {p:?}")))?;
+                if signature.len() != terms.len() {
+                    return error("TypeMismatch", "predicate arity mismatch");
+                }
+                let actual: Vec<_> = terms.iter().map(|t| self.term(t, context)).collect::<Result<_>>()?;
+                if actual != *signature {
+                    return error("TypeMismatch", "predicate argument sort mismatch");
+                }
+            }
             Formula::Eq(a, b) => {
                 if self.term(a, context)? != self.term(b, context)? {
                     return error("TypeMismatch", "equality requires one sort");
@@ -289,6 +305,9 @@ impl Checker<'_> {
             }
             Formula::Forall(s, a) | Formula::Exists(s, a) => {
                 if !self.env.sorts.contains(s) {
+                    if s == "$string" && self.env.has_profile("data@0") {
+                        return error("UnsupportedProfile", "$string quantification requires data stage 2");
+                    }
                     return error("UnknownSymbol", "unknown binder sort");
                 }
                 context.push(s.clone());
@@ -297,6 +316,22 @@ impl Checker<'_> {
             }
         }
         Ok(())
+    }
+}
+/// A definition body: one decoded formula, checked in the argument context
+/// (index 0 is the last argument) over an environment below the definition.
+pub(crate) fn decode_formula(v: &Value) -> Result<Formula> {
+    AstDecoder { nodes: 0 }.formula(v, 1)
+}
+pub(crate) fn check_in_context(env: &Environment, f: &Formula, context: &[String]) -> Result<()> {
+    Checker { env, nodes: 0 }.formula(f, &mut context.to_vec(), 1)
+}
+pub(crate) fn has_reach(f: &Formula) -> bool {
+    match f {
+        Formula::Reach(..) => true,
+        Formula::Not(a) | Formula::Forall(_, a) | Formula::Exists(_, a) => has_reach(a),
+        Formula::And(a, b) | Formula::Or(a, b) | Formula::Implies(a, b) => has_reach(a) || has_reach(b),
+        _ => false,
     }
 }
 struct AstDecoder {
@@ -352,6 +387,12 @@ impl AstDecoder {
                 self.term(&a[2], depth + 1)?,
                 self.term(&a[3], depth + 1)?,
             ),
+            "atom" => {
+                let terms = a[2].as_array().filter(|a| (3..=6).contains(&a.len()))
+                    .ok_or_else(|| Error::new("SyntaxError", "Atom terms must be an array of three to six terms"))?;
+                Formula::Atom(Self::symbol(&a[1]), terms.iter().map(|t| self.term(t, depth + 1))
+                    .collect::<Result<_>>()?)
+            },
             "eq" => Formula::Eq(self.term(&a[1], depth + 1)?, self.term(&a[2], depth + 1)?),
             "reach" => {
                 let edge = a[2].as_array().ok_or_else(|| {

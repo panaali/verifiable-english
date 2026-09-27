@@ -107,9 +107,13 @@ def test_full_english_report_gate():
 def test_full_mixed_report_gate():
     report = json.loads((ROOT / 'conformance/english-mixed-report.json').read_text())
     assert report['seed'] == 2026792107
-    assert report['texts'] == 6593 and len(report['vocabularies']) == 17
+    assert report['texts'] == 6757 and len(report['vocabularies']) == 18
     assert report['failure_count'] == 0
     assert report['missing_constructs'] == report['unexercised_profiles'] == []
     assert report['vocabularies'][0]['corpus_sha256'] == \
         '90b67e0b66f9f1a996de021b71c13935a6d144327451ca7cfb31ac0bc41631a7'
+    assert report['vocabularies'][-1]['vocabulary'] == 'nary'
+    assert 'Atom' in report['vocabularies'][-1]['node_types']
+    assert report['vocabularies'][-1]['corpus_sha256'] == \
+        '4c7fa73cd61a54d3dcdecd8b7aa5ab28020392ad4d96c241f59a321a2abe54b6'
     assert all(len(row['corpus_sha256']) == 64 for row in report['vocabularies'])
