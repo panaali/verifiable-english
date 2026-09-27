@@ -26,6 +26,7 @@ IDIOMS = {
         '{0} is an appropriately sanctioned human check',
     },
     2: {
+        '{0} may access {1}',
         '{0} undermines {1}',
         '{0} interacts with {1}',
         '{0} involves apparent conflict over {1}',
@@ -89,9 +90,10 @@ def overlay_provenance(vocabulary):
 def display_environment(env, vocabulary, accept_suggested_vocabulary):
     """Validate the entire overlay; never return a replacement identity environment."""
     if vocabulary is None:
-        return env, None, {'sorts': {}, 'predicates': {}}
+        return env, None, {'sorts': {}, 'predicates': {}, 'constants': {}}
     canonical_json(vocabulary)
-    require_fields(vocabulary, {'format', 'environment_id', 'sorts', 'predicates'})
+    require_fields(vocabulary, {'format', 'environment_id', 'sorts', 'predicates'} |
+                   ({'constants'} if 'constants' in vocabulary else set()))
     if vocabulary['format'] != 've.english-vocabulary@1' or vocabulary['environment_id'] != env.environment_id:
         raise VEError('English vocabulary format or environment_id does not match')
     data = env.to_dict()
@@ -114,7 +116,20 @@ def display_environment(env, vocabulary, accept_suggested_vocabulary):
             # An old negative must not silently attach to a changed positive template.
             if category == 'predicates': target.pop('negative_verbalisation', None)
             target.update({k: deepcopy(v) for k, v in entry.items() if k != 'suggested'})
-    return Environment(data), digest('ve-english-vocabulary-v1\n', vocabulary), vocabulary
+    constants = vocabulary.get('constants', {})
+    if type(constants) is not dict:
+        raise VEError('English constant display entries must be an object')
+    for name, entry in constants.items():
+        if name not in env.constants:
+            raise VEError(f'Unknown English vocabulary symbol: {name}')
+        require_fields(entry, {'verbalisation'})
+        form = entry['verbalisation']
+        if type(form) is not str or not form:
+            raise VEError('Constant display form must be a nonempty string')
+        if len(form) > 256:
+            raise VEError('Constant display form exceeds 256 characters')
+    return (Environment(data), digest('ve-english-vocabulary-v1\n', vocabulary),
+            {**vocabulary, 'constants': constants})
 
 
 def suggest_vocabulary(env):

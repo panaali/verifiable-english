@@ -11,7 +11,7 @@ import re
 
 from . import ast
 from .environment import Environment, RESERVED, valid_identifier
-from .english import EnglishParser, EnglishVocabulary, parse_english_with_metadata
+from .english import EnglishParser, EnglishVocabulary, _normalise_english_source, parse_english_with_metadata
 from .english_phrases import distance, lexical, nearest, phrase_end, unary_phrase, wording_key, BLOCKED, PREPOSITIONS
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_SOURCE_BYTES
@@ -26,6 +26,8 @@ class _ProposalParser(EnglishParser):
             'sorts': {}, 'predicates': {}}
         super().__init__(env, source, EnglishVocabulary(env, vocabulary=self.overlay,
                                                      accept_suggested_vocabulary=True))
+        self.original_source = source
+        self.source, self.source_boundaries = _normalise_english_source(source, self.words)
         self.introduced = []
         declared = [*env.sorts, *env.predicates, *env.constants,
                     *self.words.sorts.values(), *self.words.predicates.values(),
@@ -129,7 +131,8 @@ class _ProposalParser(EnglishParser):
             raise SyntaxError('A near-duplicate of a declared constant cannot become a unary predicate.',
                               span=self._span(start, end))
         self.introduced.append({'symbol': name, 'source_span': asdict(self._span(start, end)),
-                                'source_text': self.source[start:end], 'signature': [sort],
+                                'source_text': self.original_source[self.source_boundaries[start]:
+                                                                    self.source_boundaries[end]], 'signature': [sort],
                                 'description': description, 'verbalisation': template,
                                 'lexicon': evidence,
                                 'nearest_existing': [r for i, r in enumerate(neighbors) if i < 3 or r['near_duplicate']],
@@ -158,8 +161,9 @@ class _ProposalParser(EnglishParser):
         return ast.Not(node) if head[1] else node
 
     def _span(self, start, end):
-        return Span(start, end, self.source.count('\n', 0, start) + 1,
-                    start - self.source.rfind('\n', 0, start))
+        start, end = self.source_boundaries[start], self.source_boundaries[end]
+        return Span(start, end, self.original_source.count('\n', 0, start) + 1,
+                    start - self.original_source.rfind('\n', 0, start))
 
 
 def propose(env, source, vocabulary=None, *, acknowledge=()):
