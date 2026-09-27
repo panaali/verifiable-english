@@ -5,8 +5,9 @@ from ve.errors import VEError
 from ve.norms import NormDocument
 from ve.environment import Environment
 from ve.profiles import LANGUAGE, SPEC_REVISION
-from ve.norm_english import default_sentence, parse_english, render_english
+from ve.norm_english import _block_grammar, _words, default_sentence, parse_english, render_english
 from ve.norm_strict import parse_strict, print_strict
+from ve.surface.unambiguity import require_unique_derivation
 from tests.test_norms import environment, obligation, permission, rule
 
 
@@ -27,6 +28,13 @@ def test_four_wordings_and_identity_manifest():
     changed = text.replace("Every act may be done", "Every act must not be done")
     with pytest.raises(VEError, match="IdentityMetadataMismatch"):
         parse_english(env, changed, manifest)
+
+
+def test_norm_block_grammar_uses_normalized_english_input():
+    env = environment({"permitted": permission()})
+    grammar = _block_grammar(env, _words(env))
+    tree = require_unique_derivation(env, "Rule 1. Every  act may be done.", grammar=grammar)
+    assert tree.data == "start"
 
 
 def test_deontic_guard_and_carveout_round_trip():

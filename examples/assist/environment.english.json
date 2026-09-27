@@ -1,0 +1,14 @@
+{
+  "format": "ve.english-vocabulary@1",
+  "environment_id": "ca45c363b7c6a0775945b0cd8e05b1aefb78677dae28ac212c9e6c9f0a25e3be",
+  "sorts": {},
+  "predicates": {},
+  "constants": {
+    "api": {
+      "verbalisation": "the API"
+    },
+    "web": {
+      "verbalisation": "the web front end"
+    }
+  }
+}

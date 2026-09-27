@@ -210,16 +210,22 @@ def replace_reply(reply, **kwargs):
 
 
 def test_timeout_and_token_overrun_halt(tmp_path, monkeypatch):
-    monkeypatch.setattr("ve_experiments.paid.time.sleep", lambda _: None)
     class Slow(OfflineBackend):
         async def generate(self, _):
-            await asyncio.sleep(1)
+            pytest.fail("the deadline wrapper should expire before dispatch")
+    async def expire(coroutine, timeout):
+        assert timeout == 30
+        coroutine.close()
+        raise TimeoutError
     path = tmp_path / "timeout.jsonl"
-    client = PaidClient(Slow(None), Ledger(path, 1))
-    with pytest.raises(PreflightError, match="TimeoutError"):
-        client.call(replace(req(), timeout_s=.001))
-    assert path.read_text().count('"event":"infrastructure_failure"') == 4
-    client.close()
+    with monkeypatch.context() as patch:
+        patch.setattr("ve_experiments.paid.time.sleep", lambda _: None)
+        patch.setattr("ve_experiments.paid.asyncio.wait_for", expire)
+        client = PaidClient(Slow(None), Ledger(path, 1))
+        with pytest.raises(PreflightError, match="TimeoutError"):
+            client.call(replace(req(), timeout_s=30))
+        assert path.read_text().count('"event":"infrastructure_failure"') == 4
+        client.close()
     client = PaidClient(OfflineBackend(lambda _: PaidReply('',0,4097,0,0,'v',{},{})), Ledger(tmp_path / "over.jsonl", 1))
     with pytest.raises(PreflightError, match="token cap"):
         client.call(req())

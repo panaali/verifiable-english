@@ -10,7 +10,7 @@ restart in each statement under the default naming policy. All five cells show t
 fol_symbols: ∀ x0:service, ((deployed(x0)) → (reviewed(x0))).
 fol_keywords: forall x0:service, ((deployed(x0)) implies (reviewed(x0))).
 ve_strict: for every service x0, (if (x0 is deployed), then (x0 is reviewed)).
-ve_natural: for every service x0: (if (x0 is deployed), then (x0 is reviewed)).
+ve_explicit: for every service x0: (if (x0 is deployed), then (x0 is reviewed)).
 ve_fluent: for every service S that is deployed, S is reviewed.
 ```
 
@@ -20,7 +20,7 @@ ve_fluent: for every service S that is deployed, S is reviewed.
 fol_symbols: ∀ x0:service, ((deployed(x0)) → (∃ x1:person, (owns(x1, x0)))).
 fol_keywords: forall x0:service, ((deployed(x0)) implies (exists x1:person, (owns(x1, x0)))).
 ve_strict: for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).
-ve_natural: for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).
+ve_explicit: for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).
 ve_fluent: for every service S that is deployed, there is a person P such that P owns S.
 ```
 
@@ -30,7 +30,7 @@ ve_fluent: for every service S that is deployed, there is a person P such that P
 fol_symbols: ∃ x0:person, (∀ x1:service, ((deployed(x1)) → (owns(x0, x1)))).
 fol_keywords: exists x0:person, (forall x1:service, ((deployed(x1)) implies (owns(x0, x1)))).
 ve_strict: there exists person x0, (for every service x1, (if (x1 is deployed), then (x0 owns x1))).
-ve_natural: there is a person x0 such that (for every service x1: (if (x1 is deployed), then (x0 owns x1))).
+ve_explicit: there is a person x0 such that (for every service x1: (if (x1 is deployed), then (x0 owns x1))).
 ve_fluent: there is a person P such that for every service S that is deployed, P owns S.
 ```
 
@@ -40,7 +40,7 @@ ve_fluent: there is a person P such that for every service S that is deployed, P
 fol_symbols: ¬ (∃ x0:service, ((deployed(x0)) ∧ (¬ (reviewed(x0))))).
 fol_keywords: not (exists x0:service, ((deployed(x0)) and (not (reviewed(x0))))).
 ve_strict: not (there exists service x0, ((x0 is deployed) and (not (x0 is reviewed)))).
-ve_natural: it is not the case that (there is a service x0 such that ((x0 is deployed) and (it is not the case that (x0 is reviewed)))).
+ve_explicit: it is not the case that (there is a service x0 such that ((x0 is deployed) and (it is not the case that (x0 is reviewed)))).
 ve_fluent: it is false that (there is a service S such that both S is deployed and S is not reviewed).
 ```
 
@@ -50,7 +50,7 @@ ve_fluent: it is false that (there is a service S such that both S is deployed a
 fol_symbols: ∀ x0:service, (((deployed(x0)) ∧ (¬ (x0 = @legacy))) → (¬ (owns(@alice, x0)))).
 fol_keywords: forall x0:service, (((deployed(x0)) and (not (x0 = @legacy))) implies (not (owns(@alice, x0)))).
 ve_strict: for every service x0, (if ((x0 is deployed) and (not (x0 equals @legacy))), then (not (@alice owns x0))).
-ve_natural: for every service x0: (if ((x0 is deployed) and (it is not the case that (x0 is equal to @legacy))), then (it is not the case that (@alice owns x0))).
+ve_explicit: for every service x0: (if ((x0 is deployed) and (it is not the case that (x0 is equal to @legacy))), then (it is not the case that (@alice owns x0))).
 ve_fluent: for every service S that is deployed and that is not the same service as @legacy, @alice does not own S.
 ```
 
@@ -60,7 +60,7 @@ ve_fluent: for every service S that is deployed and that is not the same service
 fol_symbols: ∀ x0:service, (∀ x1:person, (∀ x2:person, (((owns(x1, x0)) ∧ (owns(x2, x0))) → (x1 = x2)))).
 fol_keywords: forall x0:service, (forall x1:person, (forall x2:person, (((owns(x1, x0)) and (owns(x2, x0))) implies (x1 = x2)))).
 ve_strict: for every service x0, (for every person x1, (for every person x2, (if ((x1 owns x0) and (x2 owns x0)), then (x1 equals x2)))).
-ve_natural: for every service x0: (for every person x1: (for every person x2: (if ((x1 owns x0) and (x2 owns x0)), then (x1 is equal to x2)))).
+ve_explicit: for every service x0: (for every person x1: (for every person x2: (if ((x1 owns x0) and (x2 owns x0)), then (x1 is equal to x2)))).
 ve_fluent: for every service S and every person P and every person P2, if (both P owns S and P2 owns S) then P is the same person as P2.
 ```
 

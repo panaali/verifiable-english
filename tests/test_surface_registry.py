@@ -21,14 +21,14 @@ def test_keywords_cover_statement_initial_literals():
     expected = {"it is not the case that ", "all of the following hold:",
                 "both of the following hold:", "at least one of the following holds:",
                 "if the following holds:", "both ", "either ", "if ",
-                "for every ", "every ", "there is ", "starting from "}
+                "for every ", "every ", "there is ", "starting from ", "some ", "no "}
     assert expected <= {keyword for keyword, _ in KEYWORDS}
     # Statement-layer profiles may register additional initial keywords; the
     # historical formula grammar's set and ordering remain fixed within them.
     historical = tuple(keyword for keyword, _ in KEYWORDS if keyword in expected)
     assert historical == tuple(sorted(expected, key=lambda s: (-len(s), s)))
     for keyword in expected:
-        assert keyword in region
+        assert keyword in region or keyword in source[source.index("    def natural_clause(self):"):source.index("    def owner_clause(self,")]
         assert dispatch(keyword + "x")[0] == keyword
 
 
