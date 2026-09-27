@@ -174,6 +174,15 @@ def sortedDistinct (l : List String) : Bool := decide l.Nodup && l == VE.Route.s
 def reservedPredicate (p : String) : Bool := p.startsWith "soft__"
 def containsDunder (s : String) : Bool := (s.splitOn "__").length > 1
 
+def validSoftName (s : String) : Bool :=
+  match s.toList with
+  | [] => false
+  | first :: rest =>
+    first ≥ 'a' && first ≤ 'z' &&
+      rest.all (fun c => (c ≥ 'a' && c ≤ 'z') ||
+                         (c ≥ '0' && c ≤ '9') || c == '_') &&
+      s.utf8ByteSize ≤ 64 && !containsDunder s
+
 def definedOrRegulated (D : SoftDoc) (p : String) : Bool :=
   (D.T.regulated.map (·.name)).contains p || (D.T.definitions.map (·.name)).contains p
 
@@ -185,14 +194,16 @@ def checkSoftEnv (D : SoftDoc) : Except String Unit := do
   if let some a := dupOf env.ranks then throw s!"DuplicateDeclaration: rank {a}"
   if let some π := dupOf env.parties then throw s!"DuplicateDeclaration: party {π}"
   for x in env.ranks ++ env.parties do
-    if containsDunder x || x.isEmpty then throw s!"InvalidInput: invalid soft name {x}"
+    unless validSoftName x do throw s!"InvalidInput: invalid soft name {x}"
   for e in env.outranks ++ env.ties do
     unless env.ranks.contains e.1 do throw s!"UnknownRank: {e.1}"
     unless env.ranks.contains e.2 do throw s!"UnknownRank: {e.2}"
   if env.outranking = .holistic && env.outrankingDecider.isNone then
     throw "MissingExceptionDecider: outranking"
-  for d in env.outrankingDecider.toList ++ env.exceptionDecider.toList do
-    if d.utf8ByteSize > 64 then throw "InvalidInput: invalid soft fields for environment"
+  for d in env.outrankingDecider.toList do
+    if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for outranking"
+  for d in env.exceptionDecider.toList do
+    if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for exception"
   for (p, π) in env.instructionOf do
     unless env.parties.contains π do throw s!"UnknownSymbol: party {π}"
     if definedOrRegulated D p || (D.E.predicates p).isNone then throw s!"InvalidInput: instruction_of on {p}"
@@ -207,8 +218,10 @@ def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
   | _, _ => pure ()
   unless sortedDistinct N.alterable do throw s!"InvalidInput: invalid soft fields for {N.name}"
   if let some e := N.exception then
-    unless e.factors.all (·.utf8ByteSize ≤ 200) && (e.decidedBy.all (·.utf8ByteSize ≤ 64)) do
-      throw s!"InvalidInput: invalid soft fields for {N.name}"
+    unless e.factors.all (·.utf8ByteSize ≤ 200) do
+      throw s!"InvalidInput: invalid factors of rule {N.name}"
+    unless e.decidedBy.all (fun d => !d.isEmpty && d.utf8ByteSize ≤ 64) do
+      throw s!"InvalidInput: invalid decider for rule {N.name}"
   if let some a := N.rank then
     unless env.ranks.contains a do throw s!"UnknownRank: rule {N.name}, {a}"
   for π in N.alterable do

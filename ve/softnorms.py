@@ -12,7 +12,7 @@ import json
 
 from .ast import And, Implies, Not, Or, Top, Bottom, _Checker, _Decoder, _to_data, formula_to_data
 from .background import dependency_order
-from .environment import Environment, validate_identifier
+from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .norms import Norm, NormDocument, _all, _any, _atom, _bind
 from .search import _used_predicates
@@ -39,9 +39,8 @@ def _names(values, label, maximum):
         raise ResourceLimit(label)
     seen = set()
     for name in values:
-        validate_identifier(name)
-        if '__' in name:
-            raise VEError(f"InvalidInput: {label} name contains __: {name}")
+        if not valid_identifier(name) or '__' in name:
+            raise VEError(f"InvalidInput: invalid soft name {name}")
         if name in seen:
             raise DuplicateDeclaration(f"{label[:-1]} {name}")
         seen.add(name)
@@ -102,7 +101,7 @@ class SoftEnvironment(Environment):
                 output.append(tuple(pair))
         dependencies = {r: set() for r in ranks}
         for higher, lower in edges:
-            dependencies[lower].add(higher)
+            dependencies[higher].add(lower)
         dependency_order(dependencies)
         above = {r: set() for r in ranks}
         for higher, lower in edges:
