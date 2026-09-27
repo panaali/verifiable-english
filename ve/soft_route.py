@@ -69,7 +69,8 @@ def classify_soft_pairs(soft_document: SoftNormDocument, *, pairs=None):
                  "pairs": {} if pairs is None else pairs})
 
 
-def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witness=None, pairs=None):
+def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witness=None,
+                        pairs=None, coherent_model=None, budget=None):
     """Replay a conflict package or finite witness against the soft route."""
     elaborate_soft_document(soft_document)
     case = {"id": "soft-conflict", "kind": "soft-conflict",
@@ -80,6 +81,10 @@ def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witne
     else:
         case["packages"] = {} if packages is None else packages
         case["pairs"] = {} if pairs is None else pairs
+        if coherent_model is not None:
+            case["coherent_model"] = coherent_model
+        if budget is not None:
+            case["budget"] = budget
     return _run(case)
 
 
