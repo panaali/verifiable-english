@@ -109,7 +109,8 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - `lean/VE/Service/EnglishRun.lean`: generated copy (deviation 3).
 - `lean/Serve.lean`: IO loop.
 - `lean/VE/Audit.lean`: one import and nine `#print axioms` lines. `lean/lakefile.toml`: two executables.
-- No file under `lean/VE/` other than `Audit.lean` changed; `VE/Route/frozen.py` passes.
+- No pre-existing trusted checker module under `lean/VE/` changed during stage 1;
+  `VE/Route/frozen.py` now pins all 124 VE Lean modules.
 
 ## Gate 1 evidence (2026-09-27, AMD EPYC 7B12, 8 logical CPUs)
 
@@ -119,11 +120,11 @@ latency figures are therefore upper estimates; the plan's gate figures need a re
 
 | Criterion (gate 1 as amended) | Result | Evidence |
 |---|---|---|
-| Byte-identical to the one-shot executables on existing modes | **16,552 / 16,552** cases identical, 0 restarts: every committed runner fixture (evaluation, countermodels, parser, identity, validation, closure, route-cases, v0 replay baseline), the P1, closure-induction and iceberg replay queries, the definitions (2,000), n-ary core (747), DAG (200), norms (1,100) and English (17 vocabularies, about 3,400 pairs) differential generators, the prover-backed certificate, closure, induction and order generators with their forged sets, adversarial and batch-rejecting inputs for every mode | `experiments/lean-service/parity/` |
+| Byte-identical to the one-shot executables on existing modes | **16,556 / 16,556** cases identical, 0 restarts: every committed runner fixture (evaluation, countermodels, parser, identity, validation, closure, route-cases, v0 replay baseline), the P1, closure-induction and iceberg replay queries, the definitions (2,000), n-ary core (747), DAG (200), norms (1,100) and English (17 vocabularies, about 3,400 pairs) differential generators, the prover-backed certificate, closure, induction and order generators with their forged sets, adversarial and batch-rejecting inputs for every mode, plus four English JSON acceptance cases | `experiments/lean-service/parity/` |
 | Fault injection fails closed | kill between and during a batch (one retry succeeds), hang, crash, garbage, truncated output, wrong id, short response, bad or missing handshake → `CheckerUnavailable` after one retry; over-long (16 MiB + 8) line, truncated line, malformed envelopes → one error record each, processing continues | `tests/test_lean_service.py` (23 tests) |
 | Soak | 20,000 mixed-mode requests (1–8 cases each) on one process in 70.5 s: 0 mismatches, 0 restarts, RSS 96.1 MB at request 1,000 → 101.0 MB at 20,000 (+5.1%, one step near request 5,000, then flat) | `experiments/lean-service/soak/` |
 | Service-call latency (median ≤ 5 ms, p95 ≤ 20 ms; 2,047-node certificate p95 ≤ 200 ms) | met on every workload: ordinary medians 0.60–1.70 ms, p95 1.18–4.86 ms; large certificate p50 30.9 ms, p95 45.7 ms; mixed soak p50 2.57 ms, p95 7.85 ms, p99 12.0 ms | `experiments/lean-service/latency/` |
-| `audit.py`, frozen hash test | PASS (129 files, 889 theorems, standard axioms only); `frozen.py` PASS | |
+| `audit.py`, frozen hash test | PASS (129 files, 889 theorems, standard axioms only); `frozen.py` PASS over all 124 VE Lean modules | |
 
 Persistent against one-shot, per call (p50 / p95 ms, persistent timed at the Python boundary):
 
