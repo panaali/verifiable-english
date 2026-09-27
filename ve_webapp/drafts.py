@@ -13,8 +13,8 @@ from pathlib import Path
 from ve import Environment, VEError, meaning_id
 from ve.assist.recovery import RecoveryService
 from ve.assist.ambiguity_patterns import PATTERNS
-from ve.english import parse_english_with_metadata
-from ve.ast import Not
+from ve.english import parse_english_with_metadata, render_english
+from ve.ast import Not, Unary, Const
 from ve.search import find_countermodel
 from ve.surface.definitions import adopt as adopt_glossary
 from ve.profiles import LANGUAGE as MODERN_LANGUAGE, SPEC_REVISION as MODERN_REVISION
@@ -96,17 +96,50 @@ class DraftStore:
                     term=match[1] if match else unit['source'].split()[0],
                     accepted_prefix='', expected=reason or 'A declared English sentence',
                     registered=registered)
+                unit['templates'] = self._templates(service.env)
             unit['cards'] = []
             for result in unit['catalogue_results'].values():
                 for card in result.get('cards', []):
                     unit['cards'].append({**card, 'situation_text': self._situation(service.env, card['model'])})
             unit['suggestions'] = [e['text'] for e in service.events[-20:]
                                    if e['action'] == 'proposer_suggested' and e['unit'] == unit['id']]
+        undo_target = None
+        if units:
+            previous = [e for e in service.events[:-1] if e['unit'] == 'main']
+            different = next((e for e in reversed(previous)
+                              if e['unit_snapshot']['source'] != units[0]['source']), None)
+            draft = next((e for e in previous if e['unit_snapshot']['state'] == 'draft'), None)
+            target = different or draft
+            undo_target = target['revision'] if target else None
         return {'id': row['id'], 'revision': row['revision'], 'example': row['example'],
                 'environment': json.loads(row['environment']), 'units': units,
+                'document_units': [{'source': u['source'], 'status': u['state'],
+                                    'reason': u['reason'], 'approved': u['approval'] is not None}
+                                   for u in units],
+                'undo_target': undo_target,
                 'versions': service.versions, 'limits': service.limits,
                 'history': [{'revision': e['revision'], 'action': e['action']}
                             for e in service.events[-20:]]}
+
+    @staticmethod
+    def _templates(env):
+        result = []
+        for name, predicate in env.predicates.items():
+            if len(predicate.arguments) != 1:
+                continue
+            for constant, declaration in env.constants.items():
+                if declaration.sort != predicate.arguments[0]:
+                    continue
+                try:
+                    wording = render_english(Unary(name, Const(constant)), env).strip().rstrip('.') + '.'
+                    parsed = parse_english_with_metadata(env, wording + '\n')
+                    if len(parsed.document.formulas) == 1 and parsed.document.formulas[0] == Unary(name, Const(constant)):
+                        result.append(wording)
+                except (VEError, SyntaxError, ValueError):
+                    pass
+                if len(result) == 3:
+                    return result
+        return result
 
     @staticmethod
     def _situation(env, model):
@@ -195,11 +228,16 @@ class DraftStore:
         unit = service.units.get('main')
         if action == 'save':
             source = args.get('source')
+            mode = args.get('mode', 'authoring')
             if type(source) is not str or not source.strip() or len(source) > MAX_SOURCE:
                 raise ValueError('Enter up to 6000 characters of English.')
+            if type(mode) is not str or mode not in {'authoring', 'translation'}:
+                raise ValueError('Choose authoring or translation mode.')
             if unit is None:
-                service.add('main', source, {'start': 0, 'end': len(source)})
+                service.add('main', source, {'start': 0, 'end': len(source)}, mode=mode)
             else:
+                if mode != unit.mode:
+                    raise ValueError('Mode is fixed for this document; start a new document to change it.')
                 service.edit('main', source=source, anchor={'start': 0, 'end': len(source)})
         elif action == 'analyze':
             self._needs_unit(unit)
@@ -223,7 +261,12 @@ class DraftStore:
             dispositions = ({pattern.id: {'disposition': 'not_applicable', 'actor': 'workspace author',
                              'reason': 'Explicit checked paraphrase selected after reading review'}
                             for pattern in PATTERNS if pattern.matches(source)} if reviewed_rewrite else {})
+            force = ('unsupported' if re.search(r'\b(caused|probably|reasonable|should|generally)\b', source, re.I)
+                     else 'supported')
+            discourse = ('incomplete' if re.search(r'\b(it|they|her|his)\b|\bdoes too\b', source, re.I)
+                         else 'complete')
             service.classify('main', parse_outcome=outcome, vocabulary=vocabulary,
+                             force=force, discourse=discourse,
                              pending=([{'reason': error[:300]}] if outcome == 'zero' and error else []),
                              catalogue_bindings=self._bindings(row_example=env_json, source=source),
                              catalogue_dispositions=dispositions)
@@ -250,7 +293,9 @@ class DraftStore:
                 raise ValueError('Choose a unit revision to restore.')
             prior = next((event['unit_snapshot'] for event in service.events
                           if event['unit'] == 'main' and event['revision'] == target), None)
-            if prior and prior['state'] == 'draft' and unit.state in {'unresolved', 'exhausted'}:
+            if prior and prior['state'] == 'draft' and unit.state != 'draft':
+                if unit.state == 'approved':
+                    service.unresolved('main', 'Undo requested an earlier unapproved draft.')
                 service.cancel('main')
             service.undo('main', target)
         elif action == 'proposer_reserve':
@@ -295,24 +340,38 @@ class DraftStore:
                 new_json = adopt_glossary(raw, sentence)
             else:
                 word, kind = args.get('word'), args.get('kind')
+                positive, negative = args.get('positive_example'), args.get('negative_example')
+                if (type(positive) is not str or not positive.strip() or len(positive) > 300
+                        or type(negative) is not str or not negative.strip() or len(negative) > 300):
+                    raise ValueError('Give one positive and one negative example for the new word.')
                 if type(word) is not str or not re.fullmatch(r'[a-z][a-z-]{0,40}', word):
                     raise ValueError('Use one lower-case word for the new term.')
                 if type(kind) is not str or kind not in {'person', 'property', 'relation'}:
                     raise ValueError('Choose person, property, or relation.')
                 vocabulary = raw['vocabulary']
+                description = args.get('description') or word
+                if type(description) is not str or len(description) > 300:
+                    raise ValueError('Describe the new word in at most 300 characters.')
+                description = (description + ' Applies: ' + positive.strip() +
+                               ' Does not apply: ' + negative.strip())
                 if word in vocabulary['sorts'] or word in vocabulary['predicates']:
                     raise ValueError('This term is already declared.')
                 if kind == 'person':
-                    vocabulary['sorts'][word] = {'description': args.get('description') or word}
+                    vocabulary['sorts'][word] = {'description': description}
                 else:
                     sorts = args.get('sorts')
                     count = 1 if kind == 'property' else 2
                     if (type(sorts) is not list or len(sorts) != count
                             or any(type(s) is not str or s not in vocabulary['sorts'] for s in sorts)):
                         raise ValueError('Choose declared kinds of things for the new word.')
+                    direction = args.get('direction')
+                    if count == 2 and (type(direction) is not str or direction not in {'first_to_second', 'second_to_first'}):
+                        raise ValueError('Confirm who acts on whom for a relation.')
+                    phrase = ('{0} is ' + word if count == 1 else
+                              '{0} ' + word + ' {1}' if direction == 'first_to_second' else
+                              '{1} ' + word + ' {0}')
                     vocabulary['predicates'][word] = {
-                        'arguments': sorts, 'description': args.get('description') or word,
-                        'verbalisation': ('{0} is ' + word if count == 1 else '{0} ' + word + ' {1}')}
+                        'arguments': sorts, 'description': description, 'verbalisation': phrase}
                 new_json = raw
             new_env = Environment(new_json)
             replacement = RecoveryService(new_env, grammar_version='ve.english@1',

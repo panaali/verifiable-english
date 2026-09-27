@@ -388,7 +388,9 @@ def test_glossary_and_rules_checked_in_english(setup):
     doc = _command(client, headers, doc, 'save', {'source': 'Api is reliable.'}).json()
     for word in ('reliable', 'dependable'):
         response = _command(client, headers, doc, 'define', {'word': word, 'kind': 'property',
-                    'sorts': ['service'], 'description': 'Confirmed property.'})
+                    'sorts': ['service'], 'description': 'Confirmed property.',
+                    'positive_example': 'Api has this property.',
+                    'negative_example': 'Web lacks this property.'})
         assert response.status_code == 200, response.text
         doc = response.json()
     response = _command(client, headers, doc, 'glossary',
@@ -402,3 +404,120 @@ def test_glossary_and_rules_checked_in_english(setup):
     assert conflict.status_code == 200, conflict.text
     assert conflict.json()['status'] == 'conflict'
     assert 'urgent act' in conflict.json()['explanation']
+
+
+def test_document_status_templates_and_unformalised_force(setup):
+    client, _, _ = setup
+    headers = login(client)
+    doc = client.post('/api/drafts', json={}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'An unknown statement.'}).json()
+    doc = _command(client, headers, doc, 'analyze').json()
+    assert doc['document_units'][0]['status'] == doc['units'][0]['state']
+    templates = doc['units'][0]['templates']
+    assert templates and all(not re.search(r'[@()\[\]*<=]', text) for text in templates)
+    for source in ('The API is deployed. Some service is reviewed. It is safe.',
+                   'They are safe.', 'Her manager is safe.',
+                   'Alice reviews the API; Bob checks the service; Carol does too.',
+                   'Take reasonable precautions.', 'The patch caused recovery.',
+                   'The service is probably safe.'):
+        doc = client.post('/api/drafts', json={}, headers=headers).json()
+        doc = _command(client, headers, doc, 'save', {'source': source}).json()
+        doc = _command(client, headers, doc, 'analyze').json()
+        assert doc['units'][0]['state'] not in ('ready', 'approved'), source
+        assert _command(client, headers, doc, 'approve', {'wording': 'Api is safe.'}).status_code == 400
+
+
+def test_relation_direction_and_unconfirmed_examples_rejected(setup):
+    client, _, _ = setup
+    headers = login(client)
+    doc = client.post('/api/drafts', json={}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'Api links web.'}).json()
+    args = {'word': 'links', 'kind': 'relation', 'sorts': ['service', 'service'],
+            'positive_example': 'Api links web.', 'negative_example': 'Web does not link api.'}
+    assert _command(client, headers, doc, 'define', {**args, 'direction': []}).status_code == 400
+    assert _command(client, headers, doc, 'define', {**args, 'negative_example': '',
+                                                    'direction': 'first_to_second'}).status_code == 400
+    response = _command(client, headers, doc, 'define', {**args, 'direction': 'second_to_first'})
+    assert response.status_code == 200, response.text
+    assert response.json()['environment']['vocabulary']['predicates']['links']['verbalisation'] == '{1} links {0}'
+
+
+def test_inflight_assistant_result_is_discarded_after_cancel(tmp_path):
+    import threading
+    started, release = threading.Event(), threading.Event()
+    async def slow_runner(action, data, settings):
+        started.set()
+        await asyncio.to_thread(release.wait, 5)
+        return {'candidates': [{'natural': {'sentences': [{'form': 'natural', 'text': 'Api is safe'}]}}]}
+    settings = Settings(TOKEN, tmp_path, secure=False, assist=True,
+                        claude_cli_version='test CLI version')
+    with TestClient(create_app(settings, slow_runner)) as client:
+        headers = login(client)
+        doc = client.post('/api/drafts', json={}, headers=headers).json()
+        doc = _command(client, headers, doc, 'save', {'source': 'Unknown statement.'}).json()
+        doc = _command(client, headers, doc, 'analyze').json()
+        answer = []
+        thread = threading.Thread(target=lambda: answer.append(client.post(
+            f"/api/drafts/{doc['id']}/assist", headers=headers,
+            json={'revision': doc['revision'], 'request_id': 'slow-assist-1'})))
+        thread.start()
+        try:
+            assert started.wait(3)
+            current = client.get(f"/api/drafts/{doc['id']}").json()
+            assert current['history'][-1]['action'] == 'proposer_reserved'
+            cancelled = _command(client, headers, current, 'cancel')
+            assert cancelled.status_code == 200, cancelled.text
+        finally:
+            release.set()
+            thread.join(6)
+        assert not thread.is_alive()
+        assert answer[0].json()['status'] == 'stale'
+        restored = client.get(f"/api/drafts/{doc['id']}").json()
+        assert restored['units'][0]['state'] == 'draft'
+        assert not restored['units'][0]['suggestions']
+
+
+def test_persistent_ledger_and_import_tampering_are_rejected(tmp_path):
+    import sqlite3
+    settings = Settings(TOKEN, tmp_path, secure=False)
+    with TestClient(create_app(settings)) as client:
+        headers = login(client)
+        doc = client.post('/api/drafts', json={}, headers=headers).json()
+        doc = _command(client, headers, doc, 'save', {'source': 'Api is safe.'}).json()
+        doc = _command(client, headers, doc, 'analyze').json()
+        doc = _command(client, headers, doc, 'approve', {'wording': 'Api is safe.'}).json()
+        exported = client.get(f"/api/drafts/{doc['id']}/export").json()
+        for field, altered in [('source', 'Forged source.'), ('anchor', {'start': 9, 'end': 10}),
+                               ('meaning_id', 'forged-meaning-id'), ('approval', None)]:
+            bad = json.loads(json.dumps(exported))
+            bad['ledger']['events'][-1]['unit_snapshot'][field] = altered
+            assert client.post('/api/drafts/import', json=bad, headers=headers).status_code == 400
+        bad = json.loads(json.dumps(exported))
+        bad['document']['environment']['vocabulary']['predicates']['safe']['description'] = 'Forged.'
+        assert client.post('/api/drafts/import', json=bad, headers=headers).status_code == 400
+        db = settings.state / 'drafts.sqlite3'
+        with sqlite3.connect(db) as connection:
+            connection.execute('UPDATE drafts SET ledger=? WHERE id=?', ('{}', doc['id']))
+        assert client.get(f"/api/drafts/{doc['id']}").status_code == 404
+
+
+def test_translation_preserves_alternatives_without_cited_narrowing(setup):
+    client, _, _ = setup
+    headers = login(client)
+    doc = client.post('/api/drafts', json={'example': 'scope'}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'Every engineer checks a server.',
+                                                   'mode': 'translation'}).json()
+    doc = _command(client, headers, doc, 'analyze').json()
+    unit = doc['units'][0]
+    assert unit['mode'] == 'translation'
+    assert len(unit['readings']) == 2
+    assert unit['cards'] and unit['cards'][0]['values'][0] != unit['cards'][0]['values'][1]
+    for wording in unit['cards'][0]['paraphrases']:
+        assert _command(client, headers, doc, 'approve', {'wording': wording}).status_code == 400
+    assert _command(client, headers, doc, 'save', {'source': unit['source'],
+                                                  'mode': 'authoring'}).status_code == 400
+    exported = client.get(f"/api/drafts/{doc['id']}/export").json()
+    imported = client.post('/api/drafts/import', json=exported, headers=headers)
+    assert imported.status_code == 200, imported.text
+    assert len(imported.json()['units'][0]['readings']) == 2
+    assert imported.json()['units'][0]['approval'] is None
