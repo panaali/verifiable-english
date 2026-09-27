@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Callable, NamedTuple
 
-from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Var
+from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Unary, Var
 from .errors import InvalidModel, ResourceLimit
 
 
@@ -43,6 +43,32 @@ def _valid_literals(env, model):
         denotations[value] = name
 
 
+def _profile_pairs(env):
+    return tuple((name, decl.regulated.permission) for name, decl in sorted(env.predicates.items())
+                 if decl.regulated is not None and decl.regulated.permission is not None)
+
+
+def _profile_premises(env):
+    result = []
+    for required, permitted in _profile_pairs(env):
+        sorts = env.predicates[required].arguments
+        terms = tuple(Var(len(sorts) - 1 - i) for i in range(len(sorts)))
+        atom = lambda name: Unary(name, terms[0]) if len(terms) == 1 else Binary(name, *terms)
+        formula = Implies(atom(required), atom(permitted))
+        for sort in reversed(sorts):
+            formula = Forall(sort, formula)
+        result.append(formula)
+    return tuple(result)
+
+
+def _valid_profile(env, model):
+    for required, permitted in _profile_pairs(env):
+        if not model.relations[required] <= model.relations[permitted]:
+            raise InvalidModel(f"required relation {required} exceeds permission {permitted}", generator="profile")
+
+
+# Each entry is (premise generator, validity checker). The three empty slots
+# are deliberately explicit extension points for W5, W3 and W1.
 def _flag_premises(env):
     result = []
     for name, decl in sorted(env.predicates.items()):
@@ -97,7 +123,7 @@ HOOKS: dict[str, tuple[Callable, Callable]] = {
     "flags": (_flag_premises, _valid_flags),
     "definitions": (_definition_premises, _valid_definitions),
     "literals": (_literal_premises, _valid_literals),
-    "profile": (_empty, _valid),
+    "profile": (_profile_premises, _valid_profile),
 }
 
 
@@ -113,8 +139,7 @@ def background(env) -> tuple[Premise, ...]:
 def checked_premises(env, layer_premises, case_premises):
     """The certificate order: Background ++ composed layer premises ++ Γ.
 
-    Layer premises are in composition order. P0 has no executable layers, so
-    current callers pass an empty layer list. Keep this order when they land.
+    Layer premises are in composition order after the regenerated Background.
     """
     return (tuple(item.formula for item in background(env)) +
             tuple(layer_premises) + tuple(case_premises))
