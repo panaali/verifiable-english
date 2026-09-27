@@ -6,9 +6,8 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 865 Python files; found 4696 import edges into section 1.1 modules.
-External tree `/home/seyran/code/ve-webapp` at `47d7803af33d9fce5d39a9caa7ee26f8af71606c`.
-External tree `/home/seyran/code/ve-bench` at `7f12a5d2714e4b9595f52e4f801d1de8338137ee`.
+Parsed 234 Python files; found 1828 import edges into section 1.1 modules.
+External scans include only the native `ve_webapp/` and `bench/` packages; vendored `ve/`, tests, and conformance copies are excluded. Paths use portable `external:` labels; local optional-tree availability can change this inventory and must be supplied for exact replay.
 
 ## Symbols
 
@@ -16,13 +15,13 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 
 | Module | Symbol | Line | Class | Stage 2 adapter → interface for A | Direct import consumers |
 |---|---|---:|:---:|---|---|
-| `ve/admission.py` | `AdmissionError` | 36 | U | — | `tests/test_norm_admission.py:6`, `tests/test_p0_three_way.py:287`, `/home/seyran/code/ve-webapp/tests/test_norm_admission.py:6`, `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py:287`, `/home/seyran/code/ve-bench/tests/test_norm_admission.py:6`, `/home/seyran/code/ve-bench/tests/test_p0_three_way.py:287` |
+| `ve/admission.py` | `AdmissionError` | 36 | U | — | `tests/test_norm_admission.py:6`, `tests/test_p0_three_way.py:287` |
 | `ve/admission.py` | `token` | 40 | U | — | `ve/document.py:14`, `ve/openterms.py:4`, `ve/readings.py:10` |
 | `ve/admission.py` | `Label` | 45 | U | — | — |
 | `ve/admission.py` | `Label.render` | 49 | U | — | — |
 | `ve/admission.py` | `_parse_raw` | 60 | U | — | — |
-| `ve/admission.py` | `parse_label` | 88 | U | — | `ve/bundle.py:20`, `ve/document.py:251`, `ve/document.py:275`, `tests/test_p0_three_way.py:64`, `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py:64`, `/home/seyran/code/ve-bench/tests/test_p0_three_way.py:64` |
-| `ve/admission.py` | `validate_label` | 96 | U | — | `ve/argument.py:65`, `ve/bundle.py:20`, `tests/probe_matrix.py:33`, `tests/test_p0_three_way.py:64`, `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py:64`, `/home/seyran/code/ve-bench/tests/test_p0_three_way.py:64` |
+| `ve/admission.py` | `parse_label` | 88 | U | — | `ve/bundle.py:20`, `ve/document.py:251`, `ve/document.py:275`, `tests/test_p0_three_way.py:64` |
+| `ve/admission.py` | `validate_label` | 96 | U | — | `ve/argument.py:65`, `ve/bundle.py:20`, `tests/probe_matrix.py:34`, `tests/test_p0_three_way.py:64` |
 | `ve/admission.py` | `_check_kind` | 103 | U | — | `ve/document.py:14`, `ve/readings.py:10` |
 | `ve/admission.py` | `_quoted` | 133 | U | — | — |
 | `ve/admission.py` | `_agent_matches` | 137 | U | — | — |
@@ -48,87 +47,87 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/admission.py` | `_check_graph` | 367 | A | `ve/backends/dispatch.py` → Lean admission / label | — |
 | `ve/admission.py` | `_compatible` | 396 | U | — | — |
 | `ve/admission.py` | `_claim_json` | 403 | U | — | — |
-| `ve/admission.py` | `admit_document` | 410 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:33`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:234`, `tests/test_norms_three_way.py:304` (+27) |
-| `ve/argument.py` | `_checker_build` | 32 | S | — | `tests/test_background.py:7`, `tests/test_p1_history.py:7`, `/home/seyran/code/ve-webapp/tests/test_background.py:7`, `/home/seyran/code/ve-webapp/tests/test_p1_history.py:7`, `/home/seyran/code/ve-bench/tests/test_background.py:7`, `/home/seyran/code/ve-bench/tests/test_p1_history.py:7` |
+| `ve/admission.py` | `admit_document` | 410 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:34`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:234`, `tests/test_norms_three_way.py:304` (+7) |
+| `ve/argument.py` | `_checker_build` | 32 | S | — | `tests/test_background.py:7`, `tests/test_p1_history.py:7` |
 | `ve/argument.py` | `_sequence` | 57 | S | — | — |
 | `ve/argument.py` | `_label` | 63 | S | — | — |
 | `ve/argument.py` | `_text` | 69 | S | — | — |
-| `ve/argument.py` | `Claim` | 76 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Claim.__post_init__` | 86 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Claim.create` | 90 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Claim.claim_id` | 106 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Claim.to_dict` | 114 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Claim.from_dict` | 124 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+29) |
-| `ve/argument.py` | `Evidence` | 136 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `/home/seyran/code/ve-webapp/experiments/E5/materials.py:21`, `/home/seyran/code/ve-webapp/tests/test_argument.py:6` (+4) |
-| `ve/argument.py` | `Evidence.__post_init__` | 153 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `/home/seyran/code/ve-webapp/experiments/E5/materials.py:21`, `/home/seyran/code/ve-webapp/tests/test_argument.py:6` (+4) |
-| `ve/argument.py` | `Evidence.expected_binding` | 157 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `/home/seyran/code/ve-webapp/experiments/E5/materials.py:21`, `/home/seyran/code/ve-webapp/tests/test_argument.py:6` (+4) |
-| `ve/argument.py` | `Evidence.to_dict` | 161 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `/home/seyran/code/ve-webapp/experiments/E5/materials.py:21`, `/home/seyran/code/ve-webapp/tests/test_argument.py:6` (+4) |
-| `ve/argument.py` | `Evidence.from_dict` | 165 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `/home/seyran/code/ve-webapp/experiments/E5/materials.py:21`, `/home/seyran/code/ve-webapp/tests/test_argument.py:6` (+4) |
-| `ve/argument.py` | `Deduction` | 173 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+23) |
-| `ve/argument.py` | `Deduction.__post_init__` | 180 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+23) |
-| `ve/argument.py` | `Deduction.to_dict` | 184 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+23) |
-| `ve/argument.py` | `ArgumentGraph` | 191 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.__post_init__` | 199 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.to_dict` | 203 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.to_json` | 209 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.graph_id` | 213 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.from_dict` | 217 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `ArgumentGraph.from_json` | 237 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+34) |
-| `ve/argument.py` | `deduction_identity` | 241 | S | — | `ve/__init__.py:22`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` (+10) |
+| `ve/argument.py` | `Claim` | 76 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Claim.__post_init__` | 86 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Claim.create` | 90 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Claim.claim_id` | 106 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Claim.to_dict` | 114 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Claim.from_dict` | 124 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+7) |
+| `ve/argument.py` | `Evidence` | 136 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
+| `ve/argument.py` | `Evidence.__post_init__` | 153 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
+| `ve/argument.py` | `Evidence.expected_binding` | 157 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
+| `ve/argument.py` | `Evidence.to_dict` | 161 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
+| `ve/argument.py` | `Evidence.from_dict` | 165 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
+| `ve/argument.py` | `Deduction` | 173 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+5) |
+| `ve/argument.py` | `Deduction.__post_init__` | 180 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+5) |
+| `ve/argument.py` | `Deduction.to_dict` | 184 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+5) |
+| `ve/argument.py` | `ArgumentGraph` | 191 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.__post_init__` | 199 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.to_dict` | 203 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.to_json` | 209 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.graph_id` | 213 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.from_dict` | 217 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `ArgumentGraph.from_json` | 237 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:11`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+6) |
+| `ve/argument.py` | `deduction_identity` | 241 | S | — | `ve/__init__.py:22`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6` |
 | `ve/argument.py` | `_validate_graph` | 249 | U | — | — |
 | `ve/argument.py` | `ArgumentResult` | 347 | S | — | `ve/__init__.py:22` |
 | `ve/argument.py` | `ArgumentResult.to_dict` | 367 | S | — | `ve/__init__.py:22` |
 | `ve/argument.py` | `ArgumentResult.to_json` | 387 | S | — | `ve/__init__.py:22` |
 | `ve/argument.py` | `_check_edge` | 392 | A | `ve/backends/dispatch.py` → Lean graph report and edge checks | — |
 | `ve/argument.py` | `_lean_deductions` | 485 | A | `ve/backends/dispatch.py` → Lean graph report and edge checks | — |
-| `ve/argument.py` | `check_argument` | 524 | A | `ve/backends/dispatch.py` → Lean graph report and edge checks | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:20`, `tests/test_argument.py:6` (+38) |
+| `ve/argument.py` | `check_argument` | 524 | A | `ve/backends/dispatch.py` → Lean graph report and edge checks | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `ve/assist/session.py:29`, `ve/english.py:1438`, `tests/probe_matrix.py:21`, `tests/test_argument.py:6` (+8) |
 | `ve/argument.py` | `_display_context` | 620 | S | — | — |
-| `ve/argument.py` | `outstanding_obligations` | 627 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_background.py:7` (+11) |
-| `ve/argument.py` | `_predicates` | 667 | S | — | `tests/test_nary.py:55`, `/home/seyran/code/ve-webapp/tests/test_nary.py:55`, `/home/seyran/code/ve-bench/tests/test_nary.py:55` |
-| `ve/argument.py` | `predicate_use_panel` | 694 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_nary.py:58` (+8) |
-| `ve/ast.py` | `Var` | 18 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+128) |
-| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+120) |
-| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242`, `tests/test_natural.py:15`, `tests/test_order.py:17` (+7) |
-| `ve/ast.py` | `Add` | 34 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+6) |
-| `ve/ast.py` | `Scale` | 40 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+9) |
-| `ve/ast.py` | `Top` | 50 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/attacks.py:14`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+146) |
-| `ve/ast.py` | `Bottom` | 55 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+106) |
-| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+130) |
-| `ve/ast.py` | `Binary` | 66 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+104) |
-| `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+7) |
-| `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+7) |
-| `ve/ast.py` | `Eq` | 85 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+99) |
-| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+136) |
-| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+122) |
-| `ve/ast.py` | `Or` | 102 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/admission.py:16`, `ve/document.py:214`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+86) |
-| `ve/ast.py` | `Implies` | 108 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+104) |
-| `ve/ast.py` | `Forall` | 114 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+127) |
-| `ve/ast.py` | `Exists` | 120 | S | — | `ve/__init__.py:2`, `ve/attacks.py:14`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+104) |
-| `ve/ast.py` | `Named` | 126 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/norms.py:97` (+33) |
-| `ve/ast.py` | `Body` | 131 | S | — | `ve/__init__.py:2`, `ve/argument.py:16`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/search.py:9` (+25) |
-| `ve/ast.py` | `Reach` | 140 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+44) |
-| `ve/ast.py` | `Lt` | 148 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/test_natural.py:15`, `tests/test_order.py:17` (+7) |
-| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/test_natural.py:15`, `tests/test_order.py:17` (+7) |
+| `ve/argument.py` | `outstanding_obligations` | 627 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_background.py:7` (+1) |
+| `ve/argument.py` | `_predicates` | 667 | S | — | `tests/test_nary.py:55` |
+| `ve/argument.py` | `predicate_use_panel` | 694 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_nary.py:58` |
+| `ve/ast.py` | `Var` | 18 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+43) |
+| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+42) |
+| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242`, `tests/probe_matrix.py:499`, `tests/test_natural.py:15` (+2) |
+| `ve/ast.py` | `Add` | 34 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+2) |
+| `ve/ast.py` | `Scale` | 40 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+3) |
+| `ve/ast.py` | `Top` | 50 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/attacks.py:14`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+50) |
+| `ve/ast.py` | `Bottom` | 55 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+36) |
+| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+44) |
+| `ve/ast.py` | `Binary` | 66 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+34) |
+| `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+1) |
+| `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+1) |
+| `ve/ast.py` | `Eq` | 85 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+33) |
+| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+46) |
+| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+40) |
+| `ve/ast.py` | `Or` | 102 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/admission.py:16`, `ve/document.py:214`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+29) |
+| `ve/ast.py` | `Implies` | 108 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+32) |
+| `ve/ast.py` | `Forall` | 114 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+40) |
+| `ve/ast.py` | `Exists` | 120 | S | — | `ve/__init__.py:2`, `ve/attacks.py:14`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+34) |
+| `ve/ast.py` | `Named` | 126 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/norms.py:97` (+9) |
+| `ve/ast.py` | `Body` | 131 | S | — | `ve/__init__.py:2`, `ve/argument.py:16`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/search.py:9` (+7) |
+| `ve/ast.py` | `Reach` | 140 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+14) |
+| `ve/ast.py` | `Lt` | 148 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/probe_matrix.py:499`, `tests/test_natural.py:15` (+2) |
+| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/probe_matrix.py:499`, `tests/test_natural.py:15` (+2) |
 | `ve/ast.py` | `integer_value` | 166 | S | — | — |
 | `ve/ast.py` | `decimal_from_wire` | 175 | S | — | `ve/model.py:93`, `ve/order.py:38` |
 | `ve/ast.py` | `decimal_to_wire` | 186 | S | — | `ve/order.py:38` |
-| `ve/ast.py` | `Document` | 191 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+81) |
-| `ve/ast.py` | `Document.__post_init__` | 194 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+81) |
+| `ve/ast.py` | `Document` | 191 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+25) |
+| `ve/ast.py` | `Document.__post_init__` | 194 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+25) |
 | `ve/ast.py` | `_Checker` | 200 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.__init__` | 201 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.tick` | 206 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.term` | 211 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.formula` | 242 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
-| `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+13) |
-| `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6`, `/home/seyran/code/ve-webapp/tests/test_conformance.py:6` (+1) |
-| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/norms.py:13`, `ve/order.py:38`, `tests/probe_matrix.py:22`, `tests/test_definitions_differential.py:145` (+17) |
-| `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+73) |
-| `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:22`, `tests/test_closure_certificates.py:9` (+40) |
+| `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+5) |
+| `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6` |
+| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/norms.py:13`, `ve/order.py:38`, `tests/probe_matrix.py:23`, `tests/test_definitions_differential.py:145` (+5) |
+| `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+23) |
+| `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:23`, `tests/test_closure_certificates.py:9` (+10) |
 | `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
 | `ve/ast.py` | `_Decoder.__init__` | 380 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
 | `ve/ast.py` | `_Decoder.decode` | 383 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
-| `ve/ast.py` | `formula_from_data` | 449 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/bundle.py:21` (+66) |
-| `ve/ast.py` | `document_from_data` | 455 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145`, `tests/test_lean_conformance.py:15` (+50) |
+| `ve/ast.py` | `formula_from_data` | 449 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/bundle.py:21` (+24) |
+| `ve/ast.py` | `document_from_data` | 455 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145`, `tests/test_lean_conformance.py:15` (+14) |
 | `ve/ast.py` | `doc_from_json` | 462 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7` |
 | `ve/background.py` | `Premise` | 15 | U | — | — |
 | `ve/background.py` | `_empty` | 20 | D | — | — |
@@ -142,72 +141,72 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/background.py` | `_valid_flags` | 86 | U | — | — |
 | `ve/background.py` | `_definition_premises` | 100 | U | — | — |
 | `ve/background.py` | `_valid_definitions` | 107 | U | — | — |
-| `ve/background.py` | `background` | 130 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/admission.py:17`, `ve/argument.py:645`, `ve/argument.py:511`, `ve/argument.py:590`, `ve/assist/ambiguity_patterns.py:17`, `ve/assist/recovery.py:1173` (+46) |
-| `ve/background.py` | `checked_premises` | 139 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:316`, `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py:316`, `/home/seyran/code/ve-bench/tests/test_p0_three_way.py:316` |
-| `ve/background.py` | `validate_background` | 148 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/assist/ambiguity_patterns.py:18`, `ve/assist/recovery.py:1173`, `ve/evaluate.py:184`, `ve/model.py:169`, `ve/norms.py:325`, `ve/norms.py:364` (+3) |
-| `ve/background.py` | `dependency_order` | 160 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/definitions.py:11`, `ve/norms.py:15`, `tests/probe_matrix.py:24`, `tests/test_background.py:10`, `/home/seyran/code/ve-webapp/tests/test_background.py:10`, `/home/seyran/code/ve-bench/tests/test_background.py:10` |
-| `ve/background.py` | `dependency_order_nodes` | 179 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66`, `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py:66`, `/home/seyran/code/ve-bench/tests/test_p0_three_way.py:66` |
+| `ve/background.py` | `background` | 130 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/admission.py:17`, `ve/argument.py:645`, `ve/argument.py:511`, `ve/argument.py:590`, `ve/assist/ambiguity_patterns.py:17`, `ve/assist/recovery.py:1173` (+18) |
+| `ve/background.py` | `checked_premises` | 139 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:316` |
+| `ve/background.py` | `validate_background` | 148 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/assist/ambiguity_patterns.py:18`, `ve/assist/recovery.py:1173`, `ve/evaluate.py:184`, `ve/model.py:169`, `ve/norms.py:325`, `ve/norms.py:364` (+1) |
+| `ve/background.py` | `dependency_order` | 160 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/definitions.py:11`, `ve/norms.py:15`, `tests/probe_matrix.py:25`, `tests/test_background.py:10` |
+| `ve/background.py` | `dependency_order_nodes` | 179 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66` |
 | `ve/bundle.py` | `_english` | 32 | U | — | — |
 | `ve/bundle.py` | `_leaf_choices` | 41 | U | — | — |
 | `ve/bundle.py` | `_bind_leaf` | 66 | U | — | — |
-| `ve/bundle.py` | `lean_bundle_verdict` | 85 | U | — | `tests/test_bundle.py:86`, `tests/test_bundle.py:107`, `tests/test_bundle.py:155`, `tests/test_bundle.py:193`, `tests/test_bundle.py:208`, `tests/test_bundle.py:238` (+21) |
-| `ve/bundle.py` | `check_bundle` | 101 | A | `ve/backends/dispatch.py` → Lean bundle | `ve/__main__.py:53`, `tests/probe_matrix.py:34`, `tests/test_bundle.py:9`, `tests/test_definitions_english.py:13`, `/home/seyran/code/ve-webapp/tests/test_bundle.py:9`, `/home/seyran/code/ve-webapp/tests/test_definitions_english.py:13` (+5) |
-| `ve/closure.py` | `InductionInvariant` | 11 | U | — | `ve/__init__.py:21`, `conformance/induction.py:12`, `/home/seyran/code/ve-webapp/conformance/induction.py:12`, `/home/seyran/code/ve-bench/conformance/induction.py:12` |
-| `ve/closure.py` | `invariant_at` | 22 | U | — | `conformance/induction.py:12`, `/home/seyran/code/ve-webapp/conformance/induction.py:12`, `/home/seyran/code/ve-bench/conformance/induction.py:12` |
-| `ve/closure.py` | `induction_step` | 26 | U | — | `tests/test_assist.py:380`, `tests/test_closure_induction.py:16`, `tests/test_nary_differential.py:21`, `conformance/induction.py:12`, `/home/seyran/code/ve-webapp/conformance/induction.py:12`, `/home/seyran/code/ve-webapp/tests/test_assist.py:380` (+6) |
-| `ve/closure.py` | `derive_induction` | 34 | U | — | `ve/entailment.py:630`, `conformance/induction.py:12`, `ve_experiments/t1c/certificates.py:26`, `/home/seyran/code/ve-webapp/conformance/induction.py:12`, `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py:26`, `/home/seyran/code/ve-bench/conformance/induction.py:12` (+1) |
-| `ve/closure.py` | `induction_candidates` | 55 | U | — | `ve/entailment.py:388`, `conformance/induction.py:12`, `/home/seyran/code/ve-webapp/conformance/induction.py:12`, `/home/seyran/code/ve-bench/conformance/induction.py:12` |
+| `ve/bundle.py` | `lean_bundle_verdict` | 85 | U | — | `tests/test_bundle.py:86`, `tests/test_bundle.py:107`, `tests/test_bundle.py:155`, `tests/test_bundle.py:193`, `tests/test_bundle.py:208`, `tests/test_bundle.py:238` (+3) |
+| `ve/bundle.py` | `check_bundle` | 101 | A | `ve/backends/dispatch.py` → Lean bundle | `ve/__main__.py:53`, `tests/probe_matrix.py:35`, `tests/test_bundle.py:9`, `tests/test_definitions_english.py:13`, `external:ve-bench/worker.py:14` |
+| `ve/closure.py` | `InductionInvariant` | 11 | U | — | `ve/__init__.py:21`, `conformance/induction.py:12` |
+| `ve/closure.py` | `invariant_at` | 22 | U | — | `conformance/induction.py:12` |
+| `ve/closure.py` | `induction_step` | 26 | U | — | `tests/test_assist.py:380`, `tests/test_closure_induction.py:16`, `tests/test_nary_differential.py:21`, `conformance/induction.py:12` |
+| `ve/closure.py` | `derive_induction` | 34 | U | — | `ve/entailment.py:630`, `conformance/induction.py:12`, `ve_experiments/t1c/certificates.py:26` |
+| `ve/closure.py` | `induction_candidates` | 55 | U | — | `ve/entailment.py:388`, `conformance/induction.py:12` |
 | `ve/closure.py` | `map_free` | 78 | U | — | — |
-| `ve/closure.py` | `shift` | 114 | U | — | `tests/test_nary.py:15`, `conformance/closure_certificates.py:84`, `/home/seyran/code/ve-webapp/conformance/closure_certificates.py:84`, `/home/seyran/code/ve-webapp/tests/test_nary.py:15`, `/home/seyran/code/ve-bench/conformance/closure_certificates.py:84`, `/home/seyran/code/ve-bench/tests/test_nary.py:15` |
+| `ve/closure.py` | `shift` | 114 | U | — | `tests/test_nary.py:15`, `conformance/closure_certificates.py:84` |
 | `ve/closure.py` | `substitute` | 118 | U | — | — |
-| `ve/closure.py` | `edge_at` | 129 | U | — | `conformance/closure_certificates.py:84`, `/home/seyran/code/ve-webapp/conformance/closure_certificates.py:84`, `/home/seyran/code/ve-bench/conformance/closure_certificates.py:84` |
-| `ve/closure.py` | `unfold` | 135 | U | — | `ve/entailment.py:221`, `tests/test_closure.py:14`, `conformance/closure_certificates.py:6`, `/home/seyran/code/ve-webapp/conformance/closure_certificates.py:6`, `/home/seyran/code/ve-webapp/tests/test_closure.py:14`, `/home/seyran/code/ve-bench/conformance/closure_certificates.py:6` (+1) |
+| `ve/closure.py` | `edge_at` | 129 | U | — | `conformance/closure_certificates.py:84` |
+| `ve/closure.py` | `unfold` | 135 | U | — | `ve/entailment.py:221`, `tests/test_closure.py:14`, `conformance/closure_certificates.py:6` |
 | `ve/closure.py` | `congruence_key` | 147 | U | — | `ve/entailment.py:193` |
-| `ve/closure.py` | `derive_extra` | 174 | U | — | `ve/entailment.py:627`, `conformance/certificates.py:174`, `conformance/induction.py:37`, `/home/seyran/code/ve-webapp/conformance/certificates.py:174`, `/home/seyran/code/ve-webapp/conformance/induction.py:37`, `/home/seyran/code/ve-bench/conformance/certificates.py:174` (+1) |
+| `ve/closure.py` | `derive_extra` | 174 | U | — | `ve/entailment.py:627`, `conformance/certificates.py:174`, `conformance/induction.py:37` |
 | `ve/closure.py` | `extra_candidates` | 225 | U | — | `ve/entailment.py:494` |
 | `ve/definitions.py` | `Definition` | 18 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27` |
 | `ve/definitions.py` | `_mentions` | 24 | U | — | `ve/search.py:310` |
 | `ve/definitions.py` | `_has_reach` | 40 | U | — | — |
 | `ve/definitions.py` | `_atom` | 52 | U | — | `ve/surface/definitions.py:27` |
-| `ve/definitions.py` | `premise` | 62 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27`, `tests/test_document.py:554`, `/home/seyran/code/ve-webapp/tests/test_document.py:554`, `/home/seyran/code/ve-bench/tests/test_document.py:554` |
+| `ve/definitions.py` | `premise` | 62 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27`, `tests/test_document.py:554` |
 | `ve/definitions.py` | `_restricted` | 72 | U | — | — |
-| `ve/definitions.py` | `compile_definitions` | 90 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `ve/environment.py:294`, `ve/model.py:141`, `ve/surface/definitions.py:27`, `tests/probe_matrix.py:25`, `tests/test_definitions.py:6` (+10) |
-| `ve/definitions.py` | `expand` | 151 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `tests/test_definitions.py:6`, `/home/seyran/code/ve-webapp/tests/test_definitions.py:6`, `/home/seyran/code/ve-bench/tests/test_definitions.py:6` |
-| `ve/definitions.py` | `definitions_id` | 156 | U | — | `tests/test_definitions.py:6`, `/home/seyran/code/ve-webapp/tests/test_definitions.py:6`, `/home/seyran/code/ve-bench/tests/test_definitions.py:6` |
-| `ve/entailment.py` | `EntailmentResult` | 28 | U | — | `ve/__init__.py:19`, `tests/test_equivalence.py:144`, `/home/seyran/code/ve-webapp/tests/test_equivalence.py:144`, `/home/seyran/code/ve-bench/tests/test_equivalence.py:144` |
-| `ve/entailment.py` | `EntailmentResult.to_dict` | 34 | U | — | `ve/__init__.py:19`, `tests/test_equivalence.py:144`, `/home/seyran/code/ve-webapp/tests/test_equivalence.py:144`, `/home/seyran/code/ve-bench/tests/test_equivalence.py:144` |
-| `ve/entailment.py` | `EntailmentCertificateCheck` | 40 | U | — | `ve/__init__.py:19`, `tests/test_argument.py:11`, `/home/seyran/code/ve-webapp/tests/test_argument.py:11`, `/home/seyran/code/ve-bench/tests/test_argument.py:11` |
-| `ve/entailment.py` | `EntailmentCertificateCheck.to_dict` | 46 | U | — | `ve/__init__.py:19`, `tests/test_argument.py:11`, `/home/seyran/code/ve-webapp/tests/test_argument.py:11`, `/home/seyran/code/ve-bench/tests/test_argument.py:11` |
+| `ve/definitions.py` | `compile_definitions` | 90 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `ve/environment.py:294`, `ve/model.py:141`, `ve/surface/definitions.py:27`, `tests/probe_matrix.py:26`, `tests/test_definitions.py:6` (+2) |
+| `ve/definitions.py` | `expand` | 151 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `tests/test_definitions.py:6` |
+| `ve/definitions.py` | `definitions_id` | 156 | U | — | `tests/test_definitions.py:6` |
+| `ve/entailment.py` | `EntailmentResult` | 28 | U | — | `ve/__init__.py:19`, `tests/test_equivalence.py:144` |
+| `ve/entailment.py` | `EntailmentResult.to_dict` | 34 | U | — | `ve/__init__.py:19`, `tests/test_equivalence.py:144` |
+| `ve/entailment.py` | `EntailmentCertificateCheck` | 40 | U | — | `ve/__init__.py:19`, `tests/test_argument.py:11` |
+| `ve/entailment.py` | `EntailmentCertificateCheck.to_dict` | 46 | U | — | `ve/__init__.py:19`, `tests/test_argument.py:11` |
 | `ve/entailment.py` | `_Signed` | 52 | U | — | `ve/closure.py:36`, `ve/closure.py:180` |
 | `ve/entailment.py` | `_Branch` | 60 | U | — | — |
 | `ve/entailment.py` | `_Branch.copy` | 68 | U | — | — |
 | `ve/entailment.py` | `_Budget` | 73 | U | — | — |
 | `ve/entailment.py` | `_InvalidTrace` | 77 | U | — | `ve/closure.py:36`, `ve/closure.py:180`, `ve/closure.py:227` |
 | `ve/entailment.py` | `_premises` | 81 | U | — | — |
-| `ve/entailment.py` | `_validate_inputs` | 89 | U | — | `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_initial_branch` | 129 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `conformance/p0.py:714`, `ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-webapp/conformance/certificates.py:25`, `/home/seyran/code/ve-webapp/conformance/induction.py:14` (+6) |
-| `ve/entailment.py` | `_kind` | 137 | U | — | `conformance/certificates.py:25`, `/home/seyran/code/ve-webapp/conformance/certificates.py:25`, `/home/seyran/code/ve-bench/conformance/certificates.py:25` |
+| `ve/entailment.py` | `_validate_inputs` | 89 | U | — | `conformance/p0.py:714` |
+| `ve/entailment.py` | `_initial_branch` | 129 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `conformance/p0.py:714`, `ve_experiments/t1c/certificates.py:27` |
+| `ve/entailment.py` | `_kind` | 137 | U | — | `conformance/certificates.py:25` |
 | `ve/entailment.py` | `_term_token` | 149 | U | — | `ve/closure.py:56`, `ve/closure.py:180` |
-| `ve/entailment.py` | `_closed` | 157 | U | — | `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py:27` |
-| `ve/entailment.py` | `_derive` | 209 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-webapp/conformance/certificates.py:25`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py:27` (+3) |
-| `ve/entailment.py` | `_apply` | 248 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-webapp/conformance/certificates.py:25`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py:27` (+3) |
+| `ve/entailment.py` | `_closed` | 157 | U | — | `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27` |
+| `ve/entailment.py` | `_derive` | 209 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27` |
+| `ve/entailment.py` | `_apply` | 248 | U | — | `conformance/certificates.py:25`, `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27` |
 | `ve/entailment.py` | `_instance_key` | 266 | U | — | — |
 | `ve/entailment.py` | `_connection_key` | 297 | U | — | — |
 | `ve/entailment.py` | `_ground_connections` | 343 | U | — | — |
-| `ve/entailment.py` | `_Searcher` | 362 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_Searcher.__init__` | 363 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_Searcher.tick` | 375 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_Searcher.search` | 379 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_Searcher.prove` | 530 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/conformance/p0.py:714`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/conformance/p0.py:714` |
-| `ve/entailment.py` | `_rule` | 540 | U | — | `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-webapp/conformance/induction.py:14`, `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py:27`, `/home/seyran/code/ve-bench/conformance/induction.py:14`, `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py:27` |
-| `ve/entailment.py` | `_binding` | 546 | U | — | `tests/test_closure.py:282`, `tests/test_closure_certificates.py:12`, `tests/test_closure_induction.py:127`, `tests/test_lean_certificates.py:12`, `tests/test_order.py:20`, `conformance/certificates.py:25` (+27) |
-| `ve/entailment.py` | `prove_entailment` | 562 | U | — | `ve/__init__.py:19`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/english.py:1398`, `ve/english.py:1439`, `ve/equivalence.py:14` (+108) |
+| `ve/entailment.py` | `_Searcher` | 362 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714` |
+| `ve/entailment.py` | `_Searcher.__init__` | 363 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714` |
+| `ve/entailment.py` | `_Searcher.tick` | 375 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714` |
+| `ve/entailment.py` | `_Searcher.search` | 379 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714` |
+| `ve/entailment.py` | `_Searcher.prove` | 530 | U | — | `conformance/induction.py:14`, `conformance/p0.py:714` |
+| `ve/entailment.py` | `_rule` | 540 | U | — | `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27` |
+| `ve/entailment.py` | `_binding` | 546 | U | — | `tests/test_closure.py:282`, `tests/test_closure_certificates.py:12`, `tests/test_closure_induction.py:127`, `tests/test_lean_certificates.py:12`, `tests/test_order.py:20`, `conformance/certificates.py:25` (+5) |
+| `ve/entailment.py` | `prove_entailment` | 562 | U | — | `ve/__init__.py:19`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/english.py:1398`, `ve/english.py:1439`, `ve/equivalence.py:14` (+34) |
 | `ve/entailment.py` | `_prove_order` | 596 | U | — | — |
 | `ve/entailment.py` | `_Replayer` | 612 | A | `ve/backends/dispatch.py` → Lean certificate replay | — |
 | `ve/entailment.py` | `_Replayer.__init__` | 613 | A | `ve/backends/dispatch.py` → Lean certificate replay | — |
 | `ve/entailment.py` | `_Replayer.replay` | 617 | A | `ve/backends/dispatch.py` → Lean certificate replay | — |
-| `ve/entailment.py` | `check_entailment_certificate` | 667 | A | `ve/backends/dispatch.py` → Lean certificate replay | `ve/__init__.py:19`, `ve/admission.py:370`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/bundle.py:23`, `ve/equivalence.py:14` (+84) |
-| `ve/environment.py` | `valid_identifier` | 30 | S | — | `ve/assist/session.py:31`, `ve/assist/sources.py:23`, `ve/fol.py:10`, `ve/propose.py:13`, `tests/test_propose.py:12`, `/home/seyran/code/ve-webapp/tests/test_propose.py:12` (+1) |
+| `ve/entailment.py` | `check_entailment_certificate` | 667 | A | `ve/backends/dispatch.py` → Lean certificate replay | `ve/__init__.py:19`, `ve/admission.py:370`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/bundle.py:23`, `ve/equivalence.py:14` (+28) |
+| `ve/environment.py` | `valid_identifier` | 30 | S | — | `ve/assist/session.py:31`, `ve/assist/sources.py:23`, `ve/fol.py:10`, `ve/propose.py:13`, `tests/test_propose.py:12` |
 | `ve/environment.py` | `validate_identifier` | 34 | S | — | `ve/argument.py:17`, `ve/equivalence.py:15` |
 | `ve/environment.py` | `_description` | 42 | U | — | — |
 | `ve/environment.py` | `_verbalisation` | 48 | U | — | — |
@@ -218,70 +217,70 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/environment.py` | `RegulatedDecl` | 93 | S | — | — |
 | `ve/environment.py` | `_regulated` | 100 | U | — | — |
 | `ve/environment.py` | `ConstantDecl` | 127 | S | — | — |
-| `ve/environment.py` | `Environment` | 133 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.__init__` | 142 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.from_dict` | 298 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.from_json` | 302 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.to_dict` | 305 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.closure` | 340 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.definition_entries` | 344 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.order` | 349 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.model_sorts` | 353 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.identity_version` | 358 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
-| `ve/environment.py` | `Environment.environment_id` | 365 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+302) |
+| `ve/environment.py` | `Environment` | 133 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.__init__` | 142 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.from_dict` | 298 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.from_json` | 302 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.to_dict` | 305 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.closure` | 340 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.definition_entries` | 344 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.order` | 349 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.model_sorts` | 353 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.identity_version` | 358 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
+| `ve/environment.py` | `Environment.environment_id` | 365 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+98) |
 | `ve/evaluate.py` | `Explanation` | 16 | U | — | — |
 | `ve/evaluate.py` | `Explanation.to_dict` | 23 | U | — | — |
 | `ve/evaluate.py` | `EvaluationResult` | 31 | U | — | — |
 | `ve/evaluate.py` | `EvaluationResult.to_dict` | 37 | U | — | — |
 | `ve/evaluate.py` | `_Exhausted` | 42 | U | — | `ve/model.py:142`, `ve/norms.py:356`, `ve/search.py:11` |
-| `ve/evaluate.py` | `_Evaluator` | 46 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
-| `ve/evaluate.py` | `_Evaluator.__init__` | 47 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
-| `ve/evaluate.py` | `_Evaluator.explanation` | 51 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
-| `ve/evaluate.py` | `_Evaluator.tick` | 56 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
-| `ve/evaluate.py` | `_Evaluator.term` | 61 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
-| `ve/evaluate.py` | `_Evaluator.formula` | 74 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+6) |
+| `ve/evaluate.py` | `_Evaluator` | 46 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Evaluator.__init__` | 47 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Evaluator.explanation` | 51 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Evaluator.tick` | 56 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Evaluator.term` | 61 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Evaluator.formula` | 74 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
 | `ve/evaluate.py` | `_validate_model` | 171 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/search.py:11` |
-| `ve/evaluate.py` | `_evaluate_validated` | 189 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/background.py:110`, `ve/search.py:11`, `tests/test_definitions_differential.py:147`, `/home/seyran/code/ve-webapp/rust/benchmark.py:28`, `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py:147`, `/home/seyran/code/ve-bench/rust/benchmark.py:28` (+1) |
-| `ve/evaluate.py` | `evaluate` | 213 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/__init__.py:16`, `ve/assist/ambiguity_patterns.py:20`, `ve/assist/recovery.py:20`, `ve/check.py:7`, `ve/equivalence.py:17`, `ve/readings.py:73` (+84) |
+| `ve/evaluate.py` | `_evaluate_validated` | 189 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/background.py:110`, `ve/search.py:11`, `tests/test_definitions_differential.py:147` |
+| `ve/evaluate.py` | `evaluate` | 213 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/__init__.py:16`, `ve/assist/ambiguity_patterns.py:20`, `ve/assist/recovery.py:20`, `ve/check.py:7`, `ve/equivalence.py:17`, `ve/readings.py:73` (+24) |
 | `ve/model.py` | `_fail` | 18 | U | — | — |
 | `ve/model.py` | `_keys` | 22 | U | — | — |
 | `ve/model.py` | `_local_id` | 31 | U | — | — |
-| `ve/model.py` | `FiniteModel` | 40 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+151) |
-| `ve/model.py` | `FiniteModel.from_json` | 51 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+151) |
-| `ve/model.py` | `FiniteModel.from_dict` | 56 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+151) |
-| `ve/model.py` | `FiniteModel.to_dict` | 173 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+151) |
+| `ve/model.py` | `FiniteModel` | 40 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+49) |
+| `ve/model.py` | `FiniteModel.from_json` | 51 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+49) |
+| `ve/model.py` | `FiniteModel.from_dict` | 56 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+49) |
+| `ve/model.py` | `FiniteModel.to_dict` | 173 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+49) |
 | `ve/model.py` | `_cell` | 177 | S | — | — |
 | `ve/model.py` | `_normalized` | 182 | S | — | — |
 | `ve/norm_admission.py` | `_check_quoted` | 19 | U | — | — |
-| `ve/norm_admission.py` | `admit_norm_document` | 27 | A | `ve/backends/dispatch.py` → Lean norms admission | `ve/admission.py:423`, `tests/probe_matrix.py:36` |
+| `ve/norm_admission.py` | `admit_norm_document` | 27 | A | `ve/backends/dispatch.py` → Lean norms admission | `ve/admission.py:423`, `tests/probe_matrix.py:37` |
 | `ve/norms.py` | `_all` | 23 | U | — | — |
 | `ve/norms.py` | `_any` | 30 | U | — | — |
 | `ve/norms.py` | `_atom` | 37 | U | — | `ve/norm_strict.py:8` |
-| `ve/norms.py` | `_bind` | 42 | U | — | `tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-bench/bench/run.py:38`, `/home/seyran/code/ve-bench/tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `_bind` | 42 | U | — | `tests/test_norms_three_way.py:24`, `external:ve-bench/run.py:38` |
 | `ve/norms.py` | `_shift_term` | 48 | U | — | — |
-| `ve/norms.py` | `_instantiate` | 59 | U | — | `tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-bench/tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `_instantiate` | 59 | U | — | `tests/test_norms_three_way.py:24` |
 | `ve/norms.py` | `_replace_term` | 84 | U | — | — |
 | `ve/norms.py` | `_regulated_closure` | 95 | U | — | — |
-| `ve/norms.py` | `Norm` | 110 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9`, `/home/seyran/code/ve-webapp/tests/test_norms.py:9`, `/home/seyran/code/ve-bench/tests/test_norms.py:9` |
-| `ve/norms.py` | `Norm.to_dict` | 118 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9`, `/home/seyran/code/ve-webapp/tests/test_norms.py:9`, `/home/seyran/code/ve-bench/tests/test_norms.py:9` |
-| `ve/norms.py` | `NormDocument` | 124 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.__init__` | 125 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument._decode` | 185 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.selection` | 197 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.outcome` | 212 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument._expand` | 218 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.elaborate` | 237 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.premises` | 246 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.meaning_id` | 249 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.conflict_targets` | 255 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.selected_rules` | 269 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.overlap_witnesses` | 280 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
-| `ve/norms.py` | `NormDocument.base_environment` | 298 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:35`, `tests/test_norm_admission.py:12` (+13) |
+| `ve/norms.py` | `Norm` | 110 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9` |
+| `ve/norms.py` | `Norm.to_dict` | 118 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9` |
+| `ve/norms.py` | `NormDocument` | 124 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.__init__` | 125 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument._decode` | 185 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.selection` | 197 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.outcome` | 212 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument._expand` | 218 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.elaborate` | 237 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.premises` | 246 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.meaning_id` | 249 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.conflict_targets` | 255 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.selected_rules` | 269 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.overlap_witnesses` | 280 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
+| `ve/norms.py` | `NormDocument.base_environment` | 298 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:12` (+5) |
 | `ve/norms.py` | `ConflictReport` | 309 | U | — | — |
-| `ve/norms.py` | `check_witness` | 317 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/test_norms.py:9`, `/home/seyran/code/ve-webapp/tests/test_norms.py:9`, `/home/seyran/code/ve-webapp/ve_webapp/rules.py:7`, `/home/seyran/code/ve-bench/tests/test_norms.py:9` |
-| `ve/norms.py` | `prove_norm_entailment` | 339 | U | — | `tests/probe_matrix.py:35`, `tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-bench/tests/test_norms_three_way.py:24` |
-| `ve/norms.py` | `check_norm_entailment_certificate` | 346 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:35`, `tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-bench/tests/test_norms_three_way.py:24` |
-| `ve/norms.py` | `check_conflict` | 353 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:35`, `tests/test_cedar_norms.py:8`, `tests/test_norms.py:9`, `tests/test_norms_three_way.py:24`, `/home/seyran/code/ve-webapp/tests/test_cedar_norms.py:8`, `/home/seyran/code/ve-webapp/tests/test_norms.py:9` (+6) |
+| `ve/norms.py` | `check_witness` | 317 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/test_norms.py:9`, `external:ve-webapp/rules.py:7` |
+| `ve/norms.py` | `prove_norm_entailment` | 339 | U | — | `tests/probe_matrix.py:36`, `tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `check_norm_entailment_certificate` | 346 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:36`, `tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `check_conflict` | 353 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:36`, `tests/test_cedar_norms.py:8`, `tests/test_norms.py:9`, `tests/test_norms_three_way.py:24`, `external:ve-webapp/rules.py:7`, `external:ve-bench/worker.py:13` |
 | `ve/order.py` | `InvalidTrace` | 49 | U | — | `ve/entailment.py:19` |
 | `ve/order.py` | `Budget` | 53 | U | — | `ve/entailment.py:19` |
 | `ve/order.py` | `Signed` | 60 | U | — | — |
@@ -317,7 +316,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/order.py` | `_fields` | 355 | U | — | — |
 | `ve/order.py` | `_pairs` | 363 | U | — | — |
 | `ve/order.py` | `_integer` | 374 | U | — | — |
-| `ve/order.py` | `decode_trace` | 381 | A | `ve/backends/dispatch.py` → Lean order certificate | `tests/probe_matrix.py:45` |
+| `ve/order.py` | `decode_trace` | 381 | A | `ve/backends/dispatch.py` → Lean order certificate | `tests/probe_matrix.py:46` |
 | `ve/order.py` | `_Replayer` | 429 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
 | `ve/order.py` | `_Replayer.__init__` | 430 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
 | `ve/order.py` | `_Replayer.children` | 433 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
@@ -343,647 +342,648 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/order.py` | `search` | 735 | U | — | `ve/entailment.py:598` |
 | `ve/parser.py` | `SourceMetadata` | 19 | U | — | — |
 | `ve/parser.py` | `ParseResult` | 28 | U | — | — |
-| `ve/parser.py` | `_Parser` | 33 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.__init__` | 34 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.span` | 41 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.error` | 46 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.literal` | 50 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.identifier` | 55 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.node` | 67 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.numeral` | 76 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.term` | 89 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.closure_binder` | 137 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.formula` | 147 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `_Parser.document` | 311 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21`, `/home/seyran/code/ve-webapp/tests/test_grammar.py:21`, `/home/seyran/code/ve-bench/tests/test_grammar.py:21` |
-| `ve/parser.py` | `parse_with_metadata` | 349 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/test_parser_renderer.py:7`, `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py:7`, `/home/seyran/code/ve-bench/tests/test_parser_renderer.py:7` |
-| `ve/parser.py` | `parse` | 382 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `ve/__main__.py:14`, `ve/argument.py:21`, `ve/assist/session.py:33`, `ve/attacks.py:20`, `ve/authoring.py:15` (+113) |
-| `ve/parser.py` | `canonicalize` | 386 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/probe_matrix.py:30`, `tests/test_conformance.py:25`, `tests/test_parser_renderer.py:7`, `tests/test_properties.py:23`, `/home/seyran/code/ve-webapp/tests/test_conformance.py:25` (+5) |
-| `ve/parser.py` | `is_canonical` | 391 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/test_conformance.py:25`, `tests/test_parser_renderer.py:7`, `/home/seyran/code/ve-webapp/tests/test_conformance.py:25`, `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py:7`, `/home/seyran/code/ve-bench/tests/test_conformance.py:25` (+1) |
+| `ve/parser.py` | `_Parser` | 33 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.__init__` | 34 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.span` | 41 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.error` | 46 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.literal` | 50 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.identifier` | 55 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.node` | 67 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.numeral` | 76 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.term` | 89 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.closure_binder` | 137 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.formula` | 147 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `_Parser.document` | 311 | U | — | `ve/norm_strict.py:9`, `tests/test_grammar.py:21` |
+| `ve/parser.py` | `parse_with_metadata` | 349 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/test_parser_renderer.py:7` |
+| `ve/parser.py` | `parse` | 382 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `ve/__main__.py:14`, `ve/argument.py:21`, `ve/assist/session.py:33`, `ve/attacks.py:20`, `ve/authoring.py:15` (+33) |
+| `ve/parser.py` | `canonicalize` | 386 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/probe_matrix.py:31`, `tests/test_conformance.py:25`, `tests/test_parser_renderer.py:7`, `tests/test_properties.py:23` |
+| `ve/parser.py` | `is_canonical` | 391 | A | `ve/backends/dispatch.py` → Lean parse / normalize | `ve/__init__.py:10`, `tests/test_conformance.py:25`, `tests/test_parser_renderer.py:7` |
 | `ve/printer.py` | `render_int_term` | 70 | S | — | `ve/english.py:19`, `ve/fluent.py:10` |
 | `ve/printer.py` | `_negative_template` | 119 | S | — | `ve/english_vocabulary.py:59` |
 | `ve/printer.py` | `_fluent_variable_letters` | 138 | S | — | `ve/english.py:19`, `ve/fluent.py:10` |
 | `ve/printer.py` | `VocabularyLint` | 167 | S | — | `ve/english.py:19` |
 | `ve/printer.py` | `VocabularyLint.to_dict` | 172 | S | — | `ve/english.py:19` |
 | `ve/printer.py` | `_template_head` | 176 | S | — | `ve/english.py:19` |
-| `ve/printer.py` | `_NaturalVocabulary` | 183 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/tests/explicit_inverse.py:5` (+2) |
-| `ve/printer.py` | `_NaturalVocabulary.__init__` | 189 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/tests/explicit_inverse.py:5` (+2) |
-| `ve/printer.py` | `_NaturalVocabulary.atom` | 340 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/conformance/english_surface.py:21`, `/home/seyran/code/ve-webapp/tests/explicit_inverse.py:5` (+2) |
-| `ve/printer.py` | `lint_vocabulary` | 349 | S | — | `ve/__init__.py:11`, `tests/test_english.py:230`, `tests/test_fluent.py:247`, `tests/test_fluent.py:265`, `tests/test_fluent.py:291`, `tests/test_fluent.py:313` (+42) |
+| `ve/printer.py` | `_NaturalVocabulary` | 183 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21` |
+| `ve/printer.py` | `_NaturalVocabulary.__init__` | 189 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21` |
+| `ve/printer.py` | `_NaturalVocabulary.atom` | 340 | S | — | `ve/english.py:19`, `ve/fluent.py:10`, `tests/explicit_inverse.py:5`, `conformance/english_surface.py:21` |
+| `ve/printer.py` | `lint_vocabulary` | 349 | S | — | `ve/__init__.py:11`, `tests/test_english.py:230`, `tests/test_fluent.py:247`, `tests/test_fluent.py:265`, `tests/test_fluent.py:291`, `tests/test_fluent.py:313` (+10) |
 | `ve/printer.py` | `_check_view` | 363 | S | — | — |
 | `ve/printer.py` | `_check_naming` | 368 | S | — | `ve/fluent.py:10` |
 | `ve/printer.py` | `_check_legend_style` | 373 | S | — | — |
 | `ve/printer.py` | `_legend_quote` | 378 | S | — | — |
 | `ve/printer.py` | `_compact_vocabulary` | 390 | S | — | — |
-| `ve/printer.py` | `render_vocabulary` | 441 | S | — | `ve/__init__.py:11`, `tests/test_english.py:325`, `tests/test_fluent.py:247`, `tests/test_fluent.py:265`, `tests/test_fluent.py:352`, `tests/test_fluent.py:393` (+35) |
+| `ve/printer.py` | `render_vocabulary` | 441 | S | — | `ve/__init__.py:11`, `tests/test_english.py:325`, `tests/test_fluent.py:247`, `tests/test_fluent.py:265`, `tests/test_fluent.py:352`, `tests/test_fluent.py:393` (+7) |
 | `ve/printer.py` | `_Traversal` | 499 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.__init__` | 500 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.term` | 506 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.child` | 513 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.formula` | 518 | U | — | `ve/norm_strict.py:10` |
-| `ve/printer.py` | `render` | 575 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/document.py:337`, `ve/fluent.py:212`, `ve/fol.py:182`, `ve/natural.py:271` (+68) |
-| `ve/printer.py` | `render_cell` | 649 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:118`, `tests/test_cli.py:133`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13`, `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py:14` (+9) |
-| `ve/printer.py` | `measure_view_lengths` | 658 | S | — | `ve/__init__.py:11`, `tests/test_fluent.py:410`, `tests/test_legend.py:11`, `tests/test_views.py:427`, `tests/test_views_polish.py:13`, `/home/seyran/code/ve-webapp/tests/test_fluent.py:410` (+7) |
-| `ve/printer.py` | `measure_jsonl_lengths` | 680 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:160`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13`, `/home/seyran/code/ve-webapp/tests/test_cli.py:160`, `/home/seyran/code/ve-webapp/tests/test_legend.py:11` (+4) |
-| `ve/printer.py` | `print_formula` | 729 | U | — | `ve/__init__.py:11`, `ve/argument.py:22`, `ve/assist/session.py:34`, `ve/english.py:1440`, `tests/probe_matrix.py:31`, `tests/test_assist.py:381` (+6) |
-| `ve/printer.py` | `print_document` | 735 | U | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/authoring.py:16`, `ve/check.py:10`, `ve/english.py:1422`, `ve/fol.py:14` (+70) |
+| `ve/printer.py` | `render` | 575 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/document.py:337`, `ve/fluent.py:212`, `ve/fol.py:182`, `ve/natural.py:271` (+20) |
+| `ve/printer.py` | `render_cell` | 649 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:118`, `tests/test_cli.py:133`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13` |
+| `ve/printer.py` | `measure_view_lengths` | 658 | S | — | `ve/__init__.py:11`, `tests/test_fluent.py:410`, `tests/test_legend.py:11`, `tests/test_views.py:427`, `tests/test_views_polish.py:13` |
+| `ve/printer.py` | `measure_jsonl_lengths` | 680 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:160`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13` |
+| `ve/printer.py` | `print_formula` | 729 | U | — | `ve/__init__.py:11`, `ve/argument.py:22`, `ve/assist/session.py:34`, `ve/english.py:1440`, `tests/probe_matrix.py:32`, `tests/test_assist.py:381` |
+| `ve/printer.py` | `print_document` | 735 | U | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/authoring.py:16`, `ve/check.py:10`, `ve/english.py:1422`, `ve/fol.py:14` (+20) |
 | `ve/printer.py` | `NaturalView` | 742 | S | — | `ve/fol.py:14` |
 | `ve/printer.py` | `NaturalView.to_dict` | 751 | S | — | `ve/fol.py:14` |
-| `ve/printer.py` | `natural_document` | 759 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/fol.py:14`, `ve/natural.py:90`, `tests/test_natural.py:21`, `tests/test_natural.py:496` (+13) |
-| `ve/printer.py` | `natural_formula` | 849 | S | — | `ve/__init__.py:11`, `tests/test_views.py:12`, `/home/seyran/code/ve-webapp/tests/test_views.py:12`, `/home/seyran/code/ve-bench/tests/test_views.py:12` |
+| `ve/printer.py` | `natural_document` | 759 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/fol.py:14`, `ve/natural.py:90`, `tests/test_natural.py:21`, `tests/test_natural.py:496` (+3) |
+| `ve/printer.py` | `natural_formula` | 849 | S | — | `ve/__init__.py:11`, `tests/test_views.py:12` |
 | `ve/profiles.py` | `ProfileRecord` | 12 | S | — | — |
-| `ve/profiles.py` | `checker_family` | 33 | A | `ve/backends/dispatch.py` → Lean route gate | `tests/test_profiles.py:6`, `/home/seyran/code/ve-webapp/tests/test_profiles.py:6`, `/home/seyran/code/ve-bench/tests/test_profiles.py:6` |
+| `ve/profiles.py` | `checker_family` | 33 | A | `ve/backends/dispatch.py` → Lean route gate | `tests/test_profiles.py:6` |
 | `ve/profiles.py` | `require_checker` | 60 | S | — | `ve/admission.py:21`, `ve/background.py:133`, `ve/background.py:149`, `ve/search.py:442`, `ve/search.py:511` |
 | `ve/search.py` | `_SearchSpaceLimit` | 19 | U | — | — |
 | `ve/search.py` | `_node_count` | 23 | U | — | — |
 | `ve/search.py` | `_check_aggregate_ast` | 35 | U | — | — |
 | `ve/search.py` | `_premises` | 42 | U | — | — |
-| `ve/search.py` | `CountermodelResult` | 51 | U | — | `tests/test_equivalence.py:145`, `/home/seyran/code/ve-webapp/tests/test_equivalence.py:145`, `/home/seyran/code/ve-bench/tests/test_equivalence.py:145` |
-| `ve/search.py` | `CountermodelResult.to_dict` | 65 | U | — | `tests/test_equivalence.py:145`, `/home/seyran/code/ve-webapp/tests/test_equivalence.py:145`, `/home/seyran/code/ve-bench/tests/test_equivalence.py:145` |
+| `ve/search.py` | `CountermodelResult` | 51 | U | — | `tests/test_equivalence.py:145` |
+| `ve/search.py` | `CountermodelResult.to_dict` | 65 | U | — | `tests/test_equivalence.py:145` |
 | `ve/search.py` | `CountermodelCheck` | 77 | U | — | — |
 | `ve/search.py` | `_check_countermodel_values` | 89 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | — |
-| `ve/search.py` | `check_countermodel` | 109 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/argument.py:23`, `ve/assist/proposer.py:19`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+74) |
-| `ve/search.py` | `_used_predicates` | 130 | U | — | `ve/norms.py:17`, `tests/test_closure.py:214`, `/home/seyran/code/ve-webapp/tests/test_closure.py:214`, `/home/seyran/code/ve-bench/tests/test_closure.py:214` |
-| `ve/search.py` | `_subsets` | 157 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:169`, `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py:10`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:169`, `/home/seyran/code/ve-bench/tests/test_evaluate_search.py:10`, `/home/seyran/code/ve-bench/tests/test_search_options.py:169` |
-| `ve/search.py` | `_relation_assignments` | 165 | U | — | `tests/test_search_options.py:169`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:169`, `/home/seyran/code/ve-bench/tests/test_search_options.py:169` |
-| `ve/search.py` | `_domain_sizes` | 183 | U | — | `tests/test_search_options.py:169`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:169`, `/home/seyran/code/ve-bench/tests/test_search_options.py:169` |
+| `ve/search.py` | `check_countermodel` | 109 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/argument.py:23`, `ve/assist/proposer.py:19`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
+| `ve/search.py` | `_used_predicates` | 130 | U | — | `ve/norms.py:17`, `tests/test_closure.py:214` |
+| `ve/search.py` | `_subsets` | 157 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:169` |
+| `ve/search.py` | `_relation_assignments` | 165 | U | — | `tests/test_search_options.py:169` |
+| `ve/search.py` | `_domain_sizes` | 183 | U | — | `tests/test_search_options.py:169` |
 | `ve/search.py` | `_int_terms` | 206 | U | — | — |
 | `ve/search.py` | `_int_value` | 241 | U | — | — |
 | `ve/search.py` | `_order_models` | 252 | U | — | — |
-| `ve/search.py` | `_models` | 305 | U | — | `tests/test_search_options.py:169`, `tests/test_search_options.py:224`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:169`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:224`, `/home/seyran/code/ve-bench/tests/test_search_options.py:169`, `/home/seyran/code/ve-bench/tests/test_search_options.py:224` |
-| `ve/search.py` | `_nonvacuous` | 347 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:224`, `tests/test_search_options.py:238`, `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py:10`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:224`, `/home/seyran/code/ve-webapp/tests/test_search_options.py:238` (+3) |
+| `ve/search.py` | `_models` | 305 | U | — | `tests/test_search_options.py:169`, `tests/test_search_options.py:224` |
+| `ve/search.py` | `_nonvacuous` | 347 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:224`, `tests/test_search_options.py:238` |
 | `ve/search.py` | `_validate_options` | 416 | U | — | — |
-| `ve/search.py` | `find_countermodel` | 435 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+68) |
-| `ve/search.py` | `find_distinguishing_model` | 505 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:32`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+12) |
+| `ve/search.py` | `find_countermodel` | 435 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
+| `ve/search.py` | `find_distinguishing_model` | 505 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:33`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+2) |
 
 ## Other `ve/` functions
 
 Section 1.2 combination functions are C; single-verdict relabelling is L; other retained surface, authoring, diagnostic and transport functions are S. This covers functions outside the section 1.1 deletion list.
+A/C also requires a signature-preserving `ve/backends/dispatch.py` adapter. Trusted narrowed decisions require the record to name its checked constituents, `assurance: experimental`, and the Python combination rule before any authority switch.
 
-| Module | Function | Line | Class |
-|---|---|---:|:---:|
-| `ve/__main__.py` | `_read` | 21 | S |
-| `ve/__main__.py` | `_emit` | 32 | S |
-| `ve/__main__.py` | `main` | 36 | S |
-| `ve/adapters/attributes.py` | `Value` | 15 | S |
-| `ve/adapters/attributes.py` | `Value.__bool__` | 19 | S |
-| `ve/adapters/attributes.py` | `attribute` | 23 | S |
-| `ve/adapters/attributes.py` | `has` | 35 | S |
-| `ve/adapters/attributes.py` | `_cedar_equal` | 48 | S |
-| `ve/adapters/attributes.py` | `compare` | 61 | S |
-| `ve/adapters/cedar.py` | `_any` | 25 | S |
-| `ve/adapters/cedar.py` | `_parser_module` | 37 | S |
-| `ve/adapters/cedar.py` | `_entity` | 47 | S |
-| `ve/adapters/cedar.py` | `_literal` | 51 | S |
-| `ve/adapters/cedar.py` | `_and` | 63 | S |
-| `ve/adapters/cedar.py` | `_or` | 67 | S |
-| `ve/adapters/cedar.py` | `_Excluded` | 71 | S |
-| `ve/adapters/cedar.py` | `_Case` | 76 | S |
-| `ve/adapters/cedar.py` | `_bool` | 81 | S |
-| `ve/adapters/cedar.py` | `_select` | 85 | S |
-| `ve/adapters/cedar.py` | `_Compiler` | 89 | S |
-| `ve/adapters/cedar.py` | `_Compiler.__init__` | 90 | S |
-| `ve/adapters/cedar.py` | `_Compiler._limit` | 96 | S |
-| `ve/adapters/cedar.py` | `_Compiler._var` | 101 | S |
-| `ve/adapters/cedar.py` | `_Compiler._reach` | 109 | S |
-| `ve/adapters/cedar.py` | `_Compiler._membership` | 112 | S |
-| `ve/adapters/cedar.py` | `_Compiler._logical` | 123 | S |
-| `ve/adapters/cedar.py` | `_Compiler.compile` | 135 | S |
-| `ve/adapters/cedar.py` | `_Compiler.scope` | 207 | S |
-| `ve/adapters/cedar.py` | `_Compiler.policy` | 228 | S |
-| `ve/adapters/cedar.py` | `_Compiler._logical_cases` | 239 | S |
-| `ve/adapters/cedar.py` | `_Entity` | 250 | S |
-| `ve/adapters/cedar.py` | `CedarTranslation` | 256 | S |
-| `ve/adapters/cedar.py` | `CedarTranslation.decisions` | 264 | S |
-| `ve/adapters/cedar.py` | `_walk` | 281 | S |
-| `ve/adapters/cedar.py` | `translate` | 292 | S |
-| `ve/adapters/cli.py` | `main` | 11 | S |
-| `ve/adapters/gatekeeper.py` | `Exemption` | 11 | S |
-| `ve/adapters/gatekeeper.py` | `tables` | 16 | S |
-| `ve/adapters/gatekeeper.py` | `is_exempt` | 21 | S |
-| `ve/adapters/records.py` | `_request` | 23 | S |
-| `ve/adapters/records.py` | `_regex_issue` | 39 | S |
-| `ve/adapters/records.py` | `_calculate` | 92 | S |
-| `ve/adapters/records.py` | `run` | 103 | S |
-| `ve/adapters/records.py` | `verify` | 125 | S |
-| `ve/adapters/records.py` | `_lookup_verified` | 140 | S |
-| `ve/adapters/records.py` | `lookup` | 152 | S |
-| `ve/argument_fixtures.py` | `_environment` | 28 | S |
-| `ve/argument_fixtures.py` | `_snapshot_id` | 61 | S |
-| `ve/argument_fixtures.py` | `_evidence` | 65 | S |
-| `ve/argument_fixtures.py` | `separated_vocabulary_example` | 79 | S |
-| `ve/argument_fixtures.py` | `explicit_bridge_example` | 102 | S |
-| `ve/argument_fixtures.py` | `merged_vocabulary_example` | 121 | S |
-| `ve/argument_fixtures.py` | `infinite_only_example` | 142 | S |
-| `ve/argument_fixtures.py` | `worked_examples` | 178 | S |
-| `ve/assist/ambiguity_patterns.py` | `_Deadline` | 34 | S |
-| `ve/assist/ambiguity_patterns.py` | `_Deadline.__init__` | 37 | S |
-| `ve/assist/ambiguity_patterns.py` | `Budget` | 41 | S |
-| `ve/assist/ambiguity_patterns.py` | `Budget.__init__` | 49 | S |
-| `ve/assist/ambiguity_patterns.py` | `Budget._hit` | 57 | S |
-| `ve/assist/ambiguity_patterns.py` | `Budget.expired` | 63 | S |
-| `ve/assist/ambiguity_patterns.py` | `Budget.guard` | 68 | S |
-| `ve/assist/ambiguity_patterns.py` | `_budget` | 98 | S |
-| `ve/assist/ambiguity_patterns.py` | `Pattern` | 105 | S |
-| `ve/assist/ambiguity_patterns.py` | `Pattern.matches` | 112 | S |
-| `ve/assist/ambiguity_patterns.py` | `_scope` | 116 | S |
-| `ve/assist/ambiguity_patterns.py` | `_negation` | 122 | S |
-| `ve/assist/ambiguity_patterns.py` | `_coordination` | 128 | S |
-| `ve/assist/ambiguity_patterns.py` | `_collective` | 134 | S |
-| `ve/assist/ambiguity_patterns.py` | `_attachment` | 144 | S |
-| `ve/assist/ambiguity_patterns.py` | `_reference` | 150 | S |
-| `ve/assist/ambiguity_patterns.py` | `_ellipsis` | 155 | S |
-| `ve/assist/ambiguity_patterns.py` | `pattern_by_id` | 188 | S |
-| `ve/assist/ambiguity_patterns.py` | `candidates` | 192 | S |
-| `ve/assist/ambiguity_patterns.py` | `checked_wording` | 222 | S |
-| `ve/assist/ambiguity_patterns.py` | `review` | 238 | S |
-| `ve/assist/ambiguity_patterns.py` | `_compare` | 329 | S |
-| `ve/assist/api.py` | `_tool` | 22 | S |
-| `ve/assist/api.py` | `tool_schemas` | 28 | S |
-| `ve/assist/api.py` | `tools_for_session` | 99 | S |
-| `ve/assist/api.py` | `call_tool` | 104 | S |
-| `ve/assist/cli.py` | `_load` | 21 | S |
-| `ve/assist/cli.py` | `_save` | 25 | S |
-| `ve/assist/cli.py` | `_wrap` | 32 | S |
-| `ve/assist/cli.py` | `_node_lines` | 36 | S |
-| `ve/assist/cli.py` | `_model_lines` | 51 | S |
-| `ve/assist/cli.py` | `render` | 61 | S |
-| `ve/assist/cli.py` | `_proposer` | 159 | S |
-| `ve/assist/cli.py` | `main` | 165 | S |
-| `ve/assist/ground.py` | `_atoms` | 17 | S |
-| `ve/assist/ground.py` | `_value` | 34 | S |
-| `ve/assist/ground.py` | `ground_countermodel` | 69 | S |
-| `ve/assist/premises.py` | `_conjunction` | 23 | S |
-| `ve/assist/premises.py` | `suggest_premises` | 30 | S |
-| `ve/assist/proposer.py` | `redact_secrets` | 69 | S |
-| `ve/assist/proposer.py` | `_digest` | 78 | S |
-| `ve/assist/proposer.py` | `build_prompt` | 82 | S |
-| `ve/assist/proposer.py` | `build_repair_prompt` | 102 | S |
-| `ve/assist/proposer.py` | `_matching` | 109 | S |
-| `ve/assist/proposer.py` | `strip_redundant_parentheses` | 121 | S |
-| `ve/assist/proposer.py` | `extract_candidates` | 147 | S |
-| `ve/assist/proposer.py` | `ProposerBackendError` | 168 | S |
-| `ve/assist/proposer.py` | `_attempts` | 172 | S |
-| `ve/assist/proposer.py` | `_call` | 181 | S |
-| `ve/assist/proposer.py` | `run_propose` | 231 | S |
-| `ve/assist/proposer.py` | `_distinguish` | 295 | S |
-| `ve/assist/proposer.py` | `compare_formulas` | 310 | S |
-| `ve/assist/recovery.py` | `_digest` | 37 | S |
-| `ve/assist/recovery.py` | `DocumentAdapter` | 42 | S |
-| `ve/assist/recovery.py` | `DocumentAdapter.add_unit` | 45 | S |
-| `ve/assist/recovery.py` | `DocumentAdapter.add_reading` | 46 | S |
-| `ve/assist/recovery.py` | `DocumentAdapter.narrow` | 47 | S |
-| `ve/assist/recovery.py` | `GlossaryAdapter` | 50 | S |
-| `ve/assist/recovery.py` | `GlossaryAdapter.propose_alias` | 53 | S |
-| `ve/assist/recovery.py` | `ProposerAdapter` | 56 | S |
-| `ve/assist/recovery.py` | `ProposerAdapter.request` | 58 | S |
-| `ve/assist/recovery.py` | `nearest_wordings` | 61 | S |
-| `ve/assist/recovery.py` | `Unit` | 76 | S |
-| `ve/assist/recovery.py` | `_Observations` | 101 | S |
-| `ve/assist/recovery.py` | `_Observations.__init__` | 110 | S |
-| `ve/assist/recovery.py` | `_Observations.budget` | 128 | S |
-| `ve/assist/recovery.py` | `_Observations.record` | 138 | S |
-| `ve/assist/recovery.py` | `_InvalidLedger` | 143 | S |
-| `ve/assist/recovery.py` | `_canonical` | 147 | S |
-| `ve/assist/recovery.py` | `RecoveryService` | 157 | S |
-| `ve/assist/recovery.py` | `RecoveryService.__init__` | 172 | S |
-| `ve/assist/recovery.py` | `RecoveryService._state` | 200 | S |
-| `ve/assist/recovery.py` | `RecoveryService._seal` | 204 | S |
-| `ve/assist/recovery.py` | `RecoveryService._resume` | 207 | S |
-| `ve/assist/recovery.py` | `RecoveryService._load_sealed` | 221 | S |
-| `ve/assist/recovery.py` | `RecoveryService._derived` | 241 | S |
-| `ve/assist/recovery.py` | `RecoveryService._command` | 257 | S |
-| `ve/assist/recovery.py` | `RecoveryService._legacy_command` | 372 | S |
-| `ve/assist/recovery.py` | `RecoveryService._restore` | 413 | S |
-| `ve/assist/recovery.py` | `RecoveryService._now` | 425 | S |
-| `ve/assist/recovery.py` | `RecoveryService._budget` | 428 | S |
-| `ve/assist/recovery.py` | `RecoveryService._event` | 432 | S |
-| `ve/assist/recovery.py` | `RecoveryService._snapshot` | 447 | S |
-| `ve/assist/recovery.py` | `RecoveryService._expect` | 450 | S |
-| `ve/assist/recovery.py` | `RecoveryService._replay` | 455 | S |
-| `ve/assist/recovery.py` | `RecoveryService._replay_inner` | 465 | S |
-| `ve/assist/recovery.py` | `RecoveryService.from_ledger` | 514 | S |
-| `ve/assist/recovery.py` | `RecoveryService.to_ledger` | 531 | S |
-| `ve/assist/recovery.py` | `RecoveryService.verify_ledger` | 537 | S |
-| `ve/assist/recovery.py` | `RecoveryService._invalidate` | 550 | S |
-| `ve/assist/recovery.py` | `RecoveryService.add` | 564 | S |
-| `ve/assist/recovery.py` | `RecoveryService._add` | 569 | S |
-| `ve/assist/recovery.py` | `RecoveryService.word_prompt` | 583 | S |
-| `ve/assist/recovery.py` | `RecoveryService.undo` | 589 | S |
-| `ve/assist/recovery.py` | `RecoveryService._undo` | 594 | S |
-| `ve/assist/recovery.py` | `RecoveryService._approval_still_valid` | 649 | S |
-| `ve/assist/recovery.py` | `RecoveryService.edit` | 657 | S |
-| `ve/assist/recovery.py` | `RecoveryService._edit` | 661 | S |
-| `ve/assist/recovery.py` | `RecoveryService.update_versions` | 696 | S |
-| `ve/assist/recovery.py` | `RecoveryService._update_versions` | 699 | S |
-| `ve/assist/recovery.py` | `RecoveryService.start` | 710 | S |
-| `ve/assist/recovery.py` | `RecoveryService._start` | 713 | S |
-| `ve/assist/recovery.py` | `RecoveryService.classify` | 725 | S |
-| `ve/assist/recovery.py` | `RecoveryService._classify` | 735 | S |
-| `ve/assist/recovery.py` | `RecoveryService.continue_catalogue` | 805 | S |
-| `ve/assist/recovery.py` | `RecoveryService._continue_catalogue` | 809 | S |
-| `ve/assist/recovery.py` | `RecoveryService.reply` | 842 | S |
-| `ve/assist/recovery.py` | `RecoveryService._reply` | 847 | S |
-| `ve/assist/recovery.py` | `RecoveryService.request_proposer` | 869 | S |
-| `ve/assist/recovery.py` | `RecoveryService._request_proposer` | 894 | S |
-| `ve/assist/recovery.py` | `RecoveryService._proposer_result` | 908 | S |
-| `ve/assist/recovery.py` | `RecoveryService.cancel` | 931 | S |
-| `ve/assist/recovery.py` | `RecoveryService._cancel` | 934 | S |
-| `ve/assist/recovery.py` | `RecoveryService.unresolved` | 942 | S |
-| `ve/assist/recovery.py` | `RecoveryService._unresolved` | 946 | S |
-| `ve/assist/recovery.py` | `RecoveryService.set_readings` | 955 | S |
-| `ve/assist/recovery.py` | `RecoveryService._set_readings` | 960 | S |
-| `ve/assist/recovery.py` | `RecoveryService.resolve_pending` | 1001 | S |
-| `ve/assist/recovery.py` | `RecoveryService._resolve_pending` | 1009 | S |
-| `ve/assist/recovery.py` | `RecoveryService.record_narrowing` | 1054 | S |
-| `ve/assist/recovery.py` | `RecoveryService._record_narrowing` | 1066 | S |
-| `ve/assist/recovery.py` | `RecoveryService._catalogue_complete` | 1112 | S |
-| `ve/assist/recovery.py` | `RecoveryService.approve` | 1126 | S |
-| `ve/assist/recovery.py` | `RecoveryService._approve` | 1135 | S |
-| `ve/assist/recovery.py` | `RecoveryService._approval` | 1166 | S |
-| `ve/assist/recovery.py` | `RecoveryService.approval_valid` | 1288 | S |
-| `ve/assist/recovery.py` | `RecoveryService._approval_valid` | 1304 | S |
-| `ve/assist/recovery.py` | `RecoveryService.add_unit` | 1323 | S |
-| `ve/assist/recovery.py` | `RecoveryService.add_reading` | 1328 | S |
-| `ve/assist/recovery.py` | `RecoveryService.narrow` | 1333 | S |
-| `ve/assist/recovery.py` | `RecoveryService.alias_prompt` | 1338 | S |
-| `ve/assist/session.py` | `AssistError` | 47 | S |
-| `ve/assist/session.py` | `LedgerReplayError` | 51 | S |
-| `ve/assist/session.py` | `_now` | 55 | S |
-| `ve/assist/session.py` | `_sha` | 59 | S |
-| `ve/assist/session.py` | `config_digest` | 63 | S |
-| `ve/assist/session.py` | `_ident` | 68 | S |
-| `ve/assist/session.py` | `_names` | 74 | S |
-| `ve/assist/session.py` | `_predicates_of` | 86 | S |
-| `ve/assist/session.py` | `_symbols_of` | 105 | S |
-| `ve/assist/session.py` | `_conjuncts` | 122 | S |
-| `ve/assist/session.py` | `_constants_of` | 128 | S |
-| `ve/assist/session.py` | `Node` | 143 | S |
-| `ve/assist/session.py` | `Node.kind` | 154 | S |
-| `ve/assist/session.py` | `AssistSession` | 158 | S |
-| `ve/assist/session.py` | `AssistSession.__init__` | 166 | S |
-| `ve/assist/session.py` | `AssistSession.create` | 214 | S |
-| `ve/assist/session.py` | `AssistSession.session_id` | 228 | S |
-| `ve/assist/session.py` | `AssistSession._canonical` | 232 | S |
-| `ve/assist/session.py` | `AssistSession._parse` | 235 | S |
-| `ve/assist/session.py` | `AssistSession.paraphrase_formula` | 271 | S |
-| `ve/assist/session.py` | `AssistSession._sentence_view` | 287 | S |
-| `ve/assist/session.py` | `AssistSession.node_view` | 291 | S |
-| `ve/assist/session.py` | `AssistSession._reject_vacuous` | 307 | S |
-| `ve/assist/session.py` | `AssistSession._premise_key` | 316 | S |
-| `ve/assist/session.py` | `AssistSession._canonical_premises` | 319 | S |
-| `ve/assist/session.py` | `AssistSession._ordered_parents` | 324 | S |
-| `ve/assist/session.py` | `AssistSession._decide` | 330 | S |
-| `ve/assist/session.py` | `AssistSession._validity` | 369 | S |
-| `ve/assist/session.py` | `AssistSession._offered` | 379 | S |
-| `ve/assist/session.py` | `AssistSession._require_frozen` | 388 | S |
-| `ve/assist/session.py` | `AssistSession._anchors` | 393 | S |
-| `ve/assist/session.py` | `AssistSession._descendants` | 400 | S |
-| `ve/assist/session.py` | `AssistSession._invalidate` | 410 | S |
-| `ve/assist/session.py` | `AssistSession._budget` | 414 | S |
-| `ve/assist/session.py` | `AssistSession.apply` | 422 | S |
-| `ve/assist/session.py` | `AssistSession._do_freeze_target` | 476 | S |
-| `ve/assist/session.py` | `AssistSession._do_add_node` | 508 | S |
-| `ve/assist/session.py` | `AssistSession._do_accept` | 540 | S |
-| `ve/assist/session.py` | `AssistSession._do_rewrite` | 544 | S |
-| `ve/assist/session.py` | `AssistSession._do_remove_node` | 573 | S |
-| `ve/assist/session.py` | `AssistSession._do_declare` | 583 | S |
-| `ve/assist/session.py` | `AssistSession._invariant` | 664 | S |
-| `ve/assist/session.py` | `AssistSession._check` | 671 | S |
-| `ve/assist/session.py` | `AssistSession.describe_model` | 718 | S |
-| `ve/assist/session.py` | `AssistSession._do_check_step` | 742 | S |
-| `ve/assist/session.py` | `AssistSession._suggest_premises` | 768 | S |
-| `ve/assist/session.py` | `AssistSession._do_waive` | 781 | S |
-| `ve/assist/session.py` | `AssistSession._do_show` | 791 | S |
-| `ve/assist/session.py` | `AssistSession._target_view` | 804 | S |
-| `ve/assist/session.py` | `AssistSession._do_paraphrase` | 812 | S |
-| `ve/assist/session.py` | `AssistSession._do_sentences` | 816 | S |
-| `ve/assist/session.py` | `AssistSession.vocabulary` | 822 | S |
-| `ve/assist/session.py` | `AssistSession._resolve` | 828 | S |
-| `ve/assist/session.py` | `AssistSession._do_compare` | 837 | S |
-| `ve/assist/session.py` | `AssistSession._do_propose` | 842 | S |
-| `ve/assist/session.py` | `AssistSession._do_record_usage` | 846 | S |
-| `ve/assist/session.py` | `AssistSession._support` | 854 | S |
-| `ve/assist/session.py` | `AssistSession._anchor_state` | 864 | S |
-| `ve/assist/session.py` | `AssistSession._is_anchored_parent` | 874 | S |
-| `ve/assist/session.py` | `AssistSession.target_graph` | 878 | S |
-| `ve/assist/session.py` | `AssistSession._entails` | 910 | S |
-| `ve/assist/session.py` | `AssistSession._do_status` | 920 | S |
-| `ve/assist/session.py` | `AssistSession._witnesses` | 1089 | S |
-| `ve/assist/session.py` | `AssistSession._anchored_entailment` | 1096 | S |
-| `ve/assist/session.py` | `AssistSession._derivation` | 1111 | S |
-| `ve/assist/session.py` | `AssistSession._consistency_failures` | 1132 | S |
-| `ve/assist/session.py` | `AssistSession._renamed_conclusions` | 1146 | S |
-| `ve/assist/session.py` | `AssistSession.usage` | 1185 | S |
-| `ve/assist/session.py` | `AssistSession._do_export` | 1199 | S |
-| `ve/assist/session.py` | `AssistSession.log_rejection` | 1208 | S |
-| `ve/assist/session.py` | `AssistSession.to_ledger` | 1218 | S |
-| `ve/assist/session.py` | `AssistSession.from_ledger` | 1222 | S |
-| `ve/assist/session.py` | `AssistSession._replay_rejection` | 1266 | S |
-| `ve/assist/session.py` | `AssistSession.recorded_model_call` | 1278 | S |
-| `ve/assist/session.py` | `AssistSession.replaying` | 1301 | S |
-| `ve/assist/sources.py` | `split_sentences` | 31 | S |
-| `ve/assist/sources.py` | `_sentence` | 36 | S |
-| `ve/assist/sources.py` | `source_from_text` | 43 | S |
-| `ve/assist/sources.py` | `load_source` | 65 | S |
-| `ve/assist/sources.py` | `read_p5_items` | 87 | S |
-| `ve/assist/sources.py` | `select_p5_item` | 98 | S |
-| `ve/assist/sources.py` | `_slug` | 112 | S |
-| `ve/assist/sources.py` | `p5_environment` | 116 | S |
-| `ve/assist/sources.py` | `source_from_p5` | 152 | S |
-| `ve/assist/verify.py` | `_usage_totals` | 48 | S |
-| `ve/assist/verify.py` | `_read_calls` | 63 | S |
-| `ve/assist/verify.py` | `expected_config_from_p5` | 70 | S |
-| `ve/assist/verify.py` | `verify_session` | 76 | S |
-| `ve/attacks.py` | `AttackValidation` | 26 | S |
-| `ve/attacks.py` | `AttackValidation.accepted` | 35 | S |
-| `ve/attacks.py` | `AttackValidation.to_dict` | 38 | S |
-| `ve/attacks.py` | `_preferred_witness` | 44 | S |
-| `ve/attacks.py` | `validate_attack` | 83 | S |
-| `ve/attacks.py` | `_formula` | 115 | S |
-| `ve/attacks.py` | `validate_row` | 126 | S |
-| `ve/attacks.py` | `main` | 136 | S |
-| `ve/authoring.py` | `AuthoringDiagnostic` | 31 | S |
-| `ve/authoring.py` | `AuthoringDiagnostic.to_dict` | 40 | S |
-| `ve/authoring.py` | `AuthoringRequest` | 54 | S |
-| `ve/authoring.py` | `AuthoringRound` | 63 | S |
-| `ve/authoring.py` | `AuthoringRound.to_dict` | 69 | S |
-| `ve/authoring.py` | `AuthoringResult` | 77 | S |
-| `ve/authoring.py` | `AuthoringResult.acceptance_rate` | 87 | S |
-| `ve/authoring.py` | `AuthoringResult.to_dict` | 90 | S |
-| `ve/authoring.py` | `_diagnostic` | 103 | S |
-| `ve/authoring.py` | `gatekeep` | 117 | S |
-| `ve/check.py` | `check` | 13 | L |
-| `ve/document.py` | `_body` | 30 | S |
-| `ve/document.py` | `_split` | 61 | S |
-| `ve/document.py` | `_meaning` | 82 | S |
-| `ve/document.py` | `_formula` | 97 | S |
-| `ve/document.py` | `load_document` | 123 | S |
-| `ve/document.py` | `_fixed_and_active` | 205 | S |
-| `ve/document.py` | `_assertion_disjunctions` | 213 | S |
-| `ve/document.py` | `coverage` | 227 | S |
-| `ve/document.py` | `_check_narrowing_choices` | 250 | S |
-| `ve/document.py` | `check_document` | 266 | C |
-| `ve/document.py` | `render_document` | 334 | S |
-| `ve/document.py` | `main` | 386 | S |
-| `ve/english.py` | `_mentioned_constants` | 56 | S |
-| `ve/english.py` | `_has_discourse_binder` | 71 | S |
-| `ve/english.py` | `_fold_sentence_initials` | 90 | S |
-| `ve/english.py` | `_normalise_english_source` | 133 | S |
-| `ve/english.py` | `_mask_brackets` | 168 | S |
-| `ve/english.py` | `_content_words` | 185 | S |
-| `ve/english.py` | `quote` | 190 | S |
-| `ve/english.py` | `UnreviewedVocabularyWarning` | 194 | S |
-| `ve/english.py` | `EnglishVocabulary` | 198 | S |
-| `ve/english.py` | `EnglishVocabulary.__init__` | 200 | S |
-| `ve/english.py` | `EnglishVocabulary.atom` | 421 | S |
-| `ve/english.py` | `EnglishVocabulary.natural_constants` | 427 | S |
-| `ve/english.py` | `lint_english_vocabulary` | 432 | S |
-| `ve/english.py` | `_max_scope` | 436 | S |
-| `ve/english.py` | `_article` | 454 | S |
-| `ve/english.py` | `_markers` | 458 | S |
-| `ve/english.py` | `EnglishTraversal` | 462 | S |
-| `ve/english.py` | `EnglishTraversal.__init__` | 463 | S |
-| `ve/english.py` | `EnglishTraversal.binding` | 470 | S |
-| `ve/english.py` | `EnglishTraversal.term` | 482 | S |
-| `ve/english.py` | `EnglishTraversal.simple` | 490 | S |
-| `ve/english.py` | `EnglishTraversal.relative` | 495 | S |
-| `ve/english.py` | `EnglishTraversal.guard` | 509 | S |
-| `ve/english.py` | `EnglishTraversal.formula` | 525 | S |
-| `ve/english.py` | `EnglishTraversal.render` | 633 | S |
-| `ve/english.py` | `render_english` | 639 | S |
-| `ve/english.py` | `EnglishParseResult` | 690 | S |
-| `ve/english.py` | `EnglishParseResult.paraphrase` | 699 | S |
-| `ve/english.py` | `_content_pattern` | 706 | S |
-| `ve/english.py` | `_literal_pattern` | 712 | S |
-| `ve/english.py` | `EnglishParser` | 716 | S |
-| `ve/english.py` | `EnglishParser.__init__` | 717 | S |
-| `ve/english.py` | `EnglishParser._span` | 729 | S |
-| `ve/english.py` | `EnglishParser.error` | 733 | S |
-| `ve/english.py` | `EnglishParser.take` | 737 | S |
-| `ve/english.py` | `EnglishParser.need` | 748 | S |
-| `ve/english.py` | `EnglishParser.space` | 752 | S |
-| `ve/english.py` | `EnglishParser.declaration` | 758 | S |
-| `ve/english.py` | `EnglishParser.term_options` | 778 | S |
-| `ve/english.py` | `EnglishParser.reference_pattern` | 794 | S |
-| `ve/english.py` | `EnglishParser.atom` | 798 | S |
-| `ve/english.py` | `EnglishParser.int_constants` | 951 | S |
-| `ve/english.py` | `EnglishParser.int_leaf` | 955 | S |
-| `ve/english.py` | `EnglishParser.int_pattern` | 963 | S |
-| `ve/english.py` | `EnglishParser.int_syntax` | 967 | S |
-| `ve/english.py` | `EnglishParser.int_term` | 1000 | S |
-| `ve/english.py` | `EnglishParser.unknown_atom` | 1047 | S |
-| `ve/english.py` | `EnglishParser.term` | 1066 | S |
-| `ve/english.py` | `EnglishParser.guard` | 1072 | S |
-| `ve/english.py` | `EnglishParser.formula` | 1092 | S |
-| `ve/english.py` | `EnglishParser.natural_clause` | 1198 | S |
-| `ve/english.py` | `EnglishParser.owner_clause` | 1269 | S |
-| `ve/english.py` | `EnglishParser.coordination` | 1289 | S |
-| `ve/english.py` | `EnglishParser.document` | 1334 | S |
-| `ve/english.py` | `_parse_english_document` | 1355 | S |
-| `ve/english.py` | `_check_conclusions` | 1394 | S |
-| `ve/english.py` | `parse_english_with_metadata` | 1411 | S |
-| `ve/english.py` | `parse_english` | 1427 | S |
-| `ve/english.py` | `parse_english_argument` | 1431 | S |
-| `ve/english.py` | `english_legend` | 1465 | S |
-| `ve/english.py` | `english_lark_grammar` | 1503 | S |
-| `ve/english.py` | `_natural_parser` | 1643 | S |
-| `ve/english.py` | `_natural_grammar` | 1649 | S |
-| `ve/english.py` | `_natural_derivation` | 1680 | S |
-| `ve/english_phrases.py` | `phrase_end` | 14 | S |
-| `ve/english_phrases.py` | `unary_phrase` | 23 | S |
-| `ve/english_phrases.py` | `distance` | 34 | S |
-| `ve/english_phrases.py` | `lexical` | 44 | S |
-| `ve/english_phrases.py` | `wording_key` | 49 | S |
-| `ve/english_phrases.py` | `content_tokens` | 55 | S |
-| `ve/english_phrases.py` | `nearest` | 62 | S |
-| `ve/english_vocabulary.py` | `negative_template` | 58 | S |
-| `ve/english_vocabulary.py` | `overlay_provenance` | 74 | S |
-| `ve/english_vocabulary.py` | `display_environment` | 90 | S |
-| `ve/english_vocabulary.py` | `suggest_vocabulary` | 135 | S |
-| `ve/equivalence.py` | `Budgets` | 29 | S |
-| `ve/equivalence.py` | `Budgets.__post_init__` | 35 | S |
-| `ve/equivalence.py` | `Budgets.search_options` | 41 | S |
-| `ve/equivalence.py` | `_budgets` | 45 | S |
-| `ve/equivalence.py` | `DirectionResult` | 56 | S |
-| `ve/equivalence.py` | `DirectionResult.to_dict` | 63 | S |
-| `ve/equivalence.py` | `ComparisonResult` | 70 | S |
-| `ve/equivalence.py` | `ComparisonResult.relation_detail` | 82 | S |
-| `ve/equivalence.py` | `ComparisonResult.failed_directions` | 89 | S |
-| `ve/equivalence.py` | `ComparisonResult.relation` | 95 | S |
-| `ve/equivalence.py` | `ComparisonResult.certificates` | 104 | S |
-| `ve/equivalence.py` | `ComparisonResult.models` | 110 | S |
-| `ve/equivalence.py` | `ComparisonResult.to_dict` | 115 | S |
-| `ve/equivalence.py` | `_direction` | 128 | S |
-| `ve/equivalence.py` | `compare` | 175 | C |
-| `ve/equivalence.py` | `is_weaker` | 216 | S |
-| `ve/equivalence.py` | `is_stronger` | 224 | S |
-| `ve/equivalence.py` | `in_two_variable_fragment` | 232 | S |
-| `ve/equivalence.py` | `non_vacuity_conditions` | 291 | S |
-| `ve/equivalence.py` | `witness_quality` | 321 | S |
-| `ve/equivalence.py` | `ReferenceValidation` | 340 | S |
-| `ve/equivalence.py` | `ReferenceValidation.valid` | 349 | S |
-| `ve/equivalence.py` | `ReferenceValidation.to_dict` | 352 | S |
-| `ve/equivalence.py` | `validate_reference` | 359 | S |
-| `ve/errors.py` | `Span` | 6 | S |
-| `ve/errors.py` | `VEError` | 13 | S |
-| `ve/errors.py` | `VEError.__init__` | 16 | S |
-| `ve/errors.py` | `VEError.to_dict` | 20 | S |
-| `ve/errors.py` | `SyntaxError` | 29 | S |
-| `ve/errors.py` | `AmbiguousDerivation` | 33 | S |
-| `ve/errors.py` | `UnknownSymbol` | 37 | S |
-| `ve/errors.py` | `DuplicateDeclaration` | 41 | S |
-| `ve/errors.py` | `UnboundVariable` | 45 | S |
-| `ve/errors.py` | `ShadowedVariable` | 49 | S |
-| `ve/errors.py` | `TypeMismatch` | 53 | S |
-| `ve/errors.py` | `InvalidModel` | 57 | S |
-| `ve/errors.py` | `InvalidModel.__init__` | 60 | S |
-| `ve/errors.py` | `InvalidModel.to_dict` | 65 | S |
-| `ve/errors.py` | `UnsupportedProfile` | 72 | S |
-| `ve/errors.py` | `ResourceLimit` | 76 | S |
-| `ve/fluent.py` | `_references` | 21 | S |
-| `ve/fluent.py` | `_guard` | 40 | S |
-| `ve/fluent.py` | `FluentTraversal` | 49 | S |
-| `ve/fluent.py` | `FluentTraversal.__init__` | 50 | S |
-| `ve/fluent.py` | `FluentTraversal.binder` | 57 | S |
-| `ve/fluent.py` | `FluentTraversal.term` | 69 | S |
-| `ve/fluent.py` | `FluentTraversal.equality` | 78 | S |
-| `ve/fluent.py` | `FluentTraversal.unit` | 86 | S |
-| `ve/fluent.py` | `FluentTraversal.relative` | 94 | S |
-| `ve/fluent.py` | `FluentTraversal.guard` | 112 | S |
-| `ve/fluent.py` | `FluentTraversal.negative_atom` | 126 | S |
-| `ve/fluent.py` | `FluentTraversal.formula` | 132 | S |
-| `ve/fluent.py` | `contraction_stats` | 201 | S |
-| `ve/fol.py` | `_fail` | 17 | S |
-| `ve/fol.py` | `_variable_name` | 21 | S |
-| `ve/fol.py` | `document_from_indexed_json` | 36 | S |
-| `ve/fol.py` | `document_from_named_fol` | 42 | S |
-| `ve/fol.py` | `document_to_named_fol` | 118 | S |
-| `ve/fol.py` | `render_fol` | 173 | S |
-| `ve/grammar.py` | `_integer` | 18 | S |
-| `ve/grammar.py` | `_Grammar` | 23 | S |
-| `ve/grammar.py` | `_Grammar.__init__` | 24 | S |
-| `ve/grammar.py` | `_Grammar.literal` | 36 | S |
-| `ve/grammar.py` | `_Grammar.add` | 43 | S |
-| `ve/grammar.py` | `_Grammar.state` | 51 | S |
-| `ve/grammar.py` | `_Grammar.term` | 64 | S |
-| `ve/grammar.py` | `_Grammar.integer_term` | 82 | S |
-| `ve/grammar.py` | `_Grammar.formula` | 113 | S |
-| `ve/grammar.py` | `_Grammar.build` | 171 | S |
-| `ve/grammar.py` | `_Grammar.render` | 181 | S |
-| `ve/grammar.py` | `export_grammar` | 214 | S |
-| `ve/grammar.py` | `structured_output_spec` | 252 | S |
-| `ve/identity.py` | `source_id` | 9 | L |
-| `ve/identity.py` | `meaning_id` | 19 | L |
-| `ve/lexicon/__init__.py` | `_index` | 12 | S |
-| `ve/lexicon/__init__.py` | `classify` | 29 | S |
-| `ve/lexicon/__init__.py` | `describe` | 51 | S |
-| `ve/natural.py` | `NaturalResult` | 14 | S |
-| `ve/natural.py` | `PresentationNeedsRepair` | 25 | S |
-| `ve/natural.py` | `PresentationNeedsRepair.__init__` | 26 | S |
-| `ve/natural.py` | `ProsePresentation` | 32 | S |
-| `ve/natural.py` | `ProsePresentation.to_dict` | 43 | S |
-| `ve/natural.py` | `parse_presentation` | 50 | S |
-| `ve/natural.py` | `render_presentation` | 84 | S |
-| `ve/natural.py` | `migrate_presentation` | 107 | S |
-| `ve/natural.py` | `_adjective` | 131 | S |
-| `ve/natural.py` | `_owner` | 146 | S |
-| `ve/natural.py` | `_relative_phrase` | 155 | S |
-| `ve/natural.py` | `_candidate` | 169 | S |
-| `ve/natural.py` | `render_natural_sentence` | 252 | S |
-| `ve/natural.py` | `natural_coverage` | 284 | S |
-| `ve/norm_english.py` | `_words` | 22 | S |
-| `ve/norm_english.py` | `_bindings` | 26 | S |
-| `ve/norm_english.py` | `_guard_text` | 45 | S |
-| `ve/norm_english.py` | `_parse_guard` | 51 | S |
-| `ve/norm_english.py` | `_consequence` | 73 | S |
-| `ve/norm_english.py` | `default_sentence` | 95 | S |
-| `ve/norm_english.py` | `render_english` | 113 | S |
-| `ve/norm_english.py` | `_block_grammar` | 157 | S |
-| `ve/norm_english.py` | `_parse_consequence` | 195 | S |
-| `ve/norm_english.py` | `parse_english` | 218 | S |
-| `ve/norm_strict.py` | `print_strict` | 16 | S |
-| `ve/norm_strict.py` | `parse_strict` | 37 | S |
-| `ve/openterms.py` | `validate_open_terms` | 9 | S |
-| `ve/propose.py` | `_ProposalParser` | 22 | S |
-| `ve/propose.py` | `_ProposalParser.__init__` | 23 | S |
-| `ve/propose.py` | `_ProposalParser.unknown_atom` | 43 | S |
-| `ve/propose.py` | `_ProposalParser._span` | 163 | S |
-| `ve/propose.py` | `propose` | 169 | S |
-| `ve/propose.py` | `write_proposal` | 219 | S |
-| `ve/propose.py` | `adopt` | 227 | S |
-| `ve/propose.py` | `_write_new_directory` | 263 | S |
-| `ve/readings.py` | `validate_reading_sets` | 16 | S |
-| `ve/readings.py` | `active_reading_sets` | 94 | S |
-| `ve/readings.py` | `validate_narrowings` | 104 | S |
-| `ve/readings.py` | `plan_choices` | 129 | S |
-| `ve/readings.py` | `check_readings` | 147 | C |
-| `ve/stream_audit.py` | `needles_for` | 59 | S |
-| `ve/stream_audit.py` | `_unescape` | 71 | S |
-| `ve/stream_audit.py` | `_percent` | 87 | S |
-| `ve/stream_audit.py` | `_entities` | 91 | S |
-| `ve/stream_audit.py` | `_nfkc` | 95 | S |
-| `ve/stream_audit.py` | `_bytes_text` | 99 | S |
-| `ve/stream_audit.py` | `_base64` | 103 | S |
-| `ve/stream_audit.py` | `_hex` | 123 | S |
-| `ve/stream_audit.py` | `decoded_views` | 139 | S |
-| `ve/stream_audit.py` | `exposes` | 159 | S |
-| `ve/stream_audit.py` | `contains_secret` | 170 | S |
-| `ve/stream_audit.py` | `_replace_literal` | 183 | S |
-| `ve/stream_audit.py` | `_embedded_json` | 189 | S |
-| `ve/stream_audit.py` | `sanitize_text` | 211 | S |
-| `ve/stream_audit.py` | `sanitize` | 219 | S |
-| `ve/stream_audit.py` | `_record_usage` | 236 | S |
-| `ve/stream_audit.py` | `stream_usage` | 249 | S |
-| `ve/stream_audit.py` | `usage_totals` | 267 | S |
-| `ve/stream_audit.py` | `records_from_raw` | 274 | S |
-| `ve/surface/data.py` | `attribute_equals` | 7 | S |
-| `ve/surface/data.py` | `attribute_property` | 17 | S |
-| `ve/surface/data.py` | `member_of` | 36 | S |
-| `ve/surface/definitions.py` | `_outside_quotes` | 39 | S |
-| `ve/surface/definitions.py` | `_quantified` | 45 | S |
-| `ve/surface/definitions.py` | `_check_wordings` | 51 | S |
-| `ve/surface/definitions.py` | `render_definition` | 60 | S |
-| `ve/surface/definitions.py` | `parse_definition` | 75 | S |
-| `ve/surface/definitions.py` | `_phrases` | 111 | S |
-| `ve/surface/definitions.py` | `parse_glossary` | 129 | S |
-| `ve/surface/definitions.py` | `_check_lemma_names` | 155 | S |
-| `ve/surface/definitions.py` | `render_citation` | 161 | S |
-| `ve/surface/definitions.py` | `parse_citation` | 173 | S |
-| `ve/surface/definitions.py` | `_sentences` | 196 | S |
-| `ve/surface/definitions.py` | `adopt` | 201 | S |
-| `ve/surface/definitions.py` | `wordings` | 231 | S |
-| `ve/surface/nary.py` | `template_parts` | 13 | S |
-| `ve/surface/nary.py` | `print_atom` | 36 | S |
-| `ve/surface/nary.py` | `render_english` | 40 | S |
-| `ve/surface/nary.py` | `render_fluent` | 44 | S |
-| `ve/surface/nary.py` | `map_free` | 48 | S |
-| `ve/surface/nary.py` | `predicates` | 57 | S |
-| `ve/surface/nary.py` | `import_fol` | 61 | S |
-| `ve/surface/nary.py` | `export_fol` | 71 | S |
-| `ve/surface/registry.py` | `SurfaceRecord` | 9 | S |
-| `ve/surface/registry.py` | `register` | 41 | S |
-| `ve/surface/registry.py` | `records` | 77 | S |
-| `ve/surface/registry.py` | `enabled` | 81 | S |
-| `ve/surface/registry.py` | `by_tag` | 85 | S |
-| `ve/surface/registry.py` | `by_node` | 89 | S |
-| `ve/surface/registry.py` | `formula_arities` | 93 | S |
-| `ve/surface/registry.py` | `keywords` | 98 | S |
-| `ve/surface/registry.py` | `dispatch` | 102 | S |
-| `ve/surface/registry.py` | `strict_dispatch` | 107 | S |
-| `ve/surface/unambiguity.py` | `_parser` | 19 | S |
-| `ve/surface/unambiguity.py` | `require_unique_derivation` | 25 | S |
-| `ve/surface/unambiguity.py` | `require_correspondence` | 79 | S |
-| `ve/vacuity.py` | `premise_status` | 9 | L |
-| `ve/wire.py` | `_string` | 13 | L |
-| `ve/wire.py` | `validate_json` | 18 | L |
-| `ve/wire.py` | `_pairs` | 41 | L |
-| `ve/wire.py` | `_integer` | 50 | L |
-| `ve/wire.py` | `_invalid_number` | 59 | L |
-| `ve/wire.py` | `loads_json` | 63 | L |
-| `ve/wire.py` | `canonical_json` | 81 | L |
-| `ve/wire.py` | `digest` | 98 | L |
-| `ve/wire.py` | `require_fields` | 102 | L |
-| `ve/wire.py` | `formula_tag_arity` | 111 | L |
+| Module | Function | Line | Class | Decision / Stage 2 interface |
+|---|---|---:|:---:|---|
+| `ve/__main__.py` | `_read` | 21 | S | — |
+| `ve/__main__.py` | `_emit` | 32 | S | — |
+| `ve/__main__.py` | `main` | 36 | S | — |
+| `ve/adapters/attributes.py` | `Value` | 15 | S | — |
+| `ve/adapters/attributes.py` | `Value.__bool__` | 19 | S | — |
+| `ve/adapters/attributes.py` | `attribute` | 23 | S | — |
+| `ve/adapters/attributes.py` | `has` | 35 | S | — |
+| `ve/adapters/attributes.py` | `_cedar_equal` | 48 | S | — |
+| `ve/adapters/attributes.py` | `compare` | 61 | S | — |
+| `ve/adapters/cedar.py` | `_any` | 25 | S | — |
+| `ve/adapters/cedar.py` | `_parser_module` | 37 | S | — |
+| `ve/adapters/cedar.py` | `_entity` | 47 | S | — |
+| `ve/adapters/cedar.py` | `_literal` | 51 | S | — |
+| `ve/adapters/cedar.py` | `_and` | 63 | S | — |
+| `ve/adapters/cedar.py` | `_or` | 67 | S | — |
+| `ve/adapters/cedar.py` | `_Excluded` | 71 | S | — |
+| `ve/adapters/cedar.py` | `_Case` | 76 | S | — |
+| `ve/adapters/cedar.py` | `_bool` | 81 | S | — |
+| `ve/adapters/cedar.py` | `_select` | 85 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler` | 89 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler.__init__` | 90 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._limit` | 96 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._var` | 101 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._reach` | 109 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._membership` | 112 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._logical` | 123 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler.compile` | 135 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler.scope` | 207 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler.policy` | 228 | S | — |
+| `ve/adapters/cedar.py` | `_Compiler._logical_cases` | 239 | S | — |
+| `ve/adapters/cedar.py` | `_Entity` | 250 | S | — |
+| `ve/adapters/cedar.py` | `CedarTranslation` | 256 | S | — |
+| `ve/adapters/cedar.py` | `CedarTranslation.decisions` | 264 | S | — |
+| `ve/adapters/cedar.py` | `_walk` | 281 | S | — |
+| `ve/adapters/cedar.py` | `translate` | 292 | S | — |
+| `ve/adapters/cli.py` | `main` | 11 | S | — |
+| `ve/adapters/gatekeeper.py` | `Exemption` | 11 | S | — |
+| `ve/adapters/gatekeeper.py` | `tables` | 16 | S | — |
+| `ve/adapters/gatekeeper.py` | `is_exempt` | 21 | S | — |
+| `ve/adapters/records.py` | `_request` | 23 | S | — |
+| `ve/adapters/records.py` | `_regex_issue` | 39 | S | — |
+| `ve/adapters/records.py` | `_calculate` | 92 | S | — |
+| `ve/adapters/records.py` | `run` | 103 | S | — |
+| `ve/adapters/records.py` | `verify` | 125 | S | — |
+| `ve/adapters/records.py` | `_lookup_verified` | 140 | S | — |
+| `ve/adapters/records.py` | `lookup` | 152 | S | — |
+| `ve/argument_fixtures.py` | `_environment` | 28 | S | — |
+| `ve/argument_fixtures.py` | `_snapshot_id` | 61 | S | — |
+| `ve/argument_fixtures.py` | `_evidence` | 65 | S | — |
+| `ve/argument_fixtures.py` | `separated_vocabulary_example` | 79 | S | — |
+| `ve/argument_fixtures.py` | `explicit_bridge_example` | 102 | S | — |
+| `ve/argument_fixtures.py` | `merged_vocabulary_example` | 121 | S | — |
+| `ve/argument_fixtures.py` | `infinite_only_example` | 142 | S | — |
+| `ve/argument_fixtures.py` | `worked_examples` | 178 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_Deadline` | 34 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_Deadline.__init__` | 37 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Budget` | 41 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Budget.__init__` | 49 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Budget._hit` | 57 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Budget.expired` | 63 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Budget.guard` | 68 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_budget` | 98 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Pattern` | 105 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `Pattern.matches` | 112 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_scope` | 116 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_negation` | 122 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_coordination` | 128 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_collective` | 134 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_attachment` | 144 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_reference` | 150 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_ellipsis` | 155 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `pattern_by_id` | 188 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `candidates` | 192 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `checked_wording` | 222 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `review` | 238 | S | — |
+| `ve/assist/ambiguity_patterns.py` | `_compare` | 329 | S | — |
+| `ve/assist/api.py` | `_tool` | 22 | S | — |
+| `ve/assist/api.py` | `tool_schemas` | 28 | S | — |
+| `ve/assist/api.py` | `tools_for_session` | 99 | S | — |
+| `ve/assist/api.py` | `call_tool` | 104 | S | — |
+| `ve/assist/cli.py` | `_load` | 21 | S | — |
+| `ve/assist/cli.py` | `_save` | 25 | S | — |
+| `ve/assist/cli.py` | `_wrap` | 32 | S | — |
+| `ve/assist/cli.py` | `_node_lines` | 36 | S | — |
+| `ve/assist/cli.py` | `_model_lines` | 51 | S | — |
+| `ve/assist/cli.py` | `render` | 61 | S | — |
+| `ve/assist/cli.py` | `_proposer` | 159 | S | — |
+| `ve/assist/cli.py` | `main` | 165 | S | — |
+| `ve/assist/ground.py` | `_atoms` | 17 | S | — |
+| `ve/assist/ground.py` | `_value` | 34 | S | — |
+| `ve/assist/ground.py` | `ground_countermodel` | 69 | S | — |
+| `ve/assist/premises.py` | `_conjunction` | 23 | S | — |
+| `ve/assist/premises.py` | `suggest_premises` | 30 | S | — |
+| `ve/assist/proposer.py` | `redact_secrets` | 69 | S | — |
+| `ve/assist/proposer.py` | `_digest` | 78 | S | — |
+| `ve/assist/proposer.py` | `build_prompt` | 82 | S | — |
+| `ve/assist/proposer.py` | `build_repair_prompt` | 102 | S | — |
+| `ve/assist/proposer.py` | `_matching` | 109 | S | — |
+| `ve/assist/proposer.py` | `strip_redundant_parentheses` | 121 | S | — |
+| `ve/assist/proposer.py` | `extract_candidates` | 147 | S | — |
+| `ve/assist/proposer.py` | `ProposerBackendError` | 168 | S | — |
+| `ve/assist/proposer.py` | `_attempts` | 172 | S | — |
+| `ve/assist/proposer.py` | `_call` | 181 | S | — |
+| `ve/assist/proposer.py` | `run_propose` | 231 | S | — |
+| `ve/assist/proposer.py` | `_distinguish` | 295 | S | — |
+| `ve/assist/proposer.py` | `compare_formulas` | 310 | S | — |
+| `ve/assist/recovery.py` | `_digest` | 37 | S | — |
+| `ve/assist/recovery.py` | `DocumentAdapter` | 42 | S | — |
+| `ve/assist/recovery.py` | `DocumentAdapter.add_unit` | 45 | S | — |
+| `ve/assist/recovery.py` | `DocumentAdapter.add_reading` | 46 | S | — |
+| `ve/assist/recovery.py` | `DocumentAdapter.narrow` | 47 | S | — |
+| `ve/assist/recovery.py` | `GlossaryAdapter` | 50 | S | — |
+| `ve/assist/recovery.py` | `GlossaryAdapter.propose_alias` | 53 | S | — |
+| `ve/assist/recovery.py` | `ProposerAdapter` | 56 | S | — |
+| `ve/assist/recovery.py` | `ProposerAdapter.request` | 58 | S | — |
+| `ve/assist/recovery.py` | `nearest_wordings` | 61 | S | — |
+| `ve/assist/recovery.py` | `Unit` | 76 | S | — |
+| `ve/assist/recovery.py` | `_Observations` | 101 | S | — |
+| `ve/assist/recovery.py` | `_Observations.__init__` | 110 | S | — |
+| `ve/assist/recovery.py` | `_Observations.budget` | 128 | S | — |
+| `ve/assist/recovery.py` | `_Observations.record` | 138 | S | — |
+| `ve/assist/recovery.py` | `_InvalidLedger` | 143 | S | — |
+| `ve/assist/recovery.py` | `_canonical` | 147 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService` | 157 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.__init__` | 172 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._state` | 200 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._seal` | 204 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._resume` | 207 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._load_sealed` | 221 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._derived` | 241 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._command` | 257 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._legacy_command` | 372 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._restore` | 413 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._now` | 425 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._budget` | 428 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._event` | 432 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._snapshot` | 447 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._expect` | 450 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._replay` | 455 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._replay_inner` | 465 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.from_ledger` | 514 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.to_ledger` | 531 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.verify_ledger` | 537 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._invalidate` | 550 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.add` | 564 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._add` | 569 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.word_prompt` | 583 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.undo` | 589 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._undo` | 594 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._approval_still_valid` | 649 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.edit` | 657 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._edit` | 661 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.update_versions` | 696 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._update_versions` | 699 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.start` | 710 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._start` | 713 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.classify` | 725 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._classify` | 735 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.continue_catalogue` | 805 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._continue_catalogue` | 809 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.reply` | 842 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._reply` | 847 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.request_proposer` | 869 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._request_proposer` | 894 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._proposer_result` | 908 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.cancel` | 931 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._cancel` | 934 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.unresolved` | 942 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._unresolved` | 946 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.set_readings` | 955 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._set_readings` | 960 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.resolve_pending` | 1001 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._resolve_pending` | 1009 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.record_narrowing` | 1054 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._record_narrowing` | 1066 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._catalogue_complete` | 1112 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.approve` | 1126 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._approve` | 1135 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._approval` | 1166 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.approval_valid` | 1288 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService._approval_valid` | 1304 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.add_unit` | 1323 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.add_reading` | 1328 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.narrow` | 1333 | S | — |
+| `ve/assist/recovery.py` | `RecoveryService.alias_prompt` | 1338 | S | — |
+| `ve/assist/session.py` | `AssistError` | 47 | S | — |
+| `ve/assist/session.py` | `LedgerReplayError` | 51 | S | — |
+| `ve/assist/session.py` | `_now` | 55 | S | — |
+| `ve/assist/session.py` | `_sha` | 59 | S | — |
+| `ve/assist/session.py` | `config_digest` | 63 | S | — |
+| `ve/assist/session.py` | `_ident` | 68 | S | — |
+| `ve/assist/session.py` | `_names` | 74 | S | — |
+| `ve/assist/session.py` | `_predicates_of` | 86 | S | — |
+| `ve/assist/session.py` | `_symbols_of` | 105 | S | — |
+| `ve/assist/session.py` | `_conjuncts` | 122 | S | — |
+| `ve/assist/session.py` | `_constants_of` | 128 | S | — |
+| `ve/assist/session.py` | `Node` | 143 | S | — |
+| `ve/assist/session.py` | `Node.kind` | 154 | S | — |
+| `ve/assist/session.py` | `AssistSession` | 158 | S | — |
+| `ve/assist/session.py` | `AssistSession.__init__` | 166 | S | — |
+| `ve/assist/session.py` | `AssistSession.create` | 214 | S | — |
+| `ve/assist/session.py` | `AssistSession.session_id` | 228 | S | — |
+| `ve/assist/session.py` | `AssistSession._canonical` | 232 | S | — |
+| `ve/assist/session.py` | `AssistSession._parse` | 235 | S | — |
+| `ve/assist/session.py` | `AssistSession.paraphrase_formula` | 271 | S | — |
+| `ve/assist/session.py` | `AssistSession._sentence_view` | 287 | S | — |
+| `ve/assist/session.py` | `AssistSession.node_view` | 291 | S | — |
+| `ve/assist/session.py` | `AssistSession._reject_vacuous` | 307 | S | — |
+| `ve/assist/session.py` | `AssistSession._premise_key` | 316 | S | — |
+| `ve/assist/session.py` | `AssistSession._canonical_premises` | 319 | S | — |
+| `ve/assist/session.py` | `AssistSession._ordered_parents` | 324 | S | — |
+| `ve/assist/session.py` | `AssistSession._decide` | 330 | S | — |
+| `ve/assist/session.py` | `AssistSession._validity` | 369 | S | — |
+| `ve/assist/session.py` | `AssistSession._offered` | 379 | S | — |
+| `ve/assist/session.py` | `AssistSession._require_frozen` | 388 | S | — |
+| `ve/assist/session.py` | `AssistSession._anchors` | 393 | S | — |
+| `ve/assist/session.py` | `AssistSession._descendants` | 400 | S | — |
+| `ve/assist/session.py` | `AssistSession._invalidate` | 410 | S | — |
+| `ve/assist/session.py` | `AssistSession._budget` | 414 | S | — |
+| `ve/assist/session.py` | `AssistSession.apply` | 422 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_freeze_target` | 476 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_add_node` | 508 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_accept` | 540 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_rewrite` | 544 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_remove_node` | 573 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_declare` | 583 | S | — |
+| `ve/assist/session.py` | `AssistSession._invariant` | 664 | S | — |
+| `ve/assist/session.py` | `AssistSession._check` | 671 | S | — |
+| `ve/assist/session.py` | `AssistSession.describe_model` | 718 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_check_step` | 742 | S | — |
+| `ve/assist/session.py` | `AssistSession._suggest_premises` | 768 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_waive` | 781 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_show` | 791 | S | — |
+| `ve/assist/session.py` | `AssistSession._target_view` | 804 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_paraphrase` | 812 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_sentences` | 816 | S | — |
+| `ve/assist/session.py` | `AssistSession.vocabulary` | 822 | S | — |
+| `ve/assist/session.py` | `AssistSession._resolve` | 828 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_compare` | 837 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_propose` | 842 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_record_usage` | 846 | S | — |
+| `ve/assist/session.py` | `AssistSession._support` | 854 | S | — |
+| `ve/assist/session.py` | `AssistSession._anchor_state` | 864 | S | — |
+| `ve/assist/session.py` | `AssistSession._is_anchored_parent` | 874 | S | — |
+| `ve/assist/session.py` | `AssistSession.target_graph` | 878 | S | — |
+| `ve/assist/session.py` | `AssistSession._entails` | 910 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_status` | 920 | S | — |
+| `ve/assist/session.py` | `AssistSession._witnesses` | 1089 | S | — |
+| `ve/assist/session.py` | `AssistSession._anchored_entailment` | 1096 | S | — |
+| `ve/assist/session.py` | `AssistSession._derivation` | 1111 | S | — |
+| `ve/assist/session.py` | `AssistSession._consistency_failures` | 1132 | S | — |
+| `ve/assist/session.py` | `AssistSession._renamed_conclusions` | 1146 | S | — |
+| `ve/assist/session.py` | `AssistSession.usage` | 1185 | S | — |
+| `ve/assist/session.py` | `AssistSession._do_export` | 1199 | S | — |
+| `ve/assist/session.py` | `AssistSession.log_rejection` | 1208 | S | — |
+| `ve/assist/session.py` | `AssistSession.to_ledger` | 1218 | S | — |
+| `ve/assist/session.py` | `AssistSession.from_ledger` | 1222 | S | — |
+| `ve/assist/session.py` | `AssistSession._replay_rejection` | 1266 | S | — |
+| `ve/assist/session.py` | `AssistSession.recorded_model_call` | 1278 | S | — |
+| `ve/assist/session.py` | `AssistSession.replaying` | 1301 | S | — |
+| `ve/assist/sources.py` | `split_sentences` | 31 | S | — |
+| `ve/assist/sources.py` | `_sentence` | 36 | S | — |
+| `ve/assist/sources.py` | `source_from_text` | 43 | S | — |
+| `ve/assist/sources.py` | `load_source` | 65 | S | — |
+| `ve/assist/sources.py` | `read_p5_items` | 87 | S | — |
+| `ve/assist/sources.py` | `select_p5_item` | 98 | S | — |
+| `ve/assist/sources.py` | `_slug` | 112 | S | — |
+| `ve/assist/sources.py` | `p5_environment` | 116 | S | — |
+| `ve/assist/sources.py` | `source_from_p5` | 152 | S | — |
+| `ve/assist/verify.py` | `_usage_totals` | 48 | S | — |
+| `ve/assist/verify.py` | `_read_calls` | 63 | S | — |
+| `ve/assist/verify.py` | `expected_config_from_p5` | 70 | S | — |
+| `ve/assist/verify.py` | `verify_session` | 76 | S | — |
+| `ve/attacks.py` | `AttackValidation` | 26 | S | — |
+| `ve/attacks.py` | `AttackValidation.accepted` | 35 | S | — |
+| `ve/attacks.py` | `AttackValidation.to_dict` | 38 | S | — |
+| `ve/attacks.py` | `_preferred_witness` | 44 | S | — |
+| `ve/attacks.py` | `validate_attack` | 83 | S | — |
+| `ve/attacks.py` | `_formula` | 115 | S | — |
+| `ve/attacks.py` | `validate_row` | 126 | S | — |
+| `ve/attacks.py` | `main` | 136 | S | — |
+| `ve/authoring.py` | `AuthoringDiagnostic` | 31 | S | — |
+| `ve/authoring.py` | `AuthoringDiagnostic.to_dict` | 40 | S | — |
+| `ve/authoring.py` | `AuthoringRequest` | 54 | S | — |
+| `ve/authoring.py` | `AuthoringRound` | 63 | S | — |
+| `ve/authoring.py` | `AuthoringRound.to_dict` | 69 | S | — |
+| `ve/authoring.py` | `AuthoringResult` | 77 | S | — |
+| `ve/authoring.py` | `AuthoringResult.acceptance_rate` | 87 | S | — |
+| `ve/authoring.py` | `AuthoringResult.to_dict` | 90 | S | — |
+| `ve/authoring.py` | `_diagnostic` | 103 | S | — |
+| `ve/authoring.py` | `gatekeep` | 117 | S | — |
+| `ve/check.py` | `check` | 13 | L | Single checked result |
+| `ve/document.py` | `_body` | 30 | S | — |
+| `ve/document.py` | `_split` | 61 | S | — |
+| `ve/document.py` | `_meaning` | 82 | S | — |
+| `ve/document.py` | `_formula` | 97 | S | — |
+| `ve/document.py` | `load_document` | 123 | S | — |
+| `ve/document.py` | `_fixed_and_active` | 205 | S | — |
+| `ve/document.py` | `_assertion_disjunctions` | 213 | S | — |
+| `ve/document.py` | `coverage` | 227 | S | — |
+| `ve/document.py` | `_check_narrowing_choices` | 250 | S | — |
+| `ve/document.py` | `check_document` | 266 | C | Trusted narrowed document assembly from Lean admission, readings and premise-status constituents |
+| `ve/document.py` | `render_document` | 334 | S | — |
+| `ve/document.py` | `main` | 386 | S | — |
+| `ve/english.py` | `_mentioned_constants` | 56 | S | — |
+| `ve/english.py` | `_has_discourse_binder` | 71 | S | — |
+| `ve/english.py` | `_fold_sentence_initials` | 90 | S | — |
+| `ve/english.py` | `_normalise_english_source` | 133 | S | — |
+| `ve/english.py` | `_mask_brackets` | 168 | S | — |
+| `ve/english.py` | `_content_words` | 185 | S | — |
+| `ve/english.py` | `quote` | 190 | S | — |
+| `ve/english.py` | `UnreviewedVocabularyWarning` | 194 | S | — |
+| `ve/english.py` | `EnglishVocabulary` | 198 | S | — |
+| `ve/english.py` | `EnglishVocabulary.__init__` | 200 | S | — |
+| `ve/english.py` | `EnglishVocabulary.atom` | 421 | S | — |
+| `ve/english.py` | `EnglishVocabulary.natural_constants` | 427 | S | — |
+| `ve/english.py` | `lint_english_vocabulary` | 432 | S | — |
+| `ve/english.py` | `_max_scope` | 436 | S | — |
+| `ve/english.py` | `_article` | 454 | S | — |
+| `ve/english.py` | `_markers` | 458 | S | — |
+| `ve/english.py` | `EnglishTraversal` | 462 | S | — |
+| `ve/english.py` | `EnglishTraversal.__init__` | 463 | S | — |
+| `ve/english.py` | `EnglishTraversal.binding` | 470 | S | — |
+| `ve/english.py` | `EnglishTraversal.term` | 482 | S | — |
+| `ve/english.py` | `EnglishTraversal.simple` | 490 | S | — |
+| `ve/english.py` | `EnglishTraversal.relative` | 495 | S | — |
+| `ve/english.py` | `EnglishTraversal.guard` | 509 | S | — |
+| `ve/english.py` | `EnglishTraversal.formula` | 525 | S | — |
+| `ve/english.py` | `EnglishTraversal.render` | 633 | S | — |
+| `ve/english.py` | `render_english` | 639 | S | — |
+| `ve/english.py` | `EnglishParseResult` | 690 | S | — |
+| `ve/english.py` | `EnglishParseResult.paraphrase` | 699 | S | — |
+| `ve/english.py` | `_content_pattern` | 706 | S | — |
+| `ve/english.py` | `_literal_pattern` | 712 | S | — |
+| `ve/english.py` | `EnglishParser` | 716 | S | — |
+| `ve/english.py` | `EnglishParser.__init__` | 717 | S | — |
+| `ve/english.py` | `EnglishParser._span` | 729 | S | — |
+| `ve/english.py` | `EnglishParser.error` | 733 | S | — |
+| `ve/english.py` | `EnglishParser.take` | 737 | S | — |
+| `ve/english.py` | `EnglishParser.need` | 748 | S | — |
+| `ve/english.py` | `EnglishParser.space` | 752 | S | — |
+| `ve/english.py` | `EnglishParser.declaration` | 758 | S | — |
+| `ve/english.py` | `EnglishParser.term_options` | 778 | S | — |
+| `ve/english.py` | `EnglishParser.reference_pattern` | 794 | S | — |
+| `ve/english.py` | `EnglishParser.atom` | 798 | S | — |
+| `ve/english.py` | `EnglishParser.int_constants` | 951 | S | — |
+| `ve/english.py` | `EnglishParser.int_leaf` | 955 | S | — |
+| `ve/english.py` | `EnglishParser.int_pattern` | 963 | S | — |
+| `ve/english.py` | `EnglishParser.int_syntax` | 967 | S | — |
+| `ve/english.py` | `EnglishParser.int_term` | 1000 | S | — |
+| `ve/english.py` | `EnglishParser.unknown_atom` | 1047 | S | — |
+| `ve/english.py` | `EnglishParser.term` | 1066 | S | — |
+| `ve/english.py` | `EnglishParser.guard` | 1072 | S | — |
+| `ve/english.py` | `EnglishParser.formula` | 1092 | S | — |
+| `ve/english.py` | `EnglishParser.natural_clause` | 1198 | S | — |
+| `ve/english.py` | `EnglishParser.owner_clause` | 1269 | S | — |
+| `ve/english.py` | `EnglishParser.coordination` | 1289 | S | — |
+| `ve/english.py` | `EnglishParser.document` | 1334 | S | — |
+| `ve/english.py` | `_parse_english_document` | 1355 | S | — |
+| `ve/english.py` | `_check_conclusions` | 1394 | S | — |
+| `ve/english.py` | `parse_english_with_metadata` | 1411 | S | — |
+| `ve/english.py` | `parse_english` | 1427 | S | — |
+| `ve/english.py` | `parse_english_argument` | 1431 | S | — |
+| `ve/english.py` | `english_legend` | 1465 | S | — |
+| `ve/english.py` | `english_lark_grammar` | 1503 | S | — |
+| `ve/english.py` | `_natural_parser` | 1643 | S | — |
+| `ve/english.py` | `_natural_grammar` | 1649 | S | — |
+| `ve/english.py` | `_natural_derivation` | 1680 | S | — |
+| `ve/english_phrases.py` | `phrase_end` | 14 | S | — |
+| `ve/english_phrases.py` | `unary_phrase` | 23 | S | — |
+| `ve/english_phrases.py` | `distance` | 34 | S | — |
+| `ve/english_phrases.py` | `lexical` | 44 | S | — |
+| `ve/english_phrases.py` | `wording_key` | 49 | S | — |
+| `ve/english_phrases.py` | `content_tokens` | 55 | S | — |
+| `ve/english_phrases.py` | `nearest` | 62 | S | — |
+| `ve/english_vocabulary.py` | `negative_template` | 58 | S | — |
+| `ve/english_vocabulary.py` | `overlay_provenance` | 74 | S | — |
+| `ve/english_vocabulary.py` | `display_environment` | 90 | S | — |
+| `ve/english_vocabulary.py` | `suggest_vocabulary` | 135 | S | — |
+| `ve/equivalence.py` | `Budgets` | 29 | S | — |
+| `ve/equivalence.py` | `Budgets.__post_init__` | 35 | S | — |
+| `ve/equivalence.py` | `Budgets.search_options` | 41 | S | — |
+| `ve/equivalence.py` | `_budgets` | 45 | S | — |
+| `ve/equivalence.py` | `DirectionResult` | 56 | S | — |
+| `ve/equivalence.py` | `DirectionResult.to_dict` | 63 | S | — |
+| `ve/equivalence.py` | `ComparisonResult` | 70 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.relation_detail` | 82 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.failed_directions` | 89 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.relation` | 95 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.certificates` | 104 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.models` | 110 | S | — |
+| `ve/equivalence.py` | `ComparisonResult.to_dict` | 115 | S | — |
+| `ve/equivalence.py` | `_direction` | 128 | S | — |
+| `ve/equivalence.py` | `compare` | 175 | C | Trusted narrowed: two checked directions; experimental assurance and named rule |
+| `ve/equivalence.py` | `is_weaker` | 216 | S | — |
+| `ve/equivalence.py` | `is_stronger` | 224 | S | — |
+| `ve/equivalence.py` | `in_two_variable_fragment` | 232 | S | — |
+| `ve/equivalence.py` | `non_vacuity_conditions` | 291 | S | — |
+| `ve/equivalence.py` | `witness_quality` | 321 | S | — |
+| `ve/equivalence.py` | `ReferenceValidation` | 340 | S | — |
+| `ve/equivalence.py` | `ReferenceValidation.valid` | 349 | S | — |
+| `ve/equivalence.py` | `ReferenceValidation.to_dict` | 352 | S | — |
+| `ve/equivalence.py` | `validate_reference` | 359 | C | Trusted narrowed: checked satisfying and falsifying models; experimental assurance and named rule |
+| `ve/errors.py` | `Span` | 6 | S | — |
+| `ve/errors.py` | `VEError` | 13 | S | — |
+| `ve/errors.py` | `VEError.__init__` | 16 | S | — |
+| `ve/errors.py` | `VEError.to_dict` | 20 | S | — |
+| `ve/errors.py` | `SyntaxError` | 29 | S | — |
+| `ve/errors.py` | `AmbiguousDerivation` | 33 | S | — |
+| `ve/errors.py` | `UnknownSymbol` | 37 | S | — |
+| `ve/errors.py` | `DuplicateDeclaration` | 41 | S | — |
+| `ve/errors.py` | `UnboundVariable` | 45 | S | — |
+| `ve/errors.py` | `ShadowedVariable` | 49 | S | — |
+| `ve/errors.py` | `TypeMismatch` | 53 | S | — |
+| `ve/errors.py` | `InvalidModel` | 57 | S | — |
+| `ve/errors.py` | `InvalidModel.__init__` | 60 | S | — |
+| `ve/errors.py` | `InvalidModel.to_dict` | 65 | S | — |
+| `ve/errors.py` | `UnsupportedProfile` | 72 | S | — |
+| `ve/errors.py` | `ResourceLimit` | 76 | S | — |
+| `ve/fluent.py` | `_references` | 21 | S | — |
+| `ve/fluent.py` | `_guard` | 40 | S | — |
+| `ve/fluent.py` | `FluentTraversal` | 49 | S | — |
+| `ve/fluent.py` | `FluentTraversal.__init__` | 50 | S | — |
+| `ve/fluent.py` | `FluentTraversal.binder` | 57 | S | — |
+| `ve/fluent.py` | `FluentTraversal.term` | 69 | S | — |
+| `ve/fluent.py` | `FluentTraversal.equality` | 78 | S | — |
+| `ve/fluent.py` | `FluentTraversal.unit` | 86 | S | — |
+| `ve/fluent.py` | `FluentTraversal.relative` | 94 | S | — |
+| `ve/fluent.py` | `FluentTraversal.guard` | 112 | S | — |
+| `ve/fluent.py` | `FluentTraversal.negative_atom` | 126 | S | — |
+| `ve/fluent.py` | `FluentTraversal.formula` | 132 | S | — |
+| `ve/fluent.py` | `contraction_stats` | 201 | S | — |
+| `ve/fol.py` | `_fail` | 17 | S | — |
+| `ve/fol.py` | `_variable_name` | 21 | S | — |
+| `ve/fol.py` | `document_from_indexed_json` | 36 | S | — |
+| `ve/fol.py` | `document_from_named_fol` | 42 | S | — |
+| `ve/fol.py` | `document_to_named_fol` | 118 | S | — |
+| `ve/fol.py` | `render_fol` | 173 | S | — |
+| `ve/grammar.py` | `_integer` | 18 | S | — |
+| `ve/grammar.py` | `_Grammar` | 23 | S | — |
+| `ve/grammar.py` | `_Grammar.__init__` | 24 | S | — |
+| `ve/grammar.py` | `_Grammar.literal` | 36 | S | — |
+| `ve/grammar.py` | `_Grammar.add` | 43 | S | — |
+| `ve/grammar.py` | `_Grammar.state` | 51 | S | — |
+| `ve/grammar.py` | `_Grammar.term` | 64 | S | — |
+| `ve/grammar.py` | `_Grammar.integer_term` | 82 | S | — |
+| `ve/grammar.py` | `_Grammar.formula` | 113 | S | — |
+| `ve/grammar.py` | `_Grammar.build` | 171 | S | — |
+| `ve/grammar.py` | `_Grammar.render` | 181 | S | — |
+| `ve/grammar.py` | `export_grammar` | 214 | S | — |
+| `ve/grammar.py` | `structured_output_spec` | 252 | S | — |
+| `ve/identity.py` | `source_id` | 9 | L | Single checked result |
+| `ve/identity.py` | `meaning_id` | 19 | L | Single checked result |
+| `ve/lexicon/__init__.py` | `_index` | 12 | S | — |
+| `ve/lexicon/__init__.py` | `classify` | 29 | S | — |
+| `ve/lexicon/__init__.py` | `describe` | 51 | S | — |
+| `ve/natural.py` | `NaturalResult` | 14 | S | — |
+| `ve/natural.py` | `PresentationNeedsRepair` | 25 | S | — |
+| `ve/natural.py` | `PresentationNeedsRepair.__init__` | 26 | S | — |
+| `ve/natural.py` | `ProsePresentation` | 32 | S | — |
+| `ve/natural.py` | `ProsePresentation.to_dict` | 43 | S | — |
+| `ve/natural.py` | `parse_presentation` | 50 | S | — |
+| `ve/natural.py` | `render_presentation` | 84 | S | — |
+| `ve/natural.py` | `migrate_presentation` | 107 | S | — |
+| `ve/natural.py` | `_adjective` | 131 | S | — |
+| `ve/natural.py` | `_owner` | 146 | S | — |
+| `ve/natural.py` | `_relative_phrase` | 155 | S | — |
+| `ve/natural.py` | `_candidate` | 169 | S | — |
+| `ve/natural.py` | `render_natural_sentence` | 252 | S | — |
+| `ve/natural.py` | `natural_coverage` | 284 | S | — |
+| `ve/norm_english.py` | `_words` | 22 | S | — |
+| `ve/norm_english.py` | `_bindings` | 26 | S | — |
+| `ve/norm_english.py` | `_guard_text` | 45 | S | — |
+| `ve/norm_english.py` | `_parse_guard` | 51 | S | — |
+| `ve/norm_english.py` | `_consequence` | 73 | S | — |
+| `ve/norm_english.py` | `default_sentence` | 95 | S | — |
+| `ve/norm_english.py` | `render_english` | 113 | S | — |
+| `ve/norm_english.py` | `_block_grammar` | 157 | S | — |
+| `ve/norm_english.py` | `_parse_consequence` | 195 | S | — |
+| `ve/norm_english.py` | `parse_english` | 218 | S | — |
+| `ve/norm_strict.py` | `print_strict` | 16 | S | — |
+| `ve/norm_strict.py` | `parse_strict` | 37 | S | — |
+| `ve/openterms.py` | `validate_open_terms` | 9 | S | — |
+| `ve/propose.py` | `_ProposalParser` | 22 | S | — |
+| `ve/propose.py` | `_ProposalParser.__init__` | 23 | S | — |
+| `ve/propose.py` | `_ProposalParser.unknown_atom` | 43 | S | — |
+| `ve/propose.py` | `_ProposalParser._span` | 163 | S | — |
+| `ve/propose.py` | `propose` | 169 | S | — |
+| `ve/propose.py` | `write_proposal` | 219 | S | — |
+| `ve/propose.py` | `adopt` | 227 | S | — |
+| `ve/propose.py` | `_write_new_directory` | 263 | S | — |
+| `ve/readings.py` | `validate_reading_sets` | 16 | C | Lean `readings` checks each two-evaluation distinguishing witness before trusted admission |
+| `ve/readings.py` | `active_reading_sets` | 94 | S | — |
+| `ve/readings.py` | `validate_narrowings` | 104 | S | — |
+| `ve/readings.py` | `plan_choices` | 129 | S | — |
+| `ve/readings.py` | `check_readings` | 147 | A/C | Lean `readings` checker owns ALL/SOME/NONE and labels |
+| `ve/stream_audit.py` | `needles_for` | 59 | S | — |
+| `ve/stream_audit.py` | `_unescape` | 71 | S | — |
+| `ve/stream_audit.py` | `_percent` | 87 | S | — |
+| `ve/stream_audit.py` | `_entities` | 91 | S | — |
+| `ve/stream_audit.py` | `_nfkc` | 95 | S | — |
+| `ve/stream_audit.py` | `_bytes_text` | 99 | S | — |
+| `ve/stream_audit.py` | `_base64` | 103 | S | — |
+| `ve/stream_audit.py` | `_hex` | 123 | S | — |
+| `ve/stream_audit.py` | `decoded_views` | 139 | S | — |
+| `ve/stream_audit.py` | `exposes` | 159 | S | — |
+| `ve/stream_audit.py` | `contains_secret` | 170 | S | — |
+| `ve/stream_audit.py` | `_replace_literal` | 183 | S | — |
+| `ve/stream_audit.py` | `_embedded_json` | 189 | S | — |
+| `ve/stream_audit.py` | `sanitize_text` | 211 | S | — |
+| `ve/stream_audit.py` | `sanitize` | 219 | S | — |
+| `ve/stream_audit.py` | `_record_usage` | 236 | S | — |
+| `ve/stream_audit.py` | `stream_usage` | 249 | S | — |
+| `ve/stream_audit.py` | `usage_totals` | 267 | S | — |
+| `ve/stream_audit.py` | `records_from_raw` | 274 | S | — |
+| `ve/surface/data.py` | `attribute_equals` | 7 | S | — |
+| `ve/surface/data.py` | `attribute_property` | 17 | S | — |
+| `ve/surface/data.py` | `member_of` | 36 | S | — |
+| `ve/surface/definitions.py` | `_outside_quotes` | 39 | S | — |
+| `ve/surface/definitions.py` | `_quantified` | 45 | S | — |
+| `ve/surface/definitions.py` | `_check_wordings` | 51 | S | — |
+| `ve/surface/definitions.py` | `render_definition` | 60 | S | — |
+| `ve/surface/definitions.py` | `parse_definition` | 75 | S | — |
+| `ve/surface/definitions.py` | `_phrases` | 111 | S | — |
+| `ve/surface/definitions.py` | `parse_glossary` | 129 | S | — |
+| `ve/surface/definitions.py` | `_check_lemma_names` | 155 | S | — |
+| `ve/surface/definitions.py` | `render_citation` | 161 | S | — |
+| `ve/surface/definitions.py` | `parse_citation` | 173 | S | — |
+| `ve/surface/definitions.py` | `_sentences` | 196 | S | — |
+| `ve/surface/definitions.py` | `adopt` | 201 | S | — |
+| `ve/surface/definitions.py` | `wordings` | 231 | S | — |
+| `ve/surface/nary.py` | `template_parts` | 13 | S | — |
+| `ve/surface/nary.py` | `print_atom` | 36 | S | — |
+| `ve/surface/nary.py` | `render_english` | 40 | S | — |
+| `ve/surface/nary.py` | `render_fluent` | 44 | S | — |
+| `ve/surface/nary.py` | `map_free` | 48 | S | — |
+| `ve/surface/nary.py` | `predicates` | 57 | S | — |
+| `ve/surface/nary.py` | `import_fol` | 61 | S | — |
+| `ve/surface/nary.py` | `export_fol` | 71 | S | — |
+| `ve/surface/registry.py` | `SurfaceRecord` | 9 | S | — |
+| `ve/surface/registry.py` | `register` | 41 | S | — |
+| `ve/surface/registry.py` | `records` | 77 | S | — |
+| `ve/surface/registry.py` | `enabled` | 81 | S | — |
+| `ve/surface/registry.py` | `by_tag` | 85 | S | — |
+| `ve/surface/registry.py` | `by_node` | 89 | S | — |
+| `ve/surface/registry.py` | `formula_arities` | 93 | S | — |
+| `ve/surface/registry.py` | `keywords` | 98 | S | — |
+| `ve/surface/registry.py` | `dispatch` | 102 | S | — |
+| `ve/surface/registry.py` | `strict_dispatch` | 107 | S | — |
+| `ve/surface/unambiguity.py` | `_parser` | 19 | S | — |
+| `ve/surface/unambiguity.py` | `require_unique_derivation` | 25 | S | — |
+| `ve/surface/unambiguity.py` | `require_correspondence` | 79 | S | — |
+| `ve/vacuity.py` | `premise_status` | 9 | L | Single checked result |
+| `ve/wire.py` | `_string` | 13 | L | Single checked result |
+| `ve/wire.py` | `validate_json` | 18 | L | Single checked result |
+| `ve/wire.py` | `_pairs` | 41 | L | Single checked result |
+| `ve/wire.py` | `_integer` | 50 | L | Single checked result |
+| `ve/wire.py` | `_invalid_number` | 59 | L | Single checked result |
+| `ve/wire.py` | `loads_json` | 63 | L | Single checked result |
+| `ve/wire.py` | `canonical_json` | 81 | L | Single checked result |
+| `ve/wire.py` | `digest` | 98 | L | Single checked result |
+| `ve/wire.py` | `require_fields` | 102 | L | Single checked result |
+| `ve/wire.py` | `formula_tag_arity` | 111 | L | Single checked result |
 
 ## Combination roles inside section 1.1 modules
 
@@ -992,6 +992,7 @@ These roles are additional to A/U/S/D: the class-A adapter must ask Lean for the
 | Function | Role | Reason |
 |---|:---:|---|
 | `argument.check_argument` | C | Root reachability, ordered leaves, status and composition combine edge checks; Lean `graph` owns consequence. |
+| `argument.check_argument` reachability walk | C | The root walk produces `unresolved_obligations`; Lean `graph` returns the ordered report and shadow compares this field before Python deletion. |
 | `argument._check_edge` | L | Displays each checked certificate or countermodel with diagnostic attempts. |
 | `admission.admit_document` | C | Document graph admission combines labelled leaves, citations and certificates; Lean `admission` owns verdict. |
 | `bundle.check_bundle` | C | Transitive citation and certificate replay combine into one bundle verdict; Lean `bundle` owns verdict. |
@@ -1010,2914 +1011,6 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 
 | Consumer | Provider | Imported symbol | Line |
 |---|---|---|---:|
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.ast` | `And` | 33 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.ast` | `Not` | 33 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.ast` | `Top` | 33 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.entailment` | `prove_entailment` | 34 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.norms` | `NormDocument` | 38 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.norms` | `_bind` | 38 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.printer` | `render` | 43 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.profiles` | `LANGUAGE` | 72 |
-| `/home/seyran/code/ve-bench/bench/run.py` | `ve.profiles` | `SPEC_REVISION` | 72 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.admission` | `admit_document` | 15 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.ast` | `document_from_data` | 8 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.bundle` | `check_bundle` | 14 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.entailment` | `check_entailment_certificate` | 9 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.environment` | `Environment` | 7 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.evaluate` | `evaluate` | 11 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.model` | `FiniteModel` | 10 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.norms` | `NormDocument` | 13 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.norms` | `check_conflict` | 13 |
-| `/home/seyran/code/ve-bench/bench/worker.py` | `ve.search` | `find_countermodel` | 12 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Bottom` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Const` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Eq` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Top` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Unary` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `Var` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `document_from_data` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.ast` | `formula_to_data` | 22 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.closure` | `EXTRA_RULES` | 174 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.closure` | `derive_extra` | 174 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `_apply` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `_binding` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `_derive` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `_initial_branch` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `_kind` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `check_entailment_certificate` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.entailment` | `prove_entailment` | 25 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.environment` | `Environment` | 27 |
-| `/home/seyran/code/ve-bench/conformance/certificates.py` | `ve.search` | `check_countermodel` | 28 |
-| `/home/seyran/code/ve-bench/conformance/closure.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 9 |
-| `/home/seyran/code/ve-bench/conformance/closure.py` | `ve.environment` | `CLOSURE_PROFILES` | 9 |
-| `/home/seyran/code/ve-bench/conformance/closure.py` | `ve.environment` | `CLOSURE_REVISION` | 9 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `And` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Binary` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Body` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Bottom` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Const` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Eq` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Exists` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Forall` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Implies` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Named` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Or` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.closure` | `edge_at` | 84 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.closure` | `shift` | 84 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.closure` | `unfold` | 6 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.entailment` | `_binding` | 7 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 7 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.entailment` | `prove_entailment` | 7 |
-| `/home/seyran/code/ve-bench/conformance/closure_certificates.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/conformance/english_artifacts.py` | `ve.ast` | `*module*` | 4 |
-| `/home/seyran/code/ve-bench/conformance/english_artifacts.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/conformance/english_artifacts.py` | `ve.parser` | `parse` | 4 |
-| `/home/seyran/code/ve-bench/conformance/english_artifacts.py` | `ve.printer` | `render` | 4 |
-| `/home/seyran/code/ve-bench/conformance/english_lean.py` | `ve.ast` | `*module*` | 42 |
-| `/home/seyran/code/ve-bench/conformance/english_lean.py` | `ve.parser` | `parse` | 351 |
-| `/home/seyran/code/ve-bench/conformance/english_lean.py` | `ve.printer` | `render` | 42 |
-| `/home/seyran/code/ve-bench/conformance/english_mixed.py` | `ve.ast` | `*module*` | 37 |
-| `/home/seyran/code/ve-bench/conformance/english_mixed.py` | `ve.environment` | `Environment` | 37 |
-| `/home/seyran/code/ve-bench/conformance/english_mixed.py` | `ve.printer` | `render` | 37 |
-| `/home/seyran/code/ve-bench/conformance/english_mixed.py` | `ve.profiles` | `LANGUAGE` | 40 |
-| `/home/seyran/code/ve-bench/conformance/english_mixed.py` | `ve.profiles` | `SPEC_REVISION` | 40 |
-| `/home/seyran/code/ve-bench/conformance/english_surface.py` | `ve.ast` | `*module*` | 19 |
-| `/home/seyran/code/ve-bench/conformance/english_surface.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-bench/conformance/english_surface.py` | `ve.parser` | `parse` | 19 |
-| `/home/seyran/code/ve-bench/conformance/english_surface.py` | `ve.printer` | `_NaturalVocabulary` | 21 |
-| `/home/seyran/code/ve-bench/conformance/english_surface.py` | `ve.printer` | `render` | 19 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.ast` | `document_from_data` | 5 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.ast` | `document_from_data` | 142 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.ast` | `document_to_data` | 5 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.ast` | `formula_from_data` | 202 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.model` | `FiniteModel` | 4 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.parser` | `parse` | 4 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.printer` | `print_document` | 4 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.search` | `check_countermodel` | 203 |
-| `/home/seyran/code/ve-bench/conformance/extend.py` | `ve.search` | `find_countermodel` | 203 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `And` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Binary` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Bottom` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Const` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Document` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Eq` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Exists` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Forall` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Implies` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Not` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Or` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Top` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Unary` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `Var` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `document_from_data` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.ast` | `document_to_data` | 21 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.evaluate` | `evaluate` | 20 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.model` | `FiniteModel` | 20 |
-| `/home/seyran/code/ve-bench/conformance/fuzz.py` | `ve.printer` | `print_document` | 20 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `And` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Binary` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Bottom` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Const` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Document` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Eq` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Exists` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Forall` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Implies` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Not` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Or` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Top` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Unary` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `Var` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `document_from_data` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.ast` | `document_to_data` | 19 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.evaluate` | `evaluate` | 18 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.model` | `FiniteModel` | 18 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.parser` | `parse` | 18 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.printer` | `print_document` | 18 |
-| `/home/seyran/code/ve-bench/conformance/generate.py` | `ve.search` | `check_countermodel` | 23 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Body` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Named` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Reach` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Top` | 252 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `_to_data` | 10 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.ast` | `formula_from_data` | 246 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `InductionInvariant` | 12 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `derive_extra` | 37 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `derive_induction` | 12 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `induction_candidates` | 12 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `induction_step` | 12 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.closure` | `invariant_at` | 12 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_Searcher` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_apply` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_binding` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_closed` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_derive` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_initial_branch` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `_rule` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `check_entailment_certificate` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.entailment` | `prove_entailment` | 14 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.environment` | `Environment` | 145 |
-| `/home/seyran/code/ve-bench/conformance/induction.py` | `ve.environment` | `Environment` | 247 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `And` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Atom` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Binary` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Const` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Document` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Eq` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Exists` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Forall` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Implies` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Not` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Or` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Unary` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.ast` | `Var` | 16 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.parser` | `parse` | 19 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.printer` | `print_document` | 20 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.profiles` | `LANGUAGE` | 21 |
-| `/home/seyran/code/ve-bench/conformance/nary_folio.py` | `ve.profiles` | `SPEC_REVISION` | 21 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.argument` | `check_argument` | 8 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.printer` | `natural_document` | 8 |
-| `/home/seyran/code/ve-bench/conformance/natural_surface.py` | `ve.printer` | `render` | 13 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Add` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `And` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Binary` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Bottom` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Const` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Document` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Eq` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Exists` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Forall` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Implies` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Le` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Lt` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Not` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Num` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Or` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Scale` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Top` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Unary` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `Var` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `document_from_data` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.ast` | `formula_to_data` | 29 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.entailment` | `_binding` | 31 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.entailment` | `check_entailment_certificate` | 31 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.entailment` | `prove_entailment` | 31 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.environment` | `Environment` | 32 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.evaluate` | `evaluate` | 28 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.model` | `FiniteModel` | 28 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.search` | `check_countermodel` | 33 |
-| `/home/seyran/code/ve-bench/conformance/order.py` | `ve.search` | `find_countermodel` | 33 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.admission` | `admit_document` | 557 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `_to_data` | 412 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `formula_from_data` | 140 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `formula_from_data` | 223 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `formula_from_data` | 713 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `formula_from_data` | 761 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.ast` | `formula_to_data` | 688 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.background` | `background` | 150 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.background` | `background` | 413 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.background` | `background` | 689 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.entailment` | `_Searcher` | 714 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.entailment` | `_binding` | 714 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.entailment` | `_initial_branch` | 714 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.entailment` | `_validate_inputs` | 714 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.entailment` | `prove_entailment` | 141 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.environment` | `Environment` | 134 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.profiles` | `LANGUAGE` | 16 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.profiles` | `SPEC_REVISION` | 16 |
-| `/home/seyran/code/ve-bench/conformance/p0.py` | `ve.search` | `find_countermodel` | 762 |
-| `/home/seyran/code/ve-bench/examples/fluent_views.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/examples/fluent_views.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-bench/examples/fluent_views.py` | `ve.printer` | `VIEWS` | 9 |
-| `/home/seyran/code/ve-bench/examples/fluent_views.py` | `ve.printer` | `render` | 8 |
-| `/home/seyran/code/ve-bench/examples/fluent_views.py` | `ve.printer` | `render_vocabulary` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.ast` | `document_to_data` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 16 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_PROFILES` | 16 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_REVISION` | 16 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `Environment` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.evaluate` | `evaluate` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.model` | `FiniteModel` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/generate.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.ast` | `document_from_data` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.evaluate` | `evaluate` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.model` | `FiniteModel` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.parser` | `parse` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E0/closure_witnesses/validate.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.argument` | `ArgumentGraph` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.argument` | `Claim` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.argument` | `Deduction` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.argument` | `check_argument` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.argument` | `deduction_identity` | 10 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.ast` | `*module*` | 13 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.printer` | `print_formula` | 14 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/common.py` | `ve.search` | `find_countermodel` | 12 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e2.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e2.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e2.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.argument` | `ArgumentGraph` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.argument` | `Claim` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.argument` | `Deduction` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.argument` | `check_argument` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.argument` | `deduction_identity` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.ast` | `*module*` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.model` | `FiniteModel` | 7 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/e4.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/fol.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_fol.py` | `ve.environment` | `Environment` | 2 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_fol.py` | `ve.parser` | `parse` | 2 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.argument` | `ArgumentGraph` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-bench/experiments/E2E4/tests/test_materials.py` | `ve.search` | `check_countermodel` | 11 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `ArgumentGraph` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `Claim` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `Deduction` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `Evidence` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `check_argument` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.argument` | `deduction_identity` | 21 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.entailment` | `prove_entailment` | 22 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.environment` | `Environment` | 23 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.environment` | `LANGUAGE` | 23 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.environment` | `PROFILE` | 23 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.environment` | `SPEC_REVISION` | 23 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-bench/experiments/E5/materials.py` | `ve.search` | `check_countermodel` | 25 |
-| `/home/seyran/code/ve-bench/experiments/E5/tests/test_materials.py` | `ve.argument` | `ArgumentGraph` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E5/tests/test_materials.py` | `ve.argument` | `check_argument` | 15 |
-| `/home/seyran/code/ve-bench/experiments/E5/tests/test_materials.py` | `ve.search` | `check_countermodel` | 16 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.entailment` | `prove_entailment` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.environment` | `Environment` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.evaluate` | `evaluate` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.model` | `FiniteModel` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.parser` | `parse` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/harness.py` | `ve.search` | `find_countermodel` | 35 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Document` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Named` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Reach` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `check_formula` | 22 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.entailment` | `prove_entailment` | 21 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.evaluate` | `evaluate` | 21 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/mutation.py` | `ve.search` | `find_distinguishing_model` | 21 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/naive.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/naive.py` | `ve.evaluate` | `evaluate` | 10 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/naive.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/nversion.py` | `ve.evaluate` | `evaluate` | 5 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/proofs.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/proofs.py` | `ve.entailment` | `prove_entailment` | 23 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/proofs.py` | `ve.environment` | `Environment` | 23 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/proofs.py` | `ve.parser` | `parse` | 23 |
-| `/home/seyran/code/ve-bench/experiments/P3-formalisation-tax/proofs.py` | `ve.search` | `find_countermodel` | 23 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `And` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Const` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Document` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Forall` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Implies` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Unary` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Var` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `formula_to_data` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.entailment` | `check_entailment_certificate` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.entailment` | `prove_entailment` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.environment` | `Environment` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.parser` | `parse` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-bench/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `And` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Binary` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Bottom` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Eq` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Exists` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Forall` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Implies` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Not` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Or` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Top` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Unary` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `Var` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.ast` | `formula_to_data` | 17 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.environment` | `LANGUAGE` | 20 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.environment` | `PROFILE` | 20 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.environment` | `SPEC_REVISION` | 20 |
-| `/home/seyran/code/ve-bench/experiments/oracle/measure_unknown.py` | `ve.printer` | `print_formula` | 22 |
-| `/home/seyran/code/ve-bench/experiments/p1.py` | `ve.argument` | `ArgumentGraph` | 26 |
-| `/home/seyran/code/ve-bench/experiments/p1.py` | `ve.argument` | `check_argument` | 26 |
-| `/home/seyran/code/ve-bench/experiments/p1.py` | `ve.ast` | `formula_to_data` | 27 |
-| `/home/seyran/code/ve-bench/experiments/p1.py` | `ve.model` | `FiniteModel` | 26 |
-| `/home/seyran/code/ve-bench/experiments/p1.py` | `ve.search` | `check_countermodel` | 28 |
-| `/home/seyran/code/ve-bench/experiments/validate_materials.py` | `ve.argument` | `ArgumentGraph` | 8 |
-| `/home/seyran/code/ve-bench/experiments/validate_materials.py` | `ve.argument` | `check_argument` | 8 |
-| `/home/seyran/code/ve-bench/experiments/validate_materials.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-bench/experiments/validate_materials.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-bench/experiments/validate_materials.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.ast` | `document_to_data` | 13 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.printer` | `VIEWS` | 14 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render` | 12 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render_cell` | 14 |
-| `/home/seyran/code/ve-bench/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render_vocabulary` | 12 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Binary` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Body` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Document` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Forall` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Named` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Not` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Or` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Reach` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Unary` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `Var` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `document_from_data` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.ast` | `document_to_data` | 27 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.environment` | `Environment` | 26 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.evaluate` | `_evaluate_validated` | 28 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.evaluate` | `evaluate` | 26 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.model` | `FiniteModel` | 26 |
-| `/home/seyran/code/ve-bench/rust/benchmark.py` | `ve.search` | `find_countermodel` | 26 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `And` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Binary` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Body` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Bottom` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Const` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Document` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Eq` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Exists` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Forall` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Implies` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Named` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Not` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Or` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Reach` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Top` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Unary` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `Var` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.ast` | `document_to_data` | 23 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.environment` | `Environment` | 22 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.model` | `FiniteModel` | 22 |
-| `/home/seyran/code/ve-bench/rust/fuzz_closure.py` | `ve.printer` | `print_document` | 22 |
-| `/home/seyran/code/ve-bench/tests/conftest.py` | `ve.argument` | `*module*` | 5 |
-| `/home/seyran/code/ve-bench/tests/conftest.py` | `ve.bundle` | `*module*` | 5 |
-| `/home/seyran/code/ve-bench/tests/explicit_inverse.py` | `ve.ast` | `*module*` | 4 |
-| `/home/seyran/code/ve-bench/tests/explicit_inverse.py` | `ve.printer` | `_NaturalVocabulary` | 5 |
-| `/home/seyran/code/ve-bench/tests/fluent_inverse.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `And` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Binary` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Bottom` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Const` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Eq` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Exists` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Forall` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Implies` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Not` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Or` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Top` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Unary` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `Var` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.ast` | `formula_to_data` | 31 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.entailment` | `*module*` | 191 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.entailment` | `check_entailment_certificate` | 33 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.environment` | `Environment` | 34 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.environment` | `LANGUAGE` | 34 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.environment` | `PROFILE` | 34 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.environment` | `SPEC_REVISION` | 34 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_benchmark.py` | `ve.search` | `check_countermodel` | 36 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Bottom` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Const` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Eq` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Top` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Unary` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `Var` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.ast` | `formula_to_data` | 22 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.entailment` | `*module*` | 206 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.environment` | `Environment` | 25 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.environment` | `LANGUAGE` | 25 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.environment` | `PROFILE` | 25 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.environment` | `SPEC_REVISION` | 25 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.model` | `FiniteModel` | 129 |
-| `/home/seyran/code/ve-bench/tests/prover_fair_fuzz.py` | `ve.search` | `check_countermodel` | 27 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `ArgumentGraph` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `Claim` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `Deduction` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `Evidence` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `check_argument` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `deduction_identity` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `outstanding_obligations` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.argument` | `predicate_use_panel` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.ast` | `formula_to_data` | 67 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.background` | `background` | 68 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.entailment` | `EntailmentCertificateCheck` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument.py` | `ve.model` | `FiniteModel` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `ArgumentGraph` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `Claim` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `Deduction` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `Evidence` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `check_argument` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `deduction_identity` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `outstanding_obligations` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.argument` | `predicate_use_panel` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.entailment` | `prove_entailment` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_argument_adversarial.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_argument_fixtures.py` | `ve.argument` | `check_argument` | 1 |
-| `/home/seyran/code/ve-bench/tests/test_argument_fixtures.py` | `ve.argument` | `outstanding_obligations` | 1 |
-| `/home/seyran/code/ve-bench/tests/test_argument_fixtures.py` | `ve.argument` | `predicate_use_panel` | 1 |
-| `/home/seyran/code/ve-bench/tests/test_argument_fixtures.py` | `ve.model` | `FiniteModel` | 108 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `And` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Forall` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Implies` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Named` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Reach` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Unary` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.ast` | `Var` | 379 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.closure` | `induction_step` | 380 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_assist.py` | `ve.printer` | `print_formula` | 381 |
-| `/home/seyran/code/ve-bench/tests/test_assist_deadline.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_assist_deadline.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_assist_deadline.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_assist_deadline.py` | `ve.background` | `*module*` | 133 |
-| `/home/seyran/code/ve-bench/tests/test_assist_deadline.py` | `ve.search` | `find_countermodel` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_assist_invariants.py` | `ve.environment` | `LANGUAGE` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_assist_invariants.py` | `ve.environment` | `PROFILE` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_assist_invariants.py` | `ve.environment` | `SPEC_REVISION` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery.py` | `ve.search` | `find_countermodel` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery_replay.py` | `ve.ast` | `Const` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery_replay.py` | `ve.ast` | `Not` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery_replay.py` | `ve.ast` | `Unary` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_assist_recovery_replay.py` | `ve.search` | `find_countermodel` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `And` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `Bottom` | 98 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.ast` | `formula_to_data` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_attacks.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_authoring.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_authoring.py` | `ve.environment` | `LANGUAGE` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_authoring.py` | `ve.environment` | `PROFILE` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_authoring.py` | `ve.environment` | `SPEC_REVISION` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `ArgumentGraph` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `Claim` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `Deduction` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `_checker_build` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `check_argument` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.argument` | `outstanding_obligations` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.background` | `HOOKS` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.background` | `dependency_order` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.background` | `validate_background` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.evaluate` | `evaluate` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.model` | `FiniteModel` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.search` | `check_countermodel` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.search` | `find_countermodel` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_background.py` | `ve.search` | `find_distinguishing_model` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `And` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Bottom` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Or` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.ast` | `formula_to_data` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `check_bundle` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 86 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 107 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 155 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 193 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 208 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 238 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 269 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 291 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 310 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.entailment` | `prove_entailment` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_bundle.py` | `ve.profiles` | `SPEC_REVISION` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_cedar_norms.py` | `ve.model` | `FiniteModel` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_cedar_norms.py` | `ve.norms` | `check_conflict` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.parser` | `parse` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `VIEWS` | 118 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `VIEWS` | 133 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `measure_jsonl_lengths` | 160 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `render` | 110 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `render` | 133 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `render` | 251 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `render_cell` | 118 |
-| `/home/seyran/code/ve-bench/tests/test_cli.py` | `ve.printer` | `render_cell` | 133 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.closure` | `unfold` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.entailment` | `CLOSURE_CHECKER_VERSION` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.entailment` | `_binding` | 282 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.environment` | `CLOSURE_PROFILES` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.environment` | `CLOSURE_REVISION` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_closure.py` | `ve.search` | `_used_predicates` | 214 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.argument` | `ArgumentGraph` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.argument` | `Claim` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.argument` | `Deduction` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.argument` | `check_argument` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.argument` | `outstanding_obligations` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Binary` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Body` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Const` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Exists` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Named` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Reach` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Top` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `Var` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.ast` | `document_to_data` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.entailment` | `_binding` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.printer` | `print_document` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_certificates.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `And` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Binary` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Bottom` | 126 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Const` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Document` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Forall` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Implies` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Named` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Reach` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Unary` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `Var` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.closure` | `induction_step` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.entailment` | `_binding` | 127 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.entailment` | `check_entailment_certificate` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.entailment` | `prove_entailment` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.environment` | `Environment` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.evaluate` | `evaluate` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.parser` | `parse` | 39 |
-| `/home/seyran/code/ve-bench/tests/test_closure_induction.py` | `ve.search` | `check_countermodel` | 89 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Document` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `check_document` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `document_from_data` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.ast` | `document_to_data` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.parser` | `canonicalize` | 25 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.parser` | `is_canonical` | 25 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.parser` | `parse` | 25 |
-| `/home/seyran/code/ve-bench/tests/test_conformance.py` | `ve.printer` | `print_document` | 26 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Const` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.ast` | `check_formula` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.background` | `background` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.evaluate` | `evaluate` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_flags.py` | `ve.search` | `find_countermodel` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Const` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_data_surface.py` | `ve.environment` | `Environment` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.ast` | `formula_to_data` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_data_three_way.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.ast` | `*module*` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.definitions` | `compile_definitions` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.definitions` | `definitions_id` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.definitions` | `expand` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.environment` | `Environment` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.model` | `FiniteModel` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.printer` | `print_document` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_definitions.py` | `ve.search` | `find_countermodel` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.ast` | `Top` | 275 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.ast` | `_to_data` | 145 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.ast` | `document_from_data` | 145 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.background` | `background` | 146 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.entailment` | `check_entailment_certificate` | 276 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.entailment` | `prove_entailment` | 276 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 129 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 144 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 168 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 191 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 274 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.evaluate` | `_evaluate_validated` | 147 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 144 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 168 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 191 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.profiles` | `LANGUAGE` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_differential.py` | `ve.profiles` | `SPEC_REVISION` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.ast` | `Const` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.ast` | `Unary` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.ast` | `formula_from_data` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.bundle` | `check_bundle` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.definitions` | `compile_definitions` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.entailment` | `prove_entailment` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_definitions_english.py` | `ve.profiles` | `SPEC_REVISION` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.ast` | `Top` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.ast` | `formula_from_data` | 222 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.ast` | `formula_to_data` | 555 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.definitions` | `compile_definitions` | 554 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.definitions` | `premise` | 554 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.evaluate` | `evaluate` | 257 |
-| `/home/seyran/code/ve-bench/tests/test_document.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Body` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Bottom` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Named` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Or` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Reach` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Top` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.model` | `FiniteModel` | 184 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.printer` | `VIEWS` | 325 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.printer` | `lint_vocabulary` | 230 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_english.py` | `ve.printer` | `render_vocabulary` | 325 |
-| `/home/seyran/code/ve-bench/tests/test_english_evidence.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 50 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 65 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 92 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 128 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Top` | 65 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.ast` | `Top` | 92 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.parser` | `parse` | 44 |
-| `/home/seyran/code/ve-bench/tests/test_english_unambiguity.py` | `ve.printer` | `render` | 44 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `And` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Binary` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Bottom` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Bottom` | 123 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Const` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Eq` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Implies` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Not` | 123 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Or` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Top` | 123 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Unary` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.ast` | `Var` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.entailment` | `*module*` | 144 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.entailment` | `*module*` | 185 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.entailment` | `ENTAILMENT_CHECKER_VERSION` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.entailment` | `check_entailment_certificate` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.entailment` | `prove_entailment` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_entailment.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Or` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.entailment` | `check_entailment_certificate` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_adversarial.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Bottom` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Implies` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Not` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Or` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_entailment_properties.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Const` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Eq` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Or` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.entailment` | `EntailmentResult` | 144 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.environment` | `LANGUAGE` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.environment` | `PROFILE` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.environment` | `SPEC_REVISION` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.evaluate` | `evaluate` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.search` | `CountermodelResult` | 145 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence.py` | `ve.search` | `check_countermodel` | 175 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Bottom` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Const` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Implies` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Not` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Or` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.environment` | `LANGUAGE` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.environment` | `PROFILE` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.environment` | `SPEC_REVISION` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_equivalence_properties.py` | `ve.model` | `FiniteModel` | 82 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Binary` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Bottom` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Const` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Eq` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Implies` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Or` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Unary` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.ast` | `Var` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `*module*` | 190 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `_nonvacuous` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `_subsets` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `find_countermodel` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_evaluate_search.py` | `ve.search` | `find_distinguishing_model` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Or` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `VIEWS` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 247 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 265 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 291 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 313 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `measure_view_lengths` | 410 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 247 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 265 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 352 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 393 |
-| `/home/seyran/code/ve-bench/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 410 |
-| `/home/seyran/code/ve-bench/tests/test_fol_names.py` | `ve.ast` | `*module*` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_fol_names.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_fol_names.py` | `ve.environment` | `LANGUAGE` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_fol_names.py` | `ve.environment` | `PROFILE` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_fol_names.py` | `ve.environment` | `SPEC_REVISION` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_grammar.py` | `ve.ast` | `*module*` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_grammar.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_grammar.py` | `ve.parser` | `_Parser` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_grammar.py` | `ve.parser` | `parse` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_grammar.py` | `ve.printer` | `print_document` | 22 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `And` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Bottom` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Const` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Exists` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Forall` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Implies` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Not` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Or` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Top` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Unary` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.ast` | `Var` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.entailment` | `_binding` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_lean_certificates.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Document` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Eq` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Exists` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Forall` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Implies` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Top` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Unary` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `Var` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `document_from_data` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `document_to_data` | 210 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.ast` | `document_to_data` | 333 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.environment` | `Environment` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.evaluate` | `evaluate` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.parser` | `parse` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.printer` | `print_document` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_lean_conformance.py` | `ve.search` | `check_countermodel` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.parser` | `parse` | 143 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `VIEWS` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `measure_jsonl_lengths` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `measure_view_lengths` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `render_cell` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_legend.py` | `ve.printer` | `render_vocabulary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_lexicon.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.argument` | `ArgumentGraph` | 58 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.argument` | `Claim` | 58 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.argument` | `_predicates` | 55 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.argument` | `predicate_use_panel` | 58 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Atom` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Body` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Const` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Document` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `formula_from_data` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.ast` | `formula_to_data` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.closure` | `shift` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.printer` | `lint_vocabulary` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.profiles` | `LANGUAGE` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.profiles` | `SPEC_REVISION` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_nary.py` | `ve.search` | `check_countermodel` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `And` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Atom` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Body` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Const` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Eq` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Forall` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Implies` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Reach` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `Var` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `formula_from_data` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.ast` | `formula_to_data` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.closure` | `induction_step` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.entailment` | `check_entailment_certificate` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.entailment` | `prove_entailment` | 16 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.environment` | `Environment` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.evaluate` | `evaluate` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.model` | `FiniteModel` | 20 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.profiles` | `LANGUAGE` | 22 |
-| `/home/seyran/code/ve-bench/tests/test_nary_differential.py` | `ve.profiles` | `SPEC_REVISION` | 22 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.argument` | `check_argument` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Body` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Eq` | 510 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Le` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Lt` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Num` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Or` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Reach` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Scale` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Top` | 443 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.printer` | `natural_document` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.printer` | `natural_document` | 496 |
-| `/home/seyran/code/ve-bench/tests/test_natural.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.admission` | `AdmissionError` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.admission` | `admit_document` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.ast` | `And` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.ast` | `Top` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.ast` | `formula_to_data` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_norm_admission.py` | `ve.norms` | `NormDocument` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.norms` | `NormDocument` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.profiles` | `LANGUAGE` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_norm_english.py` | `ve.profiles` | `SPEC_REVISION` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Binary` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Named` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.background` | `background` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.evaluate` | `_Evaluator` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.norms` | `Norm` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.norms` | `NormDocument` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.norms` | `check_conflict` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.norms` | `check_witness` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.profiles` | `LANGUAGE` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_norms.py` | `ve.profiles` | `SPEC_REVISION` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 183 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 234 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 304 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 332 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 343 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `And` | 211 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `And` | 235 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Const` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Const` | 235 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Eq` | 235 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Exists` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Forall` | 305 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Implies` | 305 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Not` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Top` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Unary` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `Var` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `_to_data` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 211 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.background` | `background` | 306 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 166 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 212 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 236 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 403 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.evaluate` | `_Evaluator` | 438 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.model` | `FiniteModel` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `NormDocument` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `_bind` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `_instantiate` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `check_conflict` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `check_norm_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_norms_three_way.py` | `ve.norms` | `prove_norm_entailment` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Add` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Bottom` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Const` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Document` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Eq` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Forall` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Le` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Lt` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Not` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Num` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Scale` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Top` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `Unary` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `check_formula` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `document_from_data` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `formula_from_data` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.ast` | `formula_to_data` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.entailment` | `_binding` | 20 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.entailment` | `check_entailment_certificate` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.entailment` | `prove_entailment` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.environment` | `Environment` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.evaluate` | `evaluate` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.model` | `FiniteModel` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.parser` | `parse` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.search` | `check_countermodel` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_order.py` | `ve.search` | `find_countermodel` | 15 |
-| `/home/seyran/code/ve-bench/tests/test_order_gate.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_order_gate.py` | `ve.entailment` | `prove_entailment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_order_grammar.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-bench/tests/test_order_grammar.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.ast` | `document_from_data` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.ast` | `document_to_data` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.environment` | `Environment` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.evaluate` | `evaluate` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.model` | `FiniteModel` | 17 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.parser` | `parse` | 18 |
-| `/home/seyran/code/ve-bench/tests/test_order_round2.py` | `ve.printer` | `print_document` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `AdmissionError` | 287 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 64 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 341 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 369 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `parse_label` | 64 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.admission` | `validate_label` | 64 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.argument` | `ArgumentGraph` | 520 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.argument` | `Claim` | 288 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.argument` | `Claim` | 520 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.argument` | `Deduction` | 520 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.argument` | `check_argument` | 520 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `Bottom` | 65 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 326 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 370 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 490 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `_to_data` | 83 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `document_from_data` | 65 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `document_from_data` | 261 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 65 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 301 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 315 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.ast` | `formula_to_data` | 370 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.background` | `background` | 66 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.background` | `background` | 371 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.background` | `checked_premises` | 316 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.background` | `dependency_order_nodes` | 66 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.entailment` | `check_entailment_certificate` | 67 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.entailment` | `prove_entailment` | 302 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.entailment` | `prove_entailment` | 372 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 63 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 260 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 286 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 300 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 314 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 325 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 489 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 520 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.evaluate` | `evaluate` | 63 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.model` | `FiniteModel` | 63 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.model` | `FiniteModel` | 260 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.search` | `check_countermodel` | 69 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 69 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 328 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 491 |
-| `/home/seyran/code/ve-bench/tests/test_p0_three_way.py` | `ve.search` | `find_distinguishing_model` | 328 |
-| `/home/seyran/code/ve-bench/tests/test_p1_history.py` | `ve.argument` | `_checker_build` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.environment` | `LANGUAGE` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.environment` | `PROFILE` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.environment` | `SPEC_REVISION` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.parser` | `canonicalize` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.parser` | `is_canonical` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.parser` | `parse` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.parser` | `parse_with_metadata` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.printer` | `NATURAL_RENDERER_VERSION` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.printer` | `natural_document` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_parser_renderer.py` | `ve.printer` | `print_document` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_profiles.py` | `ve.ast` | `Forall` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_profiles.py` | `ve.ast` | `Top` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_profiles.py` | `ve.ast` | `check_formula` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_profiles.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_profiles.py` | `ve.profiles` | `checker_family` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Eq` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Or` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `document_from_data` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.ast` | `document_to_data` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.model` | `FiniteModel` | 21 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.parser` | `canonicalize` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.parser` | `parse` | 23 |
-| `/home/seyran/code/ve-bench/tests/test_properties.py` | `ve.printer` | `print_document` | 24 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.ast` | `*module*` | 109 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.environment` | `RESERVED` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.environment` | `valid_identifier` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_propose.py` | `ve.printer` | `render` | 109 |
-| `/home/seyran/code/ve-bench/tests/test_replay_conservativity.py` | `ve.ast` | `document_from_data` | 7 |
-| `/home/seyran/code/ve-bench/tests/test_replay_conservativity.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_replay_conservativity.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.ast` | `document_from_data` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.ast` | `document_to_data` | 14 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.ast` | `formula_from_data` | 178 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.ast` | `formula_from_data` | 300 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.ast` | `formula_to_data` | 195 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.evaluate` | `evaluate` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.parser` | `parse` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.printer` | `print_document` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 146 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 179 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 276 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 301 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `find_countermodel` | 179 |
-| `/home/seyran/code/ve-bench/tests/test_rust_conformance.py` | `ve.search` | `find_countermodel` | 301 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `And` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Binary` | 141 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Bottom` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Eq` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Exists` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Forall` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Implies` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Or` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.evaluate` | `evaluate` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.model` | `FiniteModel` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `*module*` | 158 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_domain_sizes` | 169 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_models` | 169 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_models` | 224 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_nonvacuous` | 224 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_nonvacuous` | 238 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_relation_assignments` | 169 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `_subsets` | 169 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `check_countermodel` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `find_countermodel` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_search_options.py` | `ve.search` | `find_distinguishing_model` | 4 |
-| `/home/seyran/code/ve-bench/tests/test_surface_registry.py` | `ve.environment` | `Environment` | 50 |
-| `/home/seyran/code/ve-bench/tests/test_t1c.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
-| `/home/seyran/code/ve-bench/tests/test_t1c.py` | `ve.evaluate` | `evaluate` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_t1c.py` | `ve.model` | `FiniteModel` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.argument` | `ArgumentGraph` | 2 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.argument` | `Claim` | 2 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.argument` | `Deduction` | 2 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.argument` | `check_argument` | 2 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-bench/tests/test_vacuity.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `And` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Binary` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Bottom` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Document` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Eq` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Exists` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Forall` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Implies` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Or` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.ast` | `Var` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `VIEWS` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 282 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 296 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 306 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 318 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 339 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 348 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 365 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 389 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `measure_view_lengths` | 427 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `natural_document` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `natural_formula` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `print_document` | 12 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `render` | 8 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 365 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 389 |
-| `/home/seyran/code/ve-bench/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 427 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `document_to_data` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.ast` | `formula_to_data` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `VIEWS` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `lint_vocabulary` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `measure_jsonl_lengths` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `measure_view_lengths` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `render_cell` | 13 |
-| `/home/seyran/code/ve-bench/tests/test_views_polish.py` | `ve.printer` | `render_vocabulary` | 9 |
-| `/home/seyran/code/ve-bench/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.ast` | `*module*` | 12 |
-| `/home/seyran/code/ve-bench/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-bench/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-bench/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 15 |
-| `/home/seyran/code/ve-bench/usecases/closure-induction/verify.py` | `ve.ast` | `Document` | 12 |
-| `/home/seyran/code/ve-bench/usecases/closure-induction/verify.py` | `ve.ast` | `formula_from_data` | 12 |
-| `/home/seyran/code/ve-bench/usecases/closure-induction/verify.py` | `ve.entailment` | `check_entailment_certificate` | 13 |
-| `/home/seyran/code/ve-bench/usecases/closure-induction/verify.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-bench/usecases/closure-induction/verify.py` | `ve.printer` | `print_document` | 12 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `And` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Binary` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Document` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Exists` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Forall` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Implies` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Not` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Or` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Unary` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Var` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.entailment` | `prove_entailment` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.printer` | `print_document` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.printer` | `render` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/boundary/probe.py` | `ve.search` | `find_countermodel` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `And` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Binary` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Eq` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Exists` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Forall` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Implies` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Named` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Not` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Or` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Reach` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Unary` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.ast` | `Var` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/theory.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.ast` | `Document` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.ast` | `formula_to_data` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.entailment` | `prove_entailment` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.printer` | `lint_vocabulary` | 27 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.printer` | `print_document` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.printer` | `render` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.search` | `check_countermodel` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify.py` | `ve.search` | `find_countermodel` | 24 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.ast` | `*module*` | 14 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.background` | `background` | 15 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.bundle` | `check_bundle` | 16 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.definitions` | `compile_definitions` | 23 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.entailment` | `check_entailment_certificate` | 17 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.entailment` | `prove_entailment` | 17 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-bench/usecases/math-mini-paper/verify_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 20 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/build.py` | `ve.ast` | `formula_from_data` | 25 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/build.py` | `ve.ast` | `formula_to_data` | 25 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/build.py` | `ve.parser` | `parse` | 28 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/views.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/views.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/views.py` | `ve.printer` | `VIEWS` | 14 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/views.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-bench/ve_experiments/e1/views.py` | `ve.printer` | `render_vocabulary` | 16 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Binary` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Bottom` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Const` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Document` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Eq` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Forall` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Implies` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Named` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Not` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Or` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Reach` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `Var` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `_to_data` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.ast` | `formula_to_data` | 24 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.closure` | `derive_induction` | 26 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_apply` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_binding` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_closed` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_derive` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_initial_branch` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_rule` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.entailment` | `check_entailment_certificate` | 27 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.environment` | `Environment` | 29 |
-| `/home/seyran/code/ve-bench/ve_experiments/t1c/certificates.py` | `ve.printer` | `print_document` | 30 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Bottom` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Const` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Eq` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Top` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Unary` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `Var` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `document_from_data` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.ast` | `formula_to_data` | 22 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.closure` | `EXTRA_RULES` | 174 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.closure` | `derive_extra` | 174 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `_apply` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `_binding` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `_derive` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `_initial_branch` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `_kind` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `check_entailment_certificate` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.entailment` | `prove_entailment` | 25 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.environment` | `Environment` | 27 |
-| `/home/seyran/code/ve-webapp/conformance/certificates.py` | `ve.search` | `check_countermodel` | 28 |
-| `/home/seyran/code/ve-webapp/conformance/closure.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 9 |
-| `/home/seyran/code/ve-webapp/conformance/closure.py` | `ve.environment` | `CLOSURE_PROFILES` | 9 |
-| `/home/seyran/code/ve-webapp/conformance/closure.py` | `ve.environment` | `CLOSURE_REVISION` | 9 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `And` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Binary` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Body` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Bottom` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Const` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Eq` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Exists` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Forall` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Implies` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Named` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Or` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.closure` | `edge_at` | 84 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.closure` | `shift` | 84 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.closure` | `unfold` | 6 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.entailment` | `_binding` | 7 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 7 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.entailment` | `prove_entailment` | 7 |
-| `/home/seyran/code/ve-webapp/conformance/closure_certificates.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/english_artifacts.py` | `ve.ast` | `*module*` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/english_artifacts.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/english_artifacts.py` | `ve.parser` | `parse` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/english_artifacts.py` | `ve.printer` | `render` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/english_lean.py` | `ve.ast` | `*module*` | 42 |
-| `/home/seyran/code/ve-webapp/conformance/english_lean.py` | `ve.parser` | `parse` | 351 |
-| `/home/seyran/code/ve-webapp/conformance/english_lean.py` | `ve.printer` | `render` | 42 |
-| `/home/seyran/code/ve-webapp/conformance/english_mixed.py` | `ve.ast` | `*module*` | 37 |
-| `/home/seyran/code/ve-webapp/conformance/english_mixed.py` | `ve.environment` | `Environment` | 37 |
-| `/home/seyran/code/ve-webapp/conformance/english_mixed.py` | `ve.printer` | `render` | 37 |
-| `/home/seyran/code/ve-webapp/conformance/english_mixed.py` | `ve.profiles` | `LANGUAGE` | 40 |
-| `/home/seyran/code/ve-webapp/conformance/english_mixed.py` | `ve.profiles` | `SPEC_REVISION` | 40 |
-| `/home/seyran/code/ve-webapp/conformance/english_surface.py` | `ve.ast` | `*module*` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/english_surface.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/english_surface.py` | `ve.parser` | `parse` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/english_surface.py` | `ve.printer` | `_NaturalVocabulary` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/english_surface.py` | `ve.printer` | `render` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.ast` | `document_from_data` | 5 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.ast` | `document_from_data` | 142 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.ast` | `document_to_data` | 5 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.ast` | `formula_from_data` | 202 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.model` | `FiniteModel` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.parser` | `parse` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.printer` | `print_document` | 4 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.search` | `check_countermodel` | 203 |
-| `/home/seyran/code/ve-webapp/conformance/extend.py` | `ve.search` | `find_countermodel` | 203 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `And` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Binary` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Bottom` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Const` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Document` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Eq` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Exists` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Forall` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Implies` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Not` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Or` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Top` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Unary` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `Var` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `document_from_data` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.ast` | `document_to_data` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.evaluate` | `evaluate` | 20 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.model` | `FiniteModel` | 20 |
-| `/home/seyran/code/ve-webapp/conformance/fuzz.py` | `ve.printer` | `print_document` | 20 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `And` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Binary` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Bottom` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Const` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Document` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Eq` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Exists` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Forall` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Implies` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Not` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Or` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Top` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Unary` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `Var` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `document_from_data` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.ast` | `document_to_data` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.evaluate` | `evaluate` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.model` | `FiniteModel` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.parser` | `parse` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.printer` | `print_document` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/generate.py` | `ve.search` | `check_countermodel` | 23 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Body` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Named` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Reach` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Top` | 252 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `_to_data` | 10 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.ast` | `formula_from_data` | 246 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `InductionInvariant` | 12 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `derive_extra` | 37 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `derive_induction` | 12 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `induction_candidates` | 12 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `induction_step` | 12 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.closure` | `invariant_at` | 12 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_Searcher` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_apply` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_binding` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_closed` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_derive` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_initial_branch` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `_rule` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `check_entailment_certificate` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.entailment` | `prove_entailment` | 14 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.environment` | `Environment` | 145 |
-| `/home/seyran/code/ve-webapp/conformance/induction.py` | `ve.environment` | `Environment` | 247 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `And` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Atom` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Binary` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Const` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Document` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Eq` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Exists` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Forall` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Implies` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Not` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Or` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Unary` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.ast` | `Var` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.parser` | `parse` | 19 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.printer` | `print_document` | 20 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.profiles` | `LANGUAGE` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/nary_folio.py` | `ve.profiles` | `SPEC_REVISION` | 21 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.argument` | `check_argument` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.printer` | `natural_document` | 8 |
-| `/home/seyran/code/ve-webapp/conformance/natural_surface.py` | `ve.printer` | `render` | 13 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Add` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `And` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Binary` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Bottom` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Const` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Document` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Eq` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Exists` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Forall` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Implies` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Le` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Lt` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Not` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Num` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Or` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Scale` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Top` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Unary` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `Var` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `document_from_data` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.ast` | `formula_to_data` | 29 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.entailment` | `_binding` | 31 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.entailment` | `check_entailment_certificate` | 31 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.entailment` | `prove_entailment` | 31 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.environment` | `Environment` | 32 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.evaluate` | `evaluate` | 28 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.model` | `FiniteModel` | 28 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.search` | `check_countermodel` | 33 |
-| `/home/seyran/code/ve-webapp/conformance/order.py` | `ve.search` | `find_countermodel` | 33 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.admission` | `admit_document` | 557 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `_to_data` | 412 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `formula_from_data` | 140 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `formula_from_data` | 223 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `formula_from_data` | 713 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `formula_from_data` | 761 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.ast` | `formula_to_data` | 688 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.background` | `background` | 150 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.background` | `background` | 413 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.background` | `background` | 689 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.entailment` | `_Searcher` | 714 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.entailment` | `_binding` | 714 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.entailment` | `_initial_branch` | 714 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.entailment` | `_validate_inputs` | 714 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.entailment` | `prove_entailment` | 141 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.environment` | `Environment` | 134 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.profiles` | `LANGUAGE` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.profiles` | `SPEC_REVISION` | 16 |
-| `/home/seyran/code/ve-webapp/conformance/p0.py` | `ve.search` | `find_countermodel` | 762 |
-| `/home/seyran/code/ve-webapp/examples/fluent_views.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/examples/fluent_views.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-webapp/examples/fluent_views.py` | `ve.printer` | `VIEWS` | 9 |
-| `/home/seyran/code/ve-webapp/examples/fluent_views.py` | `ve.printer` | `render` | 8 |
-| `/home/seyran/code/ve-webapp/examples/fluent_views.py` | `ve.printer` | `render_vocabulary` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.ast` | `document_to_data` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 16 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_PROFILES` | 16 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `CLOSURE_REVISION` | 16 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.environment` | `Environment` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.evaluate` | `evaluate` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.model` | `FiniteModel` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/generate.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.ast` | `document_from_data` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.evaluate` | `evaluate` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.model` | `FiniteModel` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.parser` | `parse` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E0/closure_witnesses/validate.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.argument` | `ArgumentGraph` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.argument` | `Claim` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.argument` | `Deduction` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.argument` | `check_argument` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.argument` | `deduction_identity` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.ast` | `*module*` | 13 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.printer` | `print_formula` | 14 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/common.py` | `ve.search` | `find_countermodel` | 12 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e2.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e2.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e2.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.argument` | `ArgumentGraph` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.argument` | `Claim` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.argument` | `Deduction` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.argument` | `check_argument` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.argument` | `deduction_identity` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.ast` | `*module*` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.model` | `FiniteModel` | 7 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/e4.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/fol.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_fol.py` | `ve.environment` | `Environment` | 2 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_fol.py` | `ve.parser` | `parse` | 2 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.argument` | `ArgumentGraph` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/E2E4/tests/test_materials.py` | `ve.search` | `check_countermodel` | 11 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `ArgumentGraph` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `Claim` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `Deduction` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `Evidence` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `check_argument` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.argument` | `deduction_identity` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.entailment` | `prove_entailment` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.environment` | `Environment` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.environment` | `LANGUAGE` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.environment` | `PROFILE` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.environment` | `SPEC_REVISION` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-webapp/experiments/E5/materials.py` | `ve.search` | `check_countermodel` | 25 |
-| `/home/seyran/code/ve-webapp/experiments/E5/tests/test_materials.py` | `ve.argument` | `ArgumentGraph` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E5/tests/test_materials.py` | `ve.argument` | `check_argument` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/E5/tests/test_materials.py` | `ve.search` | `check_countermodel` | 16 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.entailment` | `prove_entailment` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.environment` | `Environment` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.evaluate` | `evaluate` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.model` | `FiniteModel` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.parser` | `parse` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/harness.py` | `ve.search` | `find_countermodel` | 35 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Document` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Named` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `Reach` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.ast` | `check_formula` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.entailment` | `prove_entailment` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.evaluate` | `evaluate` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/mutation.py` | `ve.search` | `find_distinguishing_model` | 21 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/naive.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/naive.py` | `ve.evaluate` | `evaluate` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/naive.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/nversion.py` | `ve.evaluate` | `evaluate` | 5 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/proofs.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/proofs.py` | `ve.entailment` | `prove_entailment` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/proofs.py` | `ve.environment` | `Environment` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/proofs.py` | `ve.parser` | `parse` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/P3-formalisation-tax/proofs.py` | `ve.search` | `find_countermodel` | 23 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `And` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Const` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Document` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Forall` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Implies` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Unary` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `Var` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.ast` | `formula_to_data` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.entailment` | `check_entailment_certificate` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.entailment` | `prove_entailment` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.environment` | `Environment` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.parser` | `parse` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/obfuscated-arguments/iceberg/qualitative.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `And` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Binary` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Bottom` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Eq` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Exists` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Forall` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Implies` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Not` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Or` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Top` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Unary` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `Var` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.ast` | `formula_to_data` | 17 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.environment` | `LANGUAGE` | 20 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.environment` | `PROFILE` | 20 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.environment` | `SPEC_REVISION` | 20 |
-| `/home/seyran/code/ve-webapp/experiments/oracle/measure_unknown.py` | `ve.printer` | `print_formula` | 22 |
-| `/home/seyran/code/ve-webapp/experiments/p1.py` | `ve.argument` | `ArgumentGraph` | 26 |
-| `/home/seyran/code/ve-webapp/experiments/p1.py` | `ve.argument` | `check_argument` | 26 |
-| `/home/seyran/code/ve-webapp/experiments/p1.py` | `ve.ast` | `formula_to_data` | 27 |
-| `/home/seyran/code/ve-webapp/experiments/p1.py` | `ve.model` | `FiniteModel` | 26 |
-| `/home/seyran/code/ve-webapp/experiments/p1.py` | `ve.search` | `check_countermodel` | 28 |
-| `/home/seyran/code/ve-webapp/experiments/validate_materials.py` | `ve.argument` | `ArgumentGraph` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/validate_materials.py` | `ve.argument` | `check_argument` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/validate_materials.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-webapp/experiments/validate_materials.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-webapp/experiments/validate_materials.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.ast` | `document_to_data` | 13 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.printer` | `VIEWS` | 14 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render` | 12 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render_cell` | 14 |
-| `/home/seyran/code/ve-webapp/paper/figures/gen_implementation_tables.py` | `ve.printer` | `render_vocabulary` | 12 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Binary` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Body` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Document` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Forall` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Named` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Not` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Or` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Reach` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Unary` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `Var` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `document_from_data` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.ast` | `document_to_data` | 27 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.environment` | `Environment` | 26 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.evaluate` | `_evaluate_validated` | 28 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.evaluate` | `evaluate` | 26 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.model` | `FiniteModel` | 26 |
-| `/home/seyran/code/ve-webapp/rust/benchmark.py` | `ve.search` | `find_countermodel` | 26 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `And` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Binary` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Body` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Bottom` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Const` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Document` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Eq` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Exists` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Forall` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Implies` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Named` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Not` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Or` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Reach` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Top` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Unary` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `Var` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.ast` | `document_to_data` | 23 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.environment` | `Environment` | 22 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.model` | `FiniteModel` | 22 |
-| `/home/seyran/code/ve-webapp/rust/fuzz_closure.py` | `ve.printer` | `print_document` | 22 |
-| `/home/seyran/code/ve-webapp/tests/conftest.py` | `ve.argument` | `*module*` | 5 |
-| `/home/seyran/code/ve-webapp/tests/conftest.py` | `ve.bundle` | `*module*` | 5 |
-| `/home/seyran/code/ve-webapp/tests/explicit_inverse.py` | `ve.ast` | `*module*` | 4 |
-| `/home/seyran/code/ve-webapp/tests/explicit_inverse.py` | `ve.printer` | `_NaturalVocabulary` | 5 |
-| `/home/seyran/code/ve-webapp/tests/fluent_inverse.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `And` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Binary` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Bottom` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Const` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Eq` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Exists` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Forall` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Implies` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Not` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Or` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Top` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Unary` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `Var` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.ast` | `formula_to_data` | 31 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.entailment` | `*module*` | 191 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.entailment` | `check_entailment_certificate` | 33 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.environment` | `Environment` | 34 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.environment` | `LANGUAGE` | 34 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.environment` | `PROFILE` | 34 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.environment` | `SPEC_REVISION` | 34 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_benchmark.py` | `ve.search` | `check_countermodel` | 36 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `And` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Binary` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Bottom` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Const` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Eq` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Exists` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Forall` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Implies` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Not` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Or` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Top` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Unary` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `Var` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.ast` | `formula_to_data` | 22 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.entailment` | `*module*` | 206 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.environment` | `Environment` | 25 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.environment` | `LANGUAGE` | 25 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.environment` | `PROFILE` | 25 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.environment` | `SPEC_REVISION` | 25 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.model` | `FiniteModel` | 129 |
-| `/home/seyran/code/ve-webapp/tests/prover_fair_fuzz.py` | `ve.search` | `check_countermodel` | 27 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `ArgumentGraph` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `Claim` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `Deduction` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `Evidence` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `check_argument` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `deduction_identity` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `outstanding_obligations` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.argument` | `predicate_use_panel` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.ast` | `formula_to_data` | 67 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.background` | `background` | 68 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.entailment` | `EntailmentCertificateCheck` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument.py` | `ve.model` | `FiniteModel` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `ArgumentGraph` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `Claim` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `Deduction` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `Evidence` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `check_argument` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `deduction_identity` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `outstanding_obligations` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.argument` | `predicate_use_panel` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.entailment` | `prove_entailment` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_adversarial.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_fixtures.py` | `ve.argument` | `check_argument` | 1 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_fixtures.py` | `ve.argument` | `outstanding_obligations` | 1 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_fixtures.py` | `ve.argument` | `predicate_use_panel` | 1 |
-| `/home/seyran/code/ve-webapp/tests/test_argument_fixtures.py` | `ve.model` | `FiniteModel` | 108 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `And` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Forall` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Implies` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Named` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Reach` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Unary` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.ast` | `Var` | 379 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.closure` | `induction_step` | 380 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_assist.py` | `ve.printer` | `print_formula` | 381 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_deadline.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_deadline.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_deadline.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_deadline.py` | `ve.background` | `*module*` | 133 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_deadline.py` | `ve.search` | `find_countermodel` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_invariants.py` | `ve.environment` | `LANGUAGE` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_invariants.py` | `ve.environment` | `PROFILE` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_invariants.py` | `ve.environment` | `SPEC_REVISION` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.environment` | `LANGUAGE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.environment` | `PROFILE` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.environment` | `SPEC_REVISION` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery.py` | `ve.search` | `find_countermodel` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery_replay.py` | `ve.ast` | `Const` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery_replay.py` | `ve.ast` | `Not` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery_replay.py` | `ve.ast` | `Unary` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_assist_recovery_replay.py` | `ve.search` | `find_countermodel` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `And` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `Bottom` | 98 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.ast` | `formula_to_data` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_attacks.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_authoring.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_authoring.py` | `ve.environment` | `LANGUAGE` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_authoring.py` | `ve.environment` | `PROFILE` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_authoring.py` | `ve.environment` | `SPEC_REVISION` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `ArgumentGraph` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `Claim` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `Deduction` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `_checker_build` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `check_argument` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.argument` | `outstanding_obligations` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.background` | `HOOKS` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.background` | `dependency_order` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.background` | `validate_background` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.evaluate` | `evaluate` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.model` | `FiniteModel` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.search` | `check_countermodel` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.search` | `find_countermodel` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_background.py` | `ve.search` | `find_distinguishing_model` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `And` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Bottom` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Or` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.ast` | `formula_to_data` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `check_bundle` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 86 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 107 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 155 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 193 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 208 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 238 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 269 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 291 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.bundle` | `lean_bundle_verdict` | 310 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.entailment` | `prove_entailment` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_bundle.py` | `ve.profiles` | `SPEC_REVISION` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_cedar_norms.py` | `ve.model` | `FiniteModel` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_cedar_norms.py` | `ve.norms` | `check_conflict` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.parser` | `parse` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `VIEWS` | 118 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `VIEWS` | 133 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `measure_jsonl_lengths` | 160 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `render` | 110 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `render` | 133 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `render` | 251 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `render_cell` | 118 |
-| `/home/seyran/code/ve-webapp/tests/test_cli.py` | `ve.printer` | `render_cell` | 133 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.closure` | `unfold` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.entailment` | `CLOSURE_CHECKER_VERSION` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.entailment` | `_binding` | 282 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.environment` | `CLOSURE_PROFILES` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.environment` | `CLOSURE_REVISION` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_closure.py` | `ve.search` | `_used_predicates` | 214 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.argument` | `ArgumentGraph` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.argument` | `Claim` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.argument` | `Deduction` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.argument` | `check_argument` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.argument` | `outstanding_obligations` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Binary` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Body` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Const` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Exists` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Named` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Reach` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Top` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `Var` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.ast` | `document_to_data` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.entailment` | `_binding` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.printer` | `print_document` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_certificates.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `And` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Binary` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Bottom` | 126 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Const` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Document` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Forall` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Implies` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Named` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Reach` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Unary` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `Var` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.closure` | `induction_step` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.entailment` | `_binding` | 127 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.entailment` | `check_entailment_certificate` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.entailment` | `prove_entailment` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.environment` | `Environment` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.evaluate` | `evaluate` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.parser` | `parse` | 39 |
-| `/home/seyran/code/ve-webapp/tests/test_closure_induction.py` | `ve.search` | `check_countermodel` | 89 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Document` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `check_document` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `document_from_data` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.ast` | `document_to_data` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.parser` | `canonicalize` | 25 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.parser` | `is_canonical` | 25 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.parser` | `parse` | 25 |
-| `/home/seyran/code/ve-webapp/tests/test_conformance.py` | `ve.printer` | `print_document` | 26 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Const` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.ast` | `check_formula` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.background` | `background` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.evaluate` | `evaluate` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_flags.py` | `ve.search` | `find_countermodel` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Const` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_data_surface.py` | `ve.environment` | `Environment` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.ast` | `formula_to_data` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_data_three_way.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.ast` | `*module*` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.background` | `background` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.definitions` | `compile_definitions` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.definitions` | `definitions_id` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.definitions` | `expand` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.environment` | `Environment` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.model` | `FiniteModel` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.printer` | `print_document` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions.py` | `ve.search` | `find_countermodel` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.ast` | `Top` | 275 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.ast` | `_to_data` | 145 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.ast` | `document_from_data` | 145 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.background` | `background` | 146 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.entailment` | `check_entailment_certificate` | 276 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.entailment` | `prove_entailment` | 276 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 129 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 144 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 168 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 191 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.environment` | `Environment` | 274 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.evaluate` | `_evaluate_validated` | 147 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 144 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 168 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.model` | `FiniteModel` | 191 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.profiles` | `LANGUAGE` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_differential.py` | `ve.profiles` | `SPEC_REVISION` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.ast` | `Const` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.ast` | `Unary` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.ast` | `formula_from_data` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.bundle` | `check_bundle` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.definitions` | `compile_definitions` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.entailment` | `prove_entailment` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_definitions_english.py` | `ve.profiles` | `SPEC_REVISION` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.ast` | `Top` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.ast` | `formula_from_data` | 222 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.ast` | `formula_to_data` | 555 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.definitions` | `compile_definitions` | 554 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.definitions` | `premise` | 554 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.evaluate` | `evaluate` | 257 |
-| `/home/seyran/code/ve-webapp/tests/test_document.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Body` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Bottom` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Named` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Or` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Reach` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Top` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.model` | `FiniteModel` | 184 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.printer` | `VIEWS` | 325 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.printer` | `lint_vocabulary` | 230 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_english.py` | `ve.printer` | `render_vocabulary` | 325 |
-| `/home/seyran/code/ve-webapp/tests/test_english_evidence.py` | `ve.ast` | `*module*` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 50 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 65 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 92 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Bottom` | 128 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Top` | 65 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.ast` | `Top` | 92 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.parser` | `parse` | 44 |
-| `/home/seyran/code/ve-webapp/tests/test_english_unambiguity.py` | `ve.printer` | `render` | 44 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `And` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Binary` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Bottom` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Bottom` | 123 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Const` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Eq` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Implies` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Not` | 123 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Or` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Top` | 123 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Unary` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.ast` | `Var` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.entailment` | `*module*` | 144 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.entailment` | `*module*` | 185 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.entailment` | `ENTAILMENT_CHECKER_VERSION` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.entailment` | `check_entailment_certificate` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.entailment` | `prove_entailment` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Or` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.entailment` | `check_entailment_certificate` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.entailment` | `prove_entailment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_adversarial.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Bottom` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Implies` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Not` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Or` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_entailment_properties.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Const` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Eq` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Or` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.entailment` | `EntailmentResult` | 144 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.environment` | `LANGUAGE` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.environment` | `PROFILE` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.environment` | `SPEC_REVISION` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.evaluate` | `evaluate` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.parser` | `parse` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.search` | `CountermodelResult` | 145 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence.py` | `ve.search` | `check_countermodel` | 175 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `And` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Binary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Bottom` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Const` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Eq` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Exists` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Forall` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Implies` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Not` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Or` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Top` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Unary` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.ast` | `Var` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.environment` | `LANGUAGE` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.environment` | `PROFILE` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.environment` | `SPEC_REVISION` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_equivalence_properties.py` | `ve.model` | `FiniteModel` | 82 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Binary` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Bottom` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Const` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Eq` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Exists` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Forall` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Implies` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Not` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Or` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Top` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Unary` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.ast` | `Var` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `*module*` | 190 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `_nonvacuous` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `_subsets` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `check_countermodel` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `find_countermodel` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_evaluate_search.py` | `ve.search` | `find_distinguishing_model` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Bottom` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Or` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `VIEWS` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 247 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 265 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 291 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `lint_vocabulary` | 313 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `measure_view_lengths` | 410 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 247 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 265 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 352 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 393 |
-| `/home/seyran/code/ve-webapp/tests/test_fluent.py` | `ve.printer` | `render_vocabulary` | 410 |
-| `/home/seyran/code/ve-webapp/tests/test_fol_names.py` | `ve.ast` | `*module*` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_fol_names.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_fol_names.py` | `ve.environment` | `LANGUAGE` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_fol_names.py` | `ve.environment` | `PROFILE` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_fol_names.py` | `ve.environment` | `SPEC_REVISION` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_grammar.py` | `ve.ast` | `*module*` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_grammar.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_grammar.py` | `ve.parser` | `_Parser` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_grammar.py` | `ve.parser` | `parse` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_grammar.py` | `ve.printer` | `print_document` | 22 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `And` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Bottom` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Const` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Exists` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Forall` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Implies` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Not` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Or` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Top` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Unary` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.ast` | `Var` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.entailment` | `_binding` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.entailment` | `check_entailment_certificate` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_certificates.py` | `ve.entailment` | `prove_entailment` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Document` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Eq` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Exists` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Forall` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Implies` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Top` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Unary` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `Var` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `document_from_data` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `document_to_data` | 210 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.ast` | `document_to_data` | 333 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.environment` | `Environment` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.evaluate` | `evaluate` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.parser` | `parse` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.printer` | `print_document` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_lean_conformance.py` | `ve.search` | `check_countermodel` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.ast` | `Eq` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.parser` | `parse` | 143 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `VIEWS` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `measure_jsonl_lengths` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `measure_view_lengths` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `render_cell` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_legend.py` | `ve.printer` | `render_vocabulary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_lexicon.py` | `ve.environment` | `Environment` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.argument` | `ArgumentGraph` | 58 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.argument` | `Claim` | 58 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.argument` | `_predicates` | 55 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.argument` | `predicate_use_panel` | 58 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Atom` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Body` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Const` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Document` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `formula_from_data` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.ast` | `formula_to_data` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.closure` | `shift` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.model` | `FiniteModel` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.printer` | `lint_vocabulary` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.profiles` | `LANGUAGE` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.profiles` | `SPEC_REVISION` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_nary.py` | `ve.search` | `check_countermodel` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `And` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Atom` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Body` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Const` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Eq` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Forall` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Implies` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Reach` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `Var` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `formula_from_data` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.ast` | `formula_to_data` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.closure` | `induction_step` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.entailment` | `check_entailment_certificate` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.entailment` | `prove_entailment` | 16 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.environment` | `Environment` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.evaluate` | `evaluate` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.model` | `FiniteModel` | 20 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.profiles` | `LANGUAGE` | 22 |
-| `/home/seyran/code/ve-webapp/tests/test_nary_differential.py` | `ve.profiles` | `SPEC_REVISION` | 22 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.argument` | `check_argument` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `And` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Binary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Body` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Const` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Document` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Eq` | 510 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Exists` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Forall` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Implies` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Le` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Lt` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Not` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Num` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Or` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Reach` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Scale` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Top` | 443 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Unary` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.ast` | `Var` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.environment` | `Environment` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.printer` | `natural_document` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.printer` | `natural_document` | 496 |
-| `/home/seyran/code/ve-webapp/tests/test_natural.py` | `ve.printer` | `render` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.admission` | `AdmissionError` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.admission` | `admit_document` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.ast` | `And` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.ast` | `Top` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.ast` | `formula_to_data` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.entailment` | `prove_entailment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_admission.py` | `ve.norms` | `NormDocument` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.norms` | `NormDocument` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.profiles` | `LANGUAGE` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_norm_english.py` | `ve.profiles` | `SPEC_REVISION` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Binary` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Named` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Reach` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.background` | `background` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.evaluate` | `_Evaluator` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.norms` | `Norm` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.norms` | `NormDocument` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.norms` | `check_conflict` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.norms` | `check_witness` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.profiles` | `LANGUAGE` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_norms.py` | `ve.profiles` | `SPEC_REVISION` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 183 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 234 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 304 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 332 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 343 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `And` | 211 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `And` | 235 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Const` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Const` | 235 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Eq` | 235 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Exists` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Forall` | 305 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Implies` | 305 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Not` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Top` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Unary` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `Var` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `_to_data` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 211 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.background` | `background` | 306 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 166 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 212 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 236 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 403 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.environment` | `Environment` | 20 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.evaluate` | `_Evaluator` | 438 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.model` | `FiniteModel` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `NormDocument` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `_bind` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `_instantiate` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `check_conflict` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `check_norm_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_norms_three_way.py` | `ve.norms` | `prove_norm_entailment` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Add` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Bottom` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Const` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Document` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Eq` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Forall` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Le` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Lt` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Not` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Num` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Scale` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Top` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `Unary` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `check_formula` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `document_from_data` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `formula_from_data` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.ast` | `formula_to_data` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.entailment` | `_binding` | 20 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.entailment` | `check_entailment_certificate` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.entailment` | `prove_entailment` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.environment` | `Environment` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.evaluate` | `evaluate` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.model` | `FiniteModel` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.parser` | `parse` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.printer` | `print_document` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.search` | `check_countermodel` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_order.py` | `ve.search` | `find_countermodel` | 15 |
-| `/home/seyran/code/ve-webapp/tests/test_order_gate.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_order_gate.py` | `ve.entailment` | `prove_entailment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_order_grammar.py` | `ve.parser` | `parse` | 10 |
-| `/home/seyran/code/ve-webapp/tests/test_order_grammar.py` | `ve.printer` | `print_document` | 11 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.ast` | `document_from_data` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.ast` | `document_to_data` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.environment` | `Environment` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.evaluate` | `evaluate` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.model` | `FiniteModel` | 17 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.parser` | `parse` | 18 |
-| `/home/seyran/code/ve-webapp/tests/test_order_round2.py` | `ve.printer` | `print_document` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `AdmissionError` | 287 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 64 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 341 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `admit_document` | 369 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `parse_label` | 64 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.admission` | `validate_label` | 64 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.argument` | `ArgumentGraph` | 520 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.argument` | `Claim` | 288 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.argument` | `Claim` | 520 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.argument` | `Deduction` | 520 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.argument` | `check_argument` | 520 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `Bottom` | 65 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 326 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 370 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `Top` | 490 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `_to_data` | 83 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `document_from_data` | 65 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `document_from_data` | 261 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 65 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 301 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `formula_from_data` | 315 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.ast` | `formula_to_data` | 370 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.background` | `background` | 66 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.background` | `background` | 371 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.background` | `checked_premises` | 316 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.background` | `dependency_order_nodes` | 66 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.entailment` | `check_entailment_certificate` | 67 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.entailment` | `prove_entailment` | 302 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.entailment` | `prove_entailment` | 372 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 63 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 260 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 286 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 300 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 314 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 325 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 489 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.environment` | `Environment` | 520 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.evaluate` | `evaluate` | 63 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.model` | `FiniteModel` | 63 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.model` | `FiniteModel` | 260 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.search` | `check_countermodel` | 69 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 69 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 328 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.search` | `find_countermodel` | 491 |
-| `/home/seyran/code/ve-webapp/tests/test_p0_three_way.py` | `ve.search` | `find_distinguishing_model` | 328 |
-| `/home/seyran/code/ve-webapp/tests/test_p1_history.py` | `ve.argument` | `_checker_build` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Binary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.environment` | `LANGUAGE` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.environment` | `PROFILE` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.environment` | `SPEC_REVISION` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.parser` | `canonicalize` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.parser` | `is_canonical` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.parser` | `parse` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.parser` | `parse_with_metadata` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.printer` | `NATURAL_RENDERER_VERSION` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.printer` | `natural_document` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_parser_renderer.py` | `ve.printer` | `print_document` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_profiles.py` | `ve.ast` | `Forall` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_profiles.py` | `ve.ast` | `Top` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_profiles.py` | `ve.ast` | `check_formula` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_profiles.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_profiles.py` | `ve.profiles` | `checker_family` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `And` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Document` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Eq` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Exists` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Forall` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Implies` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Not` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Or` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Unary` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `Var` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `document_from_data` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.ast` | `document_to_data` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.environment` | `Environment` | 19 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.evaluate` | `evaluate` | 22 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.model` | `FiniteModel` | 21 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.parser` | `canonicalize` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.parser` | `parse` | 23 |
-| `/home/seyran/code/ve-webapp/tests/test_properties.py` | `ve.printer` | `print_document` | 24 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.ast` | `*module*` | 109 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.environment` | `RESERVED` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.environment` | `valid_identifier` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.parser` | `parse` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_propose.py` | `ve.printer` | `render` | 109 |
-| `/home/seyran/code/ve-webapp/tests/test_replay_conservativity.py` | `ve.ast` | `document_from_data` | 7 |
-| `/home/seyran/code/ve-webapp/tests/test_replay_conservativity.py` | `ve.entailment` | `check_entailment_certificate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_replay_conservativity.py` | `ve.environment` | `Environment` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.ast` | `document_from_data` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.ast` | `document_to_data` | 14 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.ast` | `formula_from_data` | 178 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.ast` | `formula_from_data` | 300 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.ast` | `formula_to_data` | 195 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.evaluate` | `evaluate` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.model` | `FiniteModel` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.parser` | `parse` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.printer` | `print_document` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 146 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 179 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 276 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `check_countermodel` | 301 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `find_countermodel` | 179 |
-| `/home/seyran/code/ve-webapp/tests/test_rust_conformance.py` | `ve.search` | `find_countermodel` | 301 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `And` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Binary` | 141 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Bottom` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Eq` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Exists` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Forall` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Implies` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Not` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Or` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Top` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Unary` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.ast` | `Var` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.evaluate` | `evaluate` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.model` | `FiniteModel` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `*module*` | 158 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_domain_sizes` | 169 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_models` | 169 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_models` | 224 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_nonvacuous` | 224 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_nonvacuous` | 238 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_relation_assignments` | 169 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `_subsets` | 169 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `check_countermodel` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `find_countermodel` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_search_options.py` | `ve.search` | `find_distinguishing_model` | 4 |
-| `/home/seyran/code/ve-webapp/tests/test_surface_registry.py` | `ve.environment` | `Environment` | 50 |
-| `/home/seyran/code/ve-webapp/tests/test_t1c.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
-| `/home/seyran/code/ve-webapp/tests/test_t1c.py` | `ve.evaluate` | `evaluate` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_t1c.py` | `ve.model` | `FiniteModel` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.argument` | `ArgumentGraph` | 2 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.argument` | `Claim` | 2 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.argument` | `Deduction` | 2 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.argument` | `check_argument` | 2 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.ast` | `Bottom` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.ast` | `Top` | 3 |
-| `/home/seyran/code/ve-webapp/tests/test_vacuity.py` | `ve.environment` | `Environment` | 5 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `And` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Binary` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Bottom` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Const` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Document` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Eq` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Exists` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Forall` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Implies` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Not` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Or` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Top` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Unary` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.ast` | `Var` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.environment` | `Environment` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.evaluate` | `evaluate` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.model` | `FiniteModel` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.parser` | `parse` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `VIEWS` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 282 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 296 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 306 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 318 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 339 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 348 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 365 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `lint_vocabulary` | 389 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `measure_view_lengths` | 427 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `natural_document` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `natural_formula` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `print_document` | 12 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `render` | 8 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 365 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 389 |
-| `/home/seyran/code/ve-webapp/tests/test_views.py` | `ve.printer` | `render_vocabulary` | 427 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `And` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Binary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Const` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Document` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Eq` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Exists` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Forall` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Implies` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Not` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Top` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Unary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `Var` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `document_to_data` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.ast` | `formula_to_data` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.environment` | `Environment` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `VIEWS` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `lint_vocabulary` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `measure_jsonl_lengths` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `measure_view_lengths` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `render` | 9 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `render_cell` | 13 |
-| `/home/seyran/code/ve-webapp/tests/test_views_polish.py` | `ve.printer` | `render_vocabulary` | 9 |
-| `/home/seyran/code/ve-webapp/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.ast` | `*module*` | 12 |
-| `/home/seyran/code/ve-webapp/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.model` | `FiniteModel` | 14 |
-| `/home/seyran/code/ve-webapp/usecases/claude-constitution-excerpt/verify_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 15 |
-| `/home/seyran/code/ve-webapp/usecases/closure-induction/verify.py` | `ve.ast` | `Document` | 12 |
-| `/home/seyran/code/ve-webapp/usecases/closure-induction/verify.py` | `ve.ast` | `formula_from_data` | 12 |
-| `/home/seyran/code/ve-webapp/usecases/closure-induction/verify.py` | `ve.entailment` | `check_entailment_certificate` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/closure-induction/verify.py` | `ve.environment` | `Environment` | 12 |
-| `/home/seyran/code/ve-webapp/usecases/closure-induction/verify.py` | `ve.printer` | `print_document` | 12 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `And` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Binary` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Document` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Exists` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Forall` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Implies` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Not` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Or` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Unary` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.ast` | `Var` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.entailment` | `prove_entailment` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.printer` | `print_document` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.printer` | `render` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/boundary/probe.py` | `ve.search` | `find_countermodel` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `And` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Binary` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Eq` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Exists` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Forall` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Implies` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Named` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Not` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Or` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Reach` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Unary` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.ast` | `Var` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/theory.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.ast` | `Document` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.ast` | `formula_to_data` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.entailment` | `check_entailment_certificate` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.entailment` | `prove_entailment` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.model` | `FiniteModel` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.printer` | `lint_vocabulary` | 27 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.printer` | `print_document` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.printer` | `render` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.search` | `check_countermodel` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify.py` | `ve.search` | `find_countermodel` | 24 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.ast` | `*module*` | 14 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.background` | `background` | 15 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.bundle` | `check_bundle` | 16 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.definitions` | `compile_definitions` | 23 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.entailment` | `check_entailment_certificate` | 17 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.entailment` | `prove_entailment` | 17 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.environment` | `Environment` | 18 |
-| `/home/seyran/code/ve-webapp/usecases/math-mini-paper/verify_definitions.py` | `ve.profiles` | `SPEC_REVISION` | 20 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/build.py` | `ve.ast` | `formula_from_data` | 25 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/build.py` | `ve.ast` | `formula_to_data` | 25 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/build.py` | `ve.parser` | `parse` | 28 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/views.py` | `ve.ast` | `formula_from_data` | 13 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/views.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/views.py` | `ve.printer` | `VIEWS` | 14 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/views.py` | `ve.printer` | `render` | 15 |
-| `/home/seyran/code/ve-webapp/ve_experiments/e1/views.py` | `ve.printer` | `render_vocabulary` | 16 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Binary` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Bottom` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Const` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Document` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Eq` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Forall` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Implies` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Named` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Not` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Or` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Reach` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `Var` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `_to_data` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.ast` | `formula_to_data` | 24 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.closure` | `derive_induction` | 26 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_apply` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_binding` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_closed` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_derive` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_initial_branch` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `_rule` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.entailment` | `check_entailment_certificate` | 27 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.environment` | `Environment` | 29 |
-| `/home/seyran/code/ve-webapp/ve_experiments/t1c/certificates.py` | `ve.printer` | `print_document` | 30 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.ast` | `Const` | 17 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.ast` | `Not` | 17 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.ast` | `Unary` | 17 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.environment` | `Environment` | 13 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.profiles` | `LANGUAGE` | 20 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.profiles` | `SPEC_REVISION` | 20 |
-| `/home/seyran/code/ve-webapp/ve_webapp/drafts.py` | `ve.search` | `find_countermodel` | 18 |
-| `/home/seyran/code/ve-webapp/ve_webapp/examples.py` | `ve.environment` | `LANGUAGE` | 2 |
-| `/home/seyran/code/ve-webapp/ve_webapp/examples.py` | `ve.environment` | `PROFILE` | 2 |
-| `/home/seyran/code/ve-webapp/ve_webapp/examples.py` | `ve.environment` | `SPEC_REVISION` | 2 |
-| `/home/seyran/code/ve-webapp/ve_webapp/rules.py` | `ve.environment` | `Environment` | 4 |
-| `/home/seyran/code/ve-webapp/ve_webapp/rules.py` | `ve.norms` | `check_conflict` | 7 |
-| `/home/seyran/code/ve-webapp/ve_webapp/rules.py` | `ve.norms` | `check_witness` | 7 |
-| `/home/seyran/code/ve-webapp/ve_webapp/rules.py` | `ve.profiles` | `LANGUAGE` | 5 |
-| `/home/seyran/code/ve-webapp/ve_webapp/rules.py` | `ve.profiles` | `SPEC_REVISION` | 5 |
 | `conformance/certificates.py` | `ve.ast` | `And` | 22 |
 | `conformance/certificates.py` | `ve.ast` | `Binary` | 22 |
 | `conformance/certificates.py` | `ve.ast` | `Bottom` | 22 |
@@ -4144,62 +1237,102 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `conformance/p0.py` | `ve.profiles` | `LANGUAGE` | 16 |
 | `conformance/p0.py` | `ve.profiles` | `SPEC_REVISION` | 16 |
 | `conformance/p0.py` | `ve.search` | `find_countermodel` | 762 |
+| `external:ve-bench/run.py` | `ve.ast` | `And` | 33 |
+| `external:ve-bench/run.py` | `ve.ast` | `Not` | 33 |
+| `external:ve-bench/run.py` | `ve.ast` | `Top` | 33 |
+| `external:ve-bench/run.py` | `ve.entailment` | `prove_entailment` | 34 |
+| `external:ve-bench/run.py` | `ve.norms` | `NormDocument` | 38 |
+| `external:ve-bench/run.py` | `ve.norms` | `_bind` | 38 |
+| `external:ve-bench/run.py` | `ve.printer` | `render` | 43 |
+| `external:ve-bench/run.py` | `ve.profiles` | `LANGUAGE` | 72 |
+| `external:ve-bench/run.py` | `ve.profiles` | `SPEC_REVISION` | 72 |
+| `external:ve-bench/worker.py` | `ve.admission` | `admit_document` | 15 |
+| `external:ve-bench/worker.py` | `ve.ast` | `document_from_data` | 8 |
+| `external:ve-bench/worker.py` | `ve.bundle` | `check_bundle` | 14 |
+| `external:ve-bench/worker.py` | `ve.entailment` | `check_entailment_certificate` | 9 |
+| `external:ve-bench/worker.py` | `ve.environment` | `Environment` | 7 |
+| `external:ve-bench/worker.py` | `ve.evaluate` | `evaluate` | 11 |
+| `external:ve-bench/worker.py` | `ve.model` | `FiniteModel` | 10 |
+| `external:ve-bench/worker.py` | `ve.norms` | `NormDocument` | 13 |
+| `external:ve-bench/worker.py` | `ve.norms` | `check_conflict` | 13 |
+| `external:ve-bench/worker.py` | `ve.search` | `find_countermodel` | 12 |
+| `external:ve-webapp/drafts.py` | `ve.ast` | `Const` | 17 |
+| `external:ve-webapp/drafts.py` | `ve.ast` | `Not` | 17 |
+| `external:ve-webapp/drafts.py` | `ve.ast` | `Unary` | 17 |
+| `external:ve-webapp/drafts.py` | `ve.environment` | `Environment` | 13 |
+| `external:ve-webapp/drafts.py` | `ve.profiles` | `LANGUAGE` | 20 |
+| `external:ve-webapp/drafts.py` | `ve.profiles` | `SPEC_REVISION` | 20 |
+| `external:ve-webapp/drafts.py` | `ve.search` | `find_countermodel` | 18 |
+| `external:ve-webapp/examples.py` | `ve.environment` | `LANGUAGE` | 2 |
+| `external:ve-webapp/examples.py` | `ve.environment` | `PROFILE` | 2 |
+| `external:ve-webapp/examples.py` | `ve.environment` | `SPEC_REVISION` | 2 |
+| `external:ve-webapp/rules.py` | `ve.environment` | `Environment` | 4 |
+| `external:ve-webapp/rules.py` | `ve.norms` | `check_conflict` | 7 |
+| `external:ve-webapp/rules.py` | `ve.norms` | `check_witness` | 7 |
+| `external:ve-webapp/rules.py` | `ve.profiles` | `LANGUAGE` | 5 |
+| `external:ve-webapp/rules.py` | `ve.profiles` | `SPEC_REVISION` | 5 |
 | `tests/conftest.py` | `ve.argument` | `*module*` | 5 |
 | `tests/conftest.py` | `ve.bundle` | `*module*` | 5 |
 | `tests/explicit_inverse.py` | `ve.ast` | `*module*` | 4 |
 | `tests/explicit_inverse.py` | `ve.printer` | `_NaturalVocabulary` | 5 |
 | `tests/fluent_inverse.py` | `ve.ast` | `*module*` | 8 |
-| `tests/probe_matrix.py` | `ve.admission` | `admit_document` | 33 |
-| `tests/probe_matrix.py` | `ve.admission` | `validate_label` | 33 |
-| `tests/probe_matrix.py` | `ve.argument` | `ArgumentGraph` | 20 |
-| `tests/probe_matrix.py` | `ve.argument` | `Claim` | 20 |
-| `tests/probe_matrix.py` | `ve.argument` | `Deduction` | 20 |
-| `tests/probe_matrix.py` | `ve.argument` | `check_argument` | 20 |
-| `tests/probe_matrix.py` | `ve.argument` | `deduction_identity` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `And` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `Bottom` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `Const` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `Document` | 22 |
-| `tests/probe_matrix.py` | `ve.ast` | `Not` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `Top` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `Unary` | 20 |
-| `tests/probe_matrix.py` | `ve.ast` | `_to_data` | 22 |
-| `tests/probe_matrix.py` | `ve.ast` | `check_formula` | 22 |
-| `tests/probe_matrix.py` | `ve.ast` | `document_to_data` | 22 |
-| `tests/probe_matrix.py` | `ve.ast` | `formula_from_data` | 22 |
-| `tests/probe_matrix.py` | `ve.ast` | `formula_to_data` | 22 |
-| `tests/probe_matrix.py` | `ve.background` | `background` | 24 |
-| `tests/probe_matrix.py` | `ve.background` | `dependency_order` | 24 |
-| `tests/probe_matrix.py` | `ve.bundle` | `check_bundle` | 34 |
-| `tests/probe_matrix.py` | `ve.definitions` | `compile_definitions` | 25 |
-| `tests/probe_matrix.py` | `ve.entailment` | `check_entailment_certificate` | 26 |
-| `tests/probe_matrix.py` | `ve.entailment` | `prove_entailment` | 26 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `Environment` | 20 |
-| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 420 |
-| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 420 |
-| `tests/probe_matrix.py` | `ve.evaluate` | `evaluate` | 27 |
-| `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 20 |
-| `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 29 |
-| `tests/probe_matrix.py` | `ve.norm_admission` | `admit_norm_document` | 36 |
-| `tests/probe_matrix.py` | `ve.norms` | `NormDocument` | 35 |
-| `tests/probe_matrix.py` | `ve.norms` | `check_conflict` | 35 |
-| `tests/probe_matrix.py` | `ve.norms` | `check_norm_entailment_certificate` | 35 |
-| `tests/probe_matrix.py` | `ve.norms` | `prove_norm_entailment` | 35 |
-| `tests/probe_matrix.py` | `ve.order` | `decode_trace` | 45 |
-| `tests/probe_matrix.py` | `ve.parser` | `canonicalize` | 30 |
-| `tests/probe_matrix.py` | `ve.parser` | `parse` | 30 |
-| `tests/probe_matrix.py` | `ve.printer` | `print_formula` | 31 |
-| `tests/probe_matrix.py` | `ve.printer` | `render` | 42 |
-| `tests/probe_matrix.py` | `ve.profiles` | `SPEC_REVISION` | 40 |
-| `tests/probe_matrix.py` | `ve.search` | `check_countermodel` | 32 |
-| `tests/probe_matrix.py` | `ve.search` | `find_countermodel` | 32 |
-| `tests/probe_matrix.py` | `ve.search` | `find_distinguishing_model` | 32 |
+| `tests/probe_matrix.py` | `ve.admission` | `admit_document` | 34 |
+| `tests/probe_matrix.py` | `ve.admission` | `validate_label` | 34 |
+| `tests/probe_matrix.py` | `ve.argument` | `ArgumentGraph` | 21 |
+| `tests/probe_matrix.py` | `ve.argument` | `Claim` | 21 |
+| `tests/probe_matrix.py` | `ve.argument` | `Deduction` | 21 |
+| `tests/probe_matrix.py` | `ve.argument` | `check_argument` | 21 |
+| `tests/probe_matrix.py` | `ve.argument` | `deduction_identity` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `And` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Bottom` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Const` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Document` | 23 |
+| `tests/probe_matrix.py` | `ve.ast` | `Forall` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Le` | 499 |
+| `tests/probe_matrix.py` | `ve.ast` | `Lt` | 499 |
+| `tests/probe_matrix.py` | `ve.ast` | `Not` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Num` | 499 |
+| `tests/probe_matrix.py` | `ve.ast` | `Or` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Top` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Unary` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `Var` | 21 |
+| `tests/probe_matrix.py` | `ve.ast` | `_to_data` | 23 |
+| `tests/probe_matrix.py` | `ve.ast` | `check_formula` | 23 |
+| `tests/probe_matrix.py` | `ve.ast` | `document_to_data` | 23 |
+| `tests/probe_matrix.py` | `ve.ast` | `formula_from_data` | 23 |
+| `tests/probe_matrix.py` | `ve.ast` | `formula_to_data` | 23 |
+| `tests/probe_matrix.py` | `ve.background` | `background` | 25 |
+| `tests/probe_matrix.py` | `ve.background` | `dependency_order` | 25 |
+| `tests/probe_matrix.py` | `ve.bundle` | `check_bundle` | 35 |
+| `tests/probe_matrix.py` | `ve.definitions` | `compile_definitions` | 26 |
+| `tests/probe_matrix.py` | `ve.entailment` | `check_entailment_certificate` | 27 |
+| `tests/probe_matrix.py` | `ve.entailment` | `prove_entailment` | 27 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `Environment` | 21 |
+| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 541 |
+| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 541 |
+| `tests/probe_matrix.py` | `ve.evaluate` | `evaluate` | 28 |
+| `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 21 |
+| `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 30 |
+| `tests/probe_matrix.py` | `ve.norm_admission` | `admit_norm_document` | 37 |
+| `tests/probe_matrix.py` | `ve.norms` | `NormDocument` | 36 |
+| `tests/probe_matrix.py` | `ve.norms` | `check_conflict` | 36 |
+| `tests/probe_matrix.py` | `ve.norms` | `check_norm_entailment_certificate` | 36 |
+| `tests/probe_matrix.py` | `ve.norms` | `prove_norm_entailment` | 36 |
+| `tests/probe_matrix.py` | `ve.order` | `decode_trace` | 46 |
+| `tests/probe_matrix.py` | `ve.parser` | `canonicalize` | 31 |
+| `tests/probe_matrix.py` | `ve.parser` | `parse` | 31 |
+| `tests/probe_matrix.py` | `ve.printer` | `print_formula` | 32 |
+| `tests/probe_matrix.py` | `ve.printer` | `render` | 43 |
+| `tests/probe_matrix.py` | `ve.profiles` | `SPEC_REVISION` | 41 |
+| `tests/probe_matrix.py` | `ve.search` | `check_countermodel` | 33 |
+| `tests/probe_matrix.py` | `ve.search` | `find_countermodel` | 33 |
+| `tests/probe_matrix.py` | `ve.search` | `find_distinguishing_model` | 33 |
 | `tests/prover_fair_benchmark.py` | `ve.ast` | `And` | 31 |
 | `tests/prover_fair_benchmark.py` | `ve.ast` | `Binary` | 31 |
 | `tests/prover_fair_benchmark.py` | `ve.ast` | `Bottom` | 31 |
