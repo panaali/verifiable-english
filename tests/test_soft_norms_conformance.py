@@ -9,7 +9,17 @@ from ve.ast import formula_to_data
 from ve.document import check_document, render_document
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 from ve.soft_route import _run, admit_soft_document
+from ve.ast import formula_from_data
+from ve.vacuity import premise_status
 from tests.test_soft_norms_lean import env, norm, should, ranks, values, obligation, permission
+
+
+def zeta_env():
+    raw = env({"parties": ["operator", "user"], "outranking": {"mode": "strict"}},
+              extra={"operator_instructs": {"arguments": ["assistant"],
+                                          "description": "instruction"}})
+    raw["vocabulary"]["predicates"]["operator_instructs"]["instruction_of"] = "operator"
+    return raw
 
 
 def fixtures():
@@ -33,6 +43,34 @@ def fixtures():
           should("d", "x_required", False, rank="rd")],
          ["soft__outweighs__rb__ra__x_permitted", "soft__outweighs__rc__rb__x_permitted",
           "soft__outweighs__rd__rc__x_permitted"], [False], [True]),
+        ("zeta-guard-absent", zeta_env(),
+         [norm("n", "x_required", True,
+               guard=("unary", "operator_instructs", ["var", 0]), alterable=["user"])],
+         [], [False], [True]),
+        ("zeta-guard-present", zeta_env(),
+         [norm("n", "x_required", True,
+               guard=("unary", "operator_instructs", ["var", 0]), alterable=["user"])],
+         ["operator_instructs"], [True], [True]),
+        ("zeta-user-switch", zeta_env(),
+         [norm("n", "x_required", True,
+               guard=("unary", "operator_instructs", ["var", 0]), alterable=["user"])],
+         ["operator_instructs", "soft__off__n__user"], [False], [True]),
+        ("eta-strict-child", env(extra={"q": {"arguments": ["assistant"],
+                                                   "description": "q"}}),
+         [should("m", "x_required", True),
+          norm("e", "x_required", False, guard=("unary", "q", ["var", 0]), over=["m"])],
+         ["q"], [False], [True]),
+        ("eta-parent-revives", env(extra={"q": {"arguments": ["assistant"],
+                                                     "description": "q"}}),
+         [should("m", "x_required", True),
+          norm("e", "x_required", False, guard=("unary", "q", ["var", 0]), over=["m"])],
+         [], [True], [True]),
+        ("eta-author-carveout", env(extra={"u": {"arguments": ["assistant"],
+                                                      "description": "u"}}),
+         [should("m", "x_required", True, unless=[("unary", "u", ["var", 0])])],
+         ["u"], [False], [True]),
+        ("eta-open-exception", env(), [should("m", "x_required", True)],
+         ["soft__excepted__m"], [False], [True]),
         ("kappa", env(ranks(["ra", "rb", "rc"]), perm="deny"),
          [should("a", "x_required", True, rank="ra"),
           should("b", "x_permitted", False, rank="rb"),
@@ -52,6 +90,10 @@ def fixtures():
          [should("m", "x_required", True, rank="high"),
           should("n", "x_required", False, rank="low", over=["m"]),
           should("k", "x_required", False, over=["n"])], [], [False], [True]),
+        ("upsilon-no-yield", env(ranks(["high", "low"])),
+         [should("m", "x_required", True, rank="high"),
+          should("n", "x_required", False, rank="low"),
+          should("k", "x_required", False, over=["n"])], [], [], [True]),
         ("xi", env(), [norm("h", "x_required", True)], [], [True], [True]),
         ("omicron", env(), [should("a", "x_required", True), should("b", "x_required", True)],
          [], [True], [True]),
@@ -164,6 +206,29 @@ def test_nu_typed_acts_rho_conditions_and_tau_coherence():
     assert [(l, formula_to_data(soft.extended_env, f, _generated=True))
             for l, f in soft.extended_env.soft_premises] == [
                 (b["label"], b["ast"]) for b in lean["background"] if b["generator"] == "soft"]
+
+
+def test_iota_full_premise_vacuity_and_consistent_partial_findings():
+    raw = env(extra={"ga": {"arguments": ["assistant"], "description": "ga"},
+                     "gb": {"arguments": ["assistant"], "description": "gb"}})
+    raw["vocabulary"]["constants"]["a"] = {"sort": "assistant", "description": "a"}
+    rules = [should("a", "x_required", True, guard=("unary", "ga", ["var", 0])),
+             should("b", "x_permitted", False, guard=("unary", "gb", ["var", 0]))]
+    soft = SoftNormDocument(SoftEnvironment(raw), rules)
+    lean = _run({"id": "iota", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert [(l, formula_to_data(soft.extended_env, f, _generated=True))
+            for l, f in soft.elaborated.premises()] == [
+                (p["label"], p["ast"]) for p in lean["premises"]]
+    assert [(l, formula_to_data(soft.extended_env, f, _generated=True))
+            for l, f in soft.extended_env.soft_premises] == [
+                (b["label"], b["ast"]) for b in lean["background"] if b["generator"] == "soft"]
+    findings = [["unary", "ga", ["const", "a"]], ["unary", "gb", ["const", "a"]],
+                ["not", ["unary", "soft__excepted__a", ["const", "a"]]],
+                ["not", ["unary", "soft__excepted__b", ["const", "a"]]]]
+    layers = [formula for _, formula in soft.elaborated.premises()]
+    interpreted = [formula_from_data(soft.extended_env, f) for f in findings]
+    assert premise_status(soft.extended_env, layers + interpreted)["status"] == "INCONSISTENT"
+    assert premise_status(soft.extended_env, layers + interpreted[2:])["status"] == "model"
 
 
 @pytest.mark.parametrize("name,raw,rules,diagnostic", [
