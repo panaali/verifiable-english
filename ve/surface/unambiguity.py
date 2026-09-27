@@ -23,13 +23,11 @@ def _parser(grammar):
 
 
 def require_unique_derivation(env, source, **options):
-    from ..english import english_lark_grammar, EnglishVocabulary, _fold_sentence_initials
+    from ..english import english_lark_grammar, EnglishVocabulary, _normalise_english_source
     if len(source) > MAX_NODES:
         raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
     grammar = english_lark_grammar(env, **options)
-    # The handwritten parser folds the first letter of every sentence before
-    # matching; the independent grammar must see the same lexical input.
-    text = _fold_sentence_initials(source, EnglishVocabulary(env, **options))
+    text, _ = _normalise_english_source(source, EnglishVocabulary(env, **options))
     def timeout(_signum, _frame):
         raise ResourceLimit("English Earley time budget exhausted")
     # Leave an existing host alarm alone. A trace can enforce our deadline
