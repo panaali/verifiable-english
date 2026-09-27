@@ -256,6 +256,13 @@ for line in sys.stdin:
     if behaviour == "empty-result":
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
                           "results": [{}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+    if behaviour == "duplicate-response":
+        print('{"id":' + json.dumps(request["id"]) + ',"id":' + json.dumps(request["id"]) +
+              ',"status":"error","error":"forged"}', flush=True); continue
+    if behaviour == "nan-result":
+        print('{"id":' + json.dumps(request["id"]) + ',"status":"ok","mode":"evaluate",'
+              '"results":[{"status":"ok","value":NaN}],'
+              '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
     n = len(request["cases"])
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
                       "results": [{"n": i, "status": "ok"} for i in range(n)],
@@ -273,7 +280,8 @@ def fake(tmp_path, behaviour):
 
 
 @pytest.mark.parametrize("behaviour", ["hang", "crash", "garbage", "truncated", "wrong-id", "short",
-                                       "wrong-mode", "missing-error", "boolean-result", "empty-result"])
+                                       "wrong-mode", "missing-error", "boolean-result", "empty-result",
+                                       "duplicate-response", "nan-result"])
 def test_operational_faults_fail_closed(tmp_path, behaviour):
     service = LeanService(fake(tmp_path, behaviour), timeout=0.5, allow_unlisted_build=True)
     try:
