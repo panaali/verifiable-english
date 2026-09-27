@@ -120,7 +120,7 @@ register(SurfaceRecord("or", "or", ("at least one of the following holds:", "eit
                        "or", "listing | compact", node_type=ast.Or, wire_arity=3))
 register(SurfaceRecord("implies", "if", ("if the following holds:", "if "),
                        "implies", "listing | compact", node_type=ast.Implies, wire_arity=3))
-register(SurfaceRecord("forall", "for every", ("for every ", "every "),
+register(SurfaceRecord("forall", "for every", ("for every ",),
                        "for every", "universal", node_type=ast.Forall, wire_arity=3))
 register(SurfaceRecord("exists", "there exists", ("there is ",),
                        "there is", "existential", node_type=ast.Exists, wire_arity=3))

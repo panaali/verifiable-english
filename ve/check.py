@@ -38,6 +38,9 @@ def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_
         result["surface"] = "english"
         result["paraphrase"] = paraphrase
         result.update(overlay_digest=parsed.overlay_digest, review_status=parsed.review_status)
+        result["conclusions"] = list(parsed.conclusions)
+        result["sentence_roles"] = ["conclusion" if i in parsed.conclusions else "premise"
+                                    for i in range(len(document.formulas))]
     if model is not None:
         evaluation = evaluate(env, document, model, max_evaluations=max_evaluations, trace=trace)
         result["model_id"] = model.model_id

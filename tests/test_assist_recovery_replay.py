@@ -558,7 +558,9 @@ def test_random_live_cache_edits_never_reach_a_transition_or_validate(seed):
 
 @pytest.mark.parametrize("operation", ["import", "verify"])
 def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch, operation):
-    monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 0.25)
+    # The merged English grammar takes longer to build and check under the
+    # deadline tracer; keep the setup approval comfortably inside this budget.
+    monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 2.0)
     recovery = service()
     recovery.add("u", "Api is safe.", {})
     recovery.start("u")
@@ -575,7 +577,7 @@ def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch,
             return True
         if phase["delay"] and self.replay and self.fire_at is not None and not phase["delayed"]:
             phase["delayed"] = True
-            time.sleep(0.30)
+            time.sleep(2.10)
         return original_hit(self, ordinal)
 
     monkeypatch.setattr(Budget, "_hit", hit)
