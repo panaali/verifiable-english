@@ -126,7 +126,7 @@ objects (3.2). Case kinds and outputs are listed in `Run.lean` (9.4): `soft-elab
 `soft-pairs`, `soft-conflict` (packages or witness), `soft-certificate`, `admission`. Cases
 without a soft construct delegate to `ve_norms_route` behaviour unchanged.
 
-## Wire choices Python (item 2) must match, or report back
+## Matched Python/Lean wire choices
 
 These are the Lean executable's current choices where the spec leaves bytes open:
 
@@ -177,11 +177,17 @@ These are the Lean executable's current choices where the spec leaves bytes open
   certificates found by Python's unchanged prover over the Lean-regenerated `E′_base` and
   `Background_base′` (δ conditional on `soft:coherence:a,b`, α unconditional; without
   `Coh_T` the pair target has no certificate).
-* Not done here (handoffs): the Python/Lean differential on generated soft trees and
-  byte-for-byte agreement of the regenerated outputs with Python (needs item 2); certificate
-  replay against Python-produced packages; the `Overlap`, `override_cycles` and
-  `DualGuardCycle` English report lines (Python's report layer); W2 *unit* contents that
-  mention decision predicates (units are decoded over `E`; graph nodes over `E′`).
+* Integrated on `soft/build`: `ve document check` calls the Python soft route, which checks
+  Python's regenerated `E′`, norm layers and ordered soft background against Lean before
+  using `ve_soft_norms_route` for graph admission. W2 unit contents and graph nodes are both
+  decoded over `E′`, so asserted decision findings are admitted. The Python route turns an
+  inherited `decided_by: null` into the equivalent absent key on the restricted Lean wire.
+  `conformance/soft_norms.py` compared 1,000 accepted generated trees byte for byte with no
+  mismatches; `tests/test_soft_norms_conformance.py` checks the item-1 fixture outcomes,
+  diagnostics, vacuity and the end-to-end document path. The Python-produced conflict
+  packages in `tests/test_soft_norms_lean.py` replay on the Lean route.
+* Remaining report presentation: `Overlap`, `override_cycles` and `DualGuardCycle` English
+  report lines are not emitted by the Lean route.
 * Not claimed, as in the spec (9.5): completeness of the classification or of the conflict
   check outside norms.md 7 on `T′`; anything about the English surface; that
   `IntendedSoftAt` matches an author's intent; anything about deciders; override cycles
