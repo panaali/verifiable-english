@@ -46,6 +46,12 @@ def raw_session(executable, lines: bytes, timeout=120):
     return [json.loads(line) for line in out[1:-1]], out[1:-1]
 
 
+def test_english_mode_is_the_generated_copy_of_the_english_runner():
+    result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
+                            capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_handshake(service_executable):
     with LeanService(service_executable) as service:
         assert service.handshake["service"] == "ve-lean@1"
