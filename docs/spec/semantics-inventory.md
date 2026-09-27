@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 865 Python files; found 4692 import edges into section 1.1 modules.
+Parsed 865 Python files; found 4693 import edges into section 1.1 modules.
 External tree `/home/seyran/code/ve-webapp` at `47d7803af33d9fce5d39a9caa7ee26f8af71606c`.
 External tree `/home/seyran/code/ve-bench` at `7f12a5d2714e4b9595f52e4f801d1de8338137ee`.
 
@@ -123,7 +123,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6`, `/home/seyran/code/ve-webapp/tests/test_conformance.py:6` (+1) |
 | `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/norms.py:13`, `ve/order.py:38`, `tests/probe_matrix.py:22`, `tests/test_definitions_differential.py:145` (+17) |
 | `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+73) |
-| `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/test_closure_certificates.py:9`, `tests/test_conformance.py:6` (+39) |
+| `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:22`, `tests/test_closure_certificates.py:9` (+40) |
 | `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
 | `ve/ast.py` | `_Decoder.__init__` | 380 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
 | `ve/ast.py` | `_Decoder.decode` | 383 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
@@ -4163,6 +4163,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.ast` | `Unary` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `_to_data` | 22 |
 | `tests/probe_matrix.py` | `ve.ast` | `check_formula` | 22 |
+| `tests/probe_matrix.py` | `ve.ast` | `document_to_data` | 22 |
 | `tests/probe_matrix.py` | `ve.ast` | `formula_from_data` | 22 |
 | `tests/probe_matrix.py` | `ve.ast` | `formula_to_data` | 22 |
 | `tests/probe_matrix.py` | `ve.background` | `background` | 24 |
@@ -4171,15 +4172,15 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.definitions` | `compile_definitions` | 25 |
 | `tests/probe_matrix.py` | `ve.entailment` | `check_entailment_certificate` | 26 |
 | `tests/probe_matrix.py` | `ve.entailment` | `prove_entailment` | 26 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 355 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 357 |
 | `tests/probe_matrix.py` | `ve.environment` | `Environment` | 20 |
-| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 355 |
-| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 355 |
+| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 357 |
 | `tests/probe_matrix.py` | `ve.evaluate` | `evaluate` | 27 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 20 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 29 |
