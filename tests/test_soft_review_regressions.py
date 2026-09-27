@@ -68,6 +68,8 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
     path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
     result = check_document(path)
     assert result["coverage"]["accounted_bytes"] == 2
+    assert result["coverage"]["coverage_percent"] == 100
+    assert result["coverage"]["soft_status"] == "OPEN"
     assert result["coverage"]["residual"]["default_exceptions"] == 1
     assert result["coverage"]["residual_total"] > 0
     assert "soft__excepted__a" in result["coverage"]["soft_residual_labels"]
@@ -87,6 +89,12 @@ def test_document_coverage_and_render_show_open_exception(tmp_path):
      "InvalidInput: invalid decider for rule a"),
     (env({"ranks": ["x", "y", "z"], "outranks": [["x", "y"], ["y", "z"], ["z", "y"]],
           "outranking": {"mode": "strict"}}), [], "DependencyCycle: x, y, z"),
+    (env({"ranks": ["a", "a"], "outranking": {"mode": "strict"}}), [],
+     "DuplicateDeclaration: rank a"),
+    (env({"parties": ["a", "a"], "outranking": {"mode": "strict"}}), [],
+     "DuplicateDeclaration: party a"),
+    (env(), [norm("a", "x_required", True, alterable=["user"])],
+     "UnknownSymbol: party user"),
 ])
 def test_python_lean_reject_same_soft_input(raw, rules, diagnostic):
     with pytest.raises(VEError) as python_error:

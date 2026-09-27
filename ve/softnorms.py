@@ -42,7 +42,8 @@ def _names(values, label, maximum):
         if not valid_identifier(name) or '__' in name:
             raise VEError(f"InvalidInput: invalid soft name {name}")
         if name in seen:
-            raise DuplicateDeclaration(f"{label[:-1]} {name}")
+            kind = "party" if label == "parties" else "rank"
+            raise DuplicateDeclaration(f"DuplicateDeclaration: {kind} {name}")
         seen.add(name)
     return tuple(values)
 
@@ -125,7 +126,7 @@ class SoftEnvironment(Environment):
             if 'instruction_of' in entry:
                 party = entry.pop('instruction_of')
                 if party not in parties:
-                    raise UnknownSymbol(f'party {party}')
+                    raise UnknownSymbol(f'UnknownSymbol: party {party}')
                 if 'regulated' in entry or 'defined' in entry:
                     raise VEError(f'InvalidInput: instruction_of on {name}')
                 instructions[name] = party
@@ -196,7 +197,7 @@ def decode_rule(env: SoftEnvironment, content):
         raise VEError(f'InvalidInput: alterable of rule {core.name} must be sorted and distinct')
     for party in alterable:
         if party not in env.soft.get('parties', []):
-            raise UnknownSymbol(f'party {party}')
+            raise UnknownSymbol(f'UnknownSymbol: party {party}')
     hard = raw.get('hard', False)
     if type(hard) is not bool:
         raise VEError(f'InvalidInput: hard of rule {core.name} must be Boolean')
