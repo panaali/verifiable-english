@@ -704,4 +704,469 @@ theorem hard_over_soft_base (D : SoftDoc) (h : WellFormedSoft D = true) (B : VE.
     rw [unfoldB, (mem_rulesOn.mp hN).2, hsg, dualOblig_pair hv hpr]
     exact Or.inr hsp
 
+/-! ## Predicates mentioned by generated formulas -/
+
+theorem mem_preds_foldl_or : ∀ (l : List VE.Formula) (acc : VE.Formula) (q : String),
+    q ∈ preds (l.foldl .or acc) ↔ q ∈ preds acc ∨ ∃ a ∈ l, q ∈ preds a
+  | [], acc, q => by simp
+  | a :: l, acc, q => by
+    rw [List.foldl_cons, mem_preds_foldl_or l]
+    simp only [preds, List.mem_append, List.mem_cons, exists_eq_or_imp]
+    constructor
+    · rintro ((h | h) | h)
+      · exact Or.inl h
+      · exact Or.inr (Or.inl h)
+      · exact Or.inr (Or.inr h)
+    · rintro (h | h | h)
+      · exact Or.inl (Or.inl h)
+      · exact Or.inl (Or.inr h)
+      · exact Or.inr h
+
+theorem mem_preds_anyF (l : List VE.Formula) (q : String) : q ∈ preds (anyF l) ↔ ∃ a ∈ l, q ∈ preds a := by
+  rw [anyF, mem_preds_foldl_or]
+  simp [preds]
+
+theorem mem_preds_atom {q p : String} {ss : List String} (h : q ∈ preds (atom p ss)) : q = p := by
+  unfold atom at h
+  split at h <;> simp_all [preds]
+
+/-- Truth depends only on the relations of the predicates a formula mentions. -/
+theorem denote_congr_preds (S : VE.Structure.{u}) (R : String → List S.Carrier → Prop) :
+    ∀ (φ : VE.Formula) (ρ : VE.Valuation S), (∀ q ∈ preds φ, ∀ vs, R q vs ↔ S.relation q vs) →
+      (φ.denote { S with relation := R } ρ ↔ φ.denote S ρ)
+  | .top, _, _ | .bottom, _, _ | .eq _ _, _, _ => Iff.rfl
+  | .unary p t, ρ, h => by
+    simp only [VE.Formula.denote, VE.Term.denote, h p (by simp [preds])]
+  | .binary p t w, ρ, h => by
+    simp only [VE.Formula.denote, VE.Term.denote, h p (by simp [preds])]
+  | .not a, ρ, h => by
+    simp only [VE.Formula.denote]; rw [denote_congr_preds S R a ρ h]
+  | .and a b, ρ, h | .or a b, ρ, h | .implies a b, ρ, h => by
+    simp only [VE.Formula.denote]
+    rw [denote_congr_preds S R a ρ (fun q hq => h q (by simp [preds, hq])),
+      denote_congr_preds S R b ρ (fun q hq => h q (by simp [preds, hq]))]
+  | .all s a, ρ, h => by
+    simp only [VE.Formula.denote]
+    exact forall_congr' fun v => imp_congr_right fun _ => denote_congr_preds S R a (v :: ρ) h
+  | .ex s a, ρ, h => by
+    simp only [VE.Formula.denote]
+    exact exists_congr fun v => and_congr_right fun _ => denote_congr_preds S R a (v :: ρ) h
+
+theorem preds_declared {E : VE.Environment} {q : String} (φ : VE.Formula) :
+    ∀ {Γ : List String}, φ.WellFormed E Γ → q ∈ preds φ → (E.predicates q).isSome := by
+  induction φ with
+  | top | bottom | eq _ _ => intro _ _ h; simp [preds] at h
+  | unary p _ =>
+    intro _ hw h
+    obtain ⟨_, hp, _⟩ := hw
+    simp only [preds, List.mem_singleton] at h; subst h; simp [hp]
+  | binary p _ _ =>
+    intro _ hw h
+    obtain ⟨_, _, hp, _⟩ := hw
+    simp only [preds, List.mem_singleton] at h; subst h; simp [hp]
+  | not a ih => intro _ hw h; exact ih hw h
+  | and a b ia ib | or a b ia ib | implies a b ia ib =>
+    intro _ hw h
+    simp only [preds, List.mem_append] at h
+    rcases h with h | h
+    · exact ia hw.1 h
+    · exact ib hw.2 h
+  | all _ a ih | ex _ a ih => intro _ hw h; exact ih hw.2 h
+
+theorem preds_liveStrict (regs : List Regulated) (N : SoftNode) {q : String}
+    (h : q ∈ preds (liveStrictIn regs N)) :
+    q ∈ preds N.guard ∨ (∃ U ∈ N.carveOuts, q ∈ preds U) ∨ ∃ π ∈ N.alterable, q = offName N π := by
+  simp only [liveStrictIn, preds, List.mem_append, mem_preds_anyF, switchIn, List.mem_map] at h
+  rcases h with (h | h) | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · obtain ⟨_, ⟨π, hπ, rfl⟩, hq⟩ := h
+    exact Or.inr (Or.inr ⟨π, hπ, mem_preds_atom hq⟩)
+
+theorem preds_strictYields (regs : List Regulated) (ns : List SoftNode) {q : String} :
+    ∀ (f : Nat) (N : SoftNode), N ∈ ns → q ∈ preds (strictYieldsIn regs ns f N) →
+      ∃ M ∈ ns, M.mode = .strict ∧ q ∈ preds (liveStrictIn regs M)
+  | 0, N, hN, h => by
+    simp only [strictYieldsIn, preds, List.mem_append, mem_preds_anyF, List.not_mem_nil,
+      false_and, exists_false, or_false] at h
+    split at h
+    · exact ⟨N, hN, ‹_›, h⟩
+    · simp [preds] at h
+  | f + 1, N, hN, h => by
+    simp only [strictYieldsIn, preds, List.mem_append, mem_preds_anyF, List.mem_map] at h
+    rcases h with h | ⟨_, ⟨C, hC, rfl⟩, h⟩
+    · split at h
+      · exact ⟨N, hN, ‹_›, h⟩
+      · simp [preds] at h
+    · exact preds_strictYields regs ns f C (mem_childrenIn_iff.mp hC).1 h
+
+theorem preds_strictDecides (regs : List Regulated) (ns : List SoftNode) (p : String) (sign : Bool)
+    {q : String} (h : q ∈ preds (strictDecidesIn regs ns p sign)) :
+    ∃ M ∈ ns, M.mode = .strict ∧ q ∈ preds (liveStrictIn regs M) := by
+  simp only [strictDecidesIn, mem_preds_anyF, List.mem_map, List.mem_filter] at h
+  obtain ⟨_, ⟨N, ⟨⟨hN, _⟩, _⟩, rfl⟩, h⟩ := h
+  unfold strictSelectsIn at h
+  split at h
+  · simp only [preds, List.mem_append, mem_preds_anyF, List.mem_map] at h
+    rcases h with h | ⟨_, ⟨C, hC, rfl⟩, h⟩
+    · exact ⟨N, hN, ‹_›, h⟩
+    · exact preds_strictYields regs ns _ C (mem_childrenIn_iff.mp hC).1 h
+  · simp [preds] at h
+
+theorem flatMap_disjoint {α β : Type} (g : α → List β) : ∀ (l : List α), (l.flatMap g).Nodup →
+    ∀ a ∈ l, ∀ b ∈ l, a ≠ b → ∀ x ∈ g a, x ∉ g b
+  | [], _, _, h, _, _, _, _, _, _ => by cases h
+  | c :: cs, hn, a, ha, b, hb, hab, x, hxa, hxb => by
+    rw [List.flatMap_cons, List.nodup_append] at hn
+    obtain ⟨_, hcs, hdis⟩ := hn
+    rcases List.mem_cons.mp ha with rfl | ha'
+    · rcases List.mem_cons.mp hb with rfl | hb'
+      · exact hab rfl
+      · exact hdis x hxa x (List.mem_flatMap.mpr ⟨b, hb', hxb⟩) rfl
+    · rcases List.mem_cons.mp hb with rfl | hb'
+      · exact hdis x hxb x (List.mem_flatMap.mpr ⟨a, ha', hxa⟩) rfl
+      · exact flatMap_disjoint g cs hcs a ha' b hb' hab x hxa hxb
+
+theorem offNames_eq (D : SoftDoc) :
+    (offDecisions D).map (·.1) = D.T.nodes.flatMap (fun N => N.alterable.map (offName N)) := by
+  simp [offDecisions, List.map_flatMap, Function.comp_def]
+
+theorem decisionNames_eq (D : SoftDoc) : decisionNames D =
+    (exceptedDecisions D).map (·.1) ++ D.T.nodes.flatMap (fun N => N.alterable.map (offName N)) ++
+      (outweighsDecisions D).map (·.1) := by
+  simp only [decisionNames, decisions, List.map_append, offNames_eq]
+
+theorem weighing_sub_decisions (D : SoftDoc) {q : String} (h : q ∈ weighingSyms D) : q ∈ decisionNames D := by
+  rw [decisionNames_eq]
+  simp only [weighingSyms, List.mem_append, List.mem_flatMap, List.mem_filter] at h ⊢
+  rcases h with (h | ⟨N, ⟨hN, _⟩, h⟩) | h
+  · exact Or.inl (Or.inl h)
+  · exact Or.inl (Or.inr ⟨N, hN, h⟩)
+  · exact Or.inr h
+
+theorem strict_off_not_weighing {D : SoftDoc} (hv : SoftValid D) {N : SoftNode} (hN : N ∈ D.T.nodes)
+    (hs : N.mode = .strict) {π : String} (hπ : π ∈ N.alterable) : offName N π ∉ weighingSyms D := by
+  have hn := hv.decNodup
+  rw [decisionNames_eq, List.nodup_append, List.nodup_append] at hn
+  obtain ⟨⟨_, hoff, hdis1⟩, _, hdis2⟩ := hn
+  have hq : offName N π ∈ D.T.nodes.flatMap (fun N => N.alterable.map (offName N)) :=
+    List.mem_flatMap.mpr ⟨N, hN, List.mem_map_of_mem hπ⟩
+  intro hw
+  simp only [weighingSyms, List.mem_append, List.mem_flatMap, List.mem_filter, beq_iff_eq] at hw
+  rcases hw with (h | ⟨M, ⟨hM, hMd⟩, h⟩) | h
+  · exact hdis1 _ h _ hq rfl
+  · exact flatMap_disjoint (fun N => N.alterable.map (offName N)) _ hoff N hN M hM
+      (fun e => by rw [e, hMd] at hs; cases hs) _ (List.mem_map_of_mem hπ) h
+  · exact hdis2 _ (List.mem_append_right _ hq) _ h rfl
+
+/-! ## Weighing independence and cone independence -/
+
+/-- Same `E`, literals, regulated and definitions, and the same nodes up to rank,
+exception, `hard` and the switches of default rules; ranks, `outranks`, ties and the
+flag may differ. -/
+def sameStrictCore (D D₂ : SoftDoc) : Prop :=
+  D₂.E = D.E ∧ D₂.lits = D.lits ∧ D₂.T.regulated = D.T.regulated ∧ D₂.T.definitions = D.T.definitions ∧
+    D₂.T.nodes.map coreNode = D.T.nodes.map coreNode
+
+/-- Local weighing independence: strict selection on `p` reads neither ranks, the flag,
+`outweighs`, exceptions nor the switches of default rules. (i) syntactically; (ii) as a
+function of the strict core; (iii) semantically, in the form of W1's `denote_relation_congr`. -/
+theorem hard_never_weighed (D : SoftDoc) (h : WellFormedSoft D = true) (p : String) (sign : Bool) :
+    (∀ q ∈ VE.Norms.preds (strictDecidesF D p sign), q ∉ weighingSyms D) ∧
+    (∀ (D₂ : SoftDoc), sameStrictCore D D₂ → strictDecidesF D₂ p sign = strictDecidesF D p sign) ∧
+    (∀ (S : VE.Structure.{u}) (R : String → List S.Carrier → Prop)
+      (_hR : ∀ q vs, q ∉ weighingSyms D → (R q vs ↔ S.relation q vs)) (ρ : VE.Valuation S),
+      StrictDecidesD D { S with relation := R } ρ p sign ↔ StrictDecidesD D S ρ p sign) := by
+  have hv := softValid_of_wellFormed D h
+  have hi : ∀ q ∈ VE.Norms.preds (strictDecidesF D p sign), q ∉ weighingSyms D := by
+    intro q hq hw
+    obtain ⟨M, hM, hMs, hq⟩ := preds_strictDecides _ _ p sign hq
+    obtain ⟨N, hN, rfl⟩ := List.mem_map.mp hM
+    have hNs : N.mode = .strict := hMs
+    have hdecl : ∀ φ ∈ N.guard :: N.carveOuts, q ∈ preds φ → False := by
+      intro φ hφ hqφ
+      have := preds_declared φ (hv.typed N hN φ hφ) hqφ
+      rw [hv.decFresh q (weighing_sub_decisions D hw)] at this
+      cases this
+    rcases preds_liveStrict _ _ hq with hg | ⟨U, hU, hqU⟩ | ⟨π, hπ, rfl⟩
+    · exact hdecl N.guard List.mem_cons_self hg
+    · exact hdecl U (List.mem_cons_of_mem _ hU) hqU
+    · have hπ' : π ∈ N.alterable := by simpa [coreNode, hNs] using hπ
+      exact strict_off_not_weighing hv hN hNs hπ' hw
+  refine ⟨hi, fun D₂ ⟨_, _, hreg, _, hnodes⟩ => ?_, fun S R hR ρ => ?_⟩
+  · simp only [strictDecidesF, hreg, hnodes]
+  · rw [← strictDecides_denote, ← strictDecides_denote]
+    exact denote_congr_preds S R _ ρ (fun q hq vs => hR q vs (hi q hq))
+
+/-! ### The cone (7.4) -/
+
+/-- The predicates of formulas `φs`, followed by the table entries of those predicates. -/
+def predsWith (tbl : String → List String) (φs : List VE.Formula) : List String :=
+  φs.flatMap preds ++ (φs.flatMap preds).flatMap tbl
+
+/-- For each layer symbol placed before `k`: every predicate reachable from it through
+guards and carve-outs of its rules (on `T′`, including the derived ones), definition bodies
+and the layer symbols below it. -/
+def coneTable (T : Tree) : Nat → String → List String
+  | 0, _ => []
+  | k + 1, n => match (syms T)[k]? with
+    | some q => if n = q.name then predsWith (coneTable T k) (q.formulas T) else coneTable T k n
+    | none => coneTable T k n
+
+def rulesFormulas (T : Tree) (p : String) : List VE.Formula :=
+  (VE.Norms.rulesOn T p).flatMap (fun N => N.guard :: N.carveOuts)
+
+/-- The predicates of every declared condition of each `excepted_N` among `ps`. -/
+def exceptionPreds (D : SoftDoc) (ps : List String) : List String :=
+  D.T.nodes.flatMap (fun N => if ps.contains (exceptedName N) then
+    ((N.exception.map (fun e => (e.sufficient ++ e.necessary).flatMap preds)).getD []) else [])
+
+/-- `cone(p)` (7.4): the predicates reachable from the rules on `p` in `T′` through guards,
+carve-outs (including derived ones), definition bodies and the rules of lower regulated
+predicates, closed over the declared conditions of each `excepted_N` reached (the conditions
+are over the base vocabulary of `E`, so one step closes it). -/
+def cone (D : SoftDoc) (p : String) : List String :=
+  let base := predsWith (coneTable (soften D).T (before (soften D) p)) (rulesFormulas (soften D).T p)
+  base ++ exceptionPreds D base
+
+theorem preds_inst : ∀ (σ : List VE.Term) (φ : VE.Formula), preds (inst σ φ) = preds φ
+  | _, .top | _, .bottom | _, .unary _ _ | _, .binary _ _ _ | _, .eq _ _ => rfl
+  | σ, .not a => preds_inst σ a
+  | σ, .and a b | σ, .or a b | σ, .implies a b => by
+    simp only [inst, preds, preds_inst σ a, preds_inst σ b]
+  | σ, .all _ a | σ, .ex _ a => preds_inst _ a
+
+theorem preds_substWith (tbl : Table) {q : String} : ∀ (φ : VE.Formula), q ∈ preds (substWith tbl φ) →
+    q ∈ preds φ ∨ ∃ m ∈ preds φ, ∃ F, tbl m = some F ∧ q ∈ preds F
+  | .top, h | .bottom, h | .eq _ _, h => by simp [substWith, preds] at h
+  | .unary p t, h => by
+    simp only [substWith] at h
+    split at h
+    · rename_i F hF
+      rw [preds_inst] at h
+      exact Or.inr ⟨p, by simp [preds], F, hF, h⟩
+    · exact Or.inl h
+  | .binary p t w, h => by
+    simp only [substWith] at h
+    split at h
+    · rename_i F hF
+      rw [preds_inst] at h
+      exact Or.inr ⟨p, by simp [preds], F, hF, h⟩
+    · exact Or.inl h
+  | .not a, h => preds_substWith tbl a h
+  | .and a b, h | .or a b, h | .implies a b, h => by
+    simp only [substWith, preds, List.mem_append] at h ⊢
+    rcases h with h | h
+    · rcases preds_substWith tbl a h with h | ⟨m, hm, F, hF, hq⟩
+      · exact Or.inl (Or.inl h)
+      · exact Or.inr ⟨m, Or.inl hm, F, hF, hq⟩
+    · rcases preds_substWith tbl b h with h | ⟨m, hm, F, hF, hq⟩
+      · exact Or.inl (Or.inr h)
+      · exact Or.inr ⟨m, Or.inr hm, F, hF, hq⟩
+  | .all _ a, h | .ex _ a, h => preds_substWith tbl a h
+
+theorem preds_yields (T : Tree) {p q : String} : ∀ (f : Nat) (N : Node), N ∈ T.nodes → N.pred = p →
+    q ∈ preds (yields T f N) → q ∈ (rulesFormulas T p).flatMap preds
+  | 0, N, hN, hp, h => by
+    simp only [yields, preds, VE.Norms.applies, List.mem_append, mem_preds_anyF, List.not_mem_nil,
+      false_and, exists_false, or_false] at h
+    simp only [rulesFormulas, List.mem_flatMap, VE.Norms.rulesOn, List.mem_filter, beq_iff_eq, List.mem_cons]
+    rcases h with h | ⟨U, hU, h⟩
+    · exact ⟨N.guard, ⟨N, ⟨hN, hp⟩, Or.inl rfl⟩, h⟩
+    · exact ⟨U, ⟨N, ⟨hN, hp⟩, Or.inr hU⟩, h⟩
+  | f + 1, N, hN, hp, h => by
+    simp only [yields, preds, VE.Norms.applies, List.mem_append, mem_preds_anyF, List.mem_map] at h
+    rcases h with (h | ⟨U, hU, h⟩) | ⟨_, ⟨C, hC, rfl⟩, h⟩
+    · simp only [rulesFormulas, List.mem_flatMap, VE.Norms.rulesOn, List.mem_filter, beq_iff_eq, List.mem_cons]
+      exact ⟨N.guard, ⟨N, ⟨hN, hp⟩, Or.inl rfl⟩, h⟩
+    · simp only [rulesFormulas, List.mem_flatMap, VE.Norms.rulesOn, List.mem_filter, beq_iff_eq, List.mem_cons]
+      exact ⟨U, ⟨N, ⟨hN, hp⟩, Or.inr hU⟩, h⟩
+    · obtain ⟨hC, hCp⟩ := VE.Norms.mem_children hC
+      exact preds_yields T f C hC (hCp.trans hp) h
+
+theorem preds_selects (T : Tree) {p q : String} (f : Nat) (N : Node) (hN : N ∈ T.nodes) (hp : N.pred = p)
+    (h : q ∈ preds (VE.Norms.selects T f N)) : q ∈ (rulesFormulas T p).flatMap preds := by
+  simp only [VE.Norms.selects, preds, VE.Norms.applies, List.mem_append, mem_preds_anyF, List.mem_map] at h
+  simp only [rulesFormulas, List.mem_flatMap, VE.Norms.rulesOn, List.mem_filter, beq_iff_eq, List.mem_cons]
+  rcases h with (h | ⟨U, hU, h⟩) | ⟨_, ⟨C, hC, rfl⟩, h⟩
+  · exact ⟨N.guard, ⟨N, ⟨hN, hp⟩, Or.inl rfl⟩, h⟩
+  · exact ⟨U, ⟨N, ⟨hN, hp⟩, Or.inr hU⟩, h⟩
+  · obtain ⟨hC, hCp⟩ := VE.Norms.mem_children hC
+    have := preds_yields T f C hC (hCp.trans hp) h
+    simpa [rulesFormulas, VE.Norms.rulesOn] using this
+
+theorem preds_meaning (T : Tree) (s : Sym) {q : String} (h : q ∈ preds (s.meaning T)) :
+    q ∈ (s.formulas T).flatMap preds := by
+  cases s with
+  | defn d => simpa [Sym.meaning, Sym.formulas] using h
+  | reg r =>
+    have hout : q ∈ preds (VE.Norms.decides T r.name true) ∨ q ∈ preds (VE.Norms.decides T r.name false) := by
+      simp only [Sym.meaning, outcome] at h
+      split at h
+      · exact Or.inr (by simpa [preds, neg] using h)
+      · exact Or.inl (by simpa [pos] using h)
+    have key : ∀ sign, q ∈ preds (VE.Norms.decides T r.name sign) → q ∈ (rulesFormulas T r.name).flatMap preds := by
+      intro sign hq
+      simp only [VE.Norms.decides, mem_preds_anyF, List.mem_map, List.mem_filter, VE.Norms.rulesOn,
+        beq_iff_eq] at hq
+      obtain ⟨_, ⟨N, ⟨⟨hN, hp⟩, _⟩, rfl⟩, hq⟩ := hq
+      exact preds_selects T _ N hN hp hq
+    have : q ∈ (rulesFormulas T r.name).flatMap preds := by
+      rcases hout with h | h
+      · exact key true h
+      · exact key false h
+    simpa [Sym.formulas, rulesFormulas] using this
+
+theorem coneTable_at {D : Doc} (hv : Valid D) : ∀ (k j : Nat) (q : Sym), j < k →
+    (syms D.T)[j]? = some q → coneTable D.T k q.name = predsWith (coneTable D.T j) (q.formulas D.T)
+  | 0, _, _, h, _ => absurd h (Nat.not_lt_zero _)
+  | k + 1, j, q, hj, hq => by
+    cases hq' : (syms D.T)[k]? with
+    | some q' =>
+      simp only [coneTable, hq']
+      by_cases he : q.name = q'.name
+      · have := nodup_getElemOpt_inj hv.nodup (names_getElemOpt hq) (he ▸ names_getElemOpt hq')
+        subst this
+        rw [hq] at hq'
+        cases hq'
+        simp
+      · simp only [he, if_false]
+        rcases Nat.lt_succ_iff_lt_or_eq.mp hj with hj | rfl
+        · exact coneTable_at hv k j q hj hq
+        · rw [hq] at hq'; cases hq'; exact absurd rfl he
+    | none =>
+      simp only [coneTable, hq']
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hj with hj | rfl
+      · exact coneTable_at hv k j q hj hq
+      · rw [hq] at hq'; cases hq'
+
+theorem expTable_cone {D : Doc} (hv : Valid D) (k : Nat) :
+    ∀ n F, expTable D.T k n = some F → ∀ q ∈ preds F, q ∈ coneTable D.T k n := by
+  induction k using Nat.strongRecOn with
+  | ind k ih =>
+    intro n F hF q hq
+    obtain ⟨j, s, hj, hs, rfl, rfl⟩ := expTable_some D.T k n F hF
+    rw [coneTable_at hv k j s hj hs, predsWith, List.mem_append]
+    rcases preds_substWith _ _ hq with h | ⟨m, hm, F', hF', hq'⟩
+    · exact Or.inl (preds_meaning D.T s h)
+    · exact Or.inr (List.mem_flatMap.mpr ⟨m, preds_meaning D.T s hm, ih j hj m F' hF' q hq'⟩)
+
+theorem preds_outcomeBase_cone (D : SoftDoc) (h : WellFormedSoft D = true) (p : String) {q : String}
+    (hq : q ∈ preds (outcomeBase (soften D) p)) : q ∈ cone D p := by
+  have hv := valid_of_wellFormed _ (soften_wellFormed D h)
+  unfold outcomeBase at hq
+  split at hq
+  · rename_i r hr
+    have hrn : r.name = p := by simpa using List.find?_some hr
+    simp only [cone, List.mem_append]
+    left
+    rw [predsWith, List.mem_append]
+    have hout : ∀ x ∈ preds (outcome (soften D).T r), x ∈ (rulesFormulas (soften D).T p).flatMap preds := by
+      intro x hx
+      have := preds_meaning (soften D).T (.reg r) hx
+      simpa [Sym.formulas, rulesFormulas, hrn] using this
+    rcases preds_substWith _ _ hq with h | ⟨m, hm, F, hF, hqF⟩
+    · exact Or.inl (hout q h)
+    · exact Or.inr (List.mem_flatMap.mpr ⟨m, hout m hm, expTable_cone hv _ m F hF q hqF⟩)
+  · simp [preds] at hq
+
+/-- The general non-mention lemma behind the two global claims. -/
+theorem cone_independent (D : SoftDoc) (h : WellFormedSoft D = true) (p : String)
+    (_hp : p ∈ VE.Norms.regulatedNames D.base.T) (Q : List String) (hQ : ∀ q ∈ cone D p, q ∉ Q)
+    (B : VE.Structure.{u}) (R : String → List B.Carrier → Prop)
+    (hR : ∀ q vs, q ∉ Q → (R q vs ↔ B.relation q vs)) (vs : List B.Carrier) :
+    (outcomeBase (soften D) p).denote { B with relation := R } (tupleVal vs) ↔
+      (outcomeBase (soften D) p).denote B (tupleVal vs) :=
+  denote_congr_preds B R _ _ (fun q hq ws => hR q ws (hQ q (preds_outcomeBase_cone D h p hq)))
+
+/-- Global weighing independence needs a decision-free cone; strictness or hardness alone
+does not give it (fixture μ). -/
+theorem hard_never_weighed_global (D : SoftDoc) (h : WellFormedSoft D = true) (p : String)
+    (hp : p ∈ VE.Norms.regulatedNames D.base.T) (_hcone : ∀ q ∈ cone D p, q ∉ decisionNames D)
+    (B : VE.Structure.{u}) (R : String → List B.Carrier → Prop)
+    (hR : ∀ q vs, q ∉ decisionNames D → (R q vs ↔ B.relation q vs)) (vs : List B.Carrier) :
+    (outcomeBase (soften D) p).denote { B with relation := R } (tupleVal vs) ↔
+      (outcomeBase (soften D) p).denote B (tupleVal vs) :=
+  cone_independent D h p hp (decisionNames D) _hcone B R hR vs
+
+/-- 7.4: declared attribution only. -/
+theorem authority_independent (D : SoftDoc) (h : WellFormedSoft D = true) (p : String)
+    (hp : p ∈ VE.Norms.regulatedNames D.base.T) (π : String) (_hπ : π ∈ D.soft.parties)
+    (hcone : ∀ q ∈ cone D p, q ∉ attributed D π) (B : VE.Structure.{u})
+    (R : String → List B.Carrier → Prop) (hR : ∀ q vs, q ∉ attributed D π → (R q vs ↔ B.relation q vs))
+    (vs : List B.Carrier) :
+    (outcomeBase (soften D) p).denote { B with relation := R } (tupleVal vs) ↔
+      (outcomeBase (soften D) p).denote B (tupleVal vs) :=
+  cone_independent D h p hp (attributed D π) hcone B R hR vs
+
+/-- 1.2: the closed `outranks` order is a strict partial order. -/
+theorem rank_acyclic (D : SoftDoc) (h : WellFormedSoft D = true) :
+    VE.Route.DagAcyclic (rankNodes D.soft) ∧
+    (∀ a, outranksPlus D.soft a a = false) ∧
+    (∀ a b c, outranksPlus D.soft a b = true → outranksPlus D.soft b c = true → outranksPlus D.soft a c = true) := by
+  have hv := (softValid_of_wellFormed D h).ranks
+  obtain ⟨_, _, _, _, hd⟩ := order_facts hv
+  exact ⟨hd, outranksPlus_irrefl hv, fun _ _ _ h₁ h₂ => outranksPlus_trans hv h₁ h₂⟩
+
+/-! ## Every default–default collision is at a colliding pair -/
+
+theorem eq_of_key {α : Type} (key : α → String) : ∀ {l : List α}, (l.map key).Nodup → ∀ {x y : α},
+    x ∈ l → y ∈ l → key x = key y → x = y
+  | [], _, _, _, hx, _, _ => by cases hx
+  | z :: zs, hn, x, y, hx, hy, he => by
+    rw [List.map_cons, List.nodup_cons] at hn
+    rcases List.mem_cons.mp hx with rfl | hx' <;> rcases List.mem_cons.mp hy with rfl | hy'
+    · rfl
+    · exact absurd (he ▸ List.mem_map_of_mem hy') hn.1
+    · exact absurd (he.symm ▸ List.mem_map_of_mem hx') hn.1
+    · exact eq_of_key key hn.2 hx' hy' he
+
+theorem colliding_of {D : SoftDoc} (hv : SoftValid D) {M N : SoftNode} (hM : M ∈ D.T.nodes) (hN : N ∈ D.T.nodes)
+    (hMd : M.mode = .default) (hNd : N.mode = .default) (hne : M ≠ N) (hi : Incompatible D M N = true) :
+    (M, N) ∈ collidingPairs D ∨ (N, M) ∈ collidingPairs D := by
+  have hname : M.name ≠ N.name := fun e => hne (eq_of_key (fun N : SoftNode => N.name) hv.names hM hN e)
+  rcases str_lt_or_gt _ _ hname with hlt | hlt
+  · exact Or.inl (mem_collidingPairs.mpr ⟨hM, hN, hMd, hNd, hlt, hi⟩)
+  · exact Or.inr (mem_collidingPairs.mpr ⟨hN, hM, hNd, hMd, hlt, by rw [incompatible_symm]; exact hi⟩)
+
+theorem comparable_false {D : SoftDoc} (h : WellFormedSoft D = true) {M N : SoftNode}
+    (hc : (M, N) ∈ collidingPairs D) {S : VE.Structure.{u}} {ρ : VE.Valuation S}
+    (hs : SelectsSoftD D S ρ (fuel D) M ∧ SelectsSoftD D S ρ (fuel D) N) : Comparable D M N = false := by
+  cases hcmp : Comparable D M N
+  · rfl
+  · exact absurd hs (rank_resolves D h M N hc hcmp S ρ)
+
+/-- 6.3: every default–default collision is at a colliding pair; such a pair is not comparable. -/
+theorem weighing_points_complete (D : SoftDoc) (h : WellFormedSoft D = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) :
+    (∀ p, DefaultDecidesD D S ρ p true → DefaultDecidesD D S ρ p false →
+      ∃ M N, (M, N) ∈ collidingPairs D ∧ M.pred = p ∧ N.pred = p ∧
+        SelectsSoftD D S ρ (fuel D) M ∧ SelectsSoftD D S ρ (fuel D) N ∧ Comparable D M N = false) ∧
+    (∀ pr ∈ pairs (soften D).T, DefaultDecidesD D S ρ pr.req true → DefaultDecidesD D S ρ pr.perm false →
+      ∃ M N, (M, N) ∈ collidingPairs D ∧
+        ((M.pred = pr.req ∧ N.pred = pr.perm) ∨ (M.pred = pr.perm ∧ N.pred = pr.req)) ∧
+        SelectsSoftD D S ρ (fuel D) M ∧ SelectsSoftD D S ρ (fuel D) N ∧ Comparable D M N = false) := by
+  have hv := softValid_of_wellFormed D h
+  refine ⟨fun p ⟨M, hM, hMd, hMs, sM⟩ ⟨N, hN, hNd, hNs, sN⟩ => ?_, fun pr hpr ⟨M, hM, hMd, hMs, sM⟩
+    ⟨N, hN, hNd, hNs, sN⟩ => ?_⟩
+  · obtain ⟨hM, hMp⟩ := mem_rulesOn.mp hM
+    obtain ⟨hN, hNp⟩ := mem_rulesOn.mp hN
+    have hne : M ≠ N := fun e => by rw [e, hNs] at hMs; cases hMs
+    have hi : Incompatible D M N = true := by
+      simp [Incompatible, hMp, hNp, hMs, hNs]
+    rcases colliding_of hv hM hN hMd hNd hne hi with hc | hc
+    · exact ⟨M, N, hc, hMp, hNp, sM, sN, comparable_false h hc ⟨sM, sN⟩⟩
+    · exact ⟨N, M, hc, hNp, hMp, sN, sM, comparable_false h hc ⟨sN, sM⟩⟩
+  · obtain ⟨hM, hMp⟩ := mem_rulesOn.mp hM
+    obtain ⟨hN, hNp⟩ := mem_rulesOn.mp hN
+    have hv' := valid_of_wellFormed _ (soften_wellFormed D h)
+    have hrp := (hv'.pairs pr hpr).1
+    have hne : M ≠ N := fun e => hrp (by rw [← hMp, ← hNp, e])
+    have hi : Incompatible D M N = true := by
+      have hd := dualPerm_pair hv (show pr ∈ pairs D.base.T from hpr)
+      simp [Incompatible, hMp, hNp, hMs, hNs, hd]
+    rcases colliding_of hv hM hN hMd hNd hne hi with hc | hc
+    · exact ⟨M, N, hc, Or.inl ⟨hMp, hNp⟩, sM, sN, comparable_false h hc ⟨sM, sN⟩⟩
+    · exact ⟨N, M, hc, Or.inr ⟨hNp, hMp⟩, sN, sM, comparable_false h hc ⟨sN, sM⟩⟩
+
 end VE.SoftNorms
