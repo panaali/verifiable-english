@@ -49,10 +49,12 @@ def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, 
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
-/-- The English runner reads one `{environment, lexicon, cases}` object. Its one-shot
-failure (a message on stderr, exit 2) becomes an error record. -/
+/-- English cases are carried as their original JSON text in a `Json.str`, since
+`Json.compress` changes number tokens such as `0.0` into `0`. The one-shot runner
+must parse the original text itself. Its exit-2 failure becomes an error record. -/
 def englishReported (j : Json) : Json :=
-  match VE.English.ServiceRun.run j.compress with
+  let raw := match j with | .str text => text | _ => j.compress
+  match VE.English.ServiceRun.run raw with
   | .ok result => result
   | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)]
 
@@ -191,12 +193,14 @@ def response (r : Request) (cases : Array (Except String Json)) : Json :=
     ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
       ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
-/-- English's one-shot input uses Lean.Json.parse, so decode its service batch
-with the same parser. Other modes retain the restricted runner batch decoder. -/
+/-- Check the complete English batch with Lean.Json.parse, like the one-shot
+runner, then preserve each case's source text for its second parse. -/
 def parseEnglishCases (text : String) : Except String (Array (Except String Json)) := do
   let j ← Json.parse text
   let cases ← j.getArr?
-  pure (cases.map .ok)
+  let raw ← VE.JsonInput.caseTexts text
+  unless raw.size == cases.size do throw "English batch split mismatch"
+  pure (raw.map fun source => .ok (.str source))
 
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases else VE.JsonInput.parseCases r.cases
@@ -249,7 +253,8 @@ theorem runMode_order (j : Json) : runMode .order j = VE.Order.Surface.runCaseRe
 theorem runMode_route (j : Json) : runMode .route j = VE.Route.Run.runCaseReported j := rfl
 theorem runMode_norms (j : Json) : runMode .norms j = VE.Norms.Run.runCaseReported j := rfl
 theorem runMode_english (j : Json) :
-    runMode .english j = match VE.English.ServiceRun.run j.compress with
+    runMode .english j = match VE.English.ServiceRun.run
+        (match j with | .str text => text | _ => j.compress) with
       | .ok result => result
       | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)] := rfl
 
