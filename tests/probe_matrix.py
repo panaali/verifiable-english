@@ -25,7 +25,8 @@ from ve.ast import Document, Le, Num, _to_data, check_formula, document_to_data,
 from ve.identity import meaning_id
 from ve.background import background, dependency_order
 from ve.definitions import compile_definitions
-from ve.entailment import check_entailment_certificate, prove_entailment
+from ve.entailment import (check_entailment_certificate, prove_entailment,
+                           _Replayer, _Searcher, _Budget, _initial_branch)
 from ve.evaluate import evaluate
 from ve.errors import VEError, UnsupportedProfile
 from ve.model import FiniteModel
@@ -44,7 +45,7 @@ from ve.english import parse_english
 from ve.printer import render
 from ve import limits
 from ve.wire import canonical_json
-from ve.order import InvalidTrace, decode_trace
+from ve.order import Branch as OrderBranch, Signed as OrderSigned, _Search as OrderSearch, InvalidTrace, decode_trace
 
 OUT = ROOT / "conformance/baseline-2026-09"
 LAYERS = ("data@0", "definitions@0", "documents@1", "norms@0", "time@0")
@@ -396,6 +397,25 @@ def boundary_baselines():
     rows["order_trace_decoder_fuel"] = {"cap": 125,
         "at": outcome(lambda: decode_trace(nested_trace(125))["rule"], expected=(InvalidTrace,)),
         "over": outcome(lambda: decode_trace(nested_trace(126))["rule"], expected=(InvalidTrace,))}
+    closed_branch = _initial_branch(env, (Top(),), Top())
+    rows["MAX_TABLEAU_DEPTH_replay"] = {"cap": limits.MAX_TABLEAU_DEPTH,
+        "at": outcome(lambda: (_Replayer(1000).replay(closed_branch, {"rule": "close"},
+                                                        limits.MAX_TABLEAU_DEPTH), "Valid")[1], expected=(_Budget,)),
+        "over": outcome(lambda: (_Replayer(1000).replay(closed_branch, {"rule": "close"},
+                                                          limits.MAX_TABLEAU_DEPTH + 1), "Valid")[1], expected=(_Budget,))}
+    rows["MAX_TABLEAU_DEPTH_search"] = {"cap": limits.MAX_TABLEAU_DEPTH,
+        "at": outcome(lambda: "Found" if _Searcher(1000).search(closed_branch,
+                                                       limits.MAX_TABLEAU_DEPTH) else "Cutoff"),
+        "over": outcome(lambda: "Found" if _Searcher(1000).search(closed_branch,
+                                                         limits.MAX_TABLEAU_DEPTH + 1) else "Cutoff")}
+    from conformance.order import environment as order_environment
+    order_env = order_environment()
+    order_branch = OrderBranch([OrderSigned(Top(), True), OrderSigned(Top(), False)])
+    rows["order_search_depth"] = {"cap": limits.MAX_TABLEAU_DEPTH - 2,
+        "at": outcome(lambda: "Found" if OrderSearch(order_env, 1000).prove(
+            order_branch, limits.MAX_TABLEAU_DEPTH - 2) else "Cutoff"),
+        "over": outcome(lambda: "Found" if OrderSearch(order_env, 1000).prove(
+            order_branch, limits.MAX_TABLEAU_DEPTH - 1) else "Cutoff")}
     def tuples(size):
         raw = raw_environment(())
         raw["vocabulary"]["predicates"]["edge"] = {"arguments": ["item", "item"], "description": "edge"}
