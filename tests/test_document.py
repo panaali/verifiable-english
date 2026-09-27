@@ -13,6 +13,9 @@ from ve.ast import Top
 from ve.ast import formula_from_data
 from ve.model import FiniteModel
 from ve.readings import check_readings, plan_choices
+from tests.test_norms import environment as norm_environment, permission, rule
+from ve.norms import NormDocument
+from ve.ast import formula_to_data
 
 
 def write_doc(tmp_path, text, units, **extra):
@@ -40,6 +43,86 @@ def test_byte_partition_and_vacuity(tmp_path):
     assert report["unformalised_reasons"] == {"future_profile": 1}
     assert check_document(path)["premises"]["status"] == "model"
     assert "Café" in render_document(path)
+
+
+def test_mixed_csam_norm_is_checked_without_losing_rest_of_paragraph(tmp_path):
+    env = norm_environment({"generate_csam_permitted": permission(
+        act="{0} generate child sexual abuse material", args=("assistant",))},
+        sorts=("assistant",))
+    norm = rule("no-csam", "generate_csam_permitted", False)
+    norm_doc = NormDocument(env, [norm])
+    header = b"Claude should never:\n"
+    bullets = (
+        "* Provide serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties.\n"
+        "* Provide serious uplift to attacks on critical infrastructure (power grids, water systems, financial systems) or critical safety systems.\n"
+        "* Create cyberweapons or malicious code that could cause significant damage if deployed.\n"
+        "* Take actions that clearly and substantially undermine Anthropic’s ability to oversee and correct advanced AI models (see [Being broadly safe](#being-broadly-safe) below).\n"
+        "* Engage or assist in an attempt to kill or disempower the vast majority of humanity or the human species as whole.\n"
+        "* Engage or assist any individual or group with an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or economic control.\n"
+        "* Generate child sexual abuse material (CSAM).\n\n").encode()
+    assert len(bullets) == 874  # The pilot review's complete u0165 span.
+    source = header + bullets
+    cut = source.index(b"* Generate child sexual abuse material")
+    parts = [
+        {**unit("remaining-text", len(header), cut, ["unformalised", "causation"],
+                 {"unformalised": "causation"}), "status": "UNFORMALISED"},
+        {**unit("csam-rule", cut, len(source), "norm", content=norm.to_dict()),
+         "status": "CHECKED"},
+    ]
+    graph = {"root": "layer", "nodes": [{
+        "name": "layer", "ast": formula_to_data(env, norm_doc.elaborate("generate_csam_permitted")),
+        "label": "layer:norms:generate_csam_permitted"}]}
+    classification = {"name": "csam-classification", "arguments": ["material"],
+                      "decided_by": "policy-reviewer", "necessary": [], "sufficient": [],
+                      "factors": ["Which material falls within this class is unresolved."],
+                      "precedents": [], "jurisdiction": "policy", "version": 1}
+    path = write_doc(tmp_path, source, [
+        {**unit("u0164", 0, len(header), "meta"), "status": "LABELLED"},
+        {"id": "u0165", "span": [len(header), len(source)],
+         "status": "MIXED", "parts": parts}],
+                     environment_json=env.to_dict(), graph=graph,
+                     open_terms=[classification])
+    loaded = load_document(path)
+    assert [u.get("parent_id") for u in loaded["units"]] == [None, "u0165", "u0165"]
+    result = check_document(path)
+    assert result["admission"]["admitted"]
+    assert result["admission"]["kinds"] == ["meta", ["unformalised", "causation"], "norm"]
+    assert result["admission"]["report"]["assumptions"][0]["label"] == graph["nodes"][0]["label"]
+    assert result["coverage"]["bytes_by_status"] == {
+        "LABELLED": len(header), "UNFORMALISED": cut - len(header),
+        "CHECKED": len(source) - cut}
+    assert result["coverage"]["accounted_bytes"] == len(source)
+    assert result["coverage"]["residual"]["open_terms"] == 1
+    assert "must not generate child sexual abuse material" in render_document(path)
+
+
+@pytest.mark.parametrize("spans", [[[0, 2], [3, 6]], [[0, 4], [3, 6]],
+                                   [[0, 3], [3, 5]]])
+def test_mixed_parts_reject_gap_overlap_and_tail(tmp_path, spans):
+    parts = [{**unit("a", *spans[0]), "status": "LABELLED"},
+             {**unit("b", *spans[1]), "status": "LABELLED"}]
+    path = write_doc(tmp_path, b"abcdef", [{"id": "whole", "span": [0, 6],
+                                              "status": "MIXED", "parts": parts}])
+    with pytest.raises(VEError, match="partition"):
+        load_document(path)
+
+
+def test_unresolved_norm_reading_does_not_activate_stale_unit_content(tmp_path):
+    env = norm_environment({"permitted": permission()})
+    source = b"This rule has another reading.\n"
+    old = rule("old", "permitted", True).to_dict()
+    candidate = {"id": "choice", "kind": "norm", "meaning_id": "pending",
+                 "content": None, "admission": {"who": "reviewer", "why": "pending",
+                                                 "distinguishing_models": {}}}
+    reading_set = {"id": "readings", "unit": "rule", "version": 1,
+                   "status": "open", "readings": [candidate]}
+    path = write_doc(tmp_path, source,
+                     [unit("rule", 0, len(source), "norm", content=old)],
+                     environment_json=env.to_dict(), reading_sets=[reading_set])
+    loaded = load_document(path)
+    assert loaded["norms"].rules == ()
+    assert coverage(loaded)["bytes_by_status"] == {"OPEN": len(source)}
+    assert check_document(path)["premises"]["status"] == "UNKNOWN"
 
 
 @pytest.mark.parametrize("spans", [[[0, 2], [3, 6]], [[0, 4], [3, 6]], [[3, 6], [0, 3]],
