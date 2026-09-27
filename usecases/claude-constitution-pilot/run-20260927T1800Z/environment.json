@@ -1,0 +1,35 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "documents@1",
+    "relational-fol@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "entity": {
+        "description": "An entity discussed in the source.",
+        "verbalisation": {
+          "singular": "entity",
+          "plural": "entities"
+        }
+      }
+    },
+    "predicates": {
+      "human": {
+        "arguments": [
+          "entity"
+        ],
+        "description": "The entity is human.",
+        "verbalisation": "{0} is human",
+        "negative_verbalisation": "{0} is not human"
+      }
+    },
+    "constants": {
+      "claude": {
+        "sort": "entity",
+        "description": "Claude in the source."
+      }
+    }
+  }
+}
