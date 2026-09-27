@@ -202,7 +202,6 @@ def _decode_unit(env, data) -> _Unit:
 
 def _decode_leaf(env, data):
     _fields(data, ("ast", "label"))
-    formula = formula_from_data(env, data["ast"])
     label = data["label"]
     if type(label) is not str:
         raise VEError("expected a string")
@@ -211,6 +210,7 @@ def _decode_leaf(env, data):
         raise AdmissionError(f"AdmissionError: invalid label {label}")
     if parsed.kind == "cite":
         raise AdmissionError("AdmissionError: lemma leaves must be transitive (no cite labels)")
+    formula = formula_from_data(env, data["ast"], _generated=parsed.kind == "background")
     return formula, label
 
 
@@ -286,7 +286,6 @@ def _decode_node(env, data) -> _Node:
     name = data["name"]
     if type(name) is not str:
         raise VEError("expected a string")
-    formula = formula_from_data(env, data["ast"])
     label = "asserted"
     if "label" in data:
         if type(data["label"]) is not str:
@@ -294,6 +293,7 @@ def _decode_node(env, data) -> _Node:
         if data["label"] == "asserted":
             raise VEError("non-canonical label: the default label asserted is omitted")
         label = data["label"]
+    formula = formula_from_data(env, data["ast"], _generated=label.startswith("background:"))
     unit = data.get("unit")
     if "unit" in data and type(unit) is not str:
         raise VEError("expected a string")
@@ -382,7 +382,9 @@ def _check_graph(env, nodes, root):
             continue
         children = [reports[p] for p in n.premises]
         checked = check_entailment_certificate(env, [c[0][1] for c in children], n.formula,
-                                               n.certificate, _background=False)
+                                               n.certificate, _background=False,
+                                               _generated_premises=[c[0][2].startswith("background:")
+                                                                    for c in children])
         if not checked.valid:
             raise VEError(GRAPH_REJECTED)
         reports[n.name] = (claim, [a for c in children for a in c[1]])
@@ -400,7 +402,8 @@ def _compatible(x, y) -> bool:
 
 def _claim_json(env, claim):
     name, formula, label = claim
-    return {"name": name, "ast": formula_to_data(env, formula),
+    return {"name": name, "ast": formula_to_data(env, formula,
+            _generated=label.startswith("background:")),
             **({} if label == "asserted" else {"label": label})}
 
 
@@ -410,11 +413,22 @@ def admit_document(environment, document) -> dict:
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
     env = environment if type(environment) is Environment else Environment(environment)
+    # The norms route takes every input with a norm construct (11.4): a
+    # regulated declaration or norm content, as Lean `usesNormsPath` does.
+    if ("norms@0" in env.profiles and
+            (any(d.regulated is not None for d in env.predicates.values()) or
+             (type(document) is dict and type(document.get("units")) is list and
+              any(type(u) is dict and type(u.get("content")) is dict
+                  and "norm" in u["content"] for u in document["units"])))):
+        from .norm_admission import admit_norm_document
+        return admit_norm_document(env, document)
     if env.language != LANGUAGE:
         raise VEError("admission requires a ve.core@0.2 environment")
     require_checker(env)
     if env.closure or env.order:
         raise UnsupportedProfile(f"admission on the {'order' if env.order else 'closure'} family is deferred")
+    if env.definition_entries:
+        raise UnsupportedProfile("admission of documents with definitions is deferred")
     _fields(document, ("units", "graph"), ("lemmas", "open_terms", "reading_sets", "narrowings"))
     doc = _decode_doc(env, document)
     graph = document["graph"]
@@ -435,7 +449,9 @@ def admit_document(environment, document) -> dict:
             if p not in by_name:
                 raise VEError(f"dangling premise {p}")
         cert = n.certificate
-        expected = ([meaning_id(env, by_name[p].formula) for p in n.premises], meaning_id(env, n.formula))
+        expected = ([meaning_id(env, by_name[p].formula,
+                                _generated=by_name[p].label.startswith("background:"))
+                     for p in n.premises], meaning_id(env, n.formula))
         if (type(cert) is not dict or cert.get("environment_id") != env.environment_id
                 or (cert.get("premise_meaning_ids"), cert.get("conclusion_meaning_id")) != expected):
             raise VEError("certificate is stale or bound to different inputs")
@@ -451,6 +467,8 @@ def admit_document(environment, document) -> dict:
                 raise AdmissionError("AdmissionError: a cited lemma's leaves are missing from the report")
     if not all(_compatible(a[2], b[2]) for a in assumptions for b in assumptions):
         raise AdmissionError("AdmissionError: incompatible reading choices")
+    if any((label := parse_label(n.label)) is not None and label.kind == "cite" for n in nodes):
+        raise UnsupportedProfile("document citations require a checked bundle binding")
     report = {"root": _claim_json(env, root), "assumptions": [_claim_json(env, a) for a in assumptions]}
     identity_payload = {"environment_id": env.environment_id, "document": document,
                         "report": report}

@@ -1,5 +1,6 @@
 use crate::{
-    Environment, Error, Result, digest,
+    Environment, Error, MAX_EVALUATIONS, Result, digest,
+    eval::Evaluator,
     environment::{identifier, string},
     error, loads_json,
     wire::{fields, object},
@@ -40,11 +41,23 @@ impl FiniteModel {
         let rs = object(&obj["relations"], "InvalidModel")?;
         if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
             || cs.keys().ne(env.constants.keys())
-            || rs.keys().ne(env.predicates.keys())
         {
             return error(
                 "InvalidModel",
                 "model must contain exactly the declared sorts, constants and predicates",
+            );
+        }
+        // Defined tables are computed from their bodies; a supplied one is invalid.
+        if rs.keys().any(|k| env.is_defined(k)) {
+            return error(
+                "InvalidModel",
+                "supplied table for defined predicate (definitions)",
+            );
+        }
+        if rs.keys().ne(env.predicates.keys().filter(|p| !env.is_defined(p))) {
+            return error(
+                "InvalidModel",
+                "model must contain exactly the declared sorts, constants and base predicates",
             );
         }
         let mut domains = BTreeMap::new();
@@ -76,7 +89,6 @@ impl FiniteModel {
                 .map_err(|_| Error::new("InvalidModel", "constant outside its sort"))?;
             constants.insert(name.clone(), index);
         }
-        env.validate_background(&constants)?;
         let mut relations = BTreeMap::new();
         let mut count = 0;
         for (name, v) in rs {
@@ -109,12 +121,79 @@ impl FiniteModel {
             }
             relations.insert(name.clone(), relation);
         }
+        let mut model = Self {
+            domains,
+            constants,
+            relations,
+            environment_id: String::new(),
+            model_id: String::new(),
+            data: Value::Null,
+        };
+        for (name, (functional, total)) in &env.predicate_flags {
+            if !*functional && !*total { continue; }
+            let relation = &model.relations[name];
+            let mut values = BTreeMap::new();
+            for row in relation {
+                if *functional && values.insert(row[0], row[1]).is_some_and(|prior| prior != row[1]) {
+                    return error("InvalidModel", format!("flags: {name} has two values"));
+                }
+                if !*functional { values.insert(row[0], row[1]); }
+            }
+            if *total && values.len() != model.domains[&env.predicates[name][0]].len() {
+                return error("InvalidModel", format!("flags: {name} is not total"));
+            }
+        }
+        env.validate_background(&model.constants)?;
+        let mut budget = MAX_EVALUATIONS;
+        for (name, sig, body) in &env.definitions {
+            let sizes: Vec<usize> = sig.iter().map(|s| model.domains[s].len()).collect();
+            let mut table = BTreeSet::new();
+            let mut row = vec![0; sig.len()];
+            let mut more = sizes.iter().all(|n| *n > 0);
+            while more {
+                let mut ev = Evaluator::new(&model, budget);
+                let value = ev.formula(body, &mut row.clone()).map_err(|_| {
+                    Error::new("ResourceLimit", "Definition model evaluation budget exhausted")
+                })?;
+                budget -= ev.work;
+                if value {
+                    count += 1;
+                    if count > 100_000 {
+                        return error("ResourceLimit", "relation tuple limit");
+                    }
+                    table.insert(row.clone());
+                }
+                more = false;
+                for i in (0..row.len()).rev() {
+                    if row[i] + 1 < sizes[i] {
+                        row[i] += 1;
+                        more = true;
+                        break;
+                    }
+                    row[i] = 0;
+                }
+            }
+            model.relations.insert(name.clone(), table);
+        }
+        for (required, permitted) in &env.profile_pairs {
+            if !model.relations[required].is_subset(&model.relations[permitted]) {
+                return error("InvalidModel", format!(
+                    "required relation {required} exceeds permission {permitted} (profile)"));
+            }
+        }
+        let Self {
+            domains,
+            constants,
+            relations,
+            ..
+        } = model;
         let constant_data: BTreeMap<_, _> = constants
             .iter()
             .map(|(n, i)| (n, &domains[&env.constants[n]][*i]))
             .collect();
         let relation_data: BTreeMap<_, Vec<Vec<&str>>> = relations
             .iter()
+            .filter(|(n, _)| !env.is_defined(n))
             .map(|(n, rows)| {
                 (
                     n,

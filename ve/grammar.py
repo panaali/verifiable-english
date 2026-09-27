@@ -124,11 +124,18 @@ class _Grammar:
                     continue
                 if len(args) == 1:
                     self.add(name, args[0], q(f" is {pred}"))
-                else:
+                elif len(args) == 2:
                     self.add(name, args[0], q(f" {pred} "), args[1])
                     if self.env.closure and decl.arguments[0] == decl.arguments[1]:
                         for op in ("tc", "rtc"):
                             self.add(name, q(f"{op}[{pred}]("), args[0], q(", "), args[1], q(")"))
+                else:
+                    production = [q(f"{pred}(")]
+                    for index, arg in enumerate(args):
+                        if index:
+                            production.append(q(", "))
+                        production.append(arg)
+                    self.add(name, *production, q(")"))
             for term in terms.values():
                 if term is not None:
                     self.add(name, term, q(" equals "), term)

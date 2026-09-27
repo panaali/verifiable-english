@@ -4,7 +4,7 @@
   "method": "rendered mixed-construct sentences and paragraphs; parse_english all-derivations check",
   "missing_constructs": [],
   "seed": 2026792107,
-  "texts": 6593,
+  "texts": 6757,
   "unexercised_profiles": [],
   "vocabularies": [
     {
@@ -382,6 +382,28 @@
       "sentences": 119,
       "texts": 158,
       "vocabulary": "order"
+    },
+    {
+      "corpus_sha256": "4c7fa73cd61a54d3dcdecd8b7aa5ab28020392ad4d96c241f59a321a2abe54b6",
+      "multiple_derivations": 0,
+      "node_types": [
+        "And",
+        "Atom",
+        "Bottom",
+        "Eq",
+        "Exists",
+        "Forall",
+        "Implies",
+        "Not",
+        "Or",
+        "Reach",
+        "Top"
+      ],
+      "paragraphs": 41,
+      "seed": 2026792124,
+      "sentences": 123,
+      "texts": 164,
+      "vocabulary": "nary"
     }
   ]
 }

@@ -422,13 +422,100 @@ for `Background.LiteralsDistinct` / `StringAdmissible` (the stage-1 meaning of
 `$string`) and its order form `OrderLiteralsDistinct` / `OrderStringAdmissible`, for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
 `compatible` (the admission rules), and for `Gate.AllowedFamily`. The route
 theorems are about decoded values; the JSON boundary, identity digests and IO
-are tested, not proved, as for the existing routes. The closure+n-ary family is
-accepted by the gate and rejected by the runner until W4 stage 1 lands (Python
-and Rust reject it at every checking site with the same diagnostic). `$string`
+are tested, not proved, as for the existing routes. W4 stage 1 now dispatches
+the closure+n-ary family to `VE.Core.Wire.run` on the Lean route and enables the
+same family in Python and Rust. This required a reviewed change to the P0-owned
+route contract and fixtures: `VE/Route/Run.lean`, `conformance/p0.py`,
+`conformance/elaborated-document.json`, `tests/test_p0_three_way.py`, and
+`ve/profiles.py` now accept that family. The conformance case still named
+`closure-nary-gated` is a historical ID; its expected verdict is success.
+`$string`
 literals are available on every family: a literal's description is optional, and
 stage 1 is equality only (no `$string` predicate argument, no quantifier over it).
 The shared P0 families (`conformance/p0.py`) run through Python, Rust and
 `route` with identical verdicts (`tests/test_p0_three_way.py`).
+
+## W1 norms (`VE/Norms/*`)
+
+Source: `VE/Norms/*`; the full inventory, conventions and statement-review
+definitions are in [NORMS.md](NORMS.md). Norm documents elaborate into one layer
+per regulated predicate on the P0 route, interleaved with W3 definitions in the
+one dependency order. The frozen `Layer`, `Layer.comp` and route theorems are
+used unchanged: `symLayer`/`layer` instantiate `Layer` per layer symbol, with
+output admissibility `PrefixAdmissible (k+1)` (own meaning, full lower prefix,
+pair premises closed there), so consecutive layers compose by construction.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `elaborate_iff_at`, `elaborate_iff` | The generated three-clause elaboration of a regulated predicate holds iff the direct Catala semantics (`IntendedAt`, by rule recursion independent of the generated formulas) holds; the document's elaborations hold iff `holdsCatala`. |
+| `elab_completion` | Without opposite selections, the elaboration is the completed-outcome biconditional. |
+| `prefix_satisfaction`, `subst_sound` | Prefix admissibility is admissibility plus a base-admissible restriction plus the prefix's premises; on such structures outcome substitution to base symbols preserves truth under typed valuations. |
+| `conflictFree_expands` | The local iff: a prefix-admissible structure has exactly one expansion by `p` satisfying `elab_p` iff it passes `ConflictFreeAt p`; this is the `expands` field of `p`'s layer under `hc`. |
+| `conflictFree_expands_document`, `conflictFree_expands_all` | Over each base-admissible structure, unique full expansion iff base conflict-freedom; and the universal form. |
+| `conflictFree_prefix` | Base conflict-freedom gives every layer's local hypothesis. |
+| `norms_route_acceptance`, `norms_route_countermodel`, `norms_route_entails_iff` | An accepted certificate for Background ++ norm elaborations ++ Γ ⊢ φ gives φ under the direct semantics, and (conflict-free, base formulas) over base-admissible structures, via the frozen `route_acceptance`; base countermodels expand; model correspondence. |
+| `conflict_witness_sound`, `conflict_pair_witness_sound` | A checked finite base witness refutes conflict-freedom and the document property. |
+| `conflict_smallModel` | In the quantifier-free fragment, a conflict witness restricts to a finite base model within the per-sort bound of 7.2. Completeness of enumeration is not claimed. |
+| `cedar_decision` | Cedar-shaped trees decide exactly "permit and not forbid" with no opposite selections. |
+| `precedence_acyclic` | Both DAGs of a well-formed document are acyclic. |
+
+Statement review is required for `Value`, `IntendedAt`, `holdsCatala`,
+`PrefixAdmissible`, `ConflictFreeAt`, `ConflictFree`, `InFragment` and
+`CedarShape`. The executable guards in `Norms/Checks.lean` compare Lean's
+elaborations and conflict formulas with Python `ve/norms.py` string for string
+and run the 10.1 regressions on finite models; `Norms/Examples.lean` builds the
+frozen layers of 10.1(c) and (m) as values. The `ve_norms_route` executable
+replays conflict packages, witnesses and entailment certificates from raw JSON
+(`Replay.norms_wire_conflict_sound`, `norms_wire_conflict_witness_sound`,
+`norms_wire_acceptance`), and admits W2 documents with norm units
+(`Run.norms_wire_acceptance`: the answer is the encoding of the checked
+admission, with recomputed bindings and regenerated layer leaves).
+
+## Definitions and lemma citation: `definitions@0` (W3 of PLAN-EXPAND2)
+
+Source: `VE/Definitions/*`, wired into `VE/Route/Wire.lean` and
+`VE/Route/Run.lean`. A definition `p(x̄) := φ(x̄)` is an identity-bound
+`defined` field of a unary or binary predicate declaration; the body is a v0
+formula typed in the argument context (index 0 is the last argument) over the
+symbols strictly below `p` in the one dependency DAG. Elaboration is the closed
+biconditional per definition, in DAG order; it is the `definitions` slice of
+Background (before `literals`). The checker is unchanged: definitions are
+premises. Names below have prefix `VE.Definitions.`.
+
+| Theorem | Plain statement |
+|---|---|
+| `premise_iff` | One generated biconditional holds in a structure exactly when the defined predicate agrees with its body on every well-typed argument tuple (`Agrees`). |
+| `faithful` | The generated premises (`expand ds`) all hold exactly when every defined predicate agrees with its body. |
+| `Step.expands` | For one definition, every admissible structure of the vocabulary below has exactly one admissible expansion interpreting the new predicate so that its biconditional holds; relation-free side conditions (distinct literals) are preserved. |
+| `conservative` | For a whole checked, dependency-ordered list, every admissible base structure has exactly one admissible expansion to the full vocabulary satisfying all the definitions; restriction forgets exactly the defined predicates. This is the `expands` field of the composed frozen `Layer`. |
+| `conservative_entails` | For premises and a conclusion over the base vocabulary, consequence with the definitions over the full vocabulary is exactly consequence without them over the base vocabulary. |
+| `acceptance` | The FOL route acceptance theorem for definitions: an accepted tableau certificate for definitions ++ literals ++ Γ ⊢ φ gives the checked entailment; φ in every intended structure (string-admissible, every defined predicate agreeing with its body) satisfying Γ; for base-vocabulary Γ and φ, φ in every string-admissible base structure satisfying Γ; and, for every string-admissible base structure, an expansion satisfies Γ → φ. `conservative` separately proves that expansion is unique. It is proved through `Layer.faithful`, `route_intended` and `route_base` of the composed layer. |
+| `closure_acceptance` | The same on the closure family (Background embedded): φ in every intended structure satisfying Γ, and in an expansion of every string-admissible base structure. `conservative` supplies uniqueness. |
+| `countermodel` | A finite model that is admissible and satisfies the regenerated Background is an intended structure, so a checked countermodel refutes the statement over intended structures. |
+| `chainOk_sound`, `elaborate_chain` | The executable elaborator (DAG order by `Route.dependencyOrder`, then one typing check per body over the symbols below it) establishes the layer's hypothesis `Chain`. |
+| `Bundle.bundle_sound` | Citation soundness with a document reading-set registry: accepted transitive leaves have compatible choices and every reading label is bound to its registered formula or `all` disjunction; each conclusion is true in every intended structure in which its non-background transitive leaves hold. |
+| `Bundle.checkAll_sound`, `checkLemma_sound`, `citeAll_sound` | The induction behind `bundle_sound` (the `entails_cut` pattern): each certificate is replayed on Background ++ own hypotheses ++ cited conclusions, and a citing lemma must list every leaf of what it cites. |
+| `Route.Wire.decodeModel_intended` | A model decoded on the FOL or closure route (defined tables computed from their bodies, a supplied defined table rejected) is an intended structure. |
+| `Alias.*` | The earlier single-atom alias instance, kept as a worked example. |
+
+Statement review (rule 1b) is required for `Agrees` / `Intended` (what a
+definition means), `Chain` / `Step` (which definitions are admitted) and
+`Bundle.Sound` (what a checked lemma means). The order family, reachability
+bodies, closure-family bundles and admission of documents with definitions are
+rejected with explicit `UnsupportedProfile` or gate diagnostics, identically in
+Python, Rust and Lean where they apply. Python and the Lean route regenerate
+identical Background lists on 1,000 generated definition sets
+(`tests/test_definitions_differential.py`).
+
+After W4, Python and Rust also elaborate defined predicates of arity 3–6
+over the `closure+nary` family: their bodies may contain n-ary atoms, and
+finite models compute the defined tables. Lean's `Definitions` layer still has
+unary and binary syntax, while the Core route has n-ary syntax without that
+definition layer. Thus this combination has no Lean definition proof or
+three-way definition elaboration parity yet; the theorem and differential
+claims above apply only to arities 1–2.
+
+The merged W1/W3/W5 route limits are recorded in [INTEGRATION-GAPS.md](../docs/INTEGRATION-GAPS.md).
 
 ## Remaining obligations
 
