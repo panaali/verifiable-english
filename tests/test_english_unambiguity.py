@@ -251,11 +251,15 @@ def test_earley_time_budget_with_host_alarm(monkeypatch):
 
 
 def _soft_env():
-    """Exercise the item-3 surface before item 2 admits its environment JSON."""
+    """Use the admitted profile and its declared parties and ranks."""
     from tests.test_norms import environment, obligation, permission
-    env = environment({"required": obligation(), "permitted": permission()})
-    object.__setattr__(env, "profiles", tuple(sorted((*env.profiles, "soft-norms@0"))))
-    return env
+    from ve.softnorms import SoftEnvironment
+    raw = environment({"required": obligation(), "permitted": permission()}).to_dict()
+    raw["profiles"] = sorted((*raw["profiles"], "soft-norms@0"))
+    raw["vocabulary"]["soft"] = {"parties": ["operator", "user"],
+                                  "ranks": ["helpfulness"], "outranks": [], "ties": [],
+                                  "outranking": {"mode": "strict"}}
+    return SoftEnvironment(raw)
 
 
 def test_soft_modal_wordings_are_one_reading_and_profile_gated():

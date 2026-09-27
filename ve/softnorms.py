@@ -168,7 +168,8 @@ class SoftRule:
         if self.alterable:
             raw['alterable'] = list(self.alterable)
         if self.exception is not None:
-            raw['exception'] = self.exception
+            raw['exception'] = {k: v for k, v in self.exception.items()
+                                if k != 'decided_by' or v is not None}
         if self.hard:
             raw['hard'] = True
         return {'norm': raw}
@@ -206,9 +207,11 @@ def decode_rule(env: SoftEnvironment, content):
     if mode == 'strict' and exception is not None:
         raise VEError(f'InvalidInput: rule {core.name} is strict and declares an exception')
     if mode == 'default':
-        if type(exception) is not dict or set(exception) != {'decided_by', 'sufficient', 'necessary', 'factors'}:
+        if (type(exception) is not dict or
+                set(exception) - {'decided_by', 'sufficient', 'necessary', 'factors'} or
+                not {'sufficient', 'necessary', 'factors'} <= set(exception)):
             raise VEError(f'InvalidInput: rule {core.name} needs an exception')
-        decider = (env.soft.get('exception_decider') if exception['decided_by'] is None
+        decider = (env.soft.get('exception_decider') if exception.get('decided_by') is None
                    else exception['decided_by'])
         if decider is None:
             raise VEError(f'MissingExceptionDecider: rule {core.name}')
@@ -280,9 +283,13 @@ class SoftNormDocument:
         self.document_hash = soft_digest(f've-soft-norms-{env.identity_version}\n',
                                          {'environment_id': env.environment_id,
                                           'document': [r.to_dict() for r in self.rules]})
-        self.collisions = tuple((left, right) for i, left in enumerate(self.rules)
-                                for right in self.rules[i + 1:]
-                                if left.mode == right.mode == 'default' and self._incompatible(left, right))
+        self.collisions = tuple(sorted(((min(left, right, key=lambda r: r.core.name),
+                                         max(left, right, key=lambda r: r.core.name))
+                                        for i, left in enumerate(self.rules)
+                                        for right in self.rules[i + 1:]
+                                        if left.mode == right.mode == 'default'
+                                        and self._incompatible(left, right)),
+                                       key=lambda pair: (pair[0].core.name, pair[1].core.name)))
         self.extended_env = self._extended_environment()
         self.elaborated = self._soften()
         self.exception_premises = self._exception_premises()
@@ -350,7 +357,7 @@ class SoftNormDocument:
         for name, args in generated.items():
             if name in predicates:
                 raise VEError(f'InvalidInput: generated predicate collision {name}')
-            predicates[name] = {'arguments': args, 'description': f'soft decision {name}'}
+            predicates[name] = {'arguments': args, 'description': 'soft-norms decision'}
         result = SoftEnvironment(data, generated=True)
         object.__setattr__(result, 'decision_names', frozenset(generated))
         return result
@@ -372,63 +379,82 @@ class SoftNormDocument:
         return NormDocument(self.extended_env, rules)
 
     def _soften(self):
-        strict = self._strict_document()
-        strict_selection = {p: strict.selection(p) for p in strict.order}
+        # Mirror Soften.lean's constructor order. Certificate identities bind
+        # these syntax trees, so Boolean equivalence alone is insufficient.
         arity = {p: len(d.arguments) for p, d in self.env.predicates.items()
                  if d.regulated is not None}
-        blocked_by_rule = {}
+        children = {r.core.name: [x for x in self.rules if r.core.name in x.core.over]
+                    for r in self.rules}
+
+        def strict_live(rule):
+            return And(And(rule.core.guard, Not(_any(rule.core.unless))),
+                       Not(self._switch(rule)))
+
+        def strict_yields(rule, fuel):
+            own = strict_live(rule) if rule.mode == 'strict' else Bottom()
+            return Or(own, _any(strict_yields(child, fuel - 1) for child in children[rule.core.name])
+                      if fuel else Bottom())
+
+        def strict_selects(rule):
+            if rule.mode != 'strict':
+                return Bottom()
+            return And(strict_live(rule),
+                       Not(_any(strict_yields(child, len(self.rules))
+                                for child in children[rule.core.name])))
+
+        def strict_decides(predicate, sign):
+            return _any(strict_selects(rule) for rule in self.rules
+                        if rule.core.predicate == predicate and rule.core.sign == sign)
 
         def blocked(rule):
             p = rule.core.predicate
-            pos, neg, _ = strict_selection[p]
-            terms = [pos, neg]
             reg = self.env.predicates[p].regulated
-            if reg.role == 'obligation' and rule.core.sign and reg.permission:
-                terms.append(strict_selection[reg.permission][1])
-            if reg.role == 'permission' and not rule.core.sign:
+            dual_neg = Bottom()
+            dual_pos = Bottom()
+            if rule.core.sign and reg.role == 'obligation' and reg.permission:
+                dual_neg = strict_decides(reg.permission, False)
+            if not rule.core.sign and reg.role == 'permission':
                 required = next((q for q, d in self.env.predicates.items()
                                  if d.regulated is not None and d.regulated.permission == p), None)
                 if required is not None:
-                    terms.append(strict_selection[required][0])
-            return _or_nonempty(terms)
+                    dual_pos = strict_decides(required, True)
+            return Or(Or(Or(strict_decides(p, True), strict_decides(p, False)),
+                         dual_neg), dual_pos)
 
-        eligible = {}
-        for rule in self.rules:
+        def eligible(rule):
             if rule.mode != 'default':
-                continue
-            core = rule.core
-            blocked_by_rule[core.name] = blocked(rule)
-            live = And(core.guard, Not(_or_nonempty((*core.unless, self._switch(rule),
-                                                   _atom(_decision_name(rule), arity[core.predicate])))))
-            eligible[core.name] = And(live, Not(blocked_by_rule[core.name]))
-        effective = {}
-        dominated = {}
+                return Bottom()
+            live = And(strict_live(rule),
+                       Not(_atom(_decision_name(rule), arity[rule.core.predicate])))
+            return And(live, Not(blocked(rule)))
 
-        def eff(rule):
-            name = rule.core.name
-            if name in effective:
-                return effective[name]
-            dominates = []
-            for left, right in self.collisions:
-                other = right if left is rule else left if right is rule else None
-                if other is None:
-                    continue
-                pair = self._rank_pair(rule, other)
-                if pair is None:
-                    continue
-                low, high = pair
-                override = (_atom(self._outweighs_name(low, high, self._act(rule),
-                                                      self.env.predicates[rule.core.predicate].arguments),
-                                  arity[rule.core.predicate])
-                            if self.env.soft['outranking']['mode'] == 'holistic' else Bottom())
-                if other.rank == high:
-                    dominates.append(And(eff(other), Not(override)))
-                elif self.env.soft['outranking']['mode'] == 'holistic':
-                    dominates.append(And(eligible[other.core.name], override))
-            dominated[name] = _or_nonempty(dominates)
-            result = And(eligible[name], Not(dominated[name]))
-            effective[name] = result
-            return result
+        holistic = self.env.soft['outranking']['mode'] == 'holistic'
+        effective = {}
+
+        def eff(rule, fuel):
+            key = (rule.core.name, fuel)
+            if key not in effective:
+                effective[key] = (eligible(rule) if fuel == 0 else
+                                  And(eligible(rule), Not(dominated(rule, fuel - 1))))
+            return effective[key]
+
+        def dominated(rule, fuel):
+            opponents = [other for other in self.rules
+                         if other.mode == 'default' and other is not rule
+                         and self._incompatible(rule, other)
+                         and self._rank_pair(rule, other) is not None]
+            terms = []
+            for other in opponents:
+                low, high = self._rank_pair(rule, other)
+                outweighs = (_atom(self._outweighs_name(low, high, self._act(rule),
+                                                       self.env.predicates[rule.core.predicate].arguments),
+                                    arity[rule.core.predicate]) if holistic else Bottom())
+                higher = (And(eff(other, fuel), Not(outweighs) if holistic else Top())
+                          if other.rank == high else Bottom())
+                lower = (And(eligible(other), outweighs)
+                         if holistic and other.rank == low else Bottom())
+                terms.append(Or(higher, lower))
+            return _any(terms)
 
         result = []
         for rule in self.rules:
@@ -436,10 +462,9 @@ class SoftNormDocument:
             if rule.mode == 'strict':
                 derived = self._switch(rule)
             else:
-                eff(rule)
-                derived = _or_nonempty((_atom(_decision_name(rule), arity[core.predicate]),
-                                        self._switch(rule), blocked_by_rule[core.name],
-                                        dominated[core.name]))
+                derived = Or(Or(Or(_atom(_decision_name(rule), arity[core.predicate]),
+                                    self._switch(rule)), blocked(rule)),
+                             dominated(rule, len(self.env.soft.get('ranks', []))))
             unless = (*core.unless, derived) if not isinstance(derived, Bottom) else core.unless
             if len(unless) > 8:
                 raise ResourceLimit(f'derived carve-out of rule {core.name}')
