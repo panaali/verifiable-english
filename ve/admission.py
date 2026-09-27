@@ -413,6 +413,15 @@ def admit_document(environment, document) -> dict:
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
     env = environment if type(environment) is Environment else Environment(environment)
+    # The norms route takes every input with a norm construct (11.4): a
+    # regulated declaration or norm content, as Lean `usesNormsPath` does.
+    if ("norms@0" in env.profiles and
+            (any(d.regulated is not None for d in env.predicates.values()) or
+             (type(document) is dict and type(document.get("units")) is list and
+              any(type(u) is dict and type(u.get("content")) is dict
+                  and "norm" in u["content"] for u in document["units"])))):
+        from .norm_admission import admit_norm_document
+        return admit_norm_document(env, document)
     if env.language != LANGUAGE:
         raise VEError("admission requires a ve.core@0.2 environment")
     require_checker(env)

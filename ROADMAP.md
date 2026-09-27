@@ -158,3 +158,8 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 - One spec per study; its "After review" section is binding; specs never carry status.
 - When a spec is superseded, mark it with a one-line banner and list it as historical above.
 - Never duplicate status, results or the backlog in spec files or FUTURE.md.
+
+## Pilot-driven gaps (2026-09-27)
+- **Soft norms and weighing** ("should", "generally", holistic priorities): Claude's constitution (154 norm-blocked units). Design in docs/spec/soft-norms-PLAN.md (debate running).
+- **Rights / claim-rights** ("Everyone has the right to X" -> correlative duties on others; Hohfeld-style right-duty pairs): UDHR pilot (63 of 72 unformalised units norm-blocked). To design after soft norms, sharing the W1 elaboration.
+- **Causation, action alternatives, priority across different obligations**: Asimov laws use case (inaction clauses, obey-vs-self-preserve choices, Zeroth-law tradeoff).
