@@ -142,6 +142,35 @@ def test_english_accepts_one_shot_json(service_executable, suffix):
     assert response["results"] == [json.loads(proc.stdout)]
 
 
+@pytest.mark.parametrize("number,place", [
+    ("0.0", "formula"), ("0e0", "formula"), ("1e0", "formula"),
+    ("0.0", "token"), ("0.0", "slot"),
+])
+def test_english_consumed_number_keeps_one_shot_decoding(service_executable, number, place):
+    payload = {"environment": {"sorts": ["thing"], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {"thing": {"noun": ["thing"], "letter": "x"}},
+                           "predicates": {}, "constants": {}},
+               "cases": [{"tokens": [], "formulas": [["forall", "thing",
+                                                     ["eq", ["var", 0], ["var", 0]]]]}]}
+    if place == "slot":
+        payload["lexicon"]["predicates"] = {"p": [0]}
+    raw = json.dumps(payload, separators=(",", ":"))
+    if place == "formula":
+        raw = raw.replace('["var",0]', f'["var",{number}]', 1)
+    elif place == "token":
+        raw = raw.replace('"tokens":[]', f'"tokens":[["x",{number}]]')
+    else:
+        raw = raw.replace('"p":[0]', f'"p":[{number}]')
+    one_shot = subprocess.run([str(BIN / "ve_english_run")], input=raw.encode(),
+                              capture_output=True, timeout=HANG_TIMEOUT)
+    assert one_shot.returncode in (0, 2)
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw + "]", 1)
+    expected = (json.loads(one_shot.stdout) if one_shot.returncode == 0 else
+                {"status": "error", "error": one_shot.stderr.decode().strip()})
+    assert response["results"] == [expected]
+
+
 def test_killed_process_is_replaced_between_requests(service_executable):
     with LeanService(service_executable) as service:
         first = service.pid
@@ -264,8 +293,22 @@ for line in sys.stdin:
               '"results":[{"status":"ok","value":NaN}],'
               '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
     n = len(request["cases"])
+    if behaviour in ("missing-valid", "string-valid", "wrong-case-id", "english-nested-bool"):
+        if request["mode"] == "english":
+            row = {"admissible": True, "covers": True,
+                   "results": [True] if behaviour == "english-nested-bool" else []}
+        else:
+            row = {"id": request["cases"][0].get("id"), "status": "ok", "valid": True}
+            if behaviour == "missing-valid": del row["valid"]
+            if behaviour == "string-valid": row["valid"] = "false"
+            if behaviour == "wrong-case-id": row["id"] = "other"
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [row], "counts": {"cases": 1,
+                          "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                          "errors": 0}}), flush=True); continue
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                      "results": [{"id": i, "n": i, "status": "ok"} for i in range(n)],
+                      "results": [{"id": case.get("id"), "status": "ok", "values": [],
+                                   "value": True, "canonical": ""} for case in request["cases"]],
                       "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
 '''
 
@@ -296,9 +339,29 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
 
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
-        assert service.run("evaluate", [{}, {}]) == [{"id": 0, "n": 0, "status": "ok"},
-                                                      {"id": 1, "n": 1, "status": "ok"}]
+        assert service.run("evaluate", [{"id": "a"}, {"id": "b"}]) == [
+            {"id": "a", "status": "ok", "values": [], "value": True, "canonical": ""},
+            {"id": "b", "status": "ok", "values": [], "value": True, "canonical": ""}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+
+
+@pytest.mark.parametrize("behaviour,mode,case", [
+    ("missing-valid", "check-certificate", {"id": "c"}),
+    ("string-valid", "check-certificate", {"id": "c"}),
+    ("missing-valid", "order", {"id": "c", "kind": "certificate"}),
+    ("string-valid", "order", {"id": "c", "kind": "certificate"}),
+    ("wrong-case-id", "check-certificate", {"id": "c"}),
+    ("wrong-case-id", "evaluate", {"id": "c"}),
+    ("wrong-case-id", "route", {"id": "c", "kind": "certificate"}),
+    ("wrong-case-id", "norms", {"id": "c", "kind": "norms-certificate"}),
+    ("english-nested-bool", "english", {"cases": [{}]}),
+])
+def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mode, case):
+    service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="malformed response"):
+        service.run(mode, [case])
+    assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+    service.close()
 
 
 @pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
@@ -319,6 +382,27 @@ def test_spawn_error_is_supervised_and_cleans_up(tmp_path):
         service.start()
     assert service.pid is None and service.stats["retries"] == 1
     assert service._stderr is None
+
+
+@pytest.mark.parametrize("fault", ["directory", "hash-read", "stderr-file"])
+def test_pre_spawn_faults_are_supervised(tmp_path, monkeypatch, fault):
+    import ve.backends.lean_service as backend
+
+    executable = tmp_path if fault == "directory" else fake(tmp_path, "normal")
+    if fault == "hash-read":
+        def fail_hash(_):
+            raise PermissionError("hash read denied")
+        monkeypatch.setattr(backend, "executable_sha256", fail_hash)
+    if fault == "stderr-file":
+        def fail_file():
+            raise OSError("temporary file denied")
+        monkeypatch.setattr(backend.tempfile, "TemporaryFile", fail_file)
+    service = LeanService(executable, allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="startup"):
+        service.start()
+    assert service.pid is None and service._stderr is None
+    assert service.stats["starts"] == 0 and service.stats["retries"] == 1
+    assert service.stats["restarts"] == 2
 
 
 def test_unlisted_build_is_refused_by_default(tmp_path):
