@@ -30,6 +30,10 @@ class SyntaxError(VEError):
     code = "SyntaxError"
 
 
+class AmbiguousDerivation(SyntaxError):
+    """A distinct exception type while preserving the public SyntaxError code."""
+
+
 class UnknownSymbol(VEError):
     code = "UnknownSymbol"
 

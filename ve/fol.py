@@ -71,7 +71,7 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
         from .surface.registry import by_tag
         record = by_tag(op)
         if record is not None and record.fol_import_hook is not None:
-            return record.fol_import_hook(raw, scope, path, depth, formula)
+            return record.fol_import_hook(raw, scope, path, depth, formula, term)
         expected = {
             "top":{"op"}, "bottom":{"op"}, "unary":{"op","predicate","term"},
             "binary":{"op","predicate","left","right"}, "eq":{"op","left","right"},

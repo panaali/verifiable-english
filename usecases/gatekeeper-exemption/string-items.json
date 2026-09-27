@@ -1,0 +1,25 @@
+{
+  "patterns": ["registry.example/*", "*/trusted:v1", "quay.io/team/?mage:*"],
+  "items": [
+    {"image": "registry.example/a:v1", "exempt": true},
+    {"image": "registry.example/a:v2", "exempt": true},
+    {"image": "registry.example/trusted:v1", "exempt": true},
+    {"image": "registry.example/:latest", "exempt": true},
+    {"image": "registry.example/team/deep:v1", "exempt": true},
+    {"image": "registry.example/A:V1", "exempt": true},
+    {"image": "other.example/trusted:v1", "exempt": true},
+    {"image": "quay.io/team/image:v1", "exempt": true},
+    {"image": "quay.io/team/amage:v2", "exempt": true},
+    {"image": "quay.io/team/xmage:", "exempt": true},
+    {"image": "other.example/a:v1", "exempt": false},
+    {"image": "registry.example", "exempt": false},
+    {"image": "registry.examplex/a:v1", "exempt": false},
+    {"image": "REGISTRY.EXAMPLE/a:v1", "exempt": false},
+    {"image": "other.example/trusted:v2", "exempt": false},
+    {"image": "other.example/untrusted:v1", "exempt": false},
+    {"image": "quay.io/team/mage:v1", "exempt": false},
+    {"image": "quay.io/team/longmage:v1", "exempt": false},
+    {"image": "quay.io/team/image", "exempt": false},
+    {"image": "docker.io/library/alpine:latest", "exempt": false}
+  ]
+}
