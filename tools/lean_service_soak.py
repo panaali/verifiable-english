@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import random
 import sys
@@ -75,42 +76,46 @@ def main(argv=None):
     parser.add_argument("--bench-root", type=Path, default=DEFAULT_BENCH)
     parser.add_argument("--requests", type=int, default=20_000)
     args = parser.parse_args(argv)
+    machine_info = machine()
     pool = pools(args.bench_root)
     ref = references(pool)
     rng = random.Random(20260927)
     modes = sorted(pool)
-    service = LeanService(timeout=60, max_requests=10**9, max_rss=None)
-    service.start()
-    latencies, rss, mismatches = [], [], []
-    per_mode = {mode: 0 for mode in modes}
-    started_all = time.perf_counter()
-    for i in range(args.requests):
-        mode = rng.choice(modes)
-        picks = [rng.randrange(len(pool[mode])) for _ in range(rng.randint(1, 8))]
-        started = time.perf_counter()
-        results = service.run(mode, [pool[mode][k] for k in picks])
-        latencies.append(time.perf_counter() - started)
-        per_mode[mode] += 1
-        for position, (k, got) in enumerate(zip(picks, results, strict=True)):
-            want = ref[mode][k]
-            if isinstance(want, dict) and "case_index" in want:  # a batch position, as one-shot
-                want = {**want, "case_index": position}
-            if want is None:  # English one-shot failure: exit 2, the service's error record
-                if got.get("status") != "error":
+    try:
+        service = LeanService(timeout=60, max_requests=10**9, max_rss=None)
+        service.start()
+        latencies, rss, mismatches = [], [], []
+        per_mode = {mode: 0 for mode in modes}
+        started_all = time.perf_counter()
+        for i in range(args.requests):
+            mode = rng.choice(modes)
+            picks = [rng.randrange(len(pool[mode])) for _ in range(rng.randint(1, 8))]
+            started = time.perf_counter()
+            results = service.run(mode, [pool[mode][k] for k in picks])
+            latencies.append(time.perf_counter() - started)
+            per_mode[mode] += 1
+            for position, (k, got) in enumerate(zip(picks, results, strict=True)):
+                want = ref[mode][k]
+                if isinstance(want, dict) and "case_index" in want:  # a batch position, as one-shot
+                    want = {**want, "case_index": position}
+                if want is None:  # English one-shot failure: exit 2, the service's error record
+                    if got.get("status") != "error":
+                        mismatches.append((i, mode, k))
+                elif got != want:
                     mismatches.append((i, mode, k))
-            elif got != want:
-                mismatches.append((i, mode, k))
-        if (i + 1) % 1000 == 0:
-            rss.append({"request": i + 1, "rss_bytes": service.rss()})
-            print(f"{i + 1} requests, rss {rss[-1]['rss_bytes'] / 1e6:.1f} MB, "
-                  f"mismatches {len(mismatches)}, restarts {service.stats['restarts']}", flush=True)
-    elapsed = time.perf_counter() - started_all
-    stats = dict(service.stats)
-    service.close()
+            if (i + 1) % 1000 == 0:
+                rss.append({"request": i + 1, "rss_bytes": service.rss()})
+                print(f"{i + 1} requests, rss {rss[-1]['rss_bytes'] / 1e6:.1f} MB, "
+                      f"mismatches {len(mismatches)}, restarts {service.stats['restarts']}", flush=True)
+        elapsed = time.perf_counter() - started_all
+        stats = dict(service.stats)
+    finally:
+        service.close()
     warm = rss[0]["rss_bytes"]
     final = rss[-1]["rss_bytes"]
     growth = (final - warm) / warm
-    data = {"machine": machine(), "requests": args.requests, "elapsed_s": round(elapsed, 1),
+    machine_info["loadavg_after"] = list(os.getloadavg())
+    data = {"machine": machine_info, "requests": args.requests, "elapsed_s": round(elapsed, 1),
             "per_mode": per_mode, "pool_sizes": {m: len(c) for m, c in pool.items()},
             "mismatches": len(mismatches), "mismatch_examples": mismatches[:10], "service_stats": stats,
             "rss": rss, "rss_growth_from_1000": round(growth, 4),
@@ -123,14 +128,15 @@ def main(argv=None):
     lat = data["latency_after_100"]
     md = ["# Lean service soak (stage 1, gate 1)", "",
           f"Commit `{data['machine']['commit']}`; {data['machine']['cpu']}; load average "
-          f"{data['machine']['loadavg']} at start.", "",
+          f"{data['machine']['loadavg']} at start and {data['machine']['loadavg_after']} after.", "",
           f"- {args.requests} requests (1-8 cases each, mixed modes {per_mode}) in {data['elapsed_s']} s on one process.",
           f"- Result mismatches against the one-shot executables: {len(mismatches)}.",
           f"- Restarts: {stats['restarts']}; recycling disabled.",
           f"- RSS at request 1,000: {warm / 1e6:.1f} MB; at the end: {final / 1e6:.1f} MB; growth "
           f"{growth * 100:.2f}% (gate < 10%); peak {data['peak_rss_bytes'] / 1e6:.1f} MB.",
           f"- Per-request latency at the client boundary after the first 100: p50 {lat['p50_ms']} ms "
-          f"{lat['p50_ci_ms']}, p95 {lat['p95_ms']} ms {lat['p95_ci_ms']}, p99 {lat['p99_ms']} ms, "
+          f"{lat['p50_ci_ms']}, p95 {lat['p95_ms']} ms {lat['p95_ci_ms']}, p99 {lat['p99_ms']} ms "
+          f"{lat['p99_ci_ms']}, "
           f"max {lat['max_ms']} ms. First 100: p50 {data['latency_first_100']['p50_ms']} ms, "
           f"p95 {data['latency_first_100']['p95_ms']} ms.",
           f"- Gate: **{data['gate']}**.", "", "RSS samples (MB): " +

@@ -38,12 +38,13 @@ def main(argv=None):
     parser.add_argument("--bench-root", type=Path, default=DEFAULT_BENCH)
     parser.add_argument("--samples", type=int, default=400, help="persistent calls per workload")
     parser.add_argument("--one-shot-samples", type=int, default=40)
-    parser.add_argument("--batch-repeats", type=int, default=10)
+    parser.add_argument("--batch-repeats", type=int, default=30)
     parser.add_argument("--cold-starts", type=int, default=20)
     parser.add_argument("--quick", action="store_true")
     args = parser.parse_args(argv)
     rows = workloads(args.bench_root, args.quick)
-    data = {"machine": machine(), "quick": args.quick, "cold_start": None, "calls": [], "batches": []}
+    data = {"machine": machine(), "quick": args.quick, "cold_start": None,
+            "warmup_first_100": None, "calls": [], "batches": []}
 
     cold = []
     for _ in range(args.cold_starts):
@@ -56,48 +57,58 @@ def main(argv=None):
             cold_service.close()
     data["cold_start"] = summary(cold)
 
-    service = LeanService(timeout=120, max_requests=10**9, max_rss=None)
-    service.start()
-    for name, impl, case, payload in rows:
-        mode = MODES[impl][0]
-        reference = one_shot_results(impl, payload)
-        assert service.run(mode, [case]) == reference, name
-        persistent, oneshot = [], []
-        for i in range(max(args.samples, args.one_shot_samples)):
-            if i < args.one_shot_samples:
+    try:
+        service = LeanService(timeout=120, max_requests=10**9, max_rss=None)
+        service.start()
+        if rows:
+            warmup = []
+            for i in range(100):
+                _, impl, case, _ = rows[i % len(rows)]
                 started = time.perf_counter()
-                out, code = one_shot(impl, payload)
-                oneshot.append(time.perf_counter() - started)
-                assert code in (0, 1) and out, name
-            if i < args.samples:
-                started = time.perf_counter()
-                service.run(mode, [case])
-                persistent.append(time.perf_counter() - started)
-        row = {"workload": name, "mode": mode, "input_bytes": len(payload),
-               "persistent": summary(persistent), "one_shot": summary(oneshot)}
-        row["speedup_p50"] = round(row["one_shot"]["p50_ms"] / row["persistent"]["p50_ms"], 1)
-        data["calls"].append(row)
-        print(f"{name:28} {mode:18} persistent p50 {row['persistent']['p50_ms']:8.3f} "
-              f"p95 {row['persistent']['p95_ms']:8.3f} | one-shot p50 {row['one_shot']['p50_ms']:8.3f} "
-              f"p95 {row['one_shot']['p95_ms']:8.3f}", flush=True)
-        if name in BATCHES:
-            n = BATCHES[name]
-            cases = [case] * n
-            batch_payload = (json.dumps({**case, "cases": case["cases"] * n}).encode() if impl == "lean_english"
-                             else json.dumps(cases, separators=(",", ":")).encode())
+                service.run(MODES[impl][0], [case])
+                warmup.append(time.perf_counter() - started)
+            data["warmup_first_100"] = summary(warmup)
+        for name, impl, case, payload in rows:
+            mode = MODES[impl][0]
+            reference = one_shot_results(impl, payload)
+            assert service.run(mode, [case]) == reference, name
             persistent, oneshot = [], []
-            for _ in range(args.batch_repeats):
-                started = time.perf_counter()
-                results = service.run(mode, cases, timeout=120)
-                persistent.append(time.perf_counter() - started)
-                assert results == reference * n, name
-                started = time.perf_counter()
-                one_shot(impl, batch_payload)
-                oneshot.append(time.perf_counter() - started)
-            data["batches"].append({"workload": name, "mode": mode, "cases": n, "gate_s": GATES[name],
-                                    "persistent": summary(persistent), "one_shot": summary(oneshot)})
-    data["service_stats"] = service.stats
-    service.close()
+            for i in range(max(args.samples, args.one_shot_samples)):
+                if i < args.one_shot_samples:
+                    started = time.perf_counter()
+                    out, code = one_shot(impl, payload)
+                    oneshot.append(time.perf_counter() - started)
+                    assert code in (0, 1) and out, name
+                if i < args.samples:
+                    started = time.perf_counter()
+                    service.run(mode, [case])
+                    persistent.append(time.perf_counter() - started)
+            row = {"workload": name, "mode": mode, "input_bytes": len(payload),
+                   "persistent": summary(persistent), "one_shot": summary(oneshot)}
+            row["speedup_p50"] = round(row["one_shot"]["p50_ms"] / row["persistent"]["p50_ms"], 1)
+            data["calls"].append(row)
+            print(f"{name:28} {mode:18} persistent p50 {row['persistent']['p50_ms']:8.3f} "
+                  f"p95 {row['persistent']['p95_ms']:8.3f} | one-shot p50 {row['one_shot']['p50_ms']:8.3f} "
+                  f"p95 {row['one_shot']['p95_ms']:8.3f}", flush=True)
+            if name in BATCHES:
+                n = BATCHES[name]
+                cases = [case] * n
+                batch_payload = (json.dumps({**case, "cases": case["cases"] * n}).encode() if impl == "lean_english"
+                                 else json.dumps(cases, separators=(",", ":")).encode())
+                persistent, oneshot = [], []
+                for _ in range(args.batch_repeats):
+                    started = time.perf_counter()
+                    results = service.run(mode, cases, timeout=120)
+                    persistent.append(time.perf_counter() - started)
+                    assert results == reference * n, name
+                    started = time.perf_counter()
+                    one_shot(impl, batch_payload)
+                    oneshot.append(time.perf_counter() - started)
+                data["batches"].append({"workload": name, "mode": mode, "cases": n, "gate_s": GATES[name],
+                                        "persistent": summary(persistent), "one_shot": summary(oneshot)})
+        data["service_stats"] = service.stats
+    finally:
+        service.close()
     data["machine"]["loadavg_after"] = list(os.getloadavg())
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "latency.json").write_text(json.dumps(data, indent=2) + "\n")
@@ -117,12 +128,14 @@ def report(data):
              "process per case, as ve-bench measured Lean. Bracketed values are 95% bootstrap "
              "intervals.", "",
              f"Cold start (spawn to handshake, n={c['n']}): p50 {c['p50_ms']} ms, p95 {c['p95_ms']} ms.", "",
-             "| Workload | Mode | Persistent p50 ms | Persistent p95 ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |",
-             "|---|---|---:|---:|---:|---:|---:|"]
+             "First 100 service requests are timed separately before workload sampling: "
+             f"{data['warmup_first_100'] or 'no workloads'}.", "",
+             "| Workload | Mode | Persistent p50 ms | Persistent p95 ms | Persistent p99 ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |",
+             "|---|---|---:|---:|---:|---:|---:|---:|"]
     for r in data["calls"]:
         p, o = r["persistent"], r["one_shot"]
         lines.append(f"| {r['workload']} | {r['mode']} | {p['p50_ms']} {p['p50_ci_ms']} | {p['p95_ms']} "
-                     f"{p['p95_ci_ms']} | {o['p50_ms']} | {o['p95_ms']} | {r['speedup_p50']}x |")
+                     f"{p['p95_ci_ms']} | {p['p99_ms']} {p['p99_ci_ms']} | {o['p50_ms']} | {o['p95_ms']} | {r['speedup_p50']}x |")
     lines += ["", "Batches (section 4 gates; the client splits at 256 cases per request):", "",
               "| Workload | Cases | Gate s | Persistent median s | Persistent p95 s | One-shot median s |",
               "|---|---:|---:|---:|---:|---:|"]
