@@ -145,6 +145,7 @@ def test_default_paraphrase_names_its_actual_effect(role, sign, effect):
     assert f"act {effect} unless" in wording
     assert "assistant decides" in wording
     assert "source names no decider" in rule_paraphrase(12, "default", decider="unstated")
+    assert "act false unless" in rule_paraphrase(12, "default", role="plain", sign=False)
 
 
 def test_soft_strict_text_round_trip_and_hard_identity():
