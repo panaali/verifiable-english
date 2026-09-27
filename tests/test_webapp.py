@@ -275,3 +275,128 @@ def test_expired_session(setup,monkeypatch):
     now=time.time()
     monkeypatch.setattr('ve_webapp.server.time.time',lambda:now+9*3600)
     assert client.get('/api/session').status_code==401
+
+
+def _command(client, headers, doc, action, args=None, request_id=None):
+    return client.post(f"/api/drafts/{doc['id']}/commands", headers=headers, json={
+        'revision': doc['revision'], 'request_id': request_id or f'request-{doc["revision"]:08d}',
+        'action': action, 'args': args or {}})
+
+
+def test_blank_document_persists_approval_across_session_and_restart(tmp_path):
+    settings = Settings(TOKEN, tmp_path, secure=False)
+    with TestClient(create_app(settings)) as client:
+        headers = login(client)
+        doc = client.post('/api/drafts', json={}, headers=headers).json()
+        assert doc['units'] == [] and doc['revision'] == 0
+        for action, args in [('save', {'source': 'Api is safe.'}), ('analyze', {}),
+                             ('approve', {'wording': 'Api is safe.'})]:
+            response = _command(client, headers, doc, action, args)
+            assert response.status_code == 200, response.text
+            doc = response.json()
+        assert doc['units'][0]['state'] == 'approved'
+        assert doc['units'][0]['approval']
+        assert client.get(f"/api/drafts/{doc['id']}").json()['units'][0]['state'] == 'approved'
+    with TestClient(create_app(settings)) as client:
+        login(client)
+        restored = client.get(f"/api/drafts/{doc['id']}")
+        assert restored.status_code == 200
+        assert restored.json()['units'][0]['approval'] == doc['units'][0]['approval']
+
+
+def test_draft_security_stale_idempotency_and_token_isolation(tmp_path):
+    settings = Settings(TOKEN, tmp_path, secure=False)
+    with TestClient(create_app(settings)) as client:
+        headers = login(client)
+        doc = client.post('/api/drafts', json={}, headers=headers).json()
+        path = f"/api/drafts/{doc['id']}/commands"
+        body = {'revision': 0, 'request_id': 'same-request-1', 'action': 'save',
+                'args': {'source': 'Api is safe.'}}
+        assert client.post(path, json=body).status_code == 403
+        assert client.post(path, json=body, headers={**headers, 'origin': 'https://evil.test'}).status_code == 403
+        first = client.post(path, json=body, headers=headers)
+        assert first.status_code == 200
+        assert client.post(path, json=body, headers=headers).json()['revision'] == 1
+        stale = {**body, 'request_id': 'other-request-2', 'args': {'source': 'Api is reviewed.'}}
+        assert client.post(path, json=stale, headers=headers).status_code == 409
+        assert client.get('/api/drafts/../../etc/passwd').status_code in (404, 400)
+    with TestClient(create_app(Settings('other-token-' + 'y' * 40, tmp_path, secure=False))) as other:
+        login_response = other.post('/api/login', json={'token': 'other-token-' + 'y' * 40},
+                                    headers={'x-ve-csrf': 'login'})
+        assert login_response.status_code == 200
+        assert other.get(f"/api/drafts/{doc['id']}").status_code == 404
+
+
+def test_checked_cards_recovery_and_export_tampering(setup):
+    client, _, _ = setup
+    headers = login(client)
+    doc = client.post('/api/drafts', json={'example': 'scope'}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'Every engineer checks a server.'}).json()
+    doc = _command(client, headers, doc, 'analyze').json()
+    unit = doc['units'][0]
+    assert unit['state'] == 'needs_word'
+    assert len(unit['cards']) == 1
+    card = unit['cards'][0]
+    assert card['values'][0] != card['values'][1]
+    assert any('checks' in line for line in card['situation_text'])
+    assert all(not re.search(r'[@()\[\]*<=]', text) for text in card['paraphrases'] + card['situation_text'])
+    doc = _command(client, headers, doc, 'reply', {'text': card['paraphrases'][0],
+        'rejected': [{'meaning_id': card['meaning_ids'][1], 'reason': 'Different intent.'}]}).json()
+    doc = _command(client, headers, doc, 'analyze').json()
+    assert doc['units'][0]['state'] == 'ready'
+    doc = _command(client, headers, doc, 'approve', {'wording': card['paraphrases'][0]}).json()
+    assert doc['units'][0]['state'] == 'approved'
+    exported = client.get(f"/api/drafts/{doc['id']}/export").json()
+    assert exported['authorship'].startswith('Unsigned')
+    imported = client.post('/api/drafts/import', json=exported, headers=headers)
+    assert imported.status_code == 200, imported.text
+    assert imported.json()['units'][0]['state'] == 'approved'
+    exported['ledger']['events'][-1]['unit_snapshot']['source'] = 'tampered'
+    assert client.post('/api/drafts/import', json=exported, headers=headers).status_code == 400
+
+
+def test_recovery_outage_cancel_undo_and_unresolved(setup):
+    client, settings, _ = setup
+    settings.assist = False
+    headers = login(client)
+    doc = client.post('/api/drafts', json={}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'A strange new assertion.'}).json()
+    doc = _command(client, headers, doc, 'analyze').json()
+    assert doc['units'][0]['state'] in ('needs_word', 'needs_repair')
+    doc = _command(client, headers, doc, 'cancel').json()
+    assert doc['units'][0]['state'] == 'draft'
+    doc = _command(client, headers, doc, 'analyze').json()
+    doc = _command(client, headers, doc, 'unresolved', {'reason': 'No faithful reading yet.'}).json()
+    assert doc['units'][0]['state'] == 'unresolved'
+    assert doc['units'][0]['reason'] == 'No faithful reading yet.'
+    doc = _command(client, headers, doc, 'undo', {'target_revision': 1}).json()
+    assert doc['units'][0]['state'] == 'draft'
+    doc = _command(client, headers, doc, 'analyze').json()
+    result = client.post(f"/api/drafts/{doc['id']}/assist", headers=headers,
+                         json={'revision': doc['revision'], 'request_id': 'assist-123456'})
+    assert result.status_code == 200, result.text
+    assert result.json()['units'][0]['state'] == 'exhausted'
+    assert 'proposer unavailable' in result.json()['units'][0]['reason']
+
+
+def test_glossary_and_rules_checked_in_english(setup):
+    client, _, _ = setup
+    headers = login(client)
+    doc = client.post('/api/drafts', json={}, headers=headers).json()
+    doc = _command(client, headers, doc, 'save', {'source': 'Api is reliable.'}).json()
+    for word in ('reliable', 'dependable'):
+        response = _command(client, headers, doc, 'define', {'word': word, 'kind': 'property',
+                    'sorts': ['service'], 'description': 'Confirmed property.'})
+        assert response.status_code == 200, response.text
+        doc = response.json()
+    response = _command(client, headers, doc, 'glossary',
+        {'sentence': 'In this document, reliable and dependable mean the same thing.'})
+    assert response.status_code == 200, response.text
+    assert response.json()['environment']['vocabulary']['predicates']['dependable']['defined']
+    rules = client.get('/api/rules').json()
+    assert rules['result']['status'] == 'clear'
+    changed = rules['text'].replace(' (exception to rule 1)', '')
+    conflict = client.post('/api/rules', json={'text': changed}, headers=headers)
+    assert conflict.status_code == 200, conflict.text
+    assert conflict.json()['status'] == 'conflict'
+    assert 'urgent act' in conflict.json()['explanation']

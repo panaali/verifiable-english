@@ -15,7 +15,10 @@ from dataclasses import dataclass
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
+from ve.errors import VEError
 from .examples import EXAMPLES, BY_ID
+from .drafts import DraftStore, StaleDraft
+from .rules import check_rules, RULES_TEXT
 
 STATIC = Path(__file__).parent / "static"
 MAX_BODY = 32768
@@ -147,6 +150,7 @@ def create_app(settings, runner=worker):
     app.add_middleware(Boundary, secure=settings.secure)
     sessions, attempts = {}, []
     quota = Quota(settings)
+    drafts = DraftStore(settings.state, settings.token)
     busy = asyncio.Lock()
 
     def session(request):
@@ -228,6 +232,122 @@ def create_app(settings, runner=worker):
     async def examples(request: Request):
         session(request)
         return EXAMPLES
+
+    @app.get('/api/drafts')
+    async def list_drafts(request: Request):
+        session(request)
+        return drafts.list()
+
+    @app.post('/api/drafts')
+    async def create_draft(request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        if set(body) - {'example'}:
+            raise HTTPException(400, 'Unknown document field.')
+        try:
+            return drafts.create(body.get('example', 'policy'))
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.post('/api/drafts/import')
+    async def import_draft(request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        try:
+            return drafts.import_copy(body)
+        except (ValueError, VEError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.get('/api/drafts/{draft_id}')
+    async def get_draft(draft_id: str, request: Request):
+        session(request)
+        try:
+            return drafts.get(draft_id)
+        except ValueError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.get('/api/drafts/{draft_id}/export')
+    async def export_draft(draft_id: str, request: Request):
+        session(request)
+        try:
+            return drafts.export(draft_id)
+        except ValueError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.post('/api/drafts/{draft_id}/commands')
+    async def change_draft(draft_id: str, request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        if set(body) != {'revision', 'request_id', 'action', 'args'}:
+            raise HTTPException(400, 'Document command needs revision, request ID, action and arguments.')
+        if body['action'] in {'proposer_reserve', 'proposer_finish'}:
+            raise HTTPException(400, 'Use the document assistant control.')
+        try:
+            return drafts.change(draft_id, body['revision'], body['request_id'], body['action'], body['args'])
+        except StaleDraft as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except (ValueError, VEError, SyntaxError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.post('/api/drafts/{draft_id}/assist')
+    async def assist_draft(draft_id: str, request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        if set(body) != {'revision', 'request_id'} or type(body['request_id']) is not str:
+            raise HTTPException(400, 'Assistant request needs revision and request ID.')
+        try:
+            current = drafts.get(draft_id)
+            if body['revision'] != current['revision']:
+                raise StaleDraft('This document changed in another tab. Reload its latest revision.')
+            reserved = drafts.change(draft_id, current['revision'], body['request_id'] + 'reserve',
+                                     'proposer_reserve', {})
+            if reserved['units'][0]['state'] == 'unresolved':
+                return reserved
+            if not reserved['history'] or reserved['history'][-1]['action'] != 'proposer_reserved':
+                return reserved
+        except StaleDraft as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except (ValueError, VEError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        outcome = {'kind': 'failed', 'error': 'Unavailable'}
+        if settings.assist:
+            try:
+                quota.reserve()
+                async with busy:
+                    result = await runner('propose', {'example': reserved['example'],
+                                                      'text': reserved['units'][0]['source']}, settings)
+                candidates = result.get('candidates', [])
+                if candidates:
+                    natural = candidates[0].get('natural', {}).get('sentences', [])
+                    if natural and natural[0].get('form') == 'natural':
+                        outcome = {'kind': 'suggestion', 'text': natural[0]['text'].rstrip('.') + '.'}
+            except HTTPException as exc:
+                outcome = {'kind': 'failed', 'error': 'CallAllowanceReached' if exc.status_code == 429 else 'Unavailable'}
+            except Exception:
+                outcome = {'kind': 'failed', 'error': 'Unavailable'}
+        try:
+            return drafts.change(draft_id, reserved['revision'], body['request_id'] + 'finish',
+                                 'proposer_finish', {'outcome': outcome})
+        except StaleDraft:
+            return {'status': 'stale', 'reason': 'Assistant request superseded by a newer document revision.'}
+        except (ValueError, VEError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.get('/api/rules')
+    async def rules_example(request: Request):
+        session(request)
+        return {'text': RULES_TEXT, 'result': check_rules(RULES_TEXT)}
+
+    @app.post('/api/rules')
+    async def rules_check(request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        if set(body) != {'text'} or type(body['text']) is not str or len(body['text']) > 6000:
+            raise HTTPException(400, 'Enter rules in English, up to 6000 characters.')
+        try:
+            return check_rules(body['text'])
+        except (ValueError, VEError, SyntaxError) as exc:
+            raise HTTPException(422, str(exc)) from exc
 
     @app.post("/api/{action}")
     async def operate(action: str, request: Request):
