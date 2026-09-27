@@ -73,6 +73,9 @@ For assertion readings in one environment, `ve document readings --conclusion`
 uses fixed assertions, validated active norm layers, and the latest reading-set
 version for each source unit. A pending norm reading leaves the premise status
 and norm layer admission unresolved until its choice can be elaborated.
+When a recorded narrowing removes every pending norm choice, the query
+recomputes fixed premises from the retained readings, restoring validated
+active norm layers. Retained pending norm choices still leave the query unknown.
 Authored singleton choices are premises too. It first proves ALL from fixed
 assertions and one conjunction of per-unit disjunctions, with
 certificate replay. It proves NONE with one checked finite model that satisfies
