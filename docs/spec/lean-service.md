@@ -112,48 +112,21 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - No pre-existing trusted checker module under `lean/VE/` changed during stage 1;
   `VE/Route/frozen.py` now pins all 124 VE Lean modules.
 
-## Gate 1 evidence (2026-09-27, AMD EPYC 7B12, 8 logical CPUs)
+## Gate 1 review follow-up (2026-09-27)
 
-The machine was **not quiet**: other sessions' test suites held the load average at 5–7 throughout. The
-latency figures are therefore upper estimates; the plan's gate figures need a rerun on a quiet machine
-(`tools/lean_service_latency.py`, `tools/lean_service_soak.py`).
-
-| Criterion (gate 1 as amended) | Result | Evidence |
+| Criterion | Result | Evidence |
 |---|---|---|
-| Byte-identical to the one-shot executables on existing modes | **16,556 / 16,556** cases identical, 0 restarts: every committed runner fixture (evaluation, countermodels, parser, identity, validation, closure, route-cases, v0 replay baseline), the P1, closure-induction and iceberg replay queries, the definitions (2,000), n-ary core (747), DAG (200), norms (1,100) and English (17 vocabularies, about 3,400 pairs) differential generators, the prover-backed certificate, closure, induction and order generators with their forged sets, adversarial and batch-rejecting inputs for every mode, plus four English JSON acceptance cases | `experiments/lean-service/parity/` |
-| Fault injection fails closed | kill between and during a batch (one retry succeeds), hang, crash, garbage, truncated output, wrong id, short response, bad or missing handshake → `CheckerUnavailable` after one retry; over-long (16 MiB + 8) line, truncated line, malformed envelopes → one error record each, processing continues | `tests/test_lean_service.py` (23 tests) |
-| Soak | 20,000 mixed-mode requests (1–8 cases each) on one process in 70.5 s: 0 mismatches, 0 restarts, RSS 96.1 MB at request 1,000 → 101.0 MB at 20,000 (+5.1%, one step near request 5,000, then flat) | `experiments/lean-service/soak/` |
-| Service-call latency (median ≤ 5 ms, p95 ≤ 20 ms; 2,047-node certificate p95 ≤ 200 ms) | met on every workload: ordinary medians 0.60–1.70 ms, p95 1.18–4.86 ms; large certificate p50 30.9 ms, p95 45.7 ms; mixed soak p50 2.57 ms, p95 7.85 ms, p99 12.0 ms | `experiments/lean-service/latency/` |
-| `audit.py`, frozen hash test | PASS (129 files, 889 theorems, standard axioms only); `frozen.py` PASS over all 124 VE Lean modules | |
+| One-shot/service equivalence | 16,556 / 16,556 cases identical across all six modes, including English `null`, fractional, exponent and duplicate-key payloads; zero restarts | [Full parity](../../experiments/lean-service/parity/PARITY.md) |
+| Protocol and supervision faults | 42 focused tests pass: malformed responses, startup EOF and invalid handshakes retry and clean up; unlisted executables are refused by default; malformed and binary request lines receive an error and processing continues | `tests/test_lean_service.py` |
+| Three-session soak | 60,000 mixed-mode requests, zero mismatches and restarts; worst RSS growth 5.24% against the 10% gate | [Session summary](../../experiments/lean-service/soak/SESSIONS.md) |
+| Service-call latency | On the measured 95% confidence upper bounds: ordinary p50 at most 2.039 ms (gate 5 ms), ordinary p95 at most 4.198 ms (gate 20 ms), large certificate p95 50.645 ms (gate 200 ms). First 100 warmup calls and 20 separate cold starts reported; 30 repetitions per batch. | [Latency run](../../experiments/lean-service/latency/LATENCY.md) |
+| Source and theorem guards | `lake build`, 889-theorem `audit.py`, generated English-copy check and hashes over all 124 VE Lean modules pass | `lean/audit.py`, `lean/VE/Route/frozen.py` |
 
-Persistent against one-shot, per call (p50 / p95 ms, persistent timed at the Python boundary):
+**Quiet-machine condition remains open.** The 1-minute load average was 3.15–4.85 at the start of these timing runs on 8 logical CPUs, and rose as high as 5.70. The measured upper bounds meet the numerical targets under this contention; the plan also calls for a quiet host. A quiet-machine rerun or explicit gate acceptance is still required.
 
-| Workload | Persistent | One-shot |
-|---|---:|---:|
-| tableau certificate | 0.97 / 1.45 | 84.5 / 116.0 |
-| 2,047-node tableau certificate | 30.9 / 45.7 | 78.4 / 115.6 |
-| closure certificate | 1.28 / 2.43 | 86.0 / 98.2 |
-| order/Farkas certificate | 1.25 / 2.00 | 69.3 / 109.1 |
-| finite-model evaluation | 0.78 / 1.50 | 65.4 / 90.0 |
-| W1 norm elaboration | 0.62 / 1.51 | 79.6 / 92.4 |
-| W1 conflict check | 1.70 / 2.75 | 75.6 / 84.3 |
-| W3 definitions | 1.39 / 4.86 | 81.1 / 131.5 |
-| W3 bundle | 1.66 / 2.82 | 84.1 / 104.6 |
-| English parse | 0.60 / 1.18 | 55.5 / 82.6 |
-| English admission | 0.65 / 1.45 | 56.1 / 82.5 |
-
-Cold start (spawn to handshake): p50 53.8 ms, p95 91.3 ms.
-
-**Not met, and not gate 1:** the section-4 batch gates. Under the same load, 2,048 definitions took 2.23 s
-through the client against 1.94 s one-shot (gate 1.0 s); 256 bundles 0.32 s against 0.24 s (gate 0.25 s);
-256 conflicts 0.32 s (gate 0.5 s, met); 8 large certificates 0.34 s against 0.33 s (gate 0.3 s). The time is
-the runners' own work (about 0.55 ms per definitions case); a single pre-encoded 2,048-case request measured
-1.19 s against 1.16 s one-shot at lower load, so the service adds little, and the client adds Python
-encoding and decoding. The batch rows belong to gates 2–4 and need a quiet-machine measurement; if they still
-miss, the cost is in the runners, which stage 1 does not change.
+The section-4 batch targets are separate from Gate 1. In the latest 30-repetition run, 2,048 definitions took a 1.197 s median against a 1.0 s target and 8 large certificates took 0.310 s against 0.3 s. The other two batch medians were within their targets. These rows remain work for later gates.
 
 ## Left for later stages
 
-- `checkers.lock` and refusal of unlisted builds by default (stage 4 packaging; `expected_sha256` exists).
 - The section-2.1 glue modes and identities (stage 2b), adapters (2a), end-to-end and pilot latency (gates 2–4).
-- The plan's full latency method (≥ 20,000 requests from the assist ledgers, three sessions, quiet machine).
+- The plan's later assist-ledger latency method under `VE_AUTHORITY=lean` and a quiet-machine Gate 1 timing rerun.
