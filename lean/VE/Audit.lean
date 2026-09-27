@@ -26,6 +26,8 @@ import VE.Core.Checks
 import VE.Core.Route
 import VE.Core.Wire
 import Iceberg
+import VE.English.Proofs
+import VE.English.Check
 import VE.Norms.Layer
 import VE.Norms.SmallModel
 import VE.Norms.Examples
@@ -455,6 +457,91 @@ import VE.Norms.Run
 #print axioms VE.Route.Examples.interpret_admissible
 #print axioms VE.Route.Examples.tupleTyped_relation
 #print axioms VE.Route.Examples.wf_extend
+
+#print axioms VE.English.oneReading_of
+#print axioms VE.English.renderInjective_of_parseRender
+#print axioms VE.English.consume_append
+#print axioms VE.English.consume_sound
+#print axioms VE.English.infixB_of_infix
+#print axioms VE.English.infix_flatMap
+#print axioms VE.English.mem_labelsIn
+#print axioms VE.English.mem_tuples
+#print axioms VE.English.mem_termPool
+#print axioms VE.English.arg_infix
+#print axioms VE.English.mem_litCandidates
+#print axioms VE.English.parseLit_yield
+#print axioms VE.English.parseLit_sound
+#print axioms VE.English.takeWhile_nonstop
+#print axioms VE.English.parseLitPrefix_yield
+#print axioms VE.English.parseLitPrefix_sound
+#print axioms VE.English.kw_eq_kw
+#print axioms VE.English.kws_nil
+#print axioms VE.English.kws_cons
+#print axioms VE.English.kw_ne_label
+#print axioms VE.English.length_kws
+#print axioms VE.English.Stop.atom
+#print axioms VE.English.stop_nil
+#print axioms VE.English.stop_cons
+#print axioms VE.English.atomStop_cons
+#print axioms VE.English.readNoun_yield
+#print axioms VE.English.readNoun_sound
+#print axioms VE.English.takeLabel_none
+#print axioms VE.English.takeLabel_sound
+#print axioms VE.English.parseDecl_yield
+#print axioms VE.English.parseDecl_sound
+#print axioms VE.English.not_opener
+#print axioms VE.English.parseF_lit
+#print axioms VE.English.consume_header_none
+#print axioms VE.English.size_pos
+#print axioms VE.English.parseF_complete
+#print axioms VE.English.listTail_sound
+#print axioms VE.English.parseF_sound
+#print axioms VE.English.bindRef_sort
+#print axioms VE.English.scopeCount_cons
+#print axioms VE.English.built_mem
+#print axioms VE.English.bindRef_fresh
+#print axioms VE.English.built_nodup
+#print axioms VE.English.idxOfOpt_getElem
+#print axioms VE.English.renderTerm_correct
+#print axioms VE.English.pred_ok
+#print axioms VE.English.renderLit_correct
+#print axioms VE.English.renderTree_correct
+#print axioms VE.English.renderStatement_correct
+#print axioms VE.English.size_le_length
+#print axioms VE.English.tree_unique
+#print axioms VE.English.length_le_docYield
+#print axioms VE.English.parseTrees_complete
+#print axioms VE.English.parseTrees_sound
+#print axioms VE.English.core_unique_derivation
+#print axioms VE.English.core_parse_sound
+#print axioms VE.English.mapM_denote_render
+#print axioms VE.English.core_parse_render
+#print axioms VE.English.core_render_injective
+#print axioms VE.English.core_one_reading
+#print axioms VE.English.facts_of_admissible
+#print axioms VE.English.kw_mem_kws
+#print axioms VE.English.label_not_mem_kws
+#print axioms VE.English.mem_kws
+#print axioms VE.English.term_tokens
+#print axioms VE.English.term_opens
+#print axioms VE.English.term_prefix_free
+#print axioms VE.English.mem_templateWords
+#print axioms VE.English.mem_templateHoles
+#print axioms VE.English.fill_word
+#print axioms VE.English.fill_hole
+#print axioms VE.English.mem_fill
+#print axioms VE.English.disj_sound
+#print axioms VE.English.fill_inj
+#print axioms VE.English.Lit.ext_key
+#print axioms VE.English.keyTemplates_unique
+#print axioms VE.English.keyTemplate_shape
+#print axioms VE.English.lit_template
+#print axioms VE.English.admitted_of_facts
+#print axioms VE.English.admissible_sound
+#print axioms VE.English.checked_unique_derivation
+#print axioms VE.English.checked_one_reading
+#print axioms VE.English.checked_parse_render
+#print axioms VE.English.checked_render_injective
 #print axioms VE.Norms.agreesBelow_of_meanings
 #print axioms VE.Norms.allF_denote
 #print axioms VE.Norms.allF_wellFormed
