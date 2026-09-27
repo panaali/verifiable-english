@@ -3,7 +3,8 @@ import pytest
 
 from tests import probe_matrix as probe
 from ve import Environment, FiniteModel
-from ve.environment import LANGUAGE, PROFILE, SPEC_REVISION
+from ve.environment import (LANGUAGE, PROFILE, SPEC_REVISION,
+                            CLOSURE_LANGUAGE, CLOSURE_PROFILES, CLOSURE_REVISION)
 
 
 def test_legacy_environment_rejection_reaches_environment():
@@ -13,6 +14,7 @@ def test_legacy_environment_rejection_reaches_environment():
     raw["profile"] = PROFILE
     env = Environment(raw)
     model = FiniteModel.from_dict(env, probe.model_wire(env))
+    assert probe.outcome(probe.operation("parse_accept", "positive", env, model))["cell"] == "S"
     result = probe.outcome(probe.operation("environment_validation", "rejection", env, model))
     assert result["cell"] == "R" and result["status"] == "UnknownSymbol"
 
@@ -20,6 +22,15 @@ def test_legacy_environment_rejection_reaches_environment():
 def test_unexpected_probe_exception_fails_generation():
     with pytest.raises(KeyError):
         probe.outcome(lambda: {}["missing"])
+
+
+def test_legacy_closure_without_step_uses_supported_positive():
+    raw = probe.raw_environment(())
+    raw.update(language=CLOSURE_LANGUAGE, spec_revision=CLOSURE_REVISION,
+               profiles=list(CLOSURE_PROFILES))
+    env = Environment(raw)
+    model = FiniteModel.from_dict(env, probe.model_wire(env))
+    assert probe.outcome(probe.operation("parse_accept", "positive", env, model))["cell"] == "S"
 
 
 def test_search_rejections_are_semantic_diagnostics():
