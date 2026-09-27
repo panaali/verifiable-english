@@ -304,6 +304,8 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
 
 def _models(env: Any, minimum_size: int, maximum: int,
             used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+    used = used | frozenset(name for name, decl in env.predicates.items()
+                            if decl.functional or decl.total)
     if env.definition_entries:
         from .definitions import _mentions
         from .ast import _Decoder

@@ -305,6 +305,9 @@ impl Checker<'_> {
             }
             Formula::Forall(s, a) | Formula::Exists(s, a) => {
                 if !self.env.sorts.contains(s) {
+                    if s == "$string" && self.env.has_profile("data@0") {
+                        return error("UnsupportedProfile", "$string quantification requires data stage 2");
+                    }
                     return error("UnknownSymbol", "unknown binder sort");
                 }
                 context.push(s.clone());

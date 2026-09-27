@@ -146,8 +146,12 @@ def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
         error = result["error"]
+        message = error["message"]
+        generator = ("literals" if message.startswith("literals:") or message.endswith("(literals)")
+                     else "flags" if message.startswith("flags:") or message.endswith("(flags)")
+                     else None)
         suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
-        generator = suffix[1] if suffix else None
+        generator = generator or (suffix[1] if suffix else None)
         return error_verdict(error["code"], error["message"], generator)
     if kind == "label":
         return {"status": "ok", "label": result["label"]}
@@ -356,6 +360,44 @@ def test_report_identity_binds_environment_and_document(lean_executable):
     assert [row["report_id"] for row in lean] == [row["report_id"] for row in python]
     assert len({row["report_id"] for row in python}) == len(variants)
     assert all(row["report"] == python[0]["report"] for row in python)
+
+
+def test_data_background_deduction_admission_matches_lean(lean_executable):
+    """Explicit generated leaves remain generated at every graph edge position."""
+    from tests.test_data_flags import environment
+    from ve.admission import admit_document
+    from ve.ast import Top, formula_to_data
+    from ve.background import background
+    from ve.entailment import prove_entailment
+    from ve.identity import meaning_id
+
+    env = environment()
+    generated = background(env)
+    proof = prove_entailment(env, (), Top())
+    assert proof.status == "Found"
+    leaves = [{"name": f"bg{i}", "ast": formula_to_data(env, item.formula, _generated=True),
+               "label": f"background:{item.generator}"}
+              for i, item in enumerate(generated)]
+    ordinary = {"name": "ordinary", "ast": ["top"], "unit": "u"}
+    units = [{"id": "u", "span": [0, 1], "kind": "asserted", "content": ["top"]}]
+    orders = (leaves, list(reversed(leaves)), [leaves[0], ordinary, *leaves[1:]])
+    cases = []
+    for i, ordered in enumerate(orders):
+        certificate = deepcopy(proof.certificate)
+        certificate["premise_meaning_ids"] = [
+            meaning_id(env, generated[int(node["name"][2:])].formula, _generated=True)
+            if node["name"].startswith("bg") else meaning_id(env, Top())
+            for node in ordered]
+        document = {"units": units, "graph": {"root": "result", "nodes": [*ordered, {
+            "name": "result", "ast": ["top"], "premises": [node["name"] for node in ordered],
+            "certificate": certificate}]}}
+        cases.append({"id": str(i), "kind": "admission", "environment": env.to_dict(),
+                      "document": document})
+    lean = run([str(lean_executable), "route", "-"], cases)
+    python = [admit_document(env, case["document"]) for case in cases]
+    assert all(row["status"] == "ok" for row in lean)
+    assert [row["report"] for row in lean] == [row["report"] for row in python]
+    assert [row["report_id"] for row in lean] == [row["report_id"] for row in python]
 
 
 def test_frozen_lean_sources_are_in_suite():

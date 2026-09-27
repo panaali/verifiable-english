@@ -39,7 +39,7 @@ private def definedVocabulary : Json := Json.mkObj [
     ("defined", Json.mkObj [("arguments", toJson (["point"] : List String)),
       ("body", toJson (["top"] : List String))])])]),
   ("constants", Json.mkObj [])]
-#guard (match VE.Route.Wire.decodeVocabulary definedVocabulary with
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] definedVocabulary with
   | .ok rv => VE.Definitions.names rv.definitions == ["alias"]
   | .error _ => false)
 
@@ -58,16 +58,16 @@ private def atom (p : String) (i : Nat) : Json :=
   Json.arr #[.str "unary", .str p, Json.arr #[.str "var", toJson i]]
 
 private def decodeError (v : Json) : String :=
-  match VE.Route.Wire.decodeVocabulary v with
+  match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] v with
   | .ok _ => "ok"
   | .error e => e
 
 -- Definitions are ordered below their dependents (`b` mentions `a`)...
-#guard (match VE.Route.Wire.decodeVocabulary (twoDefinitions (atom "base" 0) (atom "a" 0)) with
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] (twoDefinitions (atom "base" 0) (atom "a" 0)) with
   | .ok rv => VE.Definitions.names rv.definitions == ["a", "b"]
   | .error _ => false)
 -- ...whatever the declaration order.
-#guard (match VE.Route.Wire.decodeVocabulary (twoDefinitions (atom "b" 0) (atom "base" 0)) with
+#guard (match VE.Route.Wire.decodeVocabulary ["definitions@0", "relational-fol@0"] (twoDefinitions (atom "b" 0) (atom "base" 0)) with
   | .ok rv => VE.Definitions.names rv.definitions == ["b", "a"]
   | .error _ => false)
 -- Recursion, a mutual cycle and a free variable are rejected with the Python diagnostics' shape.

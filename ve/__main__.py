@@ -38,6 +38,9 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["adapter", "run"]:
+        from .adapters.cli import main as adapter_main
+        return adapter_main(argv[2:])
     if argv[:1] == ["bundle"]:
         if argv[:2] != ["bundle", "check"]:
             print("usage: python -m ve bundle check BUNDLE [--lean EXECUTABLE]", file=sys.stderr)

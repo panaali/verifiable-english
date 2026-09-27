@@ -429,7 +429,8 @@ def runBundle (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
     | .error _ => pure ([] : List Admission.ReadingSet)
     | .ok doc => do
       VE.Bridge.exactFields doc ["reading_sets"]
-      let sets ← (← (← doc.getObjVal? "reading_sets").getArr?).toList.mapM (Admission.decodeReadingSet E)
+      let sets ← (← (← doc.getObjVal? "reading_sets").getArr?).toList.mapM
+        (Admission.decodeReadingSet E (profiles.contains "data@0"))
       Gate.require ((sets.map (fun rs => (rs.id, rs.version))).eraseDups.length == sets.length)
         "duplicate reading set version"
       pure sets
@@ -439,7 +440,9 @@ def runBundle (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
   let bind := fun (ps : List VE.Formula) (c : VE.Formula) (cert : VE.Tableau.Certificate) =>
     Wire.bindingOk profiles environment (ps.map Wire.encodeFormula) (Wire.encodeFormula c)
       cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
-  let known ← checkAll E (backgroundLeaves rv.definitions rv.literals) sets bind [] lemmas
+  let background := (Wire.fullBackground rv).map fun (formula, generator) =>
+    ("background:" ++ generator, formula)
+  let known ← checkAll E background sets bind [] lemmas
   pure (Wire.ok id [("checked", toJson known.length),
     ("lemmas", Json.arr (known.map (fun k => Json.str k.meaningId)).toArray)])
 

@@ -589,8 +589,8 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
                 from .background import background
                 composition["assumptions"].extend({
                     "label": "background:" + item.generator,
-                    "ast": formula_to_data(graph.env, item.formula),
-                    "meaning_id": meaning_id(graph.env, item.formula)}
+                    "ast": formula_to_data(graph.env, item.formula, _generated=True),
+                    "meaning_id": meaning_id(graph.env, item.formula, _generated=True)}
                     for item in background(graph.env))
             composition["record_id"] = digest("ve-composition-v1\n", composition)
         lean_checked, lean_detail = (_lean_deductions(graph, claims, records, reachable, lean_executable)
@@ -644,8 +644,8 @@ def outstanding_obligations(graph, result):
         from .background import background
         assumptions.extend({"claim": "background:" + item.generator,
             "label": "background:" + item.generator,
-            "ast": formula_to_data(graph.env, item.formula),
-            "meaning_id": meaning_id(graph.env, item.formula),
+            "ast": formula_to_data(graph.env, item.formula, _generated=True),
+            "meaning_id": meaning_id(graph.env, item.formula, _generated=True),
             "logical_assumption": True, "outstanding": False}
             for item in background(graph.env))
     return {"graph_id": result.graph_id, "assurance": "experimental", "status": result.status,

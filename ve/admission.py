@@ -202,7 +202,6 @@ def _decode_unit(env, data) -> _Unit:
 
 def _decode_leaf(env, data):
     _fields(data, ("ast", "label"))
-    formula = formula_from_data(env, data["ast"])
     label = data["label"]
     if type(label) is not str:
         raise VEError("expected a string")
@@ -211,6 +210,7 @@ def _decode_leaf(env, data):
         raise AdmissionError(f"AdmissionError: invalid label {label}")
     if parsed.kind == "cite":
         raise AdmissionError("AdmissionError: lemma leaves must be transitive (no cite labels)")
+    formula = formula_from_data(env, data["ast"], _generated=parsed.kind == "background")
     return formula, label
 
 
@@ -286,7 +286,6 @@ def _decode_node(env, data) -> _Node:
     name = data["name"]
     if type(name) is not str:
         raise VEError("expected a string")
-    formula = formula_from_data(env, data["ast"])
     label = "asserted"
     if "label" in data:
         if type(data["label"]) is not str:
@@ -294,6 +293,7 @@ def _decode_node(env, data) -> _Node:
         if data["label"] == "asserted":
             raise VEError("non-canonical label: the default label asserted is omitted")
         label = data["label"]
+    formula = formula_from_data(env, data["ast"], _generated=label.startswith("background:"))
     unit = data.get("unit")
     if "unit" in data and type(unit) is not str:
         raise VEError("expected a string")
@@ -382,7 +382,9 @@ def _check_graph(env, nodes, root):
             continue
         children = [reports[p] for p in n.premises]
         checked = check_entailment_certificate(env, [c[0][1] for c in children], n.formula,
-                                               n.certificate, _background=False)
+                                               n.certificate, _background=False,
+                                               _generated_premises=[c[0][2].startswith("background:")
+                                                                    for c in children])
         if not checked.valid:
             raise VEError(GRAPH_REJECTED)
         reports[n.name] = (claim, [a for c in children for a in c[1]])
@@ -400,7 +402,8 @@ def _compatible(x, y) -> bool:
 
 def _claim_json(env, claim):
     name, formula, label = claim
-    return {"name": name, "ast": formula_to_data(env, formula),
+    return {"name": name, "ast": formula_to_data(env, formula,
+            _generated=label.startswith("background:")),
             **({} if label == "asserted" else {"label": label})}
 
 
@@ -437,7 +440,9 @@ def admit_document(environment, document) -> dict:
             if p not in by_name:
                 raise VEError(f"dangling premise {p}")
         cert = n.certificate
-        expected = ([meaning_id(env, by_name[p].formula) for p in n.premises], meaning_id(env, n.formula))
+        expected = ([meaning_id(env, by_name[p].formula,
+                                _generated=by_name[p].label.startswith("background:"))
+                     for p in n.premises], meaning_id(env, n.formula))
         if (type(cert) is not dict or cert.get("environment_id") != env.environment_id
                 or (cert.get("premise_meaning_ids"), cert.get("conclusion_meaning_id")) != expected):
             raise VEError("certificate is stale or bound to different inputs")
