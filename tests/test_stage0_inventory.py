@@ -25,4 +25,8 @@ def test_semantic_combinations_have_explicit_ownership():
                    if line.startswith(f"| `ve/{module}.py` | `{symbol}` |"))
         assert "| S |" not in row
         assert owner in row
-    assert "`unresolved_obligations`; Lean `graph`" in report
+    walk = next(line for line in report.splitlines()
+                if line.startswith("| `argument.check_argument` reachability walk |"))
+    assert "| U |" in walk
+    assert "`unresolved_obligations` on non-composed records" in walk
+    assert "Do not delete it" in walk

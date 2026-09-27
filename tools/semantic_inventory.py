@@ -263,10 +263,10 @@ def generate():
                 else ("S", "—"))
             lines.append(f"| `{path.relative_to(ROOT)}` | `{symbol}` | {node.lineno} | {cls} | {decision} |")
     lines += ["", "## Combination roles inside section 1.1 modules", "",
-              "These roles are additional to A/U/S/D: the class-A adapter must ask Lean for the combined verdict, while diagnostic-only code stays a trusted display rule.",
+              "These roles refine A/U/S/D at a subfunction boundary: the class-A adapter must ask Lean for the combined verdict, while the reachability walk remains U for non-composed diagnostics and shadow comparison.",
               "", "| Function | Role | Reason |", "|---|:---:|---|",
               "| `argument.check_argument` | C | Root reachability, ordered leaves, status and composition combine edge checks; Lean `graph` owns consequence. |",
-              "| `argument.check_argument` reachability walk | C | The root walk produces `unresolved_obligations`; Lean `graph` returns the ordered report and shadow compares this field before Python deletion. |",
+              "| `argument.check_argument` reachability walk | U | Retain the root walk for `unresolved_obligations` on non-composed records; shadow compares its reachable leaves with the exact Lean `graph` projection on composed records. Do not delete it with the composition verdict. |",
               "| `argument._check_edge` | L | Displays each checked certificate or countermodel with diagnostic attempts. |",
               "| `admission.admit_document` | C | Document graph admission combines labelled leaves, citations and certificates; Lean `admission` owns verdict. |",
               "| `bundle.check_bundle` | C | Transitive citation and certificate replay combine into one bundle verdict; Lean `bundle` owns verdict. |",
