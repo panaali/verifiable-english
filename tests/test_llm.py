@@ -1,6 +1,5 @@
 import json
 import threading
-import time
 
 import pytest
 
@@ -8,10 +7,10 @@ from ve_experiments.llm import CODEX_FLAGS, parse_codex_events, BackendError, LL
 
 
 class FakeBackend:
-    def __init__(self, fail_first=0, delay=0.0, text='{"verdict": "approve"}'):
+    def __init__(self, fail_first=0, barrier=None, text='{"verdict": "approve"}'):
         self.calls = 0
         self.fail_first = fail_first
-        self.delay = delay
+        self.barrier = barrier
         self.text = text
         self.active = 0
         self.max_active = 0
@@ -26,7 +25,8 @@ class FakeBackend:
             self.max_active = max(self.max_active, self.active)
             self.cwds.add(cwd)
         try:
-            time.sleep(self.delay)
+            if self.barrier is not None:
+                self.barrier.wait(timeout=30)
             if n <= self.fail_first:
                 raise BackendError("transient")
             return RawReply(f"{self.text}", input_tokens=10, output_tokens=5)
@@ -76,7 +76,7 @@ def test_empty_reply_counts_as_failure(tmp_path):
 
 
 def test_concurrency_limit_and_order(tmp_path):
-    be = FakeBackend(delay=0.05)
+    be = FakeBackend(barrier=threading.Barrier(3))
     c = client(tmp_path, be, max_concurrency=3)
     res = c.map(Request("m", f"p{i}") for i in range(12))
     assert [r.key for r in res] == [c.call("m", f"p{i}").key for i in range(12)]
@@ -84,8 +84,15 @@ def test_concurrency_limit_and_order(tmp_path):
 
 
 def test_identical_concurrent_requests_make_one_call(tmp_path):
-    be = FakeBackend(delay=0.05)
-    res = client(tmp_path, be).map(Request("m", "same") for _ in range(6))
+    be = FakeBackend()
+    c = client(tmp_path, be, max_concurrency=3)
+    call = c.call
+    together = threading.Barrier(6)
+    def simultaneous(*args, **kwargs):
+        together.wait(timeout=30)
+        return call(*args, **kwargs)
+    c.call = simultaneous
+    res = c.map(Request("m", "same") for _ in range(6))
     assert be.calls == 1 and sum(r.from_cache for r in res) == 5
 
 

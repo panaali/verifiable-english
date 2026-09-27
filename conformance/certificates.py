@@ -10,6 +10,7 @@ import argparse
 import copy
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import random
 import subprocess
@@ -302,7 +303,8 @@ def invoke(executable, cases):
     for start in range(0, len(cases), 40):
         chunk = cases[start:start+40]
         proc = subprocess.run([str(executable), "check-certificate"], input=json.dumps(chunk),
-                              text=True, capture_output=True, timeout=120)
+                              text=True, capture_output=True,
+                              timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         assert proc.returncode in (0, 1), proc.stderr + proc.stdout
         rows = json.loads(proc.stdout)
         assert len(rows) == len(chunk), proc.stdout

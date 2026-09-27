@@ -12,6 +12,7 @@ from ..errors import ResourceLimit, SyntaxError
 from ..limits import MAX_NODES
 
 EARLEY_SECONDS = 30
+_monotonic = time.monotonic
 
 
 @lru_cache(maxsize=32)
@@ -41,9 +42,9 @@ def require_unique_derivation(env, source, **options):
         old_timer = signal.setitimer(signal.ITIMER_REAL, EARLEY_SECONDS)
     else:
         previous_trace = sys.gettrace()
-        started = time.monotonic()
+        started = _monotonic()
         def trace(_frame, _event, _arg):
-            if time.monotonic() - started > EARLEY_SECONDS:
+            if _monotonic() - started > EARLEY_SECONDS:
                 raise ResourceLimit("English Earley time budget exhausted")
             return trace
         sys.settrace(trace)
