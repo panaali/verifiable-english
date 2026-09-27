@@ -9,10 +9,27 @@ import argparse
 import ast
 from collections import defaultdict
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 EXTERNAL = (Path.home() / "code/ve-webapp", Path.home() / "code/ve-bench")
 SCOPES = (ROOT / "ve", ROOT / "tests", ROOT / "conformance", ROOT / "ve_experiments", *EXTERNAL)
+
+
+def public_exports():
+    """Resolve ``from ve import x`` through the package's static reexports."""
+    tree = ast.parse((ROOT / "ve/__init__.py").read_text())
+    result = {}
+    for node in tree.body:
+        if not isinstance(node, ast.ImportFrom) or node.level != 1 or not node.module:
+            continue
+        provider = "ve." + node.module
+        for alias in node.names:
+            result[alias.asname or alias.name] = (provider, alias.name)
+    return result
+
+
+EXPORTS = public_exports()
 TARGETS = {
     "ast", "environment", "model", "evaluate", "search", "entailment", "closure",
     "order", "background", "definitions", "norms", "norm_admission", "admission",
@@ -127,6 +144,9 @@ def imports(path: Path, tree: ast.Module):
             for alias in node.names:
                 if mod.startswith("ve."):
                     edges.append((mod, alias.name, node.lineno))
+                elif mod == "ve" and alias.name in EXPORTS:
+                    provider, name = EXPORTS[alias.name]
+                    edges.append((provider, name, node.lineno))
                 elif mod == "ve" and alias.name in TARGETS:
                     edges.append((f"ve.{alias.name}", "*module*", node.lineno))
         elif isinstance(node, ast.Import):
@@ -179,6 +199,10 @@ def generate():
              "", "## Coverage", "", f"Parsed {len(sources)} Python files; found {len(graph)} import edges into section 1.1 modules."]
     if missing:
         lines += ["Missing optional external trees: " + ", ".join(missing) + "."]
+    for scope in EXTERNAL:
+        if scope.exists():
+            revision = subprocess.check_output(["git", "-C", str(scope), "rev-parse", "HEAD"], text=True).strip()
+            lines.append(f"External tree `{scope}` at `{revision}`.")
     lines += ["", "## Symbols", "", "Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from plan §3 stage 2a; the interface column names its backend target.",
               "", "| Module | Symbol | Line | Class | Stage 2 adapter → interface for A | Direct import consumers |", "|---|---|---:|:---:|---|---|"]
     for module in sorted(TARGETS):
