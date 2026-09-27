@@ -115,6 +115,12 @@ def test_public_soft_pair_and_conflict_entrypoints():
     assert "among rules on the same act" not in conflict["status_text"]
     assert "budget 10000" in conflict["status_text"]
     assert conflict["coherent_exhibit"] is False
+    shown = check_soft_conflict(soft, coherent_model={
+        "complete": True, "domains": {"assistant": ["a"], "user": []},
+        "constants": {}, "relations": {"soft__excepted__a": [["a"]],
+                                      "soft__excepted__b": []}}, budget=42)
+    assert shown["coherent_exhibit"] is True
+    assert shown["budget"] == 42
 
 
 def test_rust_soft_fixture_matches_both_regenerators():
