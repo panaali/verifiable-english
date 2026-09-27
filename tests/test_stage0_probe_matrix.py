@@ -1,4 +1,5 @@
 """Regressions for rejected Stage 0 baseline probes."""
+import json
 import pytest
 
 from tests import probe_matrix as probe
@@ -63,6 +64,24 @@ def test_baseline_projection_only_drops_python_build_record_ids():
               "environment_id": "semantic", "nested": [{"record_id": "derived", "status": "Valid"}]}
     assert probe.baseline_projection(source) == {"environment_id": "semantic", "nested": [{"status": "Valid"}]}
     assert set(probe.GAP_ASSIGNMENTS) == set(probe.OPERATIONS)
+
+
+def test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence():
+    data = json.loads((probe.OUT / "python.json").read_text())
+    assert data["runtime_sha256"] == probe.runtime_sha256()
+    assert not any(row["status"] in {"KeyError", "ValueError"} for row in data["cells"])
+    assert {data["feature_probes"][f"readings:{name}"]["status"]
+            for name in ("all_disjunction", "some_fixed_choice", "none_shared_model")} == {
+                "ALL", "SOME", "NONE"}
+    assert "checker_build" not in json.dumps(data["graph_probes"])
+    boundaries = data["budget_boundaries"]
+    assert boundaries["MAX_TABLEAU_DEPTH_replay"]["at"]["status"] == "accepted"
+    assert boundaries["MAX_TABLEAU_DEPTH_replay"]["over"]["status"] == "_Budget"
+    assert boundaries["MAX_TABLEAU_DEPTH_search"]["at"]["output"] == "Found"
+    assert boundaries["MAX_TABLEAU_DEPTH_search"]["over"]["output"] == "Cutoff"
+    assert boundaries["order_search_depth"]["at"]["output"] == "Found"
+    assert boundaries["order_search_depth"]["over"]["output"] == "Cutoff"
+    probe.test_amended_graph_baselines()
 
 
 @pytest.mark.parametrize("profiles,tag", [
