@@ -1,0 +1,524 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "app_item": {
+        "description": "A part, concept, or result in the web application.",
+        "verbalisation": {
+          "singular": "app item",
+          "plural": "app items"
+        }
+      }
+    },
+    "predicates": {
+      "private": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Visible only in the private workspace.",
+        "verbalisation": "{0} is private"
+      },
+      "clear": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Clear to the reader.",
+        "verbalisation": "{0} is clear"
+      },
+      "precise": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has an exact reading.",
+        "verbalisation": "{0} is precise"
+      },
+      "explicit": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has an explicit representation.",
+        "verbalisation": "{0} is explicit"
+      },
+      "readable": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Shown in readable English.",
+        "verbalisation": "{0} is readable"
+      },
+      "relevant": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Relevant to the inference or decision.",
+        "verbalisation": "{0} is relevant"
+      },
+      "ready": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Ready for the next application action.",
+        "verbalisation": "{0} is ready"
+      },
+      "available": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Available in the current application state.",
+        "verbalisation": "{0} is available"
+      },
+      "valid": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Valid under the relevant application check.",
+        "verbalisation": "{0} is valid"
+      },
+      "saved": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Saved on the server.",
+        "verbalisation": "{0} is saved"
+      },
+      "temporary": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Expires after a limited time.",
+        "verbalisation": "{0} is temporary"
+      },
+      "separate": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Displayed separately from the related item.",
+        "verbalisation": "{0} is separate"
+      },
+      "visible": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Visible in the current application view.",
+        "verbalisation": "{0} is visible"
+      },
+      "checked": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Checked by the specified application procedure.",
+        "verbalisation": "{0} is checked"
+      },
+      "approved": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Approved by the author.",
+        "verbalisation": "{0} is approved"
+      },
+      "unresolved": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Left without an approved reading.",
+        "verbalisation": "{0} is unresolved"
+      },
+      "untrusted": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Not approved or established by the checker.",
+        "verbalisation": "{0} is untrusted"
+      },
+      "experimental": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Provided as an experimental feature.",
+        "verbalisation": "{0} is experimental"
+      },
+      "enabled": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Enabled by the server configuration.",
+        "verbalisation": "{0} is enabled"
+      },
+      "disabled": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Disabled by the server configuration.",
+        "verbalisation": "{0} is disabled"
+      },
+      "safe": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Classified as safe by the stated policy only.",
+        "verbalisation": "{0} is safe"
+      },
+      "checks": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Runs the relevant application check on the object.",
+        "verbalisation": "{0} checks {1}"
+      },
+      "shows": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Displays the object to the user.",
+        "verbalisation": "{0} shows {1}"
+      },
+      "contains": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Contains the object as a component.",
+        "verbalisation": "{0} contains {1}"
+      },
+      "uses": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Uses the object in the relevant process.",
+        "verbalisation": "{0} uses {1}"
+      },
+      "needs": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Requires the object to continue.",
+        "verbalisation": "{0} needs {1}"
+      },
+      "accepts": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Accepts the object as input.",
+        "verbalisation": "{0} accepts {1}"
+      },
+      "records": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Records the object in application state.",
+        "verbalisation": "{0} records {1}"
+      },
+      "preserves": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Preserves the object without changing its intended meaning.",
+        "verbalisation": "{0} preserves {1}"
+      },
+      "ambiguous": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has more than one possible reading.",
+        "verbalisation": "{0} is ambiguous"
+      },
+      "independent": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Does not use a model call.",
+        "verbalisation": "{0} is independent"
+      },
+      "unsigned": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Has no verified authorship.",
+        "verbalisation": "{0} is unsigned"
+      },
+      "incomplete": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Incomplete for a final decision.",
+        "verbalisation": "{0} is incomplete"
+      },
+      "current": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Applies to the current document revision.",
+        "verbalisation": "{0} is current"
+      },
+      "required": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Required for the next action.",
+        "verbalisation": "{0} is required"
+      },
+      "known": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Known to this application vocabulary.",
+        "verbalisation": "{0} is known"
+      },
+      "successful": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Completed the requested operation.",
+        "verbalisation": "{0} is successful"
+      },
+      "expired": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "No longer valid.",
+        "verbalisation": "{0} is expired"
+      },
+      "rejected": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Rejected by the application check.",
+        "verbalisation": "{0} is rejected"
+      },
+      "follows": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Follows logically from the object.",
+        "verbalisation": "{0} follows {1}"
+      },
+      "pending": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Awaiting a completed check.",
+        "verbalisation": "{0} is pending"
+      },
+      "describes": {
+        "arguments": [
+          "app_item",
+          "app_item"
+        ],
+        "description": "Gives a description of the object.",
+        "verbalisation": "{0} describes {1}"
+      }
+    },
+    "constants": {
+      "app": {
+        "sort": "app_item",
+        "description": "The VE web application."
+      },
+      "workspace": {
+        "sort": "app_item",
+        "description": "The private writing workspace."
+      },
+      "token": {
+        "sort": "app_item",
+        "description": "The user's access token."
+      },
+      "session": {
+        "sort": "app_item",
+        "description": "The current authenticated session."
+      },
+      "english": {
+        "sort": "app_item",
+        "description": "English in the application."
+      },
+      "reading": {
+        "sort": "app_item",
+        "description": "The current parsed reading."
+      },
+      "meaning": {
+        "sort": "app_item",
+        "description": "The meaning of the current document."
+      },
+      "logic": {
+        "sort": "app_item",
+        "description": "The logical form of the current reading."
+      },
+      "checker": {
+        "sort": "app_item",
+        "description": "The VE checker."
+      },
+      "proof": {
+        "sort": "app_item",
+        "description": "The current proof or certificate."
+      },
+      "assumption": {
+        "sort": "app_item",
+        "description": "An assumption of the current check."
+      },
+      "conclusion": {
+        "sort": "app_item",
+        "description": "The conclusion of the current check."
+      },
+      "document": {
+        "sort": "app_item",
+        "description": "The current user document."
+      },
+      "server": {
+        "sort": "app_item",
+        "description": "The VE web server."
+      },
+      "word": {
+        "sort": "app_item",
+        "description": "The current vocabulary word."
+      },
+      "synonym": {
+        "sort": "app_item",
+        "description": "The current proposed synonym."
+      },
+      "sentence": {
+        "sort": "app_item",
+        "description": "The current English sentence."
+      },
+      "view": {
+        "sort": "app_item",
+        "description": "The current representation of a reading."
+      },
+      "world": {
+        "sort": "app_item",
+        "description": "The current finite example world."
+      },
+      "vocabulary": {
+        "sort": "app_item",
+        "description": "The declarations that define the current document words."
+      },
+      "import": {
+        "sort": "app_item",
+        "description": "The current imported document."
+      },
+      "export": {
+        "sort": "app_item",
+        "description": "The current exported document."
+      },
+      "rule": {
+        "sort": "app_item",
+        "description": "A rule in the rules example."
+      },
+      "conflict": {
+        "sort": "app_item",
+        "description": "The current rule conflict."
+      },
+      "model": {
+        "sort": "app_item",
+        "description": "The external assistant model."
+      },
+      "assistant": {
+        "sort": "app_item",
+        "description": "The optional model assistant."
+      },
+      "candidate": {
+        "sort": "app_item",
+        "description": "A proposed reading."
+      },
+      "budget": {
+        "sort": "app_item",
+        "description": "The current checking budget."
+      },
+      "example": {
+        "sort": "app_item",
+        "description": "The selected teaching example."
+      },
+      "draft": {
+        "sort": "app_item",
+        "description": "The current unapproved draft."
+      },
+      "revision": {
+        "sort": "app_item",
+        "description": "The current document revision."
+      },
+      "statement": {
+        "sort": "app_item",
+        "description": "The current user statement."
+      },
+      "evidence": {
+        "sort": "app_item",
+        "description": "The evidence for a real-world claim."
+      },
+      "source": {
+        "sort": "app_item",
+        "description": "The user's source wording."
+      },
+      "translation": {
+        "sort": "app_item",
+        "description": "The proposed translation of the source."
+      },
+      "request": {
+        "sort": "app_item",
+        "description": "The current browser request."
+      },
+      "operation": {
+        "sort": "app_item",
+        "description": "The current server operation."
+      },
+      "result": {
+        "sort": "app_item",
+        "description": "The current result."
+      },
+      "situation": {
+        "sort": "app_item",
+        "description": "The current example situation."
+      },
+      "policy": {
+        "sort": "app_item",
+        "description": "The selected example policy."
+      },
+      "structure": {
+        "sort": "app_item",
+        "description": "The parsed structure shared by displayed views."
+      },
+      "approval": {
+        "sort": "app_item",
+        "description": "The author’s approval of a reading."
+      },
+      "consequence": {
+        "sort": "app_item",
+        "description": "A consequence of the current assumptions."
+      },
+      "paraphrase": {
+        "sort": "app_item",
+        "description": "The displayed paraphrase."
+      },
+      "reading_set": {
+        "sort": "app_item",
+        "description": "The set of checked readings."
+      },
+      "diagnostic": {
+        "sort": "app_item",
+        "description": "A diagnostic about a failed operation."
+      },
+      "words": {
+        "sort": "app_item",
+        "description": "An application words."
+      },
+      "views": {
+        "sort": "app_item",
+        "description": "An application views."
+      },
+      "rules": {
+        "sort": "app_item",
+        "description": "An application rules."
+      },
+      "kind": {
+        "sort": "app_item",
+        "description": "An application kind."
+      }
+    }
+  }
+}
