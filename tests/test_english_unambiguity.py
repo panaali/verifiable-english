@@ -279,7 +279,7 @@ def test_soft_modal_wordings_are_one_reading_and_profile_gated():
                                           decided_by="assistant")])
         source, manifest = render_english(doc)
         assert f" {wording} " in source
-        assert parse_english(env, source, manifest).rules == doc.rules
+        assert [r.to_dict() for r in parse_english(env, source, manifest).rules] == [r.to_dict() for r in doc.rules]
         assert modal_reading(wording)[0] == "default"
     w1 = environment({"required": obligation(), "permitted": permission()})
     for sentence in ("Every act should be done.", "Every act generally may be done."):
@@ -315,7 +315,7 @@ def test_soft_rule_options_exception_conditions_and_manifest():
     from ve.surface.softnorms import SoftNorm
 
     env = _soft_env()
-    rules = [SoftNorm("hard", "required", True, Top(), alterable=("user",)),
+    rules = [SoftNorm("hard", "required", True, Top(), mode="default", decided_by="assistant", alterable=("user",)),
              SoftNorm("default", "required", False, Top(), over=("hard",),
                       mode="default", rank="helpfulness", alterable=("operator", "user"),
                       decided_by="assistant", sufficient=(Top(),), necessary=(Top(),),
@@ -327,8 +327,8 @@ def test_soft_rule_options_exception_conditions_and_manifest():
     assert "Rule 2 serves helpfulness." in source
     assert "is excepted when this holds in all cases" in source
     assert "is excepted only when this holds in all cases" in source
-    assert parse_english(env, source, manifest).rules == tuple(rules)
-    assert parse_english(env, source).rules[1].over == ("rule-1",)
+    assert [r.to_dict() for r in parse_english(env, source, manifest).rules] == [r.to_dict() for r in rules]
+    assert parse_english(env, source).rules[1].core.over == ("rule-1",)
     stale = dict(manifest, text_digest="0" * 64)
     with pytest.raises(Exception, match="IdentityMetadataMismatch"):
         parse_english(env, source, stale)

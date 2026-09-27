@@ -272,9 +272,18 @@ def coverage(doc):
                 "assumptions": sum(u["support"] == "assumption" for u in units),
                 "bridge_leaves": bridge_count,
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    soft = doc.get("soft_document")
+    if soft is not None:
+        residual["soft_decisions"] = len(soft.extended_env.decision_names)
+        residual["soft_coherence"] = len(soft.coherence_premises)
+        residual["soft_exception_premises"] = len(soft.exception_premises)
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "unformalised_reasons": reasons,
-            "residual": residual, "residual_total": sum(residual.values())}
+            "residual": residual, "residual_total": sum(residual.values()),
+            **({"soft_residual_labels": [
+                *sorted(soft.extended_env.decision_names),
+                *(label for label, _ in soft.exception_premises),
+                *(label for label, _ in soft.coherence_premises)]} if soft is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):
@@ -405,8 +414,13 @@ def render_document(path):
             return f"The passage is recorded as {kind_description(kind)}."
         if type(content) is dict and "norm" in content:
             rule = content["norm"]
-            return (f"Rule {rule['name']} is a {rule.get('mode', 'strict')} rule on "
-                    f"{rule['predicate']} with sign {'positive' if rule['sign'] else 'negative'}.")
+            if rule.get("mode") == "default":
+                decider = rule["exception"].get("decided_by") or doc["environment"].soft.get("exception_decider")
+                return (f"Rule {rule['name']} is a default rule on {rule['predicate']} with sign "
+                        f"{'positive' if rule['sign'] else 'negative'}. Its exception is an open "
+                        f"decision by {decider}; the rule applies only if that exception does not apply.")
+            return (f"Rule {rule['name']} is a strict rule on {rule['predicate']} with sign "
+                    f"{'positive' if rule['sign'] else 'negative'}.")
         claim = wording(content)
         if kind == "asserted":
             return claim
@@ -415,7 +429,9 @@ def render_document(path):
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
-        prefix = "Checked reading: " if u["content"] is not None else "Recorded meaning: "
+        prefix = ("Open rule reading: " if type(u["content"]) is dict and
+                  "norm" in u["content"] and u["content"]["norm"].get("mode") == "default" else
+                  "Checked reading: " if u["content"] is not None else "Recorded meaning: ")
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
         reading_set = active_by_unit.get(u["id"])
         if reading_set is not None:

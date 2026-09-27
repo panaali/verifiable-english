@@ -401,7 +401,15 @@ def _parse_soft_notes(notes, number, env, words, scope):
         if m and int(m[1]) == number:
             if result["factors"]:
                 raise SyntaxError("Duplicate exception factors")
-            result["factors"] = [s.strip() for s in m[2].split(", ")]
+            # A factor can itself contain a comma.  Canonical output quotes
+            # every factor as a JSON string, which fixes the boundaries.
+            try:
+                result["factors"] = json.loads("[" + m[2] + "]")
+            except (ValueError, TypeError) as exc:
+                raise SyntaxError("Exception factors must be quoted strings") from exc
+            if (type(result["factors"]) is not list or
+                    any(type(factor) is not str for factor in result["factors"])):
+                raise SyntaxError("Exception factors must be quoted strings")
             continue
         raise SyntaxError(f"Unknown soft annotation {statement!r}")
     return result
@@ -450,7 +458,9 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
     for rule, (mode, parties, fields) in zip(w1.rules, metadata):
         rules.append(_soft_surface.SoftNorm(
             rule.name, rule.predicate, rule.sign, rule.guard, rule.unless, rule.over,
-            mode, fields["rank"], parties, fields["decided_by"],
+            mode, fields["rank"], parties,
+            (fields["decided_by"] or ("unstated" if mode == "default" and
+             not getattr(env, "soft", {}).get("exception_decider") else None)),
             tuple(fields["sufficient"]), tuple(fields["necessary"]), tuple(fields["factors"])))
     if manifest is not None:
         blocks = [line for line in source.split("\n") if not re.fullmatch(
@@ -479,15 +489,34 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
                 names[i], rule.predicate, rule.sign, rule.guard, rule.unless,
                 tuple(names[w1_positions[parent]] for parent in rule.over),
                 rule.mode, rule.rank, rule.alterable,
-                rule.decided_by, rule.sufficient, rule.necessary, rule.factors))
+                rule.decided_by, rule.sufficient, rule.necessary, rule.factors,
+                manifest["blocks"][i].get("hard", False) if manifest is not None else False))
         rules = restored
-    document = NormDocument(env, rules)
+    from .softnorms import SoftEnvironment, SoftNormDocument
+    soft_env = env if isinstance(env, SoftEnvironment) else SoftEnvironment(env.to_dict())
+    document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
 
 
 def _render_soft_english(document, *, handles=None):
+    from .softnorms import SoftNormDocument
+    soft_hash = document.document_hash if isinstance(document, SoftNormDocument) else None
+    if isinstance(document, SoftNormDocument):
+        from .ast import _Decoder
+        rules = []
+        for source_rule in document.rules:
+            core = source_rule.core
+            exception = source_rule.exception or {}
+            rules.append(_soft_surface.SoftNorm(
+                core.name, core.predicate, core.sign, core.guard, core.unless, core.over,
+                source_rule.mode, source_rule.rank, source_rule.alterable,
+                exception.get("decided_by"),
+                tuple(_Decoder().decode(x) for x in exception.get("sufficient", ())),
+                tuple(_Decoder().decode(x) for x in exception.get("necessary", ())),
+                tuple(exception.get("factors", ())), source_rule.hard))
+        document = NormDocument(document.env, rules)
     text, manifest = render_english(document, handles=handles, _w1=True)
     words = _words(document.env)
     lines = []
@@ -516,12 +545,21 @@ def _render_soft_english(document, *, handles=None):
                 annotations.append(f"Rule {i} is excepted only when {_guard_text(formula, document.env, words, scope)}.")
             factors = getattr(rule, "factors", ())
             if factors:
-                annotations.append(f"The exception to rule {i} takes account of {', '.join(factors)}.")
+                annotations.append(f"The exception to rule {i} takes account of " +
+                                   ", ".join(json.dumps(f, ensure_ascii=False) for f in factors) + ".")
         lines.append(header + body + (" " + " ".join(annotations) if annotations else ""))
     source = "\n".join(lines)
     start = 0
     for entry, line in zip(manifest["blocks"], lines):
         entry["span"] = [start, start + len(line)]
+        rule = document.rules[entry["number"] - 1]
+        if getattr(rule, "hard", False):
+            entry["hard"] = True
         start += len(line) + 1
     manifest["text_digest"] = hashlib.sha256(source.encode()).hexdigest()
+    if soft_hash is None:
+        from .softnorms import SoftEnvironment
+        soft_env = document.env if isinstance(document.env, SoftEnvironment) else SoftEnvironment(document.env.to_dict())
+        soft_hash = SoftNormDocument(soft_env, [rule.to_dict() for rule in document.rules]).document_hash
+    manifest["document_hash"] = soft_hash
     return source, manifest
