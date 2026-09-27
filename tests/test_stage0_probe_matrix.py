@@ -75,12 +75,12 @@ def test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence():
                 "ALL", "SOME", "NONE"}
     assert "checker_build" not in json.dumps(data["graph_probes"])
     boundaries = data["budget_boundaries"]
-    assert boundaries["MAX_TABLEAU_DEPTH_replay"]["at"]["status"] == "accepted"
+    assert boundaries["MAX_TABLEAU_DEPTH_replay"]["at"]["status"] == "Valid"
     assert boundaries["MAX_TABLEAU_DEPTH_replay"]["over"]["status"] == "_Budget"
-    assert boundaries["MAX_TABLEAU_DEPTH_search"]["at"]["output"] == "Found"
-    assert boundaries["MAX_TABLEAU_DEPTH_search"]["over"]["output"] == "Cutoff"
-    assert boundaries["order_search_depth"]["at"]["output"] == "Found"
-    assert boundaries["order_search_depth"]["over"]["output"] == "Cutoff"
+    assert boundaries["MAX_TABLEAU_DEPTH_search"]["at"]["status"] == "Found"
+    assert boundaries["MAX_TABLEAU_DEPTH_search"]["over"]["status"] == "Cutoff"
+    assert boundaries["order_search_depth"]["at"]["status"] == "Found"
+    assert boundaries["order_search_depth"]["over"]["status"] == "Cutoff"
     probe.test_amended_graph_baselines()
 
 

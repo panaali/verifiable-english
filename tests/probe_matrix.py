@@ -400,22 +400,22 @@ def boundary_baselines():
     closed_branch = _initial_branch(env, (Top(),), Top())
     rows["MAX_TABLEAU_DEPTH_replay"] = {"cap": limits.MAX_TABLEAU_DEPTH,
         "at": outcome(lambda: (_Replayer(1000).replay(closed_branch, {"rule": "close"},
-                                                        limits.MAX_TABLEAU_DEPTH), "Valid")[1], expected=(_Budget,)),
+                                                        limits.MAX_TABLEAU_DEPTH), {"status": "Valid"})[1], expected=(_Budget,)),
         "over": outcome(lambda: (_Replayer(1000).replay(closed_branch, {"rule": "close"},
-                                                          limits.MAX_TABLEAU_DEPTH + 1), "Valid")[1], expected=(_Budget,))}
+                                                          limits.MAX_TABLEAU_DEPTH + 1), {"status": "Valid"})[1], expected=(_Budget,))}
     rows["MAX_TABLEAU_DEPTH_search"] = {"cap": limits.MAX_TABLEAU_DEPTH,
-        "at": outcome(lambda: "Found" if _Searcher(1000).search(closed_branch,
-                                                       limits.MAX_TABLEAU_DEPTH) else "Cutoff"),
-        "over": outcome(lambda: "Found" if _Searcher(1000).search(closed_branch,
-                                                         limits.MAX_TABLEAU_DEPTH + 1) else "Cutoff")}
+        "at": outcome(lambda: {"status": "Found" if _Searcher(1000).search(closed_branch,
+                                                       limits.MAX_TABLEAU_DEPTH) else "Cutoff"}),
+        "over": outcome(lambda: {"status": "Found" if _Searcher(1000).search(closed_branch,
+                                                         limits.MAX_TABLEAU_DEPTH + 1) else "Cutoff"})}
     from conformance.order import environment as order_environment
     order_env = order_environment()
     order_branch = OrderBranch([OrderSigned(Top(), True), OrderSigned(Top(), False)])
     rows["order_search_depth"] = {"cap": limits.MAX_TABLEAU_DEPTH - 2,
-        "at": outcome(lambda: "Found" if OrderSearch(order_env, 1000).prove(
-            order_branch, limits.MAX_TABLEAU_DEPTH - 2) else "Cutoff"),
-        "over": outcome(lambda: "Found" if OrderSearch(order_env, 1000).prove(
-            order_branch, limits.MAX_TABLEAU_DEPTH - 1) else "Cutoff")}
+        "at": outcome(lambda: {"status": "Found" if OrderSearch(order_env, 1000).prove(
+            order_branch, limits.MAX_TABLEAU_DEPTH - 2) else "Cutoff"}),
+        "over": outcome(lambda: {"status": "Found" if OrderSearch(order_env, 1000).prove(
+            order_branch, limits.MAX_TABLEAU_DEPTH - 1) else "Cutoff"})}
     def tuples(size):
         raw = raw_environment(())
         raw["vocabulary"]["predicates"]["edge"] = {"arguments": ["item", "item"], "description": "edge"}
