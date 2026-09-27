@@ -494,7 +494,12 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
         rules = restored
     from .softnorms import SoftEnvironment, SoftNormDocument
     soft_env = env if isinstance(env, SoftEnvironment) else SoftEnvironment(env.to_dict())
-    document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
+    try:
+        document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
+    except VEError as exc:
+        if str(exc).startswith("DependencyCycle:"):
+            raise VEError(f"{exc}; DualGuardCycle: a soft decision introduces a guard dependency") from exc
+        raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document

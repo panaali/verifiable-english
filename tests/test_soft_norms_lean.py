@@ -324,6 +324,13 @@ def test_delta_conflict_free_conditional_on_coherence(lean):
                           "norms": delta, "packages": certified}])[0]
     assert verdict["verdict"] == "CONFLICT-FREE", verdict
     assert verdict["conditional_on"] == ["soft:coherence:a,b"]
+    assert "among rules on the same act" in verdict["status_text"]
+    assert verdict["coherent_exhibit"] is False
+    coherent = model({"soft__excepted__a": [["a"]], "soft__excepted__b": []})
+    shown = run(lean, [{"id": "shown", "kind": "soft-conflict", "environment": environment_json,
+                        "norms": delta, "packages": certified, "coherent_model": coherent}])[0]
+    assert shown["status_text"].endswith("coherent situation exhibited: yes")
+    assert shown["coherent_exhibit"] is True
     # without Coh_T the pair target has no certificate, and no other certificate binds
     bare = packages(environment_json, delta, row, soft=False)
     assert "x_required->x_permitted" not in bare

@@ -3,8 +3,10 @@ import json
 
 import pytest
 
-from ve.ast import Top
+from ve.ast import Forall, Top, Unary, Var
+from ve.ast import formula_from_data
 from ve.document import check_document, render_document
+from ve.entailment import prove_entailment
 from ve.errors import VEError
 from ve.norm_english import parse_english, render_english
 from ve.norm_strict import parse_strict, print_strict
@@ -15,7 +17,7 @@ from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict
 from ve.surface.softnorms import SoftNorm
 from ve.surface.softnorms import rule_paraphrase
 from tests.test_english_unambiguity import _soft_env
-from tests.test_soft_norms_lean import env, norm, should
+from tests.test_soft_norms_lean import env, norm, should, base_prime
 from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows, main as conformance_main
 
 
@@ -32,6 +34,8 @@ def test_english_default_cannot_enter_w1_semantics():
                                               mode="default", decided_by="assistant")])
     with pytest.raises(VEError, match="SoftNormDocument"):
         raw.premises()
+    required = Forall("act", Unary("required", Var(0)))
+    assert prove_norm_entailment(parsed.elaborated, (), required).status == "NotFound"
 
 
 def test_soft_manifest_preserves_hard_and_factor_boundaries():
@@ -94,6 +98,9 @@ def test_public_soft_pair_and_conflict_entrypoints():
     assert pairs["pairs"][0]["status"] == "UNKNOWN"
     conflict = check_soft_conflict(soft)
     assert conflict["verdict"] == "UNKNOWN"
+    assert "among rules on the same act" not in conflict["status_text"]
+    assert "budget 10000" in conflict["status_text"]
+    assert conflict["coherent_exhibit"] is False
 
 
 def test_rust_soft_fixture_matches_both_regenerators():
@@ -136,3 +143,25 @@ def test_soft_strict_text_round_trip_and_hard_identity():
     tricky = source.replace('decided by "assistant"',
                             'decided by "assistant factor safety"')
     assert parse_strict(environment, tricky).rules[1].exception["decided_by"] == "assistant factor safety"
+
+
+def test_disjoint_pair_is_removed_from_conditional_report():
+    q = ["unary", "q", ["var", 0]]
+    raw = env(extra={"q": {"arguments": ["assistant"], "description": "q"}})
+    rules = [should("a", "x_required", True, guard=q),
+             should("b", "x_required", False, guard=["not", q])]
+    soft = SoftNormDocument(SoftEnvironment(raw), rules)
+    row = _run({"id": "e", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    pair = row["colliding_pairs"][0]
+    base = base_prime(row)
+    claim = formula_from_data(base, pair["ast"])
+    premises = [formula_from_data(base, item["ast"]) for item in row["background"]
+                if item.get("label", "").startswith("soft:exception:")]
+    proof = prove_entailment(base, premises, claim)
+    assert proof.status == "Found"
+    package = {"environment_id": soft.env.environment_id,
+               "document_hash": soft.document_hash, "target": pair["label"],
+               "certificate": proof.certificate}
+    evidence = {pair["label"]: package}
+    assert classify_soft_pairs(soft, pairs=evidence)["discharged"] == [pair["label"]]
+    assert check_soft_conflict(soft, pairs=evidence)["conditional_on"] == []
