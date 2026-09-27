@@ -1,8 +1,9 @@
 # Soft norms and weighing in VE: plan (`soft-norms@0`)
 
-> Status: planning draft 2 (2026-09-27), revised after Astra's REVISE review of draft 1
-> (`manage-agents/soft-norms-review-astra.final.md`); for Astra + Fable statement review before any code or Lean
-> (PLAN-EXPAND2 rule 10). Section 7 lists disagreements with the review; section 8 maps every finding to a change.
+> Status: planning draft 3 (2026-09-27), transcribing the converged Astra/Fable debate
+> (`manage-agents/debates/soft-norms/{astra,fable}.md`): Astra round-2 groups 1–7 plus the three final additions.
+> BUILD as sequenced: no further plan round; Astra + Fable item-1 statement review before items 2, 3 and 4
+> (PLAN-EXPAND2 rule 10). Sections 7 and 8 retain the response to the draft-1 review.
 > Inputs: the constitution pilot W1 review (`run-20260927T0407Z/W1-REVIEW.md`, `metrics.json`: 154 of 258 unformalised
 > units carry `norms` as their representative blocker, 13 carry `defaults`; whole units faithfully upgraded: 0); the
 > pinned constitution (`manage-agents/pilots/claude-constitution/source/claude-constitution.md`, cited by line as `:n`);
@@ -58,8 +59,11 @@ exception     excepted_N(x̄): mandatory for default rules; decider named at rul
               (MissingExceptionDecider); in translation the decider may be `unstated` (counted, section 4)
 ```
 
-Decision predicates (`excepted_N`, `outweighs_L_H` for each ordered pair of ranks L below H that some colliding pair
-uses, `off_N_π`) are fresh base predicates of `E′ = E + decisions`, each with its rule's argument sorts. They are
+Decision predicates are fresh base predicates of `E′ = E + decisions`: `excepted_N` and `off_N_π` have their rule's
+argument sorts; `outweighs_{a,L,H}` is indexed by declared act `a` and ordered rank pair L below H used by a colliding
+pair on that act, with the act's argument sorts (shared by its dual predicates, norms.md 3.1). Act identity, ordered
+ranks and signature are identity-bound in `E′` and the soft document hash. Below, `outweighs_{a,N,M}` abbreviates
+`outweighs_{a,rank(N),rank(M)}` for rules N, M; it is not a separate rule-pair predicate. These predicates are
 nobody's instruction: an environment may attribute ordinary base predicates to a party (`"instruction_of":
 "operator"`, rendered in the legend as `"<verbalisation> records an instruction of the operator."`); decision
 predicates carry no attribution, because what a decider considers is outside the checker.
@@ -74,8 +78,8 @@ the set of colliding default pairs. This replaces draft 1's same-predicate-only 
 
 `ValueSoft_p(S, v̄)` is defined on the soft tree `T` itself, for a structure `S` over the symbols strictly below `p`
 in the dependency order of section 1.3 and a typed tuple `v̄`, evaluated under W1's `tupleVal`. It never refers to the
-elaboration. Every step is a finite Boolean evaluation; the only recursion is W1's `yields`/`selects` on the author
-precedence DAG, well-founded by norms.md 4.1(3).
+elaboration. Every step is a finite Boolean evaluation; step 3 recurses strictly upward in the finite rank order,
+and W1's `yields`/`selects` recurses on the author precedence DAG, well-founded by norms.md 4.1(3).
 
 ```text
 Step 0  In force.   live_N(x̄) := G_N(x̄) ∧ ¬⋁U_N(x̄) ∧ ¬switch_N(x̄) ∧ [mode default] ¬excepted_N(x̄)
@@ -92,18 +96,19 @@ Step 2  Hard over soft.  A default rule N on p is blocked at x̄ when a strict r
                         ∨ [N forbids, dual r declared]  P^s_r(x̄)      a strict rule requires the act
         A strict rule that is itself overridden by a strict exception does not select and blocks nothing.
 
-Step 3  Dominance by rank.  For (M, N) ∈ CP(T) with comparable ranks, M dominates N at x̄ iff
-          rank(M) outranks rank(N):  flag strict:   live_M(x̄)
-                                      flag holistic: live_M(x̄) ∧ ¬outweighs_N_M(x̄)
+Step 3  Dominance by rank.  eligible_N(x̄) := live_N(x̄) ∧ ¬blocked_N(x̄)
+        eff_N(x̄) := eligible_N(x̄) ∧ ¬dominated_N(x̄)
+        For (M, N) ∈ CP(T) on act a with comparable ranks, M dominates N at x̄ iff
+          rank(M) outranks rank(N):  flag strict:   eff_M(x̄)
+                                      flag holistic: eff_M(x̄) ∧ ¬outweighs_{a,N,M}(x̄)
           rank(N) outranks rank(M):  flag strict:   never
-                                      flag holistic: live_M(x̄) ∧ outweighs_M_N(x̄)
-        dominated_N(x̄) := ⋁_M dom(M, N)(x̄). Dominance reads liveness only, never who decides. Under a total rank
-        order with the strict flag the highest-ranked live rule is never dominated; under the holistic flag the
-        deciders' findings can leave every live rule dominated (a cycle of outweighings of length four or more,
-        1.4 `override_cycles`), and then step 4 gives the completion default.
+                                      flag holistic: eligible_M(x̄) ∧ outweighs_{a,M,N}(x̄)
+        dominated_N(x̄) := ⋁_M dom(M, N)(x̄). Higher opponents must be effective; lower overriding opponents need
+        only be eligible. Effective-rule dependencies go strictly upward, so the recursion is well-founded.
 
-Step 4  Default rules decide.  applies′_N := live_N ∧ ¬blocked_N ∧ ¬dominated_N for default N; W1 yields′/selects′
-        over the author precedence DAG among the rules on p; P^d_p, N^d_p as in W1 over default rules.
+Step 4  Default rules decide.  applies′_N := eff_N for default N; W1 yields′/selects′ over the author precedence
+        DAG among all rules on p, explicitly including strict children of default parents in yields′;
+        P^d_p, N^d_p as in W1 over default rules.
         P′_p := P^s_p ∨ P^d_p,  N′_p := N^s_p ∨ N^d_p
         ValueSoft_p(S, v̄) := some true  if P′ and not N′       | some false  if N′ and not P′
                             | some d_p   if neither             | none        if both
@@ -111,16 +116,20 @@ Step 4  Default rules decide.  applies′_N := live_N ∧ ¬blocked_N ∧ ¬domi
 
 Where a strict rule decides (`P^s ∨ N^s`), step 2 makes every default rule on `p` inapplicable, so `none` at a point
 with a strict rule is a strict–strict collision and `none` without one is a **weighing point**: two live, unblocked,
-undominated default rules of opposite effect, neither excepted. `some d_p` covers "no rule live", "every live
-default rule excepted, switched off or dominated", and the all-dominated case.
+undominated default rules of opposite effect, neither excepted. `some d_p` applies when no rule selects on `p`.
+At a fixed act and tuple, if any default is eligible, some default is effective, before author precedence. Proof:
+suppose none were effective. Choose an eligible rule with no lower-ranked eligible rule, which exists because the
+rank order is finite and acyclic. No higher effective rule can dominate it, and no lower eligible rule can override
+it. It is therefore effective, a contradiction. All eligible defaults being dominated is unreachable; this does
+not identify a predetermined winner or guarantee a selection on each predicate of the act.
 
 Why draft 1 was circular and this is not (review A1). Draft 1 made the higher rule an exception node of the lower
 one and then gave the higher rule a carve-out mentioning the lower rule's `selects`, so each rule's applicability
 depended on the other's selection: with both live and `outweighs` true the equations were `H = ¬L`, `L = ¬H`, two
-solutions. Here the derived conditions (`blocked`, `dominated`) mention only `live_*` of other rules and the strict
-selection of the strict sub-tree, none of which depends on any default rule's applicability or selection. With both
-live and `outweighs_L_H` true: `H` is dominated (`live_L ∧ outweighs_L_H`), `L` is not (`live_H ∧ ¬outweighs_L_H` is
-false); `L` alone applies. One winner, by evaluation, not by fixpoint.
+solutions. Here blocking depends only on strict selection, and dominance depends on higher effectiveness and lower
+eligibility, never on default selection after author precedence. With just H and L eligible on act a and
+`outweighs_{a,L,H}` true: H is dominated (`eligible_L ∧ outweighs_{a,L,H}`), L is not
+(`eff_H ∧ ¬outweighs_{a,L,H}` is false); L alone applies. One winner, by evaluation, not by fixpoint.
 
 ### 1.3 Elaboration `soften(T) = T′` over `E′`
 
@@ -134,6 +143,8 @@ derived_N := excepted_N(x̄) ∨ switch_N(x̄) ∨ blocked_N(x̄) ∨ dominated_
 carve-outs of N in T′ := U_N ++ [derived_N];  precedence of T′ := author precedence of T;  no derived edges
 ```
 
+The well-founded step-3 recursion is expanded into these derived carve-outs, inlining higher `eff_M` formulas;
+author precedence is applied afterward. Unfolded size is subject to `MAX_NODES`; overflow is `ResourceLimit`.
 `T′` is a `norms@0` tree over `E′`. Its stratification (norms.md 4.1(4)) is computed on `T′`: `blocked_N` and
 `dominated_N` mention the guard, carve-out and decision symbols of other rules, so a rule on `r` whose derived
 carve-out mentions the strict rules on `m` needs those rules' guards to lie strictly below `r`, and symmetrically for
@@ -152,12 +163,16 @@ Theorems about `soften` (Lean `VE/SoftNorms/*`, item 4):
   against a default rule's effect, that default rule does not select; hence `P^d ∧ N^s` and `N^d ∧ P^s` are
   unsatisfiable on the same predicate, and no `required ∧ ¬permitted` point has a default rule on one side and a
   strict rule on the other. This is about `soften`, not a search.
-- `hard_never_weighed`: `P^s_p`, `N^s_p` and every strict rule's `selects` are independent of ranks, the flag and
-  every `outweighs` and `excepted` predicate; a hard rule (strict, no switch) is independent of every decision
-  predicate.
+- `hard_never_weighed`: locally, with the interpretations of strict guards and author carve-outs, the layer below
+  and all strict switches fixed, `P^s_p`, `N^s_p` and every strict rule's `selects` are independent of ranks, the flag
+  and `outweighs` and default-exception decisions. Global independence from decision predicates requires a
+  decision-free dependency cone,
+  including strict exceptions (using the cone check of section 3, item 6). A hard rule's own lack of a switch does
+  not imply this: a switchable strict exception can change its selection, and a strict guard can read a lower soft
+  outcome.
 - `rank_resolves`: for `(M, N) ∈ CP(T)` with comparable ranks, `selects′_M ∧ selects′_N` is unsatisfiable (strict
-  flag: the lower is dominated wherever the higher is live; holistic: exactly one of `dom(M, N)`, `dom(N, M)` holds
-  wherever both are live, since they differ only in the sign of one `outweighs` atom).
+  flag: both effective would make the lower dominated by the higher; holistic: both effective would require the
+  same act-indexed `outweighs` atom to be true to protect the lower and false to protect the higher).
 - `rank_acyclic`: the closed `outranks` order is a strict partial order (via `VE.Route.dependencyOrder`).
 
 ### 1.4 Decision assignments, coherence and what "conflict-free" means (review A3)
@@ -169,14 +184,18 @@ classification       for (M, N) ∈ CP(T):
                        DISJOINT        certificate  Background_base(E′) ⊢ ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
                        WEIGHING POINT  checked witness (B, ā) with both selecting; shown as a situation
                        UNKNOWN         neither within budget; budget named
-WP(T)                := the WEIGHING POINT and UNKNOWN pairs (UNKNOWN is kept conservatively as an assumption)
-Coh_T                := ⋀_{(M,N) ∈ WP(T)} ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
+WP(T)                := the WEIGHING POINT and UNKNOWN pairs (undischarged conjuncts)
+Coh_T                := ⋀_{(M,N) ∈ CP(T)} ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
                         one universal base formula per pair, labelled soft:coherence:<M>,<N>, regenerated from the
                         decoded document at every site and bound to the soft document hash, never taken from the wire
-coherent B           := B ⊨ Coh_T: the deciders' findings resolve every weighing point
+coherent B           := B ⊨ Coh_T: all colliding default pairs have disjoint selections
 Background_base′     := Background_base(E′) ++ Coh_T        (universal, so norms.md 7.1(3) is preserved when the
 BaseAdmissible′ E T B := BaseAdmissible E′ B ∧ Sat B Coh_T    substituted selections are quantifier-free)
 ```
+
+`Coh_T` is defined over all syntactic `CP(T)`, independently of classification budgets. RANK-RESOLVED conjuncts
+are theorems and DISJOINT conjuncts follow from their certificates; classification marks these as discharged,
+without changing the route's coherence condition or requiring classifications to be replayed to regenerate it.
 
 Draft 1 claimed W1's guarantees would be inherited by replaying the strict core and the DISJOINT certificates. That
 was wrong: at a weighing point with both exceptions false `T′` elaborates to contradictory requirements, `elab_p` is
@@ -184,14 +203,15 @@ false there, and W1's unique-expansion premise fails for that base structure; no
 what the soft route certifies, is the following.
 
 - `coherent_expands` (W1's pointwise `conflictFree_expands_document` applied to `T′`; reused, not restated): for
-  every base `B` over `E′`, `Unique(DocumentExpansion E′ T′ B) ↔ ConflictFree E′ T′ B`. A coherent assignment that
+  every base `B` over `E′` with `BaseAdmissible E′ B`,
+  `Unique(DocumentExpansion E′ T′ B) ↔ ConflictFree E′ T′ B`. A coherent assignment that
   also avoids the conflicts below has exactly one expansion; an incoherent one has none.
 - `soft_conflict_decomposition`: `ConflictFree E′ T′ B ↔ NoStrictCollision(B) ∧ NoHardPairConflict(B) ∧ Sat B Coh_T`,
   where `NoStrictCollision` is `∀p x̄. ¬(P^s_p° ∧ N^s_p°)` and `NoHardPairConflict` says no declared pair `(r, m)` has
   `O_r° ∧ ¬O_m°` at a point unless both sides come from default rules (which is the case `Coh_T` covers). The `←`
   direction contains `hard_over_soft` and `weighing_points_complete`: every collision in a coherent `B` is
   strict–strict on one predicate or a pair conflict with a strict rule or a completion on at least one side; every
-  default–default collision is at a pair in `WP(T)`.
+  default–default collision is at a pair in `CP(T)` (and cannot be a discharged pair in an admissible base).
 - **What CONFLICT-FREE certifies**: `soft_conflict_free := ∀B. BaseAdmissible′ E T B → ConflictFree E′ T′ B`,
   checked by W1's unchanged conflict machinery (tableau, witness search, evaluator) on `T′` over `Background_base′`.
   In words: under any decision assignment that resolves the listed weighing points, every situation has exactly one
@@ -202,9 +222,11 @@ what the soft route certifies, is the following.
   the first layer's `Admissible_in` as a parameter, so `Coh_T` enters through it; `BackgroundSound`/`Complete` for
   the soft route include `Coh_T`). A certified conclusion holds in every situation whose decision assignment is
   coherent and satisfies the report's other assumptions; a countermodel is a coherent base situation, rendered with
-  its decision assignment in document terms ("rule 12 is excepted here; rule 4 is not; rule 4 outweighs rule 21").
-  Every soft report carries `conditional_on: soft:coherence:<pairs>`, and the certificate's used-leaf list shows
-  whether a given conclusion actually used a coherence premise (as bridge leaves are shown today).
+  its decision assignment in document terms ("rule 12 is excepted here; rule 4 is not; on complying with this
+  operator instruction, helpfulness outweighs ethics", the act-indexed atom for rules 4 and 21).
+  Every soft report states the route's full `Coh_T` condition separately from `conditional_on: soft:coherence:<pairs>`,
+  which lists only the undischarged coherence premises actually used by the certificate. The used-leaf list records
+  those dependencies (as bridge leaves are shown today).
 - **Vacuity.** (i) The P0 vacuity report (3.8) runs over `Background_base′ ++ layer premises ++ Γ`, so a `Γ` that
   fixes decision facts incompatible with `Coh_T` makes dependent certificates `vacuous`, visibly. (ii) A CONFLICT-FREE
   report must also exhibit one coherent decision assignment as a checked finite model together with `Γ`, or say
@@ -217,10 +239,11 @@ what the soft route certifies, is the following.
   completions; doing so would make every default obligation vacuous under a deny default (section 7, item 1). The
   witness names the completion ("rule 12 requires sharing here; by default an assistant may not share; no rule
   permits it").
-- **Override cycles.** Under the holistic flag, findings such as `outweighs_B_A ∧ outweighs_C_B ∧ outweighs_D_C ∧
-  ¬outweighs_D_A` over four mutually colliding live rules leave every live rule dominated and the completion default
-  decides (1.2, step 3). The semantics is total there; the report lists each such possibility as `override_cycles`
-  with a witness and the obligation "the deciders' outweighings must not leave every applicable rule outweighed".
+- **Override cycles.** Under the holistic flag, take four eligible defaults on act a, ranks A>B>C>D, A/C requiring
+  and B/D releasing, with findings `outweighs_{a,B,A} ∧ outweighs_{a,C,B} ∧ outweighs_{a,D,C} ∧ ¬outweighs_{a,D,A}`
+  (B>A, C>B, D>C, A>D). This is an alternating collision cycle, not four pairwise-colliding rules. D alone is
+  effective. The report's `override_cycles` line gives a diagnostic warning with a witness, not an additional
+  assumed obligation; `Coh_T` contains no ban on such cycles.
 
 Draft 1's status table said CONFLICT for the naive W1 verdict on `T′` was "the intended reading"; it is not, and it
 is not what the soft route reports. The soft route's contract is the conditional statement above with its residual.
@@ -229,15 +252,19 @@ is not what the soft route reports. The soft route's contract is the conditional
 
 | Question | Method | Result |
 |---|---|---|
-| Which default rules can collide, and is each collision resolved? | for each `(M, N) ∈ CP(T)`: `rank_resolves`, else certificate, else witness | RANK-RESOLVED / DISJOINT / WEIGHING POINT (situation, obligation `excepted_M ∨ excepted_N` there) / UNKNOWN; yields `WP(T)`, `Coh_T` |
+| Which default rules can collide, and is each collision resolved? | for each `(M, N) ∈ CP(T)`: `rank_resolves`, else certificate, else witness | RANK-RESOLVED / DISJOINT / WEIGHING POINT (situation, condition `¬(selects′_M ∧ selects′_N)` there) / UNKNOWN; identifies discharged conjuncts of the budget-independent `Coh_T` and the remaining `WP(T)` |
 | Can the rules contradict each other under a coherent decision assignment? | W1 conflict check on `T′` over `Background_base′`, unchanged functions | CONFLICT (witness classified: strict collision / pair conflict with a strict rule or completion) / CONFLICT-FREE conditional on `Coh_T` (certificate + one coherent model) / UNKNOWN |
 | Are the priorities consistent? | closure of `outranks`, `dependencyOrder`; declared ties; author edges against rank | acyclic / `DependencyCycle: <ranks>`; `TieAgainstOrder`; undeclared ties listed; `RankAgainstPrecedence` (warning: legal, pointless) |
 | Who can change each rule? | switches; attribution cone check (section 3, item 6) | per rule: parties with a switch; whether any predicate attributed to another party occurs in the rule's cone |
 
-Weighing points, override cycles and coherence premises are residual items (VISION.md 2), each with its resolution:
-`open` (a decider must except one of the two), `rank: ethics over helpfulness (holistic)` (resolved by structure, the
-`outweighs` term in the residual), `strict` (no residual). Obligations are reported as labelled premises the results
-depend on; the checker does not invent decision criteria (document.md).
+Weighing points and coherence premises are residual items (VISION.md 2), each with its resolution:
+`open` (the two rules must not both select: exceptions, switches, guard or author carve-out conditions, strict
+blocking, dominance by other rules or author precedence can prevent selection), `rank: ethics over helpfulness
+(holistic)` (pairwise defeat resolved by structure, the act-indexed `outweighs` term in the residual), `strict`
+(no residual). Reports show the actual selection-disjointness condition, not a requirement that one exception
+must hold. The full route condition `Coh_T` is separate from the undischarged premises actually used, listed in
+`conditional_on`; `override_cycles` entries are diagnostic warnings, not assumed obligations. The checker does
+not invent decision criteria (document.md).
 
 ### 1.6 Limit
 
@@ -261,10 +288,10 @@ over `outranks(property, property)`; both stay in the :34-37 reading set (sectio
 | `Rule n is excepted when C.` / `... only when C.` | C is sufficient / necessary for rule n's exception. | `sufficient` / `necessary` (premises in the `soft` background slot, listed under the term) |
 | `The exception to rule n takes account of <consideration>[, <consideration>]*.` | These considerations bear on whether rule n is excepted; none is by itself decisive. | `factors` (no premise) |
 | `Rule n serves <rank>.` | Rule n counts as a <rank> consideration where it collides with a rule of another rank. | `rank(n)` |
-| `<Rank a> outranks <rank b>.` | Where a rule serving a and one serving b disagree on one act, the a rule decides (subject to the flag). | rank-order edge |
+| `<Rank a> outranks <rank b>.` | Where the rules collide on one act, the lower rule gives way to an effective higher rule, subject to the holistic override if declared; this is pairwise defeat, not guaranteed final selection. | rank-order edge |
 | `<Rank a> and <rank b> are not ranked.` | Neither outranks the other; a disagreement between them is a weighing point. | declared tie (checked) |
-| `Outranking in this document is holistic; <decider> decides when a lower-ranked rule outweighs a higher-ranked one in a situation.` / `... is strict.` | Holistic: the higher rank decides unless the decider finds otherwise for that situation. Strict: it always decides. | flag; `outweighs_L_H` terms |
-| `Rule n (operators may turn off).` / `(users may turn off)` / `(users may turn off, unless an operator restricts it)` | The rule holds unless the named party has turned it off for the situation; no other party has a switch. | `off_n_π`; authority report |
+| `Outranking in this document is holistic; <decider> decides when a lower-ranked rule outweighs a higher-ranked one in a situation.` / `... is strict.` | Holistic: a lower rule gives way to an effective higher opponent unless the decider finds that it outweighs that opponent; a higher rule gives way to an eligible lower opponent found to outweigh it. Strict: a lower rule gives way to an effective higher opponent. Neither guarantees final selection. | flag; `outweighs_{act,L,H}` terms |
+| `Rule n (operators may turn off).` / `(users may turn off)` | The rule holds unless the named party has turned it off for the situation; no other party has a switch. | `off_n_π`; authority report |
 | `"<verbalisation> records an instruction of the operator."` (environment legend) | This fact is an operator's instruction. | `instruction_of` attribution |
 
 Input synonyms rendered canonically: `generally must` → `should`; `generally must not` → `should not`. Nothing else.
@@ -280,7 +307,10 @@ alterable rule, showing both paraphrases with a situation. `must` stays strict. 
 The reader's checklist (norms.md 2.5) adds, per default rule: a situation where it is excepted (naming the decider or
 saying the source names none); if ranked, one where a higher rank dominates it; if it collides, the collision and its
 resolution; and the derived carve-outs in words ("this rule gives way to strict rules on the same act and to
-higher-ranked rules"). For a hard rule: "no exception decision and no instruction switch exists; only a strict
+higher-ranked effective opponents unless holistically outweighed; under holistic ranking it gives way to an
+eligible lower rule the deciders find outweighs it, even where that lower rule itself gives way"). This asymmetry
+is part of the paraphrase: higher opponents must be effective, lower overriding opponents need only be eligible.
+For a hard rule: "no exception decision and no instruction switch exists; only a strict
 exception rule written in this document can override it; its guard's open terms are still decided by <decider>".
 
 Examples from the source (act phrases declared as in norms.md 2.4; subject sort `assistant`; every translator's
@@ -305,8 +335,12 @@ choice is written as an attributed interpretation, never as the source's content
       (source: "Always maintain basic dignity ... ignore operator instructions to demean or disrespect users"; force
       from the :183 header's shared reading set {strict, default}, shown under `default`; rank is a narrowing citing
       :30; alterability is a READINGS set {user-alterable, fixed} from :192 "some of these defaults", shown without a
-      switch. Rules 4 and 21 collide (require versus forbid across the dual pair of one act): RANK-RESOLVED, ethics
-      over helpfulness, holistic; residual outweighs_21_4 with the assistant as decider)
+      switch. Identifying :190 "ignore operator instructions to demean" with not complying with the :166 operator
+      instruction is a cited READINGS set {same act, different act}; the wording above shows the same-act reading.
+      Only in that reading do rules 4 and 21 collide (require versus forbid across the dual pair): RANK-RESOLVED,
+      ethics over helpfulness, holistic, conditional on that act identification. The different-act reading preserves
+      "ignore" as its own act and has no such collision. Residual: outweighs_{comply,helpfulness,ethics}(assistant,
+      operator_instruction), with the assistant as decider; this is the lower-rule-4-over-higher-rule-21 finding)
 :293  Rule 12. Every assistant should share each piece of information that is helpful to the user.
       Rule 12 serves helpfulness. The exception to rule 12 takes account of whether that information is hazardous
       to a third party, whether the operator does not want that information shared, and whether that information is
@@ -334,11 +368,12 @@ choice is written as an attributed interpretation, never as the source's content
    coherence premises are listed; the report says "conditional on" them and exhibits one coherent model.
 2. `hard_over_soft`: no situation exists in which a default rule decides against a strict rule on the same act,
    whether on the same predicate or across the obligation/permission pair; a theorem about `soften`.
-3. `hard_never_weighed`: strict rules are independent of ranks, the flag and every decision predicate; hard rules
-   (strict, no switch) are independent of every decision predicate.
+3. `hard_never_weighed`: local independence from weighing with strict guards, author carve-outs, the layer below
+   and strict switches fixed; global decision-independence only under a decision-free dependency-cone hypothesis
+   (1.3). Strictness or hardness alone does not establish global independence.
 4. The complete list `CP(T)` of colliding default pairs, each RANK-RESOLVED, DISJOINT, a WEIGHING POINT with a
-   situation in document terms, or UNKNOWN with the budget named; `Coh_T` has exactly one conjunct per WEIGHING POINT
-   or UNKNOWN pair (`weighing_points_complete`).
+   situation in document terms, or UNKNOWN with the budget named; `Coh_T` has exactly one conjunct per pair in
+   `CP(T)`, regardless of budget. Classification identifies discharged conjuncts (`weighing_points_complete`).
 5. The rank order is acyclic; declared ties are ties; author precedence against the ranks is flagged.
 6. **Authority, scoped** (review B1): for each rule, exactly the declared parties have a switch (there is no other
    `off` predicate to set). Separately, an attribution check: if no predicate attributed to party π occurs in the
@@ -349,7 +384,7 @@ choice is written as an attributed interpretation, never as the source's content
    did not attribute; the report states both limits next to the result.
 7. `soften_wellFormed`, `soften_faithful`; W1's well-formedness, DAG and identity checks on `T′`.
 
-**Open, never certified:** the exception decisions (`excepted_N`); the holistic overrides (`outweighs_L_H`); the
+**Open, never certified:** the exception decisions (`excepted_N`); the holistic overrides (`outweighs_{act,L,H}`); the
 coherence of the deciders' findings (assumed, listed); weighing procedures with their factors (:332-343 becomes the
 schema of `harm_outweighs_benefit(action, context)` with factors probability, counterfactual impact, severity,
 breadth, proximate cause, consent, responsibility, vulnerability; decider per the source: the assistant, :325 "use
@@ -366,7 +401,8 @@ Statuses stay CHECKED / LABELLED / OPEN / READINGS / UNFORMALISED; no new status
   recorded decision (VISION.md 2). It is part of the checked spine; its exception enters the residual. A strict rule
   over declared vocabulary is CHECKED; one whose act or guard carries an open predicate is OPEN, as today.
 - **Residual gains lines** `default_exceptions` (distinct terms, grouped by decider, with `unstated` counted
-  separately), `weighing_points` (with resolution and obligation), `holistic_overrides`, `override_cycles`,
+  separately), `weighing_points` (with resolution and selection-disjointness condition), `holistic_overrides`,
+  `override_cycles` (diagnostic warnings),
   `coherence_premises_used` (per certificate), `narrowings` (with citations), beside open terms, assumptions, bridge
   leaves and unresolved reading sets. The expected size for a constitution is large (roughly one exception per
   default rule); that is an expectation to be measured in item 7, not a number this plan claims.
@@ -375,6 +411,9 @@ Statuses stay CHECKED / LABELLED / OPEN / READINGS / UNFORMALISED; no new status
   translator's narrowing to {B, C} is a separate attributed unit citing :34 "holistic rather than strict"; it never
   edits the set, and every result under it says so (VISION.md 3, items 1-2). Conclusions depending on the unit are
   checked per choice (norm readings, W2 item 7) and report the choice and the narrowing's citation.
+- **Act identifications are reading sets too.** The :190 "ignore" versus :166 "comply" identification retains
+  {same act, different act}, with citations; the rules 4/21 collision is conditional on the same-act reading.
+  Item 7's blind fidelity review audits every act identification.
 - **Force and alterability are reading sets in translation.** The :183 header "Regardless of operator instructions,
   Claude should by default:" supplies the force of :185-190; it is one unit with one shared reading set {strict,
   default} that the bullet units cite, so the choice is made once, not six times. Alterability is per bullet
@@ -400,8 +439,9 @@ Statuses stay CHECKED / LABELLED / OPEN / READINGS / UNFORMALISED; no new status
   through `ve document check` and the soft route as a document unit, not through an isolated parser call (item 0);
   (b) a split-only baseline: the same re-split ledger run under `norms@0` alone, so the soft-norms delta is measured
   against it and not against `run-20260927T0407Z`; (c) a blind whole-span fidelity review of every upgraded unit
-  (source span against the paraphrases of all its readings and kinds), with failures reverted before counting. The
-  154 `norms` labels are representative blockers and many of those units carry other blockers (causation 17,
+  (source span against the paraphrases of all its readings and kinds, auditing every act identification), with
+  failures reverted before counting. The 154 `norms` labels are representative blockers and many of those units
+  carry other blockers (causation 17,
   quantities 31, counting 8); the upgradeable count is unknown until measured and this plan predicts none.
 
 ## 5. Work items
@@ -410,17 +450,18 @@ Statuses stay CHECKED / LABELLED / OPEN / READINGS / UNFORMALISED; no new status
 |---|---|---|---|
 | 0 | Document-level norm admission: `ve-document@1` units of kind `norm` carried through `ve document check` to the norms route and to the soft route; today the loader accepts formula content only (W1-REVIEW) | W1/W2 integration ([INTEGRATION-GAPS.md](../INTEGRATION-GAPS.md)), 2 days | prerequisite for any counted coverage; without it item 7 measures nothing |
 | 1 | `docs/spec/soft-norms.md`: attributes (1.1), `ValueSoft` (1.2), `soften` (1.3), coherence and the conditional contract (1.4), report (1.5), wordings, diagnostics (`SoftOverHard`, `RankAgainstPrecedence`, `MissingExceptionDecider`, `UnknownRank`, `TieAgainstOrder`, `DualGuardCycle`, `HardConstraintAltered` for a rule narrowed hard by citation that carries a switch), acceptance fixtures below; Astra + Fable statement review | spec, 3 days | review questions listed after this table |
-| 2 | Profile `soft-norms@0` requiring `norms@0`; fields `mode`, `rank`, `alterable`, `exception` on W2 `norm` content; ranks, flag and `instruction_of` in the environment (identity-bound like `regulated`); `Background_base′` generator slot `soft` (coherence premises, exception `necessary`/`sufficient` premises); no W5 dependency | Python `ve/softnorms.py`, `ve/document.py`, `ve/profiles.py`, `ve/background.py`, 5 days | all `norms@0` fixtures and hashes unchanged; W1's `check_conflict`, tableau and search reused on `T′` |
+| 2 | Profile `soft-norms@0` requiring `norms@0`; fields `mode`, `rank`, `alterable`, `exception` on W2 `norm` content; ranks, flag and `instruction_of` in the environment (identity-bound like `regulated`); `outweighs` identities bind declared act, ordered rank pair and act argument sorts; `Background_base′` generator slot `soft` (coherence premises over all `CP(T)`, exception `necessary`/`sufficient` premises); no W5 dependency | Python `ve/softnorms.py`, `ve/document.py`, `ve/profiles.py`, `ve/background.py`, 5 days | all `norms@0` fixtures and hashes unchanged; W1's `check_conflict`, tableau and search reused on `T′` |
 | 3 | Surface registrations (`should`, `generally`, `serves`, `outranks`, `are not ranked`, `is excepted when`, `takes account of`, `is decided by`, header options, legend attribution), the two synonyms, profile-gated rejection, the frequency-versus-norm paraphrases; W7 harness fixtures; `tests/test_english_unambiguity.py` | `ve/surface/softnorms.py`, `ve/norm_english.py`, 3 days | `Rule ` and `By default, ` reused, disambiguated on following tokens |
 | 4 | Lean `lean/VE/SoftNorms/{Tree,Soften,Semantics,Coherence,Status,Wire,Admission,Run}.lean`: `SoftTree`, `ValueSoft`, `soften`; theorems `soften_wellFormed`, `soften_faithful`, `hard_over_soft`, `hard_never_weighed`, `rank_resolves`, `rank_acyclic`, `weighing_points_complete`, `soft_conflict_decomposition`, `coherent_expands` (W1 lemma instance), `soft_conflict_free`, `soft_route_acceptance`, `soft_route_countermodel`, `soft_wire_acceptance`, `soft_wire_conflict_sound` (W1's restated with `BaseAdmissible′`), `authority_independent`; executable `ve_soft_norms_route` regenerating `T′`, `Coh_T` and `Background_base′` from raw JSON, delegating checker calls to unchanged W1 functions; `lean/SOFT-NORMS.md`; audit allowlist unchanged | Lean, 7 to 10 days | frozen `Norms/*`, `Route/*` untouched; W1's per-structure lemmas reused, document-wide theorems restated |
 | 5 | Coverage: residual lines and grouping in `tools/coverage_dashboard.py` and `ve document coverage`; `conditional_on` on every soft report; split-only baseline mode | Python, 2 days | metrics schema addition only |
 | 6 | W8: `add_default_rule`, `add_rank`, `set_exception`, `set_factors`; paraphrases and extra example situations including the derived carve-outs and the collision resolution; translation rule for force words; fidelity gate before offering | `ve/assist/*` | exception and decider always shown; `unstated` shown as such |
-| 7 | Pilot re-run on the pinned constitution: re-split `norms` units; split-only baseline under `norms@0`; translate :34-37, :166, :181-192, :281-293, :325-347, :405-423, :433-445 with reading sets and cited narrowings; re-examine the five open terms' deciders and `u0214`; blind whole-span fidelity review; report status and residual deltas against the split-only baseline and against `run-20260927T0407Z` | pilot, 3 days | only measured numbers are claimed; every translator choice is an attributed unit |
+| 7 | Pilot re-run on the pinned constitution: re-split `norms` units; split-only baseline under `norms@0`; translate :34-37, :166, :181-192, :281-293, :325-347, :405-423, :433-445 with reading sets and cited narrowings; re-examine the five open terms' deciders and `u0214`; blind whole-span fidelity review auditing every act identification; report status and residual deltas against the split-only baseline and against `run-20260927T0407Z` | pilot, 3 days | only measured numbers are claimed; every translator choice is an attributed unit |
 
 Acceptance fixtures for item 1 (deterministic, hand-written expected results, Python and Lean where a case kind
 exists), beside norms.md 10.1 repeated on soft trees:
 
-- (α) A1 regression: two default rules of opposite effect, ranks a over b, holistic; both live; `outweighs` true:
+- (α) A1 regression: two default rules of opposite effect on act X, ranks a over b, holistic; both eligible;
+  `outweighs_{X,b,a}` true:
   the lower alone selects; false: the higher alone; `Norms.Value T′` equals `ValueSoft`; exactly one expansion.
 - (β) A2 mixed: default `should X` (+r) and strict `must not X` (−m), both live: X neither required nor permitted,
   CONFLICT-FREE; strict `must X` and default `should not X`: required and permitted; same-predicate strict versus
@@ -429,8 +470,12 @@ exists), beside norms.md 10.1 repeated on soft trees:
   excepted"; `m` allow-by-default: CONFLICT-FREE. Default `should not X` with `r` allow-by-default: CONFLICT.
 - (δ) soft–soft across the dual, unranked: WEIGHING POINT with obligation; ranked: RANK-RESOLVED; certificate for
   the conditional claim replays; dropping `Coh_T` from the background makes the same certificate fail to replay.
-- (ε) four mutually colliding rules with cyclic outweighings: every live rule dominated, completion default; the
-  `override_cycles` line names the situation.
+  Different classification budgets leave `Coh_T` unchanged; `conditional_on` names only undischarged premises used.
+  The paraphrase permits resolution by a switch or another rule's defeat without either exception holding.
+- (ε) alternating collision cycle: four eligible defaults on X, ranks A>B>C>D, A/C require, B/D release, holistic;
+  findings B>A, C>B, D>C, A>D (`outweighs_{X,B,A}`, `outweighs_{X,C,B}`, `outweighs_{X,D,C}` true,
+  `outweighs_{X,D,A}` false). D alone is effective; the `override_cycles` warning names the situation without
+  adding an assumed obligation.
 - (ζ) authority: a strict user-alterable rule; an operator-attributed predicate in its guard versus not; the
   report's per-party result flips only in the first case; the switch predicate for the operator does not exist.
 - (η) W1's diamond (10.1 q) and grandchild (10.1 d) as default rules; a strict child of a default parent; a default
@@ -439,15 +484,29 @@ exists), beside norms.md 10.1 repeated on soft trees:
 - (θ) `TieAgainstOrder`; `DependencyCycle` on ranks; `RankAgainstPrecedence` as a warning with unchanged semantics;
   `DualGuardCycle` when a guard mentions the dual predicate on both sides.
 - (ι) vacuity: `Γ` fixing `excepted_M` and `excepted_N` false at a weighing point makes a dependent certificate
-  `vacuous`; the report's coherent-model exhibit fails and says so.
+  `vacuous` when `Γ` also fixes guards, carve-outs, switches and other defeats so that both rules select; false
+  exceptions alone do not suffice. The report's coherent-model exhibit fails and says so.
+- (κ) chain: A requires X, B forbids X, C permits X, ranks A>B>C, strict flag, all live, no strict rules or author
+  precedence, permission deny-by-default. A and C select; X is required and permitted, CONFLICT-FREE.
+- (λ) blocked dominator: strict `need not X`, higher-ranked default `should X`, lower-ranked default `should not X`,
+  all live, strict ranking, permission allow-by-default. The strict release blocks the obligation, which does not
+  dominate the prohibition; the prohibition selects. X is neither required nor permitted, CONFLICT-FREE.
+- (μ) hard parent H requires X with a strict user-alterable exception E releasing X. Switching E off changes
+  whether H selects, despite H being hard. Local independence holds with strict switches fixed; the global
+  decision-free-cone hypothesis fails.
+- (ν) two declared acts with different argument sorts share the same ordered ranks L<H. Their distinct
+  `outweighs_{act,L,H}` predicates use each act's sorts; elaboration, identity binding and rendered witnesses retain
+  the act and rank pair without conflating the predicates.
 
-Questions for the statement review: is `ValueSoft`'s step 3 (dominance by liveness, not by selection) the intended
-reading of "higher-priority considerations should generally dominate"? Is the completion default the right outcome
-for an all-dominated point, given the `override_cycles` line? Is `Coh_T` in base admissibility, with results marked
-conditional, an acceptable reading of "check under all admitted interpretations or identify the chosen one"? Is the
-attribution check the right scope for "authority"?
+Recorded answers for the statement review: step 3 uses higher effectiveness and lower eligibility, with the
+asymmetry stated in English; at a fixed act and tuple an eligible default guarantees some effective default before
+author precedence, so the all-dominated case is unreachable. The item-1 statement review by Astra + Fable checks
+the spec against the converged corrections transcribed here. Remaining questions: is `Coh_T` in base admissibility,
+with results marked conditional, an acceptable reading of "check under all admitted interpretations or identify the
+chosen one"? Is the attribution check the right scope for "authority"?
 
-Sequencing: 0 and 1 in parallel → (2, 3, 4 in parallel) → 5 → 6 → 7. Item 4 does not wait on the W3/W5 composition
+Sequencing: draft-3 transcription without a further plan round → 0 and 1 in parallel → Astra + Fable item-1
+statement review → (2, 3, 4 in parallel) → 5 → 6 → 7. Item 4 does not wait on the W3/W5 composition
 gaps: no soft construct needs a defined predicate or a data flag; a guard that needs one inherits the existing
 `UnsupportedProfile` answer.
 
@@ -467,9 +526,9 @@ gaps: no soft construct needs a defined predicate or a data flag; a guard that n
    incompatibility is invisible until stage 3, and on the constitution most hard constraints and soft rules regulate
    different acts (1.6). Status text must say "among rules on the same act".
 6. **Naive reuse of the W1 verdict** on `T′` without `Coh_T` reports CONFLICT for every soft collision; the conditional
-   contract of 1.4 is the contract, with fixture (δ) as regression. Likewise the `live`-based dominance is what keeps a
-   higher rule deciding where the lower is silent (exceptions do not inherit guards, norms.md 2.3); `soften_faithful`
-   and fixtures (α, η) guard this.
+   contract of 1.4 is the contract, with fixture (δ) as regression. Dominance must use higher effectiveness and
+   lower eligibility: a defeated higher opponent or a strictly blocked rule must not defeat a lower default.
+   `soften_faithful` and fixtures (α, η, κ, λ) guard this.
 7. **Reviewer objection: an always-available exception makes a rule vacuous.** It changes no strict rule, and a
    default rule's content is exactly "required unless excepted"; without premises about `excepted_N` nothing about
    the act is provable, and the report says so. The certified obligations on the deciders (`Coh_T`) are the
@@ -511,10 +570,10 @@ and in translation the act phrase "be willing to tell" is kept verbatim instead 
 
 | Finding | Change in this draft | Where | Regression |
 |---|---|---|---|
-| A1 — holistic elaboration circular (`H = ¬L`, `L = ¬H`) | `ValueSoft` defined on `T` as a four-step procedure with dominance by liveness only; `soften` adds one derived carve-out per rule and no derived precedence edges; nothing derived mentions another rule's `selects`; the two-winner example is worked and shown to have one winner | 1.2, 1.3 | (α), (η) |
+| A1 — holistic elaboration circular (`H = ¬L`, `L = ¬H`) | `ValueSoft` defined on `T` with well-founded upward recursion: higher effectiveness, lower eligibility; `soften` unfolds it into one derived carve-out per rule and no derived precedence edges; default selection after author precedence is not used by dominance; the two-winner example has one winner | 1.2, 1.3 | (α), (η), (κ), (λ) |
 | A2 — hard-over-soft misses `should X` versus `must not X`; mixed and soft dual conflicts; completions | collision defined by effect across the dual pair (`CP(T)`); `blocked_N` includes the dual's strict decision; `hard_over_soft` covers same predicate and dual; soft–soft dual collisions are classified pairs in `Coh_T`; completion pair conflicts stay CONFLICT with the completion named; `DualGuardCycle` for the stratification case | 1.1, 1.2 step 2, 1.3, 1.4 "Completion outcomes", 7.1 | (β), (γ), (δ), (θ) |
 | A3 — residuals do not restore model correspondence; specify admissible assignments, conditional guarantees, vacuity | decision assignments and `Coh_T` defined; `Background_base′`/`BaseAdmissible′`; `coherent_expands`, `soft_conflict_decomposition`, `soft_conflict_free` as the certified statement; route theorems restated, not inherited; `conditional_on` on reports; three vacuity measures incl. the exhibited coherent model; draft 1's "intended reading" retracted | 0, 1.4, 1.5, 3, 5 item 4 | (δ), (ι) |
-| B1 — authority claims contradict the language; separate strictness, defeasibility, authority; scope the theorem | `mode`, `alterable`, `rank` independent; `hard` derived; strict alterable rules allowed (rule 20); "strict rules have no switch" withdrawn; switches plus attribution cone check with stated limits; `hard_never_weighed` | 1.1, 3 item 6, 7.2 | (ζ) |
+| B1 — authority claims contradict the language; separate strictness, defeasibility, authority; scope the theorem | `mode`, `alterable`, `rank` independent; `hard` derived; strict alterable rules allowed (rule 20); "strict rules have no switch" withdrawn; switches plus attribution cone check with stated limits; `hard_never_weighed` local with strict inputs fixed, global only with a decision-free dependency cone | 1.1, 1.3, 3 items 3 and 6, 7.2 | (ζ), (μ) |
 | B2 — fake precision: "such as" as sufficient conditions, "be willing to tell" as "must tell", "some" as a specific switch, unsourced decider | "such as" → `factors` with a new wording and no premise; act phrase verbatim; alterability a READINGS set with the :192 narrowing only where cited; deciders per source (the assistant at :34, :325) or `unstated`; every translator choice an attributed unit; examples rewritten with provenance; rule 12/13 collision claim withdrawn (different acts) | 2 (table, examples), 4 | item 7 blind review |
 | B3 — one-reading syntax does not justify collapsing the :37 set; "typically" is frequency; keep cited narrowings | :34-37 set keeps A and B and adds C; narrowing to {B, C} is a cited attributed unit; per-choice checking reports choice and citation; `typically`/`normally`/`usually`/`as a rule` no longer synonyms, READINGS in translation and a two-paraphrase prompt in authoring | 2 (synonyms), 4 | `tests/test_english_unambiguity.py`; 10.4-style per-choice test |
 | C1 — strengthen the coverage experiment (labels, zero whole-unit upgrades, disputed `u0214`) | item 0 end-to-end admission as prerequisite; split-only baseline; blind whole-span fidelity review before counting; `u0214` no longer cited as precedent and re-examined with the other deciders; no predicted number | 4, 5 items 0, 5, 7, 6.9 | item 7 protocol |
@@ -541,3 +600,4 @@ after blind whole-span fidelity review; no number is predicted.
 |---|---|---|
 | 2026-09-27 | Draft 1 | Initial plan: soft norm as strict rule plus open exception; ranks; alterable defaults; three-question status; coverage counting. |
 | 2026-09-27 | Draft 2 | Applied every A/B finding of Astra's REVISE review and C1: `ValueSoft` as a terminating procedure with liveness-based dominance and carve-out-only elaboration (A1); effect-based collisions across the dual pair, dual-aware hard-over-soft, completion conflicts kept (A2); decision assignments, `Coh_T`, conditional route contract, vacuity measures, retraction of "inherited unchanged" (A3); independent mode/alterable/rank with a scoped authority check (B1); factors not sufficiency, verbatim act phrases, sourced or `unstated` deciders, provenance on every example (B2); preserved reading sets with cited narrowings, frequency words removed as synonyms (B3); end-to-end admission prerequisite, split-only baseline, blind whole-span fidelity, `u0214` re-examined (C1). Corrected line citations (:34, :44, :192). Added sections 7 and 8. Plan only: no code, Lean or frozen contract changed. |
+| 2026-09-27 | Draft 3 | Transcribed the converged debate in `manage-agents/debates/soft-norms/astra.md` (round-2 groups 1–7; round-3 existence correction) and `manage-agents/debates/soft-norms/fable.md` (final round-3 joint position): higher-effective/lower-eligible dominance and unfolded carve-outs; `Coh_T` over all `CP(T)`, discharged classifications and used-premise reporting; local weighing independence, conditional global independence and `BaseAdmissible` retained; selection-disjointness English, pairwise defeat and cycle warnings; act-and-rank-indexed decision signatures; same/different-act readings and audit; operator-restriction wording removed from `@0`, strict children included in `yields′`. Added the chain, blocked-dominator, hard-parent/switchable-exception and differently typed acts fixtures; corrected the alternating-cycle fixture. The three final additions are the eligible-implies-effective statement and corrected proof in place of the false corollary, the asymmetry sentence in English, and this transcription without a further plan round; item-1 statement review by both reviewers gates items 2–4. Coverage protocol remains an implementation gate, with no gain claimed. Plan only. |
