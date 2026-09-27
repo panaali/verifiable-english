@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 
 import pytest
@@ -26,14 +27,14 @@ def lean_executable():
     if lake is None:
         pytest.skip("lake is not available")
     if not os.environ.get("VE_LEAN_PREBUILT"):
-        build = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=180)
+        build = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert build.returncode == 0, build.stdout + build.stderr
     assert (ROOT / "lean/.lake/build/bin/ve_conformance").exists()
     return ROOT / "lean/.lake/build/bin/ve_conformance"
 
 
 def invoke(executable, cases, expected_code=0):
-    result = subprocess.run([str(executable)], input=json.dumps(cases), capture_output=True, text=True, timeout=60)
+    result = subprocess.run([str(executable)], input=json.dumps(cases), capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == expected_code, result.stdout + result.stderr
     return json.loads(result.stdout)
 
@@ -180,7 +181,7 @@ def test_both_decoders_reject_malformed_cases(lean_executable):
             model = FiniteModel.from_dict(env, case["model"])
             doc = document_from_data(env, case["ast"])
             evaluate(env, doc, model)
-        result = subprocess.run([str(lean_executable)], input=json.dumps(case), capture_output=True, text=True, timeout=10)
+        result = subprocess.run([str(lean_executable)], input=json.dumps(case), capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode != 0, case["id"]
 
 
@@ -190,7 +191,7 @@ def test_both_decoders_reject_malformed_cases(lean_executable):
     '{"a":null}', '{"a":1.0}', '{"a":1e0}', '{"a":-1}', '{"a":9007199254740992}',
 ])
 def test_lean_rejects_invalid_raw_json(lean_executable, raw):
-    result = subprocess.run([str(lean_executable)], input=raw, capture_output=True, text=True, timeout=10)
+    result = subprocess.run([str(lean_executable)], input=raw, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 2, result.stdout + result.stderr
 
 
@@ -243,7 +244,7 @@ def test_lean_json_accepts_unicode_descriptions(lean_executable):
     case["environment"]["vocabulary"]["sorts"]["person"]["description"] = "Person \U0001f600 \u20ac"
     for escaped in (True, False):
         result = subprocess.run([str(lean_executable)], input=json.dumps(case, ensure_ascii=escaped),
-                                capture_output=True, text=True, timeout=10)
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stderr + result.stdout
 
 
@@ -279,7 +280,7 @@ def test_lean_and_python_reject_malformed_display_metadata(lean_executable, fiel
 def test_lean_transitive_axiom_allowlist(lean_executable):
     import sys
     result = subprocess.run([sys.executable, str(ROOT / "lean/audit.py")], cwd=ROOT,
-                            capture_output=True, text=True, timeout=60)
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "PASS:" in result.stdout
 

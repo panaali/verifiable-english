@@ -78,9 +78,7 @@ def test_natural_view_preserves_premise_existence_and_dependency(env):
         Unary("deployed", Var(0)), Exists("person", Binary("owns", Var(0), Var(1))))),))
     view = natural_document(env, doc)
     assert view.version == NATURAL_RENDERER_VERSION
-    assert "if (x0 is deployed), then" in view.text
-    assert "there is a person x1 such that" in view.text
-    assert "x1 owns x0" in view.text
+    assert "Every deployed service has an owner" in view.text
 
 
 def test_indexed_fol_import_and_render(env):
@@ -88,7 +86,7 @@ def test_indexed_fol_import_and_render(env):
              ["exists", "person", ["binary", "owns", ["var", 0], ["var", 1]]]]]]
     doc = document_from_indexed_json(env, wire)
     assert render_fol(env, wire) == print_document(env, doc)
-    assert "there is a person" in render_fol(env, wire, view="natural").text
+    assert "has an owner" in render_fol(env, wire, view="natural").text
 
 
 def test_named_fol_requires_explicit_binders_and_no_inference(env):

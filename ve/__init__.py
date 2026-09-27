@@ -28,6 +28,7 @@ from .equivalence import (Budgets, ComparisonResult, DirectionResult, ReferenceV
                           EQUIVALENT, DIFFERENT, UNKNOWN, compare, is_weaker, is_stronger,
                           in_two_variable_fragment, validate_reference)
 
-from .english import parse_english, parse_english_with_metadata, lint_english_vocabulary
+from .english import (parse_english, parse_english_argument,
+                      parse_english_with_metadata, lint_english_vocabulary)
 
 from .english_vocabulary import suggest_vocabulary

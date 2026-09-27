@@ -26,6 +26,8 @@ from .errors import ResourceLimit, VEError
 from .identity import meaning_id
 from .wire import canonical_json, digest, require_fields
 
+LEAN_REPLAY_TIMEOUT = 120
+
 
 def _english(env, cited, conclusion):
     """The citation sentence, when the vocabulary has an English rendering."""
@@ -87,7 +89,7 @@ def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> 
              **({} if document is None else {"document": document})}]
     try:
         run = subprocess.run([str(lean_executable), "route"], input=canonical_json(case),
-                             capture_output=True, timeout=120)
+                             capture_output=True, timeout=LEAN_REPLAY_TIMEOUT)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise VEError("Lean lemma replay unavailable") from exc
     rows = loads_json(run.stdout)

@@ -138,7 +138,7 @@ def main(argv=None):
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
         if command in ("render", "import-fol"):
-            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent", "ve_english",
+            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_natural", "ve_fluent", "ve_english",
                                                  "canonical", "natural"), default=None)
             sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
             sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",
@@ -252,7 +252,7 @@ def main(argv=None):
         if args.command == "import-fol":
             document = document_from_named_fol(env, loads_json(_read(args.source)))
             if args.view == "natural" and not args.with_legend:
-                _emit(natural_document(env, document, naming=args.naming).to_dict())
+                _emit(natural_document(env, document, naming=args.naming, **english_options).to_dict())
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
@@ -273,7 +273,10 @@ def main(argv=None):
             try:
                 if defer_display_options:
                     english_options, provenance = load_english_options()
-                display = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+                conclusions = record.get("conclusions", ())
+                view = "ve_natural" if conclusions else display_view
+                display = render(document_from_data(env, record["ast"]), env, view,
+                                 conclusions=conclusions, **english_options)
                 record.update(display_text=display, **provenance)
             except Exception as exc:
                 record["display_omitted"] = type(exc).__name__
@@ -285,19 +288,25 @@ def main(argv=None):
             from .english import parse_english_with_metadata
             parsed = parse_english_with_metadata(env, source, **english_options)
             document = parsed.document
+            conclusions = parsed.conclusions
             if parsed.paraphrase()["changed"]:
                 print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
         else:
             document = parse(env, source)
+            conclusions = ()
         if args.command == "render":
             if args.view == "natural" and not args.with_legend:
-                _emit(natural_document(env, document, naming=args.naming).to_dict())
+                _emit(natural_document(env, document, naming=args.naming,
+                                       conclusions=conclusions, **english_options).to_dict())
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
+            options = dict(english_options, conclusions=conclusions,
+                           **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
+            if conclusions:
+                raise ValueError('Format cannot export English conclusion roles to strict VE')
             print(print_document(env, document), end="")
         return 0
     except VEError as exc:

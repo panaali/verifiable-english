@@ -26,6 +26,7 @@ from .wire import canonical_json, digest, loads_json, require_fields
 ARGUMENT_VERSION = "ve-argument-tableau@1"
 MAX_CLAIMS = 256
 MAX_REFERENCES = 512
+LEAN_REPLAY_TIMEOUT = 60
 
 
 def _checker_build():
@@ -504,7 +505,7 @@ def _lean_deductions(graph, claims, records, reachable, executable):
         if route:
             cases = [{**case, 'kind': 'certificate'} for case in cases]
         proc = subprocess.run([str(executable), 'route' if route else 'check-certificate'], input=canonical_json(cases),
-                              capture_output=True, timeout=60)
+                              capture_output=True, timeout=LEAN_REPLAY_TIMEOUT)
         rows = loads_json(proc.stdout)
         if route:
             from .background import background
