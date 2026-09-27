@@ -156,6 +156,15 @@ These are the Lean executable's current choices where the spec leaves bytes open
   rank, party or regulated name, `soft__` prefix on any declared predicate),
   `InvalidInput: invalid soft block`, `InvalidInput: invalid soft fields for environment`.
 
+## Notes on the item-1 fixtures
+
+* θ (dual guard): the elaborated `T′` has a self-edge on the defaulted predicate, and the
+  strict rule's predicate depends on it through its guard, so the shared `dependencyOrder`
+  diagnostic (every node that cannot be placed, sorted) is `DependencyCycle: x_permitted,
+  x_required` in both orientations; the fixture text names only the predicate with the
+  self-edge. Python uses the same algorithm, so the fixture text, not the checker, should
+  change (or the English layer's `DualGuardCycle` hint should name the self-edge).
+
 ## Status and what is not claimed
 
 * Proved: every theorem of spec 9.2 and 9.3 as listed above (with the deviations recorded),
