@@ -66,6 +66,12 @@ def test_baseline_projection_only_drops_python_build_record_ids():
     assert set(probe.GAP_ASSIGNMENTS) == set(probe.OPERATIONS)
 
 
+def test_graph_projection_survives_python_build_string_change(monkeypatch):
+    original = probe.baseline_projection(probe.graph_baselines())
+    monkeypatch.setattr(probe.sys, "version", probe.sys.version.split()[0] + " (other build)")
+    assert probe.baseline_projection(probe.graph_baselines()) == original
+
+
 def test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence():
     data = json.loads((probe.OUT / "python.json").read_text())
     assert data["runtime_sha256"] == probe.runtime_sha256()
