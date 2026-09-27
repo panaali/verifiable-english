@@ -121,6 +121,12 @@ class Norm:
                          "over": list(self.over)}}
 
 
+def norm_meaning_id(env, rule):
+    """The W1 unit identity uses the same AST domain as formula units."""
+    return digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": rule.to_dict()})
+
+
 class NormDocument:
     def __init__(self, env, units):
         if "norms@0" not in env.profiles:
@@ -248,9 +254,7 @@ class NormDocument:
 
     def meaning_id(self, name):
         """A rule identity binds its AST and environment, never its display number."""
-        rule = self.by_name[name]
-        return digest(f"ve-meaning-{self.env.identity_version}\n",
-                      {"environment_id": self.env.environment_id, "ast": rule.to_dict()})
+        return norm_meaning_id(self.env, self.by_name[name])
 
     def conflict_targets(self):
         targets = []
