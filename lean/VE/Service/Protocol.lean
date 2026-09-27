@@ -15,8 +15,8 @@ Glue only: nothing here decides a verdict. A request line is
 and its response line is `{"counts", "id", "mode", "results", "status": "ok"}`, whose
 `results` are, case for case and in order, the output of the existing runner for the
 mode (`runMode`, pinned per mode below), or a line error `{"error", "id", "status":
-"error"}`. The cases are decoded by `VE.JsonInput.parseCases`, the one-shot runners'
-batch decoder, so the per-case depth records and the rejections are theirs. No state
+"error"}`. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
+batch decoder; English uses `Lean.Json.parse`, its one-shot decoder. No state
 is kept between lines.
 
 Budgets are deterministic functions of the request: its size in bytes and its number
@@ -84,7 +84,7 @@ structure Request where
   id : String
   mode : Mode
   budget : Budget
-  /-- The raw text of the `cases` array, decoded by `parseCases`. -/
+  /-- The raw text of the `cases` array, decoded by the mode's runner decoder. -/
   cases : String
 
 /-- Split a JSON object's text into top-level `(key, value)` texts without decoding
@@ -191,12 +191,22 @@ def response (r : Request) (cases : Array (Except String Json)) : Json :=
     ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
       ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
+/-- English's one-shot input uses Lean.Json.parse, so decode its service batch
+with the same parser. Other modes retain the restricted runner batch decoder. -/
+def parseEnglishCases (text : String) : Except String (Array (Except String Json)) := do
+  let j ← Json.parse text
+  let cases ← j.getArr?
+  pure (cases.map .ok)
+
+def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
+  if r.mode == .english then parseEnglishCases r.cases else VE.JsonInput.parseCases r.cases
+
 def runRequest (r : Request) : Except String Json := do
   let bytes := r.cases.utf8ByteSize
   if bytes > r.budget.bytes then
     throw s!"ResourceLimit: cases are {bytes} bytes; budget is {r.budget.bytes}"
   unless r.cases.trim.startsWith "[" do throw "request field cases must be an array"
-  let cases ← VE.JsonInput.parseCases r.cases
+  let cases ← decodeCases r
   if cases.size > r.budget.cases then
     throw s!"ResourceLimit: batch has {cases.size} cases; budget is {r.budget.cases}"
   pure (response r cases)
@@ -249,7 +259,8 @@ theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) =
 existing runner applied to every case in order. -/
 theorem runRequest_ok (r : Request) (cases : Array (Except String Json))
     (hb : r.cases.utf8ByteSize ≤ r.budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
-    (hp : VE.JsonInput.parseCases r.cases = .ok cases) (hc : cases.size ≤ r.budget.cases) :
+    (hp : decodeCases r = .ok cases)
+    (hc : cases.size ≤ r.budget.cases) :
     runRequest r = .ok (response r cases) := by
   simp [runRequest, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, bind, Except.bind, pure,
     Except.pure]

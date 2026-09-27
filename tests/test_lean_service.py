@@ -78,6 +78,7 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
     good = json.dumps({"id": "ok", "mode": "evaluate", "cases": CASES[:1]}).encode()
     lines = [
         b"not json",
+        b"\xff\xfe",
         b'{"id":"a","mode":"evaluate"}',
         b'{"id":"b","mode":"missing","cases":[]}',
         b'{"id":"c","mode":"evaluate","cases":{}}',
@@ -93,11 +94,11 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
     ]
     rows, _ = raw_session(service_executable, b"\n".join(lines) + b"\n")
     ids = [row["id"] for row in rows]
-    assert ids == [None, "a", "b", "c", "d", "e", "f", "g", "h", None, None, "ok"]
+    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", None, None, "ok"]
     assert all(row["status"] == "error" for row in rows[:-1])
-    assert rows[7]["error"] == "ResourceLimit: batch has 2 cases; budget is 1"
-    assert rows[8]["error"].startswith("ResourceLimit: cases are 7 bytes")
-    assert rows[10]["error"].startswith("ResourceLimit: request line exceeds")
+    assert rows[8]["error"] == "ResourceLimit: batch has 2 cases; budget is 1"
+    assert rows[9]["error"].startswith("ResourceLimit: cases are 7 bytes")
+    assert rows[11]["error"].startswith("ResourceLimit: request line exceeds")
     assert rows[-1]["status"] == "ok" and rows[-1]["counts"] == {"cases": 1, "errors": 0,
                                                                  "bytes": len(json.dumps(CASES[:1]))}
 
@@ -125,6 +126,20 @@ def test_batch_decode_rejection_is_a_ve_error(service_executable):
         with pytest.raises(VEError):
             service.run("evaluate", [{"id": None}])  # null is outside the restricted JSON
         assert service.stats["restarts"] == 0
+
+
+@pytest.mark.parametrize("suffix", [',"ignored":null}', ',"ignored":1.5}',
+                                    ',"ignored":1e2}', ',"ignored":1,"ignored":2}'])
+def test_english_accepts_one_shot_json(service_executable, suffix):
+    payload = {"environment": {"sorts": [], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {}, "predicates": {}, "constants": {}}, "cases": []}
+    raw_case = json.dumps(payload, separators=(",", ":"))[:-1] + suffix
+    proc = subprocess.run([str(BIN / "ve_english_run")], input=raw_case.encode(),
+                          capture_output=True, timeout=HANG_TIMEOUT)
+    assert proc.returncode == 0, proc.stderr
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw_case + "]", 1)
+    assert response["results"] == [json.loads(proc.stdout)]
 
 
 def test_killed_process_is_replaced_between_requests(service_executable):
@@ -197,9 +212,20 @@ def test_pool_serves_concurrent_callers(service_executable):
 FAKE = r'''
 import json, os, sys, time
 behaviour, marker = sys.argv[1], sys.argv[2]
-hello = {"service": "ve-lean@1", "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english"]}
+hello = {"service": "ve-lean@1", "protocol": 1,
+         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english"],
+         "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
     hello["service"] = "other"
+if behaviour == "null-modes":
+    hello["modes"] = None
+if behaviour == "small-limits":
+    hello["limits"]["max_cases"] = 1
+if behaviour == "bad-protocol":
+    hello["protocol"] = 2
+if behaviour == "startup-eof":
+    open(marker, "a").write("s")
+    sys.exit(3)
 if behaviour == "silent":
     time.sleep(60)
 print(json.dumps(hello), flush=True)
@@ -219,8 +245,21 @@ for line in sys.stdin:
         request["id"] = "other"
     if behaviour == "short":
         print(json.dumps({"id": request["id"], "status": "ok", "results": []}), flush=True); continue
+    if behaviour == "wrong-mode":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": "order", "results": [True],
+                          "counts": {"cases": 1, "bytes": len(json.dumps(request["cases"])), "errors": 0}}), flush=True); continue
+    if behaviour == "missing-error":
+        print(json.dumps({"id": request["id"], "status": "error"}), flush=True); continue
+    if behaviour == "boolean-result":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [True], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+    if behaviour == "empty-result":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [{}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
     n = len(request["cases"])
-    print(json.dumps({"id": request["id"], "status": "ok", "results": [{"n": i} for i in range(n)]}), flush=True)
+    print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                      "results": [{"n": i, "status": "ok"} for i in range(n)],
+                      "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
 '''
 
 
@@ -233,9 +272,10 @@ def fake(tmp_path, behaviour):
     return wrapper
 
 
-@pytest.mark.parametrize("behaviour", ["hang", "crash", "garbage", "truncated", "wrong-id", "short"])
+@pytest.mark.parametrize("behaviour", ["hang", "crash", "garbage", "truncated", "wrong-id", "short",
+                                       "wrong-mode", "missing-error", "boolean-result", "empty-result"])
 def test_operational_faults_fail_closed(tmp_path, behaviour):
-    service = LeanService(fake(tmp_path, behaviour), timeout=0.5)
+    service = LeanService(fake(tmp_path, behaviour), timeout=0.5, allow_unlisted_build=True)
     try:
         with pytest.raises(CheckerUnavailable) as caught:
             service.run("evaluate", [{}])
@@ -247,14 +287,58 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
 
 
 def test_one_retry_recovers_a_hung_batch(tmp_path):
-    with LeanService(fake(tmp_path, "flaky"), timeout=0.5) as service:
-        assert service.run("evaluate", [{}, {}]) == [{"n": 0}, {"n": 1}]
+    with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
+        assert service.run("evaluate", [{}, {}]) == [{"n": 0, "status": "ok"}, {"n": 1, "status": "ok"}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
 
 
-@pytest.mark.parametrize("behaviour", ["handshake", "silent"])
+@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
+                                       "bad-protocol", "startup-eof"])
 def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
-    service = LeanService(fake(tmp_path, behaviour), startup_timeout=0.5)
+    service = LeanService(fake(tmp_path, behaviour), startup_timeout=0.5, allow_unlisted_build=True)
     with pytest.raises(CheckerUnavailable, match="handshake"):
         service.start()
+    assert service.pid is None and service.stats["starts"] == 2 and service.stats["retries"] == 1
     service.close()
+
+
+def test_unlisted_build_is_refused_by_default(tmp_path):
+    service = LeanService(fake(tmp_path, "normal"))
+    with pytest.raises(CheckerUnavailable, match="unlisted build"):
+        service.start()
+    assert service.pid is None
+    with LeanService(service.executable, allow_unlisted_build=True) as overridden:
+        assert overridden.pid is not None
+
+
+def test_oversized_exchange_is_resource_limit_without_start(tmp_path):
+    service = LeanService(fake(tmp_path, "normal"), allow_unlisted_build=True)
+    with pytest.raises(ResourceLimit, match="request line exceeds"):
+        service.exchange("evaluate", '["' + 'a' * (17 << 20) + '"]', 1)
+    assert service.pid is None
+
+
+def test_latency_harness_closes_every_cold_start(tmp_path, monkeypatch):
+    from tools import lean_service_latency as latency
+    instances = []
+
+    class Probe:
+        stats = {}
+
+        def __init__(self, **kwargs):
+            self.started = self.closed = False
+            instances.append(self)
+
+        def start(self):
+            self.started = True
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(latency, "LeanService", Probe)
+    monkeypatch.setattr(latency, "workloads", lambda *args: [])
+    monkeypatch.setattr(latency, "machine", lambda: {"commit": "test", "cpu": "test",
+                                                      "logical_cpus": 1, "loadavg": [0], "python": "test"})
+    latency.main(["--out", str(tmp_path), "--cold-starts", "3"])
+    assert len(instances) == 4
+    assert all(x.started and x.closed for x in instances)

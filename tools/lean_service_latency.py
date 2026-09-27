@@ -47,9 +47,13 @@ def main(argv=None):
 
     cold = []
     for _ in range(args.cold_starts):
-        started = time.perf_counter()
-        LeanService(max_rss=None).start()
-        cold.append(time.perf_counter() - started)
+        cold_service = LeanService(max_rss=None)
+        try:
+            started = time.perf_counter()
+            cold_service.start()
+            cold.append(time.perf_counter() - started)
+        finally:
+            cold_service.close()
     data["cold_start"] = summary(cold)
 
     service = LeanService(timeout=120, max_requests=10**9, max_rss=None)

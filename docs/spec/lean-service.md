@@ -25,9 +25,10 @@ reference the ve-bench harness already used).
 
 Handshake (first line):
 `{"lean":"4.24.0","limits":{"json_depth":256,"max_cases":4096,"max_line_bytes":16777216},"modes":[…],"protocol":1,"service":"ve-lean@1"}`.
-The build identity is the SHA-256 of the executable, computed by the supervisor
-(`LeanService.build`; `expected_sha256=` refuses any other build). Hashing 175 MiB in Lean at every start
-would break the cold-start budget; a committed `checkers.lock` is stage-4 packaging.
+The build identity is the SHA-256 of the executable, computed by the supervisor.
+By default the hash must be in `lean/checkers.lock`; `expected_sha256=` pins an explicit
+build and `allow_unlisted_build=True` is an explicit development override. Hashing
+175 MiB in Lean at every start would break the cold-start budget.
 
 Request (one line): `{"id": string, "mode": string, "cases": [...], "budget"?: {"cases"?: n, "bytes"?: n}}`.
 Unknown or duplicate fields are rejected.
@@ -51,8 +52,10 @@ continues with the next line; no state is kept between lines. Blank lines are ig
 
 **JSON.** The envelope is split into top-level members by a small scanner (`objectMembers`, the same quote,
 escape and depth tracking as `VE.JsonInput`'s batch splitter); `id`, `mode` and `budget` are decoded by
-`VE.JsonInput.parse` and the `cases` text by `VE.JsonInput.parseCases`, the one-shot batch decoder. No second
-JSON parser is introduced.
+`VE.JsonInput.parse`. The non-English modes decode `cases` with `VE.JsonInput.parseCases`, the one-shot batch
+decoder. English decodes its cases array with `Lean.Json.parse`, the decoder of its one-shot runner. This
+English exception resolves the Gate 1 acceptance conflict: the service accepts `null`, fractions, exponents
+and duplicate keys in English payloads that the runner accepts. The envelope remains restricted.
 
 **Budgets and counts (deterministic).** A request's cases text may not exceed `budget.bytes` and its case
 count may not exceed `budget.cases`; both default to and are capped by the service limits (16 MiB, 4,096
@@ -70,10 +73,10 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 
 ### Deviations from the one-shot executables (all in the English mode)
 
-1. The English one-shot runner decodes its input with `Lean.Json.parse`; the service decodes every case with
-   the restricted decoder first (the plan's rule), then passes the canonical re-encoding to the runner.
-   Inputs with `null`, fractions, exponents or duplicate keys are therefore rejected as a batch, where the
-   one-shot runner would accept some of them. Accepted inputs give identical results.
+1. The English one-shot runner decodes its input with `Lean.Json.parse`; the service decodes the English cases
+   array with that parser, then passes each case's canonical re-encoding to the runner. The envelope stays
+   restricted. This is the narrow exception to the plan's restricted-decoder rule required by Gate 1's
+   equivalence for runner-accepted English payloads.
 2. An English failure is the record `{"error": <message>, "status": "error"}` instead of the message on
    stderr with exit 2.
 3. `VE/English/Run.lean` declares a root `main`, so an executable with its own `main` cannot import it, and
