@@ -200,11 +200,11 @@ def _candidate(formula, env, words):
             amount = words.constants[scale.term.name]
             right = words.constants[formula.right.name]
             if re.fullmatch('[a-z]+', amount):
-                return right.capitalize() + (' is at least ' if type(formula) is ast.Le else ' is more than ') + 'twice the ' + amount
+                return right[0].upper() + right[1:] + (' is at least ' if type(formula) is ast.Le else ' is more than ') + 'twice the ' + amount
     if type(formula) in (ast.Le, ast.Lt) and type(formula.left) is ast.Num:
         if type(formula.right) is ast.Const and env.constants[formula.right.name].sort == ast.INT_SORT:
             right = words.constants[formula.right.name]
-            return right.capitalize() + (' is at least ' if type(formula) is ast.Le else ' is more than ') + str(formula.left.value)
+            return right[0].upper() + right[1:] + (' is at least ' if type(formula) is ast.Le else ' is more than ') + str(formula.left.value)
     if type(formula) is ast.Exists:
         noun = words.sorts[formula.sort]
         relative = _relative_phrase(words, formula.body)
