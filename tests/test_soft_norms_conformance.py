@@ -150,6 +150,18 @@ def test_document_check_to_python_route_to_lean(tmp_path):
     assert checked["admission"]["core_report_id"] == python["report_id"] == lean["report_id"]
     assert checked["premises"]["status"] == "model"
 
+    bad_graph = {"root": "leaf", "nodes": [{"name": "leaf", "ast": ast,
+                                             "label": "soft:coherence:b,a"}]}
+    bad_meta = {**meta, "graph": bad_graph}
+    path.write_text("---\n" + json.dumps(bad_meta) + "\n---\nA\nB\n")
+    bad_admission = {**admission, "graph": bad_graph}
+    with pytest.raises(Exception) as py_error:
+        check_document(path)
+    with pytest.raises(Exception) as lean_error:
+        _run({"id": "admission", "kind": "admission", "environment": raw,
+              "document": bad_admission})
+    assert str(py_error.value) == str(lean_error.value)
+
 
 def test_decision_finding_in_asserted_unit(tmp_path):
     raw = env()
