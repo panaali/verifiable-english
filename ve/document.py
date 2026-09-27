@@ -3,7 +3,7 @@
 Front matter is JSON between two ``---`` lines. The source is every body byte
 outside ``ve`` fences; unit spans are offsets into that exact byte sequence.
 ``ve <unit-id>`` fences supply an optional English or strict formula for a
-unit. The JSON front matter may instead bind a pre-existing formula AST.
+unit. The JSON front matter may instead bind a formula AST or a W1 norm.
 """
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ from .vacuity import premise_status
 MAX_DOCUMENT_BYTES = 4_000_000
 SUPPORTS = {"assumption", "certificate", "observation", "calculation", "statistical",
             "testimony", "adapter", "none"}
+STATUSES = {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
 
 
 def _body(body: bytes):
@@ -94,14 +95,19 @@ def _meaning(value, open_names):
     raise VEError("invalid meaning status")
 
 
-def _formula(env, unit, fences):
+def _content(env, unit, fences):
     content = unit.get("content")
     if content is None:
         return None
     if type(content) is not dict or len(content) != 1:
-        raise VEError("unit content must bind one formula")
+        raise VEError("unit content must bind one formula or norm")
+    if "norm" in content:
+        from .norms import NormDocument
+        rule = NormDocument._decode(content)
+        return rule.to_dict(), None
     if "ast" in content:
-        return formula_from_data(env, content["ast"])
+        formula = formula_from_data(env, content["ast"])
+        return formula_to_data(env, formula), meaning_id(env, formula)
     if "fence" not in content or content["fence"] != unit["id"]:
         raise VEError("unit fence must match its id")
     if unit["id"] not in fences:
@@ -117,7 +123,40 @@ def _formula(env, unit, fences):
         raise VEError("fenced content needs english or strict surface")
     if len(document.formulas) != 1:
         raise VEError("each VE fence must contain exactly one sentence")
-    return document.formulas[0]
+    formula = document.formulas[0]
+    return formula_to_data(env, formula), meaning_id(env, formula)
+
+
+def _parts(units):
+    """Flatten an explicitly partitioned mixed source unit for W2 admission.
+
+    The parent is retained as provenance in each part. Its bytes are counted
+    exactly once, by its children; no parent content can silently claim them.
+    """
+    for unit in units:
+        if type(unit) is not dict:
+            raise VEError("invalid unit schema")
+        if unit.get("status") != "MIXED":
+            if "parts" in unit:
+                raise VEError("parts require MIXED status")
+            yield unit, None
+            continue
+        if set(unit) != {"id", "span", "status", "parts"} or not token(unit["id"]):
+            raise VEError("invalid MIXED unit schema")
+        span, parts = unit["span"], unit["parts"]
+        if (type(span) is not list or len(span) != 2 or
+                type(parts) is not list or len(parts) < 2):
+            raise VEError("MIXED unit needs partitioned parts")
+        cursor = span[0]
+        for part in parts:
+            if (type(part) is not dict or part.get("status") not in STATUSES or
+                    type(part.get("span")) is not list or len(part["span"]) != 2 or
+                    part["span"][0] != cursor):
+                raise VEError("MIXED parts must partition their parent span")
+            cursor = part["span"][1]
+            yield part, unit["id"]
+        if cursor != span[1]:
+            raise VEError("MIXED parts must partition their parent span")
 
 
 def load_document(path: str | Path):
@@ -135,13 +174,19 @@ def load_document(path: str | Path):
     compiled = []
     unit_ids = set()
     cursor = 0
-    for unit in units:
+    parents = [u["id"] for u in units if type(u) is dict and u.get("status") == "MIXED"]
+    if len(set(parents)) != len(parents):
+        raise VEError("duplicate MIXED unit id")
+    parent_ids = set(parents)
+    active_norms = []
+    quoted_norms = []
+    for unit, parent_id in _parts(units):
         required = {"id", "span", "kind", "meaning", "support"}
         if (type(unit) is not dict or not required <= set(unit)
-                or set(unit) - required - {"content", "surface", "meaning_id"}):
+                or set(unit) - required - {"content", "surface", "meaning_id", "status"}):
             raise VEError("invalid unit schema")
         uid = unit["id"]
-        if not token(uid) or uid in unit_ids:
+        if not token(uid) or uid in unit_ids or uid in parent_ids:
             raise VEError("duplicate or invalid unit id")
         unit_ids.add(uid)
         span = unit["span"]
@@ -153,29 +198,65 @@ def load_document(path: str | Path):
         except UnicodeDecodeError as exc:
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
-        _check_kind(unit["kind"])
+        kind = _check_kind(unit["kind"])
         status = _meaning(unit["meaning"], open_names)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
-        formula = _formula(env, unit, fences)
-        if status == "unformalised" and formula is not None:
-            raise VEError("unformalised unit cannot assert formula content")
+        content, mid = _content(env, unit, fences) if unit.get("content") is not None else (None, None)
+        is_norm = type(content) is dict and "norm" in content
+        if is_norm:
+            from .admission import _quoted
+            if kind == "norm":
+                active_norms.append(content)
+            elif _quoted(kind):
+                quoted_norms.append(content)
+            else:
+                raise VEError("norm content requires a norm or quoted kind")
+            mid = digest(f"ve-norm-unit-{env.identity_version}\n",
+                         {"environment_id": env.environment_id, "content": content})
+        if status == "unformalised" and content is not None:
+            raise VEError("unformalised unit cannot assert content")
         if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
             raise VEError("unformalised kind needs unformalised meaning")
-        if formula is not None and "meaning_id" in unit and unit["meaning_id"] != meaning_id(env, formula):
+        if "meaning_id" in unit and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
+        explicit_status = unit.get("status")
+        if explicit_status is not None:
+            if explicit_status not in STATUSES:
+                raise VEError("invalid unit status")
+            if (explicit_status == "CHECKED" and (content is None or status != "specified") or
+                    explicit_status == "OPEN" and status != "open" or
+                    explicit_status == "UNFORMALISED" and status != "unformalised" or
+                    explicit_status == "LABELLED" and content is not None):
+                raise VEError("unit status contradicts content or meaning")
+        else:
+            explicit_status = ("CHECKED" if content is not None and status == "specified" else
+                               "OPEN" if status == "open" else
+                               "UNFORMALISED" if status == "unformalised" else "LABELLED")
         compiled.append({"id": uid, "span": span, "kind": unit["kind"], "meaning": unit["meaning"],
                          "support": unit["support"], "source": source[span[0]:span[1]].decode("utf-8"),
-                         "content": formula_to_data(env, formula) if formula is not None else None,
-                         "meaning_id": meaning_id(env, formula) if formula is not None else None})
+                         "content": content, "meaning_id": mid, "status": explicit_status,
+                         **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
-    if set(fences) != {u["id"] for u in units if type(u.get("content")) is dict
+    from .norms import NormDocument
+    if active_norms:
+        NormDocument(env, active_norms)
+    if quoted_norms:
+        from .norm_admission import _check_quoted
+        for content in quoted_norms:
+            _check_quoted(env, content)
+    if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
     validate_reading_sets(env, reading_sets, unit_ids)
     active = active_reading_sets(reading_sets)
+    reading_units = {r["unit"] for r in active}
+    selected_norms = [u["content"] for u in compiled if u["kind"] == "norm"
+                      and u["id"] not in reading_units]
+    norms = (NormDocument(env, selected_norms)
+             if any(d.regulated is not None for d in env.predicates.values()) else None)
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
         raise VEError("lemmas must be a list")
     for u in compiled:
@@ -199,7 +280,8 @@ def load_document(path: str | Path):
                                           allow_nan=False).encode("utf-8")).hexdigest()
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
-            "units": compiled, "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
+            "units": compiled, "norms": norms,
+            "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
 
 
 def _fixed_and_active(doc):
@@ -228,10 +310,12 @@ def coverage(doc):
     units = doc["units"]
     source = doc["source"]
     kinds = {}
+    statuses = {}
     reasons = {}
     for u in units:
         kind = u["kind"] if type(u["kind"]) is str else u["kind"][0]
         kinds[kind] = kinds.get(kind, 0) + u["span"][1] - u["span"][0]
+        statuses[u["status"]] = statuses.get(u["status"], 0) + u["span"][1] - u["span"][0]
         if type(u["meaning"]) is dict and "unformalised" in u["meaning"]:
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
@@ -243,7 +327,8 @@ def coverage(doc):
                 "bridge_leaves": bridge_count,
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
-            "coverage_percent": 100, "bytes_by_kind": kinds, "unformalised_reasons": reasons,
+            "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
+            "unformalised_reasons": reasons,
             "residual": residual, "residual_total": sum(residual.values())}
 
 
@@ -268,6 +353,8 @@ def check_document(path):
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
+    if doc["norms"] is not None:
+        assertions.extend(formula for _, formula in doc["norms"].premises())
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
@@ -346,6 +433,12 @@ def render_document(path):
         "exposition": "background information", "analogy": "an analogy",
         "explanation": "an explanation", "meta": "a comment about the text",
     }
+    norm_blocks = {}
+    if doc["norms"] is not None:
+        from .norm_english import render_english
+        rendered, _ = render_english(doc["norms"])
+        norm_blocks = {rule.name: block for rule, block in
+                       zip(doc["norms"].rules, rendered.splitlines())}
 
     def kind_description(kind):
         if type(kind) is str:
@@ -363,6 +456,11 @@ def render_document(path):
     def kind_wording(kind, content):
         if content is None:
             return f"The passage is recorded as {kind_description(kind)}."
+        if type(content) is dict and "norm" in content:
+            from .norms import NormDocument
+            rule = NormDocument._decode(content)
+            claim = norm_blocks.get(rule.name, f"Quoted norm {rule.name} ({rule.predicate}).")
+            return claim if kind == "norm" else f"{claim} The source presents this as {kind_description(kind)}."
         claim = wording(content)
         if kind == "asserted":
             return claim
