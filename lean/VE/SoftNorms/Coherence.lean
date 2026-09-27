@@ -782,6 +782,26 @@ theorem soft_conflictFree_prefix (D : SoftDoc) (h : WellFormedSoft D = true) (r 
     VE.Norms.ConflictFreeAt (soften D) r.name S₀ :=
   softChain_hc (valid_of_wellFormed _ (soften_wellFormed D h)) hc _ S₀ h₀
 
+/-- The first half of `soft_route_acceptance`, which needs no conflict-freedom. -/
+theorem soft_route_intended (D : SoftDoc) (h : WellFormedSoft D = true)
+    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
+    (accepted : VE.Tableau.checkCertificate (envAt (soften D) (size (soften D)))
+                  (background' D ++ VE.Norms.elaborate (soften D).T ++ Γ) φ c = true)
+    (S : VE.Structure.{u}) (hS : S.Admissible (envAt (soften D) (size (soften D)))) (hsoft : holdsSoft D S)
+    (hdef : VE.Norms.definitionsHold (soften D) S) (hprof : VE.Norms.profileHold (soften D) S)
+    (hbase : Sat S (VE.Norms.backgroundBase (soften D))) (hsp : Sat S (softPremises D)) (hΓ : Sat S Γ) :
+    φ.denote S [] := by
+  apply VE.Tableau.checkCertificate_sound.{u} _ _ _ c accepted S hS
+  intro a ha
+  simp only [List.mem_append, background', background] at ha
+  rcases ha with ((((ha | ha) | ha) | ha) | ha) | ha
+  · exact hdef a ha
+  · exact hbase a ha
+  · exact hprof a ha
+  · exact hsp a ha
+  · exact (soft_elaborate_iff D h S).mpr hsoft a ha
+  · exact hΓ a ha
+
 /-- 6.4: W1's `norms_route_acceptance` restated with `BaseAdmissible′` and `background′`. -/
 theorem soft_route_acceptance (D : SoftDoc) (h : WellFormedSoft D = true) (hc : SoftConflictFree.{u} D)
     (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
@@ -792,17 +812,8 @@ theorem soft_route_acceptance (D : SoftDoc) (h : WellFormedSoft D = true) (hc : 
       Sat S (VE.Norms.backgroundBase (soften D)) → Sat S (softPremises D) → Sat S Γ → φ.denote S []) ∧
     ((∀ a ∈ Γ, a.WellFormed (envAt (soften D) 0) []) → φ.WellFormed (envAt (soften D) 0) [] →
       ∀ B : VE.Structure.{u}, BaseAdmissible' D B → Sat B Γ → φ.denote B []) := by
-  refine ⟨fun S hS hsoft hdef hprof hbase hsp hΓ => ?_, fun hΓ hφ => ?_⟩
-  · apply VE.Tableau.checkCertificate_sound.{u} _ _ _ c accepted S hS
-    intro a ha
-    simp only [List.mem_append, background', background] at ha
-    rcases ha with ((((ha | ha) | ha) | ha) | ha) | ha
-    · exact hdef a ha
-    · exact hbase a ha
-    · exact hprof a ha
-    · exact hsp a ha
-    · exact (soft_elaborate_iff D h S).mpr hsoft a ha
-    · exact hΓ a ha
+  refine ⟨fun S hS hsoft hdef hprof hbase hsp hΓ =>
+    soft_route_intended D h Γ φ c accepted S hS hsoft hdef hprof hbase hsp hΓ, fun hΓ hφ => ?_⟩
   · let R := softRoute D h hc
     have hacc : (VE.Route.Checker.tableau R.1.E_out).valid c
         (VE.Route.checkedPremises R.1 (background' D) () Γ) φ := by
