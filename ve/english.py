@@ -691,11 +691,13 @@ class EnglishParser:
         self.paragraph_breaks = []
         self.farthest = 0
 
+    def _span(self, start, end):
+        return Span(start, end, self.source.count('\n', 0, start) + 1,
+                    start - self.source.rfind('\n', 0, start))
+
     def error(self, message, cls=SyntaxError):
         pos = max(self.i, self.farthest)
-        raise cls(message, span=Span(pos, min(pos + 1, len(self.source)),
-                                   self.source.count('\n', 0, pos) + 1,
-                                   pos - self.source.rfind('\n', 0, pos)))
+        raise cls(message, span=self._span(pos, min(pos + 1, len(self.source))))
 
     def take(self, text, *, content=False):
         match = re.compile(_content_pattern(text) if content else _literal_pattern(text)).match(self.source, self.i)
@@ -987,8 +989,7 @@ class EnglishParser:
         matches = nearest(phrase, self.words)[:3]
         suggestions = '; '.join(repr(row['wording']) for row in matches)
         raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
-                          span=Span(start, end, self.source.count('\n', 0, start) + 1,
-                                    start - self.source.rfind('\n', 0, start)))
+                          span=self._span(start, end))
 
     def term(self, scope):
         for text, value in sorted(self.term_options(scope).items(), key=lambda item: -len(item[0])):
