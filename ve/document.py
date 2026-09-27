@@ -294,7 +294,10 @@ def coverage(doc):
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "unformalised_reasons": reasons,
             "residual": residual, "residual_total": sum(residual.values()),
-            **({"default_exceptions_by_decider": by_decider,
+            **({"soft_status": "OPEN" if any(residual[key] for key in
+                ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"))
+                else "CHECKED",
+                "default_exceptions_by_decider": by_decider,
                 "soft_residual_labels": [
                 *sorted(soft.extended_env.decision_names),
                 *open_pairs],
