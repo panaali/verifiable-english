@@ -1,0 +1,200 @@
+{
+  "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
+  "source_bytes": 184893,
+  "bytes_accounted": 184893,
+  "bytes_accounted_percent": 100,
+  "sentence_clause_units": {
+    "units_total": 1094,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 0,
+      "READINGS": 0,
+      "UNFORMALISED": 1054
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 1348,
+      "OPEN": 0,
+      "READINGS": 0,
+      "UNFORMALISED": 183523
+    }
+  },
+  "aggregated_to_previous_boundaries": {
+    "units_total": 299,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 0,
+      "READINGS": 0,
+      "UNFORMALISED": 259
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 1348,
+      "OPEN": 0,
+      "READINGS": 0,
+      "UNFORMALISED": 183523
+    }
+  },
+  "previous_run_on_previous_boundaries": {
+    "units_total": 299,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 1,
+      "READINGS": 0,
+      "UNFORMALISED": 258
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 1348,
+      "OPEN": 282,
+      "READINGS": 0,
+      "UNFORMALISED": 183241
+    }
+  },
+  "checked_bytes_percent": 0.0119,
+  "open_terms": [
+    {
+      "name": "broad_safety",
+      "arguments": [
+        "claude",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human oversight",
+        "principal hierarchy",
+        "current phase of AI development"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1,
+      "referenced_unit_count": 233,
+      "decision_authority_grounded": false
+    },
+    {
+      "name": "appropriate_oversight",
+      "arguments": [
+        "mechanism",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human authorization",
+        "ability to correct AI",
+        "misuse of power"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1,
+      "referenced_unit_count": 60,
+      "decision_authority_grounded": false
+    },
+    {
+      "name": "genuine_helpfulness",
+      "arguments": [
+        "action",
+        "principal",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "benefit to operators and users",
+        "longer term interests",
+        "other people affected"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1,
+      "referenced_unit_count": 88,
+      "decision_authority_grounded": false
+    },
+    {
+      "name": "ethical_harm",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "severity",
+        "likelihood",
+        "who bears harm",
+        "possible benefits"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1,
+      "referenced_unit_count": 280,
+      "decision_authority_grounded": false
+    },
+    {
+      "name": "good_judgment",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "competing values",
+        "uncertainty",
+        "context"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1,
+      "referenced_unit_count": 42,
+      "decision_authority_grounded": false
+    }
+  ],
+  "reading_sets": {
+    "count": 0,
+    "unresolved": 0
+  },
+  "missing_feature_tally": {
+    "attribution": 10,
+    "causation": 79,
+    "counting": 30,
+    "defaults": 54,
+    "modality/belief": 21,
+    "norms": 669,
+    "other:discourse": 64,
+    "quantities": 118,
+    "time": 9
+  },
+  "check_verdicts": {
+    "document_loaded_and_english_fence_parsed": true,
+    "graph_admitted": true,
+    "premises_status": "model",
+    "premises_vacuous": false,
+    "reading_plan": "single",
+    "source_id": "020ee8c0546bad306cbd8a87ae2e7933f136386bc5880d6c8f6b4bb34ce6f449",
+    "document_id": "b14b761783b4ec7a636fc96b6c6b7fb45233daf541747888ecd65cbc2d7a994a",
+    "coverage_percent": 100,
+    "natural_render_checked_clause": "it is not the case that (@claude is human)."
+  },
+  "change_from_previous_run": {
+    "source_changed": false,
+    "resegmented": true,
+    "semantic_upgrades_from_z6": 0,
+    "prior_open_label_corrected": 1,
+    "formal_content_changed": false
+  },
+  "limitations": [
+    "Unformalised units retain source wording but have no admitted formal reading.",
+    "No formal reading set was added; potential ambiguities in unformalised prose remain unresolved.",
+    "The decision role for all five open terms is unresolved in the source."
+  ]
+}
