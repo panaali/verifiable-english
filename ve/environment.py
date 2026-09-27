@@ -81,6 +81,8 @@ class PredicateDecl:
     description: str
     verbalisation: str | None = None
     negative_verbalisation: str | None = None
+    functional: bool | None = None
+    total: bool | None = None
     defined: bytes | None = None
 
 
@@ -151,16 +153,35 @@ class Environment:
                                                   _verbalisation(raw["plural"]))
             sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
+            flagged = type(entry) is dict and ("functional" in entry or "total" in entry)
+            if flagged and "defined" in entry:
+                raise UnsupportedProfile("Defined predicates cannot carry functional or total flags")
             defined = route and "definitions@0" in data["profiles"] and type(entry) is dict and "defined" in entry
-            _entry_fields(entry, {"arguments", "description"} | ({"defined"} if defined else set()),
-                          path=f"/vocabulary/predicates/{name}", negative=True)
+            fields = {"arguments", "description"}
+            if defined:
+                fields.add("defined")
+            if flagged:
+                if not route or "data@0" not in data["profiles"]:
+                    raise UnsupportedProfile("Predicate flags require data@0")
+                fields |= {key for key in ("functional", "total") if key in entry}
+            _entry_fields(entry, fields, path=f"/vocabulary/predicates/{name}", negative=True)
             args = entry["arguments"]
             maximum_arity = 6 if route and "nary@0" in data["profiles"] else 2
             if type(args) is not list or not 1 <= len(args) <= maximum_arity:
                 raise VEError(f"Predicate arguments must be an array of one to {maximum_arity} sort identifiers")
             for sort in args:
-                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
+                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
+                                             and not (route and "data@0" in data["profiles"] and sort == STRING_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
+            if flagged and len(args) != 2:
+                raise VEError("Functional and total flags require a binary predicate")
+            if flagged and INT_SORT in args:
+                raise UnsupportedProfile("Data flags on $int slots are not supported")
+            if order and route and "data@0" in data["profiles"] and (flagged or STRING_SORT in args):
+                raise UnsupportedProfile("Data attributes on the order family are not enabled")
+            for flag in ("functional", "total"):
+                if flag in entry and type(entry[flag]) is not bool:
+                    raise VEError(f"{flag} must be a Boolean")
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
@@ -171,6 +192,7 @@ class Environment:
                     raise VEError(f"Definition {name!r} arguments differ from its declaration")
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
                                              verbalisation, negative,
+                                             entry.get("functional"), entry.get("total"),
                                              canonical_json(entry["defined"]) if defined else None)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
@@ -217,6 +239,10 @@ class Environment:
                 entry["verbalisation"] = declaration.verbalisation
             if declaration.negative_verbalisation is not None:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
+            if declaration.functional is not None:
+                entry["functional"] = declaration.functional
+            if declaration.total is not None:
+                entry["total"] = declaration.total
             if declaration.defined is not None:
                 entry["defined"] = loads_json(declaration.defined)
             return entry
@@ -243,7 +269,8 @@ class Environment:
 
     @property
     def model_sorts(self):
-        return (*self.sorts, *((STRING_SORT,) if any(d.sort == STRING_SORT for d in self.constants.values()) else ()))
+        return (*self.sorts, *((STRING_SORT,) if any(d.sort == STRING_SORT for d in self.constants.values())
+                or any(STRING_SORT in d.arguments for d in self.predicates.values()) else ()))
 
     @property
     def identity_version(self):

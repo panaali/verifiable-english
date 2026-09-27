@@ -83,6 +83,7 @@ pub struct Environment {
     profiles: Vec<String>,
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
+    pub(crate) predicate_flags: BTreeMap<String, (bool, bool)>,
     pub(crate) constants: BTreeMap<String, String>,
     /// Identity-bound definitions (W3), in dependency order.
     pub(crate) definitions: Vec<(String, Vec<String>, Formula)>,
@@ -241,25 +242,26 @@ impl Environment {
             description(&d["description"])?;
         }
         let mut predicates = BTreeMap::new();
+        let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
         for (name, decl) in preds {
+            let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
+            if flagged && decl.get("defined").is_some() {
+                return error("UnsupportedProfile", "Defined predicates cannot carry functional or total flags");
+            }
+            if flagged && !(route && profiles.iter().any(|p| p == "data@0")) {
+                return error("UnsupportedProfile", "Predicate flags require data@0");
+            }
             let is_defined = definitions_profile && decl.get("defined").is_some();
             if is_defined && order {
-                return error(
-                    "UnsupportedProfile",
-                    "definitions on the order family require an order definition layer",
-                );
+                return error("UnsupportedProfile", "definitions on the order family require an order definition layer");
             }
-            let d = entry_fields(
-                decl,
-                if is_defined {
-                    &["arguments", "description", "defined"]
-                } else {
-                    &["arguments", "description"]
-                },
-                true,
-            )?;
+            let mut keys = vec!["arguments", "description"];
+            if is_defined { keys.push("defined"); }
+            if decl.get("functional").is_some() { keys.push("functional"); }
+            if decl.get("total").is_some() { keys.push("total"); }
+            let d = entry_fields(decl, &keys, true)?;
             let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
             let args = d["arguments"]
                 .as_array()
@@ -268,11 +270,32 @@ impl Environment {
             let mut signature = Vec::new();
             for arg in args {
                 let s = string(arg, "UnknownSymbol")?;
-                if !sorts.contains_key(s) && !(order && s == "$int") {
+                if !sorts.contains_key(s) && !(order && s == "$int")
+                    && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
                     return error("UnknownSymbol", "unknown predicate argument sort");
                 }
                 signature.push(s.to_owned());
             }
+            if flagged && signature.len() != 2 {
+                return error("InvalidInput", "Functional and total flags require a binary predicate");
+            }
+            if flagged && signature.iter().any(|s| s == "$int") {
+                return error("UnsupportedProfile", "Data flags on $int slots are not supported");
+            }
+            if order && route && profiles.iter().any(|p| p == "data@0")
+                && (flagged || signature.iter().any(|s| s == "$string")) {
+                return error("UnsupportedProfile", "Data attributes on the order family are not enabled");
+            }
+            let functional = match d.get("functional") {
+                None => false,
+                Some(Value::Bool(value)) => *value,
+                _ => return error("InvalidInput", "functional must be a Boolean"),
+            };
+            let total = match d.get("total") {
+                None => false,
+                Some(Value::Bool(value)) => *value,
+                _ => return error("InvalidInput", "total must be a Boolean"),
+            };
             for key in ["verbalisation", "negative_verbalisation"] {
                 if let Some(v) = d.get(key) {
                     verbalisation(v)?;
@@ -283,6 +306,7 @@ impl Environment {
                 defined.push((name.clone(), signature.clone(), d["defined"].clone()));
             }
             predicates.insert(name.clone(), signature);
+            predicate_flags.insert(name.clone(), (functional, total));
         }
         let mut constants = BTreeMap::new();
         for (name, decl) in consts {
@@ -324,6 +348,7 @@ impl Environment {
             profiles,
             sorts: sorts.keys().cloned().collect(),
             predicates,
+            predicate_flags,
             constants,
             definitions: Vec::new(),
             data: data.clone(),
@@ -394,6 +419,9 @@ impl Environment {
     pub fn order(&self) -> bool {
         self.order
     }
+    pub(crate) fn has_profile(&self, name: &str) -> bool {
+        self.profiles.iter().any(|profile| profile == name)
+    }
     pub fn identity_version(&self) -> String {
         if self.route {
             return format!("v0.2:{}", self.profiles.join(","));
@@ -408,7 +436,8 @@ impl Environment {
     }
     pub(crate) fn model_sorts(&self) -> BTreeSet<String> {
         let mut sorts = self.sorts.clone();
-        if self.constants.values().any(|sort| sort == "$string") {
+        if self.constants.values().any(|sort| sort == "$string")
+            || self.predicates.values().any(|args| args.iter().any(|sort| sort == "$string")) {
             sorts.insert("$string".into());
         }
         sorts

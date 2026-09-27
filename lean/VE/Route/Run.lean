@@ -57,7 +57,7 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
 
 /-- The FOL/closure vocabulary; `defined` declarations need `definitions@0`. -/
 def decodeRouteVocabulary (e : Gate.Envelope) : Except String Wire.RouteVocabulary := do
-  let rv ← Wire.decodeVocabulary e.vocabulary
+  let rv ← Wire.decodeVocabulary e.profiles e.vocabulary
   unless rv.definitions.isEmpty || e.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   pure rv
@@ -75,7 +75,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
       let _ ← Wire.decodeOrderVocabulary e.vocabulary
       pure ()
     else
-      let _ ← Wire.decodeVocabulary e.vocabulary
+      let _ ← Wire.decodeVocabulary e.profiles e.vocabulary
       pure ()
     -- The label grammar alone (PLAN-EXPAND2 3.6): only canonical labels parse.
     let s ← stringField j "label"

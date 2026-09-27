@@ -198,10 +198,10 @@ class Document:
 
 
 class _Checker:
-    def __init__(self, env):
+    def __init__(self, env, *, generated=False):
         if not isinstance(env, Environment):
             raise VEError("Expected a validated Environment")
-        self.env, self.nodes = env, 0
+        self.env, self.nodes, self.generated = env, 0, generated
 
     def tick(self):
         self.nodes += 1
@@ -302,7 +302,10 @@ class _Checker:
             self.formula(node.left, context, depth + 1)
             self.formula(node.right, context, depth + 1)
         elif kind in (Forall, Exists):
-            if type(node.sort) is not str or node.sort not in self.env.sorts:
+            if type(node.sort) is not str or (node.sort not in self.env.sorts
+                    and not (self.generated and node.sort == "$string" and "data@0" in self.env.profiles)):
+                if node.sort == "$string" and "data@0" in self.env.profiles:
+                    raise UnsupportedProfile("$string quantification requires data stage 2")
                 raise UnknownSymbol(f"Unknown binder sort {node.sort!r}")
             self.formula(node.body, (node.sort,) + context, depth + 1)
         else:
@@ -363,8 +366,8 @@ def _to_data(node):
     return [record.wire_tag, node.sort, _to_data(node.body)]
 
 
-def formula_to_data(env: Environment, formula: Formula):
-    check_formula(env, formula)
+def formula_to_data(env: Environment, formula: Formula, *, _generated=False):
+    _Checker(env, generated=_generated).formula(formula)
     return _to_data(formula)
 
 
@@ -443,8 +446,10 @@ class _Decoder:
         return record.node_type(data[1], self.decode(data[2], depth + 1))
 
 
-def formula_from_data(env: Environment, data) -> Formula:
-    return check_formula(env, _Decoder().decode(data))
+def formula_from_data(env: Environment, data, *, _generated=False) -> Formula:
+    formula = _Decoder().decode(data)
+    _Checker(env, generated=_generated).formula(formula)
+    return formula
 
 
 def document_from_data(env: Environment, data) -> Document:

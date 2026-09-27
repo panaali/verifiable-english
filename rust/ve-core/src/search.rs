@@ -164,6 +164,11 @@ impl<'a> Models<'a> {
         for f in problem.document.formulas() {
             f.predicates(&mut used);
         }
+        for (name, (functional, total)) in &env.predicate_flags {
+            if *functional || *total {
+                used.insert(name.clone());
+            }
+        }
         // A defined predicate's table is computed; search its base dependencies.
         for (name, _, body) in env.definitions.iter().rev() {
             if used.contains(name) {
@@ -291,7 +296,9 @@ impl<'a> Models<'a> {
             self.advance();
             match model {
                 Ok(model) => return Ok(Some(model)),
-                Err(err) if err.code == "InvalidModel" && err.message.contains("(literals)") => {
+                Err(err) if err.code == "InvalidModel"
+                    && (err.message.starts_with("literals:") || err.message.ends_with("(literals)")
+                        || err.message.starts_with("flags:") || err.message.ends_with("(flags)")) => {
                     continue;
                 }
                 Err(err) => return Err(err),

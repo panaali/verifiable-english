@@ -1,4 +1,5 @@
 import VE.Route.Background
+import VE.Data.Background
 import VE.CertificateWire
 import VE.Order.Wire
 import VE.Order.ModelCheck
@@ -24,16 +25,24 @@ structure RouteVocabulary where
   vocabulary : VE.Bridge.Vocabulary
   literals : List String
   nodup : literals.Nodup
+  flags : List VE.Data.Background.Flag := []
   definitions : List VE.Definitions.Def
   chain : VE.Definitions.Chain vocabulary.environment definitions
 
-def RouteVocabulary.environment (rv : RouteVocabulary) : VE.Environment := rv.vocabulary.environment
+def RouteVocabulary.environment (rv : RouteVocabulary) : VE.Environment :=
+  let E := rv.vocabulary.environment
+  { E with sorts := E.sorts ++
+      (if rv.flags.any (fun f => f.source == Background.stringSort ||
+                                   f.target == Background.stringSort) then [Background.stringSort] else []) }
 
 /-- The model tables list `$string` as a domain whenever a literal is declared
 (Python `Environment.model_sorts`). -/
 def RouteVocabulary.modelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabulary :=
   { rv.vocabulary with
-    sorts := rv.vocabulary.sorts ++ (if rv.literals.isEmpty then [] else [Background.stringSort]) }
+    sorts := rv.vocabulary.sorts ++
+      (if rv.literals.isEmpty && !(rv.vocabulary.predicates.any (fun p =>
+          p.2.contains Background.stringSort))
+       then [] else [Background.stringSort]) }
 
 /-- The model tables supplied on the wire: defined predicates are computed, never supplied. -/
 def RouteVocabulary.baseModelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabulary :=
@@ -69,7 +78,7 @@ def isLiteralEntry (entry : Json) : Bool :=
 
 /-- The v0 vocabulary rules plus `$string` as the sort of declared literal
 constants. -/
-def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
+def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVocabulary := do
   exactFields v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
@@ -90,18 +99,36 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
       VE.Bridge.displayString (← words.getObjVal? "plural")
   let sortNames := sorts.map Prod.fst
   let allowed := fun (s : String) => sortNames.contains s || s == Background.stringSort
-  let ps ← predicates.mapM fun (p, entry) => do
+  let flagged := profiles.contains "data@0"
+  let psAndFlags ← predicates.mapM fun (p, entry) => do
+    if (entry.getObjVal? "defined" |>.isOk) &&
+        ((entry.getObjVal? "functional" |>.isOk) || (entry.getObjVal? "total" |>.isOk)) then
+      throw "UnsupportedProfile: Defined predicates cannot carry functional or total flags"
     let defined := (entry.getObjVal? "defined").isOk
     VE.Bridge.displayFields entry (["arguments", "description"] ++ if defined then ["defined"] else [])
-      ["verbalisation", "negative_verbalisation"]
+      (["verbalisation", "negative_verbalisation"] ++
+        (if flagged then ["functional", "total"] else []))
     VE.Bridge.description entry
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then
         VE.Bridge.displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
-    unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
+    unless (ss.length == 1 || ss.length == 2) &&
+      ss.all (fun s => sortNames.contains s || (flagged && s == Background.stringSort)) do
       throw s!"invalid signature: {p}"
-    pure (p, ss)
+    let functional ← match entry.getObjVal? "functional" with
+      | .ok b => b.getBool?
+      | .error _ => pure false
+    let total ← match entry.getObjVal? "total" with
+      | .ok b => b.getBool?
+      | .error _ => pure false
+    if (entry.getObjVal? "functional" |>.isOk) || (entry.getObjVal? "total" |>.isOk) then
+      unless ss.length == 2 do throw "flags require a binary predicate"
+    let flag : Option VE.Data.Background.Flag :=
+      if functional || total then some ⟨p, ss[0]!, ss[1]!, functional, total⟩ else none
+    pure ((p, ss), flag)
+  let ps := psAndFlags.map Prod.fst
+  let flags := psAndFlags.filterMap Prod.snd
   let entries ← predicates.filterMapM fun (p, entry) => do
     match entry.getObjVal? "defined" with
     | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
@@ -120,7 +147,7 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   unless result.namesValid do throw "invalid declaration names"
   if h : literals.Nodup then
     match hd : VE.Definitions.elaborate result.environment entries with
-    | .ok ds => pure ⟨result, literals, h, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
+    | .ok ds => pure ⟨result, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
     | .error e => throw e
   else throw "duplicate declaration"
 
@@ -208,7 +235,8 @@ def invalidModel (generator : String) : String :=
 
 /-- The regenerated Background with generators: definitions (W3), then literals. -/
 def fullBackground (rv : RouteVocabulary) : List (VE.Formula × String) :=
-  (VE.Definitions.expand rv.definitions).map (fun a => (a, "definitions")) ++
+  (VE.Data.Background.generate rv.flags).map (fun a => (a, "flags")) ++
+    (VE.Definitions.expand rv.definitions).map (fun a => (a, "definitions")) ++
     Background.background rv.literals
 
 /-- The first regenerated Background premise the model violates, with its generator. -/
@@ -299,8 +327,10 @@ theorem fullBackgroundViolation_none {α : Type} [DecidableEq α] (M : VE.Finite
   apply List.all_eq_true.mpr
   intro a ha
   rcases List.mem_append.mp ha with ha | ha
-  · simpa using hn (a, "definitions") (List.mem_append_left _ (List.mem_map.mpr ⟨a, ha, rfl⟩))
-  · simpa using hn (a, "literals") (List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩))
+  · simpa using hn (a, "definitions") (List.mem_append_left _
+      (List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩)))
+  · simpa using hn (a, "literals") (List.mem_append_right _
+      (List.mem_map.mpr ⟨a, ha, rfl⟩))
 
 open VE.Order.ProfileGate in
 /-- A decoded model is structurally admissible for the full vocabulary and
@@ -345,16 +375,73 @@ theorem decodeModel_intended (rv : RouteVocabulary) (j : Json) (M : VE.FiniteMod
     (VE.Definitions.chain_arity _ _ rv.chain) _).mp fun a ha => ?_⟩
   exact (VE.eval_iff_denote M [] a).mp (List.all_eq_true.mp hb a (List.mem_append_left _ ha))
 
+/-- The data profile rejects a finite table that violates a generated flag
+premise before any evaluation or countermodel verdict. -/
+def decodeDataModel (rv : RouteVocabulary) (j : Json) :
+    Except String (VE.FiniteModel VE.Bridge.Entity) := do
+  let M ← decodeModel rv j
+  unless VE.Data.Background.flagsValid M rv.flags do
+    throw (invalidModel "flags")
+  pure M
+
+/-- Runtime model admission enforces both parts of the reviewed data meaning:
+distinct declared literals and functional/total relation tables. -/
+theorem decodeDataModel_valid (rv : RouteVocabulary) (j : Json)
+    (M : VE.FiniteModel VE.Bridge.Entity) (h : decodeDataModel rv j = .ok M) :
+    Background.StringAdmissible rv.environment rv.literals M.asStructure ∧
+      ∀ f ∈ rv.flags, VE.Data.Background.Intended M.asStructure f := by
+  unfold decodeDataModel at h
+  obtain ⟨decoded, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  dsimp only at h
+  split at h
+  · rename_i hf
+    cases h
+    refine ⟨decodeModel_valid rv j M hd, ?_⟩
+    exact VE.Data.Background.flags_model_valid _ rv.flags (by simpa using hf)
+  · cases h
+
+/-- A data model with separate base flags and defined predicates satisfies both
+reviewed meanings after the defined tables are computed. -/
+theorem decodeDataModel_combined (rv : RouteVocabulary) (j : Json)
+    (M : VE.FiniteModel VE.Bridge.Entity) (h : decodeDataModel rv j = .ok M) :
+    VE.Definitions.Intended rv.environment rv.definitions rv.literals M.asStructure ∧
+      ∀ f ∈ rv.flags, VE.Data.Background.Intended M.asStructure f := by
+  have hflags := (decodeDataModel_valid rv j M h).2
+  unfold decodeDataModel at h
+  obtain ⟨decoded, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  dsimp only at h
+  split at h
+  · cases h
+    exact ⟨decodeModel_intended rv j M hd, hflags⟩
+  · cases h
+
+def usesStringBinder : VE.Formula → Bool
+  | .all s a | .ex s a => s == Background.stringSort || usesStringBinder a
+  | .not a => usesStringBinder a
+  | .and a b | .or a b | .implies a b => usesStringBinder a || usesStringBinder b
+  | _ => false
+
+def closureUsesStringBinder : VE.Closure.Formula → Bool
+  | .all s a | .ex s a => s == Background.stringSort || closureUsesStringBinder a
+  | .not a => closureUsesStringBinder a
+  | .and a b | .or a b | .implies a b =>
+      closureUsesStringBinder a || closureUsesStringBinder b
+  | .reachBody _ s a _ _ => s == Background.stringSort || closureUsesStringBinder a
+  | _ => false
+
 /-! ## Formula decoding for the FOL family -/
 
-def decodeFormulas (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
+def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
+    Except String (List VE.Formula) := do
   let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
+  if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
   if (fs.map VE.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
   pure fs
 
-def decodeClosed (E : VE.Environment) (j : Json) : Except String VE.Formula := do
+def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
   let a ← VE.Bridge.decodeFormula 64 j
+  if data && usesStringBinder a then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless a.check E [] do throw "ill-typed or unbound conclusion"
   pure a
 
@@ -376,20 +463,23 @@ def ok (id : String) (fields : List (String × Json)) : Json :=
 def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
     (j : Json) : Except String Json := do
   let E := rv.environment
+  if kind == "background" then
+    return ok id [("premises", toJson ((fullBackground rv).map (encodeFormula ∘ Prod.fst))),
+      ("generators", toJson ((fullBackground rv).map Prod.snd))]
   if kind == "evaluate" then
-    let M ← decodeModel rv (← j.getObjVal? "model")
-    let fs ← decodeFormulas E (← j.getObjVal? "ast")
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
+    let fs ← decodeFormulas E (← j.getObjVal? "ast") (profiles.contains "data@0")
     if fs.isEmpty then throw "empty document"
     return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
   let premisesJson ← j.getObjVal? "premises"
-  let ps ← decodeFormulas E premisesJson
-  let c ← decodeClosed E (← j.getObjVal? "conclusion")
+  let ps ← decodeFormulas E premisesJson (profiles.contains "data@0")
+  let c ← decodeClosed E (← j.getObjVal? "conclusion") (profiles.contains "data@0")
   if kind == "countermodel" then
-    let M ← decodeModel rv (← j.getObjVal? "model")
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
     return ok id [("refutes", .bool (VE.countermodelCheck M ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
-  let background := VE.Definitions.background rv.definitions rv.literals
+  let background := (fullBackground rv).map Prod.fst
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
@@ -400,23 +490,32 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
 def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
     (j : Json) : Except String Json := do
   let E := rv.environment
+  if kind == "background" then
+    return ok id [("premises", toJson ((fullBackground rv).map (encodeFormula ∘ Prod.fst))),
+      ("generators", toJson ((fullBackground rv).map Prod.snd))]
   if kind == "evaluate" then
-    let M ← decodeModel rv (← j.getObjVal? "model")
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")
+    if profiles.contains "data@0" && fs.any closureUsesStringBinder then
+      throw "$string quantification requires data stage 2"
     if fs.isEmpty then throw "empty document"
     return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
+  if profiles.contains "data@0" && ps.any closureUsesStringBinder then
+    throw "$string quantification requires data stage 2"
   let c ← VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  if profiles.contains "data@0" && closureUsesStringBinder c then
+    throw "$string quantification requires data stage 2"
   unless c.check E [] do throw "ill-typed or unbound conclusion"
   if ((c :: ps).map VE.Closure.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
     throw "ResourceLimit: AST node count"
   if kind == "countermodel" then
-    let M ← decodeModel rv (← j.getObjVal? "model")
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
     return ok id [("refutes", .bool (VE.Closure.countermodelCheck M ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeClosureCertificate (← j.getObjVal? "certificate")
-  let background := VE.Definitions.background rv.definitions rv.literals
+  let background := (fullBackground rv).map Prod.fst
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
@@ -479,6 +578,7 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
 W3(7)): the regenerated Background, in order, with each premise's generator. -/
 def runBackground (id : String) (bg : List (VE.Formula × String)) : Json :=
   ok id [("background", Json.arr (bg.map (fun p => encodeFormula p.1)).toArray),
+    ("premises", Json.arr (bg.map (fun p => encodeFormula p.1)).toArray),
     ("generators", Json.arr (bg.map (fun p => Json.str p.2)).toArray)]
 
 /-- The dependency-order case: nodes `{"name", "mentions"}`; the result is the

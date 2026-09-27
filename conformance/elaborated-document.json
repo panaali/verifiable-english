@@ -2163,6 +2163,692 @@
     }
   },
   {
+    "id": "data-two-flags-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "data-two-flags-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "data-two-flags-search",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "max_domain_size": 1,
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "expected": {
+      "status": "ok",
+      "found": true
+    }
+  },
+  {
+    "id": "data-two-flags-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+      "premise_meaning_ids": [
+        "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+        "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+        "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+      ],
+      "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 3
+    }
+  },
+  {
+    "id": "data-dropped-flag-stales-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department."
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+      "premise_meaning_ids": [
+        "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+        "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+        "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+      ],
+      "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "data-defined-predicate-cannot-be-flagged",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true,
+            "defined": {
+              "arguments": [
+                "person",
+                "department"
+              ],
+              "body": [
+                "top"
+              ]
+            }
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  },
+  {
+    "id": "data-definition-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          },
+          "assigned": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Has an assigned department.",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "department",
+                [
+                  "binary",
+                  "dept",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "assigned",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "data-definition-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          },
+          "assigned": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Has an assigned department.",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "department",
+                [
+                  "binary",
+                  "dept",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "assigned",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "assigned",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "9e348b7544efaed2cadac37e5d9ee238a536f9c312a748a5c5c77a20bfb9f708",
+      "premise_meaning_ids": [
+        "459cc8682bf2910695509c3a16da61f357f5801207cab4d12079545c63dd612f",
+        "415b3db4893b1b3d93606e72ca2a44ec7f85c33b9e5b691db2a9bfddd64ed905",
+        "39d2b500add75db50749569ec3b3a2cda55a1687bd3df8518d43fe3ade2b5947",
+        "02f02051910b2fc4d641c105ccab8d4825ea577e3dc43de8e011ebd556033c5b",
+        "5c26018409e5a6fdc29a69602a4a594b10ad64bbda0e7b6cbb99f5f64e7b78ed"
+      ],
+      "conclusion_meaning_id": "5c26018409e5a6fdc29a69602a4a594b10ad64bbda0e7b6cbb99f5f64e7b78ed",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 4
+    }
+  },
+  {
     "id": "order-literals-evaluate",
     "kind": "evaluate",
     "environment": {
@@ -6632,7 +7318,7 @@
     ],
     "expected": {
       "status": "error",
-      "code": "rejected"
+      "code": "UnsupportedProfile"
     }
   },
   {
