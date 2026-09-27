@@ -8,19 +8,23 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 import hashlib
+import inspect
 import json
+import math
 import time
 from typing import Protocol
 
-from ..ast import check_formula
+from ..ast import check_formula, formula_from_data, formula_to_data
 from ..errors import VEError
 from ..evaluate import evaluate
 from ..model import FiniteModel
 from ..identity import meaning_id
 from .ambiguity_patterns import (CATALOGUE_VERSION, OPERATION_SECONDS, SEARCH_LIMITS,
-                                 MAX_CANDIDATES, MAX_COMPARISONS, MAX_CARDS, checked_wording)
+                                 MAX_CANDIDATES, MAX_COMPARISONS, MAX_CARDS, Budget, _Deadline,
+                                 checked_wording)
 
-RECOVERY_VERSION = "ve.assist-recovery@1"
+# @2: the ledger records commands and observations; state is derived by replay.
+RECOVERY_VERSION = "ve.assist-recovery@2"
 MAX_REPLIES = 8
 TASK_SECONDS = 300
 MAX_PROPOSALS = 2
@@ -93,15 +97,79 @@ class Unit:
     started: float = field(default_factory=time.time)
 
 
+class _Observations:
+    """Nondeterministic inputs of one command: wall clock, deadline expiry, W2.
+
+    A live command reads them; a replayed command takes them from the ledger.
+    A recorded expiry can only make an operation stop earlier, so a forged
+    observation can add pending work or reject an approval, never grant one.
+    """
+    KEYS = frozenset({"now", "deadlines", "external"})
+
+    def __init__(self, clock, *, replay=False, recorded=None):
+        self.replay = replay
+        self.budgets: list[Budget] = []
+        self.external: list[str] = []
+        if not self.replay:
+            self.now, self._fire_at, self._external = clock(), None, None
+            return
+        if (type(recorded) is not dict or set(recorded) != self.KEYS
+                or type(recorded["now"]) not in (int, float) or not math.isfinite(recorded["now"])
+                or type(recorded["deadlines"]) is not list
+                or any(row is not None and (type(row) is not int or row < 1) for row in recorded["deadlines"])
+                or type(recorded["external"]) is not list
+                or any(type(row) is not str for row in recorded["external"])):
+            raise ValueError("invalid recorded observations")
+        self.now = recorded["now"]
+        self._fire_at = list(recorded["deadlines"])
+        self._external = list(recorded["external"])
+
+    def budget(self, seconds) -> Budget:
+        if not self.replay:
+            budget = Budget(seconds)
+        elif not self._fire_at:
+            raise ValueError("replayed command used an unrecorded deadline")
+        else:
+            budget = Budget(replay=True, fire_at=self._fire_at.pop(0))
+        self.budgets.append(budget)
+        return budget
+
+    def record(self):
+        return {"now": self.now, "deadlines": [budget.fired for budget in self.budgets],
+                "external": list(self.external)}
+
+
+class _InvalidLedger(ValueError):
+    pass
+
+
+def _canonical(value) -> str:
+    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+                      allow_nan=False)
+
+
+LEDGER_KEYS = frozenset({"format", "genesis_versions", "versions", "limits", "revision",
+                         "commands", "events"})
+
+
 class RecoveryService:
-    """Single writer API. All changes append a revisioned event to the ledger."""
+    """Single writer API over an event-sourced recovery ledger.
+
+    Every top-level call is a command recorded with its JSON inputs and the
+    nondeterministic observations it made. Units, readings, catalogue
+    results, pending items, narrowings, approvals and events are all derived
+    by running commands through the transition code below; nothing is
+    imported. ``from_ledger`` replays every command from genesis and accepts
+    the ledger only if it is byte-equal to that replay.
+    """
     def __init__(self, env, *, grammar_version: str, glossary_version: str,
                  reading_set_version: str, document_adapter: DocumentAdapter | None = None,
-                 glossary_adapter: GlossaryAdapter | None = None):
+                 glossary_adapter: GlossaryAdapter | None = None, clock=time.time):
         self.env = env
         self.versions = {"grammar": grammar_version, "environment": env.environment_id,
                          "glossary": glossary_version, "catalogue": CATALOGUE_VERSION,
                          "reading_set": reading_set_version, "recovery": RECOVERY_VERSION}
+        self.genesis_versions = deepcopy(self.versions)
         self.limits = {**SEARCH_LIMITS, "operation_seconds": OPERATION_SECONDS,
                        "max_candidates": MAX_CANDIDATES, "max_comparisons": MAX_COMPARISONS,
                        "max_cards": MAX_CARDS, "max_replies": MAX_REPLIES,
@@ -109,14 +177,87 @@ class RecoveryService:
                        "proposal_seconds": PROPOSAL_SECONDS}
         self.document_adapter = document_adapter
         self.glossary_adapter = glossary_adapter
+        self.clock = clock
         self.units: dict[str, Unit] = {}
         self.events: list[dict] = []
+        self.commands: list[dict] = []
         self.revision = 0
+        self._observed: _Observations | None = None
+        self._replaying: dict | None = None
+        self._document = None
+
+    # -- command log -------------------------------------------------------
+
+    def _command(self, _name, /, **args):
+        """Run one top-level command as a transaction and append its record.
+
+        Live and replayed commands both run on the JSON-decoded arguments, so
+        replay sees exactly the inputs the live transition saw. A command that
+        fails before emitting an event leaves no trace; one that fails after
+        emitting events is recorded with its error, and replay must reproduce
+        both.
+        """
+        if self._observed is not None:
+            raise RuntimeError("recovery commands cannot run inside another command")
+        try:
+            args = json.loads(_canonical(args))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("recovery command arguments must be JSON data") from exc
+        operation = getattr(self, "_" + _name)
+        if set(args) != set(inspect.signature(operation).parameters):
+            raise ValueError("recovery command arguments do not match the command")
+        saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
+                 self.revision, deepcopy(self.versions))
+        error = None
+        try:
+            recorded = self._replaying
+            self._observed = (_Observations(self.clock) if recorded is None else
+                              _Observations(self.clock, replay=True, recorded=recorded.get("observed")))
+            result = operation(**args)
+        except Exception as exc:
+            error = exc
+        except BaseException:
+            self._observed = None
+            self._restore(saved)
+            raise
+        observed, self._observed = self._observed, None
+        if error is not None and (observed is None or len(self.events) == saved[1]):
+            self._restore(saved)
+            raise error
+        record = {"sequence": len(self.commands) + 1, "command": _name, "args": args,
+                  "observed": observed.record(), "revision": self.revision,
+                  "error": None if error is None else {"type": type(error).__name__,
+                                                       "message": str(error)},
+                  "previous_digest": self.commands[-1]["command_digest"] if self.commands else None}
+        record["command_digest"] = _digest(record)
+        self.commands.append(record)
+        if error is not None:
+            raise error
+        return result
+
+    def _restore(self, saved):
+        units, events, revision, versions = saved
+        for unit_id in list(self.units):
+            if unit_id not in units:
+                del self.units[unit_id]
+            else:
+                self.units[unit_id].__dict__.update(deepcopy(units[unit_id]))
+        del self.events[events:]
+        self.revision = revision
+        self.versions.clear()
+        self.versions.update(versions)
+
+    def _now(self):
+        return self._observed.now
+
+    def _budget(self) -> Budget:
+        return self._observed.budget(OPERATION_SECONDS)
 
     def _event(self, action, unit: Unit, **detail):
         self.revision += 1
         unit.revision = self.revision
-        event = {"revision": self.revision, "action": action, "unit": unit.id,
+        event = {"revision": self.revision, "command": len(self.commands) + 1,
+                 "action": action, "unit": unit.id,
                  "state": unit.state, "source_digest": _digest(unit.source),
                  "versions": deepcopy(self.versions), "limits": deepcopy(self.limits),
                  "unit_snapshot": self._snapshot(unit),
@@ -128,206 +269,82 @@ class RecoveryService:
 
     @staticmethod
     def _snapshot(unit):
-        return asdict(unit)
+        return deepcopy(asdict(unit))
 
     def _expect(self, expected_revision):
         if expected_revision is not None and expected_revision != self.revision:
             raise ValueError("stale recovery revision")
 
     @classmethod
-    def from_ledger(cls, env, ledger, *, document_adapter=None, glossary_adapter=None):
-        versions = ledger["versions"]
-        service = cls(env, grammar_version=versions["grammar"],
-                      glossary_version=versions["glossary"],
-                      reading_set_version=versions["reading_set"],
-                      document_adapter=document_adapter, glossary_adapter=glossary_adapter)
-        if ledger.get("versions") != service.versions or ledger.get("limits") != service.limits:
+    def _replay(cls, env, ledger, clock=time.time):
+        """Derive a service from genesis by replaying every recorded command."""
+        if type(ledger) is not dict or set(ledger) != LEDGER_KEYS or ledger["format"] != RECOVERY_VERSION:
+            raise _InvalidLedger("invalid recovery ledger")
+        genesis = ledger["genesis_versions"]
+        if type(genesis) is not dict or not all(type(genesis.get(k)) is str
+                                                 for k in ("grammar", "glossary", "reading_set")):
+            raise _InvalidLedger("invalid recovery ledger")
+        service = cls(env, grammar_version=genesis["grammar"], glossary_version=genesis["glossary"],
+                      reading_set_version=genesis["reading_set"], clock=clock)
+        if _canonical(genesis) != _canonical(service.versions) or _canonical(ledger["limits"]) != _canonical(service.limits):
             raise ValueError("recovery ledger versions or limits changed")
-        service.events = deepcopy(ledger["events"])
-        service.revision = ledger["revision"]
-        for event in service.events:
-            service.units[event["unit"]] = Unit(**deepcopy(event["unit_snapshot"]))
-        if not service.verify_ledger():
-            raise ValueError("invalid recovery ledger")
+        if type(ledger["commands"]) is not list or type(ledger["events"]) is not list:
+            raise _InvalidLedger("invalid recovery ledger")
+        for record in ledger["commands"]:
+            first = len(service.events)
+            if (type(record) is not dict or type(record.get("command")) is not str
+                    or record["command"] not in COMMANDS or type(record.get("args")) is not dict):
+                raise _InvalidLedger("invalid recovery ledger")
+            service._replaying = record
+            try:
+                service._command(record["command"], **record["args"])
+            except Exception:
+                pass  # a recorded failure must recur; the comparison below decides
+            finally:
+                service._replaying = None
+            if (not service.commands or _canonical(service.commands[-1]) != _canonical(record)
+                    or _canonical(service.events[first:])
+                    != _canonical(ledger["events"][first:len(service.events)])):
+                raise _InvalidLedger("invalid recovery ledger")
+        if _canonical(service.to_ledger()) != _canonical(ledger):
+            raise _InvalidLedger("invalid recovery ledger")
+        if not all(service.approval_valid(k) for k, u in service.units.items() if u.state == "approved"):
+            raise _InvalidLedger("invalid recovery ledger")
+        return service
+
+    @classmethod
+    def from_ledger(cls, env, ledger, *, document_adapter=None, glossary_adapter=None, clock=time.time):
+        try:
+            service = cls._replay(env, ledger, clock)
+        except _InvalidLedger:
+            raise
+        except ValueError as exc:
+            if str(exc) == "recovery ledger versions or limits changed":
+                raise
+            raise ValueError("invalid recovery ledger") from exc
+        except (KeyError, TypeError, IndexError, AttributeError, RecursionError) as exc:
+            raise ValueError("invalid recovery ledger") from exc
+        service.document_adapter = document_adapter
+        service.glossary_adapter = glossary_adapter
         return service
 
     def to_ledger(self):
-        return {"format": RECOVERY_VERSION, "versions": deepcopy(self.versions),
-                "limits": deepcopy(self.limits),
-                "revision": self.revision, "events": deepcopy(self.events)}
+        return {"format": RECOVERY_VERSION, "genesis_versions": deepcopy(self.genesis_versions),
+                "versions": deepcopy(self.versions), "limits": deepcopy(self.limits),
+                "revision": self.revision, "commands": deepcopy(self.commands),
+                "events": deepcopy(self.events)}
 
     def verify_ledger(self, ledger=None):
+        """Replay ``ledger`` (default: this service's) and require it to be this state."""
         try:
-            return self._verify_ledger(ledger)
-        except (KeyError, TypeError, ValueError, IndexError, VEError):
+            replayed = self._replay(self.env, self.to_ledger() if ledger is None else ledger)
+            return (_canonical(replayed.to_ledger()) == _canonical(self.to_ledger())
+                    and _canonical({k: asdict(u) for k, u in replayed.units.items()})
+                    == _canonical({k: asdict(u) for k, u in self.units.items()}))
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError):
             return False
 
-    @staticmethod
-    def _valid_transition(event, previous):
-        """An event may change only the fields owned by its recorded action."""
-        snap = event["unit_snapshot"]
-        action = event["action"]
-        if snap["id"] != event["unit"] or snap["revision"] != event["revision"] or snap["state"] != event["state"]:
-            return False
-        if previous is None:
-            return action == "add" and snap["state"] == "draft" and snap["approval"] is None
-        allowed = {
-            "invalidate": {"state", "approval"},
-            "edit": {"source", "anchor", "presentation", "state", "meaning_id", "readings",
-                     "rejected", "narrowings", "pending", "catalogue_reviewed", "catalogue_results"},
-            "undo": set(), "undo_requires_review": {"state"},
-            "start": {"state"}, "task_cap": {"state", "reason"},
-            "classify": {"state", "reason", "pending", "readings", "catalogue_reviewed", "catalogue_results"},
-            "catalogue_page": {"state", "pending", "catalogue_reviewed", "catalogue_results"},
-            "reply": {"state", "reason", "replies", "rejected"},
-            "proposer_cap": {"state", "reason"}, "proposer_reserved": {"proposals"},
-            "proposer_failed": {"state", "reason"}, "proposer_timed_out": {"state", "reason"},
-            "proposer_suggested": set(), "cancel": {"state"}, "unresolved": {"state", "reason"},
-            "readings": {"state", "readings", "pending"},
-            "resolve_pending": {"state", "pending", "readings", "catalogue_results", "catalogue_reviewed"},
-            "narrowing": {"narrowings"},
-            "approve": {"state", "meaning_id", "paraphrase", "presentation", "situation",
-                        "readings", "rejected", "approval"},
-        }.get(action)
-        if allowed is None or any(snap[k] != previous[k] for k in snap.keys() - allowed - {"revision"}):
-            return False
-        if action == "start" and (previous["state"] not in {"draft", "stale", "unresolved", "exhausted"}
-                                  or snap["state"] != "analysing"):
-            return False
-        if action == "invalidate" and (not previous["approval"] or snap["approval"] is not None
-                                       or snap["state"] != "stale"):
-            return False
-        if action == "edit":
-            if snap["source"] == previous["source"]:
-                if any(snap[k] != previous[k] for k in ("meaning_id", "readings", "rejected",
-                        "narrowings", "pending", "catalogue_reviewed", "catalogue_results")):
-                    return False
-            elif any(snap[k] for k in ("meaning_id", "readings", "rejected", "narrowings",
-                                        "pending", "catalogue_reviewed", "catalogue_results")):
-                return False
-        if action == "classify":
-            from .ambiguity_patterns import PATTERNS
-            matched = {p.id for p in PATTERNS if p.matches(snap["source"])}
-            if (event.get("matched_patterns") != [p.id for p in PATTERNS if p.matches(snap["source"])]
-                    or type(event.get("requested_pending")) is not list
-                    or event.get("parse_outcome") not in {"zero", "one", "multiple", "exhausted"}):
-                return False
-            expected_pending = ([row for row in previous["pending"] if not row.get("pattern_id")]
-                                + event["requested_pending"])
-            expected_readings = deepcopy(previous["readings"])
-            for pattern in event["matched_patterns"]:
-                result = snap["catalogue_results"].get(pattern)
-                if result is not None:
-                    for candidate in result.get("candidates", []):
-                        if not any(row.get("meaning_id") == candidate.get("meaning_id")
-                                   for row in expected_readings):
-                            expected_readings.append(candidate)
-                if (result is None or result.get("pending") or result.get("residual")
-                        or result.get("next_cursor") is not None):
-                    expected_pending.append({"pattern_id": pattern, "reason": "catalogue review incomplete"})
-            if event.get("discourse") != "complete":
-                expected_pending.append({"reason": "discourse reference unresolved"})
-            if event["parse_outcome"] == "multiple":
-                expected_pending.append({"reason": "multiple source readings unresolved"})
-            if (previous["state"] != "analysing"
-                    or snap["readings"] != expected_readings or snap["pending"] != expected_pending
-                    or set(snap["catalogue_reviewed"]) - matched
-                    or set(snap["catalogue_results"]) - matched
-                    or set(snap["catalogue_reviewed"]) != {
-                        p for p in matched if p in snap["catalogue_results"]
-                        and not snap["catalogue_results"][p].get("pending")
-                        and not snap["catalogue_results"][p].get("residual")
-                        and snap["catalogue_results"][p].get("next_cursor") is None}
-                    or any(p not in snap["catalogue_results"] or snap["catalogue_results"][p].get("pending")
-                           or snap["catalogue_results"][p].get("residual")
-                           or snap["catalogue_results"][p].get("next_cursor") is not None
-                           for p in snap["catalogue_reviewed"])):
-                return False
-        if action == "readings":
-            if (previous["state"] not in {"reading_review", "ready"}
-                    or {row["meaning_id"] for row in previous["readings"]}
-                    - {row["meaning_id"] for row in snap["readings"]}
-                    or snap["pending"][:len(previous["pending"])] != previous["pending"]):
-                return False
-        if action == "catalogue_page":
-            pattern = event["pattern_id"]
-            before = previous["catalogue_results"].get(pattern)
-            after = snap["catalogue_results"].get(pattern)
-            retained = [row for row in previous["pending"] if row.get("pattern_id") != pattern]
-            if (previous["state"] != "reading_review" or not before or not after
-                    or before.get("next_cursor") is None
-                    or any(row not in snap["pending"] for row in retained)
-                    or set(snap["catalogue_reviewed"]) - set(previous["catalogue_reviewed"]) - {pattern}
-                    or (pattern in snap["catalogue_reviewed"] and (after.get("pending") or after.get("residual")
-                        or after.get("next_cursor") is not None))
-                    or snap["catalogue_results"].keys() != previous["catalogue_results"].keys()
-                    or any(snap["catalogue_results"][p] != result for p, result in previous["catalogue_results"].items()
-                           if p != pattern)
-                    or after.get("candidates") != before.get("candidates")
-                    or after.get("cards", [])[:len(before.get("cards", []))] != before.get("cards", [])
-                    or after.get("comparison_count", 0) < before.get("comparison_count", 0)):
-                return False
-        if action == "resolve_pending":
-            if (previous["state"] != "reading_review" or not event.get("actor") or not event.get("reason")
-                    or event["item"] not in previous["pending"] or len(snap["pending"]) != len(previous["pending"]) - 1
-                    or snap["readings"][:len(previous["readings"])] != previous["readings"]):
-                return False
-            removed = previous["pending"].copy()
-            removed.remove(event["item"])
-            if snap["pending"] != removed:
-                return False
-            if event["item"].get("pattern_id"):
-                if (event["disposition"] != "not_applicable"
-                        or snap["catalogue_results"].get(event["item"]["pattern_id"], {}).get("disposition") != {
-                            "actor": event["actor"], "reason": event["reason"], "disposition": "not_applicable"}):
-                    return False
-            elif event["disposition"] != "resolved" or not event.get("wording") or not event.get("cited_spans"):
-                return False
-        if action == "reply" and (snap["replies"] != previous["replies"] + 1
-                                  or snap["rejected"][:len(previous["rejected"])] != previous["rejected"]):
-            return False
-        if action == "proposer_reserved" and snap["proposals"] != previous["proposals"] + 1:
-            return False
-        if action == "narrowing" and snap["narrowings"] != previous["narrowings"] + [event["narrowing"]]:
-            return False
-        if action == "approve" and (snap["state"] != "approved" or previous["state"] != "ready"
-                                    or previous["pending"] or snap["readings"][:len(previous["readings"])] != previous["readings"]
-                                    or snap["rejected"][:len(previous["rejected"])] != previous["rejected"]):
-            return False
-        if action == "cancel" and (previous["state"] == "approved" or snap["state"] != "draft"):
-            return False
-        return True
-
-    def _verify_ledger(self, ledger=None):
-        ledger = self.to_ledger() if ledger is None else ledger
-        if (ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions
-                or ledger.get("limits") != self.limits):
-            return False
-        events = ledger.get("events")
-        if type(events) is not list or ledger.get("revision") != len(events):
-            return False
-        previous = None
-        history = RecoveryService(self.env, grammar_version=self.versions["grammar"],
-            glossary_version=self.versions["glossary"],
-            reading_set_version=self.versions["reading_set"])
-        for number, event in enumerate(events, 1):
-            raw = {k: v for k, v in event.items() if k != "event_digest"}
-            if (event.get("revision") != number or event.get("previous_digest") != previous
-                    or event.get("event_digest") != _digest(raw)
-                    or event.get("source_digest") != _digest(event["unit_snapshot"]["source"])):
-                return False
-            prior = history.units.get(event["unit"])
-            if not self._valid_transition(event, self._snapshot(prior) if prior else None):
-                return False
-            history.versions = deepcopy(event["versions"])
-            history.units[event["unit"]] = Unit(**deepcopy(event["unit_snapshot"]))
-            if history.units[event["unit"]].state == "approved" and not history.approval_valid(event["unit"]):
-                return False
-            previous = event["event_digest"]
-        latest = {e["unit"]: e["unit_snapshot"] for e in events}
-        if latest != {k: self._snapshot(v) for k, v in self.units.items()}:
-            return False
-        return all(self.approval_valid(k) for k, u in self.units.items() if u.state == "approved")
+    # -- transitions -------------------------------------------------------
 
     def _invalidate(self, unit_id, seen=None):
         seen = set() if seen is None else seen
@@ -344,12 +361,19 @@ class RecoveryService:
                 self._invalidate(child.id, seen)
 
     def add(self, unit_id: str, source: str, anchor: dict, *, mode="authoring", dependencies=(), expected_revision=None):
+        return self._command("add", unit_id=unit_id, source=source, anchor=anchor, mode=mode,
+                             dependencies=list(dependencies), expected_revision=expected_revision)
+
+    def _add(self, unit_id, source, anchor, mode, dependencies, expected_revision):
         self._expect(expected_revision)
-        if unit_id in self.units or not source or mode not in {"authoring", "translation"}:
+        if (not isinstance(unit_id, str) or not unit_id or unit_id in self.units
+                or not isinstance(source, str) or not source or mode not in {"authoring", "translation"}
+                or not isinstance(dependencies, list)):
             raise ValueError("invalid or duplicate unit")
-        if any(parent not in self.units for parent in dependencies):
+        if any(not isinstance(parent, str) or parent not in self.units for parent in dependencies):
             raise ValueError("unknown dependency")
-        unit = Unit(unit_id, source, deepcopy(anchor), mode=mode, dependencies=list(dependencies))
+        unit = Unit(unit_id, source, deepcopy(anchor), mode=mode, dependencies=list(dependencies),
+                    started=self._now())
         self.units[unit_id] = unit
         self._event("add", unit)
         return unit
@@ -361,8 +385,13 @@ class RecoveryService:
                 "prefix_is_admitted": False}
 
     def undo(self, unit_id: str, target_revision: int, *, expected_revision=None):
-        self._expect(expected_revision)
         """Restore an earlier snapshot as a new revision; revalidate its approval."""
+        return self._command("undo", unit_id=unit_id, target_revision=target_revision,
+                             expected_revision=expected_revision)
+
+    def _undo(self, unit_id, target_revision, expected_revision):
+        self._expect(expected_revision)
+        # Events are derived by this service's own transitions, never imported.
         prior = next((e["unit_snapshot"] for e in self.events
                       if e["unit"] == unit_id and e["revision"] == target_revision), None)
         if prior is None:
@@ -379,8 +408,7 @@ class RecoveryService:
                 and current.presentation == prior["presentation"] and self.approval_valid(unit_id)):
             self._event("undo", current, target_revision=target_revision)
             return current
-        unit = self.edit(unit_id, source=prior["source"], anchor=prior["anchor"],
-                         presentation=prior["presentation"])
+        unit = self._edit(unit_id, prior["source"], prior["anchor"], prior["presentation"], None)
         self._event("undo", unit, target_revision=target_revision)
         if old_approval is None:
             return unit
@@ -391,22 +419,27 @@ class RecoveryService:
             formula = parsed.document.formulas[0]
             if len(parsed.document.formulas) != 1 or meaning_id(self.env, formula) != snap["meaning_id"]:
                 raise ValueError("restored meaning changed")
-            self.start(unit_id)
-            self.classify(unit_id, parse_outcome="one")
+            self._start(unit_id, None)
+            self._classify(unit_id, "one")
             if unit.state != "ready":
                 raise ValueError("restored reading review is incomplete")
-            self.set_readings(unit_id, deepcopy(snap["considered"]))
-            self.approve(unit_id, formula, actor=snap["actor"], paraphrase=snap["paraphrase"],
-                         presentation=snap["presentation"], situation=snap["situation"],
-                         rejected=snap["rejected"], narrowing=snap["narrowing"])
+            self._set_readings(unit_id, deepcopy(snap["considered"]), [], None)
+            self._approve(unit_id, formula_to_data(self.env, formula), snap["actor"], snap["paraphrase"],
+                          snap["presentation"], snap["situation"], snap["rejected"], snap["narrowing"], None)
         except (ValueError, KeyError, IndexError):
             unit.state = "stale"
             self._event("undo_requires_review", unit)
         return unit
 
     def edit(self, unit_id, *, source=None, anchor=None, presentation=None, expected_revision=None):
+        return self._command("edit", unit_id=unit_id, source=source, anchor=anchor,
+                             presentation=presentation, expected_revision=expected_revision)
+
+    def _edit(self, unit_id, source, anchor, presentation, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
+        if source is not None and (not isinstance(source, str) or not source):
+            raise ValueError("invalid source")
         new_source = unit.source if source is None else source
         new_anchor = unit.anchor if anchor is None else anchor
         new_presentation = unit.presentation if presentation is None else presentation
@@ -438,8 +471,12 @@ class RecoveryService:
         return unit
 
     def update_versions(self, *, expected_revision=None, **versions):
+        return self._command("update_versions", versions=versions, expected_revision=expected_revision)
+
+    def _update_versions(self, versions, expected_revision):
         self._expect(expected_revision)
-        if set(versions) - set(self.versions):
+        if (not isinstance(versions, dict) or set(versions) - set(self.versions)
+                or any(not isinstance(v, str) for v in versions.values())):
             raise ValueError("unknown version field")
         changed = any(self.versions[k] != v for k, v in versions.items())
         self.versions.update(versions)
@@ -448,12 +485,15 @@ class RecoveryService:
                 self._invalidate(unit_id)
 
     def start(self, unit_id, *, expected_revision=None):
+        return self._command("start", unit_id=unit_id, expected_revision=expected_revision)
+
+    def _start(self, unit_id, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state not in {"draft", "stale", "unresolved", "exhausted"}:
             raise ValueError("unit cannot start analysis from this state")
         unit.state = "analysing"
-        if time.time() - unit.started >= TASK_SECONDS or unit.replies > MAX_REPLIES:
+        if self._now() - unit.started >= TASK_SECONDS or unit.replies > MAX_REPLIES:
             unit.state, unit.reason = "unresolved", "clarification task cap"
             self._event("task_cap", unit)
             return unit.state
@@ -462,12 +502,23 @@ class RecoveryService:
     def classify(self, unit_id, *, parse_outcome, vocabulary="known", discourse="complete",
                  force="supported", check="checked", pending=(), limit=None,
                  catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None):
+        return self._command("classify", unit_id=unit_id, parse_outcome=parse_outcome,
+                             vocabulary=vocabulary, discourse=discourse, force=force, check=check,
+                             pending=list(pending), limit=limit, catalogue_bindings=catalogue_bindings,
+                             catalogue_dispositions=catalogue_dispositions,
+                             expected_revision=expected_revision)
+
+    def _classify(self, unit_id, parse_outcome, vocabulary="known", discourse="complete",
+                  force="supported", check="checked", pending=(), limit=None,
+                  catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state != "analysing":
             raise ValueError("analyse first")
         if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
             raise ValueError("invalid parse outcome")
+        if any(not isinstance(row, dict) for row in pending):
+            raise ValueError("pending items must be records")
         from .ambiguity_patterns import PATTERNS, review as review_pattern
         # A restart may refresh catalogue work, but cannot erase an unresolved
         # discourse or author clarification recorded by an earlier attempt.
@@ -477,7 +528,7 @@ class RecoveryService:
         matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
         bindings = catalogue_bindings or {}
         dispositions = catalogue_dispositions or {}
-        stop = time.monotonic() + OPERATION_SECONDS
+        budget = self._budget()
         unit.catalogue_reviewed = []
         unit.catalogue_results = {}
         for pattern_id in matched:
@@ -491,7 +542,7 @@ class RecoveryService:
                                                        "candidates": [], "cards": []}
                 continue
             result = (review_pattern(self.env, unit.source, bindings[pattern_id],
-                                     pattern_id=pattern_id, deadline=stop)
+                                     pattern_id=pattern_id, deadline=budget)
                       if pattern_id in bindings else None)
             if result is not None:
                 unit.catalogue_results[pattern_id] = result
@@ -523,6 +574,10 @@ class RecoveryService:
         return unit.state
 
     def continue_catalogue(self, unit_id, pattern_id, bindings, *, expected_revision=None):
+        return self._command("continue_catalogue", unit_id=unit_id, pattern_id=pattern_id,
+                             bindings=bindings, expected_revision=expected_revision)
+
+    def _continue_catalogue(self, unit_id, pattern_id, bindings, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         previous = unit.catalogue_results.get(pattern_id)
@@ -530,7 +585,7 @@ class RecoveryService:
             raise ValueError("no catalogue page to continue")
         from .ambiguity_patterns import review
         page = review(self.env, unit.source, bindings, pattern_id=pattern_id,
-                      cursor=previous["next_cursor"])
+                      cursor=previous["next_cursor"], deadline=self._budget())
         if page["candidates"] != previous["candidates"] or page["candidate_count"] != previous["candidate_count"]:
             raise ValueError("catalogue bindings changed between pages")
         previous["cards"].extend(page["cards"])
@@ -549,11 +604,15 @@ class RecoveryService:
         return deepcopy(previous)
 
     def reply(self, unit_id, text: str, *, rejected=(), expected_revision=None):
+        return self._command("reply", unit_id=unit_id, text=text, rejected=list(rejected),
+                             expected_revision=expected_revision)
+
+    def _reply(self, unit_id, text, rejected, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state not in {"needs_word", "needs_repair", "reading_review", "ready", "exhausted"}:
             raise ValueError("no clarification requested")
-        if not text.strip():
+        if not isinstance(text, str) or not text.strip():
             raise ValueError("empty reply")
         unit.replies += 1
         for row in rejected:
@@ -562,7 +621,7 @@ class RecoveryService:
             if unit.readings and row["meaning_id"] not in {item["meaning_id"] for item in unit.readings}:
                 raise ValueError("rejected meaning is outside the considered reading set")
             unit.rejected.append(deepcopy(row))
-        elapsed = time.time() - unit.started
+        elapsed = self._now() - unit.started
         if unit.replies > MAX_REPLIES or unit.proposals > MAX_PROPOSALS or elapsed > TASK_SECONDS:
             unit.state, unit.reason = "unresolved", "clarification task cap"
         else:
@@ -571,39 +630,71 @@ class RecoveryService:
         return unit.state
 
     def request_proposer(self, unit_id, proposer: ProposerAdapter, *, expected_revision=None):
+        """Reserve before calling. Failure stays visible; an explicit retry is a new event.
+
+        The reservation and the proposer outcome are separate commands, so
+        edits made while the request is outstanding are ordered in the ledger.
+        """
+        capped = self._command("request_proposer", unit_id=unit_id, expected_revision=expected_revision)
+        if capped is not None:
+            return capped
+        unit = self.units[unit_id]
+        reserved_revision, reserved_source = self.revision, unit.source
+        started = time.monotonic()
+        try:
+            suggestion = proposer.request(reserved_source, timeout_seconds=PROPOSAL_SECONDS)
+            outcome = ({"kind": "suggestion", "text": suggestion} if isinstance(suggestion, str)
+                       else {"kind": "failed", "error": "TypeError"})
+        except Exception as exc:
+            outcome = {"kind": "failed", "error": type(exc).__name__}
+        if self.revision != reserved_revision or self.units.get(unit_id) is not unit or unit.source != reserved_source:
+            return {"status": "stale", "reason": "proposer request superseded"}
+        if outcome["kind"] == "suggestion" and time.monotonic() - started > PROPOSAL_SECONDS:
+            outcome = {"kind": "timed_out"}
+        return self._command("proposer_result", unit_id=unit_id, reserved_revision=reserved_revision,
+                             outcome=outcome)
+
+    def _request_proposer(self, unit_id, expected_revision):
         self._expect(expected_revision)
-        """Reserve before calling. Failure stays visible; an explicit retry is a new event."""
         unit = self.units[unit_id]
         if unit.state not in {"needs_word", "needs_repair", "reading_review", "exhausted"}:
             raise ValueError("proposer request is unavailable in this state")
-        if unit.proposals >= MAX_PROPOSALS or time.time() - unit.started >= TASK_SECONDS:
+        if unit.proposals >= MAX_PROPOSALS or self._now() - unit.started >= TASK_SECONDS:
             unit.state, unit.reason = "unresolved", "proposer/task cap"
             self._event("proposer_cap", unit)
             return {"status": "unresolved", "reason": unit.reason}
         unit.proposals += 1
         self._event("proposer_reserved", unit, request=unit.proposals,
                     timeout_seconds=PROPOSAL_SECONDS)
-        reserved_revision, reserved_source = self.revision, unit.source
-        started = time.monotonic()
-        try:
-            suggestion = proposer.request(reserved_source, timeout_seconds=PROPOSAL_SECONDS)
-        except Exception as exc:
-            if self.revision != reserved_revision or unit.source != reserved_source:
-                return {"status": "stale", "reason": "proposer request superseded"}
-            unit.state, unit.reason = "exhausted", f"proposer unavailable: {type(exc).__name__}"
+        return None
+
+    def _proposer_result(self, unit_id, reserved_revision, outcome):
+        unit = self.units[unit_id]
+        reserved = (self.events[reserved_revision - 1]
+                    if type(reserved_revision) is int and 1 <= reserved_revision <= len(self.events) else None)
+        # Only the latest reservation of this unit, with nothing in between, may be answered.
+        if (reserved_revision != self.revision or reserved is None
+                or reserved["action"] != "proposer_reserved" or reserved["unit"] != unit_id):
+            raise ValueError("proposer result does not answer the latest reservation")
+        kind = outcome.get("kind") if isinstance(outcome, dict) else None
+        if kind == "failed" and set(outcome) == {"kind", "error"} and isinstance(outcome["error"], str):
+            unit.state, unit.reason = "exhausted", f"proposer unavailable: {outcome['error']}"
             self._event("proposer_failed", unit, reason=unit.reason)
             return {"status": "exhausted", "reason": unit.reason}
-        if self.revision != reserved_revision or unit.source != reserved_source:
-            return {"status": "stale", "reason": "proposer request superseded"}
-        if time.monotonic() - started > PROPOSAL_SECONDS:
+        if kind == "timed_out" and set(outcome) == {"kind"}:
             unit.state, unit.reason = "exhausted", "proposer request deadline (50 seconds)"
             self._event("proposer_timed_out", unit)
             return {"status": "exhausted", "reason": unit.reason}
-        # Suggestions are never automatically admitted or selected.
-        self._event("proposer_suggested", unit, text=suggestion, provenance="untrusted_proposer")
-        return {"status": "suggestion", "text": suggestion}
+        if kind == "suggestion" and set(outcome) == {"kind", "text"} and isinstance(outcome["text"], str):
+            # Suggestions are never automatically admitted or selected.
+            self._event("proposer_suggested", unit, text=outcome["text"], provenance="untrusted_proposer")
+            return {"status": "suggestion", "text": outcome["text"]}
+        raise ValueError("invalid proposer outcome")
 
     def cancel(self, unit_id, *, expected_revision=None):
+        return self._command("cancel", unit_id=unit_id, expected_revision=expected_revision)
+
+    def _cancel(self, unit_id, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state == "approved":
@@ -612,6 +703,10 @@ class RecoveryService:
         self._event("cancel", unit)
 
     def unresolved(self, unit_id, reason, *, expected_revision=None):
+        return self._command("unresolved", unit_id=unit_id, reason=reason,
+                             expected_revision=expected_revision)
+
+    def _unresolved(self, unit_id, reason, expected_revision):
         self._expect(expected_revision)
         if not reason:
             raise ValueError("reason required")
@@ -621,15 +716,21 @@ class RecoveryService:
         self._event("unresolved", unit)
 
     def set_readings(self, unit_id, readings, pending=(), *, expected_revision=None):
+        return self._command("set_readings", unit_id=unit_id, readings=list(readings),
+                             pending=list(pending), expected_revision=expected_revision)
+
+    def _set_readings(self, unit_id, readings, pending, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state not in {"reading_review", "ready"}:
             raise ValueError("unit is not in reading review")
+        if any(not isinstance(row, dict) for row in pending):
+            raise ValueError("pending items must be records")
         self._invalidate(unit_id)
         supplied = deepcopy(list(readings))
         from ..english import parse_english_with_metadata
         for row in supplied:
-            if not isinstance(row, dict) or not row.get("meaning_id") or not row.get("wording"):
+            if not isinstance(row, dict) or not row.get("meaning_id") or not isinstance(row.get("wording"), str):
                 raise ValueError("reading needs checked meaning_id and wording")
             if not row["wording"].endswith((".", ".\n")):
                 raise ValueError("reading wording is not a writable sentence")
@@ -652,10 +753,18 @@ class RecoveryService:
     def resolve_pending(self, unit_id, index, *, actor, reason, disposition,
                         wording=None, cited_spans=(),
                         expected_revision=None):
+        return self._command("resolve_pending", unit_id=unit_id, index=index, actor=actor,
+                             reason=reason, disposition=disposition, wording=wording,
+                             cited_spans=list(cited_spans), expected_revision=expected_revision)
+
+    def _resolve_pending(self, unit_id, index, actor, reason, disposition, wording,
+                         cited_spans, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         if unit.state != "reading_review" or not actor or not reason:
             raise ValueError("checked pending resolution requires actor and reason")
+        if type(index) is not int or not 0 <= index < len(unit.pending):
+            raise ValueError("unknown pending item")
         row = unit.pending[index]
         if row.get("pattern_id") and disposition == "not_applicable":
             result = unit.catalogue_results.get(row["pattern_id"])
@@ -670,7 +779,7 @@ class RecoveryService:
             if not wording or not cited_spans:
                 raise ValueError("resolution needs a checked rewrite and cited spans")
             from ..english import parse_english_with_metadata
-            if not wording.endswith((".", ".\n")):
+            if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
                 raise ValueError("resolution rewrite is not writable")
             parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
             if len(parsed.document.formulas) != 1:
@@ -688,12 +797,23 @@ class RecoveryService:
 
     def record_narrowing(self, unit_id, *, keeps, actor, reason, cited_spans,
                          document=None, expected_revision=None):
+        """The W2 document is external; the ledger records that W2 accepted it."""
+        self._document = document
+        try:
+            return self._command("record_narrowing", unit_id=unit_id, keeps=list(keeps), actor=actor,
+                                 reason=reason, cited_spans=cited_spans,
+                                 expected_revision=expected_revision)
+        finally:
+            self._document = None
+
+    def _record_narrowing(self, unit_id, keeps, actor, reason, cited_spans, expected_revision):
         self._expect(expected_revision)
         unit = self.units[unit_id]
         ids = {row["meaning_id"] for row in unit.readings}
         kept = list(keeps)
         if (unit.mode != "translation" or unit.state not in {"ready", "reading_review"}
-                or not ids or not kept or not set(kept) <= ids or not actor or not reason
+                or not ids or not kept or any(not isinstance(k, str) for k in kept)
+                or not set(kept) <= ids or not actor or not reason
                 or not isinstance(cited_spans, list) or not cited_spans
                 or any(not isinstance(span, dict) or type(span.get("start")) is not int
                        or type(span.get("end")) is not int or not 0 <= span["start"] < span["end"] <= len(unit.source)
@@ -709,7 +829,12 @@ class RecoveryService:
         record["document_unit"] = {"id": record["id"], "source": unit.source,
                                    "anchor": deepcopy(cited_spans), "kind": "meta",
                                    "meaning_status": "reviewed", "support": [unit.id]}
-        if self.document_adapter is not None:
+        observed = self._observed
+        if observed.replay:
+            if observed._external[:1] == ["w2:accepted"]:
+                observed.external.append(observed._external.pop(0))
+        elif self.document_adapter is not None:
+            document = self._document
             if document is None:
                 raise ValueError("W2 document required for attributed narrowing")
             checked = self.document_adapter.add_unit(document, anchor=deepcopy(cited_spans),
@@ -722,29 +847,12 @@ class RecoveryService:
             if result is False or (isinstance(result, dict) and
                                    (result.get("valid") is False or result.get("status") == "rejected")):
                 raise ValueError("W2 rejected narrowing")
+            observed.external.append("w2:accepted")
         unit.narrowings.append(record)
         self._event("narrowing", unit, narrowing=deepcopy(record))
         return deepcopy(record)
 
-    def approve(self, unit_id, formula, *, actor, paraphrase, presentation, situation,
-                rejected=(), narrowing=None, expected_revision=None):
-        self._expect(expected_revision)
-        stop = time.monotonic() + OPERATION_SECONDS
-        from .ambiguity_patterns import _Deadline, _operation_budget
-        def within_deadline(operation, *args):
-            if time.monotonic() >= stop:
-                raise ValueError("approval operation deadline")
-            try:
-                with _operation_budget(stop):
-                    result = operation(*args)
-            except _Deadline as exc:
-                raise ValueError("approval operation deadline") from exc
-            if time.monotonic() >= stop:
-                raise ValueError("approval operation deadline")
-            return result
-        unit = self.units[unit_id]
-        if unit.state != "ready" or unit.pending:
-            raise ValueError("reading review is incomplete")
+    def _catalogue_complete(self, unit):
         from .ambiguity_patterns import PATTERNS
         matched = {pattern.id for pattern in PATTERNS if pattern.matches(unit.source)}
         if matched - set(unit.catalogue_reviewed):
@@ -757,21 +865,67 @@ class RecoveryService:
             if disposition is not None and (disposition.get("disposition") != "not_applicable"
                                             or not disposition.get("actor") or not disposition.get("reason")):
                 raise ValueError("catalogue disposition is invalid")
-        if time.time() - unit.started >= TASK_SECONDS or unit.replies > MAX_REPLIES:
+
+    def approve(self, unit_id, formula, *, actor, paraphrase, presentation, situation,
+                rejected=(), narrowing=None, expected_revision=None):
+        return self._command("approve", unit_id=unit_id, formula=formula_to_data(self.env, formula),
+                             actor=actor, paraphrase=paraphrase, presentation=presentation,
+                             situation=situation, rejected=list(rejected), narrowing=narrowing,
+                             expected_revision=expected_revision)
+
+    def _approve(self, unit_id, formula, actor, paraphrase, presentation, situation,
+                 rejected, narrowing, expected_revision):
+        self._expect(expected_revision)
+        unit = self.units[unit_id]
+        if unit.state != "ready" or unit.pending:
+            raise ValueError("reading review is incomplete")
+        self._catalogue_complete(unit)
+        if self._now() - unit.started >= TASK_SECONDS or unit.replies > MAX_REPLIES:
             unit.state, unit.reason = "unresolved", "clarification task cap"
             self._event("task_cap", unit)
             raise ValueError("clarification task cap")
-        if within_deadline(lambda: any(
-                self.units[d].state != "approved" or not self.approval_valid(d)
-                for d in unit.dependencies)):
-            raise ValueError("dependent unit is not approved")
+        # One budget covers every step, including dependency revalidation.
+        budget = self._budget()
+        try:
+            with budget.guard():
+                outcome = self._approval(unit_id, formula_from_data(self.env, formula), actor=actor,
+                                         paraphrase=paraphrase, presentation=presentation,
+                                         situation=situation, rejected=rejected,
+                                         narrowing=narrowing, budget=budget)
+            if budget.expired():
+                raise ValueError("approval operation deadline")
+        except _Deadline as exc:
+            raise ValueError("approval operation deadline") from exc
+        for key, value in outcome.items():
+            setattr(unit, key, value)
+        unit.state = "approved"
+        self._event("approve", unit, approval_digest=unit.approval["digest"])
+        return deepcopy(unit.approval)
+
+    def _approval(self, unit_id, formula, *, actor, paraphrase, presentation, situation,
+                  rejected, narrowing, budget):
+        """Every approval obligation, computed from derived state without mutating it.
+
+        Returns the unit fields an approval sets. Runs inside ``budget``.
+        """
+        from ..english import parse_english_with_metadata
+        from ..background import background, validate_background
+        unit = self.units[unit_id]
+        if unit.pending:
+            raise ValueError("reading review is incomplete")
+        self._catalogue_complete(unit)
+        for dependency in unit.dependencies:
+            with budget.guard():
+                valid = (self.units[dependency].state == "approved"
+                         and self._approval_valid(dependency, budget))
+            if not valid:
+                raise ValueError("dependent unit is not approved")
         if not all((actor, paraphrase, presentation)) or not isinstance(situation, dict):
             raise ValueError("actor, paraphrase, presentation and checked situation required")
-        within_deadline(check_formula, self.env, formula)
-        within_deadline(checked_wording, self.env, presentation, formula)
-        within_deadline(checked_wording, self.env, paraphrase, formula)
+        check_formula(self.env, formula)
+        checked_wording(self.env, presentation, formula)
+        checked_wording(self.env, paraphrase, formula)
         model = FiniteModel.from_dict(self.env, situation)
-        from ..background import background, validate_background
         validate_background(self.env, model)
         if any(evaluate(self.env, premise.formula, model, trace=False).value is not True
                for premise in background(self.env)):
@@ -783,11 +937,10 @@ class RecoveryService:
         alternatives = set()
         for result in unit.catalogue_results.values():
             for candidate in result.get("candidates", []):
-                from ..english import parse_english_with_metadata
                 wording = candidate["wording"]
                 if not wording.endswith((".", ".\n")):
                     raise ValueError("catalogue wording is not writable")
-                parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
+                parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
                 if (len(parsed.document.formulas) != 1 or
                         meaning_id(self.env, parsed.document.formulas[0]) != candidate["meaning_id"]):
                     raise ValueError("catalogue wording changed meaning")
@@ -806,21 +959,18 @@ class RecoveryService:
                 for wording, candidate_id in zip(card["paraphrases"], card["meaning_ids"]):
                     if not wording.endswith((".", ".\n")):
                         raise ValueError("card wording is not writable")
-                    parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
+                    parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
                     if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != candidate_id:
                         raise ValueError("card wording changed meaning")
                     values.append(evaluate(self.env, parsed.document.formulas[0], card_model,
                                            trace=False).value)
                 if values != card["values"] or len(values) != 2 or values[0] == values[1]:
                     raise ValueError("card situation does not distinguish its readings")
-        if time.monotonic() >= stop:
-            raise ValueError("approval operation deadline")
-        from ..english import parse_english_with_metadata
         for row in unit.readings:
             wording = row.get("wording")
             if not isinstance(wording, str) or not wording.endswith((".", ".\n")):
                 raise ValueError("considered reading wording is not writable")
-            parsed = within_deadline(parse_english_with_metadata, self.env, wording.rstrip("\n") + "\n")
+            parsed = parse_english_with_metadata(self.env, wording.rstrip("\n") + "\n")
             if len(parsed.document.formulas) != 1 or meaning_id(self.env, parsed.document.formulas[0]) != row.get("meaning_id"):
                 raise ValueError("considered reading wording changed meaning")
         proposed_readings = deepcopy(unit.readings)
@@ -837,7 +987,7 @@ class RecoveryService:
                 raise ValueError("explicit rejection needs meaning_id and reason")
             if row["meaning_id"] not in considered:
                 raise ValueError("rejected meaning is outside the considered reading set")
-        all_rejected = unit.rejected + deepcopy(list(rejected))
+        all_rejected = deepcopy(unit.rejected) + deepcopy(list(rejected))
         rejected_ids = {row["meaning_id"] for row in all_rejected}
         if unit.mode == "authoring" and (alternatives | considered) - {mid} - rejected_ids:
             raise ValueError("every distinct alternative needs an explicit rejection")
@@ -862,60 +1012,39 @@ class RecoveryService:
                 raise ValueError("translation choice requires a separately recorded cited narrowing")
         elif narrowing is not None and not any(row["id"] == narrowing for row in unit.narrowings):
             raise ValueError("unknown narrowing")
-        if time.monotonic() >= stop or time.time() - unit.started >= TASK_SECONDS:
-            raise ValueError("approval deadline")
-        unit.readings = proposed_readings
-        unit.meaning_id = mid
-        unit.paraphrase, unit.presentation, unit.situation = paraphrase, presentation, deepcopy(situation)
-        unit.rejected = all_rejected
         snapshot = {"unit": unit.id, "source": unit.source, "anchor": unit.anchor,
                     "presentation": presentation, "meaning_id": mid, "paraphrase": paraphrase,
-                    "situation": situation, "considered": unit.readings, "rejected": unit.rejected,
+                    "situation": situation, "considered": proposed_readings, "rejected": all_rejected,
                     "catalogue_results": unit.catalogue_results,
                     "narrowing": narrowing, "narrowings": unit.narrowings,
                     "actor": actor, "versions": self.versions,
                     "dependencies": [[d, self.units[d].revision] for d in unit.dependencies]}
-        unit.approval = {"digest": _digest(snapshot), "snapshot": deepcopy(snapshot)}
-        unit.state = "approved"
-        self._event("approve", unit, approval_digest=unit.approval["digest"])
-        return deepcopy(unit.approval)
+        return {"readings": proposed_readings, "meaning_id": mid, "paraphrase": paraphrase,
+                "presentation": presentation, "situation": deepcopy(situation),
+                "rejected": all_rejected,
+                "approval": {"digest": _digest(snapshot), "snapshot": deepcopy(snapshot)}}
 
     def approval_valid(self, unit_id) -> bool:
-        unit = self.units[unit_id]
-        if unit.state != "approved" or unit.approval is None:
+        """Recompute the approval from derived state; it must match exactly."""
+        return self._approval_valid(unit_id, Budget())
+
+    def _approval_valid(self, unit_id, budget) -> bool:
+        unit = self.units.get(unit_id)
+        if unit is None or unit.state != "approved" or not isinstance(unit.approval, dict):
             return False
         try:
-            snap = unit.approval["snapshot"]
-            bound = (snap["source"] == unit.source and snap["anchor"] == unit.anchor
-                    and snap["presentation"] == unit.presentation and snap["meaning_id"] == unit.meaning_id
-                    and snap["paraphrase"] == unit.paraphrase and snap["situation"] == unit.situation
-                    and snap["considered"] == unit.readings and snap["rejected"] == unit.rejected
-                    and snap["narrowings"] == unit.narrowings
-                    and snap["catalogue_results"] == unit.catalogue_results
-                    and snap["versions"] == self.versions
-                    and snap["dependencies"] == [[d, self.units[d].revision] for d in unit.dependencies]
-                    and _digest(snap) == unit.approval["digest"])
-        except (KeyError, TypeError, ValueError, IndexError):
-            return False
-        if not bound:
-            return False
-        try:
-            from ..english import parse_english_with_metadata
-            parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip("\n") + "\n")
-            if len(parsed.document.formulas) != 1:
-                return False
-            replay = RecoveryService(self.env, grammar_version=self.versions["grammar"],
-                glossary_version=self.versions["glossary"],
-                reading_set_version=self.versions["reading_set"])
-            replay.units = deepcopy(self.units)
-            selected = replay.units[unit_id]
-            selected.state, selected.approval = "ready", None
-            selected.started = time.time()
-            result = replay.approve(unit_id, parsed.document.formulas[0], actor=snap["actor"],
-                paraphrase=snap["paraphrase"], presentation=snap["presentation"],
-                situation=snap["situation"], narrowing=snap["narrowing"])
-            return result["digest"] == unit.approval["digest"]
-        except (KeyError, TypeError, ValueError, IndexError, VEError):
+            with budget.guard():
+                from ..english import parse_english_with_metadata
+                snap = unit.approval["snapshot"]
+                parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip("\n") + "\n")
+                if len(parsed.document.formulas) != 1:
+                    return False
+                expected = self._approval(unit_id, parsed.document.formulas[0], actor=snap["actor"],
+                                          paraphrase=snap["paraphrase"], presentation=snap["presentation"],
+                                          situation=snap["situation"], rejected=(),
+                                          narrowing=snap["narrowing"], budget=budget)
+            return _canonical(expected) == _canonical({key: getattr(unit, key) for key in expected})
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, VEError):
             return False
 
     def add_unit(self, document, **kwargs):
@@ -939,3 +1068,9 @@ class RecoveryService:
                     "source": source, "target": target}
         return self.glossary_adapter.propose_alias(source=source, target=target,
             argument_types=argument_types, direction=direction, context=context)
+
+
+COMMANDS = frozenset({"add", "undo", "edit", "update_versions", "start", "classify",
+                      "continue_catalogue", "reply", "request_proposer", "proposer_result",
+                      "cancel", "unresolved", "set_readings", "resolve_pending",
+                      "record_narrowing", "approve"})
