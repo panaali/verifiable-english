@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 865 Python files; found 4693 import edges into section 1.1 modules.
+Parsed 865 Python files; found 4696 import edges into section 1.1 modules.
 External tree `/home/seyran/code/ve-webapp` at `47d7803af33d9fce5d39a9caa7ee26f8af71606c`.
 External tree `/home/seyran/code/ve-bench` at `7f12a5d2714e4b9595f52e4f801d1de8338137ee`.
 
@@ -98,8 +98,8 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+7) |
 | `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/test_nary.py:4`, `tests/test_nary_differential.py:14` (+7) |
 | `ve/ast.py` | `Eq` | 85 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+99) |
-| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+135) |
-| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+121) |
+| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+136) |
+| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+122) |
 | `ve/ast.py` | `Or` | 102 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/admission.py:16`, `ve/document.py:214`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+86) |
 | `ve/ast.py` | `Implies` | 108 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+104) |
 | `ve/ast.py` | `Forall` | 114 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+127) |
@@ -317,7 +317,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/order.py` | `_fields` | 355 | U | — | — |
 | `ve/order.py` | `_pairs` | 363 | U | — | — |
 | `ve/order.py` | `_integer` | 374 | U | — | — |
-| `ve/order.py` | `decode_trace` | 381 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
+| `ve/order.py` | `decode_trace` | 381 | A | `ve/backends/dispatch.py` → Lean order certificate | `tests/probe_matrix.py:45` |
 | `ve/order.py` | `_Replayer` | 429 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
 | `ve/order.py` | `_Replayer.__init__` | 430 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
 | `ve/order.py` | `_Replayer.children` | 433 | A | `ve/backends/dispatch.py` → Lean order certificate | — |
@@ -4156,9 +4156,11 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.argument` | `Deduction` | 20 |
 | `tests/probe_matrix.py` | `ve.argument` | `check_argument` | 20 |
 | `tests/probe_matrix.py` | `ve.argument` | `deduction_identity` | 20 |
+| `tests/probe_matrix.py` | `ve.ast` | `And` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `Bottom` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `Const` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `Document` | 22 |
+| `tests/probe_matrix.py` | `ve.ast` | `Not` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `Top` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `Unary` | 20 |
 | `tests/probe_matrix.py` | `ve.ast` | `_to_data` | 22 |
@@ -4172,15 +4174,15 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.definitions` | `compile_definitions` | 25 |
 | `tests/probe_matrix.py` | `ve.entailment` | `check_entailment_certificate` | 26 |
 | `tests/probe_matrix.py` | `ve.entailment` | `prove_entailment` | 26 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 420 |
 | `tests/probe_matrix.py` | `ve.environment` | `Environment` | 20 |
-| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 357 |
-| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 357 |
+| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 420 |
+| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 420 |
 | `tests/probe_matrix.py` | `ve.evaluate` | `evaluate` | 27 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 20 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 29 |
@@ -4189,6 +4191,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.norms` | `check_conflict` | 35 |
 | `tests/probe_matrix.py` | `ve.norms` | `check_norm_entailment_certificate` | 35 |
 | `tests/probe_matrix.py` | `ve.norms` | `prove_norm_entailment` | 35 |
+| `tests/probe_matrix.py` | `ve.order` | `decode_trace` | 45 |
 | `tests/probe_matrix.py` | `ve.parser` | `canonicalize` | 30 |
 | `tests/probe_matrix.py` | `ve.parser` | `parse` | 30 |
 | `tests/probe_matrix.py` | `ve.printer` | `print_formula` | 31 |
