@@ -237,6 +237,30 @@ def test_capitalized_article_alias_keeps_exact_case_in_conclusions(alias, marker
     assert migration['meaning_unchanged']
 
 
+def test_declared_names_keep_case_with_extra_whitespace():
+    env = Environment(vocabulary())
+    upper = _names(env, api='The API')
+    formula = Unary('reviewed', Const('api'))
+    source = 'The  API is reviewed. Therefore  The\tAPI is reviewed.'
+    expected = Document((formula, formula))
+    assert parse_english(env, source, **upper) == expected
+    presented = parse_presentation(env, source, **upper)
+    assert presented.document == expected
+    assert [s['role'] for s in presented.sentences] == ['premise', 'conclusion']
+
+    lower = _names(env, api='api')
+    source = 'Api is reviewed. Therefore  Api is reviewed.'
+    assert parse_english(env, source, **lower) == expected
+    assert parse_presentation(env, source, **lower).document == expected
+
+    from conformance.english_surface import order_environment
+    order = order_environment()
+    order_options = _names(order, budget='Annual Budget')
+    comparison = Le(Num(3), Const('budget'))
+    assert parse_presentation(order, 'Annual  Budget is at least 3.',
+                              **order_options).document == Document((comparison,))
+
+
 def test_plural_and_possessive_references_require_explicit_repair():
     env = Environment(vocabulary())
     options = _names(env, api='the API', alice='Alice')
