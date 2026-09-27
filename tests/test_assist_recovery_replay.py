@@ -8,11 +8,13 @@ command inputs are replayed through the same checks as live calls.
 import hashlib
 import json
 import random
+import time
 from copy import deepcopy
 
 import pytest
 
-from ve.assist.ambiguity_patterns import review
+from ve.assist.ambiguity_patterns import Budget, review
+from ve.assist import recovery as recovery_module
 from ve.assist.recovery import RecoveryService
 from ve.ast import Unary, Const, Not
 from ve.identity import meaning_id
@@ -552,3 +554,43 @@ def test_random_live_cache_edits_never_reach_a_transition_or_validate(seed):
                 with pytest.raises(ValueError, match="ledger replay"):
                     attempt()
         assert observable(live) == tampered, path
+
+
+@pytest.mark.parametrize("operation", ["import", "verify"])
+def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch, operation):
+    monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 0.25)
+    recovery = service()
+    recovery.add("u", "Api is safe.", {})
+    recovery.start("u")
+    recovery.classify("u", parse_outcome="one")
+    recovery.approve("u", API, actor="author", paraphrase="Api is safe.",
+                     presentation="Api is safe.", situation=SITUATION)
+
+    original_hit = Budget._hit
+    phase = {"record": True, "delay": False, "delayed": False}
+
+    def hit(self, ordinal):
+        if phase["record"] and not self.replay:
+            self.fired = ordinal
+            return True
+        if phase["delay"] and self.replay and self.fire_at is not None and not phase["delayed"]:
+            phase["delayed"] = True
+            time.sleep(0.30)
+        return original_hit(self, ordinal)
+
+    monkeypatch.setattr(Budget, "_hit", hit)
+    with pytest.raises(ValueError, match="edit operation deadline"):
+        recovery.edit("u", source="Api is reviewed.")
+    phase["record"] = False
+    ledger = recovery.to_ledger()
+    assert ledger["commands"][-1]["observed"]["deadlines"] == [1]
+    assert recovery.units["u"].state == "approved"
+    assert RecoveryService.from_ledger(ENV, ledger).approval_valid("u")
+
+    phase["delay"] = True
+    if operation == "import":
+        with pytest.raises(ValueError, match="recovery import operation deadline"):
+            RecoveryService.from_ledger(ENV, ledger)
+    else:
+        assert not recovery.verify_ledger()
+    assert phase["delayed"]
