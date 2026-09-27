@@ -75,11 +75,12 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--bench-root", type=Path, default=DEFAULT_BENCH)
     parser.add_argument("--requests", type=int, default=20_000)
+    parser.add_argument("--seed", type=int, default=20260927)
     args = parser.parse_args(argv)
     machine_info = machine()
     pool = pools(args.bench_root)
     ref = references(pool)
-    rng = random.Random(20260927)
+    rng = random.Random(args.seed)
     modes = sorted(pool)
     try:
         service = LeanService(timeout=60, max_requests=10**9, max_rss=None)
@@ -115,7 +116,8 @@ def main(argv=None):
     final = rss[-1]["rss_bytes"]
     growth = (final - warm) / warm
     machine_info["loadavg_after"] = list(os.getloadavg())
-    data = {"machine": machine_info, "requests": args.requests, "elapsed_s": round(elapsed, 1),
+    data = {"machine": machine_info, "seed": args.seed, "requests": args.requests,
+            "elapsed_s": round(elapsed, 1),
             "per_mode": per_mode, "pool_sizes": {m: len(c) for m, c in pool.items()},
             "mismatches": len(mismatches), "mismatch_examples": mismatches[:10], "service_stats": stats,
             "rss": rss, "rss_growth_from_1000": round(growth, 4),
@@ -129,7 +131,8 @@ def main(argv=None):
     md = ["# Lean service soak (stage 1, gate 1)", "",
           f"Commit `{data['machine']['commit']}`; {data['machine']['cpu']}; load average "
           f"{data['machine']['loadavg']} at start and {data['machine']['loadavg_after']} after.", "",
-          f"- {args.requests} requests (1-8 cases each, mixed modes {per_mode}) in {data['elapsed_s']} s on one process.",
+          f"- {args.requests} requests (seed {args.seed}; 1-8 cases each, mixed modes {per_mode}) "
+          f"in {data['elapsed_s']} s on one process.",
           f"- Result mismatches against the one-shot executables: {len(mismatches)}.",
           f"- Restarts: {stats['restarts']}; recycling disabled.",
           f"- RSS at request 1,000: {warm / 1e6:.1f} MB; at the end: {final / 1e6:.1f} MB; growth "
