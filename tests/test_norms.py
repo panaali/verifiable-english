@@ -23,6 +23,19 @@ def permission(default="deny", *, act="{0} be done", args=("act",)):
             "regulated": {"role": "permission", "default": default, "act": act}}
 
 
+def test_regulated_predicate_cannot_be_defined_or_flagged():
+    raw = environment({"permitted": permission()}).to_dict()
+    raw["profiles"] = ["data@0", "definitions@0", "norms@0", "relational-fol@0"]
+    predicate = raw["vocabulary"]["predicates"]["permitted"]
+    predicate["defined"] = {"arguments": ["act"], "body": ["top"]}
+    with pytest.raises(VEError, match="RegulatedDefinedPredicate: permitted"):
+        Environment(raw)
+    del predicate["defined"]
+    predicate["functional"] = False
+    with pytest.raises(VEError, match="RegulatedFlag: permitted"):
+        Environment(raw)
+
+
 def obligation(default="deny", dual="permitted", *, act="{0} be done", args=("act",)):
     reg = {"role": "obligation", "default": default, "act": act}
     if dual is not None:

@@ -14,6 +14,26 @@ fn env(unused: bool, constants: bool) -> Environment {
     Environment::from_value(&v).unwrap()
 }
 #[test]
+fn flagged_relation_absent_from_query_is_enumerated() {
+    let e = Environment::from_value(&json!({
+        "language":"ve.core@0.2", "profiles":["data@0","relational-fol@0"],
+        "spec_revision":"ve-v0.2-expand2-2026-09-25",
+        "vocabulary":{
+            "sorts":{"person":{"description":"Person."},"department":{"description":"Department."}},
+            "predicates":{"dept":{"arguments":["person","department"],
+                "description":"Department of a person.","functional":true,"total":true}},
+            "constants":{"alice":{"sort":"person","description":"Alice."}}
+        }
+    })).unwrap();
+    let p = CountermodelProblem::new(&e, vec![], Formula::Bottom).unwrap();
+    let r = find_countermodel(&e, &p, SearchBounds { max_domain_size: 1,
+        ..Default::default() }).unwrap();
+    assert_eq!(r.status, "Found");
+    let model = r.model.unwrap();
+    assert_eq!(model.to_value()["relations"]["dept"], json!([["e0","e0"]]));
+    assert!(p.check_countermodel(&model, 100).unwrap().valid);
+}
+#[test]
 fn unused_predicates_do_not_expand_search() {
     for unused in [false, true] {
         let e = env(unused, false);

@@ -2163,6 +2163,692 @@
     }
   },
   {
+    "id": "data-two-flags-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "data-two-flags-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "data-two-flags-search",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "max_domain_size": 1,
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "expected": {
+      "status": "ok",
+      "found": true
+    }
+  },
+  {
+    "id": "data-two-flags-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+      "premise_meaning_ids": [
+        "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+        "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+        "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+      ],
+      "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 3
+    }
+  },
+  {
+    "id": "data-dropped-flag-stales-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department."
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "ac6426efeba8b86a4a1e8cb56d6aaed44f8b00de923136f0068cf15328dd32cb",
+      "premise_meaning_ids": [
+        "5ea93127ea198c867eab4eaf03373692c1e7d50aeeb8cef2edf8dbb355d6aa96",
+        "f928690733ece85e31885ac5fb9de43c20a6a900829f87cd5e2e6059cf4c0465",
+        "13d1500b0ade345b8dc76765e1adb0853b5340585eafa7bb5d66df436d9c7c54"
+      ],
+      "conclusion_meaning_id": "8ddcb36ffe2350d55e5fce3487e79e341bf50d37bcd621965338ceaae9882acb",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "data-defined-predicate-cannot-be-flagged",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true,
+            "defined": {
+              "arguments": [
+                "person",
+                "department"
+              ],
+              "body": [
+                "top"
+              ]
+            }
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  },
+  {
+    "id": "data-definition-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          },
+          "assigned": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Has an assigned department.",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "department",
+                [
+                  "binary",
+                  "dept",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a"
+        ],
+        "department": [
+          "d"
+        ]
+      },
+      "constants": {
+        "alice": "a"
+      },
+      "relations": {
+        "dept": [
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "backup": [
+          [
+            "a",
+            "d"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "assigned",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true
+      ]
+    }
+  },
+  {
+    "id": "data-definition-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department.",
+            "functional": true,
+            "total": true
+          },
+          "backup": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Backup department.",
+            "total": true
+          },
+          "assigned": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Has an assigned department.",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "department",
+                [
+                  "binary",
+                  "dept",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice."
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "assigned",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "assigned",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "9e348b7544efaed2cadac37e5d9ee238a536f9c312a748a5c5c77a20bfb9f708",
+      "premise_meaning_ids": [
+        "459cc8682bf2910695509c3a16da61f357f5801207cab4d12079545c63dd612f",
+        "415b3db4893b1b3d93606e72ca2a44ec7f85c33b9e5b691db2a9bfddd64ed905",
+        "39d2b500add75db50749569ec3b3a2cda55a1687bd3df8518d43fe3ade2b5947",
+        "02f02051910b2fc4d641c105ccab8d4825ea577e3dc43de8e011ebd556033c5b",
+        "5c26018409e5a6fdc29a69602a4a594b10ad64bbda0e7b6cbb99f5f64e7b78ed"
+      ],
+      "conclusion_meaning_id": "5c26018409e5a6fdc29a69602a4a594b10ad64bbda0e7b6cbb99f5f64e7b78ed",
+      "trace": {
+        "rule": "close"
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 4
+    }
+  },
+  {
     "id": "order-literals-evaluate",
     "kind": "evaluate",
     "environment": {
@@ -2725,9 +3411,10 @@
       ]
     ],
     "expected": {
-      "status": "error",
-      "code": "UnsupportedProfile",
-      "error": "UnsupportedProfile: the closure+n-ary checker is gated until W4 stage 1 lands"
+      "status": "ok",
+      "values": [
+        true
+      ]
     }
   },
   {
@@ -2760,6 +3447,4204 @@
       "status": "error",
       "code": "UnsupportedProfile",
       "error": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
+    }
+  },
+  {
+    "id": "defs-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "lead",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "unary",
+        "lead",
+        [
+          "const",
+          "bob"
+        ]
+      ],
+      [
+        "binary",
+        "above",
+        [
+          "const",
+          "alice"
+        ],
+        [
+          "const",
+          "bob"
+        ]
+      ],
+      [
+        "forall",
+        "person",
+        [
+          "not",
+          [
+            "binary",
+            "above",
+            [
+              "var",
+              0
+            ],
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true,
+        false,
+        true,
+        true
+      ]
+    }
+  },
+  {
+    "id": "defs-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "boss",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "lead",
+      [
+        "const",
+        "bob"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "refutes": true
+    }
+  },
+  {
+    "id": "defs-search",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "max_domain_size": 2,
+    "premises": [
+      [
+        "unary",
+        "boss",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "lead",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "found": true
+    }
+  },
+  {
+    "id": "defs-certificate-uses-definitions",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "senior_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "binary",
+        "supervises",
+        [
+          "const",
+          "alice"
+        ],
+        [
+          "const",
+          "bob"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "lead",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "c9809a565c9d8a7be96f47ac48a67f172097502927a545423dd8eea820a3d684",
+      "premise_meaning_ids": [
+        "edb98a043dd48d169f0abac2dcbf60a4a7762d9d1ddd6bfc4cf4e8dcb6d94d26",
+        "08fffcb801dacd8022534f0630cf0920ee11d7f909d7b949966d694eefbe7fe4",
+        "934db5efe9147bf82cb54d356b7844e0a6b9bba336e2cce4edb2d1b32b88b10b",
+        "110e8e743991b586aa346118973de1fb838e3618c13c6ffa7894148a0374c1be",
+        "82e22844f2db8c12f31020ba51c516b836cbadea361864388e097872b12d8253",
+        "edddebae6db83495a9ec7f18c95fa186c33e237f5239fca8f603124a111168d6",
+        "4bcb8d3a65f00da8e3e590c06aeabad4048fa35b78354c8d913486f4818177a2"
+      ],
+      "conclusion_meaning_id": "f70cef10612fac94f8d25ad66385ef900429e6cf97c58e0074d82984b4a3a316",
+      "trace": {
+        "rule": "expand",
+        "at": 4,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "expand",
+                "at": 1,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 10,
+                    "children": [
+                      {
+                        "rule": "expand",
+                        "at": 2,
+                        "children": [
+                          {
+                            "rule": "expand",
+                            "at": 13,
+                            "children": [
+                              {
+                                "rule": "expand",
+                                "at": 14,
+                                "children": [
+                                  {
+                                    "rule": "close"
+                                  },
+                                  {
+                                    "rule": "expand",
+                                    "at": 15,
+                                    "children": [
+                                      {
+                                        "rule": "close"
+                                      },
+                                      {
+                                        "rule": "expand",
+                                        "at": 16,
+                                        "children": [
+                                          {
+                                            "rule": "expand",
+                                            "at": 3,
+                                            "children": [
+                                              {
+                                                "rule": "expand",
+                                                "at": 20,
+                                                "children": [
+                                                  {
+                                                    "rule": "expand",
+                                                    "at": 22,
+                                                    "children": [
+                                                      {
+                                                        "rule": "expand",
+                                                        "at": 21,
+                                                        "children": [
+                                                          {
+                                                            "rule": "expand",
+                                                            "at": 23,
+                                                            "children": [
+                                                              {
+                                                                "rule": "expand",
+                                                                "at": 12,
+                                                                "children": [
+                                                                  {
+                                                                    "rule": "expand",
+                                                                    "at": 11,
+                                                                    "children": [
+                                                                      {
+                                                                        "rule": "expand",
+                                                                        "at": 26,
+                                                                        "children": [
+                                                                          {
+                                                                            "rule": "close"
+                                                                          }
+                                                                        ],
+                                                                        "parameter": "c:bob"
+                                                                      },
+                                                                      {
+                                                                        "rule": "close"
+                                                                      }
+                                                                    ]
+                                                                  },
+                                                                  {
+                                                                    "rule": "close"
+                                                                  }
+                                                                ]
+                                                              },
+                                                              {
+                                                                "rule": "close"
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "rule": "close"
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "rule": "close"
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ],
+                                            "parameter": "c:alice"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "parameter": "c:alice"
+                      }
+                    ]
+                  }
+                ],
+                "parameter": "c:alice"
+              }
+            ],
+            "parameter": "c:alice"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 5
+    }
+  },
+  {
+    "id": "defs-certificate-other-version",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "senior_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "binary",
+        "supervises",
+        [
+          "const",
+          "alice"
+        ],
+        [
+          "const",
+          "bob"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "lead",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-checker@2",
+      "environment_id": "413b51eb8fd31e6f859e0962124775dbaedeb55819f2f82758d9de3881fde488",
+      "premise_meaning_ids": [
+        "7a5cbf49afef8ce2a1a1adbb75b645fb6f0588d273d1efd01d21b4470c66fb38",
+        "53ddb1631dd6f01c55ea64a68b1bdceb58f5570762ea3491479dee4171f82ba9",
+        "b19cd2388d507c306bc90367db60234f6ab7f251a3900b89d6369641e7205c00",
+        "d0f4c481211285e5349efa1f37c5324d52004e92867b44ae00e9b05d46fe672d",
+        "fa18bfadcc094252c97fcb7bb0f1ab4ef12f20a3bd2f8a2035cc1952682de353",
+        "f201deb532970edaf2e0e1c2131c51b84c710a4de7c87a2b782b5627c634386d",
+        "68a06fc9cf93dabc27a5c71cf8c27996efef601c3907324de236a6eaee38f214"
+      ],
+      "conclusion_meaning_id": "da51ebebb089df30a0894370c43fa475e45f26bf4a6066d08fa6d56d85793b41",
+      "trace": {
+        "rule": "expand",
+        "at": 4,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "expand",
+                "at": 1,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 10,
+                    "children": [
+                      {
+                        "rule": "expand",
+                        "at": 11,
+                        "children": [
+                          {
+                            "rule": "expand",
+                            "at": 12,
+                            "children": [
+                              {
+                                "rule": "close"
+                              },
+                              {
+                                "rule": "close"
+                              }
+                            ]
+                          },
+                          {
+                            "rule": "expand",
+                            "at": 12,
+                            "children": [
+                              {
+                                "rule": "close"
+                              },
+                              {
+                                "rule": "expand",
+                                "at": 2,
+                                "children": [
+                                  {
+                                    "rule": "expand",
+                                    "at": 15,
+                                    "children": [
+                                      {
+                                        "rule": "expand",
+                                        "at": 16,
+                                        "children": [
+                                          {
+                                            "rule": "close"
+                                          },
+                                          {
+                                            "rule": "expand",
+                                            "at": 17,
+                                            "children": [
+                                              {
+                                                "rule": "close"
+                                              },
+                                              {
+                                                "rule": "expand",
+                                                "at": 18,
+                                                "children": [
+                                                  {
+                                                    "rule": "expand",
+                                                    "at": 3,
+                                                    "children": [
+                                                      {
+                                                        "rule": "expand",
+                                                        "at": 22,
+                                                        "children": [
+                                                          {
+                                                            "rule": "expand",
+                                                            "at": 24,
+                                                            "children": [
+                                                              {
+                                                                "rule": "expand",
+                                                                "at": 23,
+                                                                "children": [
+                                                                  {
+                                                                    "rule": "expand",
+                                                                    "at": 25,
+                                                                    "children": [
+                                                                      {
+                                                                        "rule": "close"
+                                                                      },
+                                                                      {
+                                                                        "rule": "close"
+                                                                      }
+                                                                    ]
+                                                                  },
+                                                                  {
+                                                                    "rule": "close"
+                                                                  }
+                                                                ]
+                                                              },
+                                                              {
+                                                                "rule": "close"
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ],
+                                                    "parameter": "c:alice"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ],
+                                "parameter": "c:alice"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "parameter": "c:alice"
+              }
+            ],
+            "parameter": "c:alice"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": false
+    }
+  },
+  {
+    "id": "defs-closure-certificate",
+    "kind": "certificate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "senior_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "binary",
+        "supervises",
+        [
+          "const",
+          "alice"
+        ],
+        [
+          "const",
+          "bob"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "lead",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "certificate": {
+      "checker_version": "ve-tableau-closure-checker@1",
+      "environment_id": "17753be50bdb0bc4ac51ef5cf911328eef2bd7c9fca23e2fcea61eb8b1c2189a",
+      "premise_meaning_ids": [
+        "e1e56ba86c0ed159e8a9796b4d78c52cd687e19a450eb429d4f64058523e8c5c",
+        "f1c11c5b8322f4cf4199f25ffc267fbdc651350878d0dc61b5eac51105bb9951",
+        "798c2a132a7d395f118edece1cc1b58107ca9ff0157e825fe380148052da3439",
+        "f39bc8dee5d0f1a01764ebb8fea3f406edce5cb5b8b6ceff046f04fc2e540e47",
+        "2a8b85734a662cf951948f591d6e28b4f2ae932152b73a602bf579939df2968e",
+        "ea4ec4a0dc8351b085c30cc3d7f18d5df668949320c3f9c3a1edd51c27e4b163",
+        "0b0af013ca2f6318d5067e34cd8136d27adeac36ce15d13b455d053f9df9caf7"
+      ],
+      "conclusion_meaning_id": "2590adf5dd8ab3d954689f07b4dc4ce1cad0d3b3c9ee6dd54e08f64594aee7e2",
+      "trace": {
+        "rule": "expand",
+        "at": 4,
+        "children": [
+          {
+            "rule": "expand",
+            "at": 0,
+            "children": [
+              {
+                "rule": "expand",
+                "at": 1,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 10,
+                    "children": [
+                      {
+                        "rule": "expand",
+                        "at": 2,
+                        "children": [
+                          {
+                            "rule": "expand",
+                            "at": 13,
+                            "children": [
+                              {
+                                "rule": "expand",
+                                "at": 14,
+                                "children": [
+                                  {
+                                    "rule": "close"
+                                  },
+                                  {
+                                    "rule": "expand",
+                                    "at": 15,
+                                    "children": [
+                                      {
+                                        "rule": "close"
+                                      },
+                                      {
+                                        "rule": "expand",
+                                        "at": 16,
+                                        "children": [
+                                          {
+                                            "rule": "expand",
+                                            "at": 3,
+                                            "children": [
+                                              {
+                                                "rule": "expand",
+                                                "at": 20,
+                                                "children": [
+                                                  {
+                                                    "rule": "expand",
+                                                    "at": 22,
+                                                    "children": [
+                                                      {
+                                                        "rule": "expand",
+                                                        "at": 21,
+                                                        "children": [
+                                                          {
+                                                            "rule": "expand",
+                                                            "at": 23,
+                                                            "children": [
+                                                              {
+                                                                "rule": "expand",
+                                                                "at": 12,
+                                                                "children": [
+                                                                  {
+                                                                    "rule": "expand",
+                                                                    "at": 11,
+                                                                    "children": [
+                                                                      {
+                                                                        "rule": "expand",
+                                                                        "at": 26,
+                                                                        "children": [
+                                                                          {
+                                                                            "rule": "close"
+                                                                          }
+                                                                        ],
+                                                                        "parameter": "c:bob"
+                                                                      },
+                                                                      {
+                                                                        "rule": "close"
+                                                                      }
+                                                                    ]
+                                                                  },
+                                                                  {
+                                                                    "rule": "close"
+                                                                  }
+                                                                ]
+                                                              },
+                                                              {
+                                                                "rule": "close"
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "rule": "close"
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "rule": "close"
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ],
+                                            "parameter": "c:alice"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "parameter": "c:alice"
+                      }
+                    ]
+                  }
+                ],
+                "parameter": "c:alice"
+              }
+            ],
+            "parameter": "c:alice"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "valid": true,
+      "background": 5
+    }
+  },
+  {
+    "id": "defs-closure-evaluate",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unary",
+        "lead",
+        [
+          "const",
+          "alice"
+        ]
+      ],
+      [
+        "unary",
+        "lead",
+        [
+          "const",
+          "bob"
+        ]
+      ]
+    ],
+    "expected": {
+      "status": "ok",
+      "values": [
+        true,
+        false
+      ]
+    }
+  },
+  {
+    "id": "defs-background",
+    "kind": "background",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "background": [
+        [
+          "forall",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "and",
+              [
+                "implies",
+                [
+                  "binary",
+                  "above",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "or",
+                  [
+                    "binary",
+                    "supervises",
+                    [
+                      "var",
+                      1
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "exists",
+                    "person",
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "supervises",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "binary",
+                        "supervises",
+                        [
+                          "var",
+                          0
+                        ],
+                        [
+                          "var",
+                          1
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "implies",
+                [
+                  "or",
+                  [
+                    "binary",
+                    "supervises",
+                    [
+                      "var",
+                      1
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "exists",
+                    "person",
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "supervises",
+                        [
+                          "var",
+                          2
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "binary",
+                        "supervises",
+                        [
+                          "var",
+                          0
+                        ],
+                        [
+                          "var",
+                          1
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "binary",
+                  "above",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "person",
+          [
+            "and",
+            [
+              "implies",
+              [
+                "unary",
+                "boss",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "implies",
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "boss",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "person",
+          [
+            "and",
+            [
+              "implies",
+              [
+                "unary",
+                "senior_finance",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "senior_finance",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "person",
+          [
+            "and",
+            [
+              "implies",
+              [
+                "unary",
+                "lead",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "lead",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "not",
+          [
+            "eq",
+            [
+              "const",
+              "finance"
+            ],
+            [
+              "const",
+              "legal"
+            ]
+          ]
+        ]
+      ],
+      "generators": [
+        "definitions",
+        "definitions",
+        "definitions",
+        "definitions",
+        "literals"
+      ]
+    }
+  },
+  {
+    "id": "defs-cycle",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "point": {
+            "description": "a point"
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "point"
+            ],
+            "description": "base"
+          },
+          "a": {
+            "arguments": [
+              "point"
+            ],
+            "description": "a",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "b",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          },
+          "b": {
+            "arguments": [
+              "point"
+            ],
+            "description": "b",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "a",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "DependencyCycle",
+      "error": "DependencyCycle: a, b"
+    }
+  },
+  {
+    "id": "defs-self-reference",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "point": {
+            "description": "a point"
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "point"
+            ],
+            "description": "base"
+          },
+          "a": {
+            "arguments": [
+              "point"
+            ],
+            "description": "a",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "a",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          },
+          "b": {
+            "arguments": [
+              "point"
+            ],
+            "description": "b",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "DependencyCycle",
+      "error": "DependencyCycle: a"
+    }
+  },
+  {
+    "id": "defs-free-variable",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "point": {
+            "description": "a point"
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "point"
+            ],
+            "description": "base"
+          },
+          "a": {
+            "arguments": [
+              "point"
+            ],
+            "description": "a",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  1
+                ]
+              ]
+            }
+          },
+          "b": {
+            "arguments": [
+              "point"
+            ],
+            "description": "b",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "error": "Definition a: the body is not a typed formula over the symbols below it"
+    }
+  },
+  {
+    "id": "defs-unknown-symbol",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "point": {
+            "description": "a point"
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "point"
+            ],
+            "description": "base"
+          },
+          "a": {
+            "arguments": [
+              "point"
+            ],
+            "description": "a",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "missing",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          },
+          "b": {
+            "arguments": [
+              "point"
+            ],
+            "description": "b",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "error": "Definition a: the body is not a typed formula over the symbols below it"
+    }
+  },
+  {
+    "id": "defs-arguments-mismatch",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "defs-profile-missing",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "defs-flag-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            },
+            "functional": true
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  },
+  {
+    "id": "defs-order-family-gated",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "point": {
+            "description": "a point"
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "point"
+            ],
+            "description": "base"
+          },
+          "a": {
+            "arguments": [
+              "point"
+            ],
+            "description": "a",
+            "defined": {
+              "arguments": [
+                "point"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {},
+      "constants": {},
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: definitions on the order family require an order definition layer"
+    }
+  },
+  {
+    "id": "defs-reach-body-gated",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "reach",
+                  "plus",
+                  [
+                    "named",
+                    "supervises"
+                  ],
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile",
+      "error": "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
     }
   },
   {

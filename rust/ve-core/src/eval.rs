@@ -57,6 +57,8 @@ impl<'a> Evaluator<'a> {
             }
             Formula::Binary(p, t, u) => self.model.relations[p]
                 .contains([self.term(t, bindings), self.term(u, bindings)].as_slice()),
+            Formula::Atom(p, ts) => self.model.relations[p].contains(
+                &ts.iter().map(|t| self.term(t, bindings)).collect::<Vec<_>>()),
             Formula::Reach(kind, edge, t, u) => {
                 let key = (edge, bindings.clone());
                 if !self.closures.contains_key(&key) {

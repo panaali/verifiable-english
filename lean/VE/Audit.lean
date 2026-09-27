@@ -1,4 +1,5 @@
 import VE.Order.Conservativity
+import VE.Route.Readings
 import VE.Order.Gate
 import VE.Order.ModelCheck
 import VE.Order.ProfileGate
@@ -17,6 +18,13 @@ import VE.GraphChecks
 import VE.ModelProofs
 import VE.Route.Run
 import VE.Route.Examples
+import VE.Definitions.Alias
+import VE.Definitions.Elaborate
+import VE.Definitions.Route
+import VE.Definitions.Layer
+import VE.Core.Checks
+import VE.Core.Route
+import VE.Core.Wire
 import Iceberg
 import VE.Norms.Layer
 import VE.Norms.SmallModel
@@ -405,6 +413,16 @@ import VE.Norms.Run
 #print axioms VE.Route.Background.literalsValid_sound
 #print axioms VE.Route.Background.literals_sat_iff
 #print axioms VE.Route.Background.mem_pairs
+#print axioms VE.Data.Background.functionalPremise_iff
+#print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Data.Background.premises_sat_iff
+#print axioms VE.Data.Background.generate_sat_iff
+#print axioms VE.Data.Background.flags_model_valid
+#print axioms VE.Data.Background.string_encoding_sound
+#print axioms VE.Data.Background.fol_data_route_acceptance
+#print axioms VE.Data.Background.closure_data_route_acceptance
+#print axioms VE.Data.Background.fol_data_route_countermodel
+#print axioms VE.Data.Background.closure_data_route_countermodel
 #print axioms VE.Route.Background.mem_sortStrings
 #print axioms VE.Route.Background.orderLiteralPremise_denote
 #print axioms VE.Route.Background.orderLiteralsValid_sound
@@ -425,6 +443,8 @@ import VE.Norms.Run
 #print axioms VE.Route.Run.route_rejects_before_checking
 #print axioms VE.Route.Wire.backgroundViolation_none
 #print axioms VE.Route.Wire.decodeModel_valid
+#print axioms VE.Route.Wire.decodeDataModel_valid
+#print axioms VE.Route.Wire.decodeDataModel_combined
 #print axioms VE.Route.Wire.decodeOrderModel_valid
 #print axioms VE.Route.Examples.body_holds_iff
 #print axioms VE.Route.Examples.body_wellFormed
@@ -672,3 +692,165 @@ import VE.Norms.Run
 #print axioms VE.Norms.Run.norms_wire_acceptance
 #print axioms VE.Norms.norms_route_intended
 #print axioms VE.Norms.mem_children_iff
+#print axioms VE.Definitions.Alias.faithful
+#print axioms VE.Definitions.Alias.conservative
+#print axioms VE.Definitions.Alias.alias_acceptance
+#print axioms VE.Definitions.Step.body_interpret
+#print axioms VE.Definitions.Step.expands
+#print axioms VE.Definitions.Step.extends
+#print axioms VE.Definitions.Step.forget_admissible
+#print axioms VE.Definitions.Step.forget_interpret
+#print axioms VE.Definitions.Step.head_wellFormed
+#print axioms VE.Definitions.Step.interpret_admissible
+#print axioms VE.Definitions.Step.interpret_agrees
+#print axioms VE.Definitions.Step.premise_wellFormed
+#print axioms VE.Definitions.Step.restrict_holds
+#print axioms VE.Definitions.acceptance
+#print axioms VE.Definitions.chainOk_sound
+#print axioms VE.Definitions.chain_arity
+#print axioms VE.Definitions.closure_acceptance
+#print axioms VE.Definitions.conservative_entails
+#print axioms VE.Definitions.countermodel
+#print axioms VE.Definitions.denote_congr
+#print axioms VE.Definitions.elaborate_chain
+#print axioms VE.Definitions.finish_chain
+#print axioms VE.Definitions.firstBad_none
+#print axioms VE.Definitions.forget_forget
+#print axioms VE.Definitions.forget_nil
+#print axioms VE.Definitions.hide_nil
+#print axioms VE.Definitions.iff_denote
+#print axioms VE.Definitions.literalsFree
+#print axioms VE.Definitions.premise_iff
+#print axioms VE.Definitions.routeLayer_background_sound
+#print axioms VE.Definitions.sat_background_iff
+#print axioms VE.Definitions.sortOf_congr
+#print axioms VE.Definitions.stepOk_sound
+#print axioms VE.Definitions.wf_mono
+#print axioms VE.Definitions.conservative
+#print axioms VE.Definitions.faithful
+#print axioms VE.Route.Wire.decodeModel_background
+#print axioms VE.Route.Wire.decodeModel_intended
+#print axioms VE.Route.Wire.fullBackgroundViolation_none
+#print axioms VE.Definitions.Bundle.backgroundLeaves_hold
+#print axioms VE.Definitions.Bundle.bundle_sound
+#print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkAll_reading
+#print axioms VE.Definitions.Bundle.checkAll_binding
+#print axioms VE.Definitions.Bundle.checkLemma_sound
+#print axioms VE.Definitions.Bundle.checkLemma_reading
+#print axioms VE.Definitions.Bundle.checkLemma_binding
+#print axioms VE.Definitions.Bundle.citeAll_sound
+#print axioms VE.Definitions.Bundle.lookupKnown_mem
+#print axioms VE.Definitions.Bundle.mem_appendNew_left
+#print axioms VE.Definitions.Bundle.mem_appendNew_right
+
+-- Core stage 1: new statements and helper proofs.
+#print axioms VE.Core.Path.first
+#print axioms VE.Core.Path.last
+#print axioms VE.Core.Path.least
+#print axioms VE.Core.Path.trans
+#print axioms VE.Core.Path.unfold
+#print axioms VE.Core.Surface.parseRaw_print_named
+#print axioms VE.Core.Surface.parseStatements_nonempty
+#print axioms VE.Core.Surface.parse_print_named
+#print axioms VE.Core.Surface.print_injective_named
+#print axioms VE.Core.Tableau.add_holds
+#print axioms VE.Core.Tableau.bindings_extend
+#print axioms VE.Core.Tableau.bindings_get
+#print axioms VE.Core.Tableau.checkCertificate_sound
+#print axioms VE.Core.Tableau.checkCertificate_sound_v0
+#print axioms VE.Core.Tableau.checkChildren_member
+#print axioms VE.Core.Tableau.closed_sound
+#print axioms VE.Core.Tableau.closes_sound
+#print axioms VE.Core.Tableau.closure_holds
+#print axioms VE.Core.Tableau.complementary_sound
+#print axioms VE.Core.Tableau.composeStep_sound
+#print axioms VE.Core.Tableau.delta_witness
+#print axioms VE.Core.Tableau.edgeStep_sound
+#print axioms VE.Core.Tableau.endStep_sound
+#print axioms VE.Core.Tableau.equalities_sound
+#print axioms VE.Core.Tableau.equivalent_sound
+#print axioms VE.Core.Tableau.extra_sound
+#print axioms VE.Core.Tableau.gamma_holds
+#print axioms VE.Core.Tableau.ground_denote
+#print axioms VE.Core.Tableau.grow_sound
+#print axioms VE.Core.Tableau.holds_extend
+#print axioms VE.Core.Tableau.induct_sound
+#print axioms VE.Core.Tableau.known_bindings
+#print axioms VE.Core.Tableau.literals_hold
+#print axioms VE.Core.Tableau.matches_sound
+#print axioms VE.Core.Tableau.mem_dedup
+#print axioms VE.Core.Tableau.namedStep_sound
+#print axioms VE.Core.Tableau.next_sound
+#print axioms VE.Core.Tableau.one_holds
+#print axioms VE.Core.Tableau.reachClosed_sound
+#print axioms VE.Core.Tableau.reachable_sound
+#print axioms VE.Core.Tableau.replay_sound
+#print axioms VE.Core.Tableau.rule_closure_formula
+#print axioms VE.Core.Tableau.step_sound
+#print axioms VE.Core.Tableau.termToken_denote
+#print axioms VE.Core.Tableau.termTokens_denote
+#print axioms VE.Core.Tableau.tokenListMatches_sound
+#print axioms VE.Core.Tableau.token_defined
+#print axioms VE.Core.Tableau.two_holds
+#print axioms VE.Core.Tableau.typed_extend
+#print axioms VE.Core.Tableau.unfoldAt_sound
+#print axioms VE.Core.check_iff_wellFormed
+#print axioms VE.Core.closure_induction
+#print axioms VE.Core.conservativity
+#print axioms VE.Core.conservativity_without_reach
+#print axioms VE.Core.countermodelCheck_iff
+#print axioms VE.Core.countermodel_sound
+#print axioms VE.Core.edge_at_denote
+#print axioms VE.Core.edge_inclusion
+#print axioms VE.Core.edge_shift_denote
+#print axioms VE.Core.edge_typed
+#print axioms VE.Core.embedClosure_check
+#print axioms VE.Core.embedClosure_denote
+#print axioms VE.Core.embed_of_erase
+#print axioms VE.Core.endEdge_sound
+#print axioms VE.Core.entails_closure
+#print axioms VE.Core.entails_v0
+#print axioms VE.Core.erase_embed
+#print axioms VE.Core.eval_false_iff_not_denote
+#print axioms VE.Core.eval_iff_denote
+#print axioms VE.Core.formula_matches_sound
+#print axioms VE.Core.inductionStep_denote
+#print axioms VE.Core.invariantAt_denote
+#print axioms VE.Core.liftMatch_sound
+#print axioms VE.Core.liftSub_denote
+#print axioms VE.Core.liftTerm_denote
+#print axioms VE.Core.mem_bodyEdges
+#print axioms VE.Core.mem_dedup
+#print axioms VE.Core.mem_namedEdges
+#print axioms VE.Core.mem_pivot
+#print axioms VE.Core.named_body_denote
+#print axioms VE.Core.pair_values
+#print axioms VE.Core.path_iff
+#print axioms VE.Core.pivot_closed
+#print axioms VE.Core.pivot_preserves_closed
+#print axioms VE.Core.reachEval_iff
+#print axioms VE.Core.reach_compose
+#print axioms VE.Core.reach_denote
+#print axioms VE.Core.reachable_congr
+#print axioms VE.Core.reachable_iff
+#print axioms VE.Core.reachable_induction
+#print axioms VE.Core.reachable_trans
+#print axioms VE.Core.star_least
+#print axioms VE.Core.substTerm_denote
+#print axioms VE.Core.subst_denote
+#print axioms VE.Core.termsMatch_sound
+#print axioms VE.Core.unfold_denote
+#print axioms VE.Core.unlift_denote
+#print axioms VE.Core.warshall_closed
+#print axioms VE.Core.warshall_extends
+#print axioms VE.Core.warshall_iff_path
+#print axioms VE.Core.warshall_preserves_closed
+#print axioms VE.Core.warshall_sound
+#print axioms VE.Route.coreValid_certificateSound
+#print axioms VE.Route.core_entails_iff
+#print axioms VE.Route.core_family_gate
+#print axioms VE.Route.core_route_acceptance
+#print axioms VE.Core.Wire.validField
+#print axioms VE.Core.Wire.run_certificate_acceptance
+#print axioms VE.Route.readings_all_iff
