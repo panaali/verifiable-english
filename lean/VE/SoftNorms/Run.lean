@@ -205,8 +205,12 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
       ("conditional_on", toJson conditional)]
   if kind == "soft-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨src, w⟩ ← replaySoftWitness j
+    let names ← VE.Bridge.strings ((j.getObjValD "witness").getObjValD "tuple")
+    let situation := String.intercalate ", " names
     return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
-      ("target", .str w.target.1), ("targets", toJson ((targets (soften src.D)).map (·.1)))] ++
+      ("target", .str w.target.1), ("targets", toJson ((targets (soften src.D)).map (·.1))),
+      ("status_text", .str (if w.conflict then s!"CONFLICT: {witnessKind w.target} at {situation}"
+                            else s!"UNKNOWN: {w.target.1}, budget 10000"))] ++
       (if w.conflict then [("witness_kind", .str (witnessKind w.target))] else []))
   if kind == "soft-conflict" then
     let res ← replaySoftConflict j
