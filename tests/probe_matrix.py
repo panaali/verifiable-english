@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import fields, is_dataclass, replace
+import hashlib
 import itertools
 import json
 from pathlib import Path
@@ -18,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom, And, Not,
-                Unary, Const, check_argument, deduction_identity)
+                Or, Forall, Var, Unary, Const, check_argument, deduction_identity)
 from ve.ast import Document, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
 from ve.identity import meaning_id
 from ve.background import background, dependency_order
@@ -42,7 +43,7 @@ from ve.english import parse_english
 from ve.printer import render
 from ve import limits
 from ve.wire import canonical_json
-from ve.order import decode_trace
+from ve.order import InvalidTrace, decode_trace
 
 OUT = ROOT / "conformance/baseline-2026-09"
 LAYERS = ("data@0", "definitions@0", "documents@1", "norms@0", "time@0")
@@ -50,6 +51,7 @@ FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
 INPUT_CLASSES = ("positive", "rejection", "budget")
 BUDGETED = {"evaluate", "evaluate_trace", "countermodel_check", "countermodel_search",
             "countermodel_search_nonempty", "countermodel_search_nonvacuous",
+            "countermodel_search_min_domain", "countermodel_search_semantic_nonvacuity",
             "distinguishing_model", "certificate_replay", "norms_conflict", "readings",
             "compare", "premise_status"}
 NO_REJECTION = {"background", "compare", "premise_status"}
@@ -100,32 +102,52 @@ def wire(value):
     raise TypeError(f"Unserializable baseline result: {type(value).__name__}")
 
 
-def outcome(call):
+def outcome(call, *, expected=()):
     try:
         result = wire(call())
         status = (result.get("status", result.get("verdict")) if isinstance(result, dict) else None)
         return {"cell": "S", "status": status or "accepted", "output": result}
-    except Exception as exc:
-        if isinstance(exc, (KeyboardInterrupt, SystemExit)):
-            raise
-        code = exc.code if isinstance(exc, VEError) else type(exc).__name__
+    except VEError as exc:
+        code = exc.code
         return {"cell": "U" if isinstance(exc, UnsupportedProfile) else "R",
-                "status": code, "output": exc.to_dict() if isinstance(exc, VEError)
-                else {"code": code, "message": str(exc)}}
+                "status": code, "output": exc.to_dict()}
+    except expected as exc:
+        code = type(exc).__name__
+        return {"cell": "R", "status": code, "output": {"code": code, "message": str(exc)}}
+
+
+def baseline_projection(value):
+    """Omit only checker-build-derived diagnostic identities from the oracle."""
+    if isinstance(value, dict):
+        return {key: baseline_projection(item) for key, item in value.items()
+                if key not in {"checker_build", "record_id"}}
+    if isinstance(value, list):
+        return [baseline_projection(item) for item in value]
+    return value
+
+
+def runtime_sha256():
+    files = sorted((ROOT / "ve").rglob("*.py")) + [ROOT / "pyproject.toml", ROOT / "uv.lock"]
+    digest = hashlib.sha256()
+    for path in files:
+        digest.update(path.relative_to(ROOT).as_posix().encode() + b"\0")
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.hexdigest()
 
 
 def operation(name, kind, env, model):
     """Exercise a small, deliberately explicit input for each public operation."""
     budget = kind == "budget"
     bad = kind == "rejection"
-    source = "broken.\n" if bad else "true.\n"
+    p = Unary("base", Const("x"))
+    source = "broken.\n" if bad else print_formula(env, p) + ".\n"
     if name == "parse_accept": return lambda: document_to_data(env, parse(env, source))
     if name == "canonicalize": return lambda: canonicalize(env, source)
-    if name == "typing": return lambda: formula_to_data(env, formula_from_data(env, ["not", ["top"]] if not bad else ["unary", "missing", ["const", "x"]]))
+    if name == "typing": return lambda: formula_to_data(env, formula_from_data(env, ["unary", "base", ["const", "x"]] if not bad else ["unary", "missing", ["const", "x"]]))
     if name == "environment_validation":
         def check_env():
             data = env.to_dict()
-            if bad: data["profiles"] = ["missing@0", *data["profiles"]]
+            if bad: data["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
             checked = Environment(data)
             return {"environment_id": checked.environment_id, "environment": checked.to_dict()}
         return check_env
@@ -136,16 +158,19 @@ def operation(name, kind, env, model):
             checked = FiniteModel.from_dict(env, data)
             return {"model_id": checked.model_id, "model": checked.to_dict()}
         return check_model
-    if name == "evaluate": return lambda: evaluate(env, Top(), replace(model, model_id="0" * 64) if bad else model, trace=False, max_evaluations=0 if budget else 8)
-    if name == "evaluate_trace": return lambda: evaluate(env, Top(), replace(model, model_id="0" * 64) if bad else model, trace=True, max_trace_nodes=0 if budget else 8)
-    if name == "countermodel_check": return lambda: check_countermodel(env, (), Bottom(), replace(model, model_id="0" * 64) if bad else model, max_evaluations=0 if budget else 8)
+    if name == "evaluate": return lambda: evaluate(env, p, replace(model, model_id="0" * 64) if bad else model, trace=False, max_evaluations=0 if budget else 8)
+    if name == "evaluate_trace": return lambda: evaluate(env, p, replace(model, model_id="0" * 64) if bad else model, trace=True, max_trace_nodes=0 if budget else 8)
+    if name == "countermodel_check": return lambda: check_countermodel(env, (p,), Bottom(), replace(model, model_id="0" * 64) if bad else model, max_evaluations=0 if budget else 8)
     if name.startswith("countermodel_search"):
         opts = {"max_domain_size": 1, "max_models": 0 if budget else 2, "max_evaluations": 8}
         if name.endswith("nonempty"): opts["nonempty_domains"] = True
-        if name.endswith("nonvacuous"): opts["nonvacuous_for"] = Top()
-        if bad: opts["max_models"] = -1
-        return lambda: find_countermodel(env, (), Bottom(), **opts)
-    if name == "distinguishing_model": return lambda: find_distinguishing_model(env, Top(), Bottom(), max_domain_size=1, max_models=-1 if bad else 0 if budget else 2)
+        if name.endswith("nonvacuous"): opts["nonvacuous_for"] = p
+        if name.endswith("min_domain"): opts["min_domain_size"] = 1
+        if name.endswith("semantic_nonvacuity"):
+            opts["nonvacuous_for"] = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
+            opts["semantic_nonvacuity"] = True
+        return lambda: find_countermodel(env, (p,), Unary("missing", Const("x")) if bad else Bottom(), **opts)
+    if name == "distinguishing_model": return lambda: find_distinguishing_model(env, p, Unary("missing", Const("x")) if bad else Not(p), max_domain_size=1, max_models=0 if budget else 2)
     if name == "certificate_replay":
         proof = prove_entailment(env, (), Top(), max_steps=100)
         cert = proof.certificate if not bad else {}
@@ -185,7 +210,13 @@ def operation(name, kind, env, model):
         data = {"units": [{"id": "u", "span": [0, 5], "kind": "asserted", "content": ["top"]}],
                 "graph": {"root": "absent" if bad else "r", "nodes": [{"name": "r", "ast": ["top"], "unit": "u"}]}}
         return lambda: admit_norm_document(env, data)
-    if name == "readings": return lambda: check_readings(env, [], ["missing"] if bad else ["top"], max_steps=0 if budget else 8)
+    if name == "readings":
+        sets = [{"id": "s", "version": 1, "readings": [
+            {"kind": "asserted", "content": ["unary", "base", ["const", "x"]]},
+            {"kind": "asserted", "content": ["not", ["unary", "base", ["const", "x"]]]}]}]
+        return lambda: check_readings(env, sets, ["missing"] if bad else ["bottom"],
+                                      fixed=[["not", ["unary", "base", ["const", "x"]]]],
+                                      max_steps=0 if budget else 100)
     if name == "argument_graph":
         claim = Claim.create(env, "r", "true.\n")
         graph = ArgumentGraph(env, (claim,), (), "absent" if bad else "r")
@@ -198,9 +229,45 @@ def operation(name, kind, env, model):
 OPERATIONS = ("parse_accept", "canonicalize", "typing", "environment_validation",
     "model_validation", "evaluate", "evaluate_trace", "countermodel_check",
     "countermodel_search", "countermodel_search_nonempty", "countermodel_search_nonvacuous",
+    "countermodel_search_min_domain", "countermodel_search_semantic_nonvacuity",
     "distinguishing_model", "certificate_replay", "background", "definitions_elaboration",
     "dependency_order", "admission", "label", "bundle", "norms_elaborate", "norms_conflict",
     "norms_certificate", "norms_admission", "readings", "argument_graph", "compare", "premise_status")
+
+# Every Python S cell belongs to one of these Stage 2 coverage obligations.
+# "Owner" names the implementation role, not a claim that the backend works today.
+GAP_ASSIGNMENTS = {
+    "parse_accept": ("Lean service owner", "2b parse mode: standalone AST and English-surface acceptance/diagnostics"),
+    "canonicalize": ("Lean service owner", "2b normalize mode: canonical text for every accepted envelope"),
+    "typing": ("Lean service owner", "2b check mode: standalone typing and diagnostics"),
+    "environment_validation": ("Lean service owner", "2b environment mode: all profile and layer gates"),
+    "model_validation": ("Lean service owner", "2b model mode: all model and Background checks"),
+    "evaluate": ("Lean/Rust evaluation owners", "2b route/evaluate source binding; 2e Rust budgeted values"),
+    "evaluate_trace": ("Rust evaluation owner", "2e trace schema and exact exhaustion/budget outcomes"),
+    "countermodel_check": ("Lean route owner", "2a Lean countermodel replay adapter and diagnostics"),
+    "countermodel_search": ("Rust search owner", "2e exhaustive search plus Lean witness replay"),
+    "countermodel_search_nonempty": ("Rust search owner", "2e nonempty_domains option plus Lean witness replay"),
+    "countermodel_search_nonvacuous": ("Rust search owner", "2e nonvacuous_for option plus Lean witness replay"),
+    "countermodel_search_min_domain": ("Rust search owner", "2e min_domain_size option plus Lean witness replay"),
+    "countermodel_search_semantic_nonvacuity": ("Rust search owner", "2e semantic_nonvacuity guard semantics plus Lean witness replay"),
+    "distinguishing_model": ("Rust search owner", "2e distinguishing-model search and budget diagnostics"),
+    "certificate_replay": ("Lean tableau owner", "2a replay adapter; 2c extended/closure/order/induction route parity"),
+    "background": ("Lean route owner", "2a Background generator adapter and equality checks"),
+    "definitions_elaboration": ("Lean route owner", "2a definitions adapter; 2c definitions with every supported layer"),
+    "dependency_order": ("Lean route owner", "2a dependency-order adapter and cycle diagnostics"),
+    "admission": ("Lean route owner", "2a admission adapter across Python-supported envelopes and citations"),
+    "label": ("Lean route owner", "2a label grammar and diagnostic parity"),
+    "bundle": ("Lean route owner", "2c nonempty closure/core/order bundles and transitive citations"),
+    "norms_elaborate": ("Lean norms owner", "2c norms elaboration with definitions/data flags"),
+    "norms_conflict": ("Lean norms owner", "2c norms conflict with definitions/data flags and witnesses"),
+    "norms_certificate": ("Lean norms owner", "2c norms certificate with definitions/data flags"),
+    "norms_admission": ("Lean norms owner", "2c norms admission with definitions/data flags"),
+    "readings": ("Lean readings owner", "2d ALL/SOME/NONE checker, fixed premises, labels and soundness theorems"),
+    "argument_graph": ("Lean graph owner", "2b graph package decoder/report, reachable leaves and obligations"),
+    "compare": ("Python adapter owner", "2a trusted narrowed comparison from Lean-checked constituents"),
+    "premise_status": ("Python adapter owner", "2a premise-status relabelling from Lean proof/model verdict"),
+}
+assert set(OPERATIONS) == set(GAP_ASSIGNMENTS)
 
 
 def graph_baselines():
@@ -307,10 +374,9 @@ def boundary_baselines():
          lambda size: check_formula(env, repeated_not(size - 1)).__class__.__name__)
     pair("MAX_EVALUATIONS_request", limits.MAX_EVALUATIONS,
          lambda size: evaluate(env, Top(), model, trace=False, max_evaluations=size))
-    pair("MAX_TABLEAU_DEPTH", limits.MAX_TABLEAU_DEPTH,
-         lambda size: decode_trace(nested_trace(size))["rule"])
-    pair("order_trace_decoder_fuel", 125,
-         lambda size: decode_trace(nested_trace(size))["rule"])
+    rows["order_trace_decoder_fuel"] = {"cap": 125,
+        "at": outcome(lambda: decode_trace(nested_trace(125))["rule"], expected=(InvalidTrace,)),
+        "over": outcome(lambda: decode_trace(nested_trace(126))["rule"], expected=(InvalidTrace,))}
     def tuples(size):
         raw = raw_environment(())
         raw["vocabulary"]["predicates"]["edge"] = {"arguments": ["item", "item"], "description": "edge"}
@@ -388,6 +454,57 @@ def feature_baselines():
         env = Environment(raw_environment(layers))
         rows[f"norms_layers:{'+'.join(layers)}"] = outcome(
             lambda: check_conflict(NormDocument(env, []), prove=True))
+    env = Environment(raw_environment(()))
+    atom = ["unary", "base", ["const", "x"]]
+    negated = ["not", atom]
+    alternatives = [{"id": "s", "version": 2, "readings": [
+        {"kind": "asserted", "content": atom}, {"kind": "asserted", "content": negated}]}]
+    rows["readings:all_disjunction"] = outcome(
+        lambda: check_readings(env, alternatives, ["or", atom, negated], fixed=[["top"]]))
+    rows["readings:some_fixed_choice"] = outcome(
+        lambda: check_readings(env, alternatives, ["bottom"], fixed=[negated]))
+    rows["readings:none_shared_model"] = outcome(
+        lambda: check_readings(env, [{"id": "s", "version": 2, "readings": [
+            {"kind": "asserted", "content": atom},
+            {"kind": "asserted", "content": ["top"]}]}], ["bottom"], fixed=[atom]))
+    # Removing constants makes the 0- and 1-element domain bounds observably distinct.
+    empty_raw = raw_environment(())
+    empty_raw["vocabulary"]["constants"] = {}
+    empty_env = Environment(empty_raw)
+    rows["search:min_domain_size_0"] = outcome(lambda: find_countermodel(
+        empty_env, (), Bottom(), min_domain_size=0, max_domain_size=1, max_models=2))
+    rows["search:min_domain_size_1"] = outcome(lambda: find_countermodel(
+        empty_env, (), Bottom(), min_domain_size=1, max_domain_size=1, max_models=2))
+    guard = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
+    rows["search:syntactic_nonvacuity"] = outcome(lambda: find_countermodel(
+        empty_env, (), Bottom(), min_domain_size=1, max_domain_size=1, max_models=2,
+        nonvacuous_for=guard, semantic_nonvacuity=False))
+    rows["search:semantic_nonvacuity"] = outcome(lambda: find_countermodel(
+        empty_env, (), Bottom(), min_domain_size=1, max_domain_size=1, max_models=2,
+        nonvacuous_for=guard, semantic_nonvacuity=True))
+    # Replay nontrivial certificates in each distinct checker family, including induction.
+    from conformance.closure_certificates import reviewer_queries
+    closure_env, queries = reviewer_queries()
+    premises, goal = queries["transitivity"]
+    closure_proof = prove_entailment(closure_env, premises, goal, max_steps=400)
+    assert closure_proof.status == "Found"
+    rows["replay:closure_transitivity"] = outcome(lambda: check_entailment_certificate(
+        closure_env, premises, goal, closure_proof.certificate, max_steps=400))
+    from conformance.induction import schema_cases
+    induction = schema_cases()[0]
+    induction_env = Environment(induction["environment"])
+    induction_ps = tuple(formula_from_data(induction_env, f) for f in induction["premises"])
+    induction_goal = formula_from_data(induction_env, induction["conclusion"])
+    rows["replay:closure_induction"] = outcome(lambda: check_entailment_certificate(
+        induction_env, induction_ps, induction_goal, induction["certificate"], max_steps=1000))
+    from conformance.order import environment as order_environment
+    from ve.ast import Lt, Le, Num
+    order_env = order_environment()
+    order_ps, order_goal = (Lt(Num(0), Num(1)),), Le(Num(0), Num(1))
+    order_proof = prove_entailment(order_env, order_ps, order_goal)
+    assert order_proof.status == "Found"
+    rows["replay:order_farkas"] = outcome(lambda: check_entailment_certificate(
+        order_env, order_ps, order_goal, order_proof.certificate))
     return rows
 
 
@@ -416,6 +533,12 @@ def generate():
                         result = {"cell": "U", "status": exc.code, "output": exc.to_dict()}
                     rows.append({"profiles": profile_names, "operation": name,
                                  "input_class": kind, **result})
+            english = render(Document((Unary("base", Const("x")),)), env, "ve_english")
+            for kind in INPUT_CLASSES:
+                source = "broken.\n" if kind == "rejection" else "x" * (limits.MAX_SOURCE_BYTES + 1) if kind == "budget" else english
+                result = outcome(lambda: document_to_data(env, parse_english(env, source)))
+                rows.append({"profiles": [*profile_names, "english-surface"],
+                             "operation": "parse_accept", "input_class": kind, **result})
     # The three frozen language envelopes predate ve.core@0.2.
     from ve.environment import (LANGUAGE, PROFILE, SPEC_REVISION as V0_REV,
         CLOSURE_LANGUAGE, CLOSURE_PROFILES, CLOSURE_REVISION, ORDER_PROFILES, ORDER_REVISION)
@@ -446,9 +569,10 @@ def generate():
             rows.append({"language": language, "profiles": [*profiles, "english-surface"],
                          "operation": "parse_accept", "input_class": kind, **result})
     source_commit = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", "tests/probe_matrix.py"], cwd=ROOT, text=True).strip()
-    return {"schema": "ve-stage0-baseline@1", "source_commit": source_commit,
-            "python": sys.version.split()[0], "cells": rows, "graph_probes": graph_baselines(),
-            "budget_boundaries": boundary_baselines(), "feature_probes": feature_baselines()}
+    return baseline_projection({"schema": "ve-stage0-baseline@1", "source_commit": source_commit,
+            "runtime_sha256": runtime_sha256(), "python": sys.version.split()[0], "cells": rows,
+            "graph_probes": graph_baselines(), "budget_boundaries": boundary_baselines(),
+            "feature_probes": feature_baselines()})
 
 
 def render_matrix(data):
@@ -484,6 +608,12 @@ def render_matrix(data):
         "", "| Feature probe | Cell/status |", "|---|---|"]
     for name, result in data["feature_probes"].items():
         lines.append(f"| `{name}` | {result['cell']}: `{result['status']}` |")
+    lines += ["", "## Backend gap assignments", "",
+              "Every S cell for an operation above inherits the assignment below for each Python-supported profile and input class. Stage 2 must compare the complete records, diagnostic codes and budget outcomes before claiming a backend cell. Rust is assigned only where it generates or evaluates; Lean validates reported witnesses. English surface remains Python-owned, with the Lean parse acceptance route used for accepted core syntax.",
+              "", "| Operation | Owner | Stage 2 task |", "|---|---|---|"]
+    lines += [f"| `{name}` | {owner} | {task} |"
+              for name, (owner, task) in GAP_ASSIGNMENTS.items()]
+    lines += ["", "The nonempty closure/core/order bundle probes belong to the Lean route owner (2c). The norms layer probes belong to the Lean norms owner (2c). The reading ALL/SOME/NONE probes belong to the Lean readings owner (2d). The option and replay feature probes belong to the Rust search and Lean tableau owners respectively (2e/2c). No unsupported Python U envelope is promoted by this assignment."]
     return "\n".join(lines) + "\n"
 
 
