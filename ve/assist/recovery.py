@@ -5,6 +5,7 @@ document schema and W3 alias admission when those interfaces are available.
 """
 from __future__ import annotations
 
+from contextlib import nullcontext
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 import hashlib
@@ -358,6 +359,47 @@ class RecoveryService:
             raise error
         return result
 
+    def _legacy_command(self, _name, /, **args):
+        """Replay commands recorded before the command-entry budget existed.
+
+        Their observations contain only budgets opened by individual transition
+        steps. This path is never used for a live command.
+        """
+        if self._replaying is None or self._observed is not None:
+            raise RuntimeError("legacy recovery replay requires one recorded command")
+        args = json.loads(_canonical(args))
+        operation = getattr(self, "_" + _name)
+        if set(args) != set(inspect.signature(operation).parameters) - {"budget"}:
+            raise ValueError("recovery command arguments do not match the command")
+        saved = ({k: deepcopy(asdict(u)) for k, u in self.units.items()}, len(self.events),
+                 self.revision, deepcopy(self.versions))
+        error = None
+        try:
+            self._observed = _Observations(self.clock, replay=True,
+                                           recorded=self._replaying.get("observed"))
+            result = operation(**args)
+        except Exception as exc:
+            error = exc
+        except BaseException:
+            self._observed = None
+            self._restore(saved)
+            raise
+        observed, self._observed = self._observed, None
+        if error is not None and (observed is None or len(self.events) == saved[1]):
+            self._restore(saved)
+            raise error
+        record = {"sequence": len(self.commands) + 1, "command": _name, "args": args,
+                  "observed": observed.record(), "revision": self.revision,
+                  "error": None if error is None else {"type": type(error).__name__,
+                                                       "message": str(error)},
+                  "previous_digest": self.commands[-1]["command_digest"] if self.commands else None}
+        record["command_digest"] = _digest(record)
+        self.commands.append(record)
+        self._seal()
+        if error is not None:
+            raise error
+        return result
+
     def _restore(self, saved):
         units, events, revision, versions = saved
         for unit_id in list(self.units):
@@ -374,7 +416,8 @@ class RecoveryService:
         return self._observed.now
 
     def _budget(self) -> Budget:
-        return self._operation_budget
+        return (self._operation_budget if self._operation_budget is not None
+                else self._observed.budget(OPERATION_SECONDS))
 
     def _event(self, action, unit: Unit, **detail):
         self.revision += 1
@@ -419,21 +462,32 @@ class RecoveryService:
             raise ValueError("recovery ledger versions or limits changed")
         if type(ledger["commands"]) is not list or type(ledger["events"]) is not list:
             raise _InvalidLedger("invalid recovery ledger")
+        legacy_seen = False
         for record in ledger["commands"]:
             first = len(service.events)
             if (type(record) is not dict or type(record.get("command")) is not str
                     or record["command"] not in COMMANDS or type(record.get("args")) is not dict):
                 raise _InvalidLedger("invalid recovery ledger")
-            service._replaying = record
-            try:
-                service._command(record["command"], **record["args"])
-            except Exception:
-                pass  # a recorded failure must recur; the comparison below decides
-            finally:
-                service._replaying = None
-            if (not service.commands or _canonical(service.commands[-1]) != _canonical(record)
-                    or _canonical(service.events[first:])
-                    != _canonical(ledger["events"][first:len(service.events)])):
+            old_slot = record.get("observed", {}).get("deadlines") == []
+            modes = ("legacy",) if old_slot else (("current", "legacy") if legacy_seen else ("current",))
+            previous_seal = service._sealed
+            for mode in modes:
+                service._replaying = record
+                try:
+                    command = service._legacy_command if mode == "legacy" else service._command
+                    command(record["command"], **record["args"])
+                except Exception:
+                    pass  # a recorded failure must recur; the comparison below decides
+                finally:
+                    service._replaying = None
+                if (service.commands and _canonical(service.commands[-1]) == _canonical(record)
+                        and _canonical(service.events[first:])
+                        == _canonical(ledger["events"][first:len(service.events)])):
+                    legacy_seen = legacy_seen or mode == "legacy"
+                    break
+                service._sealed = previous_seal
+                service._load_sealed()
+            else:
                 raise _InvalidLedger("invalid recovery ledger")
         if _canonical(service.to_ledger()) != _canonical(ledger):
             raise _InvalidLedger("invalid recovery ledger")
@@ -662,7 +716,7 @@ class RecoveryService:
                   catalogue_bindings=None, catalogue_dispositions=None, expected_revision=None,
                   budget=None):
         budget = self._budget() if budget is None else budget
-        with budget.guard():
+        with (budget.guard() if self._operation_budget is not None else nullcontext()):
             self._expect(expected_revision)
             unit = self.units[unit_id]
             if unit.state != "analysing":
@@ -709,7 +763,8 @@ class RecoveryService:
             unit.pending.append({"reason": "discourse reference unresolved"})
         if parse_outcome == "multiple":
             unit.pending.append({"reason": "multiple source readings unresolved"})
-        if budget.expired() and not any("deadline" in row.get("reason", "") for row in unit.pending):
+        if (self._operation_budget is not None and budget.expired()
+                and not any("deadline" in row.get("reason", "") for row in unit.pending)):
             unit.pending.append({"reason": "operation deadline (8 seconds)"})
         if limit or parse_outcome == "exhausted":
             unit.state, unit.reason = "exhausted", limit or "parser/search exhausted"
@@ -752,7 +807,7 @@ class RecoveryService:
         if not previous["pending"] and not previous["residual"] and previous["next_cursor"] is None:
             unit.catalogue_reviewed.append(pattern_id)
             unit.pending = [p for p in unit.pending if p.get("pattern_id") != pattern_id]
-        if budget.expired() and not previous["pending"]:
+        if self._operation_budget is not None and budget.expired() and not previous["pending"]:
             previous["pending"].append({"reason": "operation deadline (8 seconds)"})
             if not any(row.get("pattern_id") == pattern_id for row in unit.pending):
                 unit.pending.append({"pattern_id": pattern_id, "reason": "catalogue review incomplete"})
