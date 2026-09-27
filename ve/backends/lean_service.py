@@ -67,6 +67,21 @@ class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
 
 
+def _decode_json(line: bytes) -> object:
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON field {key}")
+            result[key] = value
+        return result
+
+    def invalid_constant(value):
+        raise ValueError(f"invalid JSON number {value}")
+
+    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant)
+
+
 _hashes: dict[tuple, str] = {}
 
 
@@ -205,7 +220,7 @@ class LeanService:
             self._served, self._recycle = 0, False
             self.stats["starts"] += 1
             line = self._read_line(time.monotonic() + self.startup_timeout)
-            handshake = json.loads(line)
+            handshake = _decode_json(line)
             limits = handshake.get("limits") if isinstance(handshake, dict) else None
             if (not isinstance(handshake, dict) or handshake.get("service") != SERVICE
                     or type(handshake.get("protocol")) is not int or handshake["protocol"] != 1
@@ -315,7 +330,7 @@ class LeanService:
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
         try:
-            response = json.loads(raw)
+            response = _decode_json(raw)
         except ValueError:
             raise _Failure(f"malformed response {raw[:200]!r}") from None
         if not isinstance(response, dict) or response.get("id") != nonce:
