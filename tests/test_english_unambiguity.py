@@ -21,6 +21,7 @@ class FakeAlarm:
     def __init__(self, timer=(0, 0), handler=None):
         self.timer = timer
         self.handler = handler
+        self.host_timer_active = timer[0] > 0
 
     def getitimer(self, _kind):
         return self.timer
@@ -32,6 +33,8 @@ class FakeAlarm:
         self.handler = handler
 
     def setitimer(self, _kind, seconds, interval=0):
+        if self.host_timer_active:
+            pytest.fail("English parsing changed the active host alarm schedule")
         previous, self.timer = self.timer, (seconds, interval)
         return previous
 
