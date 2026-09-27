@@ -37,8 +37,10 @@ typing, and passes their canonical blocks to the W1 document admission route.
 Quoted norm content retains its kind and source provenance but contributes no
 active layer. `ve document check` includes regenerated norm layers in its
 premise check; graph leaves may cite them with `layer:norms:<predicate>`.
-The compiled norm unit's `meaning_id` binds its canonical W1 block and the
-environment ID under the `ve-norm-unit-<identity-version>` digest domain.
+The compiled norm unit's `meaning_id` binds its canonical W1 block as `ast`
+and the environment ID under the shared `ve-meaning-<identity-version>` digest
+domain. Every active norm block is validated even when the environment has no
+regulated predicates; norm content requires `norms@0`.
 
 A source unit that contains both checked and unresolved text has
 `{"id", "span", "status":"MIXED", "parts":[...]}`. Each part has the ordinary
@@ -68,7 +70,9 @@ and cite source units for their reason. They never modify the set. Weights are
 separate removable intent annotations and are ignored by all checks and report identities.
 
 For assertion readings in one environment, `ve document readings --conclusion`
-uses fixed assertions and the latest reading-set version for each source unit.
+uses fixed assertions, validated active norm layers, and the latest reading-set
+version for each source unit. A pending norm reading leaves the premise status
+and norm layer admission unresolved until its choice can be elaborated.
 Authored singleton choices are premises too. It first proves ALL from fixed
 assertions and one conjunction of per-unit disjunctions, with
 certificate replay. It proves NONE with one checked finite model that satisfies
