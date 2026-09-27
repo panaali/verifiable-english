@@ -17,9 +17,11 @@ from pathlib import Path
 import pytest
 
 from ve.ast import formula_from_data
+from ve.entailment import prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
+from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -268,3 +270,73 @@ def test_w1_inputs_delegate_unchanged(lean):
     soft = run(lean, [case])[0]
     w1 = run(ROOT / "lean/.lake/build/bin/ve_norms_route", [case])[0]
     assert soft == w1
+
+
+# End-to-end CONFLICT-FREE replay: certificates found by Python's unchanged prover over the
+# Lean-regenerated E′_base and Background_base′, packaged with the bindings of 3.4.
+
+def identity(profiles):
+    return "v0.2:" + ",".join(profiles)
+
+
+def canonical_norm(n):
+    defaults = {"mode": "strict", "alterable": [], "hard": False}
+    return {"norm": {k: v for k, v in n["norm"].items() if defaults.get(k, object()) != v}}
+
+
+def base_prime(row):
+    data = json.loads(json.dumps(row["environment_prime"]))
+    data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0")]
+    vocab = data["vocabulary"]
+    vocab.pop("soft", None)
+    vocab["predicates"] = {n: {k: v for k, v in e.items() if k != "instruction_of"}
+                           for n, e in vocab["predicates"].items() if "regulated" not in e}
+    return Environment(data)
+
+
+def packages(environment_json, norms, row, *, soft=True):
+    profiles = environment_json["profiles"]
+    env_id = digest(f"ve-environment-{identity(profiles)}\n", environment_json)
+    doc_hash = digest(f"ve-soft-norms-{identity(profiles)}\n",
+                      {"environment_id": env_id, "document": [canonical_norm(n) for n in norms]})
+    base = base_prime(row)
+    premises = [formula_from_data(base, b["ast"]) for b in row["background"] if soft and b["generator"] == "soft"]
+    out = {}
+    for t in row["conflict_targets"]:
+        closed = ["not", t["ast"]]
+        for sort in reversed(t["sorts"]):
+            closed = ["forall", sort, closed]
+        conclusion = formula_from_data(base, closed)
+        result = prove_entailment(base, premises, conclusion)
+        if result.status == "Found":
+            out[t["target"]] = {"environment_id": env_id, "document_hash": doc_hash,
+                                "target": t["target"], "certificate": result.certificate}
+    return out
+
+
+def test_delta_conflict_free_conditional_on_coherence(lean):
+    environment_json = env()
+    delta = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    row = elaborate(lean, environment_json, delta)
+    certified = packages(environment_json, delta, row)
+    assert set(certified) == {t["target"] for t in row["conflict_targets"]}
+    verdict = run(lean, [{"id": "c", "kind": "soft-conflict", "environment": environment_json,
+                          "norms": delta, "packages": certified}])[0]
+    assert verdict["verdict"] == "CONFLICT-FREE", verdict
+    assert verdict["conditional_on"] == ["soft:coherence:a,b"]
+    # without Coh_T the pair target has no certificate, and no other certificate binds
+    bare = packages(environment_json, delta, row, soft=False)
+    assert "x_required->x_permitted" not in bare
+    verdict = run(lean, [{"id": "c", "kind": "soft-conflict", "environment": environment_json,
+                          "norms": delta, "packages": {**certified, **bare}}])[0]
+    assert verdict["verdict"] == "UNKNOWN"
+
+
+def test_alpha_rank_resolved_conflict_free_unconditionally(lean):
+    environment_json = env(ranks(["a", "b"], "holistic"))
+    alpha = [should("h", "x_required", True, rank="a"), should("l", "x_required", False, rank="b")]
+    row = elaborate(lean, environment_json, alpha)
+    certified = packages(environment_json, alpha, row)
+    verdict = run(lean, [{"id": "c", "kind": "soft-conflict", "environment": environment_json,
+                          "norms": alpha, "packages": certified}])[0]
+    assert verdict["verdict"] == "CONFLICT-FREE" and verdict["conditional_on"] == []
