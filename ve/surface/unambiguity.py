@@ -1,6 +1,5 @@
 """Admit English only after the complete Earley derivation check."""
 from functools import lru_cache
-import re
 import inspect
 import signal
 import sys
@@ -9,7 +8,7 @@ import time
 
 from lark.exceptions import LarkError
 
-from ..errors import ResourceLimit, SyntaxError
+from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError
 from ..limits import MAX_NODES, MAX_SOURCE_BYTES
 
 EARLEY_SECONDS = 30
@@ -22,14 +21,14 @@ def _parser(grammar):
                 propagate_positions=True)
 
 
-def require_unique_derivation(env, source, **options):
+def require_unique_derivation(env, source, *, grammar=None, **options):
     from ..english import english_lark_grammar, EnglishVocabulary, _normalise_english_source
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     text, _ = _normalise_english_source(source, EnglishVocabulary(env, **options))
     if len(text) > MAX_NODES:
         raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
-    grammar = english_lark_grammar(env, **options)
+    grammar = grammar if grammar is not None else english_lark_grammar(env, **options)
     def timeout(_signum, _frame):
         raise ResourceLimit("English Earley time budget exhausted")
     # Leave an existing host alarm alone. A trace can enforce our deadline
@@ -70,7 +69,7 @@ def require_unique_derivation(env, source, **options):
             raise ResourceLimit(f"English derivation budget MAX_NODES ({MAX_NODES}) exhausted")
         if getattr(node, "data", None) == "_ambig":
             first, second = node.children[:2]
-            raise SyntaxError("English has two derivations:\n" + first.pretty()[:1000]
+            raise AmbiguousDerivation("English has two derivations:\n" + first.pretty()[:1000]
                               + "\n---\n" + second.pretty()[:1000])
         stack.extend(getattr(node, "children", ()))
     return tree

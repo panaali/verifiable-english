@@ -6,3 +6,8 @@ import VE.Order.TableauChecks
 import VE.Order.Surface
 import VE.Route.Run
 import VE.Route.Checks
+import VE.Norms.Examples
+import VE.Norms.Cedar
+import VE.Norms.Run
+import VE.Norms.Replay
+import VE.English.Run

@@ -1,0 +1,6 @@
+{
+  "complete": true,
+  "domains": {"person": ["a"], "$string": ["f", "s"]},
+  "constants": {"alice": "a", "finance": "f", "sales": "s"},
+  "relations": {"department": [["a", "f"]]}
+}
