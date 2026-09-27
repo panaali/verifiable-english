@@ -44,14 +44,17 @@ def test_soft_manifest_preserves_hard_and_factor_boundaries():
     source, manifest = render_english(hard)
     assert manifest["blocks"][0]["hard"] is True
     assert parse_english(environment, source, manifest).rules[0].hard is True
+    rendered_sources = []
     for factors in (("safety, honesty",), ("safety", "honesty"),
                     ('safety. honesty', 'the "user" said Rule 1')):
         authored = NormDocument(environment, [SoftNorm("n", "required", True, Top(),
             mode="default", decided_by="Dr. Ada", factors=factors)])
         source, manifest = render_english(authored)
+        rendered_sources.append(source)
         parsed = parse_english(environment, source, manifest)
         assert tuple(parsed.rules[0].exception["factors"]) == factors
         assert parsed.rules[0].exception["decided_by"] == "Dr. Ada"
+    assert rendered_sources[0] != rendered_sources[1]
     prose = ("Rule 1. Every act should be done. The exception to rule 1 "
              "takes account of safety, honesty, and care.")
     assert parse_english(environment, prose).rules[0].exception["factors"] == [
