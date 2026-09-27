@@ -311,6 +311,16 @@ def test_unlisted_build_is_refused_by_default(tmp_path):
         assert overridden.pid is not None
 
 
+def test_executable_hash_cache_not_fooled_by_restored_mtime(tmp_path):
+    wrapper = fake(tmp_path, "normal")
+    original = executable_sha256(wrapper)
+    stat = wrapper.stat()
+    wrapper.write_text(wrapper.read_text().replace("normal", "bogusx"))
+    os.utime(wrapper, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert wrapper.stat().st_size == stat.st_size
+    assert executable_sha256(wrapper) != original
+
+
 def test_oversized_exchange_is_resource_limit_without_start(tmp_path):
     service = LeanService(fake(tmp_path, "normal"), allow_unlisted_build=True)
     with pytest.raises(ResourceLimit, match="request line exceeds"):

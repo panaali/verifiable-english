@@ -71,9 +71,9 @@ _hashes: dict[tuple, str] = {}
 
 
 def executable_sha256(path: Path) -> str:
-    """SHA-256 of the executable file, cached per (path, inode, size, mtime)."""
+    """SHA-256 of the executable file, cached while its filesystem identity is unchanged."""
     st = path.stat()
-    key = (str(path), st.st_ino, st.st_size, st.st_mtime_ns)
+    key = (str(path), st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
     if key not in _hashes:
         digest = hashlib.sha256()
         with path.open("rb") as f:
@@ -304,13 +304,13 @@ class LeanService:
                     raise _Failure("service exited (end of output)")
                 self._buffer += chunk
 
-    def _roundtrip(self, mode: str, cases_text: str, count: int, budget: dict,
-                   timeout: float) -> tuple[bytes, dict]:
-        nonce = f"{self._nonce}-{next(self._counter)}"
-        line = ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
+    @staticmethod
+    def _request_line(nonce: str, mode: str, cases_text: str, budget: dict) -> bytes:
+        return ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
-        if len(line) > MAX_LINE_BYTES + 1:
-            raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
+
+    def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float,
+                   nonce: str, line: bytes) -> tuple[bytes, dict]:
         deadline = time.monotonic() + timeout
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
@@ -379,14 +379,16 @@ class LeanService:
         timeout = self.timeout if timeout is None else timeout
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
-        if len(cases_text.encode()) > MAX_LINE_BYTES - ENVELOPE_BYTES:
-            raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
         with self._lock:
             attempt = 0
             while True:
+                nonce = f"{self._nonce}-{next(self._counter)}"
+                line = self._request_line(nonce, mode, cases_text, budget)
+                if len(line) > MAX_LINE_BYTES + 1:
+                    raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
-                    raw, response = self._roundtrip(mode, cases_text, count, budget, timeout)
+                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line)
                 except _Failure as failure:
                     self._failed_attempt(failure, attempt)
                     attempt += 1
