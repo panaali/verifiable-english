@@ -170,8 +170,18 @@ function renderDraft(doc, overwrite=false) {
   activeDraft=doc;
   const unit=doc.units[0];
   if(overwrite)$('prose').value=unit?.source || '';
+  $('documentMode').disabled=Boolean(unit);
+  if(unit)$('documentMode').value=unit.mode;
   $('documentRevision').textContent=`Saved revision ${doc.revision}`;
   $('documentStatus').textContent=unit ? unit.state.replaceAll('_',' ') : 'blank draft';
+  $('documentUnits').replaceChildren();
+  if(!doc.document_units.length)$('documentUnits').append(el('p','No statement yet.','note'));
+  for(const item of doc.document_units){
+    const row=el('div',undefined,'document-unit');
+    row.append(el('span',item.source),el('strong',item.status.replaceAll('_',' ')));
+    if(item.reason)row.append(el('p',item.reason,'note'));
+    $('documentUnits').append(row);
+  }
   $('recovery').replaceChildren();
   $('wordSort').replaceChildren();
   for(const sort of Object.keys(doc.environment.vocabulary.sorts)) {
@@ -183,21 +193,30 @@ function renderDraft(doc, overwrite=false) {
     const p=unit.word_prompt;
     $('recovery').append(el('h3','A word or construction needs your help'),el('p',`Check “${p.term}”. ${p.expected_construction}`,'note'));
     if(p.nearest_registered_wordings.length)$('recovery').append(el('p',`Nearby declared words: ${p.nearest_registered_wordings.join(', ')}. These are suggestions, not replacements.`,'note'));
+    if(unit.templates?.length){
+      $('recovery').append(el('p','Try a checked sentence shape using this vocabulary:','note'));
+      for(const template of unit.templates){const button=el('button',template);button.onclick=()=>{$('prose').value=template;$('prose').dispatchEvent(new Event('input',{bubbles:true}));};$('recovery').append(button);}
+    }
   }
   if(unit.pending.length)for(const pending of unit.pending)$('recovery').append(el('p',pending.reason || 'A reading is still unresolved.','note'));
   if(unit.state==='ready')$('recovery').append(el('p','One checked reading is ready. Confirm that it says what you intend.','note'));
   if(unit.state==='approved')$('recovery').append(el('p',`Meaning approved at this revision. ${unit.paraphrase || ''}`,'note'));
   if(unit.state==='unresolved')$('recovery').append(el('p','This unit remains visible and can be resumed by reviewing it again.','note'));
+  if(unit.mode==='translation' && (unit.readings.length>1 || unit.cards?.length))
+    $('recovery').append(el('p','Source alternatives stay together. A cited narrowing has not been reviewed here, so this unit cannot be approved as one reading.','note'));
   for(const card of unit.cards || []){
     const box=el('article',undefined,'candidate checked-card');
     box.append(el('h3','Two checked readings'),el('p','This example situation makes one reading true and the other false.','note'));
     for(let i=0;i<card.paraphrases.length;i++){
       const row=el('div',undefined,'card-reading');row.append(el('p',card.paraphrases[i]));
       row.append(el('p',card.values[i]?'True in this situation':'False in this situation','badge'));
-      const use=el('button','Use this wording');use.onclick=()=>task(use,async()=>{
-        await changeDraft('reply',{text:card.paraphrases[i],rejected:card.meaning_ids.filter((_,j)=>j!==i).map(meaning_id=>({meaning_id,reason:'Author chose the other checked reading.'}))});
-        await changeDraft('analyze',{});
-      });row.append(use);box.append(row);
+      if(unit.mode==='authoring'){
+        const use=el('button','Use this wording');use.onclick=()=>task(use,async()=>{
+          await changeDraft('reply',{text:card.paraphrases[i],rejected:card.meaning_ids.filter((_,j)=>j!==i).map(meaning_id=>({meaning_id,reason:'Author chose the other checked reading.'}))});
+          await changeDraft('analyze',{});
+        });row.append(use);
+      }
+      box.append(row);
     }
     for(const line of card.situation_text)box.append(el('p',line,'note'));
     $('recovery').append(box);
@@ -231,13 +250,14 @@ async function changeDraft(action,args) {
 async function saveDraft() {
   if(!activeDraft || !$('prose').value.trim())return;
   if(activeDraft.units[0]?.source===$('prose').value)return;
-  await changeDraft('save',{source:$('prose').value});
+  await changeDraft('save',{source:$('prose').value,mode:$('documentMode').value});
 }
 async function newDocument(example=selected.id) {
   await saveDraft();
   clearTimeout(draftTimer);
   await draftQueue;
   activeDraft=await api('drafts',{example});
+  $('documentMode').value='authoring';
   renderDraft(activeDraft,true);
   $('recovery').replaceChildren(el('p','Start with any English sentence.','note'));
   dirty=false;
@@ -260,6 +280,7 @@ $('noneReading').onclick=()=>task($('noneReading'),async()=>{
 });
 $('askRepair').onclick=()=>task($('askRepair'),async()=>{
   clearTimeout(draftTimer);await saveDraft();
+  await draftQueue;
   const doc=activeDraft;
   const result=await api(`drafts/${doc.id}/assist`,{revision:doc.revision,request_id:crypto.randomUUID().replaceAll('-','')});
   if(result.status==='stale'){renderDraft(await api(`drafts/${doc.id}`),true);notify(result.reason);return;}
@@ -267,9 +288,8 @@ $('askRepair').onclick=()=>task($('askRepair'),async()=>{
 });
 $('cancelReview').onclick=()=>task($('cancelReview'),()=>changeDraft('cancel',{}));
 $('undoReview').onclick=()=>task($('undoReview'),async()=>{
-  const events=activeDraft.history;
-  const target=events.length>1?events[events.length-2].revision:events[0]?.revision;
-  if(target===undefined)throw new Error('There is no earlier revision.');
+  const target=activeDraft.undo_target;
+  if(target==null)throw new Error('There is no earlier revision.');
   await changeDraft('undo',{target_revision:target});
 });
 $('unresolvedReading').onclick=()=>task($('unresolvedReading'),async()=>{
@@ -277,7 +297,8 @@ $('unresolvedReading').onclick=()=>task($('unresolvedReading'),async()=>{
 });
 $('defineWord').onclick=()=>task($('defineWord'),async()=>{
   const word=$('newWord').value.trim().toLowerCase(),kind=$('wordKind').value,sort=$('wordSort').value;
-  const args={word,kind,description:$('wordExample').value.trim(),sorts:kind==='relation'?[sort,sort]:kind==='property'?[sort]:[]};
+  const args={word,kind,positive_example:$('wordExample').value.trim(),negative_example:$('wordNegative').value.trim(),
+    direction:$('wordDirection').value,sorts:kind==='relation'?[sort,sort]:kind==='property'?[sort]:[]};
   if(!confirm(`Add “${word}” as ${kind} with this meaning? Existing approvals will need review.`))return;
   await changeDraft('define',args);$('glossaryStatus').textContent=`“${word}” was declared. Review the sentence again.`;
 });
