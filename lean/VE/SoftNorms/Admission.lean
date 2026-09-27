@@ -86,13 +86,41 @@ structure Admitted where
   report : VE.Graph.Report
   kinds : List Json
 
+/-- W2's ordinary document decoder with the regenerated decision predicates in
+scope. This lets asserted units and reading sets state decision findings. -/
+def decodeSoftDoc (src : SoftSource) (j : Json) : Except String VE.Route.Admission.Doc := do
+  let E := envPrime src.D
+  let data := src.se.profiles.contains "data@0"
+  let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM
+    (VE.Route.Admission.decodeUnit E data)
+  VE.Route.Admission.require (units.length ≤ 10000) "ResourceLimit: unit count"
+  VE.Route.Admission.require ((units.map DocUnit.id).eraseDups.length == units.length)
+    "duplicate unit id"
+  VE.Route.Admission.require (VE.Route.Admission.sortedSpans units)
+    "unit spans must be sorted and non-overlapping"
+  let optional := fun (key : String) => match j.getObjVal? key with
+    | .ok v => v.getArr?.map Array.toList
+    | .error _ => pure []
+  let lemmas ← (← optional "lemmas").mapM (VE.Route.Admission.decodeLemma E data)
+  VE.Route.Admission.require ((lemmas.map Lemma.name).eraseDups.length == lemmas.length)
+    "duplicate lemma"
+  let openTerms ← VE.Route.Admission.tokens (Json.arr (← optional "open_terms").toArray)
+  let readingSets ← (← optional "reading_sets").mapM
+    (VE.Route.Admission.decodeReadingSet E data)
+  VE.Route.Admission.require
+    ((readingSets.map (fun r => (r.id, r.version))).eraseDups.length == readingSets.length)
+    "duplicate reading set version"
+  let narrowings ← VE.Route.Admission.tokens (Json.arr (← optional "narrowings").toArray)
+  pure ⟨src.se.ne.rv.literals, src.se.ne.rv.flags, units, lemmas, openTerms, readingSets,
+    narrowings⟩
+
 def admitDocument (environment document : Json) : Except String Admitted := do
   VE.Bridge.displayFields document ["units", "graph"]
     ["lemmas", "open_terms", "reading_sets", "narrowings"]
   let (clean, norms, quoted) ← splitDocument document
   let src ← decodeSoftSource environment norms
   quoted.forM (checkQuoted src)
-  let D₀ ← VE.Route.Admission.decodeDoc src.se.ne.rv (src.se.profiles.contains "data@0") clean
+  let D₀ ← decodeSoftDoc src clean
   let D := { D₀ with literals := src.se.ne.rv.literals }
   let graphJson ← document.getObjVal? "graph"
   exactFields graphJson ["root", "nodes"]
@@ -116,7 +144,7 @@ def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
   (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧
     decodeSoftSource environment norms = .ok res.src ∧
     (∀ q ∈ quoted, checkQuoted res.src q = .ok ()) ∧
-    ∃ D₀, VE.Route.Admission.decodeDoc res.src.se.ne.rv (res.src.se.profiles.contains "data@0") clean = .ok D₀ ∧
+    ∃ D₀, decodeSoftDoc res.src clean = .ok D₀ ∧
       res.doc = { D₀ with literals := res.src.se.ne.rv.literals }) ∧
   WellFormedSoft res.src.D = true ∧ res.src.D.E = res.src.se.ne.rv.environment ∧
   res.src.D.lits = res.src.se.ne.rv.literals ∧
