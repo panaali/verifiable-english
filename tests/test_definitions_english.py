@@ -1,5 +1,6 @@
 """English authoring of definitions, glossaries of synonyms and citations (W3,
 VISION 'Synonyms and varied wording')."""
+from subprocesses import HANG_TIMEOUT
 from copy import deepcopy
 import json
 from pathlib import Path
@@ -90,7 +91,7 @@ def test_glossary_certificate_is_accepted_by_lean():
              "premises": [["unary", "employee", ["const", "ann"]]],
              "conclusion": ["unary", "personnel", ["const", "ann"]], "certificate": certificate}]
     run = subprocess.run([str(LEAN), "route", "-"], input=json.dumps(case), capture_output=True,
-                         text=True, timeout=120)
+                         text=True, timeout=HANG_TIMEOUT)
     assert json.loads(run.stdout)[0]["valid"] is True
 
 

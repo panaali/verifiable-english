@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import random
 import shutil
+from subprocesses import HANG_TIMEOUT
 import subprocess
 
 import pytest
@@ -246,7 +247,7 @@ def test_lean_all_closure_cases_and_countermodels():
     cases = CASES + [{**{k:c[k] for k in ('id','environment','model')}, 'kind':'countermodel',
                      'premises':c['ast'][:1], 'conclusion':c['ast'][1],
                      'expected_refutes': c['expected'][0] and not c['expected'][1]} for c in CASES]
-    proc = subprocess.run([str(lean_bin())], input=json.dumps(cases),text=True,capture_output=True,timeout=120)
+    proc = subprocess.run([str(lean_bin())], input=json.dumps(cases),text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert proc.returncode == 0,proc.stdout+proc.stderr
     for case,result in zip(cases,json.loads(proc.stdout),strict=True):
         assert result['status']=='ok',result
@@ -267,7 +268,7 @@ def test_lean_profile_gate_accepts_only_closure_checker_version(with_reach, vers
     certificate = {**proof.certificate, 'checker_version': version}
     request={'id':'closure_certificate_gate','environment':env.to_dict(),'premises':[],
              'conclusion':formula_to_data(env,f),'certificate':certificate}
-    proc=subprocess.run([str(lean_bin()),'check-certificate'],input=json.dumps(request),text=True,capture_output=True,timeout=30)
+    proc=subprocess.run([str(lean_bin()),'check-certificate'],input=json.dumps(request),text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     response=json.loads(proc.stdout)[0]
     assert response['status'] == 'ok'
@@ -343,7 +344,7 @@ def test_seeded_extended_formulas_all_view_inverses_and_lean():
         assert type(value) is bool
         cases.append({'id':f'fuzz_{i}','environment':env.to_dict(),'model':model.to_dict(),
                       'ast':[formula_to_data(env,f)],'source':source,'expected':[value]})
-    proc=subprocess.run([str(lean_bin())],input=json.dumps(cases),text=True,capture_output=True,timeout=60)
+    proc=subprocess.run([str(lean_bin())],input=json.dumps(cases),text=True,capture_output=True,timeout=HANG_TIMEOUT)
     assert proc.returncode==0,proc.stdout+proc.stderr
     for case,result in zip(cases,json.loads(proc.stdout),strict=True):
         assert result['values']==case['expected'] and result['canonical']==case['source']

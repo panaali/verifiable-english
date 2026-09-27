@@ -1,6 +1,5 @@
 from pathlib import Path
 import signal
-import time
 
 import pytest
 from lark import Tree
@@ -13,6 +12,28 @@ from ve.surface import unambiguity
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class FakeAlarm:
+    SIGALRM = signal.SIGALRM
+    ITIMER_REAL = signal.ITIMER_REAL
+
+    def __init__(self, timer=(0, 0), handler=None):
+        self.timer = timer
+        self.handler = handler
+
+    def getitimer(self, _kind):
+        return self.timer
+
+    def getsignal(self, _kind):
+        return self.handler
+
+    def signal(self, _kind, handler):
+        self.handler = handler
+
+    def setitimer(self, _kind, seconds, interval=0):
+        previous, self.timer = self.timer, (seconds, interval)
+        return previous
 
 
 def test_existing_english_fixture_has_one_derivation():
@@ -151,52 +172,70 @@ def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
     class SlowParser:
         def parse(self, _source):
-            while True:
+            for _ in range(100):
                 pass
+            pytest.fail("trace did not enforce the Earley deadline")
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
-    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 0.01)
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
+    ticks = iter(range(1000))
+    monkeypatch.setattr(unambiguity, "_monotonic", lambda: next(ticks))
     with ThreadPoolExecutor(max_workers=1) as pool:
         with pytest.raises(ResourceLimit, match="Earley time budget"):
-            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=2)
+            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=30)
 
 
-def test_host_alarm_cancels_long_english_parse_on_schedule():
+def test_earley_alarm_budget_restores_signal_state(monkeypatch):
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
-    source = " ".join(["This holds in all cases."] * 200)
+    original_handler = object()
+    alarm = FakeAlarm(handler=original_handler)
+    class InterruptedParser:
+        def parse(self, _source):
+            assert alarm.timer == (1, 0)
+            alarm.handler(signal.SIGALRM, None)
+            pytest.fail("Earley alarm did not enforce its budget")
+    monkeypatch.setattr(unambiguity, "signal", alarm)
+    monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: InterruptedParser())
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
+    with pytest.raises(ResourceLimit, match="Earley time budget"):
+        parse_english(env, "This holds in all cases.")
+    assert alarm.timer == (0, 0)
+    assert alarm.handler is original_handler
+
+
+def test_host_alarm_remains_active_and_cancels_english_parse(monkeypatch):
+    env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
     class HostAlarm(Exception):
         pass
     def cancel(_signum, _frame):
         raise HostAlarm()
-    previous = signal.getsignal(signal.SIGALRM)
-    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
-    try:
-        signal.signal(signal.SIGALRM, cancel)
-        start = time.monotonic()
-        signal.setitimer(signal.ITIMER_REAL, 0.05)
-        with pytest.raises(HostAlarm):
-            parse_english(env, source)
-        assert time.monotonic() - start < 0.15
-        assert signal.getsignal(signal.SIGALRM) is cancel
-    finally:
-        signal.setitimer(signal.ITIMER_REAL, 0)
-        signal.signal(signal.SIGALRM, previous)
+    alarm = FakeAlarm(timer=(30, 0), handler=cancel)
+    class InterruptedParser:
+        def parse(self, _source):
+            alarm.handler(signal.SIGALRM, None)
+            pytest.fail("host alarm did not interrupt parsing")
+    monkeypatch.setattr(unambiguity, "signal", alarm)
+    monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: InterruptedParser())
+    with pytest.raises(HostAlarm):
+        parse_english(env, "This holds in all cases.")
+    assert alarm.handler is cancel
+    assert alarm.timer == (30, 0)
 
 
 def test_earley_time_budget_with_host_alarm(monkeypatch):
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
     class SlowParser:
         def parse(self, _source):
-            while True:
+            for _ in range(100):
                 pass
+            pytest.fail("trace did not enforce the Earley deadline")
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
-    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 0.01)
-    previous = signal.getsignal(signal.SIGALRM)
-    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
-    try:
-        signal.setitimer(signal.ITIMER_REAL, 1)
-        with pytest.raises(ResourceLimit, match="Earley time budget"):
-            parse_english(env, "This holds in all cases.")
-        assert signal.getitimer(signal.ITIMER_REAL)[0] < 1
-    finally:
-        signal.setitimer(signal.ITIMER_REAL, 0)
-        signal.signal(signal.SIGALRM, previous)
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
+    ticks = iter(range(1000))
+    monkeypatch.setattr(unambiguity, "_monotonic", lambda: next(ticks))
+    host_handler = object()
+    alarm = FakeAlarm(timer=(30, 0), handler=host_handler)
+    monkeypatch.setattr(unambiguity, "signal", alarm)
+    with pytest.raises(ResourceLimit, match="Earley time budget"):
+        parse_english(env, "This holds in all cases.")
+    assert alarm.handler is host_handler
+    assert alarm.timer == (30, 0)

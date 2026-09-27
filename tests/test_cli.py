@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from subprocesses import HANG_TIMEOUT
 import subprocess
 import sys
 
@@ -21,7 +22,7 @@ MODEL = ROOT / "examples/model.json"
 
 def cli(*args):
     return subprocess.run([sys.executable, "-m", "ve", *map(str, args)], cwd=ROOT,
-                          text=True, capture_output=True, timeout=20)
+                          text=True, capture_output=True, timeout=HANG_TIMEOUT)
 
 
 def test_cli_evaluation_and_source_binding():
