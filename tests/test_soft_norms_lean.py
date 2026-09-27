@@ -366,7 +366,6 @@ def test_theta_dual_guard_cycle_on_t_prime(lean):
     ])
     # the shared dependencyOrder diagnostic names every node that cannot be placed: the
     # self-edge is on the defaulted predicate, and the strict rule's predicate depends on it
-    # (spec fixture θ writes only the first name; see lean/SOFT-NORMS.md)
     assert rows[0]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[1]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[2]["status"] == "ok" and rows[3]["status"] == "ok"

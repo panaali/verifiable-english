@@ -1242,9 +1242,9 @@ carve-outs or `over` edges; `Γ` empty. "Selects" means `selects′` at the one 
 - **(θ) Diagnostics.** `ties: [[a, b]]` with `a outranks b`: `TieAgainstOrder: a, b`. `a > b > c > a`:
   `DependencyCycle: a, b, c`. `N over M`, `{M, N} ∈ CP(T)`, `rank(M) outranks rank(N)`: `RankAgainstPrecedence: rule
   n over m`; the edge is inert when `N` has no descendants (see υ for the descendant regression). Dual guard: strict
-  `must not X` on `x_permitted` with guard "it is not the case that S must X", default `should X` on `x_required`: `DependencyCycle: x_required`
+  `must not X` on `x_permitted` with guard "it is not the case that S must X", default `should X` on `x_required`: `DependencyCycle: x_permitted, x_required`
   with the `DualGuardCycle` hint in Python's English diagnostic; the mirrored orientation (strict `must X` guarded on
-  "it is not the case that S may X", default `should not X`) likewise on `x_permitted`; the same documents with
+  "it is not the case that S may X", default `should not X`) likewise reports `DependencyCycle: x_permitted, x_required`; the same documents with
   base-only guards are accepted; strict `may X` with the first guard beside default `should X` is accepted (no
   block, no cycle).
 - **(ι) Vacuity.** Take (δ) unranked, replacing its true guards with explicit base guards `g_A(x)` and `g_B(x)`.
