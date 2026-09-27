@@ -19,8 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from ve import (ArgumentGraph, Claim, Deduction, Environment, FiniteModel, Top, Bottom, And, Not,
-                Or, Forall, Var, Unary, Const, check_argument, deduction_identity)
-from ve.ast import Document, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
+                Or, Forall, Var, Unary, Binary, Reach, Named, Const,
+                check_argument, deduction_identity)
+from ve.ast import Document, Le, Num, _to_data, check_formula, document_to_data, formula_from_data, formula_to_data
 from ve.identity import meaning_id
 from ve.background import background, dependency_order
 from ve.definitions import compile_definitions
@@ -73,6 +74,8 @@ def raw_environment(profiles):
     if "data@0" in profiles and "order@0" not in profiles:
         vocab["predicates"]["edge"] = {"arguments": ["item", "item"], "description": "edge",
                                              "functional": True}
+    if "closure@0" in profiles:
+        vocab["predicates"]["step"] = {"arguments": ["item", "item"], "description": "step"}
     if "norms@0" in profiles:
         vocab["predicates"]["permitted"] = {"arguments": ["item"], "description": "permitted",
             "regulated": {"role": "plain", "default": "deny"}}
@@ -82,8 +85,22 @@ def raw_environment(profiles):
 
 def model_wire(env):
     return {"complete": True, "domains": {"item": ["i"]}, "constants": {"x": "i"},
-            "relations": {name: ([["i"]] if name == "base" else []) for name, decl in env.predicates.items()
+            "relations": {name: ([["i"]] if name == "base" else [["i", "i"]] if name in {"edge", "step"} else [])
+                          for name, decl in env.predicates.items()
                           if decl.defined is None}}
+
+
+def semantic_formula(env):
+    """A true positive that actually uses the family's additional semantics."""
+    if env.order:
+        return Le(Num(0), Num(1))
+    if env.closure:
+        return Reach("star", Named("step"), Const("x"), Const("x"))
+    if "definitions@0" in env.profiles:
+        return Unary("derived", Const("x"))
+    if "data@0" in env.profiles:
+        return Binary("edge", Const("x"), Const("x"))
+    return Unary("base", Const("x"))
 
 
 def wire(value):
@@ -139,11 +156,11 @@ def operation(name, kind, env, model):
     """Exercise a small, deliberately explicit input for each public operation."""
     budget = kind == "budget"
     bad = kind == "rejection"
-    p = Unary("base", Const("x"))
+    p = semantic_formula(env)
     source = "broken.\n" if bad else print_formula(env, p) + ".\n"
     if name == "parse_accept": return lambda: document_to_data(env, parse(env, source))
     if name == "canonicalize": return lambda: canonicalize(env, source)
-    if name == "typing": return lambda: formula_to_data(env, formula_from_data(env, ["unary", "base", ["const", "x"]] if not bad else ["unary", "missing", ["const", "x"]]))
+    if name == "typing": return lambda: formula_to_data(env, formula_from_data(env, formula_to_data(env, p) if not bad else ["unary", "missing", ["const", "x"]]))
     if name == "environment_validation":
         def check_env():
             data = env.to_dict()
@@ -162,13 +179,15 @@ def operation(name, kind, env, model):
     if name == "evaluate_trace": return lambda: evaluate(env, p, replace(model, model_id="0" * 64) if bad else model, trace=True, max_trace_nodes=0 if budget else 8)
     if name == "countermodel_check": return lambda: check_countermodel(env, (p,), Bottom(), replace(model, model_id="0" * 64) if bad else model, max_evaluations=0 if budget else 8)
     if name.startswith("countermodel_search"):
-        opts = {"max_domain_size": 1, "max_models": 0 if budget else 2, "max_evaluations": 8}
+        opts = {"max_domain_size": 1, "max_models": 0 if budget else 2, "max_evaluations": 100}
         if name.endswith("nonempty"): opts["nonempty_domains"] = True
         if name.endswith("nonvacuous"): opts["nonvacuous_for"] = p
         if name.endswith("min_domain"): opts["min_domain_size"] = 1
         if name.endswith("semantic_nonvacuity"):
             opts["nonvacuous_for"] = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
             opts["semantic_nonvacuity"] = True
+            if not budget:
+                opts["max_models"] = 8
         return lambda: find_countermodel(env, (p,), Unary("missing", Const("x")) if bad else Bottom(), **opts)
     if name == "distinguishing_model": return lambda: find_distinguishing_model(env, p, Unary("missing", Const("x")) if bad else Not(p), max_domain_size=1, max_models=0 if budget else 2)
     if name == "certificate_replay":

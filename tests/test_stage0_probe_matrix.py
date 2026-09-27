@@ -52,3 +52,16 @@ def test_baseline_projection_only_drops_python_build_record_ids():
               "environment_id": "semantic", "nested": [{"record_id": "derived", "status": "Valid"}]}
     assert probe.baseline_projection(source) == {"environment_id": "semantic", "nested": [{"status": "Valid"}]}
     assert set(probe.GAP_ASSIGNMENTS) == set(probe.OPERATIONS)
+
+
+@pytest.mark.parametrize("profiles,tag", [
+    (("data@0",), "binary"), (("definitions@0",), "unary"),
+    (("closure@0",), "reach"), (("order@0",), "le"),
+])
+def test_profile_positive_uses_its_semantics(profiles, tag):
+    env = Environment(probe.raw_environment(profiles))
+    model = FiniteModel.from_dict(env, probe.model_wire(env))
+    assert probe.formula_to_data(env, probe.semantic_formula(env))[0] == tag
+    for name in ("parse_accept", "typing", "evaluate", "countermodel_check"):
+        result = probe.outcome(probe.operation(name, "positive", env, model))
+        assert result["cell"] == "S", (profiles, name, result)
