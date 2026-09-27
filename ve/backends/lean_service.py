@@ -184,30 +184,31 @@ class LeanService:
             self._spawn()
 
     def _spawn(self) -> None:
-        if not self.executable.exists():
-            raise CheckerUnavailable(f"CheckerUnavailable: missing Lean service executable {self.executable}")
-        if self.expected_sha256 is not None:
-            allowed = {self.expected_sha256}
-        elif self.allow_unlisted_build:
-            allowed = None
-        else:
-            try:
-                allowed = set(json.loads(BUILD_LOCK.read_text())["ve_service"])
-            except (OSError, ValueError, KeyError, TypeError):
-                raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {BUILD_LOCK}") from None
-        if allowed is not None and self.build not in allowed:
-            raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {self.build}, "
-                                     f"expected {', '.join(sorted(allowed))}")
-        if self._stderr is not None:
-            self._stderr.close()
-        self._stderr = tempfile.TemporaryFile()
-        limit = self.address_space
-        preexec = None
-        if limit is not None and not hasattr(__import__("resource"), "prlimit"):
-            def preexec():
-                import resource
-                resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
         try:
+            if not self.executable.exists():
+                raise CheckerUnavailable(f"CheckerUnavailable: missing Lean service executable {self.executable}")
+            if self.expected_sha256 is not None:
+                allowed = {self.expected_sha256}
+            elif self.allow_unlisted_build:
+                allowed = None
+            else:
+                try:
+                    allowed = set(json.loads(BUILD_LOCK.read_text())["ve_service"])
+                except (OSError, ValueError, KeyError, TypeError):
+                    raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {BUILD_LOCK}") from None
+            build = self.build
+            if allowed is not None and build not in allowed:
+                raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+                                         f"expected {', '.join(sorted(allowed))}")
+            if self._stderr is not None:
+                self._stderr.close()
+            self._stderr = tempfile.TemporaryFile()
+            limit = self.address_space
+            preexec = None
+            if limit is not None and not hasattr(__import__("resource"), "prlimit"):
+                def preexec():
+                    import resource
+                    resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
             self._proc = subprocess.Popen([str(self.executable)], stdin=subprocess.PIPE,
                                           stdout=subprocess.PIPE, stderr=self._stderr,
                                           bufsize=0, close_fds=True, preexec_fn=preexec)
@@ -231,9 +232,12 @@ class LeanService:
                            (("max_line_bytes", MAX_LINE_BYTES), ("max_cases", MAX_CASES),
                             ("json_depth", 256)))):
                 raise _Failure(f"unexpected handshake {line[:200]!r}")
+        except CheckerUnavailable:
+            self._stop(graceful=False)
+            raise
         except (_Failure, OSError, ValueError, TypeError, OverflowError) as exc:
             self._stop(graceful=False)
-            raise _Failure(f"handshake/startup from {self.executable}: {exc}") from None
+            raise _Failure(f"startup/handshake from {self.executable}: {exc}") from None
         self.handshake = handshake
 
     def _stop(self, graceful: bool) -> None:
@@ -344,10 +348,16 @@ class LeanService:
             return raw, response
         results = response.get("results")
         counts = response.get("counts")
+        try:
+            cases = json.loads(cases_text)
+        except ValueError:
+            cases = None
         if (set(response) != {"id", "status", "mode", "results", "counts"}
                 or response.get("status") != "ok" or response.get("mode") != mode
+                or not isinstance(cases, list) or len(cases) != count
                 or not isinstance(results, list) or len(results) != count
-                or any(not self._valid_result(mode, row, index) for index, row in enumerate(results))
+                or any(not self._valid_result(mode, row, index, cases[index])
+                       for index, row in enumerate(results))
                 or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
                 or type(counts["cases"]) is not int or counts["cases"] != count
                 or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.encode())
@@ -357,22 +367,96 @@ class LeanService:
         return raw, response
 
     @staticmethod
-    def _valid_result(mode: str, row: object, index: int) -> bool:
+    def _valid_result(mode: str, row: object, index: int, case: object) -> bool:
         if not isinstance(row, dict):
             return False
         if mode == "english":
             if row.get("status") == "error":
                 return (set(row) == {"status", "error"}
                         and isinstance(row["error"], str) and bool(row["error"]))
+            if not isinstance(case, dict) or not isinstance(case.get("cases"), list):
+                return False
             return (set(row) == {"admissible", "covers", "results"}
                     and type(row["admissible"]) is bool and type(row["covers"]) is bool
-                    and isinstance(row["results"], list))
-        identity = ("id" in row or
-                    (type(row.get("case_index")) is int and row["case_index"] == index
-                     and row.get("status") == "error"))
-        return (identity and row.get("status") in ("ok", "error")
-                and (row.get("status") != "error" or
-                     (isinstance(row.get("error"), str) and bool(row["error"]))))
+                    and isinstance(row["results"], list)
+                    and len(row["results"]) == len(case["cases"])
+                    and all(isinstance(item, dict) and set(item) ==
+                            {"parsed", "checked", "rendered", "roundtrip"}
+                            and (item["parsed"] is None or
+                                 (isinstance(item["parsed"], list)
+                                  and all(isinstance(formula, list) for formula in item["parsed"])))
+                            and type(item["checked"]) is bool
+                            and (item["rendered"] is None or
+                                 (isinstance(item["rendered"], list)
+                                  and all(isinstance(token, str) or
+                                          (isinstance(token, list) and len(token) == 2
+                                           and isinstance(token[0], str) and type(token[1]) is int)
+                                          for token in item["rendered"])))
+                            and type(item["roundtrip"]) is bool
+                            and (item["checked"] or item["rendered"] is None)
+                            and (item["checked"] or not item["roundtrip"])
+                            for item in row["results"]))
+        status = row.get("status")
+        if status not in ("ok", "error"):
+            return False
+        if "case_index" in row:
+            expected_fields = {"status", "case_index", "error"}
+            if mode in ("check-certificate", "order"):
+                expected_fields.add("valid")
+            return (status == "error" and type(row["case_index"]) is int
+                    and row["case_index"] == index and set(row) == expected_fields
+                    and isinstance(row.get("error"), str) and bool(row["error"])
+                    and ("valid" not in row or row["valid"] is False))
+        expected_id = case.get("id") if isinstance(case, dict) else None
+        if ("id" not in row or type(row["id"]) is not type(expected_id)
+                or row["id"] != expected_id):
+            return False
+        if status == "error":
+            if not isinstance(row.get("error"), str) or not row["error"]:
+                return False
+            if mode in ("check-certificate", "order"):
+                return set(row) == {"id", "status", "error", "valid"} and row["valid"] is False
+            if mode == "evaluate":
+                return set(row) == {"id", "status", "error"}
+            return (set(row) <= {"id", "status", "error", "generator", "valid"}
+                    and ("valid" not in row or row["valid"] is False)
+                    and ("generator" not in row or isinstance(row["generator"], str)))
+        if not isinstance(expected_id, str) or "error" in row:
+            return False
+        if mode == "check-certificate":
+            return set(row) == {"id", "status", "valid"} and type(row["valid"]) is bool
+        if mode == "evaluate":
+            if isinstance(case, dict) and case.get("kind") == "countermodel":
+                return set(row) == {"id", "status", "refutes"} and type(row["refutes"]) is bool
+            return (set(row) == {"id", "status", "values", "value", "canonical"}
+                    and isinstance(row.get("values"), list)
+                    and all(type(value) is bool for value in row["values"])
+                    and type(row.get("value")) is bool and isinstance(row.get("canonical"), str))
+        if mode == "order":
+            kind = case.get("kind") if isinstance(case, dict) else None
+            key = {"evaluate": "values", "countermodel": "refutes", "certificate": "valid",
+                   "surface": "ast"}.get(kind)
+            if key is None:
+                return False
+            value = row.get(key)
+            return (set(row) == {"id", "status", key} and
+                    (type(value) is bool if key in ("refutes", "valid") else
+                     isinstance(value, list) and (key != "values" or all(type(v) is bool for v in value))))
+        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
+        key = {"evaluate": "values", "countermodel": "refutes", "certificate": "valid",
+               "dependency-order": "order", "bundle": "lemmas", "background": "premises",
+               "label": "label", "admission": "admitted", "norms-elaborate": "background",
+               "norms-certificate": "valid", "norms-conflict": "verdict"}.get(kind)
+        if key is None:
+            return False
+        value = row.get(key)
+        if key in ("refutes", "valid", "admitted"):
+            return type(value) is bool
+        if key == "label" or key == "verdict":
+            return isinstance(value, str)
+        if key == "lemmas":
+            return type(row.get("checked")) is int and isinstance(value, list)
+        return isinstance(value, list)
 
     def _after_request(self) -> None:
         self._served += 1
