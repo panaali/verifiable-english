@@ -172,7 +172,7 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
       | some m => mode := some m
       | none => throw s!"unknown mode {name}"
     else if key == "budget" then budget ← decodeBudget raw
-    else if key == "cases" then cases := some raw
+    else if key == "cases" then cases := some raw.trim
     else throw s!"unknown request field {key}"
   match id, mode, cases with
   | some i, some m, some c => pure { id := i, mode := m, budget, cases := c }
