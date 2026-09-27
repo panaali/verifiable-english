@@ -39,6 +39,13 @@ The natural English reading of each checked rule is:
 | 5 (Law 2) | An ordered action is required if it is permitted. |
 | 6 (Law 3, illustrative assumption) | Every protective action is required if it is permitted. |
 
+The [environment](environment.json) sets completion defaults for candidate
+actions: when no permission rule applies, **permission defaults to allow**;
+when no obligation rule applies, **obligation defaults to not required**. These
+are modeling choices, not claims from Asimov's text. For example, an action
+with no `ordered`, `protects_robot`, or injury annotation is permitted but not
+required.
+
 ## Boundary and result
 
 - **Checked:** W1 parses the six rules and checks their precedence, outcomes,
