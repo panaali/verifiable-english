@@ -173,18 +173,21 @@ def test_derivation_node_budget_rejects(monkeypatch):
 def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
     from concurrent.futures import ThreadPoolExecutor
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    elapsed = [0.0]
+    iterations = [0]
     class SlowParser:
         def parse(self, _source):
             for _ in range(100):
-                pass
-            pytest.fail("trace did not enforce the Earley deadline")
+                iterations[0] += 1
+                elapsed[0] += 0.25
+            return Tree("start", [])
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
     monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
-    ticks = iter(range(1000))
-    monkeypatch.setattr(unambiguity, "_monotonic", lambda: next(ticks))
+    monkeypatch.setattr(unambiguity, "_monotonic", lambda: elapsed[0])
     with ThreadPoolExecutor(max_workers=1) as pool:
         with pytest.raises(ResourceLimit, match="Earley time budget"):
             pool.submit(parse_english, env, "This holds in all cases.").result(timeout=30)
+    assert 0 < iterations[0] < 100
 
 
 def test_earley_alarm_budget_restores_signal_state(monkeypatch):
@@ -226,19 +229,22 @@ def test_host_alarm_remains_active_and_cancels_english_parse(monkeypatch):
 
 def test_earley_time_budget_with_host_alarm(monkeypatch):
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    elapsed = [0.0]
+    iterations = [0]
     class SlowParser:
         def parse(self, _source):
             for _ in range(100):
-                pass
-            pytest.fail("trace did not enforce the Earley deadline")
+                iterations[0] += 1
+                elapsed[0] += 0.25
+            return Tree("start", [])
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
     monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
-    ticks = iter(range(1000))
-    monkeypatch.setattr(unambiguity, "_monotonic", lambda: next(ticks))
+    monkeypatch.setattr(unambiguity, "_monotonic", lambda: elapsed[0])
     host_handler = object()
     alarm = FakeAlarm(timer=(30, 0), handler=host_handler)
     monkeypatch.setattr(unambiguity, "signal", alarm)
     with pytest.raises(ResourceLimit, match="Earley time budget"):
         parse_english(env, "This holds in all cases.")
+    assert 0 < iterations[0] < 100
     assert alarm.handler is host_handler
     assert alarm.timer == (30, 0)
