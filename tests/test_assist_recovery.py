@@ -323,8 +323,13 @@ def test_narrowing_is_bound_to_exact_source_set_and_card_is_rechecked():
     fresh = service.record_narrowing("u", keeps=[meaning_id(env, formula)], actor="translator",
                                      reason="cited antecedent", cited_spans=[{"start": 0, "end": 2}])
     service.units["u"].catalogue_results["discourse.reference@1"]["cards"][0]["paraphrases"][1] = "Api is safe."
-    with pytest.raises(ValueError, match="card wording changed meaning"):
+    # An edited cache never reaches a transition, and the approval check itself rereads the card.
+    with pytest.raises(ValueError, match="ledger replay"):
         service.approve("u", formula, **{**kwargs, "narrowing": fresh["id"]})
+    from ve.assist.ambiguity_patterns import Budget
+    with pytest.raises(ValueError, match="card wording changed meaning"):
+        service._approval("u", formula, **{**kwargs, "narrowing": fresh["id"]}, rejected=(),
+                          budget=Budget())
 
 
 def test_pagination_retains_cards_counts_and_cursor_until_complete():
@@ -359,7 +364,8 @@ def test_none_of_these_reply_history_proposer_and_task_cap():
     service.classify("u", parse_outcome="zero")
     service.request_proposer("u", Suggest())
     assert service.events[-1]["text"] == "Api is safe."
-    service.units["u"].started -= 301
+    started = service.units["u"].started
+    service.clock = lambda: started + 301
     service.cancel("u")
     assert service.start("u") == "unresolved"
     service.edit("u", source="Api is safe.")
@@ -459,9 +465,11 @@ def test_edit_preserves_review_for_unchanged_source():
         service.approve("u", formula, actor="translator", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
     service.units["u"].catalogue_results.clear()
-    with pytest.raises(ValueError, match="catalogue review is incomplete"):
+    with pytest.raises(ValueError, match="ledger replay"):
         service.approve("u", formula, actor="translator", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
+    with pytest.raises(ValueError, match="catalogue review is incomplete"):
+        service._catalogue_complete(service.units["u"])
 
 
 def test_edit_keeps_unresolved_pending_distinction():

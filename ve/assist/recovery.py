@@ -150,6 +150,7 @@ def _canonical(value) -> str:
 
 LEDGER_KEYS = frozenset({"format", "genesis_versions", "versions", "limits", "revision",
                          "commands", "events"})
+DIVERGED = "recovery state differs from its ledger replay"
 
 
 class RecoveryService:
@@ -161,6 +162,11 @@ class RecoveryService:
     by running commands through the transition code below; nothing is
     imported. ``from_ledger`` replays every command from genesis and accepts
     the ledger only if it is byte-equal to that replay.
+
+    The public attributes are a read cache. Each transition or replay seals
+    the canonical state it derived; a command runs only when the live state
+    equals that seal and then continues from the sealed data, so edits to the
+    cache cannot reach a transition. ``approval_valid`` replays the ledger.
     """
     def __init__(self, env, *, grammar_version: str, glossary_version: str,
                  reading_set_version: str, document_adapter: DocumentAdapter | None = None,
@@ -185,6 +191,59 @@ class RecoveryService:
         self._observed: _Observations | None = None
         self._replaying: dict | None = None
         self._document = None
+        self._seal()
+
+    # -- derived state -----------------------------------------------------
+
+    def _state(self) -> str:
+        return _canonical({"ledger": self.to_ledger(),
+                           "units": {k: asdict(u) for k, u in self.units.items()}})
+
+    def _seal(self):
+        self._sealed = self._state()
+
+    def _resume(self):
+        """Require the live state to be the sealed derived state, then continue from the seal.
+
+        Rebuilding from the seal keeps unit identities but drops any object
+        substituted into the cache, even one that serialises identically.
+        """
+        try:
+            live = self._state()
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError):
+            live = None
+        if live != self._sealed:
+            raise ValueError(DIVERGED)
+        sealed = json.loads(self._sealed)
+        units = {}
+        for unit_id, data in sealed["units"].items():
+            derived, current = Unit(**data), self.units.get(unit_id)
+            if type(current) is Unit:
+                current.__dict__.clear()
+                current.__dict__.update(derived.__dict__)
+                derived = current
+            units[unit_id] = derived
+        if type(self.units) is not dict:
+            self.units = {}
+        self.units.clear()
+        self.units.update(units)
+        ledger = sealed["ledger"]
+        self.genesis_versions, self.versions = ledger["genesis_versions"], ledger["versions"]
+        self.limits, self.revision = ledger["limits"], ledger["revision"]
+        self.commands, self.events = ledger["commands"], ledger["events"]
+
+    def _derived(self):
+        """Replay the recorded commands from genesis; the live state must equal that replay."""
+        try:
+            live = self._state()
+            if live != self._sealed:
+                raise ValueError(DIVERGED)
+            replayed = self._replay(self.env, json.loads(live)["ledger"])
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError) as exc:
+            raise ValueError(DIVERGED) from exc
+        if live != replayed._sealed:
+            raise ValueError(DIVERGED)
+        return replayed
 
     # -- command log -------------------------------------------------------
 
@@ -199,6 +258,8 @@ class RecoveryService:
         """
         if self._observed is not None:
             raise RuntimeError("recovery commands cannot run inside another command")
+        if self._replaying is None:
+            self._resume()
         try:
             args = json.loads(_canonical(args))
         except (TypeError, ValueError) as exc:
@@ -231,6 +292,8 @@ class RecoveryService:
                   "previous_digest": self.commands[-1]["command_digest"] if self.commands else None}
         record["command_digest"] = _digest(record)
         self.commands.append(record)
+        if self._replaying is None:
+            self._seal()
         if error is not None:
             raise error
         return result
@@ -308,8 +371,10 @@ class RecoveryService:
                 raise _InvalidLedger("invalid recovery ledger")
         if _canonical(service.to_ledger()) != _canonical(ledger):
             raise _InvalidLedger("invalid recovery ledger")
-        if not all(service.approval_valid(k) for k, u in service.units.items() if u.state == "approved"):
+        if not all(service._approval_valid(k, Budget()) for k, u in service.units.items()
+                   if u.state == "approved"):
             raise _InvalidLedger("invalid recovery ledger")
+        service._seal()
         return service
 
     @classmethod
@@ -337,10 +402,8 @@ class RecoveryService:
     def verify_ledger(self, ledger=None):
         """Replay ``ledger`` (default: this service's) and require it to be this state."""
         try:
-            replayed = self._replay(self.env, self.to_ledger() if ledger is None else ledger)
-            return (_canonical(replayed.to_ledger()) == _canonical(self.to_ledger())
-                    and _canonical({k: asdict(u) for k, u in replayed.units.items()})
-                    == _canonical({k: asdict(u) for k, u in self.units.items()}))
+            derived = self._derived()
+            return ledger is None or self._replay(self.env, ledger)._sealed == derived._sealed
         except (KeyError, TypeError, ValueError, IndexError, AttributeError, RecursionError):
             return False
 
@@ -405,7 +468,8 @@ class RecoveryService:
                 self._invalidate(child.id)
         if (old_approval is not None and current.approval == old_approval
                 and current.source == prior["source"] and current.anchor == prior["anchor"]
-                and current.presentation == prior["presentation"] and self.approval_valid(unit_id)):
+                and current.presentation == prior["presentation"]
+                and self._approval_valid(unit_id, Budget())):
             self._event("undo", current, target_revision=target_revision)
             return current
         unit = self._edit(unit_id, prior["source"], prior["anchor"], prior["presentation"], None)
@@ -1025,8 +1089,18 @@ class RecoveryService:
                 "approval": {"digest": _digest(snapshot), "snapshot": deepcopy(snapshot)}}
 
     def approval_valid(self, unit_id) -> bool:
-        """Recompute the approval from derived state; it must match exactly."""
-        return self._approval_valid(unit_id, Budget())
+        """Replay the ledger and recompute the approval from the replayed state.
+
+        The live state must also equal that replay, so an edited cache never
+        reports a valid approval.
+        """
+        if self._observed is not None:
+            raise RuntimeError("approval_valid cannot run inside a command")
+        try:
+            derived = self._derived()
+        except ValueError:
+            return False
+        return derived._approval_valid(unit_id, Budget())
 
     def _approval_valid(self, unit_id, budget) -> bool:
         unit = self.units.get(unit_id)
