@@ -273,7 +273,8 @@ def accB (D : DDoc) (m : Slot) (t : Target) : Bool :=
   | ⟨.anchor, some a, none, [], none, [], none⟩ => (anchorOf D a).isSome
   | ⟨.rule, some r, none, [], none, [], none⟩ => (unitKeys D).any fun k => k.1 == r && decide (k.2.2.2 = .norm)
   | ⟨.claim, some l, none, [], none, [], none⟩ => (lemmaNames D).contains l
-  | ⟨.document, some d, none, [], none, [], none⟩ => D.K.documents.any (·.name == d)
+  | ⟨.document, some d, none, [], none, [], none⟩ => D.K.documents.any fun x => x.name == d &&
+      x.display.any fun s => lexWords s == ((ownText D m).drop m.span.1).take (m.span.2 - m.span.1)
   | _ => false
 
 /-- 4.2: the accessibility relation. -/
@@ -462,8 +463,8 @@ theorem accB_candidates (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = tru
     exact mem_candidates ((lemmaNames D).map (namedTarget .claim)) (by simp [candidateParts])
       (List.mem_map.mpr ⟨l, List.contains_iff_mem.mp h, rfl⟩)
   · rename_i d
-    simp only [List.any_eq_true, beq_iff_eq] at h
-    obtain ⟨x, hx, rfl⟩ := h
+    simp only [List.any_eq_true, Bool.and_eq_true, beq_iff_eq] at h
+    obtain ⟨x, hx, rfl, _⟩ := h
     exact mem_candidates (D.K.documents.map (fun d => namedTarget .document d.name)) (by simp [candidateParts])
       (List.mem_map.mpr ⟨x, hx, rfl⟩)
   · cases h

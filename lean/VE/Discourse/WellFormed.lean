@@ -47,6 +47,10 @@ def spanIn (inner outer : Nat × Nat) : Bool := outer.1 ≤ inner.1 && inner.2 �
 def spansDisjoint (a b : Nat × Nat) : Bool := a.2 ≤ b.1 || b.2 ≤ a.1
 def spansNested (a b : Nat × Nat) : Bool := a != b && (spanIn a b || spanIn b a)
 
+def dupOf : List String → Option String
+  | [] => none
+  | x :: xs => if xs.contains x then some x else dupOf xs
+
 def firstDup (xs : List String) : Option String :=
   (xs.zipIdx.find? fun (x, i) => (xs.take i).contains x).map Prod.fst
 
@@ -65,7 +69,7 @@ def definitionIn (D : DDoc) (a : Anchor) : Bool :=
 /-- 4.1(2): one tree, nested and non-overlapping spans, unique labels per parent, exports. -/
 def anchorsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.anchors.length ≤ 1024) "ResourceLimit: anchors",
-  fun _ => match firstDup (D.K.anchors.map Anchor.id) with
+  fun _ => match dupOf (D.K.anchors.map Anchor.id) with
     | some a => .error ("DuplicateDeclaration: anchor " ++ a)
     | none => .ok (),
   fun _ => req ((D.K.anchors.filter (·.parent.isNone)).length == 1 || D.K.anchors.isEmpty)
@@ -94,7 +98,7 @@ def tablesOk (D : DDoc) : Except String Unit := runAll [
     if !(notBinder n.constant && (D.E.constants n.constant).isSome) then
       .error ("InvalidInput: name " ++ n.constant ++ " is not a declared constant")
     else req (anchorOf D n.scope).isSome ("DanglingAnchor: " ++ n.scope),
-  fun _ => match firstDup (D.K.names.map Name.constant) with
+  fun _ => match dupOf (D.K.names.map Name.constant) with
     | some c => .error ("DuplicateDeclaration: name " ++ c)
     | none => .ok (),
   fun _ => allOk D.K.names fun n => allOk D.K.names fun n' =>
@@ -108,7 +112,7 @@ def tablesOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.documents.length ≤ 64 && D.K.imports.length ≤ 64) "ResourceLimit: documents",
   fun _ => req (D.K.documents.isEmpty || D.E.sorts.contains D.K.documentSort)
     ("InvalidInput: document sort " ++ D.K.documentSort ++ " is not declared"),
-  fun _ => match firstDup (D.K.documents.map DocName.name) with
+  fun _ => match dupOf (D.K.documents.map DocName.name) with
     | some d => .error ("DuplicateDeclaration: document " ++ d)
     | none => .ok (),
   fun _ => allOk D.K.documents fun d =>
@@ -121,6 +125,16 @@ def tablesOk (D : DDoc) : Except String Unit := runAll [
           ("UnknownDocument: " ++ d.name)
       | .imported k => req (D.K.imports.any (·.key == k) && d.sourceId.isSome && d.documentId.isSome)
           ("UnknownDocument: " ++ d.name)]
+
+def formText : Form → String
+  | .pronoun => "pronoun" | .demonstrative => "demonstrative" | .definite => "definite"
+  | .ordinalPair => "ordinal_pair" | .such => "such" | .possessive => "possessive" | .plural => "plural"
+  | .sectionRef => "section_ref" | .definitionRef => "definition_ref" | .documentName => "document_name"
+  | .citation => "citation" | .navigation => "navigation"
+
+def kindText : TargetKind → String
+  | .entity => "entity" | .predicate => "predicate" | .unit => "unit" | .anchor => "anchor"
+  | .rule => "rule" | .claim => "claim" | .document => "document"
 
 def mentionUnitLength (D : DDoc) (x : Mention) : Option Nat := (D.text x.unit).map List.length
 
@@ -145,7 +159,7 @@ def targetShapeOk (x : Mention) : Bool :=
 /-- 4.1(4, 5): mentions, their spans, target shapes, kind fit, restrictions and carriers. -/
 def mentionsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.mentions.length ≤ mentionLimit) "ResourceLimit: mentions",
-  fun _ => match firstDup (D.K.mentions.map Mention.id) with
+  fun _ => match dupOf (D.K.mentions.map Mention.id) with
     | some m => .error ("DuplicateDeclaration: mention " ++ m)
     | none => .ok (),
   fun _ => allOk D.K.mentions fun x =>
@@ -157,8 +171,11 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
     if x.id != y.id && x.unit == y.unit && !spansDisjoint x.span y.span && !spansNested x.span y.span then
       .error ("InvalidInput: mentions " ++ x.id ++ ", " ++ y.id ++ " overlap") else .ok (),
   fun _ => allOk D.K.mentions fun x => req (targetShapeOk x) ("InvalidInput: mention " ++ x.id ++ " target"),
+  fun _ => allOk D.K.mentions fun x =>
+    req (!((x.form == .pronoun || x.form == .demonstrative) && x.target.kind == .claim))
+      ("UnsupportedTarget: " ++ x.id ++ ": claim"),
   fun _ => allOk D.K.mentions fun x => req (formFits x.form x.target.kind)
-    ("TargetKindMismatch: " ++ x.id ++ ": " ++ reprStr x.form ++ ", " ++ reprStr x.target.kind),
+    ("TargetKindMismatch: " ++ x.id ++ ": " ++ formText x.form ++ ", " ++ kindText x.target.kind),
   fun _ => allOk D.K.mentions fun x =>
     if x.form == .definite then
       match x.restriction, x.reading, restrictionSort D x with

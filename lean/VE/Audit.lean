@@ -38,6 +38,7 @@ import VE.Discourse.Examples
 import VE.Discourse.Access
 import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
+import VE.Discourse.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
