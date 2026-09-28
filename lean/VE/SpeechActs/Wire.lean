@@ -551,6 +551,15 @@ def mergeBindings (E : VE.Environment) (sc : Scope) : List Binding → Except St
           pure { sc with definites := ds }
     mergeBindings E sc' bs
 
+/-- The single-binding checks of a binding that is not merged (a pending unit's or a candidate's), as the block's
+own entry: a task token, a declared constant, a phrase that `checkPhrases` accepts. -/
+def checkBinding (ne : VE.Norms.Wire.NormsEnvironment) : Binding → Except String Unit
+  | .task t => unless VE.Route.Admission.token t do throw invalidBlock
+  | .you c => unless (ne.rv.environment.constants c).isSome do throw s!"UnknownSymbol: {c}"
+  | .phrase p c => do
+    checkPhrases ne ⟨"t", none, [(p, c)]⟩
+    unless (ne.rv.environment.constants c).isSome do throw s!"UnknownSymbol: {c}"
+
 def bindingKey : Binding → String
   | .you _ => "you"
   | .phrase p _ => p
@@ -589,8 +598,14 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
     throw "unit spans must be sorted and non-overlapping"
-  -- Authored bindings (1.1).
-  let bindings := units.filterMap (fun u => match u.role with | .binding b => some b | _ => none)
+  -- Authored bindings (1.1). A binding unit whose reading set is open is pending (1.5): it supplies no entry
+  -- and declares nothing, and keeps its single-binding checks.
+  for u in units do
+    if let .binding b := u.role then
+      if u.pending then checkBinding se.ne b
+  let bindings := units.filterMap (fun u => match u.role with
+    | .binding b => if u.pending then none else some b
+    | _ => none)
   let keys := bindings.map bindingKey
   if let some k := keys.find? (fun k => keys.count k > 1) then
     throw s!"DuplicateDeclaration: binding {k}"

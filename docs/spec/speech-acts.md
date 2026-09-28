@@ -83,7 +83,10 @@ definite bindings have different `environment_id`s (3.5); this is how "one pinne
 is realised at `@0` (4.8). An entry that an authored binding supplies is supplied to the environment: the document's
 `environment_id`, and with it every meaning id and every certificate binding, is computed over the canonical
 environment whose block is the **effective** scope, exactly as if the block had declared the entry; a document whose
-bindings supply nothing keeps its environment's id. Binding "you" to Alice or to Bob therefore gives two ids.
+bindings supply nothing keeps its environment's id. Binding "you" to Alice or to Bob therefore gives two ids. Only a
+binding unit that is not pending supplies an entry (1.5): a binding whose reading set's latest version is open is
+dormant, supplies nothing, neither conflicts with nor duplicates another entry, and keeps its single-binding checks
+(shape, phrase, declared constant), whatever its own content or its candidates bind.
 
 ### 1.2 Commands
 
@@ -1575,6 +1578,7 @@ statements of section 8 are unchanged.
 | B, coverage: malformed candidates counted as R, unelaborated ones were never U, authored and historical versions inflated `unresolved_sets`, and the status table was derived from the classes | 6: candidates are decoded (malformed rejected, `null` unelaborated); the latest version decides class and residual; W2's statuses are inferred independently and the mapping is checked per unit; a stated W2 `status` must match W2's inference. The `ve-document@2` id encodes W2's payload in W2's own JSON encoding, which admits a `null` candidate (3.5). |
 | B, opaque wording: "Is atlas reviewed and not reviewed?" matched a declared one-place gloss and was answered "yes" as one atom | 2.1, 6, 7: a copular gloss must name one property; a matching gloss holding a connective, negation or quantifier word, a declared constant or a bound definite phrase is `OpaqueWording`, in questions, which bodies and query targets. |
 | A, unsigned choices: an authored reading set without its `signature` supplied a premise in both cores, though the source loader rejects it | 1.5: only a signed version is a choice in every checker; unsigned authored versions, signed open ones, versions below 1 and sets for no unit of the document are rejected with W2's texts. |
+| A, pending bindings: an open binding unit still bound "you" for active commands in both cores, although its sole candidate bound another constant | 1.1 and 1.5: a pending binding supplies no scope entry, conflicts with and duplicates nothing, and keeps its single-binding checks; a `binding` unit carries binding content in both cores. |
 
 ## Change log
 

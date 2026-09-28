@@ -205,7 +205,9 @@ class SpeechDocument:
             if type(content) is dict and "binding" in content:
                 if kind != "binding":
                     raise VEError("InvalidInput: binding content requires binding kind")
-                self.bindings.append((uid, content["binding"]))
+                self.bindings.append((uid, content["binding"], pending))
+            elif kind == "binding":  # as Lean's decoder: a binding unit carries its binding
+                raise VEError(f"InvalidInput: invalid binding fields for {uid}")
             elif type(content) is dict and "command" in content:
                 if bare_kind != "instruction":
                     raise VEError("InvalidInput: command content requires instruction kind")
@@ -247,7 +249,7 @@ class SpeechDocument:
         if self.scope != env.to_dict()["speech_acts"]:
             from .environment import Environment
             self.env = Environment({**env.to_dict(), "speech_acts": self.scope})
-        for uid, binding in self.bindings:
+        for uid, binding, _ in self.bindings:
             self.meaning_ids[uid] = self._id({"binding": binding})
         self._check_candidates()
         if len(self.questions) > 256:
@@ -276,31 +278,55 @@ class SpeechDocument:
         return digest(f"ve-meaning-{self.env.identity_version}\n",
                       {"environment_id": self.env.environment_id, "ast": value})
 
+    def _binding_entry(self, uid, binding):
+        """The legend entry one binding (a unit's or a candidate's) supplies, checked as the block's entry.
+
+        Returns its key ("you", "task" or the phrase) and value.  The phrase
+        passes the block's own checks (`validate_scope`) and the constant is
+        declared, whether or not the entry is merged.
+        """
+        if (type(binding) is not dict or set(binding) not in ({"you"}, {"task"}, {"phrase", "constant"})
+                or any(type(v) is not str for v in binding.values())
+                or "phrase" in binding and (len(binding["phrase"].encode()) > 80
+                                            or not _PHRASE.fullmatch(binding["phrase"]))):
+            raise VEError(f"InvalidInput: invalid binding fields for {uid}")
+        key = binding.get("phrase", next(iter(binding)))
+        actual = binding.get("constant", binding.get(key))
+        if key == "task":
+            if not _TOKEN.fullmatch(actual):
+                raise VEError("InvalidInput: speech_acts block")
+        elif "phrase" in binding:
+            validate_scope({"task": "t", "definites": {key: actual}}, self.env.sorts, self.env.constants,
+                           self.env.predicates)
+        elif actual not in self.env.constants:
+            raise VEError(f"UnknownSymbol: {actual}")
+        return key, actual
+
     def _check_bindings(self):
+        """1.1 and 1.5: merge the bindings of units that are not pending into the scope.
+
+        A binding unit whose reading set is open supplies no entry and
+        declares nothing (its candidates may bind otherwise); it keeps the
+        single-unit checks, as a dormant command does.
+        """
         seen = set()
-        for uid, binding in self.bindings:
-            if type(binding) is not dict or not (set(binding) == {"you"} or set(binding) == {"task"}
-                                                   or set(binding) == {"phrase", "constant"}):
-                raise VEError("InvalidInput: binding")
-            key = binding.get("phrase", next(iter(binding)))
+        for uid, binding, pending in self.bindings:
+            key, actual = self._binding_entry(uid, binding)
+            if pending:
+                continue
             if key in seen:
                 raise VEError(f"DuplicateDeclaration: binding {key}")
             seen.add(key)
             expected = (self.scope["task"] if key == "task" else
                         self.scope.get("addressee", {}).get("constant") if key == "you" else
                         self.scope.get("definites", {}).get(key))
-            actual = binding.get("constant", binding.get(key))
             if expected is not None and actual != expected:
                 raise VEError(f"BindingConflict: {key}")
             if key == "task":
                 self.scope["task"] = actual
             elif key == "you":
-                if actual not in self.env.constants:
-                    raise VEError(f"UnknownSymbol: {actual}")
                 self.scope["addressee"] = {"sort": self.env.constants[actual].sort, "constant": actual}
             else:
-                if actual not in self.env.constants:
-                    raise VEError(f"UnknownSymbol: {actual}")
                 self.scope.setdefault("definites", {})[key] = actual
 
     def _check_candidates(self):
