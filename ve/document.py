@@ -71,10 +71,12 @@ def _split(raw: bytes):
         meta = json.loads(raw[4:boundary].decode("utf-8"))
     except (ValueError, UnicodeError) as exc:
         raise VEError("invalid JSON front matter") from exc
-    if type(meta) is not dict or meta.get("format") != "ve-document@1":
+    if type(meta) is not dict or meta.get("format") not in ("ve-document@1", "ve-document@2"):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
                "narrowings", "weights", "graph", "lemmas"}
+    if meta["format"] == "ve-document@2":
+        allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
@@ -169,7 +171,9 @@ def load_document(path: str | Path):
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
-    env = Environment(meta["environment"])
+    from .discourse import base_environment, validate_discourse
+    environment_data = base_environment(meta)
+    env = Environment(environment_data)
     open_names = validate_open_terms(env, meta.get("open_terms", []))
     units = meta.get("units")
     if type(units) is not list or not units:
@@ -280,13 +284,16 @@ def load_document(path: str | Path):
         "metadata": {key: value for key, value in meta.items() if key != "weights"},
         "source": source.decode("utf-8"), "fences": fences}
     document_id = hashlib.sha256(
-        b"ve-document@1\n" + json.dumps(identity_payload, sort_keys=True,
+        (meta["format"] + "\n").encode("ascii") + json.dumps(identity_payload, sort_keys=True,
                                           ensure_ascii=False, separators=(",", ":"),
                                           allow_nan=False).encode("utf-8")).hexdigest()
-    return {"meta": meta, "environment": env, "source": source, "source_id": sid,
+    doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
             "units": compiled, "norms": norms,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
+    if meta["format"] == "ve-document@2":
+        doc["discourse"] = validate_discourse(doc)
+    return doc
 
 
 def _fixed_and_active(doc):
@@ -368,10 +375,13 @@ def _check_narrowing_choices(meta, labels):
 
 def check_document(path):
     doc = load_document(path)
+    if (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
+            or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN") and "graph" in doc["meta"]:
+        raise VEError("ResourceLimit: discourse citation and report extension pending")
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
-    result = {"format": "ve-document@1", "source_id": doc["source_id"],
+    result = {"format": doc["meta"]["format"], "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
     if "graph" in doc["meta"]:
@@ -429,6 +439,9 @@ def check_document(path):
     assertions.extend(_assertion_disjunctions(env, active))
     if _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
+    elif (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
+          or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN"):
+        result["premises"] = {"status": "UNKNOWN", "reason": "correlated reading premises require a joint choice"}
     else:
         result["premises"] = premise_status(env, assertions)
         if (result["premises"]["status"] != "INCONSISTENT"
@@ -439,6 +452,9 @@ def check_document(path):
         status = result["premises"]["status"]
         result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
                                            False if status == "model" else None)
+    if "discourse" in doc:
+        from .discourse import report_discourse
+        report_discourse(doc, result)
     return result
 
 
@@ -536,7 +552,8 @@ def main(argv=None):
                         if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
                         for r in sets]
             data = check_readings(doc["environment"], sets, conclusion,
-                                  fixed=_fixed_premises(doc, sets))
+                                  fixed=_fixed_premises(doc, sets),
+                                  joint_choices=doc.get("discourse", {}).get("joint"))
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
         else:
