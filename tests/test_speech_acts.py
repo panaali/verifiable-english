@@ -324,10 +324,9 @@ def _candidate(kind, content, rid="r1", others=()):
                           "distinguishing_models": {o: "m" + o for o in others}}}
 
 
-def _source(unit_kind, content, sets, meaning="specified", status=None):
+def _source(unit_kind, content, sets, meaning="specified", status=None, text=b"Open the desk.\n"):
     from ve.speech_document import SpeechSource
     env = environment()
-    text = b"Open the desk.\n"
     unit_ = {"id": "u", "span": [0, len(text)], "kind": unit_kind, "meaning": meaning, "support": "none",
              **({"content": content} if content is not None else {}),
              **({"status": status} if status is not None else {})}
@@ -375,8 +374,9 @@ def test_coverage_classes_are_reconciled_with_w2_statuses_not_derived_from_them(
     env = environment()
     choice = _candidate("asserted", fact)
     choice["meaning_id"] = meaning_id(env, formula_from_data(env, fact))
-    source = _source("asserted", None, [_set(1, "authored", [choice])])
-    assert source.coverage()["bytes_by_class"] == {"C": n} and source.coverage()["bytes_by_status"] == {"CHECKED": n}
+    source = _source("asserted", None, [_set(1, "authored", [choice])], text=b"Atlas is reviewed.\n")
+    assert source.coverage()["bytes_by_class"] == {"C": len(source.source)} and \
+        source.coverage()["bytes_by_status"] == {"CHECKED": len(source.source)}
     assert [u for u, _ in source.document.asserted] == ["u"]
     # A contextual meaning is W2-LABELLED, so it is L, not C; a stated W2 status must match W2's inference.
     assert _source("instruction", open_cmd, [], meaning={"contextual": "heading"}).coverage()["bytes_by_class"] == \
@@ -448,11 +448,12 @@ def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
 
     def source(ref, open_terms=(), status="open"):
         reading = {"question": {"mode": "reading", **ref}}
+        wording = b"Which reading did you mean?\n" if status == "authored" else text
         return SpeechSource({"format": "ve-document@2", "environment": env.to_dict(),
-                             "units": [{"id": "u", "span": [0, len(text)], "kind": "instruction",
+                             "units": [{"id": "u", "span": [0, len(wording)], "kind": "instruction",
                                         "meaning": "specified", "support": "none", "content": open_cmd}],
                              "open_terms": list(open_terms),
-                             "reading_sets": [_set(1, status, [_candidate("question", reading)])]}, text, {})
+                             "reading_sets": [_set(1, status, [_candidate("question", reading)])]}, wording, {})
 
     for ref in ({"set": "missing", "version": 1}, {"set": 7, "version": 1}, {"set": ["rs"], "version": 1},
                 {"set": "rs", "version": 2}, {"version": 1}):
