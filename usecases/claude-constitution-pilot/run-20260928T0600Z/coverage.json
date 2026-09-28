@@ -1,0 +1,36 @@
+{
+  "source_bytes": 184893,
+  "accounted_bytes": 184893,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 349,
+    "unformalised": 183840,
+    "attributed": 634,
+    "norm": 48,
+    "asserted": 22
+  },
+  "bytes_by_status": {
+    "LABELLED": 349,
+    "UNFORMALISED": 184474,
+    "OPEN": 48,
+    "CHECKED": 22
+  },
+  "unformalised_reasons": {
+    "other.discourse": 78,
+    "quantities": 119,
+    "norms": 676,
+    "causation": 80,
+    "time": 9,
+    "counting": 31,
+    "defaults": 54,
+    "modality_belief": 24,
+    "attribution": 12
+  },
+  "residual": {
+    "open_terms": 6,
+    "assumptions": 2,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 0
+  },
+  "residual_total": 8
+}
