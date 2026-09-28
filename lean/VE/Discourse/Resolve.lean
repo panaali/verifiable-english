@@ -146,8 +146,8 @@ theorem slotCands_complete (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = 
   · rename_i d
     have hf : m.form = .documentName := by
       revert hfit; cases hm : m.form <;> simp [formFits]
-    simp only [List.any_eq_true, beq_iff_eq] at h
-    obtain ⟨x, hx, rfl⟩ := h
+    simp only [List.any_eq_true, Bool.and_eq_true, beq_iff_eq] at h
+    obtain ⟨x, hx, rfl, _⟩ := h
     unfold slotCands
     simp only [hf]
     exact List.mem_map.mpr ⟨x, hx, rfl⟩
@@ -467,13 +467,15 @@ def firstBad (D : DDoc) (d : DTree) (vec : List Target) : String :=
     else "TargetKindMismatch: " ++ mentionIdAt D m
   | none => "UnresolvedReference: " ++ ((d.slots.head?.map (mentionIdAt D)).getD "?")
 
+/-- No type-checking accessible competitor: the unit's first recorded slot is unresolved. -/
 def unresolvedText (D : DDoc) (u : String) (ds : List DTree) : String :=
   match ds with
   | [] => "InvalidInput: unit " ++ u ++ " is outside the supported discourse fragment"
-  | d :: _ => match recordedVec D d with
-    | some vec => firstBad D d vec
-    | none => "UnresolvedReference: " ++ ((d.slots.find? (fun m => (recordedTarget D m).isNone)).map
-        (fun m => u ++ ": " ++ spanText m)).getD u
+  | d :: _ => match d.slots.find? (fun m => (recordedTarget D m).isSome) with
+    | some m => "UnresolvedReference: " ++ mentionIdAt D m
+    | none => match d.slots.head? with
+      | some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText m
+      | none => "UnresolvedReference: " ++ u
 
 def ambiguityText (D : DDoc) (u : String) (d d' : DTree) (vec vec' : List Target) : String :=
   if d'.tree == d.tree && d'.slots == d.slots then
@@ -494,7 +496,8 @@ def slotMismatchText (D : DDoc) (u : String) (d : DTree) : String :=
 unique competitor, slot correspondence, the restrictions, and its typed elaboration. -/
 def checkRecorded (D : DDoc) (u : String) (d : DTree) (vec : List Target) : Except String VE.Formula :=
   match recordedVec D d with
-  | none => .error (unresolvedText D u [d])
+  | none => .error ("UnrecordedSlot: " ++ u ++ ": " ++
+      (((d.slots.find? fun m => (recordedTarget D m).isNone).map spanText).getD "?"))
   | some rvec =>
     if !((d.slots.zip rvec).all fun x => accB D x.1 x.2) then .error (firstBad D d rvec)
     else if !aligned D d d vec rvec then .error ("ManifestMismatch: mentions." ++
@@ -515,7 +518,8 @@ def validate (D : DDoc) (unit : String) : Except String VE.Formula :=
   | some s =>
     let ds := derivs D unit s
     match ds.find? (illTypedOf D) with
-    | some d => .error ("IllTypedTarget: " ++ ((d.slots.head?.map (mentionIdAt D)).getD unit))
+    | some d => .error ("IllTypedTarget: " ++ ((d.slots.head?.map fun m => mentionIdAt D m ++ ": " ++
+        (((recordedTarget D m).map targetText).getD "?")).getD unit))
     | none =>
       if workOf D ds > workLimit then .error "ResourceLimit: resolution" else
       match typedComps D ds with
