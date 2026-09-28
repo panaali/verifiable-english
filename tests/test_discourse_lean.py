@@ -171,6 +171,21 @@ def test_alpha_ill_typed_target(lean):
     assert admit(doc)["error"] == "IllTypedTarget: m1: alice"
 
 
+def test_unrecorded_reference_is_a_slot(lean):
+    """Astra A1: a reference surface with no recorded mention is discovered from the source."""
+    graph = {"root": "n2", "nodes": [{"name": "n2", "ast": unary("deployed", "api"), "unit": "u2"}]}
+    for sentence, span in [("It is deployed.", "[0, 1)"), ("This service is deployed.", "[0, 2)"),
+                           ("It is deployed and safe.", "[0, 1)"), ("Its owner is deployed.", "[0, 1)")]:
+        doc = document(["The API is reviewed.", sentence],
+                       contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")}, graph=graph)
+        assert admit(doc)["error"] == f"UnrecordedSlot: u2: {span}", sentence
+    # without content the unit claims nothing, so nothing is checked
+    plain = document(["The API is reviewed.", "It is deployed."], contents={"u1": unary("reviewed", "api")})
+    result = admit(plain)
+    assert result["status"] == "ok", result
+    assert result["statuses"]["u2"] != "CHECKED"
+
+
 # (α′) Natural view versus manifest
 
 def test_alpha_prime_differences(lean):
