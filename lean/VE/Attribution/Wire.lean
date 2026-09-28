@@ -36,6 +36,8 @@ structure ReportsEnvironment where
   evidence : String
   /-- the raw environment, hashed for identity -/
   json : Json
+  /-- the author's declared predicate names (4.1 step 7 counts them) -/
+  predicateNames : List String
 
 def decodeEnvironment (environment : Json) : Except String ReportsEnvironment := do
   exactFields environment ["language", "profiles", "spec_revision", "vocabulary"]
@@ -77,9 +79,11 @@ def decodeEnvironment (environment : Json) : Except String ReportsEnvironment :=
     require (rv.vocabulary.sorts.contains s) s!"UnknownSymbol: holder sort {s}"
   require (rv.vocabulary.sorts.contains evidence) "UnknownSymbol: evidence sort"
   for (c, w) in stripped.filterMap Prod.snd do
-    if w == "the stated assessment" && (rv.environment.constants c).any holders.contains then
+    -- ASCII case-insensitively: no holder may display as the assessment, even
+    -- capitalised at the start of a sentence (2.1); Python compares alike.
+    if w.toLower == "the stated assessment" && (rv.environment.constants c).any holders.contains then
       throw "InvalidInput: holder verbalisation reserved"
-  pure ⟨ps, rv, holders, evidence, environment⟩
+  pure ⟨ps, rv, holders, evidence, environment, predicates.map Prod.fst⟩
 
 /-! ## Kinds: W2's decoder with the act `wants` -/
 
@@ -111,12 +115,13 @@ def decodeKind : Nat → Json → Except String Kind
 
 /-! ## Content trees -/
 
-def decodeAct (unit : String) : String → Except String Act
+/-- Section 8's text exactly (no unit suffix), as Python raises it. -/
+def decodeAct : String → Except String Act
   | "says" => pure .says
   | "believes" => pure .believes
   | "wants" => pure .wants
   | "intends" => pure .intends
-  | a => throw s!"UnsupportedAct: {a} (reports@0 admits says, believes, wants, intends) in {unit}"
+  | a => throw s!"UnsupportedAct: {a} (reports@0 admits says, believes, wants, intends)"
 
 def decodeJudgment : String → Except String Judgment
   | "may" => pure .may
@@ -152,7 +157,9 @@ def decodeDefinitionNode (j : Json) : Except String Content := do
 
 def decodeLiteral (o : Json) : Except String (Option String) :=
   match o.getObjVal? "literal" with
-  | .ok (.str w) => if w.utf8ByteSize ≤ 4096 then pure (some w) else throw "ResourceLimit: literal bytes"
+  | .ok (.str w) =>
+    if w.isEmpty then throw "InvalidInput: literal"
+    else if w.utf8ByteSize ≤ 4096 then pure (some w) else throw "ResourceLimit: literal bytes"
   | .ok _ => throw "InvalidInput: literal"
   | .error _ => pure none
 
@@ -169,7 +176,7 @@ def decodeContent (E : VE.Environment) (unit : String) : Nat → Json → Except
       let r ← j.getObjVal? "report"
       displayFields r ["holder", "act", "context", "content"] ["literal"]
       let h ← stringField r "holder"
-      let act ← decodeAct unit (← stringField r "act")
+      let act ← decodeAct (← stringField r "act")
       let c ← stringField r "context"
       let lit ← decodeLiteral r
       let body ← decodeContent E unit n (← r.getObjVal? "content")
@@ -211,6 +218,7 @@ def decodeContext (j : Json) : Except String Context := do
       pure (some t)
     | .error _ => pure none
   let d ← stringField j "description"
+  require (!d.isEmpty) s!"InvalidInput: context {id} description"
   require (d.utf8ByteSize ≤ 200) "ResourceLimit: context description"
   pure ⟨id, tense, rt, d⟩
 
@@ -228,6 +236,10 @@ def decodeAssessment (E : VE.Environment) (j : Json) : Except String Assessment 
   let precedents ← strings (← j.getObjVal? "precedents")
   let jurisdiction ← stringField j "jurisdiction"
   let version ← (← j.getObjVal? "version").getNat?
+  -- W2's open-term schema (`ve/openterms.py`): a token jurisdiction, non-empty
+  -- factors and precedents, a positive version.
+  require (token jurisdiction && version ≥ 1 && (factors ++ precedents).all (!·.isEmpty))
+    s!"InvalidInput: assessment {id}"
   pure ⟨id, context, decidedBy, necessary, sufficient, factors, precedents, jurisdiction, version⟩
 
 /-- A wire path: a unit id alone (depth 0) or `{"unit", "path"}` with `path` in `1(.1)*`. -/
@@ -357,19 +369,29 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
     narrowings⟩
   let envId ← VE.Route.Wire.environmentId re.profiles environment
   let D : ReportDoc := ⟨E, re.rv.literals, re.holders, re.evidence, contexts, assessments, reportUnits,
-    bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2⟩
+    bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2, re.predicateNames⟩
   pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map (s.id, ·)⟩
 
 /-! ## Diagnostics of 4.1, in the order of section 8 (untrusted text) -/
+
+/-- The first id that occurs twice. -/
+def firstDup : List String → Option String
+  | [] => none
+  | x :: xs => if xs.contains x then some x else firstDup xs
 
 def firstFailure (D : ReportDoc) : String :=
   let nodes := allNodes D
   let bad := nodes.find? (fun x => !nodeOk D x)
   let unitOfNode := fun (x : Content) =>
     (D.units.find? (fun u => u.content.nodes.any fun y => canonicalObject D y == canonicalObject D x)).map (·.id)
-  if !(decide (D.contexts.map (·.id)).Nodup) then "DuplicateDeclaration: context"
-  else if !(decide (D.assessments.map (·.id)).Nodup) then "DuplicateDeclaration: assessment"
-  else match D.assessments.find? (fun a => !assessmentOk D a) with
+  match firstDup (D.contexts.map (·.id)), firstDup (D.assessments.map (·.id)),
+      firstDup (D.bridges.map (·.id)), firstDup (D.«scoped».map (·.id)) with
+  | some c, _, _, _ => s!"DuplicateDeclaration: context {c}"
+  | _, some a, _, _ => s!"DuplicateDeclaration: assessment {a}"
+  | _, _, some b, _ => s!"DuplicateDeclaration: bridge {b}"
+  | _, _, _, some s => s!"DuplicateDeclaration: scoped {s}"
+  | none, none, none, none =>
+  match D.assessments.find? (fun a => !assessmentOk D a) with
   | some a =>
     if D.E.constants a.context != some D.evidence then s!"UnknownSymbol: evidence context {a.context}"
     else if !token a.decidedBy then s!"InvalidInput: assessment {a.id} needs decided_by"
@@ -405,7 +427,8 @@ def firstFailure (D : ReportDoc) : String :=
     else s!"BridgeKindMismatch: {b.target.unit}, {b.target.depth}"
   | none =>
   if !((names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&
-      decide (names D).Nodup) then "ResourceLimit: MAX_PREDICATES"
+      decide (names D).Nodup && decide (D.authorPredicates.length + (names D).length ≤ maxPredicates)) then
+    "ResourceLimit: MAX_PREDICATES"
   else "InvalidInput: the document is not well-formed"
 
 /-- A decoded, well-formed reports document. -/

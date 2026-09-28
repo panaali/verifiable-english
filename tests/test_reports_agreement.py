@@ -115,3 +115,78 @@ def test_bridge_and_scoped_targets_agree(lean):
         (package_doc(scoped=[{"id": "s1", "payloads": [{"unit": "u1", "path": "1"}],
                               "conclusion": ast(U("safe", "service"))}]), E0(), None),
     ])
+
+
+def many_predicates(n):
+    env = E0()
+    for i in range(n - len(env["vocabulary"]["predicates"])):
+        env["vocabulary"]["predicates"][f"p{i}"] = {"arguments": ["system"], "description": f"p{i}"}
+    return env
+
+
+def verbalised(words):
+    env = E0()
+    env["vocabulary"]["constants"]["anthropic"]["verbalisation"] = words
+    return env
+
+
+def test_well_formedness_boundaries_agree(lean):
+    """Astra B: 256 author predicates plus one generated predicate was Lean `ok` and
+    Python MAX_PREDICATES, so `WellFormedReports` missed 4.1 step 7. The class: every
+    4.1 boundary is decided alike on both sides."""
+    safe = ast(U("safe", "service"))
+    says = report("the_article", "says", "c3", safe)
+    a2 = dict(A1, id="a2")
+
+    def with_context(**fields):
+        return doc(says, contexts=[dict(CONTEXTS[2], **fields)])
+
+    def with_record(**fields):
+        record = {k: v for k, v in dict(A1, **fields).items() if v is not None}
+        return doc(assess("may", safe), assessments=[record])
+
+    deep = safe
+    for _ in range(16):
+        deep = report("the_article", "says", "c3", deep)
+    kind_mismatch = doc(says)
+    kind_mismatch["units"][0]["kind"] = ["attributed", "anthropic", "says", "asserted"]
+    clash = doc(says)
+    clash["units"].append({"id": "u1", "span": [5, 6], "kind": "asserted", "content": safe})
+    agree([
+        (doc(says), many_predicates(256), "ResourceLimit"),
+        (doc(says), many_predicates(255), None),
+        (doc(says, report("anthropic", "believes", "c1", safe)), many_predicates(255), "ResourceLimit"),
+        (doc(report("the_article", "promised", "c3", safe)), E0(), "UnsupportedAct"),
+        (doc(says), verbalised("the stated assessment"), "InvalidInput"),
+        (doc(says), verbalised("The Stated Assessment"), "InvalidInput"),
+        (doc(says), verbalised("the stated assessments"), None),
+        (with_context(description=""), E0(), "InvalidInput"),
+        (with_context(description="x" * 201), E0(), "ResourceLimit"),
+        (with_context(reference_time="not a token"), E0(), "shape"),
+        (with_context(tense="future"), E0(), "ContextTense"),
+        (doc(says, contexts=CONTEXTS + [CONTEXTS[0]]), E0(), "DuplicateDeclaration"),
+        (with_record(version=0), E0(), "InvalidInput"),
+        (with_record(context="anthropic"), E0(), "UnknownSymbol"),
+        (with_record(decided_by=None), E0(), "InvalidInput"),
+        (with_record(necessary=[U("safe", "anthropic")]), E0(), "shape"),
+        (with_record(jurisdiction="news desk"), E0(), "InvalidInput"),
+        (with_record(factors=[""]), E0(), "InvalidInput"),
+        (with_record(precedents=[""]), E0(), "InvalidInput"),
+        (doc(assess("may", safe), assessments=[A1, A1]), E0(), "DuplicateDeclaration"),
+        (doc(assess("may", safe, record="a9")), E0(), "UnknownAssessment"),
+        (doc(assess("maybe", safe)), E0(), "shape"),
+        (doc(assess("may", safe), assessments=[A1, a2]), E0(), None),
+        (doc(report("service", "says", "c3", safe)), E0(), "HolderSort"),
+        (doc(report("nobody", "says", "c3", safe)), E0(), "UnknownHolder"),
+        (doc(report("the_article", "says", "c9", safe)), E0(), "UnknownContext"),
+        (doc(report("the_article", "says", "c3", safe, literal="")), E0(), "InvalidInput"),
+        (doc(report("the_article", "says", "c3", safe, literal="w" * 4097)), E0(), "ResourceLimit"),
+        (doc(report("the_article", "says", "c3", safe, literal="w" * 4096)), E0(), None),
+        (doc(report("the_article", "says", "c3", neg(safe))), E0(), "InvalidInput"),
+        (doc(neg(neg(says))), E0(), "InvalidInput"),
+        (doc(deep), E0(), "shape"),
+        (kind_mismatch, E0(), "KindMismatch"),
+        (clash, E0(), "shape"),
+        (doc(says, bridges=[bridge("u1"), bridge("u1")]), E0(), "DuplicateDeclaration"),
+        (doc(says, scoped=[{"id": "s1", "payloads": ["u1"], "conclusion": safe}] * 2), E0(), "DuplicateDeclaration"),
+    ])

@@ -466,7 +466,14 @@ impl Environment {
             if let Some(value) = d.get("description") {
                 description(value)?;
             }
-            if let Some(value) = d.get("verbalisation") { verbalisation(value)?; }
+            if let Some(value) = d.get("verbalisation") {
+                verbalisation(value)?;
+                // As Python and Lean: ASCII case-insensitively, no holder displays as the assessment.
+                let holder = vocab["reports"]["holders"].as_array().is_some_and(|h| h.contains(&json!(s)));
+                if holder && value.as_str().is_some_and(|w| w.to_ascii_lowercase() == "the stated assessment") {
+                    return error("InvalidInput", "holder verbalisation reserved");
+                }
+            }
             constants.insert(name.clone(), s.into());
         }
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {

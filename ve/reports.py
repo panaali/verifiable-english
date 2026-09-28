@@ -12,6 +12,7 @@ import json
 from .admission import token
 from .ast import formula_from_data, formula_to_data
 from .environment import Environment
+from .limits import MAX_PREDICATES
 from .errors import DuplicateDeclaration, ResourceLimit, UnsupportedProfile, VEError
 from .wire import canonical_json
 
@@ -45,7 +46,7 @@ def _records(rows, label, limit):
         if type(row) is not dict or not token(row.get("id")):
             raise VEError(f"InvalidInput: {label} record")
         if row["id"] in result:
-            raise DuplicateDeclaration(f"{label[:-1]} {row['id']}")
+            raise DuplicateDeclaration(f"DuplicateDeclaration: {label[:-1]} {row['id']}")
         result[row["id"]] = dict(row)
     return result
 
@@ -61,6 +62,11 @@ class ReportsDocument:
         self.units = units
         self.bridges = list(bridges)
         self.scoped = list(scoped)
+        for label, rows in (("bridge", self.bridges), ("scoped", self.scoped)):
+            ids = [row.get("id") if type(row) is dict else None for row in rows]
+            duplicate = next((i for n, i in enumerate(ids) if i in ids[:n]), None)
+            if duplicate is not None:
+                raise DuplicateDeclaration(f"DuplicateDeclaration: {label} {duplicate}")
         self.choices = list(choices)
         self.declared_open_terms = list(open_terms)
         if len(self.bridges) > 1000 or len(self.scoped) > 256:
@@ -71,12 +77,14 @@ class ReportsDocument:
         for cid, row in self.contexts.items():
             if (set(row) not in ({"id", "tense", "description"},
                                  {"id", "tense", "reference_time", "description"})
-                    or row["tense"] not in ("present", "past", "perfect")
                     or ("reference_time" in row and row["reference_time"] is not None
                         and not token(row["reference_time"]))
-                    or type(row["description"]) is not str or not row["description"]
-                    or len(row["description"].encode()) > 200):
+                    or type(row["description"]) is not str or not row["description"]):
+                raise VEError(f"InvalidInput: context {cid}")
+            if row["tense"] not in ("present", "past", "perfect"):
                 raise VEError(f"ContextTense: {cid}")
+            if len(row["description"].encode()) > 200:
+                raise ResourceLimit("ResourceLimit: context description")
         evidence = environment.reports["evidence"]
         for aid, row in self.assessments.items():
             needed = {"id", "context", "decided_by", "necessary", "sufficient",
@@ -85,7 +93,7 @@ class ReportsDocument:
                 raise VEError(f"InvalidInput: assessment {aid} needs decided_by")
             if (row["context"] not in environment.constants or
                     environment.constants[row["context"]].sort != evidence):
-                raise VEError(f"UnknownAssessment: {aid}")
+                raise VEError(f"UnknownSymbol: evidence context {row['context']}")
             if (not token(row["jurisdiction"]) or type(row["version"]) is not int
                     or row["version"] < 1 or any(type(row[f]) is not list for f in
                     ("necessary", "sufficient", "factors", "precedents"))):
@@ -144,7 +152,7 @@ class ReportsDocument:
         # 4.1 steps 5 and 6, in Lean's order (`scopedOk`, then `bridgeOk`), before step 7.
         self.scoped_objects = [self._scoped_object(s) for s in self.scoped]
         self.bridge_objects = [self._bridge_object(b) for b in self.bridges]
-        if len(predicates) > 256:
+        if len(predicates) > MAX_PREDICATES:
             raise ResourceLimit("ResourceLimit: MAX_PREDICATES")
         self.extended_environment = Environment(raw, _generated_reports=True)
         self.premises = [self.elaborate(unit["content"]) for unit in units
@@ -309,8 +317,9 @@ class ReportsDocument:
             if context not in self.contexts:
                 raise VEError(f"UnknownContext: {context}")
             literal = value.get("literal")
-            if literal is not None and (type(literal) is not str or not literal or
-                                        len(literal.encode()) > 4096):
+            if literal is not None and (type(literal) is not str or not literal):
+                raise VEError("InvalidInput: literal")
+            if literal is not None and len(literal.encode()) > 4096:
                 raise ResourceLimit("ResourceLimit: literal bytes")
             inner = self._node(value["content"], unit, depth=depth + 1)
             complement = {"content": inner, **({"literal": literal} if literal is not None else {})}

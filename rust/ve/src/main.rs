@@ -200,6 +200,25 @@ mod reports_tests {
         unmarked["untrusted"] = json!(false);
         assert!(case(&unmarked).is_err());
     }
+
+    #[test]
+    fn reports_holder_verbalisation_reserved_in_any_ascii_case() {
+        for (words, reserved) in [("the stated assessment", true), ("The Stated Assessment", true),
+                                  ("the stated assessments", false)] {
+            let env = json!({
+                "language":"ve.core@0.2",
+                "profiles":["relational-fol@0","reports@0"],
+                "spec_revision":"ve-v0.2-expand2-2026-09-25",
+                "vocabulary":{
+                    "reports":{"holders":["text"],"evidence":"evidence"},
+                    "sorts":{"text":{"description":"text"},"evidence":{"description":"evidence"}},
+                    "predicates":{},
+                    "constants":{"article":{"sort":"text","description":"article","verbalisation":words}}
+                }
+            });
+            assert_eq!(ve_core::Environment::from_value(&env).is_err(), reserved, "{words}");
+        }
+    }
 }
 fn case_record(v: &Value) -> Value {
     match case(v) {
