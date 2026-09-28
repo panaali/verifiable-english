@@ -438,6 +438,8 @@ class SpeechDocument:
         # Units that ask about a query without being live questions or commands: quoted
         # questions and reading candidates, each a consumer at its unit (1.4).
         self._dormant_asks = []
+        # Quoted questions: no question of the document, but each has its meaning id (3.5).
+        self._quoted_questions = []
         # Reading-question candidates, for the source wrapper's open-term check (4.6).
         self.candidate_questions = []
         self.queries = {}
@@ -492,6 +494,7 @@ class SpeechDocument:
                     # check of a reading candidate, and a consumer of the query it names.
                     question = self._question(uid, content["question"],
                                               {"meaning": {"open": [f"intended-reading.{uid}"]}})
+                    self._quoted_questions.append(question)
                     if question.query is not None:
                         self._dormant_asks.append((uid, question.query))
             elif type(content) is dict and "norm" in content:
@@ -543,7 +546,7 @@ class SpeechDocument:
             if (qid := self.query_of(command)) is not None:
                 data["query"] = self.query_identity(qid)
             self.meaning_ids[command.unit] = self._id({"command": data})
-        for question in self.questions:
+        for question in [*self.questions, *self._quoted_questions]:
             data = self.question_data(question)
             if question.query is not None:
                 data["query"] = self.query_identity(question.query)
