@@ -176,7 +176,10 @@ class Environment:
         vocab = data["vocabulary"]
         if extended:
             from .units import validate_units
-            units = validate_units(data["unit_schema"], data["units"])
+            checked_units = validate_units(data["unit_schema"], data["units"])
+            units = {tag: MappingProxyType({"scale": record["scale"],
+                                          "display": MappingProxyType(dict(record["display"]))})
+                     for tag, record in checked_units.items()}
         else:
             units = None
         require_fields(vocab, {"sorts", "predicates", "constants"}, path="/vocabulary")
@@ -375,7 +378,9 @@ class Environment:
                                                  **({"verbalisation": v.verbalisation}
                                                     if v.verbalisation is not None else {})}
                                              for k, v in self.constants.items()}},
-                **({"unit_schema": self.unit_schema, "units": dict(self.units)}
+                **({"unit_schema": self.unit_schema,
+                    "units": {tag: {"scale": record["scale"], "display": dict(record["display"])}
+                              for tag, record in self.units.items()}}
                    if self.unit_schema is not None else {})}
 
     @property

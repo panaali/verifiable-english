@@ -35,7 +35,13 @@ def quantity(formula, **more):
 
 
 def test_exact_decimal_and_identity_binds_tags():
-    env = Environment(environment())
+    source_environment = environment()
+    env = Environment(source_environment)
+    original_id = env.environment_id
+    source_environment["units"]["bp"]["scale"] = "1000"
+    assert env.environment_id == original_id
+    with pytest.raises(TypeError):
+        env.units["bp"]["display"]["kind"] = "decimal"
     canonical, core = elaborate_quantity(env, quantity(["lt", ["decimal", "bp", "3.75"],
                                                          ["decimal", "bp", "4.00"]]))
     assert canonical["formula"] == ["lt", ["num", "bp", "375"], ["num", "bp", "400"]]
