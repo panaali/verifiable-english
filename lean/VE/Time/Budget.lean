@@ -201,4 +201,71 @@ theorem refutesB_sound {α : Type} [DecidableEq α] (M : FiniteModel α) (limit 
       rw [refutesB_sound M limit ps c w' b h]
       simp [countermodelCheck, ← this]
 
+theorem denote_domains_irrelevant {α : Type} (M N : FiniteModel α)
+    (hc : M.constants = N.constants) (ρ : List (Value α)) :
+    ∀ t : Term, t.denote M.asStructure ρ = t.denote N.asStructure ρ
+  | .var _ | .num _ => rfl
+  | .const c => by simp [Term.denote, FiniteModel.asStructure, hc]
+  | .add t u => by
+    simp only [Term.denote, denote_domains_irrelevant M N hc ρ t, denote_domains_irrelevant M N hc ρ u]
+    rcases Term.denote N.asStructure ρ t with _ | _ | _ <;>
+      rcases Term.denote N.asStructure ρ u with _ | _ | _ <;> rfl
+  | .scale _ t => by
+    simp only [Term.denote, denote_domains_irrelevant M N hc ρ t]
+    rcases Term.denote N.asStructure ρ t with _ | _ | _ <;> rfl
+
+/-- **Domain order is irrelevant to reference values.** Quantifiers read a
+domain through `List.all`/`List.any`, so a reordered presentation of the same
+entities has the same values; only the budgeted evaluator's work depends on the
+order, which is why the runners present every domain in Python/Rust order. -/
+theorem eval_domains_perm {α : Type} [DecidableEq α] (M N : FiniteModel α)
+    (hc : M.constants = N.constants) (hr : M.relations = N.relations)
+    (hd : ∀ s, (M.domains s).Perm (N.domains s)) :
+    ∀ (f : Formula) (ρ : List (Value α)), f.eval M ρ = f.eval N ρ := by
+  intro f
+  induction f with
+  | top | bottom => intro ρ; rfl
+  | unary p t =>
+    intro ρ
+    simp only [Formula.eval, denote_domains_irrelevant M N hc ρ t, hr]
+    rcases Term.denote N.asStructure ρ t with _ | _ <;> simp [hr]
+  | binary p t u =>
+    intro ρ
+    simp only [Formula.eval, denote_domains_irrelevant M N hc ρ t,
+      denote_domains_irrelevant M N hc ρ u]
+    rcases Term.denote N.asStructure ρ t with _ | _ <;>
+      rcases Term.denote N.asStructure ρ u with _ | _ <;> simp [hr]
+  | eq t u =>
+    intro ρ
+    simp only [Formula.eval, denote_domains_irrelevant M N hc ρ t,
+      denote_domains_irrelevant M N hc ρ u]
+    rcases Term.denote N.asStructure ρ t with _ | _ <;>
+      rcases Term.denote N.asStructure ρ u with _ | _ <;> rfl
+  | lt t u | le t u =>
+    intro ρ
+    simp only [Formula.eval, denote_domains_irrelevant M N hc ρ t,
+      denote_domains_irrelevant M N hc ρ u]
+  | not a ih => intro ρ; simp only [Formula.eval, ih ρ]
+  | and a b ia ib | or a b ia ib | implies a b ia ib =>
+    intro ρ; simp only [Formula.eval, ia ρ, ib ρ]
+  | all s a ih =>
+    intro ρ
+    simp only [Formula.eval, ih]
+    apply Bool.eq_iff_iff.mpr
+    simp only [List.all_eq_true]
+    exact ⟨fun h v hv => h v ((hd s).mem_iff.mpr hv), fun h v hv => h v ((hd s).mem_iff.mp hv)⟩
+  | ex s a ih =>
+    intro ρ
+    simp only [Formula.eval, ih]
+    apply Bool.eq_iff_iff.mpr
+    simp only [List.any_eq_true]
+    exact ⟨fun ⟨v, hv, h⟩ => ⟨v, (hd s).mem_iff.mp hv, h⟩,
+      fun ⟨v, hv, h⟩ => ⟨v, (hd s).mem_iff.mpr hv, h⟩⟩
+
+theorem countermodelCheck_domains_perm {α : Type} [DecidableEq α] (M N : FiniteModel α)
+    (hc : M.constants = N.constants) (hr : M.relations = N.relations)
+    (hd : ∀ s, (M.domains s).Perm (N.domains s)) (ps : List Formula) (c : Formula) :
+    countermodelCheck M ps c = countermodelCheck N ps c := by
+  simp only [countermodelCheck, eval_domains_perm M N hc hr hd]
+
 end VE.Time

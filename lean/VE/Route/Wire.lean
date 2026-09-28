@@ -283,6 +283,12 @@ def computeDefined (d : VE.Bridge.ModelData) : List VE.Definitions.Def → VE.Br
 def definitionWork (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) : Nat :=
   (ds.map (fun x => (x.args.map (fun s => (d.toModel.domains s).length)).foldl (· * ·) 1)).foldl (· + ·) 0
 
+/-- Each submitted domain in Python `sorted` and Rust `sort` order. The
+defined-table work stops quantifiers at the first decisive entity, so whether it
+exhausts the budget depends on this order; the model's entities do not change. -/
+def sortModelData (d : VE.Bridge.ModelData) : VE.Bridge.ModelData :=
+  { d with domains := d.domains.map fun p => (p.1, VE.Route.sortStrings p.2) }
+
 /-- A supplied table for a defined predicate is an invalid model. -/
 def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
   match j.getObjVal? "relations" with
@@ -298,7 +304,7 @@ literals is `InvalidModel(literals)`, a supplied defined table is
 `InvalidModel(definitions)`, never a truth value. -/
 def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
   noDefinedTables rv j
-  let data₀ ← VE.Bridge.decodeModelData rv.baseModelVocabulary j
+  let data₀ := sortModelData (← VE.Bridge.decodeModelData rv.baseModelVocabulary j)
   let (data, work) := computeDefined data₀ rv.definitions
   Gate.require (work ≤ 1000000) "ResourceLimit: Definition model evaluation budget exhausted"
   Gate.require ((data.relations.map (fun p => p.2.length)).foldl (· + ·) 0 ≤ 100000)
