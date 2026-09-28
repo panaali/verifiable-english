@@ -424,7 +424,10 @@ def regenerate(ledger):
 
 
 @pytest.mark.parametrize("seed", range(10))
-def test_random_histories_and_tampering_never_approve_without_review(seed):
+def test_random_histories_and_tampering_never_approve_without_review(seed, monkeypatch):
+    # This property exercises ledger validity, not the separate deadline
+    # contract. Leave enough time for many complete replays on loaded hosts.
+    monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 60)
     rng = random.Random(seed)
     recovery = random_history(rng)
     original = recovery.to_ledger()

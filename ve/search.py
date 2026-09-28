@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from itertools import combinations, product
+from contextlib import contextmanager
+from contextvars import ContextVar
+from itertools import combinations, product, tee
 import math
 from typing import Any, Iterator, Sequence
 
@@ -18,6 +20,35 @@ from .errors import InvalidModel, ResourceLimit, VEError
 
 class _SearchSpaceLimit(Exception):
     pass
+
+
+_model_pool = ContextVar("ve_model_pool", default=None)
+
+
+@contextmanager
+def model_search_scope():
+    """Share an ordered model stream among queries in one document check."""
+    token = _model_pool.set({})
+    try:
+        yield
+    finally:
+        _model_pool.reset(token)
+
+
+def _query_models(env, minimum, maximum, used, formulas, *, defer_model_id):
+    pool = _model_pool.get()
+    if pool is None:
+        return _models(env, minimum, maximum, used, formulas,
+                       _defer_model_id=defer_model_id)
+    # The formula key matters for order@0, whose candidate integer cells are
+    # derived from the query. AST nodes are immutable value objects.
+    key = (env.environment_id, minimum, maximum, used,
+           formulas if getattr(env, "order", False) else (), defer_model_id)
+    if key not in pool:
+        pool[key] = _models(env, minimum, maximum, used, formulas,
+                            _defer_model_id=defer_model_id)
+    pool[key], reader = tee(pool[key])
+    return reader
 
 
 def _node_count(root: Any) -> int:
@@ -172,11 +203,28 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
         raise _SearchSpaceLimit
     atoms = tuple((name, row) for name in sorted(used)
                   for row in product(*(domains[s] for s in env.predicates[name].arguments)))
+    base_predicates = set(env.predicates) - env.definition_entries.keys()
+    regulated_pairs = tuple((name, decl.regulated.permission)
+                            for name, decl in env.predicates.items()
+                            if decl.regulated is not None and decl.regulated.permission is not None
+                            and name in base_predicates and decl.regulated.permission in base_predicates)
+    flagged = tuple((name, decl) for name, decl in env.predicates.items()
+                    if name in base_predicates and (decl.functional or decl.total))
     for size in range(len(atoms) + 1):
         for subset in combinations(atoms, size):
             relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
             for name, row in subset:
                 relations[name].append(list(row))
+            # These declarations are model-validity conditions. Filtering them
+            # here preserves the order and count of models yielded by _models.
+            if any(not {tuple(row) for row in relations[required]} <=
+                   {tuple(row) for row in relations[permitted]}
+                   for required, permitted in regulated_pairs):
+                continue
+            if any((decl.functional and len({row[0] for row in relations[name]}) != len(relations[name]))
+                   or (decl.total and {row[0] for row in relations[name]} != set(domains[decl.arguments[0]]))
+                   for name, decl in flagged):
+                continue
             yield relations
 
 
@@ -303,7 +351,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
 
 
 def _models(env: Any, minimum_size: int, maximum: int,
-            used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+            used: frozenset[str], formulas=(), *, _defer_model_id=False) -> Iterator[FiniteModel]:
     used = used | frozenset(name for name, decl in env.predicates.items()
                             if decl.functional or decl.total)
     if env.definition_entries:
@@ -338,7 +386,8 @@ def _models(env: Any, minimum_size: int, maximum: int,
                 constant_map = dict(zip(constants, denotations, strict=True))
                 try:
                     yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
-                                                      "constants": constant_map, "relations": relations})
+                                                      "constants": constant_map, "relations": relations},
+                                                _defer_model_id=_defer_model_id)
                 except InvalidModel as exc:
                     if exc.generator is None:
                         raise
@@ -456,9 +505,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                   detail, min_domain_size, nonempty_domains,
                                   max_evaluations, nonvacuous_id, semantic_nonvacuity)
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(*premises, conclusion, nonvacuous_for),
-                       (*premises, conclusion, nonvacuous_for))
+    iterator = _query_models(env, minimum_size, max_domain_size,
+                             _used_predicates(*premises, conclusion, nonvacuous_for),
+                             (*premises, conclusion, nonvacuous_for), defer_model_id=True)
     while checked < max_models:
         try:
             model = next(iterator)
@@ -487,6 +536,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         if status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if valid:
+            if not model.model_id:
+                model = FiniteModel.from_dict(env, model.to_dict())
             return finish("Found", model, checked, work)
     # Probe exhaustion once more; this validates but does not evaluate another model.
     try:
@@ -525,8 +576,9 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                                   max_evaluations, nonvacuous_id, semantic_nonvacuity)
 
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(a, b, nonvacuous_for), (a, b, nonvacuous_for))
+    iterator = _query_models(env, minimum_size, max_domain_size,
+                             _used_predicates(a, b, nonvacuous_for), (a, b, nonvacuous_for),
+                             defer_model_id=True)
     while checked < max_models:
         try:
             model = next(iterator)
@@ -558,6 +610,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         if right.status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if left.value != right.value:
+            if not model.model_id:
+                model = FiniteModel.from_dict(env, model.to_dict())
             return finish("Found", model, checked, work)
     try:
         next(iterator)

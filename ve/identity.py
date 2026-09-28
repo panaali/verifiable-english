@@ -1,9 +1,19 @@
 """Domain-separated artifact bindings; identities never certify truth."""
 import hashlib
+from functools import lru_cache
 
 from .ast import Document, document_to_data, formula_to_data
 from .errors import SyntaxError
-from .wire import digest
+from .wire import canonical_json, digest
+
+
+@lru_cache(maxsize=8192)
+def _meaning_digest(version: str, environment_id: str, ast_bytes: bytes) -> str:
+    # The cache key is canonical immutable wire content, never a mutable AST
+    # container or an Environment object's identity.
+    from .wire import loads_json
+    return digest(f"ve-meaning-{version}\n",
+                  {"environment_id": environment_id, "ast": loads_json(ast_bytes)})
 
 
 def source_id(source: str | bytes, env=None) -> str:
@@ -19,4 +29,4 @@ def source_id(source: str | bytes, env=None) -> str:
 def meaning_id(env, document_or_formula, *, _generated=False) -> str:
     ast = (document_to_data(env, document_or_formula) if type(document_or_formula) is Document
            else formula_to_data(env, document_or_formula, _generated=_generated))
-    return digest(f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": ast})
+    return _meaning_digest(env.identity_version, env.environment_id, canonical_json(ast))
