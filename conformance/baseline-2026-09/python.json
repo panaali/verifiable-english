@@ -392718,5 +392718,5 @@
   "python": "3.14.7",
   "runtime_sha256": "8a166d0e90c9c994a270c12b16baf106205dcc1cae47fbcaec367f55dce89fe7",
   "schema": "ve-stage0-baseline@1",
-  "source_commit": "ab1a48a3363c07f818dfef96e20d5ebebd3cf482"
+  "source_commit": "cdd913b889e479ee4ce70e74496b936eab5b8663"
 }
