@@ -7,6 +7,8 @@ import json
 from tests.test_norms import environment, obligation, permission
 from ve.document import check_document, render_document
 from ve.soft_route import elaborate_soft_document
+from ve.softnorms import SoftEnvironment
+from ve.surface.rights import parse_line, render_line
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
 from ve.readings import plan_choices, validate_couplings
@@ -155,3 +157,27 @@ def test_power_splits_into_liberty_and_recognition():
 def test_rights_soft_regeneration_conformance():
     from conformance.rights import run
     assert run(8) == 8
+
+
+def test_incident_english_has_one_soft_rule_reading():
+    env = RightsEnvironment(rights_env())
+    source = render_line(env, "life", "claim", claim()["norm"])
+    assert source == "Claim of right life. Every state must protect each person."
+    parsed = parse_line(env, source, name="protect")
+    assert parsed["right"] == "life"
+    assert parsed["norm"] == claim()["norm"]
+    default = claim("protect-default")["norm"]
+    default.update({"mode": "default", "exception": {
+        "decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}})
+    soft_source = render_line(env, "life", "claim", default)
+    assert "should protect" in soft_source
+    assert parse_line(env, soft_source, name="protect-default")["norm"] == default
+    with pytest.raises(VEError, match="rights@0 is required"):
+        render_line(SoftEnvironment(rights_env_without_profile()), "life", "claim", claim()["norm"])
+
+
+def rights_env_without_profile():
+    raw = rights_env()
+    raw["profiles"].remove("rights@0")
+    raw["vocabulary"].pop("rights")
+    return raw
