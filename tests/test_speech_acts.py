@@ -404,6 +404,24 @@ def test_opaque_glosses_cannot_hide_a_sentence_behind_one_predicate():
                      source="Is atlas reviewed and not reviewed?")
     with pytest.raises(VEError, match="OpaqueWording"):
         SpeechDocument(env, [unit_])
+    # Regression: the refusal was a closed word list, so "reviewed yet never reviewed" read as one
+    # atom and a model answered "yes"; any contrast or negation word, sentence punctuation, a repeated
+    # word or another declared property inside the gloss is a sentence.
+    for name, gloss in [("yet_never", "{0} is reviewed yet never reviewed"),
+                        ("plus_un", "{0} is reviewed plus unreviewed"), ("comma", "{0} is vetted, sadly"),
+                        ("twice", "{0} is vetted really vetted"), ("again", "{0} is vetted then vetted again"),
+                        ("staffed", "{0} is reviewed by staff")]:
+        predicates[name] = {"arguments": ["service"], "description": name, "verbalisation": gloss}
+    env = Environment(raw)
+    for text in ["Is atlas reviewed yet never reviewed?", "Is atlas reviewed plus unreviewed?",
+                 "Is atlas vetted, sadly?", "Is atlas vetted really vetted?", "Is atlas vetted then vetted again?", "Is atlas reviewed by staff?",
+                 "Which one of atlas and beacon is reviewed yet never reviewed?"]:
+        with pytest.raises(VEError, match="OpaqueWording"):
+            parse_speech(env, text, env.speech_acts)
+    unit_ = question("u1", "polar", ["unary", "yet_never", ["const", "atlas"]],
+                     source="Is atlas reviewed yet never reviewed?")
+    with pytest.raises(VEError, match="OpaqueWording"):
+        SpeechDocument(env, [unit_])
     # A gloss that names one property still reads as that property.
     assert parse_speech(env, "Is atlas vetted?", env.speech_acts)[0]["body"] == ["unary", "vetted", ["const", "atlas"]]
     assert parse_speech(env, "Is atlas reviewed?", env.speech_acts)[0]["body"] == \

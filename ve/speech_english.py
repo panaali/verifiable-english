@@ -25,25 +25,46 @@ def _name(env, text):
 
 
 # Words that make a wording a sentence rather than one predicate: W1's reserved
-# words (connectives, negation, quantifiers, modals) and the other quantifier and
-# connective words of the English surface.
-_SENTENCE_WORDS = RESERVED | {"some", "all", "each", "any", "only", "unless", "none", "nor", "but", "both",
-                              "either", "neither", "nothing", "nobody", "everything", "without"}
+# words (connectives, negation, quantifiers, modals) and the other quantifier,
+# negation, contrast and connective words of English that a property never needs.
+_SENTENCE_WORDS = RESERVED | {
+    "some", "all", "each", "any", "only", "unless", "none", "nor", "but", "both", "either", "neither", "nothing",
+    "nobody", "everything", "without", "never", "nowhere", "noone", "yet", "although", "though",
+    "however", "whereas", "while", "whilst", "except", "also", "nevertheless", "nonetheless", "otherwise", "instead",
+    "else", "whether", "iff", "because", "plus", "versus", "vs", "always", "sometimes", "ever", "everyone",
+    "everybody", "someone", "somebody", "something", "anyone", "anybody", "anything", "most", "few", "many"}
+
+
+def _property_words(gloss):
+    """The words of a one-place gloss after its subject and copula, or None for another shape."""
+    if not gloss.startswith("{0} ") or "{" in gloss[4:]:
+        return None
+    words = [w.casefold() for w in re.findall(r"[A-Za-z0-9_']+", gloss[4:])]
+    return words[1:] if words[:1] == ["is"] else words
 
 
 def _opaque(env, rest):
     """The sentence a declared gloss would hide behind one predicate (6), if any.
 
-    A copular gloss may only name a property: a connective, negation or
-    quantifier word, a declared constant or a bound definite phrase inside it
-    is a sentence the gloss would answer as one opaque atom.
+    A copular gloss may only name one property.  Inside it, any of these is a
+    sentence the gloss would answer as one opaque atom: a connective,
+    negation, contrast or quantifier word; sentence punctuation; a word said
+    twice ("reviewed yet never reviewed"); another declared property as a
+    proper part ("reviewed plus unreviewed" beside "{0} is reviewed"); a
+    declared constant or a bound definite phrase.
     """
     words = [w.casefold() for w in re.findall(r"[A-Za-z0-9_']+", rest)][1:]  # after the copula "is"
+    if (mark := re.search(r"[^A-Za-z0-9_' -]", rest)) is not None:
+        return mark[0]
     constants = {name.casefold() for name in env.constants}
     padded = " " + " ".join(words) + " "
-    for word in words:
-        if word in _SENTENCE_WORDS or word.endswith("n't") or word in constants:
+    for i, word in enumerate(words):
+        if word in _SENTENCE_WORDS or word.endswith("n't") or word in constants or word in words[:i]:
             return word
+    for decl in env.predicates.values():
+        inner = _property_words(decl.verbalisation) if decl.verbalisation is not None else None
+        if inner and inner != words and " " + " ".join(inner) + " " in padded:
+            return " ".join(inner)
     for phrase in (env.speech_acts or {}).get("definites", {}):
         if " " + phrase.casefold() + " " in padded:
             return phrase
