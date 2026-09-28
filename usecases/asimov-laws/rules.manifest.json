@@ -1,7 +1,7 @@
 {
   "environment_id": "fa0ef0a9024f8425b4a5a2f86a7a0d621a3d99963a9109722bcc844bf2d18c89",
-  "document_hash": "dd0f975851fffa317b58b8038ca0a25d9f9ed5b501306fabb59150118efb8050",
-  "text_digest": "e5682f6a7d5c053b579761db913aa3f2b68bb4c39ea3badd93aacd9ee1bc5b98",
+  "document_hash": "fce30410c91e2b05a3bfebd34eee455807363ceeff2cb7f782d7698eb92df870",
+  "text_digest": "76398100a021b795566b30c40524436c84f9197518b8cd463e881d8ff22fdc38",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -36,7 +36,7 @@
       "number": 4,
       "span": [
         308,
-        611
+        492
       ]
     },
     {
@@ -44,8 +44,8 @@
       "name": "law-0-prevention-exception",
       "number": 5,
       "span": [
-        612,
-        790
+        493,
+        671
       ]
     },
     {
@@ -53,8 +53,8 @@
       "name": "law-0-direct",
       "number": 6,
       "span": [
-        791,
-        912
+        672,
+        793
       ]
     },
     {
@@ -62,8 +62,8 @@
       "name": "law-0-inaction",
       "number": 7,
       "span": [
-        913,
-        1223
+        794,
+        985
       ]
     },
     {
@@ -71,8 +71,8 @@
       "name": "law-2-obey",
       "number": 8,
       "span": [
-        1224,
-        1344
+        986,
+        1106
       ]
     },
     {
@@ -80,8 +80,8 @@
       "name": "law-3-preserve",
       "number": 9,
       "span": [
-        1345,
-        1498
+        1107,
+        1260
       ]
     }
   ]

@@ -1,9 +1,9 @@
 Rule 1. Every action may be performed, if that action is classified as "protects_robot".
 Rule 2 (exception to rule 1). Every action may be performed, if that action is classified as "ordered".
 Rule 3 (exception to rule 2). Every action must not be performed, if that action is classified as "injures_human".
-Rule 4 (exception to rule 2). Every action must not be performed, if both of the following hold: first clause: that action is inaction; end first clause; second clause: there is a harm such that both that harm is classified as "harms_human" and that action allows that harm to happen; end second clause.
+Rule 4 (exception to rule 2). Every action must not be performed, if there is a harm such that both that harm is classified as "harms_human" and that action allows that harm to happen.
 Rule 5 (exception to rules 3, 4). Every action may be performed, if there is a harm such that both that harm is classified as "harms_humanity" and that action prevents that harm.
 Rule 6 (exception to rules 3, 5). Every action must not be performed, if that action is classified as "injures_humanity".
-Rule 7 (exception to rules 4, 5). Every action must not be performed, if both of the following hold: first clause: that action is inaction; end first clause; second clause: there is a harm such that both that harm is classified as "harms_humanity" and that action allows that harm to happen; end second clause.
+Rule 7 (exception to rules 4, 5). Every action must not be performed, if there is a harm such that both that harm is classified as "harms_humanity" and that action allows that harm to happen.
 Rule 8. Every action must be performed, if both that action is classified as "ordered" and that action may be performed.
 Rule 9. Every robot must prevent each harm, if both that harm has the recorded relation "harm_to" to that robot and that harm is avoidable by that robot.
