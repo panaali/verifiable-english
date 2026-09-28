@@ -432,6 +432,8 @@ class RightsDocument:
             label = f"rights:limitation:{name}:{act}:{condition['role']}:{condition_name}"
             premises.append((label, _bind(implication, env.predicates[act].arguments)))
         self.limitation_premises = tuple(premises)
+        object.__setattr__(self.soft_document.extended_env, "rights_premises",
+                           self.limitation_premises)
 
 
 def correlate(environment, units):
