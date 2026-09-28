@@ -1,36 +1,15 @@
 {
   "$id": "common.json",
-  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Dialect: README.md in this directory.",
-  "counts": {
-    "$comment": "Sizes of the lists the runners regenerate from the case environment (README: Counts). Declarations the case's decoder rejects never reach a successful result, so each count is over the declarations as written.",
-    "flags": {"$comment": "Data.Background.generate: one premise per functional and one per total flag.", "sum": [
-      {"count": "/environment/vocabulary/predicates", "where": {"type": "object", "required": ["functional"], "properties": {"functional": {"const": true}}}},
-      {"count": "/environment/vocabulary/predicates", "where": {"type": "object", "required": ["total"], "properties": {"total": {"const": true}}}}]},
-    "definitions": {"$comment": "Definitions.expand: one biconditional per defined predicate.",
-      "count": "/environment/vocabulary/predicates", "where": {"type": "object", "required": ["defined"]}},
-    "literals": {"$comment": "Background.literals: one distinctness premise per pair of $string literals.",
-      "pairs": {"count": "/environment/vocabulary/constants", "where": {"type": "object", "required": ["sort"], "properties": {"sort": {"const": "$string"}}}}},
-    "background": {"$comment": "Route.Wire.fullBackground: flags, definitions, literals.",
-      "sum": [{"$ref": "#/counts/flags"}, {"$ref": "#/counts/definitions"}, {"$ref": "#/counts/literals"}]},
-    "regulated": {"$comment": "Norms.syms: one layer symbol per regulated predicate (no definitions on the norms route).",
-      "count": "/environment/vocabulary/predicates", "where": {"type": "object", "required": ["regulated"]}},
-    "profile_pairs": {"$comment": "Norms.pairs: one per obligation with a permission dual.",
-      "count": "/environment/vocabulary/predicates", "where": {"type": "object", "required": ["regulated"], "properties": {"regulated": {
-        "type": "object", "required": ["role", "permission"], "properties": {"role": {"const": "obligation"}, "permission": {"type": "string"}}}}}},
-    "norms_background": {"$comment": "Norms.background: definitions, literals, profile.",
-      "sum": [{"$ref": "#/counts/definitions"}, {"$ref": "#/counts/literals"}, {"$ref": "#/counts/profile_pairs"}]},
-    "targets": {"$comment": "Norms.Replay.targets: one per regulated predicate, then one per profile pair.",
-      "sum": [{"$ref": "#/counts/regulated"}, {"$ref": "#/counts/profile_pairs"}]}
-  },
+  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory.",
   "$defs": {
     "text": {"type": "string", "minLength": 1},
     "nat": {"type": "integer", "minimum": 0},
     "booleans": {"type": "array", "items": {"type": "boolean"}},
     "strings": {"type": "array", "items": {"type": "string"}},
-    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest).", "type": "string", "pattern": "[0-9a-f]{64}"},
+    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest, Service.Protocol.caseDigest).", "type": "string", "pattern": "[0-9a-f]{64}"},
     "token": {"$comment": "Route.Admission.token: nonempty, at most 64 bytes, [A-Za-z0-9_.-].", "type": "string", "pattern": "[A-Za-z0-9_.-]{1,64}"},
     "integer_text": {"$comment": "Order.Wire.decodeInt: canonical decimal, at most maxNumeralChars = 40 characters.", "type": "string", "maxLength": 40, "pattern": "0|-?[1-9][0-9]*"},
-    "values": {"$comment": "Evaluation values: one per requested formula; every runner rejects an empty document.", "type": "array", "items": {"type": "boolean"}, "minItems": 1, "x-length": "/ast"},
+    "values": {"$comment": "Evaluation values: one per requested formula (binding to the request's ast).", "type": "array", "items": {"type": "boolean"}, "x-length": "/ast"},
 
     "fol_term": {"$comment": "Bridge.decodeTerm.", "x-tagged": {
       "var": [{"$ref": "#/$defs/nat"}],
@@ -105,9 +84,8 @@
       "properties": {
         "name": {"type": "string"},
         "ast": {"$ref": "#/$defs/fol_formula"},
-        "label": {"type": "string", "not": {"const": "asserted"}}},
-      "x-member": {"of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"]}},
-    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: kinds are the request's unit kinds (decodeKind_render).",
+        "label": {"type": "string", "not": {"const": "asserted"}}}},
+    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: the root is the request's root and kinds are the request's unit kinds (decodeKind_render). That the assumptions are the root's unfolding is the service's (tests/test_lean_service_schema.py, Lean invariants).",
       "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
@@ -116,8 +94,7 @@
         "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
           "properties": {
             "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}},
-            "assumptions": {"$comment": "Exactly the ordered leaf list of the request's graph unfolded from its root (VE.Graph.Unfolds, check_unfolds): every occurrence of every leaf, in order.",
-              "type": "array", "items": {"$ref": "#/$defs/claim"}, "x-unfolds": "/document/graph"}}},
+            "assumptions": {"type": "array", "items": {"$ref": "#/$defs/claim"}}}},
         "report_id": {"$ref": "#/$defs/hex64"},
         "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
 

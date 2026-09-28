@@ -19,18 +19,12 @@
       "anyOf": [
         {"type": "string"},
         {"type": "array", "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}], "minItems": 2, "maxItems": 2}]},
-    "item": {"$comment": "EnglishRun.runCase for the case at the same position: rendered iff checked; a roundtrip needs a checked rendering; only nonempty formulas are checked.",
+    "item": {"$comment": "EnglishRun.runCase for the case at the same position. That a rendering comes exactly with a check, a roundtrip needs a checked rendering and only nonempty formulas are checked is the service's.",
       "type": "object", "required": ["parsed", "checked", "rendered", "roundtrip"], "additionalProperties": false,
       "properties": {
         "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/generated_formulas"}]},
         "checked": {"type": "boolean"},
         "rendered": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/token"}}]},
-        "roundtrip": {"type": "boolean"}},
-      "allOf": [
-        {"if": {"properties": {"checked": {"const": true}}},
-         "then": {"properties": {"rendered": {"type": "array"}}},
-         "else": {"properties": {"rendered": {"type": "null"}, "roundtrip": {"const": false}}}},
-        {"if": {"x-case": {"properties": {"formulas": {"maxItems": 0}}}},
-         "then": {"properties": {"checked": {"const": false}}}}]}
+        "roundtrip": {"type": "boolean"}}}
   }
 }

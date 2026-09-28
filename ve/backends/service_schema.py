@@ -1,7 +1,10 @@
 """Compiled validators for the Lean service response schemas.
 
 `lean_service_schema/*.json` is the only description of response shapes; this module
-compiles it (dialect: `lean_service_schema/README.md`) into closures. A validator is
+compiles it (dialect: `lean_service_schema/README.md`) into closures. The schemas
+describe binding to the request and well-formedness only; the service is the semantic
+authority (docs/spec/lean-service.md, threat model), so nothing here re-derives what
+the runners compute. A validator is
 `check(value, ctx, fuel)` and raises `Invalid` on the first violation. Tagged grammars
 (formulas and terms) are checked with an explicit stack, so a generated formula of any
 depth is checked without recursion; `x-fuel` limits the formulas the Lean decoders read
@@ -384,107 +387,6 @@ class Compiler:
                 _fail("is not the result's position")
         return check
 
-    def _x_member(self, rule, schema, base):
-        pointer, keys = rule["of"], tuple(rule["keys"])
-        where = self.compile(rule.get("where", True), base)
-
-        def project(x):
-            return {k: x[k] for k in keys if k in x} if isinstance(x, dict) else _MISSING
-
-        def check(value, ctx, fuel):
-            elements = _resolve(ctx.value, pointer)
-            mine = project(value)
-            if (not isinstance(elements, list) or mine is _MISSING
-                    or not any(same_json(mine, project(x)) and _valid(where, x, ctx, {})
-                               for x in elements if isinstance(x, dict))):
-                _fail(f"is not one of the request's {pointer}")
-        return check
-
-    def _x_dependency_order(self, pointer, schema, base):
-        def check(value, ctx, fuel):
-            nodes = _resolve(ctx.value, pointer)
-            if not _verify_order(nodes, value):
-                _fail(f"is not a dependency order of the request's {pointer}")
-        return check
-
-    def _x_unfolds(self, pointer, schema, base):
-        def check(value, ctx, fuel):
-            if not _unfolds(_resolve(ctx.value, pointer), value):
-                _fail(f"is not the ordered leaf list of the request's {pointer}")
-        return check
-
-    def count(self, expression, base):
-        """A count (README: Counts) as `ctx -> int | None`; `None` if the context lacks
-        the counted value."""
-        if type(expression) is int:
-            return lambda ctx: expression
-        if not isinstance(expression, dict):
-            raise SchemaError(f"not a count: {expression!r}")
-        keys = set(expression) - {"$comment"}
-        if keys == {"$ref"}:
-            name, _, pointer = expression["$ref"].partition("#")
-            name = name or base
-            target = _resolve(self.documents.get(name, {}), pointer)
-            if target is _MISSING:
-                raise SchemaError(f"unresolved count {expression['$ref']} in {base}")
-            return self.count(target, name)
-        if keys == {"count", "where"}:
-            pointer, where = expression["count"], self.compile(expression["where"], base)
-
-            def members(ctx):
-                value = _resolve(ctx.value, pointer)
-                if not isinstance(value, (list, dict)):
-                    return None
-                return sum(_valid(where, x, ctx, {}) for x in (value.values() if isinstance(value, dict) else value))
-            return members
-        if keys == {"pairs"}:
-            inner = self.count(expression["pairs"], base)
-
-            def pairs(ctx):
-                n = inner(ctx)
-                return None if n is None else n * (n - 1) // 2
-            return pairs
-        if keys == {"sum"}:
-            parts = [self.count(c, base) for c in expression["sum"]]
-
-            def total(ctx):
-                values = [part(ctx) for part in parts]
-                return None if None in values else sum(values)
-            return total
-        raise SchemaError(f"not a count: {expression!r}")
-
-    def _x_cardinality(self, expression, schema, base):
-        count = self.count(expression, base)
-
-        def check(value, ctx, fuel):
-            n = count(ctx)
-            size = len(value) if isinstance(value, list) else value if _kind(value) == "integer" else None
-            if n is None or size != n:
-                _fail(f"is not the request's count {n}")
-        return check
-
-    def _x_runs(self, rule, schema, base):
-        key = rule["key"]
-        runs = [(v, self.count(c, base)) for v, c in rule["runs"]]
-
-        def check(value, ctx, fuel):
-            if not isinstance(value, list):
-                _fail("expected an array")
-            expected = []
-            for v, count in runs:
-                n = count(ctx)
-                if n is None:
-                    _fail("the request has no count here")
-                expected.append((v, n))
-            if len(value) != sum(n for _, n in expected):
-                _fail(f"length is not the request's count {sum(n for _, n in expected)}")
-            elements = iter(value)
-            for v, n in expected:
-                for _ in range(n):
-                    if not same_json(_resolve(next(elements), key), v):
-                        _fail(f"not {n} of {v!r} in order")
-        return check
-
     def _x_zip(self, rule, schema, base):
         pointer, sub = rule["of"], self.compile(rule["items"], base)
 
@@ -512,40 +414,6 @@ class Compiler:
                     then(value, ctx, fuel)
                     return
             _fail("no result is possible for this request")
-        return check
-
-    def _x_same(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if a is _MISSING or b is _MISSING or not same_json(a, b):
-                    _fail(f"{p} differs from {q}")
-        return check
-
-    def _x_same_length(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if not isinstance(a, list) or not isinstance(b, list) or len(a) != len(b):
-                    _fail(f"{p} and {q} differ in length")
-        return check
-
-    def _x_in(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if a is _MISSING or not isinstance(b, list) or not any(same_json(a, x) for x in b):
-                    _fail(f"{p} is not in {q}")
-        return check
-
-    def _x_capture(self, rule, schema, base):
-        compiled = re.compile(rule["pattern"], re.DOTALL)
-
-        def check(value, ctx, fuel):
-            source, target = _resolve(value, rule["source"]), _resolve(value, rule["target"])
-            match = compiled.match(source) if isinstance(source, str) else None
-            if match is None or target is _MISSING or not same_json(target, match.group(1)):
-                _fail(f"{rule['target']} is not captured from {rule['source']}")
         return check
 
     def _x_count_where(self, rule, schema, base):
@@ -588,9 +456,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-index", "x-digest", "x-member", "x-dependency-order", "x-unfolds", "x-zip", "x-case",
-          "x-select", "x-same", "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows", "x-row",
-          "x-cardinality", "x-runs")
+          "x-count", "x-index", "x-digest", "x-zip", "x-case", "x-select", "x-count-where", "x-rows",
+          "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
 
@@ -660,72 +527,6 @@ class _Grammar:
                     pending.append((slot[0], element, fuel))
                 else:
                     slot(element, ctx, fuel)
-
-
-def _verify_order(nodes: object, order: object) -> bool:
-    """Route.Wire.decodeNodes, then Route.dependencyOrder's success conditions: unique
-    names and `verifyOrder` (a permutation with every dependency strictly earlier)."""
-    if not isinstance(nodes, list) or len(nodes) > 256 or not isinstance(order, list):
-        return False
-    names, mentions = [], []
-    for node in nodes:
-        if (not isinstance(node, dict) or set(node) != {"name", "mentions"}
-                or not isinstance(node["name"], str) or not isinstance(node["mentions"], list)
-                or not all(isinstance(m, str) for m in node["mentions"])):
-            return False
-        names.append(node["name"])
-        mentions.append(node["mentions"])
-    if len(set(names)) != len(names) or not all(isinstance(x, str) for x in order):
-        return False
-    if len(set(order)) != len(order) or set(order) != set(names):
-        return False
-    position = {name: i for i, name in enumerate(order)}
-    return all(position[m] < position[name]
-               for name, ms in zip(names, mentions) for m in ms if m in position)
-
-
-_CLAIM_KEYS = ("name", "ast", "label")
-
-
-def _unfolds(graph: object, leaves: object) -> bool:
-    """`VE.Graph.check`'s success conditions on the graph's shape (unique names, every
-    premise an earlier node, the root a node), then `leaves` is the ordered unfolding of
-    the root (`Unfolds`). Leaf counts are computed first, so shared subgraphs are never
-    expanded beyond the length of `leaves` and nothing recurses."""
-    if not isinstance(graph, dict) or not isinstance(leaves, list):
-        return False
-    nodes, root = graph.get("nodes"), graph.get("root")
-    if not isinstance(nodes, list) or not isinstance(root, str):
-        return False
-    index, counts, children = {}, [], []
-    for i, node in enumerate(nodes):
-        if not isinstance(node, dict) or not isinstance(node.get("name"), str) or node["name"] in index:
-            return False
-        if ("premises" in node) != ("certificate" in node):
-            return False
-        if "premises" not in node:
-            children.append(None)
-            counts.append(1)
-        else:
-            premises = node["premises"]
-            if not isinstance(premises, list) or not all(isinstance(p, str) and p in index for p in premises):
-                return False
-            children.append([index[p] for p in premises])
-            counts.append(sum(counts[k] for k in children[-1]))
-        index[node["name"]] = i
-    if root not in index or counts[index[root]] != len(leaves):
-        return False
-    stack, position = [index[root]], 0
-    while stack:
-        k = stack.pop()
-        if children[k] is None:
-            node = nodes[k]
-            if not same_json(leaves[position], {key: node[key] for key in _CLAIM_KEYS if key in node}):
-                return False
-            position += 1
-        else:
-            stack.extend(c for c in reversed(children[k]) if counts[c])
-    return True
 
 
 _compiler = Compiler()

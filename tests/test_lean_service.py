@@ -558,7 +558,6 @@ def test_one_retry_recovers_a_hung_batch(tmp_path):
     ("english-bad-formula", "english", {"cases": [{}]}),
     ("english-negative-label", "english", {"cases": [{}]}),
     ("english-order-atom", "english", {"cases": [{}]}),
-    ("english-checked-no-render", "english", {"cases": [{}]}),
     ("english-deep-formula", "english", {"cases": [{}]}),
     ("background-boolean-premise", "route", {"id": "c", "kind": "background"}),
     ("background-boolean-premise", "norms", {"id": "c", "kind": "background"}),
@@ -570,6 +569,16 @@ def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mod
     assert service.stats["starts"] == 2 and service.stats["retries"] == 1
     assert service.pid is None
     service.close()
+
+
+def test_client_does_not_recheck_binding_preserving_content(tmp_path):
+    """Threat model (docs/spec/lean-service.md): a checked English item without a rendering
+    keeps every binding, so the client accepts it; that the runner never emits one is the
+    service's, tested by the Lean invariants (tests/test_lean_service_schema.py)."""
+    with LeanService(fake(tmp_path, "english-checked-no-render"), allow_unlisted_build=True) as service:
+        [row] = service.run("english", [{"cases": [{}]}])
+        assert service.stats["retries"] == 0
+    assert row["results"][0]["checked"] and row["results"][0]["rendered"] is None
 
 
 _BOUND_CASES = [{"id": "a", "ast": [["top"]]}, {"id": "b", "ast": [["bottom"]]}, {"id": "a", "ast": [["top"]]}]

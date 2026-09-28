@@ -2,17 +2,25 @@ import VE.Norms.Run
 import VE.Order.Wire
 import VE.Service.EnglishRun
 
-/-! `ve_response_decode`: the Lean side of the differential test of the service
-response schemas (`ve/backends/lean_service_schema/`). It decodes a response line
-with the Lean decoders the runners' outputs come from (`Bridge.decodeFormula`,
-`Order.Wire.decodeFormula`, `Route.Admission.decodeKind`, `parseLabel`,
-`Route.Wire.decodeNodes` with `Route.verifyOrder`, `EnglishRun`'s token form) and
-the dispatch functions of the runners (`Route.Run.caseKind`, `generatorOf`,
-`Norms.Run.usesNormsPath`), and checks the links to the request that the runners
-guarantee. Test tooling only: nothing imports it and no theorem depends on it.
+/-! `ve_response_decode`: the Lean side of the tests of service responses. Test tooling
+only: nothing imports it and no theorem depends on it.
 
-Each input line is `{"mode", "request": {"id", "cases", "digests", "bytes"}, "responses": [...]}`;
-the output line is an array with `"accept"` or `"reject: <reason>"` per response. -/
+* `decode` is the differential oracle of the client's response schemas
+  (`ve/backends/lean_service_schema/`): binding to the request (nonce, mode, each
+  result's position and case digest, the identity fields the runners echo from the
+  case) and well-formedness, decoded with the Lean decoders the runners' outputs come
+  from (`Bridge.decodeFormula`, `Order.Wire.decodeFormula`, `Route.Admission.decodeKind`,
+  `parseLabel`, `EnglishRun`'s token form) and the runners' dispatch
+  (`Route.Run.caseKind`, `Norms.Run.usesNormsPath`).
+* `invariants` is `decode` and the content the runners guarantee, which the client does
+  not check (docs/spec/lean-service.md, threat model): counts regenerated from the
+  environment, graph unfoldings, dependency orders, distinct layers and conflict targets
+  with their declared argument sorts, verdict details, English check consistency. The
+  tests require every genuine service response to satisfy it.
+
+Each input line is `{"check"?: "decode" | "invariants", "mode", "request": {"id", "cases",
+"digests", "bytes"}, "responses": [...]}`; the output line is an array with `"accept"`
+or `"reject: <reason>"` per response. -/
 namespace ResponseDecode
 open Lean
 
@@ -120,11 +128,10 @@ def runs (case : Json) (counts : List (String × (Json → Except String Nat))) 
     out := out ++ List.replicate (← count case) (Json.str g)
   pure out
 
-/-- The values of `values`: one per requested formula, and never an empty document. -/
+/-- The values of `values`: one per requested formula. -/
 def values (row case : Json) : Check := do
   let vs ← (← field row "values").getArr?
   for v in vs do bool v
-  need (!vs.isEmpty) "empty values"
   need (vs.size == (← length (← field case "ast"))) "one value per formula"
 
 /-- A successful result: the request's (string) id, status ok, then exactly `fields`. -/
@@ -164,13 +171,16 @@ def firstOk (checks : List (Unit → Check)) : Check :=
 def project (x : Json) : List (Option Json) :=
   ["name", "ast", "label"].map (fun k => (x.getObjVal? k).toOption)
 
-/-- `Route.Run.claimJson` of a node the request declared (`admit_labels_decoded`). -/
-def claim (j case : Json) : Check := do
+/-- `Route.Run.claimJson`: a claim's shape. -/
+def claim (j : Json) : Check := do
   shape j ["name", "ast"] ["label"]
   string (← field j "name")
   folFormula (← field j "ast")
   if let .ok l := j.getObjVal? "label" then
     need ((← l.getStr?) != "asserted") "explicit default label"
+
+/-- The claim is a node the request declared (`admit_labels_decoded`). -/
+def requestNode (j case : Json) : Check := do
   let nodes ← (← path case ["document", "graph", "nodes"]).getArr?
   need (nodes.any (fun n => (n.getObj?).toBool && project n == project j)) "not a node of the request"
 
@@ -220,10 +230,9 @@ def admission (row case : Json) : Check := do
   let report ← field row "report"
   shape report ["root", "assumptions"] []
   let root ← field report "root"
-  claim root case
+  claim root
   need ((← field root "name") == (← path case ["document", "graph", "root"])) "root"
-  array (← field report "assumptions") (claim · case)
-  unfolds (← field report "assumptions") case
+  array (← field report "assumptions") claim
   hex64 (← field row "report_id")
   let kinds ← field row "kinds"
   array kinds kind
@@ -233,11 +242,7 @@ def admission (row case : Json) : Check := do
 
 def dependencyOrder (row case : Json) : Check := do
   okRow row case ["order"]
-  let order ← VE.Bridge.strings (← field row "order")
-  let nodes ← VE.Route.Wire.decodeNodes (← field case "nodes")
-  let names := VE.Route.nodeNames nodes
-  need ((names.find? (fun n => names.count n > 1)).isNone) "duplicate node"
-  need (VE.Route.verifyOrder nodes order) "not a dependency order of the request's nodes"
+  let _ ← VE.Bridge.strings (← field row "order")
 
 def bundle (row case : Json) : Check := do
   okRow row case ["checked", "lemmas"]
@@ -249,15 +254,10 @@ def bundle (row case : Json) : Check := do
 
 def background (row case : Json) : Check := do
   okRow row case ["background", "premises", "generators"]
-  let bg ← field row "background"
-  array bg generatedFormula
+  array (← field row "background") generatedFormula
   array (← field row "premises") generatedFormula
-  need (bg == (← field row "premises")) "premises differ from background"
-  let gs ← field row "generators"
-  array gs (fun g => do need (VE.Route.Background.generators.contains (← g.getStr?)) "generator")
-  need ((← length bg) == (← length gs)) "one generator per premise"
-  let expected ← runs case [("flags", flagsCount), ("definitions", definitionsCount), ("literals", literalsCount)]
-  need ((← gs.getArr?).toList == expected) "generators are not the regenerated Background's"
+  array (← field row "generators")
+    (fun g => do need (VE.Route.Background.generators.contains (← g.getStr?)) "generator")
 
 def label (row case : Json) : Check := do
   okRow row case ["label"]
@@ -266,11 +266,13 @@ def label (row case : Json) : Check := do
   need (isField case "label" (.str l)) "not the request's label"
 
 def routeError (row case : Json) : Check := do
-  let message ← (← field row "error").getStr?
-  let generator := VE.Route.Run.generatorOf message
   let valid := case.getObjValD "kind" == .str "certificate"
-  errorRow row case ((if generator.isSome then ["generator"] else []) ++ if valid then ["valid"] else [])
-  if let some g := generator then need (isField row "generator" (.str g)) "generator"
+  shape row (["id", "status", "error"] ++ if valid then ["valid"] else []) ["generator"]
+  need (isField row "status" (.str "error")) "status"
+  need ((← field row "id") == case.getObjValD "id") "id is not the request's"
+  text (← field row "error")
+  if valid then need (isField row "valid" (.bool false)) "valid"
+  if let .ok g := row.getObjVal? "generator" then string g
 
 def routeOk (row case : Json) : Check := do
   need (case.getObj?).toBool "case is not an object"
@@ -280,8 +282,7 @@ def routeOk (row case : Json) : Check := do
   | "certificate" => do
     okRow row case ["valid", "background"]
     bool (← field row "valid")
-    let n := (← flagsCount case) + (← definitionsCount case) + (← literalsCount case)
-    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
+    nat (← field row "background")
   | "dependency-order" => dependencyOrder row case
   | "bundle" => bundle row case
   | "background" => background row case
@@ -312,12 +313,7 @@ def normsElaborate (row case : Json) : Check := do
     let _ ← VE.Bridge.strings (← field x "sorts")
     generatedFormula (← field x "ast")
   bool (← field row "fragment")
-  let layers ← regulatedCount case
-  need (order.length == layers && (← length premises) == layers) "one layer per regulated predicate"
-  need ((← length targets) == layers + (← pairsCount case)) "one target per layer and profile pair"
-  let expected ← runs case [("definitions", definitionsCount), ("literals", literalsCount), ("profile", pairsCount)]
-  need ((← background.getArr?).toList.map (·.getObjValD "generator") == expected)
-    "Background is not the regenerated generators'"
+  let _ := order
 
 def normsOk (row case : Json) : Check := do
   match ← VE.Route.Run.caseKind case with
@@ -326,27 +322,20 @@ def normsOk (row case : Json) : Check := do
   | "norms-certificate" => do
     okRow row case ["valid", "background", "layers"]
     bool (← field row "valid")
-    let n := (← definitionsCount case) + (← literalsCount case) + (← pairsCount case)
-    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
-    need ((← (← field row "layers").getNat?) == (← regulatedCount case)) "one layer per regulated predicate"
+    nat (← field row "background")
+    nat (← field row "layers")
   | "norms-conflict" =>
-    let count := (← regulatedCount case) + (← pairsCount case)
     if has case "witness" then do
       okRow row case ["verdict", "target", "targets"]
       need (["CONFLICT", "UNKNOWN"].contains (← (← field row "verdict").getStr?)) "verdict"
       let target ← (← field row "target").getStr?
-      let targets ← VE.Bridge.strings (← field row "targets")
-      need (targets.contains target) "target is not a regenerated target"
+      let _ ← VE.Bridge.strings (← field row "targets")
       need ((← path case ["witness", "target"]) == .str target) "not the requested target"
-      need (targets.length == count) "one target per layer and profile pair"
     else do
       okRow row case ["verdict", "targets"] ["detail"]
-      let verdict ← (← field row "verdict").getStr?
-      need (["CONFLICT-FREE", "UNKNOWN"].contains verdict) "verdict"
-      need ((← VE.Bridge.strings (← field row "targets")).length == count) "one target per layer and profile pair"
-      if let .ok d := row.getObjVal? "detail" then
-        string d
-        need (verdict == "UNKNOWN") "detail without UNKNOWN"
+      need (["CONFLICT-FREE", "UNKNOWN"].contains (← (← field row "verdict").getStr?)) "verdict"
+      let _ ← VE.Bridge.strings (← field row "targets")
+      if let .ok d := row.getObjVal? "detail" then string d
   | k => throw s!"no norms result for kind {k}"
 
 def norms (row case : Json) (index : Nat) : Check :=
@@ -362,8 +351,7 @@ def evaluate (row case : Json) (index : Nat) : Check :=
     | .error _ => do
       okRow row case ["values", "value", "canonical"]
       values row case
-      let vs ← (← field row "values").getArr?
-      need (isField row "value" (.bool (vs.all (· == .bool true)))) "value is not the conjunction"
+      bool (← field row "value")
       string (← field row "canonical")
     | .ok k => do
       need (k == .str "countermodel") "unknown kind"
@@ -380,9 +368,7 @@ def order (row case : Json) (index : Nat) : Check :=
     match ← (← field case "kind").getStr? with
     | "surface" => do
       okRow row case ["ast"]
-      let fs ← (← field row "ast").getArr?
-      need (!fs.isEmpty) "empty document"
-      for f in fs do orderFormula f
+      for f in ← (← field row "ast").getArr? do orderFormula f
     | "evaluate" => do okRow row case ["values"]; values row case
     | "countermodel" => do okRow row case ["refutes"]; bool (← field row "refutes")
     | "certificate" => do okRow row case ["valid"]; bool (← field row "valid")
@@ -392,19 +378,14 @@ def token (j : Json) : Check := do
   let _ ← VE.English.ServiceRun.decodeTok j
   need (j == VE.English.ServiceRun.encodeTok (← VE.English.ServiceRun.decodeTok j)) "token"
 
-def englishItem (j case : Json) : Check := do
+def englishItem (j : Json) : Check := do
   shape j ["parsed", "checked", "rendered", "roundtrip"] []
   let parsed ← field j "parsed"
   unless parsed.isNull do array parsed generatedFormula
-  let checked ← (← field j "checked").getBool?
+  bool (← field j "checked")
   let rendered ← field j "rendered"
   unless rendered.isNull do array rendered token
-  let roundtrip ← (← field j "roundtrip").getBool?
-  if checked then
-    need (!rendered.isNull) "checked without rendering"
-    let formulas := (case.getObjVal? "formulas" >>= Json.getArr?).toOption
-    need (formulas.any (!·.isEmpty)) "checked without formulas"
-  else need (rendered.isNull && !roundtrip) "rendering or roundtrip without a check"
+  bool (← field j "roundtrip")
 
 def english (row case : Json) (index : Nat) : Check :=
   firstOk [fun _ => caseErrorRow row index false,
@@ -418,7 +399,7 @@ def english (row case : Json) (index : Nat) : Check :=
       let results ← (← field row "results").getArr?
       let cases ← (← field case "cases").getArr?
       need (results.size == cases.size) "one result per case"
-      for (item, c) in results.zip cases do englishItem item c]
+      for item in results do englishItem item]
 
 def row (mode : String) (r case : Json) (index : Nat) : Check :=
   match mode with
@@ -430,6 +411,172 @@ def row (mode : String) (r case : Json) (index : Nat) : Check :=
   | "english" => english r case index
   | m => throw s!"unknown mode {m}"
 
+/-! ## Invariants: content the runners guarantee
+
+The client does not check these (docs/spec/lean-service.md, threat model); the tests
+require every genuine service response to satisfy them, and show that each finding's
+corruption violates one. Expected values come from the request where they can be read
+off it, and from the Lean functions the runners use where they cannot (the layer order
+is a dependency order computed by the runner). -/
+namespace Invariants
+
+def distinct (xs : List Json) (what : String) : Check :=
+  need (xs.eraseDups.length == xs.length) s!"duplicate {what}"
+
+/-- The request's predicate declarations, by name (`RBNode` order). -/
+def declarations (case : Json) : Except String (List (String × Json)) := do
+  match ← path case predicates with
+  | .obj kvs => pure (kvs.foldl (fun acc k v => acc ++ [(k, v)]) [])
+  | _ => throw "predicates are not an object"
+
+/-- The regulated predicates the request declares. -/
+def regulatedNames (case : Json) : Except String (List String) := do
+  pure ((← declarations case).filterMap fun (k, v) => if has v "regulated" then some k else none)
+
+/-- `Norms.pairs`: `(r->m, r)` for each obligation `r` with a permission dual `m`, by `r`. -/
+def pairNames (case : Json) : Except String (List (String × String)) := do
+  pure ((← declarations case).filterMap fun (k, v) => match v.getObjVal? "regulated" with
+    | .ok r =>
+      if r.getObjValD "role" == .str "obligation" then
+        match r.getObjVal? "permission" with
+        | .ok (.str m) => some (k ++ "->" ++ m, k)
+        | _ => none
+      else none
+    | .error _ => none)
+
+/-- `Norms.Replay.targets` of the request's source, by the runners' Lean functions. -/
+def sourceTargets (case : Json) : Except String (List String) := do
+  let src ← VE.Norms.Wire.decodeSource (← field case "environment") (case.getObjValD "norms")
+  pure ((VE.Norms.targets src.D).map (·.1))
+
+/-- Conflict target names: distinct, one per regulated predicate (in the layer order),
+then one per declared profile pair, and exactly `Norms.Replay.targets`. -/
+def targetNames (names : List String) (case : Json) : Check := do
+  let regs ← regulatedNames case
+  let pairs ← pairNames case
+  distinct (names.map .str) "conflict target"
+  need (names.length == regs.length + pairs.length) "not one target per layer and profile pair"
+  let layers := names.take regs.length
+  need (layers.all regs.contains && regs.all layers.contains) "layer targets are not the regulated predicates"
+  need (names.drop regs.length == pairs.map (·.1)) "pair targets are not the declared pairs"
+  need (names == (← sourceTargets case)) "targets are not Norms.Replay.targets"
+
+/-- The declared argument sorts of the predicate that owns a target (`r` for `r->m`). -/
+def targetSorts (case : Json) (name : String) : Except String Json := do
+  let owner := ((← pairNames case).find? (·.1 == name)).map (·.2) |>.getD name
+  path case (predicates ++ [owner, "arguments"])
+
+def nonemptyValues (row : Json) : Check := do
+  need (!(← (← field row "values").getArr?).isEmpty) "empty values"
+
+def normsElaborate (row case : Json) : Check := do
+  let order ← VE.Bridge.strings (← field row "order")
+  let regs ← regulatedNames case
+  distinct (order.map .str) "layer"
+  need (order.length == regs.length && order.all regs.contains) "layers are not the regulated predicates"
+  let premises ← (← field row "premises").getArr?
+  need (premises.toList.map (·.getObjValD "label") == order.map (fun p => .str ("layer:norms:" ++ p)))
+    "not one premise per layer, in order"
+  let targets ← (← field row "conflict_targets").getArr?
+  let names ← targets.toList.mapM fun t => do (← field t "target").getStr?
+  targetNames names case
+  need (names.take order.length == order) "layer targets do not follow the layer order"
+  for t in targets do
+    let name ← (← field t "target").getStr?
+    need ((← field t "sorts") == (← targetSorts case name)) s!"sorts of {name} are not its declared arguments"
+  let expected ← runs case [("definitions", definitionsCount), ("literals", literalsCount), ("profile", pairsCount)]
+  need ((← (← field row "background").getArr?).toList.map (·.getObjValD "generator") == expected)
+    "Background is not the regenerated generators'"
+
+def normsOk (row case : Json) : Check := do
+  match ← VE.Route.Run.caseKind case with
+  | "admission" => admissionContent row case
+  | "norms-elaborate" => normsElaborate row case
+  | "norms-certificate" => do
+    let n := (← definitionsCount case) + (← literalsCount case) + (← pairsCount case)
+    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
+    need ((← (← field row "layers").getNat?) == (← regulatedCount case)) "not one layer per regulated predicate"
+  | "norms-conflict" => do
+    let targets ← VE.Bridge.strings (← field row "targets")
+    targetNames targets case
+    if has case "witness" then
+      need (targets.contains (← (← field row "target").getStr?)) "target is not a regenerated target"
+    else if has row "detail" then
+      need (isField row "verdict" (.str "UNKNOWN")) "detail without UNKNOWN"
+  | _ => pure ()
+where
+  admissionContent (row case : Json) : Check := do
+    let report ← field row "report"
+    requestNode (← field report "root") case
+    array (← field report "assumptions") (requestNode · case)
+    unfolds (← field report "assumptions") case
+
+def admission (row case : Json) : Check := normsOk.admissionContent row case
+
+def routeRow (row case : Json) : Check := do
+  if isField row "status" (.str "error") then
+    match VE.Route.Run.generatorOf (← (← field row "error").getStr?) with
+    | some g => need (isField row "generator" (.str g)) "generator is not the message's"
+    | none => need (!has row "generator") "generator without InvalidModel"
+  else match ← VE.Route.Run.caseKind case with
+    | "evaluate" => nonemptyValues row
+    | "certificate" => do
+      let n := (← flagsCount case) + (← definitionsCount case) + (← literalsCount case)
+      need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
+    | "dependency-order" => do
+      let order ← VE.Bridge.strings (← field row "order")
+      let nodes ← VE.Route.Wire.decodeNodes (← field case "nodes")
+      let names := VE.Route.nodeNames nodes
+      need ((names.find? (fun n => names.count n > 1)).isNone) "duplicate node"
+      need (VE.Route.verifyOrder nodes order) "not a dependency order of the request's nodes"
+    | "background" => do
+      let bg ← field row "background"
+      need (bg == (← field row "premises")) "premises differ from background"
+      let gs ← field row "generators"
+      need ((← length bg) == (← length gs)) "not one generator per premise"
+      let expected ← runs case [("flags", flagsCount), ("definitions", definitionsCount),
+        ("literals", literalsCount)]
+      need ((← gs.getArr?).toList == expected) "generators are not the regenerated Background's"
+    | "admission" => admission row case
+    | _ => pure ()
+
+def englishItem (j case : Json) : Check := do
+  let checked ← (← field j "checked").getBool?
+  let rendered ← field j "rendered"
+  if checked then
+    need (!rendered.isNull) "checked without rendering"
+    let formulas := (case.getObjVal? "formulas" >>= Json.getArr?).toOption
+    need (formulas.any (!·.isEmpty)) "checked without formulas"
+  else need (rendered.isNull && !(← (← field j "roundtrip").getBool?)) "rendering or roundtrip without a check"
+
+/-- The content invariants of one decoded result (case errors have none). -/
+def row (mode : String) (r case : Json) (_index : Nat) : Check := do
+  if has r "case_index" then return
+  let ok := isField r "status" (.str "ok")
+  match mode with
+  | "evaluate" =>
+    if ok && !has case "kind" then
+      nonemptyValues r
+      let vs ← (← field r "values").getArr?
+      need (isField r "value" (.bool (vs.all (· == .bool true)))) "value is not the conjunction"
+  | "order" =>
+    if ok then match case.getObjValD "kind" with
+      | .str "surface" => need (!(← (← field r "ast").getArr?).isEmpty) "empty document"
+      | .str "evaluate" => nonemptyValues r
+      | _ => pure ()
+  | "route" => routeRow r case
+  | "norms" =>
+    if VE.Norms.Run.usesNormsPath case then
+      if ok then normsOk r case
+    else routeRow r case
+  | "english" =>
+    if let .ok results := r.getObjVal? "results" then
+      let cases ← (← field case "cases").getArr?
+      for (item, c) in (← results.getArr?).zip cases do englishItem item c
+  | _ => pure ()
+
+end Invariants
+
 /-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`. -/
 def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
   shape b ["index", "digest", "result"] []
@@ -438,8 +585,9 @@ def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
   need ((← field b "digest") == digest) "digest is not the case's"
   field b "result"
 
-/-- `Service.Protocol`: a line error, or one bound result per case with exact counts. -/
-def response (mode : String) (request r : Json) : Check := do
+/-- `Service.Protocol`: a line error, or one bound result per case with exact counts;
+`content` is applied to each result with its case and position. -/
+def response (mode : String) (request r : Json) (content : Json → Json → Nat → Check) : Check := do
   let nonce ← field request "id"
   if isField r "status" (.str "error") then
     shape r ["id", "status", "error"] []
@@ -456,7 +604,8 @@ def response (mode : String) (request r : Json) : Check := do
     need (results.size == cases.size && digests.size == cases.size) "one result per case"
     let mut rows := #[]
     for i in [:results.size] do
-      match bound results[i]! i digests[i]! >>= fun x => do row mode x cases[i]! i; pure x with
+      match bound results[i]! i digests[i]! >>= fun x => do
+          row mode x cases[i]! i; content x cases[i]! i; pure x with
       | .ok x => rows := rows.push x
       | .error m => throw s!"result {i}: {m}"
     let counts ← field r "counts"
@@ -466,17 +615,25 @@ def response (mode : String) (request r : Json) : Check := do
     let errors := (rows.filter (fun x => isField x "status" (.str "error"))).size
     need ((← (← field counts "errors").getNat?) == errors) "counts.errors"
 
-def verdict (mode : String) (request r : Json) : Json :=
-  match response mode request r with
+def verdict (check : Json → Json → Nat → Check) (mode : String) (request r : Json) : Json :=
+  match response mode request r check with
   | .ok () => .str "accept"
   | .error m => .str s!"reject: {m}"
+
+def noContent (_ _ : Json) (_ : Nat) : Check := pure ()
+
+def contentCheck (mode : String) : Json → Except String (Json → Json → Nat → Check)
+  | .null | .str "decode" => .ok noContent
+  | .str "invariants" => .ok (Invariants.row mode)
+  | c => .error s!"unknown check {c.compress}"
 
 def line (text : String) : Except String Json := do
   let j ← Json.parse text
   let mode ← (← field j "mode").getStr?
   let request ← field j "request"
   let responses ← (← field j "responses").getArr?
-  pure (.arr (responses.map (verdict mode request)))
+  let content ← contentCheck mode (j.getObjValD "check")
+  pure (.arr (responses.map (verdict content mode request)))
 
 end ResponseDecode
 

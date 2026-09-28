@@ -12,9 +12,18 @@ The single source of truth for the shapes of `ve_service` responses
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
   its `$comment` (formulas, terms, kinds, labels, ...).
 
+**What the schemas check** (threat model, `docs/spec/lean-service.md`): binding to the
+request and well-formedness, nothing else. The binding is the nonce, the mode, each
+result's position and case digest, and the identity fields a runner echoes from its case.
+The well-formedness is the Lean decoders' domains. A rule belongs here only if its
+expected value can be read directly off the request. Values the runners compute belong
+to the service, which the tests check on its outputs (`ve_response_decode`'s
+`invariants`). Examples are counts regenerated from the environment, graph unfoldings,
+dependency orders, target lists and their sorts, and the relations between result fields.
+
 `ve/backends/service_schema.py` compiles these files; `ve/backends/lean_service.py`
-has no other shape checks. `lean/ResponseDecode.lean` (`ve_response_decode`) decodes
-the same responses with the Lean decoders, and `tests/test_lean_service_schema.py`
+has no other shape checks. `lean/ResponseDecode.lean` (`ve_response_decode`, check `decode`)
+decodes the same responses with the Lean decoders, and `tests/test_lean_service_schema.py`
 requires the two to agree on genuine service responses and on every mutation of them.
 
 ## Dialect
@@ -39,31 +48,9 @@ element of an array (every element must resolve).
 | `x-count: p` | the integer length of the context array at `p` |
 | `x-index: true` | the position of the result in the response |
 | `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
-| `x-member: {of: p, keys, where}` | the instance's `keys` equal those of some context element at `p` (absent keys stay absent) valid under `where` (default `true`) |
-| `x-dependency-order: p` | `Route.verifyOrder` accepts the instance for the dependency nodes at `p` |
-| `x-unfolds: p` | the instance is the ordered leaf list (`VE.Graph.Unfolds`) of the context claim graph at `p` (`{"root", "nodes"}`), unfolded from its root: names are unique, `premises` and `certificate` come together, every premise names an earlier node, and each leaf is its node's `name`, `ast` and `label` (absent keys stay absent) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |
 | `x-case: s` | the context is valid under `s` |
 | `x-select: [{when, then}, ...]` | the first `when` valid for the context selects `then`; none fails |
-| `x-same: [[p, q], ...]` | instance values at `p` and `q` are equal |
-| `x-same-length: [[p, q], ...]` | instance arrays at `p` and `q` have the same length |
-| `x-in: [[p, q], ...]` | the instance value at `p` is an element of the instance array at `q` |
-| `x-capture: {source, pattern, target}` | `pattern` matches a prefix of `source`; group 1 equals `target` |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |
 | `x-rows: s` | one element per case; element `i` is valid under `s` for result `i` (its case `cases[i]`, position `i` and digest `digests[i]`) |
 | `x-row: true` | valid under the mode's `row` with the context of the enclosing result's case |
-| `x-cardinality: c` | an array of length `c`, or the integer `c`, for the count `c` of the context |
-| `x-runs: {key, runs: [[v1, c1], ...]}` | an array of `c1` elements whose value at the pointer `key` (`""`: the element) is `v1`, then `c2` elements with `v2`, ... |
-
-## Counts
-
-A count is a number of things the Lean runner regenerates from the request case (for
-example one Background premise per pair of declared `$string` literals), so a
-regenerated list that loses or gains elements is rejected. A count is one of:
-
-* an integer;
-* `{"$ref": "file.json#/..."}`, the count there (`common.json#/counts` names them);
-* `{"count": p, "where": s}`: the number of members (array elements or object values) of
-  the context value at `p` that are valid under `s`; the value must be an array or object;
-* `{"pairs": c}`: `c·(c−1)/2`;
-* `{"sum": [c1, ...]}`.
