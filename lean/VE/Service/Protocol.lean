@@ -208,20 +208,29 @@ private def roundConstants : Array UInt32 := #[
 
 @[inline] private def rotr (x n : UInt32) : UInt32 := (x >>> n) ||| (x <<< (32 - n))
 
-/-- The message schedule of the block at `offset`, written into `w` (64 words). -/
-private def schedule (bytes : ByteArray) (offset : Nat) (w : Array UInt32) : Array UInt32 := Id.run do
-  let mut w := w
-  for i in [0:16] do
+/-- Words `i` to 15 of the message schedule: the block at `offset`, big-endian. -/
+private def load (bytes : ByteArray) (offset : Nat) (w : Array UInt32) (i : Nat) : Array UInt32 :=
+  if i < 16 then
     let j := offset + 4 * i
-    w := w.set! i ((bytes.get! j).toUInt32 <<< 24 ||| (bytes.get! (j+1)).toUInt32 <<< 16 |||
-      (bytes.get! (j+2)).toUInt32 <<< 8 ||| (bytes.get! (j+3)).toUInt32)
-  for i in [16:64] do
+    load bytes offset (w.set! i ((bytes.get! j).toUInt32 <<< 24 ||| (bytes.get! (j+1)).toUInt32 <<< 16 |||
+      (bytes.get! (j+2)).toUInt32 <<< 8 ||| (bytes.get! (j+3)).toUInt32)) (i + 1)
+  else w
+termination_by 16 - i
+
+/-- Words `i` to 63 of the message schedule. -/
+private def extend (w : Array UInt32) (i : Nat) : Array UInt32 :=
+  if i < 64 then
     let x := w[i-15]!
     let y := w[i-2]!
     let s0 := rotr x 7 ^^^ rotr x 18 ^^^ (x >>> 3)
     let s1 := rotr y 17 ^^^ rotr y 19 ^^^ (y >>> 10)
-    w := w.set! i (w[i-16]! + s0 + w[i-7]! + s1)
-  return w
+    extend (w.set! i (w[i-16]! + s0 + w[i-7]! + s1)) (i + 1)
+  else w
+termination_by 64 - i
+
+/-- The message schedule of the block at `offset`, written into `w` (64 words). -/
+private def schedule (bytes : ByteArray) (offset : Nat) (w : Array UInt32) : Array UInt32 :=
+  extend (load bytes offset w 0) 16
 
 structure State where
   (a b c d e f g h : UInt32)
@@ -271,24 +280,77 @@ def digest (input : ByteArray) : String := Id.run do
 end Sha256
 
 /-- The binding identity of a case: the SHA-256 of its text in the request's `cases`
-array, split by `VE.JsonInput.caseTexts` and trimmed of JSON whitespace. -/
+array, split as `VE.JsonInput.caseTexts` splits it and trimmed of JSON whitespace. -/
 def caseDigest (text : String) : String := Sha256.digest text.trim.toUTF8
+
+/-- JSON whitespace, `Char.isWhitespace` on bytes. -/
+private def space (b : UInt8) : Bool := b == 32 || b == 9 || b == 10 || b == 13
+
+/-- The bytes `[start, stop)` trimmed of JSON whitespace. -/
+private def trimmed (bytes : ByteArray) (start stop : Nat) : ByteArray := Id.run do
+  let mut i := start
+  let mut j := stop
+  while i < j && space bytes[i]! do i := i + 1
+  while i < j && space bytes[j - 1]! do j := j - 1
+  return bytes.extract i j
+
+/-- The case boundaries of the body bytes `[i, stop)`: the positions of the commas outside
+strings and brackets, in reverse order; `none` if a bracket is unbalanced or a string
+unterminated. -/
+private def commas (bytes : ByteArray) (stop : Nat) (i depth : Nat) (quoted escaped : Bool)
+    (acc : List Nat) : Option (List Nat) :=
+  if h : i < stop then
+    let c := bytes[i]!
+    if quoted then
+      if escaped then commas bytes stop (i + 1) depth true false acc
+      else if c == 92 then commas bytes stop (i + 1) depth true true acc
+      else commas bytes stop (i + 1) depth (c != 34) false acc
+    else if c == 34 then commas bytes stop (i + 1) depth true false acc
+    else if c == 91 || c == 123 then commas bytes stop (i + 1) (depth + 1) false false acc
+    else if c == 93 || c == 125 then
+      if depth == 0 then none else commas bytes stop (i + 1) (depth - 1) false false acc
+    else if c == 44 && depth == 0 then commas bytes stop (i + 1) depth false false (i :: acc)
+    else commas bytes stop (i + 1) depth false false acc
+  else if quoted || depth != 0 then none else some acc
+termination_by stop - i
+
+/-- `caseDigest` of every case text of a `cases` array, in one pass over its UTF-8 bytes
+with `VE.JsonInput.caseTexts`'s rules: the trimmed array's body is split at the commas
+outside strings and brackets. Delimiters are ASCII, and no byte of a multi-byte UTF-8
+character is ASCII, so the byte split is the character split. -/
+def caseDigests (text : String) : Except String (Array String) := do
+  let bytes := text.toUTF8
+  let mut lo := 0
+  let mut hi := bytes.size
+  while lo < hi && space bytes[lo]! do lo := lo + 1
+  while lo < hi && space bytes[hi - 1]! do hi := hi - 1
+  unless lo + 1 < hi && bytes[lo]! == 91 && bytes[hi - 1]! == 93 do
+    throw "request field cases must be an array"
+  if (trimmed bytes (lo + 1) (hi - 1)).isEmpty then return #[]
+  let some cuts := commas bytes (hi - 1) (lo + 1) 0 false false [] | throw "unbalanced batch array"
+  let bounds := (lo :: cuts.reverse) ++ [hi - 1]
+  return ((bounds.zip bounds.tail).map fun (a, b) => Sha256.digest (trimmed bytes (a + 1) b)).toArray
+
+#guard ["[]", " [ ] ", "[1]", " [ {\"a\":\"x,]\\\"\"} ,\t[1,2]\r, \"é,ü\" ,3] "].all fun t =>
+  match caseDigests t, VE.JsonInput.caseTexts t with
+  | .ok ds, .ok ts => ds == ts.map caseDigest
+  | _, _ => false
 
 /-- Result `i` with its binding: the case's position and digest. -/
 def bound (index : Nat) (digest : String) (result : Json) : Json :=
   Json.mkObj [("index", toJson index), ("digest", .str digest), ("result", result)]
 
-/-- `results`, each bound to its position and the digest of its case text in `texts`. -/
-def boundResults (r : Request) (cases : Array (Except String Json)) (texts : Array String) :
+/-- `results`, each bound to its position and its case digest in `digests`. -/
+def boundResults (r : Request) (cases : Array (Except String Json)) (digests : Array String) :
     Array Json :=
-  (results r cases).mapIdx fun i x => bound i (caseDigest (texts.getD i "")) x
+  (results r cases).mapIdx fun i x => bound i (digests.getD i "") x
 
-/-- The response to a request whose cases decode to `cases` and whose case texts are
-`texts` (one per case). -/
-def response (r : Request) (cases : Array (Except String Json)) (texts : Array String) : Json :=
+/-- The response to a request whose cases decode to `cases` and whose case digests are
+`digests` (one per case). -/
+def response (r : Request) (cases : Array (Except String Json)) (digests : Array String) : Json :=
   let rs := results r cases
   Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
-    ("results", .arr (boundResults r cases texts)),
+    ("results", .arr (boundResults r cases digests)),
     ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
       ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
@@ -312,9 +374,9 @@ def runRequest (r : Request) : Except String Json := do
   let cases ← decodeCases r
   if cases.size > r.budget.cases then
     throw s!"ResourceLimit: batch has {cases.size} cases; budget is {r.budget.cases}"
-  let texts ← VE.JsonInput.caseTexts r.cases
-  unless texts.size == cases.size do throw "batch split mismatch"
-  pure (response r cases texts)
+  let digests ← caseDigests r.cases
+  unless digests.size == cases.size do throw "batch split mismatch"
+  pure (response r cases digests)
 
 def lineError (id : Option String) (message : String) : Json :=
   Json.mkObj [("id", match id with | some s => .str s | none => .null),
@@ -361,15 +423,15 @@ theorem runMode_english (j : Json) :
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 
-/-- A request within its budget whose cases decode, one per case text, is answered with
+/-- A request within its budget whose cases decode, one digest per case, is answered with
 `response`: `results`, the existing runner applied to every case in order, each bound
-to its case text. -/
-theorem runRequest_ok (r : Request) (cases : Array (Except String Json)) (texts : Array String)
+to its case digest. -/
+theorem runRequest_ok (r : Request) (cases : Array (Except String Json)) (digests : Array String)
     (hb : r.cases.utf8ByteSize ≤ r.budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
     (hp : decodeCases r = .ok cases)
     (hc : cases.size ≤ r.budget.cases)
-    (ht : VE.JsonInput.caseTexts r.cases = .ok texts) (hn : texts.size = cases.size) :
-    runRequest r = .ok (response r cases texts) := by
+    (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size) :
+    runRequest r = .ok (response r cases digests) := by
   simp [runRequest, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, bind, Except.bind, pure,
     Except.pure]
 
@@ -378,11 +440,11 @@ theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) 
   simp [results, h]
 
 /-- Result `i` of a response is case `i`'s runner result, bound to its position and to
-the digest of its text. -/
-theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (texts : Array String)
+its case digest. -/
+theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (digests : Array String)
     (i : Nat) (h : i < cases.size) :
-    (boundResults r cases texts)[i]? =
-      some (bound i (caseDigest (texts.getD i "")) (caseResult r.mode i cases[i])) := by
+    (boundResults r cases digests)[i]? =
+      some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
   simp [boundResults, results, h]
 
 end VE.Service

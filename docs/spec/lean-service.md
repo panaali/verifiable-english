@@ -101,7 +101,8 @@ sorted order). `results[i]` is `{"digest","index":i,"result"}`: `result` is exac
 for case `i` of this request, including the per-case depth record `{"case_index", "error", "status"[, "valid"]}`,
 whose `case_index` is the position in this request, as in a one-shot batch. `digest` is the SHA-256 (lowercase
 hex) of the text of case `i` as split from the request by `VE.JsonInput.caseTexts` and trimmed of JSON
-whitespace (`VE.Service.caseDigest`). `counts.errors` counts the results whose `result.status` is `error`. A whole request that cannot be answered gets one line error
+whitespace (`VE.Service.caseDigest`; `caseDigests` computes all of them in one pass over the request's
+UTF-8 bytes with `caseTexts`'s rules). `counts.errors` counts the results whose `result.status` is `error`. A whole request that cannot be answered gets one line error
 `{"error","id","status":"error"}`: malformed envelope (`id: null` when the id cannot be read), unknown mode,
 a batch the restricted decoder rejects (the one-shot exit-2 message, verbatim), or a budget. Processing
 continues with the next line; no state is kept between lines. Blank lines are ignored.
@@ -181,10 +182,11 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - `lean/VE/Service/Protocol.lean`: every definition, and the theorems `runMode_evaluate`,
   `runMode_checkCertificate`, `runMode_order`, `runMode_route`, `runMode_norms`, `runMode_english` (each
   mode is its runner, by `rfl`), `caseResult_ok` (a decoded case gets `runMode`), `runRequest_ok` (a request
-  within budget whose cases decode, one per case text, is answered with `response`), `results_eq` (result `i`
+  within budget whose cases decode, one per case digest, is answered with `response`), `results_eq` (result `i`
   is `caseResult` of case `i`), `boundResults_eq` (bound result `i` is `caseResult` of case `i` with position
-  `i` and the digest of case text `i`). Trusted and not proved: `objectMembers`, `decodeRequest`, the
-  restricted decoder, and `Sha256.digest`. `Sha256.digest` is pinned by `#guard`s to the FIPS 180-4 vectors
+  `i` and its case digest). Trusted and not proved: `objectMembers`, `decodeRequest`, the
+  restricted decoder, `caseDigests` (pinned to `caseTexts` and `caseDigest` by a `#guard`, and to the client's
+  splitter by a randomized test against the service), and `Sha256.digest`. `Sha256.digest` is pinned by `#guard`s to the FIPS 180-4 vectors
   and to `VE.CertificateWire.sha256` on 130 inputs, and by the client comparing it with Python's `hashlib`.
 - `lean/VE/Service/EnglishRun.lean`: generated copy (deviation 3).
 - `lean/Serve.lean`: IO loop.

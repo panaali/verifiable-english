@@ -40,6 +40,7 @@ from decimal import Decimal
 import os
 from pathlib import Path
 import queue
+import re
 import secrets
 import selectors
 import subprocess
@@ -104,6 +105,7 @@ def _json_integer(digits: str) -> int | Decimal:
 
 
 _JSON_WHITESPACE = " \t\r\n"
+_DELIMITERS = re.compile(r'[\[\]{}",\\]')
 
 
 def case_texts(cases_text: str) -> list[str] | None:
@@ -115,13 +117,14 @@ def case_texts(cases_text: str) -> list[str] | None:
     body = text[1:-1]
     if not body.strip(_JSON_WHITESPACE):
         return []
-    cases, start, depth, quoted, escaped = [], 0, 0, False, False
-    for i, c in enumerate(body):
+    cases, start, depth, quoted, escaped_at = [], 0, 0, False, -1
+    for match in _DELIMITERS.finditer(body):  # every other character leaves the state unchanged
+        i, c = match.start(), match.group()
         if quoted:
-            if escaped:
-                escaped = False
+            if escaped_at == i - 1:
+                escaped_at = -1
             elif c == "\\":
-                escaped = True
+                escaped_at = i
             elif c == '"':
                 quoted = False
         elif c == '"':
@@ -387,7 +390,7 @@ class LeanService:
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float,
-                   nonce: str, line: bytes) -> tuple[bytes, dict]:
+                   nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
         deadline = time.monotonic() + timeout
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
@@ -404,7 +407,8 @@ class LeanService:
             cases = json.loads(cases_text, parse_int=_json_integer)
         except (ValueError, RecursionError):
             cases = None
-        texts = case_texts(cases_text)
+        if texts is None:
+            texts = case_texts(cases_text)
         if not isinstance(cases, list) or len(cases) != count or texts is None or len(texts) != count:
             cases = digests = None  # only a line error can answer it
         else:
@@ -428,8 +432,10 @@ class LeanService:
                 self._recycle = True
 
     def exchange(self, mode: str, cases_text: str, count: int, *, timeout: float | None = None,
-                 budget: dict | None = None) -> tuple[bytes, dict]:
+                 budget: dict | None = None, texts: list[str] | None = None) -> tuple[bytes, dict]:
         """Send one request whose `cases` is `cases_text` (a JSON array of `count` cases).
+        `texts`, when the caller has them, are the case texts `cases_text` joins without
+        whitespace (`case_texts(cases_text)`, which is then not recomputed).
 
         Returns the raw response line and its decoding, whose results are still bound
         (`{"digest", "index", "result"}`). A line error from the service is returned as is
@@ -450,7 +456,7 @@ class LeanService:
                     raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
-                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line)
+                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts)
                 except _Failure as failure:
                     self._failed_attempt(failure, attempt)
                     attempt += 1
@@ -491,7 +497,7 @@ class LeanService:
         size = len(cases_text.encode())
         budget = {"cases": self.batch_cases,
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
-        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget)
+        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
             message = str(response.get("error", ""))
             if message.startswith("ResourceLimit"):
