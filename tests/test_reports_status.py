@@ -2,8 +2,9 @@
 unit and document status and the residual, in Python and Lean alike.
 
 For generated report documents (nesting depth 1 to 3; open assessments, stale,
-missing and fresh carried scoped certificates, acts outside the slice anywhere
-in a kind), `check_document`'s document status is at most every unit's status,
+missing and fresh carried scoped certificates, acts outside the slice and
+unformalised nodes anywhere in a kind, on units with and without content),
+`check_document`'s document status is at most every unit's status,
 every nested result and every scoped check's replayed status; every nested
 result that is not CHECKED appears in the residual lines; the Lean
 `reports-status` case gives the same statuses; and each status is the one the
@@ -18,6 +19,7 @@ import random
 import pytest
 
 from ve.document import check_document, load_document
+from ve.errors import VEError
 from ve.reports import ACTS, STATUS_RANK, verdict_status
 from ve.reports_route import run_case
 
@@ -25,6 +27,7 @@ from test_reports import A1_RECORD, SAFE, contexts, scoped_certificate, write_re
 
 W2_ACTS = ("says", "promised", "believes", "intends", "expects", "denies")
 HOLDERS = ("article", "alice")
+REASONS = ("opaque", "noun_complement")
 STALE = {"environment_id": None, "document_id": "0" * 64}
 
 
@@ -41,10 +44,20 @@ def build(rng, depth, *, assessments):
     return node, ".".join(["1"] * (depth - 1))
 
 
+def leaf(rng, reasons):
+    """`asserted`, or an unformalised kind whose reason is recorded."""
+    if rng.random() < 0.3:
+        reasons.append(rng.choice(REASONS))
+        return ["unformalised", reasons[-1]]
+    return "asserted"
+
+
 def labelled_kind(rng, depth):
-    """A content-free kind of `depth` wrappers, with any W2 act at any level, and
-    the acts outside the slice in it."""
-    kind, acts = "asserted", []
+    """A content-free kind of `depth` wrappers, with any W2 act at any level and
+    unformalised leaves, the acts outside the slice in it and the reasons of its
+    unformalised nodes."""
+    acts, reasons = [], []
+    kind = leaf(rng, reasons)
     for _ in range(depth):
         shape = rng.choice(("attributed", "attributed", "hedged", "causal"))
         if shape == "attributed":
@@ -54,8 +67,18 @@ def labelled_kind(rng, depth):
         elif shape == "hedged":
             kind = ["hedged", "could", kind]
         else:
-            kind = ["causal", "because", "asserted", kind]
-    return kind, acts
+            kind = ["causal", "because", leaf(rng, reasons), kind]
+    return kind, acts, reasons
+
+
+def causal_kind(rng, depth, reasons):
+    """A causal kind of `depth` levels over `asserted` and unformalised leaves,
+    for a unit that carries content."""
+    if depth == 0:
+        return leaf(rng, reasons)
+    inner = causal_kind(rng, depth - 1, reasons)
+    return ["causal", "because", *((inner, leaf(rng, reasons)) if rng.random() < 0.5 else
+                                   (leaf(rng, reasons), inner))]
 
 
 def assessment_nodes(node):
@@ -80,30 +103,43 @@ def kind_of(node):
 
 
 def generate(seed):
-    """(pieces, payloads, scoped variants, expected unit statuses, expected acts).
-    u1 is a report unit without assessments (the graph's leaf); a unit whose tree
-    has an assessment node is `open` over every generated name (3.3)."""
+    """(pieces, payloads, scoped variants, expected unit statuses, expected acts,
+    expected unformalised reasons). u1 is a report unit without assessments (the
+    graph's leaf); a unit whose tree has an assessment node is `open` over every
+    generated name (3.3); a content-free or causal unit with an unformalised node
+    in its kind is UNFORMALISED whatever its meaning."""
     rng = random.Random(seed)
-    units, payloads, acts = [], [], []
+    units, payloads, acts, reasons, unformalised = [], [], [], [], []
     for index in range(rng.randint(1, 4)):
-        if index == 0 or rng.random() < 0.6:
+        shape = "report" if index == 0 else rng.choice(("report", "report", "labelled", "causal"))
+        unit_reasons = []
+        if shape == "report":
             node, path = build(rng, rng.randint(1, 3), assessments=index > 0)
             if rng.random() < 0.3:
                 node = {"negated": node}
             units.append({"kind": kind_of(node), "support": "testimony", "content": node})
             payloads.append({"unit": f"u{index + 1}", "path": path} if path else f"u{index + 1}")
-        else:
-            kind, unit_acts = labelled_kind(rng, rng.randint(1, 3))
+        elif shape == "labelled":
+            kind, unit_acts, unit_reasons = labelled_kind(rng, rng.randint(1, 3))
             units.append({"kind": kind, "meaning": "specified", "support": "testimony"})
             acts += unit_acts
+        else:
+            kind = causal_kind(rng, rng.randint(1, 3), unit_reasons)
+            units.append({"kind": kind, "meaning": "specified", "support": "testimony", "content": {"ast": SAFE}})
+        reasons += unit_reasons
+        unformalised.append(bool(unit_reasons))
     keys = {(n["judgment"], json.dumps(n["content"], sort_keys=True))
-            for u in units if "content" in u for n in assessment_nodes(u["content"])}
+            for u in units if "content" in u and "ast" not in u["content"] for n in assessment_nodes(u["content"])}
     generated = [f"reports__{j}__{k}" for j in ("may", "probably")
                  for k in range(1, 1 + sum(key[0] == j for key in keys))]
     statuses = []
-    for u in units:
-        if "content" not in u:
+    for u, has_unformalised in zip(units, unformalised):
+        if has_unformalised:
+            statuses.append("UNFORMALISED")
+        elif "content" not in u:
             statuses.append("LABELLED")
+        elif "ast" in u["content"]:
+            statuses.append("CHECKED")
         elif assessment_nodes(u["content"]):
             u["meaning"] = {"open": generated}
             statuses.append("OPEN")
@@ -112,7 +148,7 @@ def generate(seed):
             statuses.append("CHECKED")
     pieces = [(f"Unit u{i + 1}.\n", u) for i, u in enumerate(units)]
     variants = [rng.choice(("fresh", "stale", "missing", "none")) for _ in payloads[:rng.randint(0, 2)]]
-    return pieces, payloads, variants, statuses, acts
+    return pieces, payloads, variants, statuses, acts, reasons
 
 
 EXPECTED_SCOPED = {"fresh": ("FOLLOWS", None), "stale": ("UNKNOWN", "envelope"),
@@ -140,7 +176,7 @@ def rank(status):
     return STATUS_RANK[status]
 
 
-def check_properties(path, variants, unit_statuses, acts):
+def check_properties(path, variants, unit_statuses, acts, reasons=()):
     result = check_document(path)
     statuses = result["statuses"]
     document = statuses["document_status"]
@@ -172,10 +208,19 @@ def check_properties(path, variants, unit_statuses, acts):
         assert verdict in lines["scoped_checks"]
     assert residual["scoped_checks"] == len(statuses["scoped"])
     assert residual["unreviewed_acts"] == len([n for n in nested if n["item"] == "act"])
+    unformalised = [n for n in nested if n["item"] == "unformalised"]
+    assert all(n["status"] == "UNFORMALISED" for n in unformalised)
+    assert Counter(n["reason"] for n in unformalised) == Counter(lines["unformalised_kinds"])
+    assert residual["unformalised_kinds"] == len(unformalised)
+    # A nested one's reason is among the coverage's unformalised reasons.
+    reasons_seen = result["coverage"]["unformalised_reasons"]
+    for reason, count in Counter(n["reason"] for n in unformalised if n["path"]).items():
+        assert reasons_seen.get(reason, 0) >= count
     # Each status is the one the generator predicts.
     assert [(v["status"], v.get("detail")) for v in statuses["scoped"]] == [EXPECTED_SCOPED[v] for v in variants]
     assert [u["status"] for u in statuses["units"]] == unit_statuses
     assert sorted(n["act"] for n in nested if n["item"] == "act") == sorted(acts)
+    assert sorted(n["reason"] for n in unformalised) == sorted(reasons)
     expected = min(unit_statuses + ["CHECKED" if v == "fresh" else "UNKNOWN" for v in variants], key=rank)
     assert document == expected
     return result
@@ -218,7 +263,70 @@ def test_stale_by_changed_context(tmp_path):
     assert result["status"] == "UNKNOWN"
 
 
+ADMITTED = ("Unit u1.\n", {"kind": ["attributed", "article", "says", "asserted"], "meaning": "specified",
+                           "support": "testimony", "content": REPORT})
+OPAQUE = ["unformalised", "opaque"]
+UNFORMALISED_KINDS = [
+    # Recheck B: a testimony-backed unit with specified meaning and valid AST
+    # content, an unformalised node on either causal branch at depths 1 to 3.
+    ["causal", "because", "asserted", OPAQUE],
+    ["causal", "because", OPAQUE, "asserted"],
+    ["causal", "because", "asserted", ["causal", "because", "asserted", OPAQUE]],
+    ["causal", "because", ["causal", "because", OPAQUE, "asserted"], "asserted"],
+    ["causal", "because", "asserted", ["causal", "because", ["causal", "because", OPAQUE, "asserted"], "asserted"]],
+    ["causal", "because", ["causal", "because", "asserted", ["causal", "because", "asserted", OPAQUE]], "asserted"],
+]
+UNFORMALISED_PATHS = ["2", "1", "2.2", "1.1", "2.1.1", "1.2.2"]
+
+
+@pytest.mark.parametrize("case", range(len(UNFORMALISED_KINDS)))
+def test_nested_unformalised_kind_reaches_status_and_residual(tmp_path, case):
+    """Recheck B: with an admitted report beside it, a unit whose kind nests
+    `["unformalised", "opaque"]` under causal wrappers gave CHECKED, `nested: []`,
+    a CHECKED document and no unformalised reason or residual entry, in Python and
+    Lean, while the same marker at the root is rejected unless the meaning is
+    unformalised. The node is now an UNFORMALISED nested result with its reason."""
+    piece = ("Unit u2.\n", {"kind": UNFORMALISED_KINDS[case], "meaning": "specified", "support": "testimony",
+                            "content": {"ast": SAFE}})
+    result = check_properties(write(tmp_path, [ADMITTED, piece], ["u1"], ["fresh"]), ["fresh"],
+                              ["CHECKED", "UNFORMALISED"], [], ["opaque"])
+    assert result["status"] == "UNFORMALISED"
+    assert result["statuses"]["units"][1]["nested"] == [
+        {"item": "unformalised", "path": UNFORMALISED_PATHS[case], "reason": "opaque", "status": "UNFORMALISED"}]
+    assert result["coverage"]["residual_lines"]["unformalised_kinds"] == {"opaque": 1}
+    assert result["coverage"]["unformalised_reasons"] == {"opaque": 1}
+    assert result["coverage"]["bytes_by_status"]["UNFORMALISED"] == len(piece[0])
+
+
+def test_unformalised_kind_without_content_and_at_the_root(tmp_path):
+    """The same class on content-free quoted and hedged kinds (LABELLED before)
+    and at the root, where W2 already needs an unformalised meaning: every
+    unformalised node, at any depth, is a nested result and a residual entry, its
+    reason counted once per unit part."""
+    pieces = [ADMITTED,
+              ("Unit u2.\n", {"kind": ["attributed", "article", "says", ["unformalised", "noun_complement"]],
+                              "meaning": "specified", "support": "testimony"}),
+              ("Unit u3.\n", {"kind": ["hedged", "could", ["attributed", "alice", "promised", OPAQUE]],
+                              "meaning": "specified", "support": "testimony"}),
+              ("Unit u4.\n", {"kind": OPAQUE, "meaning": {"unformalised": "opaque"}, "support": "none"})]
+    result = check_properties(write(tmp_path, pieces, [], []), [],
+                              ["CHECKED", "UNFORMALISED", "UNFORMALISED", "UNFORMALISED"], ["promised"],
+                              ["noun_complement", "opaque", "opaque"])
+    assert result["status"] == "UNFORMALISED"
+    assert [[(n["item"], n["path"]) for n in u["nested"]] for u in result["statuses"]["units"]] == \
+        [[], [("unformalised", "1")], [("act", "1"), ("unformalised", "1.1")], [("unformalised", "")]]
+    assert result["coverage"]["residual_lines"]["unformalised_kinds"] == {"noun_complement": 1, "opaque": 2}
+    assert result["coverage"]["unformalised_reasons"] == {"noun_complement": 1, "opaque": 2}
+
+
+def test_explicit_checked_status_contradicts_a_nested_unformalised_kind(tmp_path):
+    piece = ("Unit u2.\n", {"kind": UNFORMALISED_KINDS[0], "meaning": "specified", "support": "testimony",
+                            "content": {"ast": SAFE}, "status": "CHECKED"})
+    with pytest.raises(VEError, match="unit status contradicts"):
+        load_document(write_report_document(tmp_path, [ADMITTED, piece]))
+
+
 @pytest.mark.parametrize("seed", range(60))
 def test_generated_documents(tmp_path, seed):
-    pieces, payloads, variants, statuses, acts = generate(seed)
-    check_properties(write(tmp_path, pieces, payloads, variants), variants, statuses, acts)
+    pieces, payloads, variants, statuses, acts, reasons = generate(seed)
+    check_properties(write(tmp_path, pieces, payloads, variants), variants, statuses, acts, reasons)
