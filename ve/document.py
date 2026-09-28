@@ -385,8 +385,8 @@ def check_document(path):
 
 def _check_document(path):
     doc = load_document(path)
-    joint_pending = (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
-                     or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN")
+    joint = doc.get("discourse", {}).get("joint")
+    joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
@@ -430,6 +430,9 @@ def _check_document(path):
                                              for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
         result["admission"] = admit_document(env, admission)
+        if joint is not None:
+            from .discourse import check_joint_extensions
+            check_joint_extensions(doc["meta"], result["admission"]["report"], joint)
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
@@ -448,12 +451,17 @@ def _check_document(path):
             f"ve-report-{env.identity_version}\n",
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
-    assertions.extend(_assertion_disjunctions(env, active))
+    if joint is not None and joint["constraints"]:
+        from .discourse import joint_assertion
+        joint_formula = joint_assertion(env, active, joint)
+        if joint_formula is not None:
+            assertions.append(joint_formula)
+    else:
+        assertions.extend(_assertion_disjunctions(env, active))
     if _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
-    elif (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
-          or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN"):
-        result["premises"] = {"status": "UNKNOWN", "reason": "correlated reading premises require a joint choice"}
+    elif joint_pending or (joint is not None and joint["constraints"] and joint_formula is None):
+        result["premises"] = {"status": "UNKNOWN", "reason": "joint choice enumeration or elaboration pending"}
     else:
         result["premises"] = premise_status(env, assertions)
         if (result["premises"]["status"] != "INCONSISTENT"

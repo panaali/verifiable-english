@@ -4,7 +4,7 @@ import json
 import pytest
 
 from tests.test_views import vocabulary
-from ve.discourse import _joint, _same_witness
+from ve.discourse import _joint, _same_witness, check_joint_extensions, joint_assertion
 from ve.document import check_document, load_document, render_document
 from ve.errors import VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
@@ -162,6 +162,60 @@ def test_joint_verdict_uses_only_compatible_choices():
         {"kind": "requires", "a": ["r1", 1, "a"], "b": ["r2", 1, "a"]},
         {"kind": "requires", "a": ["r1", 1, "b"], "b": ["r2", 1, "b"]}]}, sets)
     assert check_readings(env, sets, p, joint_choices=joint)["verdict"] == "SOME"
+
+
+def test_joint_premise_and_report_extension():
+    data = _environment()
+    data["profiles"].remove("ve.discourse@1")
+    env = Environment(data)
+    p = ["unary", "active", ["const", "api"]]
+    q = ["unary", "reviewed", ["const", "api"]]
+    sets = [{"id": key, "version": 1, "status": "open", "readings": [
+        {"id": "a", "kind": "asserted", "content": p},
+        {"id": "b", "kind": "asserted", "content": q}]}
+        for key in ("rs5", "rs6")]
+    joint = _joint({"constraints": [
+        {"kind": "excludes", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "b"]},
+        {"kind": "excludes", "a": ["rs5", 1, "b"], "b": ["rs6", 1, "a"]}]}, sets)
+    assert joint["count"] == 2
+    assert joint_assertion(env, sets, joint) is not None
+    report = {"root": {"name": "root"}, "assumptions": [
+        {"label": "readings:rs5@1:0"}, {"label": "readings:rs6@1:0"}]}
+    check_joint_extensions({}, report, joint)
+    report["assumptions"][1]["label"] = "readings:rs6@1:1"
+    with pytest.raises(VEError, match="InvalidCompatibility: report root"):
+        check_joint_extensions({}, report, joint)
+    report["assumptions"] = []
+    with pytest.raises(VEError, match="InvalidCompatibility: citation 2.1"):
+        check_joint_extensions({"lemmas": [{"name": "2.1", "leaves": [
+            {"label": "readings:rs5@1:0"}, {"label": "readings:rs6@1:1"}]}]}, report, joint)
+
+
+def test_correlated_document_reaches_admission(tmp_path):
+    source, front = _sample(tmp_path)
+    data = _environment()
+    data["profiles"].remove("ve.discourse@1")
+    env = Environment(data)
+
+    def reading_set(uid, rid, ast):
+        return {"id": rid, "unit": uid, "version": 1, "status": "open", "readings": [
+            {"id": "a", "kind": "asserted", "content": ast,
+             "meaning_id": meaning_id(env, formula_from_data(env, ast)),
+             "admission": {"who": "author", "why": "recorded choice",
+                           "distinguishing_models": {}}}]}
+
+    front["reading_sets"] = [
+        reading_set("u1", "rs5", front["units"][0]["content"]["ast"]),
+        reading_set("u2", "rs6", front["units"][1]["content"]["ast"])]
+    front["discourse"]["constraints"] = [
+        {"kind": "requires", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "a"]}]
+    front["graph"] = {"root": "root", "nodes": [
+        {"name": "root", "ast": front["units"][1]["content"]["ast"],
+         "label": "readings:rs6@1:0"}]}
+    result = check_document(_write(tmp_path, front, source))
+    assert result["admission"]["admitted"] is True
+    assert result["joint_choices"]["count"] == 1
+    assert result["premises"]["status"] == "model"
 
 
 def test_group_propagates_status_and_rejects_independent_fragment(tmp_path):
