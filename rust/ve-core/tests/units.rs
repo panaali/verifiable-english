@@ -75,3 +75,19 @@ fn date_and_claimed_q_correspondence() {
             .contains("Q differs")
     );
 }
+
+#[test]
+fn user_sort_counting_expansion_is_checked_and_evaluated() {
+    let mut input = case(json!(["exists", "item", ["unary", "p", ["var", 0]]]));
+    input["environment"]["vocabulary"]["sorts"] = json!({"item":{"description":"an item"}});
+    input["environment"]["vocabulary"]["predicates"] =
+        json!({"p":{"arguments":["item"],"description":"P"}});
+    input["model"] = json!({"complete":true,"domains":{"item":["e1"]},
+        "constants":{},"relations":{"p":[["e1"]]}});
+    let result = quantity_case(&input).unwrap();
+    assert_eq!(result["value"], true);
+    assert_eq!(
+        result["Q"],
+        json!(["exists", "item", ["unary", "p", ["var", 0]]])
+    );
+}
