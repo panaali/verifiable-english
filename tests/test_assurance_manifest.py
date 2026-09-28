@@ -351,6 +351,17 @@ FAULTS = {
     "ok-rows-exit-1": "print(json.dumps([{'id': c['id'], 'status': 'ok'} for c in cases])); sys.exit(1)",
     "error-rows-exit-0": "print(json.dumps([{'id': c['id'], 'status': 'error'} for c in cases]))",
     "hang": "time.sleep(30)",
+    # Rows that are JSON objects but not an answer (review reproducer: exit 0 with `[{}]`).
+    "empty-row": "print(json.dumps([{}]))",
+    "no-status": "print(json.dumps([{'id': c['id']} for c in cases]))",
+    "unknown-status": "print(json.dumps([{'id': c['id'], 'status': 'maybe'} for c in cases]))",
+    "ok-without-id": "print(json.dumps([{'status': 'ok', 'lemmas': []} for c in cases]))",
+    "null-id": "print(json.dumps([{'id': None, 'status': 'error', 'error': 'x'} for c in cases])); sys.exit(1)",
+    "error-without-message": "print(json.dumps([{'id': c['id'], 'status': 'error'} for c in cases])); sys.exit(1)",
+    "wrong-case-index": "print(json.dumps([{'case_index': 7, 'status': 'error', 'error': 'x'} for c in cases]));"
+                        " sys.exit(1)",
+    "ok-without-fields": "print(json.dumps([{'id': c['id'], 'status': 'ok'} for c in cases]))",
+    "ill-typed-field": "print(json.dumps([{'id': c['id'], 'status': 'ok', 'lemmas': 'all'} for c in cases]))",
 }
 
 
@@ -358,8 +369,22 @@ FAULTS = {
 def test_backend_faults_are_checker_unavailable(tmp_path, fault):
     fake = _fake_lean(tmp_path, FAULTS[fault])
     with pytest.raises(CheckerUnavailable) as caught:
-        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=2)
+        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=2,
+                         fields={"lemmas": list})
     assert caught.value.backend == "lean" and caught.value.operation == "bundle.check"
+
+
+def test_row_schema():
+    case, problem = {"id": "c"}, lean_backend.row_problem
+    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": bool}) is None
+    assert problem(case, {"id": "c", "status": "error", "error": "no", "valid": False}, 0, {"valid": bool}) is None
+    assert problem(case, {"case_index": 0, "status": "error", "error": "no"}, 0, {}) is None
+    assert problem(case, {"id": "c", "status": "ok", "valid": 1}, 0, {"valid": bool})
+    assert problem(case, {"id": "c", "status": "ok", "background": True}, 0, {"background": int})
+    assert problem(case, {"id": "c", "status": "ok", "background": 2}, 0, {"background": int}) is None
+    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": bool, "background": int})
+    assert problem(case, {"status": "ok"}, 0, {})
+    assert problem(case, [], 0, {})
 
 
 def test_missing_backend_is_checker_unavailable(tmp_path):
@@ -409,6 +434,21 @@ def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
         check_bundle(_bundle(), lean_executable=rejecting)
     if (LEAN_BIN / "ve_conformance").exists():
         assert check_bundle(_bundle(), lean_executable=LEAN_BIN / "ve_conformance")["lean_outcome"] == "accepted"
+
+
+@pytest.mark.parametrize("fault", ["empty-row", "no-status", "ok-without-fields", "ill-typed-field",
+                                   "error-without-message"])
+def test_malformed_rows_never_become_a_rejection(tmp_path, fault):
+    """Review reproducer: `[{}]` with exit 0 was InvalidInput for bundles and `rejected` for arguments."""
+    from ve import check_argument
+    from ve.argument_fixtures import merged_vocabulary_example
+    from ve.bundle import check_bundle
+    fake = _fake_lean(tmp_path, FAULTS[fault])
+    with pytest.raises(CheckerUnavailable):
+        check_bundle(_bundle(), lean_executable=fake)
+    result = check_argument(merged_vocabulary_example(), lean_executable=fake)
+    assert result.status == "Checked" and not result.lean_checked
+    assert result.lean_outcome == "unavailable", result.lean_detail
 
 
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
