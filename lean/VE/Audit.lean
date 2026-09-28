@@ -1045,6 +1045,11 @@ import VE.Discourse.English
 #print axioms VE.Discourse.elaborate_congr
 #print axioms VE.Discourse.elaborate_ok
 #print axioms VE.Discourse.ill_typed_target
+#print axioms VE.Discourse.ill_typed_found
+#print axioms VE.Discourse.ill_typed_target_single
+#print axioms VE.Discourse.ill_culprit
+#print axioms VE.Discourse.recorded_mention
+#print axioms VE.Discourse.culprit_mem
 #print axioms VE.Discourse.isClaim_ok
 #print axioms VE.Discourse.isW_lt
 #print axioms VE.Discourse.isW_wordAt

@@ -288,7 +288,10 @@ def test_eta_nested_mentions(lean):
     mismatch = eta(restriction=["binary", "manager_of", ["var", 0], ["const", "bob"]], names=NAMES)
     mismatch["discourse"]["names"] = ETA_NAMES
     assert unit_result(resolve(mismatch, env(PERSON)), "u2") == "ManifestMismatch: mentions.m2.restriction"
-    assert unit_result(resolve(eta(target="api"), env(PERSON)), "u2") == "IllTypedTarget: m2: binder:0"
+    # Fable B1: the diagnostic names the slot whose target does not fit, not the enclosing one
+    assert unit_result(resolve(eta(target="api"), env(PERSON)), "u2") == "IllTypedTarget: m1: api"
+    ready_service = env({"reviewed": ["person"], "ready": ["service"]})
+    assert unit_result(resolve(eta(), ready_service), "u2") == "IllTypedTarget: m2: binder:0"
     assert unit_result(resolve(eta(omit_possessive=True), env(PERSON)), "u2") == "UnrecordedSlot: u2: [0, 1)"
 
 
