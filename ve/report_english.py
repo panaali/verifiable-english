@@ -33,7 +33,7 @@ def _sentence(reports, node):
         name = holder.verbalisation or holder.description or value["holder"]
         tense = reports.contexts[value["context"]]["tense"]
         verb = _VERBS[value["act"]][("present", "past", "perfect").index(tense)]
-        if value["literal"] is not None:
+        if value.get("literal") is not None:
             if value["act"] != "says":
                 raise VEError("Literal wording is admitted only for saying")
             return name + " " + verb + ', "' + value["literal"] + '"'

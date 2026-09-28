@@ -176,8 +176,8 @@ mod reports_tests {
             "language":"ve.core@0.2",
             "profiles":["documents@1","relational-fol@0","reports@0"],
             "spec_revision":"ve-v0.2-expand2-2026-09-25",
-            "reports":{"holders":["person","text"],"evidence":"evidence"},
             "vocabulary":{
+                "reports":{"holders":["person","text"],"evidence":"evidence"},
                 "sorts":{"person":{"description":"person"},"text":{"description":"text"},
                          "evidence":{"description":"evidence"}},
                 "predicates":{"safe":{"arguments":["person"],"description":"safe"},
