@@ -386,7 +386,11 @@ The surface kind reads the wording and each act phrase through **one normalisati
 `surface_words`, Lean's `surfaceWords`): the six ASCII whitespace characters of Python's `string.whitespace` (space,
 `\t`, `\n`, `\r`, `\x0b`, `\x0c`) separate words, runs collapse to one space and none leads or trails; only `A`-`Z`
 fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), other control characters
-(`\x1c`-`\x1f`, `\x85`) and non-ASCII letters, is an ordinary character. A sentence is a question when its normalised
+(`\x1c`-`\x1f`, `\x85`) and non-ASCII letters, is an ordinary character. Every other reader of a wording keeps that
+rule: the source wrapper trims a span and a fence, and the speech parser its wording, of those six ASCII whitespace
+characters only (Python's `wording_text`), and the parser matches act phrases, constant names and glosses folding only
+`A`-`Z` (`ascii_fold`), so a wording the parser reads as a command or question has that surface kind and no path
+(original kind, inline or fenced form) sees another sentence. A sentence is a question when its normalised
 form ends with `?` or starts with an interrogative word (not "do not "); a binding when it starts "in this task, " or
 "this document is task "; an instruction when it starts "do not ", "prove that ", "command " or the first word after
 `{0}` of a regulated act phrase as a whole word: the wording ends there or continues with a space or an ASCII
@@ -1701,6 +1705,7 @@ statements of section 8 are unchanged.
 | B, quoted-question meaning ids: Python expected no `meaning_id` on a quoted-question unit, Lean regenerated the question object's | 3.5: a quoted question has its question object's meaning id in both cores. |
 | A, unary imperatives: with the act "{0} click", the parser read "Click." as an instruction, but both classifiers required a space after the verb, so both cores accepted an asserted choice on it and rejected the instruction choice, fenced and inline | 3.2: an act's verb is matched as a whole word, ending the wording or followed by a space or ASCII punctuation other than `'`, `-`, `_`, in both cores; a differential checks that every wording the parser reads as a command or question has that surface kind. |
 | A, fenced source sentence: with original kind `asserted`, source "Is atlas reviewed?", fence "Atlas is reviewed." and a signed asserted choice, the source wrapper checked the fence text and supplied an asserted premise, where the inline document was `InvalidInput: choice kind` | 3.2: the choice is checked against the unit's span in both forms; the fence is content the choice replaces. |
+| B, Unicode trimming by original kind: "Atlas is reviewed?" followed by U+00A0 under a signed asserted choice passed both cores and the source wrapper for original kind `asserted`, but the wrapper Unicode-stripped the wording of a `question` or `instruction` unit before the core's check and rejected it | 3.2: every reader of a wording (span, fence, speech parser) trims only ASCII whitespace and folds only `A`-`Z`, and every unit with a signed choice passes its wording to the core, so the outcome is the core's on the raw wording whatever the original kind or form. |
 
 ## Change log
 

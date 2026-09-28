@@ -1410,6 +1410,41 @@ def test_unary_imperative_is_an_instruction_in_both_cores(lean, tmp_path):
         assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok", wording
 
 
+def test_every_parsed_speech_act_has_its_surface_kind(lean):
+    # The class behind speech-acts6 A1 and B: a wording the speech parser reads as a command or question has that
+    # surface kind, so no signed choice can contradict the reading the parser gives it.  Over unary, binary and
+    # multi-word acts, conditions, definites, and whitespace, case and Unicode variants, every parsed wording's
+    # kind is its surface kind, in Python and (through the choice check) in Lean.
+    from ve.speech_acts import surface_kind
+    wordings = ["Click.", "Click, if atlas is reviewed.", "Do not click.", "Click check.", "Do not click check.",
+                "Open the desk.", "Open the writing desk.", "Do not share the token.", "Is atlas reviewed?",
+                "Is it the case that atlas is reviewed?", "Which one of atlas and beacon is reviewed?",
+                "Which of atlas, beacon are reviewed?", "Atlas is reviewed."]
+    variants = set()
+    for base in wordings:
+        variants |= {base, base.lower(), base.upper()}
+        for c in _SPACES + _NOT_SPACES + ["\u017f", "\u212a"]:
+            variants |= {c + base, base + c, base.replace(" ", c, 1), base.replace("s", c, 1),
+                         base.replace("k", c, 1)}
+    cases, expected = [], []
+    for env in (F0(), _unary_click_env()):
+        env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+        E = Environment(env)
+        for wording in sorted(variants):
+            try:
+                _, kind = parse_speech(E, wording, E.speech_acts)
+            except VEError:
+                continue
+            assert surface_kind(E, wording) == kind, wording
+            other = "asserted" if kind != "asserted" else "question"
+            content = {"ast": U("reviewed", "atlas")} if other == "asserted" else polar(U("reviewed", "atlas"))
+            _, case = _choice_case(env, wording, other, content)
+            cases.append(case)
+            expected.append("InvalidInput: choice kind")
+    assert len(cases) > 40
+    assert [_lean_outcome(r) for r in run(cases)] == expected
+
+
 def _source_outcome(env, span, units, fences=None, sets=()):
     meta = {"format": "ve-document@2", "environment": env, "units": units, "reading_sets": list(sets)}
     return _outcome(lambda: SpeechSource(meta, span.encode(), fences or {}))
@@ -1448,6 +1483,44 @@ def test_fence_never_replaces_the_source_sentence_in_the_choice_check(lean):
     assert _source_outcome(env, span, [fenced], {"u": "Atlas is reviewed.\n"},
                            [reading_set("u", 1, "authored", "asserted", {"ast": U("reviewed", "atlas")})]) == \
         "InvalidInput: choice kind"
+
+
+def test_source_wording_is_one_ascii_trim_whatever_the_original_kind(lean, tmp_path):
+    # Regression (speech-acts6 B): source "Atlas is reviewed? " with a signed asserted choice passes both
+    # cores (U+00A0 is an ordinary character, 3.2), and the source wrapper accepted it for original kind
+    # `asserted` but rejected it for `question` or `instruction`, whose wording it had Unicode-stripped before
+    # the core's check.  Every reader of a wording trims only ASCII whitespace, and every chosen unit carries its
+    # wording to the core, so the outcome is the core's on the raw wording, whatever the original kind or form.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    bases = ["Atlas is reviewed?", "Is atlas reviewed?", "Atlas is reviewed.", "Click check.", "Is beacon reviewed?",
+             "Click token1."]
+    spans = {b + "\n" for b in bases}
+    for c in _SPACES + _NOT_SPACES:
+        spans |= {c + b + "\n" for b in bases} | {b + c + "\n" for b in bases}
+    cases, python = [], []
+    for span in sorted(spans):
+        for choice_kind, choice_content in _CHOICES:
+            sets = [reading_set("u", 1, "authored", choice_kind, choice_content)]
+            outcomes = set()
+            for original, original_content in _ORIGINALS.items():
+                base = {**unit("u", 0, original, original_content), "span": [0, len(span.encode())]}
+                outcomes.add(_source_outcome(env, span, [base], sets=sets))
+                fenced = {**base, "content": {"fence": "u"}, "surface": "english"}
+                outcomes.add(_source_outcome(env, span, [fenced], {"u": span}, sets))
+            wording = span.strip(" \t\n\r\x0b\x0c")
+            document, case = _choice_case(env, wording, choice_kind, choice_content)
+            assert outcomes == {_outcome(lambda: core(env, document))}, (span, choice_kind, outcomes)
+            cases.append(case)
+            python.append(outcomes.pop())
+    # Lean reads no English: it agrees on the choice kind, and Python alone also parses a chosen command or question.
+    kind_error = "InvalidInput: choice kind"
+    assert [_lean_outcome(r) == kind_error for r in run(cases)] == [p == kind_error for p in python]
+    # The reproducer: accepted whatever the original kind, as by both cores.
+    span = "Atlas is reviewed?\u00a0\n"
+    for original, original_content in _ORIGINALS.items():
+        base = {**unit("u", 0, original, original_content), "span": [0, len(span.encode())]}
+        assert _source_outcome(env, span, [base], sets=[reading_set("u", 1, "authored", *_CHOICES[0])]) == "ok"
 
 
 def test_answer_metadata_types_and_unit_meaning_id(lean):
