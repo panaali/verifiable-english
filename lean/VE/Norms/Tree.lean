@@ -266,6 +266,36 @@ def ruleName (s : String) : Bool :=
     | c :: cs => ('a' ≤ c && c ≤ 'z') && cs.all (fun d => ('a' ≤ d && d ≤ 'z') || d.isDigit || d == '-')
     | [] => false
 
+/-- The act-identity and permission-dual checks of 3.1 over the regulated
+declarations, in the order Python's `Environment` runs them after decoding
+every predicate. The norms decoder runs them with the declarations, so they
+precede every rule check. -/
+def actChecks (regulated : List Regulated) : Except String Unit := do
+  -- Act identity (sorts, canonical act, role): at most one predicate per role.
+  let keyed := regulated.filter (·.role != .plain)
+  let mut seen : List (List String × Option String × Bool) := []
+  for r in keyed do
+    let key := (r.sorts, r.act, r.role == .permission)
+    if seen.contains key then
+      throw s!"DuplicateActRole: {if r.role == .permission then "permission" else "obligation"}, {r.act.getD ""}"
+    seen := seen ++ [key]
+  let mut linked : List String := []
+  for r in regulated do
+    if r.role != .obligation then continue
+    let expected := regulated.find? (fun m => m.role == .permission && m.sorts == r.sorts && m.act == r.act)
+    match r.permission with
+    | none =>
+      if let some m := expected then throw s!"MissingPermissionDual: {r.name}, {m.name}"
+    | some pm =>
+      match regulated.find? (·.name == pm) with
+      | none => throw s!"MissingPermissionDual: {r.name}, {pm}"
+      | some m =>
+        unless m.role == .permission do throw s!"MissingPermissionDual: {r.name}, {pm}"
+        unless m.sorts == r.sorts do throw s!"DualSortMismatch: {r.name}, {pm}"
+        unless m.act == r.act do throw s!"DualActMismatch: {r.name}, {pm}"
+        if linked.contains pm then throw s!"DuplicateActRole: obligation, {r.act.getD ""}"
+        linked := linked ++ [pm]
+
 /-- Declaration checks (3.1), 4.1, guard/carve-out typing and both DAG checks,
 with the shared diagnostics of 11.1, in the order Python `ve/environment.py`
 (declarations) and `ve/norms.py` `NormDocument` (rules) report them. -/
@@ -287,30 +317,7 @@ def check (D : Doc) : Except String Unit := do
     | _, _ => pure ()
     if r.role != .obligation && r.permission.isSome then
       throw s!"InvalidInput: invalid regulated fields for {r.name}"
-  -- Act identity (sorts, canonical act, role): at most one predicate per role.
-  let keyed := T.regulated.filter (·.role != .plain)
-  let mut seen : List (List String × Option String × Bool) := []
-  for r in keyed do
-    let key := (r.sorts, r.act, r.role == .permission)
-    if seen.contains key then
-      throw s!"DuplicateActRole: {if r.role == .permission then "permission" else "obligation"}, {r.act.getD ""}"
-    seen := seen ++ [key]
-  let mut linked : List String := []
-  for r in T.regulated do
-    if r.role != .obligation then continue
-    let expected := T.regulated.find? (fun m => m.role == .permission && m.sorts == r.sorts && m.act == r.act)
-    match r.permission with
-    | none =>
-      if let some m := expected then throw s!"MissingPermissionDual: {r.name}, {m.name}"
-    | some pm =>
-      match T.regulated.find? (·.name == pm) with
-      | none => throw s!"MissingPermissionDual: {r.name}, {pm}"
-      | some m =>
-        unless m.role == .permission do throw s!"MissingPermissionDual: {r.name}, {pm}"
-        unless m.sorts == r.sorts do throw s!"DualSortMismatch: {r.name}, {pm}"
-        unless m.act == r.act do throw s!"DualActMismatch: {r.name}, {pm}"
-        if linked.contains pm then throw s!"DuplicateActRole: obligation, {r.act.getD ""}"
-        linked := linked ++ [pm]
+  actChecks T.regulated
   for d in T.definitions do
     unless D.E.predicates d.name == some d.args do throw s!"UnknownSymbol: defined predicate {d.name}"
     unless d.args.length == 1 || d.args.length == 2 do

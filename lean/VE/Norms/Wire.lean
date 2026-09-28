@@ -142,6 +142,7 @@ def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment
       let args ← strings (← entry.getObjVal? "arguments")
       some <$> decodeRegulated p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
+  actChecks regs
   pure ⟨rv, regs, e.profiles, environment⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.

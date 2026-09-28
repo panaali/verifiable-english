@@ -216,6 +216,49 @@ def soft2_reproducers():
         "SOFT_INVALID_INPUT"
 
 
+def _regulated(raw, name, **fields):
+    reg = raw["vocabulary"]["predicates"][name]["regulated"]
+    for key, value in fields.items():
+        if value is _DELETE:
+            del reg[key]
+        else:
+            reg[key] = value
+    return raw
+
+
+def soft3_reproducers():
+    """The soft3 loop findings and the other instances of their classes."""
+    long_factor = {"decided_by": "assistant", "sufficient": [], "necessary": [],
+                   "factors": ["x" * 201]}
+    # W1's act-role and permission-dual checks are declaration checks (2.3): they
+    # precede the profile phase and every rule.
+    later = {
+        "profiles": lambda raw: (raw["profiles"].reverse(), [])[1],
+        "factors": lambda raw: [norm("a", "x_required", True, mode="default",
+                                     exception=long_factor)],
+        "rank": lambda raw: [norm("a", "x_required", True, rank="z")],
+    }
+    duals = {
+        "missing-dual": lambda raw: _regulated(raw, "x_required", permission="missing"),
+        "dual-not-permission": lambda raw: _declare(
+            _regulated(raw, "x_required", permission="w"), w=_predicate("w")),
+        "dual-sort": lambda raw: _declare(
+            _regulated(raw, "x_required", permission="y_permitted"),
+            y_permitted=_predicate("y_permitted", arguments=["user"], regulated={
+                "role": "permission", "default": "allow", "act": "{0} do x"})),
+        "dual-act": lambda raw: _regulated(raw, "x_permitted", act="{0} do y"),
+        "undeclared-dual": lambda raw: _regulated(raw, "x_required", permission=_DELETE),
+        "act-role": lambda raw: _declare(raw, y_required=_predicate("y_required", regulated={
+            "role": "obligation", "default": "deny", "act": "{0} do x", "permission": "x_permitted"})),
+        "permission-act-role": lambda raw: _declare(raw, y_permitted=_predicate("y_permitted", regulated={
+            "role": "permission", "default": "deny", "act": "{0} do x"})),
+    }
+    for fault, declare in duals.items():
+        for after, rules in later.items():
+            raw = declare(env())
+            yield f"soft3-{fault}-before-{after}", raw, rules(raw), "SOFT_INVALID_INPUT"
+
+
 # The multi-fault generator. A valid base source, then faults each tagged with its
 # position in the validation table (8) and its code. Faults in one group touch the
 # same field and are never combined; otherwise faults are independent, so the
@@ -275,6 +318,10 @@ def multi_faults():
         ("instruction-type", "q-instruction", (2, 2), "SOFT_INVALID_INPUT",
          _set(P + ("q", "instruction_of"), 3)),
         ("malformed-predicate", "w", (2, 3), "SOFT_INVALID_INPUT", _set(P + ("w",), False)),
+        ("missing-dual", "x-dual", (2, 3), "SOFT_INVALID_INPUT",
+         _set(P + ("x_required", "regulated", "permission"), "missing")),
+        ("act-role", "y", (2, 3), "SOFT_INVALID_INPUT", _set(P + ("y_permitted",), _predicate(
+            "y_permitted", regulated={"role": "permission", "default": "deny", "act": "{0} do x"}))),
         ("block-field", "block", (2, 4), "SOFT_INVALID_BLOCK", _set(S + ("extra",), 1)),
         ("parties-shape", "parties", (2, 5), "SOFT_INVALID_ARRAY", _set(S + ("parties",), "p")),
         ("party-name", "parties", (2, 7), "SOFT_INVALID_NAME", _set(S + ("parties",), ["p", "Q!"])),
@@ -523,7 +570,8 @@ def generated_invalid_exceptions():
 
 def expected_rejections():
     """Named sources whose first diagnostic the validation table (8) fixes."""
-    return [*loop_recheck_reproducers(), *soft2_reproducers(), *multi_fault_cases()]
+    return [*loop_recheck_reproducers(), *soft2_reproducers(), *soft3_reproducers(),
+            *multi_fault_cases()]
 
 
 def compare_rejected():
