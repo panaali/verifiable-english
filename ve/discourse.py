@@ -2,7 +2,8 @@
 
 The frozen environment and document routes receive only the base profile list.
 Every reference surface in a unit's source is a slot to account for: a unit
-whose content is admitted must record each one (docs/spec/discourse.md 3.4).
+whose content or reading set is admitted must record each one, and its content
+and readings must be the elaboration (docs/spec/discourse.md 3.4).
 A recorded pronoun, demonstrative or ordinal pair is resolved here: its
 accessible candidates are read from the source (registrations in scope, no
 competing quantifier of the candidate's sort, the coordinations an ordinal
@@ -381,9 +382,11 @@ def _same_target(recorded, candidate):
     return all(recorded.get(k) == candidate.get(k) for k in ("kind", "name", "pair"))
 
 
-def _resolve_unit(doc, unit, rows, names, anchors):
+def _resolve_unit(doc, unit, rows, names, anchors, readings=()):
     """Resolve a unit's recorded pronouns, demonstratives and ordinal pairs together: every
-    accessible assignment is a competitor, a typed expansion is the only filter (4.3)."""
+    accessible assignment is a competitor, a typed expansion is the only filter (4.3). The
+    unit's recorded meaning, its content and every reading of its active set, must be the
+    expansion's formula."""
     displays = {n["constant"]: n["display"] for n in names}
     candidates = [_accessible(doc, unit, m, names, anchors) for m in rows]
     typed = []
@@ -410,7 +413,8 @@ def _resolve_unit(doc, unit, rows, names, anchors):
         if a is None:
             raise VEError(f"InaccessibleTarget: {m['id']}: {m['target'].get('name')}")
     expanded, formula = typed[0][1]
-    if unit["content"] is not None and formula != unit["content"]:
+    recorded = [unit["content"]] if unit["content"] is not None else []
+    if any(meaning != formula for meaning in [*recorded, *readings]):
         raise VEError(f"ManifestMismatch: bound.{unit['id']}")
     return expanded
 
@@ -731,8 +735,11 @@ def validate_discourse(doc):
     for unit in doc["units"]:
         rows = by_unit.get(unit["id"], [])
         producing = [m for m in rows if m["form"] not in _LOCATION]
-        has_content = unit["content"] is not None
-        if has_content and unit["id"] not in grouped:
+        # a unit's meaning is its content or the readings of its active set (W2); either way
+        # its reference surfaces are slots, so a reading set is never a way around them
+        readings = [r["content"] for s in active if s["unit"] == unit["id"] for r in s["readings"]]
+        has_meaning = unit["content"] is not None or any(s["unit"] == unit["id"] for s in active)
+        if has_meaning and unit["id"] not in grouped:
             gap = _unrecorded(doc, unit, rows, displays)
             if gap is not None:
                 raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
@@ -740,7 +747,7 @@ def validate_discourse(doc):
             continue
         unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
         if unsupported:
-            if has_content:
+            if has_meaning:
                 raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
                               f"is not implemented in Python ({unit['id']})")
             continue
@@ -749,14 +756,15 @@ def validate_discourse(doc):
                 raise VEError(f"MentionNotSlot: {m['id']}")
         entity = [m for m in producing if m["target"]["kind"] == "entity"]
         if len(entity) != len(producing):
-            if has_content:
+            if has_meaning:
                 raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
                               f"is not implemented in Python ({unit['id']})")
             continue
-        presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names, anchors)
+        presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names, anchors,
+                                     readings)
         for m in producing:
             statuses[m["id"]] = "resolved"
-        if has_content:
+        if has_meaning:
             presentations[unit["id"]] = presentation
     references = [{"mention": mid, "unit": m["unit"], "form": m["form"], "target": m["target"],
                    "status": statuses[mid]} for mid, m in mentions.items()]

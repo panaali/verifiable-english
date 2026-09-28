@@ -70,14 +70,18 @@ surface (`discourseSourceSurface`).
 
 ## What the route checks, beyond the statement's letter
 
-- **Slots are discovered from the source** (3.4): every content unit whose text has a derivation with a slot or
-  an unplaced reference word (a pronoun, possessive, `they`, `former`/`latter`, `such`, a demonstrative before a
-  sort, `the` before a unary noun, a citation, a document name) is validated, so an unrecorded reference is
-  `UnrecordedSlot`, never unchecked content.
+- **Slots are discovered from the source** (3.4): every unit with content or an active reading set (its readings
+  are its meaning) whose text has a derivation with a slot or an unplaced reference word (a pronoun, possessive,
+  `they`, `former`/`latter`, `such`, a demonstrative before a sort, `the` before a unary noun, a citation, a
+  document name) is validated, so an unrecorded reference is `UnrecordedSlot`, never unchecked content or an
+  unchecked reading. A bound unit's content and every reading of its active set must be its elaboration
+  (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
+  therefore not admitted by the route (fail closed).
 - **Group readings are regenerated** from the spans' English (`a|an|some [ADJ] SORT is P.` then `PRONOUN is Q.`)
   and compared with the recorded reading (`ManifestMismatch: groups.<set>@<version>:<reading>`); other span shapes
   fail closed. A group span carrying another reading set is `IndependentFragment`.
-- **Pending presuppositions** (4.5) reach W2 without content: a pending unit is never a premise.
+- **Pending presuppositions** (4.5) reach W2 without content and without their reading sets: a pending unit is
+  never a premise, and a label naming its set is W2's rejection.
 - **Validity bindings are regenerated** from the unit's wording (`<document name> is [not] a valid VE document.`):
   another wording is `InvalidInput`, a different document or polarity `ManifestMismatch: validity.<unit>.*`.
 - **Stored documents** (4.1(10)) are document texts, embedded or supplied as sibling files: their bytes must
