@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from .session import AssistSession
 
 _STR = {"type": "string"}
@@ -122,7 +122,7 @@ def call_tool(session: AssistSession, name, arguments=None):
                                      "message": "Unknown argument(s): " + ", ".join(sorted(extra))})
     try:
         return session.apply(name, arguments)
-    except VEError as exc:
+    except (VEError, CheckerUnavailable) as exc:
         return {"ok": False, "error": exc.to_dict()}
     except RuntimeError as exc:  # never lose a backend failure: log it as a rejected call
         return session.log_rejection(name, arguments, {"code": "BackendError", "message": str(exc)[:500]})

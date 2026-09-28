@@ -6,6 +6,7 @@ from itertools import combinations, product
 import math
 from typing import Any, Iterator, Sequence
 
+from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, And, Atom, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
@@ -106,6 +107,7 @@ def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any,
     return valid, tuple(values), bool(result.value), work, ("Valid" if valid else "NotCountermodel")
 
 
+@semantic_entry("countermodel.check")
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
     """Independently validate and check a purported finite countermodel."""
@@ -432,6 +434,7 @@ def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluati
     return minimum_size
 
 
+@semantic_entry("countermodel.search")
 def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
                       min_domain_size: int = 0, nonempty_domains: bool = False,
                       nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
@@ -502,6 +505,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     return finish("ResourceLimit", None, checked, work, "model-attempt budget exhausted")
 
 
+@semantic_entry("countermodel.search")
 def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
                               min_domain_size: int = 0, nonempty_domains: bool = False,
                               nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,

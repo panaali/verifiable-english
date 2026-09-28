@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import re
 from typing import TypeAlias
 
+from .assurance import semantic_entry
 from .environment import Environment
 from .errors import ResourceLimit, SyntaxError, TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
@@ -312,12 +313,14 @@ class _Checker:
             raise TypeMismatch("Unknown formula constructor")
 
 
+@semantic_entry("typing")
 def check_formula(env: Environment, formula: Formula) -> Formula:
     """Check a closed formula. Open formulas are never accepted as claims."""
     _Checker(env).formula(formula)
     return formula
 
 
+@semantic_entry("typing")
 def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")

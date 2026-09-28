@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import sys
 
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..wire import loads_json
 from .api import call_tool, tool_schemas, tools_for_session
 from .session import AssistSession
@@ -317,6 +317,9 @@ def main(argv=None):
         result = session.apply(action, arguments)
         _save(session, args.session)
         return emit(command, result)
+    except CheckerUnavailable as exc:
+        print(f"error: CheckerUnavailable: {exc.message}", file=sys.stderr)
+        return 5
     except (VEError, OSError, ValueError, RuntimeError) as exc:
         message = exc.message if isinstance(exc, VEError) else str(exc)
         print(f"error: {message}", file=sys.stderr)

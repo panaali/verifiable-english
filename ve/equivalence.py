@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Formula, Implies, Not, Or, Top, Unary, Var, Reach, Body, check_formula)
 from .entailment import check_entailment_certificate, prove_entailment
@@ -172,6 +173,7 @@ def _direction(env, a, b, budgets):
                            attempts=tuple(attempts))
 
 
+@semantic_entry("compare")
 def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) -> ComparisonResult:
     """Compare closed formulas in all VE structures, including allowed empty sorts.
 

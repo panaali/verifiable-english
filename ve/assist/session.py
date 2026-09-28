@@ -29,7 +29,7 @@ from .. import ast, stream_audit
 from ..argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
 from ..entailment import check_entailment_certificate, prove_entailment
 from ..environment import RESERVED, Environment, valid_identifier
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..parser import parse
 from ..printer import print_formula
 from ..search import check_countermodel, find_countermodel
@@ -445,7 +445,7 @@ class AssistSession:
             result = {"ok": True, **handler(**args)}
         except LedgerReplayError:
             raise
-        except VEError as exc:
+        except (VEError, CheckerUnavailable) as exc:
             result = {"ok": False, "error": exc.to_dict()}
         except RuntimeError as exc:  # a backend failure must still be logged, never lost
             from .proposer import redact_secrets
