@@ -193,18 +193,27 @@ def pendingIn (D : DDoc) (wires : List WireNode) (doc : Doc) (premises : List St
   (presupMentions D).filterMap fun m =>
     if carrierIn D wires doc premises m = none then some (m.unit, "PresuppositionUnresolved: " ++ m.id) else none
 
-/-- The W2 document object with each bound unit's elaborated formula as its content. -/
-def projectUnits (j : Json) (content : String → Option VE.Formula) : Json :=
+/-- A unit object without its `content` field. -/
+def withoutContent : Json → Json
+  | .obj kvs => Json.mkObj (kvs.toList.filter fun (k, _) => k != "content")
+  | j => j
+
+/-- The W2 document object with each bound unit's elaborated formula as its content, and no
+content at all for a withheld unit (a pending presupposition, 4.5): a pending unit is never a
+premise, whatever content it was submitted with. -/
+def projectUnits (j : Json) (content : String → Option VE.Formula) (withheld : String → Bool) : Json :=
   match j.getObjValD "units" with
-  | .arr us => Json.arr (us.map fun u => match (u.getObjValD "id").getStr?.toOption.bind content with
+  | .arr us => Json.arr (us.map fun u =>
+      let id := (u.getObjValD "id").getStr?.toOption
+      match id.bind content with
       | some A => u.setObjVal! "content" (VE.Route.Wire.encodeFormula A)
-      | none => u)
+      | none => if id.any withheld then withoutContent u else u)
   | other => other
 
-def project (j : Json) (content : String → Option VE.Formula) : Json :=
+def project (j : Json) (content : String → Option VE.Formula) (withheld : String → Bool) : Json :=
   let keep := ["graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
   match j with
-  | .obj kvs => Json.mkObj (("units", projectUnits j content) ::
+  | .obj kvs => Json.mkObj (("units", projectUnits j content withheld) ::
       kvs.toList.filter fun (k, _) => keep.contains k)
   | _ => j
 
@@ -337,10 +346,13 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
   -- pending units, decided on the submitted graph before projection
   let pre := pendingIn D (rawWires rv data j) base (((base.units.filter fun x =>
     decide (x.kind = .asserted) && x.content.isSome).map DocUnit.id))
-  let projected := project j fun u => if (pre.map Prod.fst).contains u then none else boundAll u
+  let projected := project j (fun u => if (pre.map Prod.fst).contains u then none else boundAll u)
+    (fun u => (pre.map Prod.fst).contains u)
   let res ← VE.Route.Admission.admitDocument bp be rv projected
   let premises := premiseUnitsOf res
   let pending := pendingIn D res.wires res.doc premises
+  -- a carrier that was itself withheld leaves its mention pending after projection: fail closed
+  req (pending == pre) "InvalidInput: a presupposition carrier is itself pending"
   let bound : String → Option VE.Formula := fun u =>
     if (pending.map Prod.fst).contains u || (pre.map Prod.fst).contains u then none else boundAll u
   postOk D res bound
