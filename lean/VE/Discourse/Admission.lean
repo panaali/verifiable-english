@@ -83,7 +83,7 @@ def premiseUnitsOf (b : VE.Route.Admission.Admitted) : List String :=
 /-- A `@1` admission seen as a discourse result with an empty manifest. -/
 def lift1 (res : VE.Route.Admission.Admitted) : Admitted :=
   { doc := ⟨res.rv.environment, res.doc, emptyManifest, "", fun _ => none⟩, base := res, projected := .null,
-    documentId := "", reportId := "", bound := fun _ => none, joint := .ok [[]],
+    documentId := "", reportId := "", bound := fun _ => none, joint := .error "UnsupportedProfile: no discourse manifest",
     presuppositions := fun _ => none, pending := [], validity := fun _ => none, selfTruth := [],
     premiseUnits := premiseUnitsOf res }
 
@@ -205,6 +205,11 @@ def gateOk (b : VE.Route.Admission.Admitted) (cs : List Choice) : Except String 
     | .ok ch => req (cs.any (extendsTo ch)) ("InvalidCompatibility: report " ++ b.report.root.name)
     | .error e => .error e]
 
+/-- The composition gate runs over a completed joint set; an unfinished one leaves it UNKNOWN. -/
+def jointGate (b : VE.Route.Admission.Admitted) : Except String (List Choice) → Except String Unit
+  | .ok cs => gateOk b cs
+  | .error _ => .ok ()
+
 /-- The group a unit belongs to (a unit is in at most one group). -/
 def groupOf (D : DDoc) (u : String) : Option Group := D.K.groups.find? fun g => g.spans.contains u
 
@@ -231,11 +236,23 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
       ("IndependentFragment: " ++ u)],
   fun _ => allOk D.K.validity fun v => req (!(premiseUnitsOf b).contains v.unit && (bound v.unit).isNone)
     ("InvalidInput: validity unit " ++ v.unit),
-  fun _ => allOk D.K.selfTruth fun u => req (!(premiseUnitsOf b).contains u && (bound u).isNone)
+  fun _ => allOk D.K.selfTruth fun u => req (!(premiseUnitsOf b).contains u && (bound u).isNone &&
+      (unitOf D.base u).bind DocUnit.content == none)
     ("InvalidInput: self-truth unit " ++ u),
   fun _ => match dupOf (D.K.validity.map Validity.unit) with
     | some u => .error ("DuplicateDeclaration: validity " ++ u)
-    | none => .ok ()]
+    | none => .ok (),
+  fun _ => match dupOf (D.K.documents.map DocName.name) with
+    | some d => .error ("DuplicateDeclaration: document " ++ d)
+    | none => .ok (),
+  fun _ => match dupOf (D.K.mentions.map Mention.id) with
+    | some m => .error ("DuplicateDeclaration: mention " ++ m)
+    | none => .ok (),
+  fun _ => match dupOf (D.K.imports.map Import.key) with
+    | some k => .error ("DuplicateDeclaration: import " ++ k)
+    | none => .ok (),
+  fun _ => allOk (D.K.groups.flatMap Group.spans) fun u =>
+    req (!D.K.selfTruth.contains u && !(D.K.validity.map Validity.unit).contains u) ("IndependentFragment: " ++ u)]
 
 /-- The second phase: a validity claim's verdict from the outcome of checking its document. -/
 def verdictFor (D : DDoc) (prose : String) (check : ByteArray → ImportOutcome) (v : Validity) : Option Verdict :=
@@ -300,11 +317,9 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
     if (pending.map Prod.fst).contains u || (pre.map Prod.fst).contains u then none else boundAll u
   postOk D res bound
   let joint := compatibleChoices K (activeSets D) 64
-  match joint with
-  | .ok cs => gateOk res cs
-  | .error _ => pure ()
+  jointGate res joint
   let validity : String → Option Verdict := fun u =>
-    (K.validity.find? (·.unit == u)).bind (verdictFor D prose check)
+    (K.validity.find? (·.unit == u)).bind (verdictFor D (Wire.prose j) check)
   let documentId ← Wire.documentId2 (Wire.frontMatter j) (Wire.prose j) (Wire.fences j)
   let innerReportId ← VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion bp}\n"
     (Json.mkObj [("environment_id", .str envId), ("document", projected), ("report", reportJson res.report)])

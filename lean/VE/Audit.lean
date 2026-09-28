@@ -39,6 +39,7 @@ import VE.Discourse.Access
 import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
 import VE.Discourse.Run
+import VE.Discourse.Theorems
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1085,3 +1086,44 @@ import VE.Discourse.Run
 #print axioms VE.Discourse.vectors_acc
 #print axioms VE.Discourse.wellFormed_of
 #print axioms VE.Discourse.wf_bound
+#print axioms VE.Discourse.admission_projects
+#print axioms VE.Discourse.admit2_facts
+#print axioms VE.Discourse.admitAt_cases
+#print axioms VE.Discourse.admit_cases
+#print axioms VE.Discourse.admit_facts2
+#print axioms VE.Discourse.allOk_iff
+#print axioms VE.Discourse.carrier_cases
+#print axioms VE.Discourse.citation_extends_joint
+#print axioms VE.Discourse.discourse_report_sound
+#print axioms VE.Discourse.document_find
+#print axioms VE.Discourse.dupOf_none
+#print axioms VE.Discourse.dup_nodup
+#print axioms VE.Discourse.extension_unknown
+#print axioms VE.Discourse.find_group
+#print axioms VE.Discourse.find_key
+#print axioms VE.Discourse.format1_profile_requires_format2
+#print axioms VE.Discourse.format1_unchanged
+#print axioms VE.Discourse.formatOf_of
+#print axioms VE.Discourse.gate_facts
+#print axioms VE.Discourse.group_single_assertion
+#print axioms VE.Discourse.integrity_stale
+#print axioms VE.Discourse.lift1_base_sound
+#print axioms VE.Discourse.no_discourse_label
+#print axioms VE.Discourse.pending_not_compatibility
+#print axioms VE.Discourse.postOk_facts
+#print axioms VE.Discourse.presupposition_carried
+#print axioms VE.Discourse.profile_adapter_base
+#print axioms VE.Discourse.report_extends_joint
+#print axioms VE.Discourse.req_ok
+#print axioms VE.Discourse.runAll_cons
+#print axioms VE.Discourse.runAll_error
+#print axioms VE.Discourse.runAll_head_error
+#print axioms VE.Discourse.runAll_nil
+#print axioms VE.Discourse.self_truth_never_content
+#print axioms VE.Discourse.stale_import_rejected
+#print axioms VE.Discourse.statusOf_grouped
+#print axioms VE.Discourse.validity_find
+#print axioms VE.Discourse.validity_import
+#print axioms VE.Discourse.validity_never_premise
+#print axioms VE.Discourse.validity_self
+#print axioms VE.Discourse.validity_unknown_never_checked

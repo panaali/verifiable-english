@@ -43,6 +43,25 @@ theorem allOk_ok {α : Type} (xs : List α) (f : α → Except String Unit) (h :
   intro x hx
   exact runAll_ok _ h _ (List.mem_map.mpr ⟨x, hx, rfl⟩)
 
+theorem runAll_nil : runAll [] = .ok () := rfl
+
+theorem runAll_cons (f : Unit → Except String Unit) (fs : List (Unit → Except String Unit)) :
+    runAll (f :: fs) = .ok () ↔ f () = .ok () ∧ runAll fs = .ok () := by
+  show (match f () with | .ok _ => runAll fs | .error e => .error e) = .ok () ↔ _
+  cases h : f () with
+  | ok v => simp
+  | error e => simp
+
+theorem req_ok (b : Bool) (e : String) : req b e = .ok () ↔ b = true := by
+  unfold req; cases b <;> simp
+
+theorem allOk_iff {α : Type} (xs : List α) (f : α → Except String Unit) :
+    allOk xs f = .ok () ↔ ∀ x ∈ xs, f x = .ok () := by
+  unfold allOk
+  induction xs with
+  | nil => simp [runAll]
+  | cons x xs ih => simp [runAll_cons, ih]
+
 def spanIn (inner outer : Nat × Nat) : Bool := outer.1 ≤ inner.1 && inner.2 ≤ outer.2
 def spansDisjoint (a b : Nat × Nat) : Bool := a.2 ≤ b.1 || b.2 ≤ a.1
 def spansNested (a b : Nat × Nat) : Bool := a != b && (spanIn a b || spanIn b a)
@@ -50,6 +69,15 @@ def spansNested (a b : Nat × Nat) : Bool := a != b && (spanIn a b || spanIn b a
 def dupOf : List String → Option String
   | [] => none
   | x :: xs => if xs.contains x then some x else dupOf xs
+
+theorem dupOf_none : ∀ xs : List String, dupOf xs = none → xs.Nodup
+  | [], _ => List.nodup_nil
+  | x :: xs, h => by
+    unfold dupOf at h
+    split at h
+    · cases h
+    · rename_i hc
+      exact List.nodup_cons.mpr ⟨by simpa using hc, dupOf_none xs h⟩
 
 def firstDup (xs : List String) : Option String :=
   (xs.zipIdx.find? fun (x, i) => (xs.take i).contains x).map Prod.fst
