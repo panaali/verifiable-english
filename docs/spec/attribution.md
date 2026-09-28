@@ -1,7 +1,7 @@
 # Reports and attitudes (`reports@0`): structured reported content, attitude wrappers and open assessments over `ve-document@1`
 
-> Status: item-1 specification, draft 9 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
-> revision 8. Draft 1 transcribed the converged Astra/Fable design debate
+> Status: item-1 specification, draft 10 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
+> revision 9. Draft 1 transcribed the converged Astra/Fable design debate
 > (`manage-agents/debates/design-attribution/{astra,fable}.md`: BUILD after six text edits, CONVERGED after
 > round 2); draft 2 applies the converged FIX of the Astra/Fable statement review of draft 1
 > (`manage-agents/debates/attribution-spec/{astra,fable}.md`: FIX, CONVERGED after round 3; the change log lists
@@ -44,8 +44,16 @@
 > `says` report, so B₂ is recorded as breaking exactly `hb`, the freedom of its nested atom being
 > `unreported_key_free`'s at `k_in`; and B₁₂'s content depth is 4 under `Content.depth` (three report nodes over
 > the formula leaf, its W2 kind of depth 4 likewise), not 3, its nesting depth of 2 counting the report nodes
-> below the top-level one. It returns
-> for the one focused statement review that gates items 2 to 5 of the plan
+> below the top-level one; draft 10 applies the finding of the eighth read-only verification
+> (`manage-agents/attribution-p3ver8.final.md`) as an instance of the same directive: the collision check of 4.1
+> step 4 is document-local, comparing only the objects the document digests (the content object of every node
+> and the complement object of every report node, now named there, in 1.1 and in 3.4, with
+> `no_collision_complement` beside `no_collision`), so the digest and name conclusions of
+> `literal_paraphrase_distinct`, `negation_scopes_distinct` and `probably_not_scopes_distinct` are stated under
+> occurrence hypotheses (`OccursComplement`, `Occurs`, 9.1: both objects digested by the document) in place of
+> key-membership hypotheses, which the digest of an absent object could witness with one key; the
+> canonical-object conjuncts are unchanged, and B₁₄ to B₁₆ are the boundaries at which one object is absent. It
+> returns for the one focused statement review that gates items 2 to 5 of the plan
 > (PLAN-EXPAND2 rule 10) and any implementation. Sections 4 to 6 and 9 are the statements under review; section 10
 > gives the fixtures with their definitions (10.1) separated from their expected results (10.2) and the boundary
 > fixtures (10.3); section 13 lists
@@ -109,10 +117,12 @@ negated unit), or an `Expandable` structure (4.4); a key that no top-level unit 
 that is a formula over `E`, not a nested report or assessment node, whose elaboration is a signed generated atom
 at the node's own holder or evidence context, covered by the nested-content theorems of 9.2 and by nothing else in
 this list (B₁, B₇, B₉ to B₁₂′, `D_ω`); a content that the forced holder disequalities do not
-entail (4.5); a consistent premise set; and, for the premise-subset device, a document with no `says` key (10.1).
-Section 10.3 gives one fixture at the boundary of each restricted claim and, for each nested-content theorem and
-for `nested_independent`, fixtures that break exactly one of its hypotheses, the hypothesis named in the table
-that closes 10.3.
+entail (4.5); a consistent premise set; for a digest or key-distinctness claim, a document that digests both
+objects, each occurring in it (`Occurs`, `OccursComplement`, 9.1; B₁₄ to B₁₆); and, for the premise-subset
+device, a document with no `says` key (10.1).
+Section 10.3 gives one fixture at the boundary of each restricted claim and, for each nested-content theorem, for
+`nested_independent` and for each digest theorem, fixtures that break exactly one of its hypotheses, the
+hypothesis named in the table that closes 10.3.
 
 Out of scope, by the plan: promising, pledging, denying, expecting, reaffirming and determination (distinct
 reviewed acts, pending); modal inference of any kind and the candidate possible-worlds profile (plan page 2);
@@ -149,9 +159,11 @@ statement      what a top-level unit carries: a report node, an assessment node 
 content id     sha256 of the canonical content object (3.4): structural identity under the declared
                canonicalisation (P5 normalisation of formulas; canonical W1 and W3 blocks; nested objects inline;
                literal words when present; reading choices when the content was chosen from a set). Never equality
-               of truth values, never logical equivalence. Two distinct canonical objects with one digest are
-               rejected (`HashCollision`, 4.1), so within one document identity of digests is identity of
-               canonical objects.
+               of truth values, never logical equivalence. The objects one document digests are the content
+               object of every node and the complement object of every report node (4.1 step 4); two distinct
+               ones with one digest are rejected (`HashCollision`), so for two objects one document digests,
+               identity of digests is identity of canonical objects (`no_collision`, `no_collision_complement`,
+               9.2). The check inspects no object the document does not digest (B₁₄).
 occurrence     one report or assessment unit: the document's source id, the unit's byte span, the context it
                names. Repeated occurrences may share a content id and a key; each keeps its own span.
 complement id  the content id of a report node's body together with its literal words when present (3.4): what
@@ -164,7 +176,9 @@ key            report:      (act, holder sort, context id, complement id)
 ```
 
 Literal quotation binds the exact words into the content id; a paraphrase claims no word identity. The two are
-different contents and different keys; neither entails the other (13.6; the reading of `all_truth_combinations`
+different canonical complement objects and, in a document that digests both, different complement ids and so
+different keys (`literal_paraphrase_distinct` under its occurrence hypotheses, 9.2; B₁₄′, with B₁₄ at the
+boundary); neither entails the other (13.6; the reading of `all_truth_combinations`
 with `ks` the two keys under its hypotheses: neither key in `topKeys D`, `S₀` admissible, `Expandable D S₀`, 9.2).
 
 ### 1.2 Holders, acts and contexts
@@ -225,8 +239,10 @@ possibility or likelihood. The modal profile sketched on plan page 2 is not this
 `E_reports = E + {one unary predicate per key}`, regenerated at every site from `E` and the decoded document,
 never taken from the wire. Every generated predicate is a base predicate (not regulated, not defined, no data
 flag) with arbitrary interpretation. Names are identifiers of the existing grammar, at most 64 bytes, injective
-over the keys of the document (`names_injective_on_keys`, 9.2: two distinct keys of `D` have two names, because
-4.1 rejects a digest collision) and regenerable without a table:
+over the keys of the document (`names_injective_on_keys`, 9.2: two distinct keys of `D` have two names, a name
+being the key's position among the keys of its act; that two report nodes of `D` with distinct canonical
+complement objects are two keys is the document-local collision check of 4.1 step 4, `no_collision_complement`)
+and regenerable without a table:
 
 ```text
 key order          report keys sorted by (act, holder sort, context id, content id); assessment keys sorted by
@@ -535,10 +551,14 @@ document_id(D) := sha256("ve-reports-<identity_version>\n" + canonical({"environ
                   contexts, assessments, bridges and scoped checks in document order}))
 ```
 
-Identity is the canonical object; the digest is its name. Two distinct canonical objects with one digest inside
-one document are rejected (`HashCollision: <digest>`, 4.1 step 4), so every identity theorem of 9.2 is stated on
-canonical objects and, for the nodes of a well-formed document, transfers to digests (`content_structural`,
-`names_injective_on_keys`); no theorem asserts SHA-256 injectivity.
+Identity is the canonical object; the digest is its name. The objects a document digests are the content object
+`object(x)` of every node `x` of every tree and the complement object of every report node; two distinct ones
+with one digest are rejected (`HashCollision: <digest>`, 4.1 step 4), and the check compares those objects and
+no other. So every identity theorem of 9.2 and 9.3 is stated on canonical objects and transfers to digests only
+for objects a well-formed document digests, under an explicit occurrence hypothesis for each (`no_collision`,
+`no_collision_complement`, `content_structural`, `negation_scopes_distinct`, `literal_paraphrase_distinct`,
+`probably_not_scopes_distinct`); nothing is stated about the digest of an object the document does not digest
+(B₁₄ to B₁₆), and no theorem asserts SHA-256 injectivity.
 
 `E_reports`, its generated names, the open-term records of the assessments, `Γ_reports` and every bridge formula
 are regenerated from these at every site. A certificate has two bindings, both recomputed from the raw source at
@@ -587,9 +607,11 @@ A report document `D = (E, contexts, assessments, units, bridges, scoped)` is we
    (`UnknownAssessment`), each negated node's operand a report or assessment node (`InvalidInput: negated operand
    in <unit>`), each top-level content a report, assessment or negated node (`InvalidInput: invalid content for
    <unit>`); the W2 kind matches the tree (`KindMismatch`); the content graph is acyclic by construction and the
-   content-id table computed from the decoded trees has no forward reference (`DependencyCycle: <sorted content
-   ids>` through the shared `dependencyOrder`, reachable only from a malformed wire) and no two distinct canonical
-   objects with one digest (`HashCollision: <digest>`).
+   digest table computed from the decoded trees, which holds the content id of every node of every tree and the
+   complement id of every report node (3.4) and nothing else, has no forward reference (`DependencyCycle: <sorted
+   content ids>` through the shared `dependencyOrder`, reachable only from a malformed wire) and no two distinct
+   canonical objects with one digest (`HashCollision: <digest>`; the check compares the objects the table holds
+   and inspects no other, `no_collision`, `no_collision_complement`, B₁₄).
 5. Every scoped check's payload paths resolve to formula nodes over one environment (`envAt`, 5.2, equal for all
    payloads: `ScopedEnvironment`; a path that is not a formula node: `ScopedTarget`); its conclusion is closed
    over that environment; payload count at most 64.
@@ -734,7 +756,8 @@ or a queried holder-applied atom that no positive top-level premise carries at a
 one hypothesis broken each: an inconsistent signed premise set (`D_μ″`, `D_π′`); the queried key asserted at the
 same holder (`D_η`, B₁, B₃) or at another holder (B₉, B₉′); a content the disequalities force (B₄) or a valid
 content (B₆); the author's premises (B₈); a nested content carried or denied by another unit (B₇, B₁₀, B₁₁,
-`D_ω`, B₁₂′), or nested under a negation or two deep with no unit carrying its key (B₁₁′, B₁₂). Each fixture
+`D_ω`, B₁₂′), or nested under a negation or two deep with no unit carrying its key (B₁₁′, B₁₂); a canonical
+object the document does not digest, for the digest theorems (B₁₄, B₁₅, B₁₆). Each fixture
 names the premise subset it is over (γ, ε, η, μ over `D ▷ U`, 10.1; the boundaries in 10.3, whose closing table
 names the one hypothesis each breaks).
 
@@ -771,11 +794,13 @@ names the one hypothesis each breaks).
   keys instead). B₁₁,
   `D_ω` and B₁₂′ break `hb` and `hin` together, their nested key being denied or asserted at top level, and are
   instances of the nested-content theorems, not one-hypothesis boundaries of this one (the table of 10.3).
-- **Negation scopes** (`negation_scopes_distinct`: `J_{believes,c,¬q}(h)` and `¬J_{believes,c,q}(h)` are a
-  positive atom of one key and the negation of an atom of another key, with different complement objects and
-  names; `all_truth_combinations` with `ks` the two keys under its hypotheses, neither key in `topKeys`, `S₀`
-  admissible, `Expandable D S₀`: any of the four truth combinations, uniformly on the holder sort's domain;
-  `D_ε ▷ []`).
+- **Negation scopes** (`negation_scopes_distinct`, under its hypotheses that a belief node over `¬q` and one
+  over `q`, in one context and with holders of one sort, both occur in the document, as `D_ε`'s u1 and u2's
+  operand do: `J_{believes,c,¬q}(h)` and `¬J_{believes,c,q}(h)` are a positive atom of one key and the negation
+  of an atom of another key, with different complement objects and names; B₁₅, `D_ε`'s u1 alone, is the boundary
+  at which the second node is absent; `all_truth_combinations` with `ks` the two keys under its hypotheses,
+  neither key in `topKeys`, `S₀` admissible, `Expandable D S₀`: any of the four truth combinations, uniformly on
+  the holder sort's domain; `D_ε ▷ []`).
 - **Denial is not the opposite belief** (`unreported_key_free` at the key of `J_{believes,c,¬q}(h)` when it is
   `∉ topKeys D`, under `Expandable D S₀`; `reports_no_leak` at `Γ = []` for a formula content `q` over `E`:
   `Γ_reports(D)` entails `q` exactly when `neqs (Γ_reports D)` does, and with another unit asserting
@@ -784,8 +809,8 @@ names the one hypothesis each breaks).
   the present key when it is `∉ topKeys D`, under `Expandable D S₀`: a source model over `S₀` with the present
   relation empty; `D_η ▷ [u1]`, which is positive; over `D_η` itself both are premises).
 - **Contents are structural** (`content_structural`: two formula contents over `E` have one canonical object
-  exactly when their P5 normal forms are equal, never when they are merely logically equivalent; within a
-  well-formed document the same for their content ids).
+  exactly when their P5 normal forms are equal, never when they are merely logically equivalent; for two formula
+  nodes that both occur in a well-formed document, its `Occurs` hypotheses, the same for their content ids).
 - **Intention is not fulfilment or obligation** (`attitude_not_factive` with `act = intends`: `J_{intends,c,q}(h)`
   with `q` false, under the first bullet's hypotheses). No `required` atom is generated: `elab` produces one
   predicate per key and nothing else (4.3); an author may declare a base predicate of that name, decided by
@@ -1083,6 +1108,11 @@ structure ReportDoc where
   scoped : List ScopedCheck
 
 def Occurs (D : ReportDoc) (x : Content) : Prop := ∃ u ∈ D.units, x ∈ u.content.nodes
+/-- 3.4: a complement object occurs in D when some report node of some tree, under a negated node or not, has
+    that body and literal. The collision check of 4.1 step 4 digests exactly the content objects of occurring
+    nodes and the complement objects of occurring report nodes; an object outside both is never digested. -/
+def OccursComplement (D : ReportDoc) (body : Content) (lit : Option String) : Prop :=
+  ∃ hd act c, Occurs D (.report hd act c body lit)
 def Positive (D : ReportDoc) : Prop := ∀ u ∈ D.units, ¬ ∃ n, u.content = .negated n
 
 /-- 3.4: the identity is the canonical object; the digest names it. -/
@@ -1112,7 +1142,8 @@ def names (D : ReportDoc) : List String
 def envReports (D : ReportDoc) : VE.Environment                    -- E + one unary predicate per key
 def recordOf (D : ReportDoc) (a : String) : Option Assessment
 def tenseOf (D : ReportDoc) (c : String) : Option Tense
-def WellFormedReports (D : ReportDoc) : Bool                       -- 4.1, HashCollision included
+def WellFormedReports (D : ReportDoc) : Bool                       -- 4.1; HashCollision over the content ids of occurring nodes
+                                                                   -- and the complement ids of occurring report nodes only
 
 /-- 4.3: total on formula, report, assessment and negated nodes; none on norm and definition nodes. -/
 def elab (D : ReportDoc) : Content → Option VE.Formula
@@ -1245,9 +1276,14 @@ theorem keys_finite (D) (h) : (keys D).length + (akeys D).length ≤ contentCoun
     over a formula: content depth 16, kind depth 16). From W2's kind bound and `KindMismatch` (3.3): a well-formed
     unit's content depth is its kind's depth. -/
 theorem content_depth_bounded (D) (h) : ∀ u ∈ D.units, u.content.depth ≤ 16
-/-- 3.4: within a well-formed document a digest names one canonical object (HashCollision rejected). -/
+/-- 3.4: among the objects a well-formed document digests, the content object of every occurring node and the
+    complement object of every occurring report node, a digest names one canonical object (HashCollision
+    rejected). Nothing is stated for an object the document does not digest (B₁₄ to B₁₆, 13.26). -/
 theorem no_collision (D) (h) (x y : Content) (hx : Occurs D x) (hy : Occurs D y) :
   contentId D x = contentId D y → canonicalObject D x = canonicalObject D y
+theorem no_collision_complement (D) (h) (b b' : Content) (l l' : Option String)
+    (hb : OccursComplement D b l) (hb' : OccursComplement D b' l') :
+  complementId D b l = complementId D b' l' → complementObject D b l = complementObject D b' l'
 
 /-- reports_elaboration_faithful, the source-model direction: the elaborated premises hold in the interpretation
     of a source model exactly when the document's intended meaning holds of it. -/
@@ -1369,10 +1405,14 @@ theorem holder_atom_free (D) (h) (k : ReportKey) (hk : k ∈ keys D) (hd : Strin
   ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧
     ∀ v, S₀.constant hd = some v → ¬ M.J k.act k.sort k.ctx k.content v
 
-/-- Identity theorems on canonical objects; digests follow for the keys of a well-formed document. -/
-theorem negation_scopes_distinct (D) (h) (c s : String) (q : VE.Formula)
-    (hk : ⟨.believes, s, c, complementId D (.formula (.not q)) none⟩ ∈ keys D)
-    (hk' : ⟨.believes, s, c, complementId D (.formula q) none⟩ ∈ keys D) :
+/-- Identity theorems on canonical objects. A digest or name conclusion is under the occurrence in `D` of both
+    objects it compares, which is what the document-local collision check digests (3.4, 13.26): an occurring node
+    puts its key in `keys D` or `akeys D`, so each occurrence hypothesis is stronger than the key membership it
+    replaces, which the digest of an absent object could witness with one key (B₁₄ to B₁₆). -/
+theorem negation_scopes_distinct (D) (h) (hd₁ hd₂ c s : String) (q : VE.Formula)
+    (hs₁ : holderSort D hd₁ = some s) (hs₂ : holderSort D hd₂ = some s)
+    (ho : Occurs D (.report hd₁ .believes c (.formula (.not q)) none))
+    (ho' : Occurs D (.report hd₂ .believes c (.formula q) none)) :
   complementObject D (.formula (.not q)) none ≠ complementObject D (.formula q) none ∧
   reportName D ⟨.believes, s, c, complementId D (.formula (.not q)) none⟩ ≠
     reportName D ⟨.believes, s, c, complementId D (.formula q) none⟩
@@ -1387,8 +1427,7 @@ theorem content_structural (D) (h) (φ ψ : VE.Formula) :
     (contentId D (.formula φ) = contentId D (.formula ψ) ↔ canonical φ = canonical ψ))   -- never ↔ logical equivalence
 theorem literal_paraphrase_distinct (D) (h) (b : Content) (l₁ l₂ : Option String) (hw : l₁ ≠ l₂) :
   complementObject D b l₁ ≠ complementObject D b l₂ ∧
-  ((∃ k ∈ keys D, k.content = complementId D b l₁) → (∃ k ∈ keys D, k.content = complementId D b l₂) →
-    complementId D b l₁ ≠ complementId D b l₂)
+  (OccursComplement D b l₁ → OccursComplement D b l₂ → complementId D b l₁ ≠ complementId D b l₂)
 
 /-- Truth combinations over unasserted keys, typed: only elements of the key's sort are constrained. -/
 theorem all_truth_combinations (D) (h) (ks : List ReportKey) (hk : ∀ k ∈ ks, k ∉ topKeys D) (f : ReportKey → Bool)
@@ -1410,7 +1449,10 @@ statements verbatim. `topKeys` membership is a hypothesis of the freedom theorem
 `no_closure_under_consequence`, `nested_independent`, `all_truth_combinations`): a key is holder-free, so no
 theorem concludes that an atom is entailed from a key's membership in `topKeys`; the four nested-content
 entailment and refutation theorems take a top-level unit's statement, holder and polarity included, and
-`holder_atom_free` takes the signed premises themselves (B₉). `all_truth_combinations` and `all_truth_combinations_assess` are the two statements behind
+`holder_atom_free` takes the signed premises themselves (B₉). The digest and name conclusions of
+`negation_scopes_distinct`, `literal_paraphrase_distinct` and `probably_not_scopes_distinct` (9.3) are under the
+occurrence of both compared objects in `D`, because the collision check digests occurring objects only (3.4,
+13.26; B₁₄ to B₁₆). `all_truth_combinations` and `all_truth_combinations_assess` are the two statements behind
 the "different attributions for equivalent payloads", "may and probably independent" and "negation inside versus
 outside" fixtures; each fixture names the premise subset `D ▷ U` (10.1: the top-level units it keeps, every
 dropped key retained in the vocabulary by a registration unit, no kept unit asserting or denying a queried key,
@@ -1522,9 +1564,10 @@ theorem may_probably_independent (D) (h) (a q : String) :
     (∀ j, ⟨j, a, q⟩ ∉ topAKeys D) →
     ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧
       ∀ j v, M.S.domain D.evidence v → (M.A j a q v ↔ f j = true)
+/-- Both `probably` nodes occur, so both formula bodies are digested (9.2's identity convention, 13.26). -/
 theorem probably_not_scopes_distinct (D) (h) (a : String) (q : VE.Formula)
-    (hk : ⟨.probably, a, contentId D (.formula (.not q))⟩ ∈ akeys D)
-    (hk' : ⟨.probably, a, contentId D (.formula q)⟩ ∈ akeys D) :
+    (ho : Occurs D (.assessment .probably a (.formula (.not q))))
+    (ho' : Occurs D (.assessment .probably a (.formula q))) :
   canonicalObject D (.formula (.not q)) ≠ canonicalObject D (.formula q) ∧
   assessName D ⟨.probably, a, contentId D (.formula (.not q))⟩ ≠ assessName D ⟨.probably, a, contentId D (.formula q)⟩
 
@@ -1636,7 +1679,9 @@ criteria or the truth of any content. No modal theorem. No completeness of scope
 No theorem about adoption or import beyond provenance. No theorem about `Layer.comp` with the norms,
 definitions or data chains (11.3). No theorem about `and`, `or` or quantifiers over report statements: they
 have no wording, no wire form and no `elab` case (4.3). No theorem asserts SHA-256 injectivity: identity
-theorems are on canonical objects, and digests follow only inside a well-formed document (3.4).
+theorems are on canonical objects, and digests follow only for objects a well-formed document digests, under an
+explicit occurrence hypothesis for each; nothing is stated about the digest of an object the document does not
+digest, which the collision check never computes (3.4, B₁₄ to B₁₆).
 
 ## 10. Acceptance fixtures for item 1
 
@@ -1800,7 +1845,8 @@ D_ω   u1: The article says that it is not the case that Anthropic believes that
   the results of the service, nor an obligation, nor a promise follows".
 - **(ε) Negation scopes.** u2 is a negated unit: `Γ = [reports__believes__i(anthropic),
   ¬reports__believes__j(anthropic)]` with `{i, j} = {1, 2}` in the key order of the two content ids (the fixture
-  reads the names from the key table). Two different keys (`negation_scopes_distinct`); `neqs Γ = []` (two
+  reads the names from the key table). Two different keys and names (`negation_scopes_distinct`: both belief
+  nodes occur, u1's and u2's operand, so its occurrence hypotheses hold; B₁₅ is u1 alone); `neqs Γ = []` (two
   predicates, no shared one), so over `D_ε` itself the model with u1's atom true and u2's key atom false is valid
   and satisfies `Γ` (the premise-set model exists). Independence over `D_ε ▷ []` (both keys registered: `The
   article says that Anthropic believes that it is not the case that Claude is human.` and `The article says that
@@ -1865,8 +1911,9 @@ D_ω   u1: The article says that it is not the case that Anthropic believes that
   certificate is `vacuous`, and a certificate for `Γ ⊢ safe(service)` replays there too, `vacuous`: an
   inconsistent premise set is outside the fragment of every independence claim of 4.5 and 5.3. Over `D_μ` itself
   both `May` and `Probably` of `safe` are premises, which is why 5.3's independence is stated over `D_μ ▷ [u1]`
-  and `D_μ ▷ [u2]`. u4's atom is the negation of u2's atom, while u3's atom is a different key
-  (`probably_not_scopes_distinct`).
+  and `D_μ ▷ [u2]`. u4's atom is the negation of u2's atom, while u3's atom is a different key with a different
+  name (`probably_not_scopes_distinct`: the `probably` nodes over `safe(service)` and over `¬safe(service)` both
+  occur, u2 and u3, so its occurrence hypotheses hold; B₁₆ is u3 alone).
 - **(ν) Parser binding.** The environment is rejected: `InvalidInput: holder verbalisation reserved`. With a
   holder verbalised "the assessment desk" instead, the first input parses to `May(a1, safe)` only (one derivation);
   the second parses to `says(anthropic, c1, May(a1, safe))`, kind `attributed(anthropic, says, hedged(could,
@@ -1937,12 +1984,16 @@ change of φ.
 One fixture at the boundary of each claim that sections 2 to 5, 9 and 10.1 restrict to a fragment; for each
 nested-content theorem of 9.2 and for `nested_independent`, fixtures that break exactly one of its hypotheses,
 the hypothesis named in the table that closes this section (the holder differs, B₉ and B₉′; the polarity
-differs, B₁₀, B₁₁, B₁₁′ and `D_ω`; the inner act differs, B₂; the nesting is two deep, B₁₂ and B₁₂′); and for
+differs, B₁₀, B₁₁, B₁₁′ and `D_ω`; the inner act differs, B₂; the nesting is two deep, B₁₂ and B₁₂′); for
 `content_depth_bounded` the
-admitted bound and the first document beyond it (B₁₃, B₁₃′); all over `E₀` and the declarations of 10.1 (B₂ adds
+admitted bound and the first document beyond it (B₁₃, B₁₃′); and for the three digest theorems
+(`literal_paraphrase_distinct`, `negation_scopes_distinct`, `probably_not_scopes_distinct`) a document that
+digests only one of the two compared objects (B₁₄, B₁₅, B₁₆) beside one that digests both (B₁₄′, `D_ε`, `D_μ`);
+all over `E₀` and the declarations of 10.1 (B₂ adds
 one context, `c4`, to them; B₈ is `D_π` of 10.1; B₉ is B₇ and B₉′ is B₁ with u1's holder changed; B₁₁ is `D_ω`
 with u2's polarity changed; B₁₁′ is `D_ω`'s u1 alone; B₁₂′ is B₁₂ with the innermost node carried at top level;
-B₁₃ is the sixth verification's depth-16 document and B₁₃′ its extension by one node), with expected results
+B₁₃ is the sixth verification's depth-16 document and B₁₃′ its extension by one node; B₁₄′ is B₁₄ with `D_α`'s u1
+added; B₁₅ is `D_ε`'s u1 alone; B₁₆ is `D_μ`'s u3 alone), with expected results
 derivable from the definitions as in 10.2. Every entailment expectation below is an instance of a named theorem
 of 9.2 or 9.3 under its hypotheses, or a countermodel. `D ▷ U` is applied here to documents with a `says` key
 only to exhibit the boundary of 10.1, and every key such an expectation queries is checked against `topKeys`
@@ -2006,6 +2057,19 @@ B₁₃  u1: It is not the case that the article says that it is not the case th
           depth 16, W2 kind depth 16, both at the admitted bound)
 B₁₃′ B₁₃ with a sixteenth negated says report of the_article in c3 inserted between the innermost report and
      safe(service)   (content depth 17, kind depth 17)
+B₁₄  u1: The article says, "the service is safe".                             says, the_article, c3, ⟨safe(service), literal W⟩
+         (W the words "the service is safe"; a literal quotation whose paraphrase complement ⟨safe(service), none⟩
+          occurs nowhere: the document digests one complement object of that body and computes no digest for the
+          other)
+B₁₄′ B₁₄ plus u2: The article says that the service is safe.                  says, the_article, c3, ⟨safe(service), none⟩   (D_α's u1)
+         (both complements of the body safe(service) occur, so both are digested and compared)
+B₁₅  u1 of D_ε alone: Anthropic believes that it is not the case that Claude is human.
+                                                                              believes, anthropic, c1, ¬human(claude)
+         (no belief node over human(claude), asserted or denied, occurs: the complement ⟨human(claude), none⟩ is
+          never digested)
+B₁₆  u3 of D_μ alone: According to the stated assessment, it is probably the case that it is not the case that
+     the service is safe.                                                     probably, a1, ¬safe(service)
+         (no formula node safe(service) occurs: safe(service) is a subformula of the one leaf, not a node)
 ```
 
 - **(B₁) Registration and nested attribution.** Over `B₁`: keys `k₁`, `k₂`; `E_reports = E₀ +
@@ -2216,6 +2280,47 @@ B₁₃′ B₁₃ with a sixteenth negated says report of the_article in c3 ins
   premise is generated and `content_depth_bounded` has no instance (`WellFormedReports = false`). The content
   decoder's own bound, `ResourceLimit: content depth`, is the same 16 and is not reached here, the kind being
   rejected first; a content tree of depth 17 under a kind of depth 16 would be `KindMismatch` at step 4.
+- **(B₁₄) A literal quotation alone.** One key `k_W = (says, text, c3, ⟨safe(service), W⟩)`; `E_reports = E₀ +
+  reports__says__1(text)`; `Γ = [reports__says__1(the_article)]`, positive; status CHECKED; the residual's
+  `literal_quotations` line counts one; the checklist of 2.3 shows the exact words beside the content. The digest
+  table of 4.1 step 4 holds the content ids of u1's two nodes (the report node and its formula leaf) and the one
+  complement id `complementId B₁₄ (formula safe(service)) (some W)`; the paraphrase complement `⟨safe(service),
+  none⟩` is digested by no step of admission, so no check compares its digest with anything and `HashCollision`
+  cannot fire for it. `literal_paraphrase_distinct` at `b = safe(service)`, `l₁ = some W`, `l₂ = none`: `hw`
+  holds and the canonical-object conjunct holds (the two complement objects differ in their `literal` field);
+  the digest conjunct has no instance, exactly `OccursComplement B₁₄ b none` failing. Whether `complementId B₁₄ b
+  none` equals `complementId B₁₄ b (some W)` is a proposition about a digest the document never computes, which
+  no check of the document decides and no statement of this specification asserts either way; under draft 9's
+  statement that equality would have witnessed the second key-membership premise by `k_W` itself and
+  contradicted the conclusion, the eighth verification's finding (13.26). `safe(service)` is not entailed (α's
+  model with the literal key in place of `D_α`'s).
+- **(B₁₄′) Literal and paraphrase together.** Both complement objects of the body `safe(service)` occur, as the
+  complements of u1 and u2, so both are digested and compared at 4.1 step 4: the keys `k_W` and `k_P = (says,
+  text, c3, ⟨safe(service), none⟩)` differ in their complement ids (`literal_paraphrase_distinct`, both
+  occurrence hypotheses holding; `no_collision_complement` on the two distinct objects says the same), names
+  `reports__says__1` and `reports__says__2` in content-id order (the fixture reads them from the key table);
+  `E_reports = E₀` plus both; `Γ` is the two atoms at `the_article`, positive; the residual counts two report
+  keys and one literal quotation; the `reports-elaborate` key table lists both keys with their source keys and
+  u1's literal words. The alternative the definitions leave, that the two digests coincide, is the rejection
+  `HashCollision: <digest>` of the whole document at step 4 and never one merged key; it is not the expected
+  result on the fixture's bytes, as no fixture with two keys of one act expects it. Over `B₁₄′` both keys are in
+  `topKeys` (both atoms are premises), so no independence expectation is stated here; 1.1's "neither entails the
+  other" is the reading of `all_truth_combinations` over a document in which neither key is at top level.
+- **(B₁₅) The negation-inside belief alone.** One key `(believes, organisation, c1, ⟨¬human(claude), none⟩)`,
+  name `reports__believes__1`; `Γ = [reports__believes__1(anthropic)]`, positive; the paraphrase of 2.1's
+  inside-negation row. No node `human(claude)` and no report node over it occurs, so the document digests no
+  complement `⟨human(claude), none⟩`, and `negation_scopes_distinct` at `q = human(claude)`, `c = c1`, `s =
+  organisation` has no instance, exactly `ho'` failing (`hs₁`, `hs₂` at `anthropic` and `ho` hold); its
+  canonical-object conjunct holds regardless. `D_ε` is the instance: u2's operand is the belief node over
+  `human(claude)`, occurring under the negated node, so both complements are digested and the two names differ
+  (ε). Under draft 9's statement the second key-membership premise could be witnessed by the one key present if
+  the absent complement's digest equalled it, a digest the document never computes (13.26).
+- **(B₁₆) The negated assessment content alone.** One key `(probably, a1, ⟨¬safe(service)⟩)`, name
+  `reports__probably__1`, one open term; u3 OPEN; `Γ = [reports__probably__1(e1)]`. No formula node
+  `safe(service)` occurs (it is a subformula of the one leaf `¬safe(service)`, and 4.1 step 4 digests nodes, not
+  subformulas), so `probably_not_scopes_distinct` at `a = a1`, `q = safe(service)` has no instance, exactly `ho'`
+  failing; its canonical-object conjunct holds regardless. `D_μ` is the instance: u2's body is the node
+  `safe(service)`, so both formula nodes are digested and the two `probably` names differ (μ).
 
 **Which hypothesis each boundary fixture breaks.** For every fixture this section offers as the boundary of a
 theorem: the theorem, the fixture, the one hypothesis that fails (every other hypothesis of the statement holds,
@@ -2254,6 +2359,12 @@ that the fixture is an instance of another theorem, not a one-hypothesis boundar
 | | B₈ | none over `Γ_reports(D)`; `Γ_author` is outside the statement | free over the report premises, entailed by the checked list |
 | `content_depth_bounded` | B₁₃ | none: instance at the bound, depth 16 | admitted; `depth = 16` |
 | | B₁₃′ | `h`: `WellFormedReports` fails at W2's kind bound | `ResourceLimit: kind depth exceeds 16` |
+| `literal_paraphrase_distinct` | B₁₄′ | none: instance, both complements occur | two keys, two names; the object and digest conjuncts |
+| | B₁₄ | `OccursComplement D b none`: the paraphrase complement occurs nowhere | one key; the object conjunct holds; the digest conjunct has no instance; the absent complement is never digested |
+| `negation_scopes_distinct` | `D_ε` | none: instance | two keys, two names (ε) |
+| | B₁₅ | `ho'`: no belief node over `human(claude)` occurs | one key; the object conjunct holds; the name conjunct has no instance |
+| `probably_not_scopes_distinct` | `D_μ` | none: instance | two `probably` keys, two names (μ) |
+| | B₁₆ | `ho'`: no formula node `safe(service)` occurs | one `probably` key; the object conjunct holds; the name conjunct has no instance |
 
 ## 11. Limits, regeneration, Rust and trust
 
@@ -2303,7 +2414,9 @@ theorem name or successful build substitutes for a replayed certificate.
 
 1. The key (1.1): act, holder sort, context with tense, content id; finite and acyclic; literal versus paraphrase
    as distinct contents (13.6); the statement grammar with `not` as the only connective over reports (13.15);
-   identity on canonical objects with `HashCollision` (3.4).
+   identity on canonical objects with `HashCollision` over the objects the document digests, the content object
+   of every node and the complement object of every report node, and digest conclusions only under the
+   occurrence of both compared objects (3.4, 13.26).
 2. The four acts and the complement forms (1.2, 1.3); unreviewed acts as `UnsupportedAct` or LABELLED metadata,
    never renamed; the act check only on units with report content (4.1 step 2, fixture σ).
 3. The assessment record and the explicit `unresolved_decider` (1.4, 5.3); the parser binding of "the stated
@@ -2346,12 +2459,13 @@ theorem name or successful build substitutes for a replayed certificate.
 15. The diagnostics (8) and the fixtures (10), each against the definitions, each independence expectation over
     its named premise subset `D ▷ U` over a document with no `says` key, with the queried keys kept in the
     vocabulary by registration and asserted or denied by no kept unit (10.1, 13.21); the boundary fixtures of
-    10.3, B₁ to B₁₃′, one per restricted claim, the nested assessment (B₇), the author's premises (B₈), B₂'s
+    10.3, B₁ to B₁₆, one per restricted claim, the nested assessment (B₇), the author's premises (B₈), B₂'s
     forced renumbering, the one-hypothesis-broken fixtures of the nested-content theorems and of
     `nested_independent` as the closing table of 10.3 names them (B₉ and B₉′, the holder; B₁₀, B₁₁ and ω's
     refutation, the polarity; B₂, B₁₁′ and B₁₂, `nested_independent`'s shape hypothesis alone, the inner act, a
-    negated inner node and depth 2, with B₁₁, `D_ω` and B₁₂′ recorded as breaking two) and the depth bound
-    attained and exceeded (B₁₃, B₁₃′) among them; the
+    negated inner node and depth 2, with B₁₁, `D_ω` and B₁₂′ recorded as breaking two), the depth bound
+    attained and exceeded (B₁₃, B₁₃′) and the digest boundaries (B₁₄, B₁₅, B₁₆, one compared object absent;
+    B₁₄′, `D_ε`, `D_μ` the instances) among them; the
     checklist's situation lines of 2.3, defined by what the IDE runs, against B₁, B₃, B₄, B₆, B₈, B₉′, B₁₀, B₁₁,
     B₁₁′, B₁₂, B₁₂′ and `D_ω`; the envelope in fixture φ (13.19).
 16. The composition gate with `data@0` rejected (11.3) and the trust list (11.4).
@@ -2362,11 +2476,13 @@ theorem name or successful build substitutes for a replayed certificate.
     nested-content entailment on the holder-applied atom), the draft-8 choice 13.24 (a boundary fixture names
     the one hypothesis it breaks; a theorem is weakened to the admitted bound, never the bound tightened) and the
     draft-9 choice 13.25 (an instance claim unifies the fixture's content with the shape hypothesis literally,
-    act included; a fixture's depth is `Content.depth` computed); the "Fragments" convention of section 0.
+    act included; a fixture's depth is `Content.depth` computed) and the draft-10 choice 13.26 (a digest or name
+    conclusion is under the occurrence of both compared objects; the collision check is document-local); the
+    "Fragments" convention of section 0.
 18. The "Normative content" rule of section 0: every prose entailment, "iff", "exactly when" and "no …" claim
     outside the definitions, 9.2, 9.3 and section 10 names the theorem it reads and that theorem's hypotheses, or
     is absent; 4.5 and 4.6 marked NON-NORMATIVE; the three open questions of 4.6 left as questions, none promoted
-    to a claim; the plan's pages and summary (revision 8) carrying no unconditional semantic sentence and marked
+    to a claim; the plan's pages and summary (revision 9) carrying no unconditional semantic sentence and marked
     NON-NORMATIVE on the same terms.
 
 ## 13. Resolved choices in this draft
@@ -2511,6 +2627,28 @@ Each is a point where the plan left a reading open; the review may overturn any 
     distinguishes its nesting depth of 2, the report nodes below the top-level one, from its content depth. Both
     are the directive's class: a fixture assertion is checked against the statement or definition it cites, not
     against the prose around it. Nothing was broadened.
+26. **A digest or name conclusion is under the occurrence of both compared objects; the collision check is
+    document-local.** The eighth verification found that `literal_paraphrase_distinct`'s digest conjunct took
+    as hypotheses that both complement ids appear in `keys D`, which does not put both canonical complement
+    objects in the document: a document holding `(b, l₁)` and no `(b, l₂)`, the two digests coinciding,
+    witnesses both premises with one key and falsifies the conclusion, and the admission check, which digests
+    only what the document contains, cannot detect it; the key-membership hypotheses of
+    `negation_scopes_distinct` and `probably_not_scopes_distinct` had the same gap. This is the directive's
+    class: three digest conjuncts claimed what the definition of `WellFormedReports` does not give, an
+    unsupported collision-freedom assumption about an absent object. The repair: the objects the collision check
+    compares are named in the definition (1.1, 3.4, 4.1 step 4: the content object of every node and the
+    complement object of every report node, nothing else), `OccursComplement` is defined beside `Occurs` (9.1)
+    and `no_collision_complement` beside `no_collision` (9.2); the three theorems keep their canonical-object
+    conjuncts unchanged and take, for their digest and name conjuncts, the occurrence in the document of both
+    compared objects (`OccursComplement D b l₁` and `OccursComplement D b l₂`; a belief node over `¬q` and one
+    over `q` in one context with holders of the sort named; a `probably` node over `¬q` and one over `q`),
+    hypotheses strictly stronger than the key memberships they replace, since an occurring node puts its key in
+    `keys D` or `akeys D`, so no claim is broadened. The alternative the finding offered, keeping only the
+    canonical-object conjuncts, was not taken because ε and μ use the name conclusions and satisfy the occurrence
+    hypotheses. B₁₄, B₁₅ and B₁₆ each break exactly the occurrence hypothesis of the absent object (a literal
+    quotation alone, `D_ε`'s u1 alone, `D_μ`'s u3 alone); B₁₄′, `D_ε` and `D_μ` are the instances; and what the
+    definitions leave for two occurring objects with one digest is the rejection of the document, never a merged
+    key (B₁₄′). No SHA-256 collision was computed or assumed.
 
 ## Change log
 
@@ -2525,3 +2663,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 | 2026-09-28 | Draft 7 | The orchestrator's design directive after the fifth read-only verification (`manage-agents/attribution-p3ver5.final.md`, FAIL on commit `fe35218`: asserting the inner key does not entail a nested content at another holder; a negated nested content is false when its operand is asserted). (1) Section 0, "Normative content": the normative semantic content is definitions, theorem statements with every hypothesis explicit and fixtures with expected results; prose readings claim nothing beyond the statement they name; 4.5 retitled and marked NON-NORMATIVE, each bullet reduced to its theorem, that theorem's hypotheses and its fixtures, the key-level nested-content claims deleted; new 4.6 (NON-NORMATIVE) with three open questions; 2.3's situation and belief lines defined by what the IDE runs (countermodel, certificate or UNKNOWN), with the theorems and fixtures deciding which; 1.1, 1.4, 1.6, 2.1, 4.2 and 5.3 pointed at the statements. (2) 9.2: five nested-content theorems on the holder-applied atom with polarity explicit, `nested_positive_entailed`, `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted` (a top-level unit carrying the very node or its opposite) and `holder_atom_free` (no positive premise at a co-denoting holder); `holderSort` hypotheses added to `no_closure_under_consequence` and `nested_independent`; the prose after the block states that `topKeys` is a hypothesis of the freedom theorems only. (3) 10.3: B₉ (the verification's counterexample, B₇ with u1 at `the_team`), B₉′ (its report form), B₁₀ (the nested positive node denied), B₁₁ (the nested negated node denied; `D_ω` is the asserted case), B₁₂ (depth 2), each breaking one hypothesis; ω's expectation states the refutation; B₁ and B₇ name their theorem instances; checklist items 5, 9, 15, 17 and 18; 13.23. No claim broadened. Spec only; the plan's pointer moves to draft 7 and its page 1 restates its nested-content sentence on the holder-applied atom. |
 | 2026-09-28 | Draft 8 | The three findings of the sixth read-only verification (`manage-agents/attribution-p3ver6.final.md`, FAIL on commit `0c1ad1b`), each applied as an instance of the draft-7 directive. (1) `content_depth_bounded` restated at the admitted bound, `∀ u ∈ D.units, u.content.depth ≤ 16`, with `Content.depth` defined in 9.1 (a leaf one, a report or assessment node one more than its body, a negated node nothing) so that a well-formed unit's content depth is its W2 kind depth, which the frozen `decodeKind` admits up to exactly 16; 4.1 step 4 and 11.1 name the definition and the W2 bound that fires first; new fixtures B₁₃ (the verification's document: fifteen negated nested `says` reports over `safe(service)`, depth 16, admitted, the theorem holding with equality) and B₁₃′ (one node more: `ResourceLimit: kind depth exceeds 16` at step 2). (2) One-hypothesis boundaries of `nested_independent`: B₁₂ is now the depth-2 document alone (breaks `hb` only; both nested atoms free by `unreported_key_free`) and the former B₁₂ is B₁₂′ (the depth-2 instance of `nested_positive_entailed`, breaking `hb` and `hin` of `nested_independent`); new B₁₁′, `D_ω`'s u1 alone (breaks `hb` only; the atom free by `all_truth_combinations`), with B₁₁ and `D_ω` recorded as breaking `hb` and `hin` together; 10.3 closes with a table naming, for every boundary fixture of the nested-content theorems, `nested_independent`, `no_closure_under_consequence`, `attitude_not_factive` and `content_depth_bounded`, the one hypothesis it breaks; 4.5's nested-independence bullet, the intro of 4.5, 2.3, section 0, 1.6, 2.1, 4.2, ω and checklist items 9, 15, 17, 18 updated to the new fixture names. (3) The plan's summary and pages carry no unconditional semantic sentence (revision 7). 13.24 added. No claim broadened. Spec only; the plan's pointer moves to draft 8. |
 | 2026-09-28 | Draft 9 | The two findings of the seventh read-only verification (`manage-agents/attribution-p3ver7.final.md`, FAIL on commit `5587ec2`), each a fixture assertion corrected to what the definitions and statements give, as instances of the draft-7 directive. (1) B₂ is no instance of `nested_independent`: its `hb` names an inner `believes` node and B₂'s inner node is a `says` report; the closing table of 10.3 lists `D_ζ` alone as the instance and B₂ as breaking exactly `hb` (the inner act) with the expected freedom from `unreported_key_free` at `k_in`, and 4.5's nested-independence bullet, 10.3's intro, B₂'s definition and expectation and checklist 15 say the same. (2) B₁₂'s content depth is 4 under `Content.depth` (three report nodes over the formula leaf; its W2 kind has depth 4 likewise), not 3; its expectation says so and distinguishes the nesting depth of 2 from the content depth. 13.25 added; checklist 17 names it. No theorem statement, definition or expected verdict changed; no claim broadened. Spec only; the plan's pointer moves to draft 9 (revision 8). |
+| 2026-09-28 | Draft 10 | The finding of the eighth read-only verification (`manage-agents/attribution-p3ver8.final.md`, FAIL on commit `becf7cb`), applied as an instance of the draft-7 directive: `literal_paraphrase_distinct`'s digest conjunct was stated under key-membership hypotheses that the digest of an absent complement could witness with one key, outrunning the document-local collision check, and `negation_scopes_distinct` and `probably_not_scopes_distinct` had the same gap. (1) Definitions: the objects the collision check of 4.1 step 4 compares are named (the content object of every node and the complement object of every report node, nothing else) in 1.1, 3.4 and 4.1; `OccursComplement` defined in 9.1. (2) Statements: `no_collision_complement` added beside `no_collision`; the digest and name conjuncts of the three theorems restated under the occurrence of both compared objects, hypotheses strictly stronger than the memberships they replace; the canonical-object conjuncts unchanged; the readings of 1.1, 1.5, 3.4, 4.5, 9.2's prose, 9.5, ε and μ name the hypotheses. (3) Fixtures: B₁₄ (a literal quotation alone), B₁₄′ (literal and paraphrase together), B₁₅ (`D_ε`'s u1 alone), B₁₆ (`D_μ`'s u3 alone), each boundary breaking exactly the occurrence hypothesis of the absent object, with the instances B₁₄′, `D_ε`, `D_μ` in the closing table of 10.3; checklist items 1, 15, 17, 18; 13.26. No claim broadened; no digest collision computed or assumed. Spec only; the plan's pointer moves to draft 10 (revision 9). |
