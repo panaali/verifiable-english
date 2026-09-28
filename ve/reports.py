@@ -221,7 +221,7 @@ class ReportsDocument:
         its tree has no assessment node, and otherwise `open`, listing every
         generated assessment name of its tree."""
         uid, meaning = row["id"], row.get("meaning")
-        if "support" in row and row["support"] not in SUPPORTS:
+        if "support" in row and (type(row["support"]) is not str or row["support"] not in SUPPORTS):
             raise VEError(f"InvalidInput: support of {uid}")
         generated = {term["name"] for term in self.open_terms}
         valid = (meaning is None or meaning == "specified"

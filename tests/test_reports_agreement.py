@@ -216,6 +216,7 @@ def test_w2_metadata_is_checked_and_bound_into_the_document(lean):
         (base, E0(), None),
         (edited(0, meaning={"open": ["nonexistent"]}), E0(), "InvalidInput"),
         (edited(0, support="bogus"), E0(), "InvalidInput"),
+        (edited(0, support=["testimony"]), E0(), "shape"),
         (edited(1, meaning="specified"), E0(), "InvalidInput"),
         (edited(1, meaning={"open": ["genuine"]}), E0(), "InvalidInput"),
         (edited(0, meaning={"contextual": "the desk"}), E0(), "InvalidInput"),
