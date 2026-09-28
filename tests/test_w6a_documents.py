@@ -143,12 +143,13 @@ def rejection_cases(env):
         ("unit mismatch", mutate(document, ["units", 0, "content"],
                                  q(["eq", ["const", "bp", "low"], ["decimal", "usd_cent", "3.75"]])),
          "UnitMismatch(bp,usd_cent)"),
-        # Citations need a checked bundle binding on every route.
-        ("cite label", mutate(document, ["graph", "nodes", 0],
-                              {"name": "low", "quantity": LOW, "label": "cite:bundle/lemma"}),
-         "document citations require a checked bundle binding"),
-        ("lemmas", {**document, "lemmas": [{"name": "bundle/lemma", "conclusion": ["top"], "leaves": []}]},
-         "document citations require a checked bundle binding"),
+        # A citation needs a checked lemma (tests/test_w6a_citations.py has every class).
+        ("cite without lemma", mutate(document, ["graph", "nodes", 0],
+                                      {"name": "low", "quantity": LOW, "label": "cite:bundle/lemma"}),
+         "node low is not admitted under label cite:bundle/lemma"),
+        ("unchecked lemma", {**document, "lemmas": [{"name": "bundle/lemma", "conclusion": q(["top"]),
+                                                     "leaves": []}]},
+         "fields"),
     ]
 
 
@@ -165,7 +166,7 @@ def test_rust_rejects_the_statement_classes():
     raw = doc_env()
     cases = {name: document for name, document, _ in rejection_cases(Environment(raw))}
     for name, message in (("forged Q", "Q differs"), ("unit mismatch", "UnitMismatch(bp,usd_cent)"),
-                          ("lemmas", "citations")):
+                          ("unchecked lemma", "fields")):
         [other] = rust([{"id": name, "kind": "quantity", "mode": "document", "environment": raw,
                          "document": cases[name]}])
         assert other["status"] == "error" and message in other["error"]["message"], (name, other)

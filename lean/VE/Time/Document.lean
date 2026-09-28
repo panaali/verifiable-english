@@ -15,12 +15,18 @@ The provenance rules are the base route's (`VE.Route.Admission`): asserted leave
 formalise asserted units, quoted units enter only through bridge leaves naming
 them, and open-term, reading and narrowing leaves name declared objects. The
 units-only layer generates no Background, so no background leaf is admitted.
-Citations need a checked bundle binding on every route, so lemmas and `cite`
-labels reject with the base route's diagnostic.
+
+Citations are bound by checked lemmas. A lemma carries its conclusion, its
+transitive leaves (labelled statements, none a citation) and a
+`ve-quantity-certificate@1` from exactly those leaves, in order, to the
+conclusion; decoding checks the certificate. A `cite:<bundle>/<lemma>` leaf is
+admitted when it states that lemma's conclusion, and the report must carry each
+of the lemma's leaves with its label, as on the base route.
 
 `admit_quantity_report_sound`: in every admissible tagged structure where the
-report's assumptions hold, its root holds; every assumption is a decoded leaf
-with exactly its label satisfying its leaf rule; reading choices agree. -/
+report's non-citation assumptions hold, its root holds; every assumption is a
+decoded leaf with exactly its label satisfying its leaf rule; reading choices
+agree. -/
 namespace VE.Time.Document
 universe v
 open Lean
@@ -31,8 +37,10 @@ open VE.Route.Admission (Kind decodeKind renderKind parseLabel token compatible 
 def graphRejected : String :=
   "graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or invalid certificate"
 
-def citationsUnsupported : String :=
-  "UnsupportedProfile: document citations require a checked bundle binding"
+def isCite (label : String) : Bool :=
+  match parseLabel label with
+  | some (.cite _ _) => true
+  | _ => false
 
 structure QUnit where
   id : String
@@ -46,8 +54,19 @@ structure QReadingSet where
   version : Nat
   readings : List QFormula
 
-structure QDoc where
+/-- A checked lemma: its certificate establishes the conclusion from exactly its
+leaves, in order, bound to their annotated meaning ids. No leaf is a citation. -/
+structure QLemma (w : W6Env) where
+  name : String
+  conclusion : Admission w
+  leaves : List (Admission w × String)
+  certificate : W6Certificate
+  transitive : leaves.all (fun l => !isCite l.2) = true
+  checked : checkW6Certificate (leaves.map (·.1)) conclusion certificate = .ok true
+
+structure QDoc (w : W6Env) where
   units : List QUnit
+  lemmas : List (QLemma w)
   openTerms : List String
   readingSets : List QReadingSet
   narrowings : List String
@@ -69,25 +88,28 @@ def qdisjunction : List QFormula → Option QFormula
 
 /-! ## The admission rules, as independent propositions -/
 
-def AssertedUnit (D : QDoc) (u : String) (φ : QFormula) : Prop :=
+def AssertedUnit {w : W6Env} (D : QDoc w) (u : String) (φ : QFormula) : Prop :=
   ∃ x ∈ D.units, x.id = u ∧ x.kind = .asserted ∧ x.content = some φ
 
-def QuotedUnit (D : QDoc) (agent u : String) (φ : QFormula) : Prop :=
+def QuotedUnit {w : W6Env} (D : QDoc w) (agent u : String) (φ : QFormula) : Prop :=
   ∃ x ∈ D.units, x.id = u ∧ x.kind.quoted = true ∧ x.content = some φ ∧
     agentMatches x.kind agent = true
 
-def ReadingContent (D : QDoc) (s : String) (ver : Nat) (c : Option Nat) (φ : QFormula) : Prop :=
+def ReadingContent {w : W6Env} (D : QDoc w) (s : String) (ver : Nat) (c : Option Nat)
+    (φ : QFormula) : Prop :=
   ∃ rs ∈ D.readingSets, rs.id = s ∧ rs.version = ver ∧
     match c with
     | some i => rs.readings[i]? = some φ
     | none => qdisjunction rs.readings = some φ
 
-/-- The provenance rule for an undischarged leaf; background and cite leaves
-are never admitted on this route. -/
-def LeafAdmitted {w : W6Env} (D : QDoc) (n : QNode w) : Prop :=
+/-- The provenance rule for an undischarged leaf; background leaves are never
+admitted on this route, and a citation states a checked lemma's conclusion. -/
+def LeafAdmitted {w : W6Env} (D : QDoc w) (n : QNode w) : Prop :=
   match parseLabel n.label with
   | some .asserted => ∃ u, n.unit = some u ∧ AssertedUnit D u n.adm.formula
   | some (.bridge a u) => (n.unit = none ∨ n.unit = some u) ∧ QuotedUnit D a u n.adm.formula
+  | some (.cite b l) => n.unit = none ∧
+      ∃ m ∈ D.lemmas, m.name = b ++ "/" ++ l ∧ m.conclusion.formula = n.adm.formula
   | some (.openTerm t) => n.unit = none ∧ t ∈ D.openTerms
   | some (.readings s ver c) => n.unit = none ∧ ReadingContent D s ver c n.adm.formula
   | some (.narrowing m) => n.unit = none ∧ m ∈ D.narrowings
@@ -95,37 +117,44 @@ def LeafAdmitted {w : W6Env} (D : QDoc) (n : QNode w) : Prop :=
 
 /-- A deduction is an asserted claim; a unit it names is asserted with exactly
 its statement. -/
-def NodeAdmitted {w : W6Env} (D : QDoc) (n : QNode w) : Prop :=
+def NodeAdmitted {w : W6Env} (D : QDoc w) (n : QNode w) : Prop :=
   match n.deduction with
   | some _ => n.label = "asserted" ∧ ∀ u, n.unit = some u → AssertedUnit D u n.adm.formula
   | none => LeafAdmitted D n
 
-instance (D : QDoc) (u : String) (φ : QFormula) : Decidable (AssertedUnit D u φ) := by
+/-- The label cites this lemma. -/
+def citesLemma {w : W6Env} (label : String) (m : QLemma w) : Bool :=
+  match parseLabel label with
+  | some (.cite b l) => m.name == b ++ "/" ++ l
+  | _ => false
+
+instance {w : W6Env} (D : QDoc w) (u : String) (φ : QFormula) : Decidable (AssertedUnit D u φ) := by
   unfold AssertedUnit; infer_instance
 
-instance (D : QDoc) (a u : String) (φ : QFormula) : Decidable (QuotedUnit D a u φ) := by
+instance {w : W6Env} (D : QDoc w) (a u : String) (φ : QFormula) :
+    Decidable (QuotedUnit D a u φ) := by
   unfold QuotedUnit; infer_instance
 
-instance (D : QDoc) (s : String) (ver : Nat) (c : Option Nat) (φ : QFormula) :
+instance {w : W6Env} (D : QDoc w) (s : String) (ver : Nat) (c : Option Nat) (φ : QFormula) :
     Decidable (ReadingContent D s ver c φ) := by
   unfold ReadingContent
   cases c <;> infer_instance
 
-instance {w : W6Env} (D : QDoc) (n : QNode w) : Decidable (LeafAdmitted D n) := by
+instance {w : W6Env} (D : QDoc w) (n : QNode w) : Decidable (LeafAdmitted D n) := by
   unfold LeafAdmitted
   split <;> infer_instance
 
-instance {w : W6Env} (D : QDoc) (n : QNode w) : Decidable (NodeAdmitted D n) := by
+instance {w : W6Env} (D : QDoc w) (n : QNode w) : Decidable (NodeAdmitted D n) := by
   unfold NodeAdmitted
   split
   · exact decidable_of_iff (n.label = "asserted" ∧
       ∀ u ∈ n.unit.toList, AssertedUnit D u n.adm.formula) (by simp)
   · infer_instance
 
-def unitOf (D : QDoc) (u : String) : Option QUnit := D.units.find? (fun x => x.id == u)
+def unitOf {w : W6Env} (D : QDoc w) (u : String) : Option QUnit := D.units.find? (fun x => x.id == u)
 
 /-- The base route's diagnostics (untrusted text). -/
-def nodeDiagnostic {w : W6Env} (D : QDoc) (n : QNode w) : String :=
+def nodeDiagnostic {w : W6Env} (D : QDoc w) (n : QNode w) : String :=
   let bridgeNaming := match parseLabel n.label, n.deduction with
     | some (.bridge _ u), none => some u
     | _, _ => none
@@ -139,12 +168,12 @@ def nodeDiagnostic {w : W6Env} (D : QDoc) (n : QNode w) : String :=
     | none => s!"AdmissionError: invalid label {n.label}"
     | some _ => s!"AdmissionError: node {n.name} is not admitted under label {n.label}"
 
-def admitNodes {w : W6Env} (D : QDoc) (ns : List (QNode w)) : Except String Unit :=
+def admitNodes {w : W6Env} (D : QDoc w) (ns : List (QNode w)) : Except String Unit :=
   match ns.find? (fun n => !decide (NodeAdmitted D n)) with
   | some n => .error (nodeDiagnostic D n)
   | none => .ok ()
 
-theorem admitNodes_ok {w : W6Env} (D : QDoc) (ns : List (QNode w)) (h : admitNodes D ns = .ok ()) :
+theorem admitNodes_ok {w : W6Env} (D : QDoc w) (ns : List (QNode w)) (h : admitNodes D ns = .ok ()) :
     ∀ n ∈ ns, NodeAdmitted D n := by
   unfold admitNodes at h
   split at h
@@ -292,14 +321,71 @@ def ChoicesCompatible {w : W6Env} (e : Entry w) : Prop :=
 instance {w : W6Env} (e : Entry w) : Decidable (ChoicesCompatible e) := by
   unfold ChoicesCompatible; infer_instance
 
+/-- Every cited lemma's leaves are in the report with their labels. -/
+def CitationsClosed {w : W6Env} (D : QDoc w) (e : Entry w) : Prop :=
+  ∀ x ∈ e.assumptions, ∀ m ∈ D.lemmas, citesLemma x.2.2 m = true →
+    ∀ l ∈ m.leaves, ∃ y ∈ e.assumptions, y.2.1.formula = l.1.formula ∧ y.2.2 = l.2
+
+instance {w : W6Env} (D : QDoc w) (e : Entry w) : Decidable (CitationsClosed D e) := by
+  unfold CitationsClosed; infer_instance
+
+/-- The entry's statement holds in every admissible tagged structure in which
+its non-citation leaves hold. -/
+def Entry.SoundOverLeaves {w : W6Env} (e : Entry w) : Prop :=
+  ∀ (α : Type v) (T : TStructure α), T.Admissible w.vocab.env →
+    (∀ x ∈ e.assumptions, isCite x.2.2 = false → x.2.1.formula.tdenote T []) →
+      e.adm.formula.tdenote T []
+
+theorem isCite_parse {s : String} (h : isCite s = true) : ∃ b l, parseLabel s = some (.cite b l) := by
+  unfold isCite at h
+  split at h
+  · rename_i b l hp
+    exact ⟨b, l, hp⟩
+  · cases h
+
+/-- A citation leaf is discharged by its checked lemma, whose leaves the report
+carries with their labels; so the root rests only on non-citation leaves. -/
+theorem cites_discharged {w : W6Env} (D : QDoc w) (nodes : List (QNode w)) (e : Entry w)
+    (hleaves : ∀ x ∈ e.assumptions, ∃ n ∈ nodes, n.deduction = none ∧
+      (n.name, n.adm, n.label) = x ∧ LeafAdmitted D n)
+    (hclosed : CitationsClosed D e) (hsound : Entry.Sound.{v} e) : Entry.SoundOverLeaves.{v} e := by
+  intro α T hT hnc
+  apply hsound α T hT
+  intro x hx
+  obtain ⟨n, _, _, hnx, hadm⟩ := hleaves x hx
+  subst hnx
+  cases hcite : isCite n.label
+  · exact hnc _ hx hcite
+  · obtain ⟨b, l, hp⟩ := isCite_parse hcite
+    show n.adm.formula.tdenote T []
+    unfold LeafAdmitted at hadm
+    rw [hp] at hadm
+    obtain ⟨_, m, hm, hmn, hmc⟩ := hadm
+    have hcites : citesLemma n.label m = true := by
+      unfold citesLemma
+      rw [hp, hmn]
+      simp
+    have hent := (checkW6Certificate_sound.{v} _ _ _ m.checked).2.2.2
+    rw [← hmc]
+    apply hent α T hT
+    intro a ha
+    obtain ⟨b', hb, rfl⟩ := List.mem_map.mp ha
+    obtain ⟨leaf, hleaf, rfl⟩ := List.mem_map.mp hb
+    obtain ⟨y, hy, hyf, hyl⟩ := hclosed _ hx m hm hcites leaf hleaf
+    have htr : isCite leaf.2 = false := by
+      have := List.all_eq_true.mp m.transitive leaf hleaf
+      simpa using this
+    rw [← hyf]
+    exact hnc y hy (by rw [hyl]; exact htr)
+
 structure Admitted (w : W6Env) where
-  doc : QDoc
+  doc : QDoc w
   nodes : List (QNode w)
   entries : List (Entry w)
   root : Entry w
 
 /-- The logical checks on a decoded document. -/
-def admitDecoded (w : W6Env) (D : QDoc) (nodes : List (QNode w)) (root : String) :
+def admitDecoded (w : W6Env) (D : QDoc w) (nodes : List (QNode w)) (root : String) :
     Except String (Admitted w) :=
   match admitNodes D nodes with
   | .error e => .error e
@@ -310,23 +396,27 @@ def admitDecoded (w : W6Env) (D : QDoc) (nodes : List (QNode w)) (root : String)
       match entries.find? (fun e => e.name == root) with
       | none => .error graphRejected
       | some r =>
-        if decide (ChoicesCompatible r) then .ok ⟨D, nodes, entries, r⟩
-        else .error "AdmissionError: incompatible reading choices"
+        if decide (CitationsClosed D r) then
+          if decide (ChoicesCompatible r) then .ok ⟨D, nodes, entries, r⟩
+          else .error "AdmissionError: incompatible reading choices"
+        else .error "AdmissionError: a cited lemma's leaves are missing from the report"
 
 /-- **W6 report soundness.** An admitted quantity document's report root is a
 submitted node named by the graph root; in every admissible tagged structure
-where the report's assumptions hold, the root statement holds; every assumption
-is a submitted leaf with exactly its statement and label, satisfying its
-provenance rule; every node satisfies its admission rule; and reading choices
-are compatible. -/
-theorem admitDecoded_sound {w : W6Env} (D : QDoc) (nodes : List (QNode w)) (root : String)
+where the report's assumptions hold, the root statement holds, and it holds
+already where the non-citation assumptions hold; every assumption is a
+submitted leaf with exactly its statement and label, satisfying its provenance
+rule; cited lemmas' leaves are in the report; every node satisfies its
+admission rule; and reading choices are compatible. -/
+theorem admitDecoded_sound {w : W6Env} (D : QDoc w) (nodes : List (QNode w)) (root : String)
     (res : Admitted w) (h : admitDecoded w D nodes root = .ok res) :
     res.doc = D ∧ res.nodes = nodes ∧ res.root.name = root ∧
     (∃ n ∈ nodes, n.name = root ∧ n.adm = res.root.adm ∧ n.label = res.root.label) ∧
     (∀ n ∈ nodes, NodeAdmitted D n) ∧
     (∀ x ∈ res.root.assumptions, ∃ n ∈ nodes, n.deduction = none ∧
       (n.name, n.adm, n.label) = x ∧ LeafAdmitted D n) ∧
-    ChoicesCompatible res.root ∧ Entry.Sound.{v} res.root := by
+    CitationsClosed D res.root ∧ ChoicesCompatible res.root ∧ Entry.Sound.{v} res.root ∧
+    Entry.SoundOverLeaves.{v} res.root := by
   unfold admitDecoded at h
   split at h
   · cases h
@@ -338,23 +428,29 @@ theorem admitDecoded_sound {w : W6Env} (D : QDoc) (nodes : List (QNode w)) (root
       · cases h
       · rename_i r hr
         split at h
-        · rename_i hc
-          cases h
-          have hnodes := admitNodes_ok D nodes hadm
-          have hgood := checkGraph_good.{v} nodes nodes [] entries (fun n hn => hn)
-            (fun e he => by cases he) hg r (List.mem_of_find?_eq_some hr)
-          have hname : r.name = root := by
-            simpa using List.find?_some hr
-          obtain ⟨⟨n, hn, hnn, hna, hnl⟩, hleaves, hsound⟩ := hgood
-          refine ⟨rfl, rfl, hname, ⟨n, hn, hnn.trans hname, hna, hnl⟩, hnodes, ?_,
-            of_decide_eq_true hc, hsound⟩
-          intro x hx
-          obtain ⟨m, hm, hmd, hmx⟩ := hleaves x hx
-          refine ⟨m, hm, hmd, hmx, ?_⟩
-          have := hnodes m hm
-          unfold NodeAdmitted at this
-          rw [hmd] at this
-          exact this
+        · rename_i hcl
+          split at h
+          · rename_i hc
+            cases h
+            have hnodes := admitNodes_ok D nodes hadm
+            have hgood := checkGraph_good.{v} nodes nodes [] entries (fun n hn => hn)
+              (fun e he => by cases he) hg r (List.mem_of_find?_eq_some hr)
+            have hname : r.name = root := by
+              simpa using List.find?_some hr
+            obtain ⟨⟨n, hn, hnn, hna, hnl⟩, hleaves, hsound⟩ := hgood
+            have hadmitted : ∀ x ∈ r.assumptions, ∃ n ∈ nodes, n.deduction = none ∧
+                (n.name, n.adm, n.label) = x ∧ LeafAdmitted D n := by
+              intro x hx
+              obtain ⟨m, hm, hmd, hmx⟩ := hleaves x hx
+              refine ⟨m, hm, hmd, hmx, ?_⟩
+              have := hnodes m hm
+              unfold NodeAdmitted at this
+              rw [hmd] at this
+              exact this
+            exact ⟨rfl, rfl, hname, ⟨n, hn, hnn.trans hname, hna, hnl⟩, hnodes, hadmitted,
+              of_decide_eq_true hcl, of_decide_eq_true hc, hsound,
+              cites_discharged.{v} D nodes r hadmitted (of_decide_eq_true hcl) hsound⟩
+          · cases h
         · cases h
 
 /-! ## Decoding -/
@@ -411,10 +507,34 @@ def decodeNode (w : W6Env) (j : Json) : Except String (QNode w) := do
     | _, _ => throw "premises and certificate come together"
   pure ⟨name, adm, label, unit, deduction⟩
 
-def isCite (label : String) : Bool :=
-  match parseLabel label with
-  | some (.cite _ _) => true
-  | _ => false
+/-- A lemma leaf: a labelled statement; a citation cannot be a leaf. -/
+def decodeLeaf (w : W6Env) (j : Json) : Except String (Admission w × String) := do
+  exactFields j ["quantity", "label"]
+  let l ← stringField j "label"
+  match parseLabel l with
+  | none => throw s!"AdmissionError: invalid label {l}"
+  | some (.cite _ _) => throw "AdmissionError: lemma leaves must be transitive (no cite labels)"
+  | some _ => pure (← decodeQuantity w (← j.getObjVal? "quantity"), l)
+
+def lemmaUnchecked (name : String) : String :=
+  s!"AdmissionError: lemma {name} is not established by its certificate"
+
+/-- Decode a lemma and check its certificate against exactly its leaves. -/
+def decodeLemma (w : W6Env) (j : Json) : Except String (QLemma w) := do
+  exactFields j ["name", "conclusion", "leaves", "certificate"]
+  let name ← stringField j "name"
+  match parseLabel ("cite:" ++ name) with
+  | some (.cite _ _) => pure ()
+  | _ => throw s!"invalid lemma name {name}"
+  let c ← decodeQuantity w (← j.getObjVal? "conclusion")
+  let leaves ← (← (← j.getObjVal? "leaves").getArr?).toList.mapM (decodeLeaf w)
+  unless leaves.length ≤ 1000 do throw "ResourceLimit: lemma leaves"
+  let cert ← decodeW6Certificate (← j.getObjVal? "certificate")
+  if ht : leaves.all (fun l => !isCite l.2) = true then
+    match hc : checkW6Certificate (leaves.map (·.1)) c cert with
+    | .ok true => pure ⟨name, c, leaves, cert, ht, hc⟩
+    | _ => throw (lemmaUnchecked name)
+  else throw "AdmissionError: lemma leaves must be transitive (no cite labels)"
 
 def optionalArray (j : Json) (key : String) : Except String (List Json) :=
   match j.getObjVal? key with
@@ -422,15 +542,16 @@ def optionalArray (j : Json) (key : String) : Except String (List Json) :=
   | .error _ => pure []
 
 /-- Decode the document, its graph nodes and root. -/
-def decodeDocument (w : W6Env) (j : Json) : Except String (QDoc × List (QNode w) × String) := do
+def decodeDocument (w : W6Env) (j : Json) : Except String (QDoc w × List (QNode w) × String) := do
   unless w.profiles.contains "documents@1" do
     throw "UnsupportedProfile: quantity documents require documents@1"
   shape j ["units", "graph"] ["lemmas", "open_terms", "reading_sets", "narrowings"]
-  unless (← optionalArray j "lemmas").isEmpty do throw citationsUnsupported
   let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM (decodeUnit w)
   if units.length > 10000 then throw "ResourceLimit: unit count"
   unless (units.map QUnit.id).eraseDups.length == units.length do throw "duplicate unit id"
   unless sortedSpans units do throw "unit spans must be sorted and non-overlapping"
+  let lemmas ← (← optionalArray j "lemmas").mapM (decodeLemma w)
+  unless (lemmas.map QLemma.name).eraseDups.length == lemmas.length do throw "duplicate lemma"
   let openTerms ← tokenList (Json.arr (← optionalArray j "open_terms").toArray)
   let readingSets ← (← optionalArray j "reading_sets").mapM (decodeReadingSet w)
   unless (readingSets.map (fun r => (r.id, r.version))).eraseDups.length == readingSets.length do
@@ -442,8 +563,7 @@ def decodeDocument (w : W6Env) (j : Json) : Except String (QDoc × List (QNode w
   let nodeArray ← (← graphJson.getObjVal? "nodes").getArr?
   if nodeArray.size > 1000 then throw "ResourceLimit: graph node count"
   let nodes ← nodeArray.toList.mapM (decodeNode w)
-  if nodes.any (fun n => isCite n.label) then throw citationsUnsupported
-  pure (⟨units, openTerms, readingSets, narrowings⟩, nodes, root)
+  pure (⟨units, lemmas, openTerms, readingSets, narrowings⟩, nodes, root)
 
 def admitDocument (w : W6Env) (j : Json) : Except String (Admitted w) := do
   let (D, nodes, root) ← decodeDocument w j
@@ -455,13 +575,16 @@ theorem admit_quantity_report_sound {w : W6Env} (j : Json) (res : Admitted w)
     (∀ n ∈ res.nodes, NodeAdmitted res.doc n) ∧
     (∀ x ∈ res.root.assumptions, ∃ n ∈ res.nodes, n.deduction = none ∧
       (n.name, n.adm, n.label) = x ∧ LeafAdmitted res.doc n) ∧
-    ChoicesCompatible res.root ∧ Entry.Sound.{v} res.root := by
+    CitationsClosed res.doc res.root ∧ ChoicesCompatible res.root ∧ Entry.Sound.{v} res.root ∧
+    Entry.SoundOverLeaves.{v} res.root := by
   unfold admitDocument at h
   obtain ⟨⟨D, nodes, root⟩, _, h⟩ := VE.Order.ProfileGate.bind_ok h
-  obtain ⟨hd, hn, _, hroot, hnodes, hleaves, hc, hs⟩ := admitDecoded_sound.{v} D nodes root res h
+  obtain ⟨hd, hn, _, hroot, hnodes, hleaves, hcl, hc, hs, hso⟩ :=
+    admitDecoded_sound.{v} D nodes root res h
   rw [hd, hn]
   obtain ⟨n, hmem, hnn, hna, hnl⟩ := hroot
-  exact ⟨⟨n, hmem, hnn.trans (by rw [‹res.root.name = root›]), hna, hnl⟩, hnodes, hleaves, hc, hs⟩
+  exact ⟨⟨n, hmem, hnn.trans (by rw [‹res.root.name = root›]), hna, hnl⟩, hnodes, hleaves,
+    hcl, hc, hs, hso⟩
 
 /-! ## The runner case -/
 
