@@ -54,6 +54,8 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertIn("tests/test_norms.py", select(["ve/search.py"])["selected"])
         self.assertIn("tests/test_norms.py", select(["ve/surface/registry.py"])["selected"])
         self.assertEqual(select(["ve/surface/registry.py"])["minimum_layer"], 1)
+        self.assertEqual(select(["ve_experiments/assist_haiku.py"])["minimum_layer"], 4)
+        self.assertEqual(select(["ve/surface/__init__.py"])["minimum_layer"], 1)
 
     def test_imported_fixtures_and_helpers_select_consumers(self):
         cases = (

@@ -127,17 +127,21 @@ def exception_importers(path: str) -> set[str]:
     """Include importers reachable through reviewed outward edges."""
     if not path.endswith((".py", ".lean")):
         return set()
-    language = "ve" if path.startswith("ve/") else "lean" if path.startswith("lean/") else None
+    language = ("python" if path.startswith(("ve/", "ve_experiments/")) else
+                "lean" if path.startswith("lean/") else None)
     if language is None:
         return set()
-    module = ".".join(Path(path).with_suffix("").parts[(0 if language == "ve" else 1):])
-    ledger = ROOT / ("tools/layer-exceptions.json" if language == "ve" else
+    module = ".".join(Path(path).with_suffix("").parts[(0 if language == "python" else 1):])
+    if module.endswith(".__init__"):
+        module = module.removesuffix(".__init__")
+    ledger = ROOT / ("tools/layer-exceptions.json" if language == "python" else
                      "tools/lean-layer-exceptions.json")
     edges = [edge.split(" -> ") for edge in json.loads(ledger.read_text())]
     reached = {module}
     while True:
         added = {importer for importer, imported in edges
                  if any(current == imported or current.startswith(imported + ".")
+                        or (path.endswith("/__init__.py") and imported.startswith(current + "."))
                         for current in reached)} - reached
         if not added:
             break
@@ -154,7 +158,7 @@ def select(paths: list[str], *, full: bool = False) -> dict:
         if path.startswith("tests/test_") and path.endswith(".py"):
             layers[path] = test_layer(ROOT / path) if (ROOT / path).exists() else 1
         for importer in exception_importers(path):
-            layer = python_layer(importer) if path.startswith("ve/") else lean_layer(importer)
+            layer = python_layer(importer) if not path.startswith("lean/") else lean_layer(importer)
             if layer is not None:
                 layers[path] = min(layers[path], layer)
     fallback = full or not paths or None in layers.values()
