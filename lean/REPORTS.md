@@ -195,11 +195,11 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   in it; their count is W2's `open_terms` line, unchanged.
 - An `unformalised` node nested in a unit's kind (under attributed, hedged or causal wrappers) leaves that part of
   the unit unformalised whatever its meaning and content (6's MIXED row, in one unit), so it is an UNFORMALISED
-  nested result, not a rejection: W2 admits such kinds and the root rule (an unformalised kind needs an
-  unformalised meaning) is unchanged. The residual gains a line beside 6's, `unformalised_kinds` (every
+  nested result, not a rejection: W2 admits such kinds. A root unformalised kind requires an unformalised meaning
+  with the same reason (`InvalidInput` otherwise). The residual gains a line beside 6's, `unformalised_kinds` (every
   unformalised node of a unit's kind at any depth, root included, by reason), and the coverage's
-  `unformalised_reasons` counts each nested one's reason beside each unformalised meaning's (a root kind's is
-  its unit's meaning's). A plain W2 document (no `reports@0`) is unchanged.
+  `unformalised_reasons` counts each nested one's reason beside each unformalised meaning's (a matching root kind
+  and meaning count once). A plain W2 document applies the same root reason agreement rule.
 
 ## Spec defects found
 
