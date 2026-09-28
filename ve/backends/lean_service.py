@@ -44,6 +44,61 @@ DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 SERVICE = "ve-lean@1"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english")
+# Wire shapes from Service.Protocol.runMode and its six pinned runners. The same
+# table gates every successful result; the validators below check field values.
+_ROUTE_FIELDS = {
+    "evaluate": ({"id", "status", "values"},),
+    "countermodel": ({"id", "status", "refutes"},),
+    "certificate": ({"id", "status", "valid", "background"},),
+    "dependency-order": ({"id", "status", "order"},),
+    "bundle": ({"id", "status", "checked", "lemmas"},),
+    "background": ({"id", "status", "background", "premises", "generators"},),
+    "label": ({"id", "status", "label"},),
+    "admission": ({"id", "status", "admitted", "report", "report_id", "kinds"},),
+}
+RESPONSE_SCHEMAS = {
+    "evaluate": {"ok": {"default": ({"id", "status", "values", "value", "canonical"},),
+                        "countermodel": ({"id", "status", "refutes"},)},
+                 "error": ({"id", "status", "error"},),
+                 "case_error": ({"status", "case_index", "error"},)},
+    "check-certificate": {"ok": {"default": ({"id", "status", "valid"},)},
+                          "error": ({"id", "status", "error", "valid"},),
+                          "case_error": ({"status", "case_index", "error", "valid"},)},
+    "order": {"ok": {"evaluate": ({"id", "status", "values"},),
+                     "countermodel": ({"id", "status", "refutes"},),
+                     "certificate": ({"id", "status", "valid"},),
+                     "surface": ({"id", "status", "ast"},)},
+              "error": ({"id", "status", "error", "valid"},),
+              "case_error": ({"status", "case_index", "error", "valid"},)},
+    "route": {"ok": _ROUTE_FIELDS,
+              "error": ({"id", "status", "error"}, {"id", "status", "error", "valid"},
+                        {"id", "status", "error", "generator"},
+                        {"id", "status", "error", "valid", "generator"}),
+              "case_error": ({"status", "case_index", "error"},)},
+    "norms": {"ok": {**_ROUTE_FIELDS,
+                     "norms-elaborate": ({"id", "status", "order", "background", "premises",
+                                           "conflict_targets", "fragment"},),
+                     "norms-certificate": ({"id", "status", "valid", "background", "layers"},),
+                     "norms-conflict": ({"id", "status", "verdict", "targets"},
+                                        {"id", "status", "verdict", "targets", "detail"},
+                                        {"id", "status", "verdict", "target", "targets"})},
+              "error": ({"id", "status", "error"}, {"id", "status", "error", "valid"},
+                        {"id", "status", "error", "generator"},
+                        {"id", "status", "error", "valid", "generator"}),
+              "case_error": ({"status", "case_index", "error"},)},
+    "english": {"ok": {"default": ({"admissible", "covers", "results"},)},
+                "item": ({"parsed", "checked", "rendered", "roundtrip"},),
+                "formula_tags": ("top", "bottom", "unary", "binary", "eq", "not", "and", "or",
+                                 "implies", "forall", "exists"),
+                "term_tags": ("var", "const"),
+                "error": ({"status", "error"},)},
+}
+RESPONSE_ENVELOPE = {"ok": {"id", "status", "mode", "results", "counts"},
+                     "error": {"id", "status", "error"}}
+
+
+def _shape(value: object, choices: tuple[set[str], ...]) -> bool:
+    return isinstance(value, dict) and any(set(value) == fields for fields in choices)
 MAX_LINE_BYTES = 16 * 1024 * 1024
 MAX_CASES = 4096
 BATCH_CASES = 256
@@ -107,19 +162,7 @@ def _nat(value: object) -> bool:
 
 
 def _term(value: object) -> bool:
-    if not isinstance(value, list) or not value:
-        return False
-    if value[0] == "var":
-        return len(value) == 2 and _nat(value[1])
-    if value[0] == "const":
-        return len(value) == 2 and isinstance(value[1], str)
-    if value[0] == "num":
-        return len(value) == 2 and _integer_text(value[1])
-    if value[0] == "add":
-        return len(value) == 3 and _term(value[1]) and _term(value[2])
-    if value[0] == "scale":
-        return len(value) == 3 and _integer_text(value[1]) and _term(value[2])
-    return False
+    return _tree(value, english=False, term=True)
 
 
 def _integer_text(value: object) -> bool:
@@ -130,25 +173,58 @@ def _integer_text(value: object) -> bool:
 
 
 def _formula(value: object) -> bool:
-    if not isinstance(value, list) or not value:
-        return False
-    tag = value[0]
-    if tag in ("top", "bottom"):
-        return len(value) == 1
-    if tag == "unary":
-        return len(value) == 3 and isinstance(value[1], str) and _term(value[2])
-    if tag == "binary":
-        return (len(value) == 4 and isinstance(value[1], str)
-                and _term(value[2]) and _term(value[3]))
-    if tag in ("eq", "lt", "le"):
-        return len(value) == 3 and _term(value[1]) and _term(value[2])
-    if tag == "not":
-        return len(value) == 2 and _formula(value[1])
-    if tag in ("and", "or", "implies"):
-        return len(value) == 3 and _formula(value[1]) and _formula(value[2])
-    if tag in ("forall", "exists"):
-        return len(value) == 3 and isinstance(value[1], str) and _formula(value[2])
-    return False
+    return _tree(value, english=False, term=False)
+
+
+def _english_formula(value: object) -> bool:
+    return _tree(value, english=True, term=False)
+
+
+def _tree(value: object, *, english: bool, term: bool) -> bool:
+    """Validate wire ASTs without Python recursion or bool/int equality coercion.
+
+    EnglishRun.encodeFormula/encodeTerm have a smaller vocabulary than Order.Wire:
+    no arithmetic terms and no order atoms. The service advertises JSON depth 256.
+    """
+    pending = [(value, term, 0)]
+    while pending:
+        node, is_term, depth = pending.pop()
+        if depth > 256 or not isinstance(node, list) or not node or not isinstance(node[0], str):
+            return False
+        tag = node[0]
+        if english and tag not in RESPONSE_SCHEMAS["english"]["term_tags" if is_term else "formula_tags"]:
+            return False
+        if is_term:
+            if tag == "var" and len(node) == 2 and _nat(node[1]):
+                continue
+            if tag == "const" and len(node) == 2 and isinstance(node[1], str):
+                continue
+            if not english and tag == "num" and len(node) == 2 and _integer_text(node[1]):
+                continue
+            if not english and tag == "add" and len(node) == 3:
+                pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
+                continue
+            if not english and tag == "scale" and len(node) == 3 and _integer_text(node[1]):
+                pending.append((node[2], True, depth + 1))
+                continue
+            return False
+        if tag in ("top", "bottom") and len(node) == 1:
+            continue
+        if tag == "unary" and len(node) == 3 and isinstance(node[1], str):
+            pending.append((node[2], True, depth + 1))
+        elif tag == "binary" and len(node) == 4 and isinstance(node[1], str):
+            pending.extend(((node[2], True, depth + 1), (node[3], True, depth + 1)))
+        elif tag in (("eq",) if english else ("eq", "lt", "le")) and len(node) == 3:
+            pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
+        elif tag == "not" and len(node) == 2:
+            pending.append((node[1], False, depth + 1))
+        elif tag in ("and", "or", "implies") and len(node) == 3:
+            pending.extend(((node[1], False, depth + 1), (node[2], False, depth + 1)))
+        elif tag in ("forall", "exists") and len(node) == 3 and isinstance(node[1], str):
+            pending.append((node[2], False, depth + 1))
+        else:
+            return False
+    return True
 
 
 def _formulas(value: object) -> bool:
@@ -168,23 +244,32 @@ def _report(value: object) -> bool:
 
 
 def _kind(value: object) -> bool:
-    if isinstance(value, str):
-        return value in {"asserted", "norm", "definition", "question", "instruction",
-                         "example", "exposition", "analogy", "explanation", "meta"}
-    if not isinstance(value, list) or not value:
-        return False
-    if value[0] == "attributed":
-        return (len(value) == 4 and isinstance(value[1], str)
-                and isinstance(value[2], str) and _kind(value[3]))
-    if value[0] == "hedged":
-        return len(value) == 3 and isinstance(value[1], str) and _kind(value[2])
-    if value[0] == "causal":
-        return (len(value) == 4 and isinstance(value[1], str)
-                and _kind(value[2]) and _kind(value[3]))
-    return value[0] == "unformalised" and len(value) == 2 and isinstance(value[1], str)
+    pending = [(value, 0)]
+    while pending:
+        node, depth = pending.pop()
+        if depth > 256:
+            return False
+        if isinstance(node, str):
+            if node not in {"asserted", "norm", "definition", "question", "instruction",
+                            "example", "exposition", "analogy", "explanation", "meta"}:
+                return False
+            continue
+        if not isinstance(node, list) or not node:
+            return False
+        if node[0] == "attributed" and len(node) == 4 and all(isinstance(x, str) for x in node[1:3]):
+            pending.append((node[3], depth + 1))
+        elif node[0] == "hedged" and len(node) == 3 and isinstance(node[1], str):
+            pending.append((node[2], depth + 1))
+        elif node[0] == "causal" and len(node) == 4 and isinstance(node[1], str):
+            pending.extend(((node[2], depth + 1), (node[3], depth + 1)))
+        elif not (node[0] == "unformalised" and len(node) == 2 and isinstance(node[1], str)):
+            return False
+    return True
 
 
 def _valid_route_result(row: dict, kind: object, mode: str, case: object) -> bool:
+    if not _shape(row, RESPONSE_SCHEMAS[mode]["ok"].get(kind, ())):
+        return False
     fields = set(row) - {"id", "status"}
     if kind == "evaluate":
         return fields == {"values"} and _booleans(row["values"])
@@ -200,7 +285,8 @@ def _valid_route_result(row: dict, kind: object, mode: str, case: object) -> boo
                 and _strings(row["lemmas"]) and row["checked"] == len(row["lemmas"]))
     if kind == "background":
         return (fields == {"background", "premises", "generators"}
-                and _formulas(row["background"]) and row["background"] == row["premises"]
+                and _formulas(row["background"]) and _formulas(row["premises"])
+                and row["background"] == row["premises"]
                 and _strings(row["generators"])
                 and len(row["background"]) == len(row["generators"]))
     if kind == "label":
@@ -421,7 +507,7 @@ class LeanService:
         except CheckerUnavailable:
             self._stop(graceful=False)
             raise
-        except (_Failure, OSError, ValueError, TypeError, OverflowError) as exc:
+        except (_Failure, OSError, ValueError, TypeError, OverflowError, RecursionError) as exc:
             self._stop(graceful=False)
             raise _Failure(f"startup/handshake from {self.executable}: {exc}") from None
         self.handshake = handshake
@@ -521,7 +607,7 @@ class LeanService:
         raw = self._read_line(deadline)
         try:
             response = _decode_json(raw)
-        except ValueError:
+        except (ValueError, RecursionError):
             raise _Failure(f"malformed response {raw[:200]!r}") from None
         if not isinstance(response, dict) or response.get("id") != nonce:
             if isinstance(response, dict) and response.get("id") is None and response.get("status") == "error":
@@ -529,21 +615,26 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         if response.get("status") == "error":
-            if set(response) != {"id", "status", "error"} or not isinstance(response["error"], str) or not response["error"]:
+            if (not _shape(response, (RESPONSE_ENVELOPE["error"],))
+                    or not isinstance(response["error"], str) or not response["error"]):
                 raise _Failure(f"malformed error response {raw[:200]!r}")
             return raw, response
         results = response.get("results")
         counts = response.get("counts")
         try:
             cases = json.loads(cases_text, parse_int=_json_integer)
-        except ValueError:
+        except (ValueError, RecursionError):
             cases = None
-        if (set(response) != {"id", "status", "mode", "results", "counts"}
+        try:
+            valid_rows = (isinstance(results, list) and len(results) == count
+                          and all(self._valid_result(mode, row, index, cases[index])
+                                  for index, row in enumerate(results))) if isinstance(cases, list) and len(cases) == count else False
+        except (RecursionError, ValueError, TypeError):
+            valid_rows = False
+        if (not _shape(response, (RESPONSE_ENVELOPE["ok"],))
                 or response.get("status") != "ok" or response.get("mode") != mode
                 or not isinstance(cases, list) or len(cases) != count
-                or not isinstance(results, list) or len(results) != count
-                or any(not self._valid_result(mode, row, index, cases[index])
-                       for index, row in enumerate(results))
+                or not valid_rows
                 or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
                 or type(counts["cases"]) is not int or counts["cases"] != count
                 or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.strip().encode())
@@ -558,19 +649,18 @@ class LeanService:
             return False
         if mode == "english":
             if row.get("status") == "error":
-                return (set(row) == {"status", "error"}
+                return (_shape(row, RESPONSE_SCHEMAS[mode]["error"])
                         and isinstance(row["error"], str) and bool(row["error"]))
             if not isinstance(case, dict) or not isinstance(case.get("cases"), list):
                 return False
-            return (set(row) == {"admissible", "covers", "results"}
+            return (_shape(row, RESPONSE_SCHEMAS[mode]["ok"]["default"])
                     and type(row["admissible"]) is bool and type(row["covers"]) is bool
                     and isinstance(row["results"], list)
                     and len(row["results"]) == len(case["cases"])
-                    and all(isinstance(item, dict) and set(item) ==
-                            {"parsed", "checked", "rendered", "roundtrip"}
+                    and all(_shape(item, RESPONSE_SCHEMAS[mode]["item"])
                             and (item["parsed"] is None or
                                  (isinstance(item["parsed"], list)
-                                  and all(_formula(formula) for formula in item["parsed"])))
+                                  and all(_english_formula(formula) for formula in item["parsed"])))
                             and type(item["checked"]) is bool
                             and (item["rendered"] is None or
                                  (isinstance(item["rendered"], list)
@@ -579,6 +669,7 @@ class LeanService:
                                            and isinstance(token[0], str) and _nat(token[1]))
                                           for token in item["rendered"])))
                             and type(item["roundtrip"]) is bool
+                            and (not item["checked"] or isinstance(item["rendered"], list))
                             and (item["checked"] or item["rendered"] is None)
                             and (item["checked"] or not item["roundtrip"])
                             for item in row["results"]))
@@ -586,11 +677,9 @@ class LeanService:
         if status not in ("ok", "error"):
             return False
         if "case_index" in row:
-            expected_fields = {"status", "case_index", "error"}
-            if mode in ("check-certificate", "order"):
-                expected_fields.add("valid")
             return (status == "error" and type(row["case_index"]) is int
-                    and row["case_index"] == index and set(row) == expected_fields
+                    and row["case_index"] == index
+                    and _shape(row, RESPONSE_SCHEMAS[mode]["case_error"])
                     and isinstance(row.get("error"), str) and bool(row["error"])
                     and ("valid" not in row or row["valid"] is False))
         expected_id = case.get("id") if isinstance(case, dict) else None
@@ -599,6 +688,8 @@ class LeanService:
             return False
         if status == "error":
             if not isinstance(row.get("error"), str) or not row["error"]:
+                return False
+            if not _shape(row, RESPONSE_SCHEMAS[mode]["error"]):
                 return False
             if mode in ("check-certificate", "order"):
                 return set(row) == {"id", "status", "error", "valid"} and row["valid"] is False
@@ -615,6 +706,12 @@ class LeanService:
                     and ("generator" not in fields or
                          row["generator"] == row["error"][13:].split(")", 1)[0]))
         if not isinstance(expected_id, str) or "error" in row:
+            return False
+        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
+        shape_kind = ("default" if mode == "check-certificate" or
+                      mode == "evaluate" and kind != "countermodel" else kind)
+        if mode in ("evaluate", "check-certificate", "order") and not _shape(
+                row, RESPONSE_SCHEMAS[mode]["ok"].get(shape_kind, ())):
             return False
         if mode == "check-certificate":
             return set(row) == {"id", "status", "valid"} and type(row["valid"]) is bool
@@ -638,6 +735,9 @@ class LeanService:
                      _booleans(value) if key == "values" else _formulas(value)))
         kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
         if mode in ("route", "norms"):
+            if mode == "norms" and _uses_norms_path(case) and kind not in {
+                    "admission", "norms-elaborate", "norms-certificate", "norms-conflict"}:
+                return False
             return _valid_route_result(row, kind, mode, case)
         return False
 
