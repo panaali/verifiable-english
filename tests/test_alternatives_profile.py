@@ -373,6 +373,12 @@ def test_other_action_outcome_cycle_is_not_mislabeled_as_own_outcome():
     with pytest.raises(VEError, match=r"^DependencyCycle: permitted$"):
         parse_norm_english(env, "Rule 1. Every action may be done, if every other "
                                 "action available to r may be done.")
+    with pytest.raises(VEError, match="GuardOnOwnOutcome: .*own outcome"):
+        parse_norm_english(env, "Rule 1. Every action may be done, unless "
+                                "that action may be done.")
+    with pytest.raises(VEError, match=r"^DependencyCycle: permitted$"):
+        parse_norm_english(env, "Rule 1. Every action may be done, unless every other "
+                                "action available to r may be done.")
 
 
 def test_available_guard_forms_bind_owner_and_distinguish_other_action():
