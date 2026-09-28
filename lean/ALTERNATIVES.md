@@ -50,7 +50,7 @@ Names have prefix `VE.Alternatives.`.
 | `owner_unique` | Under the slot premises an action is available to at most one chooser. |
 | `alternative_monotone` | On a well-formed block, adding available alternatives on the same carrier never removes avoidability, an `allows` or a `prevents` (nothing is claimed for `clear`). |
 | `alternatives_conservative` | For premises and a conclusion over `oldEnv` (no role predicate), consequence over `BaseAdmissibleAlt` equals consequence over W1's `BaseAdmissible` (the empty-relation expansion). |
-| `alt_conflict_free` | Accepted certificates for every W1 conflict target of the inlined document over `Background_baseAlt` give `AltConflictFree`. |
+| `alt_conflict_free` | Accepted certificates for every W1 conflict target of the inlined document over `Background_baseAlt` (or W1's `Background_base` alone) give `AltConflictFree`. |
 | `alt_conflict_witness_sound` | A typed finite base witness passing `backgroundValidAlt` at which a conflict formula evaluates true refutes conflict-freedom there, unique expansion there and `AltConflictFree`. |
 | `clear_denote`, `followable_denote` | On a document expansion `S`, `clear°` and `∀r. followable°(r)` in the base restriction denote `ClearIn` and `FollowableIn` in `S`. |
 | `followable_sound` | FOLLOWABLE: an accepted certificate for `Background_baseAlt ++ Γ_base ⊢ ∀r. followable°(r)` gives `FollowableIn` in every document expansion of every `BaseAdmissibleAlt` structure satisfying `Γ_base`. |
@@ -100,6 +100,13 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 Cases without the profile, the block or an `alt-*` kind are delegated unchanged to
 `VE.Norms.Run`.
 
+End-to-end runs (not a committed test): Python W1 prover certificates, re-bound to the
+alternatives source, replay in this executable as CONFLICT-FREE for {3, 7}, {3, 8}, {3, 7, 9} and
+{3, 5, 7, 9} (over `Background_baseAlt` and over `Background_base` alone); the A₁, B and j
+witnesses replay as DILEMMA with NONE-PERMITTED, JOINTLY-UNDISCHARGEABLE and OVER-REQUIRED; a
+rule-free document's followability certificate replays as FOLLOWABLE. The Python search found no
+followability certificate for b′(A) within 50,000 steps (proof search is outside this item).
+
 ## Status, deviations from 7.2 and what is not claimed
 
 * Proved as stated: every theorem of 7.2 except those listed next, with the spec's hypotheses.
@@ -112,10 +119,11 @@ Cases without the profile, the block or an `alt-*` kind are delegated unchanged 
   (j.getObjValD "units")` (the W1 case shape the Python transport already sends), not from a
   single `document` field.
 * Not implemented: W2 `admission` with the block and `Run.alternatives_wire_acceptance`
-  (`AltAdmissionAnswer`); the route accepting a W1 certificate over `Background_base` alone
-  (4.5 last sentence: the replay requires the premise list `Background_baseAlt`); the legend and
-  the per-alternative rule reasons of the diagnosis rendering; `conditional_on` of a FOLLOWABLE
-  answer lists every `Γ_base` label rather than the ones the certificate uses.
+  (`AltAdmissionAnswer`); the legend and the per-alternative rule reasons of the diagnosis
+  rendering; `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
+  ones the certificate uses.
+* A conflict target's certificate is accepted over `Background_baseAlt` or, as 4.5 allows, over
+  W1's `Background_base` alone (`targetAccepted`; both bindings are tried on replay).
 * The Lean diagnostic order follows 6 (the block, the rules, W1 on the inlined tree,
   fulfilments, `Γ_base`); Python's block-shape check rejects a double-role block with
   `AlternativesSort: role predicates must be distinct` before the sort check that fixture l6
