@@ -111,6 +111,9 @@ followability certificate for b′(A) within 50,000 steps (proof search is outsi
 Lean validates each model and reports its clear actions; Python and Rust evaluate
 Lean's closed followability and four profile probes over the same base model.
 The s2 conflict target is also compared three ways.
+The p1, p2 and p6 outcome-table cases check signed-row completeness and the
+document's `table_complete` premise; p2's derived formulas are compared across
+all three evaluators.
 
 ## Status, deviations from 7.2 and what is not claimed
 
@@ -130,8 +133,7 @@ The s2 conflict target is also compared three ways.
 * A conflict target's certificate is accepted over `Background_baseAlt` or, as 4.5 allows, over
   W1's `Background_base` alone (`targetAccepted`; both bindings are tried on replay).
 * The Lean diagnostic order follows 6 (the block, the rules, W1 on the inlined tree,
-  fulfilments, `Γ_base`); Python's block-shape check rejects a double-role block with
-  `AlternativesSort: role predicates must be distinct` before the sort check that fixture l6
-  expects, so the two disagree on l6's text.
+  fulfilments, `Γ_base`); Python's block-shape check now follows the same role-sort
+  order, including fixture l6's `AlternativesSort: leads_to expects (action, harm)`.
 * Nothing is claimed about the diagnosis, its minimality, the existence facts beyond
   `validate_sound`, the English surface, or the truth of the declared table (7.4).

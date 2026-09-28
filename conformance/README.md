@@ -332,6 +332,11 @@ base model and compare with Lean's scenario report. The Rust route receives a
 plain base environment and never elaborates alternatives or supplies a
 profile-word table. The s2 case separately checks Lean's CONFLICT witness
 against independent evaluation of its regenerated conflict target.
+The p1, p2 and p6 cases check that signed rows reject an unstated cell,
+`complete_by` accepts the missing negative cell only under its document-bound
+premise, and a new positive row outside the document cells is rejected. For
+p2, Python and Rust also evaluate Lean's followability, avoidability and
+allows formulas on the accepted model.
 
 `elaborated-document.json` contains the `ve.core@0.2` envelope, two declared
 `$string` literals, a valid model, and three rejected profile combinations.
