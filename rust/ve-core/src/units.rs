@@ -98,7 +98,7 @@ fn scale(e: &Value, tag: &str) -> Result<BigInt> {
 }
 fn exact_decimal(e: &Value, tag: &str, s: &str) -> Result<String> {
     if s.chars().count() > 40 {
-        return error("ResourceLimit", "decimal literal exceeds 40 characters");
+        return error("ResourceLimit", "Decimal literal exceeds 40 characters");
     }
     let unsigned = s.strip_prefix('-').unwrap_or(s);
     let p: Vec<_> = unsigned.split('.').collect();
@@ -286,7 +286,7 @@ fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Ty, Value
             same(&lt, &rt)?;
             same(&quantity(tag), &lt)?;
             if tag == "day" {
-                return error("TypeMismatch", "calendar dates cannot be added");
+                return error("TypeMismatch", "Calendar dates cannot be added");
             }
             Ok((
                 quantity(tag),
@@ -304,7 +304,7 @@ fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Ty, Value
             let (tt, tq, tc) = term(e, t, ctx, depth + 1)?;
             same(&quantity(tag), &tt)?;
             if tag == "day" {
-                return error("TypeMismatch", "calendar dates cannot be scaled");
+                return error("TypeMismatch", "Calendar dates cannot be scaled");
             }
             Ok((
                 quantity(tag),
@@ -325,7 +325,7 @@ fn guard(t: &Value) -> Value {
 fn temporal(e: &Value, op: &str, a: &[Value], ctx: &[String]) -> Result<(Value, Value)> {
     let three = ["within_days", "shift_days", "elapsed_days"].contains(&op);
     if a.len() != if three { 4 } else { 3 } {
-        return error("SyntaxError", "invalid temporal arity");
+        return error("InvalidInput", format!("Invalid {op} node"));
     }
     let (ta, qa, ca) = term(e, &a[1], ctx, 1)?;
     let (tb, qb, cb) = term(e, &a[2], ctx, 1)?;
@@ -349,7 +349,7 @@ fn temporal(e: &Value, op: &str, a: &[Value], ctx: &[String]) -> Result<(Value, 
         "within_days" | "shift_days" => {
             let n = int(string(&a[3])?)?;
             if n < BigInt::from(0) {
-                return error("InvalidInput", "day offset must be nonnegative");
+                return error("InvalidInput", "Day offset must be nonnegative");
             }
             let n = n.to_string();
             let upper = json!(["add", cb, ["num", n]]);
