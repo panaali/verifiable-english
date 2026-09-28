@@ -5,7 +5,7 @@ import json
 import pytest
 
 from ve.alternatives import run_case
-from ve.document import coverage, load_document
+from ve.document import check_document, coverage, load_document
 from ve.ast import And, Binary, Const, Eq, Exists, Forall, Implies, Not, Unary, Var, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
@@ -263,6 +263,28 @@ def test_loaded_document_coverage_keeps_formula_leaves(tmp_path):
     assert detail["assumed_harm_free"] == [
         {"action": "wait", "harm": "h", "decider": "case annotator",
          "premise": "alternatives:table_complete"}]
+
+
+def test_document_check_dispatches_w2_admission_to_lean(tmp_path):
+    raw = source()
+    env = Environment(raw)
+    premise = next(p for p in run_case({"id": "source", "kind": "alt-elaborate",
+                                        "environment": raw, "norms": []})["alternatives"]
+                   if p["label"] == "alternatives:own")
+    meta = {"format": "ve-document@1", "environment": raw,
+            "units": [{"id": "claim", "span": [0, 1], "kind": "asserted",
+                       "meaning": "specified", "support": "observation",
+                       "content": {"ast": ["top"]}}],
+            "graph": {"root": "slot", "nodes": [
+                {"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}}
+    path = tmp_path / "document.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nx")
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    assert result["admission"]["report"]["root"]["label"] == "alternatives:own"
+    assert result["premises"]["status"] == "UNKNOWN"
+    assert result["admission"]["vacuous"] is None
+    assert env.environment_id == Environment(raw).environment_id
 
 
 def test_other_action_rendering_preserves_which_outer_action_is_excluded():

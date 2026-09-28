@@ -486,7 +486,10 @@ def check_document(path):
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     assertions.extend(_assertion_disjunctions(env, active))
-    if _unresolved_norm_reading(active):
+    if env.alternatives is not None:
+        result["premises"] = {"status": "UNKNOWN",
+                              "reason": "alternatives premise satisfiability requires the alternatives route"}
+    elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     else:
         result["premises"] = premise_status(env, assertions)
