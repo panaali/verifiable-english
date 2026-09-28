@@ -214,19 +214,24 @@ def joint_assertion(env, active, joint):
 
 
 def check_joint_extensions(meta, report, joint):
-    """Require each lemma and the final report to fit one complete joint choice."""
+    """Require each lemma and the final report to fit one complete joint choice (the Lean
+    `gateOk` over `gateChoices`): each compatible choice also fixes every active authored set at
+    its one signed reading, so a label naming an authored set extends exactly when W2 accepts it;
+    a `v:all` label needs the set at version v."""
     from .admission import parse_label
 
     if joint["status"] != "complete":
         return
+    authored = {f"{rs['id']}@{rs['version']}": 0
+                for rs in active_reading_sets(meta.get("reading_sets", [])) if rs["status"] == "authored"}
+    gate = [{**choice, **authored} for choice in joint["choices"]]
 
     def extends(leaves):
         labels = [parse_label(leaf.get("label")) for leaf in leaves]
         choices = [(label.args[0], label.args[1], label.args[2])
-                   for label in labels if label is not None and label.kind == "readings"
-                   and label.args[2] is not None]
-        return any(all(choice.get(f"{name}@{version}") == index
-                       for name, version, index in choices) for choice in joint["choices"])
+                   for label in labels if label is not None and label.kind == "readings"]
+        return any(all(f"{name}@{version}" in choice and index in (None, choice[f"{name}@{version}"])
+                       for name, version, index in choices) for choice in gate)
 
     for lemma in meta.get("lemmas", []):
         if not extends(lemma["leaves"]):

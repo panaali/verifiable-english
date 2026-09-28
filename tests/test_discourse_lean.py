@@ -950,3 +950,37 @@ def test_ordinal_competitors_are_their_pairs(lean, tmp_path):
                      contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
     assert admit(twice)["error"] == "DuplicateDeclaration: name api"
     assert python_outcome(twice, tmp_path) == "DuplicateDeclaration: name api"
+
+
+def test_authored_reading_labels_extend(lean, tmp_path):
+    """looprecheck1 B (discourse.py:227, Admission.lean:323): an authored singleton's reading label
+    passes @1 and must pass @2 (an authored set is fixed at its one reading in every choice the
+    composition gate reads), in both implementations and for `v:all` alike."""
+    for label in ("readings:rs1@1:0", "readings:rs1@1:all"):
+        outcomes = []
+        for fmt in ("ve-document@1", "ve-document@2"):
+            environment = env(profiles=["relational-fol@0"]) if fmt.endswith("@1") else env()
+            doc = document(["The API is safe."], kinds={"u1": "asserted"}, format=fmt,
+                           graph={"root": "n", "nodes": [{"name": "n", "ast": unary("safe", "api"), "label": label}]})
+            if fmt.endswith("@2"):
+                doc["discourse"] = {}
+            doc["reading_sets"] = [reading_set(environment, "rs1", "u1", [("r0", unary("safe", "api"))], "authored")]
+            lean_row = admit(doc, environment)
+            python = python_outcome(doc, tmp_path, environment)
+            assert lean_row.get("admitted") is True, (label, fmt, lean_row)
+            assert python["admission"]["admitted"] is True, (label, fmt, python)
+            outcomes.append((lean_row["report"], python["admission"]["report"]))
+        assert outcomes[0] == outcomes[1], label
+    # a recorded reference whose authored reading is the elaboration, cited by its label
+    doc = document(["It is deployed."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   kinds={"u1": "asserted"},
+                   graph={"root": "n", "nodes": [{"name": "n", "ast": unary("deployed", "api"), "label": "readings:rs1@1:0"}]})
+    doc["reading_sets"] = [reading_set(env(), "rs1", "u1", [("r0", unary("deployed", "api"))], "authored")]
+    assert admit(doc)["admitted"] is True
+    assert python_outcome(doc, tmp_path)["admission"]["admitted"] is True
+    # an open set's label that no compatible choice selects is still rejected
+    excluded = joint_doc([{"kind": "excludes", "a": ["rs5", 1, "r0"], "b": ["rs6", 1, "r1"]},
+                          {"kind": "excludes", "a": ["rs5", 1, "r1"], "b": ["rs6", 1, "r1"]}])
+    excluded["graph"] = {"root": "leaf", "nodes": [{"name": "leaf", "ast": unary("deployed", "api"), "label": "readings:rs6@1:1"}]}
+    assert admit(excluded)["error"] == "InvalidCompatibility: report leaf"
+    assert python_outcome(excluded, tmp_path) == "InvalidCompatibility: report leaf"
