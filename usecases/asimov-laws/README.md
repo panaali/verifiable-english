@@ -25,10 +25,10 @@ claims about probability or a physical cause.
 | 1 | Law 3: a candidate action marked protective is permitted. |
 | 2 | Law 2: an ordered action is permitted, taking precedence over Rule 1. |
 | 3 | Law 1: an action marked as injuring a human is forbidden, taking precedence over Rule 2. |
-| 4 | Law 1: doing nothing is forbidden when it allows an avoidable human harm, taking precedence over Rule 2. |
+| 4 | Law 1: an action is forbidden when it allows an avoidable human harm to happen, taking precedence over Rule 2. This covers doing nothing and doing something unrelated while another action would avoid the harm. |
 | 5 | Zeroth Law priority, as a translator's explicit reading: an action preventing a harm to humanity is permitted even when Rule 3 or 4 would forbid it. |
 | 6 | Zeroth Law: an action marked as injuring humanity is forbidden; it overrides Rules 3 and 5. |
-| 7 | Zeroth Law: doing nothing is forbidden when it allows an avoidable harm to humanity; it overrides Rules 4 and 5. |
+| 7 | Zeroth Law: an action is forbidden when it allows an avoidable harm to humanity to happen; it overrides Rules 4 and 5. |
 | 8 | Law 2: an ordered action is required when it is permitted. |
 | 9 | Law 3: the robot must avoid each avoidable harm to its continued existence. A selected action fulfils this mapped duty when it does not lead to that harm. |
 
@@ -47,10 +47,12 @@ The alternatives route replayed **four conflict certificates** for the nine
 rules: `permitted`, `prevent_required`, `required`, and the
 `required→permitted` dual. The document verdict is **CONFLICT-FREE**. On the
 **17 Asimov-shaped scenarios** from spec §8, the same full rule set has a
-clear action in **13** and no clear action in **4**. For example, scenario `a`
-permits `pull` and bars harmful inaction; `e` has `act` clear because it
+clear action in **10** and no clear action in **7**. For example, scenario `a`
+permits `pull` and bars harmful inaction; `o` leaves only `rescue` clear,
+because `act` does unrelated work while an avoidable harm happens; `e` has `act` clear because it
 prevents collective harm despite human injury; `d-full` has both `shield` and
-`retreat` clear under Rule 9. Scenario `b-A1` has no permitted action and
+`retreat` clear under Rule 9. Scenarios `b-A0` and `b-A1` have no permitted
+action, since each alternative allows or causes a harm to a human being, and
 scenario `j` requires two incompatible orders. With the conflict certificates,
 the checker replays these as **DILEMMA** witnesses (`NONE-PERMITTED` and
 `OVER-REQUIRED`). Thus the full rule set is **not document-wide FOLLOWABLE**.
@@ -62,10 +64,10 @@ FOLLOWABLE certificate.
 | Checked rules | 6 | 9 |
 | Document conflict verdict | CONFLICT-FREE | CONFLICT-FREE (4 replayed targets) |
 | Direct injury, ordered action | Checked, with annotator inputs | Checked, with annotator inputs |
-| Harm through inaction | Missing | Checked via `inaction`, `allows`, and signed `leads_to` outcomes |
+| Harm through inaction | Missing | Checked via `allows` on every alternative and signed `leads_to` outcomes |
 | Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
 | Zeroth priority across a human-injury ban | Open | Checked for Rule 5's stated prevention condition |
-| Followability | No alternatives check | 13 of 17 spec scenarios have a clear action; 4 do not |
+| Followability | No alternatives check | 10 of 17 spec scenarios have a clear action; 7 do not |
 
 ## OPEN: fidelity and evidence
 

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from conformance.alternatives import base_environment, cases
+from conformance.alternatives import base_environment, cases, scenario
 from ve.alternatives import run_case
 from ve.ast import Not, _Decoder
 from ve.entailment import prove_entailment
@@ -74,11 +74,28 @@ def test_authored_rules_have_one_reading_and_declared_priority():
     ]
 
 
+# Review finding P2 (natural English): the P0 listing markers disambiguate
+# nested connectives for the parser, but they are not natural prose.
+SCAFFOLDING = ("first clause", "second clause", "end first clause", "end second clause",
+               "of the following hold", "the following holds", "(a)", "(b)", "(i)", "(ii)")
+
+
+def test_rules_read_as_english_without_parser_scaffolding():
+    _, doc, source, _ = load()
+    lowered = source.lower()
+    assert [marker for marker in SCAFFOLDING if marker in lowered] == []
+    # Omission is not restricted to the designated inaction (review P1, rules 4 and 7).
+    by_name = {rule.name: rule for rule in doc.rules}
+    for name in ("law-1-inaction", "law-0-inaction"):
+        assert "inaction" not in json.dumps(by_name[name].to_dict()["norm"]["guard"])
+
+
 def test_checker_certifies_conflict_free_and_replays_dilemma():
     packages = conflict_packages()
     assert len(packages) == 4
     assert run_case(case("alt-conflict", packages=packages))["verdict"] == "CONFLICT-FREE"
-    for name, diagnosis in (("b-A1", "NONE-PERMITTED"), ("j", "OVER-REQUIRED")):
+    for name, diagnosis in (("b-A0", "NONE-PERMITTED"), ("b-A1", "NONE-PERMITTED"),
+                            ("j", "OVER-REQUIRED")):
         result = run_case(case("alt-followable", packages=packages,
                                witness={**spec_scenario(name), "chooser": "r"}))
         assert result["verdict"] == "DILEMMA"
@@ -87,10 +104,10 @@ def test_checker_certifies_conflict_free_and_replays_dilemma():
 
 @pytest.mark.parametrize("name,clear", [
     ("a", ["pull"]),
-    ("b-A0", ["pull"]),
+    ("b-A0", []),
     ("b-A1", []),
-    ("b-A2", ["pull"]),
-    ("b-B", ["pull"]),
+    ("b-A2", []),
+    ("b-B", []),
     ("bprime-A", []),
     ("c-7", ["nothing", "pull"]),
     ("c-8", ["nothing", "pull"]),
@@ -99,12 +116,47 @@ def test_checker_certifies_conflict_free_and_replays_dilemma():
     ("d-prevention", ["shield", "retreat"]),
     ("e", ["act"]),
     ("j", []),
-    ("o-7", ["act", "rescue"]),
-    ("o-8", ["act", "rescue"]),
+    ("o-7", ["rescue"]),
+    ("o-8", ["rescue"]),
     ("bprime-A5", []),
-    ("l5", ["pull", "pull2"]),
+    ("l5", ["pull2"]),
 ])
 def test_spec_scenarios_show_inaction_priority_and_choice(name, clear):
     report = run_case(case("alt-validate", scenario=spec_scenario(name)))
+    assert report["status"] == "ok"
+    assert report["choosers"][0]["clear"] == clear
+
+
+SELF, HUMAN, HUMANITY = ("hs",), ("hp",), ("hh",)
+HARMS = SELF + HUMAN + HUMANITY
+
+
+def model(actions, positive, *, ordered=(), injured=(), injured_humanity=()):
+    return scenario(list(actions), list(HARMS), tuple(positive), injured=injured,
+                    human=HUMAN, humanity=HUMANITY,
+                    facts={"harm_to": [[h, "r"] for h in SELF],
+                           "ordered": [[a] for a in ordered],
+                           "injures_humanity": [[a] for a in injured_humanity]})
+
+
+# Review findings P1: each reproducer, then its class.
+REGRESSIONS = {
+    # Rules 4 and 7: any alternative that lets an avoidable harm happen, not only inaction.
+    "unrelated-work-while-human-harmed": (
+        model(["nothing", "work", "rescue"], [("nothing", "hp"), ("work", "hp")]), ["rescue"]),
+    "unrelated-work-while-humanity-harmed": (
+        model(["nothing", "work", "rescue"], [("nothing", "hh"), ("work", "hh")]), ["rescue"]),
+    "ordered-unrelated-work": (
+        model(["nothing", "work", "rescue"], [("nothing", "hp"), ("work", "hp")],
+              ordered=["work"]), ["rescue"]),
+    "unavoidable-harm": (model(["nothing", "work"], [("nothing", "hp"), ("work", "hp")]),
+                         ["nothing", "work"]),
+}
+
+
+@pytest.mark.parametrize("name", REGRESSIONS)
+def test_review_reproducers_have_the_source_reading(name):
+    situation, clear = REGRESSIONS[name]
+    report = run_case(case("alt-validate", scenario=situation))
     assert report["status"] == "ok"
     assert report["choosers"][0]["clear"] == clear
