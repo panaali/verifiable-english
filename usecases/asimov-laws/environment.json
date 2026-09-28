@@ -1,0 +1,41 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": ["norms@0", "relational-fol@0"],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {"action": {"description": "A candidate action by a robot"}},
+    "predicates": {
+      "injures_humanity": {
+        "arguments": ["action"],
+        "description": "The action injures humanity, as judged by the Asimov case annotator",
+        "verbalisation": "{0} injures humanity"
+      },
+      "injures_human": {
+        "arguments": ["action"],
+        "description": "The action injures a human being, as judged by the Asimov case annotator",
+        "verbalisation": "{0} injures a human being"
+      },
+      "ordered": {
+        "arguments": ["action"],
+        "description": "A qualified human being ordered the robot to perform the action, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+        "arguments": ["action"],
+        "description": "The action protects the acting robot's existence",
+        "verbalisation": "{0} is protective"
+      },
+      "permitted": {
+        "arguments": ["action"],
+        "description": "The acting robot is permitted to perform this action",
+        "regulated": {"role": "permission", "default": "allow", "act": "{0} be performed"}
+      },
+      "required": {
+        "arguments": ["action"],
+        "description": "The acting robot is required to perform this action",
+        "regulated": {"role": "obligation", "default": "deny", "act": "{0} be performed", "permission": "permitted"}
+      }
+    },
+    "constants": {}
+  }
+}

@@ -7,13 +7,12 @@ by Python and Lean, while Rust independently evaluates the generated formulas.
 from __future__ import annotations
 
 import json
-import os
 import random
-import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
@@ -32,34 +31,20 @@ RUST = ROOT / "rust/target/release/ve"
 
 @pytest.fixture(scope="module")
 def lean_executable():
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the W1 wire gate")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
-        assert built.returncode == 0, built.stdout + built.stderr
+    assert LEAN.exists()
     return LEAN
 
 
 @pytest.fixture(scope="module")
 def rust_executable():
-    cargo = shutil.which("cargo")
-    if cargo is None:
-        pytest.skip("cargo is required for the W1 wire gate")
-    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
-           "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
-    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
-                            "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)
-    assert built.returncode == 0, built.stdout + built.stderr
+    assert RUST.exists()
     return RUST
 
 
 def run(executable, cases):
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=180)
+                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -192,6 +177,58 @@ def test_norm_document_admission_and_provenance_match_lean(lean_executable):
     assert result["status"] == "ok"
     assert {k: result[k] for k in expected} == expected
 
+
+def test_mixed_document_norm_part_reaches_lean_and_rust(tmp_path, lean_executable,
+                                                         rust_executable):
+    from tests.test_document import write_doc, unit
+    from ve.document import load_document, check_document
+    from ve.admission import admit_document
+
+    env = environment({"csam_permitted": permission(
+        act="{0} generate child sexual abuse material", args=("assistant",))},
+        sorts=("assistant",))
+    norm = rule("no-csam", "csam_permitted", False)
+    doc = NormDocument(env, [norm])
+    source = (b"Claude should never generate child sexual abuse material (CSAM).\n"
+              b"Other restrictions require causal and classification judgments.\n")
+    cut = source.index(b"\n") + 1
+    parts = [{**unit("rule", 0, cut, "norm", content=norm.to_dict()), "status": "CHECKED"},
+             {**unit("rest", cut, len(source), ["unformalised", "causation"],
+                      {"unformalised": "causation"}), "status": "UNFORMALISED"}]
+    premise = doc.elaborate("csam_permitted")
+    graph = {"root": "layer", "nodes": [{"name": "layer",
+        "ast": formula_to_data(env, premise), "label": "layer:norms:csam_permitted"}]}
+    path = write_doc(tmp_path, source, [{"id": "u0165", "span": [0, len(source)],
+        "status": "MIXED", "parts": parts}], environment_json=env.to_dict(), graph=graph)
+    loaded = load_document(path)
+    admission = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
+                             **({"content": u["content"]} if u["content"] is not None else {})}
+                            for u in loaded["units"]], "graph": graph,
+                 "lemmas": [], "open_terms": [], "reading_sets": [], "narrowings": []}
+    expected = admit_document(env, admission)
+    checked = check_document(path)
+    assert checked["admission"]["core_report_id"] == expected["report_id"]
+    case = {"id": "mixed-csam", "kind": "admission", "environment": env.to_dict(),
+            "document": admission}
+    lean = run(lean_executable, [case])[0]
+    assert lean["status"] == "ok"
+    assert {k: lean[k] for k in expected} == expected
+
+    model = FiniteModel.from_dict(env, {"complete": True,
+        "domains": {"assistant": ["claude"]}, "constants": {},
+        "relations": {"csam_permitted": []}})
+    rust = run(rust_executable, [{"id": "mixed-csam-layer", "environment": env.to_dict(),
+        "model": model.to_dict(), "ast": [formula_to_data(env, premise)]}])[0]
+    assert rust["values"] == [True]
+
+
+def test_norm_document_quoted_and_joined_match_lean(lean_executable):
+    from copy import deepcopy
+    from tests.test_norm_admission import source
+    from ve.admission import admit_document
+    env, document = source()
+    cases = [{"id": "base", "kind": "admission", "environment": env.to_dict(),
+              "document": document}]
     quoted = deepcopy(document)
     quoted["units"][0]["kind"] = ["attributed", "alice", "says", "norm"]
     quoted["units"].append({"id": "u2", "span": [20, 30], "kind": "asserted",
