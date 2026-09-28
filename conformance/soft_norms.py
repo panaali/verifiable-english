@@ -112,6 +112,10 @@ def rejected_sources():
         (env(), [norm("a", "x_required", True, mode="default")]),
         (env({"ranks": ["a"], "ties": [["a"]],
               "outranking": {"mode": "strict"}}), []),
+        (env(), [norm("a", "x_required", True, mode="default", hard=True)]),
+        (env(), [norm("a", "x_required", True, mode="default", alterable=["z"])]),
+        (env(), [norm("a", "x_required", True, mode="default", rank="z")]),
+        (env(), [norm("a", "x_required", True, alterable=False)]),
     ]
 
 
