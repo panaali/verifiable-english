@@ -232,11 +232,21 @@ def test_killed_process_is_replaced_between_requests(service_executable):
         assert service.pid != first
 
 
-def test_kill_during_a_batch_retries_once_on_a_fresh_process(service_executable):
+def test_kill_during_a_batch_retries_once_on_a_fresh_process(service_executable, monkeypatch):
     with LeanService(service_executable, timeout=120, batch_cases=4096,
                      batch_bytes=16 << 20) as service:
         first = service.pid
-        threading.Timer(0.5, os.kill, (first, 9)).start()
+        write = service._write_all
+        killed = False
+
+        def kill_before_write(line, deadline):
+            nonlocal killed
+            if not killed:
+                os.kill(first, 9)
+                killed = True
+            return write(line, deadline)
+
+        monkeypatch.setattr(service, "_write_all", kill_before_write)
         results = service.run("evaluate", CASES * 5)
         assert len(results) == 5 * len(CASES) and service.pid != first
         assert service.stats["retries"] == 1
@@ -439,7 +449,8 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
 
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
-        assert service.run("evaluate", [{"id": "a"}, {"id": "b"}]) == [
+        assert service.run("evaluate", [{"id": "a", "ast": [["top"]]},
+                                        {"id": "b", "ast": [["top"]]}]) == [
             {"id": "a", "status": "ok", "values": [True], "value": True, "canonical": ""},
             {"id": "b", "status": "ok", "values": [True], "value": True, "canonical": ""}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
@@ -475,6 +486,84 @@ def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mod
     assert service.stats["starts"] == 2 and service.stats["retries"] == 1
     assert service.pid is None
     service.close()
+
+
+def _scripted_response_rejected(tmp_path, mode, case, row):
+    answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row],
+              "counts": {"cases": 1, "bytes": "__bytes__",
+                         "errors": int(row.get("status") == "error")}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            service.run(mode, [case])
+        assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+
+
+@pytest.mark.parametrize("mode,kind,field", [
+    ("route", "background", "both"),
+    ("norms", "background", "both"),
+    ("norms", "norms-elaborate", "background"),
+    ("norms", "norms-elaborate", "premises"),
+    ("norms", "norms-elaborate", "conflict_targets"),
+    ("route", "admission", "root"),
+    ("route", "admission", "assumptions"),
+    ("norms", "admission", "root"),
+    ("norms", "admission", "assumptions"),
+])
+def test_fol_response_fields_reject_order_only_ast(tmp_path, mode, kind, field):
+    order_atom = ["lt", ["num", "0"], ["num", "1"]]
+    if kind == "background":
+        row = {"id": "c", "status": "ok", "background": [["top"]],
+               "premises": [["top"]], "generators": ["g"]}
+        row["background"] = row["premises"] = [order_atom]
+    elif kind == "norms-elaborate":
+        row = {"id": "c", "status": "ok", "order": [], "background": [],
+               "premises": [{"label": "p", "ast": ["top"]}],
+               "conflict_targets": [{"target": "p", "sorts": [], "ast": ["top"]}],
+               "fragment": True}
+        if field == "background":
+            row[field] = [{"generator": "g", "ast": order_atom}]
+        else:
+            row[field][0]["ast"] = order_atom
+    else:
+        row = {"id": "c", "status": "ok", "admitted": True,
+               "report": {"root": {"name": "p", "ast": ["top"]}, "assumptions": []},
+               "report_id": "0" * 64, "kinds": []}
+        if field == "root":
+            row["report"]["root"]["ast"] = order_atom
+        else:
+            row["report"]["assumptions"] = [{"name": "a", "ast": order_atom}]
+    _scripted_response_rejected(tmp_path, mode, {"id": "c", "kind": kind}, row)
+
+
+@pytest.mark.parametrize("numeral", ["00", "-0", "01", "-01", "1" * 41])
+@pytest.mark.parametrize("term_tag", ["num", "scale"])
+def test_order_surface_rejects_noncanonical_numerals(tmp_path, numeral, term_tag):
+    term = ["num", numeral] if term_tag == "num" else ["scale", numeral, ["var", 0]]
+    row = {"id": "c", "status": "ok", "ast": [["lt", term, ["num", "1"]]]}
+    _scripted_response_rejected(tmp_path, "order", {"id": "c", "kind": "surface"}, row)
+
+
+@pytest.mark.parametrize("mode", ["evaluate", "order", "route", "norms"])
+@pytest.mark.parametrize("values", [[True], [], [True, False, True]])
+def test_evaluation_response_requires_one_value_per_formula(tmp_path, mode, values):
+    case = {"id": "c", "ast": [["top"], ["bottom"]]}
+    if mode != "evaluate":
+        case["kind"] = "evaluate"
+    row = {"id": "c", "status": "ok", "values": values}
+    if mode == "evaluate":
+        row.update(value=all(values), canonical="")
+    _scripted_response_rejected(tmp_path, mode, case, row)
+
+
+@pytest.mark.parametrize("mode", ["evaluate", "check-certificate", "order", "route", "norms"])
+def test_nested_boolean_id_substitution_is_operational_failure(tmp_path, mode):
+    case = {"id": {"nested": [0]}}
+    row = {"id": {"nested": [False]}, "status": "error", "error": "rejected"}
+    if mode in ("check-certificate", "order"):
+        row["valid"] = False
+    _scripted_response_rejected(tmp_path, mode, case, row)
 
 
 _SCHEMA_SEEDS = {
