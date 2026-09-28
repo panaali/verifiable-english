@@ -252,9 +252,10 @@ def load_document(path: str | Path):
         unit["status"] = ("CHECKED" if reading_set["status"] == "authored"
                           and all(c["kind"] == "asserted" and c["content"] is not None
                                   for c in reading_set["readings"]) else "OPEN")
-    for unit in compiled:
-        if unit.pop("explicit_status") not in (None, unit["status"]):
-            raise VEError("unit status contradicts content, meaning, or active reading set")
+    if meta["format"] == "ve-document@1":
+        for unit in compiled:
+            if unit.pop("explicit_status") not in (None, unit["status"]):
+                raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
     norm_units = [u for u in compiled if u["kind"] == "norm"
                   and type(u["content"]) is dict and "norm" in u["content"]]
@@ -293,6 +294,9 @@ def load_document(path: str | Path):
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
     if meta["format"] == "ve-document@2":
         doc["discourse"] = validate_discourse(doc)
+        for unit in compiled:
+            if unit.pop("explicit_status") not in (None, unit["status"]):
+                raise VEError("unit status contradicts content, meaning, or active reading set")
     return doc
 
 
@@ -375,16 +379,18 @@ def _check_narrowing_choices(meta, labels):
 
 def check_document(path):
     doc = load_document(path)
-    if (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
-            or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN") and "graph" in doc["meta"]:
-        raise VEError("ResourceLimit: discourse citation and report extension pending")
+    joint_pending = (doc.get("discourse", {}).get("joint", {}).get("constraints", 0)
+                     or doc.get("discourse", {}).get("joint", {}).get("status") == "UNKNOWN")
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     result = {"format": doc["meta"]["format"], "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
-    if "graph" in doc["meta"]:
+    if "graph" in doc["meta"] and joint_pending:
+        result["admission"] = {"status": "UNKNOWN",
+                               "reason": "discourse citation and report extension pending"}
+    if "graph" in doc["meta"] and not joint_pending:
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
@@ -448,7 +454,7 @@ def check_document(path):
                 and any(c["kind"] != "asserted" or c["content"] is None
                         for r in active for c in r["readings"])):
             result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
-    if "admission" in result:
+    if "admission" in result and "report" in result["admission"]:
         status = result["premises"]["status"]
         result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
                                            False if status == "model" else None)
@@ -543,6 +549,7 @@ def main(argv=None):
             active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]
+            joint = doc.get("discourse", {}).get("joint")
             if args.narrowing:
                 matching = [n for n in doc["meta"].get("narrowings", []) if n["id"] == args.narrowing]
                 if len(matching) != 1:
@@ -551,12 +558,24 @@ def main(argv=None):
                 if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
                            for r in sets):
                     raise VEError("narrowing does not target an active reading set")
-                sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
-                        if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
-                        for r in sets]
+                if joint is not None and joint["status"] == "complete":
+                    rs = next(r for r in sets if (r["id"], r["version"]) ==
+                              (narrowing["set"], narrowing["version"]))
+                    kept = {i for i, candidate in enumerate(rs["readings"])
+                            if candidate["id"] in narrowing["keeps"]}
+                    key = f"{rs['id']}@{rs['version']}"
+                    joint = {**joint, "choices": [c for c in joint["choices"]
+                                                   if c.get(key) in kept]}
+                    if not joint["choices"]:
+                        raise VEError(f"InvalidCompatibility: narrowing {narrowing['id']}")
+                    joint["count"] = len(joint["choices"])
+                elif joint is None:
+                    sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
+                            if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
+                            for r in sets]
             data = check_readings(doc["environment"], sets, conclusion,
                                   fixed=_fixed_premises(doc, sets),
-                                  joint_choices=doc.get("discourse", {}).get("joint"))
+                                  joint_choices=joint)
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
         else:

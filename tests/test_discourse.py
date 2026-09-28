@@ -10,6 +10,8 @@ from ve.errors import VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.readings import check_readings
 from ve.environment import Environment
+from ve.ast import formula_from_data
+from ve.identity import meaning_id
 
 
 def _environment():
@@ -83,6 +85,17 @@ def test_retarget_and_content_tampering_fail(tmp_path):
         load_document(_write(tmp_path, front, source))
 
 
+def test_unrecorded_and_wrong_surface_slots_fail(tmp_path):
+    source, front = _sample(tmp_path)
+    mention = front["discourse"]["mentions"].pop()
+    with pytest.raises(VEError, match="UnrecordedSlot"):
+        load_document(_write(tmp_path, front, source))
+    mention["span"] = [source.index(b"is deployed"), source.index(b"is deployed") + 2]
+    front["discourse"]["mentions"].append(mention)
+    with pytest.raises(VEError, match="MentionNotSlot"):
+        load_document(_write(tmp_path, front, source))
+
+
 def test_rejects_partial_overlap_and_stale_version(tmp_path):
     source, front = _sample(tmp_path)
     cut = source.index(b"It")
@@ -149,3 +162,33 @@ def test_joint_verdict_uses_only_compatible_choices():
         {"kind": "requires", "a": ["r1", 1, "a"], "b": ["r2", 1, "a"]},
         {"kind": "requires", "a": ["r1", 1, "b"], "b": ["r2", 1, "b"]}]}, sets)
     assert check_readings(env, sets, p, joint_choices=joint)["verdict"] == "SOME"
+
+
+def test_group_propagates_status_and_rejects_independent_fragment(tmp_path):
+    source = b"A service is deployed.\nIt is reviewed.\n"
+    cut = source.index(b"It")
+    data = _environment()
+    base = {**data, "profiles": ["relational-fol@0"]}
+    env = Environment(base)
+    formula = ["exists", "item", ["and", ["unary", "active", ["var", 0]],
+                                      ["unary", "reviewed", ["var", 0]]]]
+    front = {"format": "ve-document@2", "environment": data,
+        "units": [{"id": "u1", "span": [0, cut], "kind": "asserted",
+                   "meaning": "specified", "support": "assumption", "status": "OPEN"},
+                  {"id": "u2", "span": [cut, len(source)],
+                   "kind": "exposition", "meaning": "specified",
+                   "support": "none", "status": "OPEN"}],
+        "reading_sets": [{"id": "rs1", "unit": "u1", "version": 1, "status": "open",
+            "readings": [{"id": "same-witness", "kind": "asserted", "content": formula,
+                          "meaning_id": meaning_id(env, formula_from_data(env, formula)),
+                          "admission": {"who": "author", "why": "shared service",
+                                        "distinguishing_models": {}}}]}],
+        "discourse": {"version": "ve.discourse@1", "anchors": [
+            {"id": "doc", "kind": "document", "label": "Policy", "span": [0, len(source)]}],
+            "groups": [{"set": "rs1", "version": 1, "reading": "same-witness",
+                        "spans": ["u1", "u2"]}]}}
+    path = _write(tmp_path, front, source)
+    assert [u["status"] for u in load_document(path)["units"]] == ["OPEN", "OPEN"]
+    front["units"][1]["content"] = {"ast": ["top"]}
+    with pytest.raises(VEError, match="IndependentFragment"):
+        load_document(_write(tmp_path, front, source))

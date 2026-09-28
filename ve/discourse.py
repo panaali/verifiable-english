@@ -214,6 +214,19 @@ def _check_simple_expansion(doc, unit, mention, names, anchors):
     return candidates[chosen][0]
 
 
+def _surface_matches(doc, mention):
+    a, b = mention["span"]
+    surface = doc["source"][a:b].decode("utf-8").strip().lower()
+    form = mention["form"]
+    if form == "pronoun":
+        return surface in {"it", "she", "he", "they", "them", "her", "him", "his", "its", "their"}
+    if form == "demonstrative":
+        return surface.startswith(("this ", "that "))
+    if form == "ordinal_pair":
+        return surface in {"the former", "the latter"}
+    return True
+
+
 def _contains_var(formula, index=0):
     if formula == ["var", index]:
         return True
@@ -282,11 +295,46 @@ def validate_discourse(doc):
     for item in content_names:
         if type(item) is not dict or item.get("scope") not in anchors or type(item.get("units")) is not list or any(u not in units for u in item["units"]):
             raise VEError("InvalidInput: content_name")
+        if type(item.get("name")) is not str or not item["name"]:
+            raise VEError("InvalidInput: content_name")
+    for i, item in enumerate(content_names):
+        for other in content_names[i + 1:]:
+            if item["name"] == other["name"] and max(
+                    anchors[item["scope"]]["span"][0], anchors[other["scope"]]["span"][0]) < min(
+                    anchors[item["scope"]]["span"][1], anchors[other["scope"]]["span"][1]):
+                raise VEError(f"DuplicateDeclaration: content_name {item['name']}")
     document_sort = block.get("document_sort")
     documents = _table(_array(block, "documents"), "name", "document")
     if documents:
         if document_sort not in env.sorts or {n for n, c in env.constants.items() if c.sort == document_sort} != set(documents):
             raise VEError(f"InvalidInput: document sort {document_sort} has other constants")
+    imports = block.get("imports", {})
+    if type(imports) is not dict or len(imports) > 64:
+        raise VEError("ResourceLimit: imports")
+    for name, declaration in documents.items():
+        refers = declaration.get("refers")
+        if refers == "self":
+            if "source_id" in declaration or "document_id" in declaration:
+                raise VEError(f"InvalidInput: self document pin {name}")
+        elif type(refers) is dict and len(refers) == 1:
+            ref_kind, ref_id = next(iter(refers.items()))
+            if ref_kind == "part":
+                if ref_id not in anchors:
+                    raise VEError(f"DanglingAnchor: {ref_id}")
+            elif ref_kind == "embedded":
+                if ref_id not in units or units[ref_id]["kind"] != "meta":
+                    raise VEError(f"UnknownDocument: {name}")
+            elif ref_kind == "import":
+                pin = imports.get(ref_id)
+                if type(pin) is not dict or not {"source_id", "document_id", "bytes"} <= set(pin):
+                    raise VEError(f"UnknownDocument: {name}")
+                if (declaration.get("source_id"), declaration.get("document_id")) != (
+                        pin["source_id"], pin["document_id"]):
+                    raise VEError(f"ManifestMismatch: documents.{name}")
+            else:
+                raise VEError(f"InvalidInput: document refers {name}")
+        else:
+            raise VEError(f"InvalidInput: document refers {name}")
     mentions = _table(_array(block, "mentions"), "id", "mention")
     by_unit = {}
     for mid, m in mentions.items():
@@ -315,6 +363,8 @@ def validate_discourse(doc):
     for mid, m in mentions.items():
         target = m["target"]
         kind, form = target["kind"], m["form"]
+        if not _surface_matches(doc, m):
+            raise VEError(f"MentionNotSlot: {mid}")
         if kind == "entity":
             members = target.get("members")
             pair = target.get("pair")
@@ -347,6 +397,15 @@ def validate_discourse(doc):
                 raise VEError(f"ManifestMismatch: mentions.{mid}.content_name")
         elif kind == "document" and target.get("name") not in documents:
             raise VEError(f"UnknownDocument: {target.get('name')}")
+        elif kind == "rule":
+            rules = {u["content"]["norm"]["name"] for u in doc["units"]
+                     if u["kind"] == "norm" and type(u["content"]) is dict and "norm" in u["content"]}
+            if target.get("name") not in rules:
+                raise VEError(f"UnknownRule: {target.get('name')}")
+        elif kind == "claim":
+            lemmas = doc["meta"].get("lemmas", [])
+            if target.get("name") not in {l.get("meaning_id") for l in lemmas if type(l) is dict}:
+                raise VEError("Citation is absent, cyclic, or not earlier in the bundle")
         references.append({"mention": mid, "unit": m["unit"], "form": form, "target": target,
                            "status": "navigation" if form in _LOCATION else "resolved"})
     for uid, rows in by_unit.items():
@@ -359,6 +418,16 @@ def validate_discourse(doc):
         if len(producing) != 1 or len(rows) != 1:
             raise VEError(f"ResourceLimit: resolution of {uid}")
         presentations[uid] = _check_simple_expansion(doc, unit, producing[0], names, anchors)
+    for unit in doc["units"]:
+        if unit["kind"] != "asserted" or unit["content"] is None:
+            continue
+        start = unit["span"][0]
+        for match in re.finditer(rb"\b(?:it|she|he|they|them|her|him|his|its|their)\b",
+                                 doc["source"][start:unit["span"][1]], re.I):
+            position = start + match.start()
+            if not any(_inside(m["span"], [position, start + match.end()])
+                       for m in by_unit.get(unit["id"], [])):
+                raise VEError(f"UnrecordedSlot: {unit['id']}: [{position}, {start + match.end()})")
     groups = _array(block, "groups")
     active = active_reading_sets(doc["meta"].get("reading_sets", []))
     for group in groups:
@@ -367,6 +436,8 @@ def validate_discourse(doc):
         rs = next((s for s in active if (s["id"], s["version"]) == (group.get("set"), group.get("version"))), None)
         if rs is None or group.get("reading") not in [r["id"] for r in rs["readings"]] or rs["unit"] != group["spans"][0]:
             raise VEError("InvalidInput: group reading")
+        if rs["status"] == "authored":
+            raise VEError("UnsupportedProfile: authored discourse group elaboration is not implemented")
         reading = next(r for r in rs["readings"] if r["id"] == group["reading"])
         if group["reading"] == "same-witness" and not _same_witness(reading.get("content")):
             raise VEError(f"WitnessSplit: {rs['id']}@{rs['version']}:same-witness")
