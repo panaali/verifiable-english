@@ -34,7 +34,8 @@ document (`Wire.decodeDocument`); nothing on the wire supplies them.
 * `reports-status`, with the inputs of `reports-scoped` → `units` (each unit's
   status and its nested results: every assessment node OPEN with its path and
   generated name, every act outside the slice in its kind LABELLED with its
-  path), `scoped` (the `reports-scoped` verdicts) and `document_status`, the
+  path, every unformalised node of its kind UNFORMALISED with its path and
+  reason), `scoped` (the `reports-scoped` verdicts) and `document_status`, the
   meet of the units' statuses and the verdicts' (`Status.documentStatus_le`).
 * `admission` of a document under `reports@0` → `admitted`, `report`,
   `report_id`, `envelope`, `kinds` (`Run.reports_wire_acceptance`).
@@ -84,6 +85,15 @@ def unreviewedActs (path : String) : VE.Route.Admission.Kind → List (String ×
       unreviewedActs (childPath path 1) body
   | .hedged _ body => unreviewedActs (childPath path 1) body
   | .causal _ c e => unreviewedActs (childPath path 1) c ++ unreviewedActs (childPath path 2) e
+  | _ => []
+
+/-- Every `unformalised` node of a kind with its path and reason, at any depth,
+with the paths of `unreviewedActs` (`ve/reports.py` `unformalised_kinds`). -/
+def unformalisedKinds (path : String) : VE.Route.Admission.Kind → List (String × String)
+  | .unformalised r => [(path, r)]
+  | .attributed _ _ body => unformalisedKinds (childPath path 1) body
+  | .hedged _ body => unformalisedKinds (childPath path 1) body
+  | .causal _ c e => unformalisedKinds (childPath path 1) c ++ unformalisedKinds (childPath path 2) e
   | _ => []
 
 def warnings (dec : Wire.Decoded) : List String :=
@@ -370,9 +380,12 @@ def nestedResults (D : ReportDoc) (u : Wire.DecodedUnit) : List (Json × Status)
        (Json.mkObj [("item", .str "assessment"), ("path", .str (depthPath d)), ("name", .str n),
          ("status", .str Status.open.render)], Status.open)
    | .w2 _ => []) ++
-  (unreviewedActs "" u.kind).map fun (p, a) =>
+  (unreviewedActs "" u.kind).map (fun (p, a) =>
     (Json.mkObj [("item", .str "act"), ("path", .str p), ("act", .str a),
-      ("status", .str Status.labelled.render)], Status.labelled)
+      ("status", .str Status.labelled.render)], Status.labelled)) ++
+  (unformalisedKinds "" u.kind).map fun (p, r) =>
+    (Json.mkObj [("item", .str "unformalised"), ("path", .str p), ("reason", .str r),
+      ("status", .str Status.unformalised.render)], Status.unformalised)
 
 def hasContent : Wire.DecodedUnit → Bool
   | .reports .. => true

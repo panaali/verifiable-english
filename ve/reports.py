@@ -80,6 +80,23 @@ def unreviewed_acts(kind, path=""):
     return []
 
 
+def unformalised_kinds(kind, path=""):
+    """Every `unformalised` node of a W2 kind with its reason, at any depth, with
+    the paths of `unreviewed_acts` (Lean `Run.unformalisedKinds`): a nested one
+    marks part of the unit's meaning as unformalised, whatever its content."""
+    if type(kind) is not list:
+        return []
+    if kind[0] == "unformalised":
+        return [{"path": path, "reason": kind[1]}]
+    if kind[0] == "attributed":
+        return unformalised_kinds(kind[3], _path(path, 1))
+    if kind[0] == "hedged":
+        return unformalised_kinds(kind[2], _path(path, 1))
+    if kind[0] == "causal":
+        return unformalised_kinds(kind[2], _path(path, 1)) + unformalised_kinds(kind[3], _path(path, 2))
+    return []
+
+
 def _records(rows, label, limit):
     if type(rows) is not list:
         raise VEError(f"InvalidInput: {label} must be a list")
@@ -264,12 +281,15 @@ class ReportsDocument:
     def nested_results(self, unit):
         """6: the results computed for a unit's nested content and kind (Lean
         `Run.nestedResults`): every assessment node OPEN, every act outside the
-        slice LABELLED."""
+        slice LABELLED, every unformalised node of the kind UNFORMALISED with its
+        reason."""
         content = unit.get("content")
+        kind = unit.get("kind")
         assessments = (self._assessment_items(content) if type(content) is dict and
                        set(content) & {"report", "assessment", "negated"} else [])
         return ([{"item": "assessment", **item, "status": "OPEN"} for item in assessments]
-                + [{"item": "act", **item, "status": "LABELLED"} for item in unreviewed_acts(unit.get("kind"))])
+                + [{"item": "act", **item, "status": "LABELLED"} for item in unreviewed_acts(kind)]
+                + [{"item": "unformalised", **item, "status": "UNFORMALISED"} for item in unformalised_kinds(kind)])
 
     def unit_status(self, unit):
         """6: the meet of the unit's own meaning status (W2's inference, Lean
@@ -594,12 +614,14 @@ class ReportsDocument:
         every report and assessment premise (an identified assumption, asserted
         or denied), every literal quotation at any depth, every scoped check with
         its inner status and detail (`scoped`: checked `scoped_verdicts` entries,
-        computed without a replay when absent) and every act outside the slice at
-        any depth of a unit's kind. W2's other lines and `bridges_nested` are
-        counted by `ve.document.coverage` from the graph."""
+        computed without a replay when absent), every act outside the slice and
+        every unformalised node (by reason) at any depth of a unit's kind. W2's
+        other lines and `bridges_nested` are counted by `ve.document.coverage`
+        from the graph."""
         lines = {"open_terms": list(self.declared_open_terms) + [term["name"] for term in self.open_terms],
                  "reports": {}, "assessments": {}, "literal_quotations": [],
-                 "scoped_checks": self.scoped_verdicts() if scoped is None else scoped, "unreviewed_acts": {}}
+                 "scoped_checks": self.scoped_verdicts() if scoped is None else scoped, "unreviewed_acts": {},
+                 "unformalised_kinds": {}}
 
         def count(line, key):
             lines[line][key] = lines[line].get(key, 0) + 1
@@ -617,6 +639,8 @@ class ReportsDocument:
             content = unit.get("content")
             for act in unreviewed_acts(unit.get("kind")):
                 count("unreviewed_acts", act["act"])
+            for node in unformalised_kinds(unit.get("kind")):
+                count("unformalised_kinds", node["reason"])
             if not (type(content) is dict and set(content) & {"report", "assessment", "negated"}):
                 continue
             node, polarity = (content["negated"], "denied") if "negated" in content else (content, "asserted")

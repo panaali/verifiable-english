@@ -2,7 +2,8 @@ import VE.Attribution.Content
 
 /-! Spec 6: unit and document status. A unit's status is the meet of its meaning
 status (W2's inference) and every result computed for its nested content (an
-assessment node is OPEN, an act outside the slice anywhere in its kind LABELLED);
+assessment node is OPEN, an act outside the slice anywhere in its kind LABELLED,
+an unformalised node anywhere in its kind UNFORMALISED);
 a document's is the meet of its units' statuses and every scoped check's
 replayed status. One order: UNFORMALISED, OPEN and UNKNOWN below LABELLED below
 CHECKED (the three lowest ranked in that order, so the meet is determined). The

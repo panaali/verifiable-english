@@ -276,7 +276,8 @@ def load_document(path: str | Path):
                 raise VEError("unit meaning id does not match content")
         # 6: every unit's status is the meet of its meaning's and every result
         # nested in its content and kind (an assessment node at any depth is OPEN,
-        # an act outside the slice anywhere in its kind LABELLED).
+        # an act outside the slice anywhere in its kind LABELLED, an unformalised
+        # node anywhere in its kind UNFORMALISED).
         for u, wire in zip(compiled, reports.units):
             u["status"] = reports.unit_status(wire)
     from .norms import NormDocument
@@ -384,6 +385,13 @@ def coverage(doc, scoped=None):
         if type(u["meaning"]) is dict and "unformalised" in u["meaning"]:
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
+        if doc.get("reports") is not None:
+            # 6: a nested unformalised kind is a part of the unit left unformalised
+            # (the root one needs an unformalised meaning, counted above).
+            from .reports import unformalised_kinds
+            for node in unformalised_kinds(u["kind"]):
+                if node["path"]:
+                    reasons[node["reason"]] = reasons.get(node["reason"], 0) + 1
     meta = doc["meta"]
     graph = meta.get("graph")
     nodes = graph.get("nodes") if type(graph) is dict else None
