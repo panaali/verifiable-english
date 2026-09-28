@@ -428,9 +428,14 @@ def coverage(doc):
     if rights is not None:
         residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
         residual["bar_terms"] = len(rights.bar_names)
-        residual["power_shadows"] = sum(i["source_kind"] in ("power", "immunity")
+        residual["power_shadows"] = sum(i["kind"] in ("powerLiberty", "immunity")
                                          for i in rights.instances)
-        residual["couplings"] = len(meta.get("couplings", []))
+        for axis in ("bearer", "polarity", "incident", "force"):
+            residual[f"{axis}_readings"] = sum(
+                len({candidate.get("labels", {}).get(axis) for candidate in reading_set["readings"]}) > 1
+                for reading_set in active_reading_sets(meta.get("reading_sets", [])))
+        residual["couplings"] = len({item["axis"] for item in meta.get("couplings", [])})
+        residual["narrowings"] = len(meta.get("narrowings", []))
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
@@ -441,7 +446,16 @@ def coverage(doc):
                 "default_exceptions_by_decider": by_decider,
                 "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
                 "soft_background_labels": [label for label, _ in soft.exception_premises]}
-               if soft is not None else {})}
+               if soft is not None else {}),
+            **({"rights_residual_labels": [
+                *[f"limitation {name} on {act}: {generated}"
+                  for (name, act), generated in rights.limitation_names.items()],
+                *[f"condition {condition} of limitation {name} on {act}: {generated}"
+                  for (name, act, condition), generated in rights.condition_names.items()],
+                *[f"coupling:{item['id']} ({item['axis']}, " +
+                  ", ".join(ref["set"] for ref in item["sets"]) + ")"
+                  for item in meta.get("couplings", [])]]}
+               if rights is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):

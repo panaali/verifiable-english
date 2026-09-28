@@ -118,6 +118,10 @@ def test_couplings_keep_only_shared_axis_choices():
     assert plan["conditional_on"] == ["coupling:same-force"]
     sets[1]["readings"] = [sets[1]["readings"][0]]
     assert plan_choices(sets, couplings=couplings)["choices"] == [{"a": 0, "b": 0}]
+    sets[1]["readings"] = [{"id": "b-other", "labels": {"force": "other"}}]
+    with pytest.raises(VEError, match="CouplingLabelMissing"):
+        validate_couplings(RightsEnvironment(rights_env()), couplings, sets,
+                           {"a", "b", "preamble"})
 
 
 def test_fan_out_generates_one_rule_per_bearer_sort():
@@ -133,6 +137,22 @@ def test_fan_out_generates_one_rule_per_bearer_sort():
     assert [(i["bearer"], i["rule"].core.name) for i in doc.instances] == [
         ("person", "rights-fan-1"), ("state", "rights-fan-2")]
     assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
+
+
+def test_joint_couplings_reject_empty_complete_choice_space():
+    sets = [{"id": "a", "version": 1, "unit": "a", "readings": [
+        {"labels": {"force": "strict", "polarity": "positive"}},
+        {"labels": {"force": "default", "polarity": "negative"}}]},
+        {"id": "b", "version": 1, "unit": "b", "readings": [
+            {"labels": {"force": "strict", "polarity": "negative"}},
+            {"labels": {"force": "default", "polarity": "positive"}}]}]
+    couplings = [{"id": axis, "axis": axis,
+                  "sets": [{"set": name, "version": 1} for name in ("a", "b")],
+                  "by": "translator", "reason_spans": ["preamble"]}
+                 for axis in ("force", "polarity")]
+    with pytest.raises(VEError, match="CouplingUnsatisfiable"):
+        validate_couplings(RightsEnvironment(rights_env()), couplings, sets,
+                           {"a", "b", "preamble"})
 
 
 def test_power_splits_into_liberty_and_recognition():
