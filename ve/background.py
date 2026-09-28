@@ -203,11 +203,13 @@ _DEPENDENCY_ENVIRONMENT = {
 
 def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     """Dependencies precede dependents in one DAG over defined and regulated symbols."""
-    from .backends.dispatch import execute
+    from .backends.dispatch import authority_for, execute
     from .backends.lean_runner import run
     from .backends.lean_service import CheckerUnavailable
     from .errors import ResourceLimit
 
+    if authority_for("dependency_order") == "python":
+        return _dependency_order_python(dependencies)
     if len(dependencies) > 256:
         raise ResourceLimit("dependency graph size")
     case = {"id": "dependency-order", "kind": "dependency-order",
