@@ -44,14 +44,13 @@ def _property_words(gloss):
 
 
 def _opaque(env, rest):
-    """The sentence a declared gloss would hide behind one predicate (6), if any.
+    """The advisory lint of 2.1: a word suggesting a declared gloss hides a sentence, if any.
 
-    A copular gloss may only name one property.  Inside it, any of these is a
-    sentence the gloss would answer as one opaque atom: a connective,
-    negation, contrast or quantifier word; sentence punctuation; a word said
-    twice ("reviewed yet never reviewed"); another declared property as a
-    proper part ("reviewed plus unreviewed" beside "{0} is reviewed"); a
-    declared constant or a bound definite phrase.
+    A declared gloss is author-declared vocabulary, one atom whose English VE
+    does not and cannot check, so this is a warning and never a gate, and the
+    list is closed (2.1): a connective, negation, contrast or quantifier
+    word; sentence punctuation; a word said twice; another declared property
+    as a proper part; a declared constant or a bound definite phrase.
     """
     words = [w.casefold() for w in re.findall(r"[A-Za-z0-9_']+", rest)][1:]  # after the copula "is"
     if (mark := re.search(r"[^A-Za-z0-9_' -]", rest)) is not None:
@@ -71,15 +70,19 @@ def _opaque(env, rest):
     return None
 
 
-def _copular(env, name, rest):
-    """Match a declared unary copula without asking P0 to parse a question."""
+def _copular(env, name, rest, warnings=None):
+    """Match a declared unary copula without asking P0 to parse a question.
+
+    A matching gloss is read as its one declared predicate; the lint of
+    `_opaque` only adds an `OpaqueWording` warning to `warnings`.
+    """
     from .ast import Const, Unary
     matches = [Unary(predicate, Const(name)) for predicate, decl in env.predicates.items()
                if len(decl.arguments) == 1 and decl.arguments[0] == env.constants[name].sort
                and decl.verbalisation is not None
                and decl.verbalisation.casefold() == ("{0} " + rest).casefold()]
-    if matches and (hidden := _opaque(env, rest)) is not None:
-        raise VEError(f"OpaqueWording: '{rest}' is a sentence about '{hidden}', not one declared property")
+    if matches and warnings is not None and (hidden := _opaque(env, rest)) is not None:
+        warnings.append(f"OpaqueWording: '{rest}' contains '{hidden}' and is read as one declared predicate")
     if len(matches) == 1:
         return matches[0]
     if len(matches) > 1:
@@ -87,21 +90,20 @@ def _copular(env, name, rest):
     return _formula(env, f"@{name} {rest}.")
 
 
-def _sentence(env, source):
+def _sentence(env, source, warnings=None):
     match = re.fullmatch(r"([A-Za-z][A-Za-z0-9_]*) (is .+)\.", source)
     if match:
         try:
-            return _copular(env, _name(env, match[1]), match[2])
-        except VEError as exc:
-            if str(exc).startswith("OpaqueWording"):
-                raise
+            return _copular(env, _name(env, match[1]), match[2], warnings)
+        except VEError:
+            pass
     return _formula(env, source)
 
 
-def _body(env, alternative, rest):
+def _body(env, alternative, rest, warnings=None):
     # Parse a complete existing English sentence first, then abstract exactly
     # the named alternative.  This retains P0's one-reading grammar check.
-    formula = _copular(env, alternative, rest)
+    formula = _copular(env, alternative, rest, warnings)
     data = _to_data(formula)
     def abstract(node):
         if type(node) is list:
@@ -144,8 +146,11 @@ def _command_candidates(env, scope):
             yield phrase, predicate, tuple(value for _, value in bindings), reg.role
 
 
-def parse_speech(env, source, scope, *, query=None, reading_set=None):
-    """Return a typed wire content object and its kind; reject other wordings."""
+def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None):
+    """Return a typed wire content object and its kind; reject other wordings.
+
+    Advisory lints (`OpaqueWording`) are appended to `warnings` when given.
+    """
     if type(source) is not str:
         raise VEError("InvalidInput: speech wording")
     text = source.strip()
@@ -158,7 +163,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
     if text.startswith("Does it follow from these premises that ") and text.endswith("?"):
         if query is None:
             raise VEError("InvalidInput: query required")
-        _sentence(env, text[len("Does it follow from these premises that "):-1] + ".")
+        _sentence(env, text[len("Does it follow from these premises that "):-1] + ".", warnings)
         return {"mode": "follows", "query": query}, "question"
     if text.startswith("Is it the case that ") and text.endswith("?"):
         formula = _formula(env, text[len("Is it the case that "):-1] + ".")
@@ -166,7 +171,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
     match = re.fullmatch(r"Is ([A-Za-z][A-Za-z0-9_]*) (.+)\?", text)
     if match:
         name = _name(env, match[1])
-        return {"mode": "polar", "body": _to_data(_copular(env, name, "is " + match[2]))}, "question"
+        return {"mode": "polar", "body": _to_data(_copular(env, name, "is " + match[2], warnings))}, "question"
     for mode, pattern in (("which_one", r"Which one of (.+) is (.+)\?"),
                           ("which_all", r"Which of (.+) are (.+)\?")):
         match = re.fullmatch(pattern, text)
@@ -177,7 +182,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
                 raise VEError("AlternativeSort: wording")
             rest = "is " + match[2]
             return {"mode": mode, "sort": sort, "domain": domain,
-                    "body": _body(env, domain[0], rest)}, "question"
+                    "body": _body(env, domain[0], rest, warnings)}, "question"
     if text.startswith("Must ") or text.startswith("Can "):
         raise VEError("ModalQuestion: choose an explicit question")
     if text.startswith("Which "):
@@ -195,7 +200,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
     if text.startswith("Prove that ") and text.endswith(" using these premises."):
         if query is None:
             raise VEError("InvalidInput: query required")
-        _sentence(env, text[len("Prove that "):-len(" using these premises.")] + ".")
+        _sentence(env, text[len("Prove that "):-len(" using these premises.")] + ".", warnings)
         from .speech_acts import PROOF_TASK_ACT
         candidates = [(name, decl) for name, decl in env.predicates.items()
                       if decl.regulated is not None and decl.regulated.role == "obligation"
