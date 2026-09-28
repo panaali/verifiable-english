@@ -763,6 +763,14 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   let E := se.ne.rv.environment
   VE.Bridge.displayFields document ["units"]
     ["queries", "answers", "compliance", "graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
+  -- Source answer records are not replayed by this route, but their optional
+  -- conditional flag still has the same wire type and diagnostic as Python.
+  if let .ok answers := document.getObjVal? "answers" then
+    for answer in (← answers.getArr?).toList do
+      if let .ok flag := answer.getObjVal? "conditional" then
+        match flag with
+        | .bool _ => pure ()
+        | _ => throw "InvalidInput: conditional"
   let states ← readingStates document
   let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E states)
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"

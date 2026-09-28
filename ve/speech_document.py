@@ -211,15 +211,22 @@ class SpeechSource:
             latest = latest_reading_sets(sets)
             for unit in fenced:
                 text = fences[unit["id"]].strip()
-                parsed, parsed_kind = parse_speech(self.env, text, scope,
-                                                   **self._fence_context(unit, text, sets))
                 reading_set = latest.get(unit["id"])
                 effective_kind = (_reading_choice(unit, reading_set)["kind"]
                                   if reading_set is not None and reading_set["status"] == "authored"
                                   else unit["kind"])
+                if effective_kind == "asserted":
+                    from .ast import _to_data
+                    from .speech_english import _sentence
+                    parsed = _to_data(_sentence(self.env, text))
+                    parsed_kind = "asserted"
+                else:
+                    parsed, parsed_kind = parse_speech(self.env, text, scope,
+                                                       **self._fence_context(unit, text, sets))
                 if parsed_kind != effective_kind:
                     raise VEError("fence kind disagrees with unit")
-                unit["content"] = {"command" if parsed_kind == "instruction" else "question": parsed}
+                unit["content"] = ({"ast": parsed} if parsed_kind == "asserted" else
+                                   {"command" if parsed_kind == "instruction" else "question": parsed})
         self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)
         latest = latest_reading_sets(sets)
         for unit in self.units:
@@ -299,6 +306,8 @@ class SpeechSource:
                     or set(record) - {"question", "by", "support", "evidence", "answer",
                                       "conditional", "judgment"}):
                 raise VEError("InvalidInput: answer record")
+            if "conditional" in record and type(record["conditional"]) is not bool:
+                raise VEError("InvalidInput: conditional")
             uid = record["question"]
             if type(uid) is not str:
                 raise VEError("InvalidInput: answer record")
