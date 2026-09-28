@@ -1255,3 +1255,40 @@ def test_generated_source_wire_never_crashes():
                 pass
             except Exception as error:
                 pytest.fail(f"uncaught {type(error).__name__} at {path}: {error}")
+
+
+def test_answer_records_validate_nested_model_and_list_tokens():
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    lines = [b"Is atlas reviewed?\n", b"Which of atlas and beacon are reviewed?\n"]
+    source = b"".join(lines)
+    units = [
+        {**unit("p", 0, "question", polar(U("reviewed", "atlas"))), "span": [0, len(lines[0])]},
+        {**unit("a", 0, "question", which("which_all")), "span": [len(lines[0]), len(source)]},
+    ]
+    base_model = model(reviewed=[["atlas"]])
+    answers = [
+        {"question": "p", "by": "checker", "support": "model", "answer": "yes",
+         "evidence": {"model": base_model}},
+        {"question": "a", "by": "checker", "support": "model", "answer": {"all": ["atlas"]},
+         "evidence": {"model": base_model}},
+    ]
+    meta = {"format": "ve-document@2", "environment": env, "units": units, "answers": answers}
+    assert len(SpeechSource(meta, source, {}).answer_lines) == 2
+    for index, field, value, diagnostic in ((0, "evidence", {"model": 7}, "InvalidModel"),
+                                            (1, "answer", {"all": [[]]}, "AnswerOutsideDomain")):
+        changed = copy.deepcopy(meta)
+        changed["answers"][index][field] = value
+        with pytest.raises(VEError) as raised:
+            SpeechSource(changed, source, {})
+        assert _diagnostic(raised.value).startswith(diagnostic)
+    for path, replacement in _wire_mutations(answers, ("answers",), include_null=True):
+        if len(path) < 2:
+            continue
+        changed = _replace_wire(meta, path, replacement)
+        try:
+            SpeechSource(changed, source, {})
+        except VEError:
+            pass
+        except Exception as error:
+            pytest.fail(f"uncaught {type(error).__name__} at {path}: {error}")
