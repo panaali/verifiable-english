@@ -10,7 +10,8 @@ result is ever substituted, and a malformed row is never read as a rejection.
 
 The response schema every runner row satisfies: `status` is `ok` or `error`;
 an `error` row carries a string `error`; an `ok` row carries the submitted
-case `id`; an `id` or `case_index` present on any row names that case. Each
+case `id`; an `id` or `case_index` present on any row names that case, with its
+JSON type (a string id, an integer index: `false` is not case 0). Each
 binding's manifest `response` gives every field an `ok` row of the operation
 must carry with its type (`bool`, `nat`, `string`, `object`, `json`, or
 `array<T>` with every element of type `T`), and its `counts` the fields whose
@@ -60,6 +61,17 @@ def _size(value) -> int:
     return value if type(value) is int else len(value)
 
 
+def _same(value, expected) -> bool:
+    """JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`."""
+    if type(value) is not type(expected):
+        return False
+    if type(value) is list:
+        return len(value) == len(expected) and all(map(_same, value, expected))
+    if type(value) is dict:
+        return value.keys() == expected.keys() and all(_same(value[k], expected[k]) for k in value)
+    return value == expected
+
+
 def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None) -> str | None:
     """Why `row` is not a well-formed answer to `case`, or None.
 
@@ -70,13 +82,15 @@ def row_problem(case: dict, row, index: int, response: dict, counts: dict | None
     status = row.get("status")
     if status not in ("ok", "error"):
         return "a result row has no status ok or error"
-    if "case_index" in row and row["case_index"] != index:
+    # Identity fields are compared with their types: Python's `False == 0` is not
+    # a JSON equality, so a Boolean never names case 0 (nor a float case 1).
+    if "case_index" in row and not _same(row["case_index"], index):
         return "result case indices do not match the submitted cases"
-    if "id" in row and row["id"] != case.get("id"):
+    if "id" in row and not _same(row["id"], case.get("id")):
         return "result ids do not match the submitted cases"
     if status == "error":
         return None if type(row.get("error")) is str else "an error row has no error message"
-    if "id" in case and row.get("id") != case["id"]:
+    if "id" in case and not _same(row.get("id"), case["id"]):
         return "an ok row does not name its case id"
     for name, spec in response.items():
         if name not in row or not conforms(row[name], spec):

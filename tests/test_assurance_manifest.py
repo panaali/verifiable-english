@@ -680,6 +680,11 @@ FAULTS = {
     "error-without-message": "print(json.dumps([{'id': c['id'], 'status': 'error'} for c in cases])); sys.exit(1)",
     "wrong-case-index": "print(json.dumps([{'case_index': 7, 'status': 'error', 'error': 'x'} for c in cases]));"
                         " sys.exit(1)",
+    # Python's `False == 0` and `0.0 == 0` are not JSON equalities (review reproducer: `case_index: false`).
+    "bool-case-index": "print(json.dumps([{'case_index': False, 'status': 'error', 'error': 'x'} for c in cases]));"
+                       " sys.exit(1)",
+    "float-case-index": "print(json.dumps([{'case_index': 0.0, 'status': 'error', 'error': 'x'} for c in cases]));"
+                        " sys.exit(1)",
     "ok-without-fields": "print(json.dumps([{'id': c['id'], 'status': 'ok'} for c in cases]))",
     "ill-typed-field": "print(json.dumps([{'id': c['id'], 'status': 'ok', 'lemmas': 'all'} for c in cases]))",
 }
@@ -698,6 +703,13 @@ def test_row_schema():
     assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": "bool"}) is None
     assert problem(case, {"id": "c", "status": "error", "error": "no", "valid": False}, 0, {"valid": "bool"}) is None
     assert problem(case, {"case_index": 0, "status": "error", "error": "no"}, 0, {}) is None
+    assert problem(case, {"case_index": 1, "status": "error", "error": "no"}, 1, {}) is None
+    for index, forged in ((0, False), (1, True), (0, 0.0), (1, 1.0), (0, "0"), (0, None), (0, [0])):
+        assert problem(case, {"case_index": forged, "status": "error", "error": "no"}, index, {}), forged
+        assert problem(case, {"id": "c", "case_index": forged, "status": "ok"}, index, {}), forged
+    for case_id, forged in (("c", ["c"]), ("c", None), (1, True), (0, False), (1, 1.0)):
+        assert problem({"id": case_id}, {"id": forged, "status": "ok"}, 0, {}), (case_id, forged)
+        assert problem({"id": case_id}, {"id": forged, "status": "error", "error": "no"}, 0, {}), (case_id, forged)
     assert problem(case, {"id": "c", "status": "ok", "valid": 1}, 0, {"valid": "bool"})
     assert problem(case, {"id": "c", "status": "ok", "background": True}, 0, {"background": "nat"})
     assert problem(case, {"id": "c", "status": "ok", "background": -1}, 0, {"background": "nat"})
@@ -844,6 +856,10 @@ BUNDLE_ROW_FAULTS = {
     "lemmas-extra": "row['lemmas'] = row['lemmas'] + row['lemmas'][:1]; row['checked'] = 4",
     "lemmas-empty": "row['lemmas'] = []; row['checked'] = 0",
     "checked-missing": "del row['checked']",
+    # Review reproducer: `case_index: false` on the real answer gave Checked with lean_outcome accepted.
+    "case-index-false": "row['case_index'] = False",
+    "case-index-float": "row['case_index'] = 0.0",
+    "case-index-string": "row['case_index'] = '0'",
 }
 
 
@@ -881,6 +897,8 @@ def test_well_formed_bundle_answers_are_verdicts(tmp_path):
     from ve.bundle import check_bundle
     result = check_bundle(_bundle(), lean_executable=_bundle_answer(tmp_path, "pass"))
     assert result["lean_checked"] and result["lean_outcome"] == "accepted"
+    indexed = _bundle_answer(tmp_path, "row['case_index'] = 0", "indexed")
+    assert check_bundle(_bundle(), lean_executable=indexed)["lean_outcome"] == "accepted"
     other = _bundle_answer(tmp_path, "row['lemmas'] = row['lemmas'][::-1]", "reordered")
     with pytest.raises(VEError, match="did not accept") as caught:
         check_bundle(_bundle(), lean_executable=other)
