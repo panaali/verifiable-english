@@ -185,6 +185,19 @@ def test_proof_task_wording_uses_an_act_both_linters_accept(lean):
     assert len(core(env, document).commands) == 1
 
 
+@pytest.mark.parametrize("target", [["top"], U("cat", "tom"), U("animal", "tom")])
+def test_query_bound_meaning_ids_agree_with_lean(lean, target):
+    # Regression: Python appended a flat `query_meaning_ids` list while Lean nests
+    # `query: {id, premises, target}`, so proof tasks and follows questions disagreed.
+    env = F0()
+    premises = [unit("u1", 0, "asserted", {"ast": U("cat", "tom")})]
+    for kind, content, key in [("question", {"question": {"mode": "follows", "query": "q1"}}, "questions"),
+                               ("instruction", command("require", "submit_required", ["q1"]), "commands")]:
+        document = {"units": premises + [unit("u2", 1, kind, content)],
+                    "queries": [{"id": "q1", "premises": ["u1"], "target": {"ast": target}}]}
+        assert core(env, document).meaning_ids["u2"] == elaborate(env, document)[key][0]["meaning_id"]
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",

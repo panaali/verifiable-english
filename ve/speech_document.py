@@ -274,7 +274,7 @@ class SpeechSource:
                     or record["command"] not in by_id or type(record["evidence"]) is not dict):
                 raise VEError("InvalidInput: compliance record")
             command = by_id[record["command"]]
-            qid = next((a for a in command.args if a in self.document.queries), None)
+            qid = self.document.query_of(command)
             if qid is None or set(record["evidence"]) != {"certificate"}:
                 raise VEError(f"QueryMismatch: {command.unit}")
             self.document.check_consequence_certificate(qid, record["evidence"]["certificate"])

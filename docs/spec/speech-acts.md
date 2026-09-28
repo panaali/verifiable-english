@@ -391,7 +391,11 @@ and target meaning id**, so a proof task's meaning is bound to what it asks to b
 its premise set, while keeping the name `q1` changes the command's meaning id and stales its compliance certificate
 (fixture ζ). A question's `meaning_id` is likewise over the question object including the derived mode, sort, domain,
 body, query (with its premise meaning ids and target meaning id) and reading-set id and version; a binding's is over
-the binding object. The report identity is P0's
+the binding object. The objects are fixed JSON so that every checker digests the same bytes: a command is
+`{"command": {"force", "act", "args", "guard"}}`, a proof task adding `"query": {"id", "premises": [<premise meaning
+ids>], "target": <target meaning id>}` inside the command object; a question is `{"question": {"mode", ...}}` with
+`body` (polar), `sort`, `domain` and `body` (which modes), `"query": {"id", "premises", "target"}` as above (follows),
+or `set` and `version` (reading). The report identity is P0's
 `{"environment_id", "document", "report"}` over the complete validated source document, `document` being the document
 id above, recomputed from the identity payload that the decoded-source wrapper retains verbatim (`SpeechSource.metadata`,
 `source`, `fences`, 8.5); every certificate in an answer,
@@ -1535,6 +1539,7 @@ statements of section 8 are unchanged.
 | Finding | Change in this draft |
 |---|---|
 | A, proof wording: the act `{0} submit a certificate for {1}` fails W1's frozen act linter (`for` is reserved), and the Python checker had been given a route-only exception | 1.4, 2.1, 3.1, 11.5 and the plan: the act is `{0} submit a proof of {1}`; the linter is W1's, unchanged, in Python and Lean. |
+| A, meaning ids: proof tasks and follows questions digested different objects in Python and Lean | 3.5: the command and question objects are fixed JSON, the query's identity nested as `query: {id, premises, target}`. |
 
 ## Change log
 
