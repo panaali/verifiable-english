@@ -16,8 +16,8 @@ def environment(profiles=None):
         "language": LANGUAGE,
         "profiles": profiles or ["documents@1", "relational-fol@0", "reports@0"],
         "spec_revision": SPEC_REVISION,
-        "reports": {"holders": ["person", "text"], "evidence": "evidence"},
         "vocabulary": {
+            "reports": {"holders": ["person", "text"], "evidence": "evidence"},
             "sorts": {s: {"description": s} for s in ("person", "text", "evidence")},
             "predicates": {"safe": {"arguments": ["person"], "description": "safe"}},
             "constants": {"article": {"sort": "text", "description": "article"},
@@ -74,13 +74,13 @@ def test_assessment_is_open_and_has_a_separate_generated_atom():
     doc = ReportsDocument(environment(), contexts(), [assessment],
                           [unit(node, kind=["hedged", "could", "asserted"])])
     assert doc.premises == [["unary", "reports__may__1", ["const", "e1"]]]
-    assert doc.open_terms[0]["decided_by"] == "unresolved_decider"
-    assert doc.open_terms[0]["factors"] == ["review status"]
+    assert doc.open_terms[0]["record"]["decided_by"] == "unresolved_decider"
+    assert doc.open_terms[0]["record"]["factors"] == ["review status"]
 
 
 def test_quoted_packages_validate_locally_without_outer_layer():
     local = environment().to_dict()
-    del local["reports"]
+    del local["vocabulary"]["reports"]
     local["profiles"] = ["norms@0", "relational-fol@0"]
     quote = {"norm": {"environment": local, "norms": []}}
     doc = ReportsDocument(environment(), contexts(), [],
@@ -119,7 +119,7 @@ def test_reject_unsupported_act_and_profile_composition():
         environment(["documents@1", "norms@0", "relational-fol@0", "reports@0"])
 
 
-def test_w2_loader_keeps_reports_unverified(tmp_path):
+def test_w2_loader_checks_report_elaboration_without_graph_admission(tmp_path):
     env = environment().to_dict()
     source = "The article says that Alice is safe.\n"
     metadata = {"format": "ve-document@1", "environment": env, "contexts": contexts(),
@@ -131,5 +131,70 @@ def test_w2_loader_keeps_reports_unverified(tmp_path):
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
     result = check_document(path)
     assert result["status"] == "UNVERIFIED"
-    assert result["coverage"]["bytes_by_status"] == {"OPEN": len(source.encode())}
-    assert result["reports"]["premises"] == [["unary", "reports__says__1", ["const", "article"]]]
+    assert result["coverage"]["bytes_by_status"] == {"CHECKED": len(source.encode())}
+    assert result["reports"]["premises"] == [{"label": "report:u1",
+        "ast": ["unary", "reports__says__1", ["const", "article"]]}]
+
+
+def test_w2_report_graph_admitted_by_lean(tmp_path):
+    env = environment().to_dict()
+    source = "The article says that Alice is safe.\n"
+    metadata = {"format": "ve-document@1", "environment": env, "contexts": contexts(),
+                "units": [{"id": "u1", "span": [0, len(source.encode())],
+                           "kind": ["attributed", "article", "says", "asserted"],
+                           "meaning": "specified", "support": "testimony", "content": report()}],
+                "graph": {"root": "R", "nodes": [{"name": "R", "label": "report:u1", "unit": "u1",
+                                                 "ast": ["unary", "reports__says__1", ["const", "article"]]}]}}
+    path = tmp_path / "admitted-report.md"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["status"] == "CHECKED"
+    assert result["admission"]["admitted"] is True
+    assert result["admission"]["envelope"] == result["reports"]["envelope"]
+
+
+def test_w2_assessment_graph_stays_open_and_is_admitted(tmp_path):
+    env = environment().to_dict()
+    source = "According to the stated assessment, Alice may be safe.\n"
+    assessment = {"id": "a1", "context": "e1", "decided_by": "unresolved_decider",
+                  "necessary": [], "sufficient": [], "factors": [], "precedents": [],
+                  "jurisdiction": "news_desk", "version": 1}
+    content = {"assessment": {"judgment": "may", "record": "a1",
+                              "content": {"ast": ["unary", "safe", ["const", "alice"]]}}}
+    metadata = {"format": "ve-document@1", "environment": env, "contexts": contexts(),
+                "assessments": [assessment],
+                "units": [{"id": "u1", "span": [0, len(source.encode())],
+                           "kind": ["hedged", "could", "asserted"],
+                           "meaning": {"open": ["reports__may__1"]}, "support": "testimony",
+                           "content": content}],
+                "graph": {"root": "A", "nodes": [{"name": "A", "label": "assessment:u1", "unit": "u1",
+                                                 "ast": ["unary", "reports__may__1", ["const", "e1"]]}]}}
+    path = tmp_path / "assessment.md"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["status"] == "OPEN" and result["admission"]["admitted"] is True
+    assert result["coverage"]["residual"]["open_terms"] == 1
+
+
+def test_w2_nested_bridge_needs_a_record(tmp_path):
+    env = environment().to_dict()
+    source = "The article says that Alice believes that Alice is safe.\n"
+    inner = report(holder="alice", act="believes")
+    outer = report(inner)
+    metadata = {"format": "ve-document@1", "environment": env, "contexts": contexts(),
+                "units": [{"id": "u1", "span": [0, len(source.encode())],
+                           "kind": ["attributed", "article", "says",
+                                    ["attributed", "alice", "believes", "asserted"]],
+                           "meaning": "specified", "support": "testimony", "content": outer}],
+                "bridges": [{"id": "b1", "unit": "u1", "path": "1",
+                             "accepted_by": "reviewer", "reason": []}],
+                "graph": {"root": "B", "nodes": [{"name": "B", "label": "bridge:accepts_at(alice,u1,1)",
+                                                 "ast": ["unary", "safe", ["const", "alice"]]}]}}
+    path = tmp_path / "bridge.md"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    del metadata["bridges"]
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    with pytest.raises(VEError):
+        check_document(path)
