@@ -381,13 +381,18 @@ def coverage(doc):
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
     meta = doc["meta"]
-    bridge_count = sum(n.get("label", "").startswith("bridge:accepts(")
-                       for n in meta.get("graph", {}).get("nodes", []))
+    graph = meta.get("graph")
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    labels = [n["label"] for n in nodes if type(n) is dict and type(n.get("label")) is str] \
+        if type(nodes) is list else []
     residual = {"open_terms": len(meta.get("open_terms", [])) +
                 (len(doc["reports"].open_terms) if doc.get("reports") is not None else 0),
                 "assumptions": sum(u["support"] == "assumption" for u in units),
-                "bridge_leaves": bridge_count,
+                "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    if doc.get("reports") is not None:
+        # 6: a nested bridge (`bridge:accepts_at`) assumes its payload as a root one does.
+        residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,

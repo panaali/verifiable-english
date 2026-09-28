@@ -196,6 +196,20 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
     result = check_document(path)
     assert result["admission"]["admitted"] is True
+    # Loop recheck B: the nested leaf assumes safe(alice), yet the residual counted
+    # only root `bridge:accepts(` labels (bridge_leaves 0, residual_total 0).
+    assert result["admission"]["report"]["assumptions"][0]["label"] == "bridge:accepts_at(alice,u1,1)"
+    residual = result["coverage"]["residual"]
+    assert residual["bridges_nested"] == 1 and residual["bridge_leaves"] == 0
+    assert result["coverage"]["residual_total"] == 1
+    root = dict(metadata, units=[dict(metadata["units"][0], content=inner,
+                                      kind=["attributed", "alice", "believes", "asserted"])],
+                bridges=[], graph={"root": "B", "nodes": [{"name": "B", "label": "bridge:accepts(alice,u1)",
+                                                           "ast": ["unary", "safe", ["const", "alice"]]}]})
+    path.write_text("---\n" + json.dumps(root) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    assert result["coverage"]["residual"]["bridge_leaves"] == 1 and result["coverage"]["residual"]["bridges_nested"] == 0
     del metadata["bridges"]
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
     with pytest.raises(VEError):
