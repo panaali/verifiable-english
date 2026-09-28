@@ -367,6 +367,12 @@ def _check_narrowing_choices(meta, labels):
 
 
 def check_document(path):
+    from .search import model_search_scope
+    with model_search_scope():
+        return _check_document(path)
+
+
+def _check_document(path):
     doc = load_document(path)
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
