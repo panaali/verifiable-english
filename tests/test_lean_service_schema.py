@@ -11,6 +11,8 @@
   some mutation.
 * Each finding of the mig1 rechecks is a scripted replacement of a genuine response
   that must fail closed, after one retry, as `CheckerUnavailable`.
+* Every result is bound to its case (position and case digest); mutations of the
+  bindings are part of the fuzz.
 """
 from __future__ import annotations
 
@@ -27,7 +29,7 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from tests.lean_service_corpus import corpus
 from tests.test_lean_service import fake
-from ve.backends.lean_service import CheckerUnavailable, LeanService
+from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +49,25 @@ def executables():
     return BIN / "ve_service", BIN / "ve_response_decode"
 
 
+def _text(value):
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+def rebind(request, response):
+    """The request's digests of its (possibly altered) cases, and the response's results
+    bound to them: an altered request/response pair as the client and service would see it."""
+    digests = [case_digest(_text(case)) for case in request["cases"]]
+    if isinstance(response.get("results"), list):
+        response = {**response, "results": [
+            {**bound, "digest": digests[i]} if isinstance(bound, dict) and i < len(digests) else bound
+            for i, bound in enumerate(response["results"])]}
+    return {**request, "digests": digests}, response
+
+
+def result(response, i):
+    return response["results"][i]["result"]
+
+
 @pytest.fixture(scope="module")
 def genuine(executables):
     """[(mode, request, response)] from the real service, in 16-case requests."""
@@ -56,10 +77,11 @@ def genuine(executables):
         for mode, cases in corpus().items():
             for start in range(0, len(cases), 16):
                 chunk = cases[start:start + 16]
-                text = json.dumps(chunk, ensure_ascii=False, separators=(",", ":"))
+                text = _text(chunk)
                 _, response = service.exchange(mode, text, len(chunk), timeout=600)
                 request = {"id": response["id"], "mode": mode, "cases": chunk,
-                           "bytes": len(text.encode())}
+                           "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+                assert rebind(request, response) == (request, response)
                 exchanges.append((mode, request, response))
         assert service.stats["retries"] == 0
     return exchanges
@@ -107,7 +129,7 @@ def test_genuine_responses_are_accepted_by_schema_and_lean(genuine, executables)
                        ("norms", "norms-certificate"), ("norms", "admission")]:
         assert (mode, kind) in kinds
     statuses = {row.get("status", "ok") if "case_index" not in row else "case" for _, _, response in genuine
-                for row in response["results"]}
+                for row in map(lambda bound: bound["result"], response["results"])}
     assert statuses == {"ok", "error", "case"}
     verdicts = assert_agreement(executables[1], [(m, q, [r]) for m, q, r in genuine])
     assert set(verdicts) == {"accept"}
@@ -169,11 +191,11 @@ def _mutants(value, rng):
 
 
 def mutations(response, rng, paths, per_path):
-    """Up to `paths` nodes of the response, each altered `per_path` ways; every top-level
-    field of every result is among them."""
+    """Up to `paths` nodes of the response, each altered `per_path` ways; every binding and
+    every top-level field of every result is among them."""
     nodes = [p for p, _ in _nodes(response)]
-    shallow = [p for p in nodes if len(p) <= 3]
-    deep = [p for p in nodes if len(p) > 3]
+    shallow = [p for p in nodes if len(p) <= 4]
+    deep = [p for p in nodes if len(p) > 4]
     rng.shuffle(deep)
     out = []
     for path in shallow + deep[:max(0, paths - len(shallow))]:
@@ -188,11 +210,11 @@ def mutations(response, rng, paths, per_path):
 def singles(genuine):
     """Each genuine result as the response to a request with only its case."""
     for mode, request, response in genuine:
-        for case, row in zip(request["cases"], response["results"]):
-            size = len(json.dumps([case], ensure_ascii=False, separators=(",", ":")).encode())
-            yield (mode, {**request, "cases": [case], "bytes": size},
-                   {**response, "results": [row], "counts": {
-                       "cases": 1, "bytes": size, "errors": int(row.get("status") == "error")}})
+        for case, digest, bound in zip(request["cases"], request["digests"], response["results"]):
+            size = len(_text([case]).encode())
+            yield (mode, {**request, "cases": [case], "digests": [digest], "bytes": size},
+                   {**response, "results": [{**bound, "index": 0}], "counts": {
+                       "cases": 1, "bytes": size, "errors": int(bound["result"].get("status") == "error")}})
 
 
 def _key(value):
@@ -204,7 +226,8 @@ def joint_mutations(request, response, rng, limit):
     kinds, meaning ids, node names and ASTs, ...) is replaced together with them, and an
     array as long as a case array is truncated together with it."""
     out = []
-    for index, (case, row) in enumerate(zip(request["cases"], response.get("results", []))):
+    for index, (case, bound) in enumerate(zip(request["cases"], response.get("results", []))):
+        row = bound.get("result") if isinstance(bound, dict) else None
         if not isinstance(case, dict) or not isinstance(row, dict):
             continue
         by_value, by_length = {}, {}
@@ -225,7 +248,7 @@ def joint_mutations(request, response, rng, limit):
         rng.shuffle(candidates)
         for how, path, case_path, change in candidates[:limit]:
             req, res = deepcopy(request), deepcopy(response)
-            row_node, case_node = res["results"][index], req["cases"][index]
+            row_node, case_node = res["results"][index]["result"], req["cases"][index]
             if how == "value":
                 row_node, case_node = _replace(row_node, path, change), _replace(case_node, case_path, change)
             else:
@@ -236,13 +259,14 @@ def joint_mutations(request, response, rng, limit):
                     old_case = old_case[step]
                 row_node = _replace(row_node, path, old_row[:change])
                 case_node = _replace(case_node, case_path, old_case[:change])
-            res["results"][index], req["cases"][index] = row_node, case_node
-            out.append((req, res))
+            res["results"][index]["result"], req["cases"][index] = row_node, case_node
+            out.append(rebind(req, res))
     return out
 
 
-def request_mutations(request, rng, limit):
-    """The same response against altered requests (kinds, ids, linked fields)."""
+def request_mutations(request, response, rng, limit):
+    """The same results against altered requests (kinds, ids, linked fields), rebound to
+    them so that each linked value is compared on its own."""
     out = []
     for index, case in enumerate(request["cases"]):
         nodes = [(p, v) for p, v in _nodes(case) if len(p) <= 3]
@@ -251,7 +275,7 @@ def request_mutations(request, rng, limit):
             for mutant in _mutants(value, rng)[:3]:
                 req = deepcopy(request)
                 req["cases"][index] = _replace(case, path, mutant)
-                out.append(req)
+                out.append(rebind(req, response))
     rng.shuffle(out)
     return out[:limit]
 
@@ -266,7 +290,7 @@ def fuzz(genuine, executables):
     for mode, request, response in singles(genuine):
         items.append((mode, request, mutations(response, rng, 14, 3)))
         items += [(mode, req, [res]) for req, res in joint_mutations(request, response, rng, 8)]
-        items += [(mode, req, [response]) for req in request_mutations(request, rng, 6)]
+        items += [(mode, req, [res]) for req, res in request_mutations(request, response, rng, 6)]
     items += (kind_items(genuine) + label_items(genuine) + depth_items(genuine) + report_items(genuine)
               + graph_items(genuine) + count_items(genuine))
     return items, lean_verdicts(executables[1], items)
@@ -279,7 +303,7 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
 
 
 @pytest.mark.parametrize("weaken", [
-    "modality", "act", "relation", "token", "kind-fuel", "formula-fuel", "values-nonempty",
+    "digest", "index", "modality", "act", "relation", "token", "kind-fuel", "formula-fuel", "values-nonempty",
     "values-count", "claim-member", "kinds-link", "lemmas-link", "checked-count", "order-link",
     "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false", "background-runs",
     "certificate-count", "norms-layers", "norms-order", "norms-targets", "norms-background",
@@ -295,7 +319,9 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
         change(document["$defs"])
         (tmp_path / name).write_text(json.dumps(document))
     common = "common.json"
-    {"modality": lambda: edit(common, lambda d: d["modality"]["enum"].append("not-a-modality")),
+    {"digest": lambda: edit("envelope.json", lambda d: d["bound"]["properties"]["digest"].pop("x-digest")),
+     "index": lambda: edit("envelope.json", lambda d: d["bound"]["properties"]["index"].pop("x-index")),
+     "modality": lambda: edit(common, lambda d: d["modality"]["enum"].append("not-a-modality")),
      "act": lambda: edit(common, lambda d: d["act"]["enum"].append("shouts")),
      "relation": lambda: edit(common, lambda d: d["relation"]["enum"].append("since")),
      "token": lambda: edit(common, lambda d: d["token"].update(pattern=".*")),
@@ -359,7 +385,7 @@ def _linked(genuine, mode, kind):
     return [(request, response, i) for m, request, response in genuine if m == mode
             for i, case in enumerate(request["cases"])
             if isinstance(case, dict) and case.get("kind") == kind
-            and response["results"][i].get("status") == "ok"]
+            and result(response, i).get("status") == "ok"]
 
 
 KINDS = ["asserted", "meta", "not-a-kind", "", ["hedged", "likely", "asserted"],
@@ -389,7 +415,8 @@ def kind_items(genuine):
                 req = deepcopy(request)
                 req["cases"][i]["document"]["units"][0]["kind"] = kind
                 res = deepcopy(response)
-                res["results"][i]["kinds"][0] = kind
+                result(res, i)["kinds"][0] = kind
+                req, res = rebind(req, res)
                 items.append((mode, req, [res]))
     return items
 
@@ -400,7 +427,7 @@ def report_items(genuine):
     items = []
     for mode in ("route", "norms"):
         for request, response, i in _linked(genuine, mode, "admission"):
-            report = response["results"][i]["report"]
+            report = result(response, i)["report"]
             root, assumptions = report["root"], report["assumptions"]
             for changed in ({"assumptions": assumptions + [root]}, {"assumptions": assumptions * 2},
                             {"assumptions": assumptions[::-1]}, {"assumptions": []},
@@ -409,7 +436,7 @@ def report_items(genuine):
                             {"assumptions": assumptions[-1:] + assumptions[1:]},
                             {"root": assumptions[0]} if assumptions else {}):
                 res = deepcopy(response)
-                res["results"][i]["report"].update(changed)
+                result(res, i)["report"].update(changed)
                 items.append((mode, request, [res]))
     return items
 
@@ -437,7 +464,8 @@ def graph_items(genuine):
             for change in changes:
                 req = deepcopy(request)
                 req["cases"][i]["document"]["graph"].update(change)
-                items.append((mode, req, [response]))
+                req, res = rebind(req, response)
+                items.append((mode, req, [res]))
     return items
 
 
@@ -508,15 +536,16 @@ def count_items(genuine):
     items = []
     for (mode, kind), fields in REGENERATED.items():
         for request, response, i in _linked(genuine, mode, kind)[:6]:
-            row, case = response["results"][i], request["cases"][i]
+            row, case = result(response, i), request["cases"][i]
             for changed in _count_mutants(row, fields):
                 res = deepcopy(response)
-                res["results"][i] = changed
+                res["results"][i]["result"] = changed
                 items.append((mode, request, [res]))
             for change in _environment_mutants(case):
                 req = deepcopy(request)
                 req["cases"][i]["environment"]["vocabulary"].update(change)
-                items.append((mode, req, [response]))
+                req, res = rebind(req, response)
+                items.append((mode, req, [res]))
     return items
 
 
@@ -544,7 +573,8 @@ def label_items(genuine):
             req = deepcopy(request)
             req["cases"][i]["label"] = label
             res = deepcopy(response)
-            res["results"][i]["label"] = label
+            result(res, i)["label"] = label
+            req, res = rebind(req, res)
             items.append(("route", req, [res]))
     return items
 
@@ -577,26 +607,27 @@ def depth_items(genuine):
     from the request, at most 64; order surface formulas and terms at most 64."""
     items = []
     for request, response, i in [x for x in _linked(genuine, "route", "background")
-                                 if x[1]["results"][x[2]]["premises"]][:1]:
+                                 if result(x[1], x[2])["premises"]][:1]:
         for depth, leaf in GENERATED_DEPTHS:
             res = deepcopy(response)
             for field in ("background", "premises"):
-                res["results"][i][field][0] = _deep_formula(depth, leaf)
+                result(res, i)[field][0] = _deep_formula(depth, leaf)
             items.append(("route", request, [res]))
     for request, response, i in _linked(genuine, "norms", "norms-elaborate")[:1]:
         for field in ("background", "premises", "conflict_targets"):
-            if response["results"][i][field]:
+            if result(response, i)[field]:
                 for depth, leaf in GENERATED_DEPTHS:
                     res = deepcopy(response)
-                    res["results"][i][field][0]["ast"] = _deep_formula(depth, leaf)
+                    result(res, i)[field][0]["ast"] = _deep_formula(depth, leaf)
                     items.append(("norms", request, [res]))
     for mode, request, response in genuine:
-        rows = [(k, j) for k, row in enumerate(response["results"]) if isinstance(row.get("results"), list)
-                for j, item in enumerate(row["results"]) if item.get("parsed")]
+        rows = [(k, j) for k, bound in enumerate(response["results"])
+                if isinstance(bound["result"].get("results"), list)
+                for j, item in enumerate(bound["result"]["results"]) if item.get("parsed")]
         for k, j in rows[:1]:
             for depth, leaf in GENERATED_DEPTHS:
                 res = deepcopy(response)
-                res["results"][k]["results"][j]["parsed"][0] = _deep_formula(depth, leaf)
+                result(res, k)["results"][j]["parsed"][0] = _deep_formula(depth, leaf)
                 items.append((mode, request, [res]))
     for request, response, i in [x for x in _linked(genuine, "route", "admission")
                                  if x[0]["cases"][x[2]]["id"] == "shared-leaves"]:
@@ -605,9 +636,10 @@ def depth_items(genuine):
             req, res = deepcopy(request), deepcopy(response)
             for node in req["cases"][i]["document"]["graph"]["nodes"]:
                 node["ast"] = formula if node["name"] == "a" else node["ast"]
-            report = res["results"][i]["report"]
+            report = result(res, i)["report"]
             for claim in report["assumptions"]:
                 claim["ast"] = formula if claim["name"] == "a" else claim["ast"]
+            req, res = rebind(req, res)
             items.append(("route", req, [res]))
     for request, response, i in _linked(genuine, "order", "surface")[:1]:
         for formula in [_deep_formula(d, ["lt", ["num", "0"], ["num", "1"]]) for d in (64, 65)] + [
@@ -615,7 +647,7 @@ def depth_items(genuine):
                 ["lt", ["num", n], ["num", "1"]] for n in ("0", "-1", "00", "-0", "+1", "1_0", "٣",
                                                          "9" * 40, "9" * 41, "-" + "9" * 39, "-" + "9" * 40)]:
             res = deepcopy(response)
-            res["results"][i]["ast"] = [formula]
+            result(res, i)["ast"] = [formula]
             items.append(("order", request, [res]))
     return items
 
@@ -647,7 +679,7 @@ def _scripted_rejected(tmp_path, mode, case, good, bad):
 
 def _genuine_row(genuine, mode, kind, predicate=lambda case, row: True):
     for request, response, i in _linked(genuine, mode, kind):
-        case, row = request["cases"][i], response["results"][i]
+        case, row = request["cases"][i], result(response, i)
         if predicate(case, row):
             return deepcopy(case), deepcopy(row)
     raise AssertionError(f"no genuine {mode} {kind} result")

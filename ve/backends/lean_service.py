@@ -19,7 +19,9 @@ Failure classes:
 
 Every response line is checked against `lean_service_schema/` (`service_schema.py`),
 the single description of response shapes, including request links such as one
-result per requested lemma and the request's unit kinds.
+result per requested lemma and the request's unit kinds. Every result is bound to its
+case: result `i` must carry position `i` and the SHA-256 of the text of case `i` as sent
+(`case_digests`), so an omitted, reordered, duplicated or substituted result is rejected.
 
 Supervision: an address-space limit on the process, a per-batch timeout (5 s
 interactive, 60 s for batch callers), recycling after a number of requests or above
@@ -95,6 +97,49 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+_JSON_WHITESPACE = " \t\r\n"
+
+
+def case_texts(cases_text: str) -> list[str] | None:
+    """The case texts of a JSON array text, split and trimmed as the service splits them
+    (`VE.JsonInput.caseTexts`, then `String.trim`); `None` if it is not an array."""
+    text = cases_text.strip(_JSON_WHITESPACE)
+    if not (text.startswith("[") and text.endswith("]")):
+        return None
+    body = text[1:-1]
+    if not body.strip(_JSON_WHITESPACE):
+        return []
+    cases, start, depth, quoted, escaped = [], 0, 0, False, False
+    for i, c in enumerate(body):
+        if quoted:
+            if escaped:
+                escaped = False
+            elif c == "\\":
+                escaped = True
+            elif c == '"':
+                quoted = False
+        elif c == '"':
+            quoted = True
+        elif c in "[{":
+            depth += 1
+        elif c in "]}":
+            if depth == 0:
+                return None
+            depth -= 1
+        elif c == "," and depth == 0:
+            cases.append(body[start:i].strip(_JSON_WHITESPACE))
+            start = i + 1
+    if quoted or depth:
+        return None
+    cases.append(body[start:].strip(_JSON_WHITESPACE))
+    return cases
+
+
+def case_digest(text: str) -> str:
+    """The binding identity of a case (`VE.Service.caseDigest`): SHA-256 of its text."""
+    return hashlib.sha256(text.encode()).hexdigest()
 
 
 _hashes: dict[tuple, str] = {}
@@ -355,9 +400,13 @@ class LeanService:
             cases = json.loads(cases_text, parse_int=_json_integer)
         except (ValueError, RecursionError):
             cases = None
-        if not isinstance(cases, list) or len(cases) != count:
-            cases = None  # only a line error can answer it
-        request = {"id": nonce, "mode": mode, "cases": cases, "bytes": len(cases_text.strip().encode())}
+        texts = case_texts(cases_text)
+        if not isinstance(cases, list) or len(cases) != count or texts is None or len(texts) != count:
+            cases = digests = None  # only a line error can answer it
+        else:
+            digests = [case_digest(text) for text in texts]
+        request = {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
+                   "bytes": len(cases_text.strip().encode())}
         try:
             check_response(mode, response, request)
         except Invalid as exc:
@@ -378,9 +427,10 @@ class LeanService:
                  budget: dict | None = None) -> tuple[bytes, dict]:
         """Send one request whose `cases` is `cases_text` (a JSON array of `count` cases).
 
-        Returns the raw response line and its decoding. A line error from the service is
-        returned as is (`status: error`); operational failures are retried once, then
-        raise `CheckerUnavailable`.
+        Returns the raw response line and its decoding, whose results are still bound
+        (`{"digest", "index", "result"}`). A line error from the service is returned as is
+        (`status: error`); operational failures are retried once, then raise
+        `CheckerUnavailable`.
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
@@ -443,7 +493,7 @@ class LeanService:
             if message.startswith("ResourceLimit"):
                 raise ResourceLimit(message)
             raise VEError(message)
-        return response["results"]
+        return [bound["result"] for bound in response["results"]]
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         """The runner results for `cases`, in order. Batches above the adapter caps (256

@@ -4,8 +4,10 @@ The single source of truth for the shapes of `ve_service` responses
 (`docs/spec/lean-service.md`, stage 1 of `docs/spec/SEMANTICS-MIGRATION-PLAN.md`).
 
 * `envelope.json`: the response line; its context is the request
-  `{"id": nonce, "mode", "cases": [...], "bytes": trimmed cases size}`.
-* `<mode>.json` for the six modes: `row` is the schema of one result; its context is
+  `{"id": nonce, "mode", "cases": [...], "digests": [...], "bytes": trimmed cases size}`,
+  where `digests[i]` is the SHA-256 of the text of case `i` as sent. Result `i` is bound:
+  `{"digest": digests[i], "index": i, "result"}`.
+* `<mode>.json` for the six modes: `row` is the schema of one `result`; its context is
   the request case at the same position.
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
   its `$comment` (formulas, terms, kinds, labels, ...).
@@ -36,6 +38,7 @@ element of an array (every element must resolve).
 | `x-length: p` | an array as long as the context array at `p` |
 | `x-count: p` | the integer length of the context array at `p` |
 | `x-index: true` | the position of the result in the response |
+| `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
 | `x-member: {of: p, keys, where}` | the instance's `keys` equal those of some context element at `p` (absent keys stay absent) valid under `where` (default `true`) |
 | `x-dependency-order: p` | `Route.verifyOrder` accepts the instance for the dependency nodes at `p` |
 | `x-unfolds: p` | the instance is the ordered leaf list (`VE.Graph.Unfolds`) of the context claim graph at `p` (`{"root", "nodes"}`), unfolded from its root: names are unique, `premises` and `certificate` come together, every premise names an earlier node, and each leaf is its node's `name`, `ast` and `label` (absent keys stay absent) |
@@ -47,7 +50,8 @@ element of an array (every element must resolve).
 | `x-in: [[p, q], ...]` | the instance value at `p` is an element of the instance array at `q` |
 | `x-capture: {source, pattern, target}` | `pattern` matches a prefix of `source`; group 1 equals `target` |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |
-| `x-rows: true` | element `i` is valid under the mode's `row` with context `cases[i]` |
+| `x-rows: s` | one element per case; element `i` is valid under `s` for result `i` (its case `cases[i]`, position `i` and digest `digests[i]`) |
+| `x-row: true` | valid under the mode's `row` with the context of the enclosing result's case |
 | `x-cardinality: c` | an array of length `c`, or the integer `c`, for the count `c` of the context |
 | `x-runs: {key, runs: [[v1, c1], ...]}` | an array of `c1` elements whose value at the pointer `key` (`""`: the element) is `v1`, then `c2` elements with `v2`, ... |
 

@@ -95,11 +95,12 @@ def _resolve(root: object, pointer: str) -> object:
 
 
 class Context:
-    """The request data a value is checked against: a case (rows) or the request (envelope)."""
-    __slots__ = ("value", "index", "rows")
+    """The request data a value is checked against: a case (rows) or the request
+    (envelope); for a result, also its position, the mode's row and its case digest."""
+    __slots__ = ("value", "index", "rows", "digest")
 
-    def __init__(self, value: object, index: int | None = None, rows=None):
-        self.value, self.index, self.rows = value, index, rows
+    def __init__(self, value: object, index: int | None = None, rows=None, digest: str | None = None):
+        self.value, self.index, self.rows, self.digest = value, index, rows, digest
 
 
 def _fail(message: str):
@@ -557,25 +558,39 @@ class Compiler:
                 _fail(f"{rule['equals']} does not count {rule['array']}")
         return check
 
-    def _x_rows(self, flag, schema, base):
+    def _x_rows(self, bound, schema, base):
+        sub = self.compile(bound, base)
+
         def check(value, ctx, fuel):
-            cases = _resolve(ctx.value, "/cases")
-            if not isinstance(value, list) or not isinstance(cases, list) or len(value) != len(cases):
+            cases, digests = _resolve(ctx.value, "/cases"), _resolve(ctx.value, "/digests")
+            if (not isinstance(value, list) or not isinstance(cases, list) or not isinstance(digests, list)
+                    or not len(value) == len(cases) == len(digests)):
                 _fail("one result per case")
-            row = ctx.rows
-            for index, (result, case) in enumerate(zip(value, cases)):
+            for index, (result, case, digest) in enumerate(zip(value, cases, digests)):
                 try:
-                    row(result, Context(case, index), {})
+                    sub(result, Context(case, index, ctx.rows, digest), {})
                 except Invalid as exc:
                     raise Invalid(f"result {index}: {exc}") from None
+        return check
+
+    def _x_digest(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            if not isinstance(value, str) or value != ctx.digest:
+                _fail("is not the digest of the result's case")
+        return check
+
+    def _x_row(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            ctx.rows(value, Context(ctx.value, ctx.index), {})
         return check
 
 
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-index", "x-member", "x-dependency-order", "x-unfolds", "x-zip", "x-case", "x-select", "x-same",
-          "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows", "x-cardinality", "x-runs")
+          "x-count", "x-index", "x-digest", "x-member", "x-dependency-order", "x-unfolds", "x-zip", "x-case",
+          "x-select", "x-same", "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows", "x-row",
+          "x-cardinality", "x-runs")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
 
@@ -731,5 +746,5 @@ def check_row(mode: str, row: object, case: object, index: int) -> None:
 
 def check_response(mode: str, response: object, request: dict) -> None:
     """Raise `Invalid` unless `response` is a possible response line for `request`
-    (`{"id", "mode", "cases", "bytes"}`)."""
+    (`{"id", "mode", "cases", "digests", "bytes"}`)."""
     RESPONSE[0](response, Context(request, rows=ROWS[mode][0]), {})
