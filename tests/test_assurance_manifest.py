@@ -402,8 +402,16 @@ def test_every_lean_binding_has_a_probe():
     assert _binding_keys(OPS) == set(BUILDERS), _binding_keys(OPS) ^ set(BUILDERS)
     for op in OPS:
         for binding in (op["lean"] or {}).get("bindings", ()):
-            assert type(binding["response"]) is list and all(type(f) is str for f in binding["response"])
-            assert set(binding) <= {"executable", "mode", "kinds", "response", "dispatch", "note"}
+            response, counts = binding["response"], binding.get("counts", {})
+            assert type(response) is dict and response, (op["id"], binding)
+            assert all(type(f) is str and lean_backend.valid_type(t) for f, t in response.items()), response
+            assert set(binding) <= {"executable", "mode", "kinds", "response", "counts", "dispatch", "note"}
+            for name, reference in counts.items():
+                # A counted field is a declared nat or array; it counts a case array or a declared array.
+                assert response.get(name, "").startswith("array<") or response.get(name) == "nat", name
+                source, _, field = reference.partition(".")
+                assert source in ("case", "row") and field, reference
+                assert source == "case" or response.get(field, "").startswith("array<"), reference
 
 
 def test_binding_drift_is_detected_without_lean():
@@ -681,22 +689,65 @@ FAULTS = {
 def test_backend_faults_are_checker_unavailable(tmp_path, fault):
     fake = _fake_lean(tmp_path, FAULTS[fault])
     with pytest.raises(CheckerUnavailable) as caught:
-        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=2,
-                         fields={"lemmas": list})
+        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=2)
     assert caught.value.backend == "lean" and caught.value.operation == "bundle.check"
 
 
 def test_row_schema():
     case, problem = {"id": "c"}, lean_backend.row_problem
-    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": bool}) is None
-    assert problem(case, {"id": "c", "status": "error", "error": "no", "valid": False}, 0, {"valid": bool}) is None
+    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": "bool"}) is None
+    assert problem(case, {"id": "c", "status": "error", "error": "no", "valid": False}, 0, {"valid": "bool"}) is None
     assert problem(case, {"case_index": 0, "status": "error", "error": "no"}, 0, {}) is None
-    assert problem(case, {"id": "c", "status": "ok", "valid": 1}, 0, {"valid": bool})
-    assert problem(case, {"id": "c", "status": "ok", "background": True}, 0, {"background": int})
-    assert problem(case, {"id": "c", "status": "ok", "background": 2}, 0, {"background": int}) is None
-    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": bool, "background": int})
+    assert problem(case, {"id": "c", "status": "ok", "valid": 1}, 0, {"valid": "bool"})
+    assert problem(case, {"id": "c", "status": "ok", "background": True}, 0, {"background": "nat"})
+    assert problem(case, {"id": "c", "status": "ok", "background": -1}, 0, {"background": "nat"})
+    assert problem(case, {"id": "c", "status": "ok", "background": 2}, 0, {"background": "nat"}) is None
+    assert problem(case, {"id": "c", "status": "ok", "valid": True}, 0, {"valid": "bool", "background": "nat"})
     assert problem(case, {"status": "ok"}, 0, {})
     assert problem(case, [], 0, {})
+    # Element types and counts (review reproducers: `checked: {}` and `lemmas: [1]`).
+    bundle, schema, counts = {"id": "c", "lemmas": [{}, {}]}, {"lemmas": "array<string>", "checked": "nat"}, \
+        {"lemmas": "case.lemmas", "checked": "case.lemmas"}
+    ok = {"id": "c", "status": "ok", "lemmas": ["a", "b"], "checked": 2}
+    assert problem(bundle, ok, 0, schema, counts) is None
+    for bad in ({"checked": {}}, {"lemmas": [1, "b"]}, {"lemmas": ["a"]}, {"checked": 3}, {"checked": True},
+                {"lemmas": ["a", "b", "c"], "checked": 3}, {"lemmas": [["a"], "b"]}):
+        assert problem(bundle, {**ok, **bad}, 0, schema, counts), bad
+    assert problem({"id": "c"}, ok, 0, schema, counts), "a case without the counted array"
+    assert problem(case, {"id": "c", "status": "ok", "g": ["x"], "p": []}, 0,
+                   {"g": "array<string>", "p": "array<json>"}, {"g": "row.p"})
+
+
+def _conforming(spec):
+    if spec.startswith("array<"):
+        return []
+    return {"bool": True, "nat": 0, "string": "", "object": {}, "json": None}[spec]
+
+
+def _ill_typed(spec):
+    """Values that do not have type `spec` (none for `json`)."""
+    values = [None, True, -1, 1, "x", {}, [], [None], [1], ["x"], [{}], [[]]]
+    return [v for v in values if not lean_backend.conforms(v, spec)]
+
+
+@pytest.mark.parametrize("op_id, binding", [(op["id"], b) for op in OPS
+                                            for b in (op["lean"] or {}).get("bindings", ())],
+                         ids=lambda value: value if type(value) is str else
+                         f"{value['executable']}-{value['mode'] or 'default'}-{','.join(value['kinds'])}")
+def test_every_declared_response_field_is_enforced(op_id, binding):
+    """For every binding: a missing, ill-typed, ill-element-typed or miscounted field is not an answer."""
+    response, counts = binding["response"], binding.get("counts", {})
+    case = {"id": "c", **{ref.partition(".")[2]: [] for ref in counts.values() if ref.startswith("case.")}}
+    row = {"id": "c", "status": "ok", **{name: _conforming(spec) for name, spec in response.items()}}
+    problem = lean_backend.row_problem
+    assert problem(case, row, 0, response, counts) is None, (op_id, row)
+    for name, spec in response.items():
+        assert problem(case, {k: v for k, v in row.items() if k != name}, 0, response, counts), (op_id, name)
+        for bad in _ill_typed(spec):
+            assert problem(case, {**row, name: bad}, 0, response, counts), (op_id, name, bad)
+    for name in counts:
+        extra = 1 if response[name] == "nat" else [row[name][0] if row[name] else _conforming(response[name][6:-1])]
+        assert problem(case, {**row, name: extra}, 0, response, counts), (op_id, name)
 
 
 def test_missing_backend_is_checker_unavailable(tmp_path):
@@ -774,6 +825,113 @@ def test_malformed_rows_never_become_a_rejection(tmp_path, fault):
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=fake)
     result = check_argument(merged_vocabulary_example(), lean_executable=fake)
+    assert result.status == "Checked" and not result.lean_checked
+    assert result.lean_outcome == "unavailable", result.lean_detail
+
+
+# Mutations of a well-formed three-lemma bundle answer (`checked`, `lemmas` hold the real meaning ids).
+BUNDLE_ROW_FAULTS = {
+    "checked-object": "row['checked'] = {}",
+    "checked-bool": "row['checked'] = True",
+    "checked-negative": "row['checked'] = -1",
+    "checked-miscount": "row['checked'] = 2",
+    "checked-string": "row['checked'] = '3'",
+    "lemma-not-string": "row['lemmas'] = [1] + row['lemmas'][1:]",
+    "lemmas-one-int": "row['lemmas'] = [1]",
+    "lemmas-object": "row['lemmas'] = {}",
+    "lemmas-dropped": "row['lemmas'] = row['lemmas'][1:]",
+    "lemmas-and-checked-dropped": "row['lemmas'] = row['lemmas'][1:]; row['checked'] = 2",
+    "lemmas-extra": "row['lemmas'] = row['lemmas'] + row['lemmas'][:1]; row['checked'] = 4",
+    "lemmas-empty": "row['lemmas'] = []; row['checked'] = 0",
+    "checked-missing": "del row['checked']",
+}
+
+
+def _bundle_answer(tmp_path, mutation, name="bundle_lean", lean=None):
+    """A runner answering the bundle case with the well-formed `ok` row, then `mutation` applied to it.
+
+    With `lean`, the row is the real Lean runner's answer; otherwise it is built from the Python ids.
+    """
+    from ve.bundle import check_bundle
+    ids = [report["meaning_id"] for report in check_bundle(_bundle())["lemmas"]]
+    if lean is None:
+        answer = (f"row = {{'id': cases[0]['id'], 'status': 'ok', 'checked': {len(ids)}, 'lemmas': {ids!r}}}")
+    else:
+        answer = ("import subprocess\n"
+                  f"proc = subprocess.run([{str(lean)!r}, *sys.argv[1:]], input=json.dumps(cases),"
+                  " capture_output=True, text=True)\n"
+                  f"row = json.loads(proc.stdout)[0]\nassert row['lemmas'] == {ids!r}, row")
+    return _fake_lean(tmp_path, f"{answer}\n{mutation}\nprint(json.dumps([row]))", name)
+
+
+@pytest.mark.parametrize("fault", BUNDLE_ROW_FAULTS)
+def test_malformed_bundle_answers_are_unavailable(tmp_path, fault):
+    """Review reproducer: `checked: {}` became a Checked, Lean-accepted bundle; `lemmas: [1]` InvalidInput."""
+    from ve.bundle import check_bundle
+    runners = [_bundle_answer(tmp_path, BUNDLE_ROW_FAULTS[fault])]
+    if (LEAN_BIN / "ve_conformance").exists():
+        runners.append(_bundle_answer(tmp_path, BUNDLE_ROW_FAULTS[fault], "real_lean", LEAN_BIN / "ve_conformance"))
+    for runner in runners:
+        with pytest.raises(CheckerUnavailable):
+            check_bundle(_bundle(), lean_executable=runner)
+
+
+def test_well_formed_bundle_answers_are_verdicts(tmp_path):
+    """The controls: the unmutated answer is accepted; a well-formed answer naming other ids is a rejection."""
+    from ve.bundle import check_bundle
+    result = check_bundle(_bundle(), lean_executable=_bundle_answer(tmp_path, "pass"))
+    assert result["lean_checked"] and result["lean_outcome"] == "accepted"
+    other = _bundle_answer(tmp_path, "row['lemmas'] = row['lemmas'][::-1]", "reordered")
+    with pytest.raises(VEError, match="did not accept") as caught:
+        check_bundle(_bundle(), lean_executable=other)
+    assert type(caught.value) is not CheckerUnavailable
+
+
+ARGUMENT_ROW_FAULTS = {
+    "valid-string": "row['valid'] = 'true'",
+    "valid-int": "row['valid'] = 1",
+    "background-bool": "row['background'] = True",
+    "background-negative": "row['background'] = -1",
+    "background-object": "row['background'] = {}",
+    "background-missing": "del row['background']",
+}
+
+
+def _route_argument():
+    """merged_vocabulary_example over ve.core@0.2, so Lean replays it on the `route` binding."""
+    from ve.argument import ArgumentGraph, Claim
+    from ve.argument_fixtures import merged_vocabulary_example
+    from ve.environment import Environment
+    from ve.profiles import SPEC_REVISION
+    graph = merged_vocabulary_example()
+    env = Environment({"language": "ve.core@0.2", "profiles": ["relational-fol@0"], "spec_revision": SPEC_REVISION,
+                       "vocabulary": graph.env.to_dict()["vocabulary"]})
+    claims = tuple(Claim.create(env, claim.name, claim.source) for claim in graph.claims)
+    return ArgumentGraph(env, claims, graph.deductions, graph.root)
+
+
+def test_route_argument_is_replayed_on_the_route_binding():
+    from ve import check_argument
+    assert check_argument(_route_argument()).status == "Checked"
+    if (LEAN_BIN / "ve_conformance").exists():
+        assert check_argument(_route_argument(), lean_executable=LEAN_BIN / "ve_conformance").lean_outcome == "accepted"
+
+
+@pytest.mark.parametrize("fault", ARGUMENT_ROW_FAULTS)
+def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
+    """The same class for graph.compose: an ill-typed `valid` or `background` is not a rejection."""
+    from ve import check_argument
+    graph = _route_argument()
+    body = ("from ve.background import background\nfrom ve.environment import Environment\nrows = []\n"
+            "for c in cases:\n"
+            "    row = {'id': c['id'], 'status': 'ok', 'valid': True,"
+            " 'background': len(background(Environment(c['environment'])))}\n"
+            f"    {ARGUMENT_ROW_FAULTS[fault]}\n    rows.append(row)\nprint(json.dumps(rows))")
+    fake = _fake_lean(tmp_path, f"sys.path.insert(0, {str(ROOT)!r})\n{body}")
+    control = _fake_lean(tmp_path, f"sys.path.insert(0, {str(ROOT)!r})\n{body.replace(ARGUMENT_ROW_FAULTS[fault], 'pass')}",
+                         "control")
+    assert check_argument(graph, lean_executable=control).lean_outcome == "accepted"
+    result = check_argument(graph, lean_executable=fake)
     assert result.status == "Checked" and not result.lean_checked
     assert result.lean_outcome == "unavailable", result.lean_detail
 

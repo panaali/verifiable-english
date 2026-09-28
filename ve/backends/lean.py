@@ -11,8 +11,12 @@ result is ever substituted, and a malformed row is never read as a rejection.
 The response schema every runner row satisfies: `status` is `ok` or `error`;
 an `error` row carries a string `error`; an `ok` row carries the submitted
 case `id`; an `id` or `case_index` present on any row names that case. Each
-binding's manifest `response` and the caller (`fields`, with types) name the
-fields an `ok` row of the operation must carry.
+binding's manifest `response` gives every field an `ok` row of the operation
+must carry with its type (`bool`, `nat`, `string`, `object`, `json`, or
+`array<T>` with every element of type `T`), and its `counts` the fields whose
+size (an array's length, a `nat`'s value) must equal the length of a case
+array (`case.NAME`) or of another response array (`row.NAME`). Nothing reads
+an `ok` row that fails its schema.
 """
 from __future__ import annotations
 
@@ -24,14 +28,43 @@ from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
 
 
-def _has_type(value, expected) -> bool:
-    # bool is not an int here, and an int is not a bool.
-    types = expected if type(expected) is tuple else (expected,)
-    return any(type(value) is t for t in types)
+_SCALARS = {
+    "bool": lambda value: type(value) is bool,
+    # bool is not an int here.
+    "nat": lambda value: type(value) is int and value >= 0,
+    "string": lambda value: type(value) is str,
+    "object": lambda value: type(value) is dict,
+    # Any JSON value; the caller compares its content.
+    "json": lambda value: True,
+}
 
 
-def row_problem(case: dict, row, index: int, fields: dict) -> str | None:
-    """Why `row` is not a well-formed answer to `case`, or None."""
+def valid_type(spec) -> bool:
+    """Whether `spec` is a response type of the manifest schema."""
+    if type(spec) is not str:
+        return False
+    if spec.startswith("array<") and spec.endswith(">"):
+        return valid_type(spec[len("array<"):-1])
+    return spec in _SCALARS
+
+
+def conforms(value, spec: str) -> bool:
+    """Whether `value` has the response type `spec`."""
+    if spec.startswith("array<"):
+        element = spec[len("array<"):-1]
+        return type(value) is list and all(conforms(item, element) for item in value)
+    return _SCALARS[spec](value)
+
+
+def _size(value) -> int:
+    return value if type(value) is int else len(value)
+
+
+def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None) -> str | None:
+    """Why `row` is not a well-formed answer to `case`, or None.
+
+    `response` and `counts` are the binding's manifest schema for `ok` rows.
+    """
     if type(row) is not dict:
         return "a result row is not an object"
     status = row.get("status")
@@ -45,24 +78,27 @@ def row_problem(case: dict, row, index: int, fields: dict) -> str | None:
         return None if type(row.get("error")) is str else "an error row has no error message"
     if "id" in case and row.get("id") != case["id"]:
         return "an ok row does not name its case id"
-    for name, expected in fields.items():
-        if name not in row or (expected is not None and not _has_type(row[name], expected)):
-            return f"an ok row has no well-formed {name!r}"
+    for name, spec in response.items():
+        if name not in row or not conforms(row[name], spec):
+            return f"an ok row has no well-formed {name!r} ({spec})"
+    for name, reference in (counts or {}).items():
+        source, _, field = reference.partition(".")
+        counted = (case if source == "case" else row).get(field)
+        if type(counted) is not list or _size(row[name]) != len(counted):
+            return f"an ok row's {name!r} does not count {reference}"
     return None
 
 
 def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str = "",
-        timeout: float, fields: dict | None = None) -> list[dict]:
+        timeout: float) -> list[dict]:
     """Submit `cases` to the Lean `runner` executable at path `executable`.
 
-    `fields` maps each field the caller reads from an `ok` row to its type
-    (or a tuple of types); every field of the binding's declared `response`
-    must be present too. A missing or ill-typed field is `CheckerUnavailable`.
+    Every `ok` row must satisfy the binding's declared `response` types and
+    `counts`; a row that does not is `CheckerUnavailable`.
     """
     kinds = {case["kind"] for case in cases if type(case.get("kind")) is str}
     binding = require_lean_binding(operation, runner, mode, kinds)
     require_lean_call_site(operation, sys._getframe(1))
-    fields = {**dict.fromkeys(binding["response"]), **(fields or {})}
 
     def unavailable(message):
         return CheckerUnavailable(f"Lean {runner}: {message}", operation=operation, backend="lean")
@@ -85,7 +121,7 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     if type(rows) is not list or len(rows) != len(cases):
         raise unavailable("output does not hold one result object per case")
     for index, (case, row) in enumerate(zip(cases, rows)):
-        problem = row_problem(case, row, index, fields)
+        problem = row_problem(case, row, index, binding["response"], binding.get("counts"))
         if problem:
             raise unavailable(problem)
     rejected = any(row["status"] == "error" for row in rows)
