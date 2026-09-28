@@ -1374,6 +1374,42 @@ def test_quoted_question_meaning_id_is_its_question_object(lean):
                                    "document": {"units": [stated_unit]}})) == outcome
 
 
+def _unary_click_env():
+    """F0 with `click` a unary act ("{0} click"): its command wordings are "Click." and "Click, if ..."."""
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    for name in ("click_required", "click_permitted"):
+        env["vocabulary"]["predicates"][name]["arguments"] = ["user"]
+        env["vocabulary"]["predicates"][name]["regulated"]["act"] = "{0} click"
+    env["vocabulary"]["predicates"]["done_click"]["arguments"] = ["user"]
+    return env
+
+
+def test_unary_imperative_is_an_instruction_in_both_cores(lean, tmp_path):
+    # Regression (speech-acts6 A1): with `click_required` and `click_permitted` over `["user"]` and act
+    # "{0} click", the parser reads "Click." as an instruction, but both classifiers required a space after the
+    # verb, so both cores accepted an asserted choice on it and rejected the instruction choice it parses as,
+    # fenced and inline.  A verb ends at the end of the wording or at a word break (3.2).
+    env = _unary_click_env()
+    require, forbid = command("require", "click_required", []), command("forbid", "click_permitted", [])
+    choices = {"asserted": {"ast": U("reviewed", "atlas")}, "question": polar(U("reviewed", "atlas"))}
+    guarded = {"command": {**require["command"], "guard": U("reviewed", "atlas")}}
+    # Each wording with the command it parses as, or None where the parser reads none ("Click" lacks its period).
+    for wording, instruction in [("Click.", require), ("Click, if atlas is reviewed.", guarded),
+                                 ("Do not click.", forbid), ("CLICK.", require), ("Click", None), ("Click!", None),
+                                 ("Click\x0c.", None)]:
+        for kind, content in [*choices.items(), *([("instruction", instruction)] if instruction else [])]:
+            expected = "ok" if kind == "instruction" else "InvalidInput: choice kind"
+            assert _both_forms(tmp_path, f"unary-{kind}", env, wording, kind, content) == [expected] * 2, \
+                (wording, kind)
+            document, case = _choice_case(env, wording, kind, content)
+            assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == expected, (wording, kind)
+    # A word that only begins with the verb is no imperative: "clicked", "clicks", "click-through", "click_rate".
+    for wording in ["Clicked.", "Clicks.", "Click-through is fine.", "Click_rate is high.", "Click2.", "Clické."]:
+        document, case = _choice_case(env, wording, "asserted", choices["asserted"])
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok", wording
+
+
 def test_answer_metadata_types_and_unit_meaning_id(lean):
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
