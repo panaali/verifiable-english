@@ -218,9 +218,10 @@ report") follow norms.md 0 and 2.4: the object is inside the declared act phrase
 Every wording has exactly one reading, conditional on the legend, which is itself the first thing the reader sees.
 Imperatives are the declared act phrase (norms.md 2.4) with slot 0 dropped and the later slots filled by a declared
 constant name or a bound definite phrase, so elaboration to `demand(c)` is mechanical. `<rest>` is the remainder of a
-copular predicate wording `{0} is <rest>` naming one property (a gloss whose `<rest>` holds a connective, negation
-or quantifier word, a declared constant or a bound definite phrase would answer a sentence as one opaque atom:
-`OpaqueWording`, 6); `<sentence>` is any closed sentence of the existing English surface.
+copular predicate wording `{0} is <rest>` naming one property (a gloss whose `<rest>` holds a connective, negation,
+contrast or quantifier word, sentence punctuation, a word said twice, another declared one-place property as a proper
+part, a declared constant or a bound definite phrase would answer a sentence as one opaque atom: `OpaqueWording`, 6;
+the check refuses, so a compound gloss such as "reviewed by staff" beside "reviewed" is refused rather than trusted); `<sentence>` is any closed sentence of the existing English surface.
 
 | Wording | The one reading (the IDE's paraphrase) | Formal effect |
 |---|---|---|
@@ -752,7 +753,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | `CheckerConflict` | `follows` and `gap` artifacts for one `(E, Π_q, P)` (debate-protocol.md) | operational error |
 | `ResourceLimit: rules` / `alternatives` / `definites` / `questions` / `open-term name` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions; a reading question's unit id over 47 bytes (W2's 64-byte token limit on `intended-reading.<u>`, 4.6) | error |
 | `CoordinatedActs`, `PermissionNotCommand`, `ModalQuestion`, `OpenDomainWhich`, `TemporalWording` | English-layer hints with the rewrites of 2.3 (Python only) | hint |
-| `OpaqueWording: <rest> is a sentence about <word>, not one declared property` | a copular `<rest>` matches a declared one-place gloss containing a connective, negation or quantifier word, a declared constant or a bound definite phrase (2.1, 6; Python only) | error |
+| `OpaqueWording: <rest> is a sentence about <word>, not one declared property` | a copular `<rest>` matches a declared one-place gloss containing a connective, negation, contrast or quantifier word, sentence punctuation, a repeated word, another declared one-place property, a declared constant or a bound definite phrase (2.1, 6; Python only) | error |
 | `Overlap(<n>, <m>)`, `DependencyCycle`, `PrecedenceAcrossPredicates`, `ConsequenceArguments`, ... | W1's, unchanged, on `policy(D)` | as W1 |
 
 Order: the profile gate; the environment block; W1's declaration checks; units in document order (kind, content, slots,
@@ -1587,6 +1588,7 @@ statements of section 8 are unchanged.
 | A, pending bindings: an open binding unit still bound "you" for active commands in both cores, although its sole candidate bound another constant | 1.1 and 1.5: a pending binding supplies no scope entry, conflicts with and duplicates nothing, and keeps its single-binding checks; a `binding` unit carries binding content in both cores. |
 | A, CLI scope identity: the inspection report gave the embedded environment's id and legend, so alice- and bob-bound documents reported one id and no bound addressee; fences were parsed under the block alone | 1.1: the report, the legend and fence parsing use the effective scope; Python's legend lists definites in Lean's sorted order. |
 | B, candidate validation: a follows-question candidate naming no record and a malformed binding phrase counted as R in Python; Lean read no open candidate and accepted `{"command": {}}` | 1.4 and 6: every candidate of every version is decoded as its kind and checked as its unit would be were it chosen, in both cores; a candidate that asks about a query consumes its record at its unit; reading sets hold 1 to 64 readings with kind and content. |
+| B, opaque contradiction: "Is atlas reviewed yet never reviewed?" escaped the closed word list, took class C and was evaluated "yes" as one gloss | 2.1 and 7: the gloss check is structural as well as lexical: contrast and negation words ("yet", "never", ...), sentence punctuation, a repeated word and another declared property inside the gloss are `OpaqueWording`. |
 
 ## Change log
 
