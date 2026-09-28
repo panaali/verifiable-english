@@ -150,6 +150,7 @@ structure Path where
   depth : Nat
   deriving DecidableEq, Repr
 
+/-- A bridge record (3.2): required for a nested target, allowed for a root one. -/
 structure Bridge where
   id : String
   target : Path
@@ -615,7 +616,7 @@ def scopedOk (D : ReportDoc) (s : ScopedCheck) : Bool :=
     | none => false
 
 def bridgeOk (D : ReportDoc) (b : Bridge) : Bool :=
-  decide (1 ≤ b.target.depth) && (bridgeFormula D b.target).isSome &&
+  (bridgeFormula D b.target).isSome &&
     match scopeAt D b.target with
     | some Eq => Eq.id == D.environmentId
     | none => false
