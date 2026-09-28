@@ -39,6 +39,26 @@ def _id(domain, value):
     return hashlib.sha256(domain.encode("ascii") + _canonical(value)).hexdigest()
 
 
+def _path(path, step):
+    return f"{path}.{step}" if path else str(step)
+
+
+def unreviewed_acts(kind, path=""):
+    """Every attributed node of a W2 kind whose act is outside the slice, at any
+    depth: an attributed or hedged kind's body is step 1, a causal kind's cause
+    and effect are steps 1 and 2 (Lean `Run.unreviewedActs`)."""
+    if type(kind) is not list:
+        return []
+    if kind[0] == "attributed":
+        own = [{"path": path, "act": kind[2]}] if kind[2] not in ACTS else []
+        return own + unreviewed_acts(kind[3], _path(path, 1))
+    if kind[0] == "hedged":
+        return unreviewed_acts(kind[2], _path(path, 1))
+    if kind[0] == "causal":
+        return unreviewed_acts(kind[2], _path(path, 1)) + unreviewed_acts(kind[3], _path(path, 2))
+    return []
+
+
 def _records(rows, label, limit):
     if type(rows) is not list:
         raise VEError(f"InvalidInput: {label} must be a list")
@@ -474,16 +494,14 @@ class ReportsDocument:
                                  _id(f"ve-content-{self.environment.identity_version}\n",
                                      self._node(u["content"], u["id"]))} for u in report_units],
                 "envelope": self.envelope,
-                "warnings": [f"unreviewed act {u['kind'][2]} in {u['id']}" for u in self.units
-                             if u not in report_units and type(u.get("kind")) is list and
-                             len(u["kind"]) == 4 and u["kind"][0] == "attributed" and
-                             u["kind"][2] not in ACTS]}
+                "warnings": [f"unreviewed act {a['act']} in {u['id']}" + (f" at {a['path']}" if a["path"] else "")
+                             for u in self.units for a in unreviewed_acts(u.get("kind"))]}
 
     def residual_lines(self):
         """Section 6's residual lines of the reports layer: every report and
         assessment premise (an identified assumption, asserted or denied), every
-        literal quotation at any depth, every scoped check and every unit whose act
-        is outside the slice. W2's lines and `bridges_nested` are counted by
+        literal quotation at any depth, every scoped check and every act outside
+        the slice at any depth of a unit's kind. W2's lines and `bridges_nested` are counted by
         `ve.document.coverage` from the graph."""
         lines = {"reports": {}, "assessments": {}, "literal_quotations": [], "scoped_checks": [],
                  "unreviewed_acts": {}}
@@ -502,11 +520,9 @@ class ReportsDocument:
 
         for unit in self.units:
             content = unit.get("content")
+            for act in unreviewed_acts(unit.get("kind")):
+                count("unreviewed_acts", act["act"])
             if not (type(content) is dict and set(content) & {"report", "assessment", "negated"}):
-                kind = unit.get("kind")
-                if (type(kind) is list and len(kind) == 4 and kind[0] == "attributed"
-                        and kind[2] not in ACTS):
-                    count("unreviewed_acts", kind[2])
                 continue
             node, polarity = (content["negated"], "denied") if "negated" in content else (content, "asserted")
             tag, value = next(iter(node.items()))

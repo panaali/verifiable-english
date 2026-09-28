@@ -501,6 +501,11 @@ def test_sigma_unreviewed_acts(lean):
                 "contexts": CONTEXTS}
     r = elaborate(labelled)
     assert r["keys"] == [] and r["premises"] == [] and r["warnings"] == ["unreviewed act promised in u2"]
+    # Loop B: an act outside the slice below the root of the kind warns too.
+    nested = {"units": [{"id": "u2", "span": [0, 1], "kind": ["hedged", "could", ["attributed", "the_team",
+                                                                                  "promised", "asserted"]]}],
+              "contexts": CONTEXTS}
+    assert elaborate(nested)["warnings"] == ["unreviewed act promised in u2 at 1"]
 
 
 def test_tau_wants(lean):
