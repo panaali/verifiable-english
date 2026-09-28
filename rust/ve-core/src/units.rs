@@ -175,7 +175,7 @@ fn same(a: &str, b: &str) -> Result<()> {
         error("TypeMismatch", format!("UnitMismatch({a},{b})"))
     }
 }
-fn term(e: &Value, v: &Value, depth: usize) -> Result<(String, Value, Value)> {
+fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(String, Value, Value)> {
     if depth > 64 {
         return error("ResourceLimit", "quantity term depth");
     }
@@ -238,8 +238,8 @@ fn term(e: &Value, v: &Value, depth: usize) -> Result<(String, Value, Value)> {
             } else {
                 ("dimensionless", &a[1], &a[2])
             };
-            let (lt, lq, lc) = term(e, l, depth + 1)?;
-            let (rt, rq, rc) = term(e, r, depth + 1)?;
+            let (lt, lq, lc) = term(e, l, ctx, depth + 1)?;
+            let (rt, rq, rc) = term(e, r, ctx, depth + 1)?;
             same(tag, &lt)?;
             same(tag, &rt)?;
             if tag == "day" {
@@ -258,7 +258,7 @@ fn term(e: &Value, v: &Value, depth: usize) -> Result<(String, Value, Value)> {
                 ("dimensionless", &a[1], &a[2])
             };
             let c = int(string(c)?)?.to_string();
-            let (tt, tq, tc) = term(e, t, depth + 1)?;
+            let (tt, tq, tc) = term(e, t, ctx, depth + 1)?;
             same(tag, &tt)?;
             if tag == "day" {
                 return error("TypeMismatch", "calendar dates cannot be scaled");
@@ -269,7 +269,22 @@ fn term(e: &Value, v: &Value, depth: usize) -> Result<(String, Value, Value)> {
                 json!(["scale", c, tc]),
             ))
         }
-        ("var", _) => error(
+        ("var", 2) => {
+            let i = a[1]
+                .as_u64()
+                .ok_or_else(|| Error::new("UnboundVariable", "invalid index"))?;
+            let sort = ctx
+                .get(i as usize)
+                .ok_or_else(|| Error::new("UnboundVariable", "unbound index"))?;
+            if sort == "$int" {
+                return error(
+                    "UnsupportedProfile",
+                    "$int quantification requires the missing numbers2 route",
+                );
+            }
+            Ok((sort.clone(), v.clone(), v.clone()))
+        }
+        ("var", 3) => error(
             "UnsupportedProfile",
             "$int quantification requires the missing numbers2 route",
         ),
@@ -283,13 +298,19 @@ fn guard(t: &Value) -> Value {
         ["le", t, ["num", "2932896"]]
     ])
 }
-fn temporal(e: &Value, op: &str, a: &[Value], depth: usize) -> Result<(Value, Value)> {
+fn temporal(
+    e: &Value,
+    op: &str,
+    a: &[Value],
+    ctx: &[String],
+    depth: usize,
+) -> Result<(Value, Value)> {
     let three = ["within_days", "shift_days", "elapsed_days"].contains(&op);
     if a.len() != if three { 4 } else { 3 } {
         return error("SyntaxError", "invalid temporal arity");
     }
-    let (ta, qa, ca) = term(e, &a[1], depth + 1)?;
-    let (tb, qb, cb) = term(e, &a[2], depth + 1)?;
+    let (ta, qa, ca) = term(e, &a[1], ctx, depth + 1)?;
+    let (tb, qb, cb) = term(e, &a[2], ctx, depth + 1)?;
     same(&ta, "day")?;
     same(&tb, "day")?;
     let both = json!(["and", guard(&ca), guard(&cb)]);
@@ -299,7 +320,7 @@ fn temporal(e: &Value, op: &str, a: &[Value], depth: usize) -> Result<(Value, Va
         "date_after" => (json!([op, qa, qb]), json!(["lt", cb, ca])),
         "date_no_later" => (json!([op, qa, qb]), json!(["le", ca, cb])),
         "elapsed_days" => {
-            let (tv, qv, cv) = term(e, &a[3], depth + 1)?;
+            let (tv, qv, cv) = term(e, &a[3], ctx, depth + 1)?;
             same(&tv, "elapsed_day")?;
             (
                 json!([op, qa, qb, qv]),
@@ -324,7 +345,7 @@ fn temporal(e: &Value, op: &str, a: &[Value], depth: usize) -> Result<(Value, Va
     };
     Ok((q, json!(["and", both, body])))
 }
-fn formula(e: &Value, v: &Value, depth: usize) -> Result<(Value, Value)> {
+fn formula(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Value, Value)> {
     if depth > 64 {
         return error("ResourceLimit", "quantity formula depth");
     }
@@ -332,28 +353,71 @@ fn formula(e: &Value, v: &Value, depth: usize) -> Result<(Value, Value)> {
     match (op, a.len()) {
         ("top" | "bottom", 1) => Ok((v.clone(), v.clone())),
         ("eq" | "lt" | "le", 3) => {
-            let (lt, lq, lc) = term(e, &a[1], depth + 1)?;
-            let (rt, rq, rc) = term(e, &a[2], depth + 1)?;
+            let (lt, lq, lc) = term(e, &a[1], ctx, depth + 1)?;
+            let (rt, rq, rc) = term(e, &a[2], ctx, depth + 1)?;
             same(&lt, &rt)?;
             if op != "eq" && lt != "dimensionless" && e["units"].get(&lt).is_none() {
                 return error("TypeMismatch", "order needs integers");
             }
             Ok((json!([op, lq, rq]), json!([op, lc, rc])))
         }
+        ("unary" | "binary", 3 | 4) if a.len() == (if op == "unary" { 3 } else { 4 }) => {
+            let name = string(&a[1])?;
+            let decl = e["vocabulary"]["predicates"]
+                .get(name)
+                .ok_or_else(|| Error::new("UnknownSymbol", "unknown predicate"))?;
+            let signature = array(&decl["arguments"])?;
+            if signature.len() != a.len() - 2 {
+                return error("TypeMismatch", "predicate arity");
+            }
+            let mut q = vec![json!(op), json!(name)];
+            let mut core = q.clone();
+            for (i, arg) in a[2..].iter().enumerate() {
+                let expected = if signature[i] == "$int" {
+                    decl.get("argument_units")
+                        .and_then(|m| m.get(i.to_string()))
+                        .and_then(Value::as_str)
+                        .unwrap_or("dimensionless")
+                } else {
+                    string(&signature[i])?
+                };
+                let (found, tq, tc) = term(e, arg, ctx, depth + 1)?;
+                same(expected, &found)?;
+                q.push(tq);
+                core.push(tc);
+            }
+            Ok((json!(q), json!(core)))
+        }
         ("not", 2) => {
-            let (q, c) = formula(e, &a[1], depth + 1)?;
+            let (q, c) = formula(e, &a[1], ctx, depth + 1)?;
             Ok((json!([op, q]), json!([op, c])))
         }
         ("and" | "or" | "implies", 3) => {
-            let (lq, lc) = formula(e, &a[1], depth + 1)?;
-            let (rq, rc) = formula(e, &a[2], depth + 1)?;
+            let (lq, lc) = formula(e, &a[1], ctx, depth + 1)?;
+            let (rq, rc) = formula(e, &a[2], ctx, depth + 1)?;
             Ok((json!([op, lq, rq]), json!([op, lc, rc])))
+        }
+        ("forall" | "exists", 3) => {
+            let sort = string(&a[1])?;
+            if sort == "$int" {
+                return error(
+                    "UnsupportedProfile",
+                    "$int quantification requires the missing numbers2 route",
+                );
+            }
+            if e["vocabulary"]["sorts"].get(sort).is_none() {
+                return error("UnknownSymbol", "unknown binder sort");
+            }
+            let mut next = vec![sort.to_owned()];
+            next.extend_from_slice(ctx);
+            let (q, c) = formula(e, &a[2], &next, depth + 1)?;
+            Ok((json!([op, sort, q]), json!([op, sort, c])))
         }
         (
             "date_on" | "date_before" | "date_after" | "date_no_later" | "within_days"
             | "shift_days" | "elapsed_days",
             _,
-        ) => temporal(e, op, a, depth),
+        ) => temporal(e, op, a, ctx, depth),
         (
             "sunday" | "excluded_sundays" | "forall_date" | "exists_date" | "trace_all"
             | "trace_some" | "forall" | "exists",
@@ -536,7 +600,7 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
         );
     }
     budget(&p["formula"])?;
-    let (q, core) = formula(e, &p["formula"], 1)?;
+    let (q, core) = formula(e, &p["formula"], &[], 1)?;
     if p.get("Q").is_some_and(|claimed| claimed != &q) {
         return error(
             "InvalidInput",

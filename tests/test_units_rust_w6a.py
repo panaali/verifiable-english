@@ -6,10 +6,12 @@ import subprocess
 import pytest
 
 from ve.ast import formula_from_data
+from ve import ast
 from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.units import elaborate_quantity, erased_environment, quantity_meaning_id
+from ve.surface.count import at_least
 
 ROOT = Path(__file__).resolve().parents[1]
 RUST = ROOT / "rust" / "target" / "release" / "ve"
@@ -73,3 +75,24 @@ def test_hostile_literal_and_tag_changes_reject_in_both():
     result = rust({"id": "forged-Q", "kind": "quantity", "environment": fixture["environment"],
                    "quantity": payload})
     assert result["status"] == "error" and "Q differs" in result["error"]["message"]
+
+
+def test_user_sort_counting_expansion_agrees_on_a_finite_model():
+    raw = {"language": "ve.core@0.2", "profiles": ["order@0", "relational-fol@0", "time@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {"item": {"description": "item"}},
+                          "predicates": {"p": {"arguments": ["item"], "description": "P"}},
+                          "constants": {}}, "unit_schema": "ve-units@1", "units": {}}
+    env = Environment(raw)
+    expanded = at_least(env, "item", 2, ast.Unary("p", ast.Var(0)))
+    payload = {"format": "ve-quantity@1", "formula": ast._to_data(expanded)}
+    canonical, core = elaborate_quantity(env, payload)
+    target = erased_environment(env)
+    model_data = {"complete": True, "domains": {"item": ["e1", "e2"]},
+                  "constants": {}, "relations": {"p": [["e1"], ["e2"]]}}
+    model = FiniteModel.from_dict(target, model_data)
+    result = rust({"id": "two", "kind": "quantity", "environment": raw,
+                   "quantity": payload, "model": model_data})
+    assert result["status"] == "ok" and result["value"] is True
+    assert result["Q"] == canonical["formula"] and result["core"] == core
+    assert evaluate(target, formula_from_data(target, core), model, trace=False).value is True
