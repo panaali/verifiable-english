@@ -804,6 +804,104 @@ def test_scope_references_are_names_before_they_are_resolved(lean):
         assert (name, result.get("error")) == (name, error)
 
 
+def _fenced_pair(tmp_path, name, env, lines, units, fenced, **meta):
+    """The source with the given units, and the same source with unit `fenced`'s content an English fence."""
+    positions = [0]
+    for line in lines:
+        positions.append(positions[-1] + len(line.encode()))
+    units = [{**u, "span": positions[i:i + 2]} for i, u in enumerate(units)]
+    fence_units = [{**u, "content": {"fence": u["id"]}, "surface": "english"} if u["id"] == fenced else u
+                   for u in units]
+    wording = lines[[u["id"] for u in units].index(fenced)].strip()
+    paths = []
+    for suffix, us, tail in (("plain", units, ""), ("fenced", fence_units, f"```ve {fenced}\n{wording}\n```\n")):
+        path = tmp_path / f"{name}-{suffix}.ve.md"
+        path.write_text("---\n" + json.dumps({"format": "ve-document@2", "environment": env, "units": us, **meta}) +
+                        "\n---\n" + "".join(lines) + tail)
+        paths.append(path)
+    return units, paths
+
+
+def test_fenced_query_and_reading_consumers_regenerate_their_reference(lean, tmp_path):
+    # Regression: "Does it follow from these premises that atlas is reviewed?" with a valid q1 passed unfenced and
+    # in Lean, but its English fence raised `InvalidInput: query required`, as did "Prove that ... using these
+    # premises." and "Which reading did you mean?": fence parsing received no document context.  A fenced wording
+    # that names neither its query nor its reading set is about the one query record regenerated at its unit (1.4)
+    # and the set version its derived open term names (4.6), so both forms and Lean agree.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    fact = unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    record = {"id": "q1", "premises": ["p"], "target": {"ast": U("reviewed", "atlas")}}
+    asks = [("follows", "Does it follow from these premises that atlas is reviewed?\n", "question",
+             {"question": {"mode": "follows", "query": "q1"}}, "questions"),
+            ("proof", "Prove that atlas is reviewed using these premises.\n", "instruction",
+             command("require", "submit_required", ["q1"]), "commands")]
+    for name, wording, kind, content, key in asks:
+        units, (plain, fenced) = _fenced_pair(tmp_path, name, env, ["Atlas is reviewed.\n", wording],
+                                              [fact, unit("f", 0, kind, content)], "f", queries=[record])
+        a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+        le = elaborate(env, {"units": units, "queries": [record]})
+        assert a.meaning_ids["f"] == b.meaning_ids["f"] == le[key][0]["meaning_id"]
+        # No record, a stale one, or two regenerated at the unit: the unit's query is not determined.
+        for records in ([], [{**record, "premises": []}], [{**record, "target": {"ast": U("reviewed", "beacon")}}],
+                        [record, {**record, "id": "q2"}]):
+            _, (plain, fenced) = _fenced_pair(tmp_path, name, env, ["Atlas is reviewed.\n", wording],
+                                              [fact, unit("f", 0, kind, content)], "f", queries=records)
+            with pytest.raises(VEError, match="^QueryMismatch: (f|q2)$"):
+                load_speech_document(plain)
+            with pytest.raises(VEError, match="^QueryMismatch: f$"):
+                load_speech_document(fenced)
+    # A premise pending in an open reading set is not among "these premises", in either form.
+    pending = reading_set("p", 1, "open", "asserted", U("reviewed", "atlas"))
+    pending["readings"][0]["meaning_id"] = _meaning_id(env, U("reviewed", "atlas"))
+    for records, ok in (([{**record, "premises": []}], True), ([record], False)):
+        _, paths = _fenced_pair(tmp_path, f"pending{ok}", env, ["Atlas is reviewed.\n", asks[0][1]],
+                                [fact, unit("f", 0, "question", asks[0][3])], "f", queries=records,
+                                reading_sets=[pending])
+        for path in paths:
+            if ok:
+                assert load_speech_document(path).document.questions[0].query == "q1"
+            else:
+                with pytest.raises(VEError, match="^QueryMismatch: f$"):
+                    load_speech_document(path)
+    # A reading question: the set version is the one its derived open term names.
+    click = command("require", "click_required", ["check"])
+    term = {"name": "intended-reading.r", "arguments": ["rs"], "version": 1, "decided_by": "alice",
+            "jurisdiction": "t1", "necessary": [], "sufficient": [], "precedents": [],
+            "factors": ["necessary: at least one nomination of a candidate of rs at version 1 by alice",
+                        "sufficient: exactly one nomination of a candidate of rs at version 1 by alice"]}
+    reading = {"question": {"mode": "reading", "set": "rs", "version": 1}}
+    sets = [reading_set("x", 1, "open", "instruction", click)]
+    units, (plain, fenced) = _fenced_pair(
+        tmp_path, "reading", env, ["Click check.\n", "Which reading did you mean?\n"],
+        [unit("x", 0, "instruction", click), unit("r", 0, "question", reading, {"open": ["intended-reading.r"]})],
+        "r", open_terms=[term], reading_sets=sets)
+    a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+    le = elaborate(env, {"units": units, "reading_sets": sets})
+    assert a.meaning_ids["r"] == b.meaning_ids["r"] == le["questions"][0]["meaning_id"]
+    for other in ({"arguments": ["other"]}, {"version": 2}):  # the open term decides; the document then checks it
+        _, (_, fenced) = _fenced_pair(
+            tmp_path, "reading-term", env, ["Click check.\n", "Which reading did you mean?\n"],
+            [unit("x", 0, "instruction", click), unit("r", 0, "question", reading, {"open": ["intended-reading.r"]})],
+            "r", open_terms=[{**term, **other}], reading_sets=sets)
+        with pytest.raises(VEError, match="^InvalidInput: invalid question fields for r$"):
+            load_speech_document(fenced)
+    _, (plain, fenced) = _fenced_pair(tmp_path, "reading-specified", env,
+                                      ["Click check.\n", "Which reading did you mean?\n"],
+                                      [unit("x", 0, "instruction", click), unit("r", 0, "question", reading)],
+                                      "r", reading_sets=sets)
+    for path in (plain, fenced):
+        with pytest.raises(VEError, match="^InvalidInput: invalid question fields for r$"):
+            load_speech_document(path)
+
+
+def _meaning_id(env, ast):
+    from ve.ast import formula_from_data
+    from ve.identity import meaning_id
+    e = Environment(env)
+    return meaning_id(e, formula_from_data(e, ast))
+
+
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     # Regression: contradictory premises certified both polar answers in Python with no premise
     # status, and Lean's `follows` line omitted the status of Π_q.
