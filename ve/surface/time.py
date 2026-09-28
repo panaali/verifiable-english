@@ -2,25 +2,58 @@
 
 This is a local authoring surface. The document route remains gated until the
 whole-grammar all-derivations and Lean correspondence checks are connected.
+Within this grammar every rule is tried at every occurrence of its connectors,
+so a sentence with two derivations is rejected rather than read one way.
 """
 from __future__ import annotations
 
 import re
 from itertools import product
 
-from ..errors import AmbiguousDerivation, SyntaxError, UnsupportedProfile, VEError
-from ..units import DIMENSIONLESS, day_number, decimal_exact, elaborate_quantity, render_coordinate
+from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError, UnsupportedProfile, VEError
+from ..units import (DIMENSIONLESS, POINTS_SUFFIX, day_number, decimal_exact, elaborate_quantity,
+                     render_coordinate)
 
 _DEC = r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?"
+_NAT = re.compile(r"0|[1-9][0-9]*\Z", re.ASCII)
 _DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z", re.ASCII)
 _MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August",
            "September", "October", "November", "December")
+# Candidate derivations tried per sentence; exhaustion rejects naming this budget.
+MAX_DERIVATIONS = 10_000
+
+# (connectors in order, operation, reversed operands); each connector separates
+# two nonempty operand phrases. The first phrase starts the sentence.
+_COMPARISONS = (
+    ((" equals ",), "eq", False),
+    ((" is less than ",), "lt", False),
+    ((" is greater than ",), "lt", True),
+    ((" is at most ",), "le", False),
+    ((" is at least ",), "le", True),
+    ((" is on ",), "date_on", False),
+    ((" is before ",), "date_before", False),
+    ((" is after ",), "date_after", False),
+    ((" is no later than ",), "date_no_later", False),
+)
+_WITHIN = (" is on or after ", " and on or before ", " days after ")
+_SHIFT = (" is ", " days after ")
+_ELAPSED_PREFIX = "The elapsed duration from "
+_ELAPSED = (" to ", " equals ")
+_POINTS = (" minus ", " equals ")
 
 
-def _constant_readings(env, phrase):
+def _capitalized(phrase):
+    return phrase[:1].upper() + phrase[1:]
+
+
+def _constant_readings(env, phrase, initial):
+    """A constant matches its approved phrase; at sentence start also its
+    capitalized form. Literals are never case-folded."""
     return [["const", decl.unit or DIMENSIONLESS, name]
             if decl.sort == "$int" else ["const", name]
-            for name, decl in env.constants.items() if decl.verbalisation == phrase]
+            for name, decl in env.constants.items()
+            if decl.verbalisation is not None and
+            (decl.verbalisation == phrase or initial and _capitalized(decl.verbalisation) == phrase)]
 
 
 def _literal_readings(env, phrase):
@@ -38,30 +71,69 @@ def _literal_readings(env, phrase):
         display = record["display"]
         kind = display["kind"]
         if kind == "percent" and phrase.endswith("%"):
-            amount = phrase[:-1]
-        elif kind == "money" and phrase.startswith(display["currency"] + " "):
-            amount = phrase[len(display["currency"]) + 1:]
-        elif kind == "money" and display.get("input_symbol") and phrase.startswith(display["input_symbol"]):
-            amount = phrase[len(display["input_symbol"]):]
+            amounts = [phrase[:-1]]
+        elif kind == "money":
+            prefixes = [display["currency"] + " "] + ([display["input_symbol"]]
+                                                      if "input_symbol" in display else [])
+            amounts = [phrase[len(p):] for p in prefixes if phrase.startswith(p)]
         elif kind == "decimal":
             label = display["label"]
             if display.get("placement") == "prefix" and phrase.startswith(label + " "):
-                amount = phrase[len(label) + 1:]
+                amounts = [phrase[len(label) + 1:]]
             elif display.get("placement", "suffix") == "suffix" and phrase.endswith(" " + label):
-                amount = phrase[:-(len(label) + 1)]
+                amounts = [phrase[:-(len(label) + 1)]]
             else:
                 continue
         else:
             continue
-        if re.fullmatch(_DEC, amount, re.ASCII):
-            # Grid precision and range are verified again by elaborate_quantity.
-            decimal_exact(amount, tag, env)
-            readings.append(["decimal", tag, amount])
+        for amount in amounts:
+            if re.fullmatch(_DEC, amount, re.ASCII):
+                # Grid precision and range are verified again by elaborate_quantity.
+                decimal_exact(amount, tag, env)
+                readings.append(["decimal", tag, amount])
     return readings
 
 
-def _terms(env, phrase):
-    return _constant_readings(env, phrase) + _literal_readings(env, phrase)
+def _terms(env, phrase, initial=False):
+    return _constant_readings(env, phrase, initial) + _literal_readings(env, phrase)
+
+
+class _Derivations:
+    def __init__(self, env):
+        self.env, self.readings, self.rejected, self.work = env, [], [], 0
+
+    def tick(self):
+        self.work += 1
+        if self.work > MAX_DERIVATIONS:
+            raise ResourceLimit(f"W6 quantity derivation budget MAX_DERIVATIONS={MAX_DERIVATIONS} exhausted")
+
+    def splits(self, text, connectors):
+        """Every way to write text as p0 + c0 + p1 + ... with nonempty phrases.
+        Each connector occurrence tried is charged to the derivation budget."""
+        if not connectors:
+            if text:
+                yield (text,)
+            return
+        connector = connectors[0]
+        start = text.find(connector, 1)
+        while start != -1:
+            self.tick()
+            for rest in self.splits(text[start + len(connector):], connectors[1:]):
+                yield (text[:start], *rest)
+            start = text.find(connector, start + 1)
+
+    def offer(self, formula):
+        self.tick()
+        try:
+            canonical, _ = elaborate_quantity(self.env, {"format": "ve-quantity@1", "formula": formula})
+        except VEError as exc:
+            self.rejected.append(exc)
+            return
+        self.readings.append(canonical)
+
+    def terms(self, *phrases):
+        """Readings of each phrase; the first phrase starts the sentence."""
+        return product(*(_terms(self.env, p, i == 0) for i, p in enumerate(phrases)))
 
 
 def parse_quantity_sentence(env, source):
@@ -74,85 +146,45 @@ def parse_quantity_sentence(env, source):
     if not source.endswith("."):
         raise SyntaxError("Quantity sentence requires a full stop")
     text = source[:-1]
-    rules = (
-        (" equals ", "eq", False),
-        (" is less than ", "lt", False),
-        (" is greater than ", "lt", True),
-        (" is at most ", "le", False),
-        (" is at least ", "le", True),
-        (" is on ", "date_on", False),
-        (" is before ", "date_before", False),
-        (" is after ", "date_after", False),
-        (" is no later than ", "date_no_later", False),
-    )
-    readings = []
-    rejected = []
-    def offer(operation, phrases, suffix=()):
-        for terms in product(*(_terms(env, phrase) for phrase in phrases)):
-            payload = {"format": "ve-quantity@1", "formula": [operation, *terms, *suffix]}
-            try:
-                canonical, _ = elaborate_quantity(env, payload)
-            except VEError as exc:
-                rejected.append(exc)
-                continue
-            readings.append(canonical)
-
-    within = re.fullmatch(r"(.+?) is on or after (.+?) and on or before (0|[1-9][0-9]*) days after (.+)", text)
-    if within and within[2] == within[4]:
-        offer("within_days", (within[1][0].lower() + within[1][1:], within[2]), (within[3],))
-    shifted = re.fullmatch(r"(.+?) is (0|[1-9][0-9]*) days after (.+)", text)
-    if shifted:
-        offer("shift_days", (shifted[1][0].lower() + shifted[1][1:], shifted[3]), (shifted[2],))
-    elapsed = re.fullmatch(r"The elapsed duration from (.+?) to (.+?) equals (.+)", text)
-    if elapsed:
-        offer("elapsed_days", (elapsed[1], elapsed[2], elapsed[3]))
-    points = re.fullmatch(r"(.+?) minus (.+?) equals (.+) percentage points", text)
-    if points:
+    d = _Derivations(env)
+    for left, day, count, origin in d.splits(text, _WITHIN):
+        if day == origin and _NAT.fullmatch(count):
+            for pair in d.terms(left, day):
+                d.offer(["within_days", *pair, count])
+    for left, count, origin in d.splits(text, _SHIFT):
+        if _NAT.fullmatch(count):
+            for pair in d.terms(left, origin):
+                d.offer(["shift_days", *pair, count])
+    if text.startswith(_ELAPSED_PREFIX):
+        for start, end, value in d.splits(text[len(_ELAPSED_PREFIX):], _ELAPSED):
+            for start_t, end_t, value_t in product(*(_terms(env, p) for p in (start, end, value))):
+                d.offer(["elapsed_days", start_t, end_t, value_t])
+    if text.endswith(POINTS_SUFFIX):
         percent_tags = [tag for tag, record in env.units.items()
                         if record["display"]["kind"] == "percent"]
-        if len(percent_tags) == 1:
-            tag = percent_tags[0]
-            for left, right in product(_terms(env, points[1][0].lower() + points[1][1:]),
-                                       _terms(env, points[2])):
-                payload = {"format": "ve-quantity@1", "formula": ["eq",
-                    ["add", tag, left, ["scale", tag, "-1", right]],
-                    ["decimal", tag, points[3]]]}
-                try:
-                    canonical, _ = elaborate_quantity(env, payload)
-                except VEError as exc:
-                    rejected.append(exc)
-                    continue
-                readings.append(canonical)
-    for connector, operation, reverse in rules:
-        if text.count(connector) != 1:
-            continue
-        left, right = text.split(connector)
-        if not left or not right:
-            continue
-        # Sentence-initial capitalization affects presentation only. The
-        # vocabulary still supplies the full approved phrase.
-        left = left[0].lower() + left[1:]
-        for lt in _terms(env, left):
-            for rt in _terms(env, right):
-                pair = (rt, lt) if reverse else (lt, rt)
-                payload = {"format": "ve-quantity@1", "formula": [operation, *pair]}
-                try:
-                    canonical, _ = elaborate_quantity(env, payload)
-                except VEError as exc:
-                    rejected.append(exc)
-                    continue
-                readings.append(canonical)
-    if not readings:
-        if len(rejected) == 1:
-            raise rejected[0]
+        for first, second, amount in d.splits(text[:-len(POINTS_SUFFIX)], _POINTS):
+            for tag in percent_tags:
+                for left, right in d.terms(first, second):
+                    d.offer(["eq", ["add", tag, left, ["scale", tag, "-1", right]],
+                             ["decimal", tag, amount]])
+    for connectors, operation, reverse in _COMPARISONS:
+        for left, right in d.splits(text, connectors):
+            for lt, rt in d.terms(left, right):
+                d.offer([operation, *((rt, lt) if reverse else (lt, rt))])
+    if not d.readings:
+        if len(d.rejected) == 1:
+            raise d.rejected[0]
         raise SyntaxError("No W6 quantity reading")
-    if len(readings) != 1:
-        raise AmbiguousDerivation(f"W6 quantity sentence has {len(readings)} derivations")
-    return readings[0]
+    if len(d.readings) != 1:
+        raise AmbiguousDerivation(f"W6 quantity sentence has {len(d.readings)} derivations")
+    return d.readings[0]
 
 
 def render_quantity_sentence(env, canonical):
-    """Render the admitted literal/constant comparison wordings without tags."""
+    """Render the admitted literal/constant comparison wordings without tags.
+
+    Only a sentence-initial constant name is capitalized; literals keep their
+    canonical display so that parsing recovers the same tag and amount."""
     checked, _ = elaborate_quantity(env, canonical)
     if checked != canonical or canonical["traces"]:
         raise UnsupportedProfile("Quantity wording cannot omit canonical annotations or trace declarations")
@@ -161,36 +193,34 @@ def render_quantity_sentence(env, canonical):
                           "date_after", "date_no_later", "within_days", "shift_days",
                           "elapsed_days"):
         raise UnsupportedProfile("No controlled W6 wording for this operation")
-    if len(formula) != (4 if formula[0] in ("within_days", "shift_days", "elapsed_days") else 3):
-        raise SyntaxError("Invalid quantity comparison")
-    def term(node):
+
+    def term(node, initial=False):
         if node[0] == "num" and len(node) == 3:
             return render_coordinate(node[1], int(node[2]), env)
         if node[0] == "const":
-            name = node[-1]
-            declaration = env.constants.get(name)
+            declaration = env.constants.get(node[-1])
             if declaration is not None and declaration.verbalisation is not None:
-                return declaration.verbalisation
+                words = declaration.verbalisation
+                return _capitalized(words) if initial else words
         raise UnsupportedProfile("Quantity English requires named constants or literals")
+
     if (formula[0] == "eq" and formula[1][0] == "add" and
             formula[1][3][0] == "scale" and formula[1][3][2] == "-1" and
             formula[2][0] == "num" and formula[1][1] == formula[2][1] and
             formula[2][1] in env.units and
             env.units[formula[2][1]]["display"]["kind"] == "percent"):
-        first = term(formula[1][2])
-        second = term(formula[1][3][3])
         amount = render_coordinate(formula[2][1], int(formula[2][2]), env).removesuffix("%")
-        return first[0].upper() + first[1:] + f" minus {second} equals {amount} percentage points."
+        return (f"{term(formula[1][2], True)} minus {term(formula[1][3][3])} equals "
+                f"{amount}{POINTS_SUFFIX}.")
     if formula[0] == "elapsed_days":
-        return (f"The elapsed duration from {term(formula[1])} to {term(formula[2])} "
+        return (f"{_ELAPSED_PREFIX}{term(formula[1])} to {term(formula[2])} "
                 f"equals {term(formula[3])}.")
-    left, right = term(formula[1]), term(formula[2])
+    left, right = term(formula[1], True), term(formula[2])
     if formula[0] == "within_days":
-        return (left[0].upper() + left[1:] + f" is on or after {right} and on or before "
-                f"{formula[3]} days after {right}.")
+        return f"{left} is on or after {right} and on or before {formula[3]} days after {right}."
     if formula[0] == "shift_days":
-        return left[0].upper() + left[1:] + f" is {formula[3]} days after {right}."
+        return f"{left} is {formula[3]} days after {right}."
     connector = {"eq": " equals ", "lt": " is less than ", "le": " is at most ",
                  "date_on": " is on ", "date_before": " is before ",
                  "date_after": " is after ", "date_no_later": " is no later than "}[formula[0]]
-    return left[0].upper() + left[1:] + connector + right + "."
+    return left + connector + right + "."
