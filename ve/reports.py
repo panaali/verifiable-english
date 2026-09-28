@@ -479,6 +479,49 @@ class ReportsDocument:
                              len(u["kind"]) == 4 and u["kind"][0] == "attributed" and
                              u["kind"][2] not in ACTS]}
 
+    def residual_lines(self):
+        """Section 6's residual lines of the reports layer: every report and
+        assessment premise (an identified assumption, asserted or denied), every
+        literal quotation at any depth, every scoped check and every unit whose act
+        is outside the slice. W2's lines and `bridges_nested` are counted by
+        `ve.document.coverage` from the graph."""
+        lines = {"reports": {}, "assessments": {}, "literal_quotations": [], "scoped_checks": [],
+                 "unreviewed_acts": {}}
+
+        def count(line, key):
+            lines[line][key] = lines[line].get(key, 0) + 1
+
+        def literals(node, uid, path):
+            tag, value = next(iter(node.items()))
+            if tag == "negated":
+                literals(value, uid, path)
+            elif tag in ("report", "assessment"):
+                if tag == "report" and value.get("literal") is not None:
+                    lines["literal_quotations"].append({"unit": uid, "path": path})
+                literals(value["content"], uid, path + ["1"])
+
+        for unit in self.units:
+            content = unit.get("content")
+            if not (type(content) is dict and set(content) & {"report", "assessment", "negated"}):
+                kind = unit.get("kind")
+                if (type(kind) is list and len(kind) == 4 and kind[0] == "attributed"
+                        and kind[2] not in ACTS):
+                    count("unreviewed_acts", kind[2])
+                continue
+            node, polarity = (content["negated"], "denied") if "negated" in content else (content, "asserted")
+            tag, value = next(iter(node.items()))
+            if tag == "report":
+                count("reports", f"{value['act']} {self.contexts[value['context']]['tense']} {polarity}")
+            else:
+                count("assessments", f"{self.assessments[value['record']]['decided_by']} {polarity}")
+            literals(content, unit["id"], [])
+        for row, scoped in zip(self.scoped, self.scoped_objects):
+            environment = self._resolve(scoped["payloads"][0])[1]
+            lines["scoped_checks"].append({"id": row["id"], "environment_id": environment.environment_id})
+        for entry in lines["literal_quotations"]:
+            entry["path"] = ".".join(entry["path"])
+        return lines
+
     @staticmethod
     def _is_assessment(content):
         if "negated" in content:
