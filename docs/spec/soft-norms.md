@@ -361,7 +361,8 @@ A soft document `(E, T)` is well-formed when, in this order:
 8. `E′` is within `MAX_IDENTIFIER_BYTES` and `MAX_PREDICATES`; the elaborated `T′` (section 5) is within
    `MAX_NODES`: at most 8 carve-outs per rule, each derived carve-out within `MAX_DEPTH` and `MAX_NODES`, and the
    guards and carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived
-   carve-out`); each generated soft premise is within `MAX_DEPTH` and `MAX_NODES` (8, 6.11),
+   carve-out`); each generated soft premise and each generated layer is within `MAX_DEPTH` and `MAX_NODES` (8, 6.11
+   and 6.12),
    and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
    `DualGuardCycle` hint when the cycle is absent on `T` (5.2).
 
@@ -514,7 +515,8 @@ restate rule <k>'s guard over the facts".
 
 Unfolded size is subject to `MAX_NODES` (10,000 nodes, term nodes included, `ve/limits.py`), which W1 applies to
 the guards and carve-outs of the whole document together (norms.md 11.5); overflow is `ResourceLimit: derived
-carve-out`, never a verdict. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
+carve-out`, never a verdict. The generated premises and layers are bounded one by one (8, 6.11 and 6.12), so a
+document is accepted only if its whole elaboration serialises. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
 not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
 
 ## 6. Decision assignments, coherence and what CONFLICT-FREE means (review A3)
@@ -830,6 +832,22 @@ the message, a name, or other input.
 | 6.9 | Each rule, in order: with its derived carve-out, at most 8 carve-outs, and the derived carve-out, typed on its own, within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 | 6.10 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
 | 6.11 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.12 | Each generated norm layer `layer:norms:<p>`, in layer order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+
+**Accepted means elaborable.** 6.4 and 6.9 to 6.12 check every derived structure
+of the elaboration (5, 6.1) against the limits of `ve/limits.py` that its
+serialisation meets: `E′` against the vocabulary limits, each derived carve-out,
+generated soft premise and generated layer on its own against `MAX_DEPTH` and
+`MAX_NODES` (term nodes included, as `soft-elaborate` serialises each one), and
+`T′` as a whole against W1's document budget. These are checks on the built
+structures, run last in the table, not bounds computed from the source; the
+checkers stop at the first overrun, so a structure whose unfolding is far
+beyond `MAX_NODES` costs at most `MAX_NODES + 1` steps. A source both
+validators accept therefore elaborates (`elaborate_soft_document`,
+`soft-elaborate`) without a resource error. A layer states a rule's guard twice
+(where the rule is selected, and where the predicate is silent), so a guard of
+more than about half of `MAX_NODES` is rejected at 6.12 although it passes 4.2
+and 6.5.
 
 A standalone environment (the English layer, generated `E′`) runs the same
 table with no norm objects. A single norm unit decoded on its own (a quoted
@@ -856,7 +874,7 @@ one phase, must produce the same code in Python and Lean.
 | `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` | field consistency (3.1, 3.2) | error |
 | `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` or `MAX_DEPTH` on unfolding; more than 16 ranks; more than 8 parties | error |
 | `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
-| `ResourceLimit: generated soft premise <label>` | a generated premise beyond `MAX_DEPTH` or `MAX_NODES` (6.11) | error |
+| `ResourceLimit: generated soft premise <label>` / `ResourceLimit: generated norm layer layer:norms:<p>` | a generated premise or layer beyond `MAX_DEPTH` or `MAX_NODES` (6.11, 6.12) | error |
 | `UnsupportedProfile: soft-norms@0 requires norms@0` | profile gate | error |
 | `RankAgainstPrecedence: rule <n> over <m>` | author edge against the ranks (4.1) | warning |
 | `Overlap(<n>, <m>)` | two same-sign rules both selecting (W1) | warning |

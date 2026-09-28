@@ -11,7 +11,7 @@ happens to visit the input. Every check carries its own stable code; inherited
 W1/P0 checks run their decoder at their position and report
 `SOFT_INVALID_INPUT` whatever class their text names. `ve/softnorms.py` is the
 same list. The remaining semantic checks are `Wire.primeVocabulary`'s (6.4) and
-`validateSoft`'s (6.5 to 6.11), on the decoded document. -/
+`validateSoft`'s (6.5 to 6.12), on the decoded document. -/
 namespace VE.SoftNorms.Phases
 open Lean
 open VE.Norms

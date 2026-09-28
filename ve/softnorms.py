@@ -683,11 +683,15 @@ class SoftNormDocument:
         self.elaborated = self._soften()
         self.exception_premises = self._exception_premises()
         self.coherence_premises = self._coherence_premises()
-        # 6.11: every generated premise, serialised on its own as the soft
-        # route does, is within MAX_DEPTH and MAX_NODES.
+        # 6.11 and 6.12: every generated premise, serialised on its own as the
+        # soft route does, is within MAX_DEPTH and MAX_NODES, so an accepted
+        # document's whole elaboration serialises.
         for label, formula in (*self.exception_premises, *self.coherence_premises):
             if not _within_limits(self.extended_env, formula):
                 raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
+        for label, formula in self.elaborated.premises():
+            if not _within_limits(self.extended_env, formula):
+                raise ResourceLimit(f'ResourceLimit: generated norm layer {label}')
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
