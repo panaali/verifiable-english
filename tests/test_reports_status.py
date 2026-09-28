@@ -319,6 +319,31 @@ def test_unformalised_kind_without_content_and_at_the_root(tmp_path):
     assert result["coverage"]["unformalised_reasons"] == {"noun_complement": 1, "opaque": 2}
 
 
+def test_root_kind_reason_mismatch_is_rejected_before_coverage(tmp_path):
+    """The review reproducer: the admitted report beside a content-free root
+    cannot hide an opaque marker behind a different meaning reason."""
+    pieces = [ADMITTED, ("Unit u2.\n", {"kind": OPAQUE,
+                                   "meaning": {"unformalised": "noun_complement"}, "support": "none"})]
+    path = write_report_document(tmp_path, pieces)
+    meta = json.loads(path.read_text().split("\n---\n")[0][4:])
+    route_doc = {k: meta[k] for k in ("units", "contexts")}
+    with pytest.raises(VEError, match="^InvalidInput: unformalised kind reason does not match meaning of u2$"):
+        load_document(path)
+    with pytest.raises(VEError, match="^InvalidInput: unformalised kind reason does not match meaning of u2$"):
+        run_case("reports-status", meta["environment"], route_doc)
+
+
+def test_nested_reason_remains_independent_of_unit_meaning(tmp_path):
+    pieces = [ADMITTED, ("Unit u2.\n", {
+        "kind": ["causal", "because", OPAQUE, "asserted"],
+        "meaning": {"unformalised": "noun_complement"}, "support": "none"})]
+    result = check_document(write_report_document(tmp_path, pieces))
+    assert result["coverage"]["unformalised_reasons"] == {"noun_complement": 1, "opaque": 1}
+    assert result["coverage"]["residual_lines"]["unformalised_kinds"] == {"opaque": 1}
+    assert result["statuses"]["units"][1]["nested"] == [
+        {"item": "unformalised", "path": "1", "reason": "opaque", "status": "UNFORMALISED"}]
+
+
 def test_explicit_checked_status_contradicts_a_nested_unformalised_kind(tmp_path):
     piece = ("Unit u2.\n", {"kind": UNFORMALISED_KINDS[0], "meaning": "specified", "support": "testimony",
                             "content": {"ast": SAFE}, "status": "CHECKED"})
