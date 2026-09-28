@@ -179,6 +179,9 @@ structure ReportDoc where
   profiles : List String
   /-- `environment_id(E)`, recomputed from the raw environment -/
   environmentId : String
+  /-- the rest of the W2 document: its other units (asserted, labelled), lemmas,
+  open terms, reading sets and narrowings, as the frozen W2 admission reads them -/
+  w2 : VE.Route.Admission.Doc
 
 def Occurs (D : ReportDoc) (x : Content) : Prop := ∃ u ∈ D.units, x ∈ u.content.nodes
 
@@ -316,7 +319,12 @@ def documentObject (D : ReportDoc) : CJson :=
       ("bridges", .a (D.bridges.map fun b => .o [("id", .str b.id), ("target", pathObject b.target),
         ("accepted_by", .str b.acceptedBy), ("reason", .a (b.reason.map .str))])),
       ("scoped", .a (D.«scoped».map fun s => .o [("id", .str s.id),
-        ("payloads", .a (s.payloads.map pathObject)), ("conclusion", .ast s.conclusion)]))])]
+        ("payloads", .a (s.payloads.map pathObject)), ("conclusion", .ast s.conclusion)])),
+      ("w2_units", .a (D.w2.units.map fun x => .o ([("id", .str x.id),
+        ("kind", .str (VE.Route.Admission.renderKind x.kind).compress)] ++
+        match x.content with
+        | some φ => [("content", .ast φ)]
+        | none => [])))])]
 
 def documentId (D : ReportDoc) : String :=
   match VE.CertificateWire.digest ("ve-reports-" ++ identityVersion D ++ "\n") (documentObject D).toJson with
@@ -626,6 +634,8 @@ def WellFormedReports (D : ReportDoc) : Bool :=
   decide (names D).Nodup &&
   D.lits.all (fun l => D.E.constants l == some VE.Route.Background.stringSort) &&
   D.«scoped».all (scopedOk D) &&
-  D.bridges.all (bridgeOk D)
+  D.bridges.all (bridgeOk D) &&
+  D.w2.units.all (fun x => !x.kind.quoted || x.content.isNone) &&
+  decide (D.units.map (·.id) ++ D.w2.units.map (·.id)).Nodup
 
 end VE.Reports
