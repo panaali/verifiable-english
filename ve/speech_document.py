@@ -19,7 +19,7 @@ from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
 from .speech_acts import (SpeechDocument, content_kind_ok, effective_scope, fixed_assertion_ids,
-                          formula_shape, latest_reading_sets, query_records)
+                          formula_shape, latest_reading_sets, query_records, _reading_choice)
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -61,8 +61,10 @@ def _reading_sets(env, sets, unit_ids):
                 or set(item) - {"id", "unit", "version", "status", "readings", "signature",
                                 "rejected_history", "models"}):
             raise VEError("invalid reading set")
+        if not token(item["id"]) or item["version"] < 1:
+            raise VEError("invalid or duplicate reading set version")
         key = item["id"], item["version"]
-        if not token(item["id"]) or item["version"] < 1 or key in seen:
+        if key in seen:
             raise VEError("invalid or duplicate reading set version")
         if item["unit"] not in unit_ids:  # W2's and the cores' text for a dangling unit
             raise VEError("invalid reading set unit or status")
@@ -80,6 +82,11 @@ def _reading_sets(env, sets, unit_ids):
             raise VEError("authored reading needs one signed choice")
         if item["status"] == "open" and "signature" in item:
             raise VEError("open reading set cannot have an author signature")
+        # References to sibling candidates are collected below. Validate every
+        # candidate id first, including candidates later in the list.
+        if any(type(reading) is not dict or not token(reading.get("id"))
+               for reading in item["readings"]):
+            raise VEError("invalid reading")
         ids = set()
         for reading in item["readings"]:
             if (type(reading) is not dict or set(reading) != {"id", "kind", "meaning_id", "content", "admission"}
@@ -170,7 +177,7 @@ class SpeechSource:
             kind = unit["kind"]
             if kind != "binding":
                 _check_kind(kind)
-            if unit["support"] not in SUPPORTS:
+            if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
                 raise VEError("invalid support")
             content = unit.get("content")
             if type(content) is dict and "fence" in content:
@@ -257,7 +264,11 @@ class SpeechSource:
         if text == "Which reading did you mean?":
             name = f"intended-reading.{uid}"
             term = next((t for t in self.open_terms if t["name"] == name), None)
-            if unit["meaning"] != {"open": [name]} or term is None or len(term["arguments"]) != 1:
+            effective = unit["meaning"]
+            latest = latest_reading_sets(sets).get(uid)
+            if latest is not None and latest["status"] == "authored":
+                effective = _reading_choice(unit, latest)["meaning"]
+            if effective != {"open": [name]} or term is None or len(term["arguments"]) != 1:
                 raise VEError(f"InvalidInput: invalid question fields for {uid}")
             return {"reading_set": (term["arguments"][0], term["version"])}
         for prefix, suffix in (("Does it follow from these premises that ", "?"),
