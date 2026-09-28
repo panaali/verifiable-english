@@ -388,7 +388,11 @@ W2's `content` may also be an English or strict fence; the English fence goes th
 yields the same command or question object (2.1); the fence's surface and the object are the same unit. A fence is read
 under the effective scope (1.1), computed by the document's own binding merge over its effective units, so a fenced and
 an unfenced source of one document agree; nothing else (a query record, a candidate asking about one) is checked out
-of its document context to compute that scope.
+of its document context to compute that scope. The source wrapper's own references are typed before they are resolved: a
+reading set whose `unit`, `version` or `status` is not of its type is the cores' `InvalidInput: reading sets on the
+speech-acts route need their unit, version and status`, one naming no unit `invalid reading set unit or status`, and a
+narrowing whose `set` is not a set id or whose `version` is not a version number (a Boolean included) is `invalid
+narrowing`, one citing no reading-set version `narrowing cites unknown reading set version`.
 
 **Binding units and P0.** The frozen P0 kind decoder (`lean/VE/Route/Admission.lean`, `atomicKind`) knows `instruction`
 and `question` but not `binding`, and no frozen file changes. `binding` units are therefore **withheld from P0
@@ -1642,6 +1646,7 @@ statements of section 8 are unchanged.
 | B, invalid reading-question candidates: a candidate naming a missing set (or, in Python, a numeric one) was accepted by both cores and counted R without its open term | 3.2, 4.1(4), 6: every reference is resolved and typed at decode time in both cores. A reading question, asked, quoted or a candidate, names a string set id at an existing version; a candidate of a latest version carries its derived open term; a chosen reading question means that open term. The conformance suite checks every reference-bearing field dangling and mistyped against one diagnostic in both checkers, which aligned command arguments (`UnknownSymbol`, `TypeMismatch: command args for <u>`), question sorts, query records (`InvalidInput: query`), binding checks before merging, formula fields (P0's type diagnostic in Lean too), quoted questions and dormant commands (single-unit checks, no addressee). |
 | B, fenced scope: `effective_scope()` built a binding-only document without its query records, so a fence beside an open binding whose candidate asks about `q1` raised `QueryMismatch: b` | 3.2: the effective scope is the document's own binding merge, with no partial document; fenced and unfenced sources agree, including when the record's premises are asserted units outside the bindings. |
 | B, untyped scope references: an addressee `sort` or `constant` of `[]` raised an uncaught `TypeError` in Python where Lean said `InvalidInput: speech_acts block`; numeric ones gave `UnknownSymbol` in Python | 3.1: every scope reference (addressee sort and constant, definite constants) is a name before it is resolved, and the block's structure and phrase checks precede resolution, in Lean's order, in both checkers. |
+| B, source references: a speech reading set's `unit: []` crashed `SpeechSource` although both cores reject it; a narrowing's `set: []` or `version: []` crashed and `version: true` was taken as version 1 | 3.2: the source wrapper types reading-set `unit`, `version` and `status` with the cores' diagnostic (and a dangling unit with theirs) before W2's checks, and W2's narrowing check requires a set id and a version number, a Boolean excluded (`invalid narrowing`). |
 
 ## Change log
 
