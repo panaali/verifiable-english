@@ -967,6 +967,11 @@ and path), `scoped_checks` (with inner status and environment), `literal_quotati
 `unreviewed_acts` (units whose act is outside the slice, by act). Counting is by the plan's accounting gate; this
 specification predicts no number.
 
+A root `unformalised(reason)` kind requires an `unformalised` meaning with that
+same reason (`InvalidInput` otherwise). Coverage counts the matching root
+reason once. Each nested `unformalised` kind contributes its own reason and
+residual entry, including when its reason differs from the unit meaning.
+
 ## 7. The report
 
 ### 7.1 The five questions
