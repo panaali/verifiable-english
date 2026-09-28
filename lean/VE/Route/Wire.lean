@@ -8,6 +8,7 @@ import VE.Definitions.Elaborate
 import VE.Route.Budget
 import VE.Route.Decode
 import VE.Route.Flags
+import VE.Route.Steps
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -511,6 +512,7 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
+  if Steps.fol certificate.trace > Steps.maxSteps then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),
     ("background", toJson background.length)]
 
@@ -550,6 +552,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
+  if Steps.closure certificate.trace > Steps.maxSteps then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
       (background.map VE.Closure.embed ++ ps) c certificate)),
     ("background", toJson background.length)]
@@ -612,6 +615,7 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     ((Background.literals rv.literals).map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
+  if Steps.order certificate.trace > Steps.maxSteps then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
     ("background", toJson background.length)]
 

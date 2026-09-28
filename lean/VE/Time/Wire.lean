@@ -620,8 +620,8 @@ def decodeW6Certificate (j : Json) : Except String W6Certificate :=
   | .error e => .error s!"Invalid quantity certificate: {e}"
 
 /-- The problem's static limits, the outer binding to the annotated statements,
-the inner binding to their regenerated core problem, then the frozen order
-replay. Documents check lemmas and graph edges here, so an oversized problem is
+the inner binding to their regenerated core problem, the replay's 10,000 steps
+(`VE.Route.Steps`), then the frozen order replay. Documents check lemmas and graph edges here, so an oversized problem is
 never established there either. -/
 def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
     (cert : W6Certificate) : Except String Bool :=
@@ -633,6 +633,8 @@ def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
       cert.core.premise_meaning_ids == ps.map (·.coreId) &&
       cert.core.conclusion_meaning_id == c.coreId) then
     .error "core certificate is stale or bound to a different regenerated problem"
+  else if VE.Route.Steps.order cert.core.trace > VE.Route.Steps.maxSteps then
+    .error VE.Route.Steps.stepLimit
   else .ok (VE.Order.Tableau.checkCertificate w.vocab.core.environment (ps.map (·.formula.erase))
     c.formula.erase cert.core)
 
@@ -654,7 +656,9 @@ theorem checkW6Certificate_sound {w : W6Env} (ps : List (Admission w)) (c : Admi
   · rename_i hb
     split at h
     · cases h
-    · simp only [Bool.not_eq_true', Bool.not_eq_false, Bool.and_eq_true, beq_iff_eq] at hb
+    · split at h
+      · cases h
+      simp only [Bool.not_eq_true', Bool.not_eq_false, Bool.and_eq_true, beq_iff_eq] at hb
       have hv := Except.ok.inj h
       refine ⟨hb.1.1, hb.1.2, hb.2, ?_⟩
       have hent := VE.Order.Tableau.checkCertificate_sound.{v} _ _ _ _ hv
