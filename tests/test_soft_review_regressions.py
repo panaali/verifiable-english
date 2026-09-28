@@ -175,7 +175,7 @@ def test_reported_diagnostic_codes(raw, rules, code):
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 112
+    assert compare_rejected() == 1122
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),

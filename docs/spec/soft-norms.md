@@ -743,7 +743,10 @@ and malformed-input diagnostics on the soft route.
 | `SOFT_INVALID_INPUT` | Other invalid input, including inherited W1 checks. |
 
 The code table is ordered: where several descriptions apply to a rejection,
-the first applicable class wins. Classification uses the diagnostic origin,
+the first applicable class wins. Within the soft block, validate parties, ranks,
+outranking and its decider, exception decider, outranks, then ties; validate
+exception deciders before exception condition arrays and factors. This order
+also applies when an input has multiple faults. Classification uses the diagnostic origin,
 not substrings supplied in a name or other input. New soft rejection paths
 must be assigned a specific code or intentionally use `SOFT_INVALID_INPUT`
 in both validators. A malformed `instruction_of` value uses

@@ -44,21 +44,42 @@ def stripSoft (environment : Json) : Except String Json := do
 
 def invalidBlock : String := "InvalidInput: invalid soft block"
 
-def softNameOf (j : Json) : Except String String :=
-  match j with
-  | .str s => pure s
-  | _ => throw s!"InvalidInput: invalid soft name {j.compress}"
+def listField (j : Json) (k : String) : Except String (List Json) :=
+  match j.getObjVal? k with
+  | .error _ => pure []
+  | .ok (.arr xs) => pure xs.toList
+  | .ok _ => throw s!"InvalidInput: {k} must be an array"
+
+def softNames (j : Json) (field : String) (limit : Nat) : Except String (List String) := do
+  let values ← listField j field
+  if values.length > limit then throw s!"ResourceLimit: {field}"
+  let mut names := []
+  for value in values do
+    let name ← match value with
+      | .str s => pure s
+      | _ => throw s!"InvalidInput: invalid soft name {value.compress}"
+    unless validSoftName name do throw s!"InvalidInput: invalid soft name {name}"
+    if names.contains name then
+      throw s!"DuplicateDeclaration: {if field == "parties" then "party" else "rank"} {name}"
+    names := names ++ [name]
+  pure names
 
 def pairOf (field : String) (j : Json) : Except String (String × String) := do
   match j with
   | .arr #[.str a, .str b] => pure (a, b)
   | _ => throw s!"InvalidInput: invalid {field} pair"
 
-def listField (j : Json) (k : String) : Except String (List Json) :=
-  match j.getObjVal? k with
-  | .error _ => pure []
-  | .ok (.arr xs) => pure xs.toList
-  | .ok _ => throw s!"InvalidInput: {k} must be an array"
+def softPairs (j : Json) (field : String) (ranks : List String) : Except String (List (String × String)) := do
+  let values ← listField j field
+  let mut pairs := []
+  for value in values do
+    let pair ← pairOf field value
+    for name in [pair.1, pair.2] do
+      unless ranks.contains name do throw s!"UnknownRank: {name}"
+    if pair.1 == pair.2 || pairs.contains pair then
+      throw s!"InvalidInput: invalid {field} pair"
+    pairs := pairs ++ [pair]
+  pure pairs
 
 /-- The environment `soft` block (3.1); absent means no parties, ranks or deciders. -/
 def decodeSoftBlock (vocab : Json) (instructionOf : List (String × String)) : Except String SoftEnv := do
@@ -68,10 +89,8 @@ def decodeSoftBlock (vocab : Json) (instructionOf : List (String × String)) : E
     match VE.Bridge.displayFields s ["outranking"] ["parties", "ranks", "outranks", "ties", "exception_decider"] with
     | .ok () => pure ()
     | .error _ => throw invalidBlock
-    let parties ← (← listField s "parties").mapM softNameOf
-    let ranks ← (← listField s "ranks").mapM softNameOf
-    let outranks ← (← listField s "outranks").mapM (pairOf "outranks")
-    let ties ← (← listField s "ties").mapM (pairOf "ties")
+    let parties ← softNames s "parties" 8
+    let ranks ← softNames s "ranks" 16
     let o := s.getObjValD "outranking"
     match VE.Bridge.displayFields o ["mode"] ["decided_by"] with
     | .ok () => pure ()
@@ -86,11 +105,24 @@ def decodeSoftBlock (vocab : Json) (instructionOf : List (String × String)) : E
       | .error _ => pure none
       | .ok (.str d) => pure (some d)
       | .ok _ => throw "InvalidInput: invalid decider for outranking"
+    if mode == .holistic && decider.isNone then throw "MissingExceptionDecider: outranking"
+    for d in decider.toList do
+      if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for outranking"
     let exceptionDecider ← match s.getObjVal? "exception_decider" with
       | .error _ => pure none
       | .ok (.str d) => pure (some d)
       | .ok _ => throw "InvalidInput: invalid decider for exception"
-    pure ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, instructionOf⟩
+    for d in exceptionDecider.toList do
+      if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for exception"
+    let outranks ← softPairs s "outranks" ranks
+    let ties ← softPairs s "ties" ranks
+    let soft : SoftEnv := ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, instructionOf⟩
+    if let .error e := VE.Route.dependencyOrder (rankNodes soft) then throw e
+    for (a, b) in ties do
+      if outranksPlus soft a b || outranksPlus soft b a then throw s!"TieAgainstOrder: {a}, {b}"
+    if (ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != ties.length then
+      throw "DuplicateDeclaration: tie"
+    pure soft
 
 /-- A decoded soft environment: W1's decoding of the stripped environment, the soft block and
 the original JSON with its original profiles. -/
@@ -110,22 +142,29 @@ def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment :
   unless profiles.contains "norms@0" do throw "UnsupportedProfile: soft-norms@0 requires norms@0"
   let vocab ← environment.getObjVal? "vocabulary"
   let preds ← fields (← vocab.getObjVal? "predicates")
-  for (p, _) in preds do
-    if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
-  let io ← preds.filterMapM fun (p, e) => match e.getObjVal? "instruction_of" with
-    | .error _ => pure none
-    | .ok (.str π) => pure (some (p, π))
+  let soft ← decodeSoftBlock vocab []
+  let mut io := []
+  for (p, e) in preds do
+    match e.getObjVal? "instruction_of" with
+    | .error _ => pure ()
+    | .ok (.str π) =>
+      unless soft.parties.contains π do throw s!"UnknownSymbol: party {π}"
+      if (e.getObjVal? "regulated").toBool || (e.getObjVal? "defined").toBool then
+        throw s!"InvalidInput: instruction_of on {p}"
+      io := io ++ [(p, π)]
     | .ok _ => throw s!"InvalidInput: instruction_of on {p}"
-  let soft ← decodeSoftBlock vocab io
+    if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
+    if containsDunder p && (e.getObjVal? "regulated").toBool then
+      throw s!"InvalidInput: invalid soft name {p}"
   let ne ← Norms.Wire.decodeNormsEnvironment (← stripSoft environment)
-  pure ⟨ne, soft, profiles, environment⟩
+  pure ⟨ne, { soft with instructionOf := io }, profiles, environment⟩
 
 /-! ## Norm objects (3.2) -/
 
 def w1Keys : List String := ["name", "predicate", "sign", "guard", "unless", "over"]
 def softKeys : List String := ["mode", "rank", "alterable", "exception", "hard"]
 
-def decodeException (name : String) (j : Json) : Except String Exception := do
+def decodeException (soft : SoftEnv) (name : String) (j : Json) : Except String Exception := do
   match j with
   | .obj _ => pure ()
   | _ => throw s!"InvalidInput: rule {name} needs an exception"
@@ -139,17 +178,24 @@ def decodeException (name : String) (j : Json) : Except String Exception := do
     | .error _ | .ok .null => pure none
     | .ok (.str s) => pure (some s)
     | .ok _ => throw s!"InvalidInput: invalid decider for rule {name}"
+  if decidedBy.isNone && soft.exceptionDecider.isNone then
+    throw s!"MissingExceptionDecider: rule {name}"
+  for d in decidedBy.toList do
+    if d.isEmpty || d.utf8ByteSize > 64 then
+      throw s!"InvalidInput: invalid decider for rule {name}"
   let formulas (k : String) : Except String (List VE.Formula) := do
     match j.getObjVal? k with
     | .error _ => pure []
     | .ok (.arr xs) => xs.toList.mapM (VE.Bridge.decodeFormula 64)
     | .ok _ => throw s!"InvalidInput: exception {k} must be an array"
+  let sufficient ← formulas "sufficient"
+  let necessary ← formulas "necessary"
   let factors ← match j.getObjVal? "factors" with
     | .error _ => throw s!"InvalidInput: rule {name} needs an exception"
     | .ok v => match strings v with
       | .ok fs => pure fs
       | .error _ => throw s!"InvalidInput: invalid factors of rule {name}"
-  pure ⟨decidedBy, ← formulas "sufficient", ← formulas "necessary", factors⟩
+  pure ⟨decidedBy, sufficient, necessary, factors⟩
 
 /-- One soft norm object; `mode` defaults to `strict`, so every `norms@0` object decodes
 with unchanged meaning. -/
@@ -191,7 +237,7 @@ def decodeSoftNorm (soft : SoftEnv) (j : Json) : Except String SoftNode := do
     | .ok e => do
       if mode == .strict then
         throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
-      some <$> decodeException N.name e
+      some <$> decodeException soft N.name e
   pure { N with mode, rank, alterable, exception, hard }
 
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
