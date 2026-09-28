@@ -213,15 +213,12 @@ impl<'a> Models<'a> {
         // matching Python's lexicographic product of subset masks when all are used.
         for p in self.used.iter().rev() {
             let sig = &self.env.predicates[p];
-            for i in 0..sizes[&sig[0]] {
-                if sig.len() == 1 {
-                    self.atoms.push((p.clone(), vec![format!("e{i}")]));
-                } else {
-                    for j in 0..sizes[&sig[1]] {
-                        self.atoms
-                            .push((p.clone(), vec![format!("e{i}"), format!("e{j}")]));
-                    }
-                }
+            let limits: Vec<_> = sig.iter().map(|s| sizes[s]).collect();
+            if limits.contains(&0) { continue; }
+            let mut indices = vec![0; sig.len()];
+            loop {
+                self.atoms.push((p.clone(), indices.iter().map(|i| format!("e{i}")).collect()));
+                if !increment(&mut indices, &vec![0; sig.len()], &limits) { break; }
             }
         }
         self.bits = vec![false; self.atoms.len()];

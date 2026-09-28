@@ -201,3 +201,14 @@ def test_distinguishing_adapter_preserves_witness_and_counts(monkeypatch, a, b, 
         monkeypatch.setenv("VE_AUTHORITY", authority)
         assert find_distinguishing_model(env, a, b, max_domain_size=1,
                                          **options).to_dict() == expected.to_dict()
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+def test_nary_search_matches_stage0_probe(monkeypatch):
+    from tests.probe_matrix import model_wire, operation, raw_environment
+    env = Environment(raw_environment(("closure@0", "nary@0")))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = operation("countermodel_search", "positive", env, model)().to_dict()
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert operation("countermodel_search", "positive", env, model)().to_dict() == expected
