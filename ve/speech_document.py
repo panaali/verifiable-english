@@ -19,7 +19,7 @@ from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
 from .speech_acts import (SpeechDocument, content_kind_ok, effective_scope, fixed_assertion_ids,
-                          formula_shape, latest_reading_sets, query_records, _reading_choice)
+                          formula_shape, latest_reading_sets, query_records, surface_kind, _reading_choice)
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -199,6 +199,14 @@ class SpeechSource:
         self.reading_sets = sets
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
+        latest = latest_reading_sets(sets)
+        for unit in self.units:
+            chosen = latest.get(unit["id"])
+            if chosen is not None and chosen["status"] == "authored":
+                wording = (fences[unit["id"]] if type(unit["content"]) is dict and "fence" in unit["content"]
+                           else source[unit["span"][0]:unit["span"][1]].decode("utf-8"))
+                if chosen["readings"][0]["kind"] != surface_kind(self.env, wording):
+                    raise VEError("InvalidInput: choice kind")
         # 1.1: a fence is read under the effective scope, so a phrase or "you" an
         # authored binding supplies reads as if the block declared it.  The scope is
         # the document's own merge, so a fenced and an unfenced source agree.
@@ -208,13 +216,12 @@ class SpeechSource:
         if fenced:
             from .speech_english import parse_speech
             scope = effective_scope(self.env, self.units, sets)
-            latest = latest_reading_sets(sets)
             for unit in fenced:
                 text = fences[unit["id"]].strip()
                 reading_set = latest.get(unit["id"])
-                effective_kind = (_reading_choice(unit, reading_set)["kind"]
-                                  if reading_set is not None and reading_set["status"] == "authored"
-                                  else unit["kind"])
+                if reading_set is not None and reading_set["status"] == "authored":
+                    continue
+                effective_kind = unit["kind"]
                 if effective_kind == "asserted":
                     from .ast import _to_data
                     from .speech_english import _sentence
@@ -228,7 +235,25 @@ class SpeechSource:
                 unit["content"] = ({"ast": parsed} if parsed_kind == "asserted" else
                                    {"command" if parsed_kind == "instruction" else "question": parsed})
         self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)
-        latest = latest_reading_sets(sets)
+        from .identity import meaning_id
+        from .speech_acts import _formula
+        from .norms import NormDocument, norm_meaning_id
+        for unit in self.units:
+            if "meaning_id" not in unit:
+                continue
+            uid = unit["id"]
+            expected = self.document.meaning_ids.get(uid)
+            if expected is None:
+                effective = next(u for u in self.document._effective if u["id"] == uid)
+                content = effective.get("content")
+                if type(content) is dict and set(content) == {"ast"}:
+                    expected = meaning_id(self.document.env, _formula(self.document.env, content["ast"]))
+                elif type(content) is list:
+                    expected = meaning_id(self.document.env, _formula(self.document.env, content))
+                elif type(content) is dict and set(content) == {"norm"}:
+                    expected = norm_meaning_id(self.document.env, NormDocument._decode(content))
+            if unit["meaning_id"] != expected:
+                raise VEError("unit meaning id does not match content")
         for unit in self.units:
             if unit.get("status") not in (None, _w2_status(unit, latest.get(unit["id"]))):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
@@ -308,6 +333,8 @@ class SpeechSource:
                 raise VEError("InvalidInput: answer record")
             if "conditional" in record and type(record["conditional"]) is not bool:
                 raise VEError("InvalidInput: conditional")
+            if type(record["by"]) is not str or not token(record["by"]):
+                raise VEError("InvalidInput: answer record")
             uid = record["question"]
             if type(uid) is not str:
                 raise VEError("InvalidInput: answer record")
@@ -329,20 +356,20 @@ class SpeechSource:
                 if question.mode == "which_one":
                     if type(answer) is not dict or set(answer) != {"one"}:
                         raise VEError(f"AnswerOutsideDomain: {uid}, {answer}")
-                    token = answer["one"]
+                    answer_token = answer["one"]
                 elif question.mode == "which_all":
                     if type(answer) is not dict or set(answer) != {"all"} or type(answer["all"]) is not list:
                         raise VEError(f"AnswerOutsideDomain: {uid}, {answer}")
-                    token = tuple(answer["all"])
+                    answer_token = tuple(answer["all"])
                 else:
-                    token = answer
+                    answer_token = answer
                 if support == "certificate" and set(record["evidence"]) == {"certificate"}:
                     line = self.document.check_answer_certificate(
-                        question, token, record["evidence"]["certificate"],
+                        question, answer_token, record["evidence"]["certificate"],
                         conditional=record.get("conditional", False))
                 elif support == "model" and set(record["evidence"]) == {"model"}:
                     line = self.document.evaluate_answer_model(
-                        question, token, record["evidence"]["model"])
+                        question, answer_token, record["evidence"]["model"])
                 else:
                     raise VEError(f"AnswerMismatch: {uid}")
             else:
