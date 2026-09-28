@@ -19,6 +19,8 @@ from .wire import digest
 _TOKEN = re.compile(r"[A-Za-z0-9_.-]{1,64}\Z", re.ASCII)
 _PHRASE = re.compile(r"the [A-Za-z][A-Za-z'-]*(?: [A-Za-z][A-Za-z'-]*)*\Z", re.ASCII)
 _ALLOWED = {"relational-fol@0", "norms@0", "speech-acts@0"}
+# The proof-task act of 1.4, in a phrase W1's frozen act linter accepts.
+PROOF_TASK_ACT = "{0} submit a proof of {1}"
 
 
 def validate_scope(raw, sorts, constants, predicates):

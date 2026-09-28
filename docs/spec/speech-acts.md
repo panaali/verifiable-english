@@ -153,10 +153,12 @@ regenerated from the document at every site and compared (`QueryMismatch` on dis
 query is `Background(E) ++ elaborate(policy(D)) ++ B_q` (4.6). The target is never added to `B_q`; if the target is
 itself an earlier asserted unit, the report says so (`TrivialQuery`, a warning) and the task stands.
 
-A proof task ("Prove that ... using these premises.") is a **command** on the declared act `{0} submit a certificate for
+A proof task ("Prove that ... using these premises.") is a **command** on the declared act `{0} submit a proof of
 {1}` whose second slot has the sort `query` and is bound to the query's constant (the query id is declared as a constant
 of that sort in E). It is the one act whose completion the checker itself can witness: a replayed certificate for exactly
 `(B_q, P)` is compliance evidence of kind `certificate` (5.4). It establishes certificate validity, not understanding.
+The phrase passes W1's frozen act linter unchanged (norms.md 3.1: `for` is a reserved word, so the earlier
+`{0} submit a certificate for {1}` was rejected by every checker); no route relaxes that linter (16).
 
 ### 1.5 Active and dormant units; what supplies a premise
 
@@ -211,7 +213,7 @@ copular predicate wording `{0} is <rest>`; `<sentence>` is any closed sentence o
 | `Which of <A>, <B>[, <C>...] and <Z> are <rest>?` | Asks for the complete list of these named alternatives that are `<rest>`; "none" is a possible answer; nothing is presupposed about anything not named. | which_all, `H = ⊤` |
 | `Which one of <A>, ... and <Z> is <rest>?` | Asks which single named alternative is `<rest>`; that exactly one is, is presupposed and shown in the residual. | which_one, `H` = exactly one |
 | `Does it follow from these premises that <sentence>?` | Asks whether the sentence follows from the premises above; the answer is a checked proof, a checked counter-situation, or "not established". | follows over query `(B_q, P)` |
-| `Prove that <sentence> using these premises.` | In this task, you are required to submit an accepted proof of the sentence from the premises above. The task may be impossible. | command on `{0} submit a certificate for {1}` |
+| `Prove that <sentence> using these premises.` | In this task, you are required to submit an accepted proof of the sentence from the premises above. The task may be impossible. | command on `{0} submit a proof of {1}` |
 | `Which reading did you mean?` (after a reading set) | Asks the addressee which of the displayed readings, at the displayed version, was intended; the reply is testimony. | reading over `(set, version)` |
 | `Answer question <n>.` | In this task, you are required to answer that question. | command on `{0} answer {1}` with the question's constant |
 
@@ -277,7 +279,7 @@ for a question with no answer record, "no answer has been given". For a proof ta
                                    "regulated": {"role": "permission", "default": "allow", "act": "{0} share {1}"}},
                "submit_required": {"arguments": ["user", "query"], "description": "...",
                                    "regulated": {"role": "obligation", "default": "deny",
-                                                 "act": "{0} submit a certificate for {1}",
+                                                 "act": "{0} submit a proof of {1}",
                                                  "permission": "submit_permitted"}}, ...}
 ```
 
@@ -1404,7 +1406,7 @@ path is Lean).
    both paths, UNKNOWN, `support_exclusive`, `support_exclusive_one`, P0's three-way premise status and the derived
    vacuity (5.3); `countermodel_not_negative` with its premise-model hypothesis.
 5. Consequence questions (4.6): exactly `follows`, `gap`, `unresolved`; `refuted` not imported; proof tasks as commands
-   on the `submit a certificate` act with `QueryMismatch`, their meaning bound to the query's premise and target
+   on the `submit a proof` act with `QueryMismatch`, their meaning bound to the query's premise and target
    meaning ids (3.5), and acceptance as compliance evidence only (no premise, no leaf, no `done` fact); reading
    nominations as testimony narrowings and the `intended-reading.<u>` open term in W2's frozen schema (empty
    closed-formula condition lists, the criteria as factors, the display label `intended-reading:<set>@<v>`).
@@ -1524,6 +1526,16 @@ items 2 to 4 start.
 |---|---|
 | `source_retained` required `Wire.encodeReadingSets src.readingSets` to reproduce the `reading_sets` front-matter field exactly, but W2 (`ve/readings.py`) accepts both an omitted `models` field and `"models": {}` for a singleton reading; both decode to `models = []` in `SpeechReadingSet`, no field keeps the distinction, and the encoder receives no retained metadata, so it cannot reproduce both originals | 8.5: the theorem is restated without re-encoding. Its first conjunct already retains the `reading_sets` and `narrowings` front-matter fields byte for byte inside `src.metadata` (W2's identity payload keeps every front-matter key but `weights`), optional fields with their presence; the second and third conjuncts now say that the structured `readingSets` and `narrowings` are exactly `Wire.decodeReadingSets` and `Wire.decodeNarrowings` of those fields (`Wire.readingSetsJson`, `Wire.narrowingsJson`, `[]` when omitted as W2 reads them), every set version and every narrowing, no projection. `Wire.encodeReadingSets` and `Wire.encodeNarrowings` are withdrawn; the `models` and `rejectedHistory` comments record the normalisation. No structure, definition or other theorem changes. |
 
+## 16. Implementation review response table (draft 5)
+
+Source: `manage-agents/speech-acts-looprecheck1.final.md`, the recheck of the merged Python and Lean routes against
+the Fable and Astra implementation reviews. Each row is a spec-level correction the implementations now share; the
+statements of section 8 are unchanged.
+
+| Finding | Change in this draft |
+|---|---|
+| A, proof wording: the act `{0} submit a certificate for {1}` fails W1's frozen act linter (`for` is reserved), and the Python checker had been given a route-only exception | 1.4, 2.1, 3.1, 11.5 and the plan: the act is `{0} submit a proof of {1}`; the linter is W1's, unchanged, in Python and Lean. |
+
 ## Change log
 
 | Date | Revision | Changes |
@@ -1532,3 +1544,4 @@ items 2 to 4 start.
 | 2026-09-28 | Draft 2 | The converged statement-review edit list applied as written (section 13): `countermodel_not_negative` hypotheses; `demand_conflict` split with `AgreesBelow`; regulated declarations in the core, decoded-source wrapper, `AppliesD` and `norms_route_acceptance` signatures, typed binders; no `done_submit` premise or leaf; proof-task identity over the query's meaning ids; P0 premise status on every certificate line; equality-guarded permission rewrite and no two-command rewrite; `intended-reading` open term and class O; profile allowlist with `soft-norms@0` rejected; `binding` units withheld from P0; `inst`, `DecidableEq`, `pinnedAsserted`, `trivialQuery`, `support_exclusive_one`; 1.5 attributed to W2's readings query; fixtures ζ, η, μ, ν, ρ, τ, υ, φ, ψ, αα; 11.11 resolved; 12.15, 12.16. Spec only. |
 | 2026-09-28 | Draft 3 | The two edits the verification pass found incomplete (section 14): Astra 3, `SpeechSource` retains W2's identity payload (metadata, source, fences), structured open terms, reading sets with speech candidates, narrowings and lemmas, with `identityPayload`, `documentId` and `source_retained`; Astra 8, the `intended-reading` open term encoded in W2's frozen schema (token name `intended-reading.<u>`, display label `intended-reading:<set>@<version>`, empty closed-formula condition lists, criteria as factors, derived declaration and `open` meaning). Sections 1.3, 3.2, 3.5, 4.1, 4.6, 5.5, 6, 7, 8.1, 8.5, 10, 11, 12.7, fixtures ν, ψ, ω. Spec only; no other change. |
 | 2026-09-28 | Draft 4 | The one defect of the second verification pass (section 15): `source_retained` restated over the front-matter fields the identity payload retains verbatim, the structured reading sets and narrowings as their decoding, `Wire.encodeReadingSets` and `Wire.encodeNarrowings` withdrawn; the `models` and `rejectedHistory` comments. Section 8.5 and the status header only. Spec only; no other change. |
+| 2026-09-28 | Draft 5 | Implementation review corrections (section 16): the proof-task act phrase passes W1's frozen linter. |

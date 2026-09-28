@@ -289,11 +289,11 @@ def test_proof_task_identity_binds_query_target_and_certificate():
     raw["vocabulary"]["predicates"].update({
         "submit_required": {"arguments": ["user", "query"], "description": "submit",
                             "regulated": {"role": "obligation", "default": "deny",
-                                          "act": "{0} submit a certificate for {1}",
+                                          "act": "{0} submit a proof of {1}",
                                           "permission": "submit_permitted"}},
         "submit_permitted": {"arguments": ["user", "query"], "description": "submit",
                              "regulated": {"role": "permission", "default": "allow",
-                                           "act": "{0} submit a certificate for {1}"}},
+                                           "act": "{0} submit a proof of {1}"}},
         "done_submit": {"arguments": ["user", "query"], "description": "submitted"},
     })
     env = Environment(raw)

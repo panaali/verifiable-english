@@ -15,8 +15,10 @@ import pytest
 
 from ve.ast import _to_data
 from ve.environment import Environment
+from ve.errors import VEError
 from ve.speech_acts import SpeechDocument
 from ve.speech_document import load_speech_document
+from ve.speech_english import parse_speech
 
 from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run1, unit, which
 
@@ -159,6 +161,28 @@ def test_xi_eta_source_to_answer_end_to_end(rust, lean, tmp_path):
                  "model_id": "same-model"})["answer"] == "evaluated yes in model same-model (this situation only)"
     assert rust_values(rust, env, [U("reviewed", "atlas")],
                        source.document.complete_model(base_model).to_dict()) == [True]
+
+
+def test_proof_task_wording_uses_an_act_both_linters_accept(lean):
+    # Regression: Python once exempted `{0} submit a certificate for {1}` from W1's act linter,
+    # so every Python proof task named an environment the Lean route rejected.
+    env = F0()
+    env["vocabulary"]["predicates"]["cat"]["verbalisation"] = "{0} is a cat"
+    for name in ("submit_required", "submit_permitted"):
+        rejected = copy.deepcopy(env)
+        rejected["vocabulary"]["predicates"][name]["regulated"]["act"] = "{0} submit a certificate for {1}"
+        with pytest.raises(VEError, match=f"invalid act phrase for {name}"):
+            Environment(rejected)
+        lean_error = run1({"id": "act", "kind": "speech-elaborate", "environment": rejected,
+                           "document": {"units": []}})["error"]
+        assert "invalid act phrase" in lean_error
+    e = Environment(env)
+    content, kind = parse_speech(e, "Prove that tom is a cat using these premises.", e.speech_acts, query="q1")
+    assert (kind, content["act"], content["args"]) == ("instruction", "submit_required", ["q1"])
+    document = {"units": [unit("u1", 0, "asserted", {"ast": U("cat", "tom")}), unit("u2", 1, kind, {"command": content})],
+                "queries": [{"id": "q1", "premises": ["u1"], "target": {"ast": U("cat", "tom")}}]}
+    assert len(elaborate(env, document)["commands"]) == 1
+    assert len(core(env, document).commands) == 1
 
 
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):

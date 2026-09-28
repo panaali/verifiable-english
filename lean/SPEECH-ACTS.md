@@ -87,9 +87,9 @@ pairs, JSON object lookup after insertion, the `ULift` lift) audited with the sa
 * **Scope block placement.** `speech_acts` is a top-level field of the environment object, beside
   `vocabulary`: `scope_in_identity` reads it with `b.getObjVal? "speech_acts"` on the canonical environment.
   3.1's excerpt shows it beside `predicates`; the Python side must use the same placement.
-* **Proof-task act phrase.** 1.4's act `{0} submit a certificate for {1}` is rejected by W1's frozen act-phrase
-  linter (`for` is reserved; `VE.Norms.Wire.actReserved`, Python `ve/environment.py` `RESERVED`). The tests use
-  `{0} submit a proof of {1}`. The spec needs a phrase W1 accepts.
+* **Proof-task act phrase.** Resolved in spec draft 5 (16): 1.4's act is `{0} submit a proof of {1}`, which
+  W1's frozen act-phrase linter accepts (`for` is reserved; `VE.Norms.Wire.actReserved`, Python
+  `ve/environment.py` `RESERVED`); neither checker relaxes the linter.
 * **Wording-level checks.** `ModeMismatch` needs the English wording (plan item 3); query targets are read
   from the stored records, whose premise ids are compared with the earlier asserted units (`QueryMismatch`).
 * **Diagnostics without fixed text in section 7.** A command whose argument count or sorts do not fit is
