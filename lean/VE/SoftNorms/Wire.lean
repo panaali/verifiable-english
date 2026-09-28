@@ -186,10 +186,12 @@ def decodeException (se : SoftEnvironment) (predicate name : String) (j : Json) 
   let formulas (k : String) : Except String (List VE.Formula) := do
     match j.getObjVal? k with
     | .error _ => pure []
-    | .ok (.arr xs) => xs.toList.mapM fun value => do
+    | .ok (.arr xs) => do
+      let some sorts := se.ne.rv.environment.predicates predicate
+        | throw s!"predicate {predicate}"
+      xs.toList.mapM fun value => do
         let C ← VE.Bridge.decodeFormula 64 value
-        let context := ((se.ne.rv.environment.predicates predicate).getD []).reverse
-        typeDiagnostic se.ne.rv.environment context C
+        typeDiagnostic se.ne.rv.environment sorts.reverse C
         if let some q := (preds C).find? (fun q =>
             (se.ne.regulated.map (·.name)).contains q ||
             (se.ne.rv.definitions.map (·.name)).contains q || reservedPredicate q) then
