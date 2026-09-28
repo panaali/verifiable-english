@@ -1,12 +1,11 @@
 """W6a admission regression cases: identity, exact grid, dates, and counting."""
-from copy import deepcopy
 from datetime import date, timedelta
 
 import pytest
 
 from ve import ast
 from ve.environment import Environment
-from ve.errors import ResourceLimit, UnsupportedProfile, VEError
+from ve.errors import UnsupportedProfile, VEError
 from ve.surface.count import at_least, exactly, n_of_m
 from ve.units import day_number, elaborate_quantity, quantity_meaning_id, render_coordinate
 
@@ -59,6 +58,10 @@ def test_exact_decimal_and_identity_binds_tags():
         elaborate_quantity(env, quantity(["eq", ["decimal", "bp", "3.75"],
                                           ["num", "bp", "375"]],
                                          Q=["eq", ["num", "bp", "376"], ["num", "bp", "375"]]))
+    implicit, _ = elaborate_quantity(env, quantity(["eq", ["num", "375"], ["num", "375"]]))
+    explicit, _ = elaborate_quantity(env, quantity(["eq", ["num", "dimensionless", "375"],
+                                                    ["num", "dimensionless", "375"]]))
+    assert implicit == explicit
     changed = environment()
     changed["units"]["unused"] = {"scale": "1", "display": {"kind": "decimal", "label": "unused"}}
     assert Environment(changed).environment_id != env.environment_id
@@ -73,6 +76,11 @@ def test_declaration_rejections_and_slot_tags():
             Environment(raw)
     raw = environment()
     raw["units"]["other"] = {"scale": "100", "display": {"kind": "percent"}}
+    with pytest.raises(VEError, match="DisplayCollision"):
+        Environment(raw)
+    raw = environment()
+    raw["units"]["label"] = {"scale": "100", "display": {"kind": "decimal", "label": "USD",
+                                                               "placement": "prefix"}}
     with pytest.raises(VEError, match="DisplayCollision"):
         Environment(raw)
     env = Environment(environment())
