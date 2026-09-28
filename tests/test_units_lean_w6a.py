@@ -54,19 +54,9 @@ def news():
     return json.loads(FIXTURE.read_text())
 
 
-NEWS_VALUES = {"decision_date": "20712", "new_target_lower": "375", "new_target_upper": "400",
-               "pce_september_estimate": "370", "pce_june_estimate": "360", "target_rate": "200",
-               "first_projected_target_year": "2029", "growth_old_projection": "220",
-               "growth_new_projection": "230", "unemployment_old_projection": "430",
-               "unemployment_new_projection": "410", "projected_lower_2026": "400",
-               "projected_upper_2026": "425", "projected_year_2026": "2026",
-               "projected_year_2027": "2027", "goal_rate": "200"}
-
-
 def news_model(raw):
-    constants = raw["vocabulary"]["constants"]
-    return {"complete": True, "domains": {}, "relations": {},
-            "constants": {k: NEWS_VALUES[k] for k in constants}}
+    """The fixture's non-vacuity model."""
+    return copy.deepcopy(news()["model"])
 
 
 # --- Admission, regeneration and identities --------------------------------

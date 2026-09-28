@@ -1,7 +1,7 @@
 {
   "format": "ve-w6a-fixtures@1",
   "source_sha256": "b905818ecbc38c479a273d1503430745d1f2c9697215752572922ccedd73545b",
-  "status": "regenerated-only; no W6 Lean admission or English fidelity claim",
+  "status": "Lean-admitted numeric spine: each case has a controlled wording that round-trips, each consequence has a Lean-checked ve-quantity-certificate@1 over its cited cases, and the model shows the cases jointly satisfiable. Source facts are assumption/testimony leaves; document admission of these units remains open.",
   "environment": {
     "language": "ve.core@0.2",
     "profiles": ["order@0", "relational-fol@0", "time@0"],
@@ -10,17 +10,23 @@
       "sorts": {},
       "predicates": {},
       "constants": {
-        "decision_date": {"sort": "$int", "unit": "day", "description": "date of the reported Fed decision"},
-        "new_target_lower": {"sort": "$int", "unit": "bp", "description": "lower endpoint of the new target rate range in S2"},
-        "new_target_upper": {"sort": "$int", "unit": "bp", "description": "upper endpoint of the new target rate range in S2"},
-        "pce_september_estimate": {"sort": "$int", "unit": "bp", "description": "September estimate of PCE inflation reported in S11"},
-        "pce_june_estimate": {"sort": "$int", "unit": "bp", "description": "June estimate of PCE inflation reported in S11"},
-        "target_rate": {"sort": "$int", "unit": "bp", "description": "inflation target named in S12"},
-        "first_projected_target_year": {"sort": "$int", "unit": "calendar_year", "description": "first year in the selected forecast reading of S12"},
-        "growth_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected growth figure in S13"},
-        "growth_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected growth figure in S13"},
-        "unemployment_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected unemployment figure in S13"},
-        "unemployment_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected unemployment figure in S13"}
+        "decision_date": {"sort": "$int", "unit": "day", "description": "date of the reported Fed decision", "verbalisation": "the decision date"},
+        "new_target_lower": {"sort": "$int", "unit": "bp", "description": "lower endpoint of the new target rate range in S2", "verbalisation": "the new target lower bound"},
+        "new_target_upper": {"sort": "$int", "unit": "bp", "description": "upper endpoint of the new target rate range in S2", "verbalisation": "the new target upper bound"},
+        "projected_range_lower": {"sort": "$int", "unit": "bp", "description": "lower endpoint of the policy-rate range projected in S6", "verbalisation": "the projected range lower bound"},
+        "projected_range_upper": {"sort": "$int", "unit": "bp", "description": "upper endpoint of the policy-rate range projected in S6", "verbalisation": "the projected range upper bound"},
+        "projected_reach_year": {"sort": "$int", "unit": "calendar_year", "description": "year by whose end S6 projects the range to be reached", "verbalisation": "the projected reaching year"},
+        "projected_remain_year": {"sort": "$int", "unit": "calendar_year", "description": "year through whose end S6 projects the range to remain", "verbalisation": "the projected final year of the range"},
+        "statement_goal": {"sort": "$int", "unit": "bp", "description": "the Committee's inflation goal named in the S7 policy statement quote", "verbalisation": "the Committee's stated inflation goal"},
+        "pledged_goal": {"sort": "$int", "unit": "bp", "description": "the inflation level Warsh pledges in S14 to bring inflation back to", "verbalisation": "the pledged inflation level"},
+        "pce_september_estimate": {"sort": "$int", "unit": "bp", "description": "September estimate of PCE inflation reported in S11", "verbalisation": "the September PCE estimate"},
+        "pce_june_estimate": {"sort": "$int", "unit": "bp", "description": "June estimate of PCE inflation reported in S11", "verbalisation": "the June PCE estimate"},
+        "target_rate": {"sort": "$int", "unit": "bp", "description": "inflation target named in S12", "verbalisation": "the inflation target"},
+        "first_projected_target_year": {"sort": "$int", "unit": "calendar_year", "description": "first year in the selected forecast reading of S12", "verbalisation": "the first projected target year"},
+        "growth_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected growth figure in S13", "verbalisation": "the earlier growth projection"},
+        "growth_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected growth figure in S13", "verbalisation": "the revised growth projection"},
+        "unemployment_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected unemployment figure in S13", "verbalisation": "the earlier unemployment projection"},
+        "unemployment_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected unemployment figure in S13", "verbalisation": "the revised unemployment projection"}
       }
     },
     "unit_schema": "ve-units@1",
@@ -31,22 +37,51 @@
     }
   },
   "cases": [
-    {"id": "N01", "row": "1", "kind": "asserted", "formula": ["date_on", ["const", "day", "decision_date"], ["date", "2026-09-16"]]},
-    {"id": "N07-lower", "row": "7", "kind": "asserted", "formula": ["eq", ["const", "bp", "new_target_lower"], ["decimal", "bp", "3.75"]]},
-    {"id": "N07-upper", "row": "7", "kind": "asserted", "formula": ["eq", ["const", "bp", "new_target_upper"], ["decimal", "bp", "4.00"]]},
-    {"id": "N21-september", "row": "21", "kind": "asserted", "formula": ["eq", ["const", "bp", "pce_september_estimate"], ["decimal", "bp", "3.70"]]},
-    {"id": "N21-june", "row": "21", "kind": "asserted", "formula": ["eq", ["const", "bp", "pce_june_estimate"], ["decimal", "bp", "3.60"]]},
-    {"id": "N22-rate", "row": "22", "kind": "asserted", "formula": ["eq", ["const", "bp", "target_rate"], ["decimal", "bp", "2.00"]]},
-    {"id": "N22-year", "row": "22", "kind": "selected forecast reading", "formula": ["eq", ["const", "calendar_year", "first_projected_target_year"], ["decimal", "calendar_year", "2029"]]},
-    {"id": "N23-growth-old", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "growth_old_projection"], ["decimal", "bp", "2.20"]]},
-    {"id": "N23-growth-new", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "growth_new_projection"], ["decimal", "bp", "2.30"]]},
-    {"id": "N23-unemployment-old", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "unemployment_old_projection"], ["decimal", "bp", "4.30"]]},
-    {"id": "N23-unemployment-new", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "unemployment_new_projection"], ["decimal", "bp", "4.10"]]}
+    {"id": "N01", "row": "1", "kind": "asserted", "wording": "The decision date is on 2026-09-16.", "formula": ["date_on", ["const", "day", "decision_date"], ["date", "2026-09-16"]]},
+    {"id": "N07-lower", "row": "7", "kind": "asserted", "wording": "The new target lower bound equals 3.75%.", "formula": ["eq", ["const", "bp", "new_target_lower"], ["decimal", "bp", "3.75"]]},
+    {"id": "N07-upper", "row": "7", "kind": "asserted", "wording": "The new target upper bound equals 4.00%.", "formula": ["eq", ["const", "bp", "new_target_upper"], ["decimal", "bp", "4.00"]]},
+    {"id": "N13-lower", "row": "13", "kind": "projected", "wording": "The projected range lower bound equals 4.00%.", "formula": ["eq", ["const", "bp", "projected_range_lower"], ["decimal", "bp", "4.00"]]},
+    {"id": "N13-upper", "row": "13", "kind": "projected", "wording": "The projected range upper bound equals 4.25%.", "formula": ["eq", ["const", "bp", "projected_range_upper"], ["decimal", "bp", "4.25"]]},
+    {"id": "N13-reach-year", "row": "13", "kind": "projected", "wording": "The projected reaching year equals calendar year 2026.", "formula": ["eq", ["const", "calendar_year", "projected_reach_year"], ["decimal", "calendar_year", "2026"]]},
+    {"id": "N13-remain-year", "row": "13", "kind": "projected", "wording": "The projected final year of the range equals calendar year 2027.", "formula": ["eq", ["const", "calendar_year", "projected_remain_year"], ["decimal", "calendar_year", "2027"]]},
+    {"id": "N15-goal", "row": "15", "kind": "attributed", "wording": "The Committee's stated inflation goal equals 2.00%.", "formula": ["eq", ["const", "bp", "statement_goal"], ["decimal", "bp", "2.00"]]},
+    {"id": "N21-september", "row": "21", "kind": "asserted", "wording": "The September PCE estimate equals 3.70%.", "formula": ["eq", ["const", "bp", "pce_september_estimate"], ["decimal", "bp", "3.70"]]},
+    {"id": "N21-june", "row": "21", "kind": "asserted", "wording": "The June PCE estimate equals 3.60%.", "formula": ["eq", ["const", "bp", "pce_june_estimate"], ["decimal", "bp", "3.60"]]},
+    {"id": "N22-rate", "row": "22", "kind": "asserted", "wording": "The inflation target equals 2.00%.", "formula": ["eq", ["const", "bp", "target_rate"], ["decimal", "bp", "2.00"]]},
+    {"id": "N22-year", "row": "22", "kind": "selected forecast reading", "wording": "The first projected target year equals calendar year 2029.", "formula": ["eq", ["const", "calendar_year", "first_projected_target_year"], ["decimal", "calendar_year", "2029"]]},
+    {"id": "N23-growth-old", "row": "23", "kind": "projected", "wording": "The earlier growth projection equals 2.20%.", "formula": ["eq", ["const", "bp", "growth_old_projection"], ["decimal", "bp", "2.20"]]},
+    {"id": "N23-growth-new", "row": "23", "kind": "projected", "wording": "The revised growth projection equals 2.30%.", "formula": ["eq", ["const", "bp", "growth_new_projection"], ["decimal", "bp", "2.30"]]},
+    {"id": "N23-unemployment-old", "row": "23", "kind": "projected", "wording": "The earlier unemployment projection equals 4.30%.", "formula": ["eq", ["const", "bp", "unemployment_old_projection"], ["decimal", "bp", "4.30"]]},
+    {"id": "N23-unemployment-new", "row": "23", "kind": "projected", "wording": "The revised unemployment projection equals 4.10%.", "formula": ["eq", ["const", "bp", "unemployment_new_projection"], ["decimal", "bp", "4.10"]]},
+    {"id": "N24-goal", "row": "24", "kind": "pledged", "wording": "The pledged inflation level equals 2.00%.", "formula": ["eq", ["const", "bp", "pledged_goal"], ["decimal", "bp", "2.00"]]}
   ],
+  "consequences": [
+    {"id": "N07-order", "row": "7", "from": ["N07-lower", "N07-upper"], "wording": "The new target lower bound is less than the new target upper bound.", "formula": ["lt", ["const", "bp", "new_target_lower"], ["const", "bp", "new_target_upper"]]},
+    {"id": "N13-order", "row": "13", "from": ["N13-lower", "N13-upper"], "wording": "The projected range lower bound is less than the projected range upper bound.", "formula": ["lt", ["const", "bp", "projected_range_lower"], ["const", "bp", "projected_range_upper"]]},
+    {"id": "N13-years", "row": "13", "from": ["N13-reach-year", "N13-remain-year"], "wording": "The projected reaching year is less than the projected final year of the range.", "formula": ["lt", ["const", "calendar_year", "projected_reach_year"], ["const", "calendar_year", "projected_remain_year"]]},
+    {"id": "N15-N24-same-goal", "row": "15,24", "from": ["N15-goal", "N24-goal"], "wording": "The Committee's stated inflation goal equals the pledged inflation level.", "formula": ["eq", ["const", "bp", "statement_goal"], ["const", "bp", "pledged_goal"]]},
+    {"id": "N21-order", "row": "21", "from": ["N21-june", "N21-september"], "wording": "The June PCE estimate is less than the September PCE estimate.", "formula": ["lt", ["const", "bp", "pce_june_estimate"], ["const", "bp", "pce_september_estimate"]]},
+    {"id": "N21-difference", "row": "21", "from": ["N21-june", "N21-september"], "wording": "The September PCE estimate minus the June PCE estimate equals 0.10 percentage points.", "formula": ["eq", ["add", "bp", ["const", "bp", "pce_september_estimate"], ["scale", "bp", "-1", ["const", "bp", "pce_june_estimate"]]], ["num", "bp", "10"]]},
+    {"id": "N23-growth-increase", "row": "23", "from": ["N23-growth-old", "N23-growth-new"], "wording": "The revised growth projection minus the earlier growth projection equals 0.10 percentage points.", "formula": ["eq", ["add", "bp", ["const", "bp", "growth_new_projection"], ["scale", "bp", "-1", ["const", "bp", "growth_old_projection"]]], ["num", "bp", "10"]]},
+    {"id": "N23-unemployment-decrease", "row": "23", "from": ["N23-unemployment-old", "N23-unemployment-new"], "wording": "The earlier unemployment projection minus the revised unemployment projection equals 0.20 percentage points.", "formula": ["eq", ["add", "bp", ["const", "bp", "unemployment_old_projection"], ["scale", "bp", "-1", ["const", "bp", "unemployment_new_projection"]]], ["num", "bp", "20"]]},
+    {"id": "N23-unemployment-order", "row": "23", "from": ["N23-unemployment-old", "N23-unemployment-new"], "wording": "The revised unemployment projection is less than the earlier unemployment projection.", "formula": ["lt", ["const", "bp", "unemployment_new_projection"], ["const", "bp", "unemployment_old_projection"]]}
+  ],
+  "model": {"complete": true, "domains": {}, "relations": {}, "constants": {
+    "decision_date": "20712", "new_target_lower": "375", "new_target_upper": "400",
+    "projected_range_lower": "400", "projected_range_upper": "425",
+    "projected_reach_year": "2026", "projected_remain_year": "2027",
+    "statement_goal": "200", "pledged_goal": "200",
+    "pce_september_estimate": "370", "pce_june_estimate": "360", "target_rate": "200",
+    "first_projected_target_year": "2029", "growth_old_projection": "220",
+    "growth_new_projection": "230", "unemployment_old_projection": "430",
+    "unemployment_new_projection": "410"}},
   "residuals": [
     {"id": "N07b", "row": "7b", "status": "NO", "reason": "old range endpoints are absent"},
     {"id": "N08", "row": "8", "status": "REIFIED", "reason": "16 of 18 exceeds the exact-count bound of 7"},
+    {"id": "N13-projection", "row": "13", "status": "OPEN", "reason": "projected, by the end of 2026 and remain ... through 2027 keep their temporal and kind obligations; the bounds are not an observed future rate"},
+    {"id": "N15-timelier", "row": "15", "status": "OPEN", "reason": "timelier has no supplied metric; the goal token stays inside the attributed policy statement"},
     {"id": "N22b", "row": "22b", "status": "NO", "reason": "previous expected target year is absent"},
-    {"id": "N23-slightly", "row": "23", "status": "OPEN", "reason": "slightly has no supplied metric or cutoff"}
+    {"id": "N23-slightly", "row": "23", "status": "OPEN", "reason": "slightly has no supplied metric or cutoff"},
+    {"id": "N24-clearly-speed", "row": "24", "status": "OPEN", "reason": "clearly and at sufficient speed have no deadline, rate or probability; the goal token stays inside Warsh's pledge"}
   ]
 }
