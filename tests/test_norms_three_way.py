@@ -12,6 +12,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
@@ -43,7 +44,7 @@ def rust_executable():
 def run(executable, cases):
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=180)
+                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
