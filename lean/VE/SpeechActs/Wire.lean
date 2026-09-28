@@ -555,6 +555,19 @@ def surfaceWords (s : String) : String :=
   " ".intercalate ((s.split (fun c => c == ' ' || c == '\t' || c == '\n' || c == '\r' ||
     c == '\x0b' || c == '\x0c')).filter (· ≠ "")) |>.map Char.toLower
 
+/-- What may follow an act's verb in its wording, as Python's `_WORD_BREAK`: a word break ("Click check."), the end
+of a unary command ("Click.") or its condition ("Click, if ..."). An act word's own `'` and `-`, a name's `_`, a digit
+and every non-ASCII character continue the word. -/
+def wordBreak (c : Char) : Bool :=
+  " !\"#$%&()*+,./:;<=>?@[\\]^`{|}~".contains c
+
+/-- `text` begins with the whole word `word`: at its end or a `wordBreak`, as Python's `_starts_with_word`. -/
+def startsWithWord (text word : String) : Bool :=
+  text.startsWith word &&
+    match (text.drop word.length).toList.head? with
+    | none => true
+    | some c => wordBreak c
+
 /-- The speech-act kinds a signed choice must share with its wording (3.2); no other kind is checked. -/
 def speechKinds : List String := ["asserted", "question", "instruction"]
 
@@ -573,7 +586,7 @@ def surfaceKind (regulated : List VE.Norms.Regulated) (source : String) : String
     if let some act := r.act then
       match (surfaceWords act).splitOn " " with
       | "{0}" :: verb :: _ =>
-        if text.startsWith (verb ++ " ") then return "instruction"
+        if startsWithWord text verb then return "instruction"
       | _ => pure ()
   return "asserted"
 

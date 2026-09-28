@@ -386,8 +386,11 @@ fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), o
 (`\x1c`-`\x1f`, `\x85`) and non-ASCII letters, is an ordinary character. A sentence is a question when its normalised
 form ends with `?` or starts with an interrogative word (not "do not "); a binding when it starts "in this task, " or
 "this document is task "; an instruction when it starts "do not ", "prove that ", "command " or the first word after
-`{0}` of a regulated act phrase. The act phrases are W1's normalised ones (3.1), as both cores decode them; a `plain`
-regulated declaration has no act and never classifies a wording.
+`{0}` of a regulated act phrase as a whole word: the wording ends there or continues with a space or an ASCII
+punctuation character other than `'`, `-` and `_` (Python's `_starts_with_word`, Lean's `startsWithWord`), so the
+unary act "{0} click" makes "Click.", "Click, if ..." and "Do not click." instructions and "Clicked.", "Clicks.",
+"Click-through ..." and "Click_rate ..." not. The act phrases are W1's normalised ones (3.1), as both cores decode
+them; a `plain` regulated declaration has no act and never classifies a wording.
 
 **Every reference is resolved and typed at decode time**, identically in Python and Lean (the conformance suite
 checks every field below dangling and mistyped). A reference that is not a name of the JSON type its field takes is a
@@ -1693,6 +1696,7 @@ statements of section 8 are unchanged.
 | B, wording normalisation: Python stripped and casefolded Unicode, Lean trimmed and lowered ASCII, so "Atlas is reviewed?\x0c" was a question in Python and a declarative in Lean | 3.2: one ASCII-only normalisation (Python's `string.whitespace`, `A`-`Z` folding), in both cores, differentially tested over whitespace, case and control-character variants. |
 | B, `"source": null`: Python skipped the wording check and Lean raised `InvalidInput: speech wording` | 3.2: a present `source` of any non-string type, `null` included, is `InvalidInput: speech wording` in both cores. |
 | B, quoted-question meaning ids: Python expected no `meaning_id` on a quoted-question unit, Lean regenerated the question object's | 3.5: a quoted question has its question object's meaning id in both cores. |
+| A, unary imperatives: with the act "{0} click", the parser read "Click." as an instruction, but both classifiers required a space after the verb, so both cores accepted an asserted choice on it and rejected the instruction choice, fenced and inline | 3.2: an act's verb is matched as a whole word, ending the wording or followed by a space or ASCII punctuation other than `'`, `-`, `_`, in both cores; a differential checks that every wording the parser reads as a command or question has that surface kind. |
 
 ## Change log
 

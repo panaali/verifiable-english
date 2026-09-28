@@ -225,6 +225,10 @@ def _reading_choice(unit, reading_set):
 SPEECH_KINDS = ("asserted", "question", "instruction")
 _SURFACE_SPACE = re.compile("[ \t\n\r\x0b\x0c]+")
 _SURFACE_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
+# What may follow an act's verb in its wording: a word break ("Click check."), the end of a unary
+# command ("Click.") or its condition ("Click, if ..."). An act word's own `'` and `-`, a name's `_`,
+# a digit and every non-ASCII character continue the word.
+_WORD_BREAK = frozenset(" !\"#$%&()*+,./:;<=>?@[\\]^`{|}~")
 
 
 def surface_words(text):
@@ -236,6 +240,11 @@ def surface_words(text):
     control characters included, is an ordinary letter.
     """
     return " ".join(w for w in _SURFACE_SPACE.split(text) if w).translate(_SURFACE_FOLD)
+
+
+def _starts_with_word(text, word):
+    """`text` begins with the whole word `word`: at its end or a `_WORD_BREAK`, as Lean's `startsWithWord`."""
+    return text.startswith(word) and (len(text) == len(word) or text[len(word)] in _WORD_BREAK)
 
 
 def surface_kind(env, wording):
@@ -261,7 +270,7 @@ def surface_kind(env, wording):
         if decl.regulated is None or decl.regulated.act is None:
             continue
         words = surface_words(decl.regulated.act).split(" ")
-        if len(words) > 1 and words[0] == "{0}" and text.startswith(words[1] + " "):
+        if len(words) > 1 and words[0] == "{0}" and _starts_with_word(text, words[1]):
             return "instruction"
     return "asserted"
 
