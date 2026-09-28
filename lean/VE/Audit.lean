@@ -1132,3 +1132,4 @@ import VE.Discourse.English
 #print axioms VE.Discourse.discourse_parseRender
 #print axioms VE.Discourse.discourse_renderInjective
 #print axioms VE.Discourse.presentation_expands
+#print axioms VE.Discourse.import_acyclic
