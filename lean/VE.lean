@@ -10,4 +10,5 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
+import VE.SoftNorms.Run
 import VE.English.Run
