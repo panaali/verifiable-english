@@ -43,6 +43,7 @@ def test_one_reading_roundtrip_without_tag_identifiers():
         "The return date is on or after the decision date and on or before 10 days after the decision date.",
         "The return date is 10 days after the decision date.",
         "The elapsed duration from the decision date to the return date equals 10 days.",
+        "The September PCE estimate minus the June PCE estimate equals 0.10 percentage points.",
         "The amount equals USD 3.75.",
     ]
     for sentence in examples:
@@ -61,6 +62,8 @@ def test_ambiguity_and_cross_tag_suppression():
         parse_quantity_sentence(fixture(), "The amount equals 3.75%.")
     with pytest.raises(SyntaxError, match="No W6 quantity reading"):
         parse_quantity_sentence(fixture(), "The September PCE estimate is substantially higher.")
+    with pytest.raises(SyntaxError, match="No W6 quantity reading"):
+        parse_quantity_sentence(fixture(), "The September PCE estimate equals 0.10 percentage points.")
     forged = {"format": "ve-quantity@1", "traces": [],
               "formula": ["eq", ["const", "usd_cent", "pce_sep"], ["num", "usd_cent", "375"]]}
     with pytest.raises(VEError, match="UnitMismatch"):
