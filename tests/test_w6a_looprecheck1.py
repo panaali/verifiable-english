@@ -195,3 +195,94 @@ def test_literals_over_forty_digits_still_reject_three_ways():
         assert "40 digits" in got["error"]
         [other] = rust([{"id": "l", "kind": "quantity", "environment": raw, "quantity": quantity(formula)}])
         assert "40 digits" in other["error"]["message"]
+
+
+# --- P2: Lean evaluates under the Python/Rust budget ---------------------------
+
+def counting_raw():
+    return raw_environment({}, sorts={"item": {"description": "an item"}}, predicates={
+        name: {"arguments": ["item"], "description": name} for name in ("p", "s")})
+
+
+def counting_model(n):
+    entities = [f"e{i}" for i in range(1, n + 1)]
+    return {"complete": True, "domains": {"item": entities}, "constants": {},
+            "relations": {name: [[e] for e in entities] for name in ("p", "s")}}
+
+
+PINNED = [
+    (8, "at least 8", True, 359),
+    (6, "exactly 6", True, 120536),
+    (6, "6 of 6", True, 244997),
+    (7, "exactly 7", None, None),
+    (7, "7 of 7", None, None),
+    (7, "at least 8", None, None),
+]
+
+
+def pinned_formula(env, name):
+    p, s = ast.Unary("p", ast.Var(0)), ast.Unary("s", ast.Var(0))
+    return {"at least 8": lambda: at_least(env, "item", 8, p),
+            "exactly 6": lambda: exactly(env, "item", 6, p),
+            "6 of 6": lambda: n_of_m(env, "item", 6, 6, s, p),
+            "exactly 7": lambda: exactly(env, "item", 7, p),
+            "7 of 7": lambda: n_of_m(env, "item", 7, 7, s, p)}[name]()
+
+
+def test_pinned_counting_fixtures_evaluate_identically_three_ways():
+    raw = counting_raw()
+    env = Environment(raw)
+    target = erased_environment(env)
+    cases, expected = [], []
+    for n, name, value, work in PINNED:
+        data = ast._to_data(pinned_formula(env, name))
+        result = evaluate(target, ast.formula_from_data(target, data),
+                          FiniteModel.from_dict(target, counting_model(n)), trace=False)
+        assert result.value is value
+        if work is not None:
+            assert result.evaluations == work
+        cases.append({"id": name, "environment": raw, "quantity": quantity(data),
+                      "model": counting_model(n)})
+        expected.append((value, work))
+    for case, got, other, (value, work) in zip(cases, lean(cases),
+                                                rust([{**c, "kind": "quantity"} for c in cases]),
+                                                expected):
+        if value is None:
+            # UNKNOWN naming the budget: never false, never a successful evaluation.
+            assert got["status"] == "error" and "ResourceLimit" in got["error"], got
+            assert "MAX_EVALUATIONS" in got["error"]
+            assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
+        else:
+            assert got["status"] == "ok" and got["value"] is value and got["evaluations"] == work, got
+            assert other["status"] == "ok" and other["value"] is value, other
+
+
+def test_countermodels_share_the_budget_three_ways():
+    raw = counting_raw()
+    env = Environment(raw)
+    seven = ast._to_data(pinned_formula(env, "exactly 7"))
+    six = ast._to_data(pinned_formula(env, "exactly 6"))
+    # Premise evaluation exhausts the budget: UNKNOWN, not "does not refute".
+    for premises, conclusion, model, refutes in (
+            ([quantity(seven)], quantity(["bottom"]), counting_model(7), None),
+            ([], quantity(["not", seven]), counting_model(7), None),
+            ([quantity(six)], quantity(["bottom"]), counting_model(6), True),
+            ([quantity(["bottom"])], quantity(seven), counting_model(7), False)):
+        case = {"environment": raw, "premises": premises, "conclusion": conclusion, "model": model}
+        [got] = lean([{"id": "m", "kind": "countermodel", **case}])
+        [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
+        if refutes is None:
+            with pytest.raises(ResourceLimit, match="MAX_EVALUATIONS"):
+                quantity_countermodel(env, premises, conclusion, model)
+            assert got["status"] == "error" and "ResourceLimit" in got["error"], got
+            assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
+        else:
+            assert quantity_countermodel(env, premises, conclusion, model) is refutes
+            assert got["status"] == "ok" and got["refutes"] is refutes, got
+            assert other["status"] == "ok" and other["refutes"] is refutes, other
+
+
+def test_lean_budget_theorems_are_audited():
+    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    for name in ("evalB_sound", "refutesB_sound", "quantB_sound"):
+        assert f"#print axioms VE.Time.{name}\n" in audit

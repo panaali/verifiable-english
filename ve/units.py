@@ -550,10 +550,19 @@ def check_quantity_certificate(env, premises, conclusion, certificate, *, max_st
                                         max_steps=max_steps).valid
 
 
+BUDGET_EXHAUSTED = "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+
+
 def quantity_countermodel(env, premises, conclusion, model_data):
-    """Whether finite tables for the target vocabulary refute the regenerated claim."""
+    """Whether finite tables for the target vocabulary refute the regenerated claim.
+
+    An exhausted evaluation budget is UNKNOWN and raises, as in Lean and Rust;
+    it is never reported as "does not refute"."""
     from .model import FiniteModel
     from .search import check_countermodel
     target, _, cores = _core_problem(env, premises, conclusion)
-    return check_countermodel(target, cores[:-1], cores[-1],
-                              FiniteModel.from_dict(target, model_data)).valid
+    checked = check_countermodel(target, cores[:-1], cores[-1],
+                                 FiniteModel.from_dict(target, model_data))
+    if checked.status == "ResourceLimit":
+        raise ResourceLimit(BUDGET_EXHAUSTED)
+    return checked.valid
