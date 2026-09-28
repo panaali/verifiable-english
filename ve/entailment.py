@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
+from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                    Not, Or, Top, Unary, Var, Reach, Named, check_document, _Checker)
 from .errors import CheckerUnavailable, ResourceLimit, VEError
@@ -666,6 +667,7 @@ class _Replayer:
             self.replay(_apply(branch, node["at"], parameter, additions), child, depth + 1)
 
 
+@semantic_entry("certificate.check")
 def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: Any,
                                  certificate: Any, *, max_steps: int = 10_000,
                                  _background: bool = True,

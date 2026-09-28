@@ -11,6 +11,7 @@ import hashlib
 import json
 import re
 
+from .assurance import semantic_entry
 from . import ast
 from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
@@ -236,6 +237,7 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
+@semantic_entry("english.admission")
 def parse_english(env, source, manifest=None, *, existing_names=()):
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")

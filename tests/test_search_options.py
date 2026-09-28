@@ -4,7 +4,7 @@ import pytest
 from ve import (And, Bottom, Environment, Eq, Exists, FiniteModel, Forall, Implies,
                 Not, Or, Top, Unary, Var, check, check_countermodel, evaluate,
                 find_countermodel, find_distinguishing_model)
-from ve.errors import InvalidModel
+from ve.errors import InvalidModel, ResourceLimit
 
 
 ENV = Environment({
@@ -276,3 +276,53 @@ def test_new_and_boolean_option_validation_is_shared(options):
         find_countermodel(ENV, (), Bottom(), **options)
     with pytest.raises(ValueError):
         find_distinguishing_model(ENV, Top(), Bottom(), **options)
+
+
+@pytest.mark.parametrize('operation', ['countermodel', 'distinguishing'])
+def test_scoped_order_search_replays_atom_space_limit(operation):
+    from ve.ast import Binary, Num
+    from ve.search import model_search_scope
+
+    env = Environment({
+        'language': 've.core@0.1', 'profiles': ['order@0', 'relational-fol@0'],
+        'spec_revision': 've-v0.1-order-2026-09-22',
+        'vocabulary': {'sorts': {}, 'predicates': {
+            'rel': {'arguments': ['$int', '$int'], 'description': 'Integer relation'}},
+            'constants': {}},
+    })
+    # 317 distinct cells in either argument make 317² > MAX_TUPLES.
+    clauses = [Binary('rel', Num(i), Num(i)) for i in range(317)]
+    while len(clauses) > 1:
+        clauses = [And(clauses[i], clauses[i + 1]) if i + 1 < len(clauses)
+                   else clauses[i] for i in range(0, len(clauses), 2)]
+    formula = clauses[0]
+    def search():
+        return (find_countermodel(env, (formula,), Bottom()) if operation == 'countermodel'
+                else find_distinguishing_model(env, formula, formula))
+
+    assert [search().status for _ in range(2)] == ['ResourceLimit'] * 2
+    with model_search_scope():
+        results = [search() for _ in range(2)]
+    assert [result.status for result in results] == ['ResourceLimit'] * 2
+    assert [result.detail for result in results] == ['search relation atom space exceeds runtime limit'] * 2
+
+
+@pytest.mark.parametrize('error', [ResourceLimit('failed model stream'),
+                                   InvalidModel('invalid model stream')])
+def test_scoped_model_readers_replay_failure_after_buffered_models(monkeypatch, error):
+    import ve.search as search
+
+    marker = object()
+    def failing_models(*args, **kwargs):
+        yield marker
+        raise error
+
+    monkeypatch.setattr(search, '_models', failing_models)
+    with search.model_search_scope():
+        first = search._query_models(ENV, 0, 0, frozenset(), (), defer_model_id=True)
+        waiting = search._query_models(ENV, 0, 0, frozenset(), (), defer_model_id=True)
+        for reader in (first, waiting, search._query_models(
+                ENV, 0, 0, frozenset(), (), defer_model_id=True)):
+            assert next(reader) is marker
+            with pytest.raises(type(error), match='model stream'):
+                next(reader)
