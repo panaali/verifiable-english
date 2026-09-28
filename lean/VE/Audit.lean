@@ -1,5 +1,6 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
+import VE.Time.Document
 import VE.Route.Readings
 import VE.Order.Gate
 import VE.Order.ModelCheck
@@ -992,6 +993,12 @@ import VE.Norms.Run
 #print axioms VE.Time.charge_some
 #print axioms VE.Time.evalB_sound
 #print axioms VE.Time.refutesB_sound
+#print axioms VE.Time.Document.admitNodes_ok
+#print axioms VE.Time.Document.lookupEntry_mem
+#print axioms VE.Time.Document.mapM_lookup_mem
+#print axioms VE.Time.Document.checkGraph_good
+#print axioms VE.Time.Document.admitDecoded_sound
+#print axioms VE.Time.Document.admit_quantity_report_sound
 #print axioms VE.Time.decimal_exact
 #print axioms VE.Time.lower_none_iff
 #print axioms VE.Time.digitsVal_append
