@@ -36,6 +36,7 @@ import VE.Norms.Replay
 import VE.Norms.Run
 import VE.Alternatives.Background
 import VE.Alternatives.Decl
+import VE.Alternatives.Examples
 import VE.Alternatives.Followable
 import VE.Alternatives.Inline
 import VE.Alternatives.Route
