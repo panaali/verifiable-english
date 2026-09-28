@@ -191,7 +191,10 @@ every certificate is replayed by Lean.
 
 ## Not done
 
-- English surface (item 4), the Python production layer `ve/reports.py` (item 3), Rust.
+- The Python production layer (`ve/reports.py`) and the English (`ve/report_english.py`) exist and are compared
+  with this route by `tests/test_reports_lean.py` (elaborations) and `tests/test_reports_agreement.py` (what is
+  admitted, with section 8's diagnostic kind); the reports parse-uniqueness theorem (`reports_parse_unique`) is
+  item 4's and is not stated here. Rust is an untrusted witness search only.
 - `{"fence": …}` content is rejected; reading-set choices are not part of canonical objects.
 - The local W1 conflict check of a quoted norm block (fixture κ's "CONFLICT among the quoted rules") is not run:
   the block is only validated by the frozen W1 decoder.
