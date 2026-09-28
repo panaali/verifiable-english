@@ -151,6 +151,10 @@ This refines the earlier "writing goes through the assistant" split: the assista
 Writers vary words for readability ("staff", "employees", "personnel"); VE allows it. A document glossary declares synonyms once ("In this document, staff, employees and personnel mean the same thing"); each is an alias definition (W3, conservative, Lean-proved) so the checker treats them as one concept, while the display keeps the author's word choice (meaning identity is separate from wording). Authoring mode: the IDE asks in plain English when a new word appears ("Does 'personnel' mean the same as 'staff' here?") and adds the alias on confirmation. Translation mode: an explicit statement in the source (a definition, "employees (staff)") is recorded with its citation; synonymy that is only "clear from context" is an interpretation, kept as a reading set (same / different) with the translator's cited reason, and the checker reports whether any conclusion depends on it.
 
 
-## Self-reference boundary (2026-09-28)
+## Self-reference boundary (2026-09-28, refined with the lead)
 
-"This document" is allowed as a name (scope, version, supersedes). A document may state that OTHER documents, identified by fingerprint, were checked, and that claim can be confirmed by re-running the check. A document may never assert its own validity or truth: validity lives in the external report (Tarski-style layering), which also rules out liar-type paradoxes such as "This document is not valid".
+The line is truth, not validity. Validity (the text parses, every sentence has one reading, the document is admitted) is a mechanical property of the text that does not depend on any sentence being true, so claims about validity are safe and checkable:
+- "The above document is a valid VE document." Supported and checked: the checker fingerprints the text before the sentence and confirms it.
+- "This document is a valid VE document." Supported and checked with validity meaning admission only; the report computes it without depending on this sentence's truth. ("This document is not a valid VE document" is then simply false, not paradoxical.)
+- "This document" as a name (scope, version, supersedes) is supported; claims that OTHER documents (by fingerprint) were checked are supported and confirmable.
+- Not allowed as checked claims: a document asserting its own truth or correctness ("everything in this document is true", "this sentence is false"). That is where liar-type paradoxes live (Tarski); such sentences are labelled, never certified.
