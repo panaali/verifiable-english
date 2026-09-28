@@ -1,6 +1,6 @@
 # Speech acts (`speech-acts@0`): commands and questions over `norms@0` and `ve-document@2`
 
-> Status: item-1 specification, draft 3 (2026-09-28), written from [speech-acts-PLAN.md](speech-acts-PLAN.md) draft 4, the
+> Status: item-1 specification, draft 4 (2026-09-28), written from [speech-acts-PLAN.md](speech-acts-PLAN.md) draft 5, the
 > plan as revised by the converged Astra/Fable design debate (`manage-agents/debates/design-speech-acts/{astra,fable}.md`,
 > CONVERGED after round 2, verdict BUILD with exact edits; the plan's section 5 maps each edit). Draft 2 applied, as
 > written, the combined edit list of the converged Astra + Fable item-1 statement review
@@ -9,9 +9,14 @@
 > edit-verification pass on draft 2 (`manage-agents/speech-acts-p3ver1.final.md`) found two edits incomplete, Astra 3
 > (the decoded-source wrapper dropped W2's identity payload and the structure of reading candidates and narrowings) and
 > Astra 8 (the `intended-reading` open term was not expressible in W2's frozen open-term schema); draft 3 completes
-> exactly those two edits and changes nothing else (section 14). The review gates items 2, 3 and 4 (PLAN-EXPAND2
-> rule 10) and any implementation: one bounded edit-verification pass by both reviewers (each checks the listed edits
-> are applied as written; new findings are admissible only where an edit introduces a defect), then items 2 to 4 start.
+> exactly those two edits and changes nothing else (section 14). The second pass (`manage-agents/speech-acts-p3ver2.final.md`)
+> found one defect that the Astra 3 completion introduced: `source_retained` demanded that a re-encoding of the
+> structured reading sets reproduce W2's front-matter bytes, which W2's optional `models` field (omitted or `{}` for a
+> singleton reading) makes impossible; draft 4 restates that theorem over the front-matter fields the identity payload
+> already retains verbatim and changes nothing else (section 15). The review gates items 2, 3 and 4 (PLAN-EXPAND2
+> rule 10) and any implementation: a bounded edit-verification pass by both reviewers on each draft (each checks the
+> listed edits are applied as written; new findings are admissible only where an edit introduces a defect), then items
+> 2 to 4 start.
 > Sections 4 to 6 and 8 are the statements; section 12 lists every point where this draft chose between readings of
 > the plan. Theorem statements and fixtures are implementation obligations, not claims of completed proofs or tests.
 > Inputs: [norms.md](norms.md) (W1, cited `norms.md n`), [document.md](document.md) (W2), the W3
@@ -1068,8 +1073,9 @@ structure SpeechReadingSet where
   status          : ReadingStatus
   signature       : Option String             -- authored sets only
   readings        : List SpeechReading        -- 1 to 64, source order (the index of `readings:<set>@<v>:<i>`)
-  models          : List (String × Json)      -- the distinguishing finite models by id
-  rejectedHistory : Json
+  models          : List (String × Json)      -- the distinguishing finite models by id; W2's optional `models`, `[]`
+                                              -- whether omitted or `{}` (its presence is in `metadata`, `source_retained`)
+  rejectedHistory : Json                      -- W2's optional `rejected_history`, `[]` when omitted, likewise
 /-- A W2 narrowing (document.md; `ve/readings.py`): the kept readings by id and the cited reason units; it never
     modifies the set. A recorded nomination (4.6) is one of these. -/
 structure Narrowing where
@@ -1128,14 +1134,21 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
   ∃ b : Json, (Wire.canonicalEnvironmentJson j).toOption = some b ∧
     b.getObjVal? "speech_acts" = .ok (Wire.encodeScope sc)
 
-/-- The wrapper is lossless on what identity and regeneration need: W2's identity payload is retained verbatim (so the
-    document id of 3.5 is recomputable from `src` alone), and every reading set and narrowing of the validated source
-    is retained with its structure, command and question candidates included. `Wire.identityPayload`,
-    `Wire.readingSetsJson` and `Wire.narrowingsJson` read the corresponding front-matter fields of `j`. -/
+/-- The wrapper is lossless on what identity and regeneration need. W2's identity payload is retained verbatim, so the
+    document id of 3.5 is recomputable from `src` alone; `reading_sets` and `narrowings` are front-matter fields, so
+    that payload (`src.metadata`, every front-matter key but `weights`) retains them byte for byte, W2's optional
+    fields with their presence (a singleton reading's `models` omitted or written `{}`). The structured records are
+    exactly the decoding of those retained fields: every version of every set with its command and question candidates
+    and every narrowing, no projection. Nothing structured is re-encoded for identity: `SpeechReadingSet` normalises
+    W2's optional fields (both spellings of an absent `models` decode to `[]`), so it is not a source of bytes.
+    `Wire.identityPayload`, `Wire.readingSetsJson` and `Wire.narrowingsJson` read the corresponding front-matter fields
+    of `j`, the last two `[]` when the field is omitted, as W2 reads them; `Wire.decodeReadingSets` and
+    `Wire.decodeNarrowings` are the decoders `decodeSpeechSource` applies to those fields (W2's `validate_reading_sets`
+    and `validate_narrowings` over the environment, the unit ids and the sets). -/
 theorem source_retained (j : Json) (src : SpeechSource) (h : Wire.decodeSpeechSource j = .ok src) :
   Wire.identityPayload j = .ok src.identityPayload ∧
-  Wire.readingSetsJson j = .ok (Wire.encodeReadingSets src.readingSets) ∧
-  Wire.narrowingsJson j = .ok (Wire.encodeNarrowings src.narrowings)
+  (∃ r : Json, Wire.readingSetsJson j = .ok r ∧ Wire.decodeReadingSets src.E src.units r = .ok src.readingSets) ∧
+  (∃ n : Json, Wire.narrowingsJson j = .ok n ∧ Wire.decodeNarrowings src.units src.readingSets n = .ok src.narrowings)
 
 /-- Which units are active: exactly kind `instruction`, specified meaning, command content, bound slots, no pending
     reading set (1.2). -/
@@ -1499,6 +1512,18 @@ items 2 to 4 start.
 | Astra 3, source preservation: `SpeechSource` lacked the source bytes and fences that the 3.5 identity needs, used P0's formula-only `ReadingSet` (which cannot hold command or question candidates) and flattened narrowings to ids, losing their kept choices and reasons | 8.5: `SpeechSource` retains W2's identity payload verbatim (`metadata` without removable weights, `source`, `fences`) with `identityPayload` and `documentId`; new `OpenTerm`, `SpeechReading`, `SpeechReadingSet` (candidates with structured content, admission fields, distinguishing models, history) and `Narrowing` (kept reading ids, author, reason units) in W2's frozen schemas; `lemmas` retained; P0's formula-only sets, open-term names and narrowing ids appear only in the projection `SpeechAdmitted.p0`; theorem `source_retained`; 3.5 and 8.1 say what the wrapper carries; 11.10; fixture (ω). |
 | Astra 8, W2-compatible open-term contract: `intended-reading:<set>@<version>` is not a W2 token (`:`, `@`) and the nomination criteria were not closed-formula lists | 4.6: the term is declared in W2's frozen schema, named `intended-reading.<u>` (a token; `ResourceLimit: open-term name` beyond 64 bytes) and displayed `intended-reading:<set>@<version>`; `arguments` the set id, `version` the set's, `decided_by` the addressee, `jurisdiction` the task, `necessary` and `sufficient` empty closed-formula lists (no formula over `E` expresses a nomination), the criteria as `factors`, `precedents` empty; the declaration and the question's `{"open": [...]}` meaning are derived content (3.2, 4.1(4), `InvalidInput`); 1.3, 5.5, 6, 7, 10, 11.5, 12.7, fixtures (ν) and (ψ). |
 
+## 15. Edit-verification response table (draft 4)
+
+Source: `manage-agents/speech-acts-p3ver2.final.md`, the statement-only verification of draft 3 (commit `60ba11d`)
+against section 14: FAIL on one defect introduced by the Astra 3 completion; the source bytes and fences, the structured
+speech candidates and narrowings, and the Astra 8 open-term contract present and compatible with W2; the plan
+synchronised. Draft 4 corrects that one defect and changes nothing else; a bounded verification pass checks it, then
+items 2 to 4 start.
+
+| Finding | Change in this draft |
+|---|---|
+| `source_retained` required `Wire.encodeReadingSets src.readingSets` to reproduce the `reading_sets` front-matter field exactly, but W2 (`ve/readings.py`) accepts both an omitted `models` field and `"models": {}` for a singleton reading; both decode to `models = []` in `SpeechReadingSet`, no field keeps the distinction, and the encoder receives no retained metadata, so it cannot reproduce both originals | 8.5: the theorem is restated without re-encoding. Its first conjunct already retains the `reading_sets` and `narrowings` front-matter fields byte for byte inside `src.metadata` (W2's identity payload keeps every front-matter key but `weights`), optional fields with their presence; the second and third conjuncts now say that the structured `readingSets` and `narrowings` are exactly `Wire.decodeReadingSets` and `Wire.decodeNarrowings` of those fields (`Wire.readingSetsJson`, `Wire.narrowingsJson`, `[]` when omitted as W2 reads them), every set version and every narrowing, no projection. `Wire.encodeReadingSets` and `Wire.encodeNarrowings` are withdrawn; the `models` and `rejectedHistory` comments record the normalisation. No structure, definition or other theorem changes. |
+
 ## Change log
 
 | Date | Revision | Changes |
@@ -1506,3 +1531,4 @@ items 2 to 4 start.
 | 2026-09-28 | Draft 1 | Item-1 specification from plan draft 2: scope block and legend; commands as W1 rules with equality guards, roles and polarity; questions with wording-derived modes, `H(q)`, `F(q, a)` and `Answers(q, S)`; proof and model paths with PRESUPPOSITION-FAILED and conditional support; consequence questions under `follows`/`gap`/`unresolved`; proof tasks and reading nominations; exact consequence correspondence, dormant invariance and the two-task rule; the four-line report; the C/L/O/R/U projection; diagnostics; every item-2 theorem as a statement in W1's Lean conventions; fixtures α to ββ; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The converged statement-review edit list applied as written (section 13): `countermodel_not_negative` hypotheses; `demand_conflict` split with `AgreesBelow`; regulated declarations in the core, decoded-source wrapper, `AppliesD` and `norms_route_acceptance` signatures, typed binders; no `done_submit` premise or leaf; proof-task identity over the query's meaning ids; P0 premise status on every certificate line; equality-guarded permission rewrite and no two-command rewrite; `intended-reading` open term and class O; profile allowlist with `soft-norms@0` rejected; `binding` units withheld from P0; `inst`, `DecidableEq`, `pinnedAsserted`, `trivialQuery`, `support_exclusive_one`; 1.5 attributed to W2's readings query; fixtures ζ, η, μ, ν, ρ, τ, υ, φ, ψ, αα; 11.11 resolved; 12.15, 12.16. Spec only. |
 | 2026-09-28 | Draft 3 | The two edits the verification pass found incomplete (section 14): Astra 3, `SpeechSource` retains W2's identity payload (metadata, source, fences), structured open terms, reading sets with speech candidates, narrowings and lemmas, with `identityPayload`, `documentId` and `source_retained`; Astra 8, the `intended-reading` open term encoded in W2's frozen schema (token name `intended-reading.<u>`, display label `intended-reading:<set>@<version>`, empty closed-formula condition lists, criteria as factors, derived declaration and `open` meaning). Sections 1.3, 3.2, 3.5, 4.1, 4.6, 5.5, 6, 7, 8.1, 8.5, 10, 11, 12.7, fixtures ν, ψ, ω. Spec only; no other change. |
+| 2026-09-28 | Draft 4 | The one defect of the second verification pass (section 15): `source_retained` restated over the front-matter fields the identity payload retains verbatim, the structured reading sets and narrowings as their decoding, `Wire.encodeReadingSets` and `Wire.encodeNarrowings` withdrawn; the `models` and `rejectedHistory` comments. Section 8.5 and the status header only. Spec only; no other change. |
