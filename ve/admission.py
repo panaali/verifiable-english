@@ -101,12 +101,14 @@ def _validate_label_python(s) -> str:
 
 def validate_label(s) -> str:
     """Check the public label grammar through the selected authority."""
-    from .backends.dispatch import execute
+    from .backends.dispatch import authority_for, execute
     from .backends.lean_runner import run
     from .backends.lean_service import CheckerUnavailable
 
     if type(s) is not str:
         raise AdmissionError(f"AdmissionError: invalid label {s}")
+    if authority_for("label") == "python":
+        return _validate_label_python(s)
     case = {"id": "label", "kind": "label", "environment": _DEPENDENCY_ENVIRONMENT,
             "label": s}
 
