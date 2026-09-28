@@ -184,6 +184,8 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
          "unit": "cell", "support": "observation"}]
     assert detail["assumed_harm_free"] == {"decider": "case annotator",
                                              "premise": "alternatives:table_complete"}
+    assert detail["table_complete"] == detail["assumed_harm_free"]
+    assert report["residual"]["table_complete"] == 1
     assert report["residual"]["counterfactual_leaves"] == 1
 
 
