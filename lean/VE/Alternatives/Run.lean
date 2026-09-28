@@ -1,4 +1,4 @@
-import VE.Alternatives.Replay
+import VE.Alternatives.Admission
 import VE.Norms.Run
 
 /-! The `ve_alternatives_route` executable (docs/spec/alternatives.md 7.3), invoked as
@@ -22,7 +22,7 @@ environment and `alternatives@0`, `norms@0` among its profiles.
   computed: conflict status UNKNOWN` without CONFLICT-FREE packages for the same source.
 * `alt-certificate` → `valid` (`alternatives_wire_acceptance`).
 * Any case without the profile, the block or an `alt-*` kind is delegated unchanged to
-  `VE.Norms.Run`. W2 `admission` with the block is not implemented and is rejected. -/
+  `VE.Norms.Run`. -/
 namespace VE.Alternatives.Run
 open Lean
 open VE.Norms
@@ -213,9 +213,49 @@ def runFollowable (id : String) (j : Json) : Except String Json := do
   return ok id [("verdict", .str "UNKNOWN"),
     ("text", .str "UNKNOWN: no accepted followability certificate for this source")]
 
+def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
+  ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson res.report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray),
+    ("conditional_on", toJson res.src.labels)]
+
+def runAdmission (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocument environment document
+  let envId ← environmentId res.src.profiles environment
+  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.src.profiles)
+    (VE.Norms.Run.reportPayload envId document res.report)
+  return encodeAdmitted id reportId res
+
+/-- A W2 answer is the exact graph-checker output, bound to the complete source.
+Its semantic consequence is over the regenerated alternatives premises and
+the ordinary W2 assumptions remaining in the report. -/
+def AltAdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
+  ∃ res : Admission.Admitted, ∃ envId reportId : String,
+    Admission.admitDocument environment document = .ok res ∧
+    environmentId res.src.profiles environment = .ok envId ∧
+    VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.src.profiles)
+      (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId ∧
+    answer = encodeAdmitted id reportId res ∧ WellFormedAlt res.src.A = true ∧
+    ∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
+      Sat S (Admission.generated res) →
+      Sat S ((Admission.otherAssumptions res).map (·.formula)) →
+      res.report.root.formula.denote S []
+
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    AltAdmissionAnswer id environment document answer := by
+  unfold runAdmission at h
+  obtain ⟨res, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨envId, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨reportId, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  exact ⟨res, envId, reportId, hr, he, hd, rfl, res.src.wf,
+    fun S hS hg ho => Admission.report_consequence res S hS hg ho⟩
+
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
+  if kind == "admission" then
+    return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "alt-elaborate" then
     let src ← sourceOf j
     return ok id (Wire.regenerated src)
@@ -228,6 +268,26 @@ def runCase (j : Json) : Except String Json := do
       ("layers", toJson (elaborate (inlineTree r.src.A).T).length),
       ("conditional_on", toJson (altPremiseLabels r.src.A))]
   throw s!"UnsupportedProfile: case kind {kind} is not available on the alternatives route"
+
+/-- Public W2 acceptance from raw input, with source and report bindings. -/
+theorem alternatives_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesAltPath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      AltAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [beq_self_eq_true, ↓reduceIte] at h
+  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨document, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesAltPath j then

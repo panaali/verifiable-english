@@ -199,6 +199,18 @@ def decodeScenario (src : AltSource) (w : Json) : Except String (Scenario src) :
       (VE.Bridge.modelData_valid data' v hv), rows, modelJ⟩
   else throw "model is not semantically admissible"
 
+/-- The public decoder supplies structural validity, so successful scenario
+validation yields the full 4.2 conclusion without a caller-supplied validity
+hypothesis. -/
+theorem validate_sound_decoded (src : AltSource) (sc : Scenario src)
+    (hv : validateAlternatives src.A sc.M sc.rows = .ok ()) :
+    sc.M.Valid (envAt (inlineTree src.A) 0) ∧
+    backgroundValidAlt src.A sc.M = true ∧
+    src.A.Γ.all (fun p => p.eval sc.M []) = true ∧
+    BaseAdmissibleAlt src.A sc.M.asStructure ∧
+    ExistenceFacts src.A sc.M sc.rows :=
+  validate_sound src.A sc.M sc.rows sc.valid hv
+
 def entity (M : VE.FiniteModel VE.Bridge.Entity) (s x : String) : Except String VE.Bridge.Entity :=
   if (M.domains s).contains (s, x) then pure (s, x) else throw s!"InvalidInput: {x} is not in the {s} domain"
 
@@ -246,7 +258,7 @@ theorem alternatives_wire_dilemma_sound (j : Json) (src : AltSource) (w : Dilemm
   simp only [DilemmaData.dilemma, Bool.and_eq_true, List.contains_iff_mem] at hw
   obtain ⟨⟨⟨hc, hm⟩, hr⟩, hd⟩ := hw
   have hval : validateAlternatives src.A w.M w.rows = .ok () := validateAlternativesWith_ok.mpr hm
-  obtain ⟨valid, hb, hΓ, _, _⟩ := validate_sound src.A w.M w.rows w.sc.valid hval
+  obtain ⟨valid, hb, hΓ, _, _⟩ := validate_sound_decoded src w.sc hval
   exact ⟨hdec, src.wf, alt_conflict_free src.A src.wf _ hc, hval, hr, hd,
     dilemma_witness_sound src.A src.wf w.M valid hb hΓ w.r hr hd⟩
 

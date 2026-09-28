@@ -12,6 +12,7 @@ import pytest
 
 from conformance.alternatives import base_environment, cases, rules
 from ve.alternatives import run_case
+from ve.admission import AdmissionError, admit_document
 from ve.ast import formula_from_data
 from ve.ast import _Decoder, Not
 from ve.entailment import prove_entailment
@@ -78,17 +79,29 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     assert python_values == rust_values == expected, case["id"]
 
 
-def test_mapped_violation_requires_a_taken_action_and_failed_fulfilment():
+def test_mapped_violation_requires_a_taken_action_and_failed_fulfilment(rust_binary):
     case = deepcopy(next(c for c in cases() if c["id"] == "f1"))
     case.pop("expected_clear")
     taken = case["scenario"]["model"]["relations"]["taken"]
-    taken[:] = [["refuse"]]
-    report = run_case(case | {"kind": "alt-validate"})["choosers"][0]
-    assert report["violations"] == [{"obligation": "respond_required", "arguments": ["r"]}]
-    taken[:] = [["refer"]]
-    assert run_case(case | {"kind": "alt-validate"})["choosers"][0]["violations"] == []
-    taken.clear()
-    assert run_case(case | {"kind": "alt-validate"})["choosers"][0]["violations"] == []
+    base = base_environment(case["environment"])
+    env = Environment(base)
+    failed_fulfilment = ["exists", "action", ["and", ["unary", "taken", ["var", 0]],
+                          ["not", case["environment"]["alternatives"]["fulfilments"][1]["body"]]]]
+    for action, expected in (("refuse", True), ("refer", False), (None, False)):
+        taken[:] = [[action]] if action else []
+        report = run_case(case | {"kind": "alt-validate"})["choosers"][0]
+        assert report["violations"] == ([{"obligation": "respond_required", "arguments": ["r"]}]
+                                         if expected else [])
+        model_data = case["scenario"]["model"]
+        model = FiniteModel.from_dict(env, model_data)
+        assert evaluate(env, formula_from_data(env, failed_fulfilment), model, trace=False).value == expected
+        rust = subprocess.run([str(rust_binary), "conformance"],
+                              input=json.dumps([{"id": "mapped", "kind": "evaluate",
+                                                 "environment": base, "ast": [failed_fulfilment],
+                                                 "model": model_data}]),
+                              capture_output=True, text=True, timeout=120)
+        assert rust.returncode == 0, rust.stdout + rust.stderr
+        assert json.loads(rust.stdout)[0]["values"] == [expected]
 
 
 def test_scenario_document_binding_changes_with_rules_and_units():
@@ -104,6 +117,60 @@ def test_scenario_document_binding_changes_with_rules_and_units():
     with_unit = deepcopy(case)
     with_unit["units"] = [{"label": "fact", "ast": ["top"]}]
     assert run_case(with_unit | {"kind": "alt-validate"})["document_hash"] != initial["document_hash"]
+
+
+def test_w2_admission_uses_regenerated_alternatives_leaves():
+    case = deepcopy(next(c for c in cases() if c["id"] == "a"))
+    env = Environment(case["environment"])
+    elaborated = run_case({"id": "source", "kind": "alt-elaborate",
+                           "environment": case["environment"], "norms": []})
+    premise = next(p for p in elaborated["alternatives"] if p["label"] == "alternatives:own")
+    document = {"units": [], "graph": {"root": "slot", "nodes": [
+        {"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}}
+    result = admit_document(env, document)
+    assert result["admitted"] is True
+    assert result["report"]["assumptions"][0]["label"] == "alternatives:own"
+    assert len(result["report_id"]) == 64
+    stale = deepcopy(document)
+    stale["graph"]["nodes"][0]["ast"] = ["top"]
+    with pytest.raises(AdmissionError):
+        admit_document(env, stale)
+    changed = deepcopy(case["environment"])
+    changed["alternatives"]["decided_by"] = "another decider"
+    assert admit_document(Environment(changed), document)["report_id"] != result["report_id"]
+
+
+def test_w2_admission_regenerates_norm_layer_and_table_completion():
+    env_data = deepcopy(next(c for c in cases() if c["id"] == "a")["environment"])
+    env_data["alternatives"]["outcomes"] = {"complete_by": "annotator"}
+    env_data["vocabulary"]["constants"] = {
+        "nothing": {"sort": "action", "description": "nothing"},
+        "h": {"sort": "harm", "description": "h"}}
+    norm = deepcopy(rules()["7"])
+    cell = ["binary", "leads_to", ["const", "nothing"], ["const", "h"]]
+    source = {"id": "generated", "kind": "alt-elaborate", "environment": env_data,
+              "norms": [norm], "units": [{"label": "unit:cell", "ast": cell}]}
+    elaborated = run_case(source)
+    assert elaborated["status"] == "ok"
+    layer = next(p for p in elaborated["premises"] if p["label"] == "layer:norms:permitted")
+    completion = next(p for p in elaborated["base_premises"]
+                      if p["label"] == "alternatives:table_complete")
+    document = {"units": [
+        {"id": "rule", "span": [0, 1], "kind": "norm", "content": norm},
+        {"id": "cell", "span": [1, 2], "kind": "asserted", "content": cell}],
+        "graph": {"root": "layer", "nodes": [
+            {"name": "layer", "label": layer["label"], "ast": layer["ast"]},
+            {"name": "completion", "label": completion["label"], "ast": completion["ast"]}]}}
+    admitted = admit_document(Environment(env_data), document)
+    assert admitted["admitted"]
+    assert admitted["kinds"] == ["norm", "asserted"]
+    assert "alternatives:table_complete" in admitted["conditional_on"]
+    document["graph"]["root"] = "completion"
+    assert admit_document(Environment(env_data), document)["report"]["root"]["label"] == "alternatives:table_complete"
+    stale = deepcopy(document)
+    stale["units"][1]["content"] = ["not", cell]
+    with pytest.raises(AdmissionError):
+        admit_document(Environment(env_data), stale)
 
 
 def test_spec_s2_conflict_three_way(rust_binary):
