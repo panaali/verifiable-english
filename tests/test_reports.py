@@ -104,13 +104,14 @@ def test_literal_and_paraphrase_have_distinct_keys():
 def test_bound_review_wording_rejects_changed_context_and_text():
     doc = ReportsDocument(environment(), contexts(), [], [unit(report())])
     rendered = render_report_unit(doc, "u1")
-    assert rendered["text"] == "article says that Alice is safe."
+    # The holder opens the sentence capitalised; the formula content stays lower case (2.1).
+    assert rendered["text"] == "Article says that alice is safe."
     assert parse_rendered_report(doc, rendered) == report()
     with pytest.raises(VEError, match="ManifestMismatch"):
         parse_rendered_report(ReportsDocument(environment(), contexts("past"), [],
                                               [unit(report())]), rendered)
-    with pytest.raises(VEError, match="ManifestMismatch"):
-        parse_rendered_report(doc, {**rendered, "text": "article claims that Alice is safe."})
+    with pytest.raises(VEError, match="claims that"):
+        parse_rendered_report(doc, {**rendered, "text": "Article claims that alice is safe."})
 
 
 def test_reject_unsupported_act_and_profile_composition():
