@@ -368,7 +368,7 @@ def coverage(doc):
             elif atom[1] == block["leads_to"]:
                 cells.append({"action": first, "harm": second, "leads_to": not negative,
                               "decider": block.get("decided_by", "unstated"), **leaf})
-            elif atom[1] == block.get("proximate"):
+            elif atom[1] == block.get("proximate") and not negative:
                 proximate.append({"action": first, "harm": second,
                                   "decider": block.get("decided_by", "unstated"), **leaf})
         mapped = {item["obligation"] for item in block.get("fulfilments", [])}
