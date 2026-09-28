@@ -168,7 +168,13 @@ need renewed statement approval (the approved statement is false or unprovable a
     object; `admission_projects`, `stale_import_rejected` and `format1_profile_requires_format2` take
     `formatOf j = some "ve-document@…"` instead of the top-level `format` field (the input is a loaded text, whose
     format is in its front matter; `stale_import_rejected` also takes that the input is a loaded text).
-20. **Checks not implemented in `wellFormed`:** 4.1(9) (the definition/proof dependency DAG; the Lean W2 document has
+20. **(renewal) Authored sets in the composition gate (4.8).** The joint set ranges over the active open sets only,
+    so the approved `citation_extends_joint`/`report_extends_joint` (`∃ c ∈ cs, ExtendsTo ch c`) cannot hold for a
+    label naming an authored set, which `@1` admits (the gate would turn a W2-accepted label into
+    `InvalidCompatibility`). The gate reads each compatible choice with the active authored sets fixed at their one
+    signed reading (`gateChoices`, `authoredChoice`), and both theorems conclude `ExtendsTo ch (c ++ authoredChoice
+    res.doc)`; with no authored set this is the approved statement. Python's `check_joint_extensions` is the same.
+21. **Checks not implemented in `wellFormed`:** 4.1(9) (the definition/proof dependency DAG; the Lean W2 document has
     no citation graph); `exports` is checked as "a `definition` unit lies inside the anchor".
 
 ## Not done

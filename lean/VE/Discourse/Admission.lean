@@ -370,6 +370,16 @@ def gateOk (b : VE.Route.Admission.Admitted) (cs : List Choice) : Except String 
     | .ok ch => req (cs.any (extendsTo ch)) ("InvalidCompatibility: report " ++ b.report.root.name)
     | .error e => .error e]
 
+/-- The active authored sets, each at its one signed reading: fixed in every choice the gate
+reads, so a label naming an authored set extends exactly when W2 accepts it (an authored set is
+no joint-set dimension, 4.8, and its choice is not open). -/
+def authoredChoice (D : DDoc) : Choice :=
+  (D.sets.filter (·.status == "authored")).map fun s => (s.id, s.version, 0)
+
+/-- The choice vectors the composition gate reads: each compatible choice with the authored sets'
+fixed choices. -/
+def gateChoices (D : DDoc) (cs : List Choice) : List Choice := cs.map (· ++ authoredChoice D)
+
 /-- The composition gate runs over a completed joint set; an unfinished one leaves it UNKNOWN. -/
 def jointGate (b : VE.Route.Admission.Admitted) : Except String (List Choice) → Except String Unit
   | .ok cs => gateOk b cs
@@ -625,7 +635,7 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
   validityPostOk D P.claims res C.bound
   choicesOk K res
   let joint := compatibleChoices K (activeSets D) 64
-  jointGate res joint
+  jointGate res (joint.map (gateChoices D))
   let validity : String → Option Verdict := fun u =>
     (P.claims.find? (·.unit == u)).bind (verdictFor D (selfOutcome joint) check)
   let documentId ← Loader.documentId j

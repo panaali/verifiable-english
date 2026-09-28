@@ -112,7 +112,7 @@ structure Admit2Facts (profiles : List String) (environment : Json) (rv : VE.Rou
   validityPost : validityPostOk res.doc res.claims res.base res.bound = .ok ()
   choices : choicesOk res.doc.K res.base = .ok ()
   joint : res.joint = compatibleChoices res.doc.K (activeSets res.doc) 64
-  gate : ∀ cs, res.joint = .ok cs → gateOk res.base cs = .ok ()
+  gate : ∀ cs, res.joint = .ok cs → gateOk res.base (gateChoices res.doc cs) = .ok ()
   presuppositions : res.presuppositions = fun id =>
     ((presupMentions res.doc).find? (·.id == id)).bind (carrierIn res.doc res.base.wires res.base.doc res.premiseUnits)
   validity : res.validity = fun u =>
@@ -171,7 +171,7 @@ theorem admit2_facts (profiles : List String) (environment : Json) (rv : VE.Rout
   intro cs hcs
   simp only at hcs
   rw [hcs] at hgate
-  exact hgate
+  simpa [Except.map, jointGate] using hgate
 
 /-! ## The two paths of `admitDiscourse` -/
 
@@ -622,11 +622,13 @@ theorem citation_extends_joint (profiles : List String) (environment : Json) (rv
     (h : admitDiscourse profiles environment rv j fuel = .ok res) (cs : List Choice) (hcs : res.joint = .ok cs)
     (L : VE.Route.Admission.Lemma) (hL : L ∈ res.base.doc.lemmas) (ch : List (String × String))
     (hch : VE.Definitions.Bundle.leafChoices (leafList L) = .ok ch) :
-    ∃ c ∈ cs, ExtendsTo ch c := by
+    ∃ c ∈ cs, ExtendsTo ch (c ++ authoredChoice res.doc) := by
   rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · cases hcs
   · obtain ⟨F, _, _⟩ := admit_facts2 profiles environment rv j _ res ha
-    exact (gate_facts (F.gate cs hcs)).1 L hL ch hch
+    obtain ⟨c', hc', he⟩ := (gate_facts (F.gate cs hcs)).1 L hL ch hch
+    obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hc'
+    exact ⟨c, hc, he⟩
 
 /-- The merged transitive assumptions of the reported graph result extend to a validated
 compatible choice. -/
@@ -635,11 +637,13 @@ theorem report_extends_joint (profiles : List String) (environment : Json) (rv :
     (h : admitDiscourse profiles environment rv j fuel = .ok res) (cs : List Choice) (hcs : res.joint = .ok cs)
     (ch : List (String × String))
     (hch : VE.Definitions.Bundle.leafChoices (res.base.report.assumptions.map (fun l => (l.label, l.formula))) = .ok ch) :
-    ∃ c ∈ cs, ExtendsTo ch c := by
+    ∃ c ∈ cs, ExtendsTo ch (c ++ authoredChoice res.doc) := by
   rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · cases hcs
   · obtain ⟨F, _, _⟩ := admit_facts2 profiles environment rv j _ res ha
-    exact (gate_facts (F.gate cs hcs)).2 ch hch
+    obtain ⟨c', hc', he⟩ := (gate_facts (F.gate cs hcs)).2 ch hch
+    obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hc'
+    exact ⟨c, hc, he⟩
 
 def CompatibilityDiagnostic (s : String) : Prop := ∃ x, s = "InvalidCompatibility" ++ x
 
@@ -1089,11 +1093,12 @@ theorem extension_rejected (profiles : List String) (environment : Json) (rv : V
     (cs : List Choice) (hcs : compatibleChoices P.doc.K (activeSets P.doc) 64 = .ok cs)
     (pre post : List VE.Route.Admission.Lemma) (L : VE.Route.Admission.Lemma)
     (hL : C.base.doc.lemmas = pre ++ L :: post)
-    (hpre : ∀ L' ∈ pre, ∃ ch', VE.Definitions.Bundle.leafChoices (leafList L') = .ok ch' ∧ cs.any (extendsTo ch') = true)
+    (hpre : ∀ L' ∈ pre, ∃ ch', VE.Definitions.Bundle.leafChoices (leafList L') = .ok ch' ∧
+      (gateChoices P.doc cs).any (extendsTo ch') = true)
     (ch : List (String × String)) (hchL : VE.Definitions.Bundle.leafChoices (leafList L) = .ok ch)
-    (hno : ∀ c ∈ cs, ¬ ExtendsTo ch c) :
+    (hno : ∀ c ∈ cs, ¬ ExtendsTo ch (c ++ authoredChoice P.doc)) :
     admitDiscourse profiles environment rv j (n + 1) = .error ("InvalidCompatibility: citation " ++ L.name) := by
-  have hgate : gateOk C.base cs = .error ("InvalidCompatibility: citation " ++ L.name) := by
+  have hgate : gateOk C.base (gateChoices P.doc cs) = .error ("InvalidCompatibility: citation " ++ L.name) := by
     unfold gateOk
     apply runAll_head_error
     rw [hL]
@@ -1101,17 +1106,18 @@ theorem extension_rejected (profiles : List String) (environment : Json) (rv : V
     · intro L' hL'
       obtain ⟨ch', h1, h2⟩ := hpre L' hL'
       simp only [h1, h2, req, if_true]
-    · have hany : cs.any (extendsTo ch) = false := by
-        cases hc : cs.any (extendsTo ch) with
+    · have hany : (gateChoices P.doc cs).any (extendsTo ch) = false := by
+        cases hc : (gateChoices P.doc cs).any (extendsTo ch) with
         | false => rfl
         | true =>
-          obtain ⟨c, hcm, he⟩ := List.any_eq_true.mp hc
-          exact absurd ((extendsTo_iff ch c).mp he) (hno c hcm)
+          obtain ⟨c', hcm, he⟩ := List.any_eq_true.mp hc
+          obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hcm
+          exact absurd ((extendsTo_iff ch _).mp he) (hno c hc)
       simp only [hchL, hany, req, Bool.false_eq_true, if_false]
   have hadmit : ∀ check, admit2 profiles environment rv j check = .error ("InvalidCompatibility: citation " ++ L.name) := by
     intro check
     unfold admit2
-    simp only [hP, hC, hcl, hvp, hch, hcs, jointGate, hgate, bind, Except.bind]
+    simp only [hP, hC, hcl, hvp, hch, hcs, Except.map, jointGate, hgate, bind, Except.bind]
   simp [admitDiscourse, admitAt, h2, hp, ht, hi, hadmit]
 
 end VE.Discourse
