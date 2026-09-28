@@ -1,4 +1,5 @@
 import VE.Order.Conservativity
+import VE.Time.Arithmetic
 import VE.Route.Readings
 import VE.Order.Gate
 import VE.Order.ModelCheck
@@ -941,3 +942,7 @@ import VE.Norms.Run
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+#print axioms VE.Time.coordinate_exact_of_lowering
+#print axioms VE.Time.sameTag_sound
+#print axioms VE.Time.within_zero_iff_on
+#print axioms VE.Time.elapsed_difference_iff
