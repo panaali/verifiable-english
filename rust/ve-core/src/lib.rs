@@ -16,7 +16,7 @@ pub use environment::Environment;
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
 pub use eval::EvaluationKernel;
-pub use eval::{Evaluation, evaluate, evaluate_formula};
+pub use eval::{Evaluation, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced};
 pub use model::FiniteModel;
 pub use order::order_case;
 pub use route::{check_label, check_reading_binding, dependency_order, label_is_canonical};

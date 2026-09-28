@@ -13,11 +13,21 @@ pub struct FiniteModel {
     pub(crate) domains: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, usize>,
     pub(crate) relations: BTreeMap<String, BTreeSet<Vec<usize>>>,
+    predicate_sorts: BTreeMap<String, Vec<String>>,
+    constant_sorts: BTreeMap<String, String>,
     environment_id: String,
     model_id: String,
     data: Value,
 }
 impl FiniteModel {
+    pub(crate) fn predicate_sort(&self, name: &str, position: usize) -> &str {
+        &self.predicate_sorts[name][position]
+    }
+
+    pub(crate) fn constant_sort(&self, name: &str) -> &str {
+        &self.constant_sorts[name]
+    }
+
     pub fn from_json(env: &Environment, bytes: &[u8]) -> Result<Self> {
         Self::from_value(env, &loads_json(bytes)?)
     }
@@ -125,6 +135,8 @@ impl FiniteModel {
             domains,
             constants,
             relations,
+            predicate_sorts: env.predicates.clone(),
+            constant_sorts: env.constants.clone(),
             environment_id: String::new(),
             model_id: String::new(),
             data: Value::Null,
@@ -218,6 +230,8 @@ impl FiniteModel {
             domains,
             constants,
             relations,
+            predicate_sorts: env.predicates.clone(),
+            constant_sorts: env.constants.clone(),
             environment_id,
             model_id,
             data,

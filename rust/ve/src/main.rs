@@ -75,7 +75,13 @@ fn case(v: &Value) -> Result<Value> {
         let doc = Document::from_value(&env, field(v, "ast")?)?;
         let model = FiniteModel::from_value(&env, field(v, "model")?)?;
         let budget = number(v, "max_evaluations", MAX_EVALUATIONS)?;
-        let mut out = serde_json::to_value(evaluate(&doc, &model, budget)?).unwrap();
+        let trace = v.get("trace").and_then(Value::as_bool).unwrap_or(false);
+        let mut out = if trace {
+            let trace_budget = number(v, "max_trace_nodes", 10_000)?;
+            serde_json::to_value(evaluate_traced(&doc, &model, budget, trace_budget)?).unwrap()
+        } else {
+            serde_json::to_value(evaluate(&doc, &model, budget)?).unwrap()
+        };
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
