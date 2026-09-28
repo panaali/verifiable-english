@@ -19,6 +19,7 @@ except ModuleNotFoundError:
     sys.modules["grimp"] = grimp
 import check_python_layers
 import check_rust_deps
+import select_tests
 
 from select_tests import select
 
@@ -57,6 +58,13 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertEqual(select(["ve_experiments/assist_haiku.py"])["minimum_layer"], 4)
         self.assertEqual(select(["ve/surface/__init__.py"])["minimum_layer"], 1)
 
+    def test_transitive_source_imports_select_surface_consumers(self):
+        for source in ("ve/admission.py", "ve/vacuity.py"):
+            with self.subTest(source=source):
+                plan = select([source])
+                self.assertLessEqual(plan["minimum_layer"], 3)
+                self.assertIn("tests/test_english.py", plan["selected"])
+
     def test_imported_fixtures_and_helpers_select_consumers(self):
         cases = (
             ("lean/Main.lean", "tests/test_lean_certificates.py"),
@@ -92,9 +100,47 @@ class LayerSelectionTests(unittest.TestCase):
                           check_python_layers.violations())
             self.assertIn("ve.errors -> ve_experiments", check_python_layers.violations())
 
+    def test_facade_imports_resolve_to_export_owner(self):
+        class Graph:
+            modules = {"ve", "ve.errors", "ve.argument"}
+
+            def find_modules_directly_imported_by(self, importer):
+                return {"ve"} if importer == "ve.errors" else set()
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ve").mkdir()
+            (root / "ve/__init__.py").write_text("from .argument import check_argument\n")
+            (root / "ve/argument.py").write_text("")
+            for source in ("from . import check_argument\n",
+                           "from ve import check_argument as check\n",
+                           "import ve as facade\nfacade.check_argument\n"):
+                (root / "ve/errors.py").write_text(source)
+                with (patch.object(check_python_layers, "ROOT", root),
+                      patch.object(check_python_layers.grimp, "build_graph", return_value=Graph())):
+                    self.assertIn("ve.errors -> ve.argument", check_python_layers.violations())
+
     def test_comment_prefixed_and_nested_lean_imports(self):
         source = "/- outer /- inner -/ -/ import VE.Route.Run\n-- import VE.Fake\n"
         self.assertEqual(check_lean_imports.imports(source), ["VE.Route.Run"])
+        self.assertEqual(check_lean_imports.imports("import «VE».Route.Run\n"),
+                         ["VE.Route.Run"])
+
+    def test_quoted_lean_local_import_is_checked(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "lean/VE/Core").mkdir(parents=True)
+            (root / "lean/VE/Route").mkdir(parents=True)
+            (root / "lean/VE/Core/Wire.lean").write_text("import «VE».Route.Run\n")
+            (root / "lean/VE/Route/Run.lean").write_text("")
+            ledger = root / "exceptions.json"
+            ledger.write_text("{}")
+            error = io.StringIO()
+            with (patch.object(check_lean_imports, "ROOT", root),
+                  patch.object(check_lean_imports, "LEDGER", ledger),
+                  redirect_stderr(error)):
+                self.assertEqual(check_lean_imports.main(), 1)
+            self.assertIn("new outward Lean import: VE.Core.Wire -> VE.Route.Run", error.getvalue())
 
     def test_unmapped_lean_importer_reports_error(self):
         with TemporaryDirectory() as directory:
@@ -109,6 +155,33 @@ class LayerSelectionTests(unittest.TestCase):
                   redirect_stderr(error)):
                 self.assertEqual(check_lean_imports.main(), 1)
             self.assertIn("unmapped Lean module: Alien", error.getvalue())
+
+    def test_unmapped_imported_lean_module_reports_error(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "lean/VE/Core").mkdir(parents=True)
+            (root / "lean/VE/Core/Wire.lean").write_text("import Alien\n")
+            (root / "lean/Alien.lean").write_text("")
+            ledger = root / "exceptions.json"
+            ledger.write_text("{}")
+            error = io.StringIO()
+            with (patch.object(check_lean_imports, "ROOT", root),
+                  patch.object(check_lean_imports, "LEDGER", ledger),
+                  redirect_stderr(error)):
+                self.assertEqual(check_lean_imports.main(), 1)
+            self.assertIn("unmapped Lean module: Alien", error.getvalue())
+
+    def test_experiment_import_forms_are_outer_layer(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            path = root / "tests/test_p1.py"
+            for source in ("from experiments import p1\n", "import experiments.p1\n"):
+                path.write_text(source)
+                select_tests.test_layer.cache_clear()
+                with patch.object(select_tests, "ROOT", root):
+                    self.assertEqual(select_tests.test_layer(path), 5)
+            select_tests.test_layer.cache_clear()
 
     def test_renamed_rust_dependency_in_target_and_workspace_sections(self):
         with TemporaryDirectory() as directory:
