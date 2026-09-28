@@ -59,7 +59,7 @@ Names have prefix `VE.Alternatives.`.
 | `dilemma_expansion` | On a document expansion whose base restriction satisfies the slot premises, a typed chooser at which `¬followable°` holds has no clear alternative. |
 | `followable_eval_iff_denote` | Finite evaluation of `¬followable°` agrees with its denotation. |
 | `validate_sound` | Successful validation (with the Bridge decoder's `M.Valid`) gives `backgroundValidAlt`, `Γ_base` by evaluation, `BaseAdmissibleAlt` and the rows and existence facts. |
-| `validate_sound_decoded` | Successful validation of a decoded scenario gives the same conclusion; its decoder supplies structural validity. |
+| `Replay.validate_sound_decoded` | Successful validation of a decoded scenario gives the same conclusion; its decoder supplies structural validity. |
 | `scenarioConflict_sound` | A conflict formula true at a typed tuple of a validated scenario refutes conflict-freedom of the model and `AltConflictFree`. |
 | `alt_prefix_satisfaction`, `alt_conflictFree_prefix` | W1's prefix characterisation and local test, over the extended base. |
 | `altRoute`, `alt_route_backgroundSound`, `alt_route_backgroundComplete` | The composed frozen P0 route of the inlined document with `BaseAdmissibleAlt` as input admissibility; `backgroundAlt` is sound and complete for its output. |

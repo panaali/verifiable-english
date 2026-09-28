@@ -12,7 +12,7 @@ import json
 import re
 
 from . import ast
-from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar
+from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
@@ -44,7 +44,8 @@ def _bindings(decl, words):
 
 def _guard_text(formula, env, words, scope):
     traversal = EnglishTraversal(env, words, word_markers=env.alternatives is not None)
-    traversal.maximum = Counter(sort for sort, _ in scope)
+    initial = tuple(sort for sort, _ in scope)
+    traversal.maximum = _max_scope(formula, initial, Counter(initial))
     return traversal.formula(formula, scope)
 
 
