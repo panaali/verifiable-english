@@ -23,6 +23,10 @@ needed to replay the inventory. The baseline projection removes only
 on interpreter build details and are diagnostic identities, while semantic
 bindings, statuses, records, certificates and model witnesses remain exact.
 
+On the Stage 2 branch, the probe compares current Python outputs with this
+frozen baseline and verifies `runtime_sha256` against the pinned Stage 0 Git
+tree. Adapter source changes therefore do not rewrite the frozen runtime hash.
+
 On an independent machine, transfer this committed branch (for example with
 `git bundle`), use Python 3.14.7 and the locked dependencies, run the two replay
 commands above, and record that machine's hostname, Python version, commit,

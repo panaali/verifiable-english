@@ -162,6 +162,21 @@ def runtime_sha256():
     return digest.hexdigest()
 
 
+def pinned_runtime_sha256():
+    """Hash the frozen Stage 0 Python tree independently of the current adapters."""
+    revision = "f4286ef0d911c9db527abcc387e8280df8858e59"
+    paths = subprocess.check_output(
+        ["git", "ls-tree", "-r", "--name-only", revision, "--", "ve"],
+        cwd=ROOT, text=True).splitlines()
+    files = sorted(path for path in paths if path.endswith(".py")) + ["pyproject.toml", "uv.lock"]
+    digest = hashlib.sha256()
+    for path in files:
+        data = subprocess.check_output(["git", "show", f"{revision}:{path}"], cwd=ROOT)
+        digest.update(path.encode() + b"\0")
+        digest.update(hashlib.sha256(data).digest())
+    return digest.hexdigest()
+
+
 def operation(name, kind, env, model):
     """Exercise a small, deliberately explicit input for each public operation."""
     budget = kind == "budget"
@@ -690,6 +705,10 @@ def main():
         baseline.write_text(payload)
         matrix.write_text(report)
     else:
+        frozen = json.loads(baseline.read_text())
+        assert frozen["runtime_sha256"] == pinned_runtime_sha256(), "Stage 0 runtime changed"
+        data["runtime_sha256"] = frozen["runtime_sha256"]
+        payload = json.dumps(data, sort_keys=True, ensure_ascii=False, indent=2) + "\n"
         assert baseline.read_text() == payload, "baseline changed; rerun --write and review"
         assert matrix.read_text() == report, "support matrix changed; rerun --write and review"
 
