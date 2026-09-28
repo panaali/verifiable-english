@@ -175,6 +175,28 @@ def test_w2_admission_regenerates_norm_layer_and_table_completion():
         admit_document(Environment(env_data), stale)
 
 
+def test_w2_quoted_norm_does_not_activate_a_layer():
+    env_data = deepcopy(next(c for c in cases() if c["id"] == "a")["environment"])
+    norm = deepcopy(rules()["7"])
+    source = run_case({"id": "empty", "kind": "alt-elaborate",
+                       "environment": env_data, "norms": []})
+    premise = next(p for p in source["alternatives"] if p["label"] == "alternatives:own")
+    document = {"units": [{"id": "quote", "span": [0, 1],
+                           "kind": ["attributed", "alice", "says", "norm"],
+                           "content": norm}],
+                "graph": {"root": "slot", "nodes": [
+                    {"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}}
+    env = Environment(env_data)
+    assert admit_document(env, document)["kinds"] == [["attributed", "alice", "says", "norm"]]
+    layer = next(p for p in run_case({"id": "active", "kind": "alt-elaborate",
+                                     "environment": env_data, "norms": [norm]})["premises"]
+                 if p["label"] == "layer:norms:permitted")
+    document["graph"] = {"root": "layer", "nodes": [
+        {"name": "layer", "label": layer["label"], "ast": layer["ast"]}]}
+    with pytest.raises(AdmissionError):
+        admit_document(env, document)
+
+
 def test_legend_uses_act_words_without_template_slots():
     case = next(c for c in cases() if c["id"] == "t")
     elaborated = run_case({"id": "legend", "kind": "alt-elaborate",
