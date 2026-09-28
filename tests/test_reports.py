@@ -397,7 +397,8 @@ def test_report_premises_are_in_the_residual(tmp_path):
     assert lines["unreviewed_acts"] == {"promised": 1}
     assert lines["open_terms"] == ["reports__may__1"]
     assert {k: coverage["residual"][k] for k in lines} == {"open_terms": 1,
-        "reports": 1, "assessments": 2, "literal_quotations": 1, "scoped_checks": 1, "unreviewed_acts": 1}
+        "reports": 1, "assessments": 2, "literal_quotations": 1, "scoped_checks": 1, "unreviewed_acts": 1,
+        "unformalised_kinds": 0}
     assert coverage["residual_total"] == 1 + 1 + 2 + 1 + 1 + 1  # the one generated open term too
 
 

@@ -129,7 +129,8 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   status order, UNFORMALISED, OPEN and UNKNOWN below LABELLED below CHECKED (the three lowest ranked in that
   order), and one meet. A unit's status is the meet of its meaning's (`meaningStatus`, W2's inference) and every
   result nested in it: each assessment node at any depth OPEN, each act outside the slice at any depth of its
-  kind LABELLED (`Run.nestedResults`); a document's is the meet of its units' and every scoped check's replayed
+  kind LABELLED, each `unformalised` node at any depth of its kind UNFORMALISED with its reason
+  (`Run.nestedResults`); a document's is the meet of its units' and every scoped check's replayed
   status (`verdictStatus`: FOLLOWS, DOES NOT FOLLOW and PAYLOADS INCONSISTENT are decided, anything else
   UNKNOWN). The document's is at most every unit's, every nested result's and every verdict's, and CHECKED only
   when every folded result is. `ve/reports.py` (`fold_status`, `unit_status`, `statuses`) computes the same, and
@@ -192,6 +193,13 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   and `reports-elaborate` warns once per node, with its kind path when it is not the root. The Python residual
   also lists the open terms by name (declared, then generated), so each assessment node, at any depth, is named
   in it; their count is W2's `open_terms` line, unchanged.
+- An `unformalised` node nested in a unit's kind (under attributed, hedged or causal wrappers) leaves that part of
+  the unit unformalised whatever its meaning and content (6's MIXED row, in one unit), so it is an UNFORMALISED
+  nested result, not a rejection: W2 admits such kinds and the root rule (an unformalised kind needs an
+  unformalised meaning) is unchanged. The residual gains a line beside 6's, `unformalised_kinds` (every
+  unformalised node of a unit's kind at any depth, root included, by reason), and the coverage's
+  `unformalised_reasons` counts each nested one's reason beside each unformalised meaning's (a root kind's is
+  its unit's meaning's). A plain W2 document (no `reports@0`) is unchanged.
 
 ## Spec defects found
 
