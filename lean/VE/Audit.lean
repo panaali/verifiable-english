@@ -34,6 +34,7 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.Discourse.Examples
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -941,3 +942,51 @@ import VE.Norms.Run
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+#print axioms VE.Discourse.assertive_denote
+#print axioms VE.Discourse.citation_choices_retained
+#print axioms VE.Discourse.compatibleChoices_unconstrained
+#print axioms VE.Discourse.compatible_budget
+#print axioms VE.Discourse.compatible_empty_error
+#print axioms VE.Discourse.compatible_no_sets
+#print axioms VE.Discourse.compatible_sound
+#print axioms VE.Discourse.conj_denote
+#print axioms VE.Discourse.conj_nil
+#print axioms VE.Discourse.denote_head
+#print axioms VE.Discourse.denote_prefix
+#print axioms VE.Discourse.description_definedness
+#print axioms VE.Discourse.disj_denote
+#print axioms VE.Discourse.disjunction_denote
+#print axioms VE.Discourse.document_sort_conservative
+#print axioms VE.Discourse.eta_models
+#print axioms VE.Discourse.extend_admissible
+#print axioms VE.Discourse.extend_denote
+#print axioms VE.Discourse.extend_term
+#print axioms VE.Discourse.extendsTo_iff
+#print axioms VE.Discourse.foldl_mul
+#print axioms VE.Discourse.formula_beq_refl
+#print axioms VE.Discourse.formula_eq_of_beq
+#print axioms VE.Discourse.fused_implies_split
+#print axioms VE.Discourse.independent_shortcut
+#print axioms VE.Discourse.joint_all_iff
+#print axioms VE.Discourse.joint_denote
+#print axioms VE.Discourse.joint_no_sets
+#print axioms VE.Discourse.joint_none_sound
+#print axioms VE.Discourse.joint_some_sound
+#print axioms VE.Discourse.length_allChoices
+#print axioms VE.Discourse.length_flatMap_range
+#print axioms VE.Discourse.mem_allChoices
+#print axioms VE.Discourse.presupposed_denote
+#print axioms VE.Discourse.presupposition_retained
+#print axioms VE.Discourse.product_iff
+#print axioms VE.Discourse.readingsOf_cons
+#print axioms VE.Discourse.satisfiesAll_iff
+#print axioms VE.Discourse.sharedWitness_spec
+#print axioms VE.Discourse.split_not_fused_model
+#print axioms VE.Discourse.term_beq_refl
+#print axioms VE.Discourse.term_denote_prefix
+#print axioms VE.Discourse.term_eq_of_beq
+#print axioms VE.Discourse.unconstrained_product
+#print axioms VE.Discourse.uniqueD_denote
+#print axioms VE.Discourse.verdictOf_negative_checked
+#print axioms VE.Discourse.verdictOf_unknown
+#print axioms VE.Discourse.xi_models
