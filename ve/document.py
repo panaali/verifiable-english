@@ -11,6 +11,7 @@ import json
 import hashlib
 from pathlib import Path
 
+from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
 from .environment import Environment
@@ -366,6 +367,7 @@ def _check_narrowing_choices(meta, labels):
                 raise VEError("reading choice conflicts with narrowing")
 
 
+@semantic_entry("document.check")
 def check_document(path):
     doc = load_document(path)
     env = doc["environment"]

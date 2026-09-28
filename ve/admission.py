@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from typing import NamedTuple
 
+from .assurance import semantic_entry
 from .ast import Or, formula_from_data, formula_to_data
 from .background import HOOKS, background
 from .environment import Environment
@@ -85,6 +86,7 @@ def _parse_raw(s: str) -> Label | None:
     return None
 
 
+@semantic_entry("label")
 def parse_label(s) -> Label | None:
     """Only canonical label strings parse: the label renders back to the input."""
     if type(s) is not str:
@@ -93,6 +95,7 @@ def parse_label(s) -> Label | None:
     return label if label is not None and label.render() == s else None
 
 
+@semantic_entry("label")
 def validate_label(s) -> str:
     if parse_label(s) is None:
         raise AdmissionError(f"AdmissionError: invalid label {s}")
@@ -407,6 +410,7 @@ def _claim_json(env, claim):
             **({} if label == "asserted" else {"label": label})}
 
 
+@semantic_entry("admission")
 def admit_document(environment, document) -> dict:
     """Admit a ve.core@0.2 document (FOL family) or raise with Lean's diagnostic.
 
