@@ -34,6 +34,8 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.Alternatives.Decl
+import VE.Alternatives.Inline
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -941,3 +943,39 @@ import VE.Norms.Run
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+
+-- alternatives@0 (lean/ALTERNATIVES.md)
+#print axioms VE.Alternatives.E_available
+#print axioms VE.Alternatives.E_leadsTo
+#print axioms VE.Alternatives.allowsF_wellFormed
+#print axioms VE.Alternatives.altSemanticCheck_of_wellFormed
+#print axioms VE.Alternatives.altValid_of_wellFormed
+#print axioms VE.Alternatives.alternatives_wellFormed
+#print axioms VE.Alternatives.available_ne_leadsTo
+#print axioms VE.Alternatives.available_not_layer
+#print axioms VE.Alternatives.avoidableF_wellFormed
+#print axioms VE.Alternatives.base_available
+#print axioms VE.Alternatives.base_inaction
+#print axioms VE.Alternatives.base_leadsTo
+#print axioms VE.Alternatives.base_proximate
+#print axioms VE.Alternatives.base_taken
+#print axioms VE.Alternatives.binary_withDefinitions
+#print axioms VE.Alternatives.body_wellFormed
+#print axioms VE.Alternatives.extEnv_predicates_none
+#print axioms VE.Alternatives.extEnv_predicates_some
+#print axioms VE.Alternatives.hide_some
+#print axioms VE.Alternatives.inlineTree_shape
+#print axioms VE.Alternatives.inline_base
+#print axioms VE.Alternatives.inline_faithful
+#print axioms VE.Alternatives.inline_wellFormed
+#print axioms VE.Alternatives.leadsTo_not_layer
+#print axioms VE.Alternatives.preventsF_wellFormed
+#print axioms VE.Alternatives.profileDef_isSome
+#print axioms VE.Alternatives.profileDef_length
+#print axioms VE.Alternatives.profileDef_some
+#print axioms VE.Alternatives.sortOf_extEnv
+#print axioms VE.Alternatives.term_denote_withDefinitions
+#print axioms VE.Alternatives.tupleTyped_withDefinitions
+#print axioms VE.Alternatives.unavoidableF_wellFormed
+#print axioms VE.Alternatives.wf_preds
+#print axioms VE.Alternatives.withDefinitions_relation_some
