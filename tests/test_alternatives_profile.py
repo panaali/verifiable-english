@@ -5,12 +5,12 @@ import pytest
 
 from ve.alternatives import run_case
 from ve.document import coverage
-from ve.ast import Binary, Const, formula_from_data, formula_to_data
+from ve.ast import Binary, Const, Forall, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.evaluate import evaluate
 from ve.norms import NormDocument, check_conflict
-from ve.norm_english import parse_english as parse_norm_english
+from ve.norm_english import parse_english as parse_norm_english, render_english as render_norm_english
 from ve.english import parse_english_with_metadata
 from ve.parser import parse as parse_strict
 from ve.printer import print_document
@@ -194,3 +194,40 @@ def test_english_own_outcome_guard_names_the_semantic_change():
     with pytest.raises(VEError, match="DependencyCycle: permitted; GuardOnOwnOutcome: .*changes the rule's meaning"):
         parse_norm_english(env, "Rule 1. Every action may be done, "
                                 "if that action may be done.")
+
+
+def test_available_guard_forms_bind_owner_and_distinguish_other_action():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "r": {"sort": "robot", "description": "r"},
+        "h": {"sort": "harm", "description": "h"},
+    }
+    env = Environment(raw)
+    for phrase, quantifier in (
+        ("every action available to r prevents h", "forall"),
+        ("every other action available to r prevents h", "forall"),
+        ("another action available to r prevents h", "exists"),
+    ):
+        document = parse_norm_english(env, f"Rule 1. Every action may be done, if {phrase}.")
+        rendered, manifest = render_norm_english(document)
+        assert parse_norm_english(env, rendered, manifest).document_hash == document.document_hash
+        rule = document.rules[0]
+        closed = formula_to_data(env, Forall("action", rule.guard))
+        assert closed[2][0] == quantifier
+        condition = closed[2][2][1]
+        if "other" in phrase or phrase.startswith("another"):
+            assert condition == ["and", ["binary", "available", ["var", 0], ["const", "r"]],
+                                 ["not", ["eq", ["var", 0], ["var", 1]]]]
+        else:
+            assert condition == ["binary", "available", ["var", 0], ["const", "r"]]
+    nested = ("there is a robot such that both of the following hold: "
+              "first clause: that action is available to that robot; end first clause; "
+              "second clause: every other action available to that robot prevents h; end second clause")
+    document = parse_norm_english(env, f"Rule 1. Every action may be done, if {nested}.")
+    rendered, manifest = render_norm_english(document)
+    assert parse_norm_english(env, rendered, manifest).document_hash == document.document_hash
+    guard = document.rules[0].guard
+    assert formula_to_data(env, Forall("action", guard))[2][2][2][2][1][2] == [
+        "not", ["eq", ["var", 0], ["var", 2]]]
+    with pytest.raises(VEError, match="Another action needs a rule on an action"):
+        parse_english_with_metadata(env, "another action available to r prevents h.")
