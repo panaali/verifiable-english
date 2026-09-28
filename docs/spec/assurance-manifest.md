@@ -68,7 +68,8 @@ A combination that needs the verdict (readings, premise status, compare, the arg
 `CheckerUnavailable`, never `UNKNOWN`. There is no fallback to Python.
 
 `ve.backends.lean.run` checks every call against the operation's declared Lean `bindings` (executable, mode and case
-kinds) before starting a process. An undeclared call is a programming error (`RuntimeError`), not an outcome.
+kinds) and, for callers inside `ve`, its declared `lean_call_sites` before starting a process. An undeclared call is a
+programming error (`RuntimeError`), not an outcome.
 
 Migrating an operation (SEMANTICS-MIGRATION-PLAN stage 4):
 
@@ -127,8 +128,11 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
 - **Python entries.** The functions carrying `semantic_entry` are exactly the manifest's `python` entries, found by an
   AST scan of `ve/`. Each entry resolves to a guarded callable, and each is refused once its operation is
   migrated.
-- **Lean call sites.** The `lean_backend.run(...)` calls are exactly the declared `lean_call_sites`. Only
-  `ve/backends/lean.py` may import `subprocess`.
+- **Lean call sites.** The calls of `ve.backends.lean.run` are exactly the declared `lean_call_sites`, however the
+  backend is imported (module or function alias, absolute or relative import); the operation argument must be a
+  literal, and any other reference to `run` (stored, passed or rebound) fails the test. At run time `run` also
+  refuses a caller inside `ve` that is not a declared call site of the operation, which covers indirections the
+  scan cannot see. Only `ve/backends/lean.py` may import `subprocess`.
 - **Lean bindings.**
   - Each executable is a `lean_exe` in `lean/lakefile.toml`.
   - Each mode string occurs in its root file.

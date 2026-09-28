@@ -16,8 +16,9 @@ caller adds the fields its interpretation reads from an `ok` row (`fields`).
 from __future__ import annotations
 
 import subprocess
+import sys
 
-from ..assurance import require_lean_binding
+from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
 
@@ -58,6 +59,7 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     """
     kinds = {case["kind"] for case in cases if type(case.get("kind")) is str}
     require_lean_binding(operation, runner, mode, kinds)
+    require_lean_call_site(operation, sys._getframe(1))
     fields = dict(fields or {})
 
     def unavailable(message):

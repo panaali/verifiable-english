@@ -13,7 +13,8 @@ the manifest to the code paths:
   `AuthorityViolation`, a `CheckerUnavailable`, instead of producing a verdict,
   so that operation's verdict can only come from Lean. Nothing is migrated yet.
 * `require_lean_binding` pins every Lean invocation (`ve.backends.lean.run`) to
-  a mode and case kind the manifest declares for that operation.
+  a mode and case kind the manifest declares for that operation, and
+  `require_lean_call_site` to a calling function it declares.
 
 The guard never computes a verdict and never falls back to another engine.
 """
@@ -102,6 +103,22 @@ def require_lean_binding(op_id: str, executable: str, mode: str, kinds=()) -> No
             return
     raise RuntimeError(f"Lean call {executable} {mode or '(default)'} {sorted(set(kinds))} "
                        f"is not declared for {op_id} in the assurance manifest")
+
+
+def require_lean_call_site(op_id: str, frame) -> None:
+    """A Lean call from inside `ve` must come from a declared `lean_call_sites` function.
+
+    `frame` is the caller's frame. The static test finds the call sites however
+    the backend is imported; this check also catches calls it cannot see
+    (aliases through data, getattr). Callers outside the package (tests,
+    tools) produce no public verdict and are not restricted.
+    """
+    module = frame.f_globals.get("__name__", "")
+    if module != "ve" and not module.startswith("ve."):
+        return
+    site = f"{module}:{frame.f_code.co_qualname}"
+    if site not in operation(op_id)["lean_call_sites"]:
+        raise RuntimeError(f"{site} is not a declared Lean call site of {op_id} in the assurance manifest")
 
 
 @contextmanager
