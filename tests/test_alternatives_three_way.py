@@ -51,6 +51,11 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     assert scenario["status"] == "ok", case["id"]
     report = scenario["choosers"][0]
     assert report["clear"] == case["expected_clear"]
+    env_id = Environment(source["environment"]).environment_id
+    assert scenario["environment_id"] == env_id
+    assert scenario["document_hash"] == digest(
+        f"ve-alternatives-{Environment(source['environment']).identity_version}\n",
+        {"environment_id": env_id, "norms": source["norms"], "units": source.get("units", [])})
 
     base = base_environment(case["environment"])
     model_data = case["scenario"]["model"]
@@ -71,6 +76,34 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     rust_values = json.loads(rust.stdout)[0]["values"]
     expected = [bool(report["clear"]), *(bool(report[name]) for name in names)]
     assert python_values == rust_values == expected, case["id"]
+
+
+def test_mapped_violation_requires_a_taken_action_and_failed_fulfilment():
+    case = deepcopy(next(c for c in cases() if c["id"] == "f1"))
+    case.pop("expected_clear")
+    taken = case["scenario"]["model"]["relations"]["taken"]
+    taken[:] = [["refuse"]]
+    report = run_case(case | {"kind": "alt-validate"})["choosers"][0]
+    assert report["violations"] == [{"obligation": "respond_required", "arguments": ["r"]}]
+    taken[:] = [["refer"]]
+    assert run_case(case | {"kind": "alt-validate"})["choosers"][0]["violations"] == []
+    taken.clear()
+    assert run_case(case | {"kind": "alt-validate"})["choosers"][0]["violations"] == []
+
+
+def test_scenario_document_binding_changes_with_rules_and_units():
+    case = deepcopy(next(c for c in cases() if c["id"] == "a"))
+    case.pop("expected_clear")
+    initial = run_case(case | {"kind": "alt-validate"})
+    without_rule = deepcopy(case)
+    without_rule["norms"] = []
+    changed = run_case(without_rule | {"kind": "alt-validate"})
+    assert initial["model_id"] == changed["model_id"]
+    assert initial["document_hash"] != changed["document_hash"]
+    assert initial["choosers"][0]["clear"] != changed["choosers"][0]["clear"]
+    with_unit = deepcopy(case)
+    with_unit["units"] = [{"label": "fact", "ast": ["top"]}]
+    assert run_case(with_unit | {"kind": "alt-validate"})["document_hash"] != initial["document_hash"]
 
 
 def test_spec_s2_conflict_three_way(rust_binary):

@@ -247,6 +247,10 @@ def profileExists (A : AltEnv) : Json :=
     | some ([first, second], body) => some (p, enc (.ex first (.ex second body)))
     | _ => none)
 
+/-- Remove numbered argument slots from an act phrase for the public legend. -/
+def actWords (act : String) : String :=
+  " ".intercalate ((act.splitOn " ").filter (fun w => !(w.startsWith "{" && w.endsWith "}")))
+
 /-- 2.3: the legend generated from the block (untrusted text; the English surface renders the
 fulfilment bodies other than `avoids`). -/
 def legend (A : AltDoc) : List String :=
@@ -254,7 +258,7 @@ def legend (A : AltDoc) : List String :=
   let decider := match a.outcomes with
     | .completeBy d => d
     | .signed => a.decidedBy.getD "unstated"
-  let quoted (act : Option String) := s!"\"{act.getD ""}\""
+  let quoted (act : Option String) := s!"\"{actWords (act.getD "")}\""
   [s!"Each {a.chooser} faces one choice among the actions available to it and takes at most one of them.",
    s!"Each {a.action} is available to at most one {a.chooser}."] ++
   (if a.inaction.isSome then [s!"Doing nothing counts as one of a {a.chooser}'s actions; every checked situation " ++

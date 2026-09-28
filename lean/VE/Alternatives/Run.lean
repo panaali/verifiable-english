@@ -62,7 +62,7 @@ def diagnosisText (r : VE.Bridge.Entity) : Diagnosis VE.Bridge.Entity → String
 
 /-- An act phrase without its slots (`{0} prevent {1}` → `prevent`). -/
 def actWords (act : String) : String :=
-  " ".intercalate ((act.splitOn " ").filter (fun w => !(w.startsWith "{" && w.endsWith "}")))
+  Wire.actWords act
 
 def unmappedText (A : AltDoc) : String :=
   match Wire.unmappedObligations A with
@@ -87,6 +87,10 @@ def chooserReport (A : AltDoc) (M : VE.FiniteModel VE.Bridge.Entity) (r : VE.Bri
     | some p => alts.filter (fun a => (M.relations p).contains [a])
     | none => []
   let taken := marked A.alt.taken
+  let mappedViolations := (duties A M r).filterMap fun duty =>
+    if taken.isEmpty || taken.any (fun a => discharges M a duty) then none
+    else some (Json.mkObj [("obligation", .str duty.1.obligation),
+                           ("arguments", ids (r :: duty.2))])
   let pairs (F : VE.Formula) := alts.flatMap (fun a => (harms.filter (fun h => F.eval M (tupleVal [a, h]))).map
     (fun h => toJson [a.2, h.2]))
   let text := if alts.isEmpty then s!"no alternatives at {r.2}"
@@ -99,7 +103,8 @@ def chooserReport (A : AltDoc) (M : VE.FiniteModel VE.Bridge.Entity) (r : VE.Bri
     ("allows", Json.arr (pairs (allowsF A.alt)).toArray), ("prevents", Json.arr (pairs (preventsF A.alt)).toArray),
     ("clear", ids clear), ("text", .str text)] ++
     (if A.alt.taken.isSome then
-      [("violations", ids (alts.filter (fun a => requiredAt A M a && !taken.contains a))),
+      [("violations", Json.arr ((alts.filter (fun a => requiredAt A M a && !taken.contains a)).map
+          (fun a => Json.str a.2) ++ mappedViolations).toArray),
        ("breaches", ids (alts.filter (fun a => !permittedAt A M a && taken.contains a)))] else [])
   (Json.mkObj fields, text)
 
@@ -126,9 +131,12 @@ def runValidate (id : String) (j : Json) : Except String Json := do
   | .error e => throw e
   | .ok () => pure ()
   let mid := modelId src environment sc
+  let eid ← environmentId src.profiles environment
+  let dh ← documentHash src.profiles environment (j.getObjValD "norms") (j.getObjValD "units")
   match scenarioConflict src.A sc.M with
   | some (t, vs) =>
     return ok id [("verdict", .str "CONFLICT"), ("target", .str t.1), ("tuple", ids vs), ("model_id", .str mid),
+      ("environment_id", .str eid), ("document_hash", .str dh),
       ("text", .str s!"scenario (model {mid}): CONFLICT at ({joined vs}) on {t.1}; no per-chooser evaluation")]
   | none =>
     let reports := (sc.M.domains src.A.alt.chooser).map (chooserReport src.A sc.M)
@@ -137,7 +145,8 @@ def runValidate (id : String) (j : Json) : Except String Json := do
           else "document followability not computed: conflict status UNKNOWN")
       else "document followability not computed: conflict status UNKNOWN"
     let failing := reports.any (fun (_, t) => t.startsWith "no clear action")
-    return ok id [("model_id", .str mid), ("choosers", Json.arr (reports.map Prod.fst).toArray),
+    return ok id [("model_id", .str mid), ("environment_id", .str eid), ("document_hash", .str dh),
+      ("choosers", Json.arr (reports.map Prod.fst).toArray),
       ("assumed_harm_free", toJson (assumedHarmFree src.A sc.M sc.rows)),
       ("unmapped_obligations", .str (unmappedText src.A)),
       ("conditional_on", toJson (if src.A.alt.outcomes == .signed then [] else ["alternatives:table_complete"])),
