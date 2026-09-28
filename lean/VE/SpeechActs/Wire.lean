@@ -549,12 +549,17 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
     | .error _ => pure []
   unless (rawQueries.map (·.1)).eraseDups.length == rawQueries.length do throw "InvalidInput: duplicate query"
   let mut before : List String := []
+  let mut asked : List String := []
   for u in units do
     if let some qid := queryOf E u then
       match rawQueries.find? (·.1 == qid) with
       | none => throw s!"QueryMismatch: {u.id}"
       | some (_, ids, _) => unless ids == before do throw s!"QueryMismatch: {u.id}"
+      asked := qid :: asked
     if (fixedAssertion u).isSome then before := before ++ [u.id]
+  -- A record no unit asks about cannot be regenerated from the document (1.4).
+  if let some (qid, _, _) := rawQueries.find? (fun q => !asked.contains q.1) then
+    throw s!"QueryMismatch: {qid}"
   let queries := rawQueries.map (fun (id, ids, t) =>
     ({ id, premiseIds := ids, premises := (asserted.filter (fun a => a.1 ∈ ids)).map Prod.snd, target := t } : Query))
   let D : SpeechDoc := ⟨E, se.ne.rv.literals, scope, se.ne.regulated, norms, commands, questions, queries, asserted⟩

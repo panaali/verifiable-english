@@ -283,7 +283,6 @@ class SpeechDocument:
         raise VEError(f"InvalidInput: invalid question fields for {uid}")
 
     def _queries(self, records):
-        by_unit = {u["id"]: i for i, u in enumerate(self.units)}
         asserted = dict(self.asserted)
         for raw in records:
             if type(raw) is not dict or set(raw) != {"id", "premises", "target"}:
@@ -295,26 +294,27 @@ class SpeechDocument:
                 raise VEError(f"QueryMismatch: {qid}")
             target = formula_from_data(self.env, raw["target"]["ast"])
             self.queries[qid] = Query(qid, tuple(raw["premises"]), target)
-        for question in self.questions:
-            if question.query and question.query not in self.queries:
-                raise VEError(f"QueryMismatch: {question.unit}")
-        for command in self.commands:
-            decl = self.env.predicates[command.act]
-            if "query" in decl.arguments:
-                for arg, sort in zip(command.args, decl.arguments[1:], strict=True):
-                    if sort == "query" and arg not in self.queries:
-                        raise VEError(f"QueryMismatch: {command.unit}")
+        # 1.4: the record is regenerated at every unit that asks, in document
+        # order, as Lean's decoder does; a later consumer with more earlier
+        # assertions makes a reused record stale.
+        asks = {q.unit: q.query for q in self.questions if q.query is not None}
+        asks.update((c.unit, qid) for c in self.commands if (qid := self.query_of(c)) is not None)
+        consumers = {}
+        before = []
+        for raw in self.units:
+            uid = raw["id"]
+            if uid in asks:
+                qid = asks[uid]
+                if qid not in self.queries or list(self.queries[qid].premises) != before:
+                    raise VEError(f"QueryMismatch: {uid}")
+                consumers.setdefault(qid, uid)
+            if uid in asserted:
+                before.append(uid)
         for qid, query in self.queries.items():
-            consumers = [q.unit for q in self.questions if q.query == qid]
-            consumers += [c.unit for c in self.commands if qid in c.args]
-            if not consumers:
+            if qid not in consumers:
                 raise VEError(f"QueryMismatch: {qid}")
-            boundary = min(by_unit[u] for u in consumers)
-            expected = [u for u, _ in self.asserted if by_unit[u] < boundary]
-            if list(query.premises) != expected:
-                raise VEError(f"QueryMismatch: {consumers[0]}")
             if query.target in (asserted[u] for u in query.premises):
-                self.warnings.append(f"TrivialQuery: {consumers[0]}")
+                self.warnings.append(f"TrivialQuery: {consumers[qid]}")
 
     def query_of(self, command):
         """The constant in the act's first slot of sort `query` (Lean's `queryOf`)."""
