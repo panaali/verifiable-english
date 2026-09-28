@@ -6,8 +6,9 @@ derivation enumerated and admits a sentence only when exactly one derivation
 exists (the all-derivations gate of 2.1). A formula content is read by the
 existing all-derivations English parser. A sentence alone is not a unit: the
 manifest carries the environment, the context record of each verb and the
-assessment record of each assessment in reading order, the content of each
-literal quotation and the reading choices, and parsing under a manifest that
+assessment record of each assessment in reading order (a literal quotation's
+content included), the content of each literal quotation and the reading
+choices, and parsing under a manifest that
 the document does not have is ``ManifestMismatch``.
 """
 from __future__ import annotations
@@ -133,6 +134,23 @@ def _subject_split(reports, words, node):
 # ---------------------------------------------------------------- printer
 
 
+def _records(node):
+    """The context and assessment records a content refers to, in reading order.
+    A literal quotation prints none of its content's, but the manifest binds them
+    all (2.4): its words alone do not fix what the quoted content means."""
+    if type(node) is not dict or len(node) != 1:
+        return
+    tag, value = next(iter(node.items()))
+    if tag == "negated":
+        yield from _records(value)
+    elif tag == "report":
+        yield "contexts", value["context"]
+        yield from _records(value.get("content"))
+    elif tag == "assessment":
+        yield "assessments", value["record"]
+        yield from _records(value["content"])
+
+
 def _print(reports, words, node, manifest, initial):
     tag, value = next(iter(node.items()))
     if tag == "negated":
@@ -147,6 +165,8 @@ def _print(reports, words, node, manifest, initial):
             if value["act"] != "says":
                 raise VEError("No reviewed wording: a literal quotation is admitted only for saying")
             manifest["literals"].append(value["content"])
+            for key, record in _records(value["content"]):
+                manifest[key].append((reports.contexts if key == "contexts" else reports.assessments)[record])
             text = holder + " " + verb + ', "' + value["literal"] + '"'
         elif value["act"] in ("says", "believes"):
             text = holder + " " + verb + " that " + _complement(reports, words, value["content"], manifest)
@@ -286,6 +306,11 @@ def _bind(reports, node, manifest, cursor):
                 raise VEError("ManifestMismatch: a literal quotation without its content")
             content = literals[cursor["literals"]]
             cursor["literals"] += 1
+            for key, record in _records(content):
+                records = manifest.get(key, [])
+                if cursor[key] >= len(records) or records[cursor[key]].get("id") != record:
+                    raise VEError("ManifestMismatch: a literal quotation's records differ from the manifest")
+                cursor[key] += 1
             return {"report": {"holder": value["holder"], "act": value["act"], "context": context,
                                "literal": value["literal"], "content": content}}
         return {"report": {"holder": value["holder"], "act": value["act"], "context": context,

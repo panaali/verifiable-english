@@ -206,6 +206,44 @@ def test_manifest_mismatch():
         parse_rendered_report(doc, dict(rendered, text="The article said that service is safe."))
 
 
+def test_literal_manifest_binds_the_quoted_content_records():
+    """Loop recheck B: a literal quotation's manifest stored its content without
+    the context and assessment records inside it, so after the record changed the
+    original text and manifest still parsed, to content with a different meaning,
+    instead of ``ManifestMismatch`` (2.4)."""
+    assessed = report("article", "says", "c2", assess("may", SAFE), literal="Service may be safe.")
+    doc = document(assessed)
+    rendered = render_report_unit(doc, "u1")
+    assert rendered["text"] == 'The article said, "Service may be safe.".'
+    assert rendered["manifest"]["contexts"] == [CONTEXTS[1]] and rendered["manifest"]["assessments"] == [A1]
+    assert parse_rendered_report(doc, rendered) == assessed
+    changed = ReportsDocument(environment(), CONTEXTS, [dict(A1, version=2)], [
+        {"id": "u1", "span": [1, 2], "kind": kind_of(assessed), "meaning": {"open": ["reports__may__1"]},
+         "support": "testimony", "content": assessed}])
+    assert changed.meaning_id(assessed) != doc.meaning_id(assessed)
+    with pytest.raises(VEError, match="ManifestMismatch"):
+        parse_report_sentence(changed, rendered["text"], rendered["manifest"])
+    with pytest.raises(VEError, match="ManifestMismatch"):
+        parse_rendered_report(changed, rendered)
+    # A manifest without the quoted content's record, or with another in its place.
+    with pytest.raises(VEError, match="ManifestMismatch"):
+        parse_rendered_report(doc, dict(rendered, manifest=dict(rendered["manifest"], assessments=[])))
+    # The same class for a context inside the quotation: the verb's context is c2, the quoted belief's c1.
+    quoted_belief = report("article", "says", "c2", BELIEF, literal="Anthropic believes it.")
+    doc = document(quoted_belief)
+    rendered = render_report_unit(doc, "u1")
+    assert rendered["manifest"]["contexts"] == [CONTEXTS[1], CONTEXTS[0]]
+    assert parse_rendered_report(doc, rendered) == quoted_belief
+    past = ReportsDocument(environment(), [dict(CONTEXTS[0], tense="past")] + CONTEXTS[1:], [A1], [
+        {"id": "u1", "span": [1, 2], "kind": kind_of(quoted_belief), "meaning": "specified",
+         "support": "testimony", "content": quoted_belief}])
+    assert past.meaning_id(quoted_belief) != doc.meaning_id(quoted_belief)
+    with pytest.raises(VEError, match="ManifestMismatch"):
+        parse_rendered_report(past, rendered)
+    with pytest.raises(VEError, match="ManifestMismatch"):
+        parse_rendered_report(doc, dict(rendered, manifest=dict(rendered["manifest"], contexts=[CONTEXTS[1]])))
+
+
 def test_two_derivations_are_rejected():
     """Two holders displayed alike: the sentence has two readings, so it is neither
     printed nor parsed."""
