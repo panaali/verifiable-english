@@ -225,6 +225,33 @@ def test_python_answer_certificates_replay_in_lean(lean, facts, mode, token, wir
     assert line.get("answer", line).startswith("supported "), line
 
 
+def test_reused_query_is_regenerated_at_every_consumer(lean):
+    # Regression: Python compared a reused query only at its earliest consumer and accepted a
+    # later consumer whose earlier assertions differ; Lean rejects it. Orphan records also agree.
+    env = F0()
+    ask = {"question": {"mode": "follows", "query": "q1"}}
+    task = command("require", "submit_required", ["q1"])
+    fact = unit("p", 1, "asserted", {"ast": U("reviewed", "atlas")})
+    query = [{"id": "q1", "premises": [], "target": {"ast": ["top"]}}]
+    for first, later in [(ask, ask), (ask, task), (task, ask)]:
+        kinds = ["question" if "question" in c else "instruction" for c in (first, later)]
+        document = {"units": [unit("u0", 0, kinds[0], first), fact, unit("u2", 2, kinds[1], later)],
+                    "queries": query}
+        with pytest.raises(VEError, match="QueryMismatch: u2"):
+            core(env, document)
+        assert run1({"id": "r", "kind": "speech-elaborate", "environment": env,
+                     "document": document})["error"] == "QueryMismatch: u2"
+    # Consumers with the same earlier assertions share the record in both checkers.
+    same = {"units": [unit("u0", 0, "question", ask), unit("u2", 2, "question", ask),
+                      unit("p", 3, "asserted", {"ast": U("reviewed", "atlas")})], "queries": query}
+    assert len(core(env, same).questions) == len(elaborate(env, same)["questions"]) == 2
+    orphan = {"units": [fact], "queries": query}
+    with pytest.raises(VEError, match="QueryMismatch: q1"):
+        core(env, orphan)
+    assert run1({"id": "o", "kind": "speech-elaborate", "environment": env,
+                 "document": orphan})["error"] == "QueryMismatch: q1"
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",

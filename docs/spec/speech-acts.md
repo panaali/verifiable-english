@@ -1541,6 +1541,7 @@ statements of section 8 are unchanged.
 | A, proof wording: the act `{0} submit a certificate for {1}` fails W1's frozen act linter (`for` is reserved), and the Python checker had been given a route-only exception | 1.4, 2.1, 3.1, 11.5 and the plan: the act is `{0} submit a proof of {1}`; the linter is W1's, unchanged, in Python and Lean. |
 | A, meaning ids: proof tasks and follows questions digested different objects in Python and Lean | 3.5: the command and question objects are fixed JSON, the query's identity nested as `query: {id, premises, target}`. |
 | B, certificate portability: Python folded `F(S)` of a complete-list answer as one mixed conjunction | No text change: 1.3's `⋀_{a∈S} P(a) ∧ ⋀_{a∈dom∖S} ¬P(a)` is two conjunctions, each folded from `⊤` in domain order (W1's `allF`), in every checker. |
+| B, query pinning: Python compared a reused query only at its earliest consumer | 1.4 as written ("at every site"): each follows question and each command with a `query` slot, in document order, compares the record with the asserted units before it; a record no unit asks about is `QueryMismatch: <query>` in both checkers. |
 
 ## Change log
 
