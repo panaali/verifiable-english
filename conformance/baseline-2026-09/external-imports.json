@@ -1,0 +1,255 @@
+{
+  "edges": [
+    [
+      "external:ve-bench/run.py",
+      "ve.ast",
+      "And",
+      33
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.ast",
+      "Not",
+      33
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.ast",
+      "Top",
+      33
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.entailment",
+      "prove_entailment",
+      34
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.norms",
+      "NormDocument",
+      38
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.norms",
+      "_bind",
+      38
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.printer",
+      "render",
+      43
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.profiles",
+      "LANGUAGE",
+      72
+    ],
+    [
+      "external:ve-bench/run.py",
+      "ve.profiles",
+      "SPEC_REVISION",
+      72
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.admission",
+      "admit_document",
+      15
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.ast",
+      "document_from_data",
+      8
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.bundle",
+      "check_bundle",
+      14
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.entailment",
+      "check_entailment_certificate",
+      9
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.environment",
+      "Environment",
+      7
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.evaluate",
+      "evaluate",
+      11
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.model",
+      "FiniteModel",
+      10
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.norms",
+      "NormDocument",
+      13
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.norms",
+      "check_conflict",
+      13
+    ],
+    [
+      "external:ve-bench/worker.py",
+      "ve.search",
+      "find_countermodel",
+      12
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.ast",
+      "Const",
+      17
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.ast",
+      "Not",
+      17
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.ast",
+      "Unary",
+      17
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.environment",
+      "Environment",
+      13
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.profiles",
+      "LANGUAGE",
+      20
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.profiles",
+      "SPEC_REVISION",
+      20
+    ],
+    [
+      "external:ve-webapp/drafts.py",
+      "ve.search",
+      "find_countermodel",
+      18
+    ],
+    [
+      "external:ve-webapp/examples.py",
+      "ve.environment",
+      "LANGUAGE",
+      2
+    ],
+    [
+      "external:ve-webapp/examples.py",
+      "ve.environment",
+      "PROFILE",
+      2
+    ],
+    [
+      "external:ve-webapp/examples.py",
+      "ve.environment",
+      "SPEC_REVISION",
+      2
+    ],
+    [
+      "external:ve-webapp/rules.py",
+      "ve.environment",
+      "Environment",
+      4
+    ],
+    [
+      "external:ve-webapp/rules.py",
+      "ve.norms",
+      "check_conflict",
+      7
+    ],
+    [
+      "external:ve-webapp/rules.py",
+      "ve.norms",
+      "check_witness",
+      7
+    ],
+    [
+      "external:ve-webapp/rules.py",
+      "ve.profiles",
+      "LANGUAGE",
+      5
+    ],
+    [
+      "external:ve-webapp/rules.py",
+      "ve.profiles",
+      "SPEC_REVISION",
+      5
+    ]
+  ],
+  "files": [
+    {
+      "path": "external:ve-webapp/__init__.py",
+      "sha256": "1127abff4e9cb545e08868dae026b5053e86d63edb7c957808866e956c5fac4a"
+    },
+    {
+      "path": "external:ve-webapp/__main__.py",
+      "sha256": "e29c77d410d862ed0303a3d2c06970e186fea5d0e9b1078785fa1e42d3dc674d"
+    },
+    {
+      "path": "external:ve-webapp/drafts.py",
+      "sha256": "35862c0d00c4d2e7507c00dc0e5ca596718b3b13c7074936387468a7320177e2"
+    },
+    {
+      "path": "external:ve-webapp/examples.py",
+      "sha256": "df684c9b6ac63ce6c17604235683f83ec17ba9a5669fa00efd877b0673b5a529"
+    },
+    {
+      "path": "external:ve-webapp/rules.py",
+      "sha256": "65847f56a2552b0b0f46588698510c8b5eaf1d8186715015e099211f42c8143e"
+    },
+    {
+      "path": "external:ve-webapp/server.py",
+      "sha256": "2973c225c93f8c0d19629c3c8a1be4139d2f1122d0a9f8b042c68225ceeb9b32"
+    },
+    {
+      "path": "external:ve-webapp/worker.py",
+      "sha256": "358d060a81a530902ccdd8ac45772df585b82b5868e2c46f59347e907931aa4c"
+    },
+    {
+      "path": "external:ve-bench/__init__.py",
+      "sha256": "bb611ea39bd64ce4b92458e419ccfc0083dae070b469015b8882489fb2ef2537"
+    },
+    {
+      "path": "external:ve-bench/run.py",
+      "sha256": "2096c7fb38d4dcd84b1f01b3bca16fcb85749377ec968f635d5b9f353f19555e"
+    },
+    {
+      "path": "external:ve-bench/test_harness.py",
+      "sha256": "5bfaa29ec71512938b4015d8cfc641b6ccaa5efa2aeb1363033190e16dff3884"
+    },
+    {
+      "path": "external:ve-bench/worker.py",
+      "sha256": "3763fa5e4dc09b46ff7cb03ee76343f483ad70709e303bb55339b076b6f06c86"
+    }
+  ],
+  "schema": "ve-external-imports@1"
+}
