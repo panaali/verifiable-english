@@ -157,6 +157,22 @@ def test_trace_declarations_are_identity_bound_before_trace_route_exists():
         elaborate_quantity(env, quantity(["trace_all", "review_window", ["top"]], traces=[trace]))
 
 
+def test_fine_percent_uses_a_separate_environment_without_conversion():
+    coarse = Environment(environment())
+    with pytest.raises(VEError, match="UnitPrecision"):
+        elaborate_quantity(coarse, quantity(["eq", ["decimal", "bp", "0.0001"],
+                                             ["num", "bp", "0"]]))
+    raw = environment()
+    raw["vocabulary"] = {"sorts": {}, "predicates": {}, "constants": {}}
+    raw["units"] = {"fine_percent": {"scale": "1000000", "display": {"kind": "percent"}}}
+    fine = Environment(raw)
+    canonical, _ = elaborate_quantity(fine, quantity(["eq", ["decimal", "fine_percent", "0.0001"],
+                                                     ["num", "fine_percent", "100"]]))
+    assert canonical["formula"][1] == ["num", "fine_percent", "100"]
+    assert render_coordinate("fine_percent", 100, fine) == "0.000100%"
+    assert fine.environment_id != coarse.environment_id
+
+
 def test_counting_nested_scope_and_bounds():
     raw = environment()
     raw["vocabulary"]["predicates"]["p"] = {"arguments": ["item"], "description": "P"}
