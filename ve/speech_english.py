@@ -37,6 +37,16 @@ def _copular(env, name, rest):
     return _formula(env, f"@{name} {rest}.")
 
 
+def _sentence(env, source):
+    match = re.fullmatch(r"([A-Za-z][A-Za-z0-9_]*) (is .+)\.", source)
+    if match:
+        try:
+            return _copular(env, _name(env, match[1]), match[2])
+        except VEError:
+            pass
+    return _formula(env, source)
+
+
 def _body(env, alternative, rest):
     # Parse a complete existing English sentence first, then abstract exactly
     # the named alternative.  This retains P0's one-reading grammar check.
@@ -97,7 +107,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
     if text.startswith("Does it follow from these premises that ") and text.endswith("?"):
         if query is None:
             raise VEError("InvalidInput: query required")
-        _formula(env, text[len("Does it follow from these premises that "):-1] + ".")
+        _sentence(env, text[len("Does it follow from these premises that "):-1] + ".")
         return {"mode": "follows", "query": query}, "question"
     if text.startswith("Is it the case that ") and text.endswith("?"):
         formula = _formula(env, text[len("Is it the case that "):-1] + ".")
@@ -134,7 +144,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
     if text.startswith("Prove that ") and text.endswith(" using these premises."):
         if query is None:
             raise VEError("InvalidInput: query required")
-        _formula(env, text[len("Prove that "):-len(" using these premises.")] + ".")
+        _sentence(env, text[len("Prove that "):-len(" using these premises.")] + ".")
         candidates = [(name, decl) for name, decl in env.predicates.items()
                       if decl.regulated is not None and decl.regulated.role == "obligation"
                       and decl.regulated.act == "{0} submit a certificate for {1}"]

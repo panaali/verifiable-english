@@ -1,5 +1,6 @@
 """Deterministic experimental speech-act core fixtures (no trusted route)."""
 from copy import deepcopy
+import json
 
 import pytest
 
@@ -9,6 +10,8 @@ from ve.errors import VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.speech_acts import SpeechDocument, combine
 from ve.speech_english import parse_speech
+from ve.speech_document import load_speech_document
+from ve.entailment import prove_entailment
 
 
 def environment(*, task="t1", addressee="alice", definite=True):
@@ -139,3 +142,70 @@ def test_english_rejects_unscoped_modes_and_coordination():
         parse_speech(env, "Which services are reviewed?", env.speech_acts)
     with pytest.raises(VEError, match="PermissionNotCommand"):
         parse_speech(env, "You may open the desk.", env.speech_acts)
+
+
+def test_answer_certificate_replay_and_dormant_question():
+    env = environment()
+    fact = unit("u1", "asserted", {"ast": ["unary", "reviewed", ["const", "atlas"]]})
+    asked = question("u2", "polar", ["unary", "reviewed", ["const", "atlas"]],
+                     source="Is atlas reviewed?")
+    doc = SpeechDocument(env, [fact, asked])
+    q = doc.questions[0]
+    target = doc.correct(q, "yes")
+    from ve.ast import And
+    proof = prove_entailment(env, doc._caller_premises(), And(doc.presupposition(q), target))
+    assert proof.status == "Found"
+    assert doc.check_answer_certificate(q, "yes", proof.certificate)["status"] == "supported"
+    with pytest.raises(VEError, match="AnswerMismatch: u2"):
+        doc.check_answer_certificate(q, "no", proof.certificate)
+    assert doc.premises() == SpeechDocument(env, [fact]).premises()
+
+
+def test_query_pinning_and_stale_proof_task_identity():
+    env = environment()
+    fact = unit("u1", "asserted", {"ast": ["unary", "reviewed", ["const", "atlas"]]})
+    task = command("u2", "require", "open_required", "desk1")
+    # A consequence question pins exactly the earlier asserted premise.
+    question_unit = unit("u3", "question", {"question": {"mode": "follows", "query": "q1"}})
+    query = {"id": "q1", "premises": ["u1"],
+             "target": {"ast": ["unary", "reviewed", ["const", "atlas"]]}}
+    doc = SpeechDocument(env, [fact, task, question_unit], [query])
+    assert "TrivialQuery: u3" in doc.warnings
+    proof = prove_entailment(env, doc._caller_premises("q1"), doc.queries["q1"].target)
+    assert proof.status == "Found"
+    assert doc.check_consequence_certificate("q1", proof.certificate)["status"] == "follows"
+    changed = deepcopy(query)
+    changed["target"] = {"ast": ["unary", "reviewed", ["const", "beacon"]]}
+    retargeted = SpeechDocument(env, [fact, task, question_unit], [changed])
+    with pytest.raises(VEError, match="QueryMismatch: q1"):
+        retargeted.check_consequence_certificate("q1", proof.certificate)
+    changed = deepcopy(query)
+    changed["premises"] = ["u1", "u3"]
+    with pytest.raises(VEError, match="QueryMismatch: u3"):
+        SpeechDocument(env, [fact, task, question_unit], [changed])
+
+
+def test_v2_source_identity_partition_and_coverage(tmp_path):
+    env = environment()
+    source = "Open the desk.\nHeading\n"
+    end = len("Open the desk.\n".encode())
+    meta = {"format": "ve-document@2", "environment": env.to_dict(),
+            "units": [
+                {**command("u1", "require", "open_required", "desk1"), "span": [0, end]},
+                {"id": "u2", "span": [end, len(source.encode())], "kind": "meta",
+                 "meaning": {"unformalised": "heading"}, "support": "none"}],
+            "queries": [], "reading_sets": []}
+    path = tmp_path / "speech.ve.md"
+    def save(metadata):
+        path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+        return load_speech_document(path)
+    first = save(meta)
+    assert first.document_id == save(deepcopy(meta)).document_id
+    assert first.coverage()["bytes_by_class"] == {"C": end, "U": len(source.encode()) - end}
+    assert [r.name for r in first.document.policy.rules] == ["cmd-u1"]
+    weighted = deepcopy(meta)
+    weighted["weights"] = []
+    assert save(weighted).document_id == first.document_id
+    changed = deepcopy(meta)
+    changed["environment"]["speech_acts"]["task"] = "t2"
+    assert save(changed).document_id != first.document_id

@@ -6,7 +6,6 @@ is required before speech-act documents can become trusted P0 evidence.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from copy import deepcopy
 import re
 
 from .ast import (And, Const, Eq, Not, Or, Top, Var, _Checker, _Decoder,
@@ -111,7 +110,7 @@ class SpeechDocument:
     assertion; the only generated premises are W1's active policy layers.
     """
 
-    def __init__(self, env, units, queries=()):
+    def __init__(self, env, units, queries=(), *, pending_units=()):
         if "speech-acts@0" not in env.profiles or "norms@0" not in env.profiles:
             raise VEError("UnsupportedProfile: speech-acts@0 requires norms@0")
         for profile in env.profiles:
@@ -122,8 +121,9 @@ class SpeechDocument:
         if any(p.functional is not None or p.total is not None for p in env.predicates.values()):
             raise VEError("UnsupportedProfile: speech-acts@0 with functional")
         self.env = env
-        self.scope = deepcopy(env.speech_acts)
+        self.scope = env.to_dict()["speech_acts"]
         self.units = tuple(units)
+        pending_units = set(pending_units)
         self.queries = {}
         self.commands = []
         self.questions = []
@@ -151,7 +151,8 @@ class SpeechDocument:
                 if bare_kind != "instruction":
                     raise VEError("InvalidInput: command content requires instruction kind")
                 self.commands.append(self._command(uid, content["command"], kind == "instruction"
-                                                   and raw["meaning"] == "specified"))
+                                                   and raw["meaning"] == "specified"
+                                                   and uid not in pending_units))
             elif type(content) is dict and "question" in content:
                 if bare_kind != "question":
                     raise VEError("InvalidInput: question content requires question kind")
@@ -283,6 +284,8 @@ class SpeechDocument:
             qid = raw["id"]
             if qid in self.queries or type(raw["premises"]) is not list:
                 raise VEError(f"QueryMismatch: {qid}")
+            if type(raw["target"]) is not dict or set(raw["target"]) != {"ast"}:
+                raise VEError(f"QueryMismatch: {qid}")
             target = formula_from_data(self.env, raw["target"]["ast"])
             self.queries[qid] = Query(qid, tuple(raw["premises"]), target)
         for question in self.questions:
@@ -316,18 +319,26 @@ class SpeechDocument:
                 meaning_id(self.env, query.target))
 
     def _check_wordings(self):
-        from .speech_english import parse_speech
+        from .speech_english import parse_speech, _sentence
         by_id = {u["id"]: u for u in self.units}
         for command in self.commands:
             source = by_id[command.unit].get("source")
             query = next((a for a in command.args if a in self.queries), None)
             if source is not None and parse_speech(self.env, source, self.scope, query=query)[0] != self.command_data(command):
                 raise VEError(f"InvalidInput: invalid command fields for {command.unit}")
+            if source is not None and query is not None and source.startswith("Prove that "):
+                wording = source[len("Prove that "):-len(" using these premises.")] + "."
+                if _sentence(self.env, wording) != self.queries[query].target:
+                    raise VEError(f"QueryMismatch: {command.unit}")
         for question in self.questions:
             source = by_id[question.unit].get("source")
             if source is not None and parse_speech(self.env, source, self.scope,
                     query=question.query, reading_set=question.reading_set)[0] != self.question_data(question):
                 raise VEError(f"ModeMismatch: {question.unit}")
+            if source is not None and question.query is not None:
+                wording = source[len("Does it follow from these premises that "):-1] + "."
+                if _sentence(self.env, wording) != self.queries[question.query].target:
+                    raise VEError(f"QueryMismatch: {question.unit}")
 
     def command_data(self, c):
         return {"force": c.force, "act": c.act, "args": list(c.args), "guard": _to_data(c.guard)}
@@ -364,6 +375,45 @@ class SpeechDocument:
         return (tuple(p.formula for p in background(self.env)) +
                 tuple(f for _, f in self.policy.premises()) +
                 tuple(asserted[u] for u in query.premises))
+
+    def _caller_premises(self, qid=None):
+        """The checker inserts Background itself; supply only the layer and claims."""
+        asserted = dict(self.asserted)
+        chosen = self.queries[qid].premises if qid is not None else tuple(asserted)
+        return (tuple(f for _, f in self.policy.premises()) +
+                tuple(asserted[u] for u in chosen))
+
+    def check_answer_certificate(self, question, token, certificate, *, conditional=False,
+                                 max_steps=10_000):
+        """Replay the exact answer target; never infer a negative from proof failure."""
+        from .entailment import check_entailment_certificate
+        if question.mode not in ("polar", "which_one", "which_all"):
+            raise VEError("InvalidInput: question has no formula answer")
+        h = self.presupposition(question)
+        f = self.correct(question, token)
+        premises = self._caller_premises()
+        target = f if conditional else And(h, f)
+        if conditional:
+            premises += (h,)
+        replay = check_entailment_certificate(self.env, premises, target, certificate,
+                                              max_steps=max_steps)
+        if not replay.valid:
+            raise VEError(f"AnswerMismatch: {question.unit}")
+        return {"status": "supported given presupposition" if conditional else "supported",
+                "answer": token, "evidence": "certificate",
+                "assumptions": [f"speech:presupposition:{question.unit}"] if conditional else []}
+
+    def check_consequence_certificate(self, qid, certificate, *, max_steps=10_000):
+        """Replay a consequence or proof-task submission against its pinned query."""
+        from .entailment import check_entailment_certificate
+        if qid not in self.queries:
+            raise VEError(f"QueryMismatch: {qid}")
+        replay = check_entailment_certificate(self.env, self._caller_premises(qid),
+                                              self.queries[qid].target, certificate,
+                                              max_steps=max_steps)
+        if not replay.valid:
+            raise VEError(f"QueryMismatch: {qid}")
+        return {"status": "follows", "evidence": "certificate", "query": qid}
 
     def presupposition(self, question):
         if question.mode != "which_one":
