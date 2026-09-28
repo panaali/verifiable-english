@@ -724,7 +724,7 @@ and malformed-input diagnostics on the soft route.
 | `SOFT_MISSING_DECIDER` | Required outranking or exception decider is absent. |
 | `SOFT_STRICT_OUTRANKING_DECIDER` | Strict outranking declares a decider. |
 | `SOFT_INVALID_NAME` | Invalid soft declaration, reserved predicate, or act-key name. |
-| `SOFT_DUPLICATE_DECLARATION` | Duplicate party, rank, or unordered tie. |
+| `SOFT_DUPLICATE_DECLARATION` | Duplicate party, rank, rule name, or unordered tie. |
 | `SOFT_UNKNOWN_RANK` | Rank reference is undeclared. |
 | `SOFT_TIE_AGAINST_ORDER` | Tie contradicts strict outranking. |
 | `SOFT_DEPENDENCY_CYCLE` | Rank or unfolded norm dependency cycle. |
@@ -742,15 +742,97 @@ and malformed-input diagnostics on the soft route.
 | `SOFT_INVALID_RULE_FIELDS` | Mode, rank, hard, or another typed soft rule field is invalid. |
 | `SOFT_INVALID_INPUT` | Other invalid input, including inherited W1 checks. |
 
-The code table is ordered: where several descriptions apply to a rejection,
-the first applicable class wins. Within the soft block, validate parties, ranks,
-outranking and its decider, exception decider, outranks, then ties; validate
-exception deciders before exception condition arrays and factors. This order
-also applies when an input has multiple faults. Classification uses the diagnostic origin,
-not substrings supplied in a name or other input. New soft rejection paths
-must be assigned a specific code or intentionally use `SOFT_INVALID_INPUT`
-in both validators. A malformed `instruction_of` value uses
-`SOFT_INVALID_INPUT`; an undeclared string party uses `SOFT_UNKNOWN_PARTY`.
+### Validation order
+
+The source of a soft check is the environment and the array of norm objects
+(for a W2 document, its active norm units). Both validators check it in the
+phases below. **The reported diagnostic is the first failing check in table
+order; where one check applies to several items, the first failing item in
+input order.** Arrays are in index order; object members are in canonical key
+order (Unicode code point order, the order in which Lean enumerates JSON
+objects), so the order in which an author wrote the keys never matters. No
+check of a phase runs before every check of the earlier phases has passed over
+the whole source; a rule's cross references are therefore checked only after
+every rule's fields, and the environment's semantic checks only after every
+rule's cross references. Checks marked *inherited* run W1's or P0's own
+decoder at that position and report `SOFT_INVALID_INPUT` with the inherited
+text, whatever class the inherited diagnostic has; every other check owns the
+code listed. Classification uses the check that failed, never substrings of
+the message, a name, or other input.
+
+| Check | Phase and check | Code |
+|---|---|---|
+| 1.1 | **Envelope.** The environment is an object with exactly `language`, `profiles`, `spec_revision`, `vocabulary` | `SOFT_INVALID_INPUT` |
+| 1.2 | `language` is `ve.core@0.2` | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.3 | `profiles` is an array of strings | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.4 | `spec_revision` is the current revision | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.5 | `vocabulary` is an object with the objects `sorts`, `predicates`, `constants` and at most `soft` besides | `SOFT_INVALID_INPUT` |
+| 1.6 | The norms are an array | `SOFT_INVALID_INPUT` |
+| 1.7 | At most 256 norm objects | `SOFT_RESOURCE_LIMIT` |
+| 2.1 | **Vocabulary declarations.** No predicate name begins `soft__`; no predicate with `regulated` contains `__` (both skipped for the generated `E′`) | `SOFT_INVALID_NAME` |
+| 2.2 | An `instruction_of` is a string, on a predicate that is neither `regulated` nor `defined` | `SOFT_INVALID_INPUT` |
+| 2.3 | *Inherited:* W1's declaration checks on the vocabulary without the soft block and `instruction_of`, under the profiles of 1.3 restricted to `data@0`, `definitions@0`, `documents@1`, `time@0`, plus `norms@0` and `relational-fol@0` (W1 admits `defined` only under `definitions@0`) | `SOFT_INVALID_INPUT` |
+| 2.4 | The soft block (absent means the defaults) is an object with `outranking` and no field beyond `parties`, `ranks`, `outranks`, `ties`, `exception_decider` | `SOFT_INVALID_BLOCK` |
+| 2.5 | `parties` is an array | `SOFT_INVALID_ARRAY` |
+| 2.6 | At most 8 parties | `SOFT_RESOURCE_LIMIT` |
+| 2.7 | Each party, in order: a soft name (`[a-z][a-z0-9_]*`, at most 64 bytes, no `__`) | `SOFT_INVALID_NAME` |
+|  | and not repeated | `SOFT_DUPLICATE_DECLARATION` |
+| 2.8 | `ranks`: as 2.5 to 2.7, at most 16 | as 2.5 to 2.7 |
+| 2.9 | `outranking` is an object with `mode` `strict` or `holistic` and at most `decided_by` besides | `SOFT_INVALID_OUTRANKING` |
+| 2.10 | `strict` has no `decided_by` | `SOFT_STRICT_OUTRANKING_DECIDER` |
+| 2.11 | A `decided_by` is a string | `SOFT_INVALID_DECIDER` |
+| 2.12 | `holistic` has a `decided_by` | `SOFT_MISSING_DECIDER` |
+| 2.13 | The outranking decider is nonempty and at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 2.14 | An `exception_decider` is a nonempty string of at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 2.15 | `outranks` is an array | `SOFT_INVALID_ARRAY` |
+| 2.16 | Each outranks pair, in order: two strings, distinct, the ordered pair not repeated | `SOFT_INVALID_OUTRANKS_PAIR` |
+| 2.17 | `ties`: as 2.15 and 2.16 | `SOFT_INVALID_ARRAY`, `SOFT_INVALID_TIES_PAIR` |
+| 3.1 | **Profiles.** `profiles` is sorted and unique | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.2 | Every profile is registered (`soft-norms@0` included) | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.3 | `relational-fol@0`, then `soft-norms@0`, then `norms@0` is present | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.4 | No checker profile (`closure@0`, `nary@0`, `order@0`) | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.5 | No W3 definition, then no W5 data flag, is declared | `SOFT_UNSUPPORTED_PROFILE` |
+| 4.1 | **Rule fields**, each norm object in order, its fields in this order. The object is `{"norm": {...}}` with every W1 field, optionally the soft fields, nothing else | `SOFT_INVALID_INPUT` |
+| 4.2 | *Inherited:* W1's field checks: rule-name syntax, `predicate` a string, `sign` a Boolean, `unless` an array of at most 8, `over` an array of strings, guard and carve-outs decode as FOL formulas | `SOFT_INVALID_INPUT` |
+| 4.3 | `mode` is absent, `strict` or `default` | `SOFT_INVALID_RULE_FIELDS` |
+| 4.4 | `rank` is absent, null or a string | `SOFT_INVALID_RULE_FIELDS` |
+| 4.5 | `alterable` is absent or an array of strings, sorted and distinct | `SOFT_INVALID_ALTERABLE` |
+| 4.6 | `hard` is absent or a Boolean | `SOFT_INVALID_RULE_FIELDS` |
+| 4.7 | A hard rule is strict and has no `alterable` | `SOFT_HARD_CONSTRAINT` |
+| 4.8 | A strict rule's `exception` is absent or null | `SOFT_STRICT_EXCEPTION` |
+| 4.9 | A default rule's `exception` is an object with `sufficient`, `necessary`, `factors` and at most `decided_by` besides | `SOFT_MISSING_EXCEPTION` |
+| 4.10 | `decided_by` is absent, null or a string | `SOFT_INVALID_DECIDER` |
+| 4.11 | A decider is given by `decided_by` or `exception_decider` | `SOFT_MISSING_DECIDER` |
+| 4.12 | A given `decided_by` is nonempty and at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 4.13 | `sufficient` is an array; then each element decodes as a FOL formula (*inherited*, `SOFT_INVALID_INPUT`); then the same for `necessary` | `SOFT_EXCEPTION_ARRAY` |
+| 4.14 | `factors` is an array of strings of at most 200 bytes each | `SOFT_INVALID_FACTORS` |
+| 5.1 | **Cross references.** Each `instruction_of` names a declared party | `SOFT_UNKNOWN_PARTY` |
+| 5.2 | Each name in `outranks`, then `ties`, is a declared rank | `SOFT_UNKNOWN_RANK` |
+| 5.3 | Rule names are unique | `SOFT_DUPLICATE_DECLARATION` |
+| 5.4 | Then, each rule in order: its predicate is a declared regulated predicate | `SOFT_INVALID_INPUT` |
+| 5.5 | its `rank` is declared | `SOFT_UNKNOWN_RANK` |
+| 5.6 | each `alterable` party is declared | `SOFT_UNKNOWN_PARTY` |
+| 5.7 | *Inherited:* its guard and carve-outs are typed over the predicate's argument sorts | `SOFT_INVALID_INPUT` |
+| 5.8 | each exception condition (`sufficient`, then `necessary`) is typed likewise (*inherited*, `SOFT_INVALID_INPUT`) and then mentions no regulated, defined or `soft__` predicate | `SOFT_INVALID_EXCEPTION_CONDITION` |
+| 5.9 | each `over` names a rule on the same predicate | `SOFT_INVALID_INPUT` |
+| 6.1 | **Semantic checks.** `outranks` is acyclic | `SOFT_DEPENDENCY_CYCLE` |
+| 6.2 | No tie between comparable ranks | `SOFT_TIE_AGAINST_ORDER` |
+| 6.3 | Ties are distinct as unordered pairs | `SOFT_DUPLICATE_DECLARATION` |
+| 6.4 | Author precedence is acyclic | `SOFT_DEPENDENCY_CYCLE` |
+| 6.5 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
+| 6.6 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
+| 6.7 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
+| 6.8 | Each rule, in order: with its derived carve-out, at most 8 carve-outs, each within `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.9 | `T′` passes W1's checks: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
+
+A standalone environment (the English layer, generated `E′`) runs the same
+table with no norm objects. A single norm unit decoded on its own (a quoted
+norm) runs 4.1 to 4.14 and then 5.4 to 5.8. Diagnostics raised after this
+table (certificates, witnesses, graphs) keep the classification by their
+stable prefixes above. New soft rejection paths must be added to this table
+in both validators. The conformance suite enforces the table with generated
+multi-fault inputs: faults from different phases, and several faults within
+one phase, must produce the same code in Python and Lean.
 
 ### Human-readable diagnostics
 
@@ -772,10 +854,8 @@ in both validators. A malformed `instruction_of` value uses
 | `Overlap(<n>, <m>)` | two same-sign rules both selecting (W1) | warning |
 | undeclared ties, `override_cycles` | report lines (1.2, 6.7) | warning |
 
-Diagnostics follow W1's check order (norms.md 11.1, `lean/NORMS.md` conventions): environment declarations, then
-W1's rule checks, then the soft rule checks in document order (mode and fields, rank, parties, decider, `hard`,
-exception typing), then `over` against modes, then ranks and ties, then the unfolded `T′` size and its DAG. English
-diagnostics carry the span and the plain-language expectation as today. Existing P0 and W1 diagnostics are unchanged.
+Diagnostics follow the validation order above. English diagnostics carry the span and the plain-language
+expectation as today. Existing P0 and W1 diagnostics are unchanged on their own routes.
 
 ## 9. Lean (item 4): definitions and the exact statements to prove
 
