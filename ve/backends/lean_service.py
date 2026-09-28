@@ -10,7 +10,9 @@ Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
   restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up.
+  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  like a response, to the nonce, the mode and every case digest; one without that
+  binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
   whose id is not the request's nonce or that the response schemas reject, a handshake
   from an unexpected build) kills the process. The batch is retried once on a fresh process, since requests are stateless;
@@ -19,8 +21,9 @@ Failure classes:
 
 Threat model (docs/spec/lean-service.md): the Lean service is the semantic authority,
 covered by Lean proofs and parity tests; this client does not re-derive semantic
-content. It guarantees binding and integrity: every response line must echo the
-request nonce and mode, and result `i` must carry position `i`, the SHA-256 of the text
+content. It guarantees binding and integrity: every response line, request errors
+included, must echo the request nonce and mode, a request error every case digest, and
+result `i` must carry position `i`, the SHA-256 of the text
 of case `i` as sent (`case_digests`) and the identity fields the runners echo from the
 case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
 Every field must also be well formed (`lean_service_schema/`, compiled by
@@ -147,6 +150,26 @@ def case_texts(cases_text: str) -> list[str] | None:
 def case_digest(text: str) -> str:
     """The binding identity of a case (`VE.Service.caseDigest`): SHA-256 of its text."""
     return hashlib.sha256(text.encode()).hexdigest()
+
+
+def request_context(nonce: str, mode: str, cases_text: str, count: int,
+                    texts: list[str] | None = None) -> dict:
+    """What a response to the request is checked against (`lean_service_schema/envelope.json`):
+    `{"id", "mode", "cases", "digests", "bytes"}`. A request error is bound to the digests
+    of the case texts as split, whether or not they decode (`null` if the text does not
+    split); results also need the decoded cases, one per case (`null` otherwise, so that
+    only a request error can answer the request)."""
+    try:
+        cases = json.loads(cases_text, parse_int=_json_integer)
+    except (ValueError, RecursionError):
+        cases = None
+    if texts is None:
+        texts = case_texts(cases_text)
+    digests = None if texts is None else [case_digest(text) for text in texts]
+    if not isinstance(cases, list) or len(cases) != count or digests is None or len(digests) != count:
+        cases = None
+    return {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
+            "bytes": len(cases_text.strip().encode())}
 
 
 _hashes: dict[tuple, str] = {}
@@ -404,19 +427,7 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         try:
-            cases = json.loads(cases_text, parse_int=_json_integer)
-        except (ValueError, RecursionError):
-            cases = None
-        if texts is None:
-            texts = case_texts(cases_text)
-        if not isinstance(cases, list) or len(cases) != count or texts is None or len(texts) != count:
-            cases = digests = None  # only a line error can answer it
-        else:
-            digests = [case_digest(text) for text in texts]
-        request = {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
-                   "bytes": len(cases_text.strip().encode())}
-        try:
-            check_response(mode, response, request)
+            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts))
         except Invalid as exc:
             raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response
@@ -438,9 +449,9 @@ class LeanService:
         whitespace (`case_texts(cases_text)`, which is then not recomputed).
 
         Returns the raw response line and its decoding, whose results are still bound
-        (`{"digest", "index", "result"}`). A line error from the service is returned as is
-        (`status: error`); operational failures are retried once, then raise
-        `CheckerUnavailable`.
+        (`{"digest", "index", "result"}`). A request error from the service, bound to the
+        nonce, mode and case digests, is returned as is (`status: error`); operational
+        failures, unbound errors included, are retried once, then raise `CheckerUnavailable`.
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")

@@ -5,8 +5,10 @@ The single source of truth for the shapes of `ve_service` responses
 
 * `envelope.json`: the response line; its context is the request
   `{"id": nonce, "mode", "cases": [...], "digests": [...], "bytes": trimmed cases size}`,
-  where `digests[i]` is the SHA-256 of the text of case `i` as sent. Result `i` is bound:
-  `{"digest": digests[i], "index": i, "result"}`.
+  where `digests[i]` is the SHA-256 of the text of case `i` as sent (`null` when the cases
+  text does not split into cases). Result `i` is bound:
+  `{"digest": digests[i], "index": i, "result"}`. A request error is bound too: it echoes
+  the nonce, the mode and `digests`.
 * `<mode>.json` for the six modes: `row` is the schema of one `result`; its context is
   the request case at the same position.
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
@@ -14,7 +16,8 @@ The single source of truth for the shapes of `ve_service` responses
 
 **What the schemas check** (threat model, `docs/spec/lean-service.md`): binding to the
 request and well-formedness, nothing else. The binding is the nonce, the mode, each
-result's position and case digest, and the identity fields a runner echoes from its case.
+result's position and case digest (a request error: every case digest), and the identity
+fields a runner echoes from its case.
 The well-formedness is the Lean decoders' domains. A rule belongs here only if its
 expected value can be read directly off the request. Values the runners compute belong
 to the service, which the tests check on its outputs (`ve_response_decode`'s

@@ -16,8 +16,11 @@ and its response line is `{"counts", "id", "mode", "results", "status": "ok"}`. 
 `i` is `{"digest", "index": i, "result"}`: `result` is the output of the existing runner
 for the mode on case `i` (`runMode`, pinned per mode below) and `digest` is the SHA-256
 of the case's text as split from the request (`caseDigest`), so the client can bind
-every result to the case it sent. A request that cannot be answered gets a line error
-`{"error", "id", "status": "error"}`. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
+every result to the case it sent. A decoded request that cannot be answered gets a
+request error `{"digests", "error", "id", "mode", "status": "error"}`, bound like a
+response: its nonce, its mode and the digests of its cases (`null` when its cases text
+does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
+line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
 batch decoder; English uses `Lean.Json.parse`, its one-shot decoder. No state
 is kept between lines.
 
@@ -87,7 +90,9 @@ structure Budget where
 structure Request where
   id : String
   mode : Mode
-  budget : Budget
+  /-- The raw text of the `budget` member, if any, decoded by `decodeBudget` when the request
+  runs, so that a malformed budget is a request error bound to the request. -/
+  budgetText : Option String := none
   /-- The raw text of the `cases` array, decoded by the mode's runner decoder. -/
   cases : String
 
@@ -163,7 +168,7 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
   let mut seen : List String := []
   let mut id : Option String := none
   let mut mode : Option Mode := none
-  let mut budget : Budget := {}
+  let mut budgetText : Option String := none
   let mut cases : Option String := none
   for (rawKey, raw) in members do
     let key ← decodeString "key" rawKey
@@ -175,11 +180,11 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
       match Mode.ofName? name with
       | some m => mode := some m
       | none => throw s!"unknown mode {name}"
-    else if key == "budget" then budget ← decodeBudget raw
+    else if key == "budget" then budgetText := some raw
     else if key == "cases" then cases := some raw.trim
     else throw s!"unknown request field {key}"
   match id, mode, cases with
-  | some i, some m, some c => pure { id := i, mode := m, budget, cases := c }
+  | some i, some m, some c => pure { id := i, mode := m, budgetText, cases := c }
   | none, _, _ => throw "request field id is missing"
   | _, none, _ => throw "request field mode is missing"
   | _, _, none => throw "request field cases is missing"
@@ -366,30 +371,55 @@ def parseEnglishCases (text : String) : Except String (Array (Except String Json
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases else VE.JsonInput.parseCases r.cases
 
+/-- The request's budget: the service limits, lowered by its `budget` member. -/
+def Request.budget (r : Request) : Except String Budget :=
+  match r.budgetText with
+  | some raw => decodeBudget raw
+  | none => pure {}
+
 def runRequest (r : Request) : Except String Json := do
+  let budget ← r.budget
   let bytes := r.cases.utf8ByteSize
-  if bytes > r.budget.bytes then
-    throw s!"ResourceLimit: cases are {bytes} bytes; budget is {r.budget.bytes}"
+  if bytes > budget.bytes then
+    throw s!"ResourceLimit: cases are {bytes} bytes; budget is {budget.bytes}"
   unless r.cases.trim.startsWith "[" do throw "request field cases must be an array"
   let cases ← decodeCases r
-  if cases.size > r.budget.cases then
-    throw s!"ResourceLimit: batch has {cases.size} cases; budget is {r.budget.cases}"
+  if cases.size > budget.cases then
+    throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
   let digests ← caseDigests r.cases
   unless digests.size == cases.size do throw "batch split mismatch"
   pure (response r cases digests)
 
+/-- The error for a line whose envelope cannot be decoded: it answers no request, so
+it carries the id when one can be read and no binding. -/
 def lineError (id : Option String) (message : String) : Json :=
   Json.mkObj [("id", match id with | some s => .str s | none => .null),
     ("status", .str "error"), ("error", .str message)]
+
+/-- The case digests of a request error: `caseDigests` of the cases text, `null` when it
+does not split into cases. -/
+def errorDigests (cases : String) : Json :=
+  match caseDigests cases with
+  | .ok digests => toJson digests
+  | .error _ => .null
+
+/-- The error for a decoded request that cannot be answered (budget, batch decoding),
+bound like a response: its nonce, its mode and the digests of its cases. -/
+def requestError (r : Request) (message : String) : Json :=
+  Json.mkObj [("id", .str r.id), ("status", .str "error"), ("mode", .str r.mode.name),
+    ("digests", errorDigests r.cases), ("error", .str message)]
 
 /-- The response to one request line. -/
 def respond (line : String) : Json :=
   match objectMembers line with
   | .error message => lineError none message
   | .ok members =>
-    match decodeRequest members >>= runRequest with
-    | .ok answer => answer
+    match decodeRequest members with
     | .error message => lineError (requestId? members) message
+    | .ok r =>
+      match runRequest r with
+      | .ok answer => answer
+      | .error message => requestError r message
 
 /-- One input line (with its newline, if any): blank lines are skipped, an over-long
 line gets one error record without being decoded. -/
@@ -426,14 +456,25 @@ theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) =
 /-- A request within its budget whose cases decode, one digest per case, is answered with
 `response`: `results`, the existing runner applied to every case in order, each bound
 to its case digest. -/
-theorem runRequest_ok (r : Request) (cases : Array (Except String Json)) (digests : Array String)
-    (hb : r.cases.utf8ByteSize ≤ r.budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
+theorem runRequest_ok (r : Request) (budget : Budget) (cases : Array (Except String Json))
+    (digests : Array String) (hq : r.budget = .ok budget)
+    (hb : r.cases.utf8ByteSize ≤ budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
     (hp : decodeCases r = .ok cases)
-    (hc : cases.size ≤ r.budget.cases)
+    (hc : cases.size ≤ budget.cases)
     (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size) :
     runRequest r = .ok (response r cases digests) := by
-  simp [runRequest, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, bind, Except.bind, pure,
+  simp [runRequest, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, bind, Except.bind, pure,
     Except.pure]
+
+/-- Every error for a decoded request is bound to it: a line whose envelope decodes to `r`
+is answered with `r`'s response or with `requestError r`, which carries `r`'s nonce, mode
+and case digests. -/
+theorem respond_decoded (line : String) (members : Array (String × String)) (r : Request)
+    (hm : objectMembers line = .ok members) (hr : decodeRequest members = .ok r) :
+    respond line = match runRequest r with
+      | .ok answer => answer
+      | .error message => requestError r message := by
+  simp [respond, hm, hr]
 
 theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) (h : i < cases.size) :
     (results r cases)[i]? = some (caseResult r.mode i cases[i]) := by

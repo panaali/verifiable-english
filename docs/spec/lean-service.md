@@ -16,7 +16,11 @@ content.
 
 **The client guarantees binding and integrity.**
 
-- Every response echoes the request's nonce (`id`) and `mode`.
+- Every response echoes the request's nonce (`id`) and `mode`. So does a request error (a
+  budget or a batch the decoder rejects), which also echoes the digest of every case
+  (`digests`; `null` when the cases text does not split into cases). An error without that
+  binding could answer a request it was not computed for, so it is a protocol fault, not a
+  `ResourceLimit` or a `VEError`.
 - Result `i` is `{"digest", "index": i, "result"}`, where `digest` is the SHA-256 of the
   text of case `i` as the client sent it (split from the `cases` array and trimmed of
   JSON whitespace; `VE.Service.caseDigest`, `ve.backends.lean_service.case_digest`). The
@@ -29,7 +33,8 @@ content.
   binding, not by semantic re-checking.
 - Every field must be well formed: the Lean decoders' domains (formula, term and kind
   grammars with their fuel, labels, tokens, enumerations; `ve/backends/lean_service_schema/`).
-- A malformed envelope, a binding mismatch or a malformed field is a protocol fault. The
+- A malformed envelope, a binding mismatch (of a result or of a request error) or a malformed
+  field is a protocol fault. The
   client kills the process and retries once on a fresh one; a second fault raises
   `CheckerUnavailable`.
 
@@ -102,10 +107,16 @@ for case `i` of this request, including the per-case depth record `{"case_index"
 whose `case_index` is the position in this request, as in a one-shot batch. `digest` is the SHA-256 (lowercase
 hex) of the text of case `i` as split from the request by `VE.JsonInput.caseTexts` and trimmed of JSON
 whitespace (`VE.Service.caseDigest`; `caseDigests` computes all of them in one pass over the request's
-UTF-8 bytes with `caseTexts`'s rules). `counts.errors` counts the results whose `result.status` is `error`. A whole request that cannot be answered gets one line error
-`{"error","id","status":"error"}`: malformed envelope (`id: null` when the id cannot be read), unknown mode,
-a batch the restricted decoder rejects (the one-shot exit-2 message, verbatim), or a budget. Processing
-continues with the next line; no state is kept between lines. Blank lines are ignored.
+UTF-8 bytes with `caseTexts`'s rules). `counts.errors` counts the results whose `result.status` is `error`.
+A decoded request that cannot be answered gets one request error
+`{"digests","error","id","mode","status":"error"}` (`requestError`): a malformed budget, a cases member that
+is not an array, a batch the restricted decoder rejects (the one-shot exit-2 message, verbatim), or a budget
+exceeded. It is bound like a response: `id` and `mode` are the request's, and `digests` is `caseDigests` of
+its cases text, or `null` when that text does not split into cases (`respond_decoded`). A line whose envelope
+cannot be decoded (not an object, unknown or duplicate or missing field, unknown mode, over-long line) gets the
+unbound line error `{"error","id","status":"error"}` (`lineError`, `id: null` when the id cannot be read),
+which answers no request; the client never sends such a line. Processing continues with the next line; no
+state is kept between lines. Blank lines are ignored.
 
 **JSON.** The envelope is split into top-level members by a small scanner (`objectMembers`, the same quote,
 escape and depth tracking as `VE.JsonInput`'s batch splitter); `id`, `mode` and `budget` are decoded by
@@ -145,7 +156,8 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 ## Supervisor (`ve/backends/lean_service.py`)
 
 - Each request carries a fresh nonce id; a response with another id or mode, a result not bound to its
-  case (position or digest), a malformed or short response, a
+  case (position or digest), a request error not bound to the request's mode and case digests, a
+  malformed or short response, a
   timeout (5 s interactive default, 60 s for batch callers), a crash, end of output or a bad handshake is an
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
@@ -167,11 +179,17 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   - they agree on every mutation of those responses: dropped, altered, retyped, enum-swapped, truncated and
     extra fields, bindings included; joint request/result mutations; altered requests; kind, label, depth and
     numeral probes;
-  - each of 16 weakenings of the schemas is caught, including dropping the digest or the index check;
+  - the schemas and `decode` accept every request error of the service (budgets, decoder rejections, a
+    malformed budget, a cases text that does not split), and agree on its mutations and on other
+    requests' digests;
+  - each of 18 weakenings of the schemas is caught, including dropping the digest or the index check and
+    the request error's mode or digests check;
   - `invariants` accepts every genuine response and rejects each content corruption of the rechecks, which the
     client accepts.
-- A line error from a healthy service is deterministic: `ResourceLimit` for budgets, otherwise `VEError`; the
-  process stays up.
+- A bound request error from a healthy service is deterministic: `ResourceLimit` for budgets, otherwise
+  `VEError`; the process stays up. The context it is checked against is `request_context`: the nonce, the
+  mode, the digests of the case texts as split (whether or not they decode) and, for results, the decoded
+  cases.
 - `RLIMIT_AS` 4 GiB on the child (`prlimit`, or `setrlimit` before exec where `prlimit` is missing);
   recycling after 10,000 requests or above 2 GiB RSS; `LeanServicePool` (default 2 processes).
 - `run(mode, cases)` splits at 256 cases or 4 MiB per request (the plan's adapter caps); each request is one
@@ -184,13 +202,15 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   mode is its runner, by `rfl`), `caseResult_ok` (a decoded case gets `runMode`), `runRequest_ok` (a request
   within budget whose cases decode, one per case digest, is answered with `response`), `results_eq` (result `i`
   is `caseResult` of case `i`), `boundResults_eq` (bound result `i` is `caseResult` of case `i` with position
-  `i` and its case digest, over `bindResults`, which binds the results `response` computes once). Trusted and not proved: `objectMembers`, `decodeRequest`, the
+  `i` and its case digest, over `bindResults`, which binds the results `response` computes once),
+  `respond_decoded` (a line whose envelope decodes to a request is answered with its response or with
+  `requestError`, bound to its nonce, mode and case digests). Trusted and not proved: `objectMembers`, `decodeRequest`, the
   restricted decoder, `caseDigests` (pinned to `caseTexts` and `caseDigest` by a `#guard`, and to the client's
   splitter by a randomized test against the service), and `Sha256.digest`. `Sha256.digest` is pinned by `#guard`s to the FIPS 180-4 vectors
   and to `VE.CertificateWire.sha256` on 130 inputs, and by the client comparing it with Python's `hashlib`.
 - `lean/VE/Service/EnglishRun.lean`: generated copy (deviation 3).
 - `lean/Serve.lean`: IO loop.
-- `lean/VE/Audit.lean`: one import and ten `#print axioms` lines. `lean/lakefile.toml`: two executables, and
+- `lean/VE/Audit.lean`: one import and eleven `#print axioms` lines. `lean/lakefile.toml`: two executables, and
   the untrusted test oracle `ve_response_decode`.
 - No pre-existing trusted checker module under `lean/VE/` changed during stage 1;
   `VE/Route/frozen.py` now pins all 124 VE Lean modules.
