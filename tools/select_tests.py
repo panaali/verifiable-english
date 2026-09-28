@@ -82,7 +82,7 @@ def test_layer(path: Path) -> int:
                     layers.append(layer)
     source = path.read_text()
     # These are non-import edges: tests invoke binaries or read generated data.
-    if "usecases/" in source or "experiments/" in source:
+    if "usecases" in source or "experiments/" in source:
         layers.append(5)
     if "rust/target/" in source or "VE_W5_RUST_BIN" in source:
         layers.append(4)
