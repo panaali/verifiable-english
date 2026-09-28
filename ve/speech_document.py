@@ -7,6 +7,7 @@ speech-act choice route exists.
 from __future__ import annotations
 
 import hashlib
+from itertools import takewhile
 import json
 from pathlib import Path
 
@@ -17,7 +18,8 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import SpeechDocument, content_kind_ok, effective_scope, formula_shape, latest_reading_sets
+from .speech_acts import (SpeechDocument, content_kind_ok, effective_scope, fixed_assertion_ids,
+                          formula_shape, latest_reading_sets, query_records)
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -193,12 +195,16 @@ class SpeechSource:
         # 1.1: a fence is read under the effective scope, so a phrase or "you" an
         # authored binding supplies reads as if the block declared it.  The scope is
         # the document's own merge, so a fenced and an unfenced source agree.
+        # A wording that names neither its query nor its reading set leaves them to the
+        # document, which regenerates them at the unit (`_fence_context`).
         fenced = [u for u in self.units if type(u["content"]) is dict and "fence" in u["content"]]
         if fenced:
             from .speech_english import parse_speech
             scope = effective_scope(self.env, self.units, sets)
             for unit in fenced:
-                parsed, parsed_kind = parse_speech(self.env, fences[unit["id"]].strip(), scope)
+                text = fences[unit["id"]].strip()
+                parsed, parsed_kind = parse_speech(self.env, text, scope,
+                                                   **self._fence_context(unit, text, sets))
                 if parsed_kind != unit["kind"]:
                     raise VEError("fence kind disagrees with unit")
                 unit["content"] = {"command" if parsed_kind == "instruction" else "question": parsed}
@@ -234,6 +240,38 @@ class SpeechSource:
         self.compliance = meta.get("compliance", [])
         self.answer_lines = self._answer_records()
         self.compliance_lines = self._compliance_records()
+
+    def _fence_context(self, unit, text, sets):
+        """What a fenced wording leaves to its document, regenerated at its unit as for an unfenced one.
+
+        "Does it follow from these premises that P?" and "Prove that P using these
+        premises." are about the one query record whose premises are the fixed
+        asserted units before the unit and whose target is P (1.4): none or more
+        than one is `QueryMismatch: <u>`.  "Which reading did you mean?" asks about
+        the set version its unit's derived open term names (4.6); a unit without
+        that meaning and declaration is `invalid question fields for <u>`.  The
+        document built afterwards checks the result exactly as an unfenced unit.
+        """
+        from .speech_english import _sentence
+        uid = unit["id"]
+        if text == "Which reading did you mean?":
+            name = f"intended-reading.{uid}"
+            term = next((t for t in self.open_terms if t["name"] == name), None)
+            if unit["meaning"] != {"open": [name]} or term is None or len(term["arguments"]) != 1:
+                raise VEError(f"InvalidInput: invalid question fields for {uid}")
+            return {"reading_set": (term["arguments"][0], term["version"])}
+        for prefix, suffix in (("Does it follow from these premises that ", "?"),
+                               ("Prove that ", " using these premises.")):
+            if text.startswith(prefix) and text.endswith(suffix):
+                target = _sentence(self.env, text[len(prefix):-len(suffix)] + ".")
+                before = takewhile(lambda other: other["id"] != uid, self.units)
+                premises = fixed_assertion_ids(before, sets)
+                ids = {q.id for q in query_records(self.env, self.metadata.get("queries", []))
+                       if list(q.premises) == premises and q.target == target}
+                if len(ids) != 1:
+                    raise VEError(f"QueryMismatch: {uid}")
+                return {"query": ids.pop()}
+        return {}
 
     def _answer_records(self):
         if type(self.answers) is not list:

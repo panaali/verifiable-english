@@ -302,6 +302,46 @@ class Query:
     target: object
 
 
+def query_records(env, records):
+    """The document's query records, decoded before regeneration (Lean's `decodeQuery`).
+
+    The record's own references are names; they are resolved against the
+    regeneration at each unit that asks (1.4).
+    """
+    if type(records) not in (list, tuple):
+        raise VEError("array expected")
+    result = []
+    for raw in records:
+        if (type(raw) is not dict or set(raw) != {"id", "premises", "target"} or type(raw["id"]) is not str
+                or type(raw["premises"]) is not list or any(type(p) is not str for p in raw["premises"])
+                or type(raw["target"]) is not dict or set(raw["target"]) != {"ast"}):
+            raise VEError("InvalidInput: query")
+        result.append(Query(raw["id"], tuple(raw["premises"]), _formula(env, raw["target"]["ast"])))
+    return result
+
+
+def fixed_assertion_ids(units, reading_sets):
+    """The ids of W2's fixed asserted premises among `units`, in document order (1.5).
+
+    An asserted unit with content outside a pending reading set, or whose latest
+    version is the author's signed assertion choice: exactly the units whose
+    formulas `SpeechDocument.asserted` holds, before anything else is checked.
+    """
+    latest = latest_reading_sets(reading_sets)
+    ids = []
+    for raw in units:
+        if type(raw) is not dict or type(raw.get("id")) is not str:
+            continue
+        reading_set = latest.get(raw["id"])
+        if reading_set is not None:
+            if reading_set["status"] == "open":
+                continue
+            raw = _reading_choice(raw, reading_set)
+        if raw.get("kind") == "asserted" and raw.get("content") is not None:
+            ids.append(raw["id"])
+    return ids
+
+
 class SpeechDocument:
     """Validated typed projection of a speech document for experimental checks.
 
@@ -570,18 +610,10 @@ class SpeechDocument:
 
     def _queries(self, records):
         asserted = dict(self.asserted)
-        for raw in records:
-            # The record's own references are names (Lean's `decodeQuery`); they are
-            # resolved against the regeneration below.
-            if (type(raw) is not dict or set(raw) != {"id", "premises", "target"} or type(raw["id"]) is not str
-                    or type(raw["premises"]) is not list or any(type(p) is not str for p in raw["premises"])
-                    or type(raw["target"]) is not dict or set(raw["target"]) != {"ast"}):
-                raise VEError("InvalidInput: query")
-            target = _formula(self.env, raw["target"]["ast"])
-            qid = raw["id"]
-            if qid in self.queries:
+        for query in query_records(self.env, records):
+            if query.id in self.queries:
                 raise VEError("InvalidInput: duplicate query")
-            self.queries[qid] = Query(qid, tuple(raw["premises"]), target)
+            self.queries[query.id] = query
         # 1.4: the record is regenerated at every unit that asks, in document
         # order, as Lean's decoder does; a later consumer with more earlier
         # assertions makes a reused record stale.
