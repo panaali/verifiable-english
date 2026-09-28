@@ -9,7 +9,7 @@ import subprocess
 
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
-from .lean_service import CheckerUnavailable
+from .lean_service import CheckerUnavailable, _decode_json
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
@@ -45,17 +45,43 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
                                    timeout=timeout, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
+    if len(completed.stdout) > MAX_LINE_BYTES:
+        raise CheckerUnavailable("CheckerUnavailable: oversized Rust JSONL response")
     lines = completed.stdout.splitlines()
     if completed.returncode not in (0, 1) or len(lines) != 1:
         detail = completed.stderr[:200].decode("utf-8", "replace")
         raise CheckerUnavailable(
             f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
     try:
-        record = json.loads(lines[0])
+        record = _decode_json(lines[0])
     except (UnicodeDecodeError, ValueError):
         raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
     if not isinstance(record, dict) or record.get("id") != case.get("id", ""):
         raise CheckerUnavailable("CheckerUnavailable: mismatched Rust response id")
-    if record.get("status") != "error" and completed.returncode != 0:
+    if (record.get("status") == "error") != (completed.returncode == 1):
         raise CheckerUnavailable("CheckerUnavailable: Rust exit status disagrees with response")
+    if case.get("kind") == "evaluate-budgeted" and record.get("status") != "error":
+        expected = {"id", "status", "value", "evaluations"}
+        if case.get("trace") is True:
+            expected.add("explanation")
+        if (set(record) != expected or type(record["status"]) is not str or record["status"] not in
+                {"Satisfied", "Violated", "ResourceLimit"}
+                or type(record["evaluations"]) is not int
+                or not 0 <= record["evaluations"] <= case["max_evaluations"]
+                or record["value"] is not ({"Satisfied": True, "Violated": False,
+                                             "ResourceLimit": None})[record["status"]]):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust evaluation result")
+    if "premises" in case and "model" in case and record.get("status") != "error":
+        expected = {"id", "status", "valid", "premise_values", "conclusion_value",
+                    "evaluations", "environment_id", "model_id", "premise_meaning_ids",
+                    "conclusion_meaning_id"}
+        if (set(record) != expected or type(record["status"]) is not str or record["status"] not in
+                {"Valid", "NotCountermodel", "ResourceLimit"}
+                or type(record["valid"]) is not bool
+                or type(record["evaluations"]) is not int
+                or not 0 <= record["evaluations"] <= case["max_evaluations"]
+                or type(record["premise_values"]) is not list
+                or any(type(v) is not bool for v in record["premise_values"])
+                or len(record["premise_values"]) > len(case["premises"])):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust countermodel result")
     return require_ok(record)

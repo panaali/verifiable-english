@@ -49,33 +49,59 @@ def _record(value):
 
 def _classes(left, right) -> list[str]:
     left, right = _record(left), _record(right)
-    if type(left) is not type(right):
-        return ["schema"]
-    if isinstance(left, dict):
-        if left.keys() != right.keys():
-            return ["schema"]
-        classes = set()
-        for key in left:
-            if left[key] == right[key]:
-                continue
-            if key in {"status", "valid", "value", "values", "refutes", "composed", "verdict"}:
-                classes.add("verdict")
-            elif key in {"environment_id", "source_id", "meaning_id", "model_id", "claim_id", "edge_id"}:
-                classes.add("identity")
-            elif key in {"evaluations", "steps", "models_checked"}:
-                classes.add("count-value")
-            elif key in {"explanation", "trace"}:
-                classes.add("explanation")
-            elif key in {"composition", "assumptions", "assumption_claim_ids", "supporting_edge_ids"}:
-                classes.add("composition")
-            elif key in {"code", "generator"}:
-                classes.add("diagnostic-code")
-            elif key in {"message", "detail"}:
-                classes.add("diagnostic-message")
-            else:
-                classes.add("schema")
-        return sorted(classes)
-    return [] if left == right else ["verdict"]
+    classes: set[str] = set()
+    identities = {"environment_id", "source_id", "meaning_id", "model_id",
+                  "claim_id", "edge_id", "graph_id"}
+    composition = {"composition", "assumptions", "assumption_claim_ids",
+                   "supporting_edge_ids", "unresolved_obligations"}
+
+    def shape(path: tuple[str, ...]) -> None:
+        classes.add("schema")
+        if "explanation" in path or "trace" in path:
+            classes.add("explanation")
+        if any(part in composition for part in path):
+            classes.add("composition")
+
+    def visit(a, b, path: tuple[str, ...] = ()) -> None:
+        if type(a) is not type(b):
+            shape(path)
+            return
+        if isinstance(a, dict):
+            if a.keys() != b.keys():
+                shape(path)
+            for key in a.keys() & b.keys():
+                visit(a[key], b[key], (*path, key))
+            return
+        if isinstance(a, list):
+            if len(a) != len(b):
+                shape(path)
+            for x, y in zip(a, b):
+                visit(x, y, path)
+            return
+        if a == b:
+            return
+        key = path[-1] if path else ""
+        if "explanation" in path or "trace" in path:
+            classes.add("explanation")
+        elif any(part in composition for part in path):
+            classes.add("composition")
+        elif key == "status":
+            classes.update(("verdict", "budget-outcome"))
+        elif key in {"valid", "value", "values", "refutes", "composed", "verdict"}:
+            classes.add("verdict")
+        elif key in identities:
+            classes.add("identity")
+        elif key in {"evaluations", "steps", "models_checked"}:
+            classes.add("count-value")
+        elif key in {"code", "generator"}:
+            classes.add("diagnostic-code")
+        elif key in {"message", "detail"}:
+            classes.add("diagnostic-message")
+        else:
+            classes.add("schema")
+
+    visit(left, right)
+    return sorted(classes)
 
 
 def _append(record: dict) -> None:
