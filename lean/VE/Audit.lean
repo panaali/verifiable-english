@@ -35,7 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SoftNorms.Run
-import VE.Rights.Distinction
+import VE.Rights.Route
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1158,9 +1158,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.bar_denote
 #print axioms VE.Rights.bar_mode
 #print axioms VE.Rights.bar_value
+#print axioms VE.Rights.baseAdmissibleR_of_valid
 #print axioms VE.Rights.blocked_eq
 #print axioms VE.Rights.catalaValue_false
 #print axioms VE.Rights.catalaValue_true
+#print axioms VE.Rights.coherent_expands
 #print axioms VE.Rights.condF_of_narrowsAt
 #print axioms VE.Rights.condKeys_nil
 #print axioms VE.Rights.correlate_faithful
@@ -1217,11 +1219,30 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.nodeNamed_self
 #print axioms VE.Rights.not_mem_children_bar
 #print axioms VE.Rights.owes_outcome
+#print axioms VE.Rights.prefixAdmissibleR_zero
 #print axioms VE.Rights.projections_agree
 #print axioms VE.Rights.regOf_name
 #print axioms VE.Rights.rightDerived_regulated
+#print axioms VE.Rights.rightsChain_hc
+#print axioms VE.Rights.rightsConflictFreeCheck_target
+#print axioms VE.Rights.rightsRouteChain_premises
+#print axioms VE.Rights.rightsRouteChain_restrict
+#print axioms VE.Rights.rightsRoute_E_out
 #print axioms VE.Rights.rightsValid_of_wellFormed
+#print axioms VE.Rights.rights_coherent_expands_all
+#print axioms VE.Rights.rights_conflict_free
+#print axioms VE.Rights.rights_conflict_witness_sound
+#print axioms VE.Rights.rights_layer_expands
+#print axioms VE.Rights.rights_restrict_admissible
+#print axioms VE.Rights.rights_route_acceptance
+#print axioms VE.Rights.rights_route_backgroundComplete
+#print axioms VE.Rights.rights_route_backgroundSound
+#print axioms VE.Rights.rights_route_countermodel
+#print axioms VE.Rights.rights_route_intended
 #print axioms VE.Rights.same_effect_delivered
+#print axioms VE.Rights.sat_backgroundBaseR
+#print axioms VE.Rights.sat_lim_restrict
+#print axioms VE.Rights.sat_soft_restrictR
 #print axioms VE.Rights.scopeLimits_nil
 #print axioms VE.Rights.selects_bar
 #print axioms VE.Rights.selects_eq
