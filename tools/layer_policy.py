@@ -6,6 +6,7 @@ responsibility until it is split; exact legacy edges are tracked separately.
 """
 from __future__ import annotations
 
+import ast
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +23,61 @@ PYTHON = {
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
+
+
+def python_exports(root: Path = ROOT) -> dict[str, str]:
+    """Map public facade names to the modules that define them."""
+    tree = ast.parse((root / "ve/__init__.py").read_text())
+    return {alias.asname or alias.name: f"ve.{node.module}"
+            for node in tree.body
+            if isinstance(node, ast.ImportFrom) and node.level == 1 and node.module
+            for alias in node.names}
+
+
+def python_imports(module: str, source: str, exports: dict[str, str],
+                   *, root: Path, package: bool = False) -> set[str]:
+    """Resolve local imports, including names reexported by the ve facade."""
+    tree = ast.parse(source)
+    imported = set()
+    facade_aliases = set()
+
+    def local_module(name: str) -> bool:
+        path = root.joinpath(*name.split("."))
+        return path.with_suffix(".py").exists() or (path / "__init__.py").exists()
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported.update(alias.name for alias in node.names)
+            facade_aliases.update(alias.asname or "ve" for alias in node.names
+                                  if alias.name == "ve")
+        elif isinstance(node, ast.ImportFrom):
+            parts = module.split(".") if package else module.split(".")[:-1]
+            if node.level:
+                parts = parts[:len(parts) - node.level + 1]
+            base = ".".join([*parts, *node.module.split(".")]) if node.module else ".".join(parts)
+            if not node.level:
+                base = node.module or ""
+            if base == "ve":
+                for alias in node.names:
+                    if alias.name == "*":
+                        imported.update(exports.values())
+                    else:
+                        target = exports.get(alias.name, f"ve.{alias.name}")
+                        if target in exports.values() or local_module(target):
+                            imported.add(target)
+            else:
+                submodules = {f"{base}.{alias.name}" for alias in node.names
+                              if alias.name != "*" and local_module(f"{base}.{alias.name}")}
+                imported.update(submodules)
+                if len(submodules) < len(node.names):
+                    imported.add(base)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
+            if node.value.id in facade_aliases:
+                target = exports.get(node.attr, f"ve.{node.attr}")
+                if target in exports.values() or local_module(target):
+                    imported.add(target)
+    return imported
 
 
 def python_layer(module: str) -> int | None:

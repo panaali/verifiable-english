@@ -8,7 +8,7 @@ import sys
 
 import grimp
 
-from layer_policy import PYTHON, ROOT, python_layer
+from layer_policy import PYTHON, ROOT, python_exports, python_imports, python_layer
 
 LEDGER = ROOT / "tools/layer-exceptions.json"
 CONTRACT = ROOT / ".importlinter"
@@ -25,10 +25,23 @@ def violations() -> set[str]:
                      and module.startswith("ve.") and python_layer(module) is None)
     if missing:
         raise ValueError(f"unmapped Python modules: {missing}")
+    exports = python_exports(ROOT)
+    edges = {(importer, imported)
+             for importer in graph.modules
+             for imported in graph.find_modules_directly_imported_by(importer)}
+    for importer in graph.modules:
+        if importer in {"ve", "ve_experiments"}:
+            continue
+        source = ROOT.joinpath(*importer.split("."))
+        package = source.is_dir()
+        source = source / "__init__.py" if package else source.with_suffix(".py")
+        if source.exists():
+            edges.update((importer, imported) for imported in
+                         python_imports(importer, source.read_text(), exports,
+                                        root=ROOT, package=package))
     return {
         f"{importer} -> {imported}"
-        for importer in graph.modules
-        for imported in graph.find_modules_directly_imported_by(importer)
+        for importer, imported in edges
         if (layer(importer) is not None and layer(imported) is not None
             and layer(importer) < layer(imported))
     }
