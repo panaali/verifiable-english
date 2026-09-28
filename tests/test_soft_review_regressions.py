@@ -22,7 +22,7 @@ from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
 from ve.softnorms import load_soft_document
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
-                                    soft2_reproducers, soft3_reproducers,
+                                    soft2_reproducers, soft3_reproducers, soft3_accepted,
                                     multi_fault_cases, multi_faults,
                                     compare_rejected, main as conformance_main)
 
@@ -189,6 +189,13 @@ def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     assert python_error.value.to_dict()["code"] == code
 
 
+@pytest.mark.parametrize("name,raw,rules", soft3_accepted())
+def test_node_budgets_admit_the_same_sources(name, raw, rules):
+    python = load_soft_document(raw, rules)
+    lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert lean["environment_prime"] == python.extended_env.to_dict()
+
+
 def test_multi_fault_generator_covers_the_table():
     faults = multi_faults()
     assert {f[2][0] for f in faults} == {1, 2, 3, 4, 5, 6}
@@ -202,7 +209,7 @@ def test_multi_fault_generator_covers_the_table():
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 4152
+    assert compare_rejected() == 4375
 
 
 def test_document_checks_environment_and_rules_as_one_source(tmp_path):
@@ -333,7 +340,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 4152
+    assert report["rejected_inputs"] == 4375
 
 
 @pytest.mark.parametrize("role,sign,effect", [

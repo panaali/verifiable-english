@@ -358,8 +358,9 @@ A soft document `(E, T)` is well-formed when, in this order:
    tree. A strict child of a default parent is allowed.
 6. `hard: true` implies `mode = strict` and `alterable = ∅` (`HardConstraintAltered: rule <n>`).
 7. Exception conditions are typed over the rule's context and mention base predicates of `E` only (3.2).
-8. The elaborated `T′` (section 5) is within `MAX_NODES` per formula (`ResourceLimit: derived carve-out of rule
-   <n>`), and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
+8. The elaborated `T′` (section 5) is within `MAX_NODES`: at most 8 carve-outs per rule, and the guards and
+   carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived carve-out`),
+   and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
    `DualGuardCycle` hint when the cycle is absent on `T` (5.2).
 
 Warnings (reported, never rejecting): `RankAgainstPrecedence: rule <N> over <M>` when `M ∈ over(N)`,
@@ -509,8 +510,9 @@ restate rule <k>'s guard over the facts".
 
 ### 5.3 Size
 
-Unfolded size is subject to `MAX_NODES` (10,000 nodes per formula, `ve/limits.py`); overflow is `ResourceLimit:
-derived carve-out of rule <n>`, never a verdict. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
+Unfolded size is subject to `MAX_NODES` (10,000 nodes, term nodes included, `ve/limits.py`), which W1 applies to
+the guards and carve-outs of the whole document together (norms.md 11.5); overflow is `ResourceLimit: derived
+carve-out`, never a verdict. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
 not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
 
 ## 6. Decision assignments, coherence and what CONFLICT-FREE means (review A3)
@@ -793,7 +795,7 @@ the message, a name, or other input.
 | 3.4 | No checker profile (`closure@0`, `nary@0`, `order@0`) | `SOFT_UNSUPPORTED_PROFILE` |
 | 3.5 | No W3 definition, then no W5 data flag, is declared | `SOFT_UNSUPPORTED_PROFILE` |
 | 4.1 | **Rule fields**, each norm object in order, its fields in this order. The object is `{"norm": {...}}` with every W1 field, optionally the soft fields, nothing else | `SOFT_INVALID_INPUT` |
-| 4.2 | *Inherited:* W1's field checks: rule-name syntax, `predicate` a string, `sign` a Boolean, `unless` an array of at most 8, `over` an array of strings, guard and carve-outs decode as FOL formulas | `SOFT_INVALID_INPUT` |
+| 4.2 | *Inherited:* W1's field checks: rule-name syntax, `predicate` a string, `sign` a Boolean, `unless` an array of at most 8, `over` an array of strings, guard and carve-outs decode as FOL formulas, each within `MAX_DEPTH` and its own `MAX_NODES` budget (term nodes count) | `SOFT_INVALID_INPUT` |
 | 4.3 | `mode` is absent, `strict` or `default` | `SOFT_INVALID_RULE_FIELDS` |
 | 4.4 | `rank` is absent, null or a string | `SOFT_INVALID_RULE_FIELDS` |
 | 4.5 | `alterable` is absent or an array of strings, sorted and distinct | `SOFT_INVALID_ALTERABLE` |
@@ -804,7 +806,7 @@ the message, a name, or other input.
 | 4.10 | `decided_by` is absent, null or a string | `SOFT_INVALID_DECIDER` |
 | 4.11 | A decider is given by `decided_by` or `exception_decider` | `SOFT_MISSING_DECIDER` |
 | 4.12 | A given `decided_by` is nonempty and at most 64 bytes | `SOFT_INVALID_DECIDER` |
-| 4.13 | `sufficient` is an array; then each element decodes as a FOL formula (*inherited*, `SOFT_INVALID_INPUT`); then the same for `necessary` | `SOFT_EXCEPTION_ARRAY` |
+| 4.13 | `sufficient` is an array; then each element decodes as a FOL formula as in 4.2 (*inherited*, `SOFT_INVALID_INPUT`); then the same for `necessary` | `SOFT_EXCEPTION_ARRAY` |
 | 4.14 | `factors` is an array of strings of at most 200 bytes each | `SOFT_INVALID_FACTORS` |
 | 5.1 | **Cross references.** Each `instruction_of` names a declared party | `SOFT_UNKNOWN_PARTY` |
 | 5.2 | Each name in `outranks`, then `ties`, is a declared rank | `SOFT_UNKNOWN_RANK` |
@@ -812,18 +814,19 @@ the message, a name, or other input.
 | 5.4 | Then, each rule in order: its predicate is a declared regulated predicate | `SOFT_INVALID_INPUT` |
 | 5.5 | its `rank` is declared | `SOFT_UNKNOWN_RANK` |
 | 5.6 | each `alterable` party is declared | `SOFT_UNKNOWN_PARTY` |
-| 5.7 | *Inherited:* its guard and carve-outs are typed over the predicate's argument sorts | `SOFT_INVALID_INPUT` |
-| 5.8 | each exception condition (`sufficient`, then `necessary`) is typed likewise (*inherited*, `SOFT_INVALID_INPUT`) and then mentions no regulated, defined or `soft__` predicate | `SOFT_INVALID_EXCEPTION_CONDITION` |
+| 5.7 | *Inherited:* its guard and carve-outs are typed over the predicate's argument sorts; the rule's formulas here and in 5.8 share one `MAX_NODES` budget, exceeded at the formula whose typing crosses it | `SOFT_INVALID_INPUT` |
+| 5.8 | each exception condition (`sufficient`, then `necessary`) is typed likewise, within the rule's budget (*inherited*, `SOFT_INVALID_INPUT`), and then mentions no regulated, defined or `soft__` predicate | `SOFT_INVALID_EXCEPTION_CONDITION` |
 | 5.9 | each `over` names a rule on the same predicate | `SOFT_INVALID_INPUT` |
 | 6.1 | **Semantic checks.** `outranks` is acyclic | `SOFT_DEPENDENCY_CYCLE` |
 | 6.2 | No tie between comparable ranks | `SOFT_TIE_AGAINST_ORDER` |
 | 6.3 | Ties are distinct as unordered pairs | `SOFT_DUPLICATE_DECLARATION` |
-| 6.4 | Author precedence is acyclic | `SOFT_DEPENDENCY_CYCLE` |
+| 6.4 | *Inherited:* the guards and carve-outs of every rule of `T`, in order, are within W1's one document budget (`MAX_NODES`, norms.md 11.5), `SOFT_RESOURCE_LIMIT`; then author precedence is acyclic | `SOFT_RESOURCE_LIMIT`, `SOFT_DEPENDENCY_CYCLE` |
 | 6.5 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
 | 6.6 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
 | 6.7 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
-| 6.8 | Each rule, in order: with its derived carve-out, at most 8 carve-outs, each within `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
-| 6.9 | `T′` passes W1's checks: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
+| 6.8 | Each rule, in order: with its derived carve-out, at most 8 carve-outs | `SOFT_RESOURCE_LIMIT` |
+| 6.9 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
+| 6.10 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 
 A standalone environment (the English layer, generated `E′`) runs the same
 table with no norm objects. A single norm unit decoded on its own (a quoted

@@ -10,7 +10,7 @@ first diagnostic is fixed by the table, not by the order in which a decoder
 happens to visit the input. Every check carries its own stable code; inherited
 W1/P0 checks run their decoder at their position and report
 `SOFT_INVALID_INPUT` whatever class their text names. `ve/softnorms.py` is the
-same list. The remaining semantic checks (6.4 to 6.9) are `validateSoft`'s, on
+same list. The remaining semantic checks (6.4 to 6.10) are `validateSoft`'s, on
 the decoded document. -/
 namespace VE.SoftNorms.Phases
 open Lean
@@ -209,7 +209,7 @@ def exceptionFields (exceptionDecider : Option String) (name : String) (j : Json
     unless deciderOk d do fail "SOFT_INVALID_DECIDER" s!"InvalidInput: invalid decider for rule {name}"
   let conditions (k : String) : Check (List VE.Formula) :=
     match j.getObjValD k with
-    | .arr xs => xs.toList.mapM (fun x => inherited (VE.Bridge.decodeFormula 64 x))
+    | .arr xs => xs.toList.mapM (fun x => inherited (Norms.Wire.decodeBudgeted x))
     | _ => fail "SOFT_EXCEPTION_ARRAY" s!"InvalidInput: exception {k} must be an array"
   let sufficient ← conditions "sufficient"
   let necessary ← conditions "necessary"
@@ -228,8 +228,9 @@ def ruleFields (exceptionDecider : Option String) (j : Json) : Check SoftNode :=
   let keys := obj.map (·.1)
   unless w1Keys.all keys.contains && keys.all (fun k => w1Keys.contains k || softKeys.contains k) do
     fail "SOFT_INVALID_INPUT" "InvalidInput: invalid norm fields"
+  -- Python's `_fol` gives the guard and each carve-out its own node budget.
   let N ← inherited (Norms.Wire.decodeNorm
-    (Json.mkObj [("norm", Json.mkObj (obj.filter (fun kv => w1Keys.contains kv.1)))]))
+    (Json.mkObj [("norm", Json.mkObj (obj.filter (fun kv => w1Keys.contains kv.1)))]) (shared := false))
   unless ruleName N.name do fail "SOFT_INVALID_INPUT" s!"InvalidInput: invalid rule name {pyRepr N.name}"
   if N.carveOuts.length > 8 then fail "SOFT_INVALID_INPUT" "InvalidInput: invalid sign or too many carve-outs"
   let mode ← match raw.getObjVal? "mode" with
@@ -280,7 +281,9 @@ def typed (E : VE.Environment) (Γ : List String) (φ : VE.Formula) (message : S
   inherited (typeDiagnostic E Γ φ)
   unless φ.check E Γ do fail "SOFT_INVALID_INPUT" message
 
-/-- 5.4 to 5.8 for one rule. -/
+/-- 5.4 to 5.8 for one rule. Python types a rule's guard, carve-outs and
+exception conditions with one `_Checker`: they share one `MAX_NODES` budget,
+checked as each formula is typed (inherited). -/
 def ruleReferences (ne : Norms.Wire.NormsEnvironment) (soft : SoftEnv) (N : SoftNode) : Check Unit := do
   let some r := ne.regulated.find? (·.name == N.pred)
     | fail "SOFT_INVALID_INPUT" s!"UnknownSymbol: regulated predicate {N.pred}"
@@ -289,11 +292,16 @@ def ruleReferences (ne : Norms.Wire.NormsEnvironment) (soft : SoftEnv) (N : Soft
   for π in N.alterable do
     unless soft.parties.contains π do fail "SOFT_UNKNOWN_PARTY" s!"UnknownSymbol: party {π}"
   let E := ne.rv.environment
+  let mut nodes := 0
   for φ in N.guard :: N.carveOuts do
     typed E r.sorts.reverse φ s!"InvalidInput: ill-typed rule {N.name}"
+    nodes := nodes + VE.Bridge.formulaNodes φ
+    if nodes > Norms.Wire.maxNodes then fail "SOFT_INVALID_INPUT" "ResourceLimit: AST exceeds 10,000 nodes"
   for e in N.exception.toList do
     for C in e.sufficient ++ e.necessary do
       typed E r.sorts.reverse C s!"InvalidInput: ill-typed rule {N.name}"
+      nodes := nodes + VE.Bridge.formulaNodes C
+      if nodes > Norms.Wire.maxNodes then fail "SOFT_INVALID_INPUT" "ResourceLimit: AST exceeds 10,000 nodes"
       if let some q := (preds C).find? (fun q => (ne.regulated.map (·.name)).contains q ||
           (ne.rv.definitions.map (·.name)).contains q || reservedPredicate q) then
         fail "SOFT_INVALID_EXCEPTION_CONDITION"
