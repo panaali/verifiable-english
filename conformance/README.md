@@ -323,7 +323,7 @@ order route.
 
 ## P0 route fixtures
 
-`alternatives.py` generates the a, b, c and o scenario shapes from
+`alternatives.py` generates the a, b, c, d, e, j and o scenario shapes from
 `docs/spec/alternatives.md` §8. `tests/test_alternatives_three_way.py` asks the
 Lean alternatives route to validate each scenario and generate its closed
 followability formula plus existential probes for all four profile words.
