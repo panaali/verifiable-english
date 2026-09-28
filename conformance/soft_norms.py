@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 import random
 import subprocess
@@ -107,17 +108,50 @@ def rejected_sources():
                       exception={"decided_by": "assistant"})]),
         (env({"parties": ["assistant", "user"], "outranking": {"mode": "strict"}}),
          [norm("a", "x_required", True, alterable=["user", "assistant"])]),
+        # Diagnostic parity reproducers from the soft route review.
+        (env(), [norm("a", "x_required", True, mode="default")]),
+        (env({"ranks": ["a"], "ties": [["a"]],
+              "outranking": {"mode": "strict"}}), []),
     ]
 
 
+def generated_invalid_soft_blocks():
+    """Single-field mutations of a valid block, including every collection shape."""
+    baseline = env({"parties": ["p"], "ranks": ["a", "b"],
+                    "outranking": {"mode": "strict"}})
+    mutations = {
+        "parties": [False, {}, "p", [False], ["Bad!"], ["p", "p"]],
+        "ranks": [False, {}, "a", [42], ["Bad!"], ["a", "a"]],
+        "outranks": [False, {}, "a", [[]], [["a"]], [["a", "b", "a"]],
+                     [[1, "b"]], [["a", "a"]], [["a", "b"], ["a", "b"]],
+                     [["a", "unknown"]]],
+        "ties": [False, {}, "a", [[]], [["a"]], [["a", "b", "a"]],
+                 [[1, "b"]], [["a", "a"]], [["a", "b"], ["a", "b"]],
+                 [["a", "b"], ["b", "a"]], [["a", "unknown"]]],
+        "outranking": [False, {}, "strict", {"mode": "other"},
+                       {"mode": "strict", "extra": 1},
+                       {"mode": "strict", "decided_by": False},
+                       {"mode": "holistic"},
+                       {"mode": "holistic", "decided_by": False},
+                       {"mode": "holistic", "decided_by": ""}],
+        "exception_decider": [False, 3, ""],
+        "unknown_field": [True],
+    }
+    for field, values in mutations.items():
+        for value in values:
+            raw = deepcopy(baseline)
+            raw["vocabulary"]["soft"][field] = value
+            yield raw, []
+
+
 def compare_rejected():
-    cases = rejected_sources()
+    cases = rejected_sources() + list(generated_invalid_soft_blocks())
     expected = []
     for raw, rules in cases:
         try:
             SoftNormDocument(SoftEnvironment(raw), rules)
         except VEError as exc:
-            expected.append(str(exc))
+            expected.append((str(exc), exc.code))
         else:
             raise AssertionError("Python unexpectedly accepted a rejected soft source")
     wire = [{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": rules}
@@ -127,8 +161,10 @@ def compare_rejected():
     rows = json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong rejected row count")
-    for i, (row, error) in enumerate(zip(rows, expected)):
-        if row.get("status") != "error" or row.get("error") != error:
+    for i, (row, (error, code)) in enumerate(zip(rows, expected)):
+        if row.get("status") != "error" or row.get("code") != code:
+            raise AssertionError((i, error, code, row))
+        if i < len(rejected_sources()) and row.get("error") != error:
             raise AssertionError((i, error, row))
     return len(cases)
 
