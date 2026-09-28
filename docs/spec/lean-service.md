@@ -24,7 +24,8 @@ reference the ve-bench harness already used).
 ## Protocol
 
 Handshake (first line):
-`{"lean":"4.24.0","limits":{"json_depth":256,"max_cases":4096,"max_line_bytes":16777216},"modes":[…],"protocol":1,"service":"ve-lean@1"}`.
+`{"lean":"4.24.0","limits":{"json_depth":256,"max_cases":4096,"max_line_bytes":16777216},"modes":[…],"protocol":2,"service":"ve-lean@1"}`.
+Protocol 2 binds results to cases (below); the client refuses protocol 1.
 The build identity is the SHA-256 of the executable, computed by the supervisor.
 By default the hash must be in `lean/checkers.lock`; `expected_sha256=` pins an explicit
 build and `allow_unlisted_build=True` is an explicit development override. Hashing
@@ -43,9 +44,11 @@ Unknown or duplicate fields are rejected.
 | `english` | `VE.English.ServiceRun.run` on each case object | `ve_english_run` / `lake env lean --run VE/English/Run.lean` |
 
 Response: `{"counts":{"bytes","cases","errors"},"id","mode","results":[…],"status":"ok"}` (keys in Lean's
-sorted order). `results[i]` is exactly the one-shot runner's output for case `i` of this request, including
-the per-case depth record `{"case_index", "error", "status"[, "valid"]}`, whose `case_index` is the position
-in this request, as in a one-shot batch. A whole request that cannot be answered gets one line error
+sorted order). `results[i]` is `{"digest","index":i,"result"}`: `result` is exactly the one-shot runner's output
+for case `i` of this request, including the per-case depth record `{"case_index", "error", "status"[, "valid"]}`,
+whose `case_index` is the position in this request, as in a one-shot batch. `digest` is the SHA-256 (lowercase
+hex) of the text of case `i` as split from the request by `VE.JsonInput.caseTexts` and trimmed of JSON
+whitespace (`VE.Service.caseDigest`). `counts.errors` counts the results whose `result.status` is `error`. A whole request that cannot be answered gets one line error
 `{"error","id","status":"error"}`: malformed envelope (`id: null` when the id cannot be read), unknown mode,
 a batch the restricted decoder rejects (the one-shot exit-2 message, verbatim), or a budget. Processing
 continues with the next line; no state is kept between lines. Blank lines are ignored.
@@ -87,7 +90,8 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 
 ## Supervisor (`ve/backends/lean_service.py`)
 
-- Each request carries a fresh nonce id; a response with another id, a malformed or short response, a
+- Each request carries a fresh nonce id; a response with another id or mode, a result not bound to its
+  case (position or digest), a malformed or short response, a
   timeout (5 s interactive default, 60 s for batch callers), a crash, end of output or a bad handshake is an
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
@@ -104,8 +108,8 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   responses with the Lean decoders and runner dispatch. `tests/test_lean_service_schema.py` requires the
   schemas and it to accept every genuine response over a corpus with every mode and result kind, to agree on
   every mutation of them (dropped, altered, retyped, enum-swapped, truncated and extra fields; joint
-  request/result mutations; altered requests; kind, label, depth and numeral probes), and shows that each of
-  18 weakenings of the schemas is caught.
+  request/result mutations; altered requests; kind, label, depth and numeral probes; bindings), and shows
+  that each of 30 weakenings of the schemas is caught, including dropping the digest or the index check.
 - A line error from a healthy service is deterministic: `ResourceLimit` for budgets, otherwise `VEError`; the
   process stays up.
 - `RLIMIT_AS` 4 GiB on the child (`prlimit`, or `setrlimit` before exec where `prlimit` is missing);
@@ -118,11 +122,14 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - `lean/VE/Service/Protocol.lean`: every definition, and the theorems `runMode_evaluate`,
   `runMode_checkCertificate`, `runMode_order`, `runMode_route`, `runMode_norms`, `runMode_english` (each
   mode is its runner, by `rfl`), `caseResult_ok` (a decoded case gets `runMode`), `runRequest_ok` (a request
-  within budget whose cases decode is answered with `response`), `results_eq` (result `i` is `caseResult`
-  of case `i`). Trusted and not proved: `objectMembers`, `decodeRequest`, and the restricted decoder.
+  within budget whose cases decode, one per case text, is answered with `response`), `results_eq` (result `i`
+  is `caseResult` of case `i`), `boundResults_eq` (bound result `i` is `caseResult` of case `i` with position
+  `i` and the digest of case text `i`). Trusted and not proved: `objectMembers`, `decodeRequest`, the
+  restricted decoder, and `Sha256.digest`. `Sha256.digest` is pinned by `#guard`s to the FIPS 180-4 vectors
+  and to `VE.CertificateWire.sha256` on 130 inputs, and by the client comparing it with Python's `hashlib`.
 - `lean/VE/Service/EnglishRun.lean`: generated copy (deviation 3).
 - `lean/Serve.lean`: IO loop.
-- `lean/VE/Audit.lean`: one import and nine `#print axioms` lines. `lean/lakefile.toml`: two executables, and
+- `lean/VE/Audit.lean`: one import and ten `#print axioms` lines. `lean/lakefile.toml`: two executables, and
   the untrusted test oracle `ve_response_decode`.
 - No pre-existing trusted checker module under `lean/VE/` changed during stage 1;
   `VE/Route/frozen.py` now pins all 124 VE Lean modules.

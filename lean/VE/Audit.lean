@@ -951,3 +951,4 @@ import VE.Service.Protocol
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq
+#print axioms VE.Service.boundResults_eq

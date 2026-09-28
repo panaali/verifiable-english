@@ -11,7 +11,7 @@ the dispatch functions of the runners (`Route.Run.caseKind`, `generatorOf`,
 `Norms.Run.usesNormsPath`), and checks the links to the request that the runners
 guarantee. Test tooling only: nothing imports it and no theorem depends on it.
 
-Each input line is `{"mode", "request": {"id", "cases", "bytes"}, "responses": [...]}`;
+Each input line is `{"mode", "request": {"id", "cases", "digests", "bytes"}, "responses": [...]}`;
 the output line is an array with `"accept"` or `"reject: <reason>"` per response. -/
 namespace ResponseDecode
 open Lean
@@ -430,7 +430,15 @@ def row (mode : String) (r case : Json) (index : Nat) : Check :=
   | "english" => english r case index
   | m => throw s!"unknown mode {m}"
 
-/-- `Service.Protocol`: a line error, or one result per case with exact counts. -/
+/-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`. -/
+def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
+  shape b ["index", "digest", "result"] []
+  need ((← (← field b "index").getNat?) == index) "index is not the result's position"
+  hex64 (← field b "digest")
+  need ((← field b "digest") == digest) "digest is not the case's"
+  field b "result"
+
+/-- `Service.Protocol`: a line error, or one bound result per case with exact counts. -/
 def response (mode : String) (request r : Json) : Check := do
   let nonce ← field request "id"
   if isField r "status" (.str "error") then
@@ -443,17 +451,19 @@ def response (mode : String) (request r : Json) : Check := do
     need ((← field r "id") == nonce && (← (field r "id")).getStr?.toBool) "id is not the nonce"
     need (isField r "mode" (.str mode)) "mode"
     let cases ← (← field request "cases").getArr?
+    let digests ← (← field request "digests").getArr?
     let results ← (← field r "results").getArr?
-    need (results.size == cases.size) "one result per case"
+    need (results.size == cases.size && digests.size == cases.size) "one result per case"
+    let mut rows := #[]
     for i in [:results.size] do
-      match row mode results[i]! cases[i]! i with
-      | .ok () => pure ()
+      match bound results[i]! i digests[i]! >>= fun x => do row mode x cases[i]! i; pure x with
+      | .ok x => rows := rows.push x
       | .error m => throw s!"result {i}: {m}"
     let counts ← field r "counts"
     shape counts ["cases", "bytes", "errors"] []
     need ((← (← field counts "cases").getNat?) == cases.size) "counts.cases"
     need ((← field counts "bytes") == (← field request "bytes")) "counts.bytes"
-    let errors := (results.filter (fun x => isField x "status" (.str "error"))).size
+    let errors := (rows.filter (fun x => isField x "status" (.str "error"))).size
     need ((← (← field counts "errors").getNat?) == errors) "counts.errors"
 
 def verdict (mode : String) (request r : Json) : Json :=
