@@ -77,7 +77,7 @@ def test_graph_projection_survives_python_build_string_change(monkeypatch):
 
 def test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence():
     data = json.loads((probe.OUT / "python.json").read_text())
-    assert data["runtime_sha256"] == probe.runtime_sha256()
+    assert data["runtime_sha256"] == probe.pinned_runtime_sha256()
     assert not any(row["status"] in {"KeyError", "ValueError"} for row in data["cells"])
     assert {data["feature_probes"][f"readings:{name}"]["status"]
             for name in ("all_disjunction", "some_fixed_choice", "none_shared_model")} == {
