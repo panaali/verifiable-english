@@ -184,7 +184,24 @@ def targetShapeOk (x : Mention) : Bool :=
     | some p, some c => c == p.1 || c == p.2
     | _, _ => false)
 
-/-- 4.1(4, 5): mentions, their spans, target shapes, kind fit, restrictions and carriers. -/
+/-- The W3 definition version of predicate `p` at `definitions_version`, regenerated from the
+environment: the base pair declares no definition versions (W2 admission defers definitions), so
+there is none, and a recorded pin can never be confirmed. -/
+def definitionVersion (_D : DDoc) (_p : String) : Option Nat := none
+
+/-- A target's recorded `version` pin (3.1): only a `definition_ref` to a predicate carries one,
+and it must equal the regenerated definition version (`StaleTarget: <mention>: <target>@<version>`,
+4.9); a pin is never carried unchecked. -/
+def pinOk (D : DDoc) (x : Mention) : Except String Unit :=
+  match x.pin with
+  | none => .ok ()
+  | some v =>
+    if x.form != .definitionRef || x.target.kind != .predicate then .error ("InvalidInput: mention " ++ x.id ++ " target")
+    else match x.target.name with
+      | some p => req (definitionVersion D p == some v) ("StaleTarget: " ++ x.id ++ ": " ++ p ++ "@" ++ toString v)
+      | none => .error ("InvalidInput: mention " ++ x.id ++ " target")
+
+/-- 4.1(4, 5): mentions, their spans, target shapes and pins, kind fit, restrictions and carriers. -/
 def mentionsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.mentions.length ≤ mentionLimit) "ResourceLimit: mentions",
   fun _ => match dupOf (D.K.mentions.map Mention.id) with
@@ -199,6 +216,7 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
     if x.id != y.id && x.unit == y.unit && !spansDisjoint x.span y.span && !spansNested x.span y.span then
       .error ("InvalidInput: mentions " ++ x.id ++ ", " ++ y.id ++ " overlap") else .ok (),
   fun _ => allOk D.K.mentions fun x => req (targetShapeOk x) ("InvalidInput: mention " ++ x.id ++ " target"),
+  fun _ => allOk D.K.mentions (pinOk D),
   fun _ => allOk D.K.mentions fun x =>
     req (!((x.form == .pronoun || x.form == .demonstrative) && x.target.kind == .claim))
       ("UnsupportedTarget: " ++ x.id ++ ": claim"),

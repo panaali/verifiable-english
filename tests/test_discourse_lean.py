@@ -759,8 +759,9 @@ def test_iota_definition_reference(lean):
     row = resolve(iota_doc())
     assert unit_result(row, "u2") == ["forall", "service", ["implies", ["unary", "eligible", ["var", 0]],
                                                             ["unary", "reviewed", ["var", 0]]]]
-    # Fable B3: the recorded version pin is carried, not dropped
+    # Fable B3: the recorded version pin is carried, not dropped (and checked: looprecheck1 B)
     assert row["mentions"]["m1"]["pin"] == 2
+    assert row["well_formed"] == "StaleTarget: m1: eligible@2"
     unexported = iota_doc()
     unexported["discourse"]["anchors"][1]["exports"] = []
     assert unit_result(resolve(unexported), "u2") == "UnresolvedReference: m1"
@@ -984,3 +985,32 @@ def test_authored_reading_labels_extend(lean, tmp_path):
     excluded["graph"] = {"root": "leaf", "nodes": [{"name": "leaf", "ast": unary("deployed", "api"), "label": "readings:rs6@1:1"}]}
     assert admit(excluded)["error"] == "InvalidCompatibility: report leaf"
     assert python_outcome(excluded, tmp_path) == "InvalidCompatibility: report leaf"
+
+
+def test_definition_pins_are_checked(lean, tmp_path):
+    """looprecheck1 B (Wire.lean:114): a definition pin is regenerated, never carried unchecked.
+    No environment the admission accepts declares a definition version, so any pin is stale;
+    without a pin the reference resolves as before. A pin on any other target is malformed."""
+    def iota(version=None, form="definition_ref"):
+        doc = iota_doc()
+        mention = doc["discourse"]["mentions"][0]
+        mention["form"] = form
+        if version is None:
+            mention["target"].pop("version")
+        else:
+            mention["target"]["version"] = version
+        doc["units"][1].update(kind="asserted", support="assumption", content={"ast": [
+            "forall", "service", ["implies", ["unary", "eligible", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]})
+        return doc
+    for version in (2, 999):
+        assert admit(iota(version))["error"] == f"StaleTarget: m1: eligible@{version}"
+        assert python_outcome(iota(version), tmp_path) == f"StaleTarget: m1: eligible@{version}"
+    unpinned = admit(iota())
+    assert unpinned["status"] == "ok" and unpinned["statuses"]["u2"] == "CHECKED", unpinned
+    # Python does not elaborate definition references
+    assert python_outcome(iota(), tmp_path).startswith("UnsupportedProfile: ve.discourse@1 definition_ref")
+    pinned_pronoun = document(["Api is reviewed.", "It is deployed."],
+                              [("m1", "u2", "It", "pronoun", {**entity("api"), "version": 1})], names=PY_NAMES,
+                              contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
+    assert admit(pinned_pronoun)["error"] == "InvalidInput: mention m1 target"
+    assert python_outcome(pinned_pronoun, tmp_path) == "InvalidInput: mention m1 target"

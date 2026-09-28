@@ -756,6 +756,12 @@ def check_stored_documents(doc, documents, imports, units):
 
 # The validator ---------------------------------------------------------------
 
+def _definition_version(env, name):
+    """The W3 definition version of a predicate at `definitions_version`: the base pair declares
+    no definition versions (W2 admission defers definitions), so there is none."""
+    return None
+
+
 def _unrecorded(doc, unit, rows, displays):
     """The first reference surface of a unit with meaning that no recorded formula-producing
     mention covers: a location binding (`navigation`, `section_ref`) is never a slot, so it
@@ -880,6 +886,13 @@ def validate_discourse(doc):
     for mid, m in mentions.items():
         target = m["target"]
         kind, form = target["kind"], m["form"]
+        if "version" in target:
+            # a pin is checked, never carried: only a definition_ref to a predicate has one, and it
+            # must be the regenerated definition version (none is declared: the Lean `pinOk`)
+            if form != "definition_ref" or kind != "predicate" or type(target.get("name")) is not str:
+                raise VEError(f"InvalidInput: mention {mid} target")
+            if _definition_version(env, target["name"]) != target["version"]:
+                raise VEError(f"StaleTarget: {mid}: {target['name']}@{target['version']}")
         if kind == "entity":
             if form == "plural":
                 members = target.get("members")
