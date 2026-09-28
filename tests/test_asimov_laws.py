@@ -123,27 +123,37 @@ def test_checker_certifies_conflict_free_and_replays_dilemma():
         assert result["diagnosis"].startswith(diagnosis)
 
 
-@pytest.mark.parametrize("name,clear", [
-    ("a", ["pull"]),
-    ("b-A0", []),
-    ("b-A1", []),
-    ("b-A2", []),
-    ("b-B", []),
-    ("bprime-A", []),
-    ("c-7", ["nothing", "pull"]),
-    ("c-8", ["nothing", "pull"]),
-    ("c-8m", ["nothing", "pull"]),
-    ("d-full", ["shield", "retreat"]),
-    ("d-prevention", ["shield", "retreat"]),
-    ("e", ["act"]),
-    ("j", []),
-    ("o-7", ["rescue"]),
-    ("o-8", ["rescue"]),
-    ("bprime-A5", []),
-    ("l5", ["pull2"]),
-])
-def test_spec_scenarios_show_inaction_priority_and_choice(name, clear):
-    report = run_case(case("alt-validate", scenario=spec_scenario(name)))
+# Review finding P2 (coverage count): replacing each spec entry's rule set with
+# the Asimov document leaves entries that differ only in their rule set. Count
+# distinct models, never entries.
+SPEC_MODELS = [
+    (("a",), ["pull"]),
+    (("b-A0", "b-A2", "b-B"), []),
+    (("b-A1", "bprime-A"), []),
+    (("c-7", "c-8", "c-8m"), ["nothing", "pull"]),
+    (("o-7", "o-8"), ["rescue"]),
+    (("d-full", "d-prevention"), ["shield", "retreat"]),
+    (("e",), ["act"]),
+    (("j", "bprime-A5"), []),
+    (("l5",), ["pull2"]),
+]
+
+
+def test_spec_entries_are_counted_as_distinct_models():
+    names = {name for group, _ in SPEC_MODELS for name in group}
+    models = {}
+    for item in cases():
+        if item["id"] in names:
+            models.setdefault(json.dumps(item["scenario"], sort_keys=True), []).append(item["id"])
+    assert sorted(map(tuple, models.values())) == sorted(group for group, _ in SPEC_MODELS)
+    assert sum(len(group) for group, _ in SPEC_MODELS) == 17
+    assert (len(SPEC_MODELS), sum(bool(clear) for _, clear in SPEC_MODELS)) == (9, 6)
+
+
+@pytest.mark.parametrize("group,clear", SPEC_MODELS, ids=lambda value: (
+    "+".join(value) if isinstance(value, tuple) else None))
+def test_spec_models_show_priority_and_choice(group, clear):
+    report = run_case(case("alt-validate", scenario=spec_scenario(group[0])))
     assert report["status"] == "ok"
     assert report["choosers"][0]["clear"] == clear
 

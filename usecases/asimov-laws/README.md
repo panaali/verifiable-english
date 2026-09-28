@@ -62,19 +62,34 @@ annotation are modeling choices.
 The alternatives route replayed **seven conflict certificates** for the
 twelve rules: `breaks_first_law`, `breaks_zeroth_law`, `has_lawful_option`,
 `permitted`, `prevent_required`, `required`, and the `required→permitted`
-dual. The document verdict is **CONFLICT-FREE**. On the
-**17 Asimov-shaped scenarios** from spec §8, the same full rule set has a
-clear action in **10** and no clear action in **7**. For example, scenario `a`
-permits `pull` and bars harmful inaction; `o` leaves only `rescue` clear,
-because `act` does unrelated work while an avoidable harm happens; `e` has `act` clear because it
-prevents collective harm despite human injury; `d-full` has both `shield` and
-`retreat` clear under Rule 12. Scenarios `b-A0` and `b-A1` have no permitted
-action, since each alternative allows or causes a harm to a human being, and
-scenario `j` requires two incompatible orders. With the conflict certificates,
-the checker replays these as **DILEMMA** witnesses (`NONE-PERMITTED` and
-`OVER-REQUIRED`). Thus the full rule set is **not document-wide FOLLOWABLE**.
-A scenario's clear action is a result for that declared model, not a global
-FOLLOWABLE certificate.
+dual. The document verdict is **CONFLICT-FREE**.
+
+The spec §8 fixtures give **17 Asimov-shaped entries**, but they are not 17
+independent scenarios. Each entry pairs a model with its own rule set; this
+case replaces every rule set with the full Asimov document. Entries that
+differed only in their rule set then collapse: `b-A0`, `b-A2` and `b-B` share
+one model, as do `b-A1` and `bprime-A`; `c-7`, `c-8` and `c-8m`; `o-7` and `o-8`;
+`d-full` and `d-prevention`; and `j` and `bprime-A5`. That leaves **nine distinct
+models**. The full rule set has a clear action in **six** of them (`a`, `c`,
+`o`, `d`, `e`, `l5`) and none in **three** (`b-A0`, `b-A1`, `j`). Counting
+entries would give 10 of 17 and would count the same model up to three
+times. For example, scenario `a` permits `pull` and bars harmful inaction;
+`o` leaves only `rescue` clear, because `act` does unrelated work while an
+avoidable harm happens; `e` has `act` clear because it prevents collective
+harm and the robot has no lawful option, so the injury is necessary;
+`d-full` has both `shield` and `retreat` clear under Rule 12. In `b-A0` and
+`b-A1` every alternative allows or causes a harm to a human being, so no
+action is permitted. Scenario `j` requires two incompatible orders. With the
+conflict certificates, the checker replays these as **DILEMMA** witnesses
+(`NONE-PERMITTED` and `OVER-REQUIRED`). Thus the full rule set is **not
+document-wide FOLLOWABLE**. A scenario's clear action is a result for that
+declared model, not a global FOLLOWABLE certificate.
+
+Fifteen review regressions add named models for the three repaired readings,
+each checked against an independent Python reading of the source. The same
+reading must match Lean's scenario report on 24 sampled models. On 300 more,
+it must agree with Python's and Rust's evaluation of Lean's followability
+formula.
 
 | Coverage | v1 | v2 |
 | --- | --- | --- |
@@ -84,7 +99,7 @@ FOLLOWABLE certificate.
 | Harm through inaction | Missing | Checked via `allows` on every alternative and signed `leads_to` outcomes |
 | Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
 | Zeroth priority across a human-injury ban | Open | Checked, with Rule 9's necessity test (a translation choice) |
-| Followability | No alternatives check | 10 of 17 spec scenarios have a clear action; 7 do not |
+| Followability | No alternatives check | 6 of 9 distinct spec models (17 entries) have a clear action; 3 do not |
 
 ## OPEN: fidelity and evidence
 
