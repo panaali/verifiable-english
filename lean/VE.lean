@@ -16,3 +16,4 @@ import VE.Discourse.Access
 import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
 import VE.Discourse.Run
+import VE.Discourse.Theorems
