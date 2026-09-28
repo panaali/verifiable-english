@@ -313,6 +313,7 @@ def standalone (mode : String) (r case : Json) (index : Nat) : Check :=
       if mode == "environment" then
         okRow r case ["environment_id", "profiles", "family"]
         hex64 (← field r "environment_id")
+        let _ ← VE.Bridge.strings (← field r "profiles")
         need ((← field r "profiles") == (← path case ["environment", "profiles"])) "profiles"
         let f ← (← field r "family").getStr?
         need (["fol", "closure", "closure+n-ary", "order"].contains f) "family"

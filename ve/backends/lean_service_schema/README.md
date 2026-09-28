@@ -5,7 +5,7 @@ The single source of truth for the shapes of `ve_service` responses
 
 * `envelope.json`: the response line; its context is the request
   `{"id": nonce, "mode", "cases": [...], "bytes": trimmed cases size}`.
-* `<mode>.json` for the six modes: `row` is the schema of one result; its context is
+* `<mode>.json` for the nine modes: `row` is the schema of one result; its context is
   the request case at the same position.
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
   its `$comment` (formulas, terms, kinds, labels, ...).
