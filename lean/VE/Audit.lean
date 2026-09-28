@@ -1,7 +1,5 @@
 import VE.Order.Conservativity
-import VE.Time.Semantics
-import VE.Time.Count
-import VE.Time.Decimal
+import VE.Time.Wire
 import VE.Route.Readings
 import VE.Order.Gate
 import VE.Order.ModelCheck
@@ -1048,3 +1046,7 @@ import VE.Norms.Run
 #print axioms VE.Time.expand_atLeast_eval_iff
 #print axioms VE.Time.expand_exactly_iff
 #print axioms VE.Time.expand_atMost_iff
+#print axioms VE.Time.Wire.lookup_map
+#print axioms VE.Time.Wire.QVocab.core_environment
+#print axioms VE.Time.Wire.Admission.sound
+#print axioms VE.Time.Wire.checkW6Certificate_sound
