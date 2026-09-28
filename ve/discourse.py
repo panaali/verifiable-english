@@ -745,7 +745,9 @@ def check_stored_documents(doc, documents, imports, units):
 # The validator ---------------------------------------------------------------
 
 def _unrecorded(doc, unit, rows, displays):
-    """The first reference surface of a content unit that no recorded mention covers."""
+    """The first reference surface of a unit with meaning that no recorded formula-producing
+    mention covers: a location binding (`navigation`, `section_ref`) is never a slot, so it
+    never accounts for one (the Lean `recordedSlots`)."""
     start = unit["span"][0]
     for a, b in reference_surfaces(doc, unit["source"], displays):
         begin = start + len(unit["source"][:a].encode("utf-8"))
@@ -907,7 +909,7 @@ def validate_discourse(doc):
         readings = [r["content"] for s in active if s["unit"] == unit["id"] for r in s["readings"]]
         has_meaning = unit["content"] is not None or any(s["unit"] == unit["id"] for s in active)
         if has_meaning and unit["id"] not in grouped:
-            gap = _unrecorded(doc, unit, rows, displays)
+            gap = _unrecorded(doc, unit, producing, displays)
             if gap is not None:
                 raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
         if not producing or unit["id"] in grouped:
