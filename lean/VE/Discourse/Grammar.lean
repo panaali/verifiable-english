@@ -83,6 +83,27 @@ def articleWord (an : Bool) : String := if an then "an" else "a"
 
 def wordIn (s : List Tok) (i : Nat) (ws : List String) : Bool := (wordAt s i).any ws.contains
 
+/-- Words that always refer back: pronouns, possessives, plural pronouns, the ordinals of a
+pair and `such`. -/
+def referenceWords : List String :=
+  ["it", "she", "he", "her", "him", "his", "its", "their", "they", "them", "former", "latter", "such"]
+
+/-- A reference surface at token `i`: a reference word, a demonstrative before a sort noun,
+`the` before a unary noun (a definite description), a citation `by <clause|section|...>`, or a
+document name. The grammar need not derive the sentence: an unplaced reference word is still
+a slot to account for. -/
+def referenceAt (D : DDoc) (s : List Tok) (i : Nat) : Bool :=
+  wordIn s i referenceWords ||
+  (wordIn s i demonstrativeWords && (wordAt s (i + 1)).any (sortWord D.E)) ||
+  (isW s i "the" && (wordAt s (i + 1)).any (unaryPred D.E)) ||
+  (isW s i "by" && wordIn s (i + 1) citeWords) ||
+  D.K.documents.any fun d => d.display.any fun x =>
+    let w := lexWords x
+    !w.isEmpty && w.isPrefixOf (s.drop i)
+
+/-- The first reference surface of a sentence. -/
+def referenceIndex (D : DDoc) (s : List Tok) : Option Nat := (List.range s.length).find? (referenceAt D s)
+
 /-- The slot forms an `NP.slot` may carry. -/
 def simpleForm (f : Form) : Bool :=
   f == .pronoun || f == .plural || f == .demonstrative || f == .ordinalPair || f == .documentName

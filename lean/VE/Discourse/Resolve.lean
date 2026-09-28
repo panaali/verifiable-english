@@ -468,9 +468,11 @@ def firstBad (D : DDoc) (d : DTree) (vec : List Target) : String :=
   | none => "UnresolvedReference: " ++ ((d.slots.head?.map (mentionIdAt D)).getD "?")
 
 /-- No type-checking accessible competitor: the unit's first recorded slot is unresolved. -/
-def unresolvedText (D : DDoc) (u : String) (ds : List DTree) : String :=
+def unresolvedText (D : DDoc) (u : String) (s : List Tok) (ds : List DTree) : String :=
   match ds with
-  | [] => "InvalidInput: unit " ++ u ++ " is outside the supported discourse fragment"
+  | [] => match (recordedSlots D u).isEmpty, referenceIndex D s with
+    | true, some i => "UnrecordedSlot: " ++ u ++ ": [" ++ toString i ++ ", " ++ toString (i + 1) ++ ")"
+    | _, _ => "InvalidInput: unit " ++ u ++ " is outside the supported discourse fragment"
   | d :: _ => match d.slots.find? (fun m => (recordedTarget D m).isSome) with
     | some m => "UnresolvedReference: " ++ mentionIdAt D m
     | none => match d.slots.head? with
@@ -523,7 +525,7 @@ def validate (D : DDoc) (unit : String) : Except String VE.Formula :=
     | none =>
       if workOf D ds > workLimit then .error "ResourceLimit: resolution" else
       match typedComps D ds with
-      | [] => .error (unresolvedText D unit ds)
+      | [] => .error (unresolvedText D unit s ds)
       | (d, vec, _) :: rest =>
         match rest.find? (fun x => !aligned D d x.1 vec x.2.1) with
         | some x => .error (ambiguityText D unit d x.1 vec x.2.1)

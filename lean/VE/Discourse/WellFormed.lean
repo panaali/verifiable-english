@@ -215,9 +215,27 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
       | _, _, _ => .error ("InvalidInput: restriction of " ++ x.id)
     else .ok ()]
 
-/-- The units carrying a formula-producing mention: each is elaborated on its own. -/
+def groupedUnits (D : DDoc) : List String := D.K.groups.flatMap Group.spans
+
+def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).bind DocUnit.content
+
+/-- A unit whose content is admitted as its own premise: it carries content and is not a
+group span (a span's content is `IndependentFragment`, 1.5). -/
+def contentUnit (D : DDoc) (u : String) : Bool := (contentOf D u).isSome && !(groupedUnits D).contains u
+
+/-- The unit's text has a reference slot: a derivation with a slot, or a reference word the
+grammar does not place (3.4: slots are discovered from the source, never only from the
+manifest's recorded mentions). -/
+def hasSourceSlot (D : DDoc) (u : String) : Bool :=
+  match D.text u with
+  | some s => (derivs D u s).any (fun d => !d.slots.isEmpty) || (referenceIndex D s).isSome
+  | none => false
+
+/-- The units elaborated on their own: every unit carrying a recorded formula-producing
+mention, and every content unit whose source has a reference slot (recorded or not). -/
 def boundUnits (D : DDoc) : List String :=
-  (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit
+  (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit ++
+    (unitIdsOf D).filter fun u => contentUnit D u && hasSourceSlot D u
 
 /-- 4.1(6): every bound unit validates. -/
 def boundOk (D : DDoc) : Except String Unit :=
@@ -233,10 +251,6 @@ def groupFormula (D : DDoc) (g : Group) : Option VE.Formula :=
   (D.base.readingSets.find? fun rs => rs.id == g.set && rs.version == g.version).bind fun rs => rs.readings[g.reading]?
 
 def owningUnit (_D : DDoc) (g : Group) : Option String := g.spans.head?
-
-def groupedUnits (D : DDoc) : List String := D.K.groups.flatMap Group.spans
-
-def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).bind DocUnit.content
 
 /-- 4.1(7): groups and constraints. -/
 def groupsOk (D : DDoc) : Except String Unit := runAll [
@@ -294,7 +308,7 @@ theorem wf_bound (D : DDoc) (h : WellFormedDiscourse D = true) (x : Mention) (hx
   have hb := runAll_ok _ (wellFormed_of D h) (fun _ => boundOk D) (by simp)
   have hu : x.unit ∈ boundUnits D := by
     unfold boundUnits
-    exact List.mem_map.mpr ⟨x, List.mem_filter.mpr ⟨hx, hf⟩, rfl⟩
+    exact List.mem_append_left _ (List.mem_map.mpr ⟨x, List.mem_filter.mpr ⟨hx, hf⟩, rfl⟩)
   have := allOk_ok _ _ hb x.unit hu
   split at this
   · rename_i A hA; exact ⟨A, hA⟩
