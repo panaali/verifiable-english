@@ -36,8 +36,8 @@
     "bound": {"$comment": "Service.Protocol.bound: the result's position, the digest of its case and the runner's result for that case.",
       "type": "object", "required": ["index", "digest", "result"], "additionalProperties": false,
       "properties": {
-        "index": {"type": "integer", "x-index": true},
-        "digest": {"$ref": "common.json#/$defs/hex64", "x-digest": true},
+        "index": {"x-index": true},
+        "digest": {"x-digest": true},
         "result": {"x-row": true}}},
     "error": {"type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
       "properties": {
