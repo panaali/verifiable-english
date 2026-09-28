@@ -119,12 +119,51 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     check_formula(env, conclusion)
     _check_aggregate_ast(premises, conclusion)
     model = _validate_model(env, model)
-    valid, values, conclusion_value, work, status = _check_countermodel_values(
-        premises, conclusion, model, max_evaluations)
-    return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
-                             model.model_id, status,
-                             tuple(meaning_id(env, x) for x in premises),
-                             meaning_id(env, conclusion))
+    from .ast import _to_data
+    from .backends.dispatch import execute
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.lean_runner import run as lean_run
+    from .backends.rust_jsonl import run as rust_run
+
+    case = {"id": "countermodel", "environment": env.to_dict(),
+            "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
+            "model": model.to_dict(), "max_evaluations": max_evaluations}
+
+    def python():
+        valid, values, conclusion_value, work, status = _check_countermodel_values(
+            premises, conclusion, model, max_evaluations)
+        return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
+                                 model.model_id, status,
+                                 tuple(meaning_id(env, x) for x in premises),
+                                 meaning_id(env, conclusion))
+
+    def rust():
+        row = rust_run(case)
+        expected_premises = tuple(meaning_id(env, f) for f in premises)
+        expected_conclusion = meaning_id(env, conclusion)
+        if (row["environment_id"] != env.environment_id or row["model_id"] != model.model_id
+                or tuple(row["premise_meaning_ids"]) != expected_premises
+                or row["conclusion_meaning_id"] != expected_conclusion):
+            raise CheckerUnavailable("CheckerUnavailable: Rust countermodel identity mismatch")
+        return CountermodelCheck(row["valid"], tuple(row["premise_values"]),
+                                 row["conclusion_value"], row["evaluations"],
+                                 row["environment_id"], row["model_id"], row["status"],
+                                 expected_premises, expected_conclusion)
+
+    def lean():
+        result = rust()
+        if result.status == "ResourceLimit":
+            return result
+        request = {**case, "kind": "countermodel"}
+        if env.language == "ve.core@0.2":
+            row = lean_run("route", [request])[0]
+        else:
+            row = lean_run("evaluate", [request])[0]
+        if row["refutes"] != result.valid:
+            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
+        return result
+
+    return execute("countermodel_check", case, python, lean=lean, rust=rust)
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
