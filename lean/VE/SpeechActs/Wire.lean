@@ -582,6 +582,10 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   if let some k := keys.find? (fun k => keys.count k > 1) then
     throw s!"DuplicateDeclaration: binding {k}"
   let scope ← mergeBindings E se.scope bindings
+  checkPhrases se.ne scope
+  -- 1.1 and 3.5: a binding that supplies a scope entry supplies it to the canonical environment, so the
+  -- environment id every meaning id and certificate binds is the effective scope's.
+  let se := { se with scope, canonical := se.canonical.setObjVal! "speech_acts" (encodeScope scope) }
   -- Reading questions: the derived open-term meaning (4.6).
   for u in units do
     if let .question q := u.role then

@@ -348,6 +348,51 @@ def test_combine_keeps_pending_commands_dormant(lean):
     assert both.queries["q1"].premises == ("p",)
 
 
+def test_authored_bindings_are_bound_into_every_identity(lean):
+    # Regression: binding "you" to alice or to bob changed the demand but kept the environment
+    # id and the command meaning id in both checkers, so certificates and ids crossed scopes.
+    env = F0(addressee=None)
+    env["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+    click = unit("u1", 1, "instruction", command("require", "click_required", ["check"]))
+    results = {}
+    for who in ("alice", "bob"):
+        document = {"units": [unit("b", 0, "binding", {"binding": {"you": who}}), click]}
+        py, le = core(env, document), elaborate(env, document)
+        assert py.env.environment_id == le["environment_id"]
+        assert py.meaning_ids["u1"] == le["commands"][0]["meaning_id"]
+        assert py.meaning_ids["b"]
+        results[who] = (le["environment_id"], le["commands"][0]["meaning_id"])
+    assert results["alice"][0] != results["bob"][0] and results["alice"][1] != results["bob"][1]
+    # A binding that supplies an entry means what the block declaring it means.
+    declared = F0()
+    declared["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+    same = elaborate(declared, {"units": [click]})
+    assert (same["environment_id"], same["commands"][0]["meaning_id"]) == results["alice"]
+    assert core(declared, {"units": [click]}).meaning_ids["u1"] == results["alice"][1]
+    # A certificate proved under bob's scope is stale under alice's.
+    fact = unit("a", 2, "asserted", {"ast": U("reviewed", "atlas")})
+    asked = unit("q", 3, "question", polar(U("reviewed", "atlas")))
+    from ve.ast import And
+    from ve.entailment import prove_entailment
+    bob = core(env, {"units": [unit("b", 0, "binding", {"binding": {"you": "bob"}}), click, fact, asked]})
+    q = bob.questions[0]
+    proof = prove_entailment(bob.env, bob._caller_premises(), And(bob.presupposition(q), bob.correct(q, "yes")))
+    alice_doc = {"units": [unit("b", 0, "binding", {"binding": {"you": "alice"}}), click, fact, asked]}
+    with pytest.raises(VEError, match="AnswerMismatch: q"):
+        core(env, alice_doc).check_answer_certificate(core(env, alice_doc).questions[0], "yes", proof.certificate)
+    assert run1({"id": "s", "kind": "speech-answer", "environment": env, "document": alice_doc, "question": "q",
+                 "answer": "yes", "evidence": {"certificate": proof.certificate}})["error"] == \
+        "certificate is stale or bound to different inputs"
+    # A phrase binding is bound likewise, and an empty definite map is the absent one in both checkers.
+    phrase = {"units": [unit("b", 0, "binding", {"binding": {"phrase": "the check", "constant": "check"}})]}
+    assert core(F0(), phrase).env.environment_id == elaborate(F0(), phrase)["environment_id"] != \
+        elaborate(F0(), {"units": []})["environment_id"]
+    empty = F0(definites={})
+    empty["speech_acts"]["definites"] = {}
+    assert Environment(empty).environment_id == elaborate(empty, {"units": []})["environment_id"] == \
+        elaborate(F0(definites={}), {"units": []})["environment_id"]
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",
