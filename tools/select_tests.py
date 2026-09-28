@@ -16,7 +16,9 @@ from pathlib import Path
 import subprocess
 import sys
 
-from layer_policy import NAMES, ROOT, lean_layer, python_layer, source_layer
+from check_lean_imports import imports as lean_imports
+from layer_policy import (NAMES, ROOT, lean_layer, python_exports, python_imports,
+                          python_layer, source_layer)
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 # These exercise the public wire across languages, routes, and frozen fixtures.
@@ -53,17 +55,7 @@ def changed_paths(base: str | None, commit: str | None) -> list[str]:
                       git_lines("ls-files", "--others", "--exclude-standard")))
 
 
-def exports() -> dict[str, str]:
-    tree = ast.parse((ROOT / "ve/__init__.py").read_text())
-    result = {}
-    for node in tree.body:
-        if isinstance(node, ast.ImportFrom) and node.level == 1 and node.module:
-            for alias in node.names:
-                result[alias.asname or alias.name] = f"ve.{node.module}"
-    return result
-
-
-EXPORTS = exports()
+EXPORTS = python_exports(ROOT)
 
 
 @cache
@@ -102,7 +94,7 @@ def test_layer(path: Path, seen: frozenset[Path] = frozenset()) -> int:
                 names += [EXPORTS.get(alias.name, f"ve.{alias.name}")
                           for alias in node.names]
         for name in names:
-            if name.startswith("ve_experiments"):
+            if name == "experiments" or name.startswith("experiments.") or name.startswith("ve_experiments"):
                 layers.append(5)
             elif name.startswith("ve."):
                 layer = python_layer(name)
@@ -123,8 +115,34 @@ def test_layer(path: Path, seen: frozenset[Path] = frozenset()) -> int:
     return max(layers, default=5)
 
 
-def exception_importers(path: str) -> set[str]:
-    """Include importers reachable through reviewed outward edges."""
+@cache
+def reverse_imports() -> dict[str, set[str]]:
+    """Local source imports plus reviewed edges, indexed by imported module."""
+    edges = set()
+    for top in ("ve", "ve_experiments"):
+        for source in (ROOT / top).rglob("*.py"):
+            relative = source.relative_to(ROOT).with_suffix("")
+            package = relative.name == "__init__"
+            module = ".".join(relative.parts[:-1] if package else relative.parts)
+            edges.update((module, imported) for imported in
+                         python_imports(module, source.read_text(), EXPORTS,
+                                        root=ROOT, package=package))
+    for source in (ROOT / "lean").rglob("*.lean"):
+        if ".lake" in source.parts:
+            continue
+        module = ".".join(source.relative_to(ROOT / "lean").with_suffix("").parts)
+        edges.update((module, imported) for imported in lean_imports(source.read_text()))
+    for ledger in ("layer-exceptions.json", "lean-layer-exceptions.json"):
+        edges.update(tuple(edge.split(" -> ")) for edge in
+                     json.loads((ROOT / "tools" / ledger).read_text()))
+    reverse: dict[str, set[str]] = {}
+    for importer, imported in edges:
+        reverse.setdefault(imported, set()).add(importer)
+    return reverse
+
+
+def reverse_importers(path: str) -> set[str]:
+    """Include all transitive consumers of a changed source module."""
     if not path.endswith((".py", ".lean")):
         return set()
     language = ("python" if path.startswith(("ve/", "ve_experiments/")) else
@@ -134,15 +152,14 @@ def exception_importers(path: str) -> set[str]:
     module = ".".join(Path(path).with_suffix("").parts[(0 if language == "python" else 1):])
     if module.endswith(".__init__"):
         module = module.removesuffix(".__init__")
-    ledger = ROOT / ("tools/layer-exceptions.json" if language == "python" else
-                     "tools/lean-layer-exceptions.json")
-    edges = [edge.split(" -> ") for edge in json.loads(ledger.read_text())]
+    reverse = reverse_imports()
     reached = {module}
     while True:
-        added = {importer for importer, imported in edges
-                 if any(current == imported or current.startswith(imported + ".")
-                        or (path.endswith("/__init__.py") and imported.startswith(current + "."))
-                        for current in reached)} - reached
+        targets = reached | ({imported for imported in reverse
+                              if imported.startswith(module + ".")}
+                             if path.endswith("/__init__.py") else set())
+        added = {importer for imported in targets
+                 for importer in reverse.get(imported, ())} - reached
         if not added:
             break
         reached.update(added)
@@ -157,7 +174,7 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     for path in paths:
         if path.startswith("tests/test_") and path.endswith(".py"):
             layers[path] = test_layer(ROOT / path) if (ROOT / path).exists() else 1
-        for importer in exception_importers(path):
+        for importer in reverse_importers(path):
             layer = python_layer(importer) if not path.startswith("lean/") else lean_layer(importer)
             if layer is not None:
                 layers[path] = min(layers[path], layer)
