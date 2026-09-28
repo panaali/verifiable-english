@@ -383,3 +383,28 @@ def test_coverage_classes_are_reconciled_with_w2_statuses_not_derived_from_them(
         {"L": n}
     with pytest.raises(VEError, match="unit status contradicts"):
         _source("instruction", open_cmd, [_set(1, "open", [_candidate("instruction", open_cmd)])], status="CHECKED")
+
+
+def test_opaque_glosses_cannot_hide_a_sentence_behind_one_predicate():
+    # Regression: "Is atlas reviewed and not reviewed?" matched a declared one-place gloss and was
+    # answered "yes" as one opaque atom; a gloss naming a constant hid a relation the same way.
+    raw = environment().to_dict()
+    predicates = raw["vocabulary"]["predicates"]
+    for name, gloss in [("contradictory", "{0} is reviewed and not reviewed"),
+                        ("atlas_linked", "{0} is linked to atlas"), ("desk_near", "{0} is near the desk"),
+                        ("never_seen", "{0} is not ever reviewed"), ("vetted", "{0} is vetted")]:
+        predicates[name] = {"arguments": ["service"], "description": name, "verbalisation": gloss}
+    env = Environment(raw)
+    for text in ["Is atlas reviewed and not reviewed?", "Is atlas linked to atlas?", "Is beacon near the desk?",
+                 "Is atlas not ever reviewed?", "Which of atlas and beacon are linked to atlas?",
+                 "Which one of atlas and beacon is reviewed and not reviewed?"]:
+        with pytest.raises(VEError, match="OpaqueWording"):
+            parse_speech(env, text, env.speech_acts)
+    unit_ = question("u1", "polar", ["unary", "contradictory", ["const", "atlas"]],
+                     source="Is atlas reviewed and not reviewed?")
+    with pytest.raises(VEError, match="OpaqueWording"):
+        SpeechDocument(env, [unit_])
+    # A gloss that names one property still reads as that property.
+    assert parse_speech(env, "Is atlas vetted?", env.speech_acts)[0]["body"] == ["unary", "vetted", ["const", "atlas"]]
+    assert parse_speech(env, "Is atlas reviewed?", env.speech_acts)[0]["body"] == \
+        ["unary", "reviewed", ["const", "atlas"]]

@@ -207,7 +207,9 @@ report") follow norms.md 0 and 2.4: the object is inside the declared act phrase
 Every wording has exactly one reading, conditional on the legend, which is itself the first thing the reader sees.
 Imperatives are the declared act phrase (norms.md 2.4) with slot 0 dropped and the later slots filled by a declared
 constant name or a bound definite phrase, so elaboration to `demand(c)` is mechanical. `<rest>` is the remainder of a
-copular predicate wording `{0} is <rest>`; `<sentence>` is any closed sentence of the existing English surface.
+copular predicate wording `{0} is <rest>` naming one property (a gloss whose `<rest>` holds a connective, negation
+or quantifier word, a declared constant or a bound definite phrase would answer a sentence as one opaque atom:
+`OpaqueWording`, 6); `<sentence>` is any closed sentence of the existing English surface.
 
 | Wording | The one reading (the IDE's paraphrase) | Formal effect |
 |---|---|---|
@@ -737,6 +739,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | `CheckerConflict` | `follows` and `gap` artifacts for one `(E, Π_q, P)` (debate-protocol.md) | operational error |
 | `ResourceLimit: rules` / `alternatives` / `definites` / `questions` / `open-term name` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions; a reading question's unit id over 47 bytes (W2's 64-byte token limit on `intended-reading.<u>`, 4.6) | error |
 | `CoordinatedActs`, `PermissionNotCommand`, `ModalQuestion`, `OpenDomainWhich`, `TemporalWording` | English-layer hints with the rewrites of 2.3 (Python only) | hint |
+| `OpaqueWording: <rest> is a sentence about <word>, not one declared property` | a copular `<rest>` matches a declared one-place gloss containing a connective, negation or quantifier word, a declared constant or a bound definite phrase (2.1, 6; Python only) | error |
 | `Overlap(<n>, <m>)`, `DependencyCycle`, `PrecedenceAcrossPredicates`, `ConsequenceArguments`, ... | W1's, unchanged, on `policy(D)` | as W1 |
 
 Order: the profile gate; the environment block; W1's declaration checks; units in document order (kind, content, slots,
@@ -1566,6 +1569,7 @@ statements of section 8 are unchanged.
 | A, scope identity: bindings that supply "you" (or a definite) changed demands but kept the environment and meaning ids | 1.1 and 3.1: identities bind the canonical environment of the effective scope, as if the block declared the supplied entry; an empty definites map is canonically absent (Python had kept `{}`). |
 | B, vacuity: Python's `supported` and `follows` lines had no premise status, so contradictory premises certified both answers silently; Lean's `follows` line had none either | 5.3: every certificate line, `follows` included, carries the status of its exact list and `vacuous: no | yes | unknown` (the follows grammar gains the vacuity it derives). Python searches for the status within its budget (a checked model, a replayed inconsistency certificate, or UNKNOWN); Lean replays supplied `premise_status` evidence. |
 | B, coverage: malformed candidates counted as R, unelaborated ones were never U, authored and historical versions inflated `unresolved_sets`, and the status table was derived from the classes | 6: candidates are decoded (malformed rejected, `null` unelaborated); the latest version decides class and residual; W2's statuses are inferred independently and the mapping is checked per unit; a stated W2 `status` must match W2's inference. The `ve-document@2` id encodes W2's payload in W2's own JSON encoding, which admits a `null` candidate (3.5). |
+| B, opaque wording: "Is atlas reviewed and not reviewed?" matched a declared one-place gloss and was answered "yes" as one atom | 2.1, 6, 7: a copular gloss must name one property; a matching gloss holding a connective, negation or quantifier word, a declared constant or a bound definite phrase is `OpaqueWording`, in questions, which bodies and query targets. |
 
 ## Change log
 
