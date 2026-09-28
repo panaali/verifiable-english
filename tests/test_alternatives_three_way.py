@@ -13,6 +13,7 @@ import pytest
 from conformance.alternatives import base_environment, cases, rules
 from ve.alternatives import run_case
 from ve.admission import AdmissionError, admit_document
+from ve.norm_admission import admit_norm_document
 from ve.ast import formula_from_data
 from ve.ast import _Decoder, Not
 from ve.entailment import prove_entailment
@@ -128,6 +129,7 @@ def test_w2_admission_uses_regenerated_alternatives_leaves():
     document = {"units": [], "graph": {"root": "slot", "nodes": [
         {"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}}
     result = admit_document(env, document)
+    assert admit_norm_document(env, document) == result
     assert result["admitted"] is True
     assert result["report"]["assumptions"][0]["label"] == "alternatives:own"
     assert len(result["report_id"]) == 64
