@@ -12,6 +12,7 @@ import hashlib
 import re
 from pathlib import Path
 
+from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
 from .environment import Environment
@@ -412,11 +413,72 @@ def coverage(doc, scoped=None):
         lines = doc["reports"].residual_lines(scoped)
         residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
                          for line, detail in lines.items()})
+    alternatives = None
+    if doc["environment"].alternatives is not None:
+        from .wire import loads_json
+        block = loads_json(doc["environment"].alternatives)
+        declared, cells, proximate = [], [], []
+        for unit in units:
+            if unit["kind"] != "asserted":
+                continue
+            content = unit["content"]
+            # Compiled formula content is the AST itself; norm content is a dict.
+            ast = content
+            if type(ast) is not list:
+                continue
+            negative = len(ast) == 2 and ast[0] == "not"
+            atom = ast[1] if negative else ast
+            if type(atom) is not list or len(atom) != 4 or atom[0] != "binary":
+                continue
+            if any(type(term) is not list or len(term) != 2 or term[0] != "const"
+                   for term in atom[2:]):
+                continue
+            first, second = atom[2][1], atom[3][1]
+            leaf = {"unit": unit["id"], "support": unit["support"]}
+            if atom[1] == block["available"] and not negative:
+                declared.append({"action": first, "chooser": second, **leaf})
+            elif atom[1] == block["leads_to"]:
+                cells.append({"action": first, "harm": second, "leads_to": not negative,
+                              "decider": block.get("decided_by", "unstated"), **leaf})
+            elif atom[1] == block.get("proximate") and not negative:
+                proximate.append({"action": first, "harm": second,
+                                  "decider": block.get("decided_by", "unstated"), **leaf})
+        mapped = {item["obligation"] for item in block.get("fulfilments", [])}
+        performed = block.get("performed", {}).get("obligation")
+        unmapped = [name for name, predicate in doc["environment"].predicates.items()
+                    if predicate.regulated is not None and predicate.regulated.role == "obligation"
+                    and name != performed and name not in mapped]
+        completion = ({"decider": block["outcomes"]["complete_by"],
+                       "premise": "alternatives:table_complete"}
+                      if type(block["outcomes"]) is dict else None)
+        # Enumerate the named cells for which the general completion premise
+        # supplies a negative answer, excluding every explicitly stated cell.
+        actions = {name for name, const in doc["environment"].constants.items()
+                   if const.sort == block["action"]}
+        actions.update(item["action"] for item in declared)
+        harms = {name for name, const in doc["environment"].constants.items()
+                 if const.sort == block["harm"]}
+        harms.update(item["harm"] for item in cells)
+        stated = {(item["action"], item["harm"]) for item in cells}
+        assumed = ([{"action": action, "harm": harm, **completion}
+                    for action in sorted(actions) for harm in sorted(harms)
+                    if (action, harm) not in stated] if completion else [])
+        alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
+                        "assumed_harm_free": assumed, "table_complete": completion,
+                        "proximate_judgments": proximate, "unmapped_obligations": unmapped,
+                        "dilemmas": [], "narrowings": meta.get("narrowings", [])}
+        residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
+                         "assumed_harm_free": len(assumed),
+                         "table_complete": int(completion is not None),
+                         "proximate_judgments": len(proximate),
+                         "unmapped_obligations": len(unmapped), "dilemmas": 0,
+                         "narrowings": len(alternatives["narrowings"])})
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
             "residual": residual, "residual_total": sum(residual.values()),
-            **({"residual_lines": lines} if lines else {})}
+            **({"residual_lines": lines} if lines else {}),
+            **({"alternatives": alternatives} if alternatives is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):
@@ -435,7 +497,14 @@ def _check_narrowing_choices(meta, labels):
                 raise VEError("reading choice conflicts with narrowing")
 
 
+@semantic_entry("document.check")
 def check_document(path):
+    from .search import model_search_scope
+    with model_search_scope():
+        return _check_document(path)
+
+
+def _check_document(path):
     doc = load_document(path)
     if doc["reports"] is not None:
         from .reports_route import checked_elaboration, run_case
@@ -537,7 +606,10 @@ def check_document(path):
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     assertions.extend(_assertion_disjunctions(env, active))
-    if _unresolved_norm_reading(active):
+    if env.alternatives is not None:
+        result["premises"] = {"status": "UNKNOWN",
+                              "reason": "alternatives premise satisfiability requires the alternatives route"}
+    elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     else:
         result["premises"] = premise_status(env, assertions)

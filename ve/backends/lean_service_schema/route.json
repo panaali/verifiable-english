@@ -1,0 +1,83 @@
+{
+  "$id": "route.json",
+  "$comment": "Mode route: Route.Run.runCaseReported. The case kind (default evaluate) selects the result shape.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"$ref": "#/$defs/error"},
+    {"x-select": [
+      {"when": {"$ref": "common.json#/$defs/no_kind"}, "then": {"$ref": "#/$defs/evaluate"}},
+      {"when": {"$ref": "#/$defs/kind/evaluate"}, "then": {"$ref": "#/$defs/evaluate"}},
+      {"when": {"$ref": "#/$defs/kind/countermodel"}, "then": {"$ref": "#/$defs/countermodel"}},
+      {"when": {"$ref": "#/$defs/kind/certificate"}, "then": {"$ref": "#/$defs/certificate"}},
+      {"when": {"$ref": "#/$defs/kind/dependency-order"}, "then": {"$ref": "#/$defs/dependency-order"}},
+      {"when": {"$ref": "#/$defs/kind/bundle"}, "then": {"$ref": "#/$defs/bundle"}},
+      {"when": {"$ref": "#/$defs/kind/background"}, "then": {"$ref": "#/$defs/background"}},
+      {"when": {"$ref": "#/$defs/kind/label"}, "then": {"$ref": "#/$defs/label"}},
+      {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "common.json#/$defs/admission"}}]}]},
+  "$defs": {
+    "kind": {
+      "evaluate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "evaluate"}}},
+      "countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
+      "certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "certificate"}}},
+      "dependency-order": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "dependency-order"}}},
+      "bundle": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "bundle"}}},
+      "background": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "background"}}},
+      "label": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "label"}}},
+      "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}}},
+    "error": {"$comment": "Route.Run.runCaseReported: the generator of an InvalidModel message (generatorOf, the service's); valid: false iff the request kind is certificate.",
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "common.json#/$defs/text"},
+        "generator": {"type": "string"},
+        "valid": {"const": false}},
+      "if": {"x-case": {"$ref": "#/$defs/kind/certificate"}},
+      "then": {"required": ["valid"]},
+      "else": {"not": {"required": ["valid"]}}},
+    "evaluate": {"type": "object", "required": ["id", "status", "values"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "values": {"$ref": "common.json#/$defs/values"}}},
+    "countermodel": {"type": "object", "required": ["id", "status", "refutes"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "refutes": {"type": "boolean"}}},
+    "certificate": {"$comment": "background: the number of regenerated Background premises (fullBackground).",
+      "type": "object", "required": ["id", "status", "valid", "background"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"},
+        "background": {"$ref": "common.json#/$defs/nat"}}},
+    "dependency-order": {"$comment": "Route.dependencyOrder: that the order passes verifyOrder for the request's nodes (dag_acyclic) is the service's.",
+      "type": "object", "required": ["id", "status", "order"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "order": {"$ref": "common.json#/$defs/strings"}}},
+    "bundle": {"$comment": "Definitions.Bundle.runBundle: every requested lemma is checked, in order, under its meaning id (binding to the request's lemmas).",
+      "type": "object", "required": ["id", "status", "checked", "lemmas"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "checked": {"$ref": "common.json#/$defs/nat", "x-count": "/lemmas"},
+        "lemmas": {"type": "array", "items": {"$ref": "common.json#/$defs/hex64"}, "x-equals": "/lemmas/*/meaning_id"}}},
+    "background": {"$comment": "Route.Wire.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's.",
+      "type": "object", "required": ["id", "status", "background", "premises", "generators"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "background": {"$ref": "common.json#/$defs/generated_formulas"},
+        "premises": {"$ref": "common.json#/$defs/generated_formulas"},
+        "generators": {"type": "array", "items": {"$ref": "common.json#/$defs/generator"}}}},
+    "label": {"$comment": "The canonical label is the requested one (parseLabel_render).",
+      "type": "object", "required": ["id", "status", "label"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "label": {"$ref": "common.json#/$defs/label", "x-equals": "/label"}}}
+  }
+}

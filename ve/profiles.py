@@ -17,6 +17,7 @@ class ProfileRecord:
 
 
 REGISTRY = (
+    ProfileRecord("alternatives@0", "alternatives", "statement", "inherited"),
     ProfileRecord("closure@0", "", "checker", "closure"),
     ProfileRecord("data@0", "data", "statement", "inherited"),
     ProfileRecord("definitions@0", "definitions", "statement", "inherited"),
@@ -37,6 +38,11 @@ def checker_family(profiles):
         raise UnsupportedProfile("profiles must be a sorted unique array")
     if profiles != sorted(set(profiles)):
         raise UnsupportedProfile("profiles must be sorted and unique")
+    if "alternatives@0" in profiles:
+        if "norms@0" not in profiles:
+            raise UnsupportedProfile("alternatives@0 requires norms@0")
+        if "soft-norms@0" in profiles:
+            raise UnsupportedProfile("alternatives@0 with soft-norms@0")
     for profile in profiles:
         if profile not in BY_NAME:
             raise UnsupportedProfile(f"Unsupported profile {profile}")

@@ -11,8 +11,9 @@ import hashlib
 import json
 import re
 
+from .assurance import semantic_entry
 from . import ast
-from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar
+from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
@@ -43,8 +44,9 @@ def _bindings(decl, words):
 
 
 def _guard_text(formula, env, words, scope):
-    traversal = EnglishTraversal(env, words)
-    traversal.maximum = Counter(sort for sort, _ in scope)
+    traversal = EnglishTraversal(env, words, word_markers=env.alternatives is not None)
+    initial = tuple(sort for sort, _ in scope)
+    traversal.maximum = _max_scope(formula, initial, Counter(initial))
     return traversal.formula(formula, scope)
 
 
@@ -68,6 +70,20 @@ def _parse_guard(source, env, words, scope):
         prefixes.append("for every " + noun + ", ")
     require_unique_derivation(env, "".join(prefixes) + source + ".")
     return formula
+
+
+def _mentions_outcome(formula, predicate):
+    """Find a deontic self-edge at any tuple, including another action."""
+    if isinstance(formula, (ast.Unary, ast.Binary)):
+        return formula.predicate == predicate
+    if isinstance(formula, (ast.Forall, ast.Exists)):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, ast.Not):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
+        return (_mentions_outcome(formula.left, predicate) or
+                _mentions_outcome(formula.right, predicate))
+    return False
 
 
 def _consequence(rule, env, words):
@@ -221,6 +237,7 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
+@semantic_entry("english.admission")
 def parse_english(env, source, manifest=None, *, existing_names=()):
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")
@@ -297,7 +314,20 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
             raise VEError("UnknownRule: display reference")
         rules.append(Norm(name, predicate, sign, guard, carveouts,
                           tuple(names[ref - 1] for ref in refs)))
-    document = NormDocument(env, rules)
+    try:
+        document = NormDocument(env, rules)
+    except VEError as exc:
+        if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
+                any(_mentions_outcome(formula, rule.predicate)
+                    for rule in rules for formula in (rule.guard, *rule.unless))):
+            raise VEError(f"{exc}; GuardOnOwnOutcome: A condition on this rule's own "
+                          "predicate creates a cycle. An author may instead select a factual guard "
+                          "like Rule 9: there is a robot such that that action is available to "
+                          "that robot and every other action available to that robot injures a human being or "
+                          "allows a harm to a human being to happen. This changes the rule's "
+                          "meaning and does not track later rules that forbid those actions "
+                          "for other reasons.") from exc
+        raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
