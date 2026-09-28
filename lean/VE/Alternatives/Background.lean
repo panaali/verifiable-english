@@ -303,17 +303,22 @@ theorem alternatives_conservative (A : AltDoc) (h : WellFormedAlt A = true) (Γ 
 
 /-! ## The conflict check over the extended background (4.5) -/
 
+/-- One target's certificate is accepted over `Background_baseAlt`, or over W1's `Background_base`
+alone (fewer premises, 4.5). -/
+def targetAccepted (A : AltDoc) (t : String × List String × VE.Formula) (c : VE.Tableau.Certificate) : Bool :=
+  VE.Tableau.checkCertificate (envAt (inlineTree A) 0) (backgroundBaseAlt A) (targetConclusion t) c ||
+    VE.Tableau.checkCertificate (envAt (inlineTree A) 0) (backgroundBase (inlineTree A)) (targetConclusion t) c
+
 /-- W1's `conflictFreeCheck` on the inlined document with `Background_baseAlt`. -/
 def altConflictFreeCheck (A : AltDoc) (certs : List (Option VE.Tableau.Certificate)) : Bool :=
   (targets (inlineTree A)).length == certs.length &&
     ((targets (inlineTree A)).zip certs).all (fun (t, c) => match c with
-      | some c => VE.Tableau.checkCertificate (envAt (inlineTree A) 0) (backgroundBaseAlt A) (targetConclusion t) c
+      | some c => targetAccepted A t c
       | none => false)
 
 theorem altConflictFreeCheck_target {A : AltDoc} {certs : List (Option VE.Tableau.Certificate)}
     (hc : altConflictFreeCheck A certs = true) {t : String × List String × VE.Formula}
-    (ht : t ∈ targets (inlineTree A)) :
-    ∃ c, VE.Tableau.checkCertificate (envAt (inlineTree A) 0) (backgroundBaseAlt A) (targetConclusion t) c = true := by
+    (ht : t ∈ targets (inlineTree A)) : ∃ c, targetAccepted A t c = true := by
   simp only [altConflictFreeCheck, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hc
   obtain ⟨hl, hall⟩ := hc
   obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp ht
@@ -339,7 +344,10 @@ theorem alt_conflict_free (A : AltDoc) (h : WellFormedAlt A = true)
       ¬ t.2.2.denote B (tupleVal vs) := by
     intro t ht vs hvs
     obtain ⟨c, hcc⟩ := altConflictFreeCheck_target hc ht
-    have he := VE.Tableau.checkCertificate_sound.{u} _ _ _ c hcc B hB.1.1 (sat_backgroundBaseAlt hB)
+    have he : (targetConclusion t).denote B [] := by
+      rcases Bool.or_eq_true_iff.mp hcc with hcc | hcc
+      · exact VE.Tableau.checkCertificate_sound.{u} _ _ _ c hcc B hB.1.1 (sat_backgroundBaseAlt hB)
+      · exact VE.Tableau.checkCertificate_sound.{u} _ _ _ c hcc B hB.1.1 hB.1.2
     exact (bindAll_denote_nil B _ _).mp he vs hvs
   refine ⟨fun r hr vs hvs => ?_, fun pr hpr vs hvs => ?_⟩
   · exact cert (r.name, r.sorts, conflict (inlineTree A) r)

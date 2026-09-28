@@ -10,7 +10,7 @@ theorems.
 Bindings (3.5). The outer binding of a package is `(environment_id, document_hash,
 target)`: `environment_id` over the complete canonical environment (block
 included), `document_hash` over the norm objects and the base units under it
-(`ve-alternatives-…` domain). The inner certificate binds the regenerated base
+(`ve-alternatives-…` domain; absent units hash as `[]`). The inner certificate binds the regenerated base
 environment (block, `alternatives@0`, `norms@0` and regulated predicates removed),
 the regenerated premises and the conclusion by P0 meaning ids. A case carries
 `norms` and `units` (the document's active base units). -/
@@ -33,6 +33,7 @@ def environmentId (ps : List String) (environment : Json) : Except String String
 source environment id. -/
 def documentHash (ps : List String) (environment norms units : Json) : Except String String := do
   let envId ← environmentId ps environment
+  let units := if units == .null then Json.arr #[] else units
   VE.CertificateWire.digest s!"ve-alternatives-{VE.Route.Wire.identityVersion ps}\n"
     (Json.mkObj [("environment_id", .str envId), ("norms", norms), ("units", units)])
 
@@ -53,12 +54,15 @@ def decodePackage (ps : List String) (environment norms units package : Json) (t
   | .ok () => some c
   | .error _ => none
 
-/-- Every conflict target's package (target order). -/
+/-- Every conflict target's package (target order), bound to `Background_baseAlt` or to W1's
+`Background_base` alone (4.5). -/
 def conflictCerts (src : AltSource) (environment norms units packages : Json) :
     List (Option VE.Tableau.Certificate) :=
   (targets (inlineTree src.A)).map fun t =>
     decodePackage src.profiles environment norms units (packages.getObjValD t.1) t.1
-      (backgroundBaseAlt src.A) (targetConclusion t)
+      (backgroundBaseAlt src.A) (targetConclusion t) <|>
+    decodePackage src.profiles environment norms units (packages.getObjValD t.1) t.1
+      (backgroundBase (inlineTree src.A)) (targetConclusion t)
 
 def sourceOf (j : Json) : Except String AltSource := do
   let environment ← j.getObjVal? "environment"
@@ -100,8 +104,7 @@ theorem alternatives_wire_conflict_sound (j : Json) (res : AltConflictReplay) (h
 /-- The first target without an accepted certificate. -/
 def firstFailure (r : AltConflictReplay) : Option String :=
   (((targets (inlineTree r.src.A)).zip r.certs).find? (fun (t, c) => match c with
-    | some c => !VE.Tableau.checkCertificate (envAt (inlineTree r.src.A) 0) (backgroundBaseAlt r.src.A)
-        (targetConclusion t) c
+    | some c => !targetAccepted r.src.A t c
     | none => true)).map (fun (t, c) => if c.isSome then s!"invalid certificate for {t.1}"
       else s!"missing certificate for {t.1}")
 

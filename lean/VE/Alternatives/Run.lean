@@ -60,10 +60,14 @@ def diagnosisText (r : VE.Bridge.Entity) : Diagnosis VE.Bridge.Entity → String
     s!"JOINTLY-UNDISCHARGEABLE({t}): each of {t} is discharged by some permitted available action, but no single action discharges all of them"
   | .clear as => s!"clear: {joined as}"
 
+/-- An act phrase without its slots (`{0} prevent {1}` → `prevent`). -/
+def actWords (act : String) : String :=
+  " ".intercalate ((act.splitOn " ").filter (fun w => !(w.startsWith "{" && w.endsWith "}")))
+
 def unmappedText (A : AltDoc) : String :=
   match Wire.unmappedObligations A with
   | [] => "none"
-  | rs => ", ".intercalate (rs.map (fun r => s!"{r.name} ({(r.act.getD "").replace "{0} " ""})"))
+  | rs => ", ".intercalate (rs.map (fun r => s!"{r.name} ({actWords (r.act.getD "")})"))
 
 def modelId (src : Wire.AltSource) (environment : Json) (sc : Scenario src) : String :=
   match environmentId src.profiles environment with
@@ -163,7 +167,7 @@ def runConflict (id : String) (j : Json) : Except String Json := do
 
 def followableText (src : Wire.AltSource) (certId : String) : String :=
   let mapped := ", ".intercalate (src.A.alt.fulfilments.map (fun f =>
-    ((findReg src.A.T f.obligation).bind (·.act)).getD f.obligation))
+    actWords (((findReg src.A.T f.obligation).bind (·.act)).getD f.obligation)))
   let conditional := match src.labels with
     | [] => "nothing"
     | ls => ", ".intercalate ls
