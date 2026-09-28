@@ -270,3 +270,27 @@ def render_quantity_sentence(env, canonical):
                  "date_on": " is on ", "date_before": " is before ",
                  "date_after": " is after ", "date_no_later": " is no later than "}[formula[0]]
     return left + connector + right + "."
+
+
+def render_quantity_witness(env, model_data):
+    """A finite model of the erased target in document terms (W8 de-elaboration):
+    every integer constant with its unit restored, dates as ISO dates, scaled
+    coordinates as decimals with their display. A coordinate outside the
+    calendar range is named as a day number, never rounded into a date."""
+    from ..model import FiniteModel
+    from ..units import erased_environment
+    target = erased_environment(env)
+    constants = FiniteModel.from_dict(target, model_data).constants
+    lines = []
+    for name, decl in env.constants.items():
+        if decl.sort != "$int" or name not in constants:
+            continue
+        tag = decl.unit or DIMENSIONLESS
+        coordinate = int(constants[name])
+        try:
+            value = render_coordinate(tag, coordinate, env)
+        except VEError:
+            value = f"day number {coordinate} (outside 1970-01-01 to 9999-12-31)"
+        words = sentence_initial(decl.verbalisation) if decl.verbalisation else name
+        lines.append(f"{words} is {value}.")
+    return lines
