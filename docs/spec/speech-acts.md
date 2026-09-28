@@ -358,8 +358,27 @@ but `{"open": ["intended-reading.<u>"]}`, naming the derived open-term declarati
 `open_terms` list (`InvalidInput: invalid question fields for <u>` when the meaning or the declaration differs from
 the regenerated form). Binding content is exactly one legend entry. Norm content
 under a non-norm kind, command content under a non-instruction kind and question content under a non-question kind are
-rejected, never discarded, as W1 rejects misplaced norm content; a quoted kind wrapping `instruction` keeps its command
-content dormant and every single-unit check still applies (as W1's `checkQuoted`).
+rejected, never discarded, as W1 rejects misplaced norm content; a quoted kind (attributed or hedged, at any depth)
+wrapping `instruction`, `question` or `norm` keeps its content dormant and every single-unit check still applies (as
+W1's `checkQuoted`): a quoted question is asked by nobody, is no question of the document and is checked as a reading
+candidate is (6), a quoted follows question consuming its query record at its unit (1.4). A dormant command (quoted,
+pending, or with a meaning other than `specified`) keeps every check of its own fields but needs no addressee, which
+only an active command's `demand` uses (4.2). A formula content (W2's `{"ast": ...}` or the P0 route's bare AST) may
+stand under any W2 kind and is checked; only an `asserted` unit's is a premise (1.5). An authored choice (1.5) gives its
+unit the meaning `specified`, except that a chosen reading question means its derived open term.
+
+**Every reference is resolved and typed at decode time**, identically in Python and Lean (the conformance suite
+checks every field below dangling and mistyped). A reference that is not a name of the JSON type its field takes is a
+field error: `InvalidInput: invalid command fields for <u>` (`act`, `args`), `invalid question fields for <u>` (`sort`,
+`domain`, `query`, `set`, `version`), `invalid binding fields for <u>`, and `InvalidInput: query` for a query record
+whose `id`, `premises` or `target` is not of its shape (`InvalidInput: duplicate query` for a repeated id). A name that
+resolves to nothing is `UnknownSymbol: regulated predicate <p>` (act), `UnknownSymbol: <c>` (command argument, bound
+constant), `UnknownSymbol: sort <s>`, `UnknownAlternative: <u>, <c>`, `QueryMismatch: <u>` (a query no record
+regenerates at `<u>`, or a premise id that is no earlier asserted unit), `InvalidInput: invalid question fields for <u>`
+(a reading question's `(set, version)` that is no reading-set version of the document), `invalid reading set unit or
+status`, `UnknownRule: rule <r>`, and, inside a formula (guard, body, assertion, target), P0's first type diagnostic
+(`UnknownSymbol: Unknown constant '<c>'`, ...); a declared constant of the wrong sort is `TypeMismatch: command args for
+<u>` or `AlternativeSort: <u>`. The same holds for the unit's reading candidates and for quoted units.
 
 W2's `content` may also be an English or strict fence; the English fence goes through the all-derivations parser and
 yields the same command or question object (2.1); the fence's surface and the object are the same unit. A fence is read
@@ -456,8 +475,11 @@ A speech-act document `D` over `E` is well-formed when, in this order:
    authoring and is `unformalised(unbound-slot)` in translation, never active.
 4. Every question's derived mode equals its stored mode; domains, sorts and bodies type-check; every `follows` question
    names a query whose premise ids are asserted units earlier in the document and whose target is closed and typed;
-   every `reading` question names an existing set and version, has the meaning `{"open": ["intended-reading.<u>"]}`
-   and the front matter declares that open term exactly as 4.6 derives it (both are derived content, 3.2).
+   every `reading` question names an existing set and version (a string set id and a version of the document's
+   reading sets), has the meaning `{"open": ["intended-reading.<u>"]}` and the front matter declares that open term
+   exactly as 4.6 derives it (both are derived content, 3.2); a reading-question candidate names an existing set and
+   version likewise and, in a unit's latest reading-set version, carries its declared open term, as it would if chosen
+   (6); a quoted reading question names an existing set and version.
 5. `policy(D)` is W1 well-formed (norms.md 4.1) over `E`: the author norm units and the command rules together pass
    `Norms.WellFormed`, including both DAGs; a rule naming a command in `over` is `UnknownRule: rule cmd-<u>` (commands
    take no precedence and are taken precedence over by nothing at `@0`, 12.4); at most 256 rules in total.
@@ -742,10 +764,11 @@ error, never reclassified. "Active" is the latest version of the unit's set (1.5
 unit R or U nor counts as unresolved, and `unresolved_sets` counts the units whose latest version is open. An
 elaborated candidate is one whose content decodes and type-checks as a command, question, norm, binding or assertion
 of its kind, checked as its unit would be were it chosen (the kind agrees with the content; a binding passes the
-single-binding checks of 1.1; a follows question or proof task names a record regenerated at its unit, 1.4), in every
-checker and for every version; a malformed candidate is rejected, never counted, and a `null` candidate is unelaborated (U). A
-question about a declared one-place gloss is classed as any question about a declared predicate is: the gloss is an
-opaque atom and the gloss lint (2.1) never changes a class. A signed (authored)
+single-binding checks of 1.1; a follows question or proof task names a record regenerated at its unit, 1.4; a
+reading question names an existing set version, 4.1(4), and a candidate of a unit's latest version carries its derived
+open term, 4.6), in every checker and for every version; a malformed candidate is rejected, never counted, and a `null`
+candidate is unelaborated (U). A question about a declared one-place gloss is classed as any question about a declared
+predicate is: the gloss is an opaque atom and the gloss lint (2.1) never changes a class. A signed (authored)
 choice is resolved: W2 checks an assertion choice itself (CHECKED ↦ C) and stores any other under OPEN, whose
 elaborated choice is R. C needs a `specified` meaning (a `contextual` unit is W2-LABELLED, so L). Residual counts (5.5)
 accompany the table; per-reading residuals stay under R. Guessed deciders and opaque
@@ -758,7 +781,9 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 |---|---|---|
 | `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route (1.6) | error |
 | `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3), including a reading question whose `{"open": [...]}` meaning or open-term declaration differs from the derived form (4.6) | error |
-| `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, alternative or query constant | error |
+| `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, command argument (a query constant included) or question sort (3.2) | error |
+| `TypeMismatch: command args for <u>` / `TypeMismatch: addressee` | a command argument of the wrong sort or number; the addressee's sort is not the act's slot 0 | error |
+| `InvalidInput: query` / `InvalidInput: duplicate query` | a query record whose `id`, `premises` or `target` is not of its shape; a repeated query id (3.2) | error |
 | `UnboundSlot: you` / `UnboundSlot: <phrase>` | a command or "you"-mentioning unit without a binding (4.1(3)); English layer adds the legend rewrite | error (authoring) / `unformalised(unbound-slot)` (translation) |
 | `BindingConflict: <phrase>` / `DuplicateDeclaration: binding <phrase>` | an authored binding disagrees with the block or repeats | error |
 | `MissingObligationRole: <act>` / `MissingPermissionRole: <act>` | `require` on an act without an obligation role; `forbid` on an act without a permission role | error |
@@ -1610,6 +1635,7 @@ statements of section 8 are unchanged.
 | B, opaque contradiction: "Is atlas reviewed yet never reviewed?" escaped the closed word list, took class C and was evaluated "yes" as one gloss | 2.1 and 7: the gloss check is structural as well as lexical: contrast and negation words ("yet", "never", ...), sentence punctuation, a repeated word and another declared property inside the gloss are `OpaqueWording`. |
 | B, vacuity omission: Lean's `PRESUPPOSITION-FAILED (certificate for ¬H)` line had no premise status even with inconsistency evidence supplied; Python's compliance line dropped the status of its certificate's list | 5.3 and 5.4: the ¬H certificate line carries the status of `Π` and its vacuity in Lean, and Python gains the same check; a proof task's compliance line carries `Π_q`'s. |
 | B, opaque contradiction persists: the gloss "{0} is reviewed despite remaining unreviewed" passed the word list and was answered as one predicate | Orchestrator directive: closed by 2.1, not by more patterns. A declared gloss is an opaque atom of author-declared vocabulary whose English VE does not check; the word list is an advisory, closed `OpaqueWording` lint (a warning, 7) that changes no class or check (6); the refusal of the earlier rows above is withdrawn. |
+| B, invalid reading-question candidates: a candidate naming a missing set (or, in Python, a numeric one) was accepted by both cores and counted R without its open term | 3.2, 4.1(4), 6: every reference is resolved and typed at decode time in both cores. A reading question, asked, quoted or a candidate, names a string set id at an existing version; a candidate of a latest version carries its derived open term; a chosen reading question means that open term. The conformance suite checks every reference-bearing field dangling and mistyped against one diagnostic in both checkers, which aligned command arguments (`UnknownSymbol`, `TypeMismatch: command args for <u>`), question sorts, query records (`InvalidInput: query`), binding checks before merging, formula fields (P0's type diagnostic in Lean too), quoted questions and dormant commands (single-unit checks, no addressee). |
 | B, fenced scope: `effective_scope()` built a binding-only document without its query records, so a fence beside an open binding whose candidate asks about `q1` raised `QueryMismatch: b` | 3.2: the effective scope is the document's own binding merge, with no partial document; fenced and unfenced sources agree, including when the record's premises are asserted units outside the bindings. |
 
 ## Change log

@@ -267,6 +267,13 @@ def decodeAnswer (j : Json) : Except String Answer :=
     | .error _, .ok s => do pure (.all (← strings s))
     | _, _ => throw "InvalidInput: answer"
 
+/-- A closed formula field (a guard, an assertion, a query target): the P0 route's decoder, with Python's first
+type diagnostic (norms.md 11.1) before its check, so an undeclared constant or predicate is `UnknownSymbol` in both
+checkers. -/
+def decodeClosedField (E : VE.Environment) (j : Json) : Except String VE.Formula := do
+  VE.Norms.typeDiagnostic E [] (← VE.Bridge.decodeFormula 64 j)
+  VE.Route.Wire.decodeClosed E j
+
 /-- Command content `{"force", "act", "args", "guard"?}` (3.2). -/
 def decodeCommand (E : VE.Environment) (u : String) (j : Json) : Except String Command := do
   let bad := s!"InvalidInput: invalid command fields for {u}"
@@ -284,7 +291,7 @@ def decodeCommand (E : VE.Environment) (u : String) (j : Json) : Except String C
     | .ok xs => pure xs
     | .error _ => throw bad
   let guard ← match j.getObjVal? "guard" with
-    | .ok g => VE.Route.Wire.decodeClosed E g
+    | .ok g => decodeClosedField E g
     | .error _ => pure .top
   pure ⟨u, force, act, args, guard⟩
 
@@ -343,10 +350,12 @@ def decodeBinding (u : String) (j : Json) : Except String Binding := do
     | .str p, .str c, 2 => if phraseOk p then pure (.phrase p c) else throw bad
     | _, _, _ => throw bad
 
-/-- What a decoded unit contributes. -/
+/-- What a decoded unit contributes. A quoted question is asked by nobody: it is dormant and keeps the single-unit
+checks of a reading candidate. -/
 inductive Role
   | command (c : Command)
   | question (q : Question)
+  | quotedQuestion (q : Question)
   | binding (b : Binding)
   | norm (n : Node)
   | asserted (φ : VE.Formula)
@@ -378,6 +387,15 @@ def contentTag (content : Json) : Option String :=
 /-- A meaning is `specified` when stated so or absent. -/
 def specified (meaning : Json) : Bool := meaning == .null || meaning == .str "specified"
 
+/-- The kind a quoted kind wraps, through every attribution and hedge. -/
+def innerKind : VE.Route.Admission.Kind → VE.Route.Admission.Kind
+  | .attributed _ _ b | .hedged _ b => innerKind b
+  | k => k
+
+/-- 3.2: the kind itself, or a quoted kind (attributed or hedged) wrapping it, may carry its content (Python's
+`_wraps`). -/
+def wraps (kind bare : VE.Route.Admission.Kind) : Bool := innerKind kind == bare
+
 def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo := do
   VE.Bridge.displayFields j ["id", "span", "kind"] ["meaning", "support", "content"]
   let id ← stringField j "id"
@@ -401,22 +419,21 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
     | none => pure Role.other
     | some content => match contentTag content with
       | some "command" =>
-        if kind == .instruction || kind.quoted then
+        if wraps kind .instruction then
           pure (Role.command (← decodeCommand E id (content.getObjValD "command")))
-        else throw "command content requires an instruction or quoted kind"
+        else throw "InvalidInput: command content requires instruction kind"
       | some "question" =>
         if kind == .question then pure (Role.question (← decodeQuestion id (content.getObjValD "question")))
-        else if kind.quoted then do
-          let _ ← decodeQuestion id (content.getObjValD "question")
-          pure Role.other
-        else throw "question content requires a question or quoted kind"
-      | some "binding" => throw s!"InvalidInput: binding content requires the binding kind for {id}"
+        else if wraps kind .question then
+          pure (Role.quotedQuestion (← decodeQuestion id (content.getObjValD "question")))
+        else throw "InvalidInput: question content requires question kind"
+      | some "binding" => throw "InvalidInput: binding content requires binding kind"
       | some "norm" =>
-        if kind == .norm || kind.quoted then pure (Role.norm (← VE.Norms.Wire.decodeNorm content))
-        else throw "norm content requires a norm or quoted kind"
+        if wraps kind .norm then pure (Role.norm (← VE.Norms.Wire.decodeNorm content))
+        else throw "InvalidInput: norm content requires norm kind"
       | tag =>
         -- A formula: the P0 route's bare AST, or W2's `{"ast": ...}`.
-        let φ ← VE.Route.Wire.decodeClosed E (if tag == some "ast" then content.getObjValD "ast" else content)
+        let φ ← decodeClosedField E (if tag == some "ast" then content.getObjValD "ast" else content)
         pure (if kind == .asserted then Role.asserted φ else Role.other)
   pure ⟨id, start, stop, VE.Route.Admission.renderKind kind, meaning, role, false⟩
 
@@ -497,12 +514,21 @@ def latestState (states : List (String × Nat × ReadingState)) (u : String) : O
   | none => none
   | some v => (mine.find? (·.2.1 == v)).map (·.2.2)
 
-/-- The unit as its latest reading set leaves it: an authored choice supplies the kind, a specified meaning
-and the content (W2's formula-only assertion candidates are bare ASTs, which `decodeUnit` reads). -/
+/-- The meaning an authored choice gives its unit: `specified`, except that a chosen reading question means its
+derived open term (3.2, 4.6). -/
+def chosenMeaning (j : Json) (content : Option Json) : Json :=
+  let mode : Option Json := content.map (fun c => (c.getObjValD "question").getObjValD "mode")
+  match mode, j.getObjValD "id" with
+  | some (Json.str "reading"), Json.str i => Json.mkObj [("open", Json.arr #[Json.str ("intended-reading." ++ i)])]
+  | _, _ => Json.str "specified"
+
+/-- The unit as its latest reading set leaves it: an authored choice supplies the kind, its meaning
+(`chosenMeaning`) and the content (W2's formula-only assertion candidates are bare ASTs, which `decodeUnit`
+reads). -/
 def chosenUnit (j : Json) (kind : Json) (content : Option Json) : Except String Json := do
   let fs ← fields j
   let kept := fs.filter (fun kv => kv.1 != "kind" && kv.1 != "meaning" && kv.1 != "content")
-  pure (Json.mkObj (kept ++ [("kind", kind), ("meaning", .str "specified")] ++
+  pure (Json.mkObj (kept ++ [("kind", kind), ("meaning", chosenMeaning j content)] ++
     match content with
     | some c => [("content", c)]
     | none => []))
@@ -524,12 +550,14 @@ def decodeUnitIn (E : VE.Environment) (states : List (String × Nat × ReadingSt
 
 /-- A query record `{"id", "premises", "target": {"ast"}}` (3.2), before regeneration. -/
 def decodeQuery (E : VE.Environment) (j : Json) : Except String (String × List String × VE.Formula) := do
-  exactFields j ["id", "premises", "target"]
-  let id ← stringField j "id"
-  let premises ← strings (← j.getObjVal? "premises")
-  let t ← j.getObjVal? "target"
-  exactFields t ["ast"]
-  pure (id, premises, ← VE.Route.Wire.decodeClosed E (← t.getObjVal? "ast"))
+  -- The record's references are names (Python's `_queries`), resolved against the regeneration.
+  let bad := "InvalidInput: query"
+  unless (exactFields j ["id", "premises", "target"]).isOk do throw bad
+  let .str id := j.getObjValD "id" | throw bad
+  let .ok premises := strings (j.getObjValD "premises") | throw bad
+  let t := j.getObjValD "target"
+  unless (exactFields t ["ast"]).isOk do throw bad
+  pure (id, premises, ← decodeClosedField E (t.getObjValD "ast"))
 
 /-! ## The document -/
 
@@ -590,25 +618,44 @@ def readingCandidates (document : Json) : Except String (List (String × Json ×
           | x => some x)
     pure per.flatten
 
-/-- The bare kind of a kind: itself, or the last element of a nested one. -/
-def bareKind : Json → Option String
-  | .str k => some k
-  | .arr xs => match xs.back? with
-    | some (.str k) => some k
-    | _ => none
-  | _ => none
+/-- A tagged content under a kind that may carry it (Python's `content_kind_ok`): `binding` exactly, else the tag's
+W2 kind or a quoted kind wrapping it (`wraps`). -/
+def contentKindOk (kind : Json) : String → Bool
+  | "binding" => kind == .str "binding"
+  | tag =>
+    let bare : Option VE.Route.Admission.Kind := match tag with
+      | "ast" => some .asserted
+      | "norm" => some .norm
+      | "command" => some .instruction
+      | "question" => some .question
+      | _ => none
+    match bare, VE.Route.Admission.decodeKind 16 kind with
+    | some b, .ok k => wraps k b
+    | _, _ => false
 
-/-- The bare kind each tagged content belongs to (W2's kinds, and `binding`). -/
-def candidateKind : String → Option String
-  | "ast" => some "asserted"
-  | "norm" => some "norm"
-  | "command" => some "instruction"
-  | "question" => some "question"
-  | "binding" => some "binding"
-  | _ => none
+/-- The `(id, version)` pairs of the document's reading-set versions: what a reading question may name (4.1(4)). -/
+def readingSetKeys (document : Json) : List (String × Nat) :=
+  match document.getObjVal? "reading_sets" >>= (·.getArr?) with
+  | .ok xs => xs.toList.filterMap fun r => match r.getObjValD "id", (r.getObjValD "version").getNat? with
+    | .str i, .ok v => some (i, v)
+    | _, _ => none
+  | .error _ => []
 
-/-- A candidate command's single-unit checks: the realising predicate, its role and the argument sorts after the
-addressee's slot, and the guard. A candidate is never active, so the addressee is not required. -/
+/-- The single-unit checks of a question nobody asks (a reading candidate's, a quoted unit's), as it would be if
+asked: a reading question names an existing set version (4.1(4)) and its open-term name fits (4.6); every other
+mode but `follows` (whose query is resolved at its unit, 1.4) passes `validateSpeech` alone. -/
+def checkLoneQuestion (se : SpeechEnvironment) (scope : Scope) (keys : List (String × Nat)) (q : Question) :
+    Except String Unit := do
+  if q.mode == .follows then return
+  if q.mode == .reading then
+    unless (q.readingSet.map keys.contains).getD false do throw s!"InvalidInput: invalid question fields for {q.unit}"
+    if q.unit.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
+  validateSpeech ⟨se.ne.rv.environment, se.ne.rv.literals, scope, se.ne.regulated, [], [], [q], [], []⟩
+
+/-- A never-active command's single-unit checks (a reading candidate's, and a dormant unit's: quoted, pending or
+not `specified`, as Python's `_command`): the realising predicate, its role, the declared arguments and their
+sorts after the addressee's slot, and the guard. The addressee is not required, as only an active command is
+elaborated (`demand`). -/
 def checkCandidateCommand (se : SpeechEnvironment) (c : Command) : Except String Unit := do
   let E := se.ne.rv.environment
   let r ← match se.ne.regulated.find? (·.name == c.act), E.predicates c.act with
@@ -617,6 +664,8 @@ def checkCandidateCommand (se : SpeechEnvironment) (c : Command) : Except String
     | none, none => throw s!"UnknownSymbol: regulated predicate {c.act}"
   if c.force = .require && r.role != .obligation then throw s!"MissingObligationRole: {r.act.getD c.act}"
   if c.force = .forbid && r.role != .permission then throw s!"MissingPermissionRole: {r.act.getD c.act}"
+  for a in c.args do
+    unless (E.constants a).isSome do throw s!"UnknownSymbol: {a}"
   unless E.predicates c.act == some r.sorts && constsTyped E c.args r.sorts.tail do
     throw s!"TypeMismatch: command args for {c.unit}"
   VE.Norms.typeDiagnostic E [] c.guard
@@ -625,8 +674,8 @@ def checkCandidateCommand (se : SpeechEnvironment) (c : Command) : Except String
 /-- One reading candidate of unit `u`, checked as the unit would be were it chosen (6): its kind, its content of
 that kind (a malformed candidate is rejected, never counted; `none` is unelaborated), and the query it asks about,
 if any, which is regenerated at `u` (1.4). -/
-def checkCandidate (se : SpeechEnvironment) (scope : Scope) (u : String) (kind : Json) (content? : Option Json) :
-    Except String (Option String) := do
+def checkCandidate (se : SpeechEnvironment) (scope : Scope) (keys : List (String × Nat)) (u : String) (kind : Json)
+    (content? : Option Json) : Except String (Option String) := do
   let E := se.ne.rv.environment
   let bad := "invalid speech reading content"
   unless kind == .str "binding" do
@@ -638,10 +687,10 @@ def checkCandidate (se : SpeechEnvironment) (scope : Scope) (u : String) (kind :
       | .ok [(t, v)] => pure (t, v)
       | _ => throw bad
     | _ => throw bad
-  unless (candidateKind tag).isSome && bareKind kind == candidateKind tag do throw bad
+  unless contentKindOk kind tag do throw bad
   match tag with
   | "ast" =>
-    let _ ← VE.Route.Wire.decodeClosed E value
+    let _ ← decodeClosedField E value
     pure none
   | "command" =>
     let c ← decodeCommand E u value
@@ -651,10 +700,8 @@ def checkCandidate (se : SpeechEnvironment) (scope : Scope) (u : String) (kind :
       | _ => none)
   | "question" =>
     let q ← decodeQuestion u value
-    if q.mode == .follows then return q.query
-    if q.mode == .reading && u.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
-    validateSpeech ⟨E, se.ne.rv.literals, scope, se.ne.regulated, [], [], [q], [], []⟩
-    pure none
+    checkLoneQuestion se scope keys q
+    pure (if q.mode == .follows then q.query else none)
   | "norm" =>
     let n ← VE.Norms.Wire.decodeNorm content
     VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
@@ -663,10 +710,11 @@ def checkCandidate (se : SpeechEnvironment) (scope : Scope) (u : String) (kind :
     checkBinding se.ne (← decodeBinding u value)
     pure none
 
-/-- The unit that asks about a query: a follows question or a proof-task command (a slot of sort `query`). -/
+/-- The unit that asks about a query: a follows question (quoted or not) or a proof-task command (a slot of sort
+`query`). -/
 def queryOf (E : VE.Environment) (u : SpeechUnitInfo) : Option String :=
   match u.role with
-  | .question q => if q.mode == .follows then q.query else none
+  | .question q | .quotedQuestion q => if q.mode == .follows then q.query else none
   | .command c => match E.predicates c.act with
     | some (_ :: ss) => ((ss.zip c.args).find? (·.1 == "query")).map Prod.snd
     | _ => none
@@ -696,29 +744,34 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
     throw "unit spans must be sorted and non-overlapping"
-  -- Authored bindings (1.1). A binding unit whose reading set is open is pending (1.5): it supplies no entry
-  -- and declares nothing, and keeps its single-binding checks.
+  -- Authored bindings (1.1), in document order as Python's `_merge_bindings`: every binding passes the
+  -- single-binding checks; one whose reading set is open is pending (1.5) and supplies no entry and declares
+  -- nothing; the others are merged, a repeated key being a duplicate.
+  let mut scope := se.scope
+  let mut seen : List String := []
   for u in units do
     if let .binding b := u.role then
-      if u.pending then checkBinding se.ne b
-  let bindings := units.filterMap (fun u => match u.role with
-    | .binding b => if u.pending then none else some b
-    | _ => none)
-  let keys := bindings.map bindingKey
-  if let some k := keys.find? (fun k => keys.count k > 1) then
-    throw s!"DuplicateDeclaration: binding {k}"
-  let scope ← mergeBindings E se.scope bindings
+      checkBinding se.ne b
+      unless u.pending do
+        if seen.contains (bindingKey b) then throw s!"DuplicateDeclaration: binding {bindingKey b}"
+        seen := bindingKey b :: seen
+        scope ← mergeBindings E scope [b]
   checkPhrases se.ne scope
   -- 1.1 and 3.5: a binding that supplies a scope entry supplies it to the canonical environment, so the
   -- environment id every meaning id and certificate binds is the effective scope's.
   let se := { se with scope, canonical := se.canonical.setObjVal! "speech_acts" (encodeScope scope) }
-  -- Reading questions: the derived open-term meaning (4.6).
+  -- Reading questions name an existing set version (4.1(4)) and mean the derived open term (4.6); a quoted
+  -- question keeps a candidate's single-unit checks.
+  let setKeys := readingSetKeys document
   for u in units do
     if let .question q := u.role then
       if q.mode == .reading then
-        if u.id.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
+        unless (q.readingSet.map setKeys.contains).getD false do
+          throw s!"InvalidInput: invalid question fields for {u.id}"
         unless u.meaning == Json.mkObj [("open", Json.arr #[.str ("intended-reading." ++ u.id)])] do
           throw s!"InvalidInput: invalid question fields for {u.id}"
+        if u.id.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
+    if let .quotedQuestion q := u.role then checkLoneQuestion se scope setKeys q
   let asserted := units.filterMap fixedAssertion
   let norms := units.filterMap activeNorm
   let commands := units.filterMap activeCommand
@@ -730,8 +783,7 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
       if (activeNorm u).isNone then
         VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
     | .command c =>
-      if (activeCommand u).isNone && (specified u.meaning || !(u.kind == .str "instruction")) then
-        validateSpeech ⟨E, se.ne.rv.literals, scope, se.ne.regulated, [], [c], [], [], []⟩
+      if (activeCommand u).isNone then checkCandidateCommand se c
     | _ => pure ()
   -- Query records (1.4): derived, compared with the regeneration at every unit that asks.
   let rawQueries ← match document.getObjVal? "queries" with
@@ -742,7 +794,7 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   -- consumer at its unit.
   let mut candidateAsks : List (String × String) := []
   for (u, kind, content?) in ← readingCandidates document do
-    if let some qid ← checkCandidate se scope u kind content? then candidateAsks := candidateAsks ++ [(u, qid)]
+    if let some qid ← checkCandidate se scope setKeys u kind content? then candidateAsks := candidateAsks ++ [(u, qid)]
   let mut before : List String := []
   let mut asked : List String := []
   for u in units do
