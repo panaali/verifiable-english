@@ -1,5 +1,6 @@
 """Python/Rust regeneration parity for the admitted W6a ground family."""
 import json
+from datetime import date, timedelta
 from pathlib import Path
 import subprocess
 
@@ -128,3 +129,24 @@ def test_integer_predicate_slot_is_checked_before_erasure():
         elaborate_quantity(env, bad)
     rejected = rust({"id": "slot-bad", "kind": "quantity", "environment": raw, "quantity": bad})
     assert rejected["status"] == "error" and "UnitMismatch" in rejected["error"]["message"]
+
+
+def test_rust_day_numbers_match_datetime_on_10000_dates():
+    raw = {"language": "ve.core@0.2", "profiles": ["order@0", "relational-fol@0", "time@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {}, "predicates": {}, "constants": {}},
+           "unit_schema": "ve-units@1", "units": {"day": {"scale": "1", "display": {"kind": "iso_date"}}}}
+    epoch = date(1970, 1, 1)
+    indices = [i * 2932896 // 9999 for i in range(10000)]
+    assert len(set(indices)) == 10000 and indices[0] == 0 and indices[-1] == 2932896
+    cases = [{"id": str(i), "kind": "quantity", "environment": raw,
+              "quantity": {"format": "ve-quantity@1", "formula": ["eq", ["date", (epoch + timedelta(days=i)).isoformat()],
+                                                                 ["num", "day", str(i)]]}}
+             for i in indices]
+    process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(cases),
+                             text=True, capture_output=True, timeout=120)
+    assert process.returncode == 0, process.stderr[:500]
+    results = json.loads(process.stdout)
+    assert len(results) == 10000
+    assert all(result["status"] == "ok" and result["Q"][1] == ["num", "day", result["id"]]
+               for result in results)
