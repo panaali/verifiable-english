@@ -434,6 +434,25 @@ def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
         source(good, [], status="authored")
 
 
+def test_answer_and_compliance_records_reference_units_by_name():
+    # Regression: a record whose question or command was not a string crashed the source wrapper with a
+    # TypeError instead of a diagnostic; a dangling name keeps its record diagnostic.
+    from ve.speech_document import SpeechSource
+    env = environment()
+    text = b"Open the desk.\n"
+    open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
+    meta = {"format": "ve-document@2", "environment": env.to_dict(),
+            "units": [{"id": "u", "span": [0, len(text)], "kind": "instruction", "meaning": "specified",
+                       "support": "none", "content": open_cmd}]}
+    for field, record, error in [
+            ("answers", {"question": ["u"], "by": "alice", "support": "model", "evidence": {}}, "InvalidInput: answer record"),
+            ("answers", {"question": "nope", "by": "alice", "support": "model", "evidence": {}}, "AnswerMismatch: nope"),
+            ("compliance", {"command": ["u"], "evidence": {}}, "InvalidInput: compliance record"),
+            ("compliance", {"command": "nope", "evidence": {}}, "InvalidInput: compliance record")]:
+        with pytest.raises(VEError, match=error):
+            SpeechSource({**meta, field: [record]}, text, {})
+
+
 def test_a_declared_gloss_is_one_opaque_atom_and_the_word_lint_only_warns():
     # Directive (2.1, 6): a declared predicate gloss is author-declared vocabulary, one opaque atom whose
     # English VE does not and cannot check. "Is atlas reviewed despite remaining unreviewed?" against the
