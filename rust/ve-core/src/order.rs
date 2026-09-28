@@ -673,6 +673,46 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if !env.order() {
         return error("UnsupportedProfile", "order profile required");
     }
+    if v.get("kind") == Some(&json!("evaluate-budgeted")) {
+        if v.get("trace") == Some(&json!(true)) {
+            return error("UnsupportedProfile", "Rust order traces are not implemented");
+        }
+        let formulas = array(v.get("ast").ok_or_else(|| Error::new("InvalidInput", "ast missing"))?)?;
+        if formulas.is_empty() {
+            return error("SyntaxError", "empty document");
+        }
+        let mut nodes = 0;
+        for formula in formulas {
+            formula_check(&env, formula, &[], 1, &mut nodes)?;
+        }
+        let model = Model::decode(&env,
+            v.get("model").ok_or_else(|| Error::new("InvalidInput", "model missing"))?)?;
+        let maximum = v.get("max_evaluations").and_then(Value::as_u64)
+            .unwrap_or(crate::MAX_EVALUATIONS);
+        if maximum > crate::MAX_EVALUATIONS {
+            return error("ResourceLimit", "evaluation budget exceeds v0 limit");
+        }
+        let mut work = 0;
+        let mut value = true;
+        for formula in formulas {
+            match eval(formula, &model, &[], &mut work, maximum) {
+                Ok(result) => {
+                    if !result {
+                        value = false;
+                        break;
+                    }
+                }
+                Err(e) if e.code == "ResourceLimit" => {
+                    return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+                        "status":"ResourceLimit","value":null,"evaluations":work}));
+                }
+                Err(e) => return Err(e),
+            }
+        }
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":if value { "Satisfied" } else { "Violated" },
+            "value":value,"evaluations":work}));
+    }
     if v.get("kind") == Some(&json!("countermodel")) {
         let premises = array(
             v.get("premises")

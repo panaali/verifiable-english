@@ -575,7 +575,10 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
             "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
             "nonempty_domains": nonempty_domains, "max_models": max_models,
-            "max_evaluations": max_evaluations}
+            "max_evaluations": max_evaluations,
+            **({} if nonvacuous_for is None else
+               {"nonvacuous_for": _to_data(nonvacuous_for),
+                "semantic_nonvacuity": semantic_nonvacuity})}
 
     def python():
         return _find_countermodel_python(
@@ -585,8 +588,6 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             max_models=max_models, max_evaluations=max_evaluations)
 
     def rust():
-        if nonvacuous_for is not None:
-            raise CheckerUnavailable("CheckerUnavailable: Rust non-vacuity search is not implemented")
         row = rust_run(case)
         status = row.get("status")
         if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
@@ -604,6 +605,10 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             except VEError as exc:
                 raise CheckerUnavailable(
                     f"CheckerUnavailable: invalid Rust search witness: {exc}") from exc
+            if nonvacuous_for is not None and not _nonvacuous(
+                    env, nonvacuous_for, model, max_evaluations,
+                    semantic=semantic_nonvacuity)[0]:
+                raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
             request = {**case, "kind": "countermodel", "model": model.to_dict()}
             checked = lean_run("route" if env.language == "ve.core@0.2" else "evaluate",
                                [request])[0]
@@ -613,7 +618,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         elif status == "NotFound":
             if row.get("model") is not None:
                 raise CheckerUnavailable("CheckerUnavailable: unexpected Rust search witness")
-            detail = "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+                      if nonvacuous_for is not None else
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
         elif row.get("detail") == "search relation atom space exceeds runtime limit":
             detail = row["detail"]
         elif row["models_checked"] >= max_models:
@@ -624,7 +631,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             detail = "model-attempt budget exhausted"
         return CountermodelResult(status, model, row["models_checked"], row["evaluations"],
                                   max_domain_size, max_models, detail, min_domain_size,
-                                  nonempty_domains, max_evaluations, None, False)
+                                  nonempty_domains, max_evaluations,
+                                  meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
+                                  semantic_nonvacuity)
 
     return execute("countermodel_search", case, python, lean=rust, rust=rust)
 
@@ -733,11 +742,12 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
             "environment": env.to_dict(), "a": _to_data(a), "b": _to_data(b),
             "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
             "nonempty_domains": nonempty_domains, "max_models": max_models,
-            "max_evaluations": max_evaluations}
+            "max_evaluations": max_evaluations,
+            **({} if nonvacuous_for is None else
+               {"nonvacuous_for": _to_data(nonvacuous_for),
+                "semantic_nonvacuity": semantic_nonvacuity})}
 
     def rust():
-        if nonvacuous_for is not None:
-            raise CheckerUnavailable("CheckerUnavailable: Rust non-vacuity search is not implemented")
         row = rust_run(case)
         status = row.get("status")
         if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
@@ -755,6 +765,10 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
             except VEError as exc:
                 raise CheckerUnavailable(
                     f"CheckerUnavailable: invalid Rust distinguishing witness: {exc}") from exc
+            if nonvacuous_for is not None and not _nonvacuous(
+                    env, nonvacuous_for, model, max_evaluations,
+                    semantic=semantic_nonvacuity)[0]:
+                raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
             request = {"id": case["id"], "kind": "evaluate", "environment": case["environment"],
                        "ast": [case["a"], case["b"]], "model": model.to_dict()}
             checked = lean_run("route" if env.language == "ve.core@0.2" else "evaluate",
@@ -767,7 +781,9 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         elif status == "NotFound":
             if row.get("model") is not None:
                 raise CheckerUnavailable("CheckerUnavailable: unexpected Rust distinguishing witness")
-            detail = "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+                      if nonvacuous_for is not None else
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
         elif row.get("detail") == "search relation atom space exceeds runtime limit":
             detail = row["detail"]
         elif row["models_checked"] >= max_models:
@@ -776,6 +792,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
             detail = "evaluation budget exhausted"
         return CountermodelResult(status, model, row["models_checked"], row["evaluations"],
                                   max_domain_size, max_models, detail, min_domain_size,
-                                  nonempty_domains, max_evaluations, None, False)
+                                  nonempty_domains, max_evaluations,
+                                  meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
+                                  semantic_nonvacuity)
 
     return execute("distinguishing_model", case, python, lean=rust, rust=rust)

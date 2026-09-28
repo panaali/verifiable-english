@@ -58,7 +58,7 @@ impl<'a> Evaluator<'a> {
     pub fn clear_closures(&mut self) {
         self.closures.clear();
     }
-    fn tick(&mut self) -> Result<()> {
+    pub(crate) fn tick(&mut self) -> Result<()> {
         if self.work >= self.maximum {
             return error("ResourceLimit", "evaluation budget exhausted");
         }
