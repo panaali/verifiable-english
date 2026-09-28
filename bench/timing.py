@@ -4,8 +4,10 @@ import os
 import statistics
 import time
 
+DEFAULT_REPEATS = 5
+DEFAULT_WARMUPS = 1
 
-def measure(fn, *, repeats=5, warmups=1):
+def measure(fn, *, repeats=DEFAULT_REPEATS, warmups=DEFAULT_WARMUPS):
     """Keep cold start out of warm-process latency samples."""
     if repeats < 1 or warmups < 0:
         raise ValueError('repeats must be positive and warmups nonnegative')

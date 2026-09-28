@@ -1,6 +1,6 @@
 # English user paths: 16-vCPU VM profile
 
-**Answer.** Python speed matters for long accepted English and editor catalogue tails. BlueDot's document breach is dominated by repeated model validation and hashing. Measure and remove redundant work before considering Rust. Warm-process Python 3.14.7, five sequential wall-time repeats per case; cProfile separately. Load was roughly 17–25 on 16 vCPUs. [Raw JSON](PROFILE-ENGLISH.json) includes each repeat, load, input hashes, and profiles. No proposer or model service was called.
+**Answer.** Python speed matters for long accepted English and editor catalogue tails. BlueDot's document breach is dominated by repeated model validation and hashing. Measure and remove redundant work before considering Rust. Warm-process Python 3.14.7, five sequential wall-time repeats per case; cProfile separately. Load was roughly 17–25 on 16 vCPUs. [Raw JSON](PROFILE-ENGLISH-BEFORE.json) includes each repeat, load, input hashes, and profiles. No proposer or model service was called.
 
 | Accepted English tokens | Sentences / runs | Parse + one-reading audit + natural display, ms p50 / p95 / max |
 |---|---:|---:|

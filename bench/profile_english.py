@@ -7,7 +7,7 @@ import pstats
 import re
 from pathlib import Path
 
-from timing import measure, stats
+from timing import DEFAULT_REPEATS, DEFAULT_WARMUPS, measure, stats
 from ve.ast import Document, formula_from_data
 from ve.document import check_document, load_document
 from ve.english import parse_english, render_english
@@ -19,6 +19,7 @@ from ve.ast import Unary, Const
 from ve.parser import parse as parse_strict
 
 ROOT = Path(__file__).resolve().parents[1]
+EDITOR_CATALOGUE_REPEATS = 20
 DOCS = {
     "claude": sorted(Path('/home/seyran/code').glob('ve-pilot-*/usecases/claude-constitution-pilot/run-*/translation.ve.md'))[-1],
     "udhr": sorted(Path('/home/seyran/code').glob('ve-udhr-*/usecases/udhr-pilot/run-*/translation.ve.md'))[-1],
@@ -74,8 +75,13 @@ def service_env():
 def main():
     out = {'machine': {'platform': platform.platform(), 'python': platform.python_version(),
                         'cpus': __import__('os').cpu_count()},
-           'repeats': 5, 'documents': {}, 'sentences': [], 'raw_source': {}, 'editor': {},
-           'method': 'One untimed warm-up per case, then sequential timed runs; editor catalogues use 20 samples. cProfile is separate; load is sampled before each timed call.'}
+           'sampling': {'default_repeats': DEFAULT_REPEATS,
+                        'editor_catalogue_repeats': EDITOR_CATALOGUE_REPEATS,
+                        'warmups': DEFAULT_WARMUPS},
+           'documents': {}, 'sentences': [], 'raw_source': {}, 'editor': {},
+           'method': (f'{DEFAULT_WARMUPS} untimed warm-up per case, then sequential timed runs; '
+                      f'editor catalogues use {EDITOR_CATALOGUE_REPEATS} samples. '
+                      'cProfile is separate; load is sampled before each timed call.')}
     loaded = {}
     cases = []
     for label, path in DOCS.items():
@@ -162,7 +168,8 @@ def main():
         parse_result = editor_parse()
         pv, p_load = measure(editor_parse)
         def catalogue(): return review(env,src,bindings,pattern_id=pattern)
-        vals, loads = measure(catalogue, repeats=20)
+        vals, loads = measure(catalogue, repeats=EDITOR_CATALOGUE_REPEATS,
+                              warmups=DEFAULT_WARMUPS)
         result = catalogue()
         out['editor'][label] = {'source': src, 'parse_result': parse_result,
                                'parse_ms': pv, 'parse_load': p_load, 'parse_stats': stats(pv),
