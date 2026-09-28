@@ -98,6 +98,7 @@ def main(argv=None):
                                   else _to_data(doc.presupposition(q))}
                                  for q in doc.questions],
                    "warnings": doc.warnings, "reading_plan": source.reading_plan,
+                   "answers": source.answer_lines, "compliance": source.compliance_lines,
                    "coverage": source.coverage()})
             return 0
         except VEError as exc:
