@@ -1,6 +1,6 @@
 # Discourse and cross-reference (`ve.discourse@1` over `ve-document@2`): names, anaphora, descriptions, document references and correlated readings
 
-> Status: item-1 specification, draft 2 (2026-09-28). Draft 1 was written from [discourse-PLAN.md](discourse-PLAN.md)
+> Status: item-1 specification, draft 3 (2026-09-28). Draft 1 was written from [discourse-PLAN.md](discourse-PLAN.md)
 > as revised by the converged Astra/Fable debate (`manage-agents/debates/design-discourse/{astra,fable}.md`, round 2,
 > edits J1 to J8) and the lead's additional input recorded in that debate's `TOPIC.md` (document names, validity
 > claims by fingerprint, the truth boundary). Draft 2 applies the converged Astra + Fable statement review of draft 1
@@ -8,7 +8,9 @@
 > corrected uniqueness statement, explicit target representations, nested mentions, the owning reading set, the three
 > adapters to the frozen interfaces (profile stripping, the two carriers of a presupposition, citation extension to a
 > compatible joint choice), import integrity separated from admission outcome with rejection distinguished from
-> UNKNOWN, exact theorem contracts, corrected boundary fixtures, and the natural-view difference). It is the statement
+> UNKNOWN, exact theorem contracts, corrected boundary fixtures, and the natural-view difference). Draft 3 applies the
+> first verification pass of draft 2 (`manage-agents/discourse-p3ver1.final.md`, FAIL, four defects: η's signature,
+> nested mentions as slots, the natural-view agreement condition, `compatible_no_sets` at limit zero). It is the statement
 > under the Astra + Fable item-1 review that gates sequences 2 to 5 of the plan (PLAN-EXPAND2 rule 10); convergence on
 > the repair list is not a PASS for these files, and both reviewers re-review the complete amended gate (definitions,
 > adapter contracts, theorem statements and fixtures together, with their consistency with the plan) before sequence
@@ -156,12 +158,17 @@ recorded target whose elaboration is ill-typed (a `person` where `safe : service
 `IllTypedTarget: <mention>: <target>`, a manifest error distinct from `TargetKindMismatch` (form/kind only).
 
 **Nested mentions.** Within one unit, two mention spans are either disjoint or properly nested (η: `Her` lies inside
-`Her manager`); a partial overlap is `InvalidInput: mentions <a>, <b> overlap`. An inner mention is resolved first
-and its target is what the outer mention's `restriction` may name (a `possessive` inside a `definite`); the outer
-mention is the slot (4.3), the inner one a binding of the restriction.
+`Her manager`); a partial overlap is `InvalidInput: mentions <a>, <b> overlap`. Nesting occurs only where a
+formula-producing mention lies inside a `definite` (a `possessive` supplying the other argument of the description's
+restriction, 4.5). Both mentions are slots of the unit's derivation (4.3): the inner slot lies inside the outer slot's
+span and is substituted first, its target's term becoming the resolved entity of the outer mention's `restriction`,
+and the recorded `restriction` must equal the one so regenerated (`ManifestMismatch: mentions.<m>.restriction`);
+the outer slot is then substituted by the description. Both are recorded mentions and both count in the slot
+correspondence of 4.3; neither is a location binding.
 
 **Formula-producing versus location bindings.** `pronoun`, `demonstrative`, `definite`, `ordinal_pair`, `such`,
-`possessive`, `plural`, `definition_ref` (as a rewrite, 2.1), `document_name` and `citation` are formula-producing:
+`possessive` (through the description enclosing it, above), `plural`, `definition_ref` (as a rewrite, 2.1),
+`document_name` and `citation` are formula-producing:
 their mention is a slot of the unit's derivation (4.3). `section_ref`, `navigation`, `unit` and `anchor` targets are
 location bindings: they are entries of the unit's binding table, produce no formula, and never occupy a slot; a
 unit consisting only of a location binding is LABELLED (4.9), and a location target in a slot position is
@@ -470,8 +477,9 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
    `U(D)` for that mention's restriction (`ManifestMismatch: mentions.<m>.presupposition_unit` otherwise).
 6. Every recorded target is accessible (4.2); its elaboration type-checks (`IllTypedTarget`); it is unique modulo
    aliases among the type-checking competitors (4.3); every bound unit (a non-grouped unit with a
-   formula-producing mention) elaborates to a closed typed formula (4.4), and its recorded mentions are exactly
-   the accepted derivation's slots (`UnrecordedSlot`, `MentionNotSlot`).
+   formula-producing mention) elaborates to a closed typed formula (4.4), and its recorded formula-producing
+   mentions, nested ones included (1.4), are exactly the accepted derivation's slots (`UnrecordedSlot`,
+   `MentionNotSlot`).
 7. Groups and constraints are well-formed (1.5): listed units carry no content and no reading set other than the
    owning set (`IndependentFragment`), the group's reading regenerates per group (`groupFormula`), the
    `same-witness` content shares its witness (`WitnessSplit`), constraints name active readings by
@@ -534,11 +542,18 @@ pair and `such` inputs). It does not depend on any other mention, on any recorde
 or on wording outside the innermost anchor (theorem `acc_no_heuristic`, 9.2, whose hypotheses are these inputs).
 Recorded targets and reading choices never prune candidates; sorts never restrict `Acc` (they act in 4.3).
 
-A manifest supersedes the natural-view rule by sort-typing it. `natural-view.md` admits a bare "It" only when
-exactly one constant has been mentioned earlier in the document, untyped and document-wide; here the candidates
-are the constants accessible by scope and the sort of the predication filters the competitors (4.3). The two
-agree whenever every constant mentioned earlier has one sort (the candidate set and the competing-quantifier set
-then coincide); with two sorts and one typed candidate they differ by design (fixture α′, section 10).
+A manifest supersedes the natural-view rule by sort-typing and scoping it. `natural-view.md` admits a bare "It" only
+when exactly one constant has been mentioned earlier in the document and no existential or universal mention
+precedes it, untyped and document-wide; here the candidates are the registered constants accessible by scope with
+no competing binder of their sort in the innermost anchor, and the sort of the predication filters them (4.3). The
+two agree where their inputs coincide: the natural view's candidate set (the constants mentioned earlier in the
+document) equals the manifest's set of accessible, type-checking candidates modulo aliases, and the natural view's
+competing-quantifier set (every earlier binder, document-wide) is empty exactly when the manifest's (the earlier
+binders of the candidates' sorts in the innermost anchor or the same sentence) is. A shared sort is not that
+condition and is not sufficient for it: two `service` constants registered at the mention's scope with only one of
+them mentioned earlier are one natural-view candidate but two typed manifest candidates (`AmbiguousReference`);
+two sorts with one typed candidate are rejected there and accepted here; a binder in an earlier anchor rejects there
+and does not compete here. Fixture α′ (section 10) records these differences as intended.
 
 ### 4.3 Resolution and acceptance
 
@@ -546,14 +561,15 @@ then coincide); with two sorts and one typed candidate they differ by design (fi
 Derives(D, s, d)            d is a derivation of sentence s in the discourse grammar: the existing English grammar with
                             a slot production for each formula-producing form of 1.4 (the slot yields the mention's
                             surface text)
-slots(d)                    the slots of d in source order; a slot is (unit, span, form): a surface position and a
-                            form, never a target
+slots(d)                    the slots of d in source order (by start byte; an enclosing slot before the slots nested
+                            in it, 1.4); a slot is (unit, span, form): a surface position and a form, never a target
 K.target(m)                 the target the manifest records at slot m: the mention of K.mentions with m's unit, span
                             and form (none when K records no mention there)
 assignment σ                slots(d) → targets
 elaborate(D, d, σ, ρ)       the closed formula obtained by substituting each slot by its target's elaboration (1.4,
-                            4.5, 4.6) under the recorded reading choices ρ, a fixed input, never a filter;
-                            capture-avoiding; fails when a slot's target has no elaboration (a location target)
+                            4.5, 4.6), innermost slots first, under the recorded reading choices ρ, a fixed input,
+                            never a filter; capture-avoiding; fails when a slot's target has no elaboration (a
+                            location target)
 Accepted(D, s, ρ, A)        := ∃ d σ. Derives(D, s, d)
                                  ∧ (∀ m ∈ slots(d). Acc(D, m, σ m) ∧ σ m = K.target(m))
                                  ∧ elaborate(D, d, σ, ρ) = A ∧ A closed and well-typed over E
@@ -605,7 +621,8 @@ no witness constant, no choice function, no fresh predicate (`elaborate_no_new_s
 ### 4.5 Definite descriptions
 
 For an explicit restriction `D` (a declared unary predicate, or a declared binary predicate with its other
-argument a resolved entity, e.g. `manager_of(x, alice)`), with `U(D) := ∃x (D(x) ∧ ∀y (D(y) → y = x))`:
+argument a resolved entity, the target of the nested slot of 1.4, e.g. `manager_of(x, alice)`), with
+`U(D) := ∃x (D(x) ∧ ∀y (D(y) → y = x))`:
 
 ```text
 assertive reading          A := ∃x:σ (D(x) ∧ ∀y:σ (D(y) → y = x) ∧ P(x))      one claim; false when there is no or
@@ -704,7 +721,8 @@ dependency as constraints (1.5). Let the active open sets be `R₁ … Rₙ` (la
 
 ```text
 JointSet(K)      := { c : Compatible(K, c) }                     enumerated, at most 64 (ResourceLimit: joint choices → UNKNOWN)
-                    zero open sets: the one empty choice [] (JointSet = {[]}); empty after a completed enumeration:
+                    zero open sets: the one empty choice [] (JointSet = {[]}; the empty product has size 1, within
+                    any limit of at least one); empty after a completed enumeration:
                     InvalidCompatibility: <sets> (a manifest validation error, 4.1(8)), distinct from inconsistent
                     premises inside an existing choice, which keep W2's inconsistency and vacuity report
 Conj(c)          := the conjunction of the chosen readings' contents (same environment, same background, all
@@ -843,7 +861,7 @@ old-boundary comparisons and certificate/audit provenance are retained. No new m
 | `IndependentFragment: <unit>` | a grouped unit carries content, or a reading set other than the group's owning set (1.5) | error |
 | `WitnessSplit: <set>@<version>:<reading>` | a `same-witness` content does not share its witness | error |
 | `PresuppositionUnresolved: <mention>` | presuppositional reading with the uniqueness premise neither proved (a certified unit-less deduction) nor assumed (an explicit `presupposition_unit`) (4.5) | pending (not a rejection) |
-| `ManifestMismatch: <field>` | regenerated binding, formula, export list, presupposition unit or table differs from the manifest | error |
+| `ManifestMismatch: <field>` | regenerated binding, formula, restriction (1.4), export list, presupposition unit or table differs from the manifest | error |
 | `UnknownDocument: <name>` / `DuplicateDeclaration: anchor <id>` / `mention <id>` / `document <name>` / `name <display>` / `content_name <display>` | tables (1.2, 1.3, 1.4, 1.6) | error |
 | `ImportCycle: <source ids>` / `ResourceLimit: document nesting` | 4.1(10); nesting inside a validity check is `unconfirmed` (4.7), not an error | error / UNKNOWN |
 | `ResourceLimit: mentions` / `anchors` / `joint choices` / `resolution` | limits (11); the last two are UNKNOWN for dependent verdicts (including the extension checks of 4.8) | error / UNKNOWN |
@@ -932,7 +950,8 @@ structure Mention where
   presuppositionUnit : Option String  -- 4.5, the assumed carrier: an asserted unit whose content is U(D)
   deriving DecidableEq, Repr
 
-/-- A slot of a derivation: a surface position and a form, never a target (4.3). -/
+/-- A slot of a derivation: a surface position and a form, never a target (4.3); a nested mention (1.4) is a slot
+    inside another slot's span. -/
 structure Slot where
   unit : String; span : Nat × Nat; form : Form
   deriving DecidableEq, Repr
@@ -1006,8 +1025,8 @@ def Derives (D : DDoc) (s : List VE.English.Tok) (d : DTree) : Prop
 def Assignment := Slot → Target
 def recordedTarget (D : DDoc) (m : Slot) : Option Target :=              -- K.target(m): the mention of K.mentions at (unit, span, form)
   (D.K.mentions.find? (fun x => x.unit == m.unit && x.span == m.span && x.form == m.form)).map Mention.target
-def recordedSlots (D : DDoc) (u : String) : List Slot                     -- the formula-producing mentions of u as slots, source order
-def elaborateD (D : DDoc) (d : DTree) (σ : Assignment) : Option VE.Formula   -- capture-avoiding slot substitution under D.K.choices (ρ), a fixed input
+def recordedSlots (D : DDoc) (u : String) : List Slot                     -- the formula-producing mentions of u as slots (nested ones included), source order: an enclosing slot before its nested slots (4.3)
+def elaborateD (D : DDoc) (d : DTree) (σ : Assignment) : Option VE.Formula   -- capture-avoiding slot substitution, innermost slots first (1.4), under D.K.choices (ρ), a fixed input
 /-- One recorded, typed (d, σ) first; every type-checking competitor equals it. The type check is the only filter. -/
 def Accepted (D : DDoc) (s : List VE.English.Tok) (A : VE.Formula) : Prop :=
   ∃ d σ, Derives D s d ∧ (∀ m ∈ d.slots, Acc D m (σ m) ∧ recordedTarget D m = some (σ m)) ∧
@@ -1058,7 +1077,8 @@ def Compatible (K : Manifest) (sets : List ReadingSet) (c : Choice) : Prop :=
 def productSize (sets : List ReadingSet) : Nat := sets.foldl (fun n rs => n * rs.readings.length) 1
 def compatibleChoices (K : Manifest) (sets : List ReadingSet) (limit : Nat) : Except String (List Choice)
   -- .error "ResourceLimit: joint choices" when productSize sets > limit (validation not completed);
-  -- .error "InvalidCompatibility: <sets>" when the completed enumeration is empty; sets = [] ↦ .ok [[]]
+  -- .error "InvalidCompatibility: <sets>" when the completed enumeration is empty;
+  -- sets = [] ↦ .ok [[]] when 0 < limit (productSize [] = 1), the resource error at limit = 0
 def readingsOf (sets : List ReadingSet) (c : Choice) : List VE.Formula
 def conj : List VE.Formula → VE.Formula                          -- right-nested ∧; [] ↦ .top
   | [] => .top
@@ -1292,8 +1312,10 @@ theorem compatible_empty_error (K : Manifest) (sets : List ReadingSet) (n : Nat)
   compatibleChoices K sets n = .error ("InvalidCompatibility: " ++ setsText sets)
 theorem compatible_budget (K : Manifest) (sets : List ReadingSet) (n : Nat) (hover : productSize sets > n) :
   compatibleChoices K sets n = .error "ResourceLimit: joint choices"
-/-- Zero open sets: the one empty choice, whose conjunction is top. -/
-theorem compatible_no_sets (K : Manifest) (n : Nat) : compatibleChoices K [] n = .ok [[]] ∧ Compatible K [] []
+/-- Zero open sets: the one empty choice, whose conjunction is top. `productSize [] = 1`, so the limit must admit one
+    choice; at `n = 0` `compatible_budget` applies instead. -/
+theorem compatible_no_sets (K : Manifest) (n : Nat) (hn : 0 < n) :
+  compatibleChoices K [] n = .ok [[]] ∧ Compatible K [] []
 theorem conj_nil : conj [] = .top
 theorem joint_no_sets : joint [] [[]] = some .top
 
@@ -1558,8 +1580,8 @@ check does not complete (it is `unconfirmed`), and no theorem that a failed inne
 completed with a non-resource diagnostic. No theorem about SHA-256 injectivity: identity statements are on
 canonical objects and transfer to digests under the occurrence hypotheses of P0 3.9 (`stale_target_rejected` takes
 the distinct meaning ids as a hypothesis). No theorem that the manifest and the natural-view rule agree beyond the
-one-sort cases of section 10 (α′ is the intended difference). No coverage theorem. Rust never resolves references
-(11).
+cases of section 10 where the candidate and competing-quantifier sets coincide (α′ records the intended
+differences). No coverage theorem. Rust never resolves references (11).
 
 ## 10. Acceptance fixtures for item 1
 
@@ -1570,9 +1592,9 @@ predicates `reviewed`, `deployed`, `safe`, `eligible : service`, `ready`, `owner
 `manager_of(person, person)`, `supersedes(document, document)`; one root anchor `doc` and section anchors `sec1`,
 `sec2`; every registered name (`api`, `alice`, `bob`) has scope `doc`; profiles `relational-fol@0`, `ve.discourse@1`;
 format `ve-document@2`. A P0 predicate has one signature, so a fixture that predicates a symbol of the other sort
-declares its own signature (γ, ζ, θ declare `reviewed : person`); a fixture never applies one predicate to both
-sorts. With all three names at scope `doc`, a bare "It"/"She" has three accessible candidates in every fixture; the
-type check of 4.3 is what leaves one.
+declares its own signature (γ, ζ, η, θ declare `reviewed : person`); a fixture never applies one predicate to both
+sorts. With all three names at scope `doc`, a bare "It"/"She"/"Her" has three accessible candidates in every fixture
+that registers them; the type check of 4.3 is what leaves one.
 
 - **(α) Named antecedent.** Units u1 "The API is reviewed." u2 "It is safe." Mention m1 (`It`) → `entity api`.
   Accessible candidates: `api`, `alice`, `bob` (all at scope `doc`); only `api` type-checks under `safe : service`.
@@ -1580,13 +1602,20 @@ type check of 4.3 is what leaves one.
   "It"; `references: 1 resolved`; bytes of u1 and u2 counted once each. The same manifest with m1 → `entity alice`:
   `IllTypedTarget: m1: alice` (`safe(alice)` is ill-typed; not `TargetKindMismatch`, which is form/kind only) and
   `ManifestMismatch: mentions.m1.target`.
-- **(α′) Natural view versus manifest, two sorts.** u1 "The API is reviewed." u2 "Alice is ready." u3 "It is safe."
+- **(α′) Natural view versus manifest.** u1 "The API is reviewed." u2 "Alice is ready." u3 "It is safe."
   m1 (`It`) → `api`. The natural-view rule (`natural-view.md`, untyped and document-wide: exactly one constant
-  mentioned earlier) REJECTS u3 (two constants mentioned). The manifest: three accessible candidates, one
-  type-checking (`api`): `safe(api)` CHECKED. The difference is intended (4.2, 13.17): the manifest sort-types
-  the rule. With `alice` not mentioned earlier (u2 removed) both accept; with a second service constant `beta`
-  registered and mentioned earlier both reject (natural view: two constants; manifest: `AmbiguousReference: m1:
-  api, beta`).
+  mentioned earlier and no earlier quantified mention) REJECTS u3 (two constants mentioned). The manifest: three
+  accessible candidates, one type-checking (`api`): `safe(api)` CHECKED. The difference is intended (4.2, 13.17):
+  the manifest sort-types and scopes the rule. With `alice` not mentioned earlier (u2 removed) both accept; with a
+  second service constant `beta` registered and mentioned earlier both reject (natural view: two constants;
+  manifest: `AmbiguousReference: m1: api, beta`). One sort is not the agreement condition: `beta : service`
+  registered at scope `doc` but not mentioned (u1 and u3 only) is ACCEPTED by the natural view (one constant
+  mentioned, no earlier quantifier) and rejected by the manifest (`AmbiguousReference: m1: api, beta`, two
+  accessible type-checking candidates). Competing-quantifier sets: u1 "A service is deployed." and u2 "The API is
+  reviewed." in `sec1`, u3 "It is safe." in `sec2`: the natural view rejects (one constant mentioned, but an
+  earlier quantified mention, document-wide) and the manifest resolves m1 → `api` (the binder is outside u3's
+  innermost anchor, as in β's second case). The two agree exactly where the candidate and competing-quantifier
+  sets coincide (4.2).
 - **(β) Competing quantifier.** u1 "A service is deployed." u2 "The API is reviewed." u3 "It is safe." Expected:
   `UnresolvedReference: m1` in authoring with the question "Does ‘it’ mean the API, or the service just mentioned?"
   offering "The API is safe." and the group reading "Some service is deployed and safe." (with u1); translation: an
@@ -1607,10 +1636,16 @@ type check of 4.3 is what leaves one.
   premise (a model with `alice = bob` is not excluded by the document; the vacuity report is unchanged). Two
   coordinations in the innermost anchor ("Alice and Bob", "Bob and Carol"): two candidates, `AmbiguousReference`.
   "The latter" → `bob`. A `pair` whose `name` is not a member: `InvalidInput`.
-- **(η) Possessive description, nested mentions.** "Alice is reviewed. Her manager is ready." m1 (`Her`, bytes
-  [a, a+3)) → `alice`; m2 (`Her manager`, bytes [a, a+11)) `definite`, restriction `manager_of(x, alice)`; m1 is
-  properly nested inside m2 (accepted; a partial overlap would be `InvalidInput: mentions m1, m2 overlap`); m2 is
-  the slot, m1 the binding of its restriction. Assertive: `∃x:person (manager_of(x, alice) ∧ ∀y:person
+- **(η) Possessive description, nested mentions.** Signature `reviewed : person`, `ready : person`; registered
+  names `api` and `alice` only (with `bob` also registered, `Her` has two type-checking candidates under
+  `manager_of(person, person)` and is `AmbiguousReference: m1: alice, bob`, as γ). "Alice is reviewed. Her manager
+  is ready." m1 (`Her`, bytes [a, a+3)) → `alice`; m2 (`Her manager`, bytes [a, a+11)) `definite`, restriction
+  `manager_of(x, alice)`; m1 is properly nested inside m2 (accepted; a partial overlap would be `InvalidInput:
+  mentions m1, m2 overlap`); both are slots of u2's derivation, `recordedSlots` = [m2, m1], m1 substituted first
+  so that m2's regenerated restriction is `manager_of(x, alice)` (a recorded restriction `manager_of(x, bob)` is
+  `ManifestMismatch: mentions.m2.restriction`; m1 recorded as `api` is `IllTypedTarget: m1: api`, since
+  `manager_of(x, api)` is ill-typed; m1 omitted from the manifest is `UnrecordedSlot: u2: [a, a+3)`). Assertive:
+  `∃x:person (manager_of(x, alice) ∧ ∀y:person
   (manager_of(y, alice) → y = x) ∧ ready(x))`. Presuppositional, proved: `Γ ⊢ U(D)` certified as a unit-less
   `asserted` deduction node; claim `∀x:person (manager_of(x, alice) → ready(x))` CHECKED with the report line
   `discourse:presupposition:m2: proved (<node>)`. Presuppositional, assumed: an authored unit u3 "Alice has exactly
@@ -1739,9 +1774,11 @@ type check of 4.3 is what leaves one.
 Beside these: every W2 fixture repeated as a `ve-document@2` document with an empty `discourse` block (identical
 statuses, verdicts, inner reports and `meaning_id`s; `document_id` in the `@2` domain); the four natural-view `It`
 cases (`natural-view.md`: zero, one and multiple named referents; an earlier quantifier) reproduced through the
-manifest with identical accept/reject outcomes **when every constant mentioned earlier has one sort**, which is
-exactly when the natural-view candidate set and competing-quantifier set coincide with the manifest's typed
-candidates and sort-scoped competing binders; α′ records the intended divergence for two sorts; differential
+manifest with identical accept/reject outcomes **when the natural-view candidate set and competing-quantifier set
+coincide with the manifest's type-checking accessible candidates and sort-scoped competing binders** (in these four
+cases: every registered constant is mentioned earlier, all of one sort, in one anchor; a shared sort alone is not
+the condition, 4.2); α′ records the intended divergences (two sorts with one typed candidate; one sort with a
+registered but unmentioned constant; a binder in an earlier anchor); differential
 `validate` Python versus Lean on 1,000 generated manifests; the 200-graph DAG differential extended to
 definition/citation dependency graphs; the mixed English harness (W7) extended with the 2.1 wordings, each passing
 the per-input all-derivations gate.
@@ -1839,9 +1876,11 @@ Each is a point where the plan or the debate left a reading open; the review may
     claims not)", 2026-09-28) exactly: validity claims supported and checked; truth claims labelled.
 17. **The type check is the only competitor filter (review F1/F2/A1).** `Accepted` fixes one recorded, typed
     derivation and assignment and compares every type-checking competitor against it; recorded targets and
-    reading choices never prune. A manifest therefore supersedes the natural-view rule by sort-typing it, and the
-    two agree exactly when every earlier-mentioned constant has one sort (α′ records the intended difference)
-    rather than being forced to coincide, which would undo the typed filter.
+    reading choices never prune. A manifest therefore supersedes the natural-view rule by sort-typing and scoping
+    it, and the two agree where the natural view's candidate and competing-quantifier sets coincide with the
+    manifest's type-checking accessible candidates and sort-scoped competing binders (a shared sort is not
+    sufficient; α′ records the intended differences) rather than being forced to coincide, which would undo the
+    typed filter.
 18. **The profile adapter (review A3, Astra round 3).** `ve.discourse@1` is validated by the wrapper and stripped
     from both the list and the environment JSON before every frozen call; identities are computed under the base
     pair; the wrapper report binds the original declaration. This mirrors `Norms/Replay.lean`.
@@ -1868,3 +1907,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 |---|---|---|
 | 2026-09-28 | Draft 1 | Item-1 specification from the plan as revised by the converged debate (J1 to J8) and the lead's document-name/validity/truth input: the manifest with seven target kinds; the English table; wire form and the `@2` identity domain; accessibility, resolution, elaboration and `Intended`; descriptions with the presupposition leaf; same-witness groups with the J5 negatives; document names, validity claims in a second phase, the self-truth label and stratification; the joint set with declared constraints and the nonempty requirement; the three operations with the J2 citation wording; report, diagnostics; every theorem of the plan's five obligation groups plus documents as a statement; fixtures α to ω; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The converged Astra + Fable statement review of draft 1 applied (`manage-agents/debates/discourse-spec`, rounds 1 to 3, FIX). F1: typed competitors, `IllTypedTarget`, per-fixture signatures. F2/A1: `Accepted` with one recorded typed (d, σ) outside the universal, slots as (unit, span, form), targets looked up in `K.mentions`, slot correspondence (`UnrecordedSlot`/`MentionNotSlot`), no pruning, typed candidates for pairs, lists and `such`. F3: `Acc`'s inputs listed; `acc_no_heuristic` over equal anchor trees and innermost-anchor texts. F4/A4: `validity_import` over the three outcomes, `stale_import_rejected` separate, rejection distinct from UNKNOWN, 4.1(10) reduced to decode, identity, cycle and depth. F5/A2: `group_single_assertion` over the owning set's leaf; owning set exempt from `IndependentFragment`; formulas validated per group; nested mentions; location versus formula bindings; `members`, `pair`, `units`, `content_names`, `exports`. F6: `target.units` and `content_names`. F7: `Meaning := Formula`, `presentation_expands`, `LexiconCovers`. F8: `such` dropped from the constant forms; `original_index` mapping; `S.domain σ a`; θ decode-time `InvalidInput`; υ over any document name; VISION commit pinned; the natural-view difference stated with fixture α′. A3: the profile adapter (`baseProfiles`, `baseEnvironment`, identities under the base pair, wrapper binding the original declaration; `profile_adapter_base`, `format1_profile_requires_format2`); the presupposition carriers (`presupposition_carried`, `no_discourse_label`); the composition gate (`ExtendsTo`, `citation_extends_joint`, `report_extends_joint`, `extension_rejected`, `extension_unknown`). A5: binder sorts on `uniqueD`/`assertive`/`presupposed`/`fused`, `.ex`, typed hypotheses throughout, `independent_shortcut` with its enumeration premise, `admission_projects` for `@2` inputs under the base pair, constant freshness in `document_sort_conservative`, `stale_target_rejected` over the bound envelope. A6: `conj [] = .top`, `compatible_empty_error` under completed enumeration, ξ corrected (two ready owners), μ's pending candidate outside the inventory. Soft composition clause (5, 11). Checklist 12 now the complete amended gate; resolved choices 17 to 24. Spec only. |
+| 2026-09-28 | Draft 3 | The first verification pass of draft 2 applied (`manage-agents/discourse-p3ver1.final.md`, FAIL). F1: η declares `reviewed : person` (the default `reviewed : service` made "Alice is reviewed" ill-typed) and registers `api` and `alice` only, so that `Her` has one type-checking candidate. A2/F2: a nested mention is a slot of the unit's derivation, not a non-slot binding: 1.4 states that both the `possessive` and the enclosing `definite` are slots, the inner substituted first and the recorded `restriction` compared with the regenerated one (`ManifestMismatch: mentions.<m>.restriction`); `slots(d)`, `recordedSlots` and `elaborateD` fix the order (enclosing before nested; innermost substituted first); 4.1(6) and η state the slot correspondence over nested mentions too. F8: the natural-view agreement condition is the coincidence of the candidate sets and of the competing-quantifier sets (4.2), not a shared sort; α′ adds the one-sort counterexample (a registered, unmentioned second `service` constant) and the earlier-anchor binder case; 9.8, the section 10 closing paragraph and 13.17 say the same. A6: `compatible_no_sets` takes `0 < n` (`productSize [] = 1`, so `compatible_budget` applies at `n = 0`); the `compatibleChoices` comment and 4.8 say so. Spec only. |
