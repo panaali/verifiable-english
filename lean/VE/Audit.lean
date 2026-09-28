@@ -1032,3 +1032,5 @@ import VE.SpeechActs.Run
 #print axioms VE.SpeechActs.Run.speech_wire_answer_sound
 #print axioms VE.SpeechActs.Run.speech_wire_consequence_sound
 #print axioms VE.SpeechActs.Run.speech_wire_conflict_witness_sound
+#print axioms VE.SpeechActs.Wire.decoded_active_commands
+#print axioms VE.SpeechActs.Wire.decoded_premises

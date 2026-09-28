@@ -33,7 +33,7 @@ checked here. -/
 namespace VE.SpeechActs.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings)
-open VE.Norms (Regulated Node)
+open VE.Norms (Regulated Node background elaborate)
 
 def speechProfile : String := "speech-acts@0"
 
@@ -345,10 +345,10 @@ def decodeBinding (u : String) (j : Json) : Except String Binding := do
 
 /-- What a decoded unit contributes. -/
 inductive Role
-  | command (c : Command) (active : Bool)
+  | command (c : Command)
   | question (q : Question)
   | binding (b : Binding)
-  | norm (n : Node) (active : Bool)
+  | norm (n : Node)
   | asserted (φ : VE.Formula)
   | other
 
@@ -360,6 +360,8 @@ structure SpeechUnitInfo where
   kind : Json
   meaning : Json
   role : Role
+  /-- the unit is the source unit of an open (pending) W2 reading set -/
+  pending : Bool := false
 
 def contentTag (content : Json) : Option String :=
   match content with
@@ -389,15 +391,14 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
     let some content := content? | throw s!"InvalidInput: invalid binding fields for {id}"
     unless contentTag content == some "binding" do throw s!"InvalidInput: invalid binding fields for {id}"
     let b ← decodeBinding id (content.getObjValD "binding")
-    return ⟨id, start, stop, kindJ, meaning, .binding b⟩
+    return ⟨id, start, stop, kindJ, meaning, .binding b, false⟩
   let kind ← VE.Route.Admission.decodeKind 16 kindJ
   let role ← match content? with
     | none => pure Role.other
     | some content => match contentTag content with
       | some "command" =>
-        if kind == .instruction then
-          pure (Role.command (← decodeCommand E id (content.getObjValD "command")) (specified meaning))
-        else if kind.quoted then pure (Role.command (← decodeCommand E id (content.getObjValD "command")) false)
+        if kind == .instruction || kind.quoted then
+          pure (Role.command (← decodeCommand E id (content.getObjValD "command")))
         else throw "command content requires an instruction or quoted kind"
       | some "question" =>
         if kind == .question then pure (Role.question (← decodeQuestion id (content.getObjValD "question")))
@@ -407,13 +408,44 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
         else throw "question content requires a question or quoted kind"
       | some "binding" => throw s!"InvalidInput: binding content requires the binding kind for {id}"
       | some "norm" =>
-        if kind == .norm then pure (Role.norm (← VE.Norms.Wire.decodeNorm content) true)
-        else if kind.quoted then pure (Role.norm (← VE.Norms.Wire.decodeNorm content) false)
+        if kind == .norm || kind.quoted then pure (Role.norm (← VE.Norms.Wire.decodeNorm content))
         else throw "norm content requires a norm or quoted kind"
       | _ =>
         let φ ← VE.Route.Wire.decodeClosed E content
         pure (if kind == .asserted then Role.asserted φ else Role.other)
-  pure ⟨id, start, stop, VE.Route.Admission.renderKind kind, meaning, role⟩
+  pure ⟨id, start, stop, VE.Route.Admission.renderKind kind, meaning, role, false⟩
+
+/-- 1.2: a command unit is active exactly when its kind is `instruction`, its meaning `specified` and it is not
+the source unit of a pending reading set (its slots are bound by `WellFormedSpeech`). Every other command unit
+is dormant. -/
+def activeCommand (u : SpeechUnitInfo) : Option Command :=
+  match u.role with
+  | .command c => if u.kind == .str "instruction" && specified u.meaning && !u.pending then some c else none
+  | _ => none
+
+/-- An author norm is active when its kind is `norm` and it is not pending (quoted norms are dormant). -/
+def activeNorm (u : SpeechUnitInfo) : Option Node :=
+  match u.role with
+  | .norm n => if u.kind == .str "norm" && !u.pending then some n else none
+  | _ => none
+
+/-- W2's fixed asserted premises: asserted units with content, not pending. -/
+def fixedAssertion (u : SpeechUnitInfo) : Option (String × VE.Formula) :=
+  match u.role with
+  | .asserted φ => if !u.pending then some (u.id, φ) else none
+  | _ => none
+
+/-- The source units of open W2 reading sets (`ve/readings.py`: `unit`, `status`). -/
+def pendingUnits (document : Json) : Except String (List String) := do
+  match document.getObjVal? "reading_sets" with
+  | .error _ => pure []
+  | .ok rs =>
+    let items ← rs.getArr?
+    items.toList.filterMapM fun r => do
+      match r.getObjVal? "unit", r.getObjVal? "status" with
+      | .ok (.str u), .ok (.str "open") => pure (some u)
+      | .ok (.str _), .ok (.str "authored") => pure none
+      | _, _ => throw "InvalidInput: reading sets on the speech-acts route need their unit and status (W2 form)"
 
 /-- A query record `{"id", "premises", "target": {"ast"}}` (3.2), before regeneration. -/
 def decodeQuery (E : VE.Environment) (j : Json) : Except String (String × List String × VE.Formula) := do
@@ -453,7 +485,7 @@ def bindingKey : Binding → String
 def queryOf (E : VE.Environment) (u : SpeechUnitInfo) : Option String :=
   match u.role with
   | .question q => if q.mode == .follows then q.query else none
-  | .command c _ => match E.predicates c.act with
+  | .command c => match E.predicates c.act with
     | some (_ :: ss) => ((ss.zip c.args).find? (·.1 == "query")).map Prod.snd
     | _ => none
   | _ => none
@@ -466,13 +498,18 @@ structure Decoded where
   wf : WellFormedSpeech D = true
   env : D.E = se.ne.rv.environment
   lits : D.lits = se.ne.rv.literals
+  commands_eq : D.commands = units.filterMap activeCommand
+  norms_eq : D.norms = units.filterMap activeNorm
+  asserted_eq : D.asserted = units.filterMap fixedAssertion
 
 def decodeDocument (environment document : Json) : Except String Decoded := do
   let se ← decodeSpeechEnvironmentFull environment
   let E := se.ne.rv.environment
   VE.Bridge.displayFields document ["units"]
     ["queries", "answers", "compliance", "graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
-  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnit E)
+  let units₀ ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnit E)
+  let pending ← pendingUnits document
+  let units := units₀.map (fun u => { u with pending := pending.contains u.id })
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"
   unless (units.map (·.id)).eraseDups.length == units.length do throw "duplicate unit id"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
@@ -490,17 +527,18 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
         if u.id.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
         unless u.meaning == Json.mkObj [("open", Json.arr #[.str ("intended-reading." ++ u.id)])] do
           throw s!"InvalidInput: invalid question fields for {u.id}"
-  let asserted := units.filterMap (fun u => match u.role with | .asserted φ => some (u.id, φ) | _ => none)
-  let norms := units.filterMap (fun u => match u.role with | .norm n true => some n | _ => none)
-  let commands := units.filterMap (fun u => match u.role with | .command c true => some c | _ => none)
+  let asserted := units.filterMap fixedAssertion
+  let norms := units.filterMap activeNorm
+  let commands := units.filterMap activeCommand
   let questions := units.filterMap (fun u => match u.role with | .question q => some q | _ => none)
   -- Quoted norms and dormant commands keep every single-unit check.
   for u in units do
     match u.role with
-    | .norm n false =>
-      VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
-    | .command c false =>
-      if specified u.meaning || !(u.kind == .str "instruction") then
+    | .norm n =>
+      if (activeNorm u).isNone then
+        VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
+    | .command c =>
+      if (activeCommand u).isNone && (specified u.meaning || !(u.kind == .str "instruction")) then
         validateSpeech ⟨E, se.ne.rv.literals, scope, se.ne.regulated, [], [c], [], [], []⟩
     | _ => pure ()
   -- Query records (1.4): derived, compared with the regeneration at every unit that asks.
@@ -514,12 +552,42 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
       match rawQueries.find? (·.1 == qid) with
       | none => throw s!"QueryMismatch: {u.id}"
       | some (_, ids, _) => unless ids == before do throw s!"QueryMismatch: {u.id}"
-    if let .asserted _ := u.role then before := before ++ [u.id]
+    if (fixedAssertion u).isSome then before := before ++ [u.id]
   let queries := rawQueries.map (fun (id, ids, t) =>
     ({ id, premiseIds := ids, premises := (asserted.filter (fun a => a.1 ∈ ids)).map Prod.snd, target := t } : Query))
   let D : SpeechDoc := ⟨E, se.ne.rv.literals, scope, se.ne.regulated, norms, commands, questions, queries, asserted⟩
   match hv : validateSpeech D with
   | .error e => throw e
-  | .ok () => pure ⟨se, units, D, by unfold WellFormedSpeech; rw [hv], rfl, rfl⟩
+  | .ok () => pure ⟨se, units, D, by unfold WellFormedSpeech; rw [hv], rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Which units are active (1.2), for the decoded document: a command is in the semantic core exactly when some
+unit of kind `instruction` with `specified` meaning, not the source of a pending reading set, carries it. -/
+theorem decoded_active_commands (dec : Decoded) (c : Command) :
+    c ∈ dec.D.commands ↔ ∃ u ∈ dec.units, u.role = .command c ∧ (u.kind == .str "instruction") = true ∧
+      specified u.meaning = true ∧ u.pending = false := by
+  rw [dec.commands_eq, List.mem_filterMap]
+  constructor
+  · rintro ⟨u, hu, ha⟩
+    unfold activeCommand at ha
+    split at ha
+    · rename_i c' hr
+      split at ha
+      · rename_i hc
+        cases ha
+        simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
+        exact ⟨u, hu, hr, hc.1.1, hc.1.2, hc.2⟩
+      · cases ha
+    · cases ha
+  · rintro ⟨u, hu, hr, hk, hs, hp⟩
+    refine ⟨u, hu, ?_⟩
+    simp [activeCommand, hr, hk, hs, hp]
+
+/-- Questions, bindings, answer and compliance records and dormant units reach no premise: the premises of the
+decoded document are regenerated from its active norms, active commands and fixed assertions alone. -/
+theorem decoded_premises (dec : Decoded) :
+    premises dec.D = background (policy dec.D) ++ elaborate (policy dec.D).T ++
+      (dec.units.filterMap fixedAssertion).map Prod.snd ∧
+    (policy dec.D).T.nodes = dec.units.filterMap activeNorm ++ (dec.units.filterMap activeCommand).map (demand dec.D) := by
+  refine ⟨by rw [premises, assertedFormulas, dec.asserted_eq], by rw [policy_nodes, dec.norms_eq, dec.commands_eq]⟩
 
 end VE.SpeechActs.Wire

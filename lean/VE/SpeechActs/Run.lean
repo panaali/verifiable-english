@@ -87,9 +87,9 @@ def elaborated (dec : Wire.Decoded) : List (String × Json) :=
    ("commands", Json.arr (D.commands.map (fun c => Json.mkObj [("unit", .str c.unit),
       ("force", Wire.encodeForce c.force), ("demand", encodeNode (demand D c)),
       ("paraphrase", .str (paraphrase D c))])).toArray),
-   ("dormant", toJson (dec.units.filterMap (fun u => match u.role with
-      | .command _ false => some u.id
-      | _ => none))),
+   ("dormant", toJson (dec.units.filterMap (fun u => match u.role, Wire.activeCommand u with
+      | .command _, none => some u.id
+      | _, _ => none))),
    ("questions", Json.arr (D.questions.map (questionJson D)).toArray),
    ("queries", Json.arr (D.queries.map (fun qr => Json.mkObj [("id", .str qr.id),
       ("premises", Json.arr (qr.premises.map enc).toArray), ("target", enc qr.target)])).toArray)]
