@@ -1,7 +1,7 @@
 # Reports and attitudes (`reports@0`): structured reported content, attitude wrappers and open assessments over `ve-document@1`
 
-> Status: item-1 specification, draft 8 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
-> revision 7. Draft 1 transcribed the converged Astra/Fable design debate
+> Status: item-1 specification, draft 9 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
+> revision 8. Draft 1 transcribed the converged Astra/Fable design debate
 > (`manage-agents/debates/design-attribution/{astra,fable}.md`: BUILD after six text edits, CONVERGED after
 > round 2); draft 2 applies the converged FIX of the Astra/Fable statement review of draft 1
 > (`manage-agents/debates/attribution-spec/{astra,fable}.md`: FIX, CONVERGED after round 3; the change log lists
@@ -37,7 +37,14 @@
 > which the nested key is asserted and denied by nothing, while B₁₁, `D_ω` and B₁₂′, which also put that key at
 > top level, break two of its hypotheses and are recorded as instances of the nested-content theorems; the table
 > at the end of 10.3 names, for every boundary fixture, the theorem and the one hypothesis it breaks; and the
-> plan's summary (revision 7) carries no unconditional semantic sentence. It returns
+> plan's summary (revision 7) carries no unconditional semantic sentence; draft 9 applies the two findings of the
+> seventh read-only verification (`manage-agents/attribution-p3ver7.final.md`) as instances of the same directive,
+> each a fixture assertion corrected to what the definitions and statements give: B₂ is no instance of
+> `nested_independent`, whose shape hypothesis `hb` names an inner `believes` node while B₂'s inner node is a
+> `says` report, so B₂ is recorded as breaking exactly `hb`, the freedom of its nested atom being
+> `unreported_key_free`'s at `k_in`; and B₁₂'s content depth is 4 under `Content.depth` (three report nodes over
+> the formula leaf, its W2 kind of depth 4 likewise), not 3, its nesting depth of 2 counting the report nodes
+> below the top-level one. It returns
 > for the one focused statement review that gates items 2 to 5 of the plan
 > (PLAN-EXPAND2 rule 10) and any implementation. Sections 4 to 6 and 9 are the statements under review; section 10
 > gives the fixtures with their definitions (10.1) separated from their expected results (10.2) and the boundary
@@ -755,11 +762,13 @@ names the one hypothesis each breaks).
 - **Nested independence** (`nested_independent`; hypotheses: `u`'s content is `report h₁ act c (report h₂
   believes c′ (formula q) none) lit`, `holderSort D h₂ = some s₂`, `⟨believes, s₂, c′, cid q⟩ ∉ topKeys D`, `S₀`
   admissible, `Expandable D S₀`, `q` false in `S₀`; conclusion: a source model over `S₀` with the inner belief
-  relation empty and `q` false; `D_ζ`, B₂). One hypothesis broken each: `hin`, the inner key in `topKeys` at the
+  relation empty and `q` false; `D_ζ`). One hypothesis broken each: `hin`, the inner key in `topKeys` at the
   same holder (B₁: `nested_positive_entailed` applies instead) or at another holder (B₉′: `holder_atom_free`
-  applies instead); `hb`, a negated inner node whose key no top-level unit asserts or denies (B₁₁′:
-  `all_truth_combinations` applies instead) or nesting depth 2 with no top-level unit of either nested key (B₁₂:
-  `hb` names a formula body at depth 1, and `unreported_key_free` applies at both nested keys instead). B₁₁,
+  applies instead); `hb`, an inner `says` node (B₂: `hb` names an inner `believes` node, and
+  `unreported_key_free` applies at the inner key instead), a negated inner node whose key no top-level unit
+  asserts or denies (B₁₁′: `all_truth_combinations` applies instead) or nesting depth 2 with no top-level unit of
+  either nested key (B₁₂: `hb` names a formula body at depth 1, and `unreported_key_free` applies at both nested
+  keys instead). B₁₁,
   `D_ω` and B₁₂′ break `hb` and `hin` together, their nested key being denied or asserted at top level, and are
   instances of the nested-content theorems, not one-hypothesis boundaries of this one (the table of 10.3).
 - **Negation scopes** (`negation_scopes_distinct`: `J_{believes,c,¬q}(h)` and `¬J_{believes,c,q}(h)` are a
@@ -1928,7 +1937,8 @@ change of φ.
 One fixture at the boundary of each claim that sections 2 to 5, 9 and 10.1 restrict to a fragment; for each
 nested-content theorem of 9.2 and for `nested_independent`, fixtures that break exactly one of its hypotheses,
 the hypothesis named in the table that closes this section (the holder differs, B₉ and B₉′; the polarity
-differs, B₁₀, B₁₁, B₁₁′ and `D_ω`; the nesting is two deep, B₁₂ and B₁₂′); and for `content_depth_bounded` the
+differs, B₁₀, B₁₁, B₁₁′ and `D_ω`; the inner act differs, B₂; the nesting is two deep, B₁₂ and B₁₂′); and for
+`content_depth_bounded` the
 admitted bound and the first document beyond it (B₁₃, B₁₃′); all over `E₀` and the declarations of 10.1 (B₂ adds
 one context, `c4`, to them; B₈ is `D_π` of 10.1; B₉ is B₇ and B₉′ is B₁ with u1's holder changed; B₁₁ is `D_ω`
 with u2's polarity changed; B₁₁′ is `D_ω`'s u1 alone; B₁₂′ is B₁₂ with the innermost node carried at top level;
@@ -1943,7 +1953,8 @@ B₁   u1: Anthropic believes that the service is safe.                        b
      u2: The article says that Anthropic believes that the service is safe.   says, the_article, c3, ⟨k₁⟩             key k₂
          (nested attribution: u2's content is u1's key, and the document has a top-level says key)
 B₂   u1: Anthropic believes that the article says that the service is safe.   believes, anthropic, c1, ⟨says, the_article, c4, safe(service)⟩
-         (a nested says key k_in under the belief key k_out; no top-level says key; the inner context is c4,
+         (a nested says key k_in under the belief key k_out: the inner node is a says report, not the believes
+          node that nested_independent's hb names; no top-level says key; the inner context is c4,
           a fourth context declared for this fixture only: present, "the article, later edition", so that k_in
           sorts after every registration key (says, text, c3, ·) in the key order of 1.5, whatever the content ids)
 B₃   u1, u2 of D_β; u3: Anthropic believes that the service is safe.          believes, anthropic, c1, safe(service)
@@ -2022,7 +2033,12 @@ B₁₃′ B₁₃ with a sixteenth negated says report of the_article in c3 ins
 - **(B₂) A nested `says` key.** Over `B₂`: keys `k_in = (says, text, c4, safe)` and `k_out`; names
   `reports__says__1`, `reports__believes__1`; `Γ = [reports__believes__1(anthropic)]`; `topKeys = {k_out}`. The
   model with the `believes` atom true, the `says` atom false and `safe` empty is valid and satisfies `Γ`
-  (`unreported_key_free` at `k_in`): nested independence holds over `B₂` itself, without registration. Over
+  (`unreported_key_free` at `k_in`, `k_in ∉ topKeys`): the nested atom is free over `B₂` itself, without
+  registration. `nested_independent` has no instance at u1 and fails exactly `hb`, whose inner node is a
+  `believes` report while u1's inner node is the `says` node (`hs₂` holds, `the_article : text`; `hin` holds,
+  `⟨believes, text, c4, safe⟩ ∉ topKeys = {k_out}`; `he` and `hn` over any admissible `S₀` with `safe` empty, the
+  document being positive): the one-hypothesis boundary of that theorem's shape hypothesis for the inner act,
+  the seventh verification's finding. Over
   `B₂ ▷ []`: the registration unit `The article says that Anthropic believes that the article says that the
   service is safe.` has key `k_r = (says, text, c3, ⟨k_out⟩)`; the `says` keys are now `k_r` and `k_in`, and in
   the key order of 1.5 `k_r` precedes `k_in` (`c3` before `c4`, whatever the content ids), so `k_r` is
@@ -2152,8 +2168,11 @@ B₁₃′ B₁₃ with a sixteenth negated says report of the_article in c3 ins
   c1, safe⟩)` and `k_top = (says, text, c3, ⟨the_team, says, c3, ⟨…⟩⟩)`; in the key order of 1.5 `k_mid`
   precedes `k_top` (`organisation` before `text`), so `E_reports = E₀ + reports__believes__1(organisation) +
   reports__says__1(organisation) + reports__says__2(text)`; `Γ = [reports__says__2(the_article)]`, positive,
-  `neqs Γ = []`; `topKeys = {k_top}`; u1's content depth is 3 and its kind `attributed(the_article, says,
-  attributed(the_team, says, attributed(anthropic, believes, asserted)))`. Neither nested atom is carried by a
+  `neqs Γ = []`; `topKeys = {k_top}`; u1's content depth is 4 (`Content.depth`, 9.1: three report nodes, each one
+  more than its body, over the formula leaf, which counts one) and its kind `attributed(the_article, says,
+  attributed(the_team, says, attributed(anthropic, believes, asserted)))` has depth 4 likewise; the fixture's
+  "nesting depth 2" counts the report nodes below the top-level one (the formula leaf is at path depth 2,
+  `(u1, 1.1)`, 5.2). Neither nested atom is carried by a
   premise and neither nested key is in `topKeys`: the finite model with `reports__says__2 = {the_article}`,
   `reports__says__1` empty, `reports__believes__1` empty and `safe` empty is valid and satisfies `Γ`
   (`unreported_key_free` at `k_mid` and at `k₁`; `all_truth_combinations` with `ks = [k₁, k_mid]` realises all
@@ -2220,9 +2239,10 @@ that the fixture is an instance of another theorem, not a one-hypothesis boundar
 | | B₁₁′ | `hb′`: no top-level unit carries `n` | free (`all_truth_combinations`) |
 | `holder_atom_free` | B₉ over an `S₀` with the two constants distinct; B₁₀; B₁₂ | none: instances | a source model over `S₀` with the atom false at `hd` |
 | | B₁, B₇; B₉ over an `S₀` in which `anthropic` and `the_team` co-denote | `hfree`: a positive premise of the key at a holder co-denoting with `hd` | no instance; the atom true in every source model over that `S₀` |
-| `nested_independent` | `D_ζ`, B₂ | none: instances | inner relation empty, `q` false |
+| `nested_independent` | `D_ζ` | none: instance | inner relation empty, `q` false |
 | | B₁ | `hin`: the inner key asserted at the same holder | entailed (`nested_positive_entailed`) |
 | | B₉′ | `hin`: the inner key asserted at another holder | free (`holder_atom_free`) |
+| | B₂ | `hb`: the inner node is a `says` report, not the `believes` node the shape names; no top-level unit of its key | free (`unreported_key_free` at `k_in`) |
 | | B₁₁′ | `hb`: the inner node is negated; no top-level unit of its key | free (`all_truth_combinations`) |
 | | B₁₂ | `hb`: the body one level down is a report node; no top-level unit of either nested key | free (`unreported_key_free`) |
 | | B₁₁, `D_ω`, B₁₂′ | `hb` and `hin` together: the nested key denied or asserted at top level | not one-hypothesis boundaries of this theorem; instances of the nested-content theorems above |
@@ -2329,8 +2349,9 @@ theorem name or successful build substitutes for a replayed certificate.
     10.3, B₁ to B₁₃′, one per restricted claim, the nested assessment (B₇), the author's premises (B₈), B₂'s
     forced renumbering, the one-hypothesis-broken fixtures of the nested-content theorems and of
     `nested_independent` as the closing table of 10.3 names them (B₉ and B₉′, the holder; B₁₀, B₁₁ and ω's
-    refutation, the polarity; B₁₁′ and B₁₂, `nested_independent`'s shape hypothesis alone, with B₁₁, `D_ω` and
-    B₁₂′ recorded as breaking two) and the depth bound attained and exceeded (B₁₃, B₁₃′) among them; the
+    refutation, the polarity; B₂, B₁₁′ and B₁₂, `nested_independent`'s shape hypothesis alone, the inner act, a
+    negated inner node and depth 2, with B₁₁, `D_ω` and B₁₂′ recorded as breaking two) and the depth bound
+    attained and exceeded (B₁₃, B₁₃′) among them; the
     checklist's situation lines of 2.3, defined by what the IDE runs, against B₁, B₃, B₄, B₆, B₈, B₉′, B₁₀, B₁₁,
     B₁₁′, B₁₂, B₁₂′ and `D_ω`; the envelope in fixture φ (13.19).
 16. The composition gate with `data@0` rejected (11.3) and the trust list (11.4).
@@ -2338,13 +2359,14 @@ theorem name or successful build substitutes for a replayed certificate.
     premises), the draft-2 choices 13.15 to 13.19, the draft-5 choice 13.21 (the no-`says` fragment of the
     premise-subset device), the draft-6 choice 13.22 (entailment claims over `Γ_reports(D)` for formula
     contents over `E`), the draft-7 choice 13.23 (normative content is definitions, statements and fixtures;
-    nested-content entailment on the holder-applied atom) and the draft-8 choice 13.24 (a boundary fixture names
-    the one hypothesis it breaks; a theorem is weakened to the admitted bound, never the bound tightened); the
-    "Fragments" convention of section 0.
+    nested-content entailment on the holder-applied atom), the draft-8 choice 13.24 (a boundary fixture names
+    the one hypothesis it breaks; a theorem is weakened to the admitted bound, never the bound tightened) and the
+    draft-9 choice 13.25 (an instance claim unifies the fixture's content with the shape hypothesis literally,
+    act included; a fixture's depth is `Content.depth` computed); the "Fragments" convention of section 0.
 18. The "Normative content" rule of section 0: every prose entailment, "iff", "exactly when" and "no …" claim
     outside the definitions, 9.2, 9.3 and section 10 names the theorem it reads and that theorem's hypotheses, or
     is absent; 4.5 and 4.6 marked NON-NORMATIVE; the three open questions of 4.6 left as questions, none promoted
-    to a claim; the plan's pages and summary (revision 7) carrying no unconditional semantic sentence and marked
+    to a claim; the plan's pages and summary (revision 8) carrying no unconditional semantic sentence and marked
     NON-NORMATIVE on the same terms.
 
 ## 13. Resolved choices in this draft
@@ -2477,6 +2499,18 @@ Each is a point where the plan left a reading open; the review may overturn any 
     NON-NORMATIVE on the terms of section 0. The admission bound was not tightened to `< 16`, which would have
     rejected documents 4.1 admits today; the theorem was weakened to what admission guarantees. Nothing was
     broadened.
+25. **An instance claim unifies the fixture's content with the shape hypothesis literally, act included; a
+    fixture's depth is `Content.depth` computed.** The seventh verification found two fixture assertions
+    incorrect, neither a theorem statement, a definition nor an expected verdict: (1) the table of 10.3 listed B₂
+    as an instance of `nested_independent` with every hypothesis satisfied, while that theorem's `hb` fixes the
+    inner node's act to `believes` and B₂'s inner node is a `says` report; B₂'s expected freedom was and is
+    `unreported_key_free`'s at its nested key, so B₂ is recorded as breaking exactly `hb` (the inner act; `hs₂`,
+    `hin`, `he` and `hn` hold), in its row, in 4.5's bullet, in 10.3's intro and in its own definition and
+    expectation, and `D_ζ` is the theorem's one listed instance; (2) B₁₂ stated a content depth of 3 where
+    `Content.depth` (9.1) gives 4, three report nodes over the formula leaf, as does its W2 kind; B₁₂ says 4 and
+    distinguishes its nesting depth of 2, the report nodes below the top-level one, from its content depth. Both
+    are the directive's class: a fixture assertion is checked against the statement or definition it cites, not
+    against the prose around it. Nothing was broadened.
 
 ## Change log
 
@@ -2490,3 +2524,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 | 2026-09-28 | Draft 6 | The three findings of the fourth read-only verification (`manage-agents/attribution-p3ver4.final.md`, FAIL on commit `5afac55`) and the second audit pass they prompted. (1) 5.3: "`q` is entailed exactly when `neqs` entails it" is stated for a content `q` that is a formula over `E`; a nested content elaborates to a generated atom of the inner key, entailed when a top-level unit asserts it and free when none asserts or denies it; new fixture B₇ (`May(a1, ⟨believes …⟩)` beside the belief itself: positive, `neqs = []`, the content not valid and entailed). The same restriction is written into 4.5's "not factive" and "denial" bullets and its intro. (2) 2.3: the situation line is for positive report units, is a source model of `Γ_reports(D)`, exists for a formula content exactly when `neqs` does not entail it, and for a nested content when no top-level unit asserts or denies its key, naming the asserting unit otherwise (B₁); the belief line names its two theorems and B₃; negated units get the denied line and no situation. (3) B₂ declares a fourth context `c4` for its nested `says` key so that the registration key precedes it in the key order of 1.5 and the renumbering `reports__says__1` to `reports__says__2` is forced, not permitted (10.1 (iii), 10.3). (4) Audit: every entailment and independence claim of 2.3, 4.5 and 5.3 is over the report premises `Γ_reports(D)`, the author's premises and the literals aside, with `D_π` as the boundary (B₈, section 0 "Fragments"); "neither entails the other" (1.1), "negation scopes" and "tense" (4.5) name a consistent premise set; the nested-content rows of 1.6 and 4.2 and the paraphrase column of 2.1 say that another unit may assert what a node or a wording leaves open; 5.1's "inconsistent only through `neqs`" is stated as `reports_no_leak` with `φ = ⊥` for `Γ` over `E`; 4.4's expansion equivalence names an admissible `S₀`. No claim broadened. Spec only; the plan's pointer moves to draft 6 and its page 1 carries the two restrictions. |
 | 2026-09-28 | Draft 7 | The orchestrator's design directive after the fifth read-only verification (`manage-agents/attribution-p3ver5.final.md`, FAIL on commit `fe35218`: asserting the inner key does not entail a nested content at another holder; a negated nested content is false when its operand is asserted). (1) Section 0, "Normative content": the normative semantic content is definitions, theorem statements with every hypothesis explicit and fixtures with expected results; prose readings claim nothing beyond the statement they name; 4.5 retitled and marked NON-NORMATIVE, each bullet reduced to its theorem, that theorem's hypotheses and its fixtures, the key-level nested-content claims deleted; new 4.6 (NON-NORMATIVE) with three open questions; 2.3's situation and belief lines defined by what the IDE runs (countermodel, certificate or UNKNOWN), with the theorems and fixtures deciding which; 1.1, 1.4, 1.6, 2.1, 4.2 and 5.3 pointed at the statements. (2) 9.2: five nested-content theorems on the holder-applied atom with polarity explicit, `nested_positive_entailed`, `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted` (a top-level unit carrying the very node or its opposite) and `holder_atom_free` (no positive premise at a co-denoting holder); `holderSort` hypotheses added to `no_closure_under_consequence` and `nested_independent`; the prose after the block states that `topKeys` is a hypothesis of the freedom theorems only. (3) 10.3: B₉ (the verification's counterexample, B₇ with u1 at `the_team`), B₉′ (its report form), B₁₀ (the nested positive node denied), B₁₁ (the nested negated node denied; `D_ω` is the asserted case), B₁₂ (depth 2), each breaking one hypothesis; ω's expectation states the refutation; B₁ and B₇ name their theorem instances; checklist items 5, 9, 15, 17 and 18; 13.23. No claim broadened. Spec only; the plan's pointer moves to draft 7 and its page 1 restates its nested-content sentence on the holder-applied atom. |
 | 2026-09-28 | Draft 8 | The three findings of the sixth read-only verification (`manage-agents/attribution-p3ver6.final.md`, FAIL on commit `0c1ad1b`), each applied as an instance of the draft-7 directive. (1) `content_depth_bounded` restated at the admitted bound, `∀ u ∈ D.units, u.content.depth ≤ 16`, with `Content.depth` defined in 9.1 (a leaf one, a report or assessment node one more than its body, a negated node nothing) so that a well-formed unit's content depth is its W2 kind depth, which the frozen `decodeKind` admits up to exactly 16; 4.1 step 4 and 11.1 name the definition and the W2 bound that fires first; new fixtures B₁₃ (the verification's document: fifteen negated nested `says` reports over `safe(service)`, depth 16, admitted, the theorem holding with equality) and B₁₃′ (one node more: `ResourceLimit: kind depth exceeds 16` at step 2). (2) One-hypothesis boundaries of `nested_independent`: B₁₂ is now the depth-2 document alone (breaks `hb` only; both nested atoms free by `unreported_key_free`) and the former B₁₂ is B₁₂′ (the depth-2 instance of `nested_positive_entailed`, breaking `hb` and `hin` of `nested_independent`); new B₁₁′, `D_ω`'s u1 alone (breaks `hb` only; the atom free by `all_truth_combinations`), with B₁₁ and `D_ω` recorded as breaking `hb` and `hin` together; 10.3 closes with a table naming, for every boundary fixture of the nested-content theorems, `nested_independent`, `no_closure_under_consequence`, `attitude_not_factive` and `content_depth_bounded`, the one hypothesis it breaks; 4.5's nested-independence bullet, the intro of 4.5, 2.3, section 0, 1.6, 2.1, 4.2, ω and checklist items 9, 15, 17, 18 updated to the new fixture names. (3) The plan's summary and pages carry no unconditional semantic sentence (revision 7). 13.24 added. No claim broadened. Spec only; the plan's pointer moves to draft 8. |
+| 2026-09-28 | Draft 9 | The two findings of the seventh read-only verification (`manage-agents/attribution-p3ver7.final.md`, FAIL on commit `5587ec2`), each a fixture assertion corrected to what the definitions and statements give, as instances of the draft-7 directive. (1) B₂ is no instance of `nested_independent`: its `hb` names an inner `believes` node and B₂'s inner node is a `says` report; the closing table of 10.3 lists `D_ζ` alone as the instance and B₂ as breaking exactly `hb` (the inner act) with the expected freedom from `unreported_key_free` at `k_in`, and 4.5's nested-independence bullet, 10.3's intro, B₂'s definition and expectation and checklist 15 say the same. (2) B₁₂'s content depth is 4 under `Content.depth` (three report nodes over the formula leaf; its W2 kind has depth 4 likewise), not 3; its expectation says so and distinguishes the nesting depth of 2 from the content depth. 13.25 added; checklist 17 names it. No theorem statement, definition or expected verdict changed; no claim broadened. Spec only; the plan's pointer moves to draft 9 (revision 8). |
