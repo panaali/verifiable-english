@@ -35,7 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SoftNorms.Run
-import VE.Rights.Route
+import VE.Rights.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1150,6 +1150,12 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.weighing_sub_decisions
 #print axioms VE.SoftNorms.yieldsD_prime
 #print axioms VE.SoftNorms.yields_strict
+#print axioms VE.Rights.Wire.primeModelR_valid
+#print axioms VE.Rights.Wire.replayRightsEntailment_decodes
+#print axioms VE.Rights.Wire.rights_wire_acceptance
+#print axioms VE.Rights.Wire.rights_wire_conflict_sound
+#print axioms VE.Rights.Wire.rights_wire_conflict_witness_sound
+#print axioms VE.Rights.Wire.rights_wire_scope_sound
 #print axioms VE.Rights.applies_bar
 #print axioms VE.Rights.applies_eq
 #print axioms VE.Rights.barNode_mem

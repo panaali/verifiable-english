@@ -1,0 +1,327 @@
+"""Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
+
+The Lean executable regenerates E″, T″, Lim_D and every target from raw rights units; nothing
+here is elaborated by Python (the Python rights profile is item 2). Checked: the regenerated
+names and the packed limitation carve-out (γ), diagnostics (β, φ, π, υ), projections on finite
+base models (α, γ), the limitation-scope audit with an uncited and a cited adopter exception
+(γ, rule 7), the bar under both readings (η), delegation of soft cases, and an end-to-end
+CONFLICT-FREE replay whose certificate, found by Python's unchanged prover over the
+Lean-regenerated E″′_base, needs a Lim_D premise and is reported conditional on it.
+"""
+from __future__ import annotations
+
+import json
+import shutil
+import subprocess
+from pathlib import Path
+
+import pytest
+
+from ve.ast import formula_from_data
+from ve.entailment import prove_entailment
+from ve.environment import Environment
+from ve.wire import digest
+from tests.test_norms import environment, obligation, permission
+
+ROOT = Path(__file__).resolve().parents[1]
+LEAN = ROOT / "lean/.lake/build/bin/ve_rights_route"
+SOFT = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
+BLOCK = {"holders": ["person"], "bearers": ["state", "person"]}
+
+
+@pytest.fixture(scope="module")
+def lean():
+    if not LEAN.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("lake is required for the rights Lean route")
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
+                               text=True, timeout=600)
+        assert built.returncode == 0, built.stdout + built.stderr
+    return LEAN
+
+
+def run(executable, cases):
+    result = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
+                            capture_output=True, timeout=180)
+    assert result.returncode in (0, 1), result.stderr
+    rows = json.loads(result.stdout)
+    assert len(rows) == len(cases)
+    return rows
+
+
+def base(*args):
+    return {"arguments": list(args), "description": "base"}
+
+
+def env(predicates, sorts=("state", "person"), *, rights=None,
+        profiles=("norms@0", "rights@0", "soft-norms@0")):
+    raw = environment(predicates, sorts=sorts).to_dict()
+    raw["profiles"] = sorted({"relational-fol@0"} | set(profiles))
+    raw["vocabulary"]["rights"] = rights or BLOCK
+    return raw
+
+
+ARREST = {"arrest_permitted": permission("allow", act="{0} arrest {1}", args=("state", "person")),
+          "arbitrary_arrest": base("state", "person"), "journalist": base("person")}
+DEPRIVE = {"deprive_required": obligation("deny", "deprive_permitted", act="{0} deprive {1} of life",
+                                          args=("state", "person")),
+           "deprive_permitted": permission("allow", act="{0} deprive {1} of life", args=("state", "person"))}
+IMPART = {"impart_required": obligation("deny", "impart_permitted", act="{0} impart {1}", args=("person", "idea")),
+          "impart_permitted": permission("allow", act="{0} impart {1}", args=("person", "idea"))}
+ARBITRARY = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
+
+
+def norm(name, pred, sign, *, guard=("top",), unless=(), over=(), **soft):
+    body = {"name": name, "sign": sign, "guard": list(guard), "unless": [list(u) for u in unless],
+            "over": list(over), **soft}
+    if pred is not None:
+        body["predicate"] = pred
+    return body
+
+
+def right(name, lines, holder="person", guard=None):
+    body = {"name": name, "holder": holder, "lines": lines}
+    if guard is not None:
+        body["guard"] = guard
+    return {"right": body}
+
+
+def line(kind, n, **extra):
+    return {"kind": kind, "norm": n, **extra}
+
+
+def limitation(name="l29", conditions=(), scope="all", kinds="all"):
+    return {"limitation": {"name": name, "scope": scope, "kinds": kinds, "decided_by": "unstated",
+                           "conditions": list(conditions), "factors": []}}
+
+
+def condition(name, role="necessary"):
+    return {"name": name, "role": role, "verbalisation": f"the limitation is {name.replace('_', ' ')}"}
+
+
+L29 = limitation(conditions=[condition("determined_by_law"), condition("solely_for_permitted_purpose")])
+GAMMA = [right("r9", [line("claim", norm("no-arbitrary-arrest", "arrest_permitted", False, guard=ARBITRARY))]), L29]
+
+
+def elaborate(lean, environment_json, document):
+    row = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": environment_json,
+                      "document": document}])[0]
+    assert row["status"] == "ok", row
+    return row
+
+
+def test_gamma_generated_names_and_packed_limitation(lean):
+    row = elaborate(lean, env(ARREST), GAMMA)
+    assert [g["name"] for g in row["generated"]] == ["rights__lim__1", "rights__cond__1", "rights__cond__2"]
+    assert row["generated"][0] == {"name": "rights__lim__1", "kind": "lim", "limitation": "l29",
+                                   "act": "arrest_permitted"}
+    node = row["lines"][0]["node"]
+    assert node["guard"] == ARBITRARY
+    assert node["unless"] == [["or", ["bottom"], ["binary", "rights__lim__1", ["var", 1], ["var", 0]]]]
+    assert [x["label"] for x in row["limitations"]] == [
+        "rights:limitation:l29:arrest_permitted:necessary:determined_by_law",
+        "rights:limitation:l29:arrest_permitted:necessary:solely_for_permitted_purpose"]
+    assert row["narrowings"][0]["mechanisms"] == [
+        {"mechanism": "limitation", "target": "no-arbitrary-arrest:limitation", "licence": "limitation"}]
+    predicates = row["environment_prime"]["vocabulary"]["predicates"]
+    assert predicates["rights__lim__1"]["arguments"] == ["state", "person"]
+
+
+def test_fan_out_power_and_diagnostics(lean):
+    torture = {"torture_permitted_state": permission("allow", act="{0} torture {1}", args=("state", "person")),
+               "torture_permitted_person": permission("allow", act="{0} torture {1}", args=("person", "person"))}
+    fan = {"state": "torture_permitted_state", "person": "torture_permitted_person"}
+    beta = [right("r5", [line("claim", norm("no-torture", None, False), fan_out=fan)])]
+    row = elaborate(lean, env(torture), beta)
+    assert [(x["rule"], x["predicate"], x["bearer"]) for x in row["lines"]] == [
+        ("rights-fan-1", "torture_permitted_person", "person"), ("rights-fan-2", "torture_permitted_state", "state")]
+    nationality = {"deprive_of_nationality_permitted": permission("allow", act="{0} deprive {1} of nationality",
+                                                                  args=("state", "person")),
+                   "has_nationality": base("person")}
+
+    def alters(slot):
+        return {**BLOCK, "alters": {"deprive_of_nationality_permitted": {"holder_slot": slot,
+                                                                        "status": "has_nationality"}}}
+    phi = [right("r15", [line("immunity", norm("no-deprivation", "deprive_of_nationality_permitted", False))])]
+    cases = [
+        (env(torture), [right("r5", [line("claim", norm("no-torture", None, False),
+                                          fan_out={"state": "torture_permitted_state"})])],
+         "FanOutUndeclared: no-torture, person"),
+        (env(nationality, rights=alters(0)), phi, "InvalidInput: alters deprive_of_nationality_permitted"),
+        (env(ARREST), [right("r9", [line("claim", norm("rights-x", "arrest_permitted", False))])],
+         "InvalidInput: name rights-x begins with rights-"),
+        (env(ARREST), [right("r9", [])], "RightWithoutIncident: r9"),
+        (env(ARREST), [GAMMA[0], {"limitation": {**L29["limitation"], "decided_by": "unstated"}},
+                       {"bar": {"name": "b", "reading": "rule"}}, {"bar": {"name": "c", "reading": "query"}}],
+         "DuplicateDeclaration: bar"),
+    ]
+    rows = run(lean, [{"id": str(i), "kind": "rights-elaborate", "environment": e, "document": d}
+                      for i, (e, d, _) in enumerate(cases)])
+    for row, (_, _, expected) in zip(rows, cases):
+        assert row["status"] == "error" and row["error"] == expected, row
+    assert elaborate(lean, env(nationality, rights=alters(1)), phi)["lines"][0]["holder_slot"] == 1
+    no_decider = {"limitation": {k: v for k, v in L29["limitation"].items() if k != "decided_by"}}
+    row = run(lean, [{"id": "p", "kind": "rights-elaborate", "environment": env(ARREST),
+                      "document": [GAMMA[0], no_decider]}])[0]
+    assert row["error"] == "MissingExceptionDecider: limitation l29"
+
+
+def model(domains, relations):
+    return {"complete": True, "domains": domains, "constants": {}, "relations": relations}
+
+
+def test_projections_alpha_and_gamma(lean):
+    alpha = [right("r3", [line("claim", norm("no-deprivation", "deprive_permitted", False))])]
+    people = {"state": ["texas"], "person": ["ann"]}
+    lim = {"rights__lim__1": [["texas", "ann"]], "rights__cond__1": [["texas", "ann"]],
+           "rights__cond__2": [["texas", "ann"]]}
+    none = {"rights__lim__1": [], "rights__cond__1": [], "rights__cond__2": []}
+    rows = run(lean, [
+        {"id": "a", "kind": "rights-projections", "environment": env(DEPRIVE), "document": alpha,
+         "model": model(people, {}), "holder": "ann", "bearer": "texas"},
+        {"id": "g", "kind": "rights-projections", "environment": env(ARREST), "document": GAMMA,
+         "model": model(people, {"arbitrary_arrest": [["texas", "ann"]], "journalist": [], **none})},
+        {"id": "g2", "kind": "rights-projections", "environment": env(ARREST), "document": GAMMA,
+         "model": model(people, {"arbitrary_arrest": [["texas", "ann"]], "journalist": [], **lim})},
+        # lim true with a necessary condition false violates Lim_D: not a base-admissible situation
+        {"id": "g3", "kind": "rights-projections", "environment": env(ARREST), "document": GAMMA,
+         "model": model(people, {"arbitrary_arrest": [["texas", "ann"]], "journalist": [],
+                                 **{**lim, "rights__cond__2": []}})},
+    ])
+    entry = {"right": "r3", "rule": "no-deprivation", "instance": "claim", "tuple": ["texas", "ann"]}
+    assert rows[0]["rights_of"] == [entry] and rows[0]["duties_of"] == [entry]
+    assert [x["rule"] for x in rows[1]["duties_of"]] == ["no-arbitrary-arrest"]
+    assert rows[2]["rights_of"] == [] and rows[2]["duties_of"] == []
+    assert rows[3]["status"] == "error" and rows[3]["error"].startswith("InvalidModel(rights background)")
+
+
+def test_scope_audit_adopter_exception(lean):
+    rule7 = norm("rule-7", "arrest_permitted", True, guard=("unary", "journalist", ["var", 0]),
+                 over=["no-arbitrary-arrest"])
+    uncited = GAMMA + [{"norm": rule7}]
+    cited = GAMMA + [{"norm": rule7, "cites": {"narrows:no-arbitrary-arrest": ["u9"]}}]
+    rows = run(lean, [{"id": "u", "kind": "rights-scope", "environment": env(ARREST), "document": uncited},
+                      {"id": "c", "kind": "rights-scope", "environment": env(ARREST), "document": cited}])
+    assert rows[0]["findings"] == ["UnlicensedLimitation: exception rule-7 of rule no-arbitrary-arrest on right r9"]
+    assert rows[0]["licensed"] is False
+    assert rows[1]["findings"] == [] and rows[1]["licensed"] is True
+
+
+def test_bar_rule_and_query_readings(lean):
+    liberty = right("r19", [line("liberty", norm("may-impart", "impart_permitted", True))])
+    outside = [{"norm": norm("must-impart", "impart_required", True)},
+               {"norm": norm("should-impart", "impart_required", True, mode="default",
+                             exception={"decided_by": "unstated", "sufficient": [], "necessary": [],
+                                        "factors": []})}]
+    one = {"holders": ["person"], "bearers": ["person"]}
+    environment_json = env(IMPART, sorts=("person", "idea"), rights=one)
+    rows = run(lean, [
+        {"id": "r", "kind": "rights-bar", "environment": environment_json,
+         "document": [liberty, *outside, {"bar": {"name": "b30", "reading": "rule"}}]},
+        {"id": "q", "kind": "rights-bar", "environment": environment_json,
+         "document": [liberty, {"bar": {"name": "b30", "reading": "query"}}]},
+    ])
+    assert rows[0]["bars"] == [{"predicate": "impart_permitted", "aimed": "rights__bar__1", "reading": "rule",
+                                "barred": ["may-impart"], "blocked_defaults": ["should-impart"],
+                                "composition_conflicts": ["must-impart"]}]
+    query = rows[1]["bars"][0]
+    assert query["reading"] == "query" and "entailed" not in query
+    assert query["target"][0] == "forall"
+
+
+def test_soft_cases_delegate_unchanged(lean):
+    raw = env(DEPRIVE, profiles=("norms@0", "soft-norms@0"))
+    del raw["vocabulary"]["rights"]
+    case = {"id": "s", "kind": "soft-elaborate", "environment": raw,
+            "norms": [{"norm": norm("m", "deprive_required", True)}]}
+    assert run(lean, [case])[0] == run(SOFT, [case])[0]
+
+
+# End-to-end CONFLICT-FREE replay: certificates found by Python's unchanged prover over the
+# Lean-regenerated E″′_base and Background_base″, packaged with the bindings of 3.5.
+
+def identity(profiles):
+    return "v0.2:" + ",".join(profiles)
+
+
+def canonical_raw(n):
+    defaults = {"mode": "strict", "alterable": [], "hard": False}
+    return {k: v for k, v in n.items() if defaults.get(k, object()) != v}
+
+
+def canonical_unit(u):
+    if "norm" in u:
+        return {**u, "norm": canonical_raw(u["norm"])}
+    for key in ("right", "right_lines"):
+        if key in u:
+            lines = [{**x, **{k: canonical_raw(x[k]) for k in ("norm", "liberty", "recognition") if k in x}}
+                     for x in u[key]["lines"]]
+            return {key: {**u[key], "lines": lines}}
+    return u
+
+
+def base_prime(row):
+    data = json.loads(json.dumps(row["environment_prime"]))
+    data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0")]
+    vocab = data["vocabulary"]
+    vocab.pop("soft", None)
+    vocab.pop("rights", None)
+    vocab["predicates"] = {n: e for n, e in vocab["predicates"].items() if "regulated" not in e}
+    return Environment(data)
+
+
+def packages(environment_json, document, row, *, rights=True):
+    profiles = environment_json["profiles"]
+    env_id = digest(f"ve-environment-{identity(profiles)}\n", environment_json)
+    doc_hash = digest(f"ve-rights-{identity(profiles)}\n",
+                      {"environment_id": env_id, "document": [canonical_unit(u) for u in document]})
+    base_env = base_prime(row)
+    slots = [b["ast"] for b in row["background"] if b["generator"] == "soft"]
+    if rights:
+        slots += [b["ast"] for b in row["rights_background"]]
+    premises = [formula_from_data(base_env, a) for a in slots]
+    out = {}
+    for t in row["conflict_targets"]:
+        closed = ["not", t["ast"]]
+        for sort in reversed(t["sorts"]):
+            closed = ["forall", sort, closed]
+        result = prove_entailment(base_env, premises, formula_from_data(base_env, closed))
+        if result.status == "Found":
+            out[t["target"]] = {"environment_id": env_id, "document_hash": doc_hash,
+                                "target": t["target"], "certificate": result.certificate}
+    return out
+
+
+def test_conflict_free_conditional_on_a_limitation_premise(lean):
+    # limitation 29 with a sufficient condition; an adopter's permission guarded by that condition
+    # collides with the claim unless Lim_D's sufficient premise makes the limitation hold there
+    l29 = limitation(conditions=[condition("determined_by_law"), condition("diplomatic_immunity", "sufficient")])
+    permit = norm("may-arrest", "arrest_permitted", True,
+                  guard=("binary", "rights__cond__2", ["var", 1], ["var", 0]))
+    document = [GAMMA[0], l29, {"norm": permit}]
+    environment_json = env(ARREST)
+    row = elaborate(lean, environment_json, document)
+    assert [g["name"] for g in row["generated"]][1:] == ["rights__cond__1", "rights__cond__2"]
+    certified = packages(environment_json, document, row)
+    assert set(certified) == {t["target"] for t in row["conflict_targets"]}
+    verdict = run(lean, [{"id": "c", "kind": "rights-conflict", "environment": environment_json,
+                          "document": document, "packages": certified}])[0]
+    assert verdict["verdict"] == "CONFLICT-FREE", verdict
+    # a label is reported when replay fails with its premise replaced by ⊤ (the soft route's
+    # convention), so the sufficient premise the proof needs is always among them
+    assert "rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity" in verdict["conditional_on"]
+    assert all(label.startswith("rights:limitation:l29:") for label in verdict["conditional_on"])
+    assert f"{len(verdict['conditional_on'])} limitation premises" in verdict["status_text"]
+    # without Lim_D no certificate for the target exists
+    bare = packages(environment_json, document, row, rights=False)
+    assert "arrest_permitted" not in bare
+    # a witness where the condition holds and the limitation fails violates Lim_D: no countermodel
+    people = {"state": ["texas"], "person": ["ann"]}
+    witness = {"target": "arrest_permitted", "tuple": ["texas", "ann"],
+               "model": model(people, {"arbitrary_arrest": [["texas", "ann"]], "journalist": [],
+                                       "rights__lim__1": [], "rights__cond__1": [],
+                                       "rights__cond__2": [["texas", "ann"]]})}
+    row = run(lean, [{"id": "w", "kind": "rights-conflict", "environment": environment_json,
+                      "document": document, "witness": witness}])[0]
+    assert row["status"] == "error" and row["error"].startswith("InvalidModel(rights background)")
