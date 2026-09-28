@@ -370,6 +370,7 @@ def contentTag (content : Json) : Option String :=
     else if (content.getObjVal? "question").isOk then some "question"
     else if (content.getObjVal? "binding").isOk then some "binding"
     else if (content.getObjVal? "norm").isOk then some "norm"
+    else if (content.getObjVal? "ast").isOk then some "ast"
     else none
   | _ => none
 
@@ -410,8 +411,9 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
       | some "norm" =>
         if kind == .norm || kind.quoted then pure (Role.norm (← VE.Norms.Wire.decodeNorm content))
         else throw "norm content requires a norm or quoted kind"
-      | _ =>
-        let φ ← VE.Route.Wire.decodeClosed E content
+      | tag =>
+        -- A formula: the P0 route's bare AST, or W2's `{"ast": ...}`.
+        let φ ← VE.Route.Wire.decodeClosed E (if tag == some "ast" then content.getObjValD "ast" else content)
         pure (if kind == .asserted then Role.asserted φ else Role.other)
   pure ⟨id, start, stop, VE.Route.Admission.renderKind kind, meaning, role, false⟩
 

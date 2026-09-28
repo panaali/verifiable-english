@@ -464,3 +464,9 @@ def test_zeta_retargeted_proof_task_changes_its_meaning_id(lean):
         "mode": "which_all", "sort": "service", "domain": order, "body": ["unary", "reviewed", ["var", 0]]}})]}
     ids = {elaborate(F0(), polar_doc(o))["questions"][0]["meaning_id"] for o in (["atlas", "beacon"], ["beacon", "atlas"])}
     assert len(ids) == 2
+
+
+def test_asserted_content_in_w2_ast_form(lean):
+    bare = {"units": [unit("u1", 0, "asserted", U("reviewed", "atlas"))]}
+    w2 = {"units": [unit("u1", 0, "asserted", {"ast": U("reviewed", "atlas")})]}
+    assert elaborate(F0(), bare)["premises"] == elaborate(F0(), w2)["premises"]
