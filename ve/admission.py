@@ -14,7 +14,7 @@ import re
 from typing import NamedTuple
 
 from .ast import Or, formula_from_data, formula_to_data
-from .background import HOOKS, background
+from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
@@ -93,10 +93,30 @@ def parse_label(s) -> Label | None:
     return label if label is not None and label.render() == s else None
 
 
-def validate_label(s) -> str:
+def _validate_label_python(s) -> str:
     if parse_label(s) is None:
         raise AdmissionError(f"AdmissionError: invalid label {s}")
     return s
+
+
+def validate_label(s) -> str:
+    """Check the public label grammar through the selected authority."""
+    from .backends.dispatch import execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+
+    if type(s) is not str:
+        raise AdmissionError(f"AdmissionError: invalid label {s}")
+    case = {"id": "label", "kind": "label", "environment": _DEPENDENCY_ENVIRONMENT,
+            "label": s}
+
+    def lean():
+        label = run("route", [case])[0].get("label")
+        if type(label) is not str or label != s:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean label result")
+        return label
+
+    return execute("label", case, lambda: _validate_label_python(s), lean=lean)
 
 
 # Kinds are kept in their wire form (a string or a tagged list); decoding only validates.
