@@ -220,7 +220,8 @@ class SpeechDocument:
             self.meaning_ids[uid] = self._id({"binding": binding})
 
     def _command(self, uid, raw, active):
-        if type(raw) is not dict or set(raw) != {"force", "act", "args", "guard"}:
+        if (type(raw) is not dict or not {"force", "act", "args"} <= set(raw)
+                or set(raw) - {"force", "act", "args", "guard"}):
             raise VEError(f"InvalidInput: invalid command fields for {uid}")
         force, predicate = raw["force"], raw["act"]
         if force not in ("require", "forbid"):
@@ -237,7 +238,7 @@ class SpeechDocument:
         for arg, sort in zip(raw["args"], decl.arguments[1:], strict=True):
             if arg not in self.env.constants or self.env.constants[arg].sort != sort:
                 raise VEError(f"TypeMismatch: command args for {uid}")
-        guard = formula_from_data(self.env, raw["guard"])
+        guard = formula_from_data(self.env, raw.get("guard", ["top"]))
         return Command(uid, force, predicate, tuple(raw["args"]), guard, active)
 
     def _question(self, uid, raw, unit):
@@ -359,7 +360,10 @@ class SpeechDocument:
         if you["sort"] != decl.arguments[0]:
             raise VEError("TypeMismatch: addressee")
         constants = [you["constant"], *command.args]
-        eq = _all(Eq(Var(len(constants) - 1 - i), Const(a)) for i, a in enumerate(constants))
+        equalities = [Eq(Var(len(constants) - 1 - i), Const(a)) for i, a in enumerate(constants)]
+        eq = equalities[-1]
+        for equality in reversed(equalities[:-1]):
+            eq = And(equality, eq)
         return Norm(f"cmd-{command.unit}", command.act, command.force == "require",
                     And(eq, command.guard))
 
