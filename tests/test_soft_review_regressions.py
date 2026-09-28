@@ -20,7 +20,7 @@ from ve.surface.softnorms import parse_header_options, render_header_options
 from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
-from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows,
+from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     compare_rejected, main as conformance_main)
 
 
@@ -174,8 +174,17 @@ def test_reported_diagnostic_codes(raw, rules, code):
     assert python_error.value.to_dict()["code"] == code
 
 
+@pytest.mark.parametrize("name,raw,rules,code", list(loop_recheck_reproducers()))
+def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
+    with pytest.raises(VEError) as python_error:
+        SoftNormDocument(SoftEnvironment(raw), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert python_error.value.code == lean_error.value.code == code
+
+
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 1122
+    assert compare_rejected() == 1128
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
