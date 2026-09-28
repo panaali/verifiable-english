@@ -162,6 +162,19 @@ def reservedEnv : VE.Environment :=
 def ma : VE.FiniteModel String := oneRobot ["nothing", "pull"] ["h1"] [("nothing", "h1")] [("harms_human", [["h1"]])]
 def rowsA : List Row := signedRows ["nothing", "pull"] ["h1"] [("nothing", "h1")]
 #guard validation (doc [r3, r7]) ma rowsA == "ok"
+-- An unrelated, undeclared relation entry is invisible to the Boolean gate.
+-- This is why the generic soundness theorem needs structural validity, while
+-- decoded scenarios obtain it from their decoder.
+def invalidMa : VE.FiniteModel String :=
+  { ma with relations := fun p => if p == "ghost" then [["R"]] else ma.relations p }
+#guard validation (doc [r3, r7]) invalidMa rowsA == "ok"
+theorem invalidMa_not_valid : ¬ invalidMa.Valid (VE.Norms.envAt (inlineTree (doc [r3, r7])) 0) := by
+  intro h
+  obtain ⟨_, hr⟩ := h
+  obtain ⟨ss, hs, _⟩ := hr "ghost" ["R"] (by simp [VE.FiniteModel.asStructure, invalidMa])
+  have hp : (VE.Norms.envAt (inlineTree (doc [r3, r7])) 0).predicates "ghost" = none := by decide
+  rw [hp] at hs
+  cases hs
 #guard (scenarioConflict (doc [r3, r7]) ma).isNone
 #guard (allowsF (block)).eval ma (tupleVal ["nothing", "h1"])
 #guard (avoidableF (block)).eval ma (tupleVal ["h1", "R"])
