@@ -24,39 +24,48 @@ PROOF_TASK_ACT = "{0} submit a proof of {1}"
 
 
 def validate_scope(raw, sorts, constants, predicates):
-    """Validate the identity-bound task legend without changing old environments."""
+    """Validate the identity-bound task legend without changing old environments.
+
+    Every reference is first a name (a string), with the block's structure and
+    phrase checks, and only then resolved, in the order of Lean's `parseScope`,
+    `checkPhrases` and `checkSpeech`: a mistyped sort or constant is a block
+    error, never an `UnknownSymbol` or a crash.
+    """
+    block = VEError("InvalidInput: speech_acts block")
     if type(raw) is not dict or "task" not in raw or set(raw) - {"task", "addressee", "definites"}:
-        raise VEError("InvalidInput: speech_acts block")
+        raise block
     if type(raw["task"]) is not str or not _TOKEN.fullmatch(raw["task"]):
-        raise VEError("InvalidInput: speech_acts block")
+        raise block
     result = {"task": raw["task"]}
-    if "addressee" in raw:
-        addressee = raw["addressee"]
-        if type(addressee) is not dict or set(addressee) != {"sort", "constant"}:
-            raise VEError("InvalidInput: speech_acts block")
+    addressee = raw.get("addressee")
+    if "addressee" in raw and (type(addressee) is not dict or set(addressee) != {"sort", "constant"}
+                               or any(type(v) is not str for v in addressee.values())):
+        raise block
+    definites = raw.get("definites", {})
+    if type(definites) is not dict or any(type(c) is not str for c in definites.values()):
+        raise block
+    normalized = {}
+    reserved = {"is", "are", "must", "may", "not", "you", "which", "one", "task"}
+    for phrase, constant in definites.items():
+        if type(phrase) is not str or len(phrase.encode()) > 80 or not _PHRASE.fullmatch(phrase):
+            raise block
+        key = " ".join(phrase.split())
+        if (key in normalized or key[4:].lower() in reserved or
+                key in constants or key[4:] in predicates):
+            raise block
+        normalized[key] = constant
+    if addressee is not None:
         sort, constant = addressee["sort"], addressee["constant"]
         if sort not in sorts:
             raise VEError(f"UnknownSymbol: sort {sort}")
         if constant not in constants or constants[constant].sort != sort:
             raise VEError(f"UnknownSymbol: {constant}")
         result["addressee"] = dict(addressee)
-    definites = raw.get("definites", {})
-    if type(definites) is not dict:
-        raise VEError("InvalidInput: speech_acts block")
     if len(definites) > 64:
         raise ResourceLimit("definites")
-    normalized = {}
-    reserved = {"is", "are", "must", "may", "not", "you", "which", "one", "task"}
-    for phrase, constant in definites.items():
-        if type(phrase) is not str or len(phrase.encode()) > 80 or not _PHRASE.fullmatch(phrase):
-            raise VEError("InvalidInput: speech_acts block")
-        key = " ".join(phrase.split())
-        if (key in normalized or key[4:].lower() in reserved or
-                key in constants or key[4:] in predicates):
-            raise VEError("InvalidInput: speech_acts block")
-        if type(constant) is not str or constant not in constants:
+    for constant in normalized.values():
+        if constant not in constants:
             raise VEError(f"UnknownSymbol: {constant}")
-        normalized[key] = constant
     if normalized:  # canonical as Lean's `encodeScope`: an empty map is absent
         result["definites"] = normalized
     return result

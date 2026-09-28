@@ -318,7 +318,11 @@ for a question with no answer record, "no answer has been given". For a proof ta
 `task` is a token (`[A-Za-z0-9_.-]`, at most 64 bytes) and mandatory; `addressee.sort` is a declared sort and
 `addressee.constant` a declared constant of that sort (`UnknownSymbol` otherwise); `definites` has at most 64 entries,
 each phrase distinct after whitespace normalisation, each constant declared. Unknown fields are `InvalidInput:
-speech_acts block`. The block is part of the canonical environment bytes, so `environment_id` changes when any of it
+speech_acts block`. Every reference is a name before it is resolved: an addressee `sort` or `constant`, or a definite's
+constant, that is not a string is `InvalidInput: speech_acts block`, and the block's structure and phrase checks all
+precede resolution (Lean's `parseScope` and `checkPhrases`, then `checkSpeech`), so a malformed phrase beside an
+undeclared addressee is the block error in both checkers; resolution then checks the addressee's sort and constant,
+the count of definites and their constants, in that order. The block is part of the canonical environment bytes, so `environment_id` changes when any of it
 changes and is unchanged for every existing environment (none has the block). Its canonical encoding is `task`, then
 `addressee` and `definites` when present, the definites sorted by phrase; an empty `definites` map is encoded as absent. The `regulated` declarations are W1's
 (norms.md 3.1) and unchanged. The sort `query` and one constant per query id are ordinary declarations when the document
@@ -1637,6 +1641,7 @@ statements of section 8 are unchanged.
 | B, opaque contradiction persists: the gloss "{0} is reviewed despite remaining unreviewed" passed the word list and was answered as one predicate | Orchestrator directive: closed by 2.1, not by more patterns. A declared gloss is an opaque atom of author-declared vocabulary whose English VE does not check; the word list is an advisory, closed `OpaqueWording` lint (a warning, 7) that changes no class or check (6); the refusal of the earlier rows above is withdrawn. |
 | B, invalid reading-question candidates: a candidate naming a missing set (or, in Python, a numeric one) was accepted by both cores and counted R without its open term | 3.2, 4.1(4), 6: every reference is resolved and typed at decode time in both cores. A reading question, asked, quoted or a candidate, names a string set id at an existing version; a candidate of a latest version carries its derived open term; a chosen reading question means that open term. The conformance suite checks every reference-bearing field dangling and mistyped against one diagnostic in both checkers, which aligned command arguments (`UnknownSymbol`, `TypeMismatch: command args for <u>`), question sorts, query records (`InvalidInput: query`), binding checks before merging, formula fields (P0's type diagnostic in Lean too), quoted questions and dormant commands (single-unit checks, no addressee). |
 | B, fenced scope: `effective_scope()` built a binding-only document without its query records, so a fence beside an open binding whose candidate asks about `q1` raised `QueryMismatch: b` | 3.2: the effective scope is the document's own binding merge, with no partial document; fenced and unfenced sources agree, including when the record's premises are asserted units outside the bindings. |
+| B, untyped scope references: an addressee `sort` or `constant` of `[]` raised an uncaught `TypeError` in Python where Lean said `InvalidInput: speech_acts block`; numeric ones gave `UnknownSymbol` in Python | 3.1: every scope reference (addressee sort and constant, definite constants) is a name before it is resolved, and the block's structure and phrase checks precede resolution, in Lean's order, in both checkers. |
 
 ## Change log
 

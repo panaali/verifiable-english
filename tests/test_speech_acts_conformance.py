@@ -736,6 +736,48 @@ def test_every_reference_is_resolved_and_typed_identically(lean):
         == ["reading"]
 
 
+def test_scope_references_are_names_before_they_are_resolved(lean):
+    # Regression: an addressee `sort` or `constant` of `[]` raised an uncaught TypeError in Python while Lean
+    # said `InvalidInput: speech_acts block`, and a numeric one gave `UnknownSymbol` in Python.  Every scope
+    # reference is a name, with the block's structure and phrase checks, before anything is resolved, in
+    # Lean's order (`parseScope`, `checkPhrases`, then `checkSpeech`).
+    block = "InvalidInput: speech_acts block"
+    many = {f"the knob k{a}{b}": "check" for a in "abc" for b in "abcdefghijklmnopqrstuvwxyz"}
+    cases = []
+    for field in ("sort", "constant"):
+        for bad in ([], {}, 7, True):  # (the frozen JSON parser of the Lean route cannot carry null)
+            cases.append((f"addressee {field} {bad!r}", {"addressee": {**F0()["speech_acts"]["addressee"], field: bad}},
+                          block))
+    for bad in ([], 7, True):
+        cases.append((f"definite constant {bad!r}", {"definites": {"the knob": bad}}, block))
+    cases += [
+        ("addressee without its constant", {"addressee": {"sort": "user"}}, block),
+        ("dangling addressee, then a malformed phrase", {"addressee": {"sort": "user", "constant": "nope"},
+                                                         "definites": {"knob": "check"}}, block),
+        ("dangling addressee, then a mistyped definite", {"addressee": {"sort": "user", "constant": "nope"},
+                                                          "definites": {"the knob": 7}}, block),
+        ("too many definites, then a malformed phrase", {"definites": {**many, "knob": "check"}}, block),
+        ("addressee sort dangling", {"addressee": {"sort": "nope", "constant": "alice"}}, "UnknownSymbol: sort nope"),
+        ("addressee constant dangling", {"addressee": {"sort": "user", "constant": "nope"}}, "UnknownSymbol: nope"),
+        ("addressee of another sort", {"addressee": {"sort": "service", "constant": "alice"}}, "UnknownSymbol: alice"),
+        ("dangling addressee before too many definites", {"addressee": {"sort": "user", "constant": "nope"},
+                                                          "definites": many}, "UnknownSymbol: nope"),
+        ("too many definites", {"definites": many}, "ResourceLimit: definites"),
+        ("definite constant dangling", {"definites": {"the knob": "nope"}}, "UnknownSymbol: nope")]
+    envs = []
+    for _, fields, _ in cases:
+        env = F0()
+        env["speech_acts"] = {**env["speech_acts"], **fields}
+        envs.append(env)
+    results = run([{"id": name, "kind": "speech-elaborate", "environment": env, "document": {"units": []}}
+                   for (name, _, _), env in zip(cases, envs)])
+    for (name, _, error), env, result in zip(cases, envs, results, strict=True):
+        with pytest.raises(VEError) as raised:
+            Environment(env)
+        assert (name, _diagnostic(raised.value)) == (name, error)
+        assert (name, result.get("error")) == (name, error)
+
+
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     # Regression: contradictory premises certified both polar answers in Python with no premise
     # status, and Lean's `follows` line omitted the status of Π_q.
