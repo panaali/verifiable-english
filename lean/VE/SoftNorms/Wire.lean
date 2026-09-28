@@ -116,12 +116,11 @@ def w1Keys : List String := ["name", "predicate", "sign", "guard", "unless", "ov
 def softKeys : List String := ["mode", "rank", "alterable", "exception", "hard"]
 
 def decodeException (name : String) (j : Json) : Except String Exception := do
-  let bad := s!"InvalidInput: invalid soft fields for {name}"
   match j with
   | .obj _ => pure ()
   | _ => throw s!"InvalidInput: rule {name} needs an exception"
   match VE.Bridge.displayFields j [] ["decided_by", "sufficient", "necessary", "factors"] with
-  | .error _ => throw bad
+  | .error _ => throw s!"InvalidInput: rule {name} needs an exception"
   | .ok () => pure ()
   for key in ["sufficient", "necessary", "factors"] do
     unless (j.getObjVal? key).toBool do
