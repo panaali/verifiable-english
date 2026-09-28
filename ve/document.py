@@ -428,6 +428,8 @@ def coverage(doc):
     rights = doc.get("rights_document")
     if rights is not None:
         residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
+        residual["limitation_deciders_unstated"] = sum(
+            limit["decided_by"] == "unstated" for limit in rights.limitations)
         residual["bar_terms"] = len(rights.bar_names)
         residual["power_shadows"] = sum(i["kind"] in ("powerLiberty", "immunity")
                                          for i in rights.instances)
@@ -449,9 +451,13 @@ def coverage(doc):
                 "soft_background_labels": [label for label, _ in soft.exception_premises]}
                if soft is not None else {}),
             **({"rights_residual_labels": [
-                *[f"limitation {name} on {act}: {generated}"
+                *[f"limitation {name} on {act}: {generated}; decider " +
+                  next(limit["decided_by"] for limit in rights.limitations if limit["name"] == name)
                   for (name, act), generated in rights.limitation_names.items()],
-                *[f"condition {condition} of limitation {name} on {act}: {generated}"
+                *[f"condition {condition} of limitation {name} on {act}: {generated}; decider " +
+                  (next(item["decided_by"] for limit in rights.limitations if limit["name"] == name
+                        for item in limit["conditions"] if item["name"] == condition) or
+                   next(limit["decided_by"] for limit in rights.limitations if limit["name"] == name))
                   for (name, act, condition), generated in rights.condition_names.items()],
                 *[f"coupling:{item['id']} ({item['axis']}, " +
                   ", ".join(ref["set"] for ref in item["sets"]) + ")"
