@@ -18,7 +18,7 @@ public semantic operation. Each entry records:
 | `assurance` | `current` label on records today (always `experimental`) and the label the plan grants `at_switch`, with the reason |
 | `python` | every Python function that produces the verdict, as `module:qualname` |
 | `outcomes` | the verdict, semantic-unknown, rejection, budget and operational outcome values (section 2) |
-| `lean` | `bindings` (executable, mode, case kinds, dispatch files), `planned_modes`, `theorems` (audited names), `planned_theorems`, `decoders` (trusted decoder files on the path) |
+| `lean` | `bindings` (executable, mode, case kinds, the `response` fields of an `ok` row, dispatch files), `planned_modes`, `theorems` (audited names), `planned_theorems`, `decoders` (trusted decoder files on the path) |
 | `rust` | Rust CLI commands on the path and their role |
 | `lean_call_sites` | the Python functions that invoke Lean for this operation |
 | `tests` | tests that back the operation (conformance, differential and three-way checks) |
@@ -77,7 +77,8 @@ A combination that needs the verdict (readings, premise status, compare, the arg
 
 `ve.backends.lean.run` checks every call against the operation's declared Lean `bindings` (executable, mode and case
 kinds) and, for callers inside `ve`, its declared `lean_call_sites` before starting a process. An undeclared call is a
-programming error (`RuntimeError`), not an outcome.
+programming error (`RuntimeError`), not an outcome. Every `ok` row must carry the binding's declared `response`
+fields; a row without them is `CheckerUnavailable`.
 
 Migrating an operation (SEMANTICS-MIGRATION-PLAN stage 4):
 
@@ -160,6 +161,12 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   - Each mode string occurs in its root file.
   - Each case kind occurs in a named dispatch file.
   - Each decoder file is a pinned decoder.
+  - The routing itself is executed, not matched as strings: `conformance/binding_probes.py` holds one case of the
+    operation for every (operation, executable, mode, kind) binding, and the set of probes must equal the set of
+    bindings. Each probe goes through `ve.backends.lean.run` to the built runner in its declared mode and must come
+    back `ok` with the binding's declared `response` fields, and every other mode of the same executable must reject
+    it. Moving a binding to another mode or kind therefore fails without Lean (no probe) and with Lean (the probe is
+    not routed there).
 - **Theorems.** Every listed theorem is audited in `lean/axioms.txt`. A planned theorem that appears there fails the
   test until it is moved to `theorems`.
 - **Other references.** Rust commands occur in `rust/ve/src/main.rs`, and every backing test exists.
@@ -210,7 +217,7 @@ the manifest `notes`, not changed:
 | `countermodel.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.search:check_countermodel` | `ve_conformance (default) countermodel`<br>`ve_conformance route countermodel`<br>`ve_conformance order countermodel` | `VE.countermodelCheck_iff`<br>`VE.countermodel_sound`<br>`VE.Closure.countermodelCheck_iff`<br>`VE.Closure.countermodel_sound`<br>`VE.Order.countermodelCheck_iff`<br>`VE.Order.countermodel_sound`<br>`VE.Order.checkCountermodel_sound`<br>`VE.Core.countermodelCheck_iff`<br>`VE.Core.countermodel_sound`<br>`VE.Bridge.decodeModel_valid`<br>`VE.Bridge.decoded_countermodel_sound`<br>`VE.Bridge.CountermodelQuery.refutes_sound`<br>`VE.Route.Wire.decodeModel_valid` | `check-countermodel`<br>`conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `countermodel.search` | search | python → rust | experimental / experimental | `ve.search:find_countermodel`<br>`ve.search:find_distinguishing_model` | none | none | `countermodel`<br>`conformance` | `python:implementation` |
 | `certificate.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.entailment:check_entailment_certificate` | `ve_conformance check-certificate`<br>`ve_conformance route certificate`<br>`ve_conformance order certificate` | `VE.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound_v0`<br>`VE.Core.Tableau.checkCertificate_sound`<br>`VE.Core.Tableau.checkCertificate_sound_v0`<br>`VE.Order.Tableau.checkCertificate_sound`<br>`VE.CertificateWire.Query.accepts_sound`<br>`VE.CertificateWire.ClosureQuery.accepts_sound`<br>`VE.Order.Wire.Query.accepts_sound`<br>`VE.Core.Wire.run_certificate_acceptance`<br>`VE.Route.route_acceptance`<br>`VE.Route.core_route_acceptance` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
-| `definitions.elaborate` | leaf | python → lean | experimental / experimental | `ve.definitions:compile_definitions`<br>`ve.definitions:expand`<br>`ve.background:background`<br>`ve.background:validate_background`<br>`ve.background:dependency_order` | `ve_conformance route background,dependency-order` | `VE.Definitions.stepOk_sound`<br>`VE.Definitions.chainOk_sound`<br>`VE.Definitions.faithful`<br>`VE.Definitions.conservative`<br>`VE.Definitions.conservative_entails`<br>`VE.Definitions.routeLayer_background_sound`<br>`VE.Route.Background.fol_background_sound`<br>`VE.Route.Background.fol_background_complete`<br>`VE.Data.Background.generate_sat_iff` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `definitions.elaborate` | leaf | python → lean | experimental / experimental | `ve.definitions:compile_definitions`<br>`ve.definitions:expand`<br>`ve.background:background`<br>`ve.background:validate_background`<br>`ve.background:dependency_order` | `ve_conformance route background`<br>`ve_conformance route dependency-order` | `VE.Definitions.stepOk_sound`<br>`VE.Definitions.chainOk_sound`<br>`VE.Definitions.faithful`<br>`VE.Definitions.conservative`<br>`VE.Definitions.conservative_entails`<br>`VE.Definitions.routeLayer_background_sound`<br>`VE.Route.Background.fol_background_sound`<br>`VE.Route.Background.fol_background_complete`<br>`VE.Data.Background.generate_sat_iff` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `norms.elaborate` | leaf | python → lean | experimental / experimental | `ve.norms:NormDocument.elaborate`<br>`ve.norms:NormDocument.premises` | `ve_norms_route (default) norms-elaborate` | `VE.Norms.elaborate_iff`<br>`VE.Norms.elaborate_iff_at`<br>`VE.Norms.norms_route_intended` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `norms.conflict` | leaf | python → lean | experimental / experimental | `ve.norms:check_witness`<br>`ve.norms:check_conflict` | `ve_norms_route (default) norms-conflict` | `VE.Norms.conflictFreeCheck_sound`<br>`VE.Norms.conflict_witness_sound`<br>`VE.Norms.conflict_smallModel`<br>`VE.Norms.Replay.norms_wire_conflict_sound`<br>`VE.Norms.Replay.norms_wire_conflict_free_expands`<br>`VE.Norms.Replay.norms_wire_conflict_witness_sound` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `norms.certificate` | leaf | python → lean | experimental / experimental | `ve.norms:check_norm_entailment_certificate` | `ve_norms_route (default) norms-certificate` | `VE.Norms.Replay.norms_wire_acceptance`<br>`VE.Norms.norms_route_acceptance`<br>`VE.Norms.norms_route_entails_iff`<br>`VE.Norms.norms_route_countermodel` | none | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |

@@ -391,6 +391,68 @@ def test_lean_bindings_name_real_executables_modes_and_kinds():
             assert path in {f["file"] for f in MANIFEST["lean_decoders"]["files"]}, (op["id"], path)
 
 
+def _binding_keys(ops):
+    return {(op["id"], b["executable"], b["mode"], kind) for op in ops
+            for b in (op["lean"] or {}).get("bindings", ()) for kind in (b["kinds"] or [None])}
+
+
+def test_every_lean_binding_has_a_probe():
+    """conformance/binding_probes.py holds one accepted case per (operation, executable, mode, kind)."""
+    from conformance.binding_probes import BUILDERS
+    assert _binding_keys(OPS) == set(BUILDERS), _binding_keys(OPS) ^ set(BUILDERS)
+    for op in OPS:
+        for binding in (op["lean"] or {}).get("bindings", ()):
+            assert type(binding["response"]) is list and all(type(f) is str for f in binding["response"])
+            assert set(binding) <= {"executable", "mode", "kinds", "response", "dispatch", "note"}
+
+
+def test_binding_drift_is_detected_without_lean():
+    """Review reproducer: moving evaluate's `order` binding to check-certificate passed every test."""
+    import copy
+    from conformance.binding_probes import BUILDERS
+    for index in range(3):
+        mutated = copy.deepcopy(OPS)
+        evaluate = next(op for op in mutated if op["id"] == "evaluate")
+        evaluate["lean"]["bindings"][index]["mode"] = "check-certificate"
+        assert _binding_keys(mutated) != set(BUILDERS), index
+
+
+@pytest.fixture(scope="module")
+def lean_bin():
+    import shutil
+    import subprocess
+    lake = shutil.which("lake")
+    if lake is None:
+        pytest.skip("lake is not available")
+    if not os.environ.get("VE_LEAN_PREBUILT"):
+        build = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=3600)
+        assert build.returncode == 0, build.stdout + build.stderr
+    return LEAN_BIN
+
+
+def test_every_lean_binding_routes_its_operation(lean_bin):
+    """Each probe is accepted in its declared mode, through the backend (binding, response and row schema)."""
+    from conformance.binding_probes import probes
+    for (op_id, executable, mode, kind), case in probes().items():
+        rows = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
+        assert rows[0]["status"] == "ok", (op_id, executable, mode, kind, rows)
+
+
+def test_no_other_mode_accepts_an_operations_probe(lean_bin):
+    """The declared mode is what routes the case: every other mode of the executable rejects it."""
+    import subprocess
+    from conformance.binding_probes import probes
+    modes = {}
+    for _, executable, mode, _ in _binding_keys(OPS):
+        modes.setdefault(executable, set()).add(mode)
+    for (op_id, executable, mode, kind), case in probes().items():
+        for other in sorted(modes[executable] - {mode}):
+            proc = subprocess.run([str(lean_bin / executable), *([other] if other else [])],
+                                  input=json.dumps([case]), capture_output=True, text=True, timeout=600)
+            row = json.loads(proc.stdout)[0]
+            assert row["status"] == "error", (op_id, mode, kind, "accepted by", other or "(default)")
+
+
 def test_rust_commands_exist():
     main = (ROOT / "rust/ve/src/main.rs").read_text()
     for op in OPS:

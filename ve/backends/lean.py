@@ -11,7 +11,8 @@ result is ever substituted, and a malformed row is never read as a rejection.
 The response schema every runner row satisfies: `status` is `ok` or `error`;
 an `error` row carries a string `error`; an `ok` row carries the submitted
 case `id`; an `id` or `case_index` present on any row names that case. Each
-caller adds the fields its interpretation reads from an `ok` row (`fields`).
+binding's manifest `response` and the caller (`fields`, with types) name the
+fields an `ok` row of the operation must carry.
 """
 from __future__ import annotations
 
@@ -45,7 +46,7 @@ def row_problem(case: dict, row, index: int, fields: dict) -> str | None:
     if "id" in case and row.get("id") != case["id"]:
         return "an ok row does not name its case id"
     for name, expected in fields.items():
-        if name not in row or not _has_type(row[name], expected):
+        if name not in row or (expected is not None and not _has_type(row[name], expected)):
             return f"an ok row has no well-formed {name!r}"
     return None
 
@@ -55,12 +56,13 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     """Submit `cases` to the Lean `runner` executable at path `executable`.
 
     `fields` maps each field the caller reads from an `ok` row to its type
-    (or a tuple of types); a missing or ill-typed field is `CheckerUnavailable`.
+    (or a tuple of types); every field of the binding's declared `response`
+    must be present too. A missing or ill-typed field is `CheckerUnavailable`.
     """
     kinds = {case["kind"] for case in cases if type(case.get("kind")) is str}
-    require_lean_binding(operation, runner, mode, kinds)
+    binding = require_lean_binding(operation, runner, mode, kinds)
     require_lean_call_site(operation, sys._getframe(1))
-    fields = dict(fields or {})
+    fields = {**dict.fromkeys(binding["response"]), **(fields or {})}
 
     def unavailable(message):
         return CheckerUnavailable(f"Lean {runner}: {message}", operation=operation, backend="lean")
