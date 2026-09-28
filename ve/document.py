@@ -351,7 +351,8 @@ def coverage(doc):
         declared, cells, proximate = [], [], []
         for unit in units:
             content = unit["content"]
-            ast = content.get("ast") if type(content) is dict else None
+            # Compiled formula content is the AST itself; norm content is a dict.
+            ast = content
             if type(ast) is not list:
                 continue
             negative = len(ast) == 2 and ast[0] == "not"
