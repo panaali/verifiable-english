@@ -145,7 +145,7 @@ def plan_choices(sets, *, limit=64):
 
 
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
-                   max_models=10_000, max_evaluations=100_000, fixed=()):
+                   max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
 
     Every positive proof is replayed by the certificate checker, and every
@@ -156,6 +156,50 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     from .entailment import check_entailment_certificate, prove_entailment
     from .search import check_countermodel, find_countermodel
     from .vacuity import premise_status
+
+    if joint_choices is not None:
+        if joint_choices.get("status") == "UNKNOWN":
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "budget": {"max_choices": joint_choices["budget"]}}
+        if not all(all(r["kind"] == "asserted" and r["content"] is not None
+                       for r in s["readings"]) for s in sets):
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "reason": "non-assertion elaborator is not yet available"}
+        conclusion = formula_from_data(env, conclusion_ast)
+        fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
+        formulas = {f"{s['id']}@{s['version']}": [formula_from_data(env, r["content"])
+                                                   for r in s["readings"]] for s in sets}
+        positive, negative = [], []
+        unknown = False
+        for choice in joint_choices["choices"]:
+            premises = [*fixed_formulas, *(formulas[key][index] for key, index in choice.items())]
+            proof = prove_entailment(env, premises, conclusion, max_steps=max_steps)
+            if proof.status == "Found" and check_entailment_certificate(
+                    env, premises, conclusion, proof.certificate, max_steps=max_steps).valid:
+                positive.append({"choice": choice, "certificate": proof.certificate,
+                                 "premises": premise_status(
+                                     env, premises, max_proof_steps=max_steps,
+                                     max_domain_size=max_domain_size, max_models=max_models,
+                                     max_evaluations=max_evaluations)})
+                continue
+            model = find_countermodel(env, premises, conclusion,
+                                      max_domain_size=max_domain_size, max_models=max_models,
+                                      max_evaluations=max_evaluations)
+            if model.status == "Found" and check_countermodel(
+                    env, premises, conclusion, model.model,
+                    max_evaluations=max_evaluations).valid:
+                negative.append({"choice": choice, "model_id": model.model.model_id})
+            else:
+                unknown = True
+        if unknown:
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "reason": "a compatible choice could not be classified"}
+        if positive and negative:
+            return {"verdict": "SOME", "route": "joint-choices", "proof": positive[0],
+                    "countermodel": negative[0]}
+        if positive:
+            return {"verdict": "ALL", "route": "joint-choices", "proofs": positive}
+        return {"verdict": "NONE", "route": "joint-choices", "countermodels": negative}
 
     plan = plan_choices(sets)
     if plan["route"] == "UNKNOWN":
