@@ -598,13 +598,19 @@ structure W6Certificate where
   conclusionId : String
   core : VE.Order.Tableau.Certificate
 
-def decodeW6Certificate (j : Json) : Except String W6Certificate := do
+def decodeW6CertificateFields (j : Json) : Except String W6Certificate := do
   exactFields j ["format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"]
   unless (← stringField j "format") == "ve-quantity-certificate@1" do
     throw "Unsupported quantity certificate format"
   pure ⟨← stringField j "environment_id", ← strings (← j.getObjVal? "premise_meaning_ids"),
     ← stringField j "conclusion_meaning_id",
     ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "core")⟩
+
+/-- A raw order certificate, or any other object, is not W6 evidence. -/
+def decodeW6Certificate (j : Json) : Except String W6Certificate :=
+  match decodeW6CertificateFields j with
+  | .ok c => .ok c
+  | .error e => .error s!"Invalid quantity certificate: {e}"
 
 /-- The outer binding to the annotated statements, the inner binding to their
 regenerated core problem, then the frozen order replay. -/
@@ -714,7 +720,12 @@ def runConversion (id kind : String) (j : Json) : Except String Json := do
     pure (ok id [("amount", .str (renderAmount places q))])
   | other => throw s!"unknown case kind {other}"
 
-def runCase (j : Json) : Except String Json := do
+/-- Case kinds beyond this module (the document route), by environment. -/
+abbrev Extension := W6Env → String → String → Json → Except String Json
+
+def noExtension : Extension := fun _ _ other _ => throw s!"unknown case kind {other}"
+
+def runCase (j : Json) (more : Extension := noExtension) : Except String Json := do
   let id ← stringField j "id"
   let kind ← match j.getObjVal? "kind" with
     | .ok k => k.getStr?
@@ -756,17 +767,17 @@ def runCase (j : Json) : Except String Json := do
       ("core_premise_meaning_ids", toJson (ps.map (·.coreId))),
       ("core_conclusion_meaning_id", .str c.coreId)] ++ ids))
   | "count" => runCount w id j
-  | other => throw s!"unknown case kind {other}"
+  | other => more w id other j
 
-def runCaseReported (j : Json) : Json :=
-  match runCase j with
+def runCaseReported (j : Json) (more : Extension := noExtension) : Json :=
+  match runCase j more with
   | .ok result => result
   | .error message => Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
       ("error", .str message)] ++
       (if j.getObjValD "kind" == .str "certificate" then [("valid", .bool false)] else []))
 
 /-- The `quantity` subcommand: read a JSON case list, print the results. -/
-def main (paths : List String) : IO UInt32 := do
+def main (paths : List String) (more : Extension := noExtension) : IO UInt32 := do
   let input ← match paths with
     | [] | ["-"] => (← IO.getStdin).readToEnd
     | [path] => IO.FS.readFile path
@@ -779,7 +790,7 @@ def main (paths : List String) : IO UInt32 := do
     return 2
   | .ok cases =>
     let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
+      | .ok j => runCaseReported j more
       | .error message => Json.mkObj [("status", .str "error"),
           ("case_index", toJson index), ("error", .str message)]
     (← IO.getStdout).putStrLn (Json.arr results).compress

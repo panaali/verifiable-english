@@ -176,6 +176,56 @@ def parse_quantity_sentence(env, source):
     return d.readings[0]
 
 
+def _core_readings(env, source, grammar):
+    """Readings of the frozen English or strict grammar over the erased target,
+    each taken as dimensionless source input through annotated admission."""
+    from ..ast import formula_to_data
+    from ..units import erased_environment
+    target = erased_environment(env)
+    if grammar == "english":
+        from ..english import parse_english as parse
+    else:
+        from ..parser import parse
+    document = parse(target, source)
+    if len(document.formulas) != 1:
+        raise SyntaxError("each VE fence must contain exactly one sentence")
+    payload = {"format": "ve-quantity@1", "formula": formula_to_data(target, document.formulas[0])}
+    canonical, _ = elaborate_quantity(env, payload)
+    return canonical
+
+
+def parse_w6_sentence(env, source, surface="english"):
+    """One sentence in a ve-units@1 environment, across every grammar that applies.
+
+    English is the whole grammar: the quantity wordings above plus the frozen
+    English grammar over the erased target, whose readings are dimensionless
+    source input and must pass the same annotated admission. Each grammar tries
+    every derivation; distinct admitted readings across them reject as
+    ambiguous, and a sentence with none rejects. Strict text has only the frozen
+    grammar."""
+    readings, rejected = {}, []
+    grammars = [("quantity", None), ("core", "english")] if surface == "english" else [("core", "strict")]
+    for name, grammar in grammars:
+        try:
+            canonical = (parse_quantity_sentence(env, source) if name == "quantity"
+                         else _core_readings(env, source, grammar))
+        except AmbiguousDerivation:
+            raise
+        except (ResourceLimit, UnsupportedProfile):
+            raise
+        except VEError as exc:
+            rejected.append(exc)
+            continue
+        from ..wire import canonical_json
+        readings[canonical_json(canonical)] = canonical
+    if len(readings) > 1:
+        raise AmbiguousDerivation(f"W6 sentence has {len(readings)} derivations across the English grammar")
+    if not readings:
+        specific = [e for e in rejected if not str(e).startswith(("No W6 quantity reading", "Unknown English"))]
+        raise specific[0] if len(specific) == 1 else SyntaxError("No W6 reading in any grammar")
+    return next(iter(readings.values()))
+
+
 def render_quantity_sentence(env, canonical):
     """Render the admitted literal/constant comparison wordings without tags.
 

@@ -497,6 +497,15 @@ def erased_environment(env):
     return Environment(erased_data(env.to_dict()))
 
 
+def core_formula(env, payload):
+    """The erased target environment and the regenerated core formula of an
+    admitted statement, for checks that run on the frozen checker."""
+    from .ast import formula_from_data
+    _, core = elaborate_quantity(env, payload)
+    target = erased_environment(env)
+    return target, formula_from_data(target, core)
+
+
 def quantity_meaning_id(env, payload):
     canonical, _ = elaborate_quantity(env, payload)
     return digest(f"ve-meaning-{env.identity_version}\n",

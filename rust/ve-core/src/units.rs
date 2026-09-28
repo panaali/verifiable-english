@@ -734,6 +734,9 @@ fn quantity_payload(e: &Value, p: &Value) -> Result<(Value, Value)> {
 /// case takes annotated `premises` and `conclusion` instead of `quantity`.
 pub fn quantity_case(v: &Value) -> Result<Value> {
     let countermodel = v.get("mode") == Some(&json!("countermodel"));
+    if v.get("mode") == Some(&json!("document")) {
+        return quantity_document(v);
+    }
     if v.get("mode").is_some() && !countermodel {
         return error(
             "UnsupportedProfile",
@@ -802,4 +805,82 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
         out["value"] = value.clone();
     }
     Ok(out)
+}
+/// A W6 quantity document: decode and regenerate every unit, reading and node
+/// statement. Admission (provenance rules, certificate replay and the report)
+/// belongs to Lean; this reports the regenerated annotated meaning ids only.
+fn quantity_document(v: &Value) -> Result<Value> {
+    shape(v, &["kind", "mode", "environment", "document"], &["id"])?;
+    if v["kind"] != "quantity" {
+        return error("InvalidInput", "quantity kind required");
+    }
+    let e = &v["environment"];
+    declarations(e)?;
+    if !array(&e["profiles"])?.contains(&json!("documents@1")) {
+        return error("UnsupportedProfile", "quantity documents require documents@1");
+    }
+    let d = &v["document"];
+    shape(
+        d,
+        &["units", "graph"],
+        &["lemmas", "open_terms", "reading_sets", "narrowings"],
+    )?;
+    if d.get("lemmas").map(array).transpose()?.is_some_and(|l| !l.is_empty()) {
+        return error(
+            "UnsupportedProfile",
+            "document citations require a checked bundle binding",
+        );
+    }
+    let id = v.get("id").cloned().unwrap_or(json!(""));
+    let mut units = vec![];
+    for u in array(&d["units"])? {
+        shape(u, &["id", "span", "kind"], &["content"])?;
+        units.push(match u.get("content") {
+            Some(q) => json!(meaning(e, q)?),
+            None => Value::Null,
+        });
+    }
+    for r in d
+        .get("reading_sets")
+        .map(array)
+        .transpose()?
+        .unwrap_or(&vec![])
+    {
+        shape(r, &["id", "version", "readings"], &[])?;
+        for q in array(&r["readings"])? {
+            meaning(e, q)?;
+        }
+    }
+    let graph = &d["graph"];
+    shape(graph, &["root", "nodes"], &[])?;
+    let mut nodes = vec![];
+    for n in array(&graph["nodes"])? {
+        shape(
+            n,
+            &["name", "quantity"],
+            &["label", "unit", "premises", "certificate"],
+        )?;
+        nodes.push(json!(meaning(e, &n["quantity"])?));
+    }
+    Ok(json!({"id":id,"status":"ok","assurance":"regeneration-only",
+        "unit_meaning_ids":units,"node_meaning_ids":nodes}))
+}
+/// The annotated meaning id of one submitted quantity statement.
+fn meaning(e: &Value, p: &Value) -> Result<String> {
+    let (q, _) = quantity_payload(e, p)?;
+    let profiles = array(&e["profiles"])?;
+    let version = format!(
+        "v0.2:{}",
+        profiles
+            .iter()
+            .map(|x| x.as_str().unwrap())
+            .collect::<Vec<_>>()
+            .join(",")
+    );
+    let environment_id = digest(&format!("ve-environment-{version}\n"), e)?;
+    let canonical = json!({"format":"ve-quantity@1","formula":q,"traces":[]});
+    digest(
+        &format!("ve-meaning-{version}\n"),
+        &json!({"environment_id":environment_id,"ast":canonical}),
+    )
 }
