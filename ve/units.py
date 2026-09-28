@@ -37,6 +37,8 @@ def validate_units(schema, raw):
     if len(raw) > 64:
         raise ResourceLimit("At most 64 unit tags")
     seen = set()
+    money_codes = set()
+    decimal_prefixes = set()
     for tag, record in raw.items():
         if not valid_identifier(tag) or tag == DIMENSIONLESS:
             raise VEError(f"Invalid unit tag {tag!r}")
@@ -57,6 +59,7 @@ def validate_units(schema, raw):
             if type(currency) is not str or not re.fullmatch(r"[A-Z]{3}", currency):
                 raise VEError(f"Invalid currency for {tag}")
             key = (kind, currency)
+            money_codes.add(currency)
             symbol = display.get("input_symbol")
             if symbol is not None:
                 _bounded(symbol)
@@ -69,6 +72,8 @@ def validate_units(schema, raw):
             if display.get("placement", "suffix") not in ("prefix", "suffix"):
                 raise VEError(f"Invalid placement for {tag}")
             key = (kind, display["label"])
+            if display.get("placement") == "prefix":
+                decimal_prefixes.add(display["label"])
         elif kind == "iso_date":
             _fields(display, ("kind",))
             if tag != "day" or scale != 1:
@@ -83,6 +88,8 @@ def validate_units(schema, raw):
             raise VEError("Reserved unit day has a fixed declaration")
         if tag == "elapsed_day" and record != ELAPSED_DAY:
             raise VEError("Reserved unit elapsed_day has a fixed declaration")
+    if money_codes & decimal_prefixes:
+        raise VEError(f"DisplayCollision({sorted(money_codes & decimal_prefixes)[0]})")
     return raw
 
 
@@ -201,12 +208,25 @@ class _Elaborator:
         op = node[0]
         if op == "const" and len(node) == 2:
             decl = self.env.constants.get(node[1])
-            if decl is not None and decl.sort != INT_SORT:
-                return decl.sort, node, node
+            if decl is not None:
+                if decl.sort != INT_SORT:
+                    return decl.sort, node, node
+                _same(DIMENSIONLESS, decl.unit or DIMENSIONLESS)
+                return DIMENSIONLESS, ["const", DIMENSIONLESS, node[1]], node
         if op == "var" and len(node) == 2:
             index = node[1]
-            if type(index) is int and 0 <= index < len(context) and context[index][0] != INT_SORT:
-                return context[index][0], node, node
+            if type(index) is int and 0 <= index < len(context):
+                if context[index][0] != INT_SORT:
+                    return context[index][0], node, node
+                _same(DIMENSIONLESS, context[index][1])
+                return DIMENSIONLESS, ["var", DIMENSIONLESS, index], node
+        if op == "num" and len(node) == 2:
+            coordinate = decimal_from_wire(node[1])
+            return DIMENSIONLESS, ["num", DIMENSIONLESS, str(coordinate)], ["num", str(coordinate)]
+        if op == "add" and len(node) == 3:
+            return self.term(["add", DIMENSIONLESS, node[1], node[2]], context, depth)
+        if op == "scale" and len(node) == 3:
+            return self.term(["scale", DIMENSIONLESS, node[1], node[2]], context, depth)
         if op in ("num", "decimal", "date"):
             if op == "date":
                 _need(node, op, 2)
@@ -294,7 +314,7 @@ class _Elaborator:
             rq, rc = self.formula(node[2], context, depth + 1)
             return [op, lq, rq], [op, lc, rc]
         if op in ("forall", "exists"):
-            if len(node) == 4 and node[1] == INT_SORT:
+            if len(node) in (3, 4) and node[1] == INT_SORT:
                 raise UnsupportedProfile("$int quantification requires the missing numbers2 route")
             if len(node) != 3 or node[1] not in self.env.sorts:
                 raise VEError("Invalid quantity binder")
