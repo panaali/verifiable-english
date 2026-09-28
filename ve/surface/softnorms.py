@@ -118,7 +118,7 @@ def rule_paraphrase(number: int | str, mode: str, *, role: str = "obligation",
     return main
 
 
-_PARTIES = re.compile(r"([a-z][a-z0-9_]*)(?: and ([a-z][a-z0-9_]*))? may turn off\Z")
+_PARTIES = re.compile(r"[a-z][a-z0-9_]*(?: and [a-z][a-z0-9_]*)* may turn off\Z")
 
 
 def parse_header_options(source: str) -> tuple[tuple[int, ...], tuple[str, ...]]:
@@ -144,7 +144,7 @@ def parse_header_options(source: str) -> tuple[tuple[int, ...], tuple[str, ...]]
         if match:
             if parties:
                 raise SyntaxError("Duplicate instruction switch option")
-            parties = tuple(x for x in match.groups() if x)
+            parties = tuple(piece.removesuffix(" may turn off").split(" and "))
             if len(set(parties)) != len(parties):
                 raise SyntaxError("Duplicate instruction party")
             continue

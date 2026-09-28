@@ -448,8 +448,12 @@ def render_document(path):
                         + rule_paraphrase(rule["name"], "default", role=role, sign=rule["sign"],
                                           decider=decider, alterable=rule.get("alterable", ()),
                                           rank=rule.get("rank")))
-            return (f"Rule {rule['name']} is a strict rule on {rule['predicate']} with sign "
-                    f"{'positive' if rule['sign'] else 'negative'}.")
+            description = (f"Rule {rule['name']} is a strict rule on {rule['predicate']} with sign "
+                           f"{'positive' if rule['sign'] else 'negative'}.")
+            if rule.get("alterable"):
+                from .surface.softnorms import rule_paraphrase
+                description += " " + rule_paraphrase(rule["name"], "strict", alterable=rule["alterable"])
+            return description
         claim = wording(content)
         if kind == "asserted":
             return claim
@@ -459,7 +463,9 @@ def render_document(path):
     for u in doc["units"]:
         lines.append(u["source"].strip())
         prefix = ("Open rule reading: " if type(u["content"]) is dict and
-                  "norm" in u["content"] and u["content"]["norm"].get("mode") == "default" else
+                  "norm" in u["content"] and
+                  (u["content"]["norm"].get("mode") == "default" or
+                   bool(u["content"]["norm"].get("alterable"))) else
                   "Checked reading: " if u["content"] is not None else "Recorded meaning: ")
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
         reading_set = active_by_unit.get(u["id"])
