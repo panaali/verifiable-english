@@ -216,10 +216,9 @@ def test_nu_outweighs_indexed_by_act_and_sorts(lean):
      "SoftOverHard: rule d over m"),
     (env({"parties": ["user"], "outranking": {"mode": "strict"}}),
      [norm("m", "x_required", True, alterable=["user"], hard=True)], "HardConstraintAltered: rule m"),
-    # `decided_by: null` (inherit) is sent as an absent key: the frozen restricted JSON
-    # parser of the Lean executables admits no null
+    # The exception object requires its three arrays, even when the decider is inherited.
     (env(), [norm("m", "x_required", True, mode="default", exception={})],
-     "MissingExceptionDecider: rule m"),
+     "InvalidInput: rule m needs an exception"),
     (env({"ranks": [], "outranking": {"mode": "holistic"}}), [], "MissingExceptionDecider: outranking"),
     (env(), [should("m", "x_required", True, exception={**DECIDER, "sufficient": [["unary", "x_permitted", ["var", 0]]]})],
      "InvalidInput: exception condition of rule m mentions x_permitted"),

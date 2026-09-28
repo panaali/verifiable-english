@@ -120,6 +120,9 @@ def decodeException (name : String) (j : Json) : Except String Exception := do
   match VE.Bridge.displayFields j [] ["decided_by", "sufficient", "necessary", "factors"] with
   | .error _ => throw bad
   | .ok () => pure ()
+  for key in ["sufficient", "necessary", "factors"] do
+    unless (j.getObjVal? key).toBool do
+      throw s!"InvalidInput: rule {name} needs an exception"
   let decidedBy ← match j.getObjVal? "decided_by" with
     | .error _ | .ok .null => pure none
     | .ok (.str s) => pure (some s)
@@ -251,9 +254,8 @@ def cohLabel (M N : SoftNode) : String := s!"soft:coherence:{M.name},{N.name}"
 def softLabelled (D : SoftDoc) : List (String × VE.Formula) :=
   (excLabels D).zip (excPremises D) ++ (collidingPairs D).map (fun (M, N) => (cohLabel M N, cohPremise D M N))
 
-/-- The coherence conjuncts not discharged by `rank_resolves` (the conservative
-`conditional_on`: every such conjunct in the background, whether or not the certificate
-uses it). -/
+/-- The coherence conjuncts not discharged by `rank_resolves`. Elaboration reports
+all of them; certified results further filter by the accepted proof's use. -/
 def openCoherence (D : SoftDoc) : List String :=
   (collidingPairs D).filterMap (fun (M, N) => if Comparable D M N then none else some (cohLabel M N))
 

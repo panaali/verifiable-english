@@ -200,10 +200,16 @@ def checkSoftEnv (D : SoftDoc) : Except String Unit := do
     unless env.ranks.contains e.2 do throw s!"UnknownRank: {e.2}"
   if env.outranking = .holistic && env.outrankingDecider.isNone then
     throw "MissingExceptionDecider: outranking"
+  if env.outranking = .strict && env.outrankingDecider.isSome then
+    throw "InvalidInput: strict outranking has no decider"
   for d in env.outrankingDecider.toList do
     if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for outranking"
   for d in env.exceptionDecider.toList do
     if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for exception"
+  for (field, pairs) in [("outranks", env.outranks), ("ties", env.ties)] do
+    for pair in pairs do
+      if pair.1 == pair.2 || pairs.count pair > 1 then
+        throw s!"InvalidInput: invalid {field} pair"
   for (p, π) in env.instructionOf do
     unless env.parties.contains π do throw s!"UnknownSymbol: party {π}"
     if definedOrRegulated D p || (D.E.predicates p).isNone then throw s!"InvalidInput: instruction_of on {p}"
@@ -216,7 +222,8 @@ def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
   | .strict, some _ => throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
   | .default, none => throw s!"InvalidInput: invalid soft fields for {N.name}"
   | _, _ => pure ()
-  unless sortedDistinct N.alterable do throw s!"InvalidInput: invalid soft fields for {N.name}"
+  unless sortedDistinct N.alterable do
+    throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
   if let some e := N.exception then
     unless e.factors.all (·.utf8ByteSize ≤ 200) do
       throw s!"InvalidInput: invalid factors of rule {N.name}"
