@@ -236,17 +236,31 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
 
     case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": env.to_dict(),
             "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
-            "max_evaluations": min(max_evaluations, max_trace_nodes) if trace else max_evaluations}
+            "max_evaluations": max_evaluations, "max_trace_nodes": max_trace_nodes,
+            "trace": trace}
 
     def python():
         return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
                                    max_trace_nodes=max_trace_nodes, trace=trace)
 
     def rust():
-        if trace:
-            raise CheckerUnavailable("CheckerUnavailable: Rust evaluation trace is not implemented")
         row = rust_run(case)
-        return EvaluationResult(row["status"], row["value"], None, row["evaluations"])
+        def explanation(wire):
+            if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
+                raise CheckerUnavailable("CheckerUnavailable: malformed Rust evaluation trace")
+            bindings = wire["bindings"]
+            if not isinstance(bindings, list) or any(
+                not isinstance(item, dict) or item.get("debruijn_index") != index
+                or set(item) != {"debruijn_index", "sort", "local_id"}
+                for index, item in enumerate(bindings)
+            ):
+                raise CheckerUnavailable("CheckerUnavailable: malformed Rust trace bindings")
+            return Explanation(wire["kind"], wire["value"],
+                               tuple((item["sort"], item["local_id"]) for item in bindings),
+                               wire["detail"], tuple(explanation(child) for child in wire["children"]))
+        return EvaluationResult(row["status"], row["value"],
+                                explanation(row["explanation"]) if trace else None,
+                                row["evaluations"])
 
     def lean():
         result = rust()
