@@ -13,9 +13,13 @@ import pytest
 from conformance.alternatives import base_environment, cases, rules
 from ve.alternatives import run_case
 from ve.ast import formula_from_data
+from ve.ast import _Decoder, Not
+from ve.entailment import prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
+from ve.norms import _bind
+from ve.wire import digest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -167,3 +171,55 @@ def test_spec_h3_proximate_claim_requires_leading_to_harm(rust_binary):
                           capture_output=True, text=True, timeout=120)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     assert json.loads(rust.stdout)[0]["values"] == [False]
+
+
+def _source_and_conflict_packages(case):
+    source = {k: v for k, v in case.items() if k not in ("scenario", "expected_clear")}
+    env = Environment(source["environment"])
+    base = Environment(base_environment(source["environment"]))
+    elaborated = run_case(source | {"kind": "alt-elaborate"})
+    document_hash = digest(f"ve-alternatives-{env.identity_version}\n", {
+        "environment_id": env.environment_id, "norms": source["norms"], "units": []})
+    packages = {}
+    for target in elaborated["conflict_targets"]:
+        conclusion = _bind(Not(_Decoder().decode(target["ast"])), target["sorts"])
+        proof = prove_entailment(base, (), conclusion, max_steps=10000)
+        assert proof.status == "Found", (case["id"], target["target"], proof.status)
+        packages[target["target"]] = {
+            "environment_id": env.environment_id, "document_hash": document_hash,
+            "target": target["target"], "certificate": proof.certificate}
+    return source, base, elaborated, document_hash, packages
+
+
+@pytest.mark.parametrize("name,diagnosis", [
+    ("b-A1", "NONE-PERMITTED"),
+    ("b-B", "JOINTLY-UNDISCHARGEABLE"),
+    ("j", "OVER-REQUIRED"),
+])
+def test_spec_conflict_certificates_and_dilemma_witness_replay(name, diagnosis):
+    case = next(c for c in cases() if c["id"] == name)
+    source, _, _, _, packages = _source_and_conflict_packages(case)
+    assert run_case(source | {"kind": "alt-conflict", "packages": packages})["verdict"] == "CONFLICT-FREE"
+    result = run_case(source | {"kind": "alt-followable", "packages": packages,
+                                "witness": {**case["scenario"], "chooser": "r"}})
+    assert result["verdict"] == "DILEMMA"
+    assert result["diagnosis"].startswith(diagnosis)
+    changed = deepcopy(source)
+    changed["environment"]["alternatives"]["decided_by"] = "another annotator"
+    assert run_case(changed | {"kind": "alt-conflict", "packages": packages})["verdict"] == "UNKNOWN"
+
+
+def test_rule_free_followable_certificate_replay():
+    case = {"id": "rule-free", "environment": next(cases())["environment"], "norms": []}
+    source, base, elaborated, document_hash, packages = _source_and_conflict_packages(case)
+    premises = [formula_from_data(base, item["ast"]) for item in elaborated["alternatives"]]
+    conclusion = formula_from_data(base, elaborated["followable"]["ast"])
+    proof = prove_entailment(base, premises, conclusion, max_steps=10000)
+    assert proof.status == "Found"
+    package = {"environment_id": Environment(source["environment"]).environment_id,
+               "document_hash": document_hash, "target": "followable",
+               "certificate": proof.certificate}
+    result = run_case(source | {"kind": "alt-followable", "packages": packages,
+                                "package": package})
+    assert result["verdict"] == "FOLLOWABLE"
+    assert result["conditional_on"] == []

@@ -100,11 +100,12 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 Cases without the profile, the block or an `alt-*` kind are delegated unchanged to
 `VE.Norms.Run`.
 
-End-to-end runs (not a committed test): Python W1 prover certificates, re-bound to the
-alternatives source, replay in this executable as CONFLICT-FREE for {3, 7}, {3, 8}, {3, 7, 9} and
-{3, 5, 7, 9} (over `Background_baseAlt` and over `Background_base` alone); the A₁, B and j
-witnesses replay as DILEMMA with NONE-PERMITTED, JOINTLY-UNDISCHARGEABLE and OVER-REQUIRED; a
-rule-free document's followability certificate replays as FOLLOWABLE. The Python search found no
+End-to-end runs: `tests/test_alternatives_three_way.py` binds Python W1 prover certificates to the
+alternatives source and replays conflict packages as CONFLICT-FREE for the A₁, B and j rule sets.
+Their witnesses replay as DILEMMA with NONE-PERMITTED, JOINTLY-UNDISCHARGEABLE and OVER-REQUIRED;
+a rule-free document's followability certificate replays as FOLLOWABLE. Changing the block's decider
+invalidates the packages. Earlier local runs also covered {3, 7, 9} and {3, 5, 7, 9}.
+The Python search found no
 followability certificate for b′(A) within 50,000 steps (proof search is outside this item).
 
 `tests/test_alternatives_three_way.py` checks the a, b, c, d, e, f, g, h, j, l5, o, t and u scenario shapes:
