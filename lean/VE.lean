@@ -12,3 +12,4 @@ import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
 import VE.English.Run
+import VE.Rights.Correlate

@@ -35,6 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SoftNorms.Run
+import VE.Rights.Correlate
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1149,3 +1150,18 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.weighing_sub_decisions
 #print axioms VE.SoftNorms.yieldsD_prime
 #print axioms VE.SoftNorms.yields_strict
+#print axioms VE.Rights.barNodes_nil
+#print axioms VE.Rights.condKeys_nil
+#print axioms VE.Rights.correlate_identity
+#print axioms VE.Rights.correlate_identity_top
+#print axioms VE.Rights.correlate_identity_top_env
+#print axioms VE.Rights.correlate_shape
+#print axioms VE.Rights.correlate_wellFormed
+#print axioms VE.Rights.envR_of_no_gen
+#print axioms VE.Rights.genDecls_nil
+#print axioms VE.Rights.holderConj_top
+#print axioms VE.Rights.limKeys_nil
+#print axioms VE.Rights.mem_barPreds
+#print axioms VE.Rights.mem_dedup
+#print axioms VE.Rights.rightsValid_of_wellFormed
+#print axioms VE.Rights.scopeLimits_nil
