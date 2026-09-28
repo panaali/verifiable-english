@@ -235,7 +235,7 @@ def AltAdmissionAnswer (id : String) (environment document answer : Json) : Prop
     VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.src.profiles)
       (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId ∧
     answer = encodeAdmitted id reportId res ∧ WellFormedAlt res.src.A = true ∧
-    ∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
+    ∀ S : VE.Structure.{0}, S.Admissible (extEnv res.src.A) →
       Sat S (Admission.generated res) →
       Sat S ((Admission.otherAssumptions res).map (·.formula)) →
       res.report.root.formula.denote S []

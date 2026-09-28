@@ -10,7 +10,7 @@ import subprocess
 
 import pytest
 
-from conformance.alternatives import base_environment, cases, rules
+from conformance.alternatives import base_environment, cases, environment as fixture_environment, rules
 from ve.alternatives import run_case
 from ve.admission import AdmissionError, admit_document
 from ve.norm_admission import admit_norm_document
@@ -140,6 +140,63 @@ def test_w2_admission_uses_regenerated_alternatives_leaves():
     changed = deepcopy(case["environment"])
     changed["alternatives"]["decided_by"] = "another decider"
     assert admit_document(Environment(changed), document)["report_id"] != result["report_id"]
+
+
+@pytest.mark.parametrize("word,first,second", [
+    ("avoidable", "h", "r"),
+    ("unavoidable", "h", "r"),
+    ("allows", "pull", "h"),
+    ("prevents", "pull", "h"),
+])
+@pytest.mark.parametrize("source_kind", ["asserted", "quoted", "reading", "lemma"])
+def test_w2_admission_profile_words_in_units_and_roots(word, first, second, source_kind):
+    raw = fixture_environment()
+    raw["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "r": {"sort": "robot", "description": "r"},
+        "h": {"sort": "harm", "description": "h"},
+    }
+    atom = ["binary", word, ["const", first], ["const", second]]
+    unit = {"id": "profile", "span": [0, 1], "kind": "asserted", "content": atom}
+    node = {"name": "root", "ast": atom, "unit": "profile"}
+    document = {"units": [unit], "graph": {"root": "root", "nodes": [node]}}
+    if source_kind == "quoted":
+        unit["kind"] = ["attributed", "author", "says", "asserted"]
+        node.pop("unit")
+        node["label"] = "bridge:accepts(author,profile)"
+    elif source_kind == "reading":
+        document["units"] = []
+        document["reading_sets"] = [{"id": "profile", "version": 1,
+                                      "readings": [atom]}]
+        node.pop("unit")
+        node["label"] = "readings:profile@1:0"
+    elif source_kind == "lemma":
+        document["units"] = []
+        document["lemmas"] = [{"name": "bundle/profile", "conclusion": atom,
+                               "leaves": []}]
+        node.pop("unit")
+        node["label"] = "cite:bundle/profile"
+    result = admit_document(Environment(raw), document)
+    assert result["admitted"]
+    assert result["report"]["root"]["ast"] == atom
+
+
+def test_w2_admission_regenerates_profile_definition_leaf():
+    raw = fixture_environment()
+    atom = ["binary", "avoidable", ["var", 1], ["var", 0]]
+    body = ["exists", "action", ["and",
+            ["binary", "available", ["var", 0], ["var", 1]],
+            ["not", ["binary", "leads_to", ["var", 0], ["var", 2]]]]]
+    definition = ["forall", "harm", ["forall", "robot", ["and",
+                  ["implies", atom, body], ["implies", body, atom]]]]
+    document = {"units": [], "graph": {"root": "definition", "nodes": [
+        {"name": "definition", "label": "alternatives:profile:avoidable",
+         "ast": definition}]}}
+    assert admit_document(Environment(raw), document)["admitted"]
+    stale = deepcopy(document)
+    stale["graph"]["nodes"][0]["ast"] = ["top"]
+    with pytest.raises(AdmissionError):
+        admit_document(Environment(raw), stale)
 
 
 def test_w2_admission_regenerates_norm_layer_and_table_completion():
