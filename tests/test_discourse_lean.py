@@ -1014,3 +1014,45 @@ def test_definition_pins_are_checked(lean, tmp_path):
                               contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
     assert admit(pinned_pronoun)["error"] == "InvalidInput: mention m1 target"
     assert python_outcome(pinned_pronoun, tmp_path) == "InvalidInput: mention m1 target"
+
+
+def test_renewal_items_are_counterexamples_to_the_approved_statements(lean, tmp_path):
+    """looprecheck1 B (DISCOURSE.md:93): each statement marked (renewal) in lean/DISCOURSE.md is
+    false as approved in draft 4. On route outputs, each approved statement's hypotheses hold
+    and its conclusion fails; the proved replacement is what the spec reviewers are asked to
+    approve (lean/DISCOURSE.md, "Renewal requests")."""
+    from ve.english import parse_english
+    # R1 ill_typed_target: every slot of eta's two-slot derivation is recorded and accessible,
+    # the elaboration is ill typed, and the diagnostic cannot start with both mention ids
+    row = resolve(eta(target="api"), env(PERSON))
+    assert all(row["mentions"][m]["accessible_recorded"] for m in ("m1", "m2"))
+    error = unit_result(row, "u2")
+    assert error == "IllTypedTarget: m1: api" and not error.startswith("IllTypedTarget: m2")
+    # R2 validity_import: checking an import under the importing document's profiles rejects a
+    # valid @1 document, so the approved outcome would refute a true claim
+    one = stored_doc(format="ve-document@1")
+    assert admit(one, env())["error"] == "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
+    assert admit(one, env(profiles=["relational-fol@0"]))["admitted"] is True
+    # R3 validity_self: an admission whose joint set hit the budget is UNKNOWN, so its own validity
+    # claim cannot be `checked` (covered in test_unknown_admission_is_an_unknown_outcome)
+    # R4 validity_independent: a malformed binding rejects j while stripValidity j is admitted
+    bound = document(["This document is correct."], kinds={"u1": "meta"},
+                     extra={**DOCS, "self_truth": ["u1"], "validity": [{"unit": "u1", "document": "this_policy", "holds": True}]})
+    assert admit(bound, env(constants=DOC_CONSTANTS))["error"] == "InvalidInput: u1 is a self-truth sentence"
+    del bound["discourse"]["validity"]
+    assert admit(bound, env(constants=DOC_CONSTANTS))["admitted"] is True
+    # R5 9.5 ParseSound/OneReading on the approved surface: a derivation's yield is the source,
+    # which the core parser does not read (it reads the presentation)
+    alpha = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))])
+    assert unit_result(resolve(alpha), "u1") == unary("safe", "api")
+    with pytest.raises(VEError, match="referent of it is incomplete"):
+        parse_english(base_env(env()), "It is safe.")
+    # R6 citation/report_extends_joint: the joint set of an authored-only document is the one empty
+    # choice, which extends no label; the label is admitted in @1 and (now) in @2
+    authored = document(["The API is safe."], kinds={"u1": "asserted"},
+                        graph={"root": "n", "nodes": [{"name": "n", "ast": unary("safe", "api"), "label": "readings:rs1@1:0"}]})
+    authored["discourse"] = {}
+    authored["reading_sets"] = [reading_set(env(), "rs1", "u1", [("r0", unary("safe", "api"))], "authored")]
+    result = admit(authored)
+    assert result["admitted"] is True and result["joint"] == 1
+    assert [leaf["label"] for leaf in result["report"]["assumptions"]] == ["readings:rs1@1:0"]
