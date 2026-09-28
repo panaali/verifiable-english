@@ -1028,6 +1028,45 @@ def test_reported_structural_regressions(lean, tmp_path):
         load_speech_document(path)
 
 
+def test_unit_content_diagnostics_match_lean(lean):
+    env = F0()
+    body = U("reviewed", "atlas")
+    cases = [
+        ("asserted", {"ast": body, "extra_wire_field": 7}, "InvalidInput: asserted content"),
+        ("asserted", 7, "InvalidInput: asserted content"),
+        ("asserted", {}, "InvalidInput: asserted content"),
+        ("instruction", 7, "InvalidInput: misplaced speech content"),
+        ("question", {"question": {"mode": 7, "body": body}},
+         "InvalidInput: invalid question fields for u"),
+        ("question", {"question": {"body": body}},
+         "InvalidInput: invalid question fields for u"),
+        ("question", {"binding": {"you": "alice"}, "question": {"mode": "polar", "body": body}},
+         "InvalidInput: binding content requires binding kind"),
+    ]
+    for index, (kind, content, expected) in enumerate(cases):
+        document = {"units": [unit("u", 0, kind, content)]}
+        with pytest.raises(VEError) as raised:
+            core(env, document)
+        assert _diagnostic(raised.value) == expected
+        assert run1({"id": str(index), "kind": "speech-elaborate", "environment": env,
+                     "document": document})["error"] == expected
+
+
+def test_duplicate_reading_version_precedes_later_item_error(lean):
+    env = F0()
+    sets = [reading_set("u", n, status, "question", polar(U("reviewed", "atlas")))
+            for n, status in ((1, "open"), (1, "open"), (2, "authored"))]
+    sets[2].pop("signature")
+    document = {"units": [unit("u", 0, "question", polar(U("reviewed", "atlas")))],
+                "reading_sets": sets}
+    expected = "invalid or duplicate reading set version"
+    with pytest.raises(VEError) as raised:
+        core(env, document)
+    assert _diagnostic(raised.value) == expected
+    assert run1({"id": "duplicate", "kind": "speech-elaborate", "environment": env,
+                 "document": document})["error"] == expected
+
+
 def test_balanced_formula_node_budget_agrees_with_lean(lean):
     body = ["top"]
     for _ in range(13):
@@ -1179,8 +1218,10 @@ def test_generated_malformed_speech_wire_matches_lean(lean):
             le_error = result.get("error")
             # The core is a typed projection. W2 owns envelope fields such as spans,
             # meaning, support and unknown keys; those are checked by SpeechSource.
-            # The scope, query and reading references are this route's own wire fields.
-            route_field = path[0] in ("scope", "queries", "reading_sets")
+            # Unit content is decoded by this route too. W2 owns the enclosing
+            # span, meaning, support and unknown unit fields.
+            route_field = (path[0] in ("scope", "queries", "reading_sets")
+                           or len(path) >= 3 and path[0] == "units" and path[2] == "content")
             if py_error and py_error.startswith("CRASH") or route_field and py_error != le_error:
                 mismatches.append((name, py_error, le_error))
     assert not mismatches, "\n".join(map(str, mismatches))
