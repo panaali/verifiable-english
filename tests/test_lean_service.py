@@ -735,3 +735,28 @@ def test_latency_harness_closes_every_cold_start(tmp_path, monkeypatch):
     latency.main(["--out", str(tmp_path), "--cold-starts", "3"])
     assert len(instances) == 4
     assert all(x.started and x.closed for x in instances)
+
+
+def test_pool_answers_a_batch_in_parallel_with_the_same_results(service_executable):
+    cases = CASES[:40]
+    with LeanService(service_executable, batch_cases=8) as single:
+        expected = single.run("evaluate", cases)
+    with LeanServicePool(2, executable=service_executable, batch_cases=8) as pool:
+        assert pool.run("evaluate", cases) == expected
+        assert all(s.stats["requests"] >= 1 for s in pool.services)
+        assert sum(s.stats["requests"] for s in pool.services) == 5
+        assert pool.run("evaluate", cases[:3]) == expected[:3]  # split to one request per process
+        assert pool.run("evaluate", []) == []
+
+
+def test_pool_raises_the_earliest_failing_request(service_executable):
+    cases = CASES[:4] + [{"id": None}] + CASES[:3] + [{"id": 1.5}]
+    with LeanServicePool(2, executable=service_executable, batch_cases=4) as pool:
+        with pytest.raises(VEError) as caught:
+            pool.run("evaluate", cases)
+        assert "null" in str(caught.value) or "JSON" in str(caught.value)
+        assert all(s.stats["restarts"] == 0 for s in pool.services)
+    with LeanService(service_executable, batch_cases=4) as single:
+        with pytest.raises(VEError) as expected:
+            single.run("evaluate", cases)
+    assert str(caught.value) == str(expected.value)

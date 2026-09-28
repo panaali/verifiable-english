@@ -420,15 +420,18 @@ class LeanService:
                 f"CheckerUnavailable: {failure}" + (f"; stderr: {detail}" if detail else "")) from None
         self.stats["retries"] += 1
 
-    def _chunks(self, texts: list[str]):
+    def _chunks(self, texts: list[str], parts: int = 1):
+        """Requests of at most `batch_cases` cases and `batch_bytes`, and at least `parts`
+        requests when there are that many cases (so a pool can answer them in parallel)."""
         # `size` is the byte length of "[" + ",".join(chunk) + "]".
+        limit = min(self.batch_cases, max(1, -(-len(texts) // max(parts, 1))))
         chunk: list[str] = []
         size = 1
         for text in texts:
             n = len(text.encode())
             if n + 2 + ENVELOPE_BYTES > MAX_LINE_BYTES:
                 raise ResourceLimit(f"ResourceLimit: case exceeds {MAX_LINE_BYTES} bytes")
-            if chunk and (len(chunk) >= self.batch_cases or size + n + 1 > self.batch_bytes):
+            if chunk and (len(chunk) >= limit or size + n + 1 > self.batch_bytes):
                 yield chunk
                 chunk, size = [], 1
             chunk.append(text)
@@ -436,28 +439,38 @@ class LeanService:
         if chunk:
             yield chunk
 
+    def _run_chunk(self, mode: str, chunk: list[str], timeout: float | None) -> list:
+        cases_text = "[" + ",".join(chunk) + "]"
+        size = len(cases_text.encode())
+        budget = {"cases": self.batch_cases,
+                  "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
+        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget)
+        if response.get("status") == "error":
+            message = str(response.get("error", ""))
+            if message.startswith("ResourceLimit"):
+                raise ResourceLimit(message)
+            raise VEError(message)
+        return response["results"]
+
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         """The runner results for `cases`, in order. Batches above the adapter caps (256
         cases or 4 MiB) are split into several requests; each is one timeout unit."""
-        texts = [json.dumps(case, ensure_ascii=False, separators=(",", ":")) for case in cases]
         results: list = []
-        for chunk in self._chunks(texts):
-            cases_text = "[" + ",".join(chunk) + "]"
-            size = len(cases_text.encode())
-            budget = {"cases": self.batch_cases,
-                      "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
-            _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget)
-            if response.get("status") == "error":
-                message = str(response.get("error", ""))
-                if message.startswith("ResourceLimit"):
-                    raise ResourceLimit(message)
-                raise VEError(message)
-            results.extend(response["results"])
+        for chunk in self._chunks(_texts(cases)):
+            results.extend(self._run_chunk(mode, chunk, timeout))
         return results
 
 
+def _texts(cases: list) -> list[str]:
+    return [json.dumps(case, ensure_ascii=False, separators=(",", ":")) for case in cases]
+
+
 class LeanServicePool:
-    """A small pool of supervised services (default 2, the IDE footprint in section 4)."""
+    """A small pool of supervised services (default 2, the IDE footprint in section 4).
+
+    A batch is split into at least one request per process and its requests are answered
+    in parallel by idle processes. Requests are stateless, so the results are those of
+    `LeanService.run`; if requests fail, the failure of the earliest one is raised."""
 
     def __init__(self, size: int = 2, **options):
         self._services = [LeanService(**options) for _ in range(size)]
@@ -469,12 +482,49 @@ class LeanServicePool:
     def services(self) -> tuple[LeanService, ...]:
         return tuple(self._services)
 
-    def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+    def start(self) -> None:
+        for service in self._services:
+            service.start()
+
+    def _on_idle(self, call):
         service = self._idle.get()
         try:
-            return service.run(mode, cases, timeout=timeout)
+            return call(service)
         finally:
             self._idle.put(service)
+
+    def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
+        if len(chunks) <= 1:
+            return self._on_idle(lambda service: service.run(mode, cases, timeout=timeout))
+        answers: list = [None] * len(chunks)
+        pending = iter(range(len(chunks)))
+        claim = threading.Lock()
+
+        def worker():
+            while True:
+                with claim:
+                    index = next(pending, None)
+                if index is None:
+                    return
+                try:
+                    answers[index] = (True, self._on_idle(
+                        lambda service: service._run_chunk(mode, chunks[index], timeout)))
+                except Exception as exc:  # noqa: BLE001  (re-raised below, in request order)
+                    answers[index] = (False, exc)
+
+        threads = [threading.Thread(target=worker, daemon=True)
+                   for _ in range(min(len(self._services), len(chunks)))]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        results: list = []
+        for ok, value in answers:
+            if not ok:
+                raise value
+            results.extend(value)
+        return results
 
     def close(self) -> None:
         for service in self._services:
