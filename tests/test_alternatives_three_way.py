@@ -175,6 +175,16 @@ def test_w2_admission_regenerates_norm_layer_and_table_completion():
         admit_document(Environment(env_data), stale)
 
 
+def test_legend_uses_act_words_without_template_slots():
+    case = next(c for c in cases() if c["id"] == "t")
+    elaborated = run_case({"id": "legend", "kind": "alt-elaborate",
+                           "environment": case["environment"], "norms": case["norms"]})
+    lines = elaborated["legend"]
+    assert any('fulfils "prevent"' in line for line in lines)
+    assert any('duties do not bear on the choice: "file a report"' in line for line in lines)
+    assert all("{0}" not in line and "{1}" not in line for line in lines)
+
+
 def test_spec_s2_conflict_three_way(rust_binary):
     case = next(c for c in cases() if c["id"] == "a")
     source = {k: v for k, v in case.items() if k != "expected_clear"}
