@@ -1,0 +1,155 @@
+"""Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
+
+Rust evaluates the regenerated formulas in a complete model. It has no speech
+admission route, so these checks do not enable trusted document admission.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import shutil
+import subprocess
+
+import pytest
+
+from ve.ast import _to_data
+from ve.environment import Environment
+from ve.speech_acts import SpeechDocument
+from ve.speech_document import load_speech_document
+
+from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run1, unit, which
+
+
+@pytest.fixture(scope="module")
+def rust():
+    executable = ROOT / "rust/target/debug/ve"
+    if not executable.exists():
+        cargo = shutil.which("cargo")
+        if cargo is None:
+            pytest.skip("cargo is required for speech-act FOL conformance")
+        built = subprocess.run([cargo, "build", "-p", "ve"], cwd=ROOT / "rust",
+                               capture_output=True, text=True, timeout=600)
+        assert built.returncode == 0, built.stdout + built.stderr
+    return executable
+
+
+def core(env, document):
+    return SpeechDocument(Environment(env), document["units"], document.get("queries", []))
+
+
+def fol_environment(env):
+    """The common FOL vocabulary after speech and norm metadata are erased."""
+    base = copy.deepcopy(env)
+    base.pop("speech_acts")
+    base["profiles"] = ["relational-fol@0"]
+    for predicate in base["vocabulary"]["predicates"].values():
+        predicate.pop("regulated", None)
+    return base
+
+
+def rust_values(rust, env, formulas, complete_model):
+    case = {"id": "speech-section-9", "environment": fol_environment(env),
+            "ast": formulas, "model": complete_model}
+    completed = subprocess.run([str(rust), "conformance", "-"], input=json.dumps([case]),
+                               capture_output=True, text=True, timeout=60)
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    [result] = json.loads(completed.stdout)
+    assert result["status"] == "ok", result
+    return result["values"]
+
+
+def test_alpha_command_regeneration_and_no_done_fact(rust, lean):
+    env = F0()
+    document = {"units": [unit("u1", 0, "instruction", command("require", "click_required", ["check"]))]}
+    py, lean = core(env, document), elaborate(env, document)
+    [cmd] = py.commands
+    assert cmd.active
+    assert py.policy.rules[0].to_dict()["norm"] == lean["commands"][0]["demand"]
+    assert py.meaning_ids["u1"] == lean["commands"][0]["meaning_id"]
+    assert [_to_data(f) for f in py.premises()] == lean["premises"]
+    complete = py.complete_model(MODEL).to_dict()
+    assert rust_values(rust, env,
+                       [["binary", "click_required", ["const", "alice"], ["const", "check"]],
+                        ["binary", "done_click", ["const", "alice"], ["const", "check"]]],
+                       complete) == [True, False]
+
+
+@pytest.mark.parametrize("reviewed,expected", [([], "no"), ([["atlas"]], "yes")])
+def test_eta_polar_answer_in_same_model(rust, lean, reviewed, expected):
+    env = F0()
+    document = {"units": [unit("u5", 0, "question", polar(U("reviewed", "atlas")))]}
+    py, lean = core(env, document), elaborate(env, document)
+    q = py.questions[0]
+    assert py.meaning_ids[q.unit] == lean["questions"][0]["meaning_id"]
+    assert _to_data(py.presupposition(q)) == lean["questions"][0]["presupposition"]
+    base_model = model(reviewed=reviewed)
+    py_answer = py.evaluate_answer_model(q, expected, base_model)
+    lean_answer = run1({"id": "eta", "kind": "speech-answer", "environment": env,
+                        "document": document, "question": "u5", "evidence": {"model": base_model},
+                        "model_id": "same-model"})
+    assert py_answer["status"] == "evaluated"
+    assert lean_answer["answer"] == f"evaluated {expected} in model same-model (this situation only)"
+    assert rust_values(rust, env, [U("reviewed", "atlas"), ["not", U("reviewed", "atlas")]],
+                       py.complete_model(base_model).to_dict()) == ([True, False] if expected == "yes" else [False, True])
+
+
+def test_iota_false_presupposition_is_neither_yes_nor_no(rust, lean):
+    env = F0()
+    document = {"units": [unit("u5", 0, "question", which("which_one"))]}
+    py, lean = core(env, document), elaborate(env, document)
+    q = py.questions[0]
+    h = _to_data(py.presupposition(q))
+    assert h == lean["questions"][0]["presupposition"]
+    base_model = model(reviewed=[["atlas"], ["beacon"]])
+    assert py.evaluate_answer_model(q, "atlas", base_model)["status"] == "PRESUPPOSITION-FAILED"
+    answer = run1({"id": "iota", "kind": "speech-answer", "environment": env,
+                   "document": document, "question": "u5", "evidence": {"model": base_model},
+                   "model_id": "same-model"})
+    assert answer["answer"] == "PRESUPPOSITION-FAILED (model same-model)"
+    assert rust_values(rust, env, [h], py.complete_model(base_model).to_dict()) == [False]
+
+
+def test_beta_prohibition_regenerates_permission_negation(rust, lean):
+    env = F0()
+    document = {"units": [unit("u1", 0, "instruction", command("forbid", "share_permitted", ["token1"]))]}
+    py, lean = core(env, document), elaborate(env, document)
+    rule = py.policy.rules[0].to_dict()["norm"]
+    assert rule == lean["commands"][0]["demand"]
+    assert rule["sign"] is False and rule["predicate"] == "share_permitted"
+    complete = py.complete_model(MODEL).to_dict()
+    assert rust_values(rust, env, [["binary", "share_permitted", ["const", "alice"], ["const", "token1"]]],
+                       complete) == [False]
+
+
+def test_xi_eta_source_to_answer_end_to_end(rust, lean, tmp_path):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    lines = ["In this task, you are alice.\n", "Click check.\n", "Is atlas reviewed?\n"]
+    positions = [0]
+    for line in lines:
+        positions.append(positions[-1] + len(line.encode()))
+    units = [
+        {**unit("u0", positions[0], "binding", {"binding": {"you": "alice"}}),
+         "span": positions[:2]},
+        {**unit("u1", positions[1], "instruction", command("require", "click_required", ["check"])),
+         "span": positions[1:3]},
+        {**unit("u2", positions[2], "question", polar(U("reviewed", "atlas"))),
+         "span": positions[2:4]},
+    ]
+    base_model = model(reviewed=[["atlas"]])
+    metadata = {"format": "ve-document@2", "environment": env, "units": units,
+                "answers": [{"question": "u2", "by": "checker", "support": "model", "answer": "yes",
+                             "evidence": {"model": base_model}}]}
+    path = tmp_path / "speech.ve.md"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + "".join(lines))
+    source = load_speech_document(path)
+    assert source.answer_lines[0]["status"] == "evaluated"
+    assert source.coverage()["bytes_by_class"] == {"C": positions[-1]}
+    lean_result = elaborate(env, {"units": units})
+    assert source.document.meaning_ids["u1"] == lean_result["commands"][0]["meaning_id"]
+    assert source.document.meaning_ids["u2"] == lean_result["questions"][0]["meaning_id"]
+    assert run1({"id": "source-answer", "kind": "speech-answer", "environment": env,
+                 "document": {"units": units}, "question": "u2", "evidence": {"model": base_model},
+                 "model_id": "same-model"})["answer"] == "evaluated yes in model same-model (this situation only)"
+    assert rust_values(rust, env, [U("reviewed", "atlas")],
+                       source.document.complete_model(base_model).to_dict()) == [True]
