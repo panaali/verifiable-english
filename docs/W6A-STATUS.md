@@ -35,12 +35,24 @@ W6a quantity statements are now admitted and certified by Lean through a separat
 
 Every §7.1 row with a numeric payload (N01, N07, N13, N15/N24, N21, N22, N23) has a Lean-admitted case with a round-tripping wording. The fixture model satisfies all cases and consequences. These consequences have Lean-checked certificates over the cases they cite: N07 and N13 orders, the N13 years, the N15/N24 goal equality, the N21 order and 0.10-point difference, and the N23 differences. N07b/N22b stay NO, N08 stays REIFIED, and the projected and vague wording is OPEN. Source facts remain assumption/testimony leaves.
 
+## Loop recheck 1 (2026-09-28)
+
+Each finding was fixed as a class, in Python, Lean and Rust where relevant, with regressions in `tests/test_w6a_looprecheck1.py`, `tests/test_w6a_documents.py` and `tests/test_fret_w6a_rerating.py`.
+
+- **Renderings read back as themselves (P1, decimal P2).** Constant verbalisations must be whitespace-normalized (the display-string rule), and pairwise distinct up to sentence-initial ASCII capitalization (`VerbalisationCollision`), in all three decoders. Sentence-initial capitalization is ASCII-only in the parser. Decimal literals are bounded by 40 digits, with sign and point uncounted, so every admitted coordinate renders on every declared scale and reparses.
+- **Evaluation budget (P2).** `VE.Time.Budget.evalB` charges exactly as Python `tick` and Rust `eval`, and `refutesB` does the same for countermodels. `evalB_sound` and `refutesB_sound` show that a budgeted answer is the reference answer. The pinned seven-entity fixtures are UNKNOWN in Lean too, and the six- and eight-entity fixtures report the pinned evaluation counts. Python `quantity_countermodel` raises on exhaustion instead of returning "does not refute".
+- **Calendar (P2).** `civilOf_num : D.Valid → civilOf D.num = some D`, via `civilOf_complete`, `civilCandidate_spec`, `findYear_spec` and `findMonth_spec`. The month fold became a bounded search with the same results.
+- **Documents (P1).** `VE.Time.Document` admits the P0 admission input with every formula a `ve-quantity@1` statement (`ve_quantity` case `document`). `admit_quantity_report_sound`: the root holds in every admissible tagged structure where the report's leaves hold, and every leaf is a submitted node satisfying its provenance rule with its label. Python (`ve.quantity_admission`) produces the same report and report id. Rust (`mode: document`) regenerates every statement. The `ve-document@1` loader takes quantity content, treats legacy `ast` content as dimensionless input to annotated admission, and checks graphs on this route.
+- **Whole-grammar English (P1).** `parse_w6_sentence` reads a fence with the quantity wordings and with the frozen English grammar over the erased target. Frozen-grammar readings are dimensionless input and must pass annotated admission. Distinct admitted readings across the grammars reject as ambiguous.
+- **Evaluation work (P1).** The news article is the Lean-admitted document `usecases/news-article/news-w6a.ve.md`. `usecases/news-article/coverage-w6a.md` refreshes the table from that run, beside the unchanged dated audit `coverage.md`: rows 7, 13, 21, 22 and 23 are DIRECT, and the totals are recounted from the rows. The measured partition is `coverage.json`, and `tools/coverage_dashboard.py` shows both in ROADMAP. The 30-item FRET sample is re-rated in `experiments/E0/FRET-W6A-RERATING.md` (b 8 → 10, c 18 → 16).
+
 ## Still open
 
-- **Document route.** `ve-document@1` admission of `{"quantity": ...}` units, and citation/report binding, need the order-family document route; the base route still defers order-family admission for every document. The coverage table is therefore unchanged.
-- **Whole-grammar English.** The quantity wording grammar is all-derivations only locally. It is not yet part of the whole English all-derivations gate or the W8 fidelity gate, so quantity constructs stay strict-only.
+- **W8 fidelity gate.** Not run. It needs 20 sealed model-written sentences per construct, authoring by Opus 5.5 and Haiku 4.5, and a blind Astra audit, and this task makes no model calls. Quantity constructs therefore stay out of `ve assist` (strict-only authoring). `render_quantity_witness` supplies the gate's deterministic witness input (units restored). Document fences are checked for one reading across the whole grammar, as existing English fences are.
+- **Citations.** `cite` labels and lemmas reject on the quantity route with the base route's diagnostic. Citation bundle binding is unimplemented on every route, not just this one.
+- **Premise status of quantity documents.** `ve document check` searches small finite models and does not choose integer values, so it reports UNKNOWN for the news document. The fixture model is the non-vacuity evidence: Lean evaluates the report's leaves and root true in it.
+- **Relational and quantity content in one document.** The news document's relational clauses stay in `claims.ve`, because the quantity route's profile set differs from the relational document's.
 - **W6b (gated on numbers2).** `sunday`, `excluded_sundays`, date/integer binders, traces (`Time.excludedDays_iff`, the guarded Sunday equivalence, `Time.trace_iff`), and the certified Art. I §7 result reject until the proved numbers2 integer-quantifier route exists.
-- **Evaluation work.** The FRET re-rating and the source-span coverage refresh.
 
 ## Gates run
 
