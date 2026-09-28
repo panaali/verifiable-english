@@ -802,7 +802,7 @@ class SpeechDocument:
         from .evaluate import _Evaluator, _Exhausted
         from .model import FiniteModel
         base_env = self.policy.base_environment()
-        base = FiniteModel.from_dict(base_env, base_wire) if type(base_wire) is dict else base_wire
+        base = base_wire if isinstance(base_wire, FiniteModel) else FiniteModel.from_dict(base_env, base_wire)
         if base.environment_id != base_env.environment_id:
             raise VEError("InvalidModel: base environment mismatch")
         wire = base.to_dict()
@@ -860,7 +860,8 @@ class SpeechDocument:
                 raise VEError(f"AnswerOutsideDomain: {question.unit}, {token}")
             return self._instance(question, token)
         if question.mode == "which_all":
-            if type(token) is not tuple or len(set(token)) != len(token) or any(x not in question.domain for x in token):
+            if (type(token) is not tuple or any(type(x) is not str for x in token)
+                    or len(set(token)) != len(token) or any(x not in question.domain for x in token)):
                 raise VEError(f"AnswerOutsideDomain: {question.unit}, {token}")
             if tuple(x for x in question.domain if x in token) != token:
                 raise VEError(f"AnswerOutsideDomain: {question.unit}, {token}")
