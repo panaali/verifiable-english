@@ -196,10 +196,13 @@ def select(paths: list[str], *, full: bool = False) -> dict:
             or (any("ve_norms_route" in (ROOT / p).read_text() for p in selected)
                 and not (ROOT / "lean/.lake/build/bin/ve_norms_route").exists()))
     rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
-    rust_binary = (rust or (any("rust/target/" in (ROOT / p).read_text()
-                               or "VE_W5_RUST_BIN" in (ROOT / p).read_text()
-                               for p in selected)
-                            and not (ROOT / "rust/target/release/ve").exists()))
+    rust_release_binary = (rust or (any("rust/target/release/ve" in (ROOT / p).read_text()
+                                       or "VE_W5_RUST_BIN" in (ROOT / p).read_text()
+                                       for p in selected)
+                                    and not (ROOT / "rust/target/release/ve").exists()))
+    rust_debug_binary = (rust or (any("rust/target/debug/ve" in (ROOT / p).read_text()
+                                     for p in selected)
+                                  and not (ROOT / "rust/target/debug/ve").exists()))
     commands = [list(cmd) for cmd in CHECKS]
     if lean:
         commands.append(["lake", "build"])
@@ -207,8 +210,11 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     if rust:
         commands.append(["cargo", "test", "--locked", "--all-features", "--manifest-path",
                          "rust/Cargo.toml", "--", "--test-threads=1"])
-    if rust_binary:
+    if rust_release_binary:
         commands.append(["cargo", "build", "--locked", "--release", "--manifest-path",
+                         "rust/Cargo.toml", "-p", "ve"])
+    if rust_debug_binary:
+        commands.append(["cargo", "build", "--locked", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
     commands.append(["uv", "run", "--frozen", "--group", "dev", "python", "-m",
                      "pytest", "-q", *selected])
