@@ -663,6 +663,24 @@ class SpeechDocument:
         raise VEError(f"InvalidInput: mode {question.mode} has no answer formula")
 
 
+def effective_scope(env, units, reading_sets=()):
+    """The scope a document's bindings leave (1.1), for wordings read before the document is built.
+
+    Exactly `SpeechDocument.scope` restricted to the units whose effective
+    kind (the unit's, or its latest signed choice's) is `binding`: pending
+    bindings supply nothing and conflicts are the document's.
+    """
+    latest = latest_reading_sets(reading_sets)
+
+    def kind(u):
+        chosen = latest.get(u.get("id"))
+        return chosen["readings"][0]["kind"] if chosen is not None and chosen["status"] == "authored" else u.get("kind")
+
+    ids = {u["id"] for u in units if type(u) is dict and kind(u) == "binding"}
+    return SpeechDocument(env, [u for u in units if type(u) is dict and u.get("id") in ids],
+                          reading_sets=[r for r in reading_sets if r["unit"] in ids]).scope
+
+
 def combine(first: SpeechDocument, second: SpeechDocument):
     if first.scope != second.scope or first.env.environment_id != second.env.environment_id:
         raise VEError(f"ScopeMismatch: {first.scope['task']}, {second.scope['task']}")

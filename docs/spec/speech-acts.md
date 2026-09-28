@@ -86,7 +86,10 @@ environment whose block is the **effective** scope, exactly as if the block had 
 bindings supply nothing keeps its environment's id. Binding "you" to Alice or to Bob therefore gives two ids. Only a
 binding unit that is not pending supplies an entry (1.5): a binding whose reading set's latest version is open is
 dormant, supplies nothing, neither conflicts with nor duplicates another entry, and keeps its single-binding checks
-(shape, phrase, declared constant), whatever its own content or its candidates bind.
+(shape, phrase, declared constant), whatever its own content or its candidates bind. Everything read or reported
+under the scope uses the effective one: a source fence is parsed under it (a phrase a binding supplies can be
+written), and the inspection report (`python -m ve speech-acts`) gives its `environment_id` and its legend, whose
+definite sentences follow the phrases' canonical (sorted) order in every checker.
 
 ### 1.2 Commands
 
@@ -1579,6 +1582,7 @@ statements of section 8 are unchanged.
 | B, opaque wording: "Is atlas reviewed and not reviewed?" matched a declared one-place gloss and was answered "yes" as one atom | 2.1, 6, 7: a copular gloss must name one property; a matching gloss holding a connective, negation or quantifier word, a declared constant or a bound definite phrase is `OpaqueWording`, in questions, which bodies and query targets. |
 | A, unsigned choices: an authored reading set without its `signature` supplied a premise in both cores, though the source loader rejects it | 1.5: only a signed version is a choice in every checker; unsigned authored versions, signed open ones, versions below 1 and sets for no unit of the document are rejected with W2's texts. |
 | A, pending bindings: an open binding unit still bound "you" for active commands in both cores, although its sole candidate bound another constant | 1.1 and 1.5: a pending binding supplies no scope entry, conflicts with and duplicates nothing, and keeps its single-binding checks; a `binding` unit carries binding content in both cores. |
+| A, CLI scope identity: the inspection report gave the embedded environment's id and legend, so alice- and bob-bound documents reported one id and no bound addressee; fences were parsed under the block alone | 1.1: the report, the legend and fence parsing use the effective scope; Python's legend lists definites in Lean's sorted order. |
 
 ## Change log
 
