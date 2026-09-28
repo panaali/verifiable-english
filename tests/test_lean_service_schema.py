@@ -35,7 +35,7 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from tests.lean_service_corpus import corpus
 from tests.test_lean_service import fake
-from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts
+from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,6 +93,44 @@ def genuine(executables):
     return exchanges
 
 
+# Request errors of every kind: (mode, cases text, count, budget).
+ERROR_REQUESTS = [
+    ("evaluate", '[{"id":"a","ast":[]},{"id":"b","ast":[]}]', 2, {"cases": 1}),
+    ("route", '[{"id":"a","kind":"evaluate"}]', 1, {"bytes": 3}),
+    ("evaluate", '[{},{}]', 2, {"steps": 1}),
+    ("order", '[{"id":1,}]', 1, None),
+    ("check-certificate", '[{"id":null}, {"id":"b"}]', 2, None),
+    ("english", '[{"cases":[],}]', 1, None),
+    ("norms", '{}', 0, {"cases": 1}),
+]
+
+
+@pytest.fixture(scope="module")
+def genuine_errors(executables):
+    """[(mode, request, response)]: the service's request errors, each with the request as
+    the client checks it (`request_context`); one cases text does not split into cases."""
+    exchanges = []
+    with LeanService(executables[0]) as service:
+        for mode, text, count, budget in ERROR_REQUESTS:
+            _, response = service.exchange(mode, text, count, budget=budget)
+            assert response["status"] == "error"
+            exchanges.append((mode, request_context(response["id"], mode, text, count), response))
+        assert service.stats["retries"] == 0
+    return exchanges
+
+
+def error_items(genuine_errors, rng):
+    """Mutations of the request errors, and each error against requests with other digests."""
+    items = []
+    for mode, request, response in genuine_errors:
+        items.append((mode, request, mutations(response, rng, 0, 4)))
+        digests = request["digests"]
+        others = [None, [], ["0" * 64]] + ([digests[:-1], digests[::-1], digests + digests[-1:]]
+                                           if digests else [])
+        items += [(mode, {**request, "digests": other}, [response]) for other in others if other != digests]
+    return items
+
+
 def lean_verdicts(decoder, items, check="decode"):
     """ve_response_decode's verdict ("accept" or "reject: ...") for each (mode, request,
     response) under `check`: `decode` (the client's schemas) or `invariants`."""
@@ -146,6 +184,31 @@ def test_genuine_responses_satisfy_the_lean_invariants(genuine, executables):
     """What the client leaves to the service holds on everything the service emits."""
     verdicts = lean_verdicts(executables[1], [(m, q, [r]) for m, q, r in genuine], "invariants")
     assert set(verdicts) == {"accept"}, [v for v in verdicts if v != "accept"][:5]
+
+
+def test_genuine_request_errors_are_bound_and_accepted(genuine_errors, executables):
+    """mig1d recheck: every request error echoes the request's mode and its case digests
+    (`null` for a cases text that does not split), and the schemas and the Lean decoders
+    accept each one against its request."""
+    assert all(set(response) == {"id", "status", "mode", "digests", "error"} and response["mode"] == mode
+               and response["digests"] == request["digests"] for mode, request, response in genuine_errors)
+    assert any(request["digests"] is None for _, request, _ in genuine_errors)
+    assert any(request["digests"] and request["cases"] is None for _, request, _ in genuine_errors)
+    items = [(m, q, [r]) for m, q, r in genuine_errors]
+    assert set(assert_agreement(executables[1], items)) == {"accept"}
+    assert set(lean_verdicts(executables[1], items, "invariants")) == {"accept"}
+
+
+def test_request_errors_without_their_binding_are_rejected(genuine_errors, executables):
+    """Dropping or altering the mode or the digests of a request error, or checking it
+    against another request's digests, is rejected by the schemas and by Lean alike."""
+    items = error_items(genuine_errors, random.Random(20260928))
+    verdicts = assert_agreement(executables[1], items)
+    flat = [(q, r) for _, q, responses in items for r in responses]
+    for (request, response), verdict in zip(flat, verdicts):
+        if not (isinstance(response, dict) and response.get("mode") == request["mode"]
+                and response.get("digests", 0) == request["digests"]):
+            assert verdict != "accept", (request, response)
 
 
 # Mutations of genuine responses
@@ -294,7 +357,7 @@ def request_mutations(request, response, rng, limit):
 
 
 @pytest.fixture(scope="module")
-def fuzz(genuine, executables):
+def fuzz(genuine, genuine_errors, executables):
     """[(mode, request, [response])]: mutations of every genuine response and of each of its
     results alone, joint request/result mutations, altered requests and the value-domain
     probes below; with Lean's verdicts."""
@@ -305,6 +368,7 @@ def fuzz(genuine, executables):
         items += [(mode, req, [res]) for req, res in joint_mutations(request, response, rng, 8)]
         items += [(mode, req, [res]) for req, res in request_mutations(request, response, rng, 6)]
     items += kind_items(genuine) + label_items(genuine) + depth_items(genuine)
+    items += error_items(genuine_errors, rng)
     return items, lean_verdicts(executables[1], items)
 
 
@@ -317,7 +381,7 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
 @pytest.mark.parametrize("weaken", [
     "digest", "index", "modality", "act", "relation", "token", "kind-fuel", "formula-fuel",
     "values-count", "kinds-link", "lemmas-link", "checked-count", "label", "valid-false",
-    "error-id", "generated-cap"])
+    "error-id", "generated-cap", "request-error-mode", "request-error-digests"])
 def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
     """The differential harness has teeth: each weakening of the schemas, bindings
     included, disagrees with the Lean decoders on some mutation (and so does the decoders'
@@ -346,6 +410,9 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
      "error-id": lambda: edit(common, lambda d: d["error"]["properties"]["id"].pop("x-echo")),
      "generated-cap": lambda: edit(common, lambda d: d["generated_formula"].update(
          {"x-fuel": {"counter": "generated_formula", "limit": 64}})),
+     "request-error-mode": lambda: edit("envelope.json", lambda d: d["error"]["properties"]["mode"].pop("x-equals")),
+     "request-error-digests": lambda: edit("envelope.json",
+                                           lambda d: d["error"]["properties"]["digests"].pop("x-equals")),
      }[weaken]()
     compiler = Compiler(tmp_path)
     rows = {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES}

@@ -19,7 +19,8 @@ only: nothing imports it and no theorem depends on it.
   tests require every genuine service response to satisfy it.
 
 Each input line is `{"check"?: "decode" | "invariants", "mode", "request": {"id", "cases",
-"digests", "bytes"}, "responses": [...]}`; the output line is an array with `"accept"`
+"digests", "bytes"}, "responses": [...]}`, where `digests` is `null` when the request's cases
+text does not split into cases; the output line is an array with `"accept"`
 or `"reject: <reason>"` per response. -/
 namespace ResponseDecode
 open Lean
@@ -585,13 +586,16 @@ def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
   need ((← field b "digest") == digest) "digest is not the case's"
   field b "result"
 
-/-- `Service.Protocol`: a line error, or one bound result per case with exact counts;
-`content` is applied to each result with its case and position. -/
+/-- `Service.Protocol`: a request error bound to the request's mode and case digests
+(`requestError`), or one bound result per case with exact counts; `content` is applied to
+each result with its case and position. -/
 def response (mode : String) (request r : Json) (content : Json → Json → Nat → Check) : Check := do
   let nonce ← field request "id"
   if isField r "status" (.str "error") then
-    shape r ["id", "status", "error"] []
+    shape r ["id", "status", "mode", "digests", "error"] []
     need ((← field r "id") == nonce && (← (field r "id")).getStr?.toBool) "id is not the nonce"
+    need (isField r "mode" (.str mode)) "mode"
+    need ((← field r "digests") == (← field request "digests")) "digests are not the request's"
     text (← field r "error")
   else
     shape r ["id", "status", "mode", "results", "counts"] []

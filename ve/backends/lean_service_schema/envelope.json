@@ -1,6 +1,6 @@
 {
   "$id": "envelope.json",
-  "$comment": "Service.Protocol lines. `handshake` is the first line; the context of `response` is the request: {id (the nonce), mode, cases (decoded), digests (SHA-256 of each case text as sent), bytes (trimmed cases text)}. A line error is kept; any other mismatch is operational. Binding: the response echoes the nonce and mode, and result i is {index: i, digest: the digest of case i, result}, so omitted, reordered, duplicated and substituted results are rejected without semantic checks (docs/spec/lean-service.md, threat model).",
+  "$comment": "Service.Protocol lines. `handshake` is the first line; the context of `response` is the request: {id (the nonce), mode, cases (decoded), digests (SHA-256 of each case text as sent, null when the cases text does not split into cases), bytes (trimmed cases text)}. A bound request error is kept; any other mismatch is operational. Binding: the response echoes the nonce and mode, and result i is {index: i, digest: the digest of case i, result}, so omitted, reordered, duplicated and substituted results are rejected without semantic checks; a request error echoes the nonce, the mode and every case digest (docs/spec/lean-service.md, threat model).",
   "handshake": {"$comment": "Service.Protocol.handshake: this protocol, every mode and at least the client's limits.",
     "type": "object", "required": ["service", "protocol", "modes", "limits"], "additionalProperties": false,
     "properties": {
@@ -39,10 +39,13 @@
         "index": {"x-index": true},
         "digest": {"x-digest": true},
         "result": {"x-row": true}}},
-    "error": {"type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+    "error": {"$comment": "Service.Protocol.requestError: a request error is bound like a response, to the nonce, the mode and the digests of the cases as sent (null when the cases text does not split into cases). The unbound lineError answers no request.",
+      "type": "object", "required": ["id", "status", "mode", "digests", "error"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "error"},
+        "mode": {"type": "string", "x-equals": "/mode"},
+        "digests": {"x-equals": "/digests"},
         "error": {"$ref": "common.json#/$defs/text"}}}
   }
 }

@@ -81,7 +81,10 @@ def test_response_schemas_follow_lean_sources():
     kind = common["kind"]["anyOf"][1]["x-tagged"]
     rendered = re.findall(r'Json.arr #\[\.str "(\w+)"', (ROOT / "lean" / admission).read_text())
     assert set(kind) == set(rendered)
-    handshake = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]
+    envelope = json.loads((SCHEMAS / "envelope.json").read_text())
+    request_error = protocol.split("def requestError", 1)[1].split("\n\n", 1)[0]
+    assert set(re.findall(r'\("(\w+)",', request_error)) == set(envelope["$defs"]["error"]["required"])
+    handshake = envelope["handshake"]["properties"]
     assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
     limits = {k: v["minimum"] for k, v in handshake["limits"]["properties"].items()}
     assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
@@ -187,6 +190,7 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
         b'{"id":"f","mode":"evaluate","cases":[{"id":1,}]}',
         b'{"id":"g","mode":"evaluate","budget":{"cases":1},"cases":[{},{}]}',
         b'{"id":"h","mode":"evaluate","budget":{"bytes":3},"cases":[{},{}]}',
+        b'{"id":"j","mode":"evaluate","budget":{"steps":3},"cases":[{}, {"id":2}]}',
         b"",
         b'{"id":"i","mode":"evaluate","cases":[' + good[:40],
         b"{" + b" " * (16 * 1024 * 1024 + 8) + b"}",
@@ -194,11 +198,23 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
     ]
     rows, _ = raw_session(service_executable, b"\n".join(lines) + b"\n")
     ids = [row["id"] for row in rows]
-    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", None, None, "ok"]
+    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", "j", None, None, "ok"]
     assert all(row["status"] == "error" for row in rows[:-1])
     assert rows[8]["error"] == "ResourceLimit: batch has 2 cases; budget is 1"
     assert rows[9]["error"].startswith("ResourceLimit: cases are 7 bytes")
-    assert rows[11]["error"].startswith("ResourceLimit: request line exceeds")
+    assert rows[10]["error"] == "unknown budget field steps"
+    assert rows[12]["error"].startswith("ResourceLimit: request line exceeds")
+    # A decoded request's error is bound like a response: its mode and the digests of its
+    # case texts as split (null when the cases text does not split into cases). Only a line
+    # whose envelope does not decode gets the unbound error, which answers no request.
+    bound = {"c": None, "f": [case_digest('{"id":1,}')], "g": [case_digest("{}")] * 2,
+             "h": [case_digest("{}")] * 2, "j": [case_digest("{}"), case_digest('{"id":2}')]}
+    for row in rows[:-1]:
+        if row["id"] in bound:
+            assert set(row) == {"id", "status", "mode", "digests", "error"}
+            assert row["mode"] == "evaluate" and row["digests"] == bound[row["id"]]
+        else:
+            assert set(row) == {"id", "status", "error"}
     assert rows[-1]["status"] == "ok" and rows[-1]["counts"] == {"cases": 1, "errors": 0,
                                                                  "bytes": len(json.dumps(CASES[:1]))}
 
@@ -213,7 +229,8 @@ def test_budget_rejection_is_deterministic_and_keeps_the_process(service_executa
         pid = service.pid
         _, response = service.exchange("evaluate", json.dumps(CASES[:3]), 3,
                                        budget={"cases": 2, "bytes": 1 << 20})
-        assert response == {"id": response["id"], "status": "error",
+        assert response == {"id": response["id"], "status": "error", "mode": "evaluate",
+                            "digests": [case_digest(t) for t in case_texts(json.dumps(CASES[:3]))],
                             "error": "ResourceLimit: batch has 3 cases; budget is 2"}
         assert service.run("evaluate", CASES[:5]) == service.run("evaluate", CASES[:5])
         assert service.pid == pid and service.stats["restarts"] == 0
@@ -654,6 +671,76 @@ def test_results_not_bound_to_their_cases_fail_closed(tmp_path, fault, results):
         with pytest.raises(CheckerUnavailable, match="malformed response"):
             service.run("evaluate", _BOUND_CASES)
         assert service.stats["retries"] == 1
+
+
+def _request_error(**change):
+    """A request error for `_BOUND_CASES`, bound as the service binds it, with `change`."""
+    answer = {"__bound__": True, "id": "__nonce__", "status": "error", "mode": "evaluate",
+              "digests": [{"$digest": 0}, {"$digest": 1}, {"$digest": 2}],
+              "error": "ResourceLimit: batch has 3 cases; budget is 2"}
+    for key, value in change.items():
+        if value is _DROP:
+            del answer[key]
+        else:
+            answer[key] = value
+    return answer
+
+
+_DROP = object()
+
+
+@pytest.mark.parametrize("message,raised", [("ResourceLimit: batch has 3 cases; budget is 2", ResourceLimit),
+                                            ("unknown budget field steps", VEError)])
+def test_bound_request_error_is_deterministic(tmp_path, message, raised):
+    (tmp_path / "marker").write_text(json.dumps(_request_error(error=message)))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        pid = service.pid
+        with pytest.raises(raised) as caught:
+            service.run("evaluate", _BOUND_CASES)
+        assert not isinstance(caught.value, CheckerUnavailable) and str(caught.value) == message
+        assert service.stats["retries"] == 0 and service.stats["restarts"] == 0 and service.pid == pid
+
+
+@pytest.mark.parametrize("fault,change", [
+    ("unbound", {"mode": _DROP, "digests": _DROP}),
+    ("unbound-case-error", {"mode": _DROP, "digests": _DROP, "error": "JSON: invalid batch"}),
+    ("missing-mode", {"mode": _DROP}),
+    ("missing-digests", {"digests": _DROP}),
+    ("wrong-mode", {"mode": "order"}),
+    ("null-digests", {"digests": None}),
+    ("empty-digests", {"digests": []}),
+    ("short-digests", {"digests": [{"$digest": 0}, {"$digest": 1}]}),
+    ("extra-digest", {"digests": [{"$digest": 0}, {"$digest": 1}, {"$digest": 2}, {"$digest": 2}]}),
+    ("reordered-digests", {"digests": [{"$digest": 1}, {"$digest": 0}, {"$digest": 2}]}),
+    ("substituted-digest", {"digests": [{"$digest": 0}, {"$digest": 0}, {"$digest": 2}]}),
+    ("foreign-digest", {"digests": [{"$digest": 0}, "0" * 64, {"$digest": 2}]}),
+    ("digests-as-string", {"digests": "*"}),
+    ("extra-field", {"results": []}),
+])
+def test_request_errors_without_their_binding_fail_closed(tmp_path, fault, change):
+    """mig1d recheck: a nonce-matching error raised ResourceLimit with zero retries, so an
+    error could answer a request it was not computed for. A request error must echo the
+    request's mode and the digest of every case as sent; without that binding it is a
+    protocol fault, retried once and then CheckerUnavailable, never ResourceLimit."""
+    (tmp_path / "marker").write_text(json.dumps(_request_error(**change)))
+    service = LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True)
+    try:
+        with pytest.raises(CheckerUnavailable, match="malformed response") as caught:
+            service.run("evaluate", _BOUND_CASES)
+        assert not isinstance(caught.value, ResourceLimit)
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1 and service.pid is None
+    finally:
+        service.close()
+
+
+def test_request_error_for_an_unsplit_batch_is_bound_to_null_digests(service_executable):
+    """A cases text that does not split into cases has no case digests: the service binds
+    its error to `null`, which is what the client expects for that request."""
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("evaluate", "{}", 0, budget={"cases": 1})
+        assert service.stats["retries"] == 0
+    assert response["digests"] is None and response["mode"] == "evaluate"
+    assert response["error"] == "request field cases must be an array"
 
 
 def test_generated_parse_of_any_depth_is_accepted(tmp_path):
