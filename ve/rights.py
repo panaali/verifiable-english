@@ -13,6 +13,7 @@ from .ast import And, Atom, Binary, Implies, Or, Top, Unary, Var, _Checker, _Dec
 from .environment import valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnsupportedProfile, VEError
 from .norms import Norm, _bind, _instantiate
+from .search import _used_predicates
 from .softnorms import SoftEnvironment, SoftNormDocument, decode_rule
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
@@ -179,6 +180,12 @@ class RightsDocument:
                     raise VEError(f"UnknownSymbol: sort {body['holder']}")
                 guard = _Decoder().decode(body["guard"])
                 _Checker(env).formula(guard, (body["holder"],))
+                if any(env.predicates[p].regulated is not None or
+                       env.predicates[p].defined is not None or p.startswith("soft__")
+                       for p in _used_predicates(guard)):
+                    raise VEError(f"InvalidInput: right guard {name} must use base predicates")
+                if type(body["lines"]) is not list:
+                    raise VEError("InvalidInput: right lines")
                 rights[name] = {**body, "guard_formula": guard, "count": 0}
                 for line in body["lines"]:
                     entries.append((name, line))
@@ -188,6 +195,8 @@ class RightsDocument:
                     raise VEError("InvalidInput: right_lines")
                 if body["right"] not in rights:
                     raise VEError(f"UnknownRight: {body['right']}")
+                if type(body["lines"]) is not list:
+                    raise VEError("InvalidInput: right lines")
                 for line in body["lines"]:
                     entries.append((body["right"], line))
                     rights[body["right"]]["count"] += 1
@@ -210,6 +219,8 @@ class RightsDocument:
                 names.add(name)
                 if body["reading"] not in ("rule", "query"):
                     raise VEError("InvalidInput: bar reading")
+                if type(body["decided_by"]) is not str or not body["decided_by"]:
+                    raise VEError("InvalidInput: bar decider")
                 bars.append(body)
             elif kind == "norm":
                 outside.append(unit)
@@ -235,6 +246,10 @@ class RightsDocument:
             kind = line["kind"]
             if type(line.get("cites")) is not dict:
                 raise VEError("InvalidInput: line citations")
+            allowed = ({"kind", "cites", "liberty", "recognition", "holder_slot"} if kind == "power"
+                       else {"kind", "cites", "norm", "holder_slot", "fan_out"})
+            if set(line) - allowed or (kind == "power" and not {"liberty", "recognition"} <= set(line)):
+                raise VEError("InvalidInput: incident line fields")
             norms = (("powerLiberty", line.get("liberty")),
                      ("powerRecognition", line.get("recognition"))) if kind == "power" else ((kind, line.get("norm")),)
             fan_map = line.get("fan_out")
@@ -244,6 +259,11 @@ class RightsDocument:
             for instance_kind, raw in norms:
                 if type(raw) is not dict:
                     raise VEError("InvalidInput: incident norm")
+                if fan_map is not None and raw.get("predicate") is not None:
+                    raise VEError(f"InvalidInput: line {raw.get('name')} has predicate and fan_out")
+                if any(type(parent) is str and parent.startswith("rights-")
+                       for parent in raw.get("over", ())):
+                    raise VEError("InvalidInput: authored precedence cites a generated rule")
                 sources = ([(bearer, fan_map.get(bearer)) for bearer in sorted(self.env.bearers)]
                            if fan_map is not None else [(None, raw.get("predicate"))])
                 for bearer, predicate in sources:
@@ -301,6 +321,8 @@ class RightsDocument:
                 raise VEError("InvalidInput: limitation kinds")
             if not limit["decided_by"] or type(limit["decided_by"]) is not str:
                 raise VEError(f"MissingExceptionDecider: limitation {limit['name']}")
+            if any(type(factor) is not str or not factor for factor in limit["factors"]):
+                raise VEError("InvalidInput: limitation factors")
             condition_names = set()
             for condition in limit["conditions"]:
                 if (type(condition) is not dict or
@@ -314,6 +336,9 @@ class RightsDocument:
                     raise DuplicateDeclaration(f"condition {condition['name']}")
                 condition_names.add(condition["name"])
                 if condition["decided_by"] is None and not limit["decided_by"]:
+                    raise VEError(f"MissingExceptionDecider: condition {condition['name']}")
+                if (condition["decided_by"] is not None and
+                        (type(condition["decided_by"]) is not str or not condition["decided_by"])):
                     raise VEError(f"MissingExceptionDecider: condition {condition['name']}")
 
     def _act(self, predicate):
@@ -375,7 +400,13 @@ class RightsDocument:
             if len(core.unless) > 6 and covering:
                 raise ResourceLimit(f"carve-outs of rule {core.name}")
             rules.append(replace(rule, core=replace(core, guard=guard, unless=unless)))
-        rules.extend(decode_rule(env, unit) for unit in self.outside)
+        for unit in self.outside:
+            raw = unit["norm"]
+            _name(raw.get("name"))
+            if any(type(parent) is str and parent.startswith("rights-")
+                   for parent in raw.get("over", ())):
+                raise VEError("InvalidInput: authored precedence cites a generated rule")
+            rules.append(decode_rule(env, unit))
         if self.bar is not None and self.bar["reading"] == "rule":
             for index, predicate in enumerate(permissions, 1):
                 parents = tuple(instance["rule"].core.name for instance in self.instances
