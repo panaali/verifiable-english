@@ -25,6 +25,7 @@ dev = [
     "scikit-learn>=1.7",
     "scipy>=1.16",
     "import-linter>=2.9,<3",
+    "pytest-xdist>=3.8.0",
 ]
 
 [tool.hatch.build.targets.wheel]

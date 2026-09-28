@@ -12,7 +12,7 @@ public reexport facade, not an architectural dependency source.
 | 1 kernel | `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
 | 2 profiles | `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate Rust imports are not enforced yet |
 | 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
-| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*` | `Main`, `NormsMain`, `VE.*.Run` | `ve` binary crate |
+| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*` | `Main`, `NormsMain`, `Serve`, `ResponseDecode`, `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
 
 The exact assignments, including exceptions to these patterns, live in
@@ -21,6 +21,10 @@ must be classified there. Rust's two crate boundaries are in
 [`tools/check_rust_deps.py`](../tools/check_rust_deps.py). The desired future
 split is separate Rust kernel, profile and surface crates; the present crate
 check cannot claim to enforce boundaries inside `ve-core`.
+The stage-1 Lean service and its Python adapter are tool-layer modules. This
+classification checks their imports and selects their consumers; the service is
+still outside the `ve` command path, as described in
+[`INTEGRATION-GAPS.md`](INTEGRATION-GAPS.md).
 
 ## Tests and non-import dependencies
 
@@ -45,7 +49,8 @@ always selected.
 | Unknown paths | Layer 1 full-suite fallback |
 
 Tests that call `lean/.lake/build/bin/ve_conformance`,
-`lean/.lake/build/bin/ve_norms_route`, or `rust/target/release/ve` are treated
+`ve_norms_route`, `ve_service`, `ve_english_run`, `ve_response_decode`,
+or `rust/target/release/ve` are treated
 as tool-level consumers even without a Python import. Tests that read
 `usecases` data are app-level consumers. Four cross-cutting Python files always run:
 `test_conformance.py`, `test_lean_conformance.py`,
@@ -92,7 +97,7 @@ Commands: `uv run --group dev python tools/check_python_layers.py`,
 
 The following replays the 10 newest non-merge commits immediately before this
 branch's layer commits. Counts are Python test files in the present tree; the full
-suite has 96 files. Historical paths are classified under today's policy.
+suite had 96 files at the time of measurement; the merged tree has 101. Historical paths were classified under that policy snapshot.
 
 | Commit | Minimum layer | Selected / full |
 |---|---:|---:|

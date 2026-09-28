@@ -132,6 +132,16 @@ class LayerSelectionTests(unittest.TestCase):
                           else real_exists(path)):
             self.assertTrue(select(["ve/search.py"])["lean_build"])
 
+    def test_service_executables_are_tool_consumers(self):
+        self.assertIn("tests/test_lean_service.py",
+                      select(["lean/VE/Service/Protocol.lean"])["selected"])
+        real_exists = Path.exists
+        for binary in ("ve_service", "ve_english_run", "ve_response_decode"):
+            with self.subTest(binary=binary), patch.object(
+                Path, "exists", lambda path: False if path.name == binary else real_exists(path)
+            ):
+                self.assertTrue(select(["ve/backends/lean_service.py"])["lean_build"])
+
     def test_python_app_package_outward_import_is_detected(self):
         class Graph:
             modules = {"ve.errors", "ve_experiments", "ve_experiments.runner"}

@@ -17,7 +17,7 @@ PYTHON = {
     2: ("background closure definitions entailment evaluate norms order profiles").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon").split(),
-    4: ("__main__ adapters admission argument attacks authoring bundle check "
+    4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_strict openterms propose readings "
         "search stream_audit vacuity assist").split(),
     5: ["argument_fixtures"],
@@ -89,7 +89,7 @@ def python_layer(module: str) -> int | None:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"Main", "NormsMain"} or module.endswith(".Run"):
+    if module in {"Main", "NormsMain", "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
