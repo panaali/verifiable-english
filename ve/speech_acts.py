@@ -491,26 +491,33 @@ class SpeechDocument:
                 "target": self._id(_to_data(query.target))}
 
     def _check_wordings(self):
+        """Every wording reads as its unit's content (2.1); the gloss lint is only a warning per unit."""
         from .speech_english import parse_speech, _sentence
         by_id = {u["id"]: u for u in self._effective}
         for command in self.commands:
             source = by_id[command.unit].get("source")
             query = self.query_of(command)
-            if source is not None and parse_speech(self.env, source, self.scope, query=query)[0] != self.command_data(command):
+            lint = []
+            if source is not None and parse_speech(self.env, source, self.scope, query=query,
+                                                   warnings=lint)[0] != self.command_data(command):
                 raise VEError(f"InvalidInput: invalid command fields for {command.unit}")
             if source is not None and query is not None and source.startswith("Prove that "):
                 wording = source[len("Prove that "):-len(" using these premises.")] + "."
                 if _sentence(self.env, wording) != self.queries[query].target:
                     raise VEError(f"QueryMismatch: {command.unit}")
+            self.warnings.extend(f"{w} in {command.unit}" for w in dict.fromkeys(lint))
         for question in self.questions:
             source = by_id[question.unit].get("source")
-            if source is not None and parse_speech(self.env, source, self.scope,
-                    query=question.query, reading_set=question.reading_set)[0] != self.question_data(question):
+            lint = []
+            if source is not None and parse_speech(self.env, source, self.scope, query=question.query,
+                                                   reading_set=question.reading_set,
+                                                   warnings=lint)[0] != self.question_data(question):
                 raise VEError(f"ModeMismatch: {question.unit}")
             if source is not None and question.query is not None:
                 wording = source[len("Does it follow from these premises that "):-1] + "."
                 if _sentence(self.env, wording) != self.queries[question.query].target:
                     raise VEError(f"QueryMismatch: {question.unit}")
+            self.warnings.extend(f"{w} in {question.unit}" for w in dict.fromkeys(lint))
 
     def command_data(self, c):
         return {"force": c.force, "act": c.act, "args": list(c.args), "guard": _to_data(c.guard)}
