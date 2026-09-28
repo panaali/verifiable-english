@@ -10,6 +10,7 @@ from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.evaluate import evaluate
 from ve.norms import NormDocument, check_conflict
+from ve.norm_english import parse_english as parse_norm_english
 from ve.english import parse_english_with_metadata
 from ve.parser import parse as parse_strict
 from ve.printer import print_document
@@ -184,3 +185,10 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert detail["assumed_harm_free"] == {"decider": "case annotator",
                                              "premise": "alternatives:table_complete"}
     assert report["residual"]["counterfactual_leaves"] == 1
+
+
+def test_english_own_outcome_guard_names_the_semantic_change():
+    env = Environment(source())
+    with pytest.raises(VEError, match="DependencyCycle: permitted; GuardOnOwnOutcome: .*changes the rule's meaning"):
+        parse_norm_english(env, "Rule 1. Every action may be done, "
+                                "if that action may be done.")

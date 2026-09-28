@@ -91,7 +91,7 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 
 | Kind | Extra input | Output |
 |---|---|---|
-| `alt-elaborate` | none | `legend` (2.3), `inlined`, `alternatives` (labelled slot premises), `base_premises`, `followable` (`ast`, `followable`, `clear`), `unmapped_obligations`, and W1's `order`, `background`, `premises`, `conflict_targets`, `fragment` |
+| `alt-elaborate` | none | `legend` (2.3), `inlined`, `alternatives` (labelled slot premises), `base_premises`, `followable` (`ast`, `followable`, `clear`), existentially closed `profile_exists` probes generated from the four profile bodies, `unmapped_obligations`, and W1's `order`, `background`, `premises`, `conflict_targets`, `fragment` |
 | `alt-validate` | `scenario` (`model`, `outcomes`), optional `packages` | `InvalidModel(alternatives): …`; else a CONFLICT witness (`target`, `tuple`) if a conflict formula holds; else `model_id`, per-chooser reports and the status text of 5.2 |
 | `alt-conflict` | `packages`, or `witness` (`model`, `outcomes`, `target`, `tuple`) | `CONFLICT-FREE` / `CONFLICT` / `UNKNOWN` |
 | `alt-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `outcomes`, `chooser`) | `FOLLOWABLE` / `DILEMMA` (with the diagnosis) / `UNKNOWN` / `not computed` |
@@ -106,6 +106,10 @@ alternatives source, replay in this executable as CONFLICT-FREE for {3, 7}, {3, 
 witnesses replay as DILEMMA with NONE-PERMITTED, JOINTLY-UNDISCHARGEABLE and OVER-REQUIRED; a
 rule-free document's followability certificate replays as FOLLOWABLE. The Python search found no
 followability certificate for b′(A) within 50,000 steps (proof search is outside this item).
+
+`tests/test_alternatives_three_way.py` checks the a, b, c and o scenario shapes:
+Lean validates each model and reports its clear actions; Python and Rust evaluate
+Lean's closed followability and four profile probes over the same base model.
 
 ## Status, deviations from 7.2 and what is not claimed
 

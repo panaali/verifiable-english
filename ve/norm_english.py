@@ -297,7 +297,14 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
             raise VEError("UnknownRule: display reference")
         rules.append(Norm(name, predicate, sign, guard, carveouts,
                           tuple(names[ref - 1] for ref in refs)))
-    document = NormDocument(env, rules)
+    try:
+        document = NormDocument(env, rules)
+    except VEError as exc:
+        if env.alternatives is not None and str(exc).startswith("DependencyCycle: "):
+            raise VEError(f"{exc}; GuardOnOwnOutcome: A factual guard about other "
+                          "actions changes the rule's meaning and does not track "
+                          "later rules that forbid them for other reasons.") from exc
+        raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
