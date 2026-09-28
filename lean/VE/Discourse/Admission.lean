@@ -290,7 +290,7 @@ def withoutContent : Json → Json
 
 /-- The W2 document object with each bound unit's elaborated formula as its content, and no
 content at all for a withheld unit (a pending presupposition, 4.5): a pending unit is never a
-premise, whatever content it was submitted with. -/
+premise, whatever content it was submitted with; `project` also drops its reading sets. -/
 def projectUnits (j : Json) (content : String → Option VE.Formula) (withheld : String → Bool) : Json :=
   match j.getObjValD "units" with
   | .arr us => Json.arr (us.map fun u =>
@@ -300,11 +300,19 @@ def projectUnits (j : Json) (content : String → Option VE.Formula) (withheld :
       | none => if id.any withheld then withoutContent u else u)
   | other => other
 
-def project (j : Json) (content : String → Option VE.Formula) (withheld : String → Bool) : Json :=
-  let keep := ["graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
+/-- The W2 reading sets without the sets `withheldSet` names: a withheld unit's readings never
+reach W2 either, so a label naming one is W2's unknown-set rejection. -/
+def projectSets (j : Json) (withheldSet : String → Bool) : Json :=
+  match j.getObjValD "reading_sets" with
+  | .arr ss => Json.arr (ss.filter fun s => !(s.getObjValD "id").getStr?.toOption.any withheldSet)
+  | other => other
+
+def project (j : Json) (content : String → Option VE.Formula) (withheld : String → Bool)
+    (withheldSet : String → Bool) : Json :=
+  let keep := ["graph", "lemmas", "open_terms", "narrowings"]
   match j with
   | .obj kvs => Json.mkObj (("units", projectUnits j content withheld) ::
-      kvs.toList.filter fun (k, _) => keep.contains k)
+      ("reading_sets", projectSets j withheldSet) :: kvs.toList.filter fun (k, _) => keep.contains k)
   | _ => j
 
 def unitOfLeaf (b : VE.Route.Admission.Admitted) (l : VE.Graph.Claim) : Option String :=
@@ -498,14 +506,21 @@ def admitCore (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
   Loader.explicitOk (D.status.map fun (u, _) => (u, unitStatus D u)) front.explicit
   let boundAll : String → Option VE.Formula := fun u =>
     if (boundUnits D).contains u then (validate D u).toOption else none
-  allOk (boundUnits D) fun u => match (unitOf base u).bind DocUnit.content, boundAll u with
-    | some c, some A => req (c == A) ("ManifestMismatch: bound." ++ u)
-    | _, _ => .ok ()
+  -- a bound unit's recorded meaning, its content and every reading of its active set, is its
+  -- elaboration: a reading set is never a way around slot regeneration
+  allOk (boundUnits D) fun u => match boundAll u with
+    | some A => req (((unitOf base u).bind DocUnit.content).all (· == A) &&
+        (D.sets.filter (·.unit == u)).all fun rs => rs.readings.all fun x => x.2 == A)
+        ("ManifestMismatch: bound." ++ u)
+    | none => .ok ()
   -- pending units, decided on the submitted graph before projection
   let pre := pendingIn D (rawWires rv data front.w2) base (((base.units.filter fun x =>
     decide (x.kind = .asserted) && x.content.isSome).map DocUnit.id))
-  let projected := project front.w2 (fun u => if (pre.map Prod.fst).contains u then none else boundAll u)
-    (fun u => (pre.map Prod.fst).contains u)
+  let withheld : String → Bool := fun u => (pre.map Prod.fst).contains u
+  -- a unit with an active reading set speaks through its readings only (W2 drops its content);
+  -- a withheld unit's content and reading sets never reach W2
+  let projected := project front.w2 (fun u => if withheld u || setUnit D u then none else boundAll u)
+    withheld (fun s => D.sets.any fun rs => rs.id == s && withheld rs.unit)
   let res ← VE.Route.Admission.admitDocument bp be rv projected
   let premises := premiseUnitsOf res
   let pending := pendingIn D res.wires res.doc premises

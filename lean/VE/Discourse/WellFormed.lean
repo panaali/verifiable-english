@@ -219,9 +219,14 @@ def groupedUnits (D : DDoc) : List String := D.K.groups.flatMap Group.spans
 
 def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).bind DocUnit.content
 
-/-- A unit whose content is admitted as its own premise: it carries content and is not a
-group span (a span's content is `IndependentFragment`, 1.5). -/
-def contentUnit (D : DDoc) (u : String) : Bool := (contentOf D u).isSome && !(groupedUnits D).contains u
+/-- The unit carries an active reading set: its readings are its meaning (W2 drops its content). -/
+def setUnit (D : DDoc) (u : String) : Bool := D.sets.any (·.unit == u)
+
+/-- A unit whose meaning is admitted on its own: it carries content or an active reading set,
+and is not a group span (a span's meaning is its group's, 1.5). A reading set is never a way
+around slot discovery. -/
+def contentUnit (D : DDoc) (u : String) : Bool :=
+  ((contentOf D u).isSome || setUnit D u) && !(groupedUnits D).contains u
 
 /-- The unit's text has a reference slot: a derivation with a slot, or a reference word the
 grammar does not place (3.4: slots are discovered from the source, never only from the
@@ -232,7 +237,8 @@ def hasSourceSlot (D : DDoc) (u : String) : Bool :=
   | none => false
 
 /-- The units elaborated on their own: every unit carrying a recorded formula-producing
-mention, and every content unit whose source has a reference slot (recorded or not). -/
+mention, and every unit with content or a reading set whose source has a reference slot
+(recorded or not). -/
 def boundUnits (D : DDoc) : List String :=
   (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit ++
     (unitIdsOf D).filter fun u => contentUnit D u && hasSourceSlot D u

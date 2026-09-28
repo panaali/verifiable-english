@@ -19,8 +19,9 @@ from pathlib import Path
 import pytest
 
 from ve.ast import formula_from_data
-from ve.document import load_document
+from ve.document import check_document, load_document
 from ve.environment import Environment
+from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.model import FiniteModel
 from ve.wire import digest
@@ -773,3 +774,69 @@ def test_kappa_anchor_tables(lean):
     dangling = iota_doc()
     dangling["discourse"]["names"] = [dict(NAMES[0], scope="sec9")]
     assert admit(dangling)["error"] == "DanglingAnchor: sec9"
+
+
+# Regressions for the loop re-check (manage-agents discourse-looprecheck1.final.md). Each
+# reproducer runs through the Lean route and, where Python implements the form, through the
+# Python loader on the same document text.
+
+# display strings the Python English parser reads back after expansion ("Api is deployed.")
+PY_NAMES = [{"constant": "api", "display": "Api", "scope": "doc"}, *NAMES[1:]]
+
+
+def python_outcome(doc, tmp_path, environment=None, files=None):
+    """The Python loader's verdict on the same document text: its result, or the diagnostic."""
+    for name, body in (files or {}).items():
+        (tmp_path / name).write_text(body)
+    path = tmp_path / "doc.ve.md"
+    path.write_text(text(doc, environment))
+    try:
+        return check_document(path)
+    except VEError as exc:
+        return str(exc)
+
+
+def test_reading_sets_regenerate_their_slots(lean, tmp_path):
+    """looprecheck1 A (WellFormed.lean:224): a reading set is a unit's meaning, so the unit's
+    source slots are discovered and every reading must be the elaboration."""
+    labelled = {"root": "n", "nodes": [{"name": "n", "ast": unary("safe", "api"), "label": "readings:rs1@1:0"}]}
+    for status in ("authored", "open"):
+        for graph in (None, labelled):
+            doc = document(["It is deployed."], names=PY_NAMES, kinds={"u1": "asserted"}, graph=graph)
+            doc["reading_sets"] = [reading_set(env(), "rs1", "u1", [("r0", unary("safe", "api"))], status)]
+            assert admit(doc)["error"] == "UnrecordedSlot: u1: [0, 1)", (status, graph)
+            assert python_outcome(doc, tmp_path) == "UnrecordedSlot: u1: [0, 2)", (status, graph)
+    # a recorded mention: the readings are compared with the elaboration, never trusted
+    it = [("m1", "u1", "It", "pronoun", entity("api"))]
+    for readings in ([("r0", unary("safe", "api"))], [("r0", unary("deployed", "api")), ("r1", unary("safe", "api"))]):
+        doc = document(["It is deployed."], it, names=PY_NAMES, kinds={"u1": "asserted"})
+        doc["reading_sets"] = [reading_set(env(), "rs1", "u1", readings, "authored" if len(readings) == 1 else "open")]
+        assert admit(doc)["error"] == "ManifestMismatch: bound.u1", readings
+        assert python_outcome(doc, tmp_path) == "ManifestMismatch: bound.u1", readings
+    doc = document(["It is deployed."], it, names=PY_NAMES, kinds={"u1": "asserted"})
+    doc["reading_sets"] = [reading_set(env(), "rs1", "u1", [("r0", unary("deployed", "api"))], "authored")]
+    result = admit(doc)
+    assert result["status"] == "ok", result
+    assert result["statuses"] == {"u1": "CHECKED"} and result["bound"] == {"u1": unary("deployed", "api")}
+    assert python_outcome(doc, tmp_path)["coverage"]["bytes_by_status"] == {"CHECKED": len("It is deployed.")}
+
+
+def test_pending_unit_readings_never_reach_w2(lean, tmp_path):
+    """looprecheck1 A (Admission.lean:304): a pending presupposition's reading set is withheld
+    like its content, so it is never a report assumption."""
+    claim = ["forall", "person", ["implies", MANAGER, ["unary", "ready", ["var", 0]]]]
+    labelled = {"root": "n", "nodes": [{"name": "n", "ast": claim, "label": "readings:rs1@1:0"}]}
+    for graph in (labelled, None):
+        doc = eta("presuppositional", graph=graph)
+        doc["units"][1]["kind"] = "asserted"
+        doc["reading_sets"] = [reading_set(env(PERSON), "rs1", "u2", [("r0", claim)])]
+        result = admit(doc, env(PERSON))
+        if graph is None:
+            assert result["status"] == "ok", result
+            assert result["pending"] == [["u2", "PresuppositionUnresolved: m2"]] and result["bound"] == {}
+            assert all(leaf["ast"] != claim for leaf in result["report"]["assumptions"])
+        else:
+            assert result["error"] == "AdmissionError: node n is not admitted under label readings:rs1@1:0"
+        # Python does not elaborate descriptions: a unit with meaning using one is unsupported
+        assert python_outcome(doc, tmp_path, env(PERSON)).startswith(
+            "UnsupportedProfile: ve.discourse@1 definite, possessive elaboration is not implemented in Python (u2)")
