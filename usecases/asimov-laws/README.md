@@ -1,84 +1,100 @@
-# Asimov's laws: a checked action reading
+# Asimov's laws: v2 alternatives reading
 
-[Source text](source.md) quotes the Three Laws from Isaac Asimov's 1942
-“Runaround” and the later Zeroth Law. In brief: **0** bars injuring humanity;
-**1** bars injuring a human; **2** requires following qualified human orders unless a higher
-law conflicts; **3** requires self preservation unless a higher law conflicts.
-Laws 0 and 1 also address harm *through inaction*; that part is outside this
-checked reading. The 1942 wording of Law 1 says “under any conditions”; adding
-the later Zeroth Law requires a revised priority reading, which this example
-does not settle.
+[Source text](source.md) separates the Three Laws printed in 1942 from the
+later Zeroth Law. This case uses the merged
+[`alternatives@0` profile](../../docs/spec/alternatives.md): an action belongs
+to one robot's decision, and an explicit `leads_to(action, harm)` table says
+which harm follows each alternative. The named **Asimov case annotator** judges
+the table and the classifications of injury, harm, qualified orders and threats
+to the robot's continued existence. The checker proves consequences of those
+declarations; it does not establish their truth.
 
-## Authoring VE
+## Checked reading
 
-These are the checked rules in [rules.ve](rules.ve). An `action` is one proposed
-act by one robot. Rule numbers are display order; [the manifest](rules.manifest.json)
-preserves their stable names. The permission rules form the W1 precedence
-chain **0 > 1 > 2 > 3** (Rules 4 > 3 > 2 > 1). Rule 5 and Rule 6 require an
-action only when it is permitted. Rule 6 is an illustrative assumption: it
-requires every permitted protective action, while the source requires the robot
-to preserve its existence without requiring every available means.
+All nine sentences in [rules.ve](rules.ve) are **CHECKED**: the English parser
+finds one reading for each and reproduces the identity-bound
+[manifest](rules.manifest.json). The `classified as` wording keeps the
+annotator's judgments visibly distinct from the profile's defined words.
+`allows` means the action leads to a harm and another available action avoids
+it. `prevents` means the action avoids a harm and another available action
+leads to it. These are Boolean claims about the declared outcome table, not
+claims about probability or a physical cause.
 
-```text
-Rule 1. Every action may be performed, if that action is protective.
-Rule 2 (exception to rule 1). Every action may be performed, if that action is ordered.
-Rule 3 (exception to rule 2). Every action must not be performed, if that action is classified as "injures_human".
-Rule 4 (exception to rule 3). Every action must not be performed, if that action is classified as "injures_humanity".
-Rule 5. Every action must be performed, if both that action is ordered and that action may be performed.
-Rule 6. Every action must be performed, if both that action is protective and that action may be performed.
-```
-
-The natural English reading of each checked rule is:
-
-| Rule | Reading |
+| Rule | Law and one reading |
 | --- | --- |
-| 1 (Law 3) | A protective candidate action is permitted. |
-| 2 (Law 2) | An ordered candidate action is permitted, taking precedence over Rule 1. |
-| 3 (Law 1) | An action judged to injure a human is forbidden, taking precedence over Rule 2. |
-| 4 (Law 0) | An action judged to injure humanity is forbidden, taking precedence over Rule 3. |
-| 5 (Law 2) | An ordered action is required if it is permitted. |
-| 6 (Law 3, illustrative assumption) | Every protective action is required if it is permitted. |
+| 1 | Law 3: a candidate action marked protective is permitted. |
+| 2 | Law 2: an ordered action is permitted, taking precedence over Rule 1. |
+| 3 | Law 1: an action marked as injuring a human is forbidden, taking precedence over Rule 2. |
+| 4 | Law 1: doing nothing is forbidden when it allows an avoidable human harm, taking precedence over Rule 2. |
+| 5 | Zeroth Law priority, as a translator's explicit reading: an action preventing a harm to humanity is permitted even when Rule 3 or 4 would forbid it. |
+| 6 | Zeroth Law: an action marked as injuring humanity is forbidden; it overrides Rules 3 and 5. |
+| 7 | Zeroth Law: doing nothing is forbidden when it allows an avoidable harm to humanity; it overrides Rules 4 and 5. |
+| 8 | Law 2: an ordered action is required when it is permitted. |
+| 9 | Law 3: the robot must avoid each avoidable harm to its continued existence. A selected action fulfils this mapped duty when it does not lead to that harm. |
 
-The [environment](environment.json) sets completion defaults for candidate
-actions: when no permission rule applies, **permission defaults to allow**;
-when no obligation rule applies, **obligation defaults to not required**. These
-are modeling choices, not claims from Asimov's text. For example, an action
-with no `ordered`, `protects_robot`, or injury annotation is permitted but not
-required.
+Rules 1–2 and 8 keep the v1 candidate-action reading. Rule 5 makes a concrete
+Zeroth Law exception across the Law 1 bans. Its `prevents` guard requires an
+alternative that leads to that same collective harm; it does **not** establish
+that human injury was the only way to avoid it. Rule 9 replaces v1's demand to
+take *every* protective action with one prevention duty that either of two
+safe alternatives can fulfil. The [environment](environment.json) defaults
+permission to allow and obligation to not required if no rule applies. These
+completion defaults and the `protects_robot` annotation are modeling choices.
 
-## Boundary and result
+## Checker result and coverage
 
-- **Checked:** W1 parses the six rules and checks their precedence, outcomes,
-  and permission/obligation dual. The W1 conflict check returns
-  **CONFLICT-FREE** with a replayed certificate for this rule document. For a
-  qualified human order to perform an action marked `injures_human`, the action is neither
-  permitted nor required. Without Rule 3's precedence over Rule 2, that same
-  situation gives a **CONFLICT** witness: Rule 2 permits and Rule 3 forbids.
-- **Open:** `injures_human` and `injures_humanity` are judgments by the named
-  **Asimov case annotator**, a human assigned to each scenario. No injury or
-  harm threshold is invented. The annotator also supplies `ordered` and
-  `protects_robot`. A conflict certificate proves consistency for *any* such
-  assignments; it does not prove the assignments true.
-- **UNFORMALISED:** “Through inaction, allow ... to come to harm” needs a
-  causal account of what the robot could have prevented. W1 has no such
-  account. The difference between *injure* and *come to harm* also remains
-  open. The checked direct injury bans are not counted as a faithful rendering
-  of the inaction clauses.
-- **UNFORMALISED:** The source's Law 3 preservation obligation concerns keeping
-  the robot in existence. Rule 6 does not faithfully express that obligation:
-  it requires *each* permitted protective action, even when two compatible
-  alternatives are available and either one would suffice. Both actions can be
-  required while the W1 conflict check still returns **CONFLICT-FREE**.
-- **UNFORMALISED:** Competing *different* actions, such as obeying an order
-  versus saving the robot, are not compared. W1 precedence is per regulated
-  predicate and per candidate action. Rules 5 and 6 can both require different
-  actions; the permission chain does not resolve that choice. Likewise, the
-  Zeroth Law's possible tradeoff between one human and humanity is not decided.
+The alternatives route replayed **four conflict certificates** for the nine
+rules: `permitted`, `prevent_required`, `required`, and the
+`required→permitted` dual. The document verdict is **CONFLICT-FREE**. On the
+**17 Asimov-shaped scenarios** from spec §8, the same full rule set has a
+clear action in **13** and no clear action in **4**. For example, scenario `a`
+permits `pull` and bars harmful inaction; `e` has `act` clear because it
+prevents collective harm despite human injury; `d-full` has both `shield` and
+`retreat` clear under Rule 9. Scenario `b-A1` has no permitted action and
+scenario `j` requires two incompatible orders. With the conflict certificates,
+the checker replays these as **DILEMMA** witnesses (`NONE-PERMITTED` and
+`OVER-REQUIRED`). Thus the full rule set is **not document-wide FOLLOWABLE**.
+A scenario's clear action is a result for that declared model, not a global
+FOLLOWABLE certificate.
 
-Closing these gaps needs explicit actions and alternatives, temporal and
-counterfactual causation for preventable harm, and priority across obligations
-for different actions. The case annotator would still have to justify the
-open injury judgments.
+| Coverage | v1 | v2 |
+| --- | --- | --- |
+| Checked rules | 6 | 9 |
+| Document conflict verdict | CONFLICT-FREE | CONFLICT-FREE (4 replayed targets) |
+| Direct injury, ordered action | Checked, with annotator inputs | Checked, with annotator inputs |
+| Harm through inaction | Missing | Checked via `inaction`, `allows`, and signed `leads_to` outcomes |
+| Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
+| Zeroth priority across a human-injury ban | Open | Checked for Rule 5's stated prevention condition |
+| Followability | No alternatives check | 13 of 17 spec scenarios have a clear action; 4 do not |
+
+## OPEN: fidelity and evidence
+
+- **OPEN — injury and harm thresholds.** `injures_human`,
+  `injures_humanity`, `harms_human`, `harms_humanity`, and `harm_to` remain
+  annotator judgments. `leads_to` connects a chosen action to an outcome; it
+  does not by itself establish proximate injury, the source's “injure” versus
+  “come to harm” distinction, or whether a threatened loss is serious enough.
+- **OPEN — exact Zeroth Law exception.** The combined 1942 and later wordings
+  do not specify a test for when human injury conflicts with protecting
+  humanity. Rule 5 adopts the stated `prevents` condition and can permit human
+  injury when another alternative also prevents the same collective harm.
+  Necessity, proportionality, and tradeoffs among different harms need an
+  explicit author judgment or a richer policy.
+- **OPEN — simultaneous demands.** Two permitted orders can require
+  incompatible actions, as scenario `j` shows. Avoiding a harm to a human and
+  preserving the robot can also demand different alternatives. W1 precedence
+  resolves competing rules about one regulated predicate on one action; it
+  does not rank different mapped obligations or choose among actions.
+- **OPEN — time and uncertain outcomes.** The signed table gives a single
+  Boolean outcome for each action and harm at one decision. Multi-step plans,
+  uncertain outcomes, joint prevention, and an independently justified causal
+  account lie outside `alternatives@0`.
+
+The review follow-up on **alternatives W2 admission** is already closed in the
+merged profile: the Lean `admission` route and its
+`alternatives_wire_acceptance` theorem check regenerated slot, profile, layer
+and completion leaves; `tests/test_alternatives_three_way.py` exercises these
+paths. This use case adds no duplicate admission implementation.
 
 Run the focused checks from the repository root:
 
