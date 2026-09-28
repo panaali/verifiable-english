@@ -276,7 +276,8 @@ def test_lambda_consequence_follows_gap_unresolved(lean):
     layers = r["premises"][:-2]
     cert = certificate(F0(), layers + q["premises"], q["target"], r["environment_id"])
     case = {"id": "l", "kind": "speech-consequence", "environment": F0(), "document": doc, "query": "q1"}
-    assert run1({**case, "certificate": cert})["judgment"] == "follows (certificate)"
+    assert run1({**case, "certificate": cert})["judgment"] == \
+        "follows (certificate; premises: UNKNOWN (no premise-status evidence); vacuous: unknown)"
     assert run1(case)["judgment"] == "unresolved (no accepted evidence)"
     gap = copy.deepcopy(doc)
     del gap["units"][1]

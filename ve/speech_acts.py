@@ -479,7 +479,8 @@ class SpeechDocument:
             raise VEError(f"AnswerMismatch: {question.unit}")
         return {"status": "supported given presupposition" if conditional else "supported",
                 "answer": token, "evidence": "certificate",
-                "assumptions": [f"speech:presupposition:{question.unit}"] if conditional else []}
+                "assumptions": [f"speech:presupposition:{question.unit}"] if conditional else [],
+                **self._premise_status(premises, max_steps)}
 
     def check_consequence_certificate(self, qid, certificate, *, max_steps=10_000):
         """Replay a consequence or proof-task submission against its pinned query."""
@@ -491,7 +492,20 @@ class SpeechDocument:
                                               max_steps=max_steps)
         if not replay.valid:
             raise VEError(f"QueryMismatch: {qid}")
-        return {"status": "follows", "evidence": "certificate", "query": qid}
+        return {"status": "follows", "evidence": "certificate", "query": qid,
+                **self._premise_status(self._caller_premises(qid), max_steps)}
+
+    def _premise_status(self, premises, max_steps):
+        """5.3: P0's three-way status of the exact list a certificate was checked over.
+
+        Opposite answers are both certified only over inconsistent premises, so
+        every certificate line says which: a checked model (not vacuous), a
+        replayed inconsistency certificate (vacuous), or UNKNOWN in the budget.
+        """
+        from .vacuity import premise_status
+        status = premise_status(self.env, list(premises), max_proof_steps=max_steps)
+        return {"premises": status,
+                "vacuous": {"INCONSISTENT": "yes", "model": "no"}.get(status["status"], "unknown")}
 
     def complete_model(self, base_wire, *, max_evaluations=1_000_000):
         """Regenerate regulated tables from a supplied base structure.
