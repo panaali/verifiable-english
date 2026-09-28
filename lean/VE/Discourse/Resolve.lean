@@ -444,6 +444,69 @@ def illTypedOf (D : DDoc) (d : DTree) : Bool :=
       | none => false
     | none => false
 
+/-! ## Which slot an ill-typed elaboration blames -/
+
+/-- The sort a predicate expects at argument `k`. -/
+def argSort (D : DDoc) (p : String) (k : Nat) : Option String := (D.E.predicates p).bind (·[k]?)
+
+def constsFit (D : DDoc) (cs : Option (List String)) (s : Option String) : Bool :=
+  match cs, s with
+  | some cs, some s => cs.all fun c => D.E.constants c == some s
+  | _, _ => false
+
+def propertyFits (D : DDoc) (t : Target) (srt : String) : Bool :=
+  match propertyOf (canonTarget D t) with
+  | some q => D.E.predicates q == some [srt]
+  | none => false
+
+/-- Each slot of a noun phrase with whether its target fits the sort `s` its position
+expects: a constant or member list by its declared sorts, a description by its
+restriction's sort, a nested possessive by the relation's other argument sort. -/
+def npFit (D : DDoc) (σ : Assignment) (np : NP) (s : Option String) : List (Slot × Bool) :=
+  match np with
+  | .name _ _ => []
+  | .slot m => [(m, constsFit D (npConsts D σ (.slot m)) s)]
+  | .definite m r =>
+    let rs := (restrFormula D σ r).map Prod.fst
+    (m, rs.isSome && rs == s) :: match r with
+      | .noun _ => []
+      | .rel q poss => [(poss, constsFit D ((termConst (canonTarget D (σ poss))).map ([·])) (argSort D q 1))]
+
+def coreFit (D : DDoc) (σ : Assignment) : Core → List (Slot × Bool)
+  | .pred subj _ p => npFit D σ subj (argSort D p 0)
+  | .coord .. => []
+  | .rel subj p obj => npFit D σ subj (argSort D p 0) ++ npFit D σ obj (argSort D p 1)
+  | .every (.slot m) srt _ | .some _ (.slot m) srt _ => [(m, propertyFits D (σ m) srt)]
+  | .every .. | .some .. => []
+  | .everyDef m srt _ _ => [(m, propertyFits D (σ m) srt)]
+
+def treeFit (D : DDoc) (σ : Assignment) : STree → List (Slot × Bool)
+  | .core c => coreFit D σ c
+  | .cite m c => (m, true) :: coreFit D σ c
+
+/-- The slot an ill-typed elaboration blames (4.3, `IllTypedTarget: <mention>: <target>`):
+the first slot, in source order, whose target does not fit the sort its position expects
+(for "Her manager is ready." with `Her` → `api`, the possessive, not the description); the
+first slot when every slot fits on its own. -/
+def culprit (D : DDoc) (d : DTree) (σ : Assignment) : Option Slot :=
+  match d.slots.find? (fun m => (treeFit D σ d.tree).any fun x => x.1 == m && !x.2) with
+  | some m => some m
+  | none => d.slots.head?
+
+theorem culprit_mem (D : DDoc) (d : DTree) (σ : Assignment) (m : Slot) (h : culprit D d σ = some m) :
+    m ∈ d.slots := by
+  unfold culprit at h
+  split at h
+  · rename_i x hx
+    cases h
+    exact List.mem_of_find?_eq_some hx
+  · exact List.mem_of_getElem? (by simpa [List.head?_eq_getElem?] using h)
+
+def illTypedText (D : DDoc) (u : String) (d : DTree) : String :=
+  match culprit D d (assignOf d.slots ((recordedVec D d).getD [])) with
+  | some m => "IllTypedTarget: " ++ mentionIdAt D m ++ ": " ++ (((recordedTarget D m).map targetText).getD "?")
+  | none => "IllTypedTarget: " ++ u
+
 def definiteRestrs : STree → List (Slot × Restr)
   | .core (.pred (.definite m r) _ _) | .cite _ (.pred (.definite m r) _ _) => [(m, r)]
   | _ => []
@@ -503,7 +566,7 @@ def checkRecorded (D : DDoc) (u : String) (d : DTree) (vec : List Target) : Exce
     else match restrictionMismatch D d (assignOf d.slots rvec) with
     | some m => .error ("ManifestMismatch: mentions." ++ mentionIdAt D m ++ ".restriction")
     | none => match elaborateD D d (assignOf d.slots rvec) with
-      | some A => if A.check D.E [] then .ok A else .error ("IllTypedTarget: " ++ u)
+      | some A => if A.check D.E [] then .ok A else .error (illTypedText D u d)
       | none => .error (firstBad D d rvec)
 
 /-- The executable validator (untrusted proposals in, one formula out). -/
@@ -514,8 +577,7 @@ def validate (D : DDoc) (unit : String) : Except String VE.Formula :=
   | some s =>
     let ds := derivs D unit s
     match ds.find? (illTypedOf D) with
-    | some d => .error ("IllTypedTarget: " ++ ((d.slots.head?.map fun m => mentionIdAt D m ++ ": " ++
-        (((recordedTarget D m).map targetText).getD "?")).getD unit))
+    | some d => .error (illTypedText D unit d)
     | none =>
       if workOf D ds > workLimit then .error "ResourceLimit: resolution" else
       match typedComps D ds with
@@ -693,12 +755,12 @@ theorem validate_budget (D : DDoc) (u : String) (hover : D.K.mentions.length > m
   unfold validate
   rw [if_pos hover]
 
-/-- The type check is the only filter: an ill-typed recorded target is the named error. -/
-theorem ill_typed_target (D : DDoc) (u : String) (s : List Tok) (hs : D.text u = some s)
+/-- An ill-typed recorded elaboration is found by the validator, which names it. -/
+theorem ill_typed_found (D : DDoc) (u : String) (s : List Tok) (hs : D.text u = some s)
     (hlim : D.K.mentions.length ≤ mentionLimit) (d : DTree) (σ : Assignment)
     (hd : Derives D u s d) (hr : ∀ m ∈ d.slots, Acc D m (σ m) ∧ recordedTarget D m = some (σ m))
     (m : Slot) (hm : m ∈ d.slots) (A : VE.Formula) (he : elaborateD D d σ = some A) (hc : A.check D.E [] = false) :
-    ∃ rest, validate D u = .error ("IllTypedTarget: " ++ rest) := by
+    ∃ d'', d'' ∈ derivs D u s ∧ illTypedOf D d'' = true ∧ validate D u = .error (illTypedText D u d'') := by
   have hill : illTypedOf D d = true := by
     have hne : d.slots.isEmpty = false := by
       cases hsl : d.slots with
@@ -716,6 +778,6 @@ theorem ill_typed_target (D : DDoc) (u : String) (s : List Tok) (hs : D.text u =
   dsimp only
   cases hf : (derivs D u s).find? (illTypedOf D) with
   | none => exact absurd (List.find?_eq_none.mp hf d hd') (by simp [hill])
-  | some d'' => exact ⟨_, rfl⟩
+  | some d'' => exact ⟨d'', List.mem_of_find?_eq_some hf, List.find?_some hf, rfl⟩
 
 end VE.Discourse

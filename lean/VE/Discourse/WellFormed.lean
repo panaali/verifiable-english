@@ -495,6 +495,91 @@ theorem derives_units {D : DDoc} {u : String} {s : List Tok} {d : DTree} (hd : D
       · exact hcore 4 j c hj m hm
     · cases hj
 
+/-- A recorded slot names a recorded mention at its unit, span and form. -/
+theorem recorded_mention {D : DDoc} {m : Slot} {t : Target} (h : recordedTarget D m = some t) :
+    ∃ x ∈ D.K.mentions, mentionAt D m = some x ∧ x.unit = m.unit ∧ x.span = m.span ∧ x.form = m.form := by
+  unfold recordedTarget at h
+  cases hx : mentionAt D m with
+  | none => rw [hx] at h; cases h
+  | some x =>
+    have hx' := hx
+    unfold mentionAt at hx'
+    have hp := List.find?_some hx'
+    simp only [Bool.and_eq_true, beq_iff_eq] at hp
+    exact ⟨x, List.mem_of_find?_eq_some hx', rfl, hp.1.1, hp.1.2, hp.2⟩
+
+/-- The mention an ill-typed derivation's diagnostic names: its culprit slot's recorded
+mention, a mention of the unit. -/
+theorem ill_culprit {D : DDoc} {u : String} {s : List Tok} {d : DTree} (hd : d ∈ derivs D u s)
+    (hi : illTypedOf D d = true) :
+    ∃ m ∈ d.slots, ∃ x ∈ D.K.mentions, mentionAt D m = some x ∧ x.unit = u ∧
+      illTypedText D u d = "IllTypedTarget: " ++ x.id ++ ": " ++ (((recordedTarget D m).map targetText).getD "?") := by
+  simp only [illTypedOf, Bool.and_eq_true, Bool.not_eq_true'] at hi
+  obtain ⟨hne, hi⟩ := hi
+  cases hv : recordedVec D d with
+  | none => rw [hv] at hi; cases hi
+  | some vec =>
+    obtain ⟨_, hrec⟩ := mapM_recorded D d.slots vec hv
+    unfold illTypedText
+    rw [hv]
+    simp only [Option.getD_some]
+    cases hc : culprit D d (assignOf d.slots vec) with
+    | none =>
+      exfalso
+      unfold culprit at hc
+      split at hc
+      · cases hc
+      · cases hsl : d.slots with
+        | nil => rw [hsl] at hne; cases hne
+        | cons y ys => rw [hsl] at hc; cases hc
+    | some m =>
+      have hm := culprit_mem D d _ m hc
+      obtain ⟨x, hx, hmx, hu, _, _⟩ := recorded_mention (hrec m hm)
+      have hu' := (derives_units ((mem_derivs D u s d).mp hd) m hm).1
+      exact ⟨m, hm, x, hx, hmx, by rw [hu, hu'], by simp [mentionIdAt, hmx]⟩
+
+/-- The type check is the only filter: an ill-typed recorded elaboration is the named error
+`IllTypedTarget: <mention>: <target>`, naming a recorded mention of the unit: the slot whose
+target does not fit the sort its position expects (lean/DISCOURSE.md: the statement's
+per-slot conclusion cannot hold for every slot of a two-slot derivation;
+`ill_typed_target_single` is that conclusion for a unit with one recorded slot). -/
+theorem ill_typed_target (D : DDoc) (u : String) (s : List Tok) (hs : D.text u = some s)
+    (hlim : D.K.mentions.length ≤ mentionLimit) (d : DTree) (σ : Assignment)
+    (hd : Derives D u s d) (hr : ∀ m ∈ d.slots, Acc D m (σ m) ∧ recordedTarget D m = some (σ m))
+    (m : Slot) (hm : m ∈ d.slots) (A : VE.Formula) (he : elaborateD D d σ = some A) (hc : A.check D.E [] = false) :
+    ∃ x ∈ D.K.mentions, x.unit = u ∧ ∃ rest, validate D u = .error ("IllTypedTarget: " ++ x.id ++ ": " ++ rest) := by
+  obtain ⟨d'', hd'', hi, hv⟩ := ill_typed_found D u s hs hlim d σ hd hr m hm A he hc
+  obtain ⟨m', _, x, hx, _, hu, ht⟩ := ill_culprit hd'' hi
+  exact ⟨x, hx, hu, ((recordedTarget D m').map targetText).getD "?", by rw [hv, ht]⟩
+
+/-- With one recorded formula-producing mention in the unit, the error names exactly it. -/
+theorem ill_typed_target_single (D : DDoc) (u : String) (s : List Tok) (hs : D.text u = some s)
+    (hlim : D.K.mentions.length ≤ mentionLimit) (d : DTree) (σ : Assignment)
+    (hd : Derives D u s d) (hr : ∀ m ∈ d.slots, Acc D m (σ m) ∧ recordedTarget D m = some (σ m))
+    (m : Slot) (hm : m ∈ d.slots) (A : VE.Formula) (he : elaborateD D d σ = some A) (hc : A.check D.E [] = false)
+    (hone : recordedSlots D u = [m]) :
+    ∃ rest, validate D u = .error ("IllTypedTarget: " ++ mentionIdAt D m ++ rest) := by
+  obtain ⟨d'', hd'', hi, hv⟩ := ill_typed_found D u s hs hlim d σ hd hr m hm A he hc
+  obtain ⟨m', hm', x, hx, hmx, hu, ht⟩ := ill_culprit hd'' hi
+  have hmx' := hmx
+  unfold mentionAt at hmx'
+  have hp := List.find?_some hmx'
+  simp only [Bool.and_eq_true, beq_iff_eq] at hp
+  have hf := (derives_units ((mem_derivs D u s d'').mp hd'') m' hm').2
+  have hin : m' ∈ recordedSlots D u := by
+    unfold recordedSlots
+    rw [List.mem_mergeSort]
+    refine List.mem_map.mpr ⟨x, List.mem_filter.mpr ⟨hx, ?_⟩, ?_⟩
+    · simp [hu, hp.2, hf]
+    · rcases m' with ⟨mu, msp, mf⟩
+      simp only at hp ⊢
+      rw [hp.1.1, hp.1.2, hp.2]
+  rw [hone, List.mem_singleton] at hin
+  subst hin
+  refine ⟨": " ++ ((recordedTarget D m').map targetText).getD "?", ?_⟩
+  rw [hv, ht]
+  simp [mentionIdAt, hmx, String.append_assoc]
+
 theorem recordedSlots_nil {D : DDoc} {u : String} (h : recordedSlots D u = []) :
     ∀ x ∈ D.K.mentions, x.unit = u → formulaForm x.form = false := by
   intro x hx hu
