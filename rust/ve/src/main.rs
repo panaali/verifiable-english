@@ -70,6 +70,15 @@ fn case(v: &Value) -> Result<Value> {
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
     }
+    if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
+        let env = Environment::from_value(field(v, "environment")?)?;
+        let doc = Document::from_value(&env, field(v, "ast")?)?;
+        let model = FiniteModel::from_value(&env, field(v, "model")?)?;
+        let budget = number(v, "max_evaluations", MAX_EVALUATIONS)?;
+        let mut out = serde_json::to_value(evaluate(&doc, &model, budget)?).unwrap();
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
+    }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
         .and_then(Value::as_array)
