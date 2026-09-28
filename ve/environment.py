@@ -289,6 +289,13 @@ class Environment:
         if route and "speech-acts@0" in data["profiles"]:
             from .speech_acts import validate_scope
             speech_acts = validate_scope(data["speech_acts"], sorts, constants, predicates)
+            speech_acts = MappingProxyType({
+                **speech_acts,
+                **({"addressee": MappingProxyType(speech_acts["addressee"])}
+                   if "addressee" in speech_acts else {}),
+                **({"definites": MappingProxyType(speech_acts["definites"])}
+                   if "definites" in speech_acts else {}),
+            })
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -339,7 +346,12 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
-                **({"speech_acts": self.speech_acts} if self.speech_acts is not None else {}),
+                **({"speech_acts": {**self.speech_acts,
+                                    **({"addressee": dict(self.speech_acts["addressee"])}
+                                       if "addressee" in self.speech_acts else {}),
+                                    **({"definites": dict(self.speech_acts["definites"])}
+                                       if "definites" in self.speech_acts else {})}}
+                   if self.speech_acts is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
