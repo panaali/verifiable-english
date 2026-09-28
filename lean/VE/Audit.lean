@@ -34,6 +34,8 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.SpeechActs.Tree
+import VE.SpeechActs.Demand
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -941,3 +943,39 @@ import VE.Norms.Run
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+#print axioms VE.SpeechActs.semanticSpeech_of_wellFormed
+#print axioms VE.SpeechActs.validSpeech_of_wellFormed
+#print axioms VE.SpeechActs.conj_denote
+#print axioms VE.SpeechActs.conj_wellFormed
+#print axioms VE.SpeechActs.preds_conj
+#print axioms VE.SpeechActs.preds_eqsFrom
+#print axioms VE.SpeechActs.constsOf_cons
+#print axioms VE.SpeechActs.constsOf_length
+#print axioms VE.SpeechActs.eqsFrom_denote
+#print axioms VE.SpeechActs.denote_agree
+#print axioms VE.SpeechActs.denote_closed
+#print axioms VE.SpeechActs.wellFormed_append
+#print axioms VE.SpeechActs.eqsFrom_wellFormed
+#print axioms VE.SpeechActs.constsTyped_length
+#print axioms VE.SpeechActs.regOf_spec
+#print axioms VE.SpeechActs.command_facts
+#print axioms VE.SpeechActs.addresseeConst_eq
+#print axioms VE.SpeechActs.actSorts_eq
+#print axioms VE.SpeechActs.policy_nodes
+#print axioms VE.SpeechActs.policy_E
+#print axioms VE.SpeechActs.policy_regulated
+#print axioms VE.SpeechActs.eqGuard_denote
+#print axioms VE.SpeechActs.policy_wellFormed
+#print axioms VE.SpeechActs.demand_shape
+#print axioms VE.SpeechActs.demand_polarity
+#print axioms VE.SpeechActs.typed_length
+#print axioms VE.SpeechActs.demand_applies
+#print axioms VE.SpeechActs.demand_mem
+#print axioms VE.SpeechActs.demand_children
+#print axioms VE.SpeechActs.demand_decides
+#print axioms VE.SpeechActs.command_symbol
+#print axioms VE.SpeechActs.elab_at
+#print axioms VE.SpeechActs.demand_consequence
+#print axioms VE.SpeechActs.demand_conflict_local
+#print axioms VE.SpeechActs.demand_conflict
+#print axioms VE.SpeechActs.scope_single
