@@ -147,6 +147,25 @@ def generated_invalid_soft_blocks():
             raw = deepcopy(baseline)
             raw["vocabulary"]["soft"][field] = value
             yield raw, []
+    for value in (False, True, 0, "strict", [], {}):
+        raw = deepcopy(baseline)
+        raw["vocabulary"]["soft"] = value
+        yield raw, []
+    for name in ("soft__reserved",):
+        raw = deepcopy(baseline)
+        raw["vocabulary"]["predicates"][name] = {
+            "arguments": ["assistant"], "description": name}
+        yield raw, []
+    # Diagnostic strings supplied as names must not change the rejection class.
+    for name in ("needs an exception", "invalid ties pair", "UnknownRank: x"):
+        raw = deepcopy(baseline)
+        raw["vocabulary"]["soft"]["ranks"] = [name]
+        yield raw, []
+    for value in (False, True, 0, 1, [], {}, ["p"], {"party": "p"}):
+        raw = deepcopy(baseline)
+        raw["vocabulary"]["predicates"]["q"] = {
+            "arguments": ["assistant"], "description": "q", "instruction_of": value}
+        yield raw, []
 
 
 def generated_invalid_soft_rules():

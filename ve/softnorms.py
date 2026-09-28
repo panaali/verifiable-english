@@ -21,37 +21,46 @@ from .wire import digest
 
 def soft_diagnostic_code(message: str) -> str:
     """Stable soft rejection class; message wording and names are not part of the code."""
+    if message.startswith('InvalidInput: rule '):
+        if message.endswith(' needs an exception'):
+            return 'SOFT_MISSING_EXCEPTION'
+        if message.endswith(' is strict and declares an exception'):
+            return 'SOFT_STRICT_EXCEPTION'
     checks = (
-        ('needs an exception', 'SOFT_MISSING_EXCEPTION'),
-        ('invalid ties pair', 'SOFT_INVALID_TIES_PAIR'),
-        ('invalid outranks pair', 'SOFT_INVALID_OUTRANKS_PAIR'),
-        ('invalid soft block', 'SOFT_INVALID_BLOCK'),
-        ('invalid outranking flag', 'SOFT_INVALID_OUTRANKING'),
-        ('invalid decider', 'SOFT_INVALID_DECIDER'),
+        ('InvalidInput: invalid ties pair', 'SOFT_INVALID_TIES_PAIR'),
+        ('InvalidInput: invalid outranks pair', 'SOFT_INVALID_OUTRANKS_PAIR'),
+        ('InvalidInput: invalid soft block', 'SOFT_INVALID_BLOCK'),
+        ('InvalidInput: invalid outranking flag', 'SOFT_INVALID_OUTRANKING'),
+        ('InvalidInput: invalid decider', 'SOFT_INVALID_DECIDER'),
         ('MissingExceptionDecider:', 'SOFT_MISSING_DECIDER'),
-        ('strict outranking has no decider', 'SOFT_STRICT_OUTRANKING_DECIDER'),
-        ('invalid soft name', 'SOFT_INVALID_NAME'),
+        ('InvalidInput: strict outranking has no decider', 'SOFT_STRICT_OUTRANKING_DECIDER'),
+        ('InvalidInput: invalid soft name', 'SOFT_INVALID_NAME'),
+        ('InvalidInput: reserved predicate', 'SOFT_INVALID_NAME'),
+        ('InvalidInput: act-key predicate contains __', 'SOFT_INVALID_NAME'),
         ('DuplicateDeclaration:', 'SOFT_DUPLICATE_DECLARATION'),
         ('UnknownRank:', 'SOFT_UNKNOWN_RANK'),
         ('TieAgainstOrder:', 'SOFT_TIE_AGAINST_ORDER'),
         ('DependencyCycle:', 'SOFT_DEPENDENCY_CYCLE'),
         ('UnknownSymbol: party', 'SOFT_UNKNOWN_PARTY'),
-        ('strict and declares an exception', 'SOFT_STRICT_EXCEPTION'),
-        ('exception sufficient must be an array', 'SOFT_EXCEPTION_ARRAY'),
-        ('exception necessary must be an array', 'SOFT_EXCEPTION_ARRAY'),
-        ('invalid factors', 'SOFT_INVALID_FACTORS'),
-        ('alterable of rule', 'SOFT_INVALID_ALTERABLE'),
+        ('InvalidInput: exception sufficient must be an array', 'SOFT_EXCEPTION_ARRAY'),
+        ('InvalidInput: exception necessary must be an array', 'SOFT_EXCEPTION_ARRAY'),
+        ('InvalidInput: invalid factors', 'SOFT_INVALID_FACTORS'),
+        ('InvalidInput: alterable of rule', 'SOFT_INVALID_ALTERABLE'),
         ('HardConstraintAltered:', 'SOFT_HARD_CONSTRAINT'),
-        ('exception condition of rule', 'SOFT_INVALID_EXCEPTION_CONDITION'),
+        ('InvalidInput: exception condition of rule', 'SOFT_INVALID_EXCEPTION_CONDITION'),
         ('SoftOverHard:', 'SOFT_OVER_HARD'),
         ('ResourceLimit:', 'SOFT_RESOURCE_LIMIT'),
         ('UnsupportedProfile:', 'SOFT_UNSUPPORTED_PROFILE'),
-        (' must be an array', 'SOFT_INVALID_ARRAY'),
-        ('invalid soft fields', 'SOFT_INVALID_RULE_FIELDS'),
-        ('invalid mode for rule', 'SOFT_INVALID_RULE_FIELDS'),
-        ('hard of rule', 'SOFT_INVALID_RULE_FIELDS'),
+        ('InvalidInput: invalid soft fields', 'SOFT_INVALID_RULE_FIELDS'),
+        ('InvalidInput: invalid mode for rule', 'SOFT_INVALID_RULE_FIELDS'),
+        ('InvalidInput: hard of rule', 'SOFT_INVALID_RULE_FIELDS'),
     )
-    return next((code for marker, code in checks if marker in message), 'SOFT_INVALID_INPUT')
+    for prefix, code in checks:
+        if message.startswith(prefix):
+            return code
+    if message.startswith('InvalidInput: ') and message.endswith(' must be an array'):
+        return 'SOFT_INVALID_ARRAY'
+    return 'SOFT_INVALID_INPUT'
 
 
 def _code_soft_error(exc: VEError) -> VEError:
@@ -118,7 +127,8 @@ class SoftEnvironment(Environment):
             has_block = False
         else:
             has_block = True
-        if type(soft) is not dict or set(soft) - {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}:
+        if (type(soft) is not dict or 'outranking' not in soft or
+                set(soft) - {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}):
             raise VEError('InvalidInput: invalid soft block')
         parties = _names(soft.get('parties', []), 'parties', 8)
         ranks = _names(soft.get('ranks', []), 'ranks', 16)
@@ -172,6 +182,8 @@ class SoftEnvironment(Environment):
                 continue
             if 'instruction_of' in entry:
                 party = entry.pop('instruction_of')
+                if type(party) is not str:
+                    raise VEError(f'InvalidInput: instruction_of on {name}')
                 if party not in parties:
                     raise UnknownSymbol(f'UnknownSymbol: party {party}')
                 if 'regulated' in entry or 'defined' in entry:

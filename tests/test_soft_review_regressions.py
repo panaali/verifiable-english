@@ -148,11 +148,22 @@ def test_soft_validation_classes_match_python_and_lean(raw, rules, diagnostic):
     assert str(python_error.value) == str(lean_error.value) == diagnostic
 
 
+def invalid_instruction_raw():
+    raw = env({"parties": ["p"], "outranking": {"mode": "strict"}})
+    raw["vocabulary"]["predicates"]["q"] = {
+        "arguments": ["assistant"], "description": "q", "instruction_of": False}
+    return raw
+
+
 @pytest.mark.parametrize("raw,rules,code", [
     (env(), [norm("a", "x_required", True, mode="default")],
      "SOFT_MISSING_EXCEPTION"),
     (env({"ranks": ["a"], "ties": [["a"]], "outranking": {"mode": "strict"}}),
      [], "SOFT_INVALID_TIES_PAIR"),
+    (env({}), [], "SOFT_INVALID_BLOCK"),
+    (env({"ranks": ["needs an exception"], "outranking": {"mode": "strict"}}),
+     [], "SOFT_INVALID_NAME"),
+    (invalid_instruction_raw(), [], "SOFT_INVALID_INPUT"),
 ])
 def test_reported_diagnostic_codes(raw, rules, code):
     with pytest.raises(VEError) as python_error:
@@ -164,7 +175,7 @@ def test_reported_diagnostic_codes(raw, rules, code):
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 94
+    assert compare_rejected() == 112
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
@@ -279,7 +290,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 94
+    assert report["rejected_inputs"] == 112
 
 
 @pytest.mark.parametrize("role,sign,effect", [

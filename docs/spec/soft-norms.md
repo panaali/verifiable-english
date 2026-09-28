@@ -723,7 +723,7 @@ and malformed-input diagnostics on the soft route.
 | `SOFT_INVALID_DECIDER` | Present decider has invalid type, length, or value. |
 | `SOFT_MISSING_DECIDER` | Required outranking or exception decider is absent. |
 | `SOFT_STRICT_OUTRANKING_DECIDER` | Strict outranking declares a decider. |
-| `SOFT_INVALID_NAME` | Invalid soft declaration or reserved name. |
+| `SOFT_INVALID_NAME` | Invalid soft declaration, reserved predicate, or act-key name. |
 | `SOFT_DUPLICATE_DECLARATION` | Duplicate party, rank, or unordered tie. |
 | `SOFT_UNKNOWN_RANK` | Rank reference is undeclared. |
 | `SOFT_TIE_AGAINST_ORDER` | Tie contradicts strict outranking. |
@@ -742,9 +742,12 @@ and malformed-input diagnostics on the soft route.
 | `SOFT_INVALID_RULE_FIELDS` | Mode, rank, hard, or another typed soft rule field is invalid. |
 | `SOFT_INVALID_INPUT` | Other invalid input, including inherited W1 checks. |
 
-The code table is ordered: where several descriptions match an error, the
-first applicable class wins. New soft rejection paths must be assigned a
-specific code or intentionally use `SOFT_INVALID_INPUT` in both validators.
+The code table is ordered: where several descriptions apply to a rejection,
+the first applicable class wins. Classification uses the diagnostic origin,
+not substrings supplied in a name or other input. New soft rejection paths
+must be assigned a specific code or intentionally use `SOFT_INVALID_INPUT`
+in both validators. A malformed `instruction_of` value uses
+`SOFT_INVALID_INPUT`; an undeclared string party uses `SOFT_UNKNOWN_PARTY`.
 
 ### Human-readable diagnostics
 
