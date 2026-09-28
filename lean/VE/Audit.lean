@@ -35,6 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.Discourse.Examples
+import VE.Discourse.Access
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -990,3 +991,20 @@ import VE.Discourse.Examples
 #print axioms VE.Discourse.verdictOf_negative_checked
 #print axioms VE.Discourse.verdictOf_unknown
 #print axioms VE.Discourse.xi_models
+#print axioms VE.Discourse.accB_candidates
+#print axioms VE.Discourse.acc_ignores_manifest_choices
+#print axioms VE.Discourse.acc_no_heuristic
+#print axioms VE.Discourse.accessible_iff
+#print axioms VE.Discourse.binder_inj_zero
+#print axioms VE.Discourse.binder_not_notBinder
+#print axioms VE.Discourse.constAcc_mem
+#print axioms VE.Discourse.innermost_within
+#print axioms VE.Discourse.kind_fit
+#print axioms VE.Discourse.mem_candidates
+#print axioms VE.Discourse.mem_subs
+#print axioms VE.Discourse.mem_tuplesOf
+#print axioms VE.Discourse.name_scope
+#print axioms VE.Discourse.narrower_mem
+#print axioms VE.Discourse.no_witness_escape
+#print axioms VE.Discourse.nodup_length_le
+#print axioms VE.Discourse.registered_some
