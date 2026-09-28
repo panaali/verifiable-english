@@ -82,10 +82,8 @@
         "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
           "properties": {
             "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}},
-            "assumptions": {"$comment": "Leaves of the request's graph: nodes without a deduction (admit_report_sound); order and multiplicity are kept.",
-              "type": "array", "items": {"$ref": "#/$defs/claim", "x-member": {
-                "of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"],
-                "where": {"not": {"anyOf": [{"required": ["premises"]}, {"required": ["certificate"]}]}}}}}}},
+            "assumptions": {"$comment": "Exactly the ordered leaf list of the request's graph unfolded from its root (VE.Graph.Unfolds, check_unfolds): every occurrence of every leaf, in order.",
+              "type": "array", "items": {"$ref": "#/$defs/claim"}, "x-unfolds": "/document/graph"}}},
         "report_id": {"$ref": "#/$defs/hex64"},
         "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
 

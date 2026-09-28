@@ -414,6 +414,12 @@ class Compiler:
                 _fail(f"is not a dependency order of the request's {pointer}")
         return check
 
+    def _x_unfolds(self, pointer, schema, base):
+        def check(value, ctx, fuel):
+            if not _unfolds(_resolve(ctx.value, pointer), value):
+                _fail(f"is not the ordered leaf list of the request's {pointer}")
+        return check
+
     def _x_zip(self, rule, schema, base):
         pointer, sub = rule["of"], self.compile(rule["items"], base)
 
@@ -504,7 +510,7 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-index", "x-member", "x-dependency-order", "x-zip", "x-case", "x-select", "x-same",
+          "x-count", "x-index", "x-member", "x-dependency-order", "x-unfolds", "x-zip", "x-case", "x-select", "x-same",
           "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
@@ -542,6 +548,50 @@ def _verify_order(nodes: object, order: object) -> bool:
     position = {name: i for i, name in enumerate(order)}
     return all(position[m] < position[name]
                for name, ms in zip(names, mentions) for m in ms if m in position)
+
+
+_CLAIM_KEYS = ("name", "ast", "label")
+
+
+def _unfolds(graph: object, leaves: object) -> bool:
+    """`VE.Graph.check`'s success conditions on the graph's shape (unique names, every
+    premise an earlier node, the root a node), then `leaves` is the ordered unfolding of
+    the root (`Unfolds`). Leaf counts are computed first, so shared subgraphs are never
+    expanded beyond the length of `leaves` and nothing recurses."""
+    if not isinstance(graph, dict) or not isinstance(leaves, list):
+        return False
+    nodes, root = graph.get("nodes"), graph.get("root")
+    if not isinstance(nodes, list) or not isinstance(root, str):
+        return False
+    index, counts, children = {}, [], []
+    for i, node in enumerate(nodes):
+        if not isinstance(node, dict) or not isinstance(node.get("name"), str) or node["name"] in index:
+            return False
+        if ("premises" in node) != ("certificate" in node):
+            return False
+        if "premises" not in node:
+            children.append(None)
+            counts.append(1)
+        else:
+            premises = node["premises"]
+            if not isinstance(premises, list) or not all(isinstance(p, str) and p in index for p in premises):
+                return False
+            children.append([index[p] for p in premises])
+            counts.append(sum(counts[k] for k in children[-1]))
+        index[node["name"]] = i
+    if root not in index or counts[index[root]] != len(leaves):
+        return False
+    stack, position = [index[root]], 0
+    while stack:
+        k = stack.pop()
+        if children[k] is None:
+            node = nodes[k]
+            if not same_json(leaves[position], {key: node[key] for key in _CLAIM_KEYS if key in node}):
+                return False
+            position += 1
+        else:
+            stack.extend(c for c in reversed(children[k]) if counts[c])
+    return True
 
 
 _compiler = Compiler()

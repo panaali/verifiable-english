@@ -105,19 +105,59 @@ def firstOk (checks : List (Unit → Check)) : Check :=
 
 /-! ## Results by mode -/
 
-/-- `Route.Run.claimJson` of a node the request declared (`admit_labels_decoded`);
-an assumption is a leaf, a node without a deduction (`admit_report_sound`). -/
-def claim (j case : Json) (leaf : Bool := false) : Check := do
+/-- A claim's identity: its name, AST and label (absent keys stay absent). -/
+def project (x : Json) : List (Option Json) :=
+  ["name", "ast", "label"].map (fun k => (x.getObjVal? k).toOption)
+
+/-- `Route.Run.claimJson` of a node the request declared (`admit_labels_decoded`). -/
+def claim (j case : Json) : Check := do
   shape j ["name", "ast"] ["label"]
   string (← field j "name")
   folFormula (← field j "ast")
   if let .ok l := j.getObjVal? "label" then
     need ((← l.getStr?) != "asserted") "explicit default label"
   let nodes ← (← path case ["document", "graph", "nodes"]).getArr?
-  let project := fun (x : Json) => ["name", "ast", "label"].map (fun k => (x.getObjVal? k).toOption)
-  let isLeaf := fun (n : Json) => !has n "premises" && !has n "certificate"
-  need (nodes.any (fun n => (n.getObj?).toBool && project n == project j && (!leaf || isLeaf n)))
-    "not a node of the request"
+  need (nodes.any (fun n => (n.getObj?).toBool && project n == project j)) "not a node of the request"
+
+/-- `VE.Graph.check`'s conditions on the graph's shape: unique names, premises and
+certificate together, and every premise an earlier node (`acyclicCheck`). -/
+def graphShape (nodes : Array Json) : Check := do
+  let mut names : Array String := #[]
+  for n in nodes do
+    let name ← (← field n "name").getStr?
+    need (!names.contains name) "duplicate node name"
+    need (has n "premises" == has n "certificate") "premises and certificate come together"
+    if let .ok ps := n.getObjVal? "premises" then
+      for p in ← ps.getArr? do
+        need (names.contains (← p.getStr?)) "a premise is not an earlier node"
+    names := names.push name
+
+/-- The ordered leaf list of node `i` (`VE.Graph.Unfolds`); premises name earlier
+nodes, so `i + 1` fuel suffices. -/
+def unfold (nodes : Array Json) : Nat → Nat → Except String (List Json)
+  | 0, _ => throw "unfolding exceeds the graph"
+  | fuel + 1, i => do
+    let node := nodes[i]!
+    match node.getObjVal? "premises" with
+    | .error _ => pure [node]
+    | .ok ps => do
+      let mut out := []
+      for p in ← ps.getArr? do
+        let k := nodes.findIdx? (fun n => n.getObjValD "name" == p)
+        out := out ++ (← unfold nodes fuel (k.getD nodes.size))
+      pure out
+
+/-- The report's assumptions are exactly the root's unfolding (`check_unfolds`). -/
+def unfolds (assumptions case : Json) : Check := do
+  let graph ← path case ["document", "graph"]
+  let nodes ← (← field graph "nodes").getArr?
+  graphShape nodes
+  let root ← (← field graph "root").getStr?
+  let some i := nodes.findIdx? (fun n => n.getObjValD "name" == .str root) | throw "the root is not a node"
+  let leaves ← unfold nodes (i + 1) i
+  let xs ← assumptions.getArr?
+  need (xs.size == leaves.length && (xs.toList.zip leaves).all (fun (x, l) => project x == project l))
+    "assumptions are not the root's unfolding"
 
 def admission (row case : Json) : Check := do
   okRow row case ["admitted", "report", "report_id", "kinds"]
@@ -127,7 +167,8 @@ def admission (row case : Json) : Check := do
   let root ← field report "root"
   claim root case
   need ((← field root "name") == (← path case ["document", "graph", "root"])) "root"
-  array (← field report "assumptions") (claim · case true)
+  array (← field report "assumptions") (claim · case)
+  unfolds (← field report "assumptions") case
   hex64 (← field row "report_id")
   let kinds ← field row "kinds"
   array kinds kind
