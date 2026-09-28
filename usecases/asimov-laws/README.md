@@ -11,47 +11,59 @@ declarations; it does not establish their truth.
 
 ## Checked reading
 
-All nine sentences in [rules.ve](rules.ve) are **CHECKED**: the English parser
-finds one reading for each and reproduces the identity-bound
-[manifest](rules.manifest.json). The `classified as` wording keeps the
-annotator's judgments visibly distinct from the profile's defined words.
+All twelve sentences in [rules.ve](rules.ve) are **CHECKED**: the English
+parser finds one reading for each and reproduces the identity-bound
+[manifest](rules.manifest.json). `classified as` marks a predicate whose own
+wording the vocabulary lint does not admit. For `injures_human`,
+`harms_human`, `harm_to`, `ordered` and the other base predicates, that is the
+annotator's judgment. For `breaks_first_law`, `breaks_zeroth_law` and
+`has_lawful_option`, it is a name derived only by Rules 3–7 below.
 `allows` means the action leads to a harm and another available action avoids
 it. `prevents` means the action avoids a harm and another available action
 leads to it. These are Boolean claims about the declared outcome table, not
 claims about probability or a physical cause.
 
-| Rule | Law and one reading |
-| --- | --- |
-| 1 | Law 3: a candidate action marked protective is permitted. |
-| 2 | Law 2: an ordered action is permitted, taking precedence over Rule 1. |
-| 3 | Law 1: an action marked as injuring a human is forbidden, taking precedence over Rule 2. |
-| 4 | Law 1: an action is forbidden when it allows an avoidable human harm to happen, taking precedence over Rule 2. This covers doing nothing and doing something unrelated while another action would avoid the harm. |
-| 5 | Zeroth Law priority, as a translator's explicit reading: an action preventing a harm to humanity is permitted even when Rule 3 or 4 would forbid it. |
-| 6 | Zeroth Law: an action marked as injuring humanity is forbidden; it overrides Rules 3 and 5. |
-| 7 | Zeroth Law: an action is forbidden when it allows an avoidable harm to humanity to happen; it overrides Rules 4 and 5. |
-| 8 | Law 2: an ordered action is required when it is permitted. |
-| 9 | Law 3: the robot must avoid each avoidable harm to its continued existence. A selected action fulfils this mapped duty when it does not lead to that harm. |
+The last column separates what the source states from a choice this
+translation makes to state it.
 
-Rules 1–2 and 8 keep the v1 candidate-action reading. Rule 5 makes a concrete
-Zeroth Law exception across the Law 1 bans. Its `prevents` guard requires an
-alternative that leads to that same collective harm; it does **not** establish
-that human injury was the only way to avoid it. Rule 9 replaces v1's demand to
-take *every* protective action with one prevention duty that either of two
-safe alternatives can fulfil. The [environment](environment.json) defaults
-permission to allow and obligation to not required if no rule applies. These
-completion defaults and the `protects_robot` annotation are modeling choices.
+| Rule | Law and one reading | Basis |
+| --- | --- | --- |
+| 1 | Law 3: a candidate action marked protective is permitted. | modeling choice (v1) |
+| 2 | Law 2: an ordered action is permitted, taking precedence over Rule 1. | source |
+| 3 | Law 1: an action marked as injuring a human being breaks the First Law. | source |
+| 4 | Law 1: an action that allows an avoidable harm to a human being to happen breaks the First Law. This covers doing nothing and doing something unrelated while another action would avoid the harm. | source |
+| 5 | Zeroth Law: an action marked as injuring humanity breaks the Zeroth Law. | source (later law) |
+| 6 | Zeroth Law: an action that allows an avoidable harm to humanity to happen breaks the Zeroth Law. | source (later law) |
+| 7 | A robot has a lawful option when some action available to it breaks neither law. | definition used by Rule 9 |
+| 8 | Law 1: an action that breaks the First Law is forbidden, taking precedence over Rule 2. | source |
+| 9 | Zeroth Law priority: an action preventing a harm to humanity is permitted even though it breaks the First Law, unless its robot has a lawful option. | source priority; the necessity test is this translation's |
+| 10 | Zeroth Law: an action that breaks the Zeroth Law is forbidden; it overrides Rules 8 and 9. | source (later law) |
+| 11 | Law 2: an ordered action is required when it is permitted. | source |
+| 12 | Law 3: the robot must avoid each avoidable harm to its continued existence. A selected action fulfils this mapped duty when it does not lead to that harm. | source, without its exception |
+
+Rules 1–2 and 11 keep the v1 candidate-action reading. Rule 9 lets the Zeroth
+Law excuse a First Law breach only when it is necessary. A lawful option breaks
+neither law, so it allows no avoidable harm to humanity and prevents every
+collective harm that the excused action prevents. It is also permitted. While
+one exists, the First Law ban stands. Rule 12 replaces v1's demand to take
+*every* protective action with one prevention duty that either of two safe
+alternatives can fulfil. The [environment](environment.json) defaults
+permission to allow, obligation to not required and each derived name to
+false if no rule applies. These completion defaults and the `protects_robot`
+annotation are modeling choices.
 
 ## Checker result and coverage
 
-The alternatives route replayed **four conflict certificates** for the nine
-rules: `permitted`, `prevent_required`, `required`, and the
-`required→permitted` dual. The document verdict is **CONFLICT-FREE**. On the
+The alternatives route replayed **seven conflict certificates** for the
+twelve rules: `breaks_first_law`, `breaks_zeroth_law`, `has_lawful_option`,
+`permitted`, `prevent_required`, `required`, and the `required→permitted`
+dual. The document verdict is **CONFLICT-FREE**. On the
 **17 Asimov-shaped scenarios** from spec §8, the same full rule set has a
 clear action in **10** and no clear action in **7**. For example, scenario `a`
 permits `pull` and bars harmful inaction; `o` leaves only `rescue` clear,
 because `act` does unrelated work while an avoidable harm happens; `e` has `act` clear because it
 prevents collective harm despite human injury; `d-full` has both `shield` and
-`retreat` clear under Rule 9. Scenarios `b-A0` and `b-A1` have no permitted
+`retreat` clear under Rule 12. Scenarios `b-A0` and `b-A1` have no permitted
 action, since each alternative allows or causes a harm to a human being, and
 scenario `j` requires two incompatible orders. With the conflict certificates,
 the checker replays these as **DILEMMA** witnesses (`NONE-PERMITTED` and
@@ -61,12 +73,12 @@ FOLLOWABLE certificate.
 
 | Coverage | v1 | v2 |
 | --- | --- | --- |
-| Checked rules | 6 | 9 |
-| Document conflict verdict | CONFLICT-FREE | CONFLICT-FREE (4 replayed targets) |
+| Checked rules | 6 | 12 |
+| Document conflict verdict | CONFLICT-FREE | CONFLICT-FREE (7 replayed targets) |
 | Direct injury, ordered action | Checked, with annotator inputs | Checked, with annotator inputs |
 | Harm through inaction | Missing | Checked via `allows` on every alternative and signed `leads_to` outcomes |
 | Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
-| Zeroth priority across a human-injury ban | Open | Checked for Rule 5's stated prevention condition |
+| Zeroth priority across a human-injury ban | Open | Checked, with Rule 9's necessity test (a translation choice) |
 | Followability | No alternatives check | 10 of 17 spec scenarios have a clear action; 7 do not |
 
 ## OPEN: fidelity and evidence
@@ -78,10 +90,10 @@ FOLLOWABLE certificate.
   “come to harm” distinction, or whether a threatened loss is serious enough.
 - **OPEN — exact Zeroth Law exception.** The combined 1942 and later wordings
   do not specify a test for when human injury conflicts with protecting
-  humanity. Rule 5 adopts the stated `prevents` condition and can permit human
-  injury when another alternative also prevents the same collective harm.
-  Necessity, proportionality, and tradeoffs among different harms need an
-  explicit author judgment or a richer policy.
+  humanity. Rule 9 permits a First Law breach that prevents a harm to humanity
+  only when no alternative breaks neither law. Proportionality and tradeoffs
+  among different harms need an explicit author judgment or a richer policy:
+  two necessary breaches are both permitted, however unequal.
 - **OPEN — simultaneous demands.** Two permitted orders can require
   incompatible actions, as scenario `j` shows. Avoiding a harm to a human and
   preserving the robot can also demand different alternatives. W1 precedence

@@ -1,7 +1,7 @@
 {
-  "environment_id": "fa0ef0a9024f8425b4a5a2f86a7a0d621a3d99963a9109722bcc844bf2d18c89",
-  "document_hash": "fce30410c91e2b05a3bfebd34eee455807363ceeff2cb7f782d7698eb92df870",
-  "text_digest": "76398100a021b795566b30c40524436c84f9197518b8cd463e881d8ff22fdc38",
+  "environment_id": "d65ee04e775ba89f1d5e29f70575b74dd9b9f481f399fe25f0b0b461baccf9c2",
+  "document_hash": "86e56a42940ec7843ab7fa2b62f146f0255e57ddf84627950e09a2b729c6a25a",
+  "text_digest": "0fcd87a030a9398ffe1cadab0fba4cd225cd4a78ea57b4b58a07f2cf94cd01d9",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -22,12 +22,12 @@
       ]
     },
     {
-      "handle": "handle-law-1-direct",
-      "name": "law-1-direct",
+      "handle": "handle-law-1-injury",
+      "name": "law-1-injury",
       "number": 3,
       "span": [
         193,
-        307
+        299
       ]
     },
     {
@@ -35,53 +35,80 @@
       "name": "law-1-inaction",
       "number": 4,
       "span": [
-        308,
-        492
+        300,
+        476
       ]
     },
     {
-      "handle": "handle-law-0-prevention-exception",
-      "name": "law-0-prevention-exception",
+      "handle": "handle-law-0-injury",
+      "name": "law-0-injury",
       "number": 5,
       "span": [
-        493,
-        671
-      ]
-    },
-    {
-      "handle": "handle-law-0-direct",
-      "name": "law-0-direct",
-      "number": 6,
-      "span": [
-        672,
-        793
+        477,
+        587
       ]
     },
     {
       "handle": "handle-law-0-inaction",
       "name": "law-0-inaction",
+      "number": 6,
+      "span": [
+        588,
+        768
+      ]
+    },
+    {
+      "handle": "handle-lawful-option",
+      "name": "lawful-option",
       "number": 7,
       "span": [
-        794,
-        985
+        769,
+        974
+      ]
+    },
+    {
+      "handle": "handle-law-1-ban",
+      "name": "law-1-ban",
+      "number": 8,
+      "span": [
+        975,
+        1092
+      ]
+    },
+    {
+      "handle": "handle-law-0-prevention-exception",
+      "name": "law-0-prevention-exception",
+      "number": 9,
+      "span": [
+        1093,
+        1398
+      ]
+    },
+    {
+      "handle": "handle-law-0-ban",
+      "name": "law-0-ban",
+      "number": 10,
+      "span": [
+        1399,
+        1522
       ]
     },
     {
       "handle": "handle-law-2-obey",
       "name": "law-2-obey",
-      "number": 8,
+      "number": 11,
       "span": [
-        986,
-        1106
+        1523,
+        1644
       ]
     },
     {
       "handle": "handle-law-3-preserve",
       "name": "law-3-preserve",
-      "number": 9,
+      "number": 12,
       "span": [
-        1107,
-        1260
+        1645,
+        1799
       ]
     }
   ]
