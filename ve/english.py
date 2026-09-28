@@ -372,6 +372,13 @@ class EnglishVocabulary:
                 'allows': '{0} allows {1} to happen',
                 'prevents': '{0} prevents {1}',
             })
+            self.input_aliases = [
+                ('avoidable', '{0} is preventable by {1}', False),
+                ('allows', '{0} lets {1} happen', False),
+                (block['leads_to'], '{0} does not lead to {1}', True),
+            ]
+        else:
+            self.input_aliases = []
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
@@ -949,6 +956,7 @@ class EnglishParser:
         for name, template in self.words.predicates.items():
             templates.append((name, template, False))
         templates += [(name, template, True) for name, template in self.words.negatives.items()]
+        templates += self.words.input_aliases
         if not relative:
             templates.append((None, '{0} is the same as {1}', False))
             if order:
@@ -1016,7 +1024,8 @@ class EnglishParser:
         if len(nodes) != 1:
             self.error('The vocabulary gives this clause more than one meaning. Use distinct predicate templates.')
         tail = re.match(r'\s+([A-Za-z][A-Za-z0-9_-]*)', self.source[longest:])
-        clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(), *self.words.negatives.values())}
+        clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(),
+                         *self.words.negatives.values(), *(t for _, t, _ in self.words.input_aliases))}
         if tail and tail[1].lower() not in BOUNDARIES | clause_heads:
             names = {n.predicate for _, n in choices if type(n) in (ast.Unary, ast.Binary)}
             names |= {n.body.predicate for _, n in choices if type(n) is ast.Not}
@@ -1139,6 +1148,21 @@ class EnglishParser:
         end = phrase_end(self.source, content)
         end = min(len(self.source), max(end, content, start + 1))
         phrase = self.source[start:end]
+        if getattr(self.env, 'alternatives', None) is not None:
+            lowered = phrase.lower()
+            if lowered.startswith('causes '):
+                self.error("The proximate cause wording needs a declared proximate role; declare it or write 'leads to'.")
+            if lowered.startswith(('results in ', 'brings about ')):
+                self.error("Use the declared Boolean wording 'leads to' for this outcome.")
+            if lowered.startswith(('could lead to ', 'risks ', 'increases the risk of ',
+                                   'contributes to ', 'provides uplift to ')):
+                self.error("This outcome wording is not Boolean. State a supported leads-to cell or label the degree of risk as open.")
+            if lowered.startswith('through inaction allows '):
+                self.error("Through inaction allows has two readings. State whether inaction leads to the harm, or whether an avoidable harm is allowed.")
+            if lowered.startswith('allows a harm to a human being to happen'):
+                self.error("Write the long form: there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen.")
+            if re.match(r'allows\s+\w+\s+to\s+\w+', lowered) and not lowered.endswith(' to happen'):
+                self.error("Permission for a person uses the W1 'may' wording, not causal 'allows'.")
         matches = nearest(phrase, self.words)[:3]
         suggestions = '; '.join(repr(row['wording']) for row in matches)
         raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
@@ -1748,8 +1772,8 @@ def english_lark_grammar(env, **options):
                      if prop.arguments == (declaration.arguments[1],))
     relatives = []
     object_relatives = []
-    for templates in (words.predicates, words.negatives):
-        for name, template in templates.items():
+    for name, template in (list(words.predicates.items()) + list(words.negatives.items()) +
+                           [(name, template) for name, template, _ in words.input_aliases]):
             sorts = env.predicates[name].arguments
             slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
             parts = re.split(r'(\{[0-5]\})', template)

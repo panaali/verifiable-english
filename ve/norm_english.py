@@ -70,6 +70,22 @@ def _parse_guard(source, env, words, scope):
     return formula
 
 
+def _mentions_own_outcome(formula, predicate, arity, depth=0):
+    """Distinguish the rule's own tuple from another action's outcome."""
+    if isinstance(formula, (ast.Unary, ast.Binary)):
+        terms = (formula.term,) if isinstance(formula, ast.Unary) else (formula.left, formula.right)
+        return (formula.predicate == predicate and len(terms) == arity and
+                terms == tuple(ast.Var(depth + arity - i - 1) for i in range(arity)))
+    if isinstance(formula, (ast.Forall, ast.Exists)):
+        return _mentions_own_outcome(formula.body, predicate, arity, depth + 1)
+    if isinstance(formula, ast.Not):
+        return _mentions_own_outcome(formula.body, predicate, arity, depth)
+    if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
+        return (_mentions_own_outcome(formula.left, predicate, arity, depth) or
+                _mentions_own_outcome(formula.right, predicate, arity, depth))
+    return False
+
+
 def _consequence(rule, env, words):
     decl = env.predicates[rule.predicate]
     reg = decl.regulated
@@ -300,7 +316,10 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
     try:
         document = NormDocument(env, rules)
     except VEError as exc:
-        if env.alternatives is not None and str(exc).startswith("DependencyCycle: "):
+        if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
+                any(_mentions_own_outcome(rule.guard, rule.predicate,
+                                          len(env.predicates[rule.predicate].arguments))
+                    for rule in rules)):
             raise VEError(f"{exc}; GuardOnOwnOutcome: A factual guard about other "
                           "actions changes the rule's meaning and does not track "
                           "later rules that forbid them for other reasons.") from exc

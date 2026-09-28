@@ -164,6 +164,46 @@ def test_derived_words_round_trip_without_declared_predicate_tables():
         check_conflict(document)
 
 
+def test_approved_alternatives_input_synonyms_normalize_to_canonical_text():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        name: {"sort": sort, "description": name}
+        for name, sort in (("pull", "action"), ("r", "robot"), ("h", "harm"))}
+    env = Environment(raw)
+    for source_text, expected, canonical in (
+        ("h is preventable by r.", ["binary", "avoidable", ["const", "h"], ["const", "r"]],
+         "h is avoidable by r."),
+        ("pull lets h happen.", ["binary", "allows", ["const", "pull"], ["const", "h"]],
+         "pull allows h to happen."),
+        ("pull does not lead to h.",
+         ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]],
+         "It is not the case that pull leads to h."),
+    ):
+        parsed = parse_english_with_metadata(env, source_text)
+        assert formula_to_data(env, parsed.document.formulas[0]) == expected
+        assert parsed.paraphrase()["english_text"] == canonical[0].upper() + canonical[1:] + "\n"
+
+
+@pytest.mark.parametrize("wording,rewrite", [
+    ("results in h", "leads to"),
+    ("brings about h", "leads to"),
+    ("could lead to h", "not Boolean"),
+    ("risks h", "not Boolean"),
+    ("increases the risk of h", "not Boolean"),
+    ("contributes to h", "not Boolean"),
+    ("provides uplift to h", "not Boolean"),
+    ("through inaction allows h to happen", "two readings"),
+    ("allows a harm to a human being to happen", "long form"),
+])
+def test_rejected_causal_wordings_offer_a_rewrite(wording, rewrite):
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "h": {"sort": "harm", "description": "h"}}
+    with pytest.raises(VEError, match=rewrite):
+        parse_english_with_metadata(Environment(raw), f"pull {wording}.")
+
+
 def test_coverage_names_declared_alternatives_and_counterfactual_support():
     raw = source()
     raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
@@ -245,6 +285,15 @@ def test_english_own_outcome_guard_names_the_semantic_change():
     with pytest.raises(VEError, match="DependencyCycle: permitted; GuardOnOwnOutcome: .*changes the rule's meaning"):
         parse_norm_english(env, "Rule 1. Every action may be done, "
                                 "if that action may be done.")
+
+
+def test_other_action_outcome_cycle_is_not_mislabeled_as_own_outcome():
+    raw = source()
+    raw["vocabulary"]["constants"] = {"r": {"sort": "robot", "description": "r"}}
+    env = Environment(raw)
+    with pytest.raises(VEError, match=r"^DependencyCycle: permitted$"):
+        parse_norm_english(env, "Rule 1. Every action may be done, if every other "
+                                "action available to r may be done.")
 
 
 def test_available_guard_forms_bind_owner_and_distinguish_other_action():
