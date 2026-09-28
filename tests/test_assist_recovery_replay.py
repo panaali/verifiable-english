@@ -13,6 +13,7 @@ from copy import deepcopy
 import pytest
 
 from ve.assist.ambiguity_patterns import Budget, _Deadline, review
+from ve.assist import ambiguity_patterns
 from ve.assist import recovery as recovery_module
 from ve.assist.recovery import RecoveryService
 from ve.ast import Unary, Const, Not
@@ -440,7 +441,11 @@ def regenerate(ledger):
 
 
 @pytest.mark.parametrize("seed", range(10))
-def test_random_histories_and_tampering_never_approve_without_review(seed):
+def test_random_histories_and_tampering_never_approve_without_review(seed, monkeypatch):
+    # This property checks replay integrity, not the wall-clock deadline. Its
+    # repeated full-ledger replays can exceed eight seconds under xdist load.
+    monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 1800)
+    monkeypatch.setattr(ambiguity_patterns, "OPERATION_SECONDS", 1800)
     rng = random.Random(seed)
     recovery = random_history(rng)
     original = recovery.to_ledger()
