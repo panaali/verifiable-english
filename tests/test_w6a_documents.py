@@ -1,9 +1,11 @@
 """W6a quantity documents: Lean admission (`ve_quantity` case `document`) against
 Python early admission and Rust regeneration, the news-article document, the
 whole-grammar English gate, and every provenance/binding rejection class."""
+from collections import Counter
 import copy
 import json
 from pathlib import Path
+import re
 import subprocess
 
 import pytest
@@ -353,3 +355,21 @@ def test_fences_and_ast_content_go_through_annotated_admission(tmp_path):
     forged = {**quantity_unit, "meaning_id": "0" * 64}
     with pytest.raises(VEError, match="meaning id"):
         load_document(write_document(tmp_path, [forged, rest]))
+
+
+def test_news_coverage_table_matches_its_rows_and_the_run():
+    text = (NEWS / "coverage.md").read_text()
+    labels = re.findall(r"^\| (\d+b?) \| .*? \| (DIRECT|REIFIED|OPAQUE|NO) \|", text, re.M)
+    counts = {label: sum(1 for _, x in labels if x == label)
+              for label in ("DIRECT", "REIFIED", "OPAQUE", "NO")}
+    assert len(labels) == 27
+    assert (f"27 rows" in text and f"{counts['DIRECT']} DIRECT,\n{counts['REIFIED']} REIFIED, "
+            f"{counts['OPAQUE']} OPAQUE, {counts['NO']} NO." in text), counts
+    assert {row for row, x in labels if x == "DIRECT"} == {"1", "7", "13", "21", "22", "23"}
+    result = check_document(NEWS / "news-w6a.ve.md")
+    statuses = result["coverage"]["bytes_by_status"]
+    for status in ("CHECKED", "OPEN", "UNFORMALISED"):
+        assert f"| {status} | {statuses[status]:,} |" in text
+    leaves = {(a["name"], a.get("label", "asserted")) for a in result["admission"]["report"]["assumptions"]}
+    kinds = Counter(label.split(":")[0] for _, label in leaves)
+    assert kinds == {"asserted": 2, "bridge": 6, "readings": 1}
