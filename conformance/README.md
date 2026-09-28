@@ -323,15 +323,15 @@ order route.
 
 ## Alternatives route fixtures
 
-`alternatives.py` generates the a, b, c, d, e, f, g, h, j, l5, o, t and u scenario shapes from
+`alternatives.py` generates the a, b, b′(A, A5), c, d, e, f, g, h, j, l5, o, t and u scenario shapes from
 `docs/spec/alternatives.md` §8. `tests/test_alternatives_three_way.py` asks the
 Lean alternatives route to validate each scenario and generate its closed
 followability formula plus existential probes for all four profile words.
 Python and Rust then evaluate those Lean-generated formulas against the same
 base model and compare with Lean's scenario report. The Rust route receives a
 plain base environment and never elaborates alternatives or supplies a
-profile-word table. The s2 case separately checks Lean's CONFLICT witness
-against independent evaluation of its regenerated conflict target.
+profile-word table. The s2, b′(A⁻) and b′(A⁻5) cases separately check Lean's
+CONFLICT witnesses against independent evaluation of the regenerated targets.
 The p1, p2 and p6 cases check that signed rows reject an unstated cell,
 `complete_by` accepts the missing negative cell only under its document-bound
 premise, and a new positive row outside the document cells is rejected. For

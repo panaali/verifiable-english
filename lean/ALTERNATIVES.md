@@ -108,10 +108,10 @@ invalidates the packages. Earlier local runs also covered {3, 7, 9} and {3, 5, 7
 The Python search found no
 followability certificate for b′(A) within 50,000 steps (proof search is outside this item).
 
-`tests/test_alternatives_three_way.py` checks the a, b, c, d, e, f, g, h, j, l5, o, t and u scenario shapes:
+`tests/test_alternatives_three_way.py` checks the a, b, b′(A, A5), c, d, e, f, g, h, j, l5, o, t and u scenario shapes:
 Lean validates each model and reports its clear actions; Python and Rust evaluate
 Lean's closed followability and four profile probes over the same base model.
-The s2 conflict target is also compared three ways.
+The s2, b′(A⁻) and b′(A⁻5) conflict targets are also compared three ways.
 The p1, p2 and p6 outcome-table cases check signed-row completeness and the
 document's `table_complete` premise; p2's derived formulas are compared across
 all three evaluators.
