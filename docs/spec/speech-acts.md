@@ -392,7 +392,8 @@ round-trip through the same objects with W1's preserved name metadata for rule n
 `ve-document@2` is `ve-document@1` (document.md) plus: the `binding` kind, command and question content, `queries`,
 `answers`, `compliance` and the `speech_acts` environment block. Its document identity is
 `sha256("ve-document@2\n" + canonical(identity_payload))` with W2's payload (metadata without removable weights, source,
-fences), so no `ve-document@1` identity moves and every `ve-document@1` document is a valid `ve-document@2` document with
+fences) in W2's own encoding (sorted keys, compact separators, UTF-8; `null` admitted for an unelaborated
+reading candidate), so no `ve-document@1` identity moves and every `ve-document@1` document is a valid `ve-document@2` document with
 the same units and, under the new domain string, a new document id. `environment_id` binds the `speech_acts` block beside
 `regulated` (3.1). A command unit's `meaning_id` is `sha256("ve-meaning-<identity_version>\n" +
 canonical({"environment_id", "ast"}))` with `ast` the command object; **a command whose act has a slot of sort
@@ -704,7 +705,15 @@ the legend, outside the partition, no class. An authored `binding`
 unit is substantive and C when it binds a declared phrase or "you" to a declared constant, U otherwise (a legend sentence
 carrying a normative default or a factual assertion is never L). Reconciliation with W2: CHECKED ↦ C; OPEN ↦ R, O or U
 by the rules above (W2 stores readings under OPEN; the class says which); LABELLED ↦ L; UNFORMALISED ↦ U; a MIXED unit
-by its parts. Residual counts (5.5) accompany the table; per-reading residuals stay under R. Guessed deciders and opaque
+by its parts. The W2 status is W2's own inference (content and meaning, then the unit's active reading set) and the
+class the precedence above, each computed from the unit; the mapping is then checked, and a unit that breaks it is an
+error, never reclassified. "Active" is the latest version of the unit's set (1.5): an earlier version neither makes a
+unit R or U nor counts as unresolved, and `unresolved_sets` counts the units whose latest version is open. An
+elaborated candidate is one whose content decodes and type-checks as a command, question, norm, binding or assertion;
+a malformed candidate is rejected, never counted, and a `null` candidate is unelaborated (U). A signed (authored)
+choice is resolved: W2 checks an assertion choice itself (CHECKED ↦ C) and stores any other under OPEN, whose
+elaborated choice is R. C needs a `specified` meaning (a `contextual` unit is W2-LABELLED, so L). Residual counts (5.5)
+accompany the table; per-reading residuals stay under R. Guessed deciders and opaque
 action glosses earn no C: an action declaration cannot hide a sentence behind an opaque predicate and claim fidelity
 (2.3, the `choose a mode` row declares the object inside the act only when that is the meaning).
 
@@ -1556,6 +1565,7 @@ statements of section 8 are unchanged.
 | A, premise leakage; B, reading activeness: pending assertions and norms stayed active in Python; Python kept authored commands dormant while Lean let historical open versions suppress resolved ones; authored singleton assertions were premises in neither; `combine` reactivated pending commands | 1.2 and 1.5: the latest reading-set version decides for every unit kind (open: pending, no rule, no premise; authored: the signed choice is the unit's kind and content); content-less asserted units need a set and unformalised units carry no content, as W2; `combine` carries reading sets and queries. |
 | A, scope identity: bindings that supply "you" (or a definite) changed demands but kept the environment and meaning ids | 1.1 and 3.1: identities bind the canonical environment of the effective scope, as if the block declared the supplied entry; an empty definites map is canonically absent (Python had kept `{}`). |
 | B, vacuity: Python's `supported` and `follows` lines had no premise status, so contradictory premises certified both answers silently; Lean's `follows` line had none either | 5.3: every certificate line, `follows` included, carries the status of its exact list and `vacuous: no | yes | unknown` (the follows grammar gains the vacuity it derives). Python searches for the status within its budget (a checked model, a replayed inconsistency certificate, or UNKNOWN); Lean replays supplied `premise_status` evidence. |
+| B, coverage: malformed candidates counted as R, unelaborated ones were never U, authored and historical versions inflated `unresolved_sets`, and the status table was derived from the classes | 6: candidates are decoded (malformed rejected, `null` unelaborated); the latest version decides class and residual; W2's statuses are inferred independently and the mapping is checked per unit; a stated W2 `status` must match W2's inference. The `ve-document@2` id encodes W2's payload in W2's own JSON encoding, which admits a `null` candidate (3.5). |
 
 ## Change log
 

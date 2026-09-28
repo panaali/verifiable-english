@@ -316,3 +316,70 @@ def test_proof_task_identity_binds_query_target_and_certificate():
     assert doc.meaning_ids["u2"] != retargeted.meaning_ids["u2"]
     with pytest.raises(VEError, match="QueryMismatch: q1"):
         retargeted.check_consequence_certificate("q1", proof.certificate)
+
+
+def _candidate(kind, content, rid="r1", others=()):
+    return {"id": rid, "kind": kind, "meaning_id": "candidate", "content": content,
+            "admission": {"who": "author", "why": "reproducer",
+                          "distinguishing_models": {o: "m" + o for o in others}}}
+
+
+def _source(unit_kind, content, sets, meaning="specified", status=None):
+    from ve.speech_document import SpeechSource
+    env = environment()
+    text = b"Open the desk.\n"
+    unit_ = {"id": "u", "span": [0, len(text)], "kind": unit_kind, "meaning": meaning, "support": "none",
+             **({"content": content} if content is not None else {}),
+             **({"status": status} if status is not None else {})}
+    return SpeechSource({"format": "ve-document@2", "environment": env.to_dict(), "units": [unit_],
+                         "reading_sets": sets}, text, {})
+
+
+def _set(version, status, readings):
+    return {"id": "rs", "unit": "u", "version": version, "status": status, "readings": readings,
+            **({"signature": "author"} if status == "authored" else {})}
+
+
+def test_coverage_classes_are_reconciled_with_w2_statuses_not_derived_from_them():
+    # Regression: any unit owning any reading set was R, malformed candidates counted as
+    # elaborated, authored and historical versions counted as unresolved, and the status table
+    # was derived from the classes, so reconciliation could not fail.
+    open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
+    n = len(b"Open the desk.\n")
+    for malformed in ({"command": {}}, {"command": {"force": "require", "act": "DOES_NOT_EXIST", "args": []}},
+                      {"question": {"mode": "polar"}}):
+        with pytest.raises(VEError):
+            _source("instruction", open_cmd, [_set(1, "open", [_candidate("instruction", malformed)])])
+    cases = [
+        # (sets, class, W2 status, unresolved, command active)
+        ([_set(1, "open", [_candidate("instruction", None)])], "U", "OPEN", 1, False),
+        ([_set(1, "open", [_candidate("instruction", open_cmd)])], "R", "OPEN", 1, False),
+        ([_set(1, "authored", [_candidate("instruction", open_cmd)])], "R", "OPEN", 0, True),
+        ([_set(1, "open", [_candidate("instruction", open_cmd)]),
+          _set(2, "authored", [_candidate("instruction", open_cmd)])], "R", "OPEN", 0, True),
+        ([_set(1, "authored", [_candidate("instruction", open_cmd)]),
+          _set(2, "open", [_candidate("instruction", open_cmd)])], "R", "OPEN", 1, False),
+        ([], "C", "CHECKED", 0, True),
+    ]
+    for sets, cls, status, unresolved, active in cases:
+        source = _source("instruction", open_cmd, sets)
+        coverage = source.coverage()
+        assert coverage["bytes_by_class"] == {cls: n}, sets
+        assert coverage["bytes_by_status"] == {status: n}, sets
+        assert coverage["residual"]["unresolved_sets"] == unresolved
+        assert source.document.commands[0].active is active
+    # An authored singleton assertion is W2-CHECKED and C, and a premise.
+    fact = ["unary", "reviewed", ["const", "atlas"]]
+    from ve.identity import meaning_id
+    from ve.ast import formula_from_data
+    env = environment()
+    choice = _candidate("asserted", fact)
+    choice["meaning_id"] = meaning_id(env, formula_from_data(env, fact))
+    source = _source("asserted", None, [_set(1, "authored", [choice])])
+    assert source.coverage()["bytes_by_class"] == {"C": n} and source.coverage()["bytes_by_status"] == {"CHECKED": n}
+    assert [u for u, _ in source.document.asserted] == ["u"]
+    # A contextual meaning is W2-LABELLED, so it is L, not C; a stated W2 status must match W2's inference.
+    assert _source("instruction", open_cmd, [], meaning={"contextual": "heading"}).coverage()["bytes_by_class"] == \
+        {"L": n}
+    with pytest.raises(VEError, match="unit status contradicts"):
+        _source("instruction", open_cmd, [_set(1, "open", [_candidate("instruction", open_cmd)])], status="CHECKED")

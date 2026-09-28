@@ -17,7 +17,7 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import SpeechDocument
+from .speech_acts import SpeechDocument, latest_reading_sets
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -192,6 +192,10 @@ class SpeechSource:
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
         self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)
+        latest = latest_reading_sets(sets)
+        for unit in self.units:
+            if unit.get("status") not in (None, _w2_status(unit, latest.get(unit["id"]))):
+                raise VEError("unit status contradicts content, meaning, or active reading set")
         by_name = {term["name"]: term for term in self.open_terms}
         for question in self.document.questions:
             if question.mode == "reading":
@@ -205,7 +209,12 @@ class SpeechSource:
             raise VEError("invalid removable reading weights")
         self.identity_payload = {"metadata": {k: v for k, v in meta.items() if k != "weights"},
                                  "source": source_text, "fences": fences}
-        self.document_id = hashlib.sha256(b"ve-document@2\n" + canonical_json(self.identity_payload)).hexdigest()
+        # W2's payload in W2's own encoding (ve/document.py): its reading sets may
+        # hold `null` for an unelaborated candidate, which canonical_json refuses.
+        canonical_json({k: v for k, v in self.identity_payload.items() if k != "metadata"})
+        self.document_id = hashlib.sha256(
+            b"ve-document@2\n" + json.dumps(self.identity_payload, sort_keys=True, ensure_ascii=False,
+                                             separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
         self.source_id = source_id(source, self.env)
         self.reading_plan = plan_choices([r for r in active_reading_sets(sets) if r["status"] == "open"])
         self.answers = meta.get("answers", [])
@@ -281,22 +290,65 @@ class SpeechSource:
         return lines
 
     def coverage(self):
+        """Section 6's classes beside W2's own status table, reconciled per unit.
+
+        The statuses are W2's inference (document.md: content and meaning, then
+        the active reading set) and the classes the section 6 precedence; each
+        is computed from the unit, and a unit whose pair breaks the fixed
+        mapping CHECKED ↦ C, OPEN ↦ R/O/U, LABELLED ↦ L, UNFORMALISED ↦ U is an
+        error, never a silent reclassification.
+        """
+        latest = latest_reading_sets(self.reading_sets)
         classes = {}
         statuses = {}
         for unit in self.units:
             length = unit["span"][1] - unit["span"][0]
-            meaning = unit["meaning"]
-            cls = ("U" if type(meaning) is dict and "unformalised" in meaning else
-                   "R" if unit["id"] in {r["unit"] for r in self.reading_sets} else
-                   "O" if type(meaning) is dict and "open" in meaning else
-                   "C" if unit["content"] is not None else "L")
+            reading_set = latest.get(unit["id"])
+            status = _w2_status(unit, reading_set)
+            cls = _speech_class(unit, reading_set)
+            if cls not in _RECONCILES[status]:
+                raise VEError(f"coverage reconciliation: {unit['id']} is {status} but class {cls}")
             classes[cls] = classes.get(cls, 0) + length
-            status = "OPEN" if cls in ("R", "O") else "UNFORMALISED" if cls == "U" else "CHECKED" if cls == "C" else "LABELLED"
             statuses[status] = statuses.get(status, 0) + length
         assert sum(classes.values()) == sum(statuses.values()) == len(self.source)
         return {"bytes_by_class": classes, "bytes_by_status": statuses,
                 "residual": {"open_terms": len(self.open_terms),
-                             "unresolved_sets": len(self.reading_sets)}}
+                             "unresolved_sets": sum(r["status"] == "open" for r in latest.values())}}
+
+
+_RECONCILES = {"CHECKED": {"C"}, "OPEN": {"R", "O", "U"}, "LABELLED": {"L"}, "UNFORMALISED": {"U"}}
+
+
+def _meaning_status(meaning):
+    return meaning if meaning == "specified" else next(iter(meaning))
+
+
+def _w2_status(unit, reading_set):
+    """W2's status inference (ve/document.py), unchanged: an active set decides, else content and meaning."""
+    if reading_set is not None:
+        return ("CHECKED" if reading_set["status"] == "authored"
+                and all(c["kind"] == "asserted" and c["content"] is not None for c in reading_set["readings"])
+                else "OPEN")
+    status = _meaning_status(unit["meaning"])
+    return ("CHECKED" if unit["content"] is not None and status == "specified" else
+            "OPEN" if status == "open" else "UNFORMALISED" if status == "unformalised" else "LABELLED")
+
+
+def _speech_class(unit, reading_set):
+    """Section 6's precedence U, R, O, C, else L, over the unit and its latest reading set."""
+    status = _meaning_status(unit["meaning"])
+    if status == "unformalised":
+        return "U"
+    if reading_set is not None:
+        if any(c["content"] is None for c in reading_set["readings"]):
+            return "U"  # an unelaborated candidate (or an unelaborated signed choice)
+        if reading_set["status"] == "open":
+            return "R"
+        # A signed choice W2 checks itself is C; one it stores under OPEN is R.
+        return "C" if all(c["kind"] == "asserted" for c in reading_set["readings"]) else "R"
+    if status == "open":
+        return "O"
+    return "C" if unit["content"] is not None and status == "specified" else "L"
 
 
 def load_speech_document(path):
