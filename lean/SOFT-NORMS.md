@@ -122,7 +122,7 @@ substructure embedding, route plumbing), audited with the same allowlist.
    `outranksPlus` is a lookup instead of a path enumeration of the rank graph;
    `RanksValid.closure` states that it is `closureOf ranks outranks`, checked by
    `softSemanticCheck`.
-10. The limit checks of 8 (6.9, 6.11, 6.12) compare sizes computed from per-rule tables
+10. The limit checks of 8 (6.9, 6.11 to 6.13) compare sizes computed from per-rule tables
    (`fsize`, `derivedSizes`, `generatedSizes`) with `MAX_NODES` and `MAX_DEPTH` before
    the formulas are built, then check the built formulas with `withinLimits`;
    `withinLimits_iff` equates the two on any formula.

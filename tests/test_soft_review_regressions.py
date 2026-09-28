@@ -28,11 +28,12 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
                                     soft_limits_reproducers, multi_fault_cases, multi_faults,
                                     near_limit_cases, compare_near_limit, _strict_under_default,
                                     compare_rejected, main as conformance_main, soft4_reproducers,
-                                    soft4_near_limit, _plain_chain, _negations, _opposed)
+                                    soft4_near_limit, _plain_chain, _negations, _opposed,
+                                    _twice, _dual_outcomes)
 
 REJECTED_INPUTS = 4417
-ACCEPTED_NEAR_LIMIT = 79
-REJECTED_NEAR_LIMIT = 122
+ACCEPTED_NEAR_LIMIT = 87
+REJECTED_NEAR_LIMIT = 129
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -232,6 +233,31 @@ def test_coherence_expansion_is_sized_before_it_is_built():
         _run({"id": "b3", "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
     assert str(python_error.value).startswith(check) and str(lean_error.value).startswith(check)
+
+
+@pytest.mark.parametrize("count,target", [(11, "p10"), (10, "x_required->x_permitted")])
+def test_expanded_conflict_targets_are_checked_before_acceptance(count, target):
+    # soft4-looprecheck1 B2: each strict rule guarded by its predecessor twice. Both
+    # validators accepted p0 … p10, and the public elaboration returned a p10
+    # conflict target of 18,427 nodes that no decoder loads. The pair target states
+    # two outcomes, so it is checked on its own too.
+    raw, rules = _plain_chain(count, _twice) if target == "p10" else _dual_outcomes(count)
+    check = f"ResourceLimit: generated conflict target {target}"
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(raw, rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "b2", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
+    assert str(python_error.value) == str(lean_error.value) == check
+    # One predicate fewer is accepted, and every regenerated target serialises and matches.
+    raw, rules = _plain_chain(count - 1, _twice) if target == "p10" else _dual_outcomes(count - 1)
+    soft = load_soft_document(raw, rules)
+    elaborated = elaborate_soft_document(soft)
+    for item in elaborated["conflict_targets"]:
+        body = ["not", item["ast"]]
+        for sort in reversed(item["sorts"]):
+            body = ["forall", sort, body]
+        formula_from_data(soft.elaborated.base_environment(), body)
 
 
 @pytest.mark.parametrize("name,raw,rules,code", list(soft4_reproducers()))
