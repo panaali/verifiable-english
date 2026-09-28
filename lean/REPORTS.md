@@ -123,7 +123,18 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   check's pinned scope. A `reports-scoped` case's `certificates` and `inconsistency` are bound by the case's
   `envelope`; a certificate a scoped check carries in the document is bound by that check's own `envelope` field
   (not part of `document_id`; an envelope without a certificate is `InvalidInput`). A check whose only
-  certificates are unbound is UNKNOWN with detail `envelope`.
+  certificates are unbound is UNKNOWN with detail `envelope`; one whose bound certificate does not replay is
+  UNKNOWN with detail `certificate does not replay`; one with no evidence at all, `no evidence`.
+- `foldStatus_le`, `foldStatus_checked`, `unitStatus_le`, `documentStatus_le` (`Status.lean`, section 6): one
+  status order, UNFORMALISED, OPEN and UNKNOWN below LABELLED below CHECKED (the three lowest ranked in that
+  order), and one meet. A unit's status is the meet of its meaning's (`meaningStatus`, W2's inference) and every
+  result nested in it: each assessment node at any depth OPEN, each act outside the slice at any depth of its
+  kind LABELLED (`Run.nestedResults`); a document's is the meet of its units' and every scoped check's replayed
+  status (`verdictStatus`: FOLLOWS, DOES NOT FOLLOW and PAYLOADS INCONSISTENT are decided, anything else
+  UNKNOWN). The document's is at most every unit's, every nested result's and every verdict's, and CHECKED only
+  when every folded result is. `ve/reports.py` (`fold_status`, `unit_status`, `statuses`) computes the same, and
+  `check_document` compares it with the `reports-status` case, then reports the meet as the document's status
+  once the premise-set line has a model.
 - `Run.reports_wire_acceptance`: a successful `admission` answer is exactly the encoding of such an admission of
   the case's own environment and document.
 - `Run.decodeReportsModel_valid`, `Run.reports_countermodel_decoded`, `Run.runCountermodel_sound`: the model
@@ -176,6 +187,11 @@ Route, scoped checks, assessments, bridges, wire (9.3).
 - `Run.ReportsAdmissionAnswer` is the encoding of an `admissionReports` result for the case's environment and
   document, with the envelope and report id recomputed; `reports_admission_sound` supplies the rest.
 - A bridge record may name a root target (3.2); the spec's Lean comment `target.depth ≥ 1` is not enforced.
+- Section 6's `unreviewed_acts` ("units whose act is outside the slice, by act") counts every attributed node
+  whose act is outside the slice, at any depth of a unit's kind (under attributed, hedged and causal wrappers),
+  and `reports-elaborate` warns once per node, with its kind path when it is not the root. The Python residual
+  also lists the open terms by name (declared, then generated), so each assessment node, at any depth, is named
+  in it; their count is W2's `open_terms` line, unchanged.
 
 ## Spec defects found
 
@@ -190,7 +206,7 @@ Route, scoped checks, assessments, bridges, wire (9.3).
 ## The executable
 
 `ve_reports_route <cases.json|->` with case kinds `reports-elaborate`, `reports-certificate`,
-`reports-countermodel`, `reports-scoped` and `admission` (documented at the top of `Run.lean`); P0 cases without
+`reports-countermodel`, `reports-scoped`, `reports-status` and `admission` (documented at the top of `Run.lean`); P0 cases without
 a reports construct delegate unchanged to `VE.Route.Run.runCase`. `tests/test_reports_lean.py` runs 22 fixtures of
 10.2/10.3 (α to ω, a selection, and B₁₃, B₁₄); the Python prover is used only as an untrusted certificate search,
 every certificate is replayed by Lean.
@@ -208,5 +224,8 @@ every certificate is replayed by Lean.
   reported UNKNOWN (certificates are replayed at either scope).
 - Admission rejects a nested bridge with the wrong holder or without a record, but with W2's `AdmissionError`
   text, not section 8's `BridgeHolder` / `MissingBridgeRecord`; residual lines (section 6) and status text (7.2)
-  are not produced by the Lean route.
+  are not produced by the Lean route (its `reports-status` gives the statuses and nested results they report).
+- Python checks each carried scoped certificate's outer binding on its own (`ReportsDocument.scoped_verdicts`)
+  but leaves the inner replay to this route: a bound certificate is FOLLOWS only from the Lean replay, and
+  `ve document coverage`, which runs no replay, reports it UNKNOWN with detail `not replayed`.
 - Fixtures not exercised: κ, ν (parser part), ξ, ρ, υ, χ, ψ (a, c) and most of B₁ to B₁₆.
