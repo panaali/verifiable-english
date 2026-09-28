@@ -17,7 +17,7 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import SpeechDocument, effective_scope, latest_reading_sets
+from .speech_acts import SpeechDocument, content_kind_ok, effective_scope, latest_reading_sets
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -80,13 +80,7 @@ def _reading_sets(env, sets, unit_ids):
                                                     or len(reading["content"]) != 1):
                 raise VEError("invalid speech reading content")
             if reading["content"] is not None:
-                tag = next(iter(reading["content"]))
-                if tag not in {"ast", "norm", "command", "question", "binding"}:
-                    raise VEError("invalid speech reading content")
-                kind = reading["kind"]
-                bare_kind = kind if type(kind) is str else kind[-1] if type(kind) is list else None
-                if bare_kind != {"ast": "asserted", "norm": "norm", "command": "instruction",
-                                 "question": "question", "binding": "binding"}[tag]:
+                if not content_kind_ok(reading["kind"], next(iter(reading["content"]))):
                     raise VEError("invalid speech reading content")
             admission = reading["admission"]
             if (type(admission) is not dict or set(admission) != {"who", "why", "distinguishing_models"}
@@ -203,10 +197,12 @@ class SpeechSource:
             if unit.get("status") not in (None, _w2_status(unit, latest.get(unit["id"]))):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
         by_name = {term["name"]: term for term in self.open_terms}
-        for question in self.document.questions:
+        # 4.1(4) and 4.6: every reading question, asked or a candidate of a unit's
+        # latest reading set (as it would be if chosen), carries its derived open term;
+        # the core has already resolved the set and version it names.
+        candidates = [q for item, q in self.document.candidate_questions if latest[item["unit"]] is item]
+        for question in [*self.document.questions, *candidates]:
             if question.mode == "reading":
-                if question.reading_set not in {(r["id"], r["version"]) for r in sets}:
-                    raise VEError(f"InvalidInput: invalid question fields for {question.unit}")
                 expected = _expected_open_term(self.document, question)
                 if by_name.get(expected["name"]) != expected:
                     raise VEError(f"InvalidInput: invalid question fields for {question.unit}")
@@ -239,6 +235,8 @@ class SpeechSource:
                                       "conditional", "judgment"}):
                 raise VEError("InvalidInput: answer record")
             uid = record["question"]
+            if type(uid) is not str:
+                raise VEError("InvalidInput: answer record")
             if uid not in by_id or type(record["evidence"]) is not dict:
                 raise VEError(f"AnswerMismatch: {uid}")
             question = by_id[uid]
@@ -284,7 +282,7 @@ class SpeechSource:
         by_id = {c.unit: c for c in self.document.commands}
         lines = []
         for record in self.compliance:
-            if (type(record) is not dict or set(record) != {"command", "evidence"}
+            if (type(record) is not dict or set(record) != {"command", "evidence"} or type(record["command"]) is not str
                     or record["command"] not in by_id or type(record["evidence"]) is not dict):
                 raise VEError("InvalidInput: compliance record")
             command = by_id[record["command"]]

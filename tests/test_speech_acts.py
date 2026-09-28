@@ -385,6 +385,55 @@ def test_coverage_classes_are_reconciled_with_w2_statuses_not_derived_from_them(
         _source("instruction", open_cmd, [_set(1, "open", [_candidate("instruction", open_cmd)])], status="CHECKED")
 
 
+def _intended_reading(uid, set_id, version):
+    """4.6's derived open term of a reading question at `uid` about `set_id` at `version` (addressee alice, task t1)."""
+    wording = f"a candidate of {set_id} at version {version} by alice"
+    return {"name": f"intended-reading.{uid}", "arguments": [set_id], "version": version, "decided_by": "alice",
+            "jurisdiction": "t1", "necessary": [], "sufficient": [], "precedents": [],
+            "factors": [f"necessary: at least one nomination of {wording}",
+                        f"sufficient: exactly one nomination of {wording}"]}
+
+
+def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
+    # Regression: an open candidate {"question": {"mode": "reading", "set": "missing", "version": 1}} was
+    # accepted by both cores despite the nonexistent set, and the source wrapper counted it as R without the
+    # required open term; Python also accepted a numeric set.  Every reading question, asked, quoted or a
+    # candidate, names an existing set id at an existing version (4.1(4)), and every one that is or could be
+    # chosen carries its derived open term (4.6).
+    from ve.speech_document import SpeechSource
+    env = environment()
+    text = b"Open the desk.\n"
+    open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
+
+    def source(ref, open_terms=(), status="open"):
+        reading = {"question": {"mode": "reading", **ref}}
+        return SpeechSource({"format": "ve-document@2", "environment": env.to_dict(),
+                             "units": [{"id": "u", "span": [0, len(text)], "kind": "instruction",
+                                        "meaning": "specified", "support": "none", "content": open_cmd}],
+                             "open_terms": list(open_terms),
+                             "reading_sets": [_set(1, status, [_candidate("question", reading)])]}, text, {})
+
+    for ref in ({"set": "missing", "version": 1}, {"set": 7, "version": 1}, {"set": ["rs"], "version": 1},
+                {"set": "rs", "version": 2}, {"version": 1}):
+        with pytest.raises(VEError, match="InvalidInput: invalid question fields for u"):
+            source(ref, [_intended_reading("u", "rs", 1)])
+        with pytest.raises(VEError, match="InvalidInput: invalid question fields for u"):
+            SpeechDocument(env, [unit("u", "instruction", open_cmd)],
+                           reading_sets=[_set(1, "open", [_candidate("question", {"question": {"mode": "reading",
+                                                                                                **ref}})])])
+    # An existing set version: the candidate needs its open term, declared exactly as derived.
+    good = {"set": "rs", "version": 1}
+    for terms in ([], [{**_intended_reading("u", "rs", 1), "decided_by": "bob"}]):
+        with pytest.raises(VEError, match="InvalidInput: invalid question fields for u"):
+            source(good, terms)
+    assert source(good, [_intended_reading("u", "rs", 1)]).coverage()["bytes_by_class"] == {"R": len(text)}
+    # Chosen, the reading question means its open term, and is asked (4.6).
+    chosen = source(good, [_intended_reading("u", "rs", 1)], status="authored")
+    assert [(q.unit, q.mode, q.reading_set) for q in chosen.document.questions] == [("u", "reading", ("rs", 1))]
+    with pytest.raises(VEError, match="InvalidInput: invalid question fields for u"):
+        source(good, [], status="authored")
+
+
 def test_a_declared_gloss_is_one_opaque_atom_and_the_word_lint_only_warns():
     # Directive (2.1, 6): a declared predicate gloss is author-declared vocabulary, one opaque atom whose
     # English VE does not and cannot check. "Is atlas reviewed despite remaining unreviewed?" against the

@@ -312,8 +312,13 @@ def test_mu_proof_task_adds_no_premise_or_done_fact(lean):
 
 
 def test_nu_reading_question_is_an_open_term(lean):
+    # The question names rs1 at version 2, an open reading set of the ambiguous unit a (4.1(4)).
+    ambiguous = unit("a", 1, "asserted")
+    rs1 = {"id": "rs1", "unit": "a", "version": 2, "status": "open",
+           "readings": [{"kind": "asserted", "content": U("reviewed", "atlas")},
+                        {"kind": "asserted", "content": U("reviewed", "beacon")}]}
     ok = {"units": [unit("u6", 0, "question", {"question": {"mode": "reading", "set": "rs1", "version": 2}},
-                         meaning={"open": ["intended-reading.u6"]})]}
+                         meaning={"open": ["intended-reading.u6"]}), ambiguous], "reading_sets": [rs1]}
     assert elaborate(F0(), ok)["questions"][0]["mode"] == "reading"
     wrong = copy.deepcopy(ok)
     wrong["units"][0]["meaning"] = "specified"
@@ -321,7 +326,8 @@ def test_nu_reading_question_is_an_open_term(lean):
         "InvalidInput: invalid question fields for u6"
     long_id = "u" * 48
     too_long = {"units": [unit(long_id, 0, "question", {"question": {"mode": "reading", "set": "rs1", "version": 2}},
-                               meaning={"open": ["intended-reading." + long_id]})]}
+                               meaning={"open": ["intended-reading." + long_id]}), ambiguous],
+                "reading_sets": [rs1]}
     assert run1({"id": "n", "kind": "speech-elaborate", "environment": F0(), "document": too_long})["error"] == \
         "ResourceLimit: open-term name"
 

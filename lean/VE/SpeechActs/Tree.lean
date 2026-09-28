@@ -271,12 +271,12 @@ def checkSpeech (D : SpeechDoc) : Except String Unit := do
     if c.force = .forbid && r.role != .permission then
       throw s!"MissingPermissionRole: {r.act.getD c.act}"
     let some (s, you) := D.scope.addressee | throw "UnboundSlot: you"
-    unless D.E.predicates c.act == some r.sorts && r.sorts.head? == some s do
-      throw s!"TypeMismatch: invalid command fields for {c.unit}"
+    unless D.E.predicates c.act == some r.sorts do throw s!"InvalidInput: invalid command fields for {c.unit}"
+    unless r.sorts.head? == some s do throw "TypeMismatch: addressee"
     for a in c.args do
       unless (D.E.constants a).isSome do throw s!"UnknownSymbol: {a}"
     unless constsTyped D.E (you :: c.args) r.sorts do
-      throw s!"TypeMismatch: invalid command fields for {c.unit}"
+      throw s!"TypeMismatch: command args for {c.unit}"
     typeDiagnostic D.E [] c.guard
     unless c.guard.check D.E [] do throw s!"InvalidInput: invalid command fields for {c.unit}"
   if D.questions.length > 256 then throw "ResourceLimit: questions"

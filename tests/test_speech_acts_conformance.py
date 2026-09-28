@@ -21,7 +21,7 @@ from ve.speech_acts import SpeechDocument
 from ve.speech_document import load_speech_document
 from ve.speech_english import parse_speech
 
-from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run1, unit, which
+from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run, run1, unit, which
 
 
 @pytest.fixture(scope="module")
@@ -599,6 +599,141 @@ def test_fenced_and_unfenced_sources_agree_on_the_effective_scope(lean, tmp_path
         path.write_text("---\n" + json.dumps(chosen) + "\n---\n" + body + ("```ve u1\nClick check.\n```\n" if fence else ""))
         with pytest.raises(VEError, match="BindingConflict: you"):
             load_speech_document(path)
+
+
+def _diagnostic(error):
+    """A Python diagnostic as Lean renders it (norms.md 11.1): `<code>: <message>` unless the message carries it."""
+    return str(error) if type(error) is VEError else f"{error.code}: {error}"
+
+
+def _reference_cases():
+    """Every reference-bearing field of a speech document, dangling (a name nothing declares) and mistyped (not a
+    name), under a unit, a quoted unit or a reading candidate, with the one diagnostic both checkers give."""
+    asked = unit("u", 0, "question", polar(U("reviewed", "atlas")))
+    fact = unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    follows = unit("f", 1, "question", {"question": {"mode": "follows", "query": "q1"}})
+    ambiguous = unit("x", 1, "asserted")
+    rs_x = reading_set("x", 1, "open", "asserted", U("reviewed", "atlas"))
+    quoted = lambda k: ["attributed", "bob", "says", k]  # noqa: E731
+    reading = lambda s, v=1: {"question": {"mode": "reading", "set": s, "version": v}}  # noqa: E731
+    which_q = lambda sort="service", domain=("atlas", "beacon"): {"question": {  # noqa: E731
+        "mode": "which_all", "sort": sort, "domain": list(domain), "body": ["unary", "reviewed", ["var", 0]]}}
+    click = lambda args=("check",), act="click_required", **extra: {  # noqa: E731
+        "command": {"force": "require", "act": act, "args": list(args), **extra}}
+    query = lambda **fields: {"id": "q1", "premises": ["p"], "target": {"ast": U("reviewed", "atlas")}, **fields}  # noqa: E731
+    fields = lambda u: f"InvalidInput: invalid question fields for {u}"  # noqa: E731
+    command_fields = "InvalidInput: invalid command fields for u"
+    unknown = "UnknownSymbol: Unknown constant 'nope'"
+    # (name, units or content placement, error)
+    placed = [  # contents placed under a unit, a quoted unit and a reading candidate
+        ("act dangling", "instruction", click(act="nope"), "UnknownSymbol: regulated predicate nope"),
+        ("act mistyped", "instruction", click(act=7), command_fields),
+        ("arg dangling", "instruction", click(["nope"]), "UnknownSymbol: nope"),
+        ("arg mistyped", "instruction", click([7]), command_fields),
+        ("arg of another sort", "instruction", click(["atlas"]), "TypeMismatch: command args for u"),
+        ("guard dangling", "instruction", click(guard=U("reviewed", "nope")), unknown),
+        ("body dangling", "question", polar(U("reviewed", "nope")), unknown),
+        ("sort dangling", "question", which_q(sort="nope"), "UnknownSymbol: sort nope"),
+        ("sort mistyped", "question", which_q(sort=7), fields("u")),
+        ("alternative dangling", "question", which_q(domain=("atlas", "nope")), "UnknownAlternative: u, nope"),
+        ("alternative mistyped", "question", which_q(domain=("atlas", 7)), fields("u")),
+        ("query dangling", "question", {"question": {"mode": "follows", "query": "nope"}}, "QueryMismatch: u"),
+        ("query mistyped", "question", {"question": {"mode": "follows", "query": 7}}, fields("u")),
+        ("reading set dangling", "question", reading("missing"), fields("u")),
+        ("reading version dangling", "question", reading("rs", 2), fields("u")),
+        ("reading set mistyped", "question", reading(7), fields("u")),
+        ("reading set missing", "question", {"question": {"mode": "reading", "version": 1}}, fields("u")),
+        ("formula dangling", "asserted", {"ast": U("reviewed", "nope")}, unknown)]
+    cases = []
+    for name, kind, content, error in placed:
+        extra = {"units": [ambiguous], "reading_sets": [{**rs_x, "id": "rs"}]}
+        meaning = {"open": ["intended-reading.u"]} if content.get("question", {}).get("mode") == "reading" else "specified"
+        cases.append((f"unit {name}", {"units": [unit("u", 0, kind, content, meaning), *extra["units"]],
+                                       "reading_sets": extra["reading_sets"]}, error))
+        cases.append((f"quoted {name}", {"units": [unit("u", 0, quoted(kind), content), *extra["units"]],
+                                         "reading_sets": extra["reading_sets"]}, error))
+        candidate = content["ast"] if kind == "asserted" else content
+        cases.append((f"candidate {name}", {"units": [asked, *extra["units"]],
+                                            "reading_sets": [{**rs_x, "id": "rs"},
+                                                             {**reading_set("u", 1, "open", kind, candidate), "id": "ru"}]},
+                      error))
+    for name, binding, error in [("you dangling", {"you": "nope"}, "UnknownSymbol: nope"),
+                                 ("you mistyped", {"you": 7}, "InvalidInput: invalid binding fields for b"),
+                                 ("phrase constant dangling", {"phrase": "the knob", "constant": "nope"},
+                                  "UnknownSymbol: nope"),
+                                 ("phrase constant mistyped", {"phrase": "the knob", "constant": 7},
+                                  "InvalidInput: invalid binding fields for b"),
+                                 ("task mistyped", {"task": 7}, "InvalidInput: invalid binding fields for b"),
+                                 ("task not a token", {"task": "a b"}, "InvalidInput: speech_acts block")]:
+        cases.append((f"binding {name}", {"units": [unit("b", 0, "binding", {"binding": binding})]}, error))
+        cases.append((f"pending binding {name}", {"units": [unit("b", 0, "binding", {"binding": binding})],
+                                                  "reading_sets": [reading_set("b", 1, "open", "binding",
+                                                                               {"binding": {"you": "alice"}})]}, error))
+    for name, record, error in [("premise dangling", query(premises=["nope"]), "QueryMismatch: f"),
+                                ("premise mistyped", query(premises=[7]), "InvalidInput: query"),
+                                ("premises mistyped", query(premises="p"), "InvalidInput: query"),
+                                ("id mistyped", query(id=7), "InvalidInput: query"),
+                                ("target dangling", query(target={"ast": U("reviewed", "nope")}), unknown),
+                                ("target mistyped", query(target=U("reviewed", "atlas")), "InvalidInput: query")]:
+        cases.append((f"query {name}", {"units": [fact, follows], "queries": [record]}, error))
+    cases.append(("query id twice", {"units": [fact, follows], "queries": [query(), query()]},
+                  "InvalidInput: duplicate query"))
+    # (Lean's frozen JSON parser cannot carry a null candidate, so these sets hold an elaborated one.)
+    for name, owner, error in [
+            ("dangling", "nope", "invalid reading set unit or status"),
+            ("mistyped", 7, "InvalidInput: reading sets on the speech-acts route need their unit, version and status")]:
+        cases.append((f"reading set unit {name}",
+                      {"units": [fact], "reading_sets": [reading_set(owner, 1, "open", content=U("reviewed", "atlas"))]},
+                      error))
+    norm = {"norm": {"name": "n1", "predicate": "nope", "sign": True, "guard": ["top"], "unless": [], "over": []}}
+    cases.append(("norm predicate dangling", {"units": [unit("n", 0, "norm", norm)]},
+                  "UnknownSymbol: regulated predicate nope"))
+    over = {"norm": {**norm["norm"], "predicate": "click_required", "over": ["nope"]}}
+    cases.append(("norm over dangling", {"units": [unit("n", 0, "norm", over)]}, "UnknownRule: rule nope"))
+    return cases
+
+
+def test_every_reference_is_resolved_and_typed_identically(lean):
+    # Directive: every reference is resolved and typed at decode time.  Regression: an open reading-question
+    # candidate naming a missing set (or, in Python, a numeric one) was accepted, and further probing found the
+    # two checkers disagreeing on dangling or mistyped references elsewhere: Python crashed or said
+    # `TypeMismatch` on a mistyped or undeclared command argument, `AlternativeSort` on an undeclared sort and
+    # `QueryMismatch` on a malformed query record; Lean checked no quoted question and no open-meaning command,
+    # demanded an addressee of a dormant command, gave `BindingConflict` before an undeclared constant and an
+    # untyped "ill-typed or unbound conclusion" for an undeclared constant in a guard, an assertion or a target.
+    env = F0()
+    cases = _reference_cases()
+    results = run([{"id": name, "kind": "speech-elaborate", "environment": env, "document": document}
+                   for name, document, _ in cases])
+    for (name, document, error), result in zip(cases, results, strict=True):
+        with pytest.raises(VEError) as raised:
+            core(env, copy.deepcopy(document))
+        assert (name, _diagnostic(raised.value)) == (name, error)
+        assert (name, result.get("error")) == (name, error)
+    # The well-formed forms of the same fields are accepted by both, and dormant commands need no addressee.
+    click = command("require", "click_required", ["check"])
+    x, rs_x = unit("x", 1, "asserted"), {**reading_set("x", 1, "open", "asserted", U("reviewed", "atlas")), "id": "rs"}
+    reading = {"question": {"mode": "reading", "set": "rs", "version": 1}}
+    for environment, document in [
+            (F0(addressee=None), {"units": [unit("u", 0, ["attributed", "bob", "says", "instruction"], click)]}),
+            (F0(addressee=None), {"units": [unit("u", 0, "instruction", click)],
+                                  "reading_sets": [reading_set("u", 1, "open", "instruction", click)]}),
+            (env, {"units": [unit("u", 0, "question", reading, {"open": ["intended-reading.u"]}), x],
+                   "reading_sets": [rs_x]}),
+            (env, {"units": [unit("u", 0, ["attributed", "bob", "says", "question"], reading), x], "reading_sets": [rs_x]}),
+            (env, {"units": [unit("u", 0, "question", polar(U("reviewed", "atlas"))), x],
+                   "reading_sets": [rs_x, {**reading_set("u", 1, "authored", "question", reading), "id": "ru"}]}),
+            (env, {"units": [unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+                             unit("f", 1, ["attributed", "bob", "says", "question"],
+                                  {"question": {"mode": "follows", "query": "q1"}})],
+                   "queries": [{"id": "q1", "premises": ["p"], "target": {"ast": U("reviewed", "atlas")}}]})]:
+        py, le = core(environment, document), elaborate(environment, document)
+        assert [q.unit for q in py.questions] == [q["unit"] for q in le["questions"]]
+    # A chosen reading question is asked, meaning its open term (4.6), in both.
+    chosen = {"units": [unit("u", 0, "question", polar(U("reviewed", "atlas"))), x],
+              "reading_sets": [rs_x, {**reading_set("u", 1, "authored", "question", reading), "id": "ru"}]}
+    assert [q.mode for q in core(env, chosen).questions] == [q["mode"] for q in elaborate(env, chosen)["questions"]] \
+        == ["reading"]
 
 
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
