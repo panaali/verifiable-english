@@ -973,6 +973,13 @@ import VE.SoftNorms.Run
 #print axioms VE.SoftNorms.circ_defaultDecides
 #print axioms VE.SoftNorms.coh_canon
 #print axioms VE.SoftNorms.coh_rank_valid
+#print axioms VE.SoftNorms.coh_rank_valid_unconditional
+-- Exact approved statement: no admissibility premise may be reintroduced.
+example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
+    (M N : VE.SoftNorms.SoftNode) (hc : (M, N) ∈ VE.SoftNorms.collidingPairs D)
+    (hcmp : VE.SoftNorms.Comparable D M N = true) (B : VE.Structure.{0}) :
+    (VE.SoftNorms.cohPremise D M N).denote B [] :=
+  VE.SoftNorms.coh_rank_valid D h M N hc hcmp B
 #print axioms VE.SoftNorms.coherent_expands
 #print axioms VE.SoftNorms.colliding_of
 #print axioms VE.SoftNorms.comparable_false
@@ -1082,6 +1089,12 @@ import VE.SoftNorms.Run
 #print axioms VE.SoftNorms.rankHeight_lt_of_higher
 #print axioms VE.SoftNorms.rank_acyclic
 #print axioms VE.SoftNorms.rank_resolves
+#print axioms VE.SoftNorms.raw_dom_congr
+#print axioms VE.SoftNorms.raw_dom_denote
+#print axioms VE.SoftNorms.raw_eff_denote
+#print axioms VE.SoftNorms.raw_eff_stable
+#print axioms VE.SoftNorms.raw_resolve_higher
+#print axioms VE.SoftNorms.raw_selects_eff
 #print axioms VE.SoftNorms.reg_of_node
 #print axioms VE.SoftNorms.resolve_higher
 #print axioms VE.SoftNorms.sat_backgroundBasePrime
