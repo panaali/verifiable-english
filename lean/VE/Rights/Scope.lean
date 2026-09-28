@@ -222,8 +222,9 @@ theorem mem_narrowings_dominatedBy (hd : N.node.mode = .default) {M : SoftNode} 
   refine Or.inl (Or.inr (List.mem_map.mpr ⟨M, List.mem_filter.mpr ⟨hM, ?_⟩, rfl⟩))
   simp [hMd, hi, hc]
 
-theorem mem_narrowings_bar {m : String} (h : barReach D N = some m) : Narrowing.bar ∈ narrowings D N := by
-  simp only [narrowings, List.mem_append, h, Option.isSome_some, if_true]
+theorem mem_narrowings_bar (hr : ruleReading D = true) {m : String} (h : barReach D N = some m) :
+    Narrowing.bar ∈ narrowings D N := by
+  simp only [narrowings, List.mem_append, h, hr, Option.isSome_some, Bool.and_self, if_true]
   exact Or.inr List.mem_cons_self
 
 end Members
@@ -278,7 +279,7 @@ theorem narrowings_complete_of_valid (hown : (ownGuard D N).denote S ρ) (hns : 
       have ha := (yields_bar hv S ρ hB _).mp hy
       simp only [barNode] at ha
       rw [show m = N.node.pred from hp] at ha
-      exact ⟨.bar, mem_narrowings_bar D N hreach, hr, N.node.pred, hreach, ha⟩
+      exact ⟨.bar, mem_narrowings_bar D N hr hreach, hr, N.node.pred, hreach, ha⟩
   · have hna : ¬ AppliesSoftD (correlate D) S ρ (nodeOf D N) := fun ha => hns ⟨ha, hch⟩
     have hmode : (nodeOf D N).mode = N.node.mode := rfl
     unfold AppliesSoftD at hna
@@ -317,7 +318,7 @@ theorem narrowings_complete_of_valid (hown : (ownGuard D N).denote S ρ) (hns : 
               subst hMp
               have hreach := hbar hMs.symm hmp
               have ha := (strictSelects_bar hv S ρ hMb _).mp hsel
-              exact ⟨.bar, mem_narrowings_bar D N hreach, hr, _, hreach, ha⟩
+              exact ⟨.bar, mem_narrowings_bar D N hr hreach, hr, _, hreach, ha⟩
           have hX : (nodeOf D N).pred = N.node.pred := rfl
           have hXs : (nodeOf D N).sign = N.node.sign := rfl
           rcases hblk with hb | hb | ⟨hsg, m, hdm, hb⟩ | ⟨hsg, r, hdr, hb⟩
@@ -450,7 +451,7 @@ theorem limitation_scope_sound (D : RightsDoc) (h : WellFormedRights D = true)
   rcases licensed_cases (licensed_of_scope hc hL hN hs hn) with rfl | rfl | hcit | hcol | ⟨M, rfl, hse⟩ | hcert
   · exact Or.inl ((base _ (hv.packTyped _ hN)).mp hact)
   · obtain ⟨hr, m, hm, ha⟩ := hact
-    exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hr, m, hm, (base _ (hv.aimedTyped _ hN m hm)).mp ha⟩)))
+    exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hr, m, hm, (base _ (hv.aimedTyped _ hN m hr hm)).mp ha⟩)))
   · exact Or.inr (Or.inl ⟨n, hn, hcit, hcond⟩)
   · exact Or.inr (Or.inr (Or.inl ⟨n, hn, hcol, hcond⟩))
   · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨M, hse, hcond⟩)))

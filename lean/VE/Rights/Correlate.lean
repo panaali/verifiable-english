@@ -173,7 +173,8 @@ def domOneF (C : SoftDoc) (eff : SoftNode → VE.Formula) (M N : SoftNode) : VE.
 /-- Every way the line can fail to select where its own guard holds (4.5): author carve-outs,
 exceptions (direct children, each covering its subtree), the packed limitation, the soft
 exception, switches, blocking strict rules, dominating ranked rules and the bar. `exception
-bar_m` and `blockedBy bar_m`, on `m` and across the dual pair, fold into `bar`. -/
+bar_m` and `blockedBy bar_m`, on `m` and across the dual pair, fold into `bar`, listed when
+`barReach D N = some m` under the rule reading (the only reading with a bar node). -/
 def narrowings (D : RightsDoc) (N : Line) : List Narrowing :=
   let X := nodeOf D N
   let C := correlate D
@@ -189,7 +190,7 @@ def narrowings (D : RightsDoc) (N : Line) : List Narrowing :=
     ((directNodes D).filter (fun M => M.mode == .default && Incompatible C M X && Comparable C M X)).map
       (fun M => .dominatedBy M.name)
    else []) ++
-  (if (barReach D N).isSome then [.bar] else [])
+  (if ruleReading D && (barReach D N).isSome then [.bar] else [])
 
 /-- `cond_n` of the table of 4.5, as a formula on `T″′` in the line's context. -/
 def condF (D : RightsDoc) (N : Line) : Narrowing → VE.Formula
@@ -415,7 +416,7 @@ def rightsSemanticCheck (D : RightsDoc) : Bool :=
     (ownGuard D N).check Ep Γ && (selectsR D N).check Ep Γ &&
       (narrowings D N).all (fun n => (condF D N n).check Ep Γ) &&
       (limPack D N).check E0 Γ &&
-      (match barReach D N with | some m => (aimedF D m).check E0 Γ | none => true))) &&
+      (match barReach D N with | some m => !ruleReading D || (aimedF D m).check E0 Γ | none => true))) &&
   ((limPremises D).all (fun φ => φ.check E0 []))
 
 /-- 4.1: the rights checks, soft well-formedness of `(E″, T″)`, the identifier limit on `E″′`,
@@ -447,7 +448,7 @@ structure RightsValid (D : RightsDoc) : Prop where
   condTyped : ∀ RN ∈ linesOf D, ∀ n ∈ narrowings D RN.2, (condF D RN.2 n).WellFormed
     (envAt (soften (correlate D)) (size (soften (correlate D)))) (sortsOf D RN.2).reverse
   packTyped : ∀ RN ∈ linesOf D, (limPack D RN.2).WellFormed (envAt (soften (correlate D)) 0) (sortsOf D RN.2).reverse
-  aimedTyped : ∀ RN ∈ linesOf D, ∀ m, barReach D RN.2 = some m →
+  aimedTyped : ∀ RN ∈ linesOf D, ∀ m, ruleReading D = true → barReach D RN.2 = some m →
     (aimedF D m).WellFormed (envAt (soften (correlate D)) 0) (sortsOf D RN.2).reverse
   limTyped : ∀ φ ∈ limPremises D, φ.WellFormed (envAt (soften (correlate D)) 0) []
 
@@ -472,7 +473,7 @@ theorem rightsValid_of_wellFormed (D : RightsDoc) (h : WellFormedRights D = true
             obtain ⟨⟨⟨hb, hd⟩, hl⟩, hp⟩ := hsem
             refine ⟨hw, fun X hX B hB hm => ?_, fun m hm => hd m (by
               simpa [rightPermission] using hm), fun RN hRN => ?_, fun RN hRN => ?_,
-              fun RN hRN n hn => ?_, fun RN hRN => ?_, fun RN hRN m hm => ?_,
+              fun RN hRN n hn => ?_, fun RN hRN => ?_, fun RN hRN m hr hm => ?_,
               fun φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hp φ hφ)⟩
             · have := hb X hX B hB
               simp [hm] at this
@@ -482,6 +483,7 @@ theorem rightsValid_of_wellFormed (D : RightsDoc) (h : WellFormedRights D = true
             · exact (VE.check_iff_wellFormed _ _ _).mp (hl RN hRN).1.2
             · have := (hl RN hRN).2
               rw [hm] at this
+              simp only [hr, Bool.not_true, Bool.false_or] at this
               exact (VE.check_iff_wellFormed _ _ _).mp this
           · cases heq
   · cases h
