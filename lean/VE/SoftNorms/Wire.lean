@@ -1,13 +1,14 @@
-import VE.SoftNorms.Status
+import VE.SoftNorms.Phases
 
 /-! The soft-norms decoder and replays (docs/spec/soft-norms.md 3, 9.3 and 9.4).
 
 The frozen P0 envelope gate does not know `soft-norms@0`, and the W1 norms
 decoder rejects the vocabulary's `soft` block and a predicate's `instruction_of`.
-`decodeSoftEnvironment` therefore checks the profile pair, strips exactly those
-three soft constructs, decodes the rest with W1's unchanged
+`Phases.checkSource` therefore runs the validation table of 8: it strips exactly
+those three soft constructs, decodes the rest with W1's unchanged
 `decodeNormsEnvironment`, decodes the soft block strictly (unknown fields
-rejected) and keeps the original complete environment for identity.
+rejected) and checks the profiles, rules and references in table order;
+`decodeSoftSource` keeps the original complete environment for identity.
 
 Nothing on the wire supplies an elaboration: `E′`, `T′`, `Exc_T`, `Coh_T`,
 `Background_base′`, `background′`, layer premises and targets are regenerated from
@@ -27,7 +28,7 @@ open Lean
 open VE.Norms
 open VE.Bridge (exactFields fields stringField strings)
 
-def softProfile : String := "soft-norms@0"
+def softProfile : String := Phases.softProfile
 
 /-! ## The environment -/
 
@@ -42,88 +43,6 @@ def stripSoft (environment : Json) : Except String Json := do
   pure ((environment.setObjVal! "profiles" (toJson (profiles.filter (· != softProfile)))).setObjVal!
     "vocabulary" vocab')
 
-def invalidBlock : String := "InvalidInput: invalid soft block"
-
-def listField (j : Json) (k : String) : Except String (List Json) :=
-  match j.getObjVal? k with
-  | .error _ => pure []
-  | .ok (.arr xs) => pure xs.toList
-  | .ok _ => throw s!"InvalidInput: {k} must be an array"
-
-def softNames (j : Json) (field : String) (limit : Nat) : Except String (List String) := do
-  let values ← listField j field
-  if values.length > limit then throw s!"ResourceLimit: {field}"
-  let mut names := []
-  for value in values do
-    let name ← match value with
-      | .str s => pure s
-      | _ => throw s!"InvalidInput: invalid soft name {value.compress}"
-    unless validSoftName name do throw s!"InvalidInput: invalid soft name {name}"
-    if names.contains name then
-      throw s!"DuplicateDeclaration: {if field == "parties" then "party" else "rank"} {name}"
-    names := names ++ [name]
-  pure names
-
-def pairOf (field : String) (j : Json) : Except String (String × String) := do
-  match j with
-  | .arr #[.str a, .str b] => pure (a, b)
-  | _ => throw s!"InvalidInput: invalid {field} pair"
-
-def softPairs (j : Json) (field : String) (ranks : List String) : Except String (List (String × String)) := do
-  let values ← listField j field
-  let mut pairs := []
-  for value in values do
-    let pair ← pairOf field value
-    for name in [pair.1, pair.2] do
-      unless ranks.contains name do throw s!"UnknownRank: {name}"
-    if pair.1 == pair.2 || pairs.contains pair then
-      throw s!"InvalidInput: invalid {field} pair"
-    pairs := pairs ++ [pair]
-  pure pairs
-
-/-- The environment `soft` block (3.1); absent means no parties, ranks or deciders. -/
-def decodeSoftBlock (vocab : Json) (instructionOf : List (String × String)) : Except String SoftEnv := do
-  match vocab.getObjVal? "soft" with
-  | .error _ => pure ⟨[], [], [], [], .strict, none, none, instructionOf⟩
-  | .ok s =>
-    match VE.Bridge.displayFields s ["outranking"] ["parties", "ranks", "outranks", "ties", "exception_decider"] with
-    | .ok () => pure ()
-    | .error _ => throw invalidBlock
-    let parties ← softNames s "parties" 8
-    let ranks ← softNames s "ranks" 16
-    let o := s.getObjValD "outranking"
-    match VE.Bridge.displayFields o ["mode"] ["decided_by"] with
-    | .ok () => pure ()
-    | .error _ => throw "InvalidInput: invalid outranking flag"
-    let mode ← match o.getObjValD "mode" with
-      | .str "strict" => pure Outranking.strict
-      | .str "holistic" => pure Outranking.holistic
-      | _ => throw "InvalidInput: invalid outranking flag"
-    if mode == .strict && (o.getObjVal? "decided_by").toBool then
-      throw "InvalidInput: strict outranking has no decider"
-    let decider ← match o.getObjVal? "decided_by" with
-      | .error _ => pure none
-      | .ok (.str d) => pure (some d)
-      | .ok _ => throw "InvalidInput: invalid decider for outranking"
-    if mode == .holistic && decider.isNone then throw "MissingExceptionDecider: outranking"
-    for d in decider.toList do
-      if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for outranking"
-    let exceptionDecider ← match s.getObjVal? "exception_decider" with
-      | .error _ => pure none
-      | .ok (.str d) => pure (some d)
-      | .ok _ => throw "InvalidInput: invalid decider for exception"
-    for d in exceptionDecider.toList do
-      if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for exception"
-    let outranks ← softPairs s "outranks" ranks
-    let ties ← softPairs s "ties" ranks
-    let soft : SoftEnv := ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, instructionOf⟩
-    if let .error e := VE.Route.dependencyOrder (rankNodes soft) then throw e
-    for (a, b) in ties do
-      if outranksPlus soft a b || outranksPlus soft b a then throw s!"TieAgainstOrder: {a}, {b}"
-    if (ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != ties.length then
-      throw "DuplicateDeclaration: tie"
-    pure soft
-
 /-- A decoded soft environment: W1's decoding of the stripped environment, the soft block and
 the original JSON with its original profiles. -/
 structure SoftEnvironment where
@@ -132,126 +51,18 @@ structure SoftEnvironment where
   profiles : List String
   json : Json
 
-def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment := do
-  let profiles ← match environment.getObjVal? "profiles" >>= strings with
-    | .ok ps => pure ps
-    | .error _ => throw (VE.Route.Gate.unsupported "profiles must be a sorted unique array")
-  unless profiles.contains softProfile do throw "UnsupportedProfile: soft-norms@0 is required"
-  unless profiles.contains "norms@0" do throw "UnsupportedProfile: soft-norms@0 requires norms@0"
-  let vocab ← environment.getObjVal? "vocabulary"
-  let preds ← fields (← vocab.getObjVal? "predicates")
-  let soft ← decodeSoftBlock vocab []
-  let mut io := []
-  for (p, e) in preds do
-    match e.getObjVal? "instruction_of" with
-    | .error _ => pure ()
-    | .ok (.str π) =>
-      unless soft.parties.contains π do throw s!"UnknownSymbol: party {π}"
-      if (e.getObjVal? "regulated").toBool || (e.getObjVal? "defined").toBool then
-        throw s!"InvalidInput: instruction_of on {p}"
-      io := io ++ [(p, π)]
-    | .ok _ => throw s!"InvalidInput: instruction_of on {p}"
-    if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
-    if containsDunder p && (e.getObjVal? "regulated").toBool then
-      throw s!"InvalidInput: invalid soft name {p}"
-  unless decide (profiles.Pairwise (· < ·)) do
-    throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
-  let ne ← Norms.Wire.decodeNormsEnvironment (← stripSoft environment)
-  pure ⟨ne, { soft with instructionOf := io }, profiles, environment⟩
-
 /-! ## Norm objects (3.2) -/
 
-def w1Keys : List String := ["name", "predicate", "sign", "guard", "unless", "over"]
-def softKeys : List String := ["mode", "rank", "alterable", "exception", "hard"]
+def w1Keys : List String := Phases.w1Keys
+def softKeys : List String := Phases.softKeys
 
-def decodeException (se : SoftEnvironment) (predicate name : String) (j : Json) : Except String Exception := do
-  match j with
-  | .obj _ => pure ()
-  | _ => throw s!"InvalidInput: rule {name} needs an exception"
-  match VE.Bridge.displayFields j [] ["decided_by", "sufficient", "necessary", "factors"] with
-  | .error _ => throw s!"InvalidInput: rule {name} needs an exception"
-  | .ok () => pure ()
-  for key in ["sufficient", "necessary", "factors"] do
-    unless (j.getObjVal? key).toBool do
-      throw s!"InvalidInput: rule {name} needs an exception"
-  let decidedBy ← match j.getObjVal? "decided_by" with
-    | .error _ | .ok .null => pure none
-    | .ok (.str s) => pure (some s)
-    | .ok _ => throw s!"InvalidInput: invalid decider for rule {name}"
-  if decidedBy.isNone && se.soft.exceptionDecider.isNone then
-    throw s!"MissingExceptionDecider: rule {name}"
-  for d in decidedBy.toList do
-    if d.isEmpty || d.utf8ByteSize > 64 then
-      throw s!"InvalidInput: invalid decider for rule {name}"
-  let formulas (k : String) : Except String (List VE.Formula) := do
-    match j.getObjVal? k with
-    | .error _ => pure []
-    | .ok (.arr xs) => do
-      let some sorts := se.ne.rv.environment.predicates predicate
-        | throw s!"predicate {predicate}"
-      xs.toList.mapM fun value => do
-        let C ← VE.Bridge.decodeFormula 64 value
-        typeDiagnostic se.ne.rv.environment sorts.reverse C
-        if let some q := (preds C).find? (fun q =>
-            (se.ne.regulated.map (·.name)).contains q ||
-            (se.ne.rv.definitions.map (·.name)).contains q || reservedPredicate q) then
-          throw s!"InvalidInput: exception condition of rule {name} mentions {q}"
-        pure C
-    | .ok _ => throw s!"InvalidInput: exception {k} must be an array"
-  let sufficient ← formulas "sufficient"
-  let necessary ← formulas "necessary"
-  let factors ← match j.getObjVal? "factors" with
-    | .error _ => throw s!"InvalidInput: rule {name} needs an exception"
-    | .ok v => match strings v with
-      | .ok fs => pure fs
-      | .error _ => throw s!"InvalidInput: invalid factors of rule {name}"
-  pure ⟨decidedBy, sufficient, necessary, factors⟩
-
-/-- One soft norm object; `mode` defaults to `strict`, so every `norms@0` object decodes
-with unchanged meaning. -/
-def decodeSoftNorm (se : SoftEnvironment) (j : Json) : Except String SoftNode := do
-  let soft := se.soft
-  exactFields j ["norm"]
-  let raw ← j.getObjVal? "norm"
-  let obj ← fields raw
-  VE.Bridge.displayFields raw w1Keys softKeys
-  let N ← Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj (obj.filter (fun kv => w1Keys.contains kv.1)))])
-  let bad := s!"InvalidInput: invalid soft fields for {N.name}"
-  let mode ← match raw.getObjVal? "mode" with
-    | .error _ => pure Mode.strict
-    | .ok (.str "strict") => pure Mode.strict
-    | .ok (.str "default") => pure Mode.default
-    | .ok _ => throw bad
-  let rank ← match raw.getObjVal? "rank" with
-    | .error _ | .ok .null => pure none
-    | .ok (.str r) => pure (some r)
-    | .ok value => throw s!"UnknownRank: rule {N.name}, {value.compress}"
-  if let some r := rank then
-    unless soft.ranks.contains r do throw s!"UnknownRank: rule {N.name}, {r}"
-  let alterable ← match raw.getObjVal? "alterable" with
-    | .error _ => pure []
-    | .ok v => match strings v with
-      | .ok ps => pure ps
-      | .error _ => throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
-  unless sortedDistinct alterable do
-    throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
-  for π in alterable do
-    unless soft.parties.contains π do throw s!"UnknownSymbol: party {π}"
-  let hard ← match raw.getObjVal? "hard" with
-    | .error _ => pure false
-    | .ok (.bool b) => pure b
-    | .ok _ => throw bad
-  if hard && (mode == .default || !alterable.isEmpty) then
-    throw s!"HardConstraintAltered: rule {N.name}"
-  let exception ← match raw.getObjVal? "exception" with
-    | .error _ | .ok .null => pure none
-    | .ok e => do
-      if mode == .strict then
-        throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
-      some <$> decodeException se N.pred N.name e
-  if mode == .default && exception.isNone then
-    throw s!"InvalidInput: rule {N.name} needs an exception"
-  pure { N with mode, rank, alterable, exception, hard }
+/-- One norm object on its own (a quoted norm): the rule-field checks and the rule's own
+cross references of the validation table (8), 4.1 to 4.14 then 5.4 to 5.8. -/
+def decodeSoftNorm (se : SoftEnvironment) (j : Json) : Except String SoftNode :=
+  match Phases.ruleFields se.soft.exceptionDecider j >>= fun N =>
+      (Phases.ruleReferences se.ne se.soft N).map (fun _ => N) with
+  | .ok N => .ok N
+  | .error f => .error f.message
 
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
 def canonicalNorm (j : Json) : Json :=
@@ -274,20 +85,15 @@ structure SoftSource where
   lits : D.lits = se.ne.rv.literals
   defs : D.T.definitions = []
 
-/-- Decode the environment and the soft norm objects (no W3 definitions or W5 flags on this
-path) and run `WellFormedSoft`; the diagnostics are those of `validateSoft`. -/
+/-- Decode the environment and the soft norm objects: the validation table of 8 over the whole
+source (`Phases.checkSource`), then `WellFormedSoft`, whose remaining diagnostics are the
+semantic checks 6.4 to 6.9. -/
 def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
-  let se ← decodeSoftEnvironment environment
-  unless se.ne.rv.definitions.isEmpty do
-    throw "UnsupportedProfile: norms route with definitions is not implemented"
-  unless se.ne.rv.flags.isEmpty do
-    throw "UnsupportedProfile: norms route with data flags is not implemented"
-  let units ← match norms with
-    | .arr xs => pure xs.toList
-    | _ => throw "InvalidInput: norms must be an array"
-  if units.length > 256 then throw "ResourceLimit: rules"
-  let nodes ← units.mapM (decodeSoftNorm se)
-  let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], nodes⟩⟩
+  let c ← match Phases.checkSource environment norms with
+    | .ok c => pure c
+    | .error f => throw f.message
+  let se : SoftEnvironment := ⟨c.ne, c.soft, c.profiles, environment⟩
+  let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], c.nodes⟩⟩
   match hv : validateSoft D with
   | .error e => throw e
   | .ok () => pure ⟨se, D, by unfold WellFormedSoft; rw [hv], rfl, rfl, rfl⟩
