@@ -7,13 +7,12 @@ by Python and Lean, while Rust independently evaluates the generated formulas.
 from __future__ import annotations
 
 import json
-import os
 import random
-import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
@@ -32,34 +31,20 @@ RUST = ROOT / "rust/target/release/ve"
 
 @pytest.fixture(scope="module")
 def lean_executable():
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the W1 wire gate")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
-        assert built.returncode == 0, built.stdout + built.stderr
+    assert LEAN.exists()
     return LEAN
 
 
 @pytest.fixture(scope="module")
 def rust_executable():
-    cargo = shutil.which("cargo")
-    if cargo is None:
-        pytest.skip("cargo is required for the W1 wire gate")
-    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
-           "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
-    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
-                            "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)
-    assert built.returncode == 0, built.stdout + built.stderr
+    assert RUST.exists()
     return RUST
 
 
 def run(executable, cases):
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=180)
+                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
