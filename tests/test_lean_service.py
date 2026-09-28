@@ -1,0 +1,768 @@
+"""Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
+
+The full-fixture parity, soak and latency runs are `tools/lean_service_parity.py`,
+`tools/lean_service_soak.py` and `tools/lean_service_latency.py`.
+"""
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import threading
+import time
+
+import pytest
+from hypothesis import HealthCheck, given, settings, strategies as st
+
+from subprocesses import HANG_TIMEOUT
+from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
+                                      LeanServicePool, MODES, executable_sha256)
+from ve.backends.service_schema import DIRECTORY as SCHEMAS
+from ve.errors import ResourceLimit, VEError
+
+ROOT = Path(__file__).resolve().parents[1]
+BIN = ROOT / "lean/.lake/build/bin"
+CASES = json.loads((ROOT / "conformance/evaluation.json").read_text())
+
+
+@pytest.fixture(scope="session")
+def service_executable():
+    lake = shutil.which("lake")
+    if lake is None and not (BIN / "ve_service").exists():
+        pytest.skip("lake is not available")
+    if lake is not None and not os.environ.get("VE_LEAN_PREBUILT"):
+        build = subprocess.run([lake, "build", "ve_service", "ve_conformance", "ve_norms_route"],
+                               cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        assert build.returncode == 0, build.stdout + build.stderr
+    return BIN / "ve_service"
+
+
+def raw_session(executable, lines: bytes, timeout=120):
+    proc = subprocess.run([str(executable)], input=lines, capture_output=True, timeout=timeout)
+    assert proc.returncode == 0, proc.stderr
+    out = proc.stdout.split(b"\n")
+    assert out[-1] == b""
+    return [json.loads(line) for line in out[1:-1]], out[1:-1]
+
+
+def test_english_mode_is_the_generated_copy_of_the_english_runner():
+    result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
+                            capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def _lean_strings(path, start, end="\n\n"):
+    text = (ROOT / "lean" / path).read_text()
+    return re.findall(r'"([^"]+)"', text.split(start, 1)[1].split(end, 1)[0])
+
+
+def test_response_schemas_follow_lean_sources():
+    """Every mode has one schema file, and the schema enumerations are the Lean ones."""
+    protocol = (ROOT / "lean/VE/Service/Protocol.lean").read_text()
+    names = re.findall(r'^  \| \.(\w+) => "([^"]+)"$', protocol, re.M)
+    dispatch = re.findall(r'^  \| \.(\w+), j => ', protocol, re.M)
+    files = {p.stem for p in SCHEMAS.glob("*.json")} - {"common", "envelope"}
+    assert {name for _, name in names} == set(MODES) == files
+    assert {constructor for constructor, _ in names} == set(dispatch)
+    common = json.loads((SCHEMAS / "common.json").read_text())["$defs"]
+    admission = "VE/Route/Admission.lean"
+    assert common["act"]["enum"] == _lean_strings(admission, "def acts : List String :=", "\n")
+    assert common["modality"]["enum"] == _lean_strings(admission, "def modalities : List String :=", "\n")
+    assert common["relation"]["enum"] == _lean_strings(admission, "def relations : List String :=", "\n")
+    atomic = re.findall(r'^  \| "(\w+)" => some', (ROOT / "lean" / admission).read_text(), re.M)
+    assert common["atomic_kind"]["enum"] == atomic
+    assert common["generator"]["enum"] == _lean_strings("VE/Route/Background.lean",
+                                                        "def generators : List String :=", "\n")
+    kind = common["kind"]["anyOf"][1]["x-tagged"]
+    rendered = re.findall(r'Json.arr #\[\.str "(\w+)"', (ROOT / "lean" / admission).read_text())
+    assert set(kind) == set(rendered)
+    handshake = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]
+    assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
+    limits = {k: v["minimum"] for k, v in handshake["limits"]["properties"].items()}
+    assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
+    assert re.search(r"def maxLineBytes : Nat := (\d+)", protocol)[1] == str(MAX_LINE_BYTES)
+    assert re.search(r"def maxCases : Nat := (\d+)", protocol)[1] == str(MAX_CASES)
+    runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
+    terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
+    formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
+    assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(common["fol_term"]["x-tagged"])
+    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common["fol_formula"]["x-tagged"])
+    order = (ROOT / "lean/VE/Order/Wire.lean").read_text()
+    order_terms = order.split("def decodeTerm :", 1)[1].split("def decodeFormula :", 1)[0]
+    order_formulas = order.split("def decodeFormula :", 1)[1].split("def termNodes", 1)[0]
+    assert set(re.findall(r'\[\.str "(\w+)"', order_terms)) == set(common["order_term"]["x-tagged"])
+    assert set(re.findall(r'\[\.str "(\w+)"', order_formulas)) == set(common["order_formula"]["x-tagged"])
+
+
+def test_handshake(service_executable):
+    with LeanService(service_executable) as service:
+        assert service.handshake["service"] == "ve-lean@1"
+        assert tuple(service.handshake["modes"]) == MODES
+        assert service.handshake["limits"] == {"max_line_bytes": 16777216, "max_cases": 4096,
+                                               "json_depth": 256}
+        assert len(service.build) == 64
+
+
+def test_results_are_the_one_shot_bytes(service_executable):
+    cases = CASES[:40]
+    text = json.dumps(cases)
+    one_shot = subprocess.run([str(BIN / "ve_conformance")], input=text.encode(),
+                              capture_output=True, timeout=HANG_TIMEOUT)
+    with LeanService(service_executable) as service:
+        raw, response = service.exchange("evaluate", text, len(cases))
+    assert response["status"] == "ok"
+    start = raw.index(b'"results":') + len(b'"results":')
+    assert raw[start:].startswith(one_shot.stdout.strip())
+    assert raw[start + len(one_shot.stdout.strip()):] == b',"status":"ok"}'
+
+
+def test_protocol_errors_answer_one_line_and_continue(service_executable):
+    good = json.dumps({"id": "ok", "mode": "evaluate", "cases": CASES[:1]}).encode()
+    lines = [
+        b"not json",
+        b"\xff\xfe",
+        b'{"id":"a","mode":"evaluate"}',
+        b'{"id":"b","mode":"missing","cases":[]}',
+        b'{"id":"c","mode":"evaluate","cases":{}}',
+        b'{"id":"d","mode":"evaluate","cases":[],"cases":[]}',
+        b'{"id":"e","mode":"evaluate","cases":[],"extra":1}',
+        b'{"id":"f","mode":"evaluate","cases":[{"id":1,}]}',
+        b'{"id":"g","mode":"evaluate","budget":{"cases":1},"cases":[{},{}]}',
+        b'{"id":"h","mode":"evaluate","budget":{"bytes":3},"cases":[{},{}]}',
+        b"",
+        b'{"id":"i","mode":"evaluate","cases":[' + good[:40],
+        b"{" + b" " * (16 * 1024 * 1024 + 8) + b"}",
+        good,
+    ]
+    rows, _ = raw_session(service_executable, b"\n".join(lines) + b"\n")
+    ids = [row["id"] for row in rows]
+    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", None, None, "ok"]
+    assert all(row["status"] == "error" for row in rows[:-1])
+    assert rows[8]["error"] == "ResourceLimit: batch has 2 cases; budget is 1"
+    assert rows[9]["error"].startswith("ResourceLimit: cases are 7 bytes")
+    assert rows[11]["error"].startswith("ResourceLimit: request line exceeds")
+    assert rows[-1]["status"] == "ok" and rows[-1]["counts"] == {"cases": 1, "errors": 0,
+                                                                 "bytes": len(json.dumps(CASES[:1]))}
+
+
+def test_truncated_final_line_is_an_error_record(service_executable):
+    rows, _ = raw_session(service_executable, b'{"id":"t","mode":"evaluate","cases":[{"id"')
+    assert rows == [{"id": None, "error": "request must be a JSON object", "status": "error"}]
+
+
+def test_budget_rejection_is_deterministic_and_keeps_the_process(service_executable):
+    with LeanService(service_executable, batch_cases=2) as service:
+        pid = service.pid
+        _, response = service.exchange("evaluate", json.dumps(CASES[:3]), 3,
+                                       budget={"cases": 2, "bytes": 1 << 20})
+        assert response == {"id": response["id"], "status": "error",
+                            "error": "ResourceLimit: batch has 3 cases; budget is 2"}
+        assert service.run("evaluate", CASES[:5]) == service.run("evaluate", CASES[:5])
+        assert service.pid == pid and service.stats["restarts"] == 0
+        with pytest.raises(ResourceLimit):
+            service.run("evaluate", [{"x": "y" * (17 * 1024 * 1024)}])
+
+
+def test_batch_decode_rejection_is_a_ve_error(service_executable):
+    with LeanService(service_executable) as service:
+        with pytest.raises(VEError):
+            service.run("evaluate", [{"id": None}])  # null is outside the restricted JSON
+        assert service.stats["restarts"] == 0
+
+
+@pytest.mark.parametrize("suffix", [',"ignored":null}', ',"ignored":1.5}',
+                                    ',"ignored":1e2}', ',"ignored":1,"ignored":2}'])
+def test_english_accepts_one_shot_json(service_executable, suffix):
+    payload = {"environment": {"sorts": [], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {}, "predicates": {}, "constants": {}}, "cases": []}
+    raw_case = json.dumps(payload, separators=(",", ":"))[:-1] + suffix
+    proc = subprocess.run([str(BIN / "ve_english_run")], input=raw_case.encode(),
+                          capture_output=True, timeout=HANG_TIMEOUT)
+    assert proc.returncode == 0, proc.stderr
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw_case + "]", 1)
+    assert response["results"] == [json.loads(proc.stdout)]
+
+
+@pytest.mark.parametrize("number,place", [
+    ("0.0", "formula"), ("0e0", "formula"), ("1e0", "formula"),
+    ("0.0", "token"), ("0.0", "slot"),
+])
+def test_english_consumed_number_keeps_one_shot_decoding(service_executable, number, place):
+    payload = {"environment": {"sorts": ["thing"], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {"thing": {"noun": ["thing"], "letter": "x"}},
+                           "predicates": {}, "constants": {}},
+               "cases": [{"tokens": [], "formulas": [["forall", "thing",
+                                                     ["eq", ["var", 0], ["var", 0]]]]}]}
+    if place == "slot":
+        payload["lexicon"]["predicates"] = {"p": [0]}
+    raw = json.dumps(payload, separators=(",", ":"))
+    if place == "formula":
+        raw = raw.replace('["var",0]', f'["var",{number}]', 1)
+    elif place == "token":
+        raw = raw.replace('"tokens":[]', f'"tokens":[["x",{number}]]')
+    else:
+        raw = raw.replace('"p":[0]', f'"p":[{number}]')
+    one_shot = subprocess.run([str(BIN / "ve_english_run")], input=raw.encode(),
+                              capture_output=True, timeout=HANG_TIMEOUT)
+    assert one_shot.returncode in (0, 2)
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw + "]", 1)
+    expected = (json.loads(one_shot.stdout) if one_shot.returncode == 0 else
+                {"status": "error", "error": one_shot.stderr.decode().strip()})
+    assert response["results"] == [expected]
+
+
+def test_english_ignored_large_integer_matches_one_shot(service_executable):
+    payload = {"environment": {"sorts": ["thing"], "predicates": {}, "constants": {}},
+               "lexicon": {"sorts": {"thing": {"noun": ["thing"], "letter": "x"}},
+                           "predicates": {}, "constants": {}},
+               "cases": [{"tokens": [], "formulas": [["top"]]}]}
+    raw = json.dumps(payload, separators=(",", ":"))
+    raw = raw[:-1] + ',"ignored":' + "9" * 4500 + "}"
+    one_shot = subprocess.run([str(BIN / "ve_english_run")], input=raw.encode(),
+                              capture_output=True, timeout=HANG_TIMEOUT)
+    assert one_shot.returncode == 0, one_shot.stderr
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("english", "[" + raw + "]", 1)
+        assert service.stats["retries"] == 0
+    assert response["results"] == [json.loads(one_shot.stdout)]
+
+
+@pytest.mark.parametrize("mode,case", [
+    ("evaluate", CASES[0]),
+    ("english", {"environment": {"sorts": [], "predicates": {}, "constants": {}},
+                 "lexicon": {"sorts": {}, "predicates": {}, "constants": {}}, "cases": []}),
+])
+def test_whitespace_around_cases_matches_one_shot(service_executable, mode, case):
+    text = " \t[" + json.dumps(case, separators=(",", ":")) + "] \r"
+    with LeanService(service_executable) as service:
+        _, response = service.exchange(mode, text, 1)
+        assert service.stats["retries"] == 0
+    assert response["counts"]["bytes"] == len(text.strip().encode())
+    assert response["status"] == "ok"
+
+
+def test_whitespace_empty_batch_has_trimmed_count(service_executable):
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("evaluate", " [] ", 0)
+        assert service.stats["retries"] == 0
+    assert response["counts"] == {"cases": 0, "bytes": 2, "errors": 0}
+
+
+def test_killed_process_is_replaced_between_requests(service_executable):
+    with LeanService(service_executable) as service:
+        first = service.pid
+        os.kill(first, 9)
+        time.sleep(0.2)
+        assert service.run("evaluate", CASES[:2])[0]["status"] == "ok"
+        assert service.pid != first
+
+
+def test_kill_during_a_batch_retries_once_on_a_fresh_process(service_executable, monkeypatch):
+    with LeanService(service_executable, timeout=120, batch_cases=4096,
+                     batch_bytes=16 << 20) as service:
+        first = service.pid
+        write = service._write_all
+        killed = False
+
+        def kill_before_write(line, deadline):
+            nonlocal killed
+            if not killed:
+                os.kill(first, 9)
+                killed = True
+            return write(line, deadline)
+
+        monkeypatch.setattr(service, "_write_all", kill_before_write)
+        results = service.run("evaluate", CASES * 5)
+        assert len(results) == 5 * len(CASES) and service.pid != first
+        assert service.stats["retries"] == 1
+
+
+def test_recycling_after_max_requests(service_executable):
+    with LeanService(service_executable, max_requests=2) as service:
+        pids = []
+        for _ in range(5):
+            service.run("evaluate", CASES[:1])
+            pids.append(service.pid)
+        assert pids[0] == pids[1] != pids[2] == pids[3] != pids[4]
+        assert service.stats["recycles"] == 2 and service.stats["restarts"] == 0
+
+
+def test_chunks_fit_their_byte_budget(service_executable):
+    service = LeanService(service_executable, batch_bytes=3000)
+    texts = [json.dumps(case, separators=(",", ":")) for case in CASES[:40]]
+    chunks = list(service._chunks(texts))
+    assert [t for chunk in chunks for t in chunk] == texts
+    assert all(len(("[" + ",".join(chunk) + "]").encode()) <= 3000 for chunk in chunks if len(chunk) > 1)
+    with service:
+        assert [r["id"] for r in service.run("evaluate", CASES[:40])] == [c["id"] for c in CASES[:40]]
+        assert service.stats["requests"] == len(chunks) and service.stats["restarts"] == 0
+
+
+def test_build_mismatch_is_refused(service_executable):
+    assert len(executable_sha256(service_executable)) == 64
+    with pytest.raises(CheckerUnavailable, match="expected 0000"):
+        LeanService(service_executable, expected_sha256="0" * 64).start()
+
+
+def test_missing_executable_is_unavailable(tmp_path):
+    with pytest.raises(CheckerUnavailable, match="missing"):
+        LeanService(tmp_path / "absent").start()
+
+
+def test_pool_serves_concurrent_callers(service_executable):
+    with LeanServicePool(2, executable=service_executable) as pool:
+        out = [None] * 6
+        def call(i):
+            out[i] = pool.run("evaluate", CASES[i:i + 3])
+        threads = [threading.Thread(target=call, args=(i,)) for i in range(6)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        assert [[r["id"] for r in rows] for rows in out] == [[c["id"] for c in CASES[i:i + 3]]
+                                                             for i in range(6)]
+
+
+# Supervisor faults, driven by a scripted stand-in for the service.
+
+FAKE = r'''
+import json, os, sys, time
+behaviour, marker = sys.argv[1], sys.argv[2]
+hello = {"service": "ve-lean@1", "protocol": 1,
+         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english"],
+         "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
+if behaviour == "handshake":
+    hello["service"] = "other"
+if behaviour == "null-modes":
+    hello["modes"] = None
+if behaviour == "small-limits":
+    hello["limits"]["max_cases"] = 1
+if behaviour == "bad-protocol":
+    hello["protocol"] = 2
+if behaviour == "startup-eof":
+    open(marker, "a").write("s")
+    sys.exit(3)
+if behaviour == "silent":
+    time.sleep(60)
+print(json.dumps(hello), flush=True)
+for line in sys.stdin:
+    request = json.loads(line)
+    first = not os.path.exists(marker)
+    open(marker, "a").close()
+    if behaviour == "hang" or (behaviour == "flaky" and first):
+        time.sleep(60)
+    if behaviour == "crash":
+        sys.exit(3)
+    if behaviour == "garbage":
+        print("\x00garbage", flush=True); continue
+    if behaviour == "truncated":
+        sys.stdout.write('{"id":"'); sys.stdout.flush(); sys.exit(0)
+    if behaviour == "wrong-id":
+        request["id"] = "other"
+    if behaviour == "short":
+        print(json.dumps({"id": request["id"], "status": "ok", "results": []}), flush=True); continue
+    if behaviour == "wrong-mode":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": "order", "results": [True],
+                          "counts": {"cases": 1, "bytes": len(json.dumps(request["cases"])), "errors": 0}}), flush=True); continue
+    if behaviour == "missing-error":
+        print(json.dumps({"id": request["id"], "status": "error"}), flush=True); continue
+    if behaviour == "boolean-result":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [True], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+    if behaviour == "empty-result":
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [{"status": "ok"}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+    if behaviour == "duplicate-response":
+        print('{"id":' + json.dumps(request["id"]) + ',"id":' + json.dumps(request["id"]) +
+              ',"status":"error","error":"forged"}', flush=True); continue
+    if behaviour == "nan-result":
+        print('{"id":' + json.dumps(request["id"]) + ',"status":"ok","mode":"evaluate",'
+              '"results":[{"status":"ok","value":NaN}],'
+              '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
+    if behaviour == "scripted":
+        answer = json.load(open(marker))
+        if answer.get("id") == "__nonce__":
+            answer["id"] = request["id"]
+        if isinstance(answer.get("counts"), dict) and answer["counts"].get("bytes") == "__bytes__":
+            answer["counts"]["bytes"] = len(line.split(',"cases":', 1)[1].rstrip()[:-1].strip().encode())
+        print(json.dumps(answer), flush=True); continue
+    n = len(request["cases"])
+    if behaviour in ("missing-valid", "string-valid", "wrong-case-id", "english-nested-bool"):
+        if request["mode"] == "english":
+            row = {"admissible": True, "covers": True,
+                   "results": [True] if behaviour == "english-nested-bool" else []}
+        else:
+            row = {"id": request["cases"][0].get("id"), "status": "ok", "valid": True}
+            if behaviour == "missing-valid": del row["valid"]
+            if behaviour == "string-valid": row["valid"] = "false"
+            if behaviour == "wrong-case-id": row["id"] = "other"
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [row], "counts": {"cases": 1,
+                          "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                          "errors": 0}}), flush=True); continue
+    malformed = {
+        "route-string-values": {"id": "c", "status": "ok", "values": ["false"]},
+        "route-extra-field": {"id": "c", "status": "ok", "values": [False], "extra": 1},
+        "order-bad-surface": {"id": "c", "status": "ok", "ast": [["garbage"]]},
+        "admission-no-report": {"id": "c", "status": "ok", "admitted": True},
+        "norms-bad-verdict": {"id": "c", "status": "ok", "verdict": "garbage", "targets": []},
+        "english-bad-formula": {"admissible": True, "covers": True,
+                                "results": [{"parsed": [["garbage"]], "checked": False,
+                                             "rendered": None, "roundtrip": False}]},
+        "english-negative-label": {"admissible": True, "covers": True,
+                                   "results": [{"parsed": None, "checked": True,
+                                                "rendered": [["x", -1]], "roundtrip": False}]},
+    }
+    if behaviour in malformed:
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                          "results": [malformed[behaviour]], "counts": {"cases": 1,
+                          "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                          "errors": 0}}), flush=True); continue
+    if behaviour in ("english-order-atom", "english-checked-no-render", "english-deep-formula",
+                     "background-boolean-premise"):
+        if behaviour == "background-boolean-premise":
+            row = {"id": request["cases"][0]["id"], "status": "ok",
+                   "background": [["eq", ["var", 0], ["var", 0]]],
+                   "premises": [["eq", ["var", False], ["var", 0]]],
+                   "generators": ["g"]}
+        else:
+            parsed = [["lt", ["num", "0"], ["num", "1"]]] if behaviour == "english-order-atom" else None
+            row = {"admissible": True, "covers": True,
+                   "results": [{"parsed": parsed, "checked": behaviour == "english-checked-no-render",
+                                "rendered": None, "roundtrip": behaviour == "english-checked-no-render"}]}
+        prefix = json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"]})[:-1]
+        counts = json.dumps({"cases": 1, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                             "errors": 0})
+        if behaviour == "english-deep-formula":
+            deep = '["not",' * 1200 + '["top"]' + ']' * 1200
+            result = '{"admissible":true,"covers":true,"results":[{"parsed":[' + deep + \
+                     '],"checked":false,"rendered":null,"roundtrip":false}]}'
+        else:
+            result = json.dumps(row, separators=(",", ":"))
+        print(prefix + ',"results":[' + result + '],"counts":' + counts + '}', flush=True)
+        continue
+    print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
+                      "results": [{"id": case.get("id"), "status": "ok", "values": [True],
+                                   "value": True, "canonical": ""} for case in request["cases"]],
+                      "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
+'''
+
+
+def fake(tmp_path, behaviour):
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    wrapper = tmp_path / f"fake-{behaviour}"
+    wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {behaviour} {tmp_path / 'marker'}\n")
+    wrapper.chmod(0o755)
+    return wrapper
+
+
+@pytest.mark.parametrize("behaviour", ["hang", "crash", "garbage", "truncated", "wrong-id", "short",
+                                       "wrong-mode", "missing-error", "boolean-result", "empty-result",
+                                       "duplicate-response", "nan-result"])
+def test_operational_faults_fail_closed(tmp_path, behaviour):
+    service = LeanService(fake(tmp_path, behaviour), timeout=0.5, allow_unlisted_build=True)
+    try:
+        with pytest.raises(CheckerUnavailable) as caught:
+            service.run("evaluate", [{}])
+        assert caught.value.code == "CheckerUnavailable"
+        assert not isinstance(caught.value, ResourceLimit)
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+    finally:
+        service.close()
+
+
+def test_one_retry_recovers_a_hung_batch(tmp_path):
+    with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
+        assert service.run("evaluate", [{"id": "a", "ast": [["top"]]},
+                                        {"id": "b", "ast": [["top"]]}]) == [
+            {"id": "a", "status": "ok", "values": [True], "value": True, "canonical": ""},
+            {"id": "b", "status": "ok", "values": [True], "value": True, "canonical": ""}]
+        assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+
+
+@pytest.mark.parametrize("behaviour,mode,case", [
+    ("missing-valid", "check-certificate", {"id": "c"}),
+    ("string-valid", "check-certificate", {"id": "c"}),
+    ("missing-valid", "order", {"id": "c", "kind": "certificate"}),
+    ("string-valid", "order", {"id": "c", "kind": "certificate"}),
+    ("wrong-case-id", "check-certificate", {"id": "c"}),
+    ("wrong-case-id", "evaluate", {"id": "c"}),
+    ("wrong-case-id", "route", {"id": "c", "kind": "certificate"}),
+    ("wrong-case-id", "norms", {"id": "c", "kind": "norms-certificate"}),
+    ("english-nested-bool", "english", {"cases": [{}]}),
+    ("route-string-values", "route", {"id": "c", "kind": "evaluate"}),
+    ("route-extra-field", "route", {"id": "c", "kind": "evaluate"}),
+    ("order-bad-surface", "order", {"id": "c", "kind": "surface"}),
+    ("admission-no-report", "route", {"id": "c", "kind": "admission"}),
+    ("norms-bad-verdict", "norms", {"id": "c", "kind": "norms-conflict"}),
+    ("english-bad-formula", "english", {"cases": [{}]}),
+    ("english-negative-label", "english", {"cases": [{}]}),
+    ("english-order-atom", "english", {"cases": [{}]}),
+    ("english-checked-no-render", "english", {"cases": [{}]}),
+    ("english-deep-formula", "english", {"cases": [{}]}),
+    ("background-boolean-premise", "route", {"id": "c", "kind": "background"}),
+    ("background-boolean-premise", "norms", {"id": "c", "kind": "background"}),
+])
+def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mode, case):
+    service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="malformed response"):
+        service.run(mode, [case])
+    assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+    assert service.pid is None
+    service.close()
+
+
+def _scripted_response_rejected(tmp_path, mode, case, row):
+    answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row],
+              "counts": {"cases": 1, "bytes": "__bytes__",
+                         "errors": int(row.get("status") == "error")}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            service.run(mode, [case])
+        assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+
+
+@pytest.mark.parametrize("mode,kind,field", [
+    ("route", "background", "both"),
+    ("norms", "background", "both"),
+    ("norms", "norms-elaborate", "background"),
+    ("norms", "norms-elaborate", "premises"),
+    ("norms", "norms-elaborate", "conflict_targets"),
+    ("route", "admission", "root"),
+    ("route", "admission", "assumptions"),
+    ("norms", "admission", "root"),
+    ("norms", "admission", "assumptions"),
+])
+def test_fol_response_fields_reject_order_only_ast(tmp_path, mode, kind, field):
+    order_atom = ["lt", ["num", "0"], ["num", "1"]]
+    if kind == "background":
+        row = {"id": "c", "status": "ok", "background": [["top"]],
+               "premises": [["top"]], "generators": ["g"]}
+        row["background"] = row["premises"] = [order_atom]
+    elif kind == "norms-elaborate":
+        row = {"id": "c", "status": "ok", "order": [], "background": [],
+               "premises": [{"label": "p", "ast": ["top"]}],
+               "conflict_targets": [{"target": "p", "sorts": [], "ast": ["top"]}],
+               "fragment": True}
+        if field == "background":
+            row[field] = [{"generator": "g", "ast": order_atom}]
+        else:
+            row[field][0]["ast"] = order_atom
+    else:
+        row = {"id": "c", "status": "ok", "admitted": True,
+               "report": {"root": {"name": "p", "ast": ["top"]}, "assumptions": []},
+               "report_id": "0" * 64, "kinds": []}
+        if field == "root":
+            row["report"]["root"]["ast"] = order_atom
+        else:
+            row["report"]["assumptions"] = [{"name": "a", "ast": order_atom}]
+    _scripted_response_rejected(tmp_path, mode, {"id": "c", "kind": kind}, row)
+
+
+@pytest.mark.parametrize("numeral", ["00", "-0", "01", "-01", "1" * 41])
+@pytest.mark.parametrize("term_tag", ["num", "scale"])
+def test_order_surface_rejects_noncanonical_numerals(tmp_path, numeral, term_tag):
+    term = ["num", numeral] if term_tag == "num" else ["scale", numeral, ["var", 0]]
+    row = {"id": "c", "status": "ok", "ast": [["lt", term, ["num", "1"]]]}
+    _scripted_response_rejected(tmp_path, "order", {"id": "c", "kind": "surface"}, row)
+
+
+@pytest.mark.parametrize("mode", ["evaluate", "order", "route", "norms"])
+@pytest.mark.parametrize("values", [[True], [], [True, False, True]])
+def test_evaluation_response_requires_one_value_per_formula(tmp_path, mode, values):
+    case = {"id": "c", "ast": [["top"], ["bottom"]]}
+    if mode != "evaluate":
+        case["kind"] = "evaluate"
+    row = {"id": "c", "status": "ok", "values": values}
+    if mode == "evaluate":
+        row.update(value=all(values), canonical="")
+    _scripted_response_rejected(tmp_path, mode, case, row)
+
+
+@pytest.mark.parametrize("mode", ["evaluate", "check-certificate", "order", "route", "norms"])
+def test_nested_boolean_id_substitution_is_operational_failure(tmp_path, mode):
+    case = {"id": {"nested": [0]}}
+    row = {"id": {"nested": [False]}, "status": "error", "error": "rejected"}
+    if mode in ("check-certificate", "order"):
+        row["valid"] = False
+    _scripted_response_rejected(tmp_path, mode, case, row)
+
+
+_SCHEMA_SEEDS = {
+    "evaluate": ({"id": "c"}, {"id": "c", "status": "ok", "values": [True],
+                              "value": True, "canonical": ""}),
+    "check-certificate": ({"id": "c"}, {"id": "c", "status": "ok", "valid": True}),
+    "order": ({"id": "c", "kind": "certificate"}, {"id": "c", "status": "ok", "valid": True}),
+    "route": ({"id": "c", "kind": "evaluate"}, {"id": "c", "status": "ok", "values": [True]}),
+    "norms": ({"id": "c", "kind": "norms-certificate"},
+              {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0}),
+    "english": ({"cases": [{}]}, {"admissible": True, "covers": True,
+                                 "results": [{"parsed": None, "checked": False,
+                                              "rendered": None, "roundtrip": False}]}),
+}
+
+
+@settings(max_examples=48, deadline=None,
+          suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(mode=st.sampled_from(MODES), mutation=st.sampled_from(
+    ("wrong-mode", "wrong-nonce", "wrong-status", "wrong-count", "missing-row-field",
+     "extra-row-field", "wrong-row-type", "wrong-error-shape")))
+def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation):
+    case, row = _SCHEMA_SEEDS[mode]
+    answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row.copy()],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": 0}}
+    if mutation == "wrong-mode":
+        answer["mode"] = next(other for other in MODES if other != mode)
+    elif mutation == "wrong-nonce":
+        answer["id"] = "other"
+    elif mutation == "wrong-status":
+        answer["status"] = "unknown"
+    elif mutation == "wrong-count":
+        answer["counts"]["cases"] = 2
+    elif mutation == "missing-row-field":
+        answer["results"][0].pop(next(iter(row)))
+    elif mutation == "extra-row-field":
+        answer["results"][0]["extra"] = 1
+    elif mutation == "wrong-row-type":
+        field = "admissible" if mode == "english" else "valid" if mode in (
+            "check-certificate", "order", "norms") else "values"
+        answer["results"][0][field] = "true"
+    else:
+        answer = {"id": "__nonce__", "status": "error", "error": {"message": "bad"}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    service = LeanService(executable, allow_unlisted_build=True)
+    try:
+        with pytest.raises(CheckerUnavailable):
+            service.run(mode, [case])
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+        assert service.pid is None
+    finally:
+        service.close()
+
+
+@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
+                                       "bad-protocol", "startup-eof"])
+def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
+    service = LeanService(fake(tmp_path, behaviour), startup_timeout=0.5, allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="handshake"):
+        service.start()
+    assert service.pid is None and service.stats["starts"] == 2 and service.stats["retries"] == 1
+    service.close()
+
+
+def test_spawn_error_is_supervised_and_cleans_up(tmp_path):
+    executable = tmp_path / "not-executable"
+    executable.write_text("not an executable")
+    service = LeanService(executable, allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="startup"):
+        service.start()
+    assert service.pid is None and service.stats["retries"] == 1
+    assert service._stderr is None
+
+
+@pytest.mark.parametrize("fault", ["directory", "hash-read", "stderr-file"])
+def test_pre_spawn_faults_are_supervised(tmp_path, monkeypatch, fault):
+    import ve.backends.lean_service as backend
+
+    executable = tmp_path if fault == "directory" else fake(tmp_path, "normal")
+    if fault == "hash-read":
+        def fail_hash(_):
+            raise PermissionError("hash read denied")
+        monkeypatch.setattr(backend, "executable_sha256", fail_hash)
+    if fault == "stderr-file":
+        def fail_file():
+            raise OSError("temporary file denied")
+        monkeypatch.setattr(backend.tempfile, "TemporaryFile", fail_file)
+    service = LeanService(executable, allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="startup"):
+        service.start()
+    assert service.pid is None and service._stderr is None
+    assert service.stats["starts"] == 0 and service.stats["retries"] == 1
+    assert service.stats["restarts"] == 2
+
+
+def test_unlisted_build_is_refused_by_default(tmp_path):
+    service = LeanService(fake(tmp_path, "normal"))
+    with pytest.raises(CheckerUnavailable, match="unlisted build"):
+        service.start()
+    assert service.pid is None
+    with LeanService(service.executable, allow_unlisted_build=True) as overridden:
+        assert overridden.pid is not None
+
+
+def test_executable_hash_cache_not_fooled_by_restored_mtime(tmp_path):
+    wrapper = fake(tmp_path, "normal")
+    original = executable_sha256(wrapper)
+    stat = wrapper.stat()
+    wrapper.write_text(wrapper.read_text().replace("normal", "bogusx"))
+    os.utime(wrapper, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert wrapper.stat().st_size == stat.st_size
+    assert executable_sha256(wrapper) != original
+
+
+def test_oversized_exchange_is_resource_limit_without_start(tmp_path):
+    service = LeanService(fake(tmp_path, "normal"), allow_unlisted_build=True)
+    with pytest.raises(ResourceLimit, match="request line exceeds"):
+        service.exchange("evaluate", '["' + 'a' * (17 << 20) + '"]', 1)
+    assert service.pid is None
+
+
+def test_latency_harness_closes_every_cold_start(tmp_path, monkeypatch):
+    from tools import lean_service_latency as latency
+    instances = []
+
+    class Probe:
+        stats = {}
+
+        def __init__(self, **kwargs):
+            self.started = self.closed = False
+            instances.append(self)
+
+        def start(self):
+            self.started = True
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(latency, "LeanService", Probe)
+    monkeypatch.setattr(latency, "workloads", lambda *args: [])
+    monkeypatch.setattr(latency, "machine", lambda: {"commit": "test", "cpu": "test",
+                                                      "logical_cpus": 1, "loadavg": [0], "python": "test"})
+    latency.main(["--out", str(tmp_path), "--cold-starts", "3"])
+    assert len(instances) == 4
+    assert all(x.started and x.closed for x in instances)
+
+
+def test_pool_answers_a_batch_in_parallel_with_the_same_results(service_executable):
+    cases = CASES[:40]
+    with LeanService(service_executable, batch_cases=8) as single:
+        expected = single.run("evaluate", cases)
+    with LeanServicePool(2, executable=service_executable, batch_cases=8) as pool:
+        assert pool.run("evaluate", cases) == expected
+        assert all(s.stats["requests"] >= 1 for s in pool.services)
+        assert sum(s.stats["requests"] for s in pool.services) == 5
+        assert pool.run("evaluate", cases[:3]) == expected[:3]  # split to one request per process
+        assert pool.run("evaluate", []) == []
+
+
+def test_pool_raises_the_earliest_failing_request(service_executable):
+    cases = CASES[:4] + [{"id": None}] + CASES[:3] + [{"id": 1.5}]
+    with LeanServicePool(2, executable=service_executable, batch_cases=4) as pool:
+        with pytest.raises(VEError) as caught:
+            pool.run("evaluate", cases)
+        assert "null" in str(caught.value) or "JSON" in str(caught.value)
+        assert all(s.stats["restarts"] == 0 for s in pool.services)
+    with LeanService(service_executable, batch_cases=4) as single:
+        with pytest.raises(VEError) as expected:
+            single.run("evaluate", cases)
+    assert str(caught.value) == str(expected.value)

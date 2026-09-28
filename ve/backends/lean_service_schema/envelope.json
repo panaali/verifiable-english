@@ -1,0 +1,42 @@
+{
+  "$id": "envelope.json",
+  "$comment": "Service.Protocol lines. `handshake` is the first line; the context of `response` is the request: {id (the nonce), mode, cases (decoded), bytes (trimmed cases text)}. A line error is kept; any other mismatch is operational.",
+  "handshake": {"$comment": "Service.Protocol.handshake: this protocol, every mode and at least the client's limits.",
+    "type": "object", "required": ["service", "protocol", "modes", "limits"], "additionalProperties": false,
+    "properties": {
+      "service": {"const": "ve-lean@1"},
+      "protocol": {"const": 1},
+      "lean": {"type": "string"},
+      "modes": {"$ref": "common.json#/$defs/strings", "allOf": [
+        {"contains": {"const": "evaluate"}}, {"contains": {"const": "check-certificate"}},
+        {"contains": {"const": "order"}}, {"contains": {"const": "route"}},
+        {"contains": {"const": "norms"}}, {"contains": {"const": "english"}}]},
+      "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
+        "additionalProperties": false,
+        "properties": {
+          "max_line_bytes": {"type": "integer", "minimum": 16777216},
+          "max_cases": {"type": "integer", "minimum": 4096},
+          "json_depth": {"type": "integer", "minimum": 256}}}}},
+  "response": {"anyOf": [
+    {"$ref": "#/$defs/ok"},
+    {"$ref": "#/$defs/error"}]},
+  "$defs": {
+    "ok": {"type": "object", "required": ["id", "status", "mode", "results", "counts"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "mode": {"type": "string", "x-equals": "/mode"},
+        "results": {"type": "array", "x-length": "/cases", "x-rows": true},
+        "counts": {"type": "object", "required": ["cases", "bytes", "errors"], "additionalProperties": false,
+          "properties": {
+            "cases": {"type": "integer", "x-count": "/cases"},
+            "bytes": {"type": "integer", "x-equals": "/bytes"},
+            "errors": {"$ref": "common.json#/$defs/nat"}}}},
+      "x-count-where": {"array": "/results", "where": {"type": "object", "required": ["status"], "properties": {"status": {"const": "error"}}}, "equals": "/counts/errors"}},
+    "error": {"type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "common.json#/$defs/text"}}}
+  }
+}

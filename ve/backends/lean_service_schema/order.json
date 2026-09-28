@@ -1,0 +1,40 @@
+{
+  "$id": "order.json",
+  "$comment": "Mode order: Order.Surface.runCaseReported (Order.Wire.runCase). The kind field is required.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error_valid"},
+    {"$ref": "common.json#/$defs/error_valid"},
+    {"x-select": [
+      {"when": {"$ref": "#/$defs/kind/surface"}, "then": {"$ref": "#/$defs/surface"}},
+      {"when": {"$ref": "#/$defs/kind/evaluate"}, "then": {"$ref": "#/$defs/evaluate"}},
+      {"when": {"$ref": "#/$defs/kind/countermodel"}, "then": {"$ref": "#/$defs/countermodel"}},
+      {"when": {"$ref": "#/$defs/kind/certificate"}, "then": {"$ref": "#/$defs/certificate"}}]}]},
+  "$defs": {
+    "kind": {
+      "surface": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "surface"}}},
+      "evaluate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "evaluate"}}},
+      "countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
+      "certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "certificate"}}}},
+    "surface": {"$comment": "Order.Surface.parse accepts only a nonempty document.",
+      "type": "object", "required": ["id", "status", "ast"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "ast": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/order_formula"}}}},
+    "evaluate": {"type": "object", "required": ["id", "status", "values"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "values": {"$ref": "common.json#/$defs/values"}}},
+    "countermodel": {"type": "object", "required": ["id", "status", "refutes"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "refutes": {"type": "boolean"}}},
+    "certificate": {"type": "object", "required": ["id", "status", "valid"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}}}
+  }
+}

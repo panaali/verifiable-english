@@ -1,0 +1,120 @@
+{
+  "$id": "common.json",
+  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Dialect: README.md in this directory.",
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "nat": {"type": "integer", "minimum": 0},
+    "booleans": {"type": "array", "items": {"type": "boolean"}},
+    "strings": {"type": "array", "items": {"type": "string"}},
+    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest).", "type": "string", "pattern": "[0-9a-f]{64}"},
+    "token": {"$comment": "Route.Admission.token: nonempty, at most 64 bytes, [A-Za-z0-9_.-].", "type": "string", "pattern": "[A-Za-z0-9_.-]{1,64}"},
+    "integer_text": {"$comment": "Order.Wire.decodeInt: canonical decimal, at most maxNumeralChars = 40 characters.", "type": "string", "maxLength": 40, "pattern": "0|-?[1-9][0-9]*"},
+    "values": {"$comment": "Evaluation values: one per requested formula; every runner rejects an empty document.", "type": "array", "items": {"type": "boolean"}, "minItems": 1, "x-length": "/ast"},
+
+    "fol_term": {"$comment": "Bridge.decodeTerm.", "x-tagged": {
+      "var": [{"$ref": "#/$defs/nat"}],
+      "const": [{"type": "string"}]}},
+    "fol_formula": {"$comment": "Bridge.decodeFormula 64.", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
+      "top": [],
+      "bottom": [],
+      "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
+      "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "not": [{"$ref": "#/$defs/fol_formula"}],
+      "and": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+      "or": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+      "implies": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+      "forall": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
+      "exists": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}]}},
+    "fol_formulas": {"type": "array", "items": {"$ref": "#/$defs/fol_formula"}},
+
+    "order_term": {"$comment": "Order.Wire.decodeTerm 64.", "x-fuel": {"counter": "order_term", "limit": 64}, "x-tagged": {
+      "var": [{"$ref": "#/$defs/nat"}],
+      "const": [{"type": "string"}],
+      "num": [{"$ref": "#/$defs/integer_text"}],
+      "add": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+      "scale": [{"$ref": "#/$defs/integer_text"}, {"$ref": "#/$defs/order_term"}]}},
+    "order_formula": {"$comment": "Order.Wire.decodeFormula 64; each term has its own depth budget.", "x-fuel": {"counter": "order_formula", "limit": 64}, "x-tagged": {
+      "top": [],
+      "bottom": [],
+      "unary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}],
+      "binary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+      "eq": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+      "lt": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+      "le": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+      "not": [{"$ref": "#/$defs/order_formula"}],
+      "and": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+      "or": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+      "implies": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+      "forall": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}],
+      "exists": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}]}},
+
+    "atomic_kind": {"$comment": "Route.Admission.atomicKind.", "enum": ["asserted", "norm", "definition", "question", "instruction", "example", "exposition", "analogy", "explanation", "meta"]},
+    "act": {"$comment": "Route.Admission.acts.", "enum": ["says", "promised", "believes", "intends", "expects", "denies"]},
+    "modality": {"$comment": "Route.Admission.modalities.", "enum": ["could", "likely", "generally", "typically", "effectively"]},
+    "relation": {"$comment": "Route.Admission.relations.", "enum": ["because", "in order to", "prevents"]},
+    "kind": {"$comment": "Route.Admission.decodeKind 16.", "x-fuel": {"counter": "kind", "limit": 16}, "anyOf": [
+      {"type": "string", "$ref": "#/$defs/atomic_kind"},
+      {"type": "array", "x-tagged": {
+        "attributed": [{"$ref": "#/$defs/token"}, {"$ref": "#/$defs/act"}, {"$ref": "#/$defs/kind"}],
+        "hedged": [{"$ref": "#/$defs/modality"}, {"$ref": "#/$defs/kind"}],
+        "causal": [{"$ref": "#/$defs/relation"}, {"$ref": "#/$defs/kind"}, {"$ref": "#/$defs/kind"}],
+        "unformalised": [{"$ref": "#/$defs/token"}]}}]},
+
+    "generator": {"$comment": "Route.Background.generators.", "enum": ["flags", "definitions", "literals", "profile"]},
+    "label": {"$comment": "Canonical labels: Route.Admission.parseLabel (the parsed label renders to the input).",
+      "type": "string",
+      "pattern": "asserted|bridge:accepts\\([A-Za-z0-9_.-]{1,64},[A-Za-z0-9_.-]{1,64}\\)|background:(flags|definitions|literals|profile)|cite:[A-Za-z0-9_.-]{1,64}/[A-Za-z0-9_.-]{1,64}|open:[A-Za-z0-9_.-]{1,64}|readings:[A-Za-z0-9_.-]{1,64}@(0|[1-9][0-9]*):(0|[1-9][0-9]*|all)|narrowing:[A-Za-z0-9_.-]{1,64}"},
+
+    "claim": {"$comment": "Route.Run.claimJson: a decoded graph node of the request, re-encoded; the default label is omitted.",
+      "type": "object", "required": ["name", "ast"], "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "ast": {"$ref": "#/$defs/fol_formula"},
+        "label": {"type": "string", "not": {"const": "asserted"}}},
+      "x-member": {"of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"]}},
+    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: kinds are the request's unit kinds (decodeKind_render).",
+      "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "admitted": {"const": true},
+        "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
+          "properties": {
+            "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}},
+            "assumptions": {"$comment": "Leaves of the request's graph: nodes without a deduction (admit_report_sound); order and multiplicity are kept.",
+              "type": "array", "items": {"$ref": "#/$defs/claim", "x-member": {
+                "of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"],
+                "where": {"not": {"anyOf": [{"required": ["premises"]}, {"required": ["certificate"]}]}}}}}}},
+        "report_id": {"$ref": "#/$defs/hex64"},
+        "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
+
+    "case_error": {"$comment": "Service.Protocol.caseError: a case the batch decoder rejected on its own.",
+      "type": "object", "required": ["status", "case_index", "error"], "additionalProperties": false,
+      "properties": {
+        "status": {"const": "error"},
+        "case_index": {"type": "integer", "x-index": true},
+        "error": {"$ref": "#/$defs/text"}}},
+    "case_error_valid": {"$comment": "Service.Protocol.caseError for check-certificate and order.",
+      "type": "object", "required": ["status", "case_index", "error", "valid"], "additionalProperties": false,
+      "properties": {
+        "status": {"const": "error"},
+        "case_index": {"type": "integer", "x-index": true},
+        "error": {"$ref": "#/$defs/text"},
+        "valid": {"const": false}}},
+    "error": {"$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "#/$defs/text"}}},
+    "error_valid": {"$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
+      "type": "object", "required": ["id", "status", "error", "valid"], "additionalProperties": false,
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "#/$defs/text"},
+        "valid": {"const": false}}},
+    "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}}
+  }
+}
