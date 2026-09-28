@@ -1,8 +1,8 @@
 {
   "format": "ve-web-copy@1",
   "sources": {
-    "ve_webapp/static/index.html": "79aba26aa411570955d951c689c99b7cc185a314c5708d6e86f5ad70b752301a",
-    "ve_webapp/static/app.js": "b48f16ac1f44b0310d58e3d39b32061b2eb1c08b1ba877a5b95bb49ed2e29072",
+    "ve_webapp/static/index.html": "6efad0d475915071c774f1aef55ea098b25e0b4e9f4ee8ba5687f5f2250aa3c0",
+    "ve_webapp/static/app.js": "2374276d1a34c1f103779e3bc038512d1abf6836f54ca83063761eaa4800bd7d",
     "ve_webapp/server.py": "16c4140b3ae42c564dd854ab66784d975b98a6efcd3c99bbb39a5f2db2198417",
     "ve_webapp/worker.py": "db363fe1ab680d67a38bd6dfe2dc4137e704f3b0d7b9fe9d1210b2f3cfc6b9c0",
     "ve_webapp/drafts.py": "78fc21ca526c488bb8363b0a5f479c89ae4d316958780859be1939db51f27576",
@@ -440,6 +440,23 @@
         {
           "kind": "LABEL",
           "text": "First to second"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "For a new word, choose what kind of thing it names. A synonym only takes effect after you confirm it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "For a new word, choose what kind of thing it names.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "A synonym only takes effect after you confirm it.",
+          "gap": "SyntaxError"
         }
       ]
     },
@@ -925,27 +942,12 @@
     },
     {
       "source": "ve_webapp/static/index.html",
-      "raw": "The word needs the kind. The synonym needs approval.",
+      "raw": "The workspace accepts the sentence. The checker checks the conclusion.",
       "visibility": "UI",
       "segments": [
         {
           "kind": "SENTENCE",
-          "text": "The word needs the kind."
-        },
-        {
-          "kind": "SENTENCE",
-          "text": "The synonym needs approval."
-        }
-      ]
-    },
-    {
-      "source": "ve_webapp/static/index.html",
-      "raw": "The workspace shows the sentence. The checker checks the conclusion.",
-      "visibility": "UI",
-      "segments": [
-        {
-          "kind": "SENTENCE",
-          "text": "The workspace shows the sentence."
+          "text": "The workspace accepts the sentence."
         },
         {
           "kind": "SENTENCE",
@@ -1769,12 +1771,12 @@
     },
     {
       "source": "ve_webapp/static/app.js",
-      "raw": "The assistant shows the candidate. The candidate is untrusted.",
+      "raw": "The assistant is working. The candidate is untrusted.",
       "visibility": "UI",
       "segments": [
         {
           "kind": "SENTENCE",
-          "text": "The assistant shows the candidate."
+          "text": "The assistant is working."
         },
         {
           "kind": "SENTENCE",
@@ -2315,17 +2317,6 @@
         {
           "kind": "SENTENCE",
           "text": "The sentence needs approval."
-        }
-      ]
-    },
-    {
-      "source": "ve_webapp/static/app.js",
-      "raw": "The word is not known.",
-      "visibility": "UI",
-      "segments": [
-        {
-          "kind": "SENTENCE",
-          "text": "The word is not known."
         }
       ]
     },

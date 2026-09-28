@@ -137,7 +137,7 @@ $('prose').addEventListener('input',()=>{dirty=true;$('candidates').replaceChild
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 $('propose').onclick=()=>task($('propose'),async()=>{
   const v=revision, source=$('prose').value;const body=payload();body.text=source;delete body.premises;
-  $('candidates').replaceChildren(el('p','The assistant shows the candidate. The candidate is untrusted.','note'));
+  $('candidates').replaceChildren(el('p','The assistant is working. The candidate is untrusted.','note'));
   try {
     const response=await api('propose',body);if(v!==revision || source!==$('prose').value)return;
     const data=response; $('candidates').replaceChildren();
@@ -172,7 +172,7 @@ api('session').then(signedIn).catch(()=>signedOut());
 
 const documentStates={
   draft:'The draft is available.', analysing:'The reading is pending.',
-  needs_word:'The word is not known.', needs_repair:'The reading is unresolved.',
+  needs_word:'The reading is unresolved.', needs_repair:'The reading is unresolved.',
   reading_review:'The reading needs approval.', ready:'The reading is ready.',
   approved:'The reading is approved.', unresolved:'The reading is unresolved.',
   exhausted:'The budget is exhausted.', stale:'The result is not current.'

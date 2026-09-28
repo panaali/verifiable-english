@@ -409,6 +409,13 @@
         ],
         "description": "Independently replayed by the Python checker.",
         "verbalisation": "{0} is replayed"
+      },
+      "working": {
+        "arguments": [
+          "app_item"
+        ],
+        "description": "Currently working on the request.",
+        "verbalisation": "{0} is working"
       }
     },
     "constants": {
