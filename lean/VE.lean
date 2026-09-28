@@ -14,3 +14,4 @@ import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
 import VE.Discourse.Resolve
+import VE.Discourse.WellFormed

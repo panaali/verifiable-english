@@ -426,9 +426,12 @@ def candCount (D : DDoc) (m : Slot) : Nat :=
 def workOf (D : DDoc) (ds : List DTree) : Nat :=
   ds.foldl (fun acc d => acc + (d.slots.map (candCount D)).foldl (· * ·) 1) 0
 
-/-- Every type-checking competitor: a derivation, an assignment of its slots, the formula. -/
+/-- The accessible, elaborable candidates of a slot. -/
+def accCands (D : DDoc) (m : Slot) : List Target := (slotCands D m).filter (accB D m)
+
+/-- Every type-checking competitor: a derivation, an accessible assignment of its slots, the formula. -/
 def typedComps (D : DDoc) (ds : List DTree) : List (DTree × List Target × VE.Formula) :=
-  ds.flatMap fun d => (vectors (d.slots.map (slotCands D))).filterMap fun vec =>
+  ds.flatMap fun d => (vectors (d.slots.map (accCands D))).filterMap fun vec =>
     match elaborateD D d (assignOf d.slots vec) with
     | some A => if A.check D.E [] then some (d, vec, A) else none
     | none => none
@@ -589,7 +592,7 @@ theorem validate_ok (D : DDoc) (u : String) (A : VE.Formula) (h : validate D u =
                         · cases h
 
 theorem mem_typedComps (D : DDoc) (ds : List DTree) (d : DTree) (vec : List Target) (A : VE.Formula) :
-    (d, vec, A) ∈ typedComps D ds ↔ d ∈ ds ∧ vec ∈ vectors (d.slots.map (slotCands D)) ∧
+    (d, vec, A) ∈ typedComps D ds ↔ d ∈ ds ∧ vec ∈ vectors (d.slots.map (accCands D)) ∧
       elaborateD D d (assignOf d.slots vec) = some A ∧ A.check D.E [] = true := by
   unfold typedComps
   simp only [List.mem_flatMap, List.mem_filterMap]
@@ -631,9 +634,9 @@ theorem validate_accepted (D : DDoc) (u : String) (A : VE.Formula) (s : List Tok
   intro d' σ' A' hd' ha' he' hc'
   have hsl : d'.slots = slotsOf d'.tree := hd'.1
   have hok := elaborate_ok D d' σ' A' he'
-  have hvec : d'.slots.map σ' ∈ vectors (d'.slots.map (slotCands D)) :=
-    map_mem_vectors σ' (slotCands D) d'.slots fun m hm =>
-      slotCands_complete D m (σ' m) (ha' m hm) (hok m (by rw [← hsl]; exact hm))
+  have hvec : d'.slots.map σ' ∈ vectors (d'.slots.map (accCands D)) :=
+    map_mem_vectors σ' (accCands D) d'.slots fun m hm => List.mem_filter.mpr
+      ⟨slotCands_complete D m (σ' m) (ha' m hm) (hok m (by rw [← hsl]; exact hm)), ha' m hm⟩
   have he'' : elaborateD D d' (assignOf d'.slots (d'.slots.map σ')) = some A' := by
     rw [elaborate_congr D d' _ σ' (fun m hm => assignOf_map σ' d'.slots m (by rw [hsl]; exact hm))]
     exact he'
