@@ -37,6 +37,7 @@ import VE.Norms.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
 import VE.Discourse.Resolve
+import VE.Discourse.WellFormed
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1065,3 +1066,21 @@ import VE.Discourse.Resolve
 #print axioms VE.Discourse.wordAt_mem
 #print axioms VE.Discourse.zip_all_assign
 #print axioms VE.Discourse.zip_all_map
+#print axioms VE.Discourse.allOk_ok
+#print axioms VE.Discourse.definiteRestrs_nil
+#print axioms VE.Discourse.derives_units
+#print axioms VE.Discourse.elaborate_faithful
+#print axioms VE.Discourse.elaborate_no_new_symbols
+#print axioms VE.Discourse.elaborate_tree
+#print axioms VE.Discourse.recordedSlots_nil
+#print axioms VE.Discourse.recordedTarget_none
+#print axioms VE.Discourse.runAll_ok
+#print axioms VE.Discourse.slots_of_derivs
+#print axioms VE.Discourse.symbolsOf_declared
+#print axioms VE.Discourse.termSymbols_declared
+#print axioms VE.Discourse.validate_complete
+#print axioms VE.Discourse.validate_slots_recorded
+#print axioms VE.Discourse.validate_sound
+#print axioms VE.Discourse.vectors_acc
+#print axioms VE.Discourse.wellFormed_of
+#print axioms VE.Discourse.wf_bound
