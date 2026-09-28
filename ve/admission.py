@@ -430,6 +430,33 @@ def _claim_json(env, claim):
 
 
 def admit_document(environment, document) -> dict:
+    """Admit a document under the selected checker authority."""
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+
+    if authority_for("admission") == "python":
+        return _admit_document_python(environment, document)
+    env = environment if type(environment) is Environment else Environment(environment)
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
+            "document": document}
+
+    def lean():
+        row = run("norms" if "norms@0" in env.profiles and (
+            any(d.regulated is not None for d in env.predicates.values()) or
+            (type(document) is dict and type(document.get("units")) is list and
+             any(type(u) is dict and type(u.get("content")) is dict and
+                 "norm" in u["content"] for u in document["units"]))
+        ) else "route", [case])[0]
+        expected = {"id", "status", "admitted", "report", "report_id", "kinds"}
+        if set(row) != expected or row["admitted"] is not True:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
+        return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+
+    return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
+
+
+def _admit_document_python(environment, document) -> dict:
     """Admit a ve.core@0.2 document (FOL family) or raise with Lean's diagnostic.
 
     Returns the admitted report, its `ve-report-<identity>` id and the units'

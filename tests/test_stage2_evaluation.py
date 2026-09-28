@@ -15,10 +15,21 @@ from ve.evaluate import evaluate
 from ve.errors import VEError
 from ve.backends.lean_service import CheckerUnavailable
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
+from ve.admission import admit_document
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
 RUST = ROOT / "rust/target/release/ve"
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+def test_lean_admission_preserves_report_and_identity(monkeypatch):
+    from conformance.p0 import admission_cases
+    case = next(c for c in admission_cases() if c["id"] == "bridge-background")
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = admit_document(case["environment"], case["document"])
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert admit_document(case["environment"], case["document"]) == expected
 
 
 @pytest.fixture
