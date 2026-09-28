@@ -271,7 +271,8 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
   if (env.ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != env.ties.length then
     throw "DuplicateDeclaration: tie"
   for N in D.T.nodes do
-    if (derivedList D N).any (fun φ => fsize φ > maxNodes) then
+    if N.carveOuts.length + (derivedList D N).length > 8 ||
+        (derivedList D N).any (fun φ => fsize φ > maxNodes) then
       throw s!"ResourceLimit: derived carve-out of rule {N.name}"
   VE.Norms.validate (soften D)
 where

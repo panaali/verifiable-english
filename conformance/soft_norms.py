@@ -95,18 +95,19 @@ def loop_recheck_reproducers():
     unknown_rank = norm("b", "x_required", True, rank="z")
     yield "missing-exception-before-next-rule", env(), [missing, unknown_rank], "SOFT_MISSING_EXCEPTION"
 
-    for variable, code in ((0, "SOFT_INVALID_EXCEPTION_CONDITION"),
-                           (1, "SOFT_INVALID_INPUT")):
+    # The validation table (8) puts factors (4.14) before exception typing (5.8)
+    # and the rule's predicate reference (5.4); these superseded the loop's order.
+    for variable in (0, 1):
         exception = {"decided_by": "assistant", "sufficient": [
             ["unary", "x_required", ["var", variable]]],
             "necessary": [], "factors": False}
-        yield f"exception-typing-before-factors-{variable}", env(), [
-            norm("a", "x_required", True, mode="default", exception=exception)], code
+        yield f"factors-before-exception-typing-{variable}", env(), [
+            norm("a", "x_required", True, mode="default", exception=exception)], "SOFT_INVALID_FACTORS"
 
     unknown_predicate = {"decided_by": "assistant", "sufficient": [],
                          "necessary": [], "factors": False}
-    yield "exception-predicate-before-factors", env(), [
-        norm("a", "missing", True, mode="default", exception=unknown_predicate)], "SOFT_INVALID_INPUT"
+    yield "factors-before-predicate-reference", env(), [
+        norm("a", "missing", True, mode="default", exception=unknown_predicate)], "SOFT_INVALID_FACTORS"
 
     for names in (("z", "soft__a"), ("soft__a", "z")):
         raw = env({"parties": ["p"], "outranking": {"mode": "strict"}})

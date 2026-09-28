@@ -7,7 +7,7 @@ import subprocess
 
 from .ast import formula_to_data
 from .errors import VEError
-from .softnorms import SoftEnvironment, SoftNormDocument
+from .softnorms import SoftEnvironment, SoftNormDocument, check_soft_source
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_soft_norms_route"
 
@@ -97,12 +97,17 @@ def admit_soft_document(environment, document, *, soft_document=None):
     independently regenerates E′ and T′; no Python-generated premise is sent
     as an authority for admission.
     """
-    env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
     if soft_document is None:
         active = [u["content"] for u in document["units"]
                   if u["kind"] == "norm" and type(u.get("content")) is dict
                   and "norm" in u["content"]]
+        if not isinstance(environment, SoftEnvironment):
+            # The whole source is checked in table order before either half is built.
+            check_soft_source(environment, active)
+        env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
         soft_document = SoftNormDocument(env, active)
+    else:
+        env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
     elaborate_soft_document(soft_document)
     # The restricted Lean JSON input has no null literal. The wire's null
     # inherited-decider spelling is canonicalized to the equivalent omission.

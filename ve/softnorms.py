@@ -10,11 +10,13 @@ from copy import deepcopy
 import hashlib
 import json
 
-from .ast import And, Implies, Not, Or, Top, Bottom, _Checker, _Decoder, _to_data, formula_to_data
+from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Bottom, Unary, Var,
+                  _Checker, _Decoder, _to_data, formula_to_data)
 from .background import dependency_order
 from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
-from .norms import Norm, NormDocument, _all, _any, _atom, _bind
+from .norms import _NAME, Norm, NormDocument, _all, _any, _atom, _bind
+from . import profiles as profile_registry
 from .search import _used_predicates
 from .wire import digest
 
@@ -64,7 +66,15 @@ def soft_diagnostic_code(message: str) -> str:
 
 
 def _code_soft_error(exc: VEError) -> VEError:
-    exc.code = soft_diagnostic_code(str(exc))
+    """Classify an error raised after the validation table by its origin."""
+    if getattr(exc, 'soft_checked', False):
+        return exc
+    if isinstance(exc, ResourceLimit):
+        exc.code = 'SOFT_RESOURCE_LIMIT'
+    elif isinstance(exc, UnsupportedProfile):
+        exc.code = 'SOFT_UNSUPPORTED_PROFILE'
+    else:
+        exc.code = soft_diagnostic_code(str(exc))
     return exc
 
 
@@ -75,26 +85,409 @@ def soft_digest(domain, payload):
     return hashlib.sha256(domain.encode('ascii') + encoded).hexdigest()
 
 
+# The validation table of docs/spec/soft-norms.md section 8, as ordered phases.
+# Each phase runs over the whole source before the next starts, and each check
+# raises its own code; `Phases.lean` is the same list.
+
+_ENVELOPE = {'language', 'profiles', 'spec_revision', 'vocabulary'}
+_BLOCK_FIELDS = {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}
+_W1_FIELDS = ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
+_SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
+_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'time@0')
+_CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
+SOFT_PROFILE = 'soft-norms@0'
+
+
+def _fault(code, message, error=VEError):
+    exc = error(message)
+    exc.code = code
+    exc.soft_checked = True
+    return exc
+
+
+def _inherited(call, *args, code='SOFT_INVALID_INPUT'):
+    """Run an inherited W1/P0 check; its failure is classified by this position."""
+    try:
+        return call(*args)
+    except VEError as exc:
+        exc.code = code
+        exc.soft_checked = True
+        raise
+
+
+def _utf8(value):
+    return len(value.encode('utf-8'))
+
+
+@dataclass(slots=True)
+class _Context:
+    env: Environment
+    parties: tuple[str, ...]
+    ranks: tuple[str, ...]
+    edges: tuple[tuple[str, str], ...]
+    ties: tuple[tuple[str, str], ...]
+    exception_decider: str | None
+    instructions: dict
+
+
+@dataclass(slots=True)
+class _RuleFields:
+    core: Norm
+    mode: str
+    rank: str | None
+    alterable: tuple[str, ...]
+    hard: bool
+    exception: dict | None
+    conditions: dict
+
+
+# Phase 1: envelope and JSON shape.
+
+def _envelope(data, norms):
+    if type(data) is not dict or set(data) != _ENVELOPE:
+        raise _fault('SOFT_INVALID_INPUT', 'InvalidInput: invalid environment envelope')
+    if data['language'] != profile_registry.LANGUAGE:
+        raise _fault('SOFT_UNSUPPORTED_PROFILE', 'UnsupportedProfile: Unsupported language',
+                     UnsupportedProfile)
+    if type(data['profiles']) is not list or any(type(p) is not str for p in data['profiles']):
+        raise _fault('SOFT_UNSUPPORTED_PROFILE',
+                     'UnsupportedProfile: profiles must be a sorted unique array', UnsupportedProfile)
+    if data['spec_revision'] != profile_registry.SPEC_REVISION:
+        raise _fault('SOFT_UNSUPPORTED_PROFILE',
+                     'UnsupportedProfile: Unsupported specification revision', UnsupportedProfile)
+    vocab = data['vocabulary']
+    required = {'sorts', 'predicates', 'constants'}
+    if (type(vocab) is not dict or not required <= set(vocab) <= required | {'soft'}
+            or any(type(vocab[k]) is not dict for k in required)):
+        raise _fault('SOFT_INVALID_INPUT', 'InvalidInput: invalid vocabulary')
+    if norms is not None:
+        _norm_array(norms)
+
+
+def _norm_array(norms):
+    if type(norms) not in (list, tuple):
+        raise _fault('SOFT_INVALID_INPUT', 'InvalidInput: expected an array of norm objects')
+    if len(norms) > 256:
+        raise _fault('SOFT_RESOURCE_LIMIT', 'ResourceLimit: rules', ResourceLimit)
+
+
+# Phase 2: vocabulary declarations.
+
+def _names(block, label, maximum):
+    values = block.get(label, [])
+    if type(values) is not list:
+        raise _fault('SOFT_INVALID_ARRAY', f'InvalidInput: {label} must be an array')
+    if len(values) > maximum:
+        raise _fault('SOFT_RESOURCE_LIMIT', f'ResourceLimit: {label}', ResourceLimit)
+    seen = []
+    for name in values:
+        if type(name) is not str or not valid_identifier(name) or '__' in name:
+            raise _fault('SOFT_INVALID_NAME', f'InvalidInput: invalid soft name {name}')
+        if name in seen:
+            kind = 'party' if label == 'parties' else 'rank'
+            raise _fault('SOFT_DUPLICATE_DECLARATION', f'DuplicateDeclaration: {kind} {name}',
+                         DuplicateDeclaration)
+        seen.append(name)
+    return tuple(values)
+
+
 def _decider(value, where):
-    if type(value) is not str or not value or len(value.encode('utf-8')) > 64:
-        raise VEError(f"InvalidInput: invalid decider for {where}")
+    if type(value) is not str or not value or _utf8(value) > 64:
+        raise _fault('SOFT_INVALID_DECIDER', f'InvalidInput: invalid decider for {where}')
     return value
 
 
-def _names(values, label, maximum):
+def _pairs(block, field):
+    values = block.get(field, [])
     if type(values) is not list:
-        raise VEError(f"InvalidInput: {label} must be an array")
-    if len(values) > maximum:
-        raise ResourceLimit(label)
-    seen = set()
-    for name in values:
-        if not valid_identifier(name) or '__' in name:
-            raise VEError(f"InvalidInput: invalid soft name {name}")
-        if name in seen:
-            kind = "party" if label == "parties" else "rank"
-            raise DuplicateDeclaration(f"DuplicateDeclaration: {kind} {name}")
-        seen.add(name)
-    return tuple(values)
+        raise _fault('SOFT_INVALID_ARRAY', f'InvalidInput: {field} must be an array')
+    code = 'SOFT_INVALID_OUTRANKS_PAIR' if field == 'outranks' else 'SOFT_INVALID_TIES_PAIR'
+    pairs = []
+    for pair in values:
+        if (type(pair) is not list or len(pair) != 2 or any(type(x) is not str for x in pair)
+                or pair[0] == pair[1] or tuple(pair) in pairs):
+            raise _fault(code, f'InvalidInput: invalid {field} pair')
+        pairs.append(tuple(pair))
+    return tuple(pairs)
+
+
+def _declarations(data, generated):
+    vocab = data['vocabulary']
+    # Canonical key order: Lean enumerates JSON objects by key.
+    predicates = sorted(vocab['predicates'].items())
+    if not generated:
+        for name, entry in predicates:
+            if name.startswith('soft__') or ('__' in name and type(entry) is dict and 'regulated' in entry):
+                raise _fault('SOFT_INVALID_NAME', f'InvalidInput: invalid soft name {name}')
+    instructions = {}
+    for name, entry in predicates:
+        if type(entry) is dict and 'instruction_of' in entry:
+            if type(entry['instruction_of']) is not str or 'regulated' in entry or 'defined' in entry:
+                raise _fault('SOFT_INVALID_INPUT', f'InvalidInput: instruction_of on {name}')
+            instructions[name] = entry['instruction_of']
+    profiles = sorted({p for p in data['profiles'] if p in _INHERITED_PROFILES}
+                      | {'norms@0', profile_registry.BASE})
+    stripped = {**data, 'profiles': profiles, 'vocabulary': {
+        'sorts': vocab['sorts'], 'constants': vocab['constants'],
+        'predicates': {name: ({k: v for k, v in entry.items() if k != 'instruction_of'}
+                              if type(entry) is dict else entry)
+                       for name, entry in vocab['predicates'].items()}}}
+    env = _inherited(Environment, stripped)
+    if 'soft' not in vocab:
+        return _Context(env, (), (), (), (), None, instructions)
+    block = vocab['soft']
+    if type(block) is not dict or 'outranking' not in block or set(block) - _BLOCK_FIELDS:
+        raise _fault('SOFT_INVALID_BLOCK', 'InvalidInput: invalid soft block')
+    parties = _names(block, 'parties', 8)
+    ranks = _names(block, 'ranks', 16)
+    flag = block['outranking']
+    if (type(flag) is not dict or 'mode' not in flag or set(flag) - {'mode', 'decided_by'}
+            or type(flag['mode']) is not str or flag['mode'] not in ('strict', 'holistic')):
+        raise _fault('SOFT_INVALID_OUTRANKING', 'InvalidInput: invalid outranking flag')
+    if flag['mode'] == 'strict' and 'decided_by' in flag:
+        raise _fault('SOFT_STRICT_OUTRANKING_DECIDER', 'InvalidInput: strict outranking has no decider')
+    if 'decided_by' in flag and type(flag['decided_by']) is not str:
+        raise _fault('SOFT_INVALID_DECIDER', 'InvalidInput: invalid decider for outranking')
+    if flag['mode'] == 'holistic' and 'decided_by' not in flag:
+        raise _fault('SOFT_MISSING_DECIDER', 'MissingExceptionDecider: outranking')
+    if 'decided_by' in flag:
+        _decider(flag['decided_by'], 'outranking')
+    exception_decider = None
+    if 'exception_decider' in block:
+        exception_decider = _decider(block['exception_decider'], 'exception')
+    edges = _pairs(block, 'outranks')
+    ties = _pairs(block, 'ties')
+    return _Context(env, parties, ranks, edges, ties, exception_decider, instructions)
+
+
+# Phase 3: profiles.
+
+def _profiles(data, env):
+    profiles = data['profiles']
+    fail = lambda message: _fault('SOFT_UNSUPPORTED_PROFILE', f'UnsupportedProfile: {message}',
+                                  UnsupportedProfile)
+    if profiles != sorted(set(profiles)):
+        raise fail('profiles must be sorted and unique')
+    for profile in profiles:
+        if profile not in profile_registry.BY_NAME:
+            raise fail(f'Unsupported profile {profile}')
+    if profile_registry.BASE not in profiles:
+        raise fail(f'Missing profile {profile_registry.BASE}')
+    if SOFT_PROFILE not in profiles:
+        raise fail('soft-norms@0 is required')
+    if 'norms@0' not in profiles:
+        raise fail('soft-norms@0 requires norms@0')
+    if any(p in _CHECKER_PROFILES for p in profiles):
+        raise fail('the norms route admits FOL documents only')
+    if any(decl.defined is not None for decl in env.predicates.values()):
+        raise fail('norms route with definitions is not implemented')
+    if any(decl.functional or decl.total for decl in env.predicates.values()):
+        raise fail('norms route with data flags is not implemented')
+
+
+# Phase 4: rule fields.
+
+def _fol(data):
+    """Decode one FOL formula, the fragment Lean's `decodeFormula 64` accepts."""
+    formula = _inherited(_Decoder().decode, data)
+
+    def term(t):
+        if not ((isinstance(t, Var) and type(t.index) is int) or
+                (isinstance(t, Const) and type(t.name) is str)):
+            raise _fault('SOFT_INVALID_INPUT', 'InvalidInput: invalid indexed term')
+
+    def walk(node):
+        if isinstance(node, (Top, Bottom)):
+            return
+        if isinstance(node, Unary) and type(node.predicate) is str:
+            return term(node.term)
+        if isinstance(node, Binary) and type(node.predicate) is str:
+            term(node.left)
+            return term(node.right)
+        if isinstance(node, Eq):
+            term(node.left)
+            return term(node.right)
+        if isinstance(node, Not):
+            return walk(node.body)
+        if isinstance(node, (And, Or, Implies)):
+            walk(node.left)
+            return walk(node.right)
+        if isinstance(node, (Forall, Exists)) and type(node.sort) is str:
+            return walk(node.body)
+        raise _fault('SOFT_INVALID_INPUT', 'InvalidInput: invalid indexed formula')
+
+    walk(formula)
+    return formula
+
+
+def _rule_fields(content, exception_decider):
+    invalid = lambda message: _fault('SOFT_INVALID_INPUT', f'InvalidInput: {message}')
+    if type(content) is not dict or set(content) != {'norm'} or type(content['norm']) is not dict:
+        raise invalid('expected norm object')
+    raw = content['norm']
+    if not set(_W1_FIELDS) <= set(raw) <= set(_W1_FIELDS) | set(_SOFT_FIELDS):
+        raise invalid(f'invalid norm fields {sorted(raw)}')
+    name = raw['name']
+    if type(name) is not str or len(name) > 64 or not _NAME.fullmatch(name):
+        raise invalid(f'invalid rule name {name!r}')
+    if type(raw['predicate']) is not str:
+        raise invalid('rule predicate and precedence edges must be strings')
+    if type(raw['sign']) is not bool:
+        raise invalid('invalid sign or too many carve-outs')
+    if type(raw['unless']) is not list or type(raw['over']) is not list:
+        raise invalid('unless and over must be arrays')
+    if len(raw['unless']) > 8:
+        raise invalid('invalid sign or too many carve-outs')
+    if any(type(p) is not str for p in raw['over']):
+        raise invalid('rule predicate and precedence edges must be strings')
+    core = Norm(name, raw['predicate'], raw['sign'], _fol(raw['guard']),
+                tuple(_fol(x) for x in raw['unless']), tuple(raw['over']))
+    mode = raw.get('mode', 'strict')
+    if type(mode) is not str or mode not in ('strict', 'default'):
+        raise _fault('SOFT_INVALID_RULE_FIELDS', f'InvalidInput: invalid mode for rule {name}')
+    rank = raw.get('rank')
+    if rank is not None and type(rank) is not str:
+        raise _fault('SOFT_INVALID_RULE_FIELDS', f'InvalidInput: invalid soft fields for {name}')
+    alterable = raw.get('alterable', [])
+    if (type(alterable) is not list or any(type(x) is not str for x in alterable)
+            or alterable != sorted(set(alterable))):
+        raise _fault('SOFT_INVALID_ALTERABLE',
+                     f'InvalidInput: alterable of rule {name} must be sorted and distinct')
+    hard = raw.get('hard', False)
+    if type(hard) is not bool:
+        raise _fault('SOFT_INVALID_RULE_FIELDS', f'InvalidInput: hard of rule {name} must be Boolean')
+    if hard and (mode != 'strict' or alterable):
+        raise _fault('SOFT_HARD_CONSTRAINT', f'HardConstraintAltered: rule {name}')
+    exception = raw.get('exception')
+    if mode == 'strict' and exception is not None:
+        raise _fault('SOFT_STRICT_EXCEPTION', f'InvalidInput: rule {name} is strict and declares an exception')
+    conditions = {}
+    if mode == 'default':
+        if (type(exception) is not dict or
+                set(exception) - {'decided_by', 'sufficient', 'necessary', 'factors'} or
+                not {'sufficient', 'necessary', 'factors'} <= set(exception)):
+            raise _fault('SOFT_MISSING_EXCEPTION', f'InvalidInput: rule {name} needs an exception')
+        decided_by = exception.get('decided_by')
+        if decided_by is not None and type(decided_by) is not str:
+            raise _fault('SOFT_INVALID_DECIDER', f'InvalidInput: invalid decider for rule {name}')
+        if decided_by is None and exception_decider is None:
+            raise _fault('SOFT_MISSING_DECIDER', f'MissingExceptionDecider: rule {name}')
+        if decided_by is not None:
+            _decider(decided_by, f'rule {name}')
+        for kind in ('sufficient', 'necessary'):
+            if type(exception[kind]) is not list:
+                raise _fault('SOFT_EXCEPTION_ARRAY', f'InvalidInput: exception {kind} must be an array')
+            conditions[kind] = tuple(_fol(x) for x in exception[kind])
+        factors = exception['factors']
+        if type(factors) is not list or any(type(x) is not str or _utf8(x) > 200 for x in factors):
+            raise _fault('SOFT_INVALID_FACTORS', f'InvalidInput: invalid factors of rule {name}')
+    return _RuleFields(core, mode, rank, tuple(alterable), hard, exception, conditions)
+
+
+# Phase 5: cross references.
+
+def _environment_references(ctx):
+    for name, party in sorted(ctx.instructions.items()):
+        if party not in ctx.parties:
+            raise _fault('SOFT_UNKNOWN_PARTY', f'UnknownSymbol: party {party}', UnknownSymbol)
+    for pairs in (ctx.edges, ctx.ties):
+        for pair in pairs:
+            for rank in pair:
+                if rank not in ctx.ranks:
+                    raise _fault('SOFT_UNKNOWN_RANK', f'UnknownRank: {rank}')
+
+
+def _rule_references(env, parties, ranks, rule):
+    """5.4 to 5.8 for one rule."""
+    core = rule.core
+    decl = env.predicates.get(core.predicate)
+    if decl is None or decl.regulated is None:
+        raise _fault('SOFT_INVALID_INPUT', f'UnknownSymbol: regulated predicate {core.predicate}')
+    if rule.rank is not None and rule.rank not in ranks:
+        raise _fault('SOFT_UNKNOWN_RANK', f'UnknownRank: rule {core.name}, {rule.rank}')
+    for party in rule.alterable:
+        if party not in parties:
+            raise _fault('SOFT_UNKNOWN_PARTY', f'UnknownSymbol: party {party}', UnknownSymbol)
+    context = tuple(reversed(decl.arguments))
+    checker = _Checker(env)
+    for formula in (core.guard, *core.unless):
+        _inherited(checker.formula, formula, context)
+    for kind in ('sufficient', 'necessary'):
+        for formula in rule.conditions.get(kind, ()):
+            _inherited(checker.formula, formula, context)
+            for predicate in sorted(_used_predicates(formula)):
+                used = env.predicates[predicate]
+                if used.regulated is not None or used.defined is not None or predicate.startswith('soft__'):
+                    raise _fault('SOFT_INVALID_EXCEPTION_CONDITION',
+                                 f'InvalidInput: exception condition of rule {core.name} mentions {predicate}')
+
+
+def _document_references(env, parties, ranks, rules):
+    """5.3 to 5.9 over the whole document."""
+    names = []
+    for rule in rules:
+        if rule.core.name in names:
+            raise _fault('SOFT_DUPLICATE_DECLARATION', f'DuplicateDeclaration: rule {rule.core.name}',
+                         DuplicateDeclaration)
+        names.append(rule.core.name)
+    by_name = {rule.core.name: rule.core for rule in rules}
+    for rule in rules:
+        _rule_references(env, parties, ranks, rule)
+        for parent in rule.core.over:
+            if parent not in by_name:
+                raise _fault('SOFT_INVALID_INPUT', f'UnknownRule: rule {parent}')
+            if by_name[parent].predicate != rule.core.predicate:
+                raise _fault('SOFT_INVALID_INPUT',
+                             f'PrecedenceAcrossPredicates: rule {rule.core.name} on {rule.core.predicate}, '
+                             f'rule {parent} on {by_name[parent].predicate}')
+
+
+# Phase 6, environment part: the rank order.
+
+def _rank_semantics(ctx):
+    dependencies = {r: set() for r in ctx.ranks}
+    for higher, lower in ctx.edges:
+        dependencies[higher].add(lower)
+    _inherited(dependency_order, dependencies, code='SOFT_DEPENDENCY_CYCLE')
+    above = {r: set() for r in ctx.ranks}
+    for higher, lower in ctx.edges:
+        above[lower].add(higher)
+    for rank in ctx.ranks:
+        pending = list(above[rank])
+        while pending:
+            parent = pending.pop()
+            for ancestor in above[parent] - above[rank]:
+                above[rank].add(ancestor)
+                pending.append(ancestor)
+    for a, b in ctx.ties:
+        if a in above[b] or b in above[a]:
+            raise _fault('SOFT_TIE_AGAINST_ORDER', f'TieAgainstOrder: {a}, {b}')
+    if len({frozenset(pair) for pair in ctx.ties}) != len(ctx.ties):
+        raise _fault('SOFT_DUPLICATE_DECLARATION', 'DuplicateDeclaration: tie', DuplicateDeclaration)
+    return above
+
+
+def check_soft_source(environment, norms=None, *, generated=False):
+    """Phases 1 to 5 and the rank checks of phase 6 over one soft source.
+
+    Raises the first failing check of the table with its code. A caller that
+    holds the raw environment and norms together runs this before building
+    `SoftEnvironment`, so an environment fault never masks an earlier-phase
+    fault in a rule."""
+    _envelope(environment, norms)
+    ctx = _declarations(environment, generated)
+    _profiles(environment, ctx.env)
+    rules = [_rule_fields(unit, ctx.exception_decider) for unit in (norms or ())]
+    _environment_references(ctx)
+    _document_references(ctx.env, ctx.parties, ctx.ranks, rules)
+    above = _rank_semantics(ctx)
+    return ctx, rules, above
+
+
+def load_soft_document(environment, norms):
+    """A soft source from raw JSON, validated in table order over the whole source."""
+    check_soft_source(environment, norms)
+    return SoftNormDocument(SoftEnvironment(environment), norms)
 
 
 class SoftEnvironment(Environment):
@@ -112,94 +505,20 @@ class SoftEnvironment(Environment):
             raise
 
     def _init_soft(self, data, *, generated=False):
-        if type(data) is not dict or 'soft-norms@0' not in data.get('profiles', []):
-            raise UnsupportedProfile('soft-norms@0 is required')
-        if 'norms@0' not in data['profiles']:
-            raise UnsupportedProfile('soft-norms@0 requires norms@0')
+        ctx, _, above = check_soft_source(data, generated=generated)
         raw = deepcopy(data)
-        vocab = raw.get('vocabulary')
-        if type(vocab) is not dict:
-            raise VEError('InvalidInput: missing vocabulary')
-        soft = vocab.pop('soft', None)
-        if soft is None:
-            soft = {'parties': [], 'ranks': [], 'outranks': [], 'ties': [],
-                    'outranking': {'mode': 'strict'}}
-            has_block = False
-        else:
-            has_block = True
-        if (type(soft) is not dict or 'outranking' not in soft or
-                set(soft) - {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}):
-            raise VEError('InvalidInput: invalid soft block')
-        parties = _names(soft.get('parties', []), 'parties', 8)
-        ranks = _names(soft.get('ranks', []), 'ranks', 16)
-        flag = soft.get('outranking')
-        if type(flag) is not dict or set(flag) - {'mode', 'decided_by'} or flag.get('mode') not in ('strict', 'holistic'):
-            raise VEError('InvalidInput: invalid outranking flag')
-        if flag['mode'] == 'holistic':
-            if 'decided_by' not in flag:
-                raise VEError('MissingExceptionDecider: outranking')
-            _decider(flag['decided_by'], 'outranking')
-        elif 'decided_by' in flag:
-            raise VEError('InvalidInput: strict outranking has no decider')
-        if 'exception_decider' in soft:
-            _decider(soft['exception_decider'], 'exception')
-        edges, ties = [], []
-        for field, output in (('outranks', edges), ('ties', ties)):
-            value = soft.get(field, [])
-            if type(value) is not list:
-                raise VEError(f'InvalidInput: {field} must be an array')
-            for pair in value:
-                if type(pair) is not list or len(pair) != 2 or any(type(x) is not str for x in pair):
-                    raise VEError(f'InvalidInput: invalid {field} pair')
-                for name in pair:
-                    if name not in ranks:
-                        raise VEError(f'UnknownRank: {name}')
-                if pair[0] == pair[1] or tuple(pair) in output:
-                    raise VEError(f'InvalidInput: invalid {field} pair')
-                output.append(tuple(pair))
-        dependencies = {r: set() for r in ranks}
-        for higher, lower in edges:
-            dependencies[higher].add(lower)
-        dependency_order(dependencies)
-        above = {r: set() for r in ranks}
-        for higher, lower in edges:
-            above[lower].add(higher)
-        for rank in ranks:
-            pending = list(above[rank])
-            while pending:
-                parent = pending.pop()
-                for ancestor in above[parent] - above[rank]:
-                    above[rank].add(ancestor)
-                    pending.append(ancestor)
-        for a, b in ties:
-            if a in above[b] or b in above[a]:
-                raise VEError(f'TieAgainstOrder: {a}, {b}')
-        if len({frozenset(pair) for pair in ties}) != len(ties):
-            raise DuplicateDeclaration('DuplicateDeclaration: tie')
-        instructions = {}
-        # Lean's JSON objects enumerate keys canonically. Use the same order so
-        # simultaneous predicate faults have a stable first diagnostic.
-        for name, entry in sorted(vocab.get('predicates', {}).items()):
-            if type(entry) is not dict:
-                continue
-            if 'instruction_of' in entry:
-                party = entry.pop('instruction_of')
-                if type(party) is not str:
-                    raise VEError(f'InvalidInput: instruction_of on {name}')
-                if party not in parties:
-                    raise UnknownSymbol(f'UnknownSymbol: party {party}')
-                if 'regulated' in entry or 'defined' in entry:
-                    raise VEError(f'InvalidInput: instruction_of on {name}')
-                instructions[name] = party
-            if not generated and name.startswith('soft__'):
-                raise VEError(f'InvalidInput: reserved predicate {name}')
-            if not generated and '__' in name and 'regulated' in entry:
-                raise VEError(f'InvalidInput: act-key predicate contains __: {name}')
+        vocab = raw['vocabulary']
+        has_block = 'soft' in vocab
+        soft = vocab.pop('soft') if has_block else {
+            'parties': [], 'ranks': [], 'outranks': [], 'ties': [], 'outranking': {'mode': 'strict'}}
+        for entry in vocab['predicates'].values():
+            entry.pop('instruction_of', None)
         object.__setattr__(self, 'soft', soft)
         object.__setattr__(self, 'soft_present', has_block)
-        object.__setattr__(self, 'instruction_of', instructions)
+        object.__setattr__(self, 'instruction_of', dict(sorted(ctx.instructions.items())))
         object.__setattr__(self, 'ranks_above', above)
         object.__setattr__(self, 'soft_premises', ())
+        # Every declaration passed 2.3 under the same profiles; this cannot fail.
         super().__init__(raw)
 
     def to_dict(self):
@@ -244,68 +563,19 @@ def decode_rule(env: SoftEnvironment, content):
         raise
 
 
+def _soft_rule(fields):
+    exception = fields.exception
+    if fields.mode == 'default':
+        exception = {**exception, **{kind: [_to_data(f) for f in fields.conditions[kind]]
+                                     for kind in ('sufficient', 'necessary')}}
+    return SoftRule(fields.core, fields.mode, fields.rank, fields.alterable, exception, fields.hard)
+
+
 def _decode_rule(env: SoftEnvironment, content):
-    if type(content) is not dict or set(content) != {'norm'} or type(content['norm']) is not dict:
-        raise VEError('InvalidInput: expected norm object')
-    raw = content['norm']
-    extra = set(raw) - {'name', 'predicate', 'sign', 'guard', 'unless', 'over',
-                        'mode', 'rank', 'alterable', 'exception', 'hard'}
-    if extra:
-        raise VEError(f'InvalidInput: unknown soft norm fields {sorted(extra)}')
-    core = NormDocument._decode({'norm': {k: raw[k] for k in ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
-                                         if k in raw}})
-    mode = raw.get('mode', 'strict')
-    if mode not in ('strict', 'default'):
-        raise VEError(f'InvalidInput: invalid mode for rule {core.name}')
-    rank = raw.get('rank')
-    if rank is not None and rank not in env.soft.get('ranks', []):
-        raise VEError(f'UnknownRank: rule {core.name}, {rank}')
-    alterable = raw.get('alterable', [])
-    if (type(alterable) is not list or any(type(x) is not str for x in alterable)
-            or alterable != sorted(set(alterable))):
-        raise VEError(f'InvalidInput: alterable of rule {core.name} must be sorted and distinct')
-    for party in alterable:
-        if party not in env.soft.get('parties', []):
-            raise UnknownSymbol(f'UnknownSymbol: party {party}')
-    hard = raw.get('hard', False)
-    if type(hard) is not bool:
-        raise VEError(f'InvalidInput: hard of rule {core.name} must be Boolean')
-    if hard and (mode != 'strict' or alterable):
-        raise VEError(f'HardConstraintAltered: rule {core.name}')
-    exception = raw.get('exception')
-    if mode == 'strict' and exception is not None:
-        raise VEError(f'InvalidInput: rule {core.name} is strict and declares an exception')
-    if mode == 'default':
-        if (type(exception) is not dict or
-                set(exception) - {'decided_by', 'sufficient', 'necessary', 'factors'} or
-                not {'sufficient', 'necessary', 'factors'} <= set(exception)):
-            raise VEError(f'InvalidInput: rule {core.name} needs an exception')
-        decider = (env.soft.get('exception_decider') if exception.get('decided_by') is None
-                   else exception['decided_by'])
-        if decider is None:
-            raise VEError(f'MissingExceptionDecider: rule {core.name}')
-        _decider(decider, f'rule {core.name}')
-        canonical_exception = {**exception}
-        for kind in ('sufficient', 'necessary'):
-            if type(exception[kind]) is not list:
-                raise VEError(f'InvalidInput: exception {kind} must be an array')
-            if core.predicate not in env.predicates:
-                raise UnknownSymbol(f'predicate {core.predicate}')
-            context = tuple(reversed(env.predicates[core.predicate].arguments))
-            canonical_exception[kind] = []
-            for data in exception[kind]:
-                formula = _Decoder().decode(data)
-                _Checker(env).formula(formula, context)
-                canonical_exception[kind].append(_to_data(formula))
-                for predicate in _used_predicates(formula):
-                    decl = env.predicates[predicate]
-                    if decl.regulated is not None or decl.defined is not None or predicate.startswith('soft__'):
-                        raise VEError(f'InvalidInput: exception condition of rule {core.name} mentions {predicate}')
-        if type(exception['factors']) is not list or any(type(x) is not str or len(x.encode('utf-8')) > 200
-                                                        for x in exception['factors']):
-            raise VEError(f'InvalidInput: invalid factors of rule {core.name}')
-        exception = canonical_exception
-    return SoftRule(core, mode, rank, tuple(alterable), exception, hard)
+    """One norm unit on its own: 4.1 to 4.14, then 5.4 to 5.8."""
+    fields = _rule_fields(content, env.soft.get('exception_decider'))
+    _rule_references(env, env.soft.get('parties', []), env.soft.get('ranks', []), fields)
+    return _soft_rule(fields)
 
 
 class SoftBaseEnvironment(Environment):
@@ -348,7 +618,12 @@ class SoftNormDocument:
         if not isinstance(env, SoftEnvironment):
             raise UnsupportedProfile('soft-norms@0 is required')
         self.env = env
-        self.rules = tuple(decode_rule(env, x) for x in units)
+        # Phases 1, 4 and 5 over the whole document; the environment passed
+        # phases 1 to 3, 5 and 6.1 to 6.3 when it was built.
+        _norm_array(units)
+        fields = [_rule_fields(unit, env.soft.get('exception_decider')) for unit in units]
+        _document_references(env, env.soft.get('parties', []), env.soft.get('ranks', []), fields)
+        self.rules = tuple(_soft_rule(x) for x in fields)
         self.core = NormDocument(env, [r.core for r in self.rules])
         by_name = {r.core.name: r for r in self.rules}
         for rule in self.rules:
@@ -391,7 +666,7 @@ class SoftNormDocument:
             try:
                 formula_to_data(self.extended_env, formula, _generated=True)
             except ResourceLimit as exc:
-                raise ResourceLimit(f'generated soft premise {label}') from exc
+                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}') from exc
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
@@ -560,12 +835,12 @@ class SoftNormDocument:
                              dominated(rule, len(self.env.soft.get('ranks', []))))
             unless = (*core.unless, derived) if not isinstance(derived, Bottom) else core.unless
             if len(unless) > 8:
-                raise ResourceLimit(f'derived carve-out of rule {core.name}')
+                raise ResourceLimit(f'ResourceLimit: derived carve-out of rule {core.name}')
             result.append(Norm(core.name, core.predicate, core.sign, core.guard, unless, core.over))
         try:
             return SoftenedNormDocument(self.extended_env, result)
         except ResourceLimit as exc:
-            raise ResourceLimit('derived carve-out') from exc
+            raise ResourceLimit('ResourceLimit: derived carve-out') from exc
 
     def _exception_premises(self):
         premises = []

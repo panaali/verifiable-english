@@ -120,6 +120,12 @@ def _formula(env, unit, fences):
     return document.formulas[0]
 
 
+def _soft_contents(units):
+    return [u.get("content") for u in units
+            if type(u) is dict and u.get("kind") == "norm"
+            and type(u.get("content")) is dict and "norm" in u["content"]]
+
+
 def load_document(path: str | Path):
     raw = Path(path).read_bytes()
     meta, source, fences = _split(raw)
@@ -129,7 +135,10 @@ def load_document(path: str | Path):
         raise VEError("document needs an embedded environment")
     soft_enabled = "soft-norms@0" in meta["environment"].get("profiles", [])
     if soft_enabled:
-        from .softnorms import SoftEnvironment
+        from .softnorms import SoftEnvironment, check_soft_source
+        if type(meta.get("units")) is list:
+            # The environment and the norm units are one soft source (8).
+            check_soft_source(meta["environment"], _soft_contents(meta["units"]))
         env = SoftEnvironment(meta["environment"])
     else:
         env = Environment(meta["environment"])
@@ -141,10 +150,7 @@ def load_document(path: str | Path):
     formula_env = env
     if soft_enabled:
         from .softnorms import SoftNormDocument
-        soft_document = SoftNormDocument(env, [u.get("content") for u in units
-                                              if type(u) is dict and u.get("kind") == "norm"
-                                              and type(u.get("content")) is dict
-                                              and "norm" in u["content"]])
+        soft_document = SoftNormDocument(env, _soft_contents(units))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
     compiled = []

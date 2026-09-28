@@ -338,12 +338,25 @@ def softDiagnosticCode (message : String) : String := Id.run do
     return "SOFT_INVALID_ARRAY"
   return "SOFT_INVALID_INPUT"
 
+/-- The code of a reported soft error: the failed check of the validation table (8) when the
+error is that table's first diagnostic for the case's source, else the stable prefix above.
+The code comes from the check, never from substrings of the message. -/
+def reportedCode (j : Json) (message : String) : String :=
+  let norms := if j.getObjValD "kind" == .str "admission" then
+      match VE.Norms.Admission.splitDocument (j.getObjValD "document") with
+      | .ok (_, active, _) => active
+      | .error _ => .null
+    else j.getObjValD "norms"
+  match Phases.checkSource (j.getObjValD "environment") norms with
+  | .error f => if f.message == message then f.code else softDiagnosticCode message
+  | .ok _ => softDiagnosticCode message
+
 def runCaseReported (j : Json) : Json :=
   if usesSoftPath j then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
-        ("error", .str message), ("code", .str (softDiagnosticCode message))]
+        ("error", .str message), ("code", .str (reportedCode j message))]
   else Norms.Run.runCaseReported j
 
 def main (paths : List String) : IO UInt32 := do
