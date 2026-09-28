@@ -122,10 +122,11 @@ substructure embedding, route plumbing), audited with the same allowlist.
    `outranksPlus` is a lookup instead of a path enumeration of the rank graph;
    `RanksValid.closure` states that it is `closureOf ranks outranks`, checked by
    `softSemanticCheck`.
-10. The limit checks of 8 (6.9, 6.11 to 6.13) compare sizes computed from per-rule tables
+10. The limit checks of 8 (6.9, 6.11 to 6.15) compare sizes computed from per-rule tables
    (`fsize`, `derivedSizes`, `generatedSizes`) with `MAX_NODES` and `MAX_DEPTH` before
    the formulas are built, then check the built formulas with `withinLimits`;
-   `withinLimits_iff` equates the two on any formula.
+   `withinLimits_iff` equates the two on any formula. The aggregates of 6.14 and 6.15
+   (`fitsTogether`) sum the sizes, as one Python checker counts a list.
 
 ## The `ve_soft_norms_route` cases (for the Python harness)
 

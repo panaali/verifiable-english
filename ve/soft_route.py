@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 
 from .ast import _Checker, _to_data, formula_to_data
+from .background import background
 from .errors import VEError
 from .softnorms import SoftEnvironment, SoftNormDocument, check_soft_source
 
@@ -54,7 +55,7 @@ def check_regenerated(soft_document: SoftNormDocument, elaborated):
     """Compare every output of Lean's `soft-elaborate` row with Python's regeneration.
 
     Every generated formula is serialised through the checker's limits; an
-    accepted document is within them (validation table 6.4 and 6.9 to 6.13)."""
+    accepted document is within them (validation table 6.4 and 6.9 to 6.15)."""
     if soft_document.extended_env.to_dict() != elaborated["environment_prime"]:
         raise VEError("soft route regeneration mismatch: extended environment")
     decisions = {item["name"] for item in elaborated["decisions"]}
@@ -92,6 +93,10 @@ def check_regenerated(soft_document: SoftNormDocument, elaborated):
                  if item.get("generator") == "soft"]
     if py_soft != lean_soft:
         raise VEError("soft route regeneration mismatch: soft background")
+    py_background = [(premise.generator, formula_to_data(env, premise.formula, _generated=True))
+                     for premise in background(env)]
+    if py_background != [(item["generator"], item["ast"]) for item in elaborated["background"]]:
+        raise VEError("soft route regeneration mismatch: background")
     if list(soft_document.warnings) != elaborated["warnings"]:
         raise VEError("soft route regeneration mismatch: warnings")
     return elaborated

@@ -362,7 +362,8 @@ A soft document `(E, T)` is well-formed when, in this order:
    `MAX_NODES`: at most 8 carve-outs per rule, each derived carve-out within `MAX_DEPTH` and `MAX_NODES`, and the
    guards and carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived
    carve-out`); each generated soft premise, each generated layer and each conflict target's certified conclusion
-   is within `MAX_DEPTH` and `MAX_NODES` (8, 6.11 to 6.13),
+   is within `MAX_DEPTH` and `MAX_NODES`, and so are `background′` and the layers followed by `⊤`, each typed by one
+   checker (8, 6.11 to 6.15),
    and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
    `DualGuardCycle` hint when the cycle is absent on `T` (5.2).
 
@@ -515,8 +516,10 @@ restate rule <k>'s guard over the facts".
 
 Unfolded size is subject to `MAX_NODES` (10,000 nodes, term nodes included, `ve/limits.py`), which W1 applies to
 the guards and carve-outs of the whole document together (norms.md 11.5); overflow is `ResourceLimit: derived
-carve-out`, never a verdict. The generated premises, layers and targets are bounded one by one (8, 6.11 to 6.13), so a
-document is accepted only if its whole elaboration serialises, conflict targets included (6.13). Sizes are computed before anything is built (8,
+carve-out`, never a verdict. The generated premises, layers and targets are bounded one by one (8, 6.11 to 6.13), and
+`background′` and the layers as the entailment route types them, one checker over each list (6.14, 6.15), so a
+document is accepted only if its whole elaboration serialises, conflict targets included, and the smallest queries on it
+type-check. Sizes are computed before anything is built (8,
 "Accepted means elaborable"): an unfolding can be exponential in the source, since an expansion inlines each lower
 predicate's expanded outcome at every occurrence and `yields` inlines every path of the precedence DAG. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
 not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
@@ -836,13 +839,22 @@ the message, a name, or other input.
 | 6.11 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 | 6.12 | Each generated norm layer `layer:norms:<p>`, in layer order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 | 6.13 | Each conflict target of `T′` (norms.md 5.1: `conflict_p` for each regulated predicate in layer order, then `conflict_(r,m)` for each declared pair in order of `r`), its certified conclusion `∀x̄. ¬conflict` on its own, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.14 | `background′` (definitions, literals, profile pairs, then the soft premises of 6.11), in order, typed by one checker: within `MAX_NODES` together | `SOFT_RESOURCE_LIMIT` |
+| 6.15 | The layers of 6.12, in layer order, then the one-node conclusion `⊤`, typed by one checker: within `MAX_NODES` together | `SOFT_RESOURCE_LIMIT` |
 
-**Accepted means elaborable.** 6.4 and 6.9 to 6.13 check every derived structure
+**Accepted means elaborable.** 6.4 and 6.9 to 6.15 check every derived structure
 of the elaboration (5, 6.1) against the limits of `ve/limits.py` that its
 serialisation meets: `E′` against the vocabulary limits, each derived carve-out,
 generated soft premise, generated layer and conflict target on its own against `MAX_DEPTH` and
-`MAX_NODES` (term nodes included, as `soft-elaborate` serialises each one), and
-`T′` as a whole against W1's document budget. These are checks on the
+`MAX_NODES` (term nodes included, as `soft-elaborate` serialises each one),
+`T′` as a whole against W1's document budget, and the two lists the entailment
+route types with one checker each against one `MAX_NODES` budget: `background′`
+(the Background of `E′`, soft premises included) and the layers followed by the
+conclusion. The smallest conclusion is the one-node `⊤`, so the layers together
+are at most `MAX_NODES - 1` nodes: an accepted document answers
+`prove_norm_entailment(elaborated, (), ⊤)` and a proof attempt for each conflict
+target without a resource error. Longer premises or conclusions of a caller's
+query may still exceed the budget; that is the query's limit, not the document's. These are checks on the
 structures the elaboration builds, run last in the table. Each structure's size
 (nodes, term nodes included, and depth, as the checker counts them) is computed
 from per-rule tables before the structure is built: a rule's `yields` and `eff`
@@ -859,8 +871,8 @@ targets) is compared with Python's regeneration (`check_regenerated`). A conflic
 target is not a layer: it substitutes every lower predicate's expanded outcome
 for its atoms, so a target can exceed the limits although every layer fits. A layer states a rule's guard twice
 (where the rule is selected, and where the predicate is silent), so a guard of
-more than about half of `MAX_NODES` is rejected at 6.12 although it passes 4.2
-and 6.5.
+more than about half of `MAX_NODES` is rejected at 6.12 or 6.15 although it
+passes 4.2 and 6.5.
 
 A standalone environment (the English layer, generated `E′`) runs the same
 table with no norm objects. A single norm unit decoded on its own (a quoted
@@ -888,6 +900,7 @@ one phase, must produce the same code in Python and Lean.
 | `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` or `MAX_DEPTH` on unfolding; more than 16 ranks; more than 8 parties | error |
 | `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
 | `ResourceLimit: generated soft premise <label>` / `ResourceLimit: generated norm layer layer:norms:<p>` / `ResourceLimit: generated conflict target <t>` | a generated premise, layer or conflict target beyond `MAX_DEPTH` or `MAX_NODES` (6.11 to 6.13) | error |
+| `ResourceLimit: generated background` / `ResourceLimit: generated norm layers` | `background′`, or the layers followed by `⊤`, beyond one checker's `MAX_NODES` (6.14, 6.15) | error |
 | `UnsupportedProfile: soft-norms@0 requires norms@0` | profile gate | error |
 | `RankAgainstPrecedence: rule <n> over <m>` | author edge against the ranks (4.1) | warning |
 | `Overlap(<n>, <m>)` | two same-sign rules both selecting (W1) | warning |
