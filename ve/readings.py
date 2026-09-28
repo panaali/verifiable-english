@@ -11,13 +11,13 @@ from .admission import _check_kind, token
 from .ast import formula_from_data
 from .errors import VEError
 from .identity import meaning_id
-from .wire import digest
 
 
 def rights_meaning_id(env, content):
     """Bind one rights candidate to its source environment and exact AST."""
-    return digest(f"ve-meaning-{env.identity_version}\n",
-                  {"environment_id": env.environment_id, "ast": content})
+    from .softnorms import soft_digest
+    return soft_digest(f"ve-meaning-{env.identity_version}\n",
+                       {"environment_id": env.environment_id, "ast": content})
 
 
 def validate_reading_sets(env, values, unit_ids):

@@ -5,7 +5,7 @@ import pytest
 import json
 
 from tests.test_norms import environment, obligation, permission
-from ve.document import check_document, render_document
+from ve.document import check_document, load_document, render_document
 from ve.soft_route import elaborate_soft_document
 from ve.softnorms import SoftEnvironment
 from ve.background import background
@@ -87,6 +87,7 @@ def test_document_check_uses_correlated_soft_route(tmp_path):
     assert result["rights"]["environment_id"]
     assert result["soft"]["soft_document_hash"]
     assert "Claim of right life" in render_document(path)
+    assert load_document(path)["units"][0]["meaning_id"]
 
 
 def test_rule_bar_elaborates_over_right_liberty():
