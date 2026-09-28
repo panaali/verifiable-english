@@ -110,6 +110,7 @@ followability certificate for b′(A) within 50,000 steps (proof search is outsi
 `tests/test_alternatives_three_way.py` checks the a, b, c, d, e, j and o scenario shapes:
 Lean validates each model and reports its clear actions; Python and Rust evaluate
 Lean's closed followability and four profile probes over the same base model.
+The s2 conflict target is also compared three ways.
 
 ## Status, deviations from 7.2 and what is not claimed
 

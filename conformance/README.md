@@ -330,7 +330,8 @@ followability formula plus existential probes for all four profile words.
 Python and Rust then evaluate those Lean-generated formulas against the same
 base model and compare with Lean's scenario report. The Rust route receives a
 plain base environment and never elaborates alternatives or supplies a
-profile-word table.
+profile-word table. The s2 case separately checks Lean's CONFLICT witness
+against independent evaluation of its regenerated conflict target.
 
 `elaborated-document.json` contains the `ve.core@0.2` envelope, two declared
 `$string` literals, a valid model, and three rejected profile combinations.
