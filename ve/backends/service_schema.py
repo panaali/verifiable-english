@@ -420,6 +420,78 @@ class Compiler:
                 _fail(f"is not the ordered leaf list of the request's {pointer}")
         return check
 
+    def count(self, expression, base):
+        """A count (README: Counts) as `ctx -> int | None`; `None` if the context lacks
+        the counted value."""
+        if type(expression) is int:
+            return lambda ctx: expression
+        if not isinstance(expression, dict):
+            raise SchemaError(f"not a count: {expression!r}")
+        keys = set(expression) - {"$comment"}
+        if keys == {"$ref"}:
+            name, _, pointer = expression["$ref"].partition("#")
+            name = name or base
+            target = _resolve(self.documents.get(name, {}), pointer)
+            if target is _MISSING:
+                raise SchemaError(f"unresolved count {expression['$ref']} in {base}")
+            return self.count(target, name)
+        if keys == {"count", "where"}:
+            pointer, where = expression["count"], self.compile(expression["where"], base)
+
+            def members(ctx):
+                value = _resolve(ctx.value, pointer)
+                if not isinstance(value, (list, dict)):
+                    return None
+                return sum(_valid(where, x, ctx, {}) for x in (value.values() if isinstance(value, dict) else value))
+            return members
+        if keys == {"pairs"}:
+            inner = self.count(expression["pairs"], base)
+
+            def pairs(ctx):
+                n = inner(ctx)
+                return None if n is None else n * (n - 1) // 2
+            return pairs
+        if keys == {"sum"}:
+            parts = [self.count(c, base) for c in expression["sum"]]
+
+            def total(ctx):
+                values = [part(ctx) for part in parts]
+                return None if None in values else sum(values)
+            return total
+        raise SchemaError(f"not a count: {expression!r}")
+
+    def _x_cardinality(self, expression, schema, base):
+        count = self.count(expression, base)
+
+        def check(value, ctx, fuel):
+            n = count(ctx)
+            size = len(value) if isinstance(value, list) else value if _kind(value) == "integer" else None
+            if n is None or size != n:
+                _fail(f"is not the request's count {n}")
+        return check
+
+    def _x_runs(self, rule, schema, base):
+        key = rule["key"]
+        runs = [(v, self.count(c, base)) for v, c in rule["runs"]]
+
+        def check(value, ctx, fuel):
+            if not isinstance(value, list):
+                _fail("expected an array")
+            expected = []
+            for v, count in runs:
+                n = count(ctx)
+                if n is None:
+                    _fail("the request has no count here")
+                expected.append((v, n))
+            if len(value) != sum(n for _, n in expected):
+                _fail(f"length is not the request's count {sum(n for _, n in expected)}")
+            elements = iter(value)
+            for v, n in expected:
+                for _ in range(n):
+                    if not same_json(_resolve(next(elements), key), v):
+                        _fail(f"not {n} of {v!r} in order")
+        return check
+
     def _x_zip(self, rule, schema, base):
         pointer, sub = rule["of"], self.compile(rule["items"], base)
 
@@ -511,7 +583,7 @@ _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", 
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
           "x-count", "x-index", "x-member", "x-dependency-order", "x-unfolds", "x-zip", "x-case", "x-select", "x-same",
-          "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows")
+          "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows", "x-cardinality", "x-runs")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
 
