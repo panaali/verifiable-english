@@ -9,6 +9,7 @@ from ve.document import check_document, load_document, render_document
 from ve.soft_route import elaborate_soft_document
 from ve.softnorms import SoftEnvironment
 from ve.background import background
+from ve.model import FiniteModel
 from ve.surface.rights import parse_line, render_line
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
@@ -65,6 +66,12 @@ def test_claim_is_one_soft_rule_and_limitation_is_one_pack():
     assert [label for label, _ in doc.limitation_premises] == [
         "rights:limitation:l29:protect_permitted:necessary:law"]
     assert sum(p.generator == "rights" for p in background(doc.soft_document.extended_env)) == 1
+    extended = doc.soft_document.extended_env
+    model = {"complete": True, "domains": {"state": ["s"], "person": ["p"]},
+             "constants": {}, "relations": {name: [] for name in extended.predicates}}
+    model["relations"]["rights__lim__1"] = [["s", "p"]]
+    with pytest.raises(VEError, match="rights premise"):
+        FiniteModel.from_dict(extended, model)
 
 
 def test_right_requires_incident_and_claim_shape():
