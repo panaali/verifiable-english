@@ -309,7 +309,9 @@ def decodeCommand (E : VE.Environment) (u : String) (j : Json) : Except String C
 /-- Question content (3.2): `mode`, and per mode `body`, `sort`/`domain`, `query` or `set`/`version`. -/
 def decodeQuestion (u : String) (j : Json) : Except String Question := do
   let bad := s!"InvalidInput: invalid question fields for {u}"
-  let mode ← decodeMode (j.getObjValD "mode")
+  let mode ← match decodeMode (j.getObjValD "mode") with
+    | .ok mode => pure mode
+    | .error _ => throw bad
   let (required, optional) : List String × List String := match mode with
     | .polar => (["mode", "body"], [])
     | .whichAll | .whichOne => (["mode", "sort", "domain", "body"], [])
@@ -387,9 +389,9 @@ structure SpeechUnitInfo where
 def contentTag (content : Json) : Option String :=
   match content with
   | .obj _ =>
-    if (content.getObjVal? "command").isOk then some "command"
+    if (content.getObjVal? "binding").isOk then some "binding"
+    else if (content.getObjVal? "command").isOk then some "command"
     else if (content.getObjVal? "question").isOk then some "question"
-    else if (content.getObjVal? "binding").isOk then some "binding"
     else if (content.getObjVal? "norm").isOk then some "norm"
     else if (content.getObjVal? "ast").isOk then some "ast"
     else none
@@ -444,7 +446,16 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
         else throw "InvalidInput: norm content requires norm kind"
       | tag =>
         -- A formula: the P0 route's bare AST, or W2's `{"ast": ...}`.
-        let φ ← decodeClosedField E (if tag == some "ast" then content.getObjValD "ast" else content)
+        let formula ← match content with
+          | .obj _ =>
+            if tag == some "ast" && (fields content).toOption.map (·.map (·.1)) == some ["ast"] then
+              pure (content.getObjValD "ast")
+            else throw (if kind == .asserted then "InvalidInput: asserted content"
+                        else "InvalidInput: misplaced speech content")
+          | .arr _ => pure content
+          | _ => throw (if kind == .asserted then "InvalidInput: asserted content"
+                        else "InvalidInput: misplaced speech content")
+        let φ ← decodeClosedField E formula
         pure (if kind == .asserted then Role.asserted φ else Role.other)
   pure ⟨id, start, stop, VE.Route.Admission.renderKind kind, meaning, role, false⟩
 
@@ -495,8 +506,10 @@ def readingStates (document : Json) : Except String (List (String × Nat × Read
     let items ← match rs.getArr? with
       | .ok xs => pure xs.toList
       | .error _ => throw readingSetsError
-    let states ← items.mapM fun r => do
-      match r.getObjVal? "unit", (r.getObjValD "version").getNat?, r.getObjVal? "status" with
+    let mut states := []
+    let mut keys : List (String × Nat) := []
+    for r in items do
+      let state ← match r.getObjVal? "unit", (r.getObjValD "version").getNat?, r.getObjVal? "status" with
       | .ok (.str _), .ok 0, .ok (.str "open") | .ok (.str _), .ok 0, .ok (.str "authored") =>
         throw "invalid or duplicate reading set version"
       | .ok (.str u), .ok v, .ok (.str "open") =>
@@ -513,9 +526,11 @@ def readingStates (document : Json) : Except String (List (String × Nat × Read
           pure (u, v, ReadingState.authored (c.getObjValD "kind") content)
         | _ => throw "authored reading needs one signed choice"
       | _, _, _ => throw readingSetsError
-    let keys := states.map (fun (u, v, _) => (u, v))
-    unless keys.eraseDups.length == keys.length do throw "invalid or duplicate reading set version"
-    pure states
+      let key := (state.1, state.2.1)
+      if keys.contains key then throw "invalid or duplicate reading set version"
+      keys := key :: keys
+      states := state :: states
+    pure states.reverse
 
 /-- 1.2 and 1.5: the latest version of a unit's reading set decides (W2's `active_reading_sets`); earlier
 versions are history. -/
