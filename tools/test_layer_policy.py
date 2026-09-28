@@ -75,6 +75,10 @@ class LayerSelectionTests(unittest.TestCase):
     def test_both_lean_executables_are_tool_consumers(self):
         self.assertIn("tests/test_norms_three_way.py",
                       select(["lean/VE/Norms/Run.lean"])["selected"])
+        real_exists = Path.exists
+        with patch.object(Path, "exists", lambda path: False if path.name == "ve_norms_route"
+                          else real_exists(path)):
+            self.assertTrue(select(["ve/search.py"])["lean_build"])
 
     def test_python_app_package_outward_import_is_detected(self):
         class Graph:
