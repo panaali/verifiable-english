@@ -179,7 +179,11 @@ a unit's reading set decides, for every unit kind: an `open` latest version make
 dormant, its norm contributes no rule and its assertion no premise; an `authored` latest version is the author's
 signed singleton choice, whose kind and content are the unit's (a specified meaning), so an authored assertion is a
 fixed premise and an authored command or norm is active when its kind is; earlier versions are history and change
-nothing. An asserted unit without content and without a reading set is rejected, as W2 rejects it.
+nothing. Only a **signed** version is a choice, in every checker and not only in the source loader: an `authored`
+version whose `signature` is not a W2 token (`authored reading needs one signed choice`), an `open` one carrying a
+signature, a version below 1 and a set whose unit is not a unit of the document are rejected, as W2's
+`validate_reading_sets` rejects them, and never supply a premise. An asserted unit without content and without a
+reading set is rejected, as W2 rejects it.
 `combine` (4.8) carries every document's reading sets and query records with its units. No embedded proposition of a command or question is a premise
 through its occurrence there (4.7). `policy(D)` itself excludes every pending command: a command inside an open reading
 set is dormant (1.2) and contributes no rule to `policy(D)` under any choice. It is W2's readings query (`ve document
@@ -1570,6 +1574,7 @@ statements of section 8 are unchanged.
 | B, vacuity: Python's `supported` and `follows` lines had no premise status, so contradictory premises certified both answers silently; Lean's `follows` line had none either | 5.3: every certificate line, `follows` included, carries the status of its exact list and `vacuous: no | yes | unknown` (the follows grammar gains the vacuity it derives). Python searches for the status within its budget (a checked model, a replayed inconsistency certificate, or UNKNOWN); Lean replays supplied `premise_status` evidence. |
 | B, coverage: malformed candidates counted as R, unelaborated ones were never U, authored and historical versions inflated `unresolved_sets`, and the status table was derived from the classes | 6: candidates are decoded (malformed rejected, `null` unelaborated); the latest version decides class and residual; W2's statuses are inferred independently and the mapping is checked per unit; a stated W2 `status` must match W2's inference. The `ve-document@2` id encodes W2's payload in W2's own JSON encoding, which admits a `null` candidate (3.5). |
 | B, opaque wording: "Is atlas reviewed and not reviewed?" matched a declared one-place gloss and was answered "yes" as one atom | 2.1, 6, 7: a copular gloss must name one property; a matching gloss holding a connective, negation or quantifier word, a declared constant or a bound definite phrase is `OpaqueWording`, in questions, which bodies and query targets. |
+| A, unsigned choices: an authored reading set without its `signature` supplied a premise in both cores, though the source loader rejects it | 1.5: only a signed version is a choice in every checker; unsigned authored versions, signed open ones, versions below 1 and sets for no unit of the document are rejected with W2's texts. |
 
 ## Change log
 
