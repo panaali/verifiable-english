@@ -216,6 +216,14 @@ def soft2_reproducers():
         "SOFT_INVALID_INPUT"
 
 
+def _doubled(times, leaf=("top",)):
+    """A balanced `and` tree of 2 ** (times + 1) - 1 nodes, depth times + 1."""
+    tree = list(leaf)
+    for _ in range(times):
+        tree = ["and", tree, tree]
+    return tree
+
+
 def _regulated(raw, name, **fields):
     reg = raw["vocabulary"]["predicates"][name]["regulated"]
     for key, value in fields.items():
@@ -258,6 +266,98 @@ def soft3_reproducers():
             raw = declare(env())
             yield f"soft3-{fault}-before-{after}", raw, rules(raw), "SOFT_INVALID_INPUT"
 
+    # Python's node budgets, at each position the table gives them: the decoder's
+    # per formula (4.2, 4.13), the checker's per rule over its guard, carve-outs
+    # and exception conditions (5.7, 5.8), the W1 checker's over the whole of T
+    # (6.4) and of T' (6.9), and each generated premise's (6.10).
+    big = _doubled(13)  # 16,383 nodes
+    yield "soft3-guard-nodes-before-rank", env(), [
+        norm("a", "x_required", True, guard=big, rank="missing")], "SOFT_INVALID_INPUT"
+    yield "soft3-guard-nodes", env(), [norm("a", "x_required", True, guard=big)], "SOFT_INVALID_INPUT"
+    yield "soft3-carve-out-nodes-before-rank", env(), [
+        norm("a", "x_required", True, unless=[big], rank="missing")], "SOFT_INVALID_INPUT"
+    yield "soft3-guard-nodes-before-next-rule", env(), [
+        norm("a", "x_required", True, guard=big),
+        norm("b", "x_required", True, extra=1)], "SOFT_INVALID_INPUT"
+    for kind in ("sufficient", "necessary"):
+        yield f"soft3-{kind}-nodes-before-rank", env(), [
+            norm("a", "x_required", True, mode="default", exception=_exception(kind, big),
+                 rank="missing")], "SOFT_INVALID_INPUT"
+    # Term nodes count: 4,096 atoms under 4,095 conjunctions is 12,287 nodes.
+    atoms = _doubled(12, ("unary", "x_permitted", ["var", 0]))
+    yield "soft3-term-nodes-before-rank", env(), [
+        norm("a", "x_required", True, guard=atoms, rank="missing")], "SOFT_INVALID_INPUT"
+    half = _doubled(11)  # 4,095 nodes
+    yield "soft3-rule-nodes-guard-and-carve-outs", env(), [
+        norm("a", "x_required", True, guard=["and", half, half], unless=[half, half])], \
+        "SOFT_INVALID_INPUT"
+    condition = _doubled(11, ("unary", "x_permitted", ["var", 0]))  # 6,143 nodes
+    yield "soft3-rule-nodes-before-exception-condition", env(), [
+        should("a", "x_required", True, guard=half, exception=_exception("sufficient", condition))], \
+        "SOFT_INVALID_INPUT"
+    yield "soft3-rule-nodes-before-next-rule-condition", env(), [
+        should("a", "x_required", True, guard=half, exception=_exception("sufficient", condition)),
+        should("b", "x_required", True, exception=_exception("sufficient", ["unary", "x_permitted", ["var", 0]]))], \
+        "SOFT_INVALID_INPUT"
+    yield "soft3-rule-nodes-guard-and-condition", env(), [
+        should("a", "x_required", True, exception=_exception("sufficient", _exact(10000)))], \
+        "SOFT_INVALID_INPUT"
+    three = [norm(f"r{i}", "x_required", True, guard=half) for i in range(3)]
+    yield "soft3-document-nodes", env(), three, "SOFT_RESOURCE_LIMIT"
+    cycle = deepcopy(three)
+    cycle[0]["norm"]["over"], cycle[2]["norm"]["over"] = ["r2"], ["r0"]
+    yield "soft3-document-nodes-before-precedence-cycle", env(), cycle, "SOFT_RESOURCE_LIMIT"
+    over_hard = deepcopy(three)
+    over_hard[2] = should("r2", "x_required", True, guard=half, over=["r0"])
+    yield "soft3-document-nodes-before-soft-over-hard", env(), over_hard, "SOFT_RESOURCE_LIMIT"
+    for n in (9990, 10000):
+        yield f"soft3-derived-nodes-{n}", env(), [should("a", "x_required", True, guard=_exact(n))], \
+            "SOFT_RESOURCE_LIMIT"
+    yield "soft3-premise-nodes", env(), [
+        should("a", "x_required", True, exception=_exception("sufficient", _exact(9998)))], \
+        "SOFT_RESOURCE_LIMIT"
+    for depth in (63, 64):
+        yield f"soft3-premise-depth-{depth}", env(), [
+            should("a", "x_required", True, exception=_exception("sufficient", _nested(depth)))], \
+            "SOFT_RESOURCE_LIMIT"
+
+
+def _exception(kind, formula):
+    return {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": [], kind: [formula]}
+
+
+def _exact(n):
+    """A formula of exactly n nodes and logarithmic depth."""
+    if n == 1:
+        return ["top"]
+    if n == 2:
+        return ["not", ["top"]]
+    left = (n - 1) // 2
+    return ["and", _exact(left), _exact(n - 1 - left)]
+
+
+def _nested(depth):
+    formula = ["top"]
+    for _ in range(depth - 1):
+        formula = ["not", formula]
+    return formula
+
+
+def soft3_accepted():
+    """Sources at each node budget that both validators accept."""
+    half = _doubled(11)
+    return [
+        ("guard-8191", env(), [norm("a", "x_required", True, guard=["and", half, half])]),
+        ("strict-guard-10000", env(), [norm("a", "x_required", True, guard=_exact(10000))]),
+        ("default-guard-9980", env(), [should("a", "x_required", True, guard=_exact(9980))]),
+        ("premise-nodes-9996", env(), [
+            should("a", "x_required", True, exception=_exception("sufficient", _exact(9996)))]),
+        ("premise-depth-62", env(), [
+            should("a", "x_required", True, exception=_exception("sufficient", _nested(62)))]),
+        ("document-nodes-9999", env(), [norm("r0", "x_required", True, guard=_exact(4999)),
+                                        norm("r1", "x_required", True, guard=_exact(5000))]),
+    ]
+
 
 # The multi-fault generator. A valid base source, then faults each tagged with its
 # position in the validation table (8) and its code. Faults in one group touch the
@@ -297,6 +397,13 @@ _DELETE = object()
 def _profiles(update):
     def apply(raw, rules):
         raw["profiles"] = update(raw["profiles"])
+    return apply
+
+
+def _carve_outs(indices, formula):
+    def apply(raw, rules):
+        for i in indices:
+            rules[i]["norm"]["unless"] = [deepcopy(formula)]
     return apply
 
 
@@ -353,6 +460,8 @@ def multi_faults():
         *[fault for i in range(4) for fault in (
             (f"r{i}-field", f"r{i}-extra", (4, i, 1), "SOFT_INVALID_INPUT", _set(rule(i, "extra"), 1)),
             (f"r{i}-sign", f"r{i}-sign", (4, i, 2), "SOFT_INVALID_INPUT", _set(rule(i, "sign"), "yes")),
+            (f"r{i}-guard-nodes", f"r{i}-guard", (4, i, 2), "SOFT_INVALID_INPUT",
+             _set(rule(i, "guard"), _doubled(13))),
             (f"r{i}-mode", f"r{i}-mode", (4, i, 3), "SOFT_INVALID_RULE_FIELDS", _set(rule(i, "mode"), "x")),
             (f"r{i}-rank-type", f"r{i}-rank", (4, i, 4), "SOFT_INVALID_RULE_FIELDS",
              _set(rule(i, "rank"), 7)),
@@ -404,8 +513,12 @@ def multi_faults():
          _set(S + ("ties",), [["b", "c"], ["a", "b"]])),
         ("tie-repeat", "ties", (6, 3), "SOFT_DUPLICATE_DECLARATION",
          _set(S + ("ties",), [["b", "c"], ["c", "b"]])),
-        ("precedence-cycle", "r0-over", (6, 4), "SOFT_DEPENDENCY_CYCLE", _set(rule(0, "over"), ["c2"])),
+        ("document-nodes", "unless", (6, 4, 0), "SOFT_RESOURCE_LIMIT", _carve_outs(range(3), _doubled(11))),
+        ("precedence-cycle", "r0-over", (6, 4, 1), "SOFT_DEPENDENCY_CYCLE", _set(rule(0, "over"), ["c2"])),
         ("soft-over-hard", "r3-over", (6, 7), "SOFT_OVER_HARD", _set(rule(3, "over"), ["b1"])),
+        ("derived-nodes", "r3-guard", (6, 9), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(9990))),
+        ("premise-depth", "r0-sufficient", (6, 10), "SOFT_RESOURCE_LIMIT",
+         _set(rule(0, "exception", "sufficient"), [_nested(63)])),
     ]
 
 
@@ -574,6 +687,20 @@ def expected_rejections():
             *multi_fault_cases()]
 
 
+def _batches(cases, limit=8 << 20):
+    """JSON arrays of consecutive cases, each within the executable's input limit."""
+    batch, size = [], 2
+    for case in cases:
+        encoded = json.dumps(case)
+        if batch and size + len(encoded) + 1 > limit:
+            yield "[" + ",".join(batch) + "]"
+            batch, size = [], 2
+        batch.append(encoded)
+        size += len(encoded) + 1
+    if batch:
+        yield "[" + ",".join(batch) + "]"
+
+
 def compare_rejected():
     named = expected_rejections()
     cases = (rejected_sources() +
@@ -592,9 +719,11 @@ def compare_rejected():
             raise AssertionError("Python unexpectedly accepted a rejected soft source")
     wire = [{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": rules}
             for i, (raw, rules) in enumerate(cases)]
-    run = subprocess.run([str(LEAN), "-"], input=json.dumps(wire), text=True,
-                         capture_output=True, timeout=300, check=False)
-    rows = json.loads(run.stdout)
+    rows = []
+    for batch in _batches(wire):
+        run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
+                             capture_output=True, timeout=300, check=False)
+        rows += json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong rejected row count")
     for i, (row, (error, code)) in enumerate(zip(rows, expected)):

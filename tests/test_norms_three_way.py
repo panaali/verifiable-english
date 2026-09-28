@@ -116,6 +116,14 @@ def _unit(name, guard=("top",), unless=(), sign=True):
                      "unless": [list(u) for u in unless], "over": []}}
 
 
+def _tree(times):
+    """A balanced `and` tree of 2 ** (times + 1) - 1 nodes."""
+    tree = ["top"]
+    for _ in range(times):
+        tree = ["and", tree, tree]
+    return tree
+
+
 @pytest.mark.parametrize("label,edit", [
     ("missing", lambda preds: preds["required"]["regulated"].update(permission="missing")),
     ("undeclared", lambda preds: preds["required"]["regulated"].pop("permission")),
@@ -132,6 +140,27 @@ def test_permission_duals_are_declaration_checks_across_languages(lean_executabl
                                  "norms": units}])[0]
     assert row["status"] == "error"
     assert row["error"] == str(python_error.value)
+
+
+@pytest.mark.parametrize("label,units,accepted", [
+    # Python's decoder: one budget per norm unit, guard then carve-outs.
+    ("guard", [_unit("a", _tree(13))], False),
+    ("guard-and-carve-out", [_unit("a", _tree(12), [_tree(11)])], False),
+    # Python's checker: one budget over every rule of the document.
+    ("document", [_unit(f"r{i}", _tree(11)) for i in range(3)], False),
+    ("within", [_unit("a", _tree(12), [_tree(9)]), _unit("b", _tree(8), sign=False)], True),
+])
+def test_node_budgets_match_python(lean_executable, label, units, accepted):
+    env = environment({"permitted": permission()})
+    row = run(lean_executable, [{"id": label, "kind": "norms-elaborate",
+                                 "environment": env.to_dict(), "norms": units}])[0]
+    if accepted:
+        NormDocument(env, units)
+        assert row["status"] == "ok", row
+    else:
+        with pytest.raises(VEError, match="AST exceeds"):
+            NormDocument(env, units)
+        assert row["status"] == "error" and "AST exceeds" in row["error"], row
 
 
 # Every separator of Python's no-argument `str.split()` (str.isspace).

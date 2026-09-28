@@ -325,9 +325,12 @@ def check (D : Doc) : Except String Unit := do
     unless d.args.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {d.name}"
     typeDiagnostic D.E d.args.reverse d.body
     unless d.body.check D.E d.args.reverse do throw s!"InvalidInput: ill-typed definition {d.name}"
-  -- Rules (4.1(1)-(3)), one at a time as Python checks them.
+  -- Rules (4.1(1)-(3)), one at a time as Python checks them. Python types every
+  -- rule with one `_Checker`, so the guards and carve-outs of the whole document
+  -- share one `MAX_NODES` budget (term nodes count).
   if T.nodes.length > 256 then throw "ResourceLimit: rules"
   let mut names : List String := []
+  let mut nodes := 0
   for N in T.nodes do
     unless ruleName N.name do throw s!"InvalidInput: invalid rule name {pyRepr N.name}"
     if names.contains N.name then throw s!"DuplicateDeclaration: rule {N.name}"
@@ -339,6 +342,8 @@ def check (D : Doc) : Except String Unit := do
       for φ in N.guard :: N.carveOuts do
         typeDiagnostic D.E r.sorts.reverse φ
         unless φ.check D.E r.sorts.reverse do throw s!"InvalidInput: ill-typed rule {N.name}"
+        nodes := nodes + VE.Bridge.formulaNodes φ
+        if nodes > 10000 then throw "ResourceLimit: AST exceeds 10,000 nodes"
   for N in T.nodes do
     for m in N.over do
       match T.nodes.find? (·.name == m) with
