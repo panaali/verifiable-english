@@ -1,16 +1,19 @@
 # Speech acts (`speech-acts@0`): commands and questions over `norms@0` and `ve-document@2`
 
-> Status: item-1 specification, draft 2 (2026-09-28), written from [speech-acts-PLAN.md](speech-acts-PLAN.md) draft 3, the
+> Status: item-1 specification, draft 3 (2026-09-28), written from [speech-acts-PLAN.md](speech-acts-PLAN.md) draft 4, the
 > plan as revised by the converged Astra/Fable design debate (`manage-agents/debates/design-speech-acts/{astra,fable}.md`,
-> CONVERGED after round 2, verdict BUILD with exact edits; the plan's section 5 maps each edit). Draft 2 applies, as
+> CONVERGED after round 2, verdict BUILD with exact edits; the plan's section 5 maps each edit). Draft 2 applied, as
 > written, the combined edit list of the converged Astra + Fable item-1 statement review
 > (`manage-agents/debates/speech-acts-spec/{astra,fable}.md`, CONVERGED after round 2, verdict FIX: Astra's nine
-> findings in the forms agreed at round 2 plus Fable's unopposed edits 4 to 7); section 13 maps each edit. The review
-> gates items 2, 3 and 4 (PLAN-EXPAND2 rule 10) and any implementation: one bounded edit-verification pass by both
-> reviewers (each checks the listed edits are applied as written; new findings are admissible only where an edit
-> introduces a defect), then items 2 to 4 start. Sections 4 to 6 and 8 are the statements; section 12 lists every point
-> where this draft chose between readings of the plan. Theorem statements and fixtures are implementation obligations,
-> not claims of completed proofs or tests.
+> findings in the forms agreed at round 2 plus Fable's unopposed edits 4 to 7); section 13 maps each edit. The
+> edit-verification pass on draft 2 (`manage-agents/speech-acts-p3ver1.final.md`) found two edits incomplete, Astra 3
+> (the decoded-source wrapper dropped W2's identity payload and the structure of reading candidates and narrowings) and
+> Astra 8 (the `intended-reading` open term was not expressible in W2's frozen open-term schema); draft 3 completes
+> exactly those two edits and changes nothing else (section 14). The review gates items 2, 3 and 4 (PLAN-EXPAND2
+> rule 10) and any implementation: one bounded edit-verification pass by both reviewers (each checks the listed edits
+> are applied as written; new findings are admissible only where an edit introduces a defect), then items 2 to 4 start.
+> Sections 4 to 6 and 8 are the statements; section 12 lists every point where this draft chose between readings of
+> the plan. Theorem statements and fixtures are implementation obligations, not claims of completed proofs or tests.
 > Inputs: [norms.md](norms.md) (W1, cited `norms.md n`), [document.md](document.md) (W2), the W3
 > [definitions statements](../../lean/VE/Definitions/STATEMENTS.md), [debate-protocol.md](debate-protocol.md) (the
 > judgments `follows`, `gap`, `unresolved`), [VISION.md](../../VISION.md), `lean/VE/Norms/*` and
@@ -37,7 +40,7 @@ a command with an unbound slot is a repair case; documents with different scopes
 In this specification: the scope, commands, questions and queries (1), the English (2), the wire form and identity (3),
 the semantics (4), the report (5), the coverage projection (6), diagnostics (7), the Lean definitions and every item-2
 theorem as a statement (8), the item-1 acceptance fixtures (9), limits (10), the review checklist (11), the resolved
-choices (12) and the statement-review response table (13).
+choices (12), the statement-review response table (13) and the edit-verification response table (14).
 
 Out of scope, by the plan: temporal, causal, epistemic or execution logic in any action name; deadlines, fulfilment over
 time, ability and authority; requests, advice, invitations and permission-granting utterances as commands; open-domain
@@ -120,8 +123,9 @@ tokens(q)    := polar: {yes, no}; which_one: the domain; which_all: every subset
 H(q)         := the presupposition, one closed formula:
                 polar, which_all, follows:  ⊤
                 which_one over {a₁..aₙ}:    (⋁ᵢ P(aᵢ)) ∧ ⋀_{i<j} ¬(P(aᵢ) ∧ P(aⱼ))        exactly one alternative
-                reading:                     no formula; the W2 open term `intended-reading:<set>@<version>` (4.6):
-                                             "exactly one intended reading", decided by the addressee
+                reading:                     no formula; the W2 open term named `intended-reading.<u>` and displayed
+                                             `intended-reading:<set>@<version>` (4.6): "exactly one intended reading",
+                                             decided by the addressee
 F(q, a)      := the correctness formula of a token, closed:
                 polar:      F(yes) = P,  F(no) = ¬P
                 which_one:  F(a) = P(a)
@@ -293,19 +297,26 @@ uses proof tasks.
 {"id": "u9", "span": [200, 258], "kind": "question", "meaning": "specified", "support": "none",
  "content": {"question": {"mode": "follows", "query": "q1"}}}
 
+{"id": "u6", "span": [300, 327], "kind": "question", "meaning": {"open": ["intended-reading.u6"]}, "support": "none",
+ "content": {"question": {"mode": "reading", "set": "rs1", "version": 2}}}   // the open term is declared in 4.6
+
 {"id": "u0", "span": [0, 27], "kind": "binding", "meaning": "specified", "support": "none",
  "content": {"binding": {"you": "Alice"}}}          // or {"phrase": "the token", "constant": "Token1"} or {"task": "tutorial-3"}
 ```
 
 Front matter additions: `"queries": [{"id": "q1", "premises": ["u3", "u4"], "target": {"ast": [...]}}]` (derived,
-regenerated: `QueryMismatch`), `"answers"` and `"compliance"` (3.3). Command content: `force` ∈ `{require, forbid}`
+regenerated: `QueryMismatch`), `"answers"` and `"compliance"` (3.3); W2's own `open_terms` list carries every
+`intended-reading.<u>` declaration (4.6). Command content: `force` ∈ `{require, forbid}`
 (`InvalidInput: force` otherwise; permission-granting is not a force); `act` names the realising predicate, whose role
 must match the force (`MissingObligationRole` / `MissingPermissionRole`, naming the act phrase); `args` are constants of
 the predicate's later sorts, one per slot (`TypeMismatch`); `guard` is a closed formula in the P0 wire form (`["top"]`
 when absent). Question content: `mode` is derived content and must equal the mode the wording determines (`ModeMismatch:
 <unit>`); `domain` lists 2 to 16 distinct declared constants of `sort` (`UnknownAlternative`, `DuplicateAlternative`,
 `AlternativeSort`); `body` is over the context `[sort]` for which modes and closed for polar; `query` names a query for
-`follows`; `reading` mode carries `{"set": id, "version": n}`. Binding content is exactly one legend entry. Norm content
+`follows`; `reading` mode carries `{"set": id, "version": n}`, and a reading question's `meaning` is not `specified`
+but `{"open": ["intended-reading.<u>"]}`, naming the derived open-term declaration of 4.6 in the front matter's W2
+`open_terms` list (`InvalidInput: invalid question fields for <u>` when the meaning or the declaration differs from
+the regenerated form). Binding content is exactly one legend entry. Norm content
 under a non-norm kind, command content under a non-instruction kind and question content under a non-question kind are
 rejected, never discarded, as W1 rejects misplaced norm content; a quoted kind wrapping `instruction` keeps its command
 content dormant and every single-unit check still applies (as W1's `checkQuoted`).
@@ -374,7 +385,9 @@ its premise set, while keeping the name `q1` changes the command's meaning id an
 (fixture ζ). A question's `meaning_id` is likewise over the question object including the derived mode, sort, domain,
 body, query (with its premise meaning ids and target meaning id) and reading-set id and version; a binding's is over
 the binding object. The report identity is P0's
-`{"environment_id", "document", "report"}` over the complete validated source document; every certificate in an answer,
+`{"environment_id", "document", "report"}` over the complete validated source document, `document` being the document
+id above, recomputed from the identity payload that the decoded-source wrapper retains verbatim (`SpeechSource.metadata`,
+`source`, `fences`, 8.5); every certificate in an answer,
 compliance or consequence record is bound to the recomputed environment id, the regenerated premise list (1.5 or the
 query's, 4.6) and the exact conclusion (`H(q) ∧ F(a)`, `F(a)` with `H(q)` as a premise, or the target); a replay against
 a document whose scope block, regulated declaration, query premise set, active command set or asserted premise set
@@ -395,7 +408,8 @@ A speech-act document `D` over `E` is well-formed when, in this order:
    authoring and is `unformalised(unbound-slot)` in translation, never active.
 4. Every question's derived mode equals its stored mode; domains, sorts and bodies type-check; every `follows` question
    names a query whose premise ids are asserted units earlier in the document and whose target is closed and typed;
-   every `reading` question names an existing set and version.
+   every `reading` question names an existing set and version, has the meaning `{"open": ["intended-reading.<u>"]}`
+   and the front matter declares that open term exactly as 4.6 derives it (both are derived content, 3.2).
 5. `policy(D)` is W1 well-formed (norms.md 4.1) over `E`: the author norm units and the command rules together pass
    `Norms.WellFormed`, including both DAGs; a rule naming a command in `over` is `UnknownRule: rule cmd-<u>` (commands
    take no precedence and are taken precedence over by nothing at `@0`, 12.4); at most 256 rules in total.
@@ -501,15 +515,37 @@ model of every pinned premise may interpret it as false, and a usable `done` lea
 (8.4). The checker generates no `done` fact of any kind; acceptance establishes nothing about the submitter.
 
 A **reading question** binds `(set, version)`. A nomination of candidate `i` by agent `g` is testimony: it records a
-W2 narrowing (document.md: cites the set and version, keeps the readings, cites the question and the nomination unit as
-its reason, never modifies the set), so later checks can depend on the chosen reading under the label
-`readings:<set>@<version>:<i>` with the narrowing's provenance visible; it is never proof of intent or of fidelity. No
-nomination, two nominations, or a nomination outside the set leaves the status `CLARIFICATION-OPEN` and records nothing.
-The presupposition "exactly one intended reading" is expressly non-formal (the set is not a domain of constants), so it
-is not a formula and cannot be a formalised presupposition; it is a **W2 open term** (document.md) named
-`intended-reading:<set>@<version>`, with `arguments` the set id and version, `decided_by` the addressee, `sufficient`
-exactly one in-set nomination by the addressee at that version, `necessary` at least one, and `version` the set's; it
-is counted in the residual as an open term, and the reading question's class is O (6).
+W2 narrowing (document.md, `ve/readings.py`: `set` and `version` the bound pair, `keeps` the one reading id of
+candidate `i`, `by` the agent, `reason_spans` the question unit and the nomination unit; it never modifies the set), so
+later checks can depend on the chosen reading under the label `readings:<set>@<version>:<i>` with the narrowing's
+provenance visible; it is never proof of intent or of fidelity. No nomination, two nominations, or a nomination outside
+the set leaves the status `CLARIFICATION-OPEN` and records nothing. The presupposition "exactly one intended reading"
+is expressly non-formal (the set is not a domain of constants), so it is not a formula and cannot be a formalised
+presupposition; it is a **W2 open term** (document.md) in W2's frozen schema (`ve/openterms.py`: the complete record,
+token-valid names and arguments, closed-formula condition lists). Its `name` is the W2 token `intended-reading.<u>`,
+`<u>` the reading question's unit id (W2 tokens are `[A-Za-z0-9_.-]` of at most 64 bytes, so `:` and `@` cannot occur
+in a name, and a reading question whose unit id exceeds 47 bytes is `ResourceLimit: open-term name`); everywhere in
+the report and the residual it is displayed under the label `intended-reading:<set>@<version>`, rendered from its
+`arguments` and `version`. The declaration is derived content (3.2), regenerated from the question and compared, one
+per reading question:
+
+```json
+{"name": "intended-reading.u6", "arguments": ["rs1"], "version": 2,
+ "decided_by": "Alice", "jurisdiction": "t1",
+ "necessary": [], "sufficient": [], "precedents": [],
+ "factors": ["necessary: at least one nomination of a candidate of rs1 at version 2 by Alice",
+             "sufficient: exactly one nomination of a candidate of rs1 at version 2 by Alice"]}
+```
+
+`arguments` is the bound set id (a W2 token); `version` is the bound version (W2 requires an integer of at least 1 of
+an open term and of a reading set alike); `decided_by` is the addressee's constant name (mandatory here, since the
+wording mentions "you": 1.1) and `jurisdiction` the scope's task token. `necessary` and `sufficient` are W2's
+closed-formula lists and are **empty**: no closed formula over `E` expresses a nomination, because the candidates are
+readings and not constants of a sort, which is exactly what "expressly non-formal" means; the nomination criteria are
+therefore carried as `factors` text and enforced by the route's nomination-record rules (3.3), never by a formula, and
+`precedents` is empty. The reading question's `meaning` names the term, `{"open": ["intended-reading.<u>"]}` (3.2), so
+under W2's own status inference the unit is OPEN, the term is counted in the residual under W2's open-term count, and
+the reading question's class is O (6).
 
 ### 4.7 Exact consequence correspondence and dormant-request invariance
 
@@ -612,7 +648,8 @@ compliance: <x> of <m> commands with evidence (<y> external, <z> certificates)
 ```
 
 Residual lines beside W2's (open terms, named assumptions, bridge leaves, unresolved reading sets): `presuppositions`
-(assumed, per question), `intended-reading` open terms (one per reading question, under W2's open-term count),
+(assumed, per question), `intended-reading` open terms (one per reading question, named `intended-reading.<u>` and
+displayed `intended-reading:<set>@<v>`, under W2's open-term count),
 `domain-closure` assumptions from rewrites, `unbound-slots`, `dormant-commands` (quoted, example, pending), `unanswered`,
 `answer-bridges` (leaves `speech:answer:*` used).
 
@@ -632,14 +669,15 @@ substantive, in this order:
   R  else an active open reading set whose every candidate is elaborated (each admitted as a command, question, norm
      or assertion), with each candidate's residual retained beneath it
   O  else a meaning `{"open": [...]}`, a question whose presupposition or a command whose guard is an open term, or a
-     reading question (its presupposition is the open term `intended-reading:<set>@<v>`, 4.6)
+     reading question (its meaning is `{"open": ["intended-reading.<u>"]}`, naming the open term of 4.6)
   C  else: admitted, every context slot bound, every presupposition formalised and either proved or retained as a named
      assumption in the residual; completion and answer truth are irrelevant to C
 ```
 
 Failing C never by itself yields U: necessity versus duty ("Must Alice open the desk?") is R; "a clear explanation" is
 O; "Which reading did you mean?" is O, because its expressly non-formal presupposition cannot meet C's formalisation
-requirement and is carried by an open term with a decider and criteria. Environment-declared bindings and defaults are
+requirement and is carried by an open term with a decider and criteria in W2's frozen schema (4.6). Environment-declared
+bindings and defaults are
 the legend, outside the partition, no class. An authored `binding`
 unit is substantive and C when it binds a declared phrase or "you" to a declared constant, U otherwise (a legend sentence
 carrying a normative default or a factual assertion is never L). Reconciliation with W2: CHECKED ↦ C; OPEN ↦ R, O or U
@@ -653,7 +691,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | Text | When | Kind |
 |---|---|---|
 | `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route (1.6) | error |
-| `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3) | error |
+| `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3), including a reading question whose `{"open": [...]}` meaning or open-term declaration differs from the derived form (4.6) | error |
 | `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, alternative or query constant | error |
 | `UnboundSlot: you` / `UnboundSlot: <phrase>` | a command or "you"-mentioning unit without a binding (4.1(3)); English layer adds the legend rewrite | error (authoring) / `unformalised(unbound-slot)` (translation) |
 | `BindingConflict: <phrase>` / `DuplicateDeclaration: binding <phrase>` | an authored binding disagrees with the block or repeats | error |
@@ -666,7 +704,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | `AnswerOutsideDomain: <u>, <token>` / `AnswerMismatch: <u>` / `NominationOutsideSet: <u>` | answer records (3.3) | error |
 | `TrivialQuery: <u>` | the target is an earlier asserted unit | warning |
 | `CheckerConflict` | `follows` and `gap` artifacts for one `(E, Π_q, P)` (debate-protocol.md) | operational error |
-| `ResourceLimit: rules` / `alternatives` / `definites` / `questions` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions | error |
+| `ResourceLimit: rules` / `alternatives` / `definites` / `questions` / `open-term name` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions; a reading question's unit id over 47 bytes (W2's 64-byte token limit on `intended-reading.<u>`, 4.6) | error |
 | `CoordinatedActs`, `PermissionNotCommand`, `ModalQuestion`, `OpenDomainWhich`, `TemporalWording` | English-layer hints with the rewrites of 2.3 (Python only) | hint |
 | `Overlap(<n>, <m>)`, `DependencyCycle`, `PrecedenceAcrossPredicates`, `ConsequenceArguments`, ... | W1's, unchanged, on `policy(D)` | as W1 |
 
@@ -797,9 +835,11 @@ def core (D : SpeechDoc) :
 `D.regulated` is what W1's environment decoder validated (3.1), carried with the core because `E` cannot supply it;
 `answerEval` evaluates `H(q)` and `F(q, a)` with `Formula.eval` under `[]`. `tokens` for `whichAll` lists every sorted
 sublist of the domain (at most 2¹⁶ tokens; the report enumerates only the answers present in records, never the token
-list). The decoded-source wrapper that carries everything `SpeechDoc` omits (every unit including dormant and
-`binding` units, the query records, the answer, compliance and nomination records, the graph and the provenance) is
-`SpeechSource` in 8.5; `SpeechDoc` is its projection.
+list). The decoded-source wrapper that carries everything `SpeechDoc` omits (W2's identity payload of 3.5 verbatim,
+that is the validated front matter without removable weights, the source bytes and the fences; every unit including
+dormant and `binding` units; the open terms; the reading sets with their command, question, norm and assertion
+candidates; the structured narrowings; the lemmas; the query records; the answer, compliance and nomination records;
+the graph and the provenance) is `SpeechSource` in 8.5; `SpeechDoc` is its projection.
 
 ### 8.2 Theorems: commands
 
@@ -985,9 +1025,11 @@ theorem policy_rules (D : SpeechDoc) (h : WellFormedSpeech D = true) (N : Node) 
 ### 8.5 Theorems: wire and report
 
 ```lean
-/-- The decoded source (Wire.lean): everything the validated `ve-document@2` source carries, kept for admission and
+/-- The decoded source (Wire.lean): the complete validated `ve-document@2` payload, kept for identity, admission and
     report regeneration; `SpeechDoc` (8.1) is its projection and discards nothing that identity or regeneration needs
-    because this wrapper keeps it. -/
+    because this wrapper keeps it. W2's identity payload (3.5) is retained verbatim in `metadata`, `source` and
+    `fences`; every other field is decoded from it. The frozen P0 `ReadingSet` (`Route/Admission.lean`, formula-only)
+    and P0's open-term name and narrowing id lists appear only in the P0 projection `SpeechAdmitted.p0`, never here. -/
 structure SpeechUnit where
   id       : String
   span     : Nat × Nat
@@ -996,28 +1038,81 @@ structure SpeechUnit where
   support  : String
   content  : SpeechContent                    -- command | question | binding | norm | assertion | none
   active   : Bool                             -- 1.2 for commands; active author norm or fixed assertion otherwise
+/-- A W2 open term in the frozen schema (document.md; `ve/openterms.py`): the conditions are closed formulas over `E`;
+    the `intended-reading.<u>` terms of 4.6 are among these. -/
+structure OpenTerm where
+  name         : String                       -- a W2 token
+  arguments    : List String                  -- distinct W2 tokens
+  decidedBy    : String
+  jurisdiction : String
+  version      : Nat                          -- at least 1
+  necessary    : List VE.Formula              -- closed
+  sufficient   : List VE.Formula              -- closed
+  factors      : List String
+  precedents   : List String                  -- pinned meaning ids
+/-- A W2 reading candidate (document.md; `ve/readings.py`) with its structured content: a command, question, norm or
+    assertion candidate is retained as such, `none` while its elaboration is pending. -/
+structure SpeechReading where
+  id             : String
+  kind           : SpeechKind
+  meaningId      : String
+  content        : Option SpeechContent
+  who            : String                     -- admission.who
+  why            : String                     -- admission.why
+  distinguishing : List (String × String)     -- admission.distinguishing_models: other reading id ↦ model id
+inductive ReadingStatus | authored | pending  -- W2 `authored` | `open`
+structure SpeechReadingSet where
+  id              : String
+  unit            : String                    -- the source unit
+  version         : Nat                       -- at least 1
+  status          : ReadingStatus
+  signature       : Option String             -- authored sets only
+  readings        : List SpeechReading        -- 1 to 64, source order (the index of `readings:<set>@<v>:<i>`)
+  models          : List (String × Json)      -- the distinguishing finite models by id
+  rejectedHistory : Json
+/-- A W2 narrowing (document.md; `ve/readings.py`): the kept readings by id and the cited reason units; it never
+    modifies the set. A recorded nomination (4.6) is one of these. -/
+structure Narrowing where
+  id          : String
+  setId       : String
+  version     : Nat
+  keeps       : List String                   -- reading ids of that set version, nonempty
+  author      : String                        -- W2 `by`
+  reasonSpans : List String                   -- unit ids, nonempty
 structure SpeechSource where
+  metadata    : Json                          -- the validated front matter without removable `weights` (3.5)
+  source      : String                        -- the prose source bytes (UTF-8, `ve` fences excluded), the span domain
+  fences      : List (String × String)        -- unit id ↦ `ve` fence text
   E           : VE.Environment
   canonical   : Json                          -- the canonical environment bytes (3.1), the input of `environment_id`
   scope       : Scope
   regulated   : List Regulated
   lits        : List String
   units       : List SpeechUnit               -- every unit, active or dormant, document order
+  openTerms   : List OpenTerm                 -- every declared open term, the `intended-reading.<u>` terms included
+  readingSets : List SpeechReadingSet         -- every version of every set, candidates retained with their structure
+  narrowings  : List Narrowing                -- every narrowing, recorded nominations included
+  lemmas      : List VE.Route.Admission.Lemma
   queries     : List Query                    -- the derived query records (3.2), regenerated and compared
   answers     : List AnswerRecord             -- 3.3
   compliance  : List ComplianceRecord         -- 3.3
   nominations : List NominationRecord         -- 3.3
-  readingSets : List VE.Route.Admission.ReadingSet
-  narrowings  : List String
   graphJson   : Json
   provenance  : Json
+/-- 3.5: W2's identity payload and the `ve-document@2` document id, from the retained payload and nothing else. -/
+def SpeechSource.identityPayload (src : SpeechSource) : Json :=
+  Json.mkObj [("metadata", src.metadata), ("source", .str src.source), ("fences", Wire.encodeFences src.fences)]
+def SpeechSource.documentId (src : SpeechSource) : Except String String :=
+  VE.CertificateWire.digest "ve-document@2\n" src.identityPayload
 /-- The projection to the semantic core: the active commands, active norm units, questions, queries and fixed
     asserted units of `src`. -/
 def SpeechSource.toDoc (src : SpeechSource) : SpeechDoc
 
 /-- The admission wrapper, the shape of `Norms.Admission.Admitted`: the decoded source, its projection, the P0 document
-    actually sent to `admit_document` (every source unit except `binding` units, 3.2), the graph, the report, the
-    kinds and the classes (6). -/
+    actually sent to `admit_document` (W2's projection of the source: every source unit except `binding` units (3.2), a
+    unit under an active reading set without its content, only the active assertion-only reading sets and those as
+    P0's formula-only `ReadingSet`, the open-term names, the narrowing ids, the lemmas and the graph), the graph, the
+    report, the kinds and the classes (6). -/
 structure SpeechAdmitted where
   src     : SpeechSource
   D       : SpeechDoc                         -- = src.toDoc
@@ -1032,6 +1127,15 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     (h : Wire.decodeSpeechEnvironment j = .ok (E, sc, rs)) :
   ∃ b : Json, (Wire.canonicalEnvironmentJson j).toOption = some b ∧
     b.getObjVal? "speech_acts" = .ok (Wire.encodeScope sc)
+
+/-- The wrapper is lossless on what identity and regeneration need: W2's identity payload is retained verbatim (so the
+    document id of 3.5 is recomputable from `src` alone), and every reading set and narrowing of the validated source
+    is retained with its structure, command and question candidates included. `Wire.identityPayload`,
+    `Wire.readingSetsJson` and `Wire.narrowingsJson` read the corresponding front-matter fields of `j`. -/
+theorem source_retained (j : Json) (src : SpeechSource) (h : Wire.decodeSpeechSource j = .ok src) :
+  Wire.identityPayload j = .ok src.identityPayload ∧
+  Wire.readingSetsJson j = .ok (Wire.encodeReadingSets src.readingSets) ∧
+  Wire.narrowingsJson j = .ok (Wire.encodeNarrowings src.narrowings)
 
 /-- Which units are active: exactly kind `instruction`, specified meaning, command content, bound slots, no pending
     reading set (1.2). -/
@@ -1061,7 +1165,8 @@ theorem speech_wire_acceptance (j a : Json) (h : Run.runCase j = .ok a)
 ```
 
 `ReportAdmitted` is the norms extension of P0's admission relation (`Norms.Admission.admitDocument_spec`) over the
-P0 document `adm.p0` (binding units withheld), with exactly two route-local leaves: `speech:presupposition:<u>` (equal
+P0 document `adm.p0` (binding units withheld), whose report id is the digest of 3.5 over `{"environment_id",
+"document": adm.src.documentId, "report"}`, with exactly two route-local leaves: `speech:presupposition:<u>` (equal
 to `presupposition D q`) and `speech:answer:<u>:<a>` (equal to `H ∧ F` of a certificate-supported answer over
 `premises D`, with that certificate's leaves retained), each admitted only when equal to the regenerated formula.
 There is **no** `speech:compliance:<u>` leaf and no leaf over a `done` atom that the checker generates: an accepted
@@ -1189,9 +1294,13 @@ regulated as in 3.1 plus `open_required`/`open_permitted(user, desk)` (obligatio
 - **(ν) Reading question.** A reading set `rs1@2` over an earlier unit with two candidates; `Which reading did you mean?`
   bound to `(rs1, 2)`. Nomination `0` by `author`: a narrowing recorded, `support: testimony`, status line
   `nominated 0 by author (testimony)`; nomination `2`: `NominationOutsideSet: u6`, CLARIFICATION-OPEN; two nominations:
-  CLARIFICATION-OPEN (multiple); none: CLARIFICATION-OPEN (none). The residual lists the open term
-  `intended-reading:rs1@2` (decided by the addressee; criterion one in-set nomination at version 2) under W2's
-  open-term count; the question's class is O.
+  CLARIFICATION-OPEN (multiple); none: CLARIFICATION-OPEN (none). The front matter declares the open term
+  `intended-reading.u6` exactly as 4.6 derives it (arguments `["rs1"]`, version 2, decided by `Alice`, jurisdiction
+  `t1`, empty `necessary` and `sufficient` lists, the two criterion factors) and `u6` has the meaning `{"open":
+  ["intended-reading.u6"]}`; the residual lists the term under W2's open-term count, displayed `intended-reading:rs1@2`;
+  the question's class is O. A declaration named `intended-reading:rs1@2` (which also fails W2's own token check), a
+  non-empty `sufficient` list, or a `specified` meaning on `u6`: `InvalidInput: invalid question fields for u6`; a
+  reading question whose unit id has 48 bytes: `ResourceLimit: open-term name`.
 - **(ξ) Unbound slot.** `Share the token.` with `the token` removed from `definites`: authoring rejects with
   `UnboundSlot: the token` and the legend rewrite; translation admits the unit as `unformalised(unbound-slot)` (U);
   adding the authored binding unit `In this task, the token is Token1.` (kind `binding`, C) makes the command active.
@@ -1230,12 +1339,14 @@ regulated as in 3.1 plus `open_required`/`open_permitted(user, desk)` (obligatio
   total the source length and reconcile by the table of 6.
 - **(ψ) Coverage projection.** A document with the legend in the environment, one active command, one polar question
   answered by certificate, one unanswered `which_all` question, (ο)'s two units, (ν)'s reading question and a heading:
-  classes C, C, C (answer truth irrelevant), R, U, O (the reading question: mode admitted, its expressly non-formal
-  presupposition carried by the open term `intended-reading:rs1@2`, so not C), L; the environment legend contributes no
+  classes C, C, C (answer truth irrelevant), R, U, O (the reading question: mode admitted, meaning `{"open":
+  ["intended-reading.u6"]}`, its expressly non-formal presupposition carried by that open term, displayed
+  `intended-reading:rs1@2`, so not C, and OPEN in W2's status table), L; the environment legend contributes no
   bytes; an authored `binding` unit for `you` counts C and is withheld from P0 admission (3.2); totals reconcile with
   W2's status table.
 - **(ω) Identity.** Every existing fixture, identity, certificate and wire hash unchanged; every `ve-document@1` fixture
-  loads under `ve-document@2` with the same units and a new document id; changing `task`, the addressee or a definite
+  loads under `ve-document@2` with the same units and a new document id, which the wrapper recomputes from its retained
+  payload alone (`SpeechSource.documentId`, `source_retained`); changing `task`, the addressee or a definite
   changes `environment_id` and stales every certificate; adding an answer record changes the document and report ids
   and not `premises(D)`; two questions differing only in domain order have different meaning ids.
 - **(αα) Catalogue and tutorial sentences.** `Open the writing desk.` (C, `open_required(Alice, Desk1)`); `Choose
@@ -1257,7 +1368,8 @@ W1 DAG diagnostics on `policy(D)`).
 ## 10. Limits, regeneration, Rust
 
 Rules ≤ 256 including command rules, regulated predicates ≤ 64, definites ≤ 64, alternatives ≤ 16 per question,
-questions ≤ 256, reading sets and choices as W2 (64 complete choices), formulas within `MAX_NODES`; witness and answer
+questions ≤ 256, reading sets and choices as W2 (64 complete choices), open-term names ≤ 64 bytes as W2 (so a reading
+question's unit id ≤ 47 bytes, 4.6), formulas within `MAX_NODES`; witness and answer
 search use the existing bounds and `MAX_EVALUATIONS`; every overflow is `ResourceLimit` with the limit named, never a
 truth value. `policy(D)`, `premises(D)`, every `H(q)`, `F(q, a)`, `Π_q` and every leaf formula are regenerated from the
 decoded units, records and declarations at every trusted site (norms.md 11.3); a finite model supplies base tables
@@ -1281,7 +1393,8 @@ path is Lean).
 5. Consequence questions (4.6): exactly `follows`, `gap`, `unresolved`; `refuted` not imported; proof tasks as commands
    on the `submit a certificate` act with `QueryMismatch`, their meaning bound to the query's premise and target
    meaning ids (3.5), and acceptance as compliance evidence only (no premise, no leaf, no `done` fact); reading
-   nominations as testimony narrowings and the `intended-reading` open term.
+   nominations as testimony narrowings and the `intended-reading.<u>` open term in W2's frozen schema (empty
+   closed-formula condition lists, the criteria as factors, the display label `intended-reading:<set>@<v>`).
 6. Exact correspondence and invariance (4.7, 8.4): `premises_core`, `dormant_invariance`, the answer bridge leaf, and
    W1's `norms_route_acceptance` reused on `policy(D)`.
 7. Scope (4.8): the block in the environment; `combine` and `ScopeMismatch`; `scope_single`, `policy_rules`,
@@ -1291,7 +1404,8 @@ path is Lean).
 9. The report's four lines (5) and the coverage projection (6): C's entry conditions, U/R/O/C precedence, L
    non-substantive only, legend outside the partition, authored bindings as units.
 10. The diagnostics (7) and every fixture (9) against the definitions; the wire theorem (8.5) over the decoded-source
-    wrapper, with `binding` units withheld from P0, and the executable (8.6).
+    wrapper, with `binding` units withheld from P0 and W2's identity payload, reading sets and narrowings retained
+    with their structure (`source_retained`), and the executable (8.6).
 11. Open questions, resolved at the statement review (both reviewers): "these premises" = earlier asserted units
     (12.3) is accepted as the `@0` pinning, with the derived query record and `QueryMismatch`; a named wording can be
     added later without moving any identity. The `binding` kind is accepted as route-local (12.1), with the rule that
@@ -1323,8 +1437,10 @@ Each is a point where the plan left a reading open; the review may overturn any 
    because `done_submit(you, q)` is a free base atom no certificate entails and a usable leaf would break
    `premises_core`. The checker generates no `done` fact of any kind.
 7. **Reading nominations are W2 narrowings with testimony support**; "exactly one intended reading" is expressly
-   non-formal (the set is not a domain of constants), so it is a W2 open term `intended-reading:<set>@<v>` with the
-   addressee as decider and one in-set nomination as the criterion, and the reading question is class O (6), never C.
+   non-formal (the set is not a domain of constants), so it is a W2 open term in W2's frozen schema, named
+   `intended-reading.<u>` and displayed `intended-reading:<set>@<v>`, with the addressee as decider, empty
+   closed-formula condition lists and one in-set nomination as the criterion carried in `factors` (4.6), and the
+   reading question, whose meaning names the term, is class O (6), never C.
 8. **Adoption of quoted commands is deferred**: W1 has no norm bridge, quoted norm content contributes no layer, and the
    same holds for quoted commands; the plan's "separate attributed adoption with a verified norm bridge" is a later
    item with its own statement review.
@@ -1357,12 +1473,12 @@ introduces a defect), then items 2 to 4 start; the proof and fidelity gates stil
 |---|---|
 | Astra 1 = Fable 2: `countermodel_not_negative` second conjunct unprovable | 8.3: binders `(S' : VE.Structure) (hS' : S'.Admissible (En D)) (hp' : Sat S' (premises D)) (hb' : q.body.denote S' [])` added; the comment removed; 4.5 says why; the `[¬P]` counterexample is a regression in fixture (η). |
 | Astra 2 = Fable 1: `demand_conflict` second conjunct false as stated | 8.2: split into `demand_conflict_local` (the elaboration incompatibility, from `hop` alone) and `demand_conflict` with the hypothesis `AgreesBelow (policy D) (before (policy D) c.act) S` for the base-conflict conclusion, W1's `conflict_denote` form (`ConstantsTyped` from `hS`; the `PrefixAdmissible` form a corollary via `agreesBelow_of_meanings`). |
-| Astra 3 = Fable 5: representation and signatures | 8.1: `SpeechDoc.regulated : List Regulated` in `core`; `policy` reads it; `regulatedOf D.E` removed (the frozen `VE.Environment` has only sorts, signatures, constants). 8.5: `SpeechSource` (units, bindings, query records, evidence records, graph, provenance) with `toDoc`, and `SpeechAdmitted` in the shape of `Norms.Admission.Admitted`; the wire theorems quantify over them. `AppliesD S ρ N` without the tree argument; `norms_route_acceptance` invoked with exactly `D h hc Γ φ c acc` and `speech_route_acceptance` loses `hΓ hφ`; every abbreviated binder in 8.3 and 8.4 typed. |
+| Astra 3 = Fable 5: representation and signatures | 8.1: `SpeechDoc.regulated : List Regulated` in `core`; `policy` reads it; `regulatedOf D.E` removed (the frozen `VE.Environment` has only sorts, signatures, constants). 8.5: `SpeechSource` (units, bindings, query records, evidence records, graph, provenance) with `toDoc`, and `SpeechAdmitted` in the shape of `Norms.Admission.Admitted`; the wire theorems quantify over them. `AppliesD S ρ N` without the tree argument; `norms_route_acceptance` invoked with exactly `D h hc Γ φ c acc` and `speech_route_acceptance` loses `hΓ hφ`; every abbreviated binder in 8.3 and 8.4 typed. Completed in draft 3 (14): `SpeechSource` retains W2's identity payload verbatim and the open terms, reading sets and narrowings with their structure. |
 | Astra 4 = Fable 3, resolved as Astra's "no leaf": the `done_submit` premise | 4.6, 5.4, 8.5, 8.7, 12.6 and fixture (μ): the accepted certificate is compliance evidence on the compliance line only; no premise, no graph leaf (`speech:compliance:<u>` removed), no checker-generated `done` fact; a claimed `done_submit` leaf is rejected. |
 | Astra 5: proof-task identity | 3.5: a command with a `query` slot includes the query's premise and target meaning ids in its `ast`; 12.15; fixture (ζ) gains the retargeted-`q1` and changed-premise stale cases. |
 | Astra 6: P0's three-way premise status | 5.3: `premises: model | INCONSISTENT | UNKNOWN` on every certificate line, the status of `Π` for unconditional answers, of `Π ++ [H]` for conditional ones, of `Π_q` for judgments; `vacuous` derived (`no | yes | unknown`); 8.5 `PremiseStatusEvidence`; fixtures (τ) and (υ). |
 | Astra 7: meaning-changing rewrites | 2.2, 2.3, 12.16, fixtures (ρ) and (αα): the permission rewrite is the equality-guarded rule of norms.md 3.3 keeping both bindings, never the universal; the two-command rewrite for a disjunctive object is withdrawn (two demands are not a choice), the unit is U unless the act declares the object. |
-| Astra 8: fixture ψ versus C's formalisation requirement | 1.3, 4.6, 5.5, 6, 12.7, fixtures (ν) and (ψ): "exactly one intended reading" is a W2 open term `intended-reading:<set>@<v>` (decider the addressee, criterion one in-set nomination), counted as an open term; reading questions are class O. |
+| Astra 8: fixture ψ versus C's formalisation requirement | 1.3, 4.6, 5.5, 6, 12.7, fixtures (ν) and (ψ): "exactly one intended reading" is a W2 open term displayed `intended-reading:<set>@<v>` (decider the addressee, criterion one in-set nomination), counted as an open term; reading questions are class O. Completed in draft 3 (14): the term is encoded in W2's frozen open-term schema under the token name `intended-reading.<u>`. |
 | Astra 9: `soft-norms@0` | 1.6 is an allowlist (`relational-fol@0`, `norms@0`, `speech-acts@0`); 4.1(1), 7 and 12.5 updated; fixture (φ) names `soft-norms@0`. |
 | Fable 4: `binding` units at the P0 boundary | 3.2, 8.5 (`bindings_withheld`, `SpeechAdmitted.p0`), 8.6, 12.1, fixture (ψ): withheld from P0 `admit_document` (its frozen kind decoder lacks the kind), present only in the wrapper identity and the coverage projection. |
 | Fable 5: `inst`, `DecidableEq`, missing helpers | 8.3 `inst [.const a] q.body`; 8.1 `Force` (and `Mode`) `deriving DecidableEq`; `pinnedAsserted` and `trivialQuery` defined in 8.1 (with `Query.premiseIds` and asserted unit ids for them to be definable). |
@@ -1371,9 +1487,22 @@ introduces a defect), then items 2 to 4 start; the proof and fidelity gates stil
 | Both: open questions 11.11 | Accepted: earlier-assertion queries (12.3) and route-local `binding` (12.1, with Fable 4); 11.11 records the resolution. |
 | Both: plan synchronisation | speech-acts-PLAN.md draft 3: item 1 records the converged FIX and the verification pass; item 4 gains the stale-proof-task, `soft-norms@0`, countermodel-not-negation and withheld-binding regressions; sections 2 to 4 aligned (open-term reading presupposition, no `done` premise, three-way premise status, allowlist); section 6 maps the edits. |
 
+## 14. Edit-verification response table (draft 3)
+
+Source: `manage-agents/speech-acts-p3ver1.final.md`, the statement-only verification of draft 2 (commit `88e6290`)
+against the converged list of section 13: FAIL on two incomplete edits, every other edit and the plan synchronisation
+present. Draft 3 completes those two and changes nothing else; a second bounded verification pass checks them, then
+items 2 to 4 start.
+
+| Finding | Change in this draft |
+|---|---|
+| Astra 3, source preservation: `SpeechSource` lacked the source bytes and fences that the 3.5 identity needs, used P0's formula-only `ReadingSet` (which cannot hold command or question candidates) and flattened narrowings to ids, losing their kept choices and reasons | 8.5: `SpeechSource` retains W2's identity payload verbatim (`metadata` without removable weights, `source`, `fences`) with `identityPayload` and `documentId`; new `OpenTerm`, `SpeechReading`, `SpeechReadingSet` (candidates with structured content, admission fields, distinguishing models, history) and `Narrowing` (kept reading ids, author, reason units) in W2's frozen schemas; `lemmas` retained; P0's formula-only sets, open-term names and narrowing ids appear only in the projection `SpeechAdmitted.p0`; theorem `source_retained`; 3.5 and 8.1 say what the wrapper carries; 11.10; fixture (ω). |
+| Astra 8, W2-compatible open-term contract: `intended-reading:<set>@<version>` is not a W2 token (`:`, `@`) and the nomination criteria were not closed-formula lists | 4.6: the term is declared in W2's frozen schema, named `intended-reading.<u>` (a token; `ResourceLimit: open-term name` beyond 64 bytes) and displayed `intended-reading:<set>@<version>`; `arguments` the set id, `version` the set's, `decided_by` the addressee, `jurisdiction` the task, `necessary` and `sufficient` empty closed-formula lists (no formula over `E` expresses a nomination), the criteria as `factors`, `precedents` empty; the declaration and the question's `{"open": [...]}` meaning are derived content (3.2, 4.1(4), `InvalidInput`); 1.3, 5.5, 6, 7, 10, 11.5, 12.7, fixtures (ν) and (ψ). |
+
 ## Change log
 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-09-28 | Draft 1 | Item-1 specification from plan draft 2: scope block and legend; commands as W1 rules with equality guards, roles and polarity; questions with wording-derived modes, `H(q)`, `F(q, a)` and `Answers(q, S)`; proof and model paths with PRESUPPOSITION-FAILED and conditional support; consequence questions under `follows`/`gap`/`unresolved`; proof tasks and reading nominations; exact consequence correspondence, dormant invariance and the two-task rule; the four-line report; the C/L/O/R/U projection; diagnostics; every item-2 theorem as a statement in W1's Lean conventions; fixtures α to ββ; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The converged statement-review edit list applied as written (section 13): `countermodel_not_negative` hypotheses; `demand_conflict` split with `AgreesBelow`; regulated declarations in the core, decoded-source wrapper, `AppliesD` and `norms_route_acceptance` signatures, typed binders; no `done_submit` premise or leaf; proof-task identity over the query's meaning ids; P0 premise status on every certificate line; equality-guarded permission rewrite and no two-command rewrite; `intended-reading` open term and class O; profile allowlist with `soft-norms@0` rejected; `binding` units withheld from P0; `inst`, `DecidableEq`, `pinnedAsserted`, `trivialQuery`, `support_exclusive_one`; 1.5 attributed to W2's readings query; fixtures ζ, η, μ, ν, ρ, τ, υ, φ, ψ, αα; 11.11 resolved; 12.15, 12.16. Spec only. |
+| 2026-09-28 | Draft 3 | The two edits the verification pass found incomplete (section 14): Astra 3, `SpeechSource` retains W2's identity payload (metadata, source, fences), structured open terms, reading sets with speech candidates, narrowings and lemmas, with `identityPayload`, `documentId` and `source_retained`; Astra 8, the `intended-reading` open term encoded in W2's frozen schema (token name `intended-reading.<u>`, display label `intended-reading:<set>@<version>`, empty closed-formula condition lists, criteria as factors, derived declaration and `open` meaning). Sections 1.3, 3.2, 3.5, 4.1, 4.6, 5.5, 6, 7, 8.1, 8.5, 10, 11, 12.7, fixtures ν, ψ, ω. Spec only; no other change. |
