@@ -37,7 +37,8 @@ def rust():
 
 
 def core(env, document):
-    return SpeechDocument(Environment(env), document["units"], document.get("queries", []))
+    return SpeechDocument(Environment(env), document["units"], document.get("queries", []),
+                          reading_sets=document.get("reading_sets", []))
 
 
 def fol_environment(env):
@@ -250,6 +251,101 @@ def test_reused_query_is_regenerated_at_every_consumer(lean):
         core(env, orphan)
     assert run1({"id": "o", "kind": "speech-elaborate", "environment": env,
                  "document": orphan})["error"] == "QueryMismatch: q1"
+
+
+def reading_set(uid, version, status, kind="asserted", content=None):
+    reading = {"id": "r", "kind": kind, "meaning_id": "candidate", "content": content,
+               "admission": {"who": "author", "why": "reproducer", "distinguishing_models": {}}}
+    return {"id": "rs", "unit": uid, "version": version, "status": status, "readings": [reading],
+            **({"signature": "author"} if status == "authored" else {})}
+
+
+def agree(env, document):
+    """Python and Lean regenerate the same premises, active commands and dormant units."""
+    py, le = core(env, document), elaborate(env, document)
+    assert [_to_data(f) for f in py.premises()] == le["premises"]
+    assert [c.unit for c in py.commands if c.active] == [c["unit"] for c in le["commands"]]
+    assert [c.unit for c in py.commands if not c.active] == le["dormant"]
+    return py, le
+
+
+def test_pending_assertions_and_norms_supply_no_premise(lean):
+    # Regression: Python kept an asserted or norm unit active while its reading set was open,
+    # so a pending reading's rejected alternative still answered questions.
+    env = F0()
+    fact = unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    asked = unit("q", 1, "question", polar(U("reviewed", "atlas")))
+    negative = ["not", U("reviewed", "atlas")]
+    pending = {"units": [fact, asked], "reading_sets": [reading_set("a", 1, "open", content=negative)]}
+    py, le = agree(env, pending)
+    assert py.asserted == [] and le["premises"] == elaborate(env, {"units": [asked]})["premises"]
+    from ve.ast import And
+    from ve.entailment import prove_entailment
+    q = py.questions[0]
+    assert prove_entailment(py.env, py._caller_premises(), And(py.presupposition(q), py.correct(q, "yes")),
+                            max_steps=2000).status != "Found"
+    norm = {"norm": {"name": "n1", "predicate": "click_required", "sign": True, "guard": ["top"],
+                     "unless": [], "over": []}}
+    norm_doc = {"units": [unit("n", 0, "norm", norm)],
+                "reading_sets": [reading_set("n", 1, "open", "norm", norm)]}
+    py, le = agree(env, norm_doc)
+    assert py.policy.rules == () or list(py.policy.rules) == []
+    assert agree(env, {"units": [unit("n", 0, "norm", norm)]})[0].policy.rules
+
+
+@pytest.mark.parametrize("versions,active", [
+    ([("authored", 1)], True), ([("open", 1)], False),
+    ([("open", 1), ("authored", 2)], True), ([("authored", 1), ("open", 2)], False),
+    ([("authored", 2), ("open", 1)], True)])
+def test_latest_reading_version_decides_command_activeness(lean, versions, active):
+    # Regression: Python kept a command with an authored latest version dormant, and Lean let a
+    # historical open version suppress a resolved command.
+    env = F0()
+    click = command("require", "click_required", ["check"])
+    document = {"units": [unit("u", 0, "instruction", click)],
+                "reading_sets": [reading_set("u", v, s, "instruction", click) for s, v in versions]}
+    py, le = agree(env, document)
+    assert py.commands[0].active is active and len(le["commands"]) == int(active)
+
+
+def test_authored_singleton_choice_is_the_units_meaning(lean):
+    # Regression: an authored singleton assertion (1.5) was rejected by Python and dropped by Lean.
+    env = F0()
+    for content in (U("reviewed", "atlas"), {"ast": U("reviewed", "atlas")}):
+        document = {"units": [unit("a", 0, "asserted")],
+                    "reading_sets": [reading_set("a", 1, "authored", content=content)]}
+        py, le = agree(env, document)
+        assert le["premises"][-1] == U("reviewed", "atlas") and py.asserted[0][0] == "a"
+    # The choice replaces the unit's own content: an authored forbid on a require unit.
+    forbid = command("forbid", "click_permitted", ["check"])
+    document = {"units": [unit("u", 0, "instruction", command("require", "click_required", ["check"]))],
+                "reading_sets": [reading_set("u", 1, "authored", "instruction", forbid)]}
+    py, le = agree(env, document)
+    assert py.commands[0].force == "forbid" and le["commands"][0]["force"] == "forbid"
+    # A content-less asserted unit needs a reading set, and unformalised content is rejected, in both.
+    for bad, error in [({"units": [unit("a", 0, "asserted")]}, "asserted unit needs content or a reading set"),
+                       ({"units": [unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")},
+                                        meaning={"unformalised": "vague"})]},
+                        "unformalised unit cannot assert content")]:
+        with pytest.raises(VEError, match=error):
+            core(env, bad)
+        assert run1({"id": "b", "kind": "speech-elaborate", "environment": env, "document": bad})["error"] == error
+
+
+def test_combine_keeps_pending_commands_dormant(lean):
+    # Regression: combine() rebuilt the document without its reading sets or queries and
+    # reactivated a pending command.
+    from ve.speech_acts import combine
+    env = F0()
+    click = command("require", "click_required", ["check"])
+    first = core(env, {"units": [unit("u", 0, "instruction", click)],
+                       "reading_sets": [reading_set("u", 1, "open", "instruction", click)]})
+    second = core(env, {"units": [unit("p", 1, "asserted", {"ast": U("cat", "tom")}),
+                                  unit("f", 2, "question", {"question": {"mode": "follows", "query": "q1"}})],
+                        "queries": [{"id": "q1", "premises": ["p"], "target": {"ast": U("cat", "tom")}}]})
+    both = combine(first, second)
+    assert not both.commands[0].active and both.policy.rules == first.policy.rules
+    assert both.queries["q1"].premises == ("p",)
 
 
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
