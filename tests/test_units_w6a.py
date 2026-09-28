@@ -7,7 +7,7 @@ from ve import ast
 from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.surface.count import at_least, exactly, n_of_m
-from ve.units import day_number, elaborate_quantity, quantity_meaning_id, render_coordinate
+from ve.units import day_number, elaborate_quantity, erased_environment, quantity_meaning_id, render_coordinate
 
 
 def environment():
@@ -40,6 +40,9 @@ def test_exact_decimal_and_identity_binds_tags():
                                                          ["decimal", "bp", "4.00"]]))
     assert canonical["formula"] == ["lt", ["num", "bp", "375"], ["num", "bp", "400"]]
     assert core == ["lt", ["num", "375"], ["num", "400"]]
+    target = erased_environment(env)
+    assert target.unit_schema is None and target.environment_id != env.environment_id
+    assert ast.formula_from_data(target, core) == ast.Lt(ast.Num(375), ast.Num(400))
     assert render_coordinate("bp", 370, env) == "3.70%"
     assert render_coordinate("usd_cent", 375, env) == "USD 3.75"
     assert quantity_meaning_id(env, quantity(["eq", ["decimal", "bp", "3.700"],
@@ -103,6 +106,9 @@ def test_dates_and_duration_are_distinct():
     for i in range(0, 2932897, 293):
         d = start + timedelta(days=i)
         assert day_number(d.isoformat()) == i
+    for spelling in ("1970-01-01", "2000-02-29", "2000-12-31", "2099-12-31",
+                     "2100-03-01", "9999-12-31"):
+        assert render_coordinate("day", day_number(spelling), env) == spelling
     _, core = elaborate_quantity(env, quantity(["shift_days", ["date", "2026-09-17"],
                                                 ["date", "2026-09-16"], "1"]))
     assert core[-1] == ["eq", ["num", "20713"], ["add", ["num", "20712"], ["num", "1"]]]
@@ -118,6 +124,23 @@ def test_dates_and_duration_are_distinct():
         day_number("1969-12-31")
     with pytest.raises(VEError, match="InvalidDate"):
         day_number("2100-02-29")
+
+
+def test_trace_declarations_are_identity_bound_before_trace_route_exists():
+    raw = environment()
+    raw["vocabulary"]["constants"]["other_event"] = {"sort": "item", "description": "other event"}
+    env = Environment(raw)
+    trace = {"name": "review_window", "tick_tag": "elapsed_day", "origin": "event", "horizon": "10"}
+    first = quantity(["top"], traces=[trace])
+    second = quantity(["top"], traces=[{**trace, "origin": "other_event"}])
+    assert elaborate_quantity(env, first)[1] == elaborate_quantity(env, second)[1]
+    assert quantity_meaning_id(env, first) != quantity_meaning_id(env, second)
+    with pytest.raises(VEError, match="Duplicate"):
+        elaborate_quantity(env, quantity(["top"], traces=[trace, trace]))
+    with pytest.raises(VEError, match="origin"):
+        elaborate_quantity(env, quantity(["top"], traces=[{**trace, "origin": "missing"}]))
+    with pytest.raises(UnsupportedProfile, match="numbers2"):
+        elaborate_quantity(env, quantity(["trace_all", "review_window", ["top"]], traces=[trace]))
 
 
 def test_counting_nested_scope_and_bounds():

@@ -385,8 +385,28 @@ def elaborate_quantity(env, payload):
     q, core = _Elaborator(env).formula(payload["formula"])
     if "Q" in payload and payload["Q"] != q:
         raise VEError("Quantity Q differs from regenerated formula")
+    # The target vocabulary has the same symbols and checker profile, with only
+    # W6 declaration fields removed. The frozen checker validates regenerated
+    # data in that independently identified environment.
+    from .ast import formula_from_data
+    formula_from_data(erased_environment(env), core)
     return {"format": "ve-quantity@1", "formula": q,
             "traces": sorted(checked, key=lambda t: t["name"])}, core
+
+
+def erased_environment(env):
+    """Regenerate the core target environment; never trust a supplied target ID."""
+    from .environment import Environment
+    if env.unit_schema != SCHEMA:
+        raise UnsupportedProfile("quantities require ve-units@1")
+    data = env.to_dict()
+    del data["unit_schema"]
+    del data["units"]
+    for declaration in data["vocabulary"]["predicates"].values():
+        declaration.pop("argument_units", None)
+    for declaration in data["vocabulary"]["constants"].values():
+        declaration.pop("unit", None)
+    return Environment(data)
 
 
 def quantity_meaning_id(env, payload):
