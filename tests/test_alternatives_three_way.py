@@ -51,15 +51,18 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     model_data = case["scenario"]["model"]
     env = Environment(base)
     model = FiniteModel.from_dict(env, model_data)
-    formula = elaborated["followable"]["ast"]
-    python_value = evaluate(env, formula_from_data(env, formula), model, trace=False).value
+    probes = elaborated["profile_exists"]
+    names = ("avoidable", "unavoidable", "allows", "prevents")
+    formulas = [elaborated["followable"]["ast"], *(probes[name] for name in names)]
+    python_values = [evaluate(env, formula_from_data(env, formula), model, trace=False).value
+                     for formula in formulas]
 
     rust = subprocess.run([str(rust_binary), "conformance"],
                           input=json.dumps([{"id": case["id"], "kind": "evaluate",
-                                             "environment": base, "ast": [formula],
+                                             "environment": base, "ast": formulas,
                                              "model": model_data}]),
                           capture_output=True, text=True, timeout=120)
     assert rust.returncode == 0, rust.stdout + rust.stderr
-    rust_value = json.loads(rust.stdout)[0]["value"]
-    expected = bool(case["expected_clear"])
-    assert python_value == rust_value == expected == bool(report["clear"]), case["id"]
+    rust_values = json.loads(rust.stdout)[0]["values"]
+    expected = [bool(report["clear"]), *(bool(report[name]) for name in names)]
+    assert python_values == rust_values == expected, case["id"]
