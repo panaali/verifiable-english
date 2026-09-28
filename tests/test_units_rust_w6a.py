@@ -59,6 +59,9 @@ def test_hostile_literal_and_tag_changes_reject_in_both():
     cases = [
         (["eq", ["decimal", "bp", "3.755"], ["num", "bp", "375"]], "UnitPrecision"),
         (["eq", ["num", "bp", "375"], ["num", "calendar_year", "375"]], "UnitMismatch"),
+        (["eq", ["num", "bp", "0"], ["num", "0"]], "UnitMismatch"),
+        (["eq", ["add", "bp", ["num", "bp", "1"], ["num", "calendar_year", "1"]],
+          ["num", "bp", "2"]], "UnitMismatch"),
         (["eq", ["date", "1969-12-31"], ["num", "day", "0"]], "DateRange"),
     ]
     for formula, message in cases:
