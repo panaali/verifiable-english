@@ -174,8 +174,11 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
         {"id": "cell", "span": [1, 2], "kind": "asserted", "status": "CHECKED",
          "meaning": "specified", "support": "observation",
          "content": {"ast": ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]]}},
+        {"id": "not-cause", "span": [2, 3], "kind": "asserted", "status": "CHECKED",
+         "meaning": "specified", "support": "testimony",
+         "content": {"ast": ["not", ["binary", "causes", ["const", "pull"], ["const", "h"]]]}},
     ]
-    report = coverage({"environment": env, "units": units, "source": b"ab", "meta": {}})
+    report = coverage({"environment": env, "units": units, "source": b"abc", "meta": {}})
     detail = report["alternatives"]
     assert detail["alternatives_declared"] == [
         {"action": "pull", "chooser": "R", "unit": "choice", "support": "testimony"}]
@@ -185,6 +188,7 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert detail["assumed_harm_free"] == {"decider": "case annotator",
                                              "premise": "alternatives:table_complete"}
     assert detail["table_complete"] == detail["assumed_harm_free"]
+    assert detail["proximate_judgments"] == []
     assert report["residual"]["table_complete"] == 1
     assert report["residual"]["counterfactual_leaves"] == 1
 
