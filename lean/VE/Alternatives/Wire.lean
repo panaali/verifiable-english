@@ -238,6 +238,15 @@ def unmappedObligations (A : AltDoc) : List Regulated :=
 def labelled (labels : List String) (fs : List VE.Formula) : Json :=
   Json.arr ((labels.zip fs).map (fun (l, a) => Json.mkObj [("label", .str l), ("ast", enc a)])).toArray
 
+/-- Closed probes for independent finite evaluators. The open bodies and their
+argument order remain defined only by `profileDef`; these existential closures
+make the four derived words observable without supplying a profile-word table. -/
+def profileExists (A : AltEnv) : Json :=
+  Json.mkObj (profileWords.filterMap fun p =>
+    match profileDef A p with
+    | some ([first, second], body) => some (p, enc (.ex first (.ex second body)))
+    | _ => none)
+
 /-- 2.3: the legend generated from the block (untrusted text; the English surface renders the
 fulfilment bodies other than `avoids`). -/
 def legend (A : AltDoc) : List String :=
@@ -275,6 +284,7 @@ def regenerated (src : AltSource) : List (String × Json) :=
    ("base_premises", labelled src.labels A.Γ),
    ("followable", Json.mkObj [("ast", enc (allFollowable A)), ("followable", enc (followableF A)),
      ("clear", enc (clearF A))]),
+   ("profile_exists", profileExists A.alt),
    ("unmapped_obligations", Json.arr ((unmappedObligations A).map (fun r =>
      Json.mkObj [("obligation", .str r.name), ("act", .str (r.act.getD ""))])).toArray)] ++
   VE.Norms.Wire.regenerated (inlineTree A)
