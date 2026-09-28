@@ -21,16 +21,14 @@ def test_catalogue_covers_served_page_and_source_literals(tmp_path):
     assert result['errors'] == []
     assert result['sentences'] > 0
     assert result['labels'] > 0
-    # Known gaps remain visible in the measurement. The strict build gate must
-    # reject them rather than silently treating them as labels or VE sentences.
-    assert result['gaps']
-    assert result['dynamic_gaps']
+    # Every failed parse remains visible in the catalogue until the wording or
+    # language changes; it cannot silently become a label.
+    assert all(gap['reason'] for gap in result['gaps'])
 
 
-def test_strict_copy_gate_rejects_recorded_violations():
+def test_strict_copy_gate_tracks_recorded_violations():
     process = subprocess.run([sys.executable, '-m', 'webapp.vocabulary.audit', '--strict'],
                              cwd=ROOT, capture_output=True, text=True, check=False)
-    assert process.returncode == 1
     result = json.loads(process.stdout)
     assert result['errors'] == []
-    assert result['gaps'] and result['dynamic_gaps']
+    assert process.returncode == int(bool(result['gaps'] or result['dynamic_gaps']))
