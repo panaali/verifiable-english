@@ -586,6 +586,54 @@ def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     assert (line["premises"]["status"], line["vacuous"]) == ("model", "no")
 
 
+def test_presupposition_failure_and_compliance_lines_carry_premise_status(lean, tmp_path):
+    # Regression: over contradictory premises Lean's `PRESUPPOSITION-FAILED (certificate for ¬H)` line
+    # carried no premise status or vacuity even with inconsistency evidence supplied, and Python's
+    # proof-task compliance line dropped the status its certificate check computed.
+    from ve.ast import Not
+    from ve.entailment import prove_entailment
+    env = F0()
+    facts = [unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+             unit("n", 1, "asserted", {"ast": ["not", U("reviewed", "atlas")]})]
+    for asked in (which("which_one"), polar(U("reviewed", "atlas"))):
+        document = {"units": facts + [unit("q", 2, "question", asked)]}
+        py = core(env, document)
+        q = py.questions[0]
+        proof = prove_entailment(py.env, py._caller_premises(), Not(py.presupposition(q)))
+        line = py.check_presupposition_failure_certificate(q, proof.certificate)
+        assert (line["status"], line["premises"]["status"], line["vacuous"]) == \
+            ("PRESUPPOSITION-FAILED", "INCONSISTENT", "yes")
+        lean_line = run1({"id": "h", "kind": "speech-answer", "environment": env, "document": document,
+                          "question": "q", "evidence": {"presupposition_failed": proof.certificate},
+                          "premise_status": {"inconsistent": line["premises"]["certificate"]}})["answer"]
+        assert lean_line == \
+            "PRESUPPOSITION-FAILED (certificate for ¬H; premises: INCONSISTENT (certificate); vacuous: yes)"
+    # A consistent list: ¬H is not certified, never reported as a failed presupposition.
+    consistent = core(env, {"units": facts[:1] + [unit("q", 2, "question", which("which_one"))]})
+    with pytest.raises(VEError, match="AnswerMismatch: q"):
+        consistent.check_presupposition_failure_certificate(consistent.questions[0], proof.certificate)
+    # The compliance line of a proof task over contradictory premises is vacuous and says so.
+    env["vocabulary"]["predicates"]["cat"]["verbalisation"] = "{0} is a cat"
+    lines = ["Tom is a cat.\n", "Tom is not a cat.\n", "Prove that tom is a cat using these premises.\n"]
+    positions = [0]
+    for text in lines:
+        positions.append(positions[-1] + len(text.encode()))
+    task = command("require", "submit_required", ["q1"])
+    units = [{**unit("p", 0, "asserted", {"ast": U("cat", "tom")}), "span": positions[0:2]},
+             {**unit("n", 0, "asserted", {"ast": ["not", U("cat", "tom")]}), "span": positions[1:3]},
+             {**unit("t", 0, "instruction", task), "span": positions[2:4]}]
+    records = [{"id": "q1", "premises": ["p", "n"], "target": {"ast": U("cat", "tom")}}]
+    py = core(env, {"units": units, "queries": records})
+    proof = prove_entailment(py.env, py._caller_premises("q1"), py.queries["q1"].target)
+    path = tmp_path / "task.ve.md"
+    path.write_text("---\n" + json.dumps({"format": "ve-document@2", "environment": env, "units": units,
+                                          "queries": records, "compliance": [
+                                              {"command": "t", "evidence": {"certificate": proof.certificate}}]}) +
+                    "\n---\n" + "".join(lines))
+    [line] = load_speech_document(path).compliance_lines
+    assert (line["status"], line["premises"]["status"], line["vacuous"]) == ("certificate", "INCONSISTENT", "yes")
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",

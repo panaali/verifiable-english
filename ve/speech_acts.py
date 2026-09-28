@@ -579,6 +579,19 @@ class SpeechDocument:
                 "assumptions": [f"speech:presupposition:{question.unit}"] if conditional else [],
                 **self._premise_status(premises, max_steps)}
 
+    def check_presupposition_failure_certificate(self, question, certificate, *, max_steps=10_000):
+        """Replay a certificate for ¬H(q) over premises(D): no token is a correct answer (5.3)."""
+        from .entailment import check_entailment_certificate
+        if question.mode not in ("polar", "which_one", "which_all"):
+            raise VEError("InvalidInput: question has no formula answer")
+        premises = self._caller_premises()
+        replay = check_entailment_certificate(self.env, premises, Not(self.presupposition(question)), certificate,
+                                              max_steps=max_steps)
+        if not replay.valid:
+            raise VEError(f"AnswerMismatch: {question.unit}")
+        return {"status": "PRESUPPOSITION-FAILED", "evidence": "certificate",
+                **self._premise_status(premises, max_steps)}
+
     def check_consequence_certificate(self, qid, certificate, *, max_steps=10_000):
         """Replay a consequence or proof-task submission against its pinned query."""
         from .entailment import check_entailment_certificate

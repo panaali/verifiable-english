@@ -645,7 +645,9 @@ answer: supported <a> (certificate; assumptions: <leaves>;
       | supported <a> given the presupposition (certificate; assumption speech:presupposition:<u>;
                        premises with H: model <id> | INCONSISTENT (certificate) | UNKNOWN (<budget>); vacuous: no | yes | unknown)
       | evaluated <a> in model <id> (this situation only)
-      | PRESUPPOSITION-FAILED (certificate for ¬H | model <id>)
+      | PRESUPPOSITION-FAILED (certificate for ¬H; premises: model <id> | INCONSISTENT (certificate) | UNKNOWN (<budget>);
+                               vacuous: no | yes | unknown)
+      | PRESUPPOSITION-FAILED (model <id>)
       | UNKNOWN (<budget>)
       | UNANSWERED
 judgment (follows questions): follows (certificate; premises: model <id> | INCONSISTENT (certificate) | UNKNOWN (<budget>);
@@ -658,7 +660,8 @@ nomination (reading questions): <i> by <agent> (testimony) | CLARIFICATION-OPEN 
 within the named budget) of the exact premise list the certificate was checked over: `Π` for an unconditional answer,
 `Π ++ [H(q)]` for a conditional one (a false presupposition can make a conditional proof vacuous although `Π` is
 consistent, so the conditional line carries the status of the extended list, never a copy of `Π`'s), and `Π_q` for a
-`follows` judgment. `vacuous` is derived from that status and nothing else: `yes` under INCONSISTENT, `no` under a
+`follows` judgment; a certificate for `¬H(q)` is checked over `Π` and carries `Π`'s status (over inconsistent premises
+it is vacuous like every other certificate), and a proof task's compliance certificate (5.4) carries `Π_q`'s. `vacuous` is derived from that status and nothing else: `yes` under INCONSISTENT, `no` under a
 model, `unknown` under UNKNOWN; the three-way status is never collapsed to a yes/no.
 
 ### 5.4 Compliance evidence (commands)
@@ -666,7 +669,9 @@ model, `unknown` under UNKNOWN; the three-way status is never collapsed to a yes
 ```text
 compliance: none
           | external: unit <id> (<support kind>)          an asserted done_act(ā) unit with its own support
-          | certificate: query <q>                        a proof task's replayed certificate (evidence on this line only:
+          | certificate: query <q> (premises: <status>; vacuous: no | yes | unknown)
+                                                          a proof task's replayed certificate, with the status of Π_q
+                                                          (5.3) (evidence on this line only:
                                                           no premise, no leaf, no generated done fact; 4.6)
 ```
 
@@ -1589,6 +1594,7 @@ statements of section 8 are unchanged.
 | A, CLI scope identity: the inspection report gave the embedded environment's id and legend, so alice- and bob-bound documents reported one id and no bound addressee; fences were parsed under the block alone | 1.1: the report, the legend and fence parsing use the effective scope; Python's legend lists definites in Lean's sorted order. |
 | B, candidate validation: a follows-question candidate naming no record and a malformed binding phrase counted as R in Python; Lean read no open candidate and accepted `{"command": {}}` | 1.4 and 6: every candidate of every version is decoded as its kind and checked as its unit would be were it chosen, in both cores; a candidate that asks about a query consumes its record at its unit; reading sets hold 1 to 64 readings with kind and content. |
 | B, opaque contradiction: "Is atlas reviewed yet never reviewed?" escaped the closed word list, took class C and was evaluated "yes" as one gloss | 2.1 and 7: the gloss check is structural as well as lexical: contrast and negation words ("yet", "never", ...), sentence punctuation, a repeated word and another declared property inside the gloss are `OpaqueWording`. |
+| B, vacuity omission: Lean's `PRESUPPOSITION-FAILED (certificate for ¬H)` line had no premise status even with inconsistency evidence supplied; Python's compliance line dropped the status of its certificate's list | 5.3 and 5.4: the ¬H certificate line carries the status of `Π` and its vacuity in Lean, and Python gains the same check; a proof task's compliance line carries `Π_q`'s. |
 
 ## Change log
 
