@@ -54,6 +54,11 @@ def hex64 (j : Json) : Check := do
 
 def folFormula (j : Json) : Check := do let _ ← VE.Bridge.decodeFormula 64 j
 
+/-- A formula the runner generated: `Bridge.decodeFormula`'s grammar at any depth. Each
+level of a formula adds at least two characters to its rendering, so that length is
+enough fuel. -/
+def generatedFormula (j : Json) : Check := do let _ ← VE.Bridge.decodeFormula j.compress.length j
+
 def orderFormula (j : Json) : Check := do let _ ← VE.Order.Wire.decodeFormula 64 j
 
 def kind (j : Json) : Check := do let _ ← VE.Route.Admission.decodeKind 16 j
@@ -245,8 +250,8 @@ def bundle (row case : Json) : Check := do
 def background (row case : Json) : Check := do
   okRow row case ["background", "premises", "generators"]
   let bg ← field row "background"
-  array bg folFormula
-  array (← field row "premises") folFormula
+  array bg generatedFormula
+  array (← field row "premises") generatedFormula
   need (bg == (← field row "premises")) "premises differ from background"
   let gs ← field row "generators"
   array gs (fun g => do need (VE.Route.Background.generators.contains (← g.getStr?)) "generator")
@@ -296,16 +301,16 @@ def normsElaborate (row case : Json) : Check := do
   let background ← field row "background"
   objects background ["generator", "ast"] fun x => do
     need (["definitions", "literals", "profile"].contains (← (← field x "generator").getStr?)) "generator"
-    folFormula (← field x "ast")
+    generatedFormula (← field x "ast")
   let premises ← field row "premises"
   objects premises ["label", "ast"] fun x => do
     need ((← (← field x "label").getStr?).startsWith "layer:norms:") "layer label"
-    folFormula (← field x "ast")
+    generatedFormula (← field x "ast")
   let targets ← field row "conflict_targets"
   objects targets ["target", "sorts", "ast"] fun x => do
     string (← field x "target")
     let _ ← VE.Bridge.strings (← field x "sorts")
-    folFormula (← field x "ast")
+    generatedFormula (← field x "ast")
   bool (← field row "fragment")
   let layers ← regulatedCount case
   need (order.length == layers && (← length premises) == layers) "one layer per regulated predicate"
@@ -390,7 +395,7 @@ def token (j : Json) : Check := do
 def englishItem (j case : Json) : Check := do
   shape j ["parsed", "checked", "rendered", "roundtrip"] []
   let parsed ← field j "parsed"
-  unless parsed.isNull do array parsed folFormula
+  unless parsed.isNull do array parsed generatedFormula
   let checked ← (← field j "checked").getBool?
   let rendered ← field j "rendered"
   unless rendered.isNull do array rendered token

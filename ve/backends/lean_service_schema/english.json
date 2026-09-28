@@ -22,7 +22,7 @@
     "item": {"$comment": "EnglishRun.runCase for the case at the same position: rendered iff checked; a roundtrip needs a checked rendering; only nonempty formulas are checked.",
       "type": "object", "required": ["parsed", "checked", "rendered", "roundtrip"], "additionalProperties": false,
       "properties": {
-        "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/fol_formulas"}]},
+        "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/generated_formulas"}]},
         "checked": {"type": "boolean"},
         "rendered": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/token"}}]},
         "roundtrip": {"type": "boolean"}},

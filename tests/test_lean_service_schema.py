@@ -283,10 +283,11 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
     "values-count", "claim-member", "kinds-link", "lemmas-link", "checked-count", "order-link",
     "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false", "background-runs",
     "certificate-count", "norms-layers", "norms-order", "norms-targets", "norms-background",
-    "norms-certificate", "conflict-targets", "literal-pairs"])
+    "norms-certificate", "conflict-targets", "literal-pairs", "generated-cap"])
 def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
     """The differential harness has teeth: each weakening of the schemas disagrees with
-    the Lean decoders on some mutation."""
+    the Lean decoders on some mutation (and so does the decoders' depth cap put back on
+    generated formulas)."""
     for path in DIRECTORY.glob("*.json"):
         shutil.copy(path, tmp_path / path.name)
     def edit(name, change):
@@ -331,6 +332,8 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
                                       lambda d: d["norms-conflict"]["properties"]["targets"].pop("x-cardinality")),
      "literal-pairs": lambda: _edit_counts(
          tmp_path, lambda c: c["literals"].update(pairs={"sum": [c["literals"]["pairs"], 1]})),
+     "generated-cap": lambda: edit(common, lambda d: d["generated_formula"].update(
+         {"x-fuel": {"counter": "generated_formula", "limit": 64}})),
      }[weaken]()
     compiler = Compiler(tmp_path)
     rows = {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
@@ -565,15 +568,47 @@ def _deep_term(depth):
     return term
 
 
+GENERATED_DEPTHS = [(depth, ["top"]) for depth in (63, 64, 65, 69, 3000)] + [(3000, ["nope"]), (65, ["top", 1])]
+
+
 def depth_items(genuine):
+    """Formula depth: generated formulas (Background, norms premises and targets, English
+    parses) at any depth, malformed deep ones rejected; claims, which the runners decode
+    from the request, at most 64; order surface formulas and terms at most 64."""
     items = []
     for request, response, i in [x for x in _linked(genuine, "route", "background")
                                  if x[1]["results"][x[2]]["premises"]][:1]:
-        for depth in (63, 64, 65):
+        for depth, leaf in GENERATED_DEPTHS:
             res = deepcopy(response)
             for field in ("background", "premises"):
-                res["results"][i][field][0] = _deep_formula(depth, ["top"])
+                res["results"][i][field][0] = _deep_formula(depth, leaf)
             items.append(("route", request, [res]))
+    for request, response, i in _linked(genuine, "norms", "norms-elaborate")[:1]:
+        for field in ("background", "premises", "conflict_targets"):
+            if response["results"][i][field]:
+                for depth, leaf in GENERATED_DEPTHS:
+                    res = deepcopy(response)
+                    res["results"][i][field][0]["ast"] = _deep_formula(depth, leaf)
+                    items.append(("norms", request, [res]))
+    for mode, request, response in genuine:
+        rows = [(k, j) for k, row in enumerate(response["results"]) if isinstance(row.get("results"), list)
+                for j, item in enumerate(row["results"]) if item.get("parsed")]
+        for k, j in rows[:1]:
+            for depth, leaf in GENERATED_DEPTHS:
+                res = deepcopy(response)
+                res["results"][k]["results"][j]["parsed"][0] = _deep_formula(depth, leaf)
+                items.append((mode, request, [res]))
+    for request, response, i in [x for x in _linked(genuine, "route", "admission")
+                                 if x[0]["cases"][x[2]]["id"] == "shared-leaves"]:
+        for depth in (63, 64, 65, 3000):
+            formula = _deep_formula(depth, ["top"])
+            req, res = deepcopy(request), deepcopy(response)
+            for node in req["cases"][i]["document"]["graph"]["nodes"]:
+                node["ast"] = formula if node["name"] == "a" else node["ast"]
+            report = res["results"][i]["report"]
+            for claim in report["assumptions"]:
+                claim["ast"] = formula if claim["name"] == "a" else claim["ast"]
+            items.append(("route", req, [res]))
     for request, response, i in _linked(genuine, "order", "surface")[:1]:
         for formula in [_deep_formula(d, ["lt", ["num", "0"], ["num", "1"]]) for d in (64, 65)] + [
                 ["lt", _deep_term(d), ["num", "1"]] for d in (63, 64, 65)] + [
@@ -752,6 +787,46 @@ def test_order_surface_of_zero_less_than_one_is_nonempty(executables):
         [empty] = service.run("order", [{**env, "id": "e", "source": ""}])
     assert row["status"] == "ok" and row["ast"] == [["lt", ["num", "0"], ["num", "1"]]]
     assert empty["status"] == "error"
+
+
+def _depth(formula):
+    """Formula nesting depth (terms not counted), without recursion."""
+    deepest, pending = 0, [(formula, 1)]
+    while pending:
+        node, depth = pending.pop()
+        deepest = max(deepest, depth)
+        if node[0] in ("not", "and", "or", "implies"):
+            pending += [(sub, depth + 1) for sub in node[1:]]
+        elif node[0] in ("forall", "exists"):
+            pending.append((node[2], depth + 1))
+    return deepest
+
+
+def test_generated_formulas_deeper_than_the_decoders_are_accepted(executables):
+    """mig1c-looprecheck1 B: a binary definition with a body of depth 62 has a depth-66
+    Background premise, and English with 64 negations parses at depth 65; both actual
+    service responses failed as CheckerUnavailable after one retry. Formulas the runners
+    generate are not bounded by the decoders' 64: these, the largest definition premise
+    (68), a 2002-deep English parse and a norms elaboration over 70 rules are accepted with
+    no retry. Order surface formulas stay within 64 because the runner re-decodes them."""
+    from tests.lean_service_corpus import (deep_definition_background, deep_norms_elaboration,
+                                           english_cases, load, order_cases)
+    route = load("lean/VE/Route/examples/route-cases.json")
+    order = next(c for c in order_cases() if isinstance(c, dict) and c.get("kind") == "surface")
+
+    def source(depth):
+        return "not (" * (depth - 1) + "0 < 1" + ")" * (depth - 1) + ".\n"
+    with LeanService(executables[0]) as service:
+        backgrounds = service.run("route", [deep_definition_background(route, d) for d in (62, 64)])
+        [english] = service.run("english", english_cases(negations=(64, 2000))[:1])
+        [norms] = service.run("norms", [deep_norms_elaboration()])
+        surfaces = service.run("order", [{**order, "id": str(d), "source": source(d)} for d in (64, 65)])
+        assert service.stats["retries"] == 0
+    assert [max(map(_depth, row["premises"])) for row in backgrounds] == [66, 68]
+    assert [_depth(item["parsed"][0]) for item in english["results"][-4:]] == [66, 2002, 66, 2002]
+    assert min(_depth(x["ast"]) for x in norms["premises"] + norms["conflict_targets"]) > 64
+    assert surfaces[0]["status"] == "ok" and _depth(surfaces[0]["ast"][0]) == 64
+    assert surfaces[1]["status"] == "error"
 
 
 def test_python_reference_decoders_agree_with_schema_domains():

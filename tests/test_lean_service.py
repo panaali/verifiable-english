@@ -90,7 +90,8 @@ def test_response_schemas_follow_lean_sources():
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
     assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(common["fol_term"]["x-tagged"])
-    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common["fol_formula"]["x-tagged"])
+    for name in ("fol_formula", "generated_formula"):
+        assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common[name]["x-tagged"])
     order = (ROOT / "lean/VE/Order/Wire.lean").read_text()
     order_terms = order.split("def decodeTerm :", 1)[1].split("def decodeFormula :", 1)[0]
     order_formulas = order.split("def decodeFormula :", 1)[1].split("def termNodes", 1)[0]
@@ -425,7 +426,7 @@ for line in sys.stdin:
                           "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                           "errors": 0}}), flush=True); continue
     if behaviour in ("english-order-atom", "english-checked-no-render", "english-deep-formula",
-                     "background-boolean-premise"):
+                     "english-deep-parse", "background-boolean-premise"):
         if behaviour == "background-boolean-premise":
             row = {"id": request["cases"][0]["id"], "status": "ok",
                    "background": [["eq", ["var", 0], ["var", 0]]],
@@ -439,8 +440,9 @@ for line in sys.stdin:
         prefix = json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"]})[:-1]
         counts = json.dumps({"cases": 1, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                              "errors": 0})
-        if behaviour == "english-deep-formula":
-            deep = '["not",' * 1200 + '["top"]' + ']' * 1200
+        if behaviour in ("english-deep-formula", "english-deep-parse"):
+            leaf = '["top"]' if behaviour == "english-deep-parse" else '["nope"]'
+            deep = '["not",' * 5000 + leaf + ']' * 5000
             result = '{"admissible":true,"covers":true,"results":[{"parsed":[' + deep + \
                      '],"checked":false,"rendered":null,"roundtrip":false}]}'
         else:
@@ -517,6 +519,19 @@ def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mod
     assert service.stats["starts"] == 2 and service.stats["retries"] == 1
     assert service.pid is None
     service.close()
+
+
+def test_generated_parse_of_any_depth_is_accepted(tmp_path):
+    """Generated formulas are not bounded by the decoders' 64 (an English parse nests one
+    negation per prefix): a valid parse of depth 5001 is checked without recursion and
+    accepted with no retry, while the same parse with a bad leaf fails closed above."""
+    with LeanService(fake(tmp_path, "english-deep-parse"), allow_unlisted_build=True) as service:
+        [row] = service.run("english", [{"cases": [{}]}])
+        assert service.stats["retries"] == 0
+    parsed = row["results"][0]["parsed"][0]
+    for _ in range(5000):
+        parsed = parsed[1]
+    assert parsed == ["top"]
 
 
 def _scripted_response_rejected(tmp_path, mode, case, row):

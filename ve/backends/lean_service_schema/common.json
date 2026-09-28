@@ -35,7 +35,7 @@
     "fol_term": {"$comment": "Bridge.decodeTerm.", "x-tagged": {
       "var": [{"$ref": "#/$defs/nat"}],
       "const": [{"type": "string"}]}},
-    "fol_formula": {"$comment": "Bridge.decodeFormula 64.", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
+    "fol_formula": {"$comment": "Bridge.decodeFormula 64: a formula the runner decoded from the request (a claim).", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
       "top": [],
       "bottom": [],
       "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
@@ -47,7 +47,20 @@
       "implies": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
       "forall": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
       "exists": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}]}},
-    "fol_formulas": {"type": "array", "items": {"$ref": "#/$defs/fol_formula"}},
+    "generated_formula": {"$comment": "Route.Wire.encodeFormula of a formula the runner generated (Background, norms premises and conflict targets, English parses): Bridge.decodeFormula's grammar at any depth. The decoder's 64 bounds the inputs, not these: a definition premise wraps a body of depth 64 in two binders and a biconditional (68), an English parse nests one negation per 'it is not the case that', and a norms elaboration nests every rule, carve-out and lower layer.",
+      "x-tagged": {
+      "top": [],
+      "bottom": [],
+      "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
+      "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "not": [{"$ref": "#/$defs/generated_formula"}],
+      "and": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "or": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "implies": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "forall": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}],
+      "exists": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}]}},
+    "generated_formulas": {"type": "array", "items": {"$ref": "#/$defs/generated_formula"}},
 
     "order_term": {"$comment": "Order.Wire.decodeTerm 64.", "x-fuel": {"counter": "order_term", "limit": 64}, "x-tagged": {
       "var": [{"$ref": "#/$defs/nat"}],
