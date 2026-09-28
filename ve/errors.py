@@ -73,5 +73,9 @@ class UnsupportedProfile(VEError):
     code = "UnsupportedProfile"
 
 
+class CheckerUnavailable(VEError):
+    code = "CheckerUnavailable"
+
+
 class ResourceLimit(VEError):
     code = "ResourceLimit"
