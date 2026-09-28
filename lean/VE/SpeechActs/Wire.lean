@@ -548,9 +548,20 @@ def chosenMeaning (j : Json) (content : Option Json) : Json :=
   | some (Json.str "reading"), Json.str i => Json.mkObj [("open", Json.arr #[Json.str ("intended-reading." ++ i)])]
   | _, _ => Json.str "specified"
 
-/-- The visible sentence shape, checked before an authored reading replaces the unit. -/
-def surfaceKind (environment : Json) (source : String) : String := Id.run do
-  let text := source.trim.toLower
+/-- The one normalisation of a wording and an act phrase for `surfaceKind` (3.2), as Python's `surface_words`:
+ASCII only. The six ASCII whitespace characters of Python's `string.whitespace` separate words (runs collapse to
+one space, none leads or trails) and only `A`-`Z` fold (`Char.toLower`); every other character is a letter. -/
+def surfaceWords (s : String) : String :=
+  " ".intercalate ((s.split (fun c => c == ' ' || c == '\t' || c == '\n' || c == '\r' ||
+    c == '\x0b' || c == '\x0c')).filter (· ≠ "")) |>.map Char.toLower
+
+/-- The speech-act kinds a signed choice must share with its wording (3.2); no other kind is checked. -/
+def speechKinds : List String := ["asserted", "question", "instruction"]
+
+/-- The visible sentence shape, checked before an authored reading replaces the unit. Acts are W1's normalised
+phrases (`Regulated.act`, as Python's `RegulatedDecl.act`); a `plain` declaration has none. -/
+def surfaceKind (regulated : List VE.Norms.Regulated) (source : String) : String := Id.run do
+  let text := surfaceWords source
   if text.endsWith "?" ||
       (["question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
         "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can "].any text.startsWith &&
@@ -558,15 +569,21 @@ def surfaceKind (environment : Json) (source : String) : String := Id.run do
   if text.startsWith "in this task, " || text.startsWith "this document is task " then return "binding"
   if text.startsWith "do not " || text.startsWith "prove that " || text.startsWith "command " then
     return "instruction"
-  let predicates := ((environment.getObjValD "vocabulary").getObjValD "predicates")
-  for (_, p) in (fields predicates).toOption.getD [] do
-    let act := ((p.getObjValD "regulated").getObjValD "act")
-    if let .str wording := act then
-      match wording.toLower.splitOn " " with
+  for r in regulated do
+    if let some act := r.act then
+      match (surfaceWords act).splitOn " " with
       | "{0}" :: verb :: _ =>
         if text.startsWith (verb ++ " ") then return "instruction"
       | _ => pure ()
   return "asserted"
+
+/-- 3.2: a signed choice of `kind` contradicts its wording only when both are speech-act kinds and differ; a
+norm, definition, example, binding or quoted choice, or a binding-shaped wording, is never rejected here. -/
+def choiceKindConflicts (regulated : List VE.Norms.Regulated) (kind : Json) (source : String) : Bool :=
+  let surface := surfaceKind regulated source
+  match kind with
+  | .str k => speechKinds.contains k && speechKinds.contains surface && k != surface
+  | _ => false
 
 /-- The unit as its latest reading set leaves it: an authored choice supplies the kind, its meaning
 (`chosenMeaning`) and the content (W2's formula-only assertion candidates are bare ASTs, which `decodeUnit`
@@ -580,7 +597,7 @@ def chosenUnit (j : Json) (kind : Json) (content : Option Json) : Except String 
     | none => []))
 
 /-- Decode one unit under the document's reading sets. -/
-def decodeUnitIn (E : VE.Environment) (environment : Json)
+def decodeUnitIn (E : VE.Environment) (regulated : List VE.Norms.Regulated)
     (states : List (String × Nat × ReadingState)) (j : Json) :
     Except String SpeechUnitInfo := do
   let id := match j.getObjValD "id" with
@@ -589,9 +606,10 @@ def decodeUnitIn (E : VE.Environment) (environment : Json)
   match latestState states id with
   | some .pending => pure { (← decodeUnit E j) with pending := true }
   | some (.authored kind content) => do
+    -- A present `source`, `null` included, is the wording (Python's `SpeechDocument`).
     match j.getObjVal? "source" with
     | .ok (.str source) =>
-      unless kind == Json.str (surfaceKind environment source) do throw "InvalidInput: choice kind"
+      if choiceKindConflicts regulated kind source then throw "InvalidInput: choice kind"
     | .ok _ => throw "InvalidInput: speech wording"
     | .error _ => pure ()
     decodeUnit E (← chosenUnit j kind content)
@@ -791,7 +809,7 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   VE.Bridge.displayFields document ["units"]
     ["queries", "answers", "compliance", "graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
   let states ← readingStates document
-  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E environment states)
+  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E se.ne.regulated states)
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"
   unless (units.map (·.id)).eraseDups.length == units.length do throw "duplicate unit id"
   unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
