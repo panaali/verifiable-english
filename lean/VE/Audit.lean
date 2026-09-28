@@ -1090,6 +1090,14 @@ import VE.Discourse.English
 #print axioms VE.Discourse.definiteRestrs_nil
 #print axioms VE.Discourse.derives_units
 #print axioms VE.Discourse.elaborate_faithful
+#print axioms VE.Discourse.conj_wf
+#print axioms VE.Discourse.npConsts_ne
+#print axioms VE.Discourse.conjOn_wf
+#print axioms VE.Discourse.restr_wf
+#print axioms VE.Discourse.unary_var_wf
+#print axioms VE.Discourse.core_typed
+#print axioms VE.Discourse.elaborate_typed
+#print axioms VE.Discourse.elaborate_of_meaning
 #print axioms VE.Discourse.elaborate_no_new_symbols
 #print axioms VE.Discourse.elaborate_tree
 #print axioms VE.Discourse.recordedSlots_nil
