@@ -16,7 +16,8 @@ bridge formula: they are regenerated from the decoded document.
   may carry `report`, `assessment` or `negated` content (the report units);
   every other unit is a W2 unit (asserted units with an `ast`, labelled units
   with none). The kind decoder is W2's with the act `wants` added. A report
-  unit may also carry `meaning` and `support` (checked for shape, not read).
+  unit carries `meaning` and `support`; every unit's span, meaning and support
+  are decoded (`decodeMeta`), checked by `metaOk` and hashed into `document_id`.
 * Optional absent values are absent keys (`literal`, `reference_time`, a
   package's `content`): the frozen restricted JSON parser rejects `null`.
 * `{"fence": …}` content (surface text) is not decoded by the Lean route. -/
