@@ -310,7 +310,21 @@ def jointOk (D : DDoc) : Except String Unit :=
   | .ok _ => .ok ()
   | .error e => if e.startsWith "ResourceLimit" then .ok () else .error e
 
-/-- Validity bindings and self-truth labels (4.7): `meta` units without content. -/
+/-- The validity wording after the document name (2.1): `is [not] a valid VE document.` -/
+def validityTail (holds : Bool) : List Tok :=
+  ((if holds then ["is"] else ["is", "not"]) ++ ["a", "valid", "ve", "document", "."]).map Tok.word
+
+/-- The validity claims a unit's own wording makes: the document whose display it names and
+the polarity. Anything else (a self-truth wording such as `Everything in this document is
+true.`) makes none. -/
+def validityWording (D : DDoc) (u : String) : List (String × Bool) :=
+  match D.text u with
+  | none => []
+  | some s => D.K.documents.flatMap fun d => [true, false].filterMap fun h =>
+      if d.display.any (fun x => lexWords x ++ validityTail h == s) then some (d.name, h) else none
+
+/-- Validity bindings and self-truth labels (4.7): `meta` units without content, and a
+validity binding's document and polarity regenerated from the unit's wording. -/
 def labelsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => allOk D.K.validity fun v =>
     if !(D.base.units.any fun x => x.id == v.unit && decide (x.kind = .«meta») && x.content.isNone) then
@@ -320,7 +334,12 @@ def labelsOk (D : DDoc) : Except String Unit := runAll [
       | none => .error ("UnknownDocument: " ++ v.document)
       | some d => match d.refers with
         | .part _ => .error ("UnsupportedTarget: " ++ v.unit ++ ": part")
-        | _ => .ok (),
+        | _ => match validityWording D v.unit with
+          | [(name, holds)] =>
+            if name != v.document then .error ("ManifestMismatch: validity." ++ v.unit ++ ".document")
+            else req (holds == v.holds) ("ManifestMismatch: validity." ++ v.unit ++ ".holds")
+          | [] => .error ("InvalidInput: validity unit " ++ v.unit ++ " is not a validity wording")
+          | _ => .error ("InvalidInput: validity unit " ++ v.unit ++ " names more than one document"),
   fun _ => allOk D.K.selfTruth fun u =>
     req (D.base.units.any fun x => x.id == u && decide (x.kind = .«meta») && x.content.isNone)
       ("InvalidInput: self-truth unit " ++ u)]

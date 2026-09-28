@@ -525,6 +525,20 @@ def test_upsilon_self_truth(lean):
     assert admit(bound_as_validity, env(constants=DOC_CONSTANTS))["error"] == "InvalidInput: u1 is a self-truth sentence"
 
 
+def test_validity_binding_is_regenerated_from_wording(lean):
+    """Astra A4, Fable A1: the manifest cannot turn a truth wording into a checked validity claim."""
+    environment = env(constants=DOC_CONSTANTS)
+    for sentence in ("Everything in this document is true.", "This document is correct.", "Policy 2 is correct."):
+        assert admit(validity_doc(sentence, "this_policy", True), environment)["error"] == \
+            "InvalidInput: validity unit u1 is not a validity wording", sentence
+    assert admit(validity_doc("This document is not a valid VE document.", "this_policy", True), environment)[
+        "error"] == "ManifestMismatch: validity.u1.holds"
+    assert admit(validity_doc("This document is a valid VE document.", "this_policy", False), environment)[
+        "error"] == "ManifestMismatch: validity.u1.holds"
+    assert admit(validity_doc("Policy 2 is a valid VE document.", "this_policy", True), environment)[
+        "error"] == "ManifestMismatch: validity.u1.document"
+
+
 # (φ) Identity, tampering and the profile adapter
 
 def test_phi_tampering_and_identity(lean):
