@@ -993,6 +993,12 @@ import VE.Norms.Run
 #print axioms VE.Time.charge_some
 #print axioms VE.Time.evalB_sound
 #print axioms VE.Time.refutesB_sound
+#print axioms VE.Time.denote_domains_irrelevant
+#print axioms VE.Time.eval_domains_perm
+#print axioms VE.Time.countermodelCheck_domains_perm
+#print axioms VE.Time.Wire.sortDomains_perm
+#print axioms VE.Time.Wire.evalB_sorted_sound
+#print axioms VE.Time.Wire.refutesB_sorted_sound
 #print axioms VE.Time.Document.admitNodes_ok
 #print axioms VE.Time.Document.lookupEntry_mem
 #print axioms VE.Time.Document.mapM_lookup_mem

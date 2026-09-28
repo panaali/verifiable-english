@@ -16,8 +16,9 @@ equal it, admits the statement with the proved `QFormula.admits`, and erases it
 the regenerated target environment, whose identity is recomputed here.
 
 Cases (`kind`): `admission` (default; with an optional `model` it also evaluates
-under the Python/Rust budget, `evalB_sound`), `countermodel` (the same budget,
-`refutesB_sound`), `certificate` (a `ve-quantity-certificate@1` wrapping an order
+under the Python/Rust budget over each domain in Python/Rust order,
+`evalB_sorted_sound`), `countermodel` (the same budget and order,
+`refutesB_sorted_sound`), `certificate` (a `ve-quantity-certificate@1` wrapping an order
 certificate for the regenerated problem; see `checkW6Certificate_sound`),
 `count` (the canonical counting expansion), and the conversions `day`,
 `civil`, `lower`, `render` used by the differential tests. -/
@@ -660,6 +661,38 @@ theorem checkW6Certificate_sound {w : W6Env} (ps : List (Admission w)) (c : Admi
 def budgetExhausted : String :=
   "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
 
+/-- Each submitted domain in Python `sorted` and Rust `sort` order (local
+identifiers are ASCII, so code-point, byte and `String` order agree). `evalB`
+stops at the first decisive entity, so its work, and whether the budget runs
+out, depends on this order; values never do (`eval_domains_perm`). -/
+def sortDomains (d : VE.Order.ModelData VE.Order.Wire.Entity) :
+    VE.Order.ModelData VE.Order.Wire.Entity :=
+  { d with domains := d.domains.map fun p => (p.1, p.2.mergeSort fun a b => decide (a.2 ≤ b.2)) }
+
+theorem sortDomains_perm (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : String) :
+    ((sortDomains d).toModel.domains s).Perm (d.toModel.domains s) := by
+  simp only [sortDomains, VE.Order.ModelData.toModel,
+    lookup_map (fun xs : List VE.Order.Wire.Entity => xs.mergeSort fun a b => decide (a.2 ≤ b.2))]
+  cases VE.Order.lookup d.domains s <;> simp [List.mergeSort_perm]
+
+/-- A budgeted value on the sorted presentation is the reference value on the
+submitted model. -/
+theorem evalB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (limit : Nat)
+    (f : VE.Order.Formula) (w : Nat) (r : Bool × Nat)
+    (h : evalB (sortDomains d).toModel limit [] f w = some r) : r.1 = f.eval d.toModel [] := by
+  rw [evalB_sound (sortDomains d).toModel limit f [] w r h]
+  exact eval_domains_perm (sortDomains d).toModel d.toModel rfl rfl (sortDomains_perm d) f []
+
+/-- A budgeted countermodel verdict on the sorted presentation is the reference
+verdict on the submitted model. -/
+theorem refutesB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (limit : Nat)
+    (ps : List VE.Order.Formula) (c : VE.Order.Formula) (w : Nat) (b : Bool)
+    (h : refutesB (sortDomains d).toModel limit ps c w = some b) :
+    b = VE.Order.countermodelCheck d.toModel ps c := by
+  rw [refutesB_sound (sortDomains d).toModel limit ps c w b h]
+  exact countermodelCheck_domains_perm (sortDomains d).toModel d.toModel rfl rfl
+    (sortDomains_perm d) ps c
+
 def ok (id : String) (fs : List (String × Json)) : Json :=
   Json.mkObj ([("id", .str id), ("status", .str "ok")] ++ fs)
 
@@ -740,7 +773,7 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
     let value ← match j.getObjVal? "model" with
       | .ok m => do
         let d ← VE.Order.Wire.decodeValidModel w.vocab.core m
-        match evalB d.toModel maxEvaluations [] a.formula.erase 0 with
+        match evalB (sortDomains d).toModel maxEvaluations [] a.formula.erase 0 with
         | some (value, work) => pure [("value", Json.bool value), ("evaluations", toJson work)]
         | none => throw budgetExhausted
       | .error _ => pure []
@@ -750,7 +783,7 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
     let d ← VE.Order.Wire.decodeValidModel w.vocab.core (← j.getObjVal? "model")
-    let some refutes := refutesB d.toModel maxEvaluations (ps.map (·.formula.erase))
+    let some refutes := refutesB (sortDomains d).toModel maxEvaluations (ps.map (·.formula.erase))
       c.formula.erase 0 | throw budgetExhausted
     pure (ok id ([("refutes", .bool refutes),
       ("premise_meaning_ids", toJson (ps.map (·.meaningId))),
