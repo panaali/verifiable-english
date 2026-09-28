@@ -204,6 +204,34 @@ def test_unused_coherence_is_not_a_certificate_dependency():
     assert result["conditional_on"] == []
 
 
+def test_substitutable_coherence_leaves_keep_a_sufficient_dependency():
+    raw = env()
+    rules = [should("a", "x_required", True), should("b", "x_permitted", False),
+             should("c", "x_permitted", False)]
+    row = _run({"id": "e", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    labels = ["soft:coherence:a,b", "soft:coherence:a,c"]
+    assert row["conditional_on"] == labels
+    leaves = {item["label"]: item["ast"] for item in row["background"] if "label" in item}
+    conclusion = ["or", leaves[labels[0]], leaves[labels[1]]]
+    prime = row["environment_prime"]
+    # The proof uses either coherence leaf. Keeping the original premise positions
+    # matters because the certificate is bound to the complete source background.
+    decoded = SoftEnvironment(prime, generated=True)
+    premises = [formula_from_data(decoded, item["ast"])
+                for item in row["background"] + row["premises"]
+                if item.get("generator") != "profile"]
+    claim = formula_from_data(decoded, conclusion)
+    proof = prove_entailment(decoded, premises, claim)
+    assert proof.status == "Found"
+    case = {"id": "c", "kind": "soft-certificate", "environment": raw,
+            "norms": rules, "premises": [], "conclusion": conclusion,
+            "certificate": proof.certificate}
+    result = _run(case)
+    assert result["valid"] is True
+    assert len(result["conditional_on"]) == 1
+    assert result["conditional_on"][0] in labels
+
+
 def test_public_soft_pair_and_conflict_entrypoints():
     soft = SoftNormDocument(SoftEnvironment(env()),
                             [should("a", "x_required", True),
