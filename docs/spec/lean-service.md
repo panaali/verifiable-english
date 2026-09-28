@@ -207,6 +207,11 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 
 **Quiet-machine condition remains open.** The 1-minute load average was 3.15–4.85 at the start of these timing runs on 8 logical CPUs, and rose as high as 5.70. The measured upper bounds meet the numerical targets under this contention; the plan also calls for a quiet host. A quiet-machine rerun or explicit gate acceptance is still required.
 
+**Update (design directive 3, commit `eb97efad`).** The [latest run](../../experiments/lean-service/recheck-20260928-directive3/RECHECK.md)
+meets every numerical target on its upper bounds, including all four batch targets on the pool (2,048 definitions:
+0.938 s median, upper bound 0.974 s). It also measures contention directly: the median runqueue wait was 0.0 ms for
+every workload at load 11 on 16 CPUs. Accepting it as the quiet-machine run is left to the DRI.
+
 The section-4 batch targets are separate from Gate 1. In the latest 30-repetition run, 2,048 definitions took a 1.197 s median against a 1.0 s target and 8 large certificates took 0.310 s against 0.3 s. The other two batch medians were within their targets. These rows remain work for later gates.
 
 ## Left for later stages
