@@ -1,7 +1,7 @@
 # Reports and attitudes (`reports@0`): structured reported content, attitude wrappers and open assessments over `ve-document@1`
 
-> Status: item-1 specification, draft 6 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
-> revision 5. Draft 1 transcribed the converged Astra/Fable design debate
+> Status: item-1 specification, draft 7 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
+> revision 6. Draft 1 transcribed the converged Astra/Fable design debate
 > (`manage-agents/debates/design-attribution/{astra,fable}.md`: BUILD after six text edits, CONVERGED after
 > round 2); draft 2 applies the converged FIX of the Astra/Fable statement review of draft 1
 > (`manage-agents/debates/attribution-spec/{astra,fable}.md`: FIX, CONVERGED after round 3; the change log lists
@@ -20,7 +20,16 @@
 > over `E`, a nested content being a generated atom that another unit may assert, fixture B₇; the checklist's
 > situation line of 2.3 handles a nested content that another unit asserts, B₁; B₂ now forces the renumbering it
 > exhibits) and a second audit pass that names `Γ_reports(D)` as the premise list of every entailment claim, the
-> author's premises aside (B₈). It returns
+> author's premises aside (B₈); draft 7 applies the orchestrator's design directive after the fifth read-only
+> verification (`manage-agents/attribution-p3ver5.final.md`: "asserting the inner key entails the nested content"
+> fails when the key is asserted at another holder, B₉, and for a negated nested content, `D_ω`): the normative
+> semantic content of this specification is only its definitions, its theorem statements with every hypothesis
+> explicit and its fixtures with expected results (section 0, "Normative content"); every prose entailment claim
+> is either the reading of a named theorem under that theorem's hypotheses or deleted; nested-content entailment is
+> stated on the holder-applied atom with its polarity explicit, as five theorem statements of 9.2
+> (`nested_positive_entailed`, `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted`,
+> `holder_atom_free`), with boundary fixtures B₉ to B₁₂ that each break one hypothesis, and the questions the
+> directive left open are in 4.6 (NON-NORMATIVE). It returns
 > for the one focused statement review that gates items 2 to 5 of the plan
 > (PLAN-EXPAND2 rule 10) and any implementation. Sections 4 to 6 and 9 are the statements under review; section 10
 > gives the fixtures with their definitions (10.1) separated from their expected results (10.2) and the boundary
@@ -42,8 +51,9 @@ safe" asserts that a saying occurred and keeps "the service is safe" as a closed
 that is displayed, checked locally and never promoted to a premise without an explicit bridge. Four acts are
 admitted, saying, believing, wanting and intending; each is an arbitrary relation of the independent semantics
 `(S, J)`, so, in the semantics, a report entails neither its content nor any other report, belief is not closed
-under consequence, and an intention entails neither success nor obligation (over a document's own premise set
-these hold on the fragment 4.5 names). Two open assessments, `May` and `Probably`, are named
+under consequence, and an intention entails neither success nor obligation (over a document's own premise set,
+what holds is what the theorem statements of 9.2 and 9.3 say under their hypotheses; 4.5 is their non-normative
+reading). Two open assessments, `May` and `Probably`, are named
 open judgments over content with W2's complete open-term record; admission checks their content and declared
 criteria and establishes neither possibility nor likelihood. Elaboration generates, for every finite acyclic key
 (act or judgment, holder sort, context with its tense, content), one fresh unary predicate in `E_reports`; the
@@ -62,16 +72,31 @@ and elaboration (4), scoped checks, bridges and assessments (5), status and cove
 diagnostics (8), the Lean definitions and every theorem of plan item 2 as a statement (9), the item-1 acceptance
 fixtures (10), limits, regeneration and trust (11), the review checklist (12) and the resolved choices (13).
 
+**Normative content.** The normative semantic content of this specification is exactly three things: (a) the
+definitions (sections 1, 3, 4.1 to 4.4 and 9.1), (b) the theorem statements of 9.2 and 9.3, each with every
+hypothesis explicit, and (c) the fixtures of section 10 with their expected results. Every other sentence about
+what a document's premises entail, refute or leave free is a NON-NORMATIVE reading: it names the theorem it reads
+and that theorem's hypotheses, or it is an example under a fixture, and it claims nothing the theorem statement
+does not. Where such a reading and a theorem statement differ, the statement governs and the reading is a defect
+to be repaired by deletion, never by rewording. Sections 4.5 and 4.6 are marked NON-NORMATIVE for this reason;
+the prose of 2.3 and 5.3 defines what the IDE displays and points to theorems for what exists. Entailment of a
+nested content (a report or assessment node, or the negation of one, inside another node) is stated only on the
+holder-applied signed atom the node elaborates to, at the node's own holder or evidence context and with the
+node's polarity, never on the holder-free key: the five nested-content theorems of 9.2 and the fixtures B₇, B₉
+to B₁₂ and `D_ω`.
+
 **Fragments.** Every "exactly when", "↔", "never", "only" and "no …" claim in this specification is a claim over
 the fragment of report documents named beside it; where none is named, it is over every well-formed report
 document (4.1) and is a definition or a design rule, not a theorem. Every entailment and independence claim of
 2.3, 4.5 and 5.3 is over the report premises `Γ_reports(D)` alone: the author's premises `Γ_author` and the
 literals may entail what the report premises do not (B₈). The fragments that recur: a positive document (no
 negated unit), or an `Expandable` structure (4.4); a key that no top-level unit asserts or denies (9.2); a content
-that is a formula over `E`, not a nested report or assessment node, whose elaboration is a generated atom and
-whose truth is its own key's business (4.5, 5.3; B₁, B₇); a content that the forced holder disequalities do not
+that is a formula over `E`, not a nested report or assessment node, whose elaboration is a signed generated atom
+at the node's own holder or evidence context, covered by the nested-content theorems of 9.2 and by nothing else in
+this list (B₁, B₇, B₉ to B₁₂, `D_ω`); a content that the forced holder disequalities do not
 entail (4.5); a consistent premise set; and, for the premise-subset device, a document with no `says` key (10.1).
-Section 10.3 gives one fixture at the boundary of each restricted claim.
+Section 10.3 gives one fixture at the boundary of each restricted claim and, for each nested-content theorem,
+one fixture that breaks exactly one of its hypotheses.
 
 Out of scope, by the plan: promising, pledging, denying, expecting, reaffirming and determination (distinct
 reviewed acts, pending); modal inference of any kind and the candidate possible-worlds profile (plan page 2);
@@ -123,8 +148,8 @@ key            report:      (act, holder sort, context id, complement id)
 ```
 
 Literal quotation binds the exact words into the content id; a paraphrase claims no word identity. The two are
-different contents and different keys; neither entails the other (13.6; as two keys, `all_truth_combinations`
-over a consistent premise subset that asserts or denies neither, 9.2).
+different contents and different keys; neither entails the other (13.6; the reading of `all_truth_combinations`
+with `ks` the two keys under its hypotheses: neither key in `topKeys D`, `S₀` admissible, `Expandable D S₀`, 9.2).
 
 ### 1.2 Holders, acts and contexts
 
@@ -173,8 +198,8 @@ Probably(a, q)  likewise for "probably"
 ```
 
 `May(a, q)` and `Probably(a, q)` are open: no rule of the checker decides them, relates them to each other or to
-`q`, or reads a threshold, a percentage or an accessibility relation (what a document's own premises entail is
-4.4 and 5.3). `May(a, ¬q)`, `¬May(a, q)`,
+`q`, or reads a threshold, a percentage or an accessibility relation (what a document's own report premises
+entail is the theorem statements of 9.2 and 9.3; 5.3 points to them). `May(a, ¬q)`, `¬May(a, q)`,
 `Probably(a, ¬q)` and `¬Probably(a, q)` are four different formulas (2.1). Admission checks the structured content
 `q`, the record's shape and that its criteria are closed formulas over `E`; it does not establish evidential
 possibility or likelihood. The modal profile sketched on plan page 2 is not this profile.
@@ -210,8 +235,8 @@ specification are that rendering.
 |---|---|---|
 | report unit | a unit with `report` content | one atom `J_{act,c,q}(h)`, labelled `report:<unit>` |
 | assessment unit | a unit with `assessment` content | one atom `May(a,q)` or `Probably(a,q)`, labelled `assessment:<unit>`; one open term in the residual |
-| negated unit | a unit with `negated` content | the negation of its operand's atom, `¬J_{act,c,q}(h)` or `¬May(a,q)`, labelled as the operand (`report:<unit>` or `assessment:<unit>`); it denies the report or assessment and asserts nothing else beyond the holder disequality it forces together with a positive unit of the same key (4.2, 4.4) |
-| nested content | inside a report, assessment or negated node | nothing through the node that contains it: it is content, and a bridge is needed to use any part of it; a top-level unit with the same key asserts or denies that key as any premise does (B₁, B₇) |
+| negated unit | a unit with `negated` content | the negation of its operand's atom, `¬J_{act,c,q}(h)` or `¬May(a,q)`, labelled as the operand (`report:<unit>` or `assessment:<unit>`): that one signed entry in `Γ_reports(D)` and no other; for old-language consequences it adds exactly the holder disequalities of `neqs` (`reports_no_leak`, 4.4) |
+| nested content | inside a report, assessment or negated node | nothing through the node that contains it: it is content, and a bridge is needed to use any part of it; what a top-level unit that carries the same node, its negation, or the same key at another holder entails about the node's own signed atom is the nested-content theorems of 9.2 (B₁, B₇, B₉ to B₁₂, `D_ω`) |
 | scoped check | front matter `scoped` | nothing: a report about the contents, computed in the content's environment with that environment's own background (5.1) |
 | bridge | a graph leaf `bridge:accepts(<holder>,<unit>)` (root, legacy) or `bridge:accepts_at(<holder>,<unit>,<path>)` (nested, with a record) | exactly the elaborated formula at the path, as a labelled assumption |
 | quoted norm block or definition package | content | nothing: a local check only; no layer, no `background:definitions` premise outside; a package's statement is a payload for scoped checks over `E_q` only |
@@ -223,9 +248,10 @@ specification are that rendering.
 Names are declared holder constants rendered by the environment legend; contexts are chosen from the declared
 records and shown in the inspector; the verb form carries the context's tense. `S` is any sentence the reports
 surface admits as content (a formula sentence of the existing grammar, or a nested report or assessment wording).
-The paraphrase column states what one wording claims and leaves unclaimed in the semantics of 4.2, not what a
-whole document entails: another unit may assert what a wording leaves open (B₁, B₃, B₇), and what a premise set
-entails is 4.5.
+The paraphrase column is the display text the IDE shows for one wording (2.3), a definition: it states what that
+wording claims and leaves unclaimed in the semantics of 4.2, not what a whole document entails. Another unit may
+carry what a wording leaves open (B₁, B₃, B₇, B₉ to B₁₂), and what a premise set entails is the theorem
+statements of 9.2 and 9.3 (4.5 reads them).
 
 | Wording | The one reading (the IDE's paraphrase) | Formal effect |
 |---|---|---|
@@ -282,22 +308,28 @@ named.
 ### 2.3 The reader's checklist (norms.md 2.5, extended)
 
 For every positive report unit the IDE shows, in English only: the paraphrase of 2.1; "claimed: that <Holder>
-<act> …; not claimed: <S>; not claimed: any other belief or statement of <Holder>"; one situation in which every
-report of the document holds and S is false, that is, a source model of the report premises `Γ_reports(D)` (4.2;
-the author's premises `Γ_author` and the literals are not part of it, and may entail S when the report premises
-do not, B₈). When S is a formula over `E`, such a situation exists exactly when `neqs (Γ_reports D)` does not
-entail S (4.5), so for a positive document exactly when S is not valid on its own; when S follows from the forced
-holder disequalities of 4.4, fixture B₄, or is valid, fixture B₆, there is none and the line says so instead.
-When S is a nested report or assessment wording, whose elaboration is a generated atom of the inner key, one
-exists over a consistent premise set when no top-level unit asserts or denies that key (`unreported_key_free`;
-`D_ζ`); when a top-level unit asserts or denies it, the line names that unit instead of a situation (B₁: u1
-asserts u2's inner belief, so no situation of `B₁` has u2's report hold and S false). For a belief in P and a Q:
-one situation in which <Holder> believes P and believes that P implies Q and does not believe Q
-(`no_closure_under_consequence` when the document asserts both beliefs and no top-level unit asserts or denies
-the belief in Q, `D_β`; `all_truth_combinations` when no top-level unit asserts or denies either of the two keys;
-when a unit asserts the belief in Q, B₃, there is none and the line says so). For a nested report, which bridge
+<act> …; not claimed: <S>; not claimed: any other belief or statement of <Holder>"; the **situation line**: one
+situation in which every report of the document holds and S is false, that is, a source model of the report
+premises `Γ_reports(D)` (4.2; the author's premises `Γ_author` and the literals are not part of it, and may entail
+S when the report premises do not, B₈). The situation line is defined by what the IDE runs, not by a claim about
+when a situation exists: it submits `Γ_reports(D) ⊢ elab(S)` to the finite-model search over `E_reports` within
+the existing budget and, when a countermodel is found, decodes it to a source model and shows that
+(`reports_route_countermodel` with `Γ = []`, `finite_witness_decodes`); when a certificate for
+`Γ_reports(D) ⊢ elab(S)` replays, the line says that there is none, beside the certificate; otherwise the line
+says UNKNOWN with the budget. Which of the three a document produces is the business of the theorem statements of
+9.2 and of the fixtures, not of this paragraph: for a formula content over `E`, `reports_no_leak` with `Γ = []`
+and `R = Γ_reports(D)` (B₄, B₆, B₈); for a nested report or assessment wording, whose elaboration is a signed
+generated atom at the nested node's own holder, the nested-content theorems of 9.2 (`nested_positive_entailed`,
+B₁, B₇; `holder_atom_free`, B₉′; `unreported_key_free`, `D_ζ`, B₁₂; `nested_positive_refuted`, B₁₀; for a
+negated nested wording, `nested_negated_entailed`, B₁₁, and `nested_negated_refuted`, `D_ω`). For a belief in P
+and a Q, the **belief line**: one situation in which <Holder> believes P and believes that P implies Q and does
+not believe Q, run and displayed the same way for the conclusion `J_{believes,c,Q}(h)`; the theorems that supply
+a situation are `no_closure_under_consequence` under its hypotheses (`beliefsIn D hd c P (P → Q)`,
+`holderSort D hd = some s`, the belief-in-Q key `∉ topKeys D`, `S₀` admissible, `Expandable D S₀`; `D_β`),
+`holder_atom_free` and `all_truth_combinations`; B₃ is the case in which a certificate replays. For a nested
+report, which bridge
 would assume which sentence; for an intention, one situation in which the act never happens and nothing is
-required, on the same fragment as the first situation; for a literal quotation, the exact words beside the
+required, run and displayed as the situation line; for a literal quotation, the exact words beside the
 content. For every negated unit: the paraphrase of 2.1's outside-negation row and the denied status line of 7.2
 (the content is not claimed and neither is its negation); no situation line. For every assessment unit: the
 record's criteria, factors and decider (or "the source names no
@@ -573,8 +605,10 @@ IntendedReports D M             := ∀ top-level unit u of D, Sat_M u.content
 
 Only the document's top-level statements are asserted; a nested node, negated or not, is content: `J` is indexed
 by the content id, so the recursion never descends into a complement, and nested nodes constrain nothing through
-the node that contains them (a top-level unit with the same key constrains it as any premise does, B₁, B₇). A
-negated top-level unit denies its operand's key (for its holder) and asserts nothing else. The single theorem
+the node that contains them (what a top-level unit that carries the same node, its negation, or the same key at
+another holder entails about the nested node's own signed atom is the nested-content theorems of 9.2: B₁, B₇,
+B₉ to B₁₂, `D_ω`). A negated top-level unit's clause is `¬ Sat_M n`: the denial of its operand's atom at its
+operand's holder, and no other clause. The single theorem
 behind non-factivity, non-closure, nested independence and harmless inconsistent quotation is
 `source_over_any_structure` (9.2): every admissible `S` extends to a source model of `D`, unconditionally when
 every top-level unit is positive, and, when some unit is negated, exactly when `S` satisfies the holder
@@ -668,52 +702,87 @@ it is the hypothesis of every theorem of 9.2 that builds a model of a document w
 certificate is `vacuous`, visibly: the same line, at `E_reports` and at `E`. `reports_route_acceptance_base`
 (9.3) carries `neqs (Γ_reports D)` into its old-language conclusion for the same reason.
 
-### 4.5 What the structure theorems say, in words (each an instance of 4.2 in 9.2)
+### 4.5 The structure theorems, in words (NON-NORMATIVE: a reading of 9.2; the statements there govern)
 
-Each is a theorem of 9.2 over the report premises `Γ_reports(D)` and over the fragment its hypotheses name and
-no wider: a positive document, or a document with negated units under `fol.Sat S₀ (neqs (Γ_reports D))` (4.4); a
-queried key that no top-level unit asserts or denies (`∉ topKeys D`); a content that is a formula over `E` (not a
-nested report or assessment node, whose elaboration is a generated atom of the inner key) and is false in some
-`S₀` of that fragment, which excludes a content that is valid on its own and, for a document with negated units,
-every content that `neqs (Γ_reports D)` entails. Outside the fragment the bullet fails: a document whose signed
-premises are inconsistent (`D_μ″`, `D_π′`) entails everything; a document that asserts the queried key itself
-(`D_η`, B₁, B₃) has it as a premise; a nested content is entailed when a top-level unit asserts its key (B₁, B₇);
-a content the disequalities force (B₄) or a valid content (B₆) is entailed; and the author's premises `Γ_author`
-may entail a content the report premises do not (B₈). Each fixture names the premise subset it is over (γ, ε, η,
-μ over `D ▷ U`, 10.1; the boundaries in 10.3).
+Nothing in this section is a claim beyond the theorem statement each bullet names, read under that statement's
+hypotheses and no wider (section 0, "Normative content"); a bullet that said more than its theorem would be a
+defect, to be deleted. Each theorem is over the report premises `Γ_reports(D)` and holds on the fragment its
+hypotheses name: a positive document, or a document with negated units under `Expandable D S₀`, that is,
+`fol.Sat S₀ (neqs (Γ_reports D))` (4.4); a queried key that no top-level unit asserts or denies (`∉ topKeys D`),
+or a queried holder-applied atom that no positive top-level premise carries at a co-denoting holder
+(`holder_atom_free`); a content that is a formula over `E` and is false in `S₀`. The fixtures at the boundaries,
+one hypothesis broken each: an inconsistent signed premise set (`D_μ″`, `D_π′`); the queried key asserted at the
+same holder (`D_η`, B₁, B₃) or at another holder (B₉, B₉′); a content the disequalities force (B₄) or a valid
+content (B₆); the author's premises (B₈); a nested content carried, denied or nested deeper by another unit (B₇,
+B₁₀, B₁₁, B₁₂, `D_ω`). Each fixture names the premise subset it is over (γ, ε, η, μ over `D ▷ U`, 10.1; the
+boundaries in 10.3).
 
-- **Not factive.** For any admissible `S₀` of the fragment in which the formula content `q` over `E` is false,
-  there is a source model with `S = S₀` in which every report of `D` holds. So `Γ_reports(D)` entails `q` exactly
-  when `neqs (Γ_reports D)` does (`reports_no_leak` with `Γ = []` and `R = Γ_reports(D)`, for `q` over `E`): for
-  a positive document exactly when `q` is valid over `E` on its own (B₆), and for a document with negated units
-  exactly when the forced disequalities entail it (B₄). The same for belief, desire and intention, and for the
-  content of an assessment (5.3). Stated for formula contents over `E` only: for a nested content, `q` elaborates
-  to a generated atom of the inner key, which `reports_no_leak` does not cover (it is not over `E`), and its truth
-  is the inner key's business: entailed when a top-level unit asserts that key (B₁, B₇), free when none asserts
-  or denies it (next two bullets).
-- **Not closed.** With beliefs in `P` and in `P → Q` recorded and no top-level unit asserting or denying the
-  belief in `Q`, `unreported_key_free` gives a source model with that relation empty (`D_β`); when a unit asserts
-  it (B₃), it is a premise like any other, and nothing more follows about `Q` than the first bullet says.
-- **Nested independence.** `says(article, believes(anthropic, q))` constrains only the outer key: when no
-  top-level unit asserts or denies the inner key and `q` is false in `S₀`, the inner belief atom and `q` are free
-  (`nested_independent`; `D_ζ`, B₂); when another unit asserts the inner key (B₁, `D_ω`), that unit's premise
-  fixes it and only `q` remains free.
-- **Negation scopes.** `J_{believes,c,¬q}(h)` and `¬J_{believes,c,q}(h)` are two different formulas: a positive
-  atom of one key and the negation of an atom of another key (different complement ids); any of the four truth
-  combinations is realised by a source model over a consistent premise set in which no top-level unit asserts or
-  denies either key (`D_ε ▷ []`).
-- **Denial is not the opposite belief.** A negated unit `¬J_{believes,c,q}(h)` forces nothing about
-  `J_{believes,c,¬q}(h)` when no top-level unit asserts or denies that key, and, for a formula content `q` over
-  `E`, nothing about `q` beyond `neqs`; with another unit asserting `J_{believes,c,q}(h′)`, it forces `h ≠ h′`
-  and, in the old language, nothing else (`reports_no_leak`, 4.4; `D_ω′`).
-- **Tense.** `c` (past) and `c′` (present) give different keys; a past report never entails a present one over a
-  consistent premise subset in which no top-level unit asserts or denies the present key (`D_η ▷ [u1]`, which is
-  positive); over `D_η` itself both are premises.
-- **Contents are structural.** Two formula contents over `E` that are canonically distinct, even logically
-  equivalent ones, have different keys; canonically equal ones share a key (`content_structural`).
-- **Intention is not fulfilment or obligation.** `J_{intends,c,q}(h)` with `¬q` is consistent on the fragment of
-  the first bullet; no `required` atom is generated: an author may declare a base predicate of that name, decided
-  by nothing (fixture ο), and a regulated one needs `norms@0`, which this slice rejects beside `reports@0` (11.3).
+- **Not factive** (`attitude_not_factive`; hypotheses: `u ∈ D.units` with content `report hd act c (formula q)
+  lit`, `S₀` admissible over `E`, `Expandable D S₀`, `q` false in `S₀`; conclusion: a source model with `S = S₀`
+  in which every top-level statement of `D` holds and `q` is false). Read with `reports_no_leak` at `Γ = []` and
+  `R = Γ_reports(D)`, for `q` over `E`: `Γ_reports(D)` entails `q` exactly when `neqs (Γ_reports D)` does; with
+  `reports_no_leak_uniform` and `positive_uniform`, for a positive document exactly when `q` is valid over `E` on
+  its own (B₆); for a document with negated units, B₄. The same statement for belief, desire and intention (the
+  act is a parameter) and, as `assessment_not_factive`, for the formula content of an assessment (5.3). A nested
+  content is outside every hypothesis of this bullet: it elaborates to a signed generated atom at the nested
+  node's own holder or evidence context, not to a formula over `E`, and `reports_no_leak` does not cover it. What
+  the report premises entail about that atom is the five nested-content theorems of 9.2, each read under its own
+  hypotheses: `nested_positive_entailed` (a top-level unit carries the very node, holder and all: B₁, B₇, B₁₂),
+  `nested_positive_refuted` (a top-level unit carries the node's negation: B₁₀), `nested_negated_entailed` and
+  `nested_negated_refuted` (the nested node is itself negated; a top-level unit denies, B₁₁, or asserts, `D_ω`,
+  its operand), and `holder_atom_free` (no positive top-level premise carries the atom at a holder co-denoting
+  with the node's, whatever `topKeys` contains: B₉, the same key at another holder), beside `unreported_key_free`
+  (no top-level unit carries the key at all: `D_ζ`, B₂, B₁₂).
+- **Not closed** (`no_closure_under_consequence`; hypotheses: `beliefsIn D hd c P (P → Q)`, `holderSort D hd =
+  some s`, the key `⟨believes, s, c, cid Q⟩ ∉ topKeys D`, `S₀` admissible, `Expandable D S₀`; conclusion: a
+  source model over `S₀` with the belief-in-`Q` relation empty; `D_β`). B₃ carries the belief in `Q` as a
+  top-level unit at the same holder, so its atom is a premise and the theorem has no instance (`hQ` fails); for
+  `Q` over `E` itself, the first bullet.
+- **Nested independence** (`nested_independent`; hypotheses: `u`'s content is `report h₁ act c (report h₂
+  believes c′ (formula q) none) lit`, `holderSort D h₂ = some s₂`, `⟨believes, s₂, c′, cid q⟩ ∉ topKeys D`, `S₀`
+  admissible, `Expandable D S₀`, `q` false in `S₀`; conclusion: a source model over `S₀` with the inner belief
+  relation empty and `q` false; `D_ζ`, B₂). One hypothesis broken each: the inner key in `topKeys` at the same
+  holder (B₁: `nested_positive_entailed` applies instead), at another holder (B₉′: `holder_atom_free` applies
+  instead), a negated inner node (B₁₁, `D_ω`: the negated-content theorems apply instead), nesting depth 2 (B₁₂:
+  `hb` names a formula body at depth 1, and `unreported_key_free` and `nested_positive_entailed` apply instead).
+- **Negation scopes** (`negation_scopes_distinct`: `J_{believes,c,¬q}(h)` and `¬J_{believes,c,q}(h)` are a
+  positive atom of one key and the negation of an atom of another key, with different complement objects and
+  names; `all_truth_combinations` with `ks` the two keys under its hypotheses, neither key in `topKeys`, `S₀`
+  admissible, `Expandable D S₀`: any of the four truth combinations, uniformly on the holder sort's domain;
+  `D_ε ▷ []`).
+- **Denial is not the opposite belief** (`unreported_key_free` at the key of `J_{believes,c,¬q}(h)` when it is
+  `∉ topKeys D`, under `Expandable D S₀`; `reports_no_leak` at `Γ = []` for a formula content `q` over `E`:
+  `Γ_reports(D)` entails `q` exactly when `neqs (Γ_reports D)` does, and with another unit asserting
+  `J_{believes,c,q}(h′)` beside the denial at `h`, `neqs` is `[¬(h′ = h)]`; `D_ω′`, B₄).
+- **Tense** (`tense_keys_distinct`: `c` (past) and `c′` (present) give different names; `unreported_key_free` at
+  the present key when it is `∉ topKeys D`, under `Expandable D S₀`: a source model over `S₀` with the present
+  relation empty; `D_η ▷ [u1]`, which is positive; over `D_η` itself both are premises).
+- **Contents are structural** (`content_structural`: two formula contents over `E` have one canonical object
+  exactly when their P5 normal forms are equal, never when they are merely logically equivalent; within a
+  well-formed document the same for their content ids).
+- **Intention is not fulfilment or obligation** (`attitude_not_factive` with `act = intends`: `J_{intends,c,q}(h)`
+  with `q` false, under the first bullet's hypotheses). No `required` atom is generated: `elab` produces one
+  predicate per key and nothing else (4.3); an author may declare a base predicate of that name, decided by
+  nothing (fixture ο), and a regulated one needs `norms@0`, which this slice rejects beside `reports@0` (11.3).
+
+### 4.6 Open questions (NON-NORMATIVE)
+
+Readings the directive of draft 7 did not let this draft assert, because no theorem statement of 9.2 covers them
+as written. Each is a question for the statement review, not a claim; an answer enters this specification as a
+theorem statement with its fixtures or not at all.
+
+1. **Canonically equal, syntactically distinct nested contents.** `nested_positive_entailed` is stated on node
+   identity (`u′.content = n`). Two report nodes with one holder, act and context whose formula bodies are
+   distinct ASTs with one P5 normal form have one complement id (3.4) and elaborate to one atom (4.3), so the
+   nested one would be entailed by the top-level one; no theorem states it, and no fixture expects it.
+2. **The situation line for a nested content at another holder.** Over B₉′ the line shows a situation from
+   `holder_atom_free`; over B₁ it reports a certificate. Whether the line should also say, in English, that the
+   key is asserted at another holder (so that a reader sees why B₉′ and B₁ differ) is a display question for
+   item 4; nothing here depends on it.
+3. **`topKeys` versus holder-applied atoms in the premise-subset device.** 10.1's properties (i) to (iii) are
+   stated on keys, which is what `unreported_key_free` and `all_truth_combinations` need. Whether the device
+   should also be stated on signed holder-applied atoms, so that an independence fixture can keep a key asserted
+   at one holder and query it at another (B₉'s shape), is left open; no fixture of 10.2 needs it.
 
 ## 5. Scoped checks, bridges, assessments, adoption and import
 
@@ -795,16 +864,21 @@ complete schema). In Lean the W2 open-term inventory is a list of names (`Doc.op
 name is `recordOf D a`; the Python residual renders both. The atom is an
 assumption like any premise: "the assessment on record holds that q may be so". No rule of the checker derives
 `q` from `May(a, q)`, `Probably(a, q)` from `May(a, q)`, `May(a, q)` from `Probably(a, q)`, or anything from the
-criteria; what the report premises `Γ_reports(D)` entail is 4.4 (the author's premises aside, B₈): over a
-consistent premise set, a generated assessment atom that no top-level unit asserts or denies is not entailed
-(`D_μ ▷ [u1]`, `all_truth_combinations_assess`); for a content `q` that is a formula over `E`, `q` is entailed
-exactly when `neqs (Γ_reports D)` entails it (`assessment_not_factive`, and `reports_no_leak` with `Γ = []`; for
-a positive document, exactly when `q` is valid on its own, B₆); for a nested content, a report or assessment
-node, `q` elaborates to a generated atom of the inner key, which `reports_no_leak` does not cover, and its truth
-is that key's business: entailed when a top-level unit asserts it (B₇: `May(a1, ⟨believes …⟩)` beside the belief
-itself, positive, `neqs = []`, the content not valid and entailed all the same), free over a consistent premise
-set when no top-level unit asserts or denies it (`unreported_key_free`; `B₇ ▷ [u2]`); and an asserted atom is a
-premise (`D_μ` asserts both `May` and `Probably` of `safe`; `D_μ″` is inconsistent and entails everything). The
+criteria; what the report premises `Γ_reports(D)` entail is the theorem statements of 9.2 and 9.3, read here
+under their hypotheses and no wider (the author's premises aside, B₈): a generated assessment atom whose key is
+`∉ topAKeys D` is free over an admissible `Expandable` `S₀` (`all_truth_combinations_assess`; `D_μ ▷ [u1]`); for
+a content `q` that is a formula over `E`, `assessment_not_factive` under its hypotheses (`q` false in an
+admissible `Expandable` `S₀`) gives a source model in which every top-level statement holds and `q` is false, and
+`reports_no_leak` with `Γ = []` reads: `q` is entailed exactly when `neqs (Γ_reports D)` entails it (for a
+positive document, exactly when `q` is valid on its own, B₆); for a nested content, a report node, an assessment
+node or the negation of one, `q` elaborates to a signed generated atom at the nested node's own holder or
+evidence context, which `reports_no_leak` does not cover and `assessment_not_factive`'s `hc` excludes, and what
+is entailed about it is the nested-content theorems of 9.2: `nested_positive_entailed` (B₇: u1 carries the very
+node u2 nests, holder included, so a certificate for the atom replays from u1's premise; `neqs = []` and the
+content not valid), `holder_atom_free` (B₉: the same key at another holder, the atom free), `unreported_key_free`
+(`B₇ ▷ [u2]`) and, for a negated nested content, `nested_negated_entailed` (B₁₁) and `nested_negated_refuted`
+(`D_ω`); an asserted atom is a premise (`D_μ` asserts both `May` and `Probably` of `safe`; `D_μ″` is inconsistent
+and entails everything). The
 criteria bind only when the author writes them into `Γ` (they are not premises by themselves; 13.5). The status
 of an assessment unit is OPEN (6).
 
@@ -1206,7 +1280,7 @@ theorem attitude_not_factive (D) (h) (u : Unit) (hu : u ∈ D.units) (hd c : Str
     (S₀ : VE.Structure.{u}) (h₀ : S₀.Admissible D.E) (he : Expandable D S₀) (hn : ¬ q.denote S₀ []) :
   ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧ ¬ q.denote (interp D M) []
 theorem no_closure_under_consequence (D) (h) (hd c s : String) (P Q : VE.Formula)
-    (hb : beliefsIn D hd c P (.implies P Q))
+    (hb : beliefsIn D hd c P (.implies P Q)) (hs : holderSort D hd = some s)
     (hQ : ⟨.believes, s, c, complementId D (.formula Q) none⟩ ∉ topKeys D)
     (S₀ : VE.Structure.{u}) (h₀ : S₀.Admissible D.E) (he : Expandable D S₀) :
   ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧
@@ -1214,10 +1288,49 @@ theorem no_closure_under_consequence (D) (h) (hd c s : String) (P Q : VE.Formula
 theorem nested_independent (D) (h) (u : Unit) (hu : u ∈ D.units) (h₁ h₂ c c' s₂ : String) (act : Act)
     (q : VE.Formula) (lit : Option String)
     (hb : u.content = .report h₁ act c (.report h₂ .believes c' (.formula q) none) lit)
+    (hs₂ : holderSort D h₂ = some s₂)
     (hin : ⟨.believes, s₂, c', complementId D (.formula q) none⟩ ∉ topKeys D)
     (S₀ : VE.Structure.{u}) (h₀ : S₀.Admissible D.E) (he : Expandable D S₀) (hn : ¬ q.denote S₀ []) :
   ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧
     (∀ v, ¬ M.J .believes s₂ c' (complementId D (.formula q) none) v) ∧ ¬ q.denote (interp D M) []
+
+/-- 4.5, nested contents (draft 7). Stated on the holder-applied signed atom a nested node elaborates to, at the
+    node's own holder or evidence context, with the node's polarity explicit; never on the holder-free key. `n` is
+    a positive report or assessment node that occurs nested in a top-level unit `u`, and `φ = elab D n` is its atom
+    (`J_{act,sort h,c,q}(h)` or `A_{j,a,q}(context a)`). The hypothesis that decides entailment is a top-level unit
+    `u'` and its statement, never `topKeys`: the same key at another holder is B₉, and `hn` only locates the claim
+    (the conclusion follows from `hb'` alone, as `unitPremise D u'` is in `premises D`). -/
+theorem nested_positive_entailed (D) (h) (u u' : Unit) (hu : u ∈ D.units) (hu' : u' ∈ D.units) (n : Content)
+    (hn : n ∈ u.content.nodes) (hr : n.isReport = true ∨ n.isAssessment = true) (hb' : u'.content = n)
+    (φ : VE.Formula) (he : elab D n = some φ) :
+  VE.Entails.{u} (envReports D) (premises D) φ
+/-- The opposite polarity at top level refutes the nested positive node: its atom is false in every model of the
+    report premises (B₁₀). -/
+theorem nested_positive_refuted (D) (h) (u u' : Unit) (hu : u ∈ D.units) (hu' : u' ∈ D.units) (n : Content)
+    (hn : n ∈ u.content.nodes) (hr : n.isReport = true ∨ n.isAssessment = true) (hb' : u'.content = .negated n)
+    (φ : VE.Formula) (he : elab D n = some φ) :
+  VE.Entails.{u} (envReports D) (premises D) (.not φ)
+/-- A negated nested node `¬n` (D_ω's u1 content) elaborates to `¬φ`: entailed when a top-level unit denies `n`
+    (B₁₁), refuted when a top-level unit asserts `n` (`D_ω`: `¬φ` is false in every model of the premises). -/
+theorem nested_negated_entailed (D) (h) (u u' : Unit) (hu : u ∈ D.units) (hu' : u' ∈ D.units) (n : Content)
+    (hn : .negated n ∈ u.content.nodes) (hr : n.isReport = true ∨ n.isAssessment = true)
+    (hb' : u'.content = .negated n) (φ : VE.Formula) (he : elab D n = some φ) :
+  VE.Entails.{u} (envReports D) (premises D) (.not φ)
+theorem nested_negated_refuted (D) (h) (u u' : Unit) (hu : u ∈ D.units) (hu' : u' ∈ D.units) (n : Content)
+    (hn : .negated n ∈ u.content.nodes) (hr : n.isReport = true ∨ n.isAssessment = true)
+    (hb' : u'.content = n) (φ : VE.Formula) (he : elab D n = some φ) :
+  VE.Entails.{u} (envReports D) (premises D) φ
+/-- The holder-applied atom of a report key `k` at a holder `hd` is free when no positive top-level premise carries
+    that atom at a holder co-denoting with `hd` in `S₀`; the hypothesis is on the signed premises, not on `topKeys`
+    (`unreported_key_free` is the case with no top-level premise of `k` at all). Proof: the source model of
+    `source_over_any_structure`, with `J` at `k` made false at `hd`'s element; positive premises of `k` sit at
+    other elements by `hfree`, negated ones are preserved by shrinking `J`. B₉ is the instance with the key in
+    `topKeys` at another holder; B₇ and B₁ are the boundary, where `hfree` fails at the asserting unit's holder. -/
+theorem holder_atom_free (D) (h) (k : ReportKey) (hk : k ∈ keys D) (hd : String) (hs : holderSort D hd = some k.sort)
+    (S₀ : VE.Structure.{u}) (h₀ : S₀.Admissible D.E) (he : Expandable D S₀)
+    (hfree : ∀ h', .unary (reportName D k) (.const h') ∈ premises D → S₀.constant h' ≠ S₀.constant hd) :
+  ∃ M : Source.{u} D, M.S = S₀ ∧ IntendedReports D M ∧
+    ∀ v, S₀.constant hd = some v → ¬ M.J k.act k.sort k.ctx k.content v
 
 /-- Identity theorems on canonical objects; digests follow for the keys of a well-formed document. -/
 theorem negation_scopes_distinct (D) (h) (c s : String) (q : VE.Formula)
@@ -1256,7 +1369,11 @@ counts); `beliefsIn D hd c P R` says `D` has positive top-level belief units of 
 formula contents `P` and `R`; `tenseOf` reads the context table; `canonical` is the P5 normal form; `contentCount D`
 is the number of nodes of all trees. `Expandable D S₀` is `fol.Sat S₀ (neqs (premises D))`, discharged by
 `positive_expandable` for every document without negated units, so a positive document recovers the draft-1
-statements verbatim. `all_truth_combinations` and `all_truth_combinations_assess` are the two statements behind
+statements verbatim. `topKeys` membership is a hypothesis of the freedom theorems only (`unreported_key_free`,
+`no_closure_under_consequence`, `nested_independent`, `all_truth_combinations`): a key is holder-free, so no
+theorem concludes that an atom is entailed from a key's membership in `topKeys`; the four nested-content
+entailment and refutation theorems take a top-level unit's statement, holder and polarity included, and
+`holder_atom_free` takes the signed premises themselves (B₉). `all_truth_combinations` and `all_truth_combinations_assess` are the two statements behind
 the "different attributions for equivalent payloads", "may and probably independent" and "negation inside versus
 outside" fixtures; each fixture names the premise subset `D ▷ U` (10.1: the top-level units it keeps, every
 dropped key retained in the vocabulary by a registration unit, no kept unit asserting or denying a queried key,
@@ -1755,7 +1872,12 @@ D_ω   u1: The article says that it is not the case that Anthropic believes that
 - **(ω) Nested negation; deferred connectives; forced disequalities.** `D_ω`: u1's key is `(says, text, c3,
   ⟨¬⟨believes, anthropic, c1, helpful⟩⟩)`; its complement object is `{"negated": …}`; `E_reports` has the inner
   key's predicate (it occurs as content) and u2 asserts it; `Γ = [reports__says__1(the_article),
-  reports__believes__1(anthropic)]`, positive, consistent; u1's paraphrase is the 2.1 row; u1's kind is
+  reports__believes__1(anthropic)]`, positive, consistent; u1's content, the negated node, elaborates to
+  `¬reports__believes__1(anthropic)` and u2's premise is its operand's atom at the same holder, so the content is
+  false in every model of `Γ` (`nested_negated_refuted` at u1's nested negated node with `u′ = u2`): a
+  certificate for `Γ ⊢ reports__believes__1(anthropic)` replays from u2's premise, and the situation line of 2.3
+  for u1 shows any model of `Γ` as one in which u1's report holds and its content is false (B₁₁ is the same u1
+  with u2 denying instead of asserting, where the content is entailed); u1's paraphrase is the 2.1 row; u1's kind is
   `attributed(the_article, says, attributed(anthropic, believes, asserted))`, the negation invisible to the kind;
   the bridge `bridge:accepts_at(anthropic,u1,1)` assumes `helpful(claude)` (the path passes through the negated
   node, `bridge_through_negation`). The first input is rejected with the rewrite into two units; the second is
@@ -1774,9 +1896,13 @@ change of φ.
 
 ### 10.3 Boundary fixtures
 
-One fixture at the boundary of each claim that sections 2 to 5, 9 and 10.1 restrict to a fragment, over `E₀` and
-the declarations of 10.1 (B₂ adds one context, `c4`, to them; B₈ is `D_π` of 10.1), with expected results
-derivable from the definitions as in 10.2. `D ▷ U` is applied
+One fixture at the boundary of each claim that sections 2 to 5, 9 and 10.1 restrict to a fragment and, for each
+nested-content theorem of 9.2, one fixture that breaks exactly one of its hypotheses (the holder differs, B₉ and
+B₉′; the polarity differs, B₁₀, B₁₁ and `D_ω`; the nesting is two deep, B₁₂), over `E₀` and the declarations of
+10.1 (B₂ adds one context, `c4`, to them; B₈ is `D_π` of 10.1; B₉ is B₇ and B₉′ is B₁ with u1's holder changed;
+B₁₁ is `D_ω` with u2's polarity changed), with expected results derivable from the definitions as in 10.2. Every
+entailment expectation below is an instance of a named theorem of 9.2 or 9.3 under its hypotheses, or a
+countermodel. `D ▷ U` is applied
 here to documents with a `says` key only to exhibit the boundary of 10.1, and every key such an expectation
 queries is checked against `topKeys` directly.
 
@@ -1806,6 +1932,26 @@ B₇   u1: Anthropic believes that the service is safe.                        b
          (a nested assessment content whose key u1 asserts; no says key)
 B₈   D_π of 10.1: D_α with Γ_author = [reviewed(service) → safe(service), reviewed(service)]
          (u1's content entailed by the author's premises and not by the report premises)
+B₉   u1: The team believes that the service is safe.                         believes, the_team, c1, safe(service)   key k₁
+     u2: According to the stated assessment, it may be that Anthropic believes that the service is safe.
+                                                                              may, a1, ⟨anthropic, believes, c1, safe(service)⟩   (k₁ at anthropic)
+         (B₇ with u1's holder changed: one key k₁, asserted at the_team, nested at anthropic; no says key. The
+          fifth verification's counterexample)
+B₉′  u1: The team believes that the service is safe.                         believes, the_team, c1, safe(service)   key k₁
+     u2: The article says that Anthropic believes that the service is safe.   says, the_article, c3, ⟨anthropic, believes, c1, safe(service)⟩
+         (B₁ with u1's holder changed: the report form of B₉, for the situation line of 2.3)
+B₁₀  u1: The article says that Anthropic believes that the service is safe.   says, the_article, c3, ⟨anthropic, believes, c1, safe(service)⟩
+     u2: It is not the case that Anthropic believes that the service is safe.  negated ⟨anthropic, believes, c1, safe(service)⟩
+         (the nested positive node denied at top level, same holder)
+B₁₁  u1: The article says that it is not the case that Anthropic believes that Claude is helpful.   (D_ω's u1)
+                                                                              says, the_article, c3, ⟨¬⟨anthropic, believes, c1, helpful(claude)⟩⟩
+     u2: It is not the case that Anthropic believes that Claude is helpful.   negated ⟨anthropic, believes, c1, helpful(claude)⟩
+         (D_ω with u2 denying, instead of asserting, the operand of u1's negated content)
+B₁₂  u1: The article says that the team says that Anthropic believes that the service is safe.
+                                                                              says, the_article, c3, ⟨the_team, says, c3, ⟨anthropic, believes, c1, safe(service)⟩⟩
+     u2: Anthropic believes that the service is safe.                         believes, anthropic, c1, safe(service)   key k₁
+         (nesting depth 2: the innermost node carried at top level; the middle key k_mid = (says, organisation,
+          c3, ⟨anthropic, believes, c1, safe⟩) nested only)
 ```
 
 - **(B₁) Registration and nested attribution.** Over `B₁`: keys `k₁`, `k₂`; `E_reports = E₀ +
@@ -1825,9 +1971,11 @@ B₈   D_π of 10.1: D_α with Γ_author = [reviewed(service) → safe(service),
   `Γ = [reports__believes__1(anthropic), reports__says__j(the_article)]` with `j` the position of `k₃` among the
   two `says` keys `k₂`, `k₃`): `k₂` is nested in the registration unit and not in `topKeys`, so the model with the
   `k₁` and `k₃` atoms true and the `k₂` atom false is valid and satisfies `Γ`, and no certificate for u2's atom
-  replays there. The checklist line of 2.3 for u2 shows no situation of `B₁` in which u2's report holds and its
-  content, u1's belief, is false, and names u1 instead; the line for u1 shows the situation in which u1's belief
-  holds and `safe(service)` is false.
+  replays there. The situation line of 2.3 for u2 reports that there is none, beside the certificate that replays
+  from u1's premise (`nested_positive_entailed` at u2's nested node with `u′ = u1`: u1 carries the very node,
+  holder included; `holder_atom_free` at `k₁`, `hd = anthropic` has no instance, `hfree` failing at u1's own
+  holder; B₉′ is the same u2 with u1 at another holder, where the line shows a situation); the line for u1 shows
+  the situation in which u1's belief holds and `safe(service)` is false.
 - **(B₂) A nested `says` key.** Over `B₂`: keys `k_in = (says, text, c4, safe)` and `k_out`; names
   `reports__says__1`, `reports__believes__1`; `Γ = [reports__believes__1(anthropic)]`; `topKeys = {k_out}`. The
   model with the `believes` atom true, the `says` atom false and `safe` empty is valid and satisfies `Γ`
@@ -1874,10 +2022,13 @@ B₈   D_π of 10.1: D_α with Γ_author = [reviewed(service) → safe(service),
   `E_reports = E₀ + reports__believes__1(organisation) + reports__may__1(evidence)`;
   `Γ = [reports__believes__1(anthropic), reports__may__1(e1)]`, positive, `neqs Γ = []`; u2 is OPEN with its open
   term `reports__may__1`. u2's content elaborates to u1's atom, so a certificate for
-  `Γ ⊢ reports__believes__1(anthropic)` replays from u1's premise: `B₇` entails the content of its own assessment
+  `Γ ⊢ reports__believes__1(anthropic)` replays from u1's premise (`nested_positive_entailed` at u2's nested node
+  with `u′ = u1`: u1 carries the very node, holder included): `B₇` entails the content of its own assessment
   although `neqs` is empty and the content is not valid, and `assessment_not_factive` has no instance at u2 (its
   hypothesis names a formula content, and u2's is a report node), which is why 5.3 states its "exactly when" for
-  formula contents over `E`. `safe(service)` is still not entailed: the model with both atoms true and `safe`
+  formula contents over `E`; `holder_atom_free` at `k₁`, `hd = anthropic` has no instance over any `S₀` (`hfree`
+  fails at u1's own holder), and B₉ is this fixture with u1 at `the_team`, where the atom is free although the
+  key is asserted. `safe(service)` is still not entailed: the model with both atoms true and `safe`
   empty is valid and satisfies `Γ`. Over `B₇ ▷ [u2]` (u1 registered by `The article says that Anthropic believes
   that the service is safe.`; `B₇` has no `says` key, so 10.1 applies): `Γ = [reports__may__1(e1),
   reports__says__1(the_article)]`, `k₁` is nested in both units and outside `topKeys`, and the model with the
@@ -1891,6 +2042,68 @@ B₈   D_π of 10.1: D_α with Γ_author = [reviewed(service) → safe(service),
   2.3 for u1 shows that situation as a model of the report premises and not of `Γ_author`; what the whole checked
   list entails is the P0 line and the certificate. Every entailment claim of 2.3, 4.5 and 5.3 is over
   `Γ_reports(D)`; this fixture is the boundary of that restriction.
+- **(B₉) The same key at another holder.** Keys `k₁ = (believes, organisation, c1, safe)` and
+  `(may, a1, ⟨anthropic, believes, c1, safe⟩)`; `E_reports = E₀ + reports__believes__1(organisation) +
+  reports__may__1(evidence)`; `Γ = [reports__believes__1(the_team), reports__may__1(e1)]`, positive,
+  `neqs Γ = []`; `topKeys = {k₁}`; u2 OPEN with its open term. u2's content elaborates to
+  `reports__believes__1(anthropic)`, the atom of `k₁` at `anthropic`, which no premise carries. The finite model
+  in which `anthropic` and `the_team` are distinct elements, `reports__believes__1 = {the_team}`,
+  `reports__may__1 = {e1}` and `safe` empty is valid, satisfies `Γ` and falsifies u2's content, so no certificate
+  for `Γ ⊢ reports__believes__1(anthropic)` replays (`holder_atom_free` at `k₁`, `hd = anthropic`, over any
+  admissible `S₀` in which the two constants differ: the one positive premise of `k₁` is at `the_team`, so
+  `hfree` holds). `nested_positive_entailed` has no instance at u2's nested node (no top-level unit carries
+  `⟨anthropic, believes, c1, safe⟩`; u1 carries `⟨the_team, …⟩`, another node of the same key), and
+  `unreported_key_free` has none at `k₁` (`k₁ ∈ topKeys`): the key is asserted and the atom is free, which is the
+  boundary of every reading that put a key where the theorems put a holder-applied atom, the fifth verification's
+  counterexample. Over the `S₀` in which `anthropic` and `the_team` co-denote, `hfree` fails and every source model
+  over `S₀` has the relation true at their shared element (u1's premise), so u2's content is true there: the
+  finite model with both constants at one element, that element in `reports__believes__1`, is valid and satisfies
+  `Γ`. u2's content is therefore neither entailed nor refuted by `Γ`. `safe(service)` is not entailed (the first
+  model). Over `B₉ ▷ [u2]` (u1 registered; `B₉` has no `says` key, so 10.1 applies) the expectation of
+  `B₇ ▷ [u2]` is recovered.
+- **(B₉′) The report form.** Keys `k₁` and `(says, text, c3, ⟨anthropic, believes, c1, safe⟩)`;
+  `Γ = [reports__believes__1(the_team), reports__says__1(the_article)]`, positive; the same two models with
+  `reports__says__1 = {the_article}` in place of the assessment atom, and the same theorem instances. The
+  situation line of 2.3 for u2 shows the first model (the team believes, Anthropic does not, the article says),
+  and no certificate for u2's content replays; over B₁, the same u2 beside the belief at `anthropic`, the line
+  reports the certificate instead. `nested_independent` has no instance at u2 in either (`k₁ ∈ topKeys` in both).
+- **(B₁₀) The nested positive node denied at top level.** Keys `k₁` and `k₂ = (says, text, c3, ⟨anthropic,
+  believes, c1, safe⟩)`; `Γ = [reports__says__1(the_article), ¬reports__believes__1(anthropic)]`; `neqs Γ = []`
+  (no positive `believes` premise); `topKeys = {k₁, k₂}`; u2's status line is the denied form of 7.2. u1's content
+  elaborates to `reports__believes__1(anthropic)`, whose negation is u2's premise, so a certificate for
+  `Γ ⊢ ¬reports__believes__1(anthropic)` replays from u2's premise and u1's content is false in every model of `Γ`
+  (`nested_positive_refuted` at u1's nested node with `u′ = u2`). `nested_positive_entailed` has no instance (no
+  unit carries the positive node); `holder_atom_free` at `k₁`, `hd = anthropic` has one over every admissible
+  `S₀` (`Expandable` trivially, `hfree` vacuously), and its model is any model of `Γ`. The situation line of 2.3
+  for u1 shows the finite model with `reports__says__1 = {the_article}`, `reports__believes__1` empty and `safe`
+  empty. `safe(service)` is not entailed.
+- **(B₁₁) The nested negated node denied at top level.** Keys `k₁′ = (believes, organisation, c1, helpful)` and
+  `(says, text, c3, ⟨¬⟨anthropic, believes, c1, helpful⟩⟩)`; `Γ = [reports__says__1(the_article),
+  ¬reports__believes__1(anthropic)]`, `neqs Γ = []`. u1's content, the negated node, elaborates to
+  `¬reports__believes__1(anthropic)`, which is u2's premise: a certificate for
+  `Γ ⊢ ¬reports__believes__1(anthropic)` replays (`nested_negated_entailed` at u1's nested negated node with
+  `u′ = u2`), u1's content is true in every model of `Γ`, and the situation line of 2.3 for u1 reports that there
+  is none, beside the certificate. Over `D_ω`, the same u1 beside the assertion of the operand, the same content
+  is false in every model (`nested_negated_refuted`, ω). Over the sub-document `[u1]` alone, `k₁′ ∉ topKeys` and
+  both truth values of the atom at `anthropic` are realised (`all_truth_combinations` with `ks = [k₁′]`), so there
+  the content is neither entailed nor refuted.
+- **(B₁₂) Nesting depth 2.** Keys `k₁`, `k_mid = (says, organisation, c3, ⟨anthropic, believes, c1, safe⟩)` and
+  `k_top = (says, text, c3, ⟨the_team, says, c3, ⟨…⟩⟩)`; in the key order of 1.5 `k_mid` precedes `k_top`
+  (`organisation` before `text`), so `E_reports = E₀ + reports__believes__1(organisation) +
+  reports__says__1(organisation) + reports__says__2(text)`; `Γ = [reports__says__2(the_article),
+  reports__believes__1(anthropic)]`, positive, `neqs Γ = []`; `topKeys = {k_top, k₁}`; u1's content depth is 3
+  and its kind `attributed(the_article, says, attributed(the_team, says, attributed(anthropic, believes,
+  asserted)))`. The innermost node is u2's content, holder included: a certificate for
+  `Γ ⊢ reports__believes__1(anthropic)` replays from u2's premise (`nested_positive_entailed` at u1's innermost
+  node with `u′ = u2`; `nodes` lists every descendant). The middle node's atom `reports__says__1(the_team)` is
+  carried by no premise and `k_mid ∉ topKeys`: the finite model with `reports__says__2 = {the_article}`,
+  `reports__believes__1 = {anthropic}`, `reports__says__1` empty and `safe` empty is valid and satisfies `Γ`
+  (`unreported_key_free` at `k_mid`), so no certificate for u1's content replays, and the situation line of 2.3
+  for u1 shows that model. `nested_independent` has no instance at u1 (its `hb` names a formula body one level
+  down, and u1's body one level down is a report node), which is why 4.5's nested-independence bullet stops at
+  depth 1. `safe(service)` is not entailed (`attitude_not_factive` at u2). The bridge paths `(u1, ε)`, `(u1, 1)`
+  and `(u1, 1.1)` assume the middle atom, the innermost atom and `safe(service)` respectively (5.2); the second is
+  already the premise `report:u2`.
 
 ## 11. Limits, regeneration, Rust and trust
 
@@ -1946,7 +2159,9 @@ theorem name or successful build substitutes for a replayed certificate.
 4. `E_reports` and the generated names (1.5), per-act numbering, injective on the document's keys; the reserved
    prefix.
 5. The typed semantics `(S, J, A)` with `J` on the complete key, recursive `Sat` and `IntendedReports` (4.2): only
-   top-level statements assert; nested nodes, negated or not, are contents.
+   top-level statements assert; nested nodes, negated or not, are contents; what a top-level unit entails about a
+   nested node's atom is 9.2's nested-content theorems, on the holder-applied atom with its polarity (B₇, B₉ to
+   B₁₂, `D_ω`).
 6. `elab` through negation, `interp`, `restrictJ` with its domain guards (13.17) and
    `reports_elaboration_faithful` in both directions with finite witness decoding (4.3, 9.2), at every universe.
 7. The route instance: `Layer.id` over `E_reports`, signed report atoms in `Γ`, `Intended = True` as the empty
@@ -1958,7 +2173,10 @@ theorem name or successful build substitutes for a replayed certificate.
 9. The structure theorems as instances of `source_over_any_structure`, on formula contents over `E` with
    `M.S = S₀`, each stated over `Γ_reports(D)` and with the fragment on which it holds and its boundary fixture
    (4.5, 9.2, 10.3, 13.22); the assessment counterpart `all_truth_combinations_assess` and 5.3's non-factivity
-   for formula contents only (B₇).
+   for formula contents only (B₇); the five nested-content theorems (`nested_positive_entailed`,
+   `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted`, `holder_atom_free`) on the
+   holder-applied atom and never on a key, the `holderSort` hypotheses of `no_closure_under_consequence` and
+   `nested_independent` (13.23); 4.5 and 4.6 as NON-NORMATIVE readings that claim nothing beyond the statements.
 10. Scoped checks as report lines, not premises, under `Background(E_q)` of the pinned route; inner
     inconsistency local (5.1); a quoted definition premise never inserted into the checked list and present there
     only as an explicit author premise (`scoped_background_local`); a package's statement as the only formula
@@ -1974,14 +2192,21 @@ theorem name or successful build substitutes for a replayed certificate.
 15. The diagnostics (8) and the fixtures (10), each against the definitions, each independence expectation over
     its named premise subset `D ▷ U` over a document with no `says` key, with the queried keys kept in the
     vocabulary by registration and asserted or denied by no kept unit (10.1, 13.21); the boundary fixtures of
-    10.3, B₁ to B₈, one per restricted claim, the nested assessment (B₇), the author's premises (B₈) and B₂'s
-    forced renumbering among them; the checklist's situation lines of 2.3 against B₁, B₃, B₄, B₆ and B₈; the
+    10.3, B₁ to B₁₂, one per restricted claim, the nested assessment (B₇), the author's premises (B₈), B₂'s
+    forced renumbering and the one-hypothesis-broken fixtures of the nested-content theorems (B₉ and B₉′, the
+    holder; B₁₀, B₁₁ and ω's refutation, the polarity; B₁₂, the depth) among them; the checklist's situation
+    lines of 2.3, defined by what the IDE runs, against B₁, B₃, B₄, B₆, B₈, B₉′, B₁₀, B₁₁, B₁₂ and `D_ω`; the
     envelope in fixture φ (13.19).
 16. The composition gate with `data@0` rejected (11.3) and the trust list (11.4).
 17. The resolved choices of section 13, in particular 13.2 (the profile-gated act list), 13.5 (criteria are not
     premises), the draft-2 choices 13.15 to 13.19, the draft-5 choice 13.21 (the no-`says` fragment of the
-    premise-subset device) and the draft-6 choice 13.22 (entailment claims over `Γ_reports(D)` for formula
-    contents over `E`); the "Fragments" convention of section 0.
+    premise-subset device), the draft-6 choice 13.22 (entailment claims over `Γ_reports(D)` for formula
+    contents over `E`) and the draft-7 choice 13.23 (normative content is definitions, statements and fixtures;
+    nested-content entailment on the holder-applied atom); the "Fragments" convention of section 0.
+18. The "Normative content" rule of section 0: every prose entailment, "iff", "exactly when" and "no …" claim
+    outside the definitions, 9.2, 9.3 and section 10 names the theorem it reads and that theorem's hypotheses, or
+    is absent; 4.5 and 4.6 marked NON-NORMATIVE; the three open questions of 4.6 left as questions, none promoted
+    to a claim.
 
 ## 13. Resolved choices in this draft
 
@@ -2070,11 +2295,29 @@ Each is a point where the plan left a reading open; the review may overturn any 
     generated atom that another unit may assert (B₇), and that the checklist's situation line promised a source
     model for a nested content that another unit asserts (B₁). Both are now stated for formula contents over
     `E`, which is what `reports_no_leak` and the non-factivity theorems cover, with a nested content deferred to
-    its own key (entailed when a top-level unit asserts it, free when none asserts or denies it); every
+    its own key (draft 6's reading of that deferral, "entailed when a top-level unit asserts that key", was the
+    fifth verification's finding and is replaced by 13.23: the holder-applied atom, never the key); every
     entailment claim of 2.3, 4.5 and 5.3 names `Γ_reports(D)` as its premise list, since the author's premises
     may entail what the report premises do not (B₈ is `D_π`); and B₂ forces the renumbering it exhibits with a
     fourth context, `c4`, so that the nested `says` key sorts after the registration key whatever the content
     ids. Nothing was broadened.
+23. **Normative content is definitions, theorem statements and fixtures; nested-content entailment is on the
+    holder-applied atom with its polarity.** The fifth verification found that "asserting the inner key entails
+    the nested content" (draft 6, 4.5 and 5.3) is false: a key omits the holder, so B₇ with u1's holder changed to
+    `the_team` (B₉) asserts the key and leaves u2's content, the atom at `anthropic`, free; and `D_ω` nests the
+    negation of the belief u2 asserts, so its content is refuted, not entailed. The orchestrator's directive made
+    the repair a class rule rather than a sixth rewording: the normative semantic content is the definitions, the
+    theorem statements with every hypothesis explicit and the fixtures (section 0); every prose "entails", "iff",
+    "exactly when" and "no …" claim is either the reading of a named theorem under that theorem's hypotheses or
+    deleted, never replaced by new prose; nested-content entailment is stated as four theorems on the
+    holder-applied atom, positive and negated nested nodes separately (`nested_positive_entailed`,
+    `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted`), each taking a top-level
+    unit's statement, holder and polarity included, and freedom of an atom whose key another holder asserts as
+    `holder_atom_free`, whose hypothesis is on the signed premises and not on `topKeys`;
+    `no_closure_under_consequence` and `nested_independent` gained the `holderSort` hypothesis that ties their
+    key's sort to the holder named; 4.5 is NON-NORMATIVE and 4.6 holds, as open questions, the readings no
+    statement covers. Boundary fixtures B₉ to B₁₂ each break one hypothesis (holder, polarity, depth), B₉ being
+    the verification's counterexample. Nothing was broadened.
 
 ## Change log
 
@@ -2086,3 +2329,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 | 2026-09-28 | Draft 4 | The two findings of the second read-only verification (`manage-agents/attribution-p3ver2.final.md`, FAIL on commit `b4b5d22`), both in the registration specification of 10.1: (1) registration keeps a dropped key in the vocabulary but does not by itself remove it from `topKeys (D ▷ U)` or `topAKeys (D ▷ U)`; a dropped key is outside them exactly when no kept unit asserts or denies it (over `D_γ ▷ [u2]`, u3's key is u2's and stays asserted), and every independence expectation is stated to query only such keys (9.2, 10.1, 10.2 γ, checklist 15); (2) registration is one unit per omitted unit, so `D_γ ▷ [u1]` has two identical registration premises and its `Γ` lists three entries with two distinct formulas, and `D_γ ▷ [u2, u3]`'s `Γ` is listed (10.1, 10.2 γ). The countermodels, ε, η, μ, `SignedAtom`, `neqs` and `scoped_background_local` are unchanged. Spec only; the plan's pointer moves to draft 4. |
 | 2026-09-28 | Draft 5 | The finding of the third read-only verification (`manage-agents/attribution-p3ver3.final.md`, FAIL on commit `0d8836e`) and the audit it prompted. (1) 10.1: a registration unit is itself a `says` report of `the_article` in `c3`, so it can reproduce and assert a dropped `says` key (the finding's `D ▷ []` over "Anthropic believes that the service is safe" and "The article says that Anthropic believes that the service is safe"); the construction stays, and its three properties (registration asserts nothing, a dropped key leaves `topKeys` exactly when no kept unit asserts or denies it, names preserved) are stated for documents with no `says` key, which γ, ε, η and μ are, with the boundary in fixtures B₁ (top-level `says` key reproduced) and B₂ (nested `says` key renumbered) (10.1, 9.2 prose, 10.2 γ, checklist 15, 13.21). (2) Audit of every "exactly when", "↔", "never", "only" and "no …" claim of this specification and of the plan, each restricted to the fragment on which it holds, never broadened: the "Fragments" convention (0); the semantic reading of the summary (0); "neither entails the other" for literal versus paraphrase over a subset that asserts neither (1.1); the checker's "never" for assessments as the absence of a rule, with entailment deferred to 4.4 (1.4, 5.3); a negated unit's "nothing else" beside the disequality it forces (1.6); the scoped report line's "exactly the selected contents" under `E_q`'s background (2.1, B₅); "no sentence has two encodings" as a design rule with the theorem item 4's (2.1); the checklist's "one situation" line for contents that are neither forced by `neqs` nor valid (2.3, B₄, B₆); `object(formula)`'s environment id and `content_structural` on formula nodes over `E` (3.4, 9.2); the envelope's "invalidates every certificate" absent a digest collision (3.4); `expansion_exists_iff` named for `R = Γ_reports(D)` (4.4, 13.18 unchanged); 4.5 restated with its fragment and boundaries: non-factivity as `Γ_reports(D) ⊨ q ↔ neqs ⊨ q` (so for a positive document exactly when `q` is valid on its own), closure under an unasserted `Q`, nested independence under an unasserted inner key, denial, tense over a positive subset, structural contents over `E`, no generated `required` atom (4.5); inner inconsistency and the outer vacuity line (5.1). (3) New section 10.3, boundary fixtures B₁ to B₆ (nested attribution asserted elsewhere and registration, nested `says` key, asserted belief in `Q`, a content the disequalities force, scoped consequence without `E_q`'s background, a valid content); μ's expectation names the inconsistent boundary; ω′'s `neqs` entry is written as the definition orders it, `¬(anthropic = the_team)`. Spec only; the plan's pointer moves to draft 5 and the plan's page 1 carries the same fragment. |
 | 2026-09-28 | Draft 6 | The three findings of the fourth read-only verification (`manage-agents/attribution-p3ver4.final.md`, FAIL on commit `5afac55`) and the second audit pass they prompted. (1) 5.3: "`q` is entailed exactly when `neqs` entails it" is stated for a content `q` that is a formula over `E`; a nested content elaborates to a generated atom of the inner key, entailed when a top-level unit asserts it and free when none asserts or denies it; new fixture B₇ (`May(a1, ⟨believes …⟩)` beside the belief itself: positive, `neqs = []`, the content not valid and entailed). The same restriction is written into 4.5's "not factive" and "denial" bullets and its intro. (2) 2.3: the situation line is for positive report units, is a source model of `Γ_reports(D)`, exists for a formula content exactly when `neqs` does not entail it, and for a nested content when no top-level unit asserts or denies its key, naming the asserting unit otherwise (B₁); the belief line names its two theorems and B₃; negated units get the denied line and no situation. (3) B₂ declares a fourth context `c4` for its nested `says` key so that the registration key precedes it in the key order of 1.5 and the renumbering `reports__says__1` to `reports__says__2` is forced, not permitted (10.1 (iii), 10.3). (4) Audit: every entailment and independence claim of 2.3, 4.5 and 5.3 is over the report premises `Γ_reports(D)`, the author's premises and the literals aside, with `D_π` as the boundary (B₈, section 0 "Fragments"); "neither entails the other" (1.1), "negation scopes" and "tense" (4.5) name a consistent premise set; the nested-content rows of 1.6 and 4.2 and the paraphrase column of 2.1 say that another unit may assert what a node or a wording leaves open; 5.1's "inconsistent only through `neqs`" is stated as `reports_no_leak` with `φ = ⊥` for `Γ` over `E`; 4.4's expansion equivalence names an admissible `S₀`. No claim broadened. Spec only; the plan's pointer moves to draft 6 and its page 1 carries the two restrictions. |
+| 2026-09-28 | Draft 7 | The orchestrator's design directive after the fifth read-only verification (`manage-agents/attribution-p3ver5.final.md`, FAIL on commit `fe35218`: asserting the inner key does not entail a nested content at another holder; a negated nested content is false when its operand is asserted). (1) Section 0, "Normative content": the normative semantic content is definitions, theorem statements with every hypothesis explicit and fixtures with expected results; prose readings claim nothing beyond the statement they name; 4.5 retitled and marked NON-NORMATIVE, each bullet reduced to its theorem, that theorem's hypotheses and its fixtures, the key-level nested-content claims deleted; new 4.6 (NON-NORMATIVE) with three open questions; 2.3's situation and belief lines defined by what the IDE runs (countermodel, certificate or UNKNOWN), with the theorems and fixtures deciding which; 1.1, 1.4, 1.6, 2.1, 4.2 and 5.3 pointed at the statements. (2) 9.2: five nested-content theorems on the holder-applied atom with polarity explicit, `nested_positive_entailed`, `nested_positive_refuted`, `nested_negated_entailed`, `nested_negated_refuted` (a top-level unit carrying the very node or its opposite) and `holder_atom_free` (no positive premise at a co-denoting holder); `holderSort` hypotheses added to `no_closure_under_consequence` and `nested_independent`; the prose after the block states that `topKeys` is a hypothesis of the freedom theorems only. (3) 10.3: B₉ (the verification's counterexample, B₇ with u1 at `the_team`), B₉′ (its report form), B₁₀ (the nested positive node denied), B₁₁ (the nested negated node denied; `D_ω` is the asserted case), B₁₂ (depth 2), each breaking one hypothesis; ω's expectation states the refutation; B₁ and B₇ name their theorem instances; checklist items 5, 9, 15, 17 and 18; 13.23. No claim broadened. Spec only; the plan's pointer moves to draft 7 and its page 1 restates its nested-content sentence on the holder-applied atom. |
