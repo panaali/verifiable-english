@@ -301,37 +301,42 @@ theorem soft_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
 
 /-- Stable classes from docs/spec/soft-norms.md §8; details stay in `error`. -/
 def softDiagnosticCode (message : String) : String := Id.run do
-  let markers : List (String × String) := [
-    ("needs an exception", "SOFT_MISSING_EXCEPTION"),
-    ("invalid ties pair", "SOFT_INVALID_TIES_PAIR"),
-    ("invalid outranks pair", "SOFT_INVALID_OUTRANKS_PAIR"),
-    ("invalid soft block", "SOFT_INVALID_BLOCK"),
-    ("invalid outranking flag", "SOFT_INVALID_OUTRANKING"),
-    ("invalid decider", "SOFT_INVALID_DECIDER"),
+  if message.startsWith "InvalidInput: rule " && message.endsWith " needs an exception" then
+    return "SOFT_MISSING_EXCEPTION"
+  if message.startsWith "InvalidInput: rule " &&
+      message.endsWith " is strict and declares an exception" then
+    return "SOFT_STRICT_EXCEPTION"
+  let prefixes : List (String × String) := [
+    ("InvalidInput: invalid ties pair", "SOFT_INVALID_TIES_PAIR"),
+    ("InvalidInput: invalid outranks pair", "SOFT_INVALID_OUTRANKS_PAIR"),
+    ("InvalidInput: invalid soft block", "SOFT_INVALID_BLOCK"),
+    ("InvalidInput: invalid outranking flag", "SOFT_INVALID_OUTRANKING"),
+    ("InvalidInput: invalid decider", "SOFT_INVALID_DECIDER"),
     ("MissingExceptionDecider:", "SOFT_MISSING_DECIDER"),
-    ("strict outranking has no decider", "SOFT_STRICT_OUTRANKING_DECIDER"),
-    ("invalid soft name", "SOFT_INVALID_NAME"),
+    ("InvalidInput: strict outranking has no decider", "SOFT_STRICT_OUTRANKING_DECIDER"),
+    ("InvalidInput: invalid soft name", "SOFT_INVALID_NAME"),
     ("DuplicateDeclaration:", "SOFT_DUPLICATE_DECLARATION"),
     ("UnknownRank:", "SOFT_UNKNOWN_RANK"),
     ("TieAgainstOrder:", "SOFT_TIE_AGAINST_ORDER"),
     ("DependencyCycle:", "SOFT_DEPENDENCY_CYCLE"),
     ("UnknownSymbol: party", "SOFT_UNKNOWN_PARTY"),
-    ("strict and declares an exception", "SOFT_STRICT_EXCEPTION"),
-    ("exception sufficient must be an array", "SOFT_EXCEPTION_ARRAY"),
-    ("exception necessary must be an array", "SOFT_EXCEPTION_ARRAY"),
-    ("invalid factors", "SOFT_INVALID_FACTORS"),
-    ("alterable of rule", "SOFT_INVALID_ALTERABLE"),
+    ("InvalidInput: exception sufficient must be an array", "SOFT_EXCEPTION_ARRAY"),
+    ("InvalidInput: exception necessary must be an array", "SOFT_EXCEPTION_ARRAY"),
+    ("InvalidInput: invalid factors", "SOFT_INVALID_FACTORS"),
+    ("InvalidInput: alterable of rule", "SOFT_INVALID_ALTERABLE"),
     ("HardConstraintAltered:", "SOFT_HARD_CONSTRAINT"),
-    ("exception condition of rule", "SOFT_INVALID_EXCEPTION_CONDITION"),
+    ("InvalidInput: exception condition of rule", "SOFT_INVALID_EXCEPTION_CONDITION"),
     ("SoftOverHard:", "SOFT_OVER_HARD"),
     ("ResourceLimit:", "SOFT_RESOURCE_LIMIT"),
     ("UnsupportedProfile:", "SOFT_UNSUPPORTED_PROFILE"),
-    (" must be an array", "SOFT_INVALID_ARRAY"),
-    ("invalid soft fields", "SOFT_INVALID_RULE_FIELDS"),
-    ("invalid mode for rule", "SOFT_INVALID_RULE_FIELDS"),
-    ("hard of rule", "SOFT_INVALID_RULE_FIELDS")]
-  return ((markers.find? fun (marker, _) => (message.splitOn marker).length > 1).map Prod.snd).getD
-    "SOFT_INVALID_INPUT"
+    ("InvalidInput: invalid soft fields", "SOFT_INVALID_RULE_FIELDS"),
+    ("InvalidInput: invalid mode for rule", "SOFT_INVALID_RULE_FIELDS"),
+    ("InvalidInput: hard of rule", "SOFT_INVALID_RULE_FIELDS")]
+  if let some (_, code) := prefixes.find? (fun (pfx, _) => message.startsWith pfx) then
+    return code
+  if message.startsWith "InvalidInput: " && message.endsWith " must be an array" then
+    return "SOFT_INVALID_ARRAY"
+  return "SOFT_INVALID_INPUT"
 
 def runCaseReported (j : Json) : Json :=
   if usesSoftPath j then
