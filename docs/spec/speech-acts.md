@@ -379,6 +379,9 @@ choose `asserted` or `question`). Every other choice kind (`norm`, `definition`,
 binding-shaped wording ("In this task, ...") is not checked. The choice supplies effective content only after this
 check. Lean checks wording when the speech route receives a unit's `source` field (a present field of any other JSON
 type, `null` included, is `InvalidInput: speech wording` in both cores); the source wrapper has the document bytes.
+Its wording is the unit's span, in the inline and the English-fenced form alike (a fence is the unit's content, which
+the choice replaces, and never stands for the source sentence), and it passes that wording to the core as `source`
+for every unit with a signed choice, whatever the unit's original kind, as for every `instruction` or `question` unit.
 The surface kind reads the wording and each act phrase through **one normalisation, ASCII only** (Python's
 `surface_words`, Lean's `surfaceWords`): the six ASCII whitespace characters of Python's `string.whitespace` (space,
 `\t`, `\n`, `\r`, `\x0b`, `\x0c`) separate words, runs collapse to one space and none leads or trails; only `A`-`Z`
@@ -1697,6 +1700,7 @@ statements of section 8 are unchanged.
 | B, `"source": null`: Python skipped the wording check and Lean raised `InvalidInput: speech wording` | 3.2: a present `source` of any non-string type, `null` included, is `InvalidInput: speech wording` in both cores. |
 | B, quoted-question meaning ids: Python expected no `meaning_id` on a quoted-question unit, Lean regenerated the question object's | 3.5: a quoted question has its question object's meaning id in both cores. |
 | A, unary imperatives: with the act "{0} click", the parser read "Click." as an instruction, but both classifiers required a space after the verb, so both cores accepted an asserted choice on it and rejected the instruction choice, fenced and inline | 3.2: an act's verb is matched as a whole word, ending the wording or followed by a space or ASCII punctuation other than `'`, `-`, `_`, in both cores; a differential checks that every wording the parser reads as a command or question has that surface kind. |
+| A, fenced source sentence: with original kind `asserted`, source "Is atlas reviewed?", fence "Atlas is reviewed." and a signed asserted choice, the source wrapper checked the fence text and supplied an asserted premise, where the inline document was `InvalidInput: choice kind` | 3.2: the choice is checked against the unit's span in both forms; the fence is content the choice replaces. |
 
 ## Change log
 
