@@ -715,7 +715,11 @@ def runCase (j : Json) : Except String Json := do
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
     let d ← VE.Order.Wire.decodeValidModel w.vocab.core (← j.getObjVal? "model")
     pure (ok id ([("refutes", .bool (VE.Order.checkCountermodel w.vocab.core d
-      (ps.map (·.formula.erase)) c.formula.erase))] ++ ids))
+      (ps.map (·.formula.erase)) c.formula.erase)),
+      ("premise_meaning_ids", toJson (ps.map (·.meaningId))),
+      ("conclusion_meaning_id", .str c.meaningId),
+      ("core_premise_meaning_ids", toJson (ps.map (·.coreId))),
+      ("core_conclusion_meaning_id", .str c.coreId)] ++ ids))
   | "certificate" => do
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")

@@ -718,6 +718,12 @@ fn quantity_payload(e: &Value, p: &Value) -> Result<(Value, Value)> {
 /// case takes annotated `premises` and `conclusion` instead of `quantity`.
 pub fn quantity_case(v: &Value) -> Result<Value> {
     let countermodel = v.get("mode") == Some(&json!("countermodel"));
+    if v.get("mode").is_some() && !countermodel {
+        return error(
+            "UnsupportedProfile",
+            "Rust regenerates and evaluates quantities; Lean checks quantity certificates",
+        );
+    }
     if countermodel {
         shape(
             v,
