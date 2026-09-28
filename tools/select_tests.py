@@ -9,13 +9,14 @@ from __future__ import annotations
 
 import argparse
 import ast
+from functools import cache
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 
-from layer_policy import NAMES, ROOT, python_layer, source_layer
+from layer_policy import NAMES, ROOT, lean_layer, python_layer, source_layer
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 # These exercise the public wire across languages, routes, and frozen fixtures.
@@ -65,11 +66,30 @@ def exports() -> dict[str, str]:
 EXPORTS = exports()
 
 
-def test_layer(path: Path) -> int:
-    """Classify by imported provider; the highest direct provider owns the test."""
+@cache
+def test_dependencies(path: Path) -> frozenset[str]:
+    """Local test modules providing fixtures or helper functions."""
+    tree = ast.parse(path.read_text())
+    names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            names.update(alias.name.removeprefix("tests.").split(".")[0]
+                         for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            names.add(node.module.removeprefix("tests.").split(".")[0])
+    return frozenset(f"tests/{name}.py" for name in names
+                     if name.startswith("test_") and (ROOT / "tests" / f"{name}.py").exists())
+
+
+@cache
+def test_layer(path: Path, seen: frozenset[Path] = frozenset()) -> int:
+    """Classify by direct providers and transitively imported test helpers."""
     relative = path.relative_to(ROOT).as_posix()
     if relative in TEST_LAYER_OVERRIDES:
         return TEST_LAYER_OVERRIDES[relative]
+    if path in seen:
+        return 1
+    seen = seen | {path}
     tree = ast.parse(path.read_text())
     layers = []
     for node in ast.walk(tree):
@@ -94,9 +114,35 @@ def test_layer(path: Path) -> int:
         layers.append(5)
     if "rust/target/" in source or "VE_W5_RUST_BIN" in source:
         layers.append(4)
-    if "lean/.lake/" in source or "ve_conformance" in source:
+    if "lean/.lake/" in source or "ve_conformance" in source or "ve_norms_route" in source:
         layers.append(4)
+    if '"-m", "ve"' in source or "'-m', 've'" in source:
+        layers.append(4)
+    layers.extend(test_layer(ROOT / dependency, seen)
+                  for dependency in test_dependencies(path))
     return max(layers, default=5)
+
+
+def exception_importers(path: str) -> set[str]:
+    """Include importers reachable through reviewed outward edges."""
+    if not path.endswith((".py", ".lean")):
+        return set()
+    language = "ve" if path.startswith("ve/") else "lean" if path.startswith("lean/") else None
+    if language is None:
+        return set()
+    module = ".".join(Path(path).with_suffix("").parts[(0 if language == "ve" else 1):])
+    ledger = ROOT / ("tools/layer-exceptions.json" if language == "ve" else
+                     "tools/lean-layer-exceptions.json")
+    edges = [edge.split(" -> ") for edge in json.loads(ledger.read_text())]
+    reached = {module}
+    while True:
+        added = {importer for importer, imported in edges
+                 if any(current == imported or current.startswith(imported + ".")
+                        for current in reached)} - reached
+        if not added:
+            break
+        reached.update(added)
+    return reached - {module}
 
 
 def select(paths: list[str], *, full: bool = False) -> dict:
@@ -107,11 +153,23 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     for path in paths:
         if path.startswith("tests/test_") and path.endswith(".py"):
             layers[path] = test_layer(ROOT / path) if (ROOT / path).exists() else 1
+        for importer in exception_importers(path):
+            layer = python_layer(importer) if path.startswith("ve/") else lean_layer(importer)
+            if layer is not None:
+                layers[path] = min(layers[path], layer)
     fallback = full or not paths or None in layers.values()
     minimum = 1 if fallback else min(layers.values())
     classified = {path.relative_to(ROOT).as_posix(): test_layer(path) for path in TESTS}
+    changed_tests = {path for path in paths if path.startswith("tests/test_") and path.endswith(".py")}
+    dependent_tests = set(changed_tests)
+    while True:
+        added = {path for path in classified
+                 if test_dependencies(ROOT / path) & dependent_tests} - dependent_tests
+        if not added:
+            break
+        dependent_tests.update(added)
     selected = sorted(path for path, layer in classified.items()
-                      if layer >= minimum or path in ALWAYS or path in paths)
+                      if layer >= minimum or path in ALWAYS or path in dependent_tests)
     lean = (fallback or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
             or not (ROOT / "lean/.lake/build/bin/ve_conformance").exists())
     rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
