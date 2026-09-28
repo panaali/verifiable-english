@@ -471,7 +471,7 @@ def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluati
     return minimum_size
 
 
-def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
+def _find_countermodel_python(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
                       min_domain_size: int = 0, nonempty_domains: bool = False,
                       nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
                       max_models: int = 10_000,
@@ -539,6 +539,94 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         return finish("ResourceLimit", None, checked, work,
                       "search relation atom space exceeds runtime limit")
     return finish("ResourceLimit", None, checked, work, "model-attempt budget exhausted")
+
+
+def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
+                      min_domain_size: int = 0, nonempty_domains: bool = False,
+                      nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
+                      max_models: int = 10_000,
+                      max_evaluations: int = 1_000_000) -> CountermodelResult:
+    """Search with a bounded Rust enumerator and Lean-checked witnesses."""
+    from .ast import _to_data
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_runner import run as lean_run
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.rust_jsonl import run as rust_run
+    from .profiles import require_checker
+
+    if authority_for("countermodel_search") == "python":
+        return _find_countermodel_python(
+            env, premises, conclusion, max_domain_size=max_domain_size,
+            min_domain_size=min_domain_size, nonempty_domains=nonempty_domains,
+            nonvacuous_for=nonvacuous_for, semantic_nonvacuity=semantic_nonvacuity,
+            max_models=max_models, max_evaluations=max_evaluations)
+
+    premises = _premises(premises)
+    require_checker(env)
+    _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
+                      nonempty_domains, nonvacuous_for, semantic_nonvacuity)
+    _check_aggregate_ast(premises, conclusion)
+    for formula in premises:
+        check_formula(env, formula)
+    check_formula(env, conclusion)
+    if nonvacuous_for is not None:
+        check_formula(env, nonvacuous_for)
+    case = {"id": "countermodel-search", "environment": env.to_dict(),
+            "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
+            "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
+            "nonempty_domains": nonempty_domains, "max_models": max_models,
+            "max_evaluations": max_evaluations}
+
+    def python():
+        return _find_countermodel_python(
+            env, premises, conclusion, max_domain_size=max_domain_size,
+            min_domain_size=min_domain_size, nonempty_domains=nonempty_domains,
+            nonvacuous_for=nonvacuous_for, semantic_nonvacuity=semantic_nonvacuity,
+            max_models=max_models, max_evaluations=max_evaluations)
+
+    def rust():
+        if nonvacuous_for is not None:
+            raise CheckerUnavailable("CheckerUnavailable: Rust non-vacuity search is not implemented")
+        row = rust_run(case)
+        status = row.get("status")
+        if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
+                or type(row.get("models_checked")) is not int
+                or type(row.get("evaluations")) is not int
+                or not 0 <= row["models_checked"] <= max_models
+                or not 0 <= row["evaluations"] <= max_evaluations):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust search result")
+        model = None
+        if status == "Found":
+            if not isinstance(row.get("model"), dict):
+                raise CheckerUnavailable("CheckerUnavailable: missing Rust search witness")
+            try:
+                model = FiniteModel.from_dict(env, row["model"])
+            except VEError as exc:
+                raise CheckerUnavailable(
+                    f"CheckerUnavailable: invalid Rust search witness: {exc}") from exc
+            request = {**case, "kind": "countermodel", "model": model.to_dict()}
+            checked = lean_run("route" if env.language == "ve.core@0.2" else "evaluate",
+                               [request])[0]
+            if checked.get("refutes") is not True:
+                raise CheckerUnavailable("CheckerUnavailable: Lean rejected Rust search witness")
+            detail = ""
+        elif status == "NotFound":
+            if row.get("model") is not None:
+                raise CheckerUnavailable("CheckerUnavailable: unexpected Rust search witness")
+            detail = "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
+        elif row.get("detail") == "search relation atom space exceeds runtime limit":
+            detail = row["detail"]
+        elif row["models_checked"] >= max_models:
+            detail = "model-attempt budget exhausted"
+        elif row["evaluations"] >= max_evaluations:
+            detail = "evaluation budget exhausted"
+        else:
+            detail = "model-attempt budget exhausted"
+        return CountermodelResult(status, model, row["models_checked"], row["evaluations"],
+                                  max_domain_size, max_models, detail, min_domain_size,
+                                  nonempty_domains, max_evaluations, None, False)
+
+    return execute("countermodel_search", case, python, lean=rust, rust=rust)
 
 
 def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,

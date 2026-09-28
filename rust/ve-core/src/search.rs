@@ -148,7 +148,8 @@ struct Models<'a> {
     done: bool,
 }
 impl<'a> Models<'a> {
-    fn new(env: &'a Environment, problem: &CountermodelProblem, maximum: usize) -> Self {
+    fn new(env: &'a Environment, problem: &CountermodelProblem, maximum: usize,
+           minimum: usize) -> Self {
         let sorts: Vec<_> = env.model_sorts().into_iter().collect();
         let minima: Vec<_> = sorts
             .iter()
@@ -157,7 +158,7 @@ impl<'a> Models<'a> {
                     env.constants.values().filter(|t| *t == s).count()
                 } else {
                     usize::from(env.constants.values().any(|t| t == s))
-                }
+                }.max(minimum)
             })
             .collect();
         let mut used = BTreeSet::new();
@@ -314,11 +315,21 @@ pub fn find_countermodel(
     problem: &CountermodelProblem,
     bounds: SearchBounds,
 ) -> Result<SearchResult> {
+    find_countermodel_min(env, problem, bounds, 0)
+}
+
+pub fn find_countermodel_min(
+    env: &Environment,
+    problem: &CountermodelProblem,
+    bounds: SearchBounds,
+    minimum: usize,
+) -> Result<SearchResult> {
     problem.document.belongs_to(env)?;
-    if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS {
+    if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS
+        || minimum > bounds.max_domain_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
-    let mut models = Models::new(env, problem, bounds.max_domain_size);
+    let mut models = Models::new(env, problem, bounds.max_domain_size, minimum);
     let mut result = SearchResult {
         status: "NotFound",
         model: None,

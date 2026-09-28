@@ -21,7 +21,8 @@ pub use model::FiniteModel;
 pub use order::order_case;
 pub use route::{check_label, check_reading_binding, dependency_order, label_is_canonical};
 pub use search::{
-    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
+    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult,
+    find_countermodel, find_countermodel_min,
 };
 use serde::Serialize;
 pub use surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
