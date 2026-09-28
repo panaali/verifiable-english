@@ -22,7 +22,7 @@ universe u
 
 /-- A quoted norm never contributes a layer but passes every single-rule check. -/
 def checkQuoted (src : SoftSource) (j : Json) : Except String Unit := do
-  let N ← decodeSoftNorm src.D.soft j
+  let N ← decodeSoftNorm src.se j
   validateSoft ⟨src.D.E, src.D.lits, src.D.soft, ⟨src.D.T.regulated, [], [{ N with over := [] }]⟩⟩
 
 def LayerLeaf (src : SoftSource) (w : WireNode) : Prop :=

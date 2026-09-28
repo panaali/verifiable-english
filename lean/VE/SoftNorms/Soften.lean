@@ -237,14 +237,14 @@ def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
     if e.decidedBy.isNone && env.exceptionDecider.isNone then
       throw s!"MissingExceptionDecider: rule {N.name}"
   if let some e := N.exception then
-    unless e.factors.all (·.utf8ByteSize ≤ 200) do
-      throw s!"InvalidInput: invalid factors of rule {N.name}"
     for C in e.sufficient ++ e.necessary do
-      if let some q := (preds C).find? (fun q => definedOrRegulated D q || reservedPredicate q) then
-        throw s!"InvalidInput: exception condition of rule {N.name} mentions {q}"
       typeDiagnostic D.E (sortsOf D N.pred).reverse C
       unless C.check D.E (sortsOf D N.pred).reverse do
         throw s!"InvalidInput: ill-typed rule {N.name}"
+      if let some q := (preds C).find? (fun q => definedOrRegulated D q || reservedPredicate q) then
+        throw s!"InvalidInput: exception condition of rule {N.name} mentions {q}"
+    unless e.factors.all (·.utf8ByteSize ≤ 200) do
+      throw s!"InvalidInput: invalid factors of rule {N.name}"
 
 /-- The diagnostics of 4.1 in the order of 8. -/
 def checkSoft (D : SoftDoc) : Except String Unit := do
