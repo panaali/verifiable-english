@@ -110,7 +110,8 @@ def test_missing_rust_binary_fails_closed_and_shadow_records_it(monkeypatch, fix
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 @pytest.mark.parametrize("formula,budget,trace_budget", [
-    (Top(), 1, 1), (Top(), 0, 10), (And(Top(), Bottom()), 3, 3),
+    (Top(), 1, 1), (Top(), 1, 10 ** 100), (Top(), 0, 10),
+    (And(Top(), Bottom()), 3, 3),
     (And(Bottom(), Top()), 2, 2), (Or(Top(), Bottom()), 2, 2),
     (Implies(Bottom(), Top()), 2, 2), (Not(Top()), 2, 2),
     (Eq(Const("alpha"), Const("beta")), 1, 1),

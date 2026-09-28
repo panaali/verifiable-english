@@ -236,7 +236,8 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
 
     case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": env.to_dict(),
             "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
-            "max_evaluations": max_evaluations, "max_trace_nodes": max_trace_nodes,
+            "max_evaluations": max_evaluations,
+            "max_trace_nodes": min(max_evaluations, max_trace_nodes),
             "trace": trace}
 
     def python():
