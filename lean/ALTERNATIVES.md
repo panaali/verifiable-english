@@ -123,7 +123,8 @@ all three evaluators.
 ## Status, deviations from 7.2 and what is not claimed
 
 * Proved as stated: every theorem of 7.2 except those listed next, with the spec's hypotheses.
-* `validate_sound` takes `M.Valid (envAt (inlineTree A) 0)` as a hypothesis. A `FiniteModel`'s
+* `validate_sound` takes `M.Valid (envAt (inlineTree A) 0)` as a hypothesis, as corrected in
+  spec 7.2. A `FiniteModel`'s
   relation table is a function and cannot be enumerated, so structural admissibility is
   established by the Bridge decoder (`decodeScenario`, as W1's `witnessFrom`), and the dilemma
   wire theorem uses `validate_sound_decoded`, which states the full conclusion without a caller-supplied
@@ -131,13 +132,16 @@ all three evaluators.
   `FiniteModel` cannot follow from the current Boolean validator: changing an unused relation
   table can break `M.Valid` without changing any Boolean check. `validateAlternatives` additionally needs an `EntityName`
   instance to render entity names in its failure texts; success does not depend on it.
+  `Examples.invalidMa_not_valid` records that counterexample at build time.
 * The wire statements decode from `(j.getObjValD "environment") (j.getObjValD "norms")
   (j.getObjValD "units")` (the W1 case shape the Python transport already sends), not from a
   single `document` field.
 * W2 `admission` with the block checks regenerated alternatives and layer leaves,
   W2 provenance and certificate bindings, and has `Run.alternatives_wire_acceptance`
-  (`AltAdmissionAnswer`) over the checked graph and regenerated premises. The per-alternative
-  rule reasons of the diagnosis rendering and English renderings of fulfilment bodies other than `avoids`
+  (`AltAdmissionAnswer`) over the checked graph and regenerated premises. The graph environment
+  includes the four profile words, and regenerated definition leaves connect each word to its
+  inlined base body. The per-alternative rule reasons of the diagnosis rendering and English
+  renderings of fulfilment bodies other than `avoids`
   remain incomplete; `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
   ones the certificate uses.
 * A conflict target's certificate is accepted over `Background_baseAlt` or, as 4.5 allows, over

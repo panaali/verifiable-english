@@ -272,6 +272,11 @@ over the profile words (`h1 is avoidable by R`) are ordinary W2 units and are in
 assertion units on `leads_to` with `support`; a negative cell is the negation. No unit may have a profile word as
 a regulated or defined predicate.
 
+W2 graph nodes may use those four words as typed atoms. The checker admits a regenerated
+`alternatives:profile:<word>` leaf for each word: the closed equivalence between that atom and its inlined base
+body, universally quantified over its two argument sorts. These definition leaves are assumptions in the graph
+report and its semantic consequence; they add no model table and do not alter source identities.
+
 ### 3.3 Scenarios (finite models on this route)
 
 A finite model supplies base tables as in W1 (norms.md 11.3) except that the `leads_to` table is supplied as signed
@@ -865,10 +870,18 @@ theorem followable_eval_iff_denote {α} [DecidableEq α] (A) (M : VE.FiniteModel
 
 /-- 4.2: successful validation gives every hypothesis `dilemma_witness_sound` needs, plus the rows and existence
     facts (`ExistenceFacts A M rows` includes `RowsConsistent A M rows`). -/
-theorem validate_sound {α} [DecidableEq α] (A : AltDoc) (M : VE.FiniteModel α) (rows : List Row)
+theorem validate_sound {α} [DecidableEq α] [EntityName α] (A : AltDoc) (M : VE.FiniteModel α) (rows : List Row)
+    (valid : M.Valid (envAt (inlineTree A) 0))
     (hv : validateAlternatives A M rows = .ok ()) :
   M.Valid (envAt (inlineTree A) 0) ∧ backgroundValidAlt A M = true ∧ A.Γ.all (fun p => p.eval M []) = true ∧
   BaseAdmissibleAlt A M.asStructure ∧ ExistenceFacts A M rows
+
+For a decoded scenario, `validate_sound_decoded` has the same conclusion without a caller-supplied `valid`:
+`decodeScenario` establishes `M.Valid` before validation. The generic Boolean validator cannot establish structural
+validity for an arbitrary `FiniteModel`: its relation table is a function over every predicate name, and an
+otherwise accepted model may give an undeclared, unused predicate an ill-typed tuple. `EntityName` supplies names
+for diagnostics and does not affect successful validation. This correction preserves the executable input and
+output contracts and the full wire-level conclusion.
 
 /-- 4.7: a scenario answer is rendered only where no regenerated conflict formula holds on the model. -/
 theorem scenarioConflict_sound {α} [DecidableEq α] (A : AltDoc) (h : WellFormedAlt A = true) (M : VE.FiniteModel α)
@@ -949,7 +962,8 @@ CONFLICT-FREE result for the same source (4.6), and carries the successful valid
 data: for every expansion `S` with `restrictAll (inlineTree src.A).T S = w.M.asStructure`, the chooser has no clear
 alternative in `S`. `AltAdmissionAnswer` is W1's `AdmissionAnswer` with the alternatives decoder, `alternatives:*`
 leaves admitted only when equal to the regenerated premises, and the report consequence stated over `backgroundAlt
-++ elaborate (inlineTree A).T`.
+++ elaborate (inlineTree A).T ++ Γ_base ++` the four regenerated profile definitions. The graph checker types
+profile-word claims over `extEnv A`.
 
 Proof plan: `inline_faithful` by the capture-avoiding atom-substitution lemma under `S.Admissible A.E` (W3's
 `faithful` is the model, not a dependency, so the W1×W3 gap is not on the path); `clear_denote` and
@@ -1337,3 +1351,4 @@ fixture changed; the new fixtures are b′(A⁻5) and l6.
 | 2026-09-28 | Draft 1 | Item-1 specification from plan draft 2: block with roles, fixed orders and verbalisations, ownership, fulfilments and mapped obligations, two outcome modes; the English table with the `available to` constructs, the binder and the negative-cell wording; wire form, signed rows, identity and package bindings; `WellFormedAlt`; slot premises, `BaseAdmissibleAlt`, existence facts and the broader-class sentence with its cost; definitions and inlining; `table_complete`; conflict over the extended background; `clear`, `followable`, the verdict-scope table, the gate on CONFLICT-FREE and the diagnosis procedure with JOINTLY-UNDISCHARGEABLE; scenario evaluation bound to the model; `GuardOnOwnOutcome` as an author-selected change; conservativity and the ROADMAP line; report, status text, residual lines; diagnostics; every item-2 theorem as a statement in W1's Lean conventions; fixtures a–v with definitions (8.1) separated from expectations (8.2); resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The ten edits of the converged statement review (`manage-agents/debates/causation-spec/`, FIX), section 12: rule subsets drop `over` entries naming absent rules; b′(A⁻) is CONFLICT with followability not computed (8.2 header, 11.16); p4 gains a distinctness unit and p5 keeps the aliased countermodel; p2's document states its positive cell, a scenario's positive rows must lie within the document's cells (p6), rows change neither premise nor hash; argument orders fixed once with `clear(r, a)`; `S.Admissible A.E` on `inline_faithful`, `WellFormedAlt` on `owner_unique`, explicit carrier transport (`clear_denote`, `followable_denote`, `dilemma_expansion`, `extendAvailable`), `ExistenceFacts A M rows` with `RowsConsistent`, validation carried by the dilemma wire theorem; `AlternativesReserved` and no fulfilment atoms; `alt-validate` evaluates the conflict formulas first and a scenario failure is a document DILEMMA only on CONFLICT-FREE; the `no alternatives` branch, legend line 3 and fixture u qualified; r4 differential with r5 added; wording (short object form marked, b(A₁), l5). Checklist item 10.13 names the repeated gate. Spec only. |
 | 2026-09-28 | Draft 3 | The four corrections of Astra's verification of draft 2 (`manage-agents/causation-verify1b-astra.final.md`, FAIL), section 13: `alternative_monotone` takes `WellFormedAlt A = true`, 4.1(2) states that the role predicates are pairwise distinct and fixture l6 rejects a block naming one predicate for two roles; r5 requires a separately bound certificate per route proving the same conclusion, not "the same certificate"; fixture b′ gains (A⁻5), CONFLICT with followability not computed, and the 8.2 header lists it; the inlining prose of 4.3 is qualified by admissibility. Resolved choices 11.22 and 11.23; the repeated gate (10.13) covers the four. Spec only. |
+| 2026-09-28 | Implementation correction | Section 7.2 states the structural validity premise required for arbitrary `FiniteModel` and the premise-free decoded-scenario theorem; a build-time counterexample demonstrates why the original generic statement cannot hold. Section 3.2 and the W2 admission statement specify profile-word graph typing and regenerated definition leaves. Existing wire identities and frozen W1 contracts are unchanged. |
