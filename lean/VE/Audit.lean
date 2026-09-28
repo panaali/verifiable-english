@@ -979,7 +979,15 @@ import VE.Norms.Run
 #print axioms VE.Time.parseIso_valid
 #print axioms VE.Time.checkedCivil_sound
 #print axioms VE.Time.civilOf_sound
+#print axioms VE.Time.yearLen_le
+#print axioms VE.Time.daysToYear_bounds
+#print axioms VE.Time.findYear_spec
+#print axioms VE.Time.findMonth_spec
+#print axioms VE.Time.daysToYear_tenThousand
+#print axioms VE.Time.civilCandidate_spec
+#print axioms VE.Time.civilOf_complete
 #print axioms VE.Time.civilOf_num
+#print axioms VE.Time.civilOf_isSome_iff
 #print axioms VE.Time.quantB_sound
 #print axioms VE.Time.charge_some
 #print axioms VE.Time.evalB_sound
