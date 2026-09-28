@@ -19,11 +19,12 @@ and one per incoming × outgoing pair. Nothing here runs unmetered: the defined
 tables of a model are built by the same evaluator under one shared budget and
 the tuple limit, one candidate row at a time.
 
-Each evaluator returns a value only when the reference evaluator has that value
+Atoms read their tables through a hash index built once per model. Each
+evaluator returns a value only when the reference evaluator has that value
 (`evalF_sound`, `evalC_sound`, `evalN_sound` and the countermodel forms), so the
 budget turns answers into `ResourceLimit`, never into different answers.
-Closure values are read from the reference evaluator; the metered construction
-only decides whether the budget suffices. -/
+Closure values are read from the cached closures, which `VE.Route.Closure`
+proves are exactly the finite paths of their edges. -/
 namespace VE.Route.Budget
 open VE.Time (charge charge_some quantB quantB_sound maxEvaluations)
 
