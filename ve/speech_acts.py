@@ -6,6 +6,7 @@ is required before speech-act documents can become trusted P0 evidence.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import product
 import re
 
 from .ast import (And, Const, Eq, Not, Or, Top, Var, _Checker, _Decoder,
@@ -414,6 +415,52 @@ class SpeechDocument:
         if not replay.valid:
             raise VEError(f"QueryMismatch: {qid}")
         return {"status": "follows", "evidence": "certificate", "query": qid}
+
+    def complete_model(self, base_wire, *, max_evaluations=1_000_000):
+        """Regenerate regulated tables from a supplied base structure.
+
+        The caller supplies only base predicate tables.  A table for a
+        regulated predicate is rejected by FiniteModel's exact field check.
+        """
+        from .evaluate import _Evaluator, _Exhausted
+        from .model import FiniteModel
+        base_env = self.policy.base_environment()
+        base = FiniteModel.from_dict(base_env, base_wire) if type(base_wire) is dict else base_wire
+        if base.environment_id != base_env.environment_id:
+            raise VEError("InvalidModel: base environment mismatch")
+        wire = base.to_dict()
+        evaluator = _Evaluator(base_env, base, max_evaluations, trace=False)
+        try:
+            for predicate in self.policy.order:
+                decl = self.env.predicates[predicate]
+                formula = self.policy.outcome(predicate, base=True)
+                table = []
+                for row in product(*(base.domains[s] for s in decl.arguments)):
+                    bindings = tuple(reversed(tuple(zip(decl.arguments, row))))
+                    if evaluator.formula(formula, bindings)[0]:
+                        table.append(list(row))
+                wire["relations"][predicate] = table
+        except _Exhausted as exc:
+            raise ResourceLimit("model evaluation budget") from exc
+        return FiniteModel.from_dict(self.env, wire)
+
+    def evaluate_answer_model(self, question, token, base_wire, *, max_evaluations=1_000_000):
+        """Evaluate H and F in one checked premise model, with model-only scope."""
+        from .evaluate import _Evaluator, _Exhausted
+        model = self.complete_model(base_wire, max_evaluations=max_evaluations)
+        evaluator = _Evaluator(self.env, model, max_evaluations, trace=False)
+        try:
+            if any(not evaluator.formula(formula)[0] for formula in self.premises()):
+                raise VEError("InvalidModel: model does not satisfy pinned premises")
+            if not evaluator.formula(self.presupposition(question))[0]:
+                return {"status": "PRESUPPOSITION-FAILED", "evidence": "model",
+                        "model_id": model.model_id, "scope": "this model only"}
+            if not evaluator.formula(self.correct(question, token))[0]:
+                raise VEError(f"AnswerMismatch: {question.unit}")
+        except _Exhausted as exc:
+            raise ResourceLimit("model evaluation budget") from exc
+        return {"status": "evaluated", "answer": token, "evidence": "model",
+                "model_id": model.model_id, "scope": "this model only"}
 
     def presupposition(self, question):
         if question.mode != "which_one":

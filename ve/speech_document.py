@@ -179,8 +179,75 @@ class SpeechSource:
         self.reading_plan = plan_choices([r for r in active_reading_sets(sets) if r["status"] == "open"])
         self.answers = meta.get("answers", [])
         self.compliance = meta.get("compliance", [])
-        if self.answers or self.compliance:
-            raise VEError("UnsupportedProfile: speech evidence records need the proved route")
+        self.answer_lines = self._answer_records()
+        self.compliance_lines = self._compliance_records()
+
+    def _answer_records(self):
+        if type(self.answers) is not list:
+            raise VEError("InvalidInput: answers")
+        by_id = {q.unit: q for q in self.document.questions}
+        lines = []
+        for record in self.answers:
+            if (type(record) is not dict or not {"question", "by", "support", "evidence"} <= set(record)
+                    or set(record) - {"question", "by", "support", "evidence", "answer",
+                                      "conditional", "judgment"}):
+                raise VEError("InvalidInput: answer record")
+            uid = record["question"]
+            if uid not in by_id or type(record["evidence"]) is not dict:
+                raise VEError(f"AnswerMismatch: {uid}")
+            question = by_id[uid]
+            support = record["support"]
+            if question.mode == "follows":
+                if (record.get("judgment") not in ("follows", "gap") or
+                        record.get("judgment") != "follows" or support != "certificate"
+                        or set(record["evidence"]) != {"certificate"}):
+                    raise VEError("InvalidInput: judgment")
+                line = self.document.check_consequence_certificate(
+                    question.query, record["evidence"]["certificate"])
+            elif question.mode in ("polar", "which_one", "which_all"):
+                if "answer" not in record or "judgment" in record:
+                    raise VEError(f"AnswerMismatch: {uid}")
+                answer = record["answer"]
+                if question.mode == "which_one":
+                    if type(answer) is not dict or set(answer) != {"one"}:
+                        raise VEError(f"AnswerOutsideDomain: {uid}, {answer}")
+                    token = answer["one"]
+                elif question.mode == "which_all":
+                    if type(answer) is not dict or set(answer) != {"all"} or type(answer["all"]) is not list:
+                        raise VEError(f"AnswerOutsideDomain: {uid}, {answer}")
+                    token = tuple(answer["all"])
+                else:
+                    token = answer
+                if support == "certificate" and set(record["evidence"]) == {"certificate"}:
+                    line = self.document.check_answer_certificate(
+                        question, token, record["evidence"]["certificate"],
+                        conditional=record.get("conditional", False))
+                elif support == "model" and set(record["evidence"]) == {"model"}:
+                    line = self.document.evaluate_answer_model(
+                        question, token, record["evidence"]["model"])
+                else:
+                    raise VEError(f"AnswerMismatch: {uid}")
+            else:
+                raise VEError(f"NominationOutsideSet: {uid}")
+            lines.append({"question": uid, **line})
+        return lines
+
+    def _compliance_records(self):
+        if type(self.compliance) is not list:
+            raise VEError("InvalidInput: compliance")
+        by_id = {c.unit: c for c in self.document.commands}
+        lines = []
+        for record in self.compliance:
+            if (type(record) is not dict or set(record) != {"command", "evidence"}
+                    or record["command"] not in by_id or type(record["evidence"]) is not dict):
+                raise VEError("InvalidInput: compliance record")
+            command = by_id[record["command"]]
+            qid = next((a for a in command.args if a in self.document.queries), None)
+            if qid is None or set(record["evidence"]) != {"certificate"}:
+                raise VEError(f"QueryMismatch: {command.unit}")
+            self.document.check_consequence_certificate(qid, record["evidence"]["certificate"])
+            lines.append({"command": command.unit, "status": "certificate", "query": qid})
+        return lines
 
     def coverage(self):
         classes = {}

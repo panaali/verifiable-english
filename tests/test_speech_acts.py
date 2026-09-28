@@ -209,3 +209,91 @@ def test_v2_source_identity_partition_and_coverage(tmp_path):
     changed = deepcopy(meta)
     changed["environment"]["speech_acts"]["task"] = "t2"
     assert save(changed).document_id != first.document_id
+
+
+def test_model_answer_scope_and_presupposition_failure():
+    env = environment()
+    polar = question("u1", "polar", ["unary", "reviewed", ["const", "atlas"]],
+                     source="Is atlas reviewed?")
+    one = question("u2", "which_one", ["unary", "reviewed", ["var", 0]],
+                   ("atlas", "beacon"), "Which one of atlas and beacon is reviewed?")
+    doc = SpeechDocument(env, [polar, one])
+    base = doc.policy.base_environment()
+    wire = {"complete": True,
+            "domains": {s: [s + "0"] for s in base.sorts},
+            "constants": {name: sort + "0" for name, entry in base.constants.items()
+                          if (sort := entry.sort)},
+            "relations": {name: [] for name in base.predicates}}
+    wire["relations"]["reviewed"] = [["service0"]]
+    evaluated = doc.evaluate_answer_model(doc.questions[0], "yes", wire)
+    assert evaluated["status"] == "evaluated" and evaluated["scope"] == "this model only"
+    # atlas and beacon alias the same service entity in this model, so the
+    # single-choice presupposition fails, regardless of the nominated token.
+    assert doc.evaluate_answer_model(doc.questions[1], "atlas", wire)["status"] == "PRESUPPOSITION-FAILED"
+    wire["relations"]["open_required"] = []  # A supplied regulated table is never accepted.
+    with pytest.raises(VEError):
+        doc.complete_model(wire)
+
+
+def test_v2_answer_record_replays_certificate_without_new_premise(tmp_path):
+    env = environment()
+    source = "atlas is reviewed.\nIs atlas reviewed?\n"
+    boundary = len("atlas is reviewed.\n".encode())
+    fact = {**unit("u1", "asserted", {"ast": ["unary", "reviewed", ["const", "atlas"]]}),
+            "span": [0, boundary]}
+    asked = {**question("u2", "polar", ["unary", "reviewed", ["const", "atlas"]]),
+             "span": [boundary, len(source.encode())]}
+    core = SpeechDocument(env, [fact, {**asked, "source": "Is atlas reviewed?"}])
+    q = core.questions[0]
+    from ve.ast import And
+    proof = prove_entailment(env, core._caller_premises(),
+                             And(core.presupposition(q), core.correct(q, "yes")))
+    assert proof.status == "Found"
+    meta = {"format": "ve-document@2", "environment": env.to_dict(), "units": [fact, asked],
+            "answers": [{"question": "u2", "by": "checker", "support": "certificate",
+                         "answer": "yes", "evidence": {"certificate": proof.certificate}}]}
+    path = tmp_path / "answered.ve.md"
+    def save(metadata):
+        path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+        return load_speech_document(path)
+    loaded = save(meta)
+    assert loaded.answer_lines[0]["status"] == "supported"
+    assert loaded.document.premises() == core.premises()
+    forged = deepcopy(meta)
+    forged["answers"][0]["answer"] = "no"
+    with pytest.raises(VEError, match="AnswerMismatch: u2"):
+        save(forged)
+
+
+def test_proof_task_identity_binds_query_target_and_certificate():
+    raw = environment().to_dict()
+    raw["vocabulary"]["predicates"].update({
+        "submit_required": {"arguments": ["user", "query"], "description": "submit",
+                            "regulated": {"role": "obligation", "default": "deny",
+                                          "act": "{0} submit a certificate for {1}",
+                                          "permission": "submit_permitted"}},
+        "submit_permitted": {"arguments": ["user", "query"], "description": "submit",
+                             "regulated": {"role": "permission", "default": "allow",
+                                           "act": "{0} submit a certificate for {1}"}},
+        "done_submit": {"arguments": ["user", "query"], "description": "submitted"},
+    })
+    env = Environment(raw)
+    fact = unit("u1", "asserted", {"ast": ["unary", "reviewed", ["const", "atlas"]]})
+    task = command("u2", "require", "submit_required", "q1",
+                   "Prove that atlas is reviewed using these premises.")
+    query = {"id": "q1", "premises": ["u1"],
+             "target": {"ast": ["unary", "reviewed", ["const", "atlas"]]}}
+    doc = SpeechDocument(env, [fact, task], [query])
+    proof = prove_entailment(env, doc._caller_premises("q1"), doc.queries["q1"].target)
+    assert proof.status == "Found"
+    before = doc.premises()
+    assert doc.check_consequence_certificate("q1", proof.certificate)["status"] == "follows"
+    assert doc.premises() == before
+    changed = deepcopy(query)
+    changed["target"] = {"ast": ["unary", "reviewed", ["const", "beacon"]]}
+    task_without_wording = deepcopy(task)
+    task_without_wording.pop("source")
+    retargeted = SpeechDocument(env, [fact, task_without_wording], [changed])
+    assert doc.meaning_ids["u2"] != retargeted.meaning_ids["u2"]
+    with pytest.raises(VEError, match="QueryMismatch: q1"):
+        retargeted.check_consequence_certificate("q1", proof.certificate)
