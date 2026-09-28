@@ -1,0 +1,200 @@
+# Operation assurance manifest
+
+**Status:** P0-3 of the architecture roadmap, 2026-09-28. This adds the manifest, its executable bindings and the
+enforcement hooks. **No operation's authority changes:** every verdict is still produced where it was before, and
+Lean and Rust remain cross-checks and test oracles. Inputs: [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md)
+(revision 3), [verification-contract.md](verification-contract.md), [lean/README.md](../../lean/README.md).
+
+## 1. What the manifest records
+
+`ve/assurance-manifest.json` (shipped inside the package, loaded by `ve/assurance.py`) has one entry for every
+public semantic operation. Each entry records:
+
+| Field | Meaning |
+|---|---|
+| `id`, `summary`, `class` | the operation; `class` is `leaf`, `combination` (plan section 1.2 classes L and C), `search` or `surface` |
+| `authority` | who produces the verdict **now**: `python`, `migrated` (Lean only) or `lean-only` (no Python implementation may exist) |
+| `target` | the engine the migration plan assigns: `lean`, `rust` (search, validated by Lean) or `python` (surface and trusted class-C rules) |
+| `assurance` | `current` label on records today (always `experimental`) and the label the plan grants `at_switch`, with the reason |
+| `python` | every Python function that produces the verdict, as `module:qualname` |
+| `outcomes` | the verdict, semantic-unknown, rejection, budget and operational outcome values (section 2) |
+| `lean` | `bindings` (executable, mode, case kinds, dispatch files), `planned_modes`, `theorems` (audited names), `planned_theorems`, `decoders` (trusted decoder files on the path) |
+| `rust` | Rust CLI commands on the path and their role |
+| `lean_call_sites` | the Python functions that invoke Lean for this operation |
+| `tests` | tests that back the operation (conformance, differential and three-way checks) |
+| `trusted` | ids from the top-level `trusted` table: what a reader must trust for this operation's verdict |
+| `notes` | recorded gaps and conflations |
+
+The top level also holds the `trusted` component table, the pinned Lean decoder ranges (section 4) and the
+reviewed broad exception handlers (section 5).
+
+## 2. Operational failure versus semantic UNKNOWN
+
+Five outcome classes are kept apart in every result:
+
+| Class | Values | Meaning |
+|---|---|---|
+| verdict | `Valid`, `Satisfied`, `Found`, `ALL`, `CONFLICT`, `Checked`, ... | a checked answer |
+| unknown | `UNKNOWN`, `NotFound`, `Incomplete` | the checker ran to completion; bounded search or proof found neither answer |
+| rejection | `InvalidInput`, `SyntaxError`, `TypeMismatch`, `InvalidModel`, `AdmissionError`, ... | the input is invalid |
+| budget | `ResourceLimit` | a deterministic public work budget or structural cap was reached |
+| operational | `CheckerUnavailable` | no verdict was obtained: a backend was missing or mismatched, crashed, timed out or gave malformed output, or a migrated operation reached a non-authoritative engine |
+
+`ve.errors.CheckerUnavailable` carries `code`, `message`, `operation` and `backend`. It is deliberately **not** a
+`VEError` or `ValueError`. The semantic modules catch `VEError`, `ResourceLimit` and `ValueError` to produce
+`InvalidInput`, `UNKNOWN`, `InvalidCertificate` or a `ResourceLimit` attempt, so a `CheckerUnavailable` passes through
+all of them unchanged. The manifest test pins this. `AuthorityViolation` is the `CheckerUnavailable` subclass that
+the authority guard raises.
+
+How an operational failure surfaces:
+
+| Where | Before P0-3 | Now |
+|---|---|---|
+| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count or id mismatch, or an exit status that contradicts the rows all raise `CheckerUnavailable`. A returned `status: error` row is Lean's semantic rejection |
+| `check_bundle(lean_executable=...)` | `VEError` (`InvalidInput`) for an unavailable Lean; a crash surfaced as `SyntaxError` or `ResourceLimit` | raises `CheckerUnavailable`. A Lean rejection still raises `VEError`. The result carries `lean_outcome`: `accepted`, `not_requested` or `not_applicable` (no lemmas) |
+| `check_argument(lean_executable=...)` | `lean_checked: false` for both rejection and unavailability; only `lean_detail` wording differed | `lean_outcome`: `accepted`, `rejected`, `unavailable`, `not_requested` or `not_applicable`; `lean_status` reads `Lean-checked: unavailable`. The Lean replay is an optional cross-check while authority is Python, so the Python verdict is unaffected |
+| `check_argument` when a verdict it needs is unavailable | would have become `InvalidInput` or an edge error had the exception been a `VEError` | `status: CheckerUnavailable`, `composed: false`, `proof: not_checked`, with the error in `errors` |
+| `premise_status`, `compare`, `check_readings`, `check`, `check_document`, norms, admission | no operational path | `CheckerUnavailable` propagates; it never becomes `UNKNOWN` |
+| CLI (`python -m ve ...`) | exit 2 with `InvalidInput` | `{"status": "CheckerUnavailable", "error": ...}`, **exit 5**; exit codes 0–4 are unchanged |
+| `ve assist` tools and CLI | `BackendError` | the error keeps code `CheckerUnavailable`; the assist CLI exits 5 |
+
+## 3. Authority and the enforcement hook
+
+Every function listed under `python` carries `@semantic_entry("<operation>")` (`ve/assurance.py`). The decorator
+registers the function and guards each call. While an operation's `authority` is `python`, the guard is inert (one
+check of an empty set). When the manifest records an operation as `migrated`, every Python entry for it raises
+`AuthorityViolation` before its body runs. The verdict of a migrated operation can therefore only come from Lean.
+A combination that needs the verdict (readings, premise status, compare, the argument checker) reports
+`CheckerUnavailable`, never `UNKNOWN`. There is no fallback to Python.
+
+`ve.backends.lean.run` checks every call against the operation's declared Lean `bindings` (executable, mode and case
+kinds) before starting a process. An undeclared call is a programming error (`RuntimeError`), not an outcome.
+
+Migrating an operation (SEMANTICS-MIGRATION-PLAN stage 4):
+
+1. Add a Lean-backed implementation with the same signature, marked `@semantic_entry(op, engine="lean")`, whose call
+   sites are listed in `lean_call_sites`.
+2. Set the operation's `authority` to `migrated`, and update `test_nothing_is_migrated_yet` in the same reviewed
+   commit.
+3. The existing Python entries stay importable for rollback. `VE_AUTHORITY=python` per-operation rollback is stage 4
+   work and is not part of this change.
+
+`ve.assurance.simulate_migration(*ops)` enforces Lean authority for a block of code. The tests use it to check that
+every entry is guarded and that combinations propagate unavailability, and a stage-4 rehearsal can run with it.
+
+## 4. The trusted base
+
+Every operation names its trusted components; the definitions are in the manifest's `trusted` table. While
+authority is Python, `python:implementation` is trusted for every operation that has one. Tests compare it with Lean
+and Rust, but no theorem covers it. The Lean side trusts the kernel and its three axioms (`lean:kernel`, audited by
+`lean/audit.py` into `lean/axioms.txt`), the compiler and runtime (`lean:compiler`), the runner dispatch
+(`lean:runner-glue`) and the hand-written decoders.
+
+**Hand-written Lean decoders (`lean:decoders`), 1,862 lines.** These are the JSON parser, the wire decoders, the
+canonical serializers and the SHA-256 identity code. No refinement theorem relates them to the wire specification.
+Decoded models are proved admissible and decoded formulas are typed by the proved checker, but the correspondence
+with the specified wire format is trusted. The manifest pins each range, and the test checks the following:
+
+- every range starts and ends on a declaration boundary;
+- every listed declaration starts inside a range;
+- the ranges sum to `total_lines`.
+
+Moving decoder code therefore forces a manifest update.
+
+| File | Lines | Ranges |
+|---|---:|---|
+| `lean/VE/Json.lean` | 136 | 1–136 |
+| `lean/VE/Bridge.lean` | 235 | 14–248 |
+| `lean/VE/CertificateWire.lean` | 164 | 11–163 (SHA-256, canonical JSON, trace decoders), 177–187 |
+| `lean/VE/Closure/Bridge.lean` | 58 | 9–66 |
+| `lean/VE/Core/Bridge.lean` | 117 | 10–126 |
+| `lean/VE/Core/Wire.lean` | 49 | 10–58 |
+| `lean/VE/Route/Wire.lean` | 353 | 24–311, 380–388, 418–458, 528–535, 586–592 |
+| `lean/VE/Order/Wire.lean` | 217 | 24–233, 247–253 |
+| `lean/VE/Norms/Wire.lean` | 213 | 24–236 |
+| `lean/VE/Route/Gate.lean` | 38 | 126–163 (partly covered by `decodeEnvelope_sound`) |
+| `lean/VE/Route/Admission.lean` | 184 | 101–124, 206–245, 421–540 |
+| `lean/VE/Norms/Replay.lean` | 69 | 92–140, 272–291 |
+| `lean/VE/Definitions/Bundle.lean` | 29 | 393–421 |
+
+Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
+dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theorem depends on.
+
+## 5. Executable bindings
+
+`tests/test_assurance_manifest.py` checks the manifest against the code:
+
+- **Python entries.** The functions carrying `semantic_entry` are exactly the manifest's `python` entries, found by an
+  AST scan of `ve/`. Each entry resolves to a guarded callable, and each is refused once its operation is
+  migrated.
+- **Lean call sites.** The `lean_backend.run(...)` calls are exactly the declared `lean_call_sites`. Only
+  `ve/backends/lean.py` may import `subprocess`.
+- **Lean bindings.**
+  - Each executable is a `lean_exe` in `lean/lakefile.toml`.
+  - Each mode string occurs in its root file.
+  - Each case kind occurs in a named dispatch file.
+  - Each decoder file is a pinned decoder.
+- **Theorems.** Every listed theorem is audited in `lean/axioms.txt`. A planned theorem that appears there fails the
+  test until it is moved to `theorems`.
+- **Other references.** Rust commands occur in `rust/ve/src/main.rs`, and every backing test exists.
+- **Broad exception handlers.** Every handler in `ve/` broad enough to catch `CheckerUnavailable` (`Exception`,
+  `BaseException`, `RuntimeError`, bare) is listed under `reviewed_broad_handlers` with the reason it cannot turn an
+  operational failure into a verdict. A new one fails the test until it is reviewed.
+- **Runtime behaviour.**
+  - Backend fault injection (missing, crash, signal, usage error, garbage, empty, wrong row count, wrong ids,
+    inconsistent exit status, hang) yields `CheckerUnavailable`.
+  - A `status: error` row is returned as a rejection.
+  - Bundles and arguments separate rejection from unavailability.
+  - The CLI exits 5.
+  - With certificate and countermodel checking migrated, `premise_status`, `compare`, `check_readings` and
+    `check_argument` report unavailability rather than `UNKNOWN`.
+- **Invariants.** No operation is migrated yet, and lean-only operations have no Python verdict path.
+- **This document.** The table in section 7 is generated from the manifest.
+
+## 6. Recorded conflations, not changed here
+
+Changing a public diagnostic code needs the migration plan's section-2.3 product decision, so these are recorded in
+the manifest `notes`, not changed:
+
+- **Earley timeout.** The English Earley wall-clock budget (`ve/surface/unambiguity.py`, `EARLEY_SECONDS`) reports
+  `ResourceLimit`. The plan reserves `ResourceLimit` for deterministic budgets and calls wall-clock limits
+  operational.
+- **Marked English conclusions.** When bounded proof search for a marked English conclusion ends in `NotFound` or
+  `ResourceLimit`, the conclusion is rejected as `SyntaxError` (`ve/english.py`, `_check_conclusions`). This is a
+  search UNKNOWN surfacing as a rejection, and the search result is not replayed there.
+
+## 7. Operations
+
+<!-- BEGIN GENERATED: python tools/assurance_manifest.py --write -->
+| Operation | Class | Authority now → target | Assurance now / at switch | Python entries | Lean bindings | Lean theorems | Rust | Trusted |
+|---|---|---|---|---|---|---|---|---|
+| `parse` | leaf | python → lean | experimental / experimental | `ve.parser:parse_with_metadata`<br>`ve.parser:parse`<br>`ve.parser:canonicalize`<br>`ve.parser:is_canonical` | `ve_conformance (default)`<br>`ve_conformance order surface` | `VE.Surface.parse_print`<br>`VE.Surface.parse_wellFormed`<br>`VE.Surface.normalize_idempotent`<br>`VE.Surface.print_injective`<br>`VE.Surface.accepted_normalize_eq_iff`<br>`VE.Surface.parse_print_propositional`<br>`VE.Closure.Surface.parse_print_named`<br>`VE.Core.Surface.parse_print_named` | `parse`<br>`format` | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`lean:order-surface-parser` |
+| `typing` | leaf | python → lean | experimental / reference-theorems-checked | `ve.ast:check_formula`<br>`ve.ast:check_document` | none | `VE.check_iff_wellFormed`<br>`VE.Closure.check_iff_wellFormed`<br>`VE.Order.check_iff_wellFormed`<br>`VE.Core.check_iff_wellFormed` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `evaluate` | leaf | python → lean | experimental / reference-theorems-checked | `ve.evaluate:evaluate` | `ve_conformance (default)`<br>`ve_conformance route evaluate`<br>`ve_conformance order evaluate` | `VE.eval_iff_denote`<br>`VE.eval_false_iff_not_denote`<br>`VE.document_eval_iff_denote`<br>`VE.Closure.eval_iff_denote`<br>`VE.Order.eval_iff_denote`<br>`VE.Core.eval_iff_denote`<br>`VE.Bridge.decodeModel_valid`<br>`VE.Route.Wire.decodeModel_valid` | `evaluate`<br>`conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `countermodel.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.search:check_countermodel` | `ve_conformance (default) countermodel`<br>`ve_conformance route countermodel`<br>`ve_conformance order countermodel` | `VE.countermodelCheck_iff`<br>`VE.countermodel_sound`<br>`VE.Closure.countermodelCheck_iff`<br>`VE.Closure.countermodel_sound`<br>`VE.Order.countermodelCheck_iff`<br>`VE.Order.countermodel_sound`<br>`VE.Order.checkCountermodel_sound`<br>`VE.Core.countermodelCheck_iff`<br>`VE.Core.countermodel_sound`<br>`VE.Bridge.decodeModel_valid`<br>`VE.Bridge.decoded_countermodel_sound`<br>`VE.Bridge.CountermodelQuery.refutes_sound`<br>`VE.Route.Wire.decodeModel_valid` | `check-countermodel`<br>`conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `countermodel.search` | search | python → rust | experimental / experimental | `ve.search:find_countermodel`<br>`ve.search:find_distinguishing_model` | none | none | `countermodel`<br>`conformance` | `python:implementation` |
+| `certificate.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.entailment:check_entailment_certificate` | `ve_conformance check-certificate`<br>`ve_conformance route certificate`<br>`ve_conformance order certificate` | `VE.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound_v0`<br>`VE.Core.Tableau.checkCertificate_sound`<br>`VE.Core.Tableau.checkCertificate_sound_v0`<br>`VE.Order.Tableau.checkCertificate_sound`<br>`VE.CertificateWire.Query.accepts_sound`<br>`VE.CertificateWire.ClosureQuery.accepts_sound`<br>`VE.Order.Wire.Query.accepts_sound`<br>`VE.Core.Wire.run_certificate_acceptance`<br>`VE.Route.route_acceptance`<br>`VE.Route.core_route_acceptance` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `definitions.elaborate` | leaf | python → lean | experimental / experimental | `ve.definitions:compile_definitions`<br>`ve.definitions:expand`<br>`ve.background:background`<br>`ve.background:validate_background`<br>`ve.background:dependency_order` | `ve_conformance route background,dependency-order` | `VE.Definitions.stepOk_sound`<br>`VE.Definitions.chainOk_sound`<br>`VE.Definitions.faithful`<br>`VE.Definitions.conservative`<br>`VE.Definitions.conservative_entails`<br>`VE.Definitions.routeLayer_background_sound`<br>`VE.Route.Background.fol_background_sound`<br>`VE.Route.Background.fol_background_complete`<br>`VE.Data.Background.generate_sat_iff` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `norms.elaborate` | leaf | python → lean | experimental / experimental | `ve.norms:NormDocument.elaborate`<br>`ve.norms:NormDocument.premises` | `ve_norms_route (default) norms-elaborate` | `VE.Norms.elaborate_iff`<br>`VE.Norms.elaborate_iff_at`<br>`VE.Norms.norms_route_intended` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `norms.conflict` | leaf | python → lean | experimental / experimental | `ve.norms:check_witness`<br>`ve.norms:check_conflict` | `ve_norms_route (default) norms-conflict` | `VE.Norms.conflictFreeCheck_sound`<br>`VE.Norms.conflict_witness_sound`<br>`VE.Norms.conflict_smallModel`<br>`VE.Norms.Replay.norms_wire_conflict_sound`<br>`VE.Norms.Replay.norms_wire_conflict_free_expands`<br>`VE.Norms.Replay.norms_wire_conflict_witness_sound` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `norms.certificate` | leaf | python → lean | experimental / experimental | `ve.norms:check_norm_entailment_certificate` | `ve_norms_route (default) norms-certificate` | `VE.Norms.Replay.norms_wire_acceptance`<br>`VE.Norms.norms_route_acceptance`<br>`VE.Norms.norms_route_entails_iff`<br>`VE.Norms.norms_route_countermodel` | none | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `soft.elaborate` | leaf | lean-only → lean | experimental / experimental | none | none | none | none | `lean:kernel`<br>`lean:compiler` |
+| `admission` | leaf | python → lean | experimental / experimental | `ve.admission:admit_document`<br>`ve.norm_admission:admit_norm_document` | `ve_conformance route admission`<br>`ve_norms_route (default) admission` | `VE.Route.Admission.admit_report_sound`<br>`VE.Route.Admission.admit_string_sound`<br>`VE.Route.Admission.admit_labels_decoded`<br>`VE.Norms.Admission.admitDocument_spec`<br>`VE.Norms.Admission.norms_wire_admission_sound`<br>`VE.Norms.Admission.norms_wire_report_consequence`<br>`VE.Norms.Run.runAdmission_sound`<br>`VE.Norms.Run.norms_wire_acceptance` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:record-identity` |
+| `label` | leaf | python → lean | experimental / experimental | `ve.admission:parse_label`<br>`ve.admission:validate_label` | `ve_conformance route label` | `VE.Route.Admission.parseLabel_render` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Route.readings_all_sound (planned)`<br>`VE.Route.readings_none_sound (planned)`<br>`VE.Route.readings_some_sound (planned)` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
+| `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.backgroundLeaves_hold` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface` |
+| `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
+| `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
+| `document.check` | combination | python → lean | experimental / experimental | `ve.document:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
+| `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
+<!-- END GENERATED -->
+
+## 8. Not in this change
+
+- Records do not yet carry the stage-4 `authority`, `assurance`, `covered_operations` and `trusted` fields. The
+  manifest is their source when stage 4 adds them.
+- `docs/spec/theorem-coverage.md`: the `at_switch` column is the plan's initial list, still to be confirmed.
+- The `VE_AUTHORITY` flag, the Lean service, shadow mode and the planned Lean modes (`parse`, `normalize`, `check`,
+  `model`, `graph`, `readings`, `identity`).
