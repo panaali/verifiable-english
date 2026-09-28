@@ -80,7 +80,10 @@ with the environment block (`BindingConflict` otherwise) or, when the block omit
 binding is a typed declaration unit with admitted meaning and is counted like any other unit (6). The environment's
 `speech_acts` block is part of the canonical environment bytes, so two documents with different tasks, addressees or
 definite bindings have different `environment_id`s (3.5); this is how "one pinned semantic scope per policy evaluation"
-is realised at `@0` (4.8).
+is realised at `@0` (4.8). An entry that an authored binding supplies is supplied to the environment: the document's
+`environment_id`, and with it every meaning id and every certificate binding, is computed over the canonical
+environment whose block is the **effective** scope, exactly as if the block had declared the entry; a document whose
+bindings supply nothing keeps its environment's id. Binding "you" to Alice or to Bob therefore gives two ids.
 
 ### 1.2 Commands
 
@@ -293,7 +296,8 @@ for a question with no answer record, "no answer has been given". For a proof ta
 `addressee.constant` a declared constant of that sort (`UnknownSymbol` otherwise); `definites` has at most 64 entries,
 each phrase distinct after whitespace normalisation, each constant declared. Unknown fields are `InvalidInput:
 speech_acts block`. The block is part of the canonical environment bytes, so `environment_id` changes when any of it
-changes and is unchanged for every existing environment (none has the block). The `regulated` declarations are W1's
+changes and is unchanged for every existing environment (none has the block). Its canonical encoding is `task`, then
+`addressee` and `definites` when present, the definites sorted by phrase; an empty `definites` map is encoded as absent. The `regulated` declarations are W1's
 (norms.md 3.1) and unchanged. The sort `query` and one constant per query id are ordinary declarations when the document
 uses proof tasks.
 
@@ -1549,6 +1553,7 @@ statements of section 8 are unchanged.
 | B, certificate portability: Python folded `F(S)` of a complete-list answer as one mixed conjunction | No text change: 1.3's `⋀_{a∈S} P(a) ∧ ⋀_{a∈dom∖S} ¬P(a)` is two conjunctions, each folded from `⊤` in domain order (W1's `allF`), in every checker. |
 | B, query pinning: Python compared a reused query only at its earliest consumer | 1.4 as written ("at every site"): each follows question and each command with a `query` slot, in document order, compares the record with the asserted units before it; a record no unit asks about is `QueryMismatch: <query>` in both checkers. |
 | A, premise leakage; B, reading activeness: pending assertions and norms stayed active in Python; Python kept authored commands dormant while Lean let historical open versions suppress resolved ones; authored singleton assertions were premises in neither; `combine` reactivated pending commands | 1.2 and 1.5: the latest reading-set version decides for every unit kind (open: pending, no rule, no premise; authored: the signed choice is the unit's kind and content); content-less asserted units need a set and unformalised units carry no content, as W2; `combine` carries reading sets and queries. |
+| A, scope identity: bindings that supply "you" (or a definite) changed demands but kept the environment and meaning ids | 1.1 and 3.1: identities bind the canonical environment of the effective scope, as if the block declared the supplied entry; an empty definites map is canonically absent (Python had kept `{}`). |
 
 ## Change log
 

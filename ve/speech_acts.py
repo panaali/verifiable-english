@@ -56,7 +56,7 @@ def validate_scope(raw, sorts, constants, predicates):
         if type(constant) is not str or constant not in constants:
             raise VEError(f"UnknownSymbol: {constant}")
         normalized[key] = constant
-    if "definites" in raw:
+    if normalized:  # canonical as Lean's `encodeScope`: an empty map is absent
         result["definites"] = normalized
     return result
 
@@ -228,6 +228,14 @@ class SpeechDocument:
             elif content is not None:
                 raise VEError("InvalidInput: misplaced speech content")
         self._check_bindings()
+        # 1.1 and 3.5: a binding that supplies a scope entry supplies it to the
+        # environment, so every identity (meaning ids, certificates) binds the
+        # effective scope; without one the environment is unchanged.
+        if self.scope != env.to_dict()["speech_acts"]:
+            from .environment import Environment
+            self.env = Environment({**env.to_dict(), "speech_acts": self.scope})
+        for uid, binding in self.bindings:
+            self.meaning_ids[uid] = self._id({"binding": binding})
         if len(self.questions) > 256:
             raise ResourceLimit("questions")
         self._queries(queries)
@@ -245,7 +253,7 @@ class SpeechDocument:
             if question.query is not None:
                 data["query"] = self.query_identity(question.query)
             self.meaning_ids[question.unit] = self._id({"question": data})
-        self.policy = NormDocument(env, [*self.norms, *(self.demand(c) for c in self.commands if c.active)])
+        self.policy = NormDocument(self.env, [*self.norms, *(self.demand(c) for c in self.commands if c.active)])
         for rule in self.norms:
             if any(edge.startswith("cmd-") for edge in rule.over):
                 raise VEError(f"UnknownRule: rule {next(edge for edge in rule.over if edge.startswith('cmd-'))}")
@@ -280,7 +288,6 @@ class SpeechDocument:
                 if actual not in self.env.constants:
                     raise VEError(f"UnknownSymbol: {actual}")
                 self.scope.setdefault("definites", {})[key] = actual
-            self.meaning_ids[uid] = self._id({"binding": binding})
 
     def _command(self, uid, raw, active):
         if (type(raw) is not dict or not {"force", "act", "args"} <= set(raw)
