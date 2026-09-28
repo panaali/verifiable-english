@@ -1,0 +1,1779 @@
+{
+  "source_sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
+  "units": [
+    {
+      "id": "u001",
+      "article": "title",
+      "span": [
+        0,
+        41
+      ],
+      "status": "LABELLED",
+      "source": "# Universal Declaration of Human Rights",
+      "old_unit": "u001",
+      "previous_unit": "u001"
+    },
+    {
+      "id": "u002",
+      "article": "Preamble",
+      "span": [
+        41,
+        54
+      ],
+      "status": "LABELLED",
+      "source": "## Preamble",
+      "old_unit": "u002",
+      "previous_unit": "u002"
+    },
+    {
+      "id": "u003",
+      "article": "Preamble",
+      "span": [
+        54,
+        236
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas recognition of the inherent dignity and of the equal and inalienable rights of all members of the human family is the foundation of freedom, justice and peace in the world,",
+      "missing_feature": "causation",
+      "open_terms": [
+        "inherent_dignity",
+        "inalienable_rights",
+        "justice"
+      ],
+      "old_unit": "u003",
+      "previous_unit": "u003",
+      "semantic_kind": "evaluative causal claim"
+    },
+    {
+      "id": "u004",
+      "article": "Preamble",
+      "span": [
+        236,
+        363
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas disregard and contempt for human rights have resulted in barbarous acts which have outraged the conscience of mankind,",
+      "missing_feature": "causation",
+      "old_unit": "u004",
+      "previous_unit": "u004",
+      "semantic_kind": "causal claim with evaluative words"
+    },
+    {
+      "id": "u005",
+      "article": "Preamble",
+      "span": [
+        363,
+        552
+      ],
+      "status": "UNFORMALISED",
+      "source": "and the advent of a world in which human beings shall enjoy freedom of speech and belief and freedom from fear and want has been proclaimed as the highest aspiration of the common people,",
+      "missing_feature": "attribution",
+      "old_unit": "u005",
+      "previous_unit": "u005",
+      "semantic_kind": [
+        "attributed",
+        "unstated",
+        "says",
+        "asserted"
+      ]
+    },
+    {
+      "id": "u006",
+      "article": "Preamble",
+      "span": [
+        552,
+        747
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas it is essential, if man is not to be compelled to have recourse, as a last resort, to rebellion against tyranny and oppression, that human rights should be protected by the rule of law,",
+      "missing_feature": "modality/belief",
+      "open_terms": [
+        "essential"
+      ],
+      "old_unit": "u006",
+      "previous_unit": "u006",
+      "semantic_kind": "evaluative conditional claim with should"
+    },
+    {
+      "id": "u007",
+      "article": "Preamble",
+      "span": [
+        747,
+        838
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas it is essential to promote the development of friendly relations between nations,",
+      "missing_feature": "modality/belief",
+      "open_terms": [
+        "essential"
+      ],
+      "old_unit": "u007",
+      "previous_unit": "u007",
+      "semantic_kind": "evaluative claim"
+    },
+    {
+      "id": "u008a",
+      "article": "Preamble",
+      "span": [
+        838,
+        1037
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas the peoples of the United Nations have in the Charter reaffirmed their faith in fundamental human rights, in the dignity and worth of the human person and in the equal rights of men and women",
+      "missing_feature": "attribution",
+      "old_unit": "u008",
+      "previous_unit": "u008a",
+      "semantic_kind": [
+        "attributed",
+        "peoples_of_un",
+        "believes",
+        "asserted"
+      ]
+    },
+    {
+      "id": "u008b",
+      "article": "Preamble",
+      "span": [
+        1037,
+        1134
+      ],
+      "status": "UNFORMALISED",
+      "source": "and have determined to promote social progress and better standards of life in larger freedom,",
+      "missing_feature": "attribution",
+      "old_unit": "u008",
+      "previous_unit": "u008b",
+      "semantic_kind": [
+        "attributed",
+        "peoples_of_un",
+        "intends",
+        "norm"
+      ]
+    },
+    {
+      "id": "u009",
+      "article": "Preamble",
+      "span": [
+        1134,
+        1330
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas Member States have pledged themselves to achieve, in co-operation with the United Nations, the promotion of universal respect for and observance of human rights and fundamental freedoms,",
+      "missing_feature": "attribution",
+      "old_unit": "u009",
+      "previous_unit": "u009",
+      "semantic_kind": [
+        "attributed",
+        "member_states",
+        "promised",
+        "norm"
+      ]
+    },
+    {
+      "id": "u010",
+      "article": "Preamble",
+      "span": [
+        1330,
+        1462
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas a common understanding of these rights and freedoms is of the greatest importance for the full realization of this pledge,",
+      "open_terms": [
+        "greatest_importance"
+      ],
+      "old_unit": "u010",
+      "missing_feature": "other:evaluative_open_claim",
+      "previous_unit": "u010",
+      "semantic_kind": "evaluative claim"
+    },
+    {
+      "id": "u011",
+      "article": "Preamble",
+      "span": [
+        1462,
+        1479
+      ],
+      "status": "LABELLED",
+      "source": "Now, therefore,",
+      "old_unit": "u011",
+      "previous_unit": "u011"
+    },
+    {
+      "id": "u012",
+      "article": "Preamble",
+      "span": [
+        1479,
+        1502
+      ],
+      "status": "LABELLED",
+      "source": "The General Assembly,",
+      "old_unit": "u012",
+      "previous_unit": "u012"
+    },
+    {
+      "id": "u013a",
+      "article": "Preamble",
+      "span": [
+        1502,
+        1622
+      ],
+      "status": "UNFORMALISED",
+      "source": "Proclaims this Universal Declaration of Human Rights as a common standard of achievement for all peoples and all nations",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013a",
+      "semantic_kind": [
+        "attributed",
+        "general_assembly",
+        "says",
+        "norm"
+      ]
+    },
+    {
+      "id": "u013ba",
+      "article": "Preamble",
+      "span": [
+        1622,
+        1817
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to the end that every individual and every organ of society, keeping this Declaration constantly in mind, shall strive by teaching and education to promote respect for these rights and freedoms",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013b"
+    },
+    {
+      "id": "u013bb",
+      "article": "Preamble",
+      "span": [
+        1817,
+        2058
+      ],
+      "status": "UNFORMALISED",
+      "source": "and by progressive measures, national and international, to secure their universal and effective recognition and observance, both among the peoples of Member States themselves and among the peoples of territories under their jurisdiction.",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013b"
+    },
+    {
+      "id": "u014",
+      "article": "Article 1",
+      "span": [
+        2058,
+        2072
+      ],
+      "status": "LABELLED",
+      "source": "## Article 1",
+      "old_unit": "u014",
+      "previous_unit": "u014"
+    },
+    {
+      "id": "u015",
+      "article": "Article 1",
+      "span": [
+        2072,
+        2136
+      ],
+      "status": "UNFORMALISED",
+      "source": "All human beings are born free and equal in dignity and rights.",
+      "missing_feature": "time",
+      "old_unit": "u015",
+      "previous_unit": "u015"
+    },
+    {
+      "id": "u016",
+      "article": "Article 1",
+      "span": [
+        2136,
+        2179
+      ],
+      "status": "UNFORMALISED",
+      "source": "They are endowed with reason and conscience",
+      "missing_feature": "other:metaphorical_endowment",
+      "old_unit": "u016",
+      "previous_unit": "u016"
+    },
+    {
+      "id": "u017",
+      "article": "Article 1",
+      "span": [
+        2179,
+        2244
+      ],
+      "status": "UNFORMALISED",
+      "source": "and should act towards one another in a spirit of brotherhood.",
+      "reading_set": "rs_u017",
+      "unresolved_features": [
+        "norms",
+        "defaults"
+      ],
+      "old_unit": "u017",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "open_terms": [
+        "spirit_of_brotherhood"
+      ],
+      "previous_unit": "u017"
+    },
+    {
+      "id": "u018",
+      "article": "Article 2",
+      "span": [
+        2244,
+        2258
+      ],
+      "status": "LABELLED",
+      "source": "## Article 2",
+      "old_unit": "u018",
+      "previous_unit": "u018"
+    },
+    {
+      "id": "u019",
+      "article": "Article 2",
+      "span": [
+        2258,
+        2509
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone is entitled to all the rights and freedoms set forth in this Declaration, without distinction of any kind, such as race, colour, sex, language, religion, political or other opinion, national or social origin, property, birth or other status.",
+      "missing_feature": "norms",
+      "old_unit": "u019",
+      "previous_unit": "u019"
+    },
+    {
+      "id": "u020",
+      "article": "Article 2",
+      "span": [
+        2509,
+        2776
+      ],
+      "status": "UNFORMALISED",
+      "source": "Furthermore, no distinction shall be made on the basis of the political, jurisdictional or international status of the country or territory to which a person belongs, whether it be independent, trust, non-self-governing or under any other limitation of sovereignty.",
+      "missing_feature": "norms",
+      "old_unit": "u020",
+      "previous_unit": "u020"
+    },
+    {
+      "id": "u021",
+      "article": "Article 3",
+      "span": [
+        2776,
+        2790
+      ],
+      "status": "LABELLED",
+      "source": "## Article 3",
+      "old_unit": "u021",
+      "previous_unit": "u021"
+    },
+    {
+      "id": "u022",
+      "article": "Article 3",
+      "span": [
+        2790,
+        2855
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to life, liberty and security of person.",
+      "missing_feature": "norms",
+      "old_unit": "u022",
+      "previous_unit": "u022"
+    },
+    {
+      "id": "u023",
+      "article": "Article 4",
+      "span": [
+        2855,
+        2869
+      ],
+      "status": "LABELLED",
+      "source": "## Article 4",
+      "old_unit": "u023",
+      "previous_unit": "u023"
+    },
+    {
+      "id": "u024",
+      "article": "Article 4",
+      "span": [
+        2869,
+        2915
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be held in slavery or servitude;",
+      "missing_feature": "norms",
+      "old_unit": "u024",
+      "previous_unit": "u024"
+    },
+    {
+      "id": "u025",
+      "article": "Article 4",
+      "span": [
+        2915,
+        2984
+      ],
+      "status": "UNFORMALISED",
+      "source": "slavery and the slave trade shall be prohibited in all their forms.",
+      "missing_feature": "norms",
+      "old_unit": "u025",
+      "previous_unit": "u025"
+    },
+    {
+      "id": "u026",
+      "article": "Article 5",
+      "span": [
+        2984,
+        2998
+      ],
+      "status": "LABELLED",
+      "source": "## Article 5",
+      "old_unit": "u026",
+      "previous_unit": "u026"
+    },
+    {
+      "id": "u027",
+      "article": "Article 5",
+      "span": [
+        2998,
+        3095
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.",
+      "missing_feature": "norms",
+      "old_unit": "u027",
+      "previous_unit": "u027"
+    },
+    {
+      "id": "u028",
+      "article": "Article 6",
+      "span": [
+        3095,
+        3109
+      ],
+      "status": "LABELLED",
+      "source": "## Article 6",
+      "old_unit": "u028",
+      "previous_unit": "u028"
+    },
+    {
+      "id": "u029",
+      "article": "Article 6",
+      "span": [
+        3109,
+        3187
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to recognition everywhere as a person before the law.",
+      "missing_feature": "norms",
+      "old_unit": "u029",
+      "previous_unit": "u029"
+    },
+    {
+      "id": "u030",
+      "article": "Article 7",
+      "span": [
+        3187,
+        3201
+      ],
+      "status": "LABELLED",
+      "source": "## Article 7",
+      "old_unit": "u030",
+      "previous_unit": "u030"
+    },
+    {
+      "id": "u031",
+      "article": "Article 7",
+      "span": [
+        3201,
+        3229
+      ],
+      "status": "UNFORMALISED",
+      "source": "All are equal before the law",
+      "open_terms": [
+        "equal_before_law"
+      ],
+      "old_unit": "u031",
+      "missing_feature": "norms",
+      "previous_unit": "u031"
+    },
+    {
+      "id": "u032",
+      "article": "Article 7",
+      "span": [
+        3229,
+        3306
+      ],
+      "status": "UNFORMALISED",
+      "source": "and are entitled without any discrimination to equal protection of the law.",
+      "missing_feature": "norms",
+      "old_unit": "u032",
+      "previous_unit": "u032"
+    },
+    {
+      "id": "u033a",
+      "article": "Article 7",
+      "span": [
+        3306,
+        3402
+      ],
+      "status": "UNFORMALISED",
+      "source": "All are entitled to equal protection against any discrimination in violation of this Declaration",
+      "missing_feature": "norms",
+      "old_unit": "u033",
+      "previous_unit": "u033"
+    },
+    {
+      "id": "u033b",
+      "article": "Article 7",
+      "span": [
+        3402,
+        3455
+      ],
+      "status": "UNFORMALISED",
+      "source": "and against any incitement to such discrimination.",
+      "missing_feature": "norms",
+      "old_unit": "u033",
+      "previous_unit": "u033"
+    },
+    {
+      "id": "u034",
+      "article": "Article 8",
+      "span": [
+        3455,
+        3469
+      ],
+      "status": "LABELLED",
+      "source": "## Article 8",
+      "old_unit": "u034",
+      "previous_unit": "u034"
+    },
+    {
+      "id": "u035",
+      "article": "Article 8",
+      "span": [
+        3469,
+        3637
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to an effective remedy by the competent national tribunals for acts violating the fundamental rights granted him by the constitution or by law.",
+      "missing_feature": "norms",
+      "old_unit": "u035",
+      "previous_unit": "u035"
+    },
+    {
+      "id": "u036",
+      "article": "Article 9",
+      "span": [
+        3637,
+        3651
+      ],
+      "status": "LABELLED",
+      "source": "## Article 9",
+      "old_unit": "u036",
+      "previous_unit": "u036"
+    },
+    {
+      "id": "u037",
+      "article": "Article 9",
+      "span": [
+        3651,
+        3719
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to arbitrary arrest, detention or exile.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u037",
+      "previous_unit": "u037"
+    },
+    {
+      "id": "u038",
+      "article": "Article 10",
+      "span": [
+        3719,
+        3734
+      ],
+      "status": "LABELLED",
+      "source": "## Article 10",
+      "old_unit": "u038",
+      "previous_unit": "u038"
+    },
+    {
+      "id": "u039",
+      "article": "Article 10",
+      "span": [
+        3734,
+        3935
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone is entitled in full equality to a fair and public hearing by an independent and impartial tribunal, in the determination of his rights and obligations and of any criminal charge against him.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "fair"
+      ],
+      "old_unit": "u039",
+      "previous_unit": "u039"
+    },
+    {
+      "id": "u040",
+      "article": "Article 11",
+      "span": [
+        3935,
+        3950
+      ],
+      "status": "LABELLED",
+      "source": "## Article 11",
+      "old_unit": "u040",
+      "previous_unit": "u040"
+    },
+    {
+      "id": "u041",
+      "article": "Article 11",
+      "span": [
+        3950,
+        4151
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone charged with a penal offence has the right to be presumed innocent until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence.",
+      "missing_feature": "norms",
+      "old_unit": "u041",
+      "previous_unit": "u041"
+    },
+    {
+      "id": "u042",
+      "article": "Article 11",
+      "span": [
+        4151,
+        4351
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be held guilty of any penal offence on account of any act or omission which did not constitute a penal offence, under national or international law, at the time when it was committed.",
+      "missing_feature": "norms",
+      "old_unit": "u042",
+      "previous_unit": "u042"
+    },
+    {
+      "id": "u043",
+      "article": "Article 11",
+      "span": [
+        4351,
+        4469
+      ],
+      "status": "UNFORMALISED",
+      "source": "Nor shall a heavier penalty be imposed than the one that was applicable at the time the penal offence was committed.",
+      "missing_feature": "norms",
+      "old_unit": "u043",
+      "previous_unit": "u043"
+    },
+    {
+      "id": "u044",
+      "article": "Article 12",
+      "span": [
+        4469,
+        4484
+      ],
+      "status": "LABELLED",
+      "source": "## Article 12",
+      "old_unit": "u044",
+      "previous_unit": "u044"
+    },
+    {
+      "id": "u045a",
+      "article": "Article 12",
+      "span": [
+        4484,
+        4584
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence",
+      "missing_feature": "norms",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u045",
+      "previous_unit": "u045"
+    },
+    {
+      "id": "u045b",
+      "article": "Article 12",
+      "span": [
+        4584,
+        4633
+      ],
+      "status": "UNFORMALISED",
+      "source": ", nor to attacks upon his honour and reputation.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u045",
+      "previous_unit": "u045"
+    },
+    {
+      "id": "u046",
+      "article": "Article 12",
+      "span": [
+        4633,
+        4724
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to the protection of the law against such interference or attacks.",
+      "missing_feature": "norms",
+      "old_unit": "u046",
+      "previous_unit": "u046"
+    },
+    {
+      "id": "u047",
+      "article": "Article 13",
+      "span": [
+        4724,
+        4739
+      ],
+      "status": "LABELLED",
+      "source": "## Article 13",
+      "old_unit": "u047",
+      "previous_unit": "u047"
+    },
+    {
+      "id": "u048",
+      "article": "Article 13",
+      "span": [
+        4739,
+        4837
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to freedom of movement and residence within the borders of each state.",
+      "missing_feature": "norms",
+      "old_unit": "u048",
+      "previous_unit": "u048"
+    },
+    {
+      "id": "u049",
+      "article": "Article 13",
+      "span": [
+        4837,
+        4935
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone has the right to leave any country, including his own, and to return to his country.",
+      "missing_feature": "norms",
+      "old_unit": "u049",
+      "previous_unit": "u049"
+    },
+    {
+      "id": "u050",
+      "article": "Article 14",
+      "span": [
+        4935,
+        4950
+      ],
+      "status": "LABELLED",
+      "source": "## Article 14",
+      "old_unit": "u050",
+      "previous_unit": "u050"
+    },
+    {
+      "id": "u051",
+      "article": "Article 14",
+      "span": [
+        4950,
+        5042
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to seek and to enjoy in other countries asylum from persecution.",
+      "missing_feature": "norms",
+      "old_unit": "u051",
+      "previous_unit": "u051"
+    },
+    {
+      "id": "u052",
+      "article": "Article 14",
+      "span": [
+        5042,
+        5224
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. This right may not be invoked in the case of prosecutions genuinely arising from non-political crimes or from acts contrary to the purposes and principles of the United Nations.",
+      "open_terms": [
+        "genuine"
+      ],
+      "reading_set": "rs_u052",
+      "unresolved_features": [
+        "norms",
+        "other:exception_scope"
+      ],
+      "old_unit": "u052",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u052"
+    },
+    {
+      "id": "u053",
+      "article": "Article 15",
+      "span": [
+        5224,
+        5239
+      ],
+      "status": "LABELLED",
+      "source": "## Article 15",
+      "old_unit": "u053",
+      "previous_unit": "u053"
+    },
+    {
+      "id": "u054",
+      "article": "Article 15",
+      "span": [
+        5239,
+        5284
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to a nationality.",
+      "missing_feature": "norms",
+      "old_unit": "u054",
+      "previous_unit": "u054"
+    },
+    {
+      "id": "u055",
+      "article": "Article 15",
+      "span": [
+        5284,
+        5392
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality.",
+      "missing_feature": "norms",
+      "old_unit": "u055",
+      "previous_unit": "u055"
+    },
+    {
+      "id": "u056",
+      "article": "Article 16",
+      "span": [
+        5392,
+        5407
+      ],
+      "status": "LABELLED",
+      "source": "## Article 16",
+      "old_unit": "u056",
+      "previous_unit": "u056"
+    },
+    {
+      "id": "u057",
+      "article": "Article 16",
+      "span": [
+        5407,
+        5545
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Men and women of full age, without any limitation due to race, nationality or religion, have the right to marry and to found a family.",
+      "missing_feature": "norms",
+      "old_unit": "u057",
+      "previous_unit": "u057"
+    },
+    {
+      "id": "u058",
+      "article": "Article 16",
+      "span": [
+        5545,
+        5636
+      ],
+      "status": "UNFORMALISED",
+      "source": "They are entitled to equal rights as to marriage, during marriage and at its dissolution.",
+      "missing_feature": "norms",
+      "old_unit": "u058",
+      "previous_unit": "u058"
+    },
+    {
+      "id": "u059",
+      "article": "Article 16",
+      "span": [
+        5636,
+        5733
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Marriage shall be entered into only with the free and full consent of the intending spouses.",
+      "missing_feature": "norms",
+      "old_unit": "u059",
+      "previous_unit": "u059"
+    },
+    {
+      "id": "u060",
+      "article": "Article 16",
+      "span": [
+        5733,
+        5799
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. The family is the natural and fundamental group unit of society",
+      "open_terms": [
+        "natural_group_unit"
+      ],
+      "old_unit": "u060",
+      "missing_feature": "other:evaluative_open_claim",
+      "previous_unit": "u060",
+      "semantic_kind": "evaluative claim"
+    },
+    {
+      "id": "u061",
+      "article": "Article 16",
+      "span": [
+        5799,
+        5857
+      ],
+      "status": "UNFORMALISED",
+      "source": "and is entitled to protection by society and the State.",
+      "missing_feature": "norms",
+      "old_unit": "u061",
+      "previous_unit": "u061"
+    },
+    {
+      "id": "u062",
+      "article": "Article 17",
+      "span": [
+        5857,
+        5872
+      ],
+      "status": "LABELLED",
+      "source": "## Article 17",
+      "old_unit": "u062",
+      "previous_unit": "u062"
+    },
+    {
+      "id": "u063",
+      "article": "Article 17",
+      "span": [
+        5872,
+        5960
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to own property alone as well as in association with others.",
+      "missing_feature": "norms",
+      "old_unit": "u063",
+      "previous_unit": "u063"
+    },
+    {
+      "id": "u064",
+      "article": "Article 17",
+      "span": [
+        5960,
+        6018
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be arbitrarily deprived of his property.",
+      "missing_feature": "norms",
+      "old_unit": "u064",
+      "previous_unit": "u064"
+    },
+    {
+      "id": "u065",
+      "article": "Article 18",
+      "span": [
+        6018,
+        6033
+      ],
+      "status": "LABELLED",
+      "source": "## Article 18",
+      "old_unit": "u065",
+      "previous_unit": "u065"
+    },
+    {
+      "id": "u066",
+      "article": "Article 18",
+      "span": [
+        6033,
+        6104
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to freedom of thought, conscience and religion;",
+      "missing_feature": "norms",
+      "old_unit": "u066",
+      "previous_unit": "u066"
+    },
+    {
+      "id": "u067",
+      "article": "Article 18",
+      "span": [
+        6104,
+        6166
+      ],
+      "status": "UNFORMALISED",
+      "source": "this right includes freedom to change his religion or belief,",
+      "missing_feature": "norms",
+      "old_unit": "u067",
+      "previous_unit": "u067"
+    },
+    {
+      "id": "u068",
+      "article": "Article 18",
+      "span": [
+        6166,
+        6329
+      ],
+      "status": "UNFORMALISED",
+      "source": "and freedom, either alone or in community with others and in public or private, to manifest his religion or belief in teaching, practice, worship and observance.",
+      "missing_feature": "norms",
+      "old_unit": "u068",
+      "previous_unit": "u068"
+    },
+    {
+      "id": "u069",
+      "article": "Article 19",
+      "span": [
+        6329,
+        6344
+      ],
+      "status": "LABELLED",
+      "source": "## Article 19",
+      "old_unit": "u069",
+      "previous_unit": "u069"
+    },
+    {
+      "id": "u070",
+      "article": "Article 19",
+      "span": [
+        6344,
+        6405
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to freedom of opinion and expression;",
+      "missing_feature": "norms",
+      "old_unit": "u070",
+      "previous_unit": "u070"
+    },
+    {
+      "id": "u071a",
+      "article": "Article 19",
+      "span": [
+        6405,
+        6470
+      ],
+      "status": "UNFORMALISED",
+      "source": "this right includes freedom to hold opinions without interference",
+      "missing_feature": "norms",
+      "old_unit": "u071",
+      "previous_unit": "u071"
+    },
+    {
+      "id": "u071b",
+      "article": "Article 19",
+      "span": [
+        6470,
+        6573
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to seek, receive and impart information and ideas through any media and regardless of frontiers.",
+      "missing_feature": "norms",
+      "old_unit": "u071",
+      "previous_unit": "u071"
+    },
+    {
+      "id": "u072",
+      "article": "Article 20",
+      "span": [
+        6573,
+        6588
+      ],
+      "status": "LABELLED",
+      "source": "## Article 20",
+      "old_unit": "u072",
+      "previous_unit": "u072"
+    },
+    {
+      "id": "u073",
+      "article": "Article 20",
+      "span": [
+        6588,
+        6664
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to freedom of peaceful assembly and association.",
+      "missing_feature": "norms",
+      "old_unit": "u073",
+      "previous_unit": "u073"
+    },
+    {
+      "id": "u074",
+      "article": "Article 20",
+      "span": [
+        6664,
+        6721
+      ],
+      "status": "CHECKED",
+      "source": "2. No one may be compelled to belong to an association.",
+      "reading_set": "rs_u074",
+      "old_unit": "u074",
+      "previous_unit": "u074",
+      "audit_repair": "Strict legal prohibition: every actor is forbidden to compel any person to belong to an association. The rejected physical-possibility reading is absent."
+    },
+    {
+      "id": "u075",
+      "article": "Article 21",
+      "span": [
+        6721,
+        6736
+      ],
+      "status": "LABELLED",
+      "source": "## Article 21",
+      "old_unit": "u075",
+      "previous_unit": "u075"
+    },
+    {
+      "id": "u076",
+      "article": "Article 21",
+      "span": [
+        6736,
+        6861
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.",
+      "missing_feature": "norms",
+      "old_unit": "u076",
+      "previous_unit": "u076"
+    },
+    {
+      "id": "u077",
+      "article": "Article 21",
+      "span": [
+        6861,
+        6938
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone has the right of equal access to public service in his country.",
+      "missing_feature": "norms",
+      "old_unit": "u077",
+      "previous_unit": "u077"
+    },
+    {
+      "id": "u078",
+      "article": "Article 21",
+      "span": [
+        6938,
+        7015
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. The will of the people shall be the basis of the authority of government;",
+      "missing_feature": "norms",
+      "old_unit": "u078",
+      "previous_unit": "u078"
+    },
+    {
+      "id": "u079a",
+      "article": "Article 21",
+      "span": [
+        7015,
+        7124
+      ],
+      "status": "UNFORMALISED",
+      "source": "this will shall be expressed in periodic and genuine elections which shall be by universal and equal suffrage",
+      "missing_feature": "norms",
+      "open_terms": [
+        "genuine"
+      ],
+      "old_unit": "u079",
+      "previous_unit": "u079"
+    },
+    {
+      "id": "u079b",
+      "article": "Article 21",
+      "span": [
+        7124,
+        7200
+      ],
+      "status": "UNFORMALISED",
+      "source": "and shall be held by secret vote or by equivalent free voting procedures.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "genuine"
+      ],
+      "old_unit": "u079",
+      "previous_unit": "u079"
+    },
+    {
+      "id": "u080",
+      "article": "Article 22",
+      "span": [
+        7200,
+        7215
+      ],
+      "status": "LABELLED",
+      "source": "## Article 22",
+      "old_unit": "u080",
+      "previous_unit": "u080"
+    },
+    {
+      "id": "u081",
+      "article": "Article 22",
+      "span": [
+        7215,
+        7281
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone, as a member of society, has the right to social security",
+      "missing_feature": "norms",
+      "old_unit": "u081",
+      "previous_unit": "u081"
+    },
+    {
+      "id": "u082",
+      "article": "Article 22",
+      "span": [
+        7281,
+        7558
+      ],
+      "status": "UNFORMALISED",
+      "source": "and is entitled to realization, through national effort and international co-operation and in accordance with the organization and resources of each State, of the economic, social and cultural rights indispensable for his dignity and the free development of his personality.",
+      "missing_feature": "norms",
+      "old_unit": "u082",
+      "previous_unit": "u082"
+    },
+    {
+      "id": "u083",
+      "article": "Article 23",
+      "span": [
+        7558,
+        7573
+      ],
+      "status": "LABELLED",
+      "source": "## Article 23",
+      "old_unit": "u083",
+      "previous_unit": "u083"
+    },
+    {
+      "id": "u084a",
+      "article": "Article 23",
+      "span": [
+        7573,
+        7606
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to work",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084"
+    },
+    {
+      "id": "u084b",
+      "article": "Article 23",
+      "span": [
+        7606,
+        7636
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to free choice of employment",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084"
+    },
+    {
+      "id": "u084c",
+      "article": "Article 23",
+      "span": [
+        7636,
+        7679
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to just and favourable conditions of work",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084"
+    },
+    {
+      "id": "u084d",
+      "article": "Article 23",
+      "span": [
+        7679,
+        7721
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to protection against unemployment.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084"
+    },
+    {
+      "id": "u085",
+      "article": "Article 23",
+      "span": [
+        7721,
+        7806
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone, without any discrimination, has the right to equal pay for equal work.",
+      "missing_feature": "norms",
+      "old_unit": "u085",
+      "previous_unit": "u085"
+    },
+    {
+      "id": "u086",
+      "article": "Article 23",
+      "span": [
+        7806,
+        8022
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. Everyone who works has the right to just and favourable remuneration ensuring for himself and his family an existence worthy of human dignity, and supplemented, if necessary, by other means of social protection.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u086",
+      "previous_unit": "u086"
+    },
+    {
+      "id": "u087",
+      "article": "Article 23",
+      "span": [
+        8022,
+        8119
+      ],
+      "status": "UNFORMALISED",
+      "source": "4. Everyone has the right to form and to join trade unions for the protection of his interests.",
+      "missing_feature": "norms",
+      "old_unit": "u087",
+      "previous_unit": "u087"
+    },
+    {
+      "id": "u088",
+      "article": "Article 24",
+      "span": [
+        8119,
+        8134
+      ],
+      "status": "LABELLED",
+      "source": "## Article 24",
+      "old_unit": "u088",
+      "previous_unit": "u088"
+    },
+    {
+      "id": "u089",
+      "article": "Article 24",
+      "span": [
+        8134,
+        8260
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to rest and leisure, including reasonable limitation of working hours and periodic holidays with pay.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "reasonable"
+      ],
+      "old_unit": "u089",
+      "previous_unit": "u089"
+    },
+    {
+      "id": "u090",
+      "article": "Article 25",
+      "span": [
+        8260,
+        8275
+      ],
+      "status": "LABELLED",
+      "source": "## Article 25",
+      "old_unit": "u090",
+      "previous_unit": "u090"
+    },
+    {
+      "id": "u091",
+      "article": "Article 25",
+      "span": [
+        8275,
+        8476
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to a standard of living adequate for the health and well-being of himself and of his family, including food, clothing, housing and medical care and necessary social services,",
+      "missing_feature": "norms",
+      "open_terms": [
+        "adequate"
+      ],
+      "old_unit": "u091",
+      "previous_unit": "u091"
+    },
+    {
+      "id": "u092",
+      "article": "Article 25",
+      "span": [
+        8476,
+        8639
+      ],
+      "status": "UNFORMALISED",
+      "source": "and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.",
+      "missing_feature": "norms",
+      "old_unit": "u092",
+      "previous_unit": "u092"
+    },
+    {
+      "id": "u093",
+      "article": "Article 25",
+      "span": [
+        8639,
+        8712
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Motherhood and childhood are entitled to special care and assistance.",
+      "missing_feature": "norms",
+      "old_unit": "u093",
+      "previous_unit": "u093"
+    },
+    {
+      "id": "u094",
+      "article": "Article 25",
+      "span": [
+        8712,
+        8802
+      ],
+      "status": "UNFORMALISED",
+      "source": "All children, whether born in or out of wedlock, shall enjoy the same social protection.",
+      "missing_feature": "norms",
+      "old_unit": "u094",
+      "previous_unit": "u094"
+    },
+    {
+      "id": "u095",
+      "article": "Article 26",
+      "span": [
+        8802,
+        8817
+      ],
+      "status": "LABELLED",
+      "source": "## Article 26",
+      "old_unit": "u095",
+      "previous_unit": "u095"
+    },
+    {
+      "id": "u096",
+      "article": "Article 26",
+      "span": [
+        8817,
+        8857
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to education.",
+      "missing_feature": "norms",
+      "old_unit": "u096",
+      "previous_unit": "u096"
+    },
+    {
+      "id": "u097",
+      "article": "Article 26",
+      "span": [
+        8857,
+        8933
+      ],
+      "status": "UNFORMALISED",
+      "source": "Education shall be free, at least in the elementary and fundamental stages.",
+      "missing_feature": "norms",
+      "old_unit": "u097",
+      "previous_unit": "u097"
+    },
+    {
+      "id": "u098",
+      "article": "Article 26",
+      "span": [
+        8933,
+        8975
+      ],
+      "status": "UNFORMALISED",
+      "source": "Elementary education shall be compulsory.",
+      "missing_feature": "norms",
+      "old_unit": "u098",
+      "previous_unit": "u098"
+    },
+    {
+      "id": "u099a",
+      "article": "Article 26",
+      "span": [
+        8975,
+        9045
+      ],
+      "status": "UNFORMALISED",
+      "source": "Technical and professional education shall be made generally available",
+      "missing_feature": "norms",
+      "old_unit": "u099",
+      "previous_unit": "u099"
+    },
+    {
+      "id": "u099b",
+      "article": "Article 26",
+      "span": [
+        9045,
+        9126
+      ],
+      "status": "UNFORMALISED",
+      "source": "and higher education shall be equally accessible to all on the basis of merit.",
+      "missing_feature": "norms",
+      "old_unit": "u099",
+      "previous_unit": "u099"
+    },
+    {
+      "id": "u100a",
+      "article": "Article 26",
+      "span": [
+        9126,
+        9205
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Education shall be directed to the full development of the human personality",
+      "missing_feature": "norms",
+      "old_unit": "u100",
+      "previous_unit": "u100"
+    },
+    {
+      "id": "u100b",
+      "article": "Article 26",
+      "span": [
+        9205,
+        9285
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to the strengthening of respect for human rights and fundamental freedoms.",
+      "missing_feature": "norms",
+      "old_unit": "u100",
+      "previous_unit": "u100"
+    },
+    {
+      "id": "u101",
+      "article": "Article 26",
+      "span": [
+        9285,
+        9389
+      ],
+      "status": "UNFORMALISED",
+      "source": "It shall promote understanding, tolerance and friendship among all nations, racial or religious groups,",
+      "missing_feature": "norms",
+      "old_unit": "u101",
+      "previous_unit": "u101"
+    },
+    {
+      "id": "u102",
+      "article": "Article 26",
+      "span": [
+        9389,
+        9475
+      ],
+      "status": "UNFORMALISED",
+      "source": "and shall further the activities of the United Nations for the maintenance of peace.",
+      "missing_feature": "norms",
+      "old_unit": "u102",
+      "previous_unit": "u102"
+    },
+    {
+      "id": "u103",
+      "article": "Article 26",
+      "span": [
+        9475,
+        9577
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. Parents have a prior right to choose the kind of education that shall be given to their children.",
+      "missing_feature": "norms",
+      "old_unit": "u103",
+      "previous_unit": "u103"
+    },
+    {
+      "id": "u104",
+      "article": "Article 27",
+      "span": [
+        9577,
+        9592
+      ],
+      "status": "LABELLED",
+      "source": "## Article 27",
+      "old_unit": "u104",
+      "previous_unit": "u104"
+    },
+    {
+      "id": "u105a",
+      "article": "Article 27",
+      "span": [
+        9592,
+        9677
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right freely to participate in the cultural life of the community",
+      "missing_feature": "norms",
+      "old_unit": "u105",
+      "previous_unit": "u105"
+    },
+    {
+      "id": "u105b",
+      "article": "Article 27",
+      "span": [
+        9677,
+        9696
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to enjoy the arts",
+      "missing_feature": "norms",
+      "old_unit": "u105",
+      "previous_unit": "u105"
+    },
+    {
+      "id": "u105c",
+      "article": "Article 27",
+      "span": [
+        9696,
+        9755
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to share in scientific advancement and its benefits.",
+      "missing_feature": "norms",
+      "old_unit": "u105",
+      "previous_unit": "u105"
+    },
+    {
+      "id": "u106",
+      "article": "Article 27",
+      "span": [
+        9755,
+        9926
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author.",
+      "missing_feature": "norms",
+      "old_unit": "u106",
+      "previous_unit": "u106"
+    },
+    {
+      "id": "u107",
+      "article": "Article 28",
+      "span": [
+        9926,
+        9941
+      ],
+      "status": "LABELLED",
+      "source": "## Article 28",
+      "old_unit": "u107",
+      "previous_unit": "u107"
+    },
+    {
+      "id": "u108",
+      "article": "Article 28",
+      "span": [
+        9941,
+        10085
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone is entitled to a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized.",
+      "missing_feature": "norms",
+      "old_unit": "u108",
+      "previous_unit": "u108"
+    },
+    {
+      "id": "u109",
+      "article": "Article 29",
+      "span": [
+        10085,
+        10100
+      ],
+      "status": "LABELLED",
+      "source": "## Article 29",
+      "old_unit": "u109",
+      "previous_unit": "u109"
+    },
+    {
+      "id": "u110",
+      "article": "Article 29",
+      "span": [
+        10100,
+        10218
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has duties to the community in which alone the free and full development of his personality is possible.",
+      "missing_feature": "norms",
+      "old_unit": "u110",
+      "previous_unit": "u110"
+    },
+    {
+      "id": "u111a",
+      "article": "Article 29",
+      "span": [
+        10218,
+        10441
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law solely for the purpose of securing due recognition and respect for the rights and freedoms of others",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u111",
+      "previous_unit": "u111"
+    },
+    {
+      "id": "u111b",
+      "article": "Article 29",
+      "span": [
+        10441,
+        10555
+      ],
+      "status": "UNFORMALISED",
+      "source": "and of meeting the just requirements of morality, public order and the general welfare in a democratic society.",
+      "missing_feature": "norms",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u111",
+      "previous_unit": "u111"
+    },
+    {
+      "id": "u112",
+      "article": "Article 29",
+      "span": [
+        10555,
+        10676
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. These rights and freedoms may in no case be exercised contrary to the purposes and principles of the United Nations.",
+      "reading_set": "rs_u112",
+      "unresolved_features": [
+        "norms"
+      ],
+      "old_unit": "u112",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u112"
+    },
+    {
+      "id": "u113",
+      "article": "Article 30",
+      "span": [
+        10676,
+        10691
+      ],
+      "status": "LABELLED",
+      "source": "## Article 30",
+      "old_unit": "u113",
+      "previous_unit": "u113"
+    },
+    {
+      "id": "u114",
+      "article": "Article 30",
+      "span": [
+        10691,
+        10916
+      ],
+      "status": "UNFORMALISED",
+      "source": "Nothing in this Declaration may be interpreted as implying for any State, group or person any right to engage in any activity or to perform any act aimed at the destruction of any of the rights and freedoms set forth herein.",
+      "reading_set": "rs_u114",
+      "unresolved_features": [
+        "norms"
+      ],
+      "old_unit": "u114",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u114"
+    }
+  ],
+  "note": "The source is pinned. UNFORMALISED rows retain open-term and reading metadata without claiming formal content."
+}
