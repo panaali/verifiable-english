@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
-import os
 import re
 import shutil
 from subprocesses import HANG_TIMEOUT
@@ -205,15 +204,9 @@ def lean_executable():
 
 @pytest.fixture(scope="module")
 def rust_executable():
-    cargo = shutil.which("cargo")
-    if not cargo:
-        pytest.skip("cargo is not available")
-    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
-    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
-                            str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env, capture_output=True,
-                           text=True, timeout=HANG_TIMEOUT)
-    assert built.returncode == 0, built.stdout + built.stderr
-    return ROOT / "rust/target/release/ve"
+    binary = ROOT / "rust/target/release/ve"
+    assert binary.exists()
+    return binary
 
 
 def test_fixtures_are_generated():

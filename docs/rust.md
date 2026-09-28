@@ -186,7 +186,7 @@ its API supports the operation, Lean:
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python conformance/generate.py
 (cd lean && lake build)
-VE_LEAN_PREBUILT=1 uv run --frozen python -m pytest -q
+uv run --frozen python -m pytest -q
 uv run --frozen python conformance/fuzz.py --rust rust/target/release/ve --count 5000
 ```
 

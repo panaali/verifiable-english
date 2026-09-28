@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 import json
-import os
 import random
-import shutil
 from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
@@ -50,27 +48,14 @@ def invoke(binary, command, cases, *, errors=False):
 @pytest.fixture(scope="module")
 def lean_binary():
     binary = ROOT / "lean/.lake/build/bin/ve_conformance"
-    if not binary.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("Lean is unavailable")
-        result = subprocess.run([lake, "build", "ve_conformance"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert result.returncode == 0, result.stdout + result.stderr
+    assert binary.exists()
     return binary
 
 
 @pytest.fixture(scope="module")
 def rust_binary():
     binary = ROOT / "rust/target/debug/ve"
-    if not binary.exists():
-        cargo = shutil.which("cargo")
-        if cargo is None:
-            pytest.skip("Rust is unavailable")
-        env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home")}
-        result = subprocess.run([cargo, "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
-                                env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert result.returncode == 0, result.stdout + result.stderr
+    assert binary.exists()
     return binary
 
 
