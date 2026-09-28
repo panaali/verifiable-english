@@ -18,7 +18,7 @@ from ve.ast import _to_data
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.speech_acts import SpeechDocument
-from ve.speech_document import load_speech_document
+from ve.speech_document import SpeechSource, load_speech_document
 from ve.speech_english import parse_speech
 
 from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run, run1, unit, which
@@ -994,3 +994,259 @@ def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
                                         command("require", "click_required", ["check"]))]}}
     assert run1(case)["error"] == (
         "UnsupportedProfile: case kind admission is not available on the speech-acts route")
+
+
+def test_reported_structural_regressions(lean, tmp_path):
+    env = F0()
+    base = {"units": [unit("u", 0, "question", polar(U("reviewed", "atlas")))]}
+    for value in (7, True):
+        document = {**base, "queries": value}
+        with pytest.raises(VEError, match="^array expected$"):
+            core(env, document)
+        assert run1({"id": "queries", "kind": "speech-elaborate", "environment": env,
+                     "document": document})["error"] == "array expected"
+    for phrase in ("the reviewed", "the is"):
+        scoped = F0(definites={phrase: "check"})
+        assert Environment(scoped)
+        assert "error" not in run1({"id": "scope", "kind": "speech-elaborate",
+                                    "environment": scoped, "document": {"units": []}})
+    versions = [reading_set("u", n, "open", "question", polar(U("reviewed", "atlas")))
+                for n in (1, 2, 1)]
+    document = {**base, "reading_sets": versions}
+    with pytest.raises(VEError, match="invalid or duplicate reading set version"):
+        core(env, document)
+    assert run1({"id": "versions", "kind": "speech-elaborate", "environment": env,
+                 "document": document})["error"] == "invalid or duplicate reading set version"
+    bad = reading_set("u", 1, "open", "question", polar(U("reviewed", "atlas")))
+    bad["readings"].append({**copy.deepcopy(bad["readings"][0]), "id": []})
+    metadata = {"format": "ve-document@2", "environment": env,
+                "units": [unit("u", 0, "question", polar(U("reviewed", "atlas")))],
+                "reading_sets": [bad]}
+    path = tmp_path / "bad-candidate.ve.md"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\nX")
+    with pytest.raises(VEError, match="invalid reading"):
+        load_speech_document(path)
+
+
+def test_balanced_formula_node_budget_agrees_with_lean(lean):
+    body = ["top"]
+    for _ in range(13):
+        body = ["and", body, copy.deepcopy(body)]
+    click = command("require", "click_required", ["check"])
+    norm = {"norm": {"name": "n1", "predicate": "click_required", "sign": True,
+                     "guard": body, "unless": [], "over": []}}
+    documents = [
+        {"units": [unit("u", 0, "question", polar(body))]},
+        {"units": [unit("u", 0, "asserted", {"ast": body})]},
+        {"units": [unit("u", 0, "instruction", {"command": {**click["command"], "guard": body}})]},
+        {"units": [unit("u", 0, "norm", norm)]},
+        {"units": [unit("u", 0, "question", {"question": {"mode": "follows", "query": "q1"}})],
+         "queries": [{"id": "q1", "premises": [], "target": {"ast": body}}]},
+        {"units": [unit("u", 0, "asserted")],
+         "reading_sets": [reading_set("u", 1, "open", "asserted", body)]},
+    ]
+    for index, document in enumerate(documents):
+        with pytest.raises(VEError) as raised:
+            core(F0(), document)
+        assert _diagnostic(raised.value) == "ResourceLimit: AST exceeds depth or node budget"
+        assert run1({"id": f"nodes-{index}", "kind": "speech-elaborate", "environment": F0(),
+                     "document": document})["error"] == _diagnostic(raised.value)
+
+
+def test_fenced_signed_reading_uses_derived_meaning(lean, tmp_path):
+    env = F0()
+    click = command("require", "click_required", ["check"])
+    sets = [reading_set("x", 1, "open", "instruction", click),
+            {**reading_set("r", 1, "authored", "question",
+                           {"question": {"mode": "reading", "set": "rs", "version": 1}}), "id": "rr"}]
+    sets[0]["id"] = "rs"
+    term = {"name": "intended-reading.r", "arguments": ["rs"], "version": 1, "decided_by": "alice",
+            "jurisdiction": "t1", "necessary": [], "sufficient": [], "precedents": [],
+            "factors": ["necessary: at least one nomination of a candidate of rs at version 1 by alice",
+                        "sufficient: exactly one nomination of a candidate of rs at version 1 by alice"]}
+    units, (plain, fenced) = _fenced_pair(
+        tmp_path, "signed-reading", env, ["Click check.\n", "Which reading did you mean?\n"],
+        [unit("x", 0, "instruction", click), unit("r", 0, "question",
+             {"question": {"mode": "reading", "set": "rs", "version": 1}})],
+        "r", open_terms=[term], reading_sets=sets)
+    a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+    le = elaborate(env, {"units": units, "reading_sets": sets})
+    assert a.meaning_ids["r"] == b.meaning_ids["r"] == le["questions"][0]["meaning_id"]
+
+
+def _wire_mutations(value, prefix=()):
+    """Replace every nested field and container, then probe required/extra keys."""
+    if type(value) is dict:
+        for key in value:
+            path = (*prefix, key)
+            for replacement in (7, True, [], {}):
+                yield path, replacement
+            yield from _wire_mutations(value[key], path)
+        for key in value:
+            yield (*prefix, key), _MISSING
+        yield (*prefix, "extra_wire_field"), "unexpected"
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            for replacement in (7, True, [], {}):
+                yield (*prefix, index), replacement
+            yield from _wire_mutations(item, (*prefix, index))
+
+
+_MISSING = object()
+
+
+def _replace_wire(value, path, replacement):
+    result = copy.deepcopy(value)
+    parent = result
+    for key in path[:-1]:
+        parent = parent[key]
+    if replacement is _MISSING:
+        del parent[path[-1]]
+    else:
+        parent[path[-1]] = replacement
+    return result
+
+
+def test_generated_malformed_speech_wire_matches_lean(lean):
+    env = F0()
+    q = {"id": "q1", "premises": ["a"], "target": {"ast": U("reviewed", "atlas")}}
+    set_ = reading_set("a", 1, "open", "asserted", U("reviewed", "atlas"))
+    templates = [
+        {"units": [unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+                   unit("f", 1, "question", {"question": {"mode": "follows", "query": "q1"}})],
+         "queries": [q]},
+        {"units": [unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+                   unit("c", 1, "instruction", command("require", "click_required", ["check"]))]},
+        {"units": [unit("a", 0, "asserted"), unit("r", 1, "question",
+                   {"question": {"mode": "reading", "set": "rs", "version": 1}},
+                   {"open": ["intended-reading.r"]})], "reading_sets": [{**set_, "id": "rs"}]},
+        {"units": [unit("b", 0, "binding", {"binding": {"phrase": "the knob", "constant": "check"}}),
+                   unit("w", 1, "question", which("which_one"))]},
+    ]
+    cases = []
+    for index, document in enumerate(templates):
+        for path, replacement in _wire_mutations(document):
+            mutated = _replace_wire(document, path, replacement)
+            cases.append((f"doc{index}:{path}:{replacement!r}", env, mutated, path))
+    for path, replacement in _wire_mutations(env["speech_acts"]):
+        changed = copy.deepcopy(env)
+        changed["speech_acts"] = _replace_wire(env["speech_acts"], path, replacement)
+        cases.append((f"scope:{path}:{replacement!r}", changed, {"units": []}, ("scope", *path)))
+    mismatches = []
+    for start in range(0, len(cases), 40):
+        batch = cases[start:start + 40]
+        try:
+            results = run([{"id": str(start + i), "kind": "speech-elaborate", "environment": e,
+                            "document": d} for i, (_, e, d, _) in enumerate(batch)])
+        except Exception as error:
+            bad = []
+            for name, e, d, _ in batch:
+                try:
+                    run([{"id": "one", "kind": "speech-elaborate", "environment": e, "document": d}])
+                except Exception:
+                    bad.append(name)
+            raise AssertionError(bad) from error
+        for (name, e, d, path), result in zip(batch, results, strict=True):
+            try:
+                if "units" in d:
+                    core(e, d)
+                else:
+                    raise VEError("missing units")
+                py_error = None
+            except VEError as error:
+                py_error = _diagnostic(error)
+            except Exception as error:
+                py_error = f"CRASH {type(error).__name__}: {error}"
+            le_error = result.get("error")
+            # The core is a typed projection. W2 owns envelope fields such as spans,
+            # meaning, support and unknown keys; those are checked by SpeechSource.
+            # The scope, query and reading references are this route's own wire fields.
+            route_field = path[0] in ("scope", "queries", "reading_sets")
+            if py_error and py_error.startswith("CRASH") or route_field and py_error != le_error:
+                mismatches.append((name, py_error, le_error))
+    assert not mismatches, "\n".join(map(str, mismatches))
+
+
+def test_generated_fence_equivalence_for_accepted_wordings(lean, tmp_path):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    corpus = ["Click check.", "Do not click check.", "Open the desk.",
+              "Is atlas reviewed?", "Which one of atlas and beacon is reviewed?",
+              "Which of atlas and beacon are reviewed?"]
+    for index, wording in enumerate(corpus):
+        content, kind = parse_speech(Environment(env), wording, env["speech_acts"])
+        tagged = {"command" if kind == "instruction" else "question": content}
+        for history in (False, True):
+            uid = f"u{index}"
+            sets = ([{**reading_set(uid, 1, "authored", kind, tagged), "id": f"rs{index}"}]
+                    if history else [])
+            unit_ = unit(uid, 0, kind, tagged)
+            units, (plain, fenced) = _fenced_pair(
+                tmp_path, f"generated-{index}-{history}", env, [wording + "\n"], [unit_], uid,
+                reading_sets=sets)
+            a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+            le = elaborate(env, {"units": units, "reading_sets": sets})
+            assert a.scope == b.scope
+            assert a.env.environment_id == b.env.environment_id == le["environment_id"]
+            assert a.meaning_ids == b.meaning_ids
+            assert [_to_data(f) for f in a.premises()] == [_to_data(f) for f in b.premises()] == le["premises"]
+            assert [c.unit for c in a.commands if c.active] == [c.unit for c in b.commands if c.active] == \
+                [c["unit"] for c in le["commands"]]
+            assert [q.unit for q in a.questions] == [q.unit for q in b.questions] == \
+                [q["unit"] for q in le["questions"]]
+
+
+def test_generated_source_wire_never_crashes():
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    source = b"Is atlas reviewed?\n"
+    base = {"format": "ve-document@2", "environment": env,
+            "units": [{**unit("q", 0, "question", polar(U("reviewed", "atlas"))),
+                       "span": [0, len(source)]}],
+            "open_terms": [], "reading_sets": [], "narrowings": [], "weights": [],
+            "queries": [], "answers": [], "compliance": []}
+    query_source = b"Atlas is reviewed.\nDoes it follow from these premises that atlas is reviewed?\n"
+    split = len(b"Atlas is reviewed.\n")
+    queried = {**base, "units": [
+        {**unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}), "span": [0, split]},
+        {**unit("f", 0, "question", {"question": {"mode": "follows", "query": "q1"}}),
+         "span": [split, len(query_source)]}],
+        "queries": [{"id": "q1", "premises": ["a"], "target": {"ast": U("reviewed", "atlas")}}]}
+    reading_source = b"Click check.\nWhich reading did you mean?\n"
+    split = len(b"Click check.\n")
+    term = {"name": "intended-reading.r", "arguments": ["rs"], "version": 1, "decided_by": "alice",
+            "jurisdiction": "t1", "necessary": [], "sufficient": [], "precedents": [],
+            "factors": ["necessary: at least one nomination of a candidate of rs at version 1 by alice",
+                        "sufficient: exactly one nomination of a candidate of rs at version 1 by alice"]}
+    reading = {**base, "units": [
+        {**unit("x", 0, "instruction", command("require", "click_required", ["check"])),
+         "span": [0, split]},
+        {**unit("r", 0, "question", {"question": {"mode": "reading", "set": "rs", "version": 1}},
+                {"open": ["intended-reading.r"]}), "span": [split, len(reading_source)]}],
+        "open_terms": [term],
+        "reading_sets": [{**reading_set("x", 1, "open", "instruction",
+                                       command("require", "click_required", ["check"])), "id": "rs"}]}
+    alternate = copy.deepcopy(reading)
+    candidates = alternate["reading_sets"][0]["readings"]
+    candidates[0]["admission"]["distinguishing_models"] = {"other": "m1"}
+    candidates.append({**copy.deepcopy(candidates[0]), "id": "other",
+                       "admission": {"who": "author", "why": "other possible reading",
+                                     "distinguishing_models": {"r": "m2"}}})
+    alternate["reading_sets"][0]["models"] = {"m1": {}, "m2": {}}
+    ordinary_source = b"X"
+    ordinary = {**base, "units": [{**unit("a", 0, "asserted"), "span": [0, 1]}],
+                "reading_sets": [{**reading_set("a", 1, "open", "asserted", None), "id": "rs"}]}
+    for metadata, body in ((base, source), (queried, query_source),
+                           (reading, reading_source), (alternate, reading_source),
+                           (ordinary, ordinary_source)):
+        SpeechSource(metadata, body, {})
+        paths = [(path, replacement) for path, replacement in _wire_mutations(metadata)
+                 if path[0] != "environment" or path[1:2] == ("speech_acts",) or len(path) == 1]
+        for path, replacement in paths:
+            changed = _replace_wire(metadata, path, replacement)
+            try:
+                SpeechSource(changed, body, {})
+            except VEError:
+                pass
+            except Exception as error:
+                pytest.fail(f"uncaught {type(error).__name__} at {path}: {error}")
