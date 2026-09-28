@@ -5,7 +5,7 @@ with the executable `ve_discourse_route` (`DiscourseMain.lean`, its own `[[lean_
 `Route/*`, `Definitions/*`, `Norms/*`, `English/*`, P0 sources and `Main.lean` are untouched; `VE.lean`,
 `VE/Audit.lean` and `lakefile.toml` gain imports, audit lines and the new target only. Every theorem is audited
 (`python lean/audit.py`): no `sorry`, no added axiom, only `propext`, `Classical.choice`, `Quot.sound`.
-Fixture tests: `tests/test_discourse_lean.py` (22 tests over fixtures α to φ).
+Fixture tests: `tests/test_discourse_lean.py` (24 tests over fixtures α to φ).
 
 ## Files
 
@@ -121,7 +121,7 @@ to exactly the elaborated formula. `discourse_parseRender`, `discourse_renderInj
   surface `parse` reads the presentation (core English) while a derivation yields the source text (discourse
   English), so a parse result is in general not the reading of a derivation of that same text. Uniqueness of the
   accepted derivation is `accepted_unique` and `Accepted`'s own clause. This is a spec point to raise.
-- **Fixtures not covered by tests:** κ (anchors, renumbering, `DependencyCycle`), λ lemma-level citations (W3
+- **Fixtures not covered by tests:** parts of κ (renumbering, `DependencyCycle`), λ lemma-level citations (W3
   bundles), σ embedded documents, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it
   needs a certificate), and the Python/Lean differential over generated manifests (sequence 2 has no Python
   validator yet). `discourse-joint` reports the joint set and the disjunction, not ALL/NONE/SOME verdicts.

@@ -523,3 +523,34 @@ def test_phi_format1(lean):
     with_profile = copy.deepcopy(delegated)
     with_profile["environment"]["profiles"] = sorted(with_profile["environment"]["profiles"] + ["ve.discourse@1"])
     assert run([with_profile])[0]["error"] == "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
+
+
+# (ι) Definition reference and (κ) anchors
+
+def iota_doc():
+    doc = document(["Eligible services are reviewed services.",
+                    "Every eligible service is reviewed, where eligible has the meaning defined in section 2."],
+                   [("m1", "u2", "eligible", "definition_ref", {"kind": "predicate", "name": "eligible", "version": 2})],
+                   kinds={"u1": "definition"})
+    end = doc["units"][1]["span"][1]
+    doc["discourse"]["anchors"].append({"id": "sec2", "kind": "section", "parent": "doc", "label": "2",
+                                        "span": [0, end], "exports": ["eligible"]})
+    return doc
+
+
+def test_iota_definition_reference(lean):
+    assert unit_result(resolve(iota_doc()), "u2") == ["forall", "service", ["implies", ["unary", "eligible", ["var", 0]],
+                                                                            ["unary", "reviewed", ["var", 0]]]]
+    unexported = iota_doc()
+    unexported["discourse"]["anchors"][1]["exports"] = []
+    assert unit_result(resolve(unexported), "u2") == "UnresolvedReference: m1"
+
+
+def test_kappa_anchor_tables(lean):
+    duplicate = iota_doc()
+    duplicate["discourse"]["anchors"].append({"id": "sec2b", "kind": "section", "parent": "doc", "label": "2",
+                                              "span": [0, 5]})
+    assert admit(duplicate)["error"] == "DuplicateAnchor: 2"
+    dangling = iota_doc()
+    dangling["discourse"]["names"] = [dict(NAMES[0], scope="sec9")]
+    assert admit(dangling)["error"] == "DanglingAnchor: sec9"
