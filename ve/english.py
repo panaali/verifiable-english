@@ -539,6 +539,61 @@ class EnglishTraversal:
             if b and c: return left + ', and ' + b + ' and ' + c
         return None
 
+    def alternatives_guard(self, value, scope):
+        if getattr(self.env, 'alternatives', None) is None or type(value) not in (ast.Forall, ast.Exists):
+            return None
+        from .wire import loads_json
+        block = loads_json(self.env.alternatives)
+        if value.sort != block['action']:
+            return None
+        if type(value) is ast.Forall and type(value.body) is ast.Implies:
+            condition, body = value.body.left, value.body.right
+            quantifier = 'every'
+        elif type(value) is ast.Exists and type(value.body) is ast.And:
+            condition, body = value.body.left, value.body.right
+            quantifier = 'another'
+        else:
+            return None
+        other = False
+        if type(condition) is ast.And:
+            first, difference = condition.left, condition.right
+            if (type(difference) is not ast.Not or type(difference.body) is not ast.Eq
+                    or difference.body.left != ast.Var(0)
+                    or type(difference.body.right) is not ast.Var):
+                return None
+            outer = difference.body.right.index - 1
+            if (outer < 0 or outer >= len(scope) or scope[outer][0] != block['action']):
+                return None
+            condition, other = first, True
+        if (type(condition) is not ast.Binary or condition.predicate != block['available']
+                or condition.left != ast.Var(0)):
+            return None
+        if quantifier == 'another' and not other:
+            return None
+        owner = condition.right
+        if type(owner) is ast.Var:
+            if owner.index == 0 or owner.index > len(scope):
+                return None
+            owner = ast.Var(owner.index - 1)
+        inner = ((block['action'], 'that other ' + self.words.sorts[block['action']]
+                  if other else 'that ' + self.words.sorts[block['action']]), *scope)
+
+        def vp(atom):
+            return self.relative(atom, inner)
+
+        verbal = vp(body)
+        if verbal is None and type(body) in (ast.And, ast.Or):
+            left, right = vp(body.left), vp(body.right)
+            if left is not None and right is not None:
+                verbal = ('both ' + left + ' and ' + right if type(body) is ast.And else
+                          'either ' + left + ' or ' + right)
+        if verbal is None:
+            return None
+        noun = self.words.sorts[block['action']]
+        prefix = ('another ' if quantifier == 'another' else
+                  'every other ' if other else 'every ')
+        return prefix + noun + ' available to ' + self.term(owner, scope) + ' ' + verbal
+
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
         if kind is ast.Exists and 'data@0' in self.env.profiles and type(value.body) is ast.And:
@@ -556,6 +611,9 @@ class EnglishTraversal:
                               else relation.left)
                     return ('the ' + relation.predicate + ' of ' + self.term(source, scope)
                             + ' is ' + property_atom.predicate)
+        special = self.alternatives_guard(value, scope)
+        if special is not None:
+            return special
         record = surface_registry.by_node(value)
         if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
             return record.english_renderer(self, value, scope, depth)
@@ -1106,6 +1164,47 @@ class EnglishParser:
             return ast.And(first, second)
         return first
 
+    def alternatives_guard(self, scope):
+        """Expand the three profile guard phrases to ordinary quantified FOL."""
+        from .wire import loads_json
+        block = loads_json(self.env.alternatives)
+        noun = self.words.sorts[block['action']]
+        forms = ((f'every other {noun} available to ', 'other'),
+                 (f'every {noun} available to ', 'every'),
+                 (f'another {noun} available to ', 'another'))
+        mode = next((kind for prefix, kind in forms if self.take(prefix)), None)
+        if mode is None:
+            return None
+        outer_action = next((index for index, (sort, _) in enumerate(scope)
+                             if sort == block['action']), None)
+        if mode != 'every' and outer_action is None:
+            self.error('Another action needs a rule on an action as its reference.')
+        owner = self.term(scope)
+        self.space()
+        inner = ((block['action'], 'that other ' + noun if mode != 'every' else 'that ' + noun), *scope)
+
+        def verb_phrase():
+            if self.take('either '):
+                left = self.atom(inner, relative=True)
+                self.need(' or ')
+                right = self.atom(inner, relative=True)
+                self.take(', or both')
+                return ast.Or(left, right)
+            if self.take('both '):
+                left = self.atom(inner, relative=True)
+                self.need(' and ')
+                return ast.And(left, self.atom(inner, relative=True))
+            return self.atom(inner, relative=True)
+
+        body = verb_phrase()
+        lifted_owner = ast.Var(owner.index + 1) if type(owner) is ast.Var else owner
+        available = ast.Binary(block['available'], ast.Var(0), lifted_owner)
+        if mode != 'every':
+            available = ast.And(available, ast.Not(ast.Eq(ast.Var(0), ast.Var(outer_action + 1))))
+        self.farthest = max(self.farthest, self.i)
+        return (ast.Exists(block['action'], ast.And(available, body)) if mode == 'another'
+                else ast.Forall(block['action'], ast.Implies(available, body)))
+
     def formula(self, scope=(), depth=0, nesting=1):
         if nesting > MAX_DEPTH:
             self.error(f'This statement exceeds the {MAX_DEPTH}-level nesting limit.', ResourceLimit)
@@ -1120,6 +1219,10 @@ class EnglishParser:
             word = remainder.split(maxsplit=1)[0]
             if word not in self.term_options(scope):
                 self.error('Plural or possessive reference needs an explicit-name or scoped-referent confirmation.')
+        if getattr(self.env, 'alternatives', None) is not None:
+            alternative = self.alternatives_guard(scope)
+            if alternative is not None:
+                return alternative
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
             start = self.i
@@ -1580,6 +1683,19 @@ def english_lark_grammar(env, **options):
         ('LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/'
          if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
+    if getattr(env, 'alternatives', None) is not None:
+        from .wire import loads_json
+        block = loads_json(env.alternatives)
+        action_noun = content_lit(words.sorts[block['action']])
+        rules += [
+            '%extend formula: alt_available_guard',
+            'alt_available_guard: "every" ' + action_noun + ' "available" "to" term alt_verb_phrase'
+            ' | "every" "other" ' + action_noun + ' "available" "to" term alt_verb_phrase'
+            ' | "another" ' + action_noun + ' "available" "to" term alt_verb_phrase',
+            'alt_verb_phrase: relative | "either" relative "or" relative'
+            ' | "either" relative "or" relative ", or both"'
+            ' | "both" relative "and" relative',
+        ]
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
     constants = [constant_lit(v) for n, v in words.constants.items() if not is_int(n)]
