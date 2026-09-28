@@ -456,3 +456,13 @@ def test_lean_only_block_fields_are_unsupported_not_misread(tmp_path):
     front["discourse"]["validity"] = [{"unit": "u1", "document": "x", "holds": True}]
     with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 validity claims are not implemented in Python"):
         load_document(_write(tmp_path, front, source))
+
+
+def test_navigation_relabel_does_not_hide_a_slot(tmp_path):
+    """looprecheck1 A (discourse.py:582): the reviewer's reproducer, `It` relabelled as a
+    navigation mention to the document anchor, is an unrecorded slot, not 100% CHECKED."""
+    source, front = _sample(tmp_path)
+    front["discourse"]["mentions"][0]["form"] = "navigation"
+    front["discourse"]["mentions"][0]["target"] = {"kind": "anchor", "name": "doc"}
+    with pytest.raises(VEError, match=r"UnrecordedSlot: u2: \[17, 19\)"):
+        check_document(_write(tmp_path, front, source))

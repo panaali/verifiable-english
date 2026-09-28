@@ -917,3 +917,14 @@ def test_own_block_decodes_as_strictly_in_python(lean, tmp_path):
     doc["discourse"]["mentions"][0]["note"] = "free text"
     assert admit(doc)["error"].startswith("fields do not match")
     assert python_outcome(doc, tmp_path) == "InvalidInput: discourse fields"
+
+
+def test_location_binding_never_covers_a_slot(lean, tmp_path):
+    """looprecheck1 A (discourse.py:582): relabelling `It` as a navigation (or section_ref)
+    mention does not account for its slot; both implementations report it unrecorded."""
+    for form in ("navigation", "section_ref"):
+        doc = document(["Api is reviewed.", "It is deployed."],
+                       [("m1", "u2", "It", form, {"kind": "anchor", "name": "doc"})], names=PY_NAMES,
+                       contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
+        assert admit(doc)["error"] == "UnrecordedSlot: u2: [0, 1)", form
+        assert python_outcome(doc, tmp_path) == "UnrecordedSlot: u2: [17, 19)", form
