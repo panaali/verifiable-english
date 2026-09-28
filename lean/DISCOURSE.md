@@ -87,7 +87,8 @@ surface (`discourseSourceSurface`).
   another wording is `InvalidInput`, a different document or polarity `ManifestMismatch: validity.<unit>.*`.
 - **Stored documents** (4.1(10)) are document texts, embedded or supplied as sibling files: their bytes must
   re-fingerprint to the pinned `source_id`, the declaration's pins must equal the import table's, each must decode
-  (text, envelope, discourse tables) with its recomputed `document_id` equal to its pin, and the chain must be
+  (text, envelope and, for `@2`, its whole discourse block, strictly, as the importing document's own block) with its
+  recomputed `document_id` equal to its pin, and the chain must be
   acyclic by source id and at most four deep. A stored document is checked under its own environment and profiles.
 - **Certificates are bound** explicitly (3.3): every deduction's environment id is the base pair's, and a deduction
   formalising a bound unit carries the meaning id of that unit's elaboration.

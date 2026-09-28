@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 
 from ve.ast import formula_from_data
-from ve.document import check_document, load_document
+from ve.document import check_document, load_document, stored_identities
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
@@ -864,3 +864,56 @@ def test_unknown_admission_is_an_unknown_outcome(lean, tmp_path):
     assert result["admitted"] == "UNKNOWN", result
     assert result["validity"] == {"u9": "unconfirmed (ResourceLimit: joint choices)"}
     assert result["statuses"]["u9"] == "LABELLED"
+
+
+def malformed_blocks():
+    """Stored `@2` documents whose discourse block does not decode (3.1), one per table shape."""
+    def with_block(**changes):
+        doc = stored_doc(format="ve-document@2")
+        doc["discourse"].update(changes)
+        return doc
+    pronoun = {"id": "m1", "unit": "u1", "span": [0, 3], "form": "pronoun", "target": entity("api")}
+    yield "mentions", with_block(mentions="not an array")
+    yield "extra field", with_block(names=[{"constant": "api", "display": "Api", "scope": "doc", "extra": 1}])
+    yield "group reading", with_block(groups=[{"set": "rs9", "version": 1, "reading": "r0", "spans": ["u1"]}])
+    yield "version", with_block(version="ve.discourse@9")
+    yield "reading", with_block(mentions=[{**pronoun, "reading": "collective"}])
+    yield "document version", with_block(documents=[{"name": "x", "display": ["x"], "refers": "self"}])
+    anchor = stored_doc(format="ve-document@2")
+    anchor["discourse"]["anchors"][0]["kind"] = "chapter"
+    yield "anchor kind", anchor
+
+
+def test_stored_block_decodes_or_rejects_the_importer(lean, tmp_path):
+    """looprecheck1 A (Admission.lean:192): a stored document must decode its whole discourse
+    block (4.1(10)), not only its document and import tables; one that does not is an error of
+    the importing document, never a completed rejection that checks a negative validity claim.
+    Python rejects the same importer."""
+    for name, inner in malformed_blocks():
+        body = text(inner, env())
+        _, source_id, document_id = stored_identities(body.encode())
+        files = {"policy2.ve.md": body}
+        negative = claim(False, import_docs(source_id, document_id), files)
+        assert negative["status"] == "error", (name, negative)
+        assert negative["error"].startswith("InvalidInput: document policy2: "), (name, negative)
+        importer = document(["The API is reviewed."], contents={"u1": unary("reviewed", "api")},
+                            extra=import_docs(source_id, document_id))
+        environment = env(constants=DOC_CONSTANTS)
+        lean_error = admit(importer, environment, files)["error"]
+        python_error = python_outcome(importer, tmp_path, environment, files)
+        assert lean_error == negative["error"], name
+        assert python_error.startswith("InvalidInput: document policy2: "), (name, python_error)
+    # a well-formed @2 import still decodes and is checked
+    body, source_id, document_id = stored(tmp_path, stored_doc(format="ve-document@2"))
+    assert claim(False, import_docs(source_id, document_id), {"policy2.ve.md": body})["validity"] == {"u1": "refuted"}
+
+
+def test_own_block_decodes_as_strictly_in_python(lean, tmp_path):
+    """The same class on the importing document: Python decodes its own block with the stored
+    decoder, so a field Lean's strict decoder rejects is rejected in Python too."""
+    doc = document(["Api is reviewed.", "It is deployed."], [("m1", "u2", "It", "pronoun", entity("api"))],
+                   names=PY_NAMES, contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
+    assert isinstance(python_outcome(doc, tmp_path), dict)
+    doc["discourse"]["mentions"][0]["note"] = "free text"
+    assert admit(doc)["error"].startswith("fields do not match")
+    assert python_outcome(doc, tmp_path) == "InvalidInput: discourse fields"
