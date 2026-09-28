@@ -168,6 +168,28 @@ def generated_invalid_soft_blocks():
         yield raw, []
 
 
+def combined_invalid_soft_blocks():
+    """Independent block faults must have the same diagnostic precedence."""
+    baseline = env({"parties": ["p"], "ranks": ["a", "b"],
+                    "outranking": {"mode": "strict"}})
+    original = baseline["vocabulary"]["soft"]
+    mutations = []
+    for raw, _ in generated_invalid_soft_blocks():
+        block = raw["vocabulary"].get("soft")
+        if type(block) is not dict:
+            continue
+        changed = {k: v for k, v in block.items() if k not in original or v != original[k]}
+        if len(changed) == 1:
+            mutations.append(changed)
+    for left, right in combinations(mutations, 2):
+        if left.keys() & right.keys():
+            continue
+        raw = deepcopy(baseline)
+        raw["vocabulary"]["soft"].update(left)
+        raw["vocabulary"]["soft"].update(right)
+        yield raw, []
+
+
 def generated_invalid_soft_rules():
     """Pairs of independent rule faults check diagnostic precedence."""
     raw = env()
@@ -187,9 +209,28 @@ def generated_invalid_soft_rules():
         yield raw, [{"norm": {**valid["norm"], **left, **right}}]
 
 
+def generated_invalid_exceptions():
+    """Exception fields are checked in wire order, including combined faults."""
+    valid = {"decided_by": "assistant", "sufficient": [],
+             "necessary": [], "factors": []}
+    faults = [
+        {"decided_by": False}, {"decided_by": ""},
+        {"sufficient": False}, {"sufficient": [False]},
+        {"necessary": False}, {"necessary": [False]},
+        {"factors": False}, {"factors": [False]},
+    ]
+    for left, right in combinations(faults, 2):
+        if left.keys() & right.keys():
+            continue
+        exception = {**valid, **left, **right}
+        yield env(), [norm("a", "x_required", True, mode="default", exception=exception)]
+
+
 def compare_rejected():
     cases = (rejected_sources() + list(generated_invalid_soft_blocks()) +
-             list(generated_invalid_soft_rules()))
+             list(generated_invalid_soft_rules()) +
+             list(combined_invalid_soft_blocks()) +
+             list(generated_invalid_exceptions()))
     expected = []
     for raw, rules in cases:
         try:
