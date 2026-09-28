@@ -74,7 +74,7 @@ def _split(raw: bytes):
     if type(meta) is not dict or meta.get("format") != "ve-document@1":
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
-               "narrowings", "weights", "graph", "lemmas"}
+               "narrowings", "couplings", "weights", "graph", "lemmas"}
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
@@ -110,6 +110,10 @@ def _content(env, unit, fences):
             raise VEError("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
+    if next(iter(content)) in {"right", "right_lines", "limitation", "bar"}:
+        if "rights@0" not in env.profiles:
+            raise VEError("UnsupportedProfile: rights@0 is required")
+        return content, None
     if "ast" in content:
         formula = formula_from_data(env, content["ast"])
         return formula_to_data(env, formula), meaning_id(env, formula)
@@ -172,8 +176,12 @@ def load_document(path: str | Path):
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
+    rights_enabled = "rights@0" in meta["environment"].get("profiles", [])
     soft_enabled = "soft-norms@0" in meta["environment"].get("profiles", [])
-    if soft_enabled:
+    if rights_enabled:
+        from .rights import RightsEnvironment
+        env = RightsEnvironment(meta["environment"])
+    elif soft_enabled:
         from .softnorms import SoftEnvironment
         env = SoftEnvironment(meta["environment"])
     else:
@@ -183,8 +191,17 @@ def load_document(path: str | Path):
     if type(units) is not list or not units:
         raise VEError("document needs units")
     soft_document = None
+    rights_document = None
     formula_env = env
-    if soft_enabled:
+    if rights_enabled:
+        from .rights import RightsDocument
+        rights_document = RightsDocument(env, [u["content"] for u, _ in _parts(units)
+                                               if type(u.get("content")) is dict and
+                                               u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")])
+        soft_document = rights_document.soft_document
+        formula_env = soft_document.extended_env
+        open_names = set(open_names) | formula_env.decision_names
+    elif soft_enabled:
         from .softnorms import SoftNormDocument
         soft_document = SoftNormDocument(env, [u.get("content") for u in units
                                               if type(u) is dict and u.get("kind") == "norm"
@@ -220,11 +237,14 @@ def load_document(path: str | Path):
         except UnicodeDecodeError as exc:
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
-        kind = _check_kind(unit["kind"])
+        kind = (unit["kind"] if rights_enabled and unit["kind"] in
+                ("right", "right_lines", "limitation", "bar") else _check_kind(unit["kind"]))
         status = _meaning(unit["meaning"], open_names)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
-        content, mid = _content(formula_env, unit, fences) if unit.get("content") is not None else (None, None)
+        content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
+                       else formula_env)
+        content, mid = _content(content_env, unit, fences) if unit.get("content") is not None else (None, None)
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
             from .norms import norm_meaning_id, NormDocument
@@ -288,7 +308,9 @@ def load_document(path: str | Path):
             for content in quoted_norms:
                 _check_quoted(env, content)
     selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units]
-    if soft_enabled:
+    if rights_enabled:
+        norms = None
+    elif soft_enabled:
         from .softnorms import SoftNormDocument
         soft_document = SoftNormDocument(env, selected_norms)
         norms = None
@@ -319,6 +341,7 @@ def load_document(path: str | Path):
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
             "units": compiled, "norms": norms, "soft_document": soft_document,
+            "rights_document": rights_document,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
 
 
@@ -395,6 +418,13 @@ def coverage(doc):
             if rule.mode == "default":
                 who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
                 by_decider[who] = by_decider.get(who, 0) + 1
+    rights = doc.get("rights_document")
+    if rights is not None:
+        residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
+        residual["bar_terms"] = len(rights.bar_names)
+        residual["power_shadows"] = sum(i["source_kind"] in ("power", "immunity")
+                                         for i in rights.instances)
+        residual["couplings"] = len(meta.get("couplings", []))
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
@@ -442,7 +472,20 @@ def check_document(path):
                           "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
         assertions.extend(formula for _, formula in soft.elaborated.premises())
         assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
+    rights = doc["rights_document"]
+    if rights is not None:
+        assertions.extend(formula for _, formula in rights.limitation_premises)
+        result["rights"] = {
+            "environment_id": doc["environment"].environment_id,
+            "limitation_predicates": [{"name": generated, "limitation": limit, "act": act}
+                                      for (limit, act), generated in rights.limitation_names.items()],
+            "condition_predicates": [{"name": generated, "limitation": limit, "act": act,
+                                      "condition": condition}
+                                     for (limit, act, condition), generated in rights.condition_names.items()],
+            "limitation_background_labels": [label for label, _ in rights.limitation_premises]}
     if "graph" in doc["meta"]:
+        if doc["rights_document"] is not None:
+            raise VEError("UnsupportedProfile: rights graph admission requires a rights route")
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
@@ -528,6 +571,8 @@ def render_document(path):
 
     descriptions = {
         "asserted": "a direct assertion", "norm": "a rule", "definition": "a definition",
+        "right": "a right", "right_lines": "right incidents", "limitation": "a limitation",
+        "bar": "a bar",
         "question": "a question", "instruction": "an instruction", "example": "an example",
         "exposition": "background information", "analogy": "an analogy",
         "explanation": "an explanation", "meta": "a comment about the text",
@@ -548,6 +593,9 @@ def render_document(path):
     def kind_wording(kind, content):
         if content is None:
             return f"The passage is recorded as {kind_description(kind)}."
+        if kind in ("right", "right_lines", "limitation", "bar"):
+            from .surface.rights import render_unit
+            return render_unit(doc["rights_document"], content)
         if type(content) is dict and "norm" in content:
             if doc["soft_document"] is not None:
                 rule = content["norm"]
