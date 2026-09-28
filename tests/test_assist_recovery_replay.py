@@ -8,12 +8,11 @@ command inputs are replayed through the same checks as live calls.
 import hashlib
 import json
 import random
-import time
 from copy import deepcopy
 
 import pytest
 
-from ve.assist.ambiguity_patterns import Budget, review
+from ve.assist.ambiguity_patterns import Budget, _Deadline, review
 from ve.assist import ambiguity_patterns
 from ve.assist import recovery as recovery_module
 from ve.assist.recovery import RecoveryService
@@ -32,8 +31,25 @@ SELECT_API = dict(actor="translator", paraphrase="Api is safe.", presentation="A
                   situation=SITUATION)
 
 
+@pytest.fixture(autouse=True)
+def fixed_operation_clock(monkeypatch, request):
+    """Replay and cache properties concern state, not elapsed CPU time."""
+    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: 0.0)
+    if request.node.name.split("[")[0] in {
+        "test_recorded_deadline_cannot_swallow_enclosing_replay_deadline",
+        "test_live_budget_still_interrupts_a_slow_step",
+    }:
+        return
+    original_init = Budget.__init__
+    def nonexpiring_budget(self, seconds=None, *, stop=None, replay=False, fire_at=None):
+        original_init(self, seconds, stop=stop if replay else float("inf"),
+                      replay=replay, fire_at=fire_at)
+    monkeypatch.setattr(Budget, "__init__", nonexpiring_budget)
+
+
 def service():
-    return RecoveryService(ENV, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    return RecoveryService(ENV, grammar_version="g1", glossary_version="v1",
+                           reading_set_version="r1", clock=lambda: 0.0)
 
 
 def digest(value):
@@ -563,8 +579,8 @@ def test_random_live_cache_edits_never_reach_a_transition_or_validate(seed):
 
 @pytest.mark.parametrize("operation", ["import", "verify"])
 def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch, operation):
-    # The merged English grammar takes longer to build and check under the
-    # deadline tracer; keep the setup approval comfortably inside this budget.
+    now = [0.0]
+    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: now[0])
     monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 2.0)
     recovery = service()
     recovery.add("u", "Api is safe.", {})
@@ -582,7 +598,9 @@ def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch,
             return True
         if phase["delay"] and self.replay and self.fire_at is not None and not phase["delayed"]:
             phase["delayed"] = True
-            time.sleep(2.10)
+            # A recorded command's replay budget is independent of the live
+            # enclosing budget. Advance the latter at this exact checkpoint.
+            now[0] = 3.0
         return original_hit(self, ordinal)
 
     monkeypatch.setattr(Budget, "_hit", hit)
@@ -601,3 +619,16 @@ def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch,
     else:
         assert not recovery.verify_ledger()
     assert phase["delayed"]
+
+
+def test_live_budget_still_interrupts_a_slow_step(monkeypatch):
+    now = [0.0]
+    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: now[0])
+    def slow_step():
+        budget = Budget(seconds=0.02)
+        with budget.guard():
+            now[0] = 0.04
+            pytest.fail("the live deadline did not interrupt the step")
+
+    with pytest.raises(_Deadline):
+        slow_step()
