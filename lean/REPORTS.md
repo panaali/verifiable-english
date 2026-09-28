@@ -120,6 +120,11 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   decoded leaves admitted by `ReportsLeafAdmitted`, with closed citations and compatible choices.
 - `Run.reports_wire_acceptance`: a successful `admission` answer is exactly the encoding of such an admission of
   the case's own environment and document.
+- `Run.decodeReportsModel_valid`, `Run.reports_countermodel_decoded`, `Run.runCountermodel_sound`: the model
+  vocabulary the executable regenerates has exactly the constants and predicate signatures of `E_reports`
+  (`reportsModel_constants`, `reportsModel_predicates`), so a model it decodes is `Mo.Valid (envReports D)` and
+  meets the literals, and a `reports-countermodel` answer's `refutes` is the check of such a model, which then
+  refutes the route statement and decodes to a source model (`reports_route_countermodel`).
 
 ## Conventions and deviations from the spec's Lean blocks
 
@@ -192,9 +197,6 @@ every certificate is replayed by Lean.
   the block is only validated by the frozen W1 decoder.
 - `reports-scoped` replays witness models only over the author's `E`; a witness for a quoted package's scope is
   reported UNKNOWN (certificates are replayed at either scope).
-- The executable checks a countermodel's validity over `E_reports` by the P0 model decoder on a regenerated model
-  vocabulary; no theorem connects that check to `Mo.Valid (envReports D)`, which `reports_route_countermodel`
-  takes as a hypothesis.
 - Admission rejects a nested bridge with the wrong holder or without a record, but with W2's `AdmissionError`
   text, not section 8's `BridgeHolder` / `MissingBridgeRecord`; residual lines (section 6) and status text (7.2)
   are not produced by the Lean route.

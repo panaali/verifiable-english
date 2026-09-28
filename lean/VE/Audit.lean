@@ -1141,4 +1141,11 @@ import VE.Attribution.Wire
 #print axioms VE.Reports.reports_admission_sound
 #print axioms VE.Reports.reports_labels_decoded
 #print axioms VE.Reports.Run.runAdmission_sound
+#print axioms VE.Reports.Run.lookup_append
+#print axioms VE.Reports.Run.reportsModel_constants
+#print axioms VE.Reports.Run.reportsModel_predicates
+#print axioms VE.Reports.Run.valid_congr
+#print axioms VE.Reports.Run.decodeReportsModel_valid
+#print axioms VE.Reports.Run.reports_countermodel_decoded
+#print axioms VE.Reports.Run.runCountermodel_sound
 #print axioms VE.Reports.Run.reports_wire_acceptance
