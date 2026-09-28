@@ -61,16 +61,19 @@ def test_authored_rules_have_one_reading_and_declared_priority():
     assert render_english(doc) == (source, manifest)
     assert data["alternatives"]["fulfilments"] == [
         {"obligation": "prevent_required", "body": "avoids"}]
-    assert [(r.name, r.over) for r in doc.rules] == [
-        ("law-3-permission", ()),
-        ("law-2-permission", ("law-3-permission",)),
-        ("law-1-direct", ("law-2-permission",)),
-        ("law-1-inaction", ("law-2-permission",)),
-        ("law-0-prevention-exception", ("law-1-direct", "law-1-inaction")),
-        ("law-0-direct", ("law-1-direct", "law-0-prevention-exception")),
-        ("law-0-inaction", ("law-1-inaction", "law-0-prevention-exception")),
-        ("law-2-obey", ()),
-        ("law-3-preserve", ()),
+    assert [(r.name, r.predicate, r.over, len(r.unless)) for r in doc.rules] == [
+        ("law-3-permission", "permitted", (), 0),
+        ("law-2-permission", "permitted", ("law-3-permission",), 0),
+        ("law-1-injury", "breaks_first_law", (), 0),
+        ("law-1-inaction", "breaks_first_law", (), 0),
+        ("law-0-injury", "breaks_zeroth_law", (), 0),
+        ("law-0-inaction", "breaks_zeroth_law", (), 0),
+        ("lawful-option", "has_lawful_option", (), 0),
+        ("law-1-ban", "permitted", ("law-2-permission",), 0),
+        ("law-0-prevention-exception", "permitted", ("law-1-ban",), 1),
+        ("law-0-ban", "permitted", ("law-1-ban", "law-0-prevention-exception"), 0),
+        ("law-2-obey", "required", (), 0),
+        ("law-3-preserve", "prevent_required", (), 0),
     ]
 
 
@@ -92,7 +95,9 @@ def test_rules_read_as_english_without_parser_scaffolding():
 
 def test_checker_certifies_conflict_free_and_replays_dilemma():
     packages = conflict_packages()
-    assert len(packages) == 4
+    assert sorted(packages) == sorted([
+        "breaks_first_law", "breaks_zeroth_law", "has_lawful_option", "permitted",
+        "prevent_required", "required", "required->permitted"])
     assert run_case(case("alt-conflict", packages=packages))["verdict"] == "CONFLICT-FREE"
     for name, diagnosis in (("b-A0", "NONE-PERMITTED"), ("b-A1", "NONE-PERMITTED"),
                             ("j", "OVER-REQUIRED")):
@@ -141,6 +146,22 @@ def model(actions, positive, *, ordered=(), injured=(), injured_humanity=()):
 
 # Review findings P1: each reproducer, then its class.
 REGRESSIONS = {
+    # Rule 5: the Zeroth Law excuses only a necessary First Law breach.
+    "ordered-unnecessary-injury": (
+        model(["nothing", "act", "rescue"], [("nothing", "hh")], ordered=["act"],
+              injured=["act"]), ["rescue"]),
+    "unnecessary-injury": (
+        model(["nothing", "act", "rescue"], [("nothing", "hh")], injured=["act"]), ["rescue"]),
+    "unnecessary-allowed-human-harm": (
+        model(["nothing", "act", "rescue"], [("nothing", "hh"), ("act", "hp")]), ["rescue"]),
+    "necessary-injury": (model(["nothing", "act"], [("nothing", "hh")], injured=["act"]),
+                         ["act"]),
+    "two-necessary-injuries": (
+        model(["nothing", "act", "act2"], [("nothing", "hh")], injured=["act", "act2"]),
+        ["act", "act2"]),
+    "harmless-looking-rescue-breaks-zeroth-law": (
+        model(["nothing", "act", "rescue"], [("nothing", "hh"), ("rescue", "hh")],
+              injured=["act"], injured_humanity=["rescue"]), ["act"]),
     # Rules 4 and 7: any alternative that lets an avoidable harm happen, not only inaction.
     "unrelated-work-while-human-harmed": (
         model(["nothing", "work", "rescue"], [("nothing", "hp"), ("work", "hp")]), ["rescue"]),

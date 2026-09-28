@@ -99,6 +99,36 @@
         "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
         "verbalisation": "{0} is protective"
       },
+      "breaks_first_law": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures a human being or allows an avoidable harm to a human being to happen, as derived by the First Law rules",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "breaks_zeroth_law": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures humanity or allows an avoidable harm to humanity to happen, as derived by the Zeroth Law rules",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "has_lawful_option": {
+        "arguments": [
+          "robot"
+        ],
+        "description": "Some action available to the robot breaks neither the First nor the Zeroth Law, as derived by the lawful-option rule",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
       "permitted": {
         "arguments": [
           "action"
