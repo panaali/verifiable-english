@@ -124,8 +124,11 @@ need renewed statement approval (the approved statement is false or unprovable a
 9. **`elaborate_no_new_symbols`** states `DeclaredSymbol D.E q` (the environment has no symbol list).
 10. **The wire.** The route reads the 3.1 wire from the document text: reading ids decode to `original_index`, an
     import's `bytes` names a sibling file whose text the case supplies (`files`), and a target's `version` pin is
-    carried as the mention's `pin` and reported. No environment declares W3 definition versions, so the pin is not
-    regenerated (in Python neither); `StaleTarget: <mention>: <target>@<version>` is not implemented. Beyond 3.1 the
+    carried as the mention's `pin`, reported, and checked (`pinOk`, in Python too): only a `definition_ref` to a
+    predicate may carry one (`InvalidInput: mention <m> target` otherwise), and it must equal the regenerated
+    definition version (`StaleTarget: <mention>: <target>@<version>`). No environment the admission accepts declares
+    a W3 definition version (W2 defers definitions; `definitionVersion` is `none`), so every pin is stale and fixture
+    ι's pinned reference is rejected rather than admitted unchecked; an unpinned `definition_ref` resolves. Beyond 3.1 the
     block may carry `validity`, `self_truth` and `choices` (the Manifest fields of 9.1); Python reports them as
     `UnsupportedProfile`.
 11. **The loader.** JSON `null` (which the restricted parser does not read), fenced English or strict content, norm

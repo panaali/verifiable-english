@@ -72,7 +72,7 @@ structure Mention where
   restriction : Option VE.Formula
   reading : Option Reading
   presuppositionUnit : Option String
-  pin : Option Nat                    -- the target's recorded `version` pin (carried and reported)
+  pin : Option Nat                    -- the target's recorded `version` pin (checked by `pinOk`)
   deriving DecidableEq, Repr
 
 /-- A slot of a derivation: a surface position and a form, never a target (4.3); a

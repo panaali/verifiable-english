@@ -12,9 +12,9 @@ mapped to token ranges of their unit by the lexer (a named trust boundary); a by
 does not start and end on token boundaries of its unit is `InvalidInput`.
 
 Beyond 3.1 the block may carry `validity` bindings, `self_truth` labels and the recorded
-reading choices `choices` (the Manifest fields of 9.1). A predicate target's `version` pin is
-carried as the mention's `pin` and reported; no environment declares definition versions, so
-it is not regenerated (lean/DISCOURSE.md). An empty block `{}` is the empty manifest. -/
+reading choices `choices` (the Manifest fields of 9.1). A target's `version` pin is carried as
+the mention's `pin` and checked by `wellFormed` (`pinOk`) against the regenerated definition
+version. An empty block `{}` is the empty manifest. -/
 namespace VE.Discourse.Wire
 open Lean
 open VE.Bridge (stringField strings fields displayFields)
@@ -110,6 +110,7 @@ def decodeTarget (j : Json) : Except String Target := do
       | [a, b] => pure (some (a, b))
       | _ => throw "InvalidInput: pair"
     | none => pure none
+  -- the pin is the mention's `pin`, checked by `pinOk`; the target compared with candidates has none
   let _ := version
   pure { kind, name := ← optString j "name", version := none,
          members := ← optStrings j "members", pair, units := ← optStrings j "units",
