@@ -148,7 +148,7 @@ struct Models<'a> {
     done: bool,
 }
 impl<'a> Models<'a> {
-    fn new(env: &'a Environment, problem: &CountermodelProblem, maximum: usize,
+    fn new(env: &'a Environment, document: &Document, maximum: usize,
            minimum: usize) -> Self {
         let sorts: Vec<_> = env.model_sorts().into_iter().collect();
         let minima: Vec<_> = sorts
@@ -162,7 +162,7 @@ impl<'a> Models<'a> {
             })
             .collect();
         let mut used = BTreeSet::new();
-        for f in problem.document.formulas() {
+        for f in document.formulas() {
             f.predicates(&mut used);
         }
         for (name, (functional, total)) in &env.predicate_flags {
@@ -329,7 +329,7 @@ pub fn find_countermodel_min(
         || minimum > bounds.max_domain_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
-    let mut models = Models::new(env, problem, bounds.max_domain_size, minimum);
+    let mut models = Models::new(env, &problem.document, bounds.max_domain_size, minimum);
     let mut result = SearchResult {
         status: "NotFound",
         model: None,
@@ -370,6 +370,70 @@ pub fn find_countermodel_min(
             result.model = Some(model);
             result.detail = "";
             return Ok(result);
+        }
+    }
+}
+
+/// Find a finite model on which two closed formulas differ. Neither exhaustion
+/// nor a budget limit is a proof of equivalence.
+pub fn find_distinguishing_model(
+    env: &Environment,
+    a: Formula,
+    b: Formula,
+    bounds: SearchBounds,
+    minimum: usize,
+) -> Result<SearchResult> {
+    env.require_checker()?;
+    let document = Document::check(env, vec![a, b])?;
+    if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS
+        || minimum > bounds.max_domain_size {
+        return error("ResourceLimit", "search bounds exceed v0 envelope");
+    }
+    let mut models = Models::new(env, &document, bounds.max_domain_size, minimum);
+    let mut result = SearchResult {
+        status: "NotFound", model: None, models_checked: 0, evaluations: 0,
+        bounds, detail: "all finite models within the domain bound were exhausted",
+    };
+    loop {
+        let model = match models.next() {
+            Ok(None) => return Ok(result),
+            Ok(Some(model)) => model,
+            Err(e) if e.code == "ResourceLimit" => {
+                result.status = "ResourceLimit";
+                result.detail = "search relation atom space exceeds runtime limit";
+                return Ok(result);
+            }
+            Err(e) => return Err(e),
+        };
+        if result.models_checked >= bounds.max_models
+            || result.evaluations >= bounds.max_evaluations {
+            result.status = "ResourceLimit";
+            result.detail = "model-attempt or evaluation budget exhausted";
+            return Ok(result);
+        }
+        let mut evaluator = Evaluator::new(&model, bounds.max_evaluations - result.evaluations);
+        let left = evaluator.formula(&document.formulas()[0], &mut Vec::new());
+        evaluator.clear_closures();
+        let right = if left.is_ok() {
+            evaluator.formula(&document.formulas()[1], &mut Vec::new())
+        } else {
+            left.clone()
+        };
+        result.models_checked += 1;
+        result.evaluations += evaluator.work;
+        match (left, right) {
+            (Ok(a), Ok(b)) if a != b => {
+                result.status = "Found";
+                result.detail = "";
+                result.model = Some(model);
+                return Ok(result);
+            }
+            (Ok(_), Ok(_)) => {}
+            _ => {
+                result.status = "ResourceLimit";
+                result.detail = "evaluation budget exhausted";
+                return Ok(result);
+            }
         }
     }
 }

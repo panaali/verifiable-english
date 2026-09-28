@@ -14,7 +14,7 @@ from ve.background import background, dependency_order
 from ve.evaluate import evaluate
 from ve.errors import VEError
 from ve.backends.lean_service import CheckerUnavailable
-from ve.search import check_countermodel, find_countermodel
+from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
@@ -181,3 +181,23 @@ def test_search_adapter_preserves_witness_and_budgets(monkeypatch, options):
         monkeypatch.setenv("VE_AUTHORITY", authority)
         assert find_countermodel(env, (), Bottom(), max_domain_size=1,
                                  **options).to_dict() == expected.to_dict()
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("a,b,options", [
+    (Top(), Bottom(), {}), (Top(), Top(), {}),
+    (Top(), Bottom(), {"nonempty_domains": True}),
+    (Top(), Bottom(), {"max_models": 0}),
+    (Top(), Bottom(), {"max_evaluations": 1}),
+])
+def test_distinguishing_adapter_preserves_witness_and_counts(monkeypatch, a, b, options):
+    wire = environment()
+    wire["vocabulary"]["sorts"]["person"] = {"description": "A person."}
+    wire["vocabulary"]["constants"] = {}
+    env = Environment(wire)
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = find_distinguishing_model(env, a, b, max_domain_size=1, **options)
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert find_distinguishing_model(env, a, b, max_domain_size=1,
+                                         **options).to_dict() == expected.to_dict()

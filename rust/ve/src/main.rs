@@ -85,6 +85,23 @@ fn case(v: &Value) -> Result<Value> {
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
+    if v.get("kind").and_then(Value::as_str) == Some("distinguishing-model") {
+        let env = Environment::from_value(field(v, "environment")?)?;
+        let doc = Document::from_value(&env, &json!([field(v, "a")?, field(v, "b")?]))?;
+        let bounds = SearchBounds {
+            max_domain_size: usize::try_from(number(v, "max_domain_size", 2)?)
+                .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?,
+            max_models: number(v, "max_models", 10_000)?,
+            max_evaluations: number(v, "max_evaluations", MAX_EVALUATIONS)?,
+        };
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let mut out = find_distinguishing_model(&env, doc.formulas()[0].clone(),
+            doc.formulas()[1].clone(), bounds, minimum.max(usize::from(nonempty)))?.to_value();
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
+    }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
         .and_then(Value::as_array)
