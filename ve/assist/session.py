@@ -927,7 +927,7 @@ class AssistSession:
                 view.update(certified=False, reason=reason)
                 failures.append(f"target {tid}: {reason}")
             else:
-                result = check_argument(graph, search=False)
+                result = check_argument(graph, search=False).require_available()
                 support = self._support(root)
                 support_all.update(support)
                 view.update(node=root, replay=result.status, certified=result.status == "Checked",

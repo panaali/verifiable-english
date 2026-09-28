@@ -371,6 +371,14 @@ class ArgumentResult:
         return "Lean-checked: " + ("yes" if self.lean_checked else
                                    "unavailable" if self.lean_outcome == "unavailable" else "no")
 
+    def require_available(self):
+        """Re-raise a `CheckerUnavailable` status so a caller cannot read it as a finding."""
+        if self.status == "CheckerUnavailable":
+            error = self.errors[0] if self.errors else {}
+            raise CheckerUnavailable(error.get("message", "a verdict the argument needs is unavailable"),
+                                     operation=error.get("operation", ""), backend=error.get("backend", ""))
+        return self
+
     def to_dict(self):
         data = {"version": ARGUMENT_VERSION, "assurance": "experimental", "status": self.status,
                 "graph_id": self.graph_id, "environment_id": self.environment_id, "root": self.root,

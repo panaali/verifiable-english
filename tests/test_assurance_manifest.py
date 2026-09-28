@@ -440,6 +440,89 @@ def test_cli_reports_checker_unavailable_with_its_own_exit_code(tmp_path, capsys
     assert record["status"] == "CheckerUnavailable" and record["error"]["code"] == "CheckerUnavailable"
 
 
+def _assist_session(tmp_path, capsys):
+    from ve.assist.cli import main as assist_main
+    from tests.test_assist import ENV, TEXT
+    (tmp_path / "env.json").write_text(json.dumps(ENV))
+    (tmp_path / "arg.txt").write_text(TEXT)
+    session = tmp_path / "s.json"
+    assert assist_main(["new", str(session), "--env", str(tmp_path / "env.json"), "--text",
+                        str(tmp_path / "arg.txt"), "--target", "p2.1"]) == 0
+    capsys.readouterr()
+    return assist_main, str(session)
+
+
+def test_assist_cli_exits_5_when_a_result_reports_checker_unavailable(tmp_path, capsys):
+    """Session actions return CheckerUnavailable as a result; the exit code must still be 5."""
+    assist_main, session = _assist_session(tmp_path, capsys)
+    arguments = json.dumps({"target": "t_p2_1", "text": "@api is safe."})
+    with assurance.simulate_migration("parse"):
+        assert assist_main(["freeze", session, "t_p2_1", "@api is safe."]) == 5
+        assert "CheckerUnavailable" in capsys.readouterr().out
+        assert assist_main(["call", session, "freeze_target", arguments]) == 5
+        assert json.loads(capsys.readouterr().out)["error"]["code"] == "CheckerUnavailable"
+    # Rejections keep exit 2 and success exit 0.
+    assert assist_main(["freeze", session, "t_p2_1", "@api is not a sentence"]) == 2
+    assert assist_main(["call", session, "freeze_target", arguments]) == 0
+
+
+def test_assist_exit_code_reads_the_error_code():
+    from ve.assist.cli import exit_code
+    assert exit_code({"ok": True}) == exit_code({"tools": []}) == 0
+    assert exit_code({"ok": False, "error": {"code": "CheckerUnavailable", "message": "m"}}) == 5
+    assert exit_code({"ok": False, "error": {"code": "InvalidInput", "message": "m"}}) == 2
+    assert exit_code({"ok": False, "error": {"code": "BackendError", "message": "m"}}) == 2
+
+
+def test_assist_status_reports_unavailability_not_a_failed_replay():
+    from tests.test_assist import build_success, new_session
+    session = new_session()
+    build_success(session)
+    assert session.apply("status", {})["ok"]
+    with assurance.simulate_migration(*LEAVES):
+        result = session.apply("status", {})
+    assert not result["ok"] and result["error"]["code"] == "CheckerUnavailable", result
+
+
+def test_english_marked_conclusion_unavailability_is_not_a_syntax_error():
+    from ve.english import parse_english_argument
+    from ve.environment import Environment
+    example = ROOT / "examples/assist"
+    env = Environment.from_json((example / "environment.json").read_bytes())
+    options = {"vocabulary": json.loads((example / "environment.english.json").read_text())}
+    text = "Every reviewed service is safe. The API is reviewed. Therefore the API is safe."
+    assert parse_english_argument(env, text, **options).deductions
+    with assurance.simulate_migration("certificate.check"):
+        with pytest.raises(CheckerUnavailable):
+            parse_english_argument(env, text, **options)
+
+
+def test_english_graph_replay_unavailability_is_not_a_syntax_error(monkeypatch):
+    """The claim-graph replay's CheckerUnavailable status is re-raised, not read as a failed replay."""
+    from ve import argument
+    from ve.english import parse_english_argument
+    from ve.environment import Environment
+    example = ROOT / "examples/assist"
+    env = Environment.from_json((example / "environment.json").read_bytes())
+    options = {"vocabulary": json.loads((example / "environment.english.json").read_text())}
+    unavailable = argument.ArgumentResult("CheckerUnavailable", errors=(
+        CheckerUnavailable("no Lean", operation="certificate.check", backend="lean").to_dict(),))
+    monkeypatch.setattr(argument, "check_argument", lambda *args, **kwargs: unavailable)
+    with pytest.raises(CheckerUnavailable, match="no Lean"):
+        parse_english_argument(env, "Every reviewed service is safe. The API is reviewed. "
+                                    "Therefore the API is safe.", **options)
+
+
+def test_argument_require_available():
+    from ve.argument import ArgumentResult
+    with pytest.raises(CheckerUnavailable, match="gone") as caught:
+        ArgumentResult("CheckerUnavailable", errors=({"code": "CheckerUnavailable", "message": "gone",
+                                                      "operation": "certificate.check"},)).require_available()
+    assert caught.value.operation == "certificate.check"
+    checked = ArgumentResult("Incomplete")
+    assert checked.require_available() is checked
+
+
 # --- documentation ------------------------------------------------------------
 
 def test_spec_table_is_generated_from_the_manifest():
