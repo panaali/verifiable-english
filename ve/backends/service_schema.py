@@ -547,6 +547,12 @@ def _verify_order(nodes: object, order: object) -> bool:
 _compiler = Compiler()
 ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
 RESPONSE = _compiler.ref("envelope.json", "#/response")
+HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
+
+
+def check_handshake(handshake: object) -> None:
+    """Raise `Invalid` unless `handshake` is a first line this client can use."""
+    HANDSHAKE[0](handshake, Context(None), {})
 
 
 def check_row(mode: str, row: object, case: object, index: int) -> None:

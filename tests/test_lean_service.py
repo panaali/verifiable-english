@@ -19,8 +19,8 @@ import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
-from ve.backends.lean_service import (CheckerUnavailable, LeanService, LeanServicePool, MODES,
-                                      executable_sha256)
+from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
+                                      LeanServicePool, MODES, executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
 from ve.errors import ResourceLimit, VEError
 
@@ -80,6 +80,12 @@ def test_response_schemas_follow_lean_sources():
     kind = common["kind"]["anyOf"][1]["x-tagged"]
     rendered = re.findall(r'Json.arr #\[\.str "(\w+)"', (ROOT / "lean" / admission).read_text())
     assert set(kind) == set(rendered)
+    handshake = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]
+    assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
+    limits = {k: v["minimum"] for k, v in handshake["limits"]["properties"].items()}
+    assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
+    assert re.search(r"def maxLineBytes : Nat := (\d+)", protocol)[1] == str(MAX_LINE_BYTES)
+    assert re.search(r"def maxCases : Nat := (\d+)", protocol)[1] == str(MAX_CASES)
     runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
