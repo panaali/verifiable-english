@@ -34,6 +34,7 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.EvaluationCounts
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -822,6 +823,12 @@ import VE.Norms.Run
 #print axioms VE.Definitions.Bundle.bundle_sound
 #print axioms VE.Definitions.Bundle.checkAll_sound
 #print axioms VE.Definitions.Bundle.checkAll_length
+#print axioms VE.EvaluationCounts.mapM_length
+#print axioms VE.EvaluationCounts.legacy_decodeDocument_length
+#print axioms VE.EvaluationCounts.closure_decodeFormulas_length
+#print axioms VE.EvaluationCounts.core_decodeFormulas_length
+#print axioms VE.EvaluationCounts.order_decodeFormulas_length
+#print axioms VE.EvaluationCounts.route_decodeFormulas_length
 #print axioms VE.Definitions.Bundle.checkAll_reading
 #print axioms VE.Definitions.Bundle.checkAll_binding
 #print axioms VE.Definitions.Bundle.checkLemma_sound

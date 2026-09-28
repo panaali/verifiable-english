@@ -405,7 +405,13 @@ def test_every_lean_binding_has_a_probe():
             response, counts = binding["response"], binding.get("counts", {})
             assert type(response) is dict and response, (op["id"], binding)
             assert all(type(f) is str and lean_backend.valid_type(t) for f, t in response.items()), response
-            assert set(binding) <= {"executable", "mode", "kinds", "response", "counts", "dispatch", "note"}
+            assert set(binding) <= {"executable", "mode", "kinds", "response", "counts", "uncounted", "dispatch", "note"}
+            # Every size-carrying field (array or nat) is counted, or says why its size is Lean's to choose
+            # (review reproducer: evaluation `values: []` for a one-formula case was `ok`).
+            uncounted = binding.get("uncounted", {})
+            sized = {name for name, spec in response.items() if spec.startswith("array<") or spec == "nat"}
+            assert set(counts) | set(uncounted) == sized and not set(counts) & set(uncounted), (op["id"], binding)
+            assert all(type(reason) is str and reason for reason in uncounted.values()), (op["id"], binding)
             for name, reference in counts.items():
                 # A counted field is a declared nat or array; it counts a case array or a declared array.
                 assert response.get(name, "").startswith("array<") or response.get(name) == "nat", name
@@ -444,6 +450,43 @@ def test_every_lean_binding_routes_its_operation(lean_bin):
     for (op_id, executable, mode, kind), case in probes().items():
         rows = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
         assert rows[0]["status"] == "ok", (op_id, executable, mode, kind, rows)
+
+
+def _declared_binding(op_id, executable, mode, kind):
+    op = next(op for op in OPS if op["id"] == op_id)
+    return next(b for b in op["lean"]["bindings"] if (b["executable"], b["mode"]) == (executable, mode)
+                and (kind in b["kinds"] if kind else not b["kinds"]))
+
+
+def _miscounted(row, binding):
+    """`row` with one counted field made one short or one long, for every counted field."""
+    for name in binding.get("counts", {}):
+        value = row[name]
+        if type(value) is int:
+            yield from ({**row, name: n} for n in (value - 1, value + 1) if n >= 0)
+        else:
+            extra = value[:1] or [_conforming(binding["response"][name][len("array<"):-1])]
+            yield from ({**row, name: v} for v in ([value[:-1]] if value else []) + [value + extra])
+
+
+def test_every_real_answer_is_counted_and_indexed(lean_bin, tmp_path):
+    """Review reproducers: the real evaluation answer with `values: []` for a one-formula case was `ok` in
+    every mode, and `case_index: false` on the real bundle answer was accepted. For every binding, its real
+    answer miscounted in any counted field, or naming its case with a non-integer index, is unavailable."""
+    from conformance.binding_probes import probes
+    for (op_id, executable, mode, kind), case in probes().items():
+        binding = _declared_binding(op_id, executable, mode, kind)
+        [row] = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
+        assert lean_backend.row_problem(case, {**row, "case_index": 0}, 0, binding["response"],
+                                        binding.get("counts")) is None
+        forged = [*_miscounted(row, binding), *({**row, "case_index": i} for i in (False, 0.0, "0"))]
+        assert len(forged) > 3 or not binding.get("counts"), (op_id, mode, kind)
+        for index, bad in enumerate(forged):
+            answer = tmp_path / f"forged_{index}.json"
+            answer.write_text(json.dumps([bad]))
+            fake = _fake_lean(tmp_path, f"print(open({str(answer)!r}).read())", f"forged_{index}")
+            with pytest.raises(CheckerUnavailable, match="count|case indices|JSON result"):
+                lean_backend.run(op_id, fake, [case], runner=executable, mode=mode, timeout=60)
 
 
 def test_no_other_mode_accepts_an_operations_probe(lean_bin):
