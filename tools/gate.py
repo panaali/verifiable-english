@@ -77,14 +77,16 @@ def check_toolchains(result: dict, env: dict[str, str]) -> None:
 
 
 def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
-    return any(fnmatch.fnmatchcase(nodeid, entry["nodeid"]) and
-               entry["reason"] in reason for entry in entries)
+    return any((fnmatch.fnmatchcase(nodeid, entry["nodeid"])
+                if "*" in entry["nodeid"] else nodeid == entry["nodeid"])
+               and entry["reason"] in reason for entry in entries)
 
 
 def interpret_pytest(result: dict, events: dict, policy: dict) -> None:
     tests = events["tests"]
-    selected = events["collected"]
-    result["counts"].update(collected=len(selected) + len(events["deselected"]),
+    deselected = set(events["deselected"])
+    selected = [node for node in events["collected"] if node not in deselected]
+    result["counts"].update(collected=len(set(selected) | deselected),
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
