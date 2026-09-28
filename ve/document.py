@@ -344,10 +344,54 @@ def coverage(doc):
                 "assumptions": sum(u["support"] == "assumption" for u in units),
                 "bridge_leaves": bridge_count,
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    alternatives = None
+    if doc["environment"].alternatives is not None:
+        from .wire import loads_json
+        block = loads_json(doc["environment"].alternatives)
+        declared, cells, proximate = [], [], []
+        for unit in units:
+            content = unit["content"]
+            ast = content.get("ast") if type(content) is dict else None
+            if type(ast) is not list:
+                continue
+            negative = len(ast) == 2 and ast[0] == "not"
+            atom = ast[1] if negative else ast
+            if type(atom) is not list or len(atom) != 4 or atom[0] != "binary":
+                continue
+            if any(type(term) is not list or len(term) != 2 or term[0] != "const"
+                   for term in atom[2:]):
+                continue
+            first, second = atom[2][1], atom[3][1]
+            leaf = {"unit": unit["id"], "support": unit["support"]}
+            if atom[1] == block["available"] and not negative:
+                declared.append({"action": first, "chooser": second, **leaf})
+            elif atom[1] == block["leads_to"]:
+                cells.append({"action": first, "harm": second, "leads_to": not negative,
+                              "decider": block.get("decided_by", "unstated"), **leaf})
+            elif atom[1] == block.get("proximate"):
+                proximate.append({"action": first, "harm": second,
+                                  "decider": block.get("decided_by", "unstated"), **leaf})
+        mapped = {item["obligation"] for item in block.get("fulfilments", [])}
+        performed = block.get("performed", {}).get("obligation")
+        unmapped = [name for name, predicate in doc["environment"].predicates.items()
+                    if predicate.regulated is not None and predicate.regulated.role == "obligation"
+                    and name != performed and name not in mapped]
+        alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
+                        "assumed_harm_free": ({"decider": block["outcomes"]["complete_by"],
+                                               "premise": "alternatives:table_complete"}
+                                              if type(block["outcomes"]) is dict else None),
+                        "proximate_judgments": proximate, "unmapped_obligations": unmapped,
+                        "dilemmas": [], "narrowings": meta.get("narrowings", [])}
+        residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
+                         "assumed_harm_free": int(alternatives["assumed_harm_free"] is not None),
+                         "proximate_judgments": len(proximate),
+                         "unmapped_obligations": len(unmapped), "dilemmas": 0,
+                         "narrowings": len(alternatives["narrowings"])})
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
-            "residual": residual, "residual_total": sum(residual.values())}
+            "residual": residual, "residual_total": sum(residual.values()),
+            **({"alternatives": alternatives} if alternatives is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):

@@ -4,6 +4,7 @@ from copy import deepcopy
 import pytest
 
 from ve.alternatives import run_case
+from ve.document import coverage
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.english import parse_english_with_metadata
@@ -115,3 +116,27 @@ def test_fixed_role_wordings_have_one_paraphrase():
     del undeclared["alternatives"]["proximate"]
     with pytest.raises(VEError, match="AlternativesVerbalisation"):
         Environment(undeclared)
+
+
+def test_coverage_names_declared_alternatives_and_counterfactual_support():
+    raw = source()
+    raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
+    env = Environment(raw)
+    units = [
+        {"id": "choice", "span": [0, 1], "kind": "asserted", "status": "CHECKED",
+         "meaning": "specified", "support": "testimony",
+         "content": {"ast": ["binary", "available", ["const", "pull"], ["const", "R"]]}},
+        {"id": "cell", "span": [1, 2], "kind": "asserted", "status": "CHECKED",
+         "meaning": "specified", "support": "observation",
+         "content": {"ast": ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]]}},
+    ]
+    report = coverage({"environment": env, "units": units, "source": b"ab", "meta": {}})
+    detail = report["alternatives"]
+    assert detail["alternatives_declared"] == [
+        {"action": "pull", "chooser": "R", "unit": "choice", "support": "testimony"}]
+    assert detail["counterfactual_leaves"] == [
+        {"action": "pull", "harm": "h", "leads_to": False, "decider": "case annotator",
+         "unit": "cell", "support": "observation"}]
+    assert detail["assumed_harm_free"] == {"decider": "case annotator",
+                                             "premise": "alternatives:table_complete"}
+    assert report["residual"]["counterfactual_leaves"] == 1
