@@ -1,18 +1,24 @@
-"""The response schemas against the Lean service and the Lean decoders.
+"""Service responses: the client's schemas, the Lean decoders and the Lean invariants.
+
+Threat model (docs/spec/lean-service.md): the service is the semantic authority; the
+client checks binding (nonce, mode, each result's position and case digest, the identity
+fields the runners echo from the case) and well-formedness, and nothing else.
 
 * Every genuine response of the service over a corpus with every mode and result kind
-  (`tests/lean_service_corpus.py`) is accepted by the schemas and by
-  `ve_response_decode`, the Lean decoding of responses (`lean/ResponseDecode.lean`).
+  (`tests/lean_service_corpus.py`) is accepted by the schemas and by `ve_response_decode`
+  (`lean/ResponseDecode.lean`), and satisfies its Lean invariants: the content the runners
+  guarantee and the client does not check (regenerated counts, distinct layers and
+  conflict targets with their declared sorts, graph unfoldings, dependency orders, ...).
 * Differential fuzz: mutations of those genuine responses (dropped, altered, retyped,
-  enum-swapped, truncated and extra fields, at every depth) are accepted by the schemas
-  exactly when the Lean decoders accept them. Request-linked values are also mutated
-  together with their request, so each value domain is compared on its own.
-* The harness has teeth: each of a list of schema weakenings disagrees with Lean on
-  some mutation.
-* Each finding of the mig1 rechecks is a scripted replacement of a genuine response
-  that must fail closed, after one retry, as `CheckerUnavailable`.
-* Every result is bound to its case (position and case digest); mutations of the
-  bindings are part of the fuzz.
+  enum-swapped, truncated and extra fields, at every depth, bindings included) are
+  accepted by the schemas exactly when the Lean decoders accept them. Request-linked
+  values are also mutated together with their request, so each value domain is compared
+  on its own. Each of a list of schema weakenings disagrees with Lean on some mutation.
+* Findings: each shape or binding finding of the mig1 rechecks is a scripted replacement
+  of a genuine response that fails closed, after one retry, as `CheckerUnavailable`; each
+  content finding is a corruption that keeps every binding, which the client accepts and
+  a Lean invariant rejects. The service's norms content is also compared with Python's
+  independent regeneration (`ve/norms.py`).
 """
 from __future__ import annotations
 
@@ -87,11 +93,12 @@ def genuine(executables):
     return exchanges
 
 
-def lean_verdicts(decoder, items):
-    """ve_response_decode's verdict ("accept" or "reject: ...") for each (mode, request, response)."""
+def lean_verdicts(decoder, items, check="decode"):
+    """ve_response_decode's verdict ("accept" or "reject: ...") for each (mode, request,
+    response) under `check`: `decode` (the client's schemas) or `invariants`."""
     lines, sizes = [], []
     for mode, request, responses in items:
-        lines.append(json.dumps({"mode": mode, "request": request, "responses": responses}))
+        lines.append(json.dumps({"check": check, "mode": mode, "request": request, "responses": responses}))
         sizes.append(len(responses))
     proc = subprocess.run([str(decoder)], input="\n".join(lines) + "\n", capture_output=True,
                           text=True, timeout=HANG_TIMEOUT)
@@ -133,6 +140,12 @@ def test_genuine_responses_are_accepted_by_schema_and_lean(genuine, executables)
     assert statuses == {"ok", "error", "case"}
     verdicts = assert_agreement(executables[1], [(m, q, [r]) for m, q, r in genuine])
     assert set(verdicts) == {"accept"}
+
+
+def test_genuine_responses_satisfy_the_lean_invariants(genuine, executables):
+    """What the client leaves to the service holds on everything the service emits."""
+    verdicts = lean_verdicts(executables[1], [(m, q, [r]) for m, q, r in genuine], "invariants")
+    assert set(verdicts) == {"accept"}, [v for v in verdicts if v != "accept"][:5]
 
 
 # Mutations of genuine responses
@@ -291,8 +304,7 @@ def fuzz(genuine, executables):
         items.append((mode, request, mutations(response, rng, 14, 3)))
         items += [(mode, req, [res]) for req, res in joint_mutations(request, response, rng, 8)]
         items += [(mode, req, [res]) for req, res in request_mutations(request, response, rng, 6)]
-    items += (kind_items(genuine) + label_items(genuine) + depth_items(genuine) + report_items(genuine)
-              + graph_items(genuine) + count_items(genuine))
+    items += kind_items(genuine) + label_items(genuine) + depth_items(genuine)
     return items, lean_verdicts(executables[1], items)
 
 
@@ -303,15 +315,13 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
 
 
 @pytest.mark.parametrize("weaken", [
-    "digest", "index", "modality", "act", "relation", "token", "kind-fuel", "formula-fuel", "values-nonempty",
-    "values-count", "claim-member", "kinds-link", "lemmas-link", "checked-count", "order-link",
-    "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false", "background-runs",
-    "certificate-count", "norms-layers", "norms-order", "norms-targets", "norms-background",
-    "norms-certificate", "conflict-targets", "literal-pairs", "generated-cap"])
+    "digest", "index", "modality", "act", "relation", "token", "kind-fuel", "formula-fuel",
+    "values-count", "kinds-link", "lemmas-link", "checked-count", "label", "valid-false",
+    "error-id", "generated-cap"])
 def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
-    """The differential harness has teeth: each weakening of the schemas disagrees with
-    the Lean decoders on some mutation (and so does the decoders' depth cap put back on
-    generated formulas)."""
+    """The differential harness has teeth: each weakening of the schemas, bindings
+    included, disagrees with the Lean decoders on some mutation (and so does the decoders'
+    depth cap put back on generated formulas)."""
     for path in DIRECTORY.glob("*.json"):
         shutil.copy(path, tmp_path / path.name)
     def edit(name, change):
@@ -327,37 +337,13 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
      "token": lambda: edit(common, lambda d: d["token"].update(pattern=".*")),
      "kind-fuel": lambda: edit(common, lambda d: d["kind"]["x-fuel"].update(limit=256)),
      "formula-fuel": lambda: edit(common, lambda d: d["fol_formula"]["x-fuel"].update(limit=256)),
-     "values-nonempty": lambda: edit(common, lambda d: d["values"].pop("minItems")),
      "values-count": lambda: edit(common, lambda d: d["values"].pop("x-length")),
-     "claim-member": lambda: edit(common, lambda d: d["claim"].pop("x-member")),
      "kinds-link": lambda: edit(common, lambda d: d["admission"]["properties"]["kinds"].pop("x-equals")),
      "lemmas-link": lambda: edit("route.json", lambda d: d["bundle"]["properties"]["lemmas"].pop("x-equals")),
      "checked-count": lambda: edit("route.json", lambda d: d["bundle"]["properties"]["checked"].pop("x-count")),
-     "order-link": lambda: edit("route.json",
-                                lambda d: d["dependency-order"]["properties"]["order"].pop("x-dependency-order")),
-     "surface-nonempty": lambda: edit("order.json", lambda d: d["surface"]["properties"]["ast"].pop("minItems")),
      "label": lambda: edit(common, lambda d: d["label"].update(pattern=".*")),
-     "english-checked": lambda: edit("english.json", lambda d: d["item"]["allOf"].pop()),
-     "assumptions-unfold": lambda: edit(common, lambda d: d["admission"]["properties"]["report"]["properties"][
-         "assumptions"].pop("x-unfolds")),
      "valid-false": lambda: edit(common, lambda d: d["error_valid"]["properties"].update(valid={"type": "boolean"})),
-     "background-runs": lambda: edit("route.json", lambda d: d["background"]["properties"]["generators"].pop("x-runs")),
-     "certificate-count": lambda: edit("route.json",
-                                       lambda d: d["certificate"]["properties"]["background"].pop("x-cardinality")),
-     "norms-layers": lambda: edit("norms.json",
-                                  lambda d: d["norms-elaborate"]["properties"]["premises"].pop("x-cardinality")),
-     "norms-order": lambda: edit("norms.json",
-                                 lambda d: d["norms-elaborate"]["properties"]["order"].pop("x-cardinality")),
-     "norms-targets": lambda: edit("norms.json", lambda d: d["norms-elaborate"]["properties"][
-         "conflict_targets"].pop("x-cardinality")),
-     "norms-background": lambda: edit("norms.json",
-                                      lambda d: d["norms-elaborate"]["properties"]["background"].pop("x-runs")),
-     "norms-certificate": lambda: edit("norms.json", lambda d: d["norms-certificate"]["properties"][
-         "layers"].pop("x-cardinality")),
-     "conflict-targets": lambda: edit("norms.json",
-                                      lambda d: d["norms-conflict"]["properties"]["targets"].pop("x-cardinality")),
-     "literal-pairs": lambda: _edit_counts(
-         tmp_path, lambda c: c["literals"].update(pairs={"sum": [c["literals"]["pairs"], 1]})),
+     "error-id": lambda: edit(common, lambda d: d["error"]["properties"]["id"].pop("x-echo")),
      "generated-cap": lambda: edit(common, lambda d: d["generated_formula"].update(
          {"x-fuel": {"counter": "generated_formula", "limit": 64}})),
      }[weaken]()
@@ -373,12 +359,6 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
             return False
     ours = [accepts(mode, request, r) for mode, request, responses in items for r in responses]
     assert any(a != (b == "accept") for a, b in zip(ours, lean))
-
-
-def _edit_counts(directory, change):
-    document = json.loads((directory / "common.json").read_text())
-    change(document["counts"])
-    (directory / "common.json").write_text(json.dumps(document))
 
 
 def _linked(genuine, mode, kind):
@@ -419,139 +399,6 @@ def kind_items(genuine):
                 req, res = rebind(req, res)
                 items.append((mode, req, [res]))
     return items
-
-
-def report_items(genuine):
-    """Reports: assumptions are exactly the ordered unfolding of the request graph from its
-    root; the root is the graph's root."""
-    items = []
-    for mode in ("route", "norms"):
-        for request, response, i in _linked(genuine, mode, "admission"):
-            report = result(response, i)["report"]
-            root, assumptions = report["root"], report["assumptions"]
-            for changed in ({"assumptions": assumptions + [root]}, {"assumptions": assumptions * 2},
-                            {"assumptions": assumptions[::-1]}, {"assumptions": []},
-                            {"assumptions": assumptions[1:]}, {"assumptions": assumptions[:-1]},
-                            {"assumptions": assumptions[1:2] + assumptions[:1] + assumptions[2:]},
-                            {"assumptions": assumptions[-1:] + assumptions[1:]},
-                            {"root": assumptions[0]} if assumptions else {}):
-                res = deepcopy(response)
-                result(res, i)["report"].update(changed)
-                items.append((mode, request, [res]))
-    return items
-
-
-def graph_items(genuine):
-    """The unfolding's conditions on the request graph (`VE.Graph.check`): the genuine
-    report against graphs with a later or dangling premise, a duplicate name, a deduction
-    without its certificate, a leaf with one, another root, and an extra premise."""
-    items = []
-    for mode in ("route", "norms"):
-        for request, response, i in _linked(genuine, mode, "admission"):
-            graph = request["cases"][i]["document"]["graph"]
-            nodes = graph["nodes"]
-            deductions = [k for k, n in enumerate(nodes) if "premises" in n]
-            changes = [{"nodes": nodes[::-1]}, {"nodes": nodes + nodes[:1]}, {"root": "missing"},
-                       {"root": nodes[0]["name"]}, {"nodes": [{**nodes[0], "certificate": {}}] + nodes[1:]}]
-            for k in deductions[:1]:
-                edited = deepcopy(nodes)
-                del edited[k]["certificate"]
-                changes.append({"nodes": edited})
-                for premise in ("missing", nodes[k]["name"], nodes[-1]["name"], nodes[0]["name"]):
-                    edited = deepcopy(nodes)
-                    edited[k]["premises"] = edited[k]["premises"] + [premise]
-                    changes.append({"nodes": edited})
-            for change in changes:
-                req = deepcopy(request)
-                req["cases"][i]["document"]["graph"].update(change)
-                req, res = rebind(req, response)
-                items.append((mode, req, [res]))
-    return items
-
-
-def test_graph_unfolding_agrees_with_the_lean_graph_conditions(genuine, executables):
-    verdicts = assert_agreement(executables[1], graph_items(genuine) + report_items(genuine))
-    assert "accept" in verdicts and any(v != "accept" for v in verdicts)
-
-
-REGENERATED = {  # (mode, kind): the result fields regenerated from the environment
-    ("route", "background"): ("background", "premises", "generators"),
-    ("route", "certificate"): ("background",),
-    ("norms", "background"): ("background", "premises", "generators"),
-    ("norms", "certificate"): ("background",),
-    ("norms", "norms-elaborate"): ("order", "background", "premises", "conflict_targets"),
-    ("norms", "norms-certificate"): ("background", "layers"),
-    ("norms", "norms-conflict"): ("targets",),
-}
-
-
-def _count_mutants(row, fields):
-    """Each regenerated list emptied, shortened, extended or reordered, and each count moved."""
-    for field in fields:
-        value = row[field]
-        if isinstance(value, list):
-            changes = [[], value[:-1], value[1:], value + value[-1:], value[::-1], value[-1:] + value[:-1]]
-            if field in ("background", "premises", "generators") and "generators" in row:
-                # the route Background: all three arrays together
-                yield {**row, **{f: [] for f in ("background", "premises", "generators")}}
-                for keep in (slice(None, -1), slice(1, None)):
-                    yield {**row, **{f: row[f][keep] for f in ("background", "premises", "generators")}}
-            for changed in changes:
-                if changed != value:
-                    yield {**row, field: changed}
-        else:
-            for changed in (value - 1, value + 1):
-                if changed >= 0:
-                    yield {**row, field: changed}
-    if "generators" in row:
-        for other in ("flags", "definitions", "literals"):
-            if row["generators"] and other != row["generators"][0]:
-                yield {**row, "generators": [other] + row["generators"][1:]}
-
-
-def _environment_mutants(case):
-    """The environment with one more or one fewer regenerated declaration."""
-    vocabulary = case["environment"]["vocabulary"]
-    predicates, constants = vocabulary["predicates"], vocabulary["constants"]
-    yield {"constants": {**constants, "zeta": {"sort": "$string"}}}
-    yield {"constants": {**constants, "zeta": {"sort": "$string"}, "eta": {"sort": "$string"}}}
-    yield {"constants": {k: v for k, v in constants.items() if v.get("sort") != "$string"}}
-    for name, entry in predicates.items():
-        for key in ("defined", "regulated", "functional", "total"):
-            if key in entry:
-                yield {"predicates": {**predicates, name: {k: v for k, v in entry.items() if k != key}}}
-        if isinstance(entry.get("regulated"), dict):
-            regulated = entry["regulated"]
-            yield {"predicates": {**predicates, name: {**entry, "regulated": {
-                **regulated, "role": "plain" if regulated.get("role") == "obligation" else "obligation"}}}}
-            yield {"predicates": {**predicates, name: {**entry, "regulated": {**regulated, "permission": None}}}}
-        if len(entry.get("arguments", ())) == 2:
-            yield {"predicates": {**predicates, name: {**entry, "functional": True, "total": True}}}
-    yield {"predicates": [], "constants": []}
-
-
-def count_items(genuine):
-    """Regenerated lists and counts: altered results against their request, and the
-    genuine result against environments with more or fewer regenerated declarations."""
-    items = []
-    for (mode, kind), fields in REGENERATED.items():
-        for request, response, i in _linked(genuine, mode, kind)[:6]:
-            row, case = result(response, i), request["cases"][i]
-            for changed in _count_mutants(row, fields):
-                res = deepcopy(response)
-                res["results"][i]["result"] = changed
-                items.append((mode, request, [res]))
-            for change in _environment_mutants(case):
-                req = deepcopy(request)
-                req["cases"][i]["environment"]["vocabulary"].update(change)
-                req, res = rebind(req, response)
-                items.append((mode, req, [res]))
-    return items
-
-
-def test_regenerated_counts_agree_with_lean(genuine, executables):
-    verdicts = assert_agreement(executables[1], count_items(genuine))
-    assert "accept" in verdicts and any(v != "accept" for v in verdicts)
 
 
 def test_kind_domain_agrees_with_decode_kind(genuine, executables):
@@ -657,12 +504,12 @@ def test_formula_depth_and_numerals_agree_with_lean_decoders(genuine, executable
     assert "accept" in verdicts and any(v != "accept" for v in verdicts)
 
 
-# Regression tests for the mig1 recheck findings: scripted replacements of genuine
+# Shape and binding findings of the mig1 rechecks: scripted replacements of genuine
 # responses fail closed after exactly one retry.
 
 def _scripted_rejected(tmp_path, mode, case, good, bad):
     """The scripted service answers `good` (accepted, no retry), then `bad`, which must
-    fail closed after exactly one retry."""
+    fail closed after exactly one retry. The stand-in binds each row to its case."""
     def answer(row):
         return {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row],
                 "counts": {"cases": 1, "bytes": "__bytes__", "errors": int(row.get("status") == "error")}}
@@ -702,14 +549,14 @@ def test_admission_kinds_outside_lean_decoder_fail_closed(tmp_path, genuine, mod
 @pytest.mark.parametrize("field,truncated", [
     ("bundle", {"checked": 0, "lemmas": []}),
     ("bundle-short", None),
-    ("dependency-order", {"order": []}),
-    ("dependency-order-short", None),
     ("admission", {"kinds": []}),
     ("admission-short", None),
 ])
 def test_truncated_request_linked_results_fail_closed(tmp_path, genuine, mode, field, truncated):
+    """Results the runners echo from the request (a bundle's lemma ids, an admission's unit
+    kinds) are bindings: truncating them fails closed."""
     kind = field.removesuffix("-short")
-    size = {"bundle": ("lemmas", 3), "dependency-order": ("order", 3), "admission": ("kinds", 4)}[kind]
+    size = {"bundle": ("lemmas", 3), "admission": ("kinds", 4)}[kind]
     case, row = _genuine_row(genuine, mode, kind, lambda c, r: len(r[size[0]]) >= size[1])
     bad = deepcopy(row)
     if truncated is None:
@@ -722,94 +569,223 @@ def test_truncated_request_linked_results_fail_closed(tmp_path, genuine, mode, f
 
 
 @pytest.mark.parametrize("mode", ["route", "norms"])
-@pytest.mark.parametrize("name,change", [
-    ("bridge-background", "empty"), ("shared-leaves", "empty"), ("shared-leaves", "drop-last"),
-    ("shared-leaves", "drop-first"), ("shared-leaves", "duplicate"), ("shared-leaves", "reorder"),
-    ("shared-leaves", "substitute"), ("shared-leaves", "deduction")])
-def test_admission_assumptions_are_the_graph_unfolding(tmp_path, genuine, mode, name, change):
-    """mig1c-looprecheck1 A: a report whose assumptions were replaced by [] kept
-    `admitted: true` and was accepted. The assumptions are exactly the root's ordered
-    unfolding, so every loss, repetition, reordering or substitution of a leaf fails closed
-    (each substitute is still a node, and a leaf, of the request)."""
-    case, row = _genuine_row(genuine, mode, "admission", lambda c, r: c["id"] == name)
-    assumptions = row["report"]["assumptions"]
-    nodes = {n["name"]: {k: n[k] for k in ("name", "ast", "label") if k in n}
-             for n in case["document"]["graph"]["nodes"]}
-    assert assumptions and all(a in nodes.values() for a in assumptions)
-    changed = {"empty": lambda: [], "drop-last": lambda: assumptions[:-1],
-               "drop-first": lambda: assumptions[1:], "duplicate": lambda: assumptions + assumptions[:1],
-               "reorder": lambda: assumptions[1:2] + assumptions[:1] + assumptions[2:],
-               "substitute": lambda: [nodes["b"]] + assumptions[1:],
-               "deduction": lambda: [nodes["mid"]] + assumptions[3:]}[change]()
-    assert changed != assumptions
-    bad = deepcopy(row)
-    bad["report"]["assumptions"] = changed
-    _scripted_rejected(tmp_path, mode, case, row, bad)
-
-
-@pytest.mark.parametrize("mode", ["route", "norms"])
-@pytest.mark.parametrize("change", ["empty", "drop-definition", "drop-literal", "relabel"])
-def test_regenerated_background_keeps_every_premise(tmp_path, genuine, mode, change):
-    """mig1c-looprecheck1 B: the five-premise defs-background response with all three
-    arrays emptied was accepted. Each generator's premise count is fixed by the request."""
-    case, row = _genuine_row(genuine, mode, "background", lambda c, r: c["id"] == "defs-background")
-    assert row["generators"] == ["definitions"] * 4 + ["literals"]
-    keep = {"empty": slice(0, 0), "drop-definition": slice(1, None), "drop-literal": slice(None, -1),
-            "relabel": slice(None)}[change]
-    bad = {**row, **{f: row[f][keep] for f in ("background", "premises", "generators")}}
-    if change == "relabel":
-        bad["generators"] = ["definitions"] * 5
-    _scripted_rejected(tmp_path, mode, case, row, bad)
-
-
-@pytest.mark.parametrize("name", ["e2", "e-literals"])
-@pytest.mark.parametrize("fields", [("order",), ("premises",), ("conflict_targets",), ("background",),
-                                    ("order", "premises", "conflict_targets"),
-                                    ("order", "background", "premises", "conflict_targets")])
-@pytest.mark.parametrize("truncate", ["empty", "drop-last"])
-def test_regenerated_norms_elaboration_keeps_every_layer(tmp_path, genuine, name, fields, truncate):
-    """mig1c-looprecheck1 B: emptied order, premises and conflict targets of a nonempty
-    elaboration were accepted. Their lengths are fixed by the regulated predicates and
-    profile pairs, and Background by its generators."""
-    case, row = _genuine_row(genuine, "norms", "norms-elaborate", lambda c, r: c["id"] == name)
-    assert all(row[f] for f in fields)
-    bad = {**row, **{f: [] if truncate == "empty" else row[f][:-1] for f in fields}}
-    _scripted_rejected(tmp_path, "norms", case, row, bad)
-
-
-@pytest.mark.parametrize("mode,kind,field,name", [
-    ("route", "certificate", "background", "data-definition-certificate"),
-    ("norms", "certificate", "background", "defs-certificate-uses-definitions"),
-    ("norms", "norms-certificate", "layers", "certificate"),
-    ("norms", "norms-certificate", "background", "certificate"),
-    ("norms", "norms-conflict", "targets", "c2"),
-    ("norms", "norms-conflict", "targets", "w0"),
-])
-def test_regenerated_counts_fail_closed(tmp_path, genuine, mode, kind, field, name):
-    """The same class for counts and target lists: each is the request's count."""
-    case, row = _genuine_row(genuine, mode, kind, lambda c, r: c["id"] == name)
-    value = row[field]
-    for bad in ([], value[:-1]) if isinstance(value, list) else (value + 1, max(value - 1, 0) if value else 1):
-        if bad != value:
-            _scripted_rejected(tmp_path, mode, case, row, {**row, field: bad})
-
-
-@pytest.mark.parametrize("mode", ["route", "norms"])
-def test_empty_evaluation_of_empty_document_fails_closed(tmp_path, genuine, mode):
+def test_evaluation_of_fewer_formulas_fails_closed(tmp_path, genuine, mode):
+    """One value per requested formula is a binding."""
     case, row = _genuine_row(genuine, "route", "evaluate", lambda c, r: bool(c.get("ast")))
     case["ast"] = case["ast"][:1]
     good = {**row, "values": row["values"][:1]}
     _scripted_rejected(tmp_path, mode, case, good, {**good, "values": []})
-    case["ast"] = []
-    error = {"id": case["id"], "status": "error", "error": "empty document"}
-    _scripted_rejected(tmp_path, mode, case, error, {**good, "values": []})
 
 
-def test_empty_order_surface_parse_fails_closed(tmp_path, genuine):
-    case, row = _genuine_row(genuine, "order", "surface")
-    case["source"] = "0 < 1.\n"
-    good = {**row, "ast": [["lt", ["num", "0"], ["num", "1"]]]}
-    _scripted_rejected(tmp_path, "order", case, good, {**good, "ast": []})
+# Content findings: corruptions that keep every binding. Directive 3: the client accepts
+# them (it does not re-derive semantics); a Lean invariant rejects each, and every genuine
+# response satisfies the invariants (test_genuine_responses_satisfy_the_lean_invariants).
+
+def _dup_first(values):
+    """The list with its first element in every position: the length is kept, every other
+    element is lost."""
+    return [values[0]] * len(values)
+
+
+def _swap(values):
+    return values[1:2] + values[:1] + values[2:]
+
+
+def _set_sorts(sorts, which=None):
+    def change(row, case):
+        targets = deepcopy(row["conflict_targets"])
+        for k, target in enumerate(targets):
+            if which is None or k == which:
+                target["sorts"] = sorts
+        return {**row, "conflict_targets": targets}, case
+    return change
+
+
+def _row_change(change):
+    return lambda row, case: (change(row), case)
+
+
+def _assumptions(change):
+    def edit(row, case):
+        nodes = {n["name"]: {k: n[k] for k in ("name", "ast", "label") if k in n}
+                 for n in case["document"]["graph"]["nodes"]}
+        bad = deepcopy(row)
+        bad["report"]["assumptions"] = change(row["report"]["assumptions"], nodes)
+        return bad, case
+    return edit
+
+
+def _empty_document(row, case):
+    return {**row, "values": []}, {**case, "ast": []}
+
+
+# name: (mode, request kind, case id or None, change(row, case) -> (row, case))
+CONTENT = {
+    # mig1c-looprecheck2 B: omitted targets disguised as duplicates.
+    "c2-targets-all-permitted": ("norms", "norms-conflict", "c2",
+                                 _row_change(lambda r: {**r, "targets": ["permitted"] * 3})),
+    "conflict-target-duplicated-in-place": ("norms", "norms-conflict", "c2",
+                                            _row_change(lambda r: {**r, "targets": r["targets"][:1] * 2 + r["targets"][2:]})),
+    "conflict-targets-reordered": ("norms", "norms-conflict", "c2",
+                                   _row_change(lambda r: {**r, "targets": _swap(r["targets"])})),
+    "witness-targets-substituted": ("norms", "norms-conflict", "w0",
+                                    _row_change(lambda r: {**r, "targets": [r["target"], r["target"]]})),
+    "elaboration-order-duplicated": ("norms", "norms-elaborate", "e2",
+                                     _row_change(lambda r: {**r, "order": _dup_first(r["order"])})),
+    "elaboration-premises-duplicated": ("norms", "norms-elaborate", "e2",
+                                        _row_change(lambda r: {**r, "premises": _dup_first(r["premises"])})),
+    "elaboration-targets-duplicated": ("norms", "norms-elaborate", "e2",
+                                       _row_change(lambda r: {**r, "conflict_targets": _dup_first(r["conflict_targets"])})),
+    "elaboration-targets-renamed": ("norms", "norms-elaborate", "e-literals", _row_change(lambda r: {
+        **r, "conflict_targets": [{**t, "target": r["conflict_targets"][0]["target"]} for t in r["conflict_targets"]]})),
+    # mig1c-looprecheck2 B: target sorts truncated.
+    "target-sorts-emptied": ("norms", "norms-elaborate", "e2", _set_sorts([])),
+    "first-target-sorts-emptied": ("norms", "norms-elaborate", "e2", _set_sorts([], 0)),
+    "pair-target-sorts-emptied": ("norms", "norms-elaborate", "e-literals", _set_sorts([], 2)),
+    "target-sorts-substituted": ("norms", "norms-elaborate", "e2", _set_sorts(["other"], 1)),
+    "target-sorts-extended": ("norms", "norms-elaborate", "e2", _set_sorts(["act", "act"], 0)),
+    # mig1c-looprecheck1 A: admission assumptions erased or altered (route and norms).
+    **{f"{mode}-assumptions-{name}": (mode, "admission", case_id, _assumptions(change))
+       for mode in ("route", "norms")
+       for name, case_id, change in [
+           ("emptied", "bridge-background", lambda a, n: []),
+           ("emptied-shared", "shared-leaves", lambda a, n: []),
+           ("drop-last", "shared-leaves", lambda a, n: a[:-1]),
+           ("drop-first", "shared-leaves", lambda a, n: a[1:]),
+           ("duplicate", "shared-leaves", lambda a, n: a + a[:1]),
+           ("reorder", "shared-leaves", lambda a, n: _swap(a)),
+           ("substitute", "shared-leaves", lambda a, n: [n["b"]] + a[1:]),
+           ("deduction", "shared-leaves", lambda a, n: [n["mid"]] + a[3:])]},
+    # mig1c-looprecheck1 B: regenerated lists truncated.
+    **{f"{mode}-background-{name}": (mode, "background", "defs-background", _row_change(change))
+       for mode in ("route", "norms")
+       for name, change in [
+           ("emptied", lambda r: {**r, "background": [], "premises": [], "generators": []}),
+           ("drop-definition", lambda r: {k: v[1:] if isinstance(v, list) else v for k, v in r.items()}),
+           ("drop-literal", lambda r: {k: v[:-1] if isinstance(v, list) else v for k, v in r.items()}),
+           ("relabel", lambda r: {**r, "generators": ["definitions"] * len(r["generators"])}),
+           ("premises-differ", lambda r: {**r, "premises": r["premises"][::-1]})]},
+    **{f"elaboration-{case_id}-{'-'.join(fields)}-{how}": (
+        "norms", "norms-elaborate", case_id,
+        _row_change(lambda r, fields=fields, how=how: {**r, **{f: [] if how == "emptied" else r[f][:-1]
+                                                              for f in fields}}))
+       for case_id in ("e2", "e-literals")
+       for fields in [("order",), ("premises",), ("conflict_targets",), ("background",),
+                      ("order", "premises", "conflict_targets")]
+       for how in ("emptied", "drop-last")},
+    **{f"{mode}-{kind}-{field}-{name}": (mode, kind, case_id, _row_change(change))
+       for mode, kind, field, case_id in [
+           ("route", "certificate", "background", "data-definition-certificate"),
+           ("norms", "certificate", "background", "defs-certificate-uses-definitions"),
+           ("norms", "norms-certificate", "layers", "certificate"),
+           ("norms", "norms-certificate", "background", "certificate")]
+       for name, change in [("plus-one", lambda r, f=field: {**r, f: r[f] + 1}),
+                            ("minus-one", lambda r, f=field: {**r, f: max(r[f] - 1, 0) if r[f] else 1})]},
+    "c2-targets-emptied": ("norms", "norms-conflict", "c2", _row_change(lambda r: {**r, "targets": []})),
+    "c2-targets-drop-last": ("norms", "norms-conflict", "c2", _row_change(lambda r: {**r, "targets": r["targets"][:-1]})),
+    # Earlier rechecks: dependency orders, empty documents and parses, verdict details.
+    **{f"{mode}-dependency-order-{name}": (mode, "dependency-order", None, _row_change(change))
+       for mode in ("route", "norms")
+       for name, change in [("emptied", lambda r: {**r, "order": []}),
+                            ("drop-last", lambda r: {**r, "order": r["order"][:-1]}),
+                            ("duplicated", lambda r: {**r, "order": _dup_first(r["order"])})]},
+    **{f"{mode}-empty-document-values": (mode, "evaluate", None, _empty_document) for mode in ("route", "norms")},
+    "empty-surface-parse": ("order", "surface", None, _row_change(lambda r: {**r, "ast": []})),
+    "evaluate-conjunction-flipped": ("evaluate", None, None, _row_change(lambda r: {**r, "value": not r["value"]})),
+    "conflict-free-with-detail": ("norms", "norms-conflict", "c2", _row_change(lambda r: {**r, "detail": "stale"})),
+    "english-checked-without-rendering": ("english", None, None, _row_change(lambda r: {
+        **r, "results": [{**r["results"][0], "checked": True, "rendered": None}] + r["results"][1:]})),
+    "route-generator-not-the-messages": ("route", "evaluate", "invalid-model", _row_change(lambda r: {
+        **r, "generator": "other"})),
+}
+
+
+def _content_item(genuine, name):
+    mode, kind, case_id, change = CONTENT[name]
+    for m, request, response in genuine:
+        if m != mode:
+            continue
+        for i, case in enumerate(request["cases"]):
+            row = result(response, i)
+            if not isinstance(case, dict) or (kind is not None and case.get("kind", "evaluate") != kind):
+                continue
+            if case_id is not None and case.get("id") != case_id:
+                continue
+            if case_id is None and (row.get("status", "ok") != "ok" or "case_index" in row
+                                    or (mode == "evaluate" and "kind" in case)
+                                    or (kind == "dependency-order" and len(row["order"]) < 2)
+                                    or (mode == "english" and not row.get("results"))
+                                    or (kind == "evaluate" and not row.get("values"))):
+                continue
+            bad_row, bad_case = change(deepcopy(row), deepcopy(case))
+            assert bad_row != row, name
+            req, res = deepcopy(request), deepcopy(response)
+            req["cases"][i], res["results"][i]["result"] = bad_case, bad_row
+            req, res = rebind(req, res)
+            return mode, req, res
+    raise AssertionError(f"no genuine result for {name}")
+
+
+@pytest.fixture(scope="module")
+def content(genuine, executables):
+    """{name: (mode, request, response, decode verdict, invariants verdict)}."""
+    items = {name: _content_item(genuine, name) for name in CONTENT}
+    batch = [(mode, request, [response]) for mode, request, response in items.values()]
+    decoded = lean_verdicts(executables[1], batch)
+    checked = lean_verdicts(executables[1], batch, "invariants")
+    return {name: (*item, d, c) for (name, item), d, c in zip(items.items(), decoded, checked)}
+
+
+@pytest.mark.parametrize("name", list(CONTENT))
+def test_binding_preserving_content_is_left_to_the_service(content, name):
+    """The client (its schemas, and the Lean decoding of them) accepts the corruption, and
+    a Lean invariant, which every genuine response satisfies, rejects it."""
+    mode, request, response, decoded, checked = content[name]
+    assert schema_verdict(mode, request, response) == "accept"
+    assert decoded == "accept"
+    assert checked.startswith("reject"), checked
+
+
+@pytest.mark.parametrize("name", ["c2-targets-all-permitted", "target-sorts-emptied"])
+def test_client_accepts_the_recheck2_reproducers_with_no_retry(tmp_path, genuine, name):
+    """mig1c-looprecheck2: the two content reproducers keep every binding. The client
+    accepts them with no retry, as documented; the service never emits them (the Lean
+    invariants above, and parity with Python's regeneration below)."""
+    mode, kind, case_id, change = CONTENT[name]
+    case, row = _genuine_row(genuine, mode, kind, lambda c, r: c["id"] == case_id)
+    bad, _ = change(deepcopy(row), case)
+    (tmp_path / "marker").write_text(json.dumps({"id": "__nonce__", "status": "ok", "mode": mode, "results": [bad],
+                                                 "counts": {"cases": 1, "bytes": "__bytes__", "errors": 0}}))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        assert service.run(mode, [case]) == [bad]
+        assert service.stats["retries"] == 0
+
+
+def test_service_norms_content_matches_python_regeneration(executables):
+    """Parity for norms content the client does not check: on the three-way corpus, the
+    service's layers, premises and conflict targets (names, argument sorts and formulas)
+    are Python's independent regeneration (ve/norms.py), and every response satisfies the
+    Lean invariants."""
+    from ve.ast import _to_data, formula_to_data
+    from tests.test_norms_three_way import corpus as norms_corpus, lean_case, pair_corpus
+    docs = [*norms_corpus(160), *pair_corpus(60)]
+    cases = [lean_case(i, doc) for i, doc in enumerate(docs)]
+    text = _text(cases)
+    with LeanService(executables[0], timeout=600) as service:
+        _, response = service.exchange("norms", text, len(cases), timeout=600)
+        assert service.stats["retries"] == 0
+    for i, (doc, bound) in enumerate(zip(docs, response["results"], strict=True)):
+        got = bound["result"]
+        assert got["status"] == "ok", (i, got)
+        assert got["order"] == list(doc.order), i
+        assert got["premises"] == [{"label": label, "ast": formula_to_data(doc.env, ast)}
+                                   for label, ast in doc.premises()], i
+        assert got["conflict_targets"] == [{"target": target, "sorts": list(sorts), "ast": _to_data(ast)}
+                                           for target, sorts, ast in doc.conflict_targets()], i
+    assert any(len(bound["result"]["conflict_targets"]) >= 3 for bound in response["results"])
+    request = {"id": response["id"], "mode": "norms", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    assert lean_verdicts(executables[1], [("norms", request, [response])], "invariants") == ["accept"]
 
 
 def test_order_surface_of_zero_less_than_one_is_nonempty(executables):

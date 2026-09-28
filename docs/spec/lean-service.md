@@ -6,6 +6,59 @@ review (`~/code/manage-agents/debates/semantics-migration/`): a persistent JSON-
 faults, soak and service-call latency. The section-2.1 glue modes (`parse`, `check`, `graph`, …) are stage
 2b. Nothing in `ve` calls the service yet; no Python semantics is switched.
 
+## Threat model (design directive 3)
+
+**The Lean service is the semantic authority.** It is trusted: its dispatch is pinned to
+the existing runners by the `runMode_*` theorems, the runners carry the Lean proofs, and
+the service's outputs are covered by parity with the one-shot executables and with
+Python's independent regenerations. The Python client does **not** re-derive semantic
+content.
+
+**The client guarantees binding and integrity.**
+
+- Every response echoes the request's nonce (`id`) and `mode`.
+- Result `i` is `{"digest", "index": i, "result"}`, where `digest` is the SHA-256 of the
+  text of case `i` as the client sent it (split from the `cases` array and trimmed of
+  JSON whitespace; `VE.Service.caseDigest`, `ve.backends.lean_service.case_digest`). The
+  client computes the digest of every case it sends and compares.
+- Each result also carries the identity fields the runners echo from its case, and the
+  client compares them with the case: the case `id`, the requested label and witness
+  target, the admission root and unit kinds, the requested lemmas' meaning ids, one value
+  per requested formula and one English result per requested case.
+- An omitted, reordered, duplicated or substituted result is therefore rejected by
+  binding, not by semantic re-checking.
+- Every field must be well formed: the Lean decoders' domains (formula, term and kind
+  grammars with their fuel, labels, tokens, enumerations; `ve/backends/lean_service_schema/`).
+- A malformed envelope, a binding mismatch or a malformed field is a protocol fault. The
+  client kills the process and retries once on a fresh one; a second fault raises
+  `CheckerUnavailable`.
+
+**Content that preserves binding is the service's responsibility.** The client does not
+check such content. Examples:
+
+- the conflict targets inside one norms result (their distinctness, completeness and
+  argument sorts);
+- the Background premises, layers and counts regenerated from the environment;
+- the admission assumptions (the root's unfolding);
+- the validity of a dependency order;
+- the conjunction of evaluation values;
+- whether a verdict carries a detail;
+- the consistency of an English check with its rendering.
+
+These are tested on the service's outputs instead:
+
+- `ve_response_decode`'s `invariants` check (`lean/ResponseDecode.lean`) must accept every
+  genuine response of the test corpus, and must reject each content corruption found by
+  the rechecks.
+- The service's norms layers, premises and conflict targets must equal Python's
+  regeneration (`ve/norms.py`) over the three-way corpus
+  (`tests/test_lean_service_schema.py`).
+- The full parity run compares every result with the one-shot runner byte for byte.
+
+The rule for the boundary: a value the client can read directly off its own request is
+binding and is checked. A value the client would have to compute with VE's semantics is
+content and is not checked.
+
 ## Components
 
 | File | Role |
@@ -98,18 +151,24 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   fallback to Python. Cancellation is out of band only (the kill).
 - Response shapes have one source: `ve/backends/lean_service_schema/` (one JSON schema file per mode plus the
   envelope and shared Lean value domains; dialect in its `README.md`). `ve/backends/service_schema.py`
-  compiles it; the supervisor has no other shape checks. The schemas carry the Lean enumerations (kinds,
-  acts, modalities, relations, generators, verdicts), the Lean decoders' fuel (formula and term depth 64,
-  kind depth 16), nonempty evaluations and surface parses, and the request links: one value per requested
-  formula, one result per English case, `checked` and meaning ids of every requested lemma, the requested
-  unit kinds, report claims that are request nodes (assumptions only leaves), `verifyOrder` for dependency
-  orders, the requested label and witness target. A response outside them is an operational failure.
-- `lean/ResponseDecode.lean` (`ve_response_decode`, test tooling outside `VE/`, no theorems) decodes
-  responses with the Lean decoders and runner dispatch. `tests/test_lean_service_schema.py` requires the
-  schemas and it to accept every genuine response over a corpus with every mode and result kind, to agree on
-  every mutation of them (dropped, altered, retyped, enum-swapped, truncated and extra fields; joint
-  request/result mutations; altered requests; kind, label, depth and numeral probes; bindings), and shows
-  that each of 30 weakenings of the schemas is caught, including dropping the digest or the index check.
+  compiles it; the supervisor has no other shape checks. Following the threat model, the schemas hold binding
+  and well-formedness only. The binding is the nonce, the mode, each result's position and case digest, and the
+  identity fields echoed from the case: `id`, the requested label and witness target, the admission root and
+  unit kinds, the requested lemmas' meaning ids and `checked`, one value per requested formula, one result per
+  English case. The well-formedness is the Lean enumerations (kinds, acts, modalities, relations, generators,
+  verdicts) and the Lean decoders' grammars and fuel (formula and term depth 64, kind depth 16; generated
+  formulas at any depth). A response outside them is an operational failure.
+- `lean/ResponseDecode.lean` (`ve_response_decode`, test tooling outside `VE/`, no theorems) has two checks.
+  `decode` reads responses with the Lean decoders and runner dispatch, and is the schemas' differential oracle.
+  `invariants` checks the content the client leaves to the service, as listed in the threat model.
+  `tests/test_lean_service_schema.py` has these requirements:
+  - the schemas and `decode` accept every genuine response over a corpus with every mode and result kind;
+  - they agree on every mutation of those responses: dropped, altered, retyped, enum-swapped, truncated and
+    extra fields, bindings included; joint request/result mutations; altered requests; kind, label, depth and
+    numeral probes;
+  - each of 16 weakenings of the schemas is caught, including dropping the digest or the index check;
+  - `invariants` accepts every genuine response and rejects each content corruption of the rechecks, which the
+    client accepts.
 - A line error from a healthy service is deterministic: `ResourceLimit` for budgets, otherwise `VEError`; the
   process stays up.
 - `RLIMIT_AS` 4 GiB on the child (`prlimit`, or `setrlimit` before exec where `prlimit` is missing);

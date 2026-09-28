@@ -17,11 +17,15 @@ Failure classes:
   a second failure raises `CheckerUnavailable`, which is never a verdict and never
   `ResourceLimit`. There is no fallback to Python.
 
-Every response line is checked against `lean_service_schema/` (`service_schema.py`),
-the single description of response shapes, including request links such as one
-result per requested lemma and the request's unit kinds. Every result is bound to its
-case: result `i` must carry position `i` and the SHA-256 of the text of case `i` as sent
-(`case_digests`), so an omitted, reordered, duplicated or substituted result is rejected.
+Threat model (docs/spec/lean-service.md): the Lean service is the semantic authority,
+covered by Lean proofs and parity tests; this client does not re-derive semantic
+content. It guarantees binding and integrity: every response line must echo the
+request nonce and mode, and result `i` must carry position `i`, the SHA-256 of the text
+of case `i` as sent (`case_digests`) and the identity fields the runners echo from the
+case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
+Every field must also be well formed (`lean_service_schema/`, compiled by
+`service_schema.py`). Content that preserves binding, such as the targets inside one
+norms result, is the service's responsibility and is not checked here.
 
 Supervision: an address-space limit on the process, a per-batch timeout (5 s
 interactive, 60 s for batch callers), recycling after a number of requests or above
