@@ -111,6 +111,29 @@ def test_noninitial_subject_act_rejected_across_languages(lean_executable, rust_
     assert "invalid act phrase" in rust_result["error"]["message"]
 
 
+def _unit(name, guard=("top",), unless=(), sign=True):
+    return {"norm": {"name": name, "predicate": "permitted", "sign": sign, "guard": list(guard),
+                     "unless": [list(u) for u in unless], "over": []}}
+
+
+@pytest.mark.parametrize("label,edit", [
+    ("missing", lambda preds: preds["required"]["regulated"].update(permission="missing")),
+    ("undeclared", lambda preds: preds["required"]["regulated"].pop("permission")),
+    ("act", lambda preds: preds["permitted"]["regulated"].update(act="{0} be seen")),
+])
+def test_permission_duals_are_declaration_checks_across_languages(lean_executable, label, edit):
+    """W1's dual checks run with the declarations, before any norm unit is read."""
+    raw = environment({"permitted": permission(), "required": obligation()}).to_dict()
+    edit(raw["vocabulary"]["predicates"])
+    units = [_unit("a", sign="yes")]
+    with pytest.raises(VEError) as python_error:
+        NormDocument(Environment(raw), units)
+    row = run(lean_executable, [{"id": label, "kind": "norms-elaborate", "environment": raw,
+                                 "norms": units}])[0]
+    assert row["status"] == "error"
+    assert row["error"] == str(python_error.value)
+
+
 # Every separator of Python's no-argument `str.split()` (str.isspace).
 PY_WHITESPACE = ("\t", "\n", "\x0b", "\x0c", "\r", "\x1c", "\x1d", "\x1e", "\x1f", "\x85",
                  "\xa0", " ", " ", " ", " ", " ", " ",
