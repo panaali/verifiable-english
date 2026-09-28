@@ -355,6 +355,17 @@ class EnglishVocabulary:
                     self.negatives[name] = negative
                     negative_path = path.replace("/verbalisation", "/negative_verbalisation")
                     issues = {i for i in issues if i.path != negative_path}
+        # alternatives@0 fixes these exact forms as part of its declaration
+        # contract. Generic vocabulary lint is deliberately more restrictive
+        # about auxiliary verbs and common words.
+        if getattr(env, 'alternatives', None) is not None:
+            from .wire import loads_json
+            block = loads_json(env.alternatives)
+            for role in ('available', 'leads_to', 'inaction', 'taken', 'proximate'):
+                if role in block:
+                    name = block[role]
+                    self.predicates[name] = env.predicates[name].verbalisation
+                    issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
