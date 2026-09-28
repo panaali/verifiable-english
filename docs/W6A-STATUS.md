@@ -48,5 +48,5 @@ Every §7.1 row with a numeric payload (N01, N07, N13, N15/N24, N21, N22, N23) h
 - `lean/audit.py` passed (132 sources, 988 theorem declarations, standard axiom allowlist only).
 - `lean/VE/Route/frozen.py` passed.
 - `cargo test -p ve-core` passed.
-- The full repository pytest run results are recorded in the branch report.
+- The repository pytest run (8 chunks) had 2,301 passed, 5 skipped, 1 live test deselected and 1 failure. The failure was `test_assist_deadline.py::test_approval_sealing_is_inside_the_operation_deadline`, a wall-clock deadline test in unchanged `ve/assist` code, run under load average ~9.5; its file passed 35/35 when rerun alone.
 - No model calls or push were made.
