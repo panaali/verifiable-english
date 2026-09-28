@@ -78,6 +78,22 @@ def test_assessment_is_open_and_has_a_separate_generated_atom():
     assert doc.open_terms[0]["factors"] == ["review status"]
 
 
+def test_quoted_packages_validate_locally_without_outer_layer():
+    local = environment().to_dict()
+    del local["reports"]
+    local["profiles"] = ["norms@0", "relational-fol@0"]
+    quote = {"norm": {"environment": local, "norms": []}}
+    doc = ReportsDocument(environment(), contexts(), [],
+                          [unit(report(quote), kind=["attributed", "article", "says", "norm"])])
+    assert doc.premises == [["unary", "reports__says__1", ["const", "article"]]]
+    assert "norms@0" not in doc.extended_environment.profiles
+    broken = json.loads(json.dumps(quote))
+    broken["norm"]["environment"]["profiles"] = ["relational-fol@0"]
+    with pytest.raises(VEError, match="quoted norm needs norms@0 locally"):
+        ReportsDocument(environment(), contexts(), [],
+                        [unit(report(broken), kind=["attributed", "article", "says", "norm"])])
+
+
 def test_literal_and_paraphrase_have_distinct_keys():
     units = [unit(report(), "u1"), unit(report(literal="Alice is safe"), "u2")]
     doc = ReportsDocument(environment(), contexts(), [], units)

@@ -157,6 +157,8 @@ class ReportsDocument:
             return ReportsDocument._kind_matches(kind, value)
         if tag == "ast":
             return kind == "asserted"
+        if tag in ("norm", "definition"):
+            return kind == tag
         if tag == "report":
             return (type(kind) is list and len(kind) == 4 and kind[:3] ==
                     ["attributed", value["holder"], value["act"]] and
@@ -179,6 +181,31 @@ class ReportsDocument:
             formula = formula_from_data(self.environment, value)
             obj = {"environment_id": self.environment.environment_id,
                    "ast": formula_to_data(self.environment, formula)}
+        elif tag == "norm":
+            from .norms import NormDocument
+            if type(value) is not dict or set(value) != {"environment", "norms"}:
+                raise VEError(f"InvalidInput: quoted norm in {unit}")
+            local = Environment(value["environment"])
+            if "norms@0" not in local.profiles:
+                raise UnsupportedProfile("quoted norm needs norms@0 locally")
+            checked = NormDocument(local, value["norms"])
+            obj = {"environment_id": local.environment_id,
+                   "norms": [rule.to_dict() for rule in checked.rules]}
+        elif tag == "definition":
+            if type(value) is not dict or set(value) != {"environment", "content"}:
+                raise VEError(f"InvalidInput: quoted definition in {unit}")
+            local = Environment(value["environment"])
+            if "definitions@0" not in local.profiles:
+                raise UnsupportedProfile("quoted definition needs definitions@0 locally")
+            statement = value["content"]
+            if statement is not None:
+                if type(statement) is not dict or set(statement) != {"ast"}:
+                    raise VEError(f"InvalidInput: definition statement in {unit}")
+                formula = formula_from_data(local, statement["ast"])
+                statement = {"environment_id": local.environment_id,
+                             "ast": formula_to_data(local, formula)}
+                self._remember(statement)
+            obj = {"environment_id": local.environment_id, "content": statement}
         elif tag == "report":
             if type(value) is not dict or set(value) != {"holder", "act", "context", "literal", "content"}:
                 raise VEError(f"InvalidInput: report in {unit}")
