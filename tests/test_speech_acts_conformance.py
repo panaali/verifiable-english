@@ -9,6 +9,7 @@ import copy
 import json
 import shutil
 import subprocess
+import sys
 
 import pytest
 
@@ -145,6 +146,11 @@ def test_xi_eta_source_to_answer_end_to_end(rust, lean, tmp_path):
     source = load_speech_document(path)
     assert source.answer_lines[0]["status"] == "evaluated"
     assert source.coverage()["bytes_by_class"] == {"C": positions[-1]}
+    inspected = subprocess.run([sys.executable, "-m", "ve", "speech-acts", str(path)],
+                               capture_output=True, text=True, timeout=60)
+    assert inspected.returncode == 0, inspected.stderr
+    report = json.loads(inspected.stdout)
+    assert report["status"] == "experimental" and report["answers"][0]["status"] == "evaluated"
     lean_result = elaborate(env, {"units": units})
     assert source.document.meaning_ids["u1"] == lean_result["commands"][0]["meaning_id"]
     assert source.document.meaning_ids["u2"] == lean_result["questions"][0]["meaning_id"]
@@ -153,3 +159,11 @@ def test_xi_eta_source_to_answer_end_to_end(rust, lean, tmp_path):
                  "model_id": "same-model"})["answer"] == "evaluated yes in model same-model (this situation only)"
     assert rust_values(rust, env, [U("reviewed", "atlas")],
                        source.document.complete_model(base_model).to_dict()) == [True]
+
+
+def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
+    case = {"id": "closed", "kind": "admission", "environment": F0(),
+            "document": {"units": [unit("u1", 0, "instruction",
+                                        command("require", "click_required", ["check"]))]}}
+    assert run1(case)["error"] == (
+        "UnsupportedProfile: case kind admission is not available on the speech-acts route")
