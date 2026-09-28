@@ -420,6 +420,43 @@ def test_authored_bindings_are_bound_into_every_identity(lean):
         elaborate(F0(definites={}), {"units": []})["environment_id"]
 
 
+def test_pending_bindings_supply_no_scope_entry(lean):
+    # Regression: an open binding of "you" to bob still bound the active command's addressee in both
+    # cores, although its sole candidate binds alice; a pending binding is dormant like a pending command.
+    env = F0(addressee=None)
+    env["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+    click = unit("u1", 1, "instruction", command("require", "click_required", ["check"]))
+    bob = unit("b", 0, "binding", {"binding": {"you": "bob"}})
+    to_alice = reading_set("b", 1, "open", "binding", {"binding": {"you": "alice"}})
+    leaked = {"units": [bob, click], "reading_sets": [to_alice]}
+    with pytest.raises(VEError, match="UnboundSlot: you"):
+        core(env, leaked)
+    assert run1({"id": "p", "kind": "speech-elaborate", "environment": env, "document": leaked})["error"] == \
+        "UnboundSlot: you"
+    # Without the active command the pending binding leaves the scope, and so every identity, unchanged.
+    alone = {"units": [bob], "reading_sets": [to_alice]}
+    py, le = core(env, alone), elaborate(env, alone)
+    assert "addressee" not in py.scope and "addressee" not in le["scope"]
+    assert py.env.environment_id == le["environment_id"] == elaborate(env, {"units": []})["environment_id"]
+    # A pending binding neither conflicts with nor duplicates the block or an authored binding.
+    for environment, units in [(F0(), [bob, click]),
+                               (env, [bob, click, unit("a", 2, "binding", {"binding": {"you": "alice"}})])]:
+        environment["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+        document = {"units": units, "reading_sets": [to_alice]}
+        py, le = core(environment, document), elaborate(environment, document)
+        assert py.scope["addressee"]["constant"] == le["scope"]["addressee"]["constant"] == "alice"
+        assert py.policy.rules[0].to_dict()["norm"] == le["commands"][0]["demand"]
+        assert py.env.environment_id == le["environment_id"]
+    # It keeps the single-binding checks of the unit it would supply.
+    for binding, error in [({"you": "carol"}, "UnknownSymbol: carol"),
+                           ({"phrase": "bad phrase", "constant": "check"}, "InvalidInput: invalid binding fields for b"),
+                           ({"phrase": "the check", "constant": "carol"}, "UnknownSymbol: carol")]:
+        document = {"units": [unit("b", 0, "binding", {"binding": binding})], "reading_sets": [to_alice]}
+        with pytest.raises(VEError, match=error):
+            core(env, document)
+        assert run1({"id": "p", "kind": "speech-elaborate", "environment": env, "document": document})["error"] == error
+
+
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     # Regression: contradictory premises certified both polar answers in Python with no premise
     # status, and Lean's `follows` line omitted the status of Π_q.
