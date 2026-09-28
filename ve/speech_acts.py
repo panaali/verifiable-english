@@ -5,6 +5,7 @@ is required before speech-act documents can become trusted P0 evidence.
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 from itertools import product
 import re
@@ -129,6 +130,61 @@ def _reading_choice(unit, reading_set):
     return result
 
 
+def _binding_entry(env, uid, binding):
+    """The legend entry one binding (a unit's or a candidate's) supplies, checked as the block's entry.
+
+    Returns its key ("you", "task" or the phrase) and value.  The phrase
+    passes the block's own checks (`validate_scope`) and the constant is
+    declared, whether or not the entry is merged.
+    """
+    if (type(binding) is not dict or set(binding) not in ({"you"}, {"task"}, {"phrase", "constant"})
+            or any(type(v) is not str for v in binding.values())
+            or "phrase" in binding and (len(binding["phrase"].encode()) > 80
+                                        or not _PHRASE.fullmatch(binding["phrase"]))):
+        raise VEError(f"InvalidInput: invalid binding fields for {uid}")
+    key = binding.get("phrase", next(iter(binding)))
+    actual = binding.get("constant", binding.get(key))
+    if key == "task":
+        if not _TOKEN.fullmatch(actual):
+            raise VEError("InvalidInput: speech_acts block")
+    elif "phrase" in binding:
+        validate_scope({"task": "t", "definites": {key: actual}}, env.sorts, env.constants, env.predicates)
+    elif actual not in env.constants:
+        raise VEError(f"UnknownSymbol: {actual}")
+    return key, actual
+
+
+def _merge_bindings(env, scope, bindings):
+    """1.1 and 1.5: the scope with the bindings of units that are not pending merged in.
+
+    `bindings` lists `(unit, binding, pending)` in document order.  A binding
+    unit whose reading set is open supplies no entry and declares nothing (its
+    candidates may bind otherwise); it keeps the single-unit checks, as a
+    dormant command does.  The one merge of `SpeechDocument` and `effective_scope`.
+    """
+    scope = copy.deepcopy(scope)
+    seen = set()
+    for uid, binding, pending in bindings:
+        key, actual = _binding_entry(env, uid, binding)
+        if pending:
+            continue
+        if key in seen:
+            raise VEError(f"DuplicateDeclaration: binding {key}")
+        seen.add(key)
+        expected = (scope["task"] if key == "task" else
+                    scope.get("addressee", {}).get("constant") if key == "you" else
+                    scope.get("definites", {}).get(key))
+        if expected is not None and actual != expected:
+            raise VEError(f"BindingConflict: {key}")
+        if key == "task":
+            scope["task"] = actual
+        elif key == "you":
+            scope["addressee"] = {"sort": env.constants[actual].sort, "constant": actual}
+        else:
+            scope.setdefault("definites", {})[key] = actual
+    return scope
+
+
 @dataclass(frozen=True, slots=True)
 class Command:
     unit: str
@@ -247,7 +303,7 @@ class SpeechDocument:
                 raise VEError("InvalidInput: misplaced speech content")
         if any(item["unit"] not in ids for item in self.reading_sets):
             raise VEError("invalid reading set unit or status")
-        self._check_bindings()
+        self.scope = _merge_bindings(env, self.scope, self.bindings)
         # 1.1 and 3.5: a binding that supplies a scope entry supplies it to the
         # environment, so every identity (meaning ids, certificates) binds the
         # effective scope; without one the environment is unchanged.
@@ -282,57 +338,6 @@ class SpeechDocument:
     def _id(self, value):
         return digest(f"ve-meaning-{self.env.identity_version}\n",
                       {"environment_id": self.env.environment_id, "ast": value})
-
-    def _binding_entry(self, uid, binding):
-        """The legend entry one binding (a unit's or a candidate's) supplies, checked as the block's entry.
-
-        Returns its key ("you", "task" or the phrase) and value.  The phrase
-        passes the block's own checks (`validate_scope`) and the constant is
-        declared, whether or not the entry is merged.
-        """
-        if (type(binding) is not dict or set(binding) not in ({"you"}, {"task"}, {"phrase", "constant"})
-                or any(type(v) is not str for v in binding.values())
-                or "phrase" in binding and (len(binding["phrase"].encode()) > 80
-                                            or not _PHRASE.fullmatch(binding["phrase"]))):
-            raise VEError(f"InvalidInput: invalid binding fields for {uid}")
-        key = binding.get("phrase", next(iter(binding)))
-        actual = binding.get("constant", binding.get(key))
-        if key == "task":
-            if not _TOKEN.fullmatch(actual):
-                raise VEError("InvalidInput: speech_acts block")
-        elif "phrase" in binding:
-            validate_scope({"task": "t", "definites": {key: actual}}, self.env.sorts, self.env.constants,
-                           self.env.predicates)
-        elif actual not in self.env.constants:
-            raise VEError(f"UnknownSymbol: {actual}")
-        return key, actual
-
-    def _check_bindings(self):
-        """1.1 and 1.5: merge the bindings of units that are not pending into the scope.
-
-        A binding unit whose reading set is open supplies no entry and
-        declares nothing (its candidates may bind otherwise); it keeps the
-        single-unit checks, as a dormant command does.
-        """
-        seen = set()
-        for uid, binding, pending in self.bindings:
-            key, actual = self._binding_entry(uid, binding)
-            if pending:
-                continue
-            if key in seen:
-                raise VEError(f"DuplicateDeclaration: binding {key}")
-            seen.add(key)
-            expected = (self.scope["task"] if key == "task" else
-                        self.scope.get("addressee", {}).get("constant") if key == "you" else
-                        self.scope.get("definites", {}).get(key))
-            if expected is not None and actual != expected:
-                raise VEError(f"BindingConflict: {key}")
-            if key == "task":
-                self.scope["task"] = actual
-            elif key == "you":
-                self.scope["addressee"] = {"sort": self.env.constants[actual].sort, "constant": actual}
-            else:
-                self.scope.setdefault("definites", {})[key] = actual
 
     def _check_candidates(self):
         """Every elaborated reading candidate decodes as content of its kind.
@@ -381,7 +386,7 @@ class SpeechDocument:
                 elif tag == "norm":
                     _check_quoted(self.env, content)
                 else:
-                    self._binding_entry(uid, value)
+                    _binding_entry(self.env, uid, value)
 
     def _command(self, uid, raw, active):
         if (type(raw) is not dict or not {"force", "act", "args"} <= set(raw)
@@ -705,19 +710,23 @@ class SpeechDocument:
 def effective_scope(env, units, reading_sets=()):
     """The scope a document's bindings leave (1.1), for wordings read before the document is built.
 
-    Exactly `SpeechDocument.scope` restricted to the units whose effective
-    kind (the unit's, or its latest signed choice's) is `binding`: pending
-    bindings supply nothing and conflicts are the document's.
+    Exactly `SpeechDocument.scope`: the same merge (`_merge_bindings`) over the
+    bindings of the effective units (each unit, or its latest signed choice),
+    pending bindings supplying nothing.  No partial document is built, so
+    nothing else (a query record, a candidate that asks about one) is checked
+    out of its context here; the document built afterwards checks everything.
     """
     latest = latest_reading_sets(reading_sets)
-
-    def kind(u):
-        chosen = latest.get(u.get("id"))
-        return chosen["readings"][0]["kind"] if chosen is not None and chosen["status"] == "authored" else u.get("kind")
-
-    ids = {u["id"] for u in units if type(u) is dict and kind(u) == "binding"}
-    return SpeechDocument(env, [u for u in units if type(u) is dict and u.get("id") in ids],
-                          reading_sets=[r for r in reading_sets if r["unit"] in ids]).scope
+    bindings = []
+    for raw in units:
+        if type(raw) is not dict or type(raw.get("id")) is not str:
+            continue
+        if raw["id"] in latest:
+            raw = _reading_choice(raw, latest[raw["id"]])
+        content = raw.get("content")
+        if raw.get("kind") == "binding" and type(content) is dict and "binding" in content:
+            bindings.append((raw["id"], content["binding"], latest.get(raw["id"], {}).get("status") == "open"))
+    return _merge_bindings(env, env.to_dict()["speech_acts"], bindings)
 
 
 def combine(first: SpeechDocument, second: SpeechDocument):

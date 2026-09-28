@@ -362,7 +362,10 @@ rejected, never discarded, as W1 rejects misplaced norm content; a quoted kind w
 content dormant and every single-unit check still applies (as W1's `checkQuoted`).
 
 W2's `content` may also be an English or strict fence; the English fence goes through the all-derivations parser and
-yields the same command or question object (2.1); the fence's surface and the object are the same unit.
+yields the same command or question object (2.1); the fence's surface and the object are the same unit. A fence is read
+under the effective scope (1.1), computed by the document's own binding merge over its effective units, so a fenced and
+an unfenced source of one document agree; nothing else (a query record, a candidate asking about one) is checked out
+of its document context to compute that scope.
 
 **Binding units and P0.** The frozen P0 kind decoder (`lean/VE/Route/Admission.lean`, `atomicKind`) knows `instruction`
 and `question` but not `binding`, and no frozen file changes. `binding` units are therefore **withheld from P0
@@ -1607,6 +1610,7 @@ statements of section 8 are unchanged.
 | B, opaque contradiction: "Is atlas reviewed yet never reviewed?" escaped the closed word list, took class C and was evaluated "yes" as one gloss | 2.1 and 7: the gloss check is structural as well as lexical: contrast and negation words ("yet", "never", ...), sentence punctuation, a repeated word and another declared property inside the gloss are `OpaqueWording`. |
 | B, vacuity omission: Lean's `PRESUPPOSITION-FAILED (certificate for ¬H)` line had no premise status even with inconsistency evidence supplied; Python's compliance line dropped the status of its certificate's list | 5.3 and 5.4: the ¬H certificate line carries the status of `Π` and its vacuity in Lean, and Python gains the same check; a proof task's compliance line carries `Π_q`'s. |
 | B, opaque contradiction persists: the gloss "{0} is reviewed despite remaining unreviewed" passed the word list and was answered as one predicate | Orchestrator directive: closed by 2.1, not by more patterns. A declared gloss is an opaque atom of author-declared vocabulary whose English VE does not check; the word list is an advisory, closed `OpaqueWording` lint (a warning, 7) that changes no class or check (6); the refusal of the earlier rows above is withdrawn. |
+| B, fenced scope: `effective_scope()` built a binding-only document without its query records, so a fence beside an open binding whose candidate asks about `q1` raised `QueryMismatch: b` | 3.2: the effective scope is the document's own binding merge, with no partial document; fenced and unfenced sources agree, including when the record's premises are asserted units outside the bindings. |
 
 ## Change log
 

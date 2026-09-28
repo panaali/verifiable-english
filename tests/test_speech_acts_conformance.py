@@ -548,6 +548,59 @@ def test_cli_and_fences_read_the_effective_scope(lean, tmp_path):
     assert reported["alice"] != reported["bob"]
 
 
+def test_fenced_and_unfenced_sources_agree_on_the_effective_scope(lean, tmp_path):
+    # Regression: effective_scope() built a binding-only document without the query records, so an open
+    # binding whose candidate asks about the valid query q1 made the fenced form of a later "Click check."
+    # raise `QueryMismatch: b`, while the unfenced source and Lean accepted the document.  The scope is now
+    # the document's own merge, so a record whose premises are asserted units outside the bindings (p here)
+    # is checked only in its context, by the document.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    follows = {"question": {"mode": "follows", "query": "q1"}}
+    lines = ["Atlas is reviewed.\n", "In this task, you are alice.\n", "Click check.\n"]
+    positions = [0]
+    for line in lines:
+        positions.append(positions[-1] + len(line.encode()))
+    click = command("require", "click_required", ["check"])
+    for premises in ([], ["p"]):
+        fact = [{**unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")}), "span": positions[0:2]}] if premises else []
+        head = lines[:1] if premises else []
+        offset = 0 if premises else positions[1]
+        shift = lambda span: [span[0] - offset, span[1] - offset]  # noqa: E731
+        units = [*fact, {**unit("b", 0, "binding", {"binding": {"you": "alice"}}), "span": shift(positions[1:3])},
+                 {**unit("u1", 0, "instruction", click), "span": shift(positions[2:4])}]
+        meta = {"format": "ve-document@2", "environment": env, "units": units,
+                "queries": [{"id": "q1", "premises": premises, "target": {"ast": U("reviewed", "atlas")}}],
+                "reading_sets": [reading_set("b", 1, "open", "question", follows)]}
+        body = "".join(head + lines[1:])
+        plain = tmp_path / f"plain{len(premises)}.ve.md"
+        plain.write_text("---\n" + json.dumps(meta) + "\n---\n" + body)
+        fenced_units = copy.deepcopy(units)
+        fenced_units[-1] = {**fenced_units[-1], "content": {"fence": "u1"}, "surface": "english"}
+        fenced = tmp_path / f"fenced{len(premises)}.ve.md"
+        fenced.write_text("---\n" + json.dumps({**meta, "units": fenced_units}) + "\n---\n" + body +
+                          "```ve u1\nClick check.\n```\n")
+        a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+        le = elaborate(env, {k: meta[k] for k in ("units", "queries", "reading_sets")})
+        assert a.scope == b.scope and a.env.environment_id == b.env.environment_id == le["environment_id"]
+        assert [r.to_dict() for r in a.policy.rules] == [r.to_dict() for r in b.policy.rules]
+        assert a.policy.rules[0].to_dict()["norm"] == le["commands"][0]["demand"]
+    # A binding conflict is the document's, in either form.
+    conflict = {**meta, "units": [*units[:-2], {**units[-2], "content": {"binding": {"you": "bob"}}}, units[-1]],
+                "reading_sets": []}
+    conflict["environment"] = copy.deepcopy(env)
+    conflict["environment"]["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+    conflict["queries"] = []
+    for fence in (False, True):
+        path = tmp_path / f"conflict{fence}.ve.md"
+        chosen = copy.deepcopy(conflict)
+        if fence:
+            chosen["units"][-1] = {**chosen["units"][-1], "content": {"fence": "u1"}, "surface": "english"}
+        path.write_text("---\n" + json.dumps(chosen) + "\n---\n" + body + ("```ve u1\nClick check.\n```\n" if fence else ""))
+        with pytest.raises(VEError, match="BindingConflict: you"):
+            load_speech_document(path)
+
+
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     # Regression: contradictory premises certified both polar answers in Python with no premise
     # status, and Lean's `follows` line omitted the status of Π_q.

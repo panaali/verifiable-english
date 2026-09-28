@@ -186,11 +186,12 @@ class SpeechSource:
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
         # 1.1: a fence is read under the effective scope, so a phrase or "you" an
-        # authored binding supplies reads as if the block declared it.
+        # authored binding supplies reads as if the block declared it.  The scope is
+        # the document's own merge, so a fenced and an unfenced source agree.
         fenced = [u for u in self.units if type(u["content"]) is dict and "fence" in u["content"]]
         if fenced:
             from .speech_english import parse_speech
-            scope = effective_scope(self.env, [u for u in self.units if u not in fenced], sets)
+            scope = effective_scope(self.env, self.units, sets)
             for unit in fenced:
                 parsed, parsed_kind = parse_speech(self.env, fences[unit["id"]].strip(), scope)
                 if parsed_kind != unit["kind"]:
