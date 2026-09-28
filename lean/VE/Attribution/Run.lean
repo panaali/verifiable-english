@@ -21,10 +21,15 @@ document (`Wire.decodeDocument`); nothing on the wire supplies them.
   over E_reports → `refutes` and the decoded source-model rendering (the holders
   or evidence contexts of each key).
 * `reports-scoped` with optional `certificates`, `inconsistency` and
-  `witnesses` (maps from check id) → per scoped check FOLLOWS / DOES NOT FOLLOW
-  / PAYLOADS INCONSISTENT / UNKNOWN, with the check's environment id and
-  Background size. Witness models are replayed for checks over the author's E
-  only; a witness for a quoted package's scope is reported UNKNOWN.
+  `witnesses` (maps from check id) and `envelope` → per scoped check FOLLOWS /
+  DOES NOT FOLLOW / PAYLOADS INCONSISTENT / UNKNOWN, with the check's
+  environment id and Background size; the recomputed `envelope` and
+  `bindings`. A certificate counts only with both bindings (3.4): the case's
+  certificates are bound by the case's `envelope`, a certificate a scoped
+  check carries in the document by that check's own `envelope`; a check whose
+  only certificates are unbound is UNKNOWN with detail `envelope`. Witness
+  models are replayed for checks over the author's E only; a witness for a
+  quoted package's scope is reported UNKNOWN.
 * `admission` of a document under `reports@0` → `admitted`, `report`,
   `report_id`, `envelope`, `kinds` (`Run.reports_wire_acceptance`).
 * Cases without a reports construct delegate unchanged to
@@ -262,6 +267,45 @@ def scopedBound (Eq : Pinned) (checked : List VE.Formula) (conclusion : VE.Formu
 def certificateFor (j : Json) (key id : String) : Option Json :=
   ((j.getObjValD key).getObjVal? id).toOption
 
+/-- A scoped certificate of `goal` (the check's conclusion, or `⊥` for PAYLOADS
+INCONSISTENT) counts only with both bindings of 3.4: the inner binding to the
+check's pinned scope and `outer`, its envelope checked against the recomputed
+one. -/
+def scopedCertified (Eq : Pinned) (checked : List VE.Formula) (goal : VE.Formula) (outer : Bool)
+    (cj : Option Json) : Except String Bool :=
+  match cj with
+  | some cj => do
+    let cert ← VE.CertificateWire.decodeCertificate cj
+    pure (outer && scopedBound Eq checked goal cert && VE.Tableau.checkCertificate Eq checked goal cert)
+  | none => pure false
+
+/-- A scoped certificate that counts carries the recomputed envelope and replays
+with the inner binding. -/
+theorem scopedCertified_sound {Eq : Pinned} {checked : List VE.Formula} {goal : VE.Formula} {outer : Bool}
+    {cj : Option Json} (h : scopedCertified Eq checked goal outer cj = .ok true) :
+    outer = true ∧ ∃ cert, scopedBound Eq checked goal cert = true ∧
+      VE.Tableau.checkCertificate Eq checked goal cert = true := by
+  cases cj with
+  | none => cases h
+  | some cj =>
+    obtain ⟨cert, _, h⟩ := bind_ok h
+    have h' : (outer && scopedBound Eq checked goal cert && VE.Tableau.checkCertificate Eq checked goal cert) = true := by
+      injection h
+    simp only [Bool.and_eq_true] at h'
+    exact ⟨h'.1.1, cert, h'.1.2, h'.2⟩
+
+/-- A scoped check's certificate and its outer binding: the case's own
+certificate is bound by the case's `envelope`, a certificate the document
+carries by that check's own `envelope`. -/
+def scopedCertificate (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Option Json × Bool :=
+  let D := c.dec.D
+  match certificateFor j "certificates" s.id with
+  | some cj => (some cj, outerBound D j)
+  | none => match c.dec.scopedCertificates.find? (·.1 == s.id) with
+    | some (_, cj, some e) => (some cj, envelopeMatches D.environmentId (documentId D) e)
+    | some (_, cj, none) => (some cj, false)
+    | none => (none, false)
+
 def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except String Json := do
   let D := c.dec.D
   match payloadFormulas D s with
@@ -269,21 +313,14 @@ def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except Strin
   | some (Eq, ps) =>
     let checked := background Eq ++ ps
     let base := [("id", .str s.id), ("environment_id", .str Eq.id), ("background", toJson (background Eq).length)]
-    let certJson := (certificateFor j "certificates" s.id).orElse fun _ =>
-      (c.dec.scopedCertificates.find? (·.1 == s.id)).map Prod.snd
-    let follows ← match certJson with
-      | some cj => do
-        let cert ← VE.CertificateWire.decodeCertificate cj
-        pure (scopedBound Eq checked s.conclusion cert &&
-          VE.Tableau.checkCertificate Eq checked s.conclusion cert)
-      | none => pure false
-    if follows then return Json.mkObj (base ++ [("status", .str "FOLLOWS")])
-    let inconsistent ← match certificateFor j "inconsistency" s.id with
-      | some cj => do
-        let cert ← VE.CertificateWire.decodeCertificate cj
-        pure (scopedBound Eq checked .bottom cert && VE.Tableau.checkCertificate Eq checked .bottom cert)
-      | none => pure false
-    if inconsistent then return Json.mkObj (base ++ [("status", .str "PAYLOADS INCONSISTENT")])
+    let (certJson, certOuter) := scopedCertificate c j s
+    if ← scopedCertified Eq checked s.conclusion certOuter certJson then
+      return Json.mkObj (base ++ [("status", .str "FOLLOWS")])
+    let inconsistency := certificateFor j "inconsistency" s.id
+    if ← scopedCertified Eq checked .bottom (outerBound D j) inconsistency then
+      return Json.mkObj (base ++ [("status", .str "PAYLOADS INCONSISTENT")])
+    -- a certificate offered for another document or environment is not evidence
+    let unbound := certJson.isSome && !certOuter || inconsistency.isSome && !outerBound D j
     match certificateFor j "witnesses" s.id with
     | some mj =>
       if Eq.id == D.environmentId then
@@ -293,7 +330,8 @@ def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except Strin
         else return Json.mkObj (base ++ [("status", .str "UNKNOWN"), ("detail", .str "witness does not refute")])
       else return Json.mkObj (base ++ [("status", .str "UNKNOWN"),
         ("detail", .str "witness replay over a quoted package's scope is not implemented")])
-    | none => pure (Json.mkObj (base ++ [("status", .str "UNKNOWN"), ("detail", .str "no evidence")]))
+    | none => pure (Json.mkObj (base ++ [("status", .str "UNKNOWN"),
+        ("detail", .str (if unbound then "envelope" else "no evidence"))]))
 
 /-! ## admission -/
 
@@ -365,7 +403,9 @@ def runCase (j : Json) : Except String Json := do
       return ← runCountermodel c id j
     if kind == "reports-scoped" then
       let verdicts ← c.dec.D.«scoped».mapM (scopedVerdict c j)
-      return VE.Route.Wire.ok id [("scoped", Json.arr verdicts.toArray)]
+      return VE.Route.Wire.ok id [("scoped", Json.arr verdicts.toArray),
+        ("envelope", envelopeJson c.dec.D c.dec.D.environmentId),
+        ("bindings", Json.mkObj [("envelope", .bool (outerBound c.dec.D j))])]
   if usesReportsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the reports route"
   VE.Route.Run.runCase j

@@ -254,7 +254,7 @@ def test_beta_not_closed_and_scoped_consequence(lean):
     env_id = r["envelope"]["environment_id"]
     cert = certificate(E0(), {"keys": []}, [U("reviewed", "service"), implies], U("safe", "service"), env_id)
     out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": d,
-                "certificates": {"s1": cert}})
+                "certificates": {"s1": cert}, "envelope": r["envelope"]})
     assert out["scoped"] == [{"id": "s1", "environment_id": env_id, "background": 0, "status": "FOLLOWS"}]
     # scoped_not_premise: the same document without s1 regenerates the same E_reports and premises.
     d0 = copy.deepcopy(d)
@@ -374,7 +374,8 @@ def test_theta_inconsistent_quotation_is_local(lean):
     r = elaborate(d)
     env_id = r["envelope"]["environment_id"]
     cert = certificate(E0(), {"keys": []}, [U("safe", "service"), ["not", U("safe", "service")]], ["bottom"], env_id)
-    out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": d, "inconsistency": {"s1": cert}})
+    out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": d, "inconsistency": {"s1": cert},
+                "envelope": r["envelope"]})
     assert out["scoped"][0]["status"] == "PAYLOADS INCONSISTENT"
     # The outer premise set has a model: both report atoms true, safe empty.
     [a, b] = premises(r)
@@ -434,7 +435,8 @@ def test_lambda_quoted_definitions(lean):
     cert["environment_id"] = v["environment_id"]
     cert["premise_meaning_ids"] = [digest(domain, {"environment_id": v["environment_id"], "ast": a}) for a in checked]
     cert["conclusion_meaning_id"] = digest(domain, {"environment_id": v["environment_id"], "ast": U("safe", "service")})
-    out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": d, "certificates": {"s1": cert}})
+    out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": d, "certificates": {"s1": cert},
+                "envelope": r["envelope"]})
     assert out["scoped"][0]["status"] == "FOLLOWS", out
     # BridgeKindMismatch: the package's statement is over E_q.
     bad = dict(d, bridges=[{"id": "b1", "unit": "u1", "path": "1", "accepted_by": "reviewer_ann", "reason": []}])
@@ -774,6 +776,74 @@ def test_graph_certificates_carry_the_outer_binding(lean):
     assert stale["status"] == "error" and "bound to another document" in stale["error"], stale
     fresh = admission(dict(changed, graph=graph(r2["envelope"])))
     assert fresh["status"] == "ok" and fresh["admitted"] is True
+
+
+def test_scoped_certificates_carry_the_outer_binding(lean):
+    """Loop recheck A: `reports-scoped` checked only a scoped certificate's inner
+    binding, so after the sole context's tense changed (document_id changed, the
+    payloads and the check's scope identical) the old certificate still gave
+    FOLLOWS, and an inconsistency certificate PAYLOADS INCONSISTENT (3.4). Every
+    scoped certificate, supplied by the case or carried by the document, now
+    needs the recomputed envelope."""
+    implies = ["implies", U("reviewed", "service"), U("safe", "service")]
+    check = {"id": "s1", "payloads": ["u1", "u2"], "conclusion": ast(U("safe", "service"))}
+    d = doc(report("the_article", "says", "c3", ast(U("reviewed", "service"))),
+            report("the_article", "says", "c3", ast(implies)), scoped=[check])
+    r = elaborate(d)
+    cert = certificate(E0(), {"keys": []}, [U("reviewed", "service"), implies], U("safe", "service"),
+                       r["envelope"]["environment_id"])
+    past = [dict(c, tense="past") if c["id"] == "c3" else c for c in CONTEXTS]
+    changed = dict(d, contexts=past)
+    r2 = elaborate(changed)
+    assert r2["envelope"]["environment_id"] == r["envelope"]["environment_id"]
+    assert r2["envelope"]["document_id"] != r["envelope"]["document_id"]
+
+    def scoped(document, **extra):
+        out = run1({"id": "s", "kind": "reports-scoped", "environment": E0(), "document": document, **extra})
+        assert out["status"] == "ok", out
+        return out
+
+    def status(out):
+        [v] = out["scoped"]
+        return v["status"], v.get("detail")
+
+    fresh = scoped(d, certificates={"s1": cert}, envelope=r["envelope"])
+    assert status(fresh) == ("FOLLOWS", None)
+    assert fresh["envelope"] == r["envelope"] and fresh["bindings"] == {"envelope": True}
+    missing = scoped(d, certificates={"s1": cert})
+    assert status(missing) == ("UNKNOWN", "envelope") and missing["bindings"] == {"envelope": False}
+    assert status(scoped(d, certificates={"s1": cert}, envelope=dict(r["envelope"], note="x"))) == \
+        ("UNKNOWN", "envelope")
+    # The reproducer: the tense changes, the certificate and its envelope do not.
+    assert status(scoped(changed, certificates={"s1": cert}, envelope=r["envelope"])) == ("UNKNOWN", "envelope")
+    assert status(scoped(changed, certificates={"s1": cert}, envelope=r2["envelope"])) == ("FOLLOWS", None)
+    # A certificate the document carries is bound by its own envelope, which document_id does not hash.
+    carried = dict(d, scoped=[dict(check, certificate=cert, envelope=r["envelope"])])
+    assert elaborate(carried)["envelope"] == r["envelope"]
+    assert status(scoped(carried)) == ("FOLLOWS", None)
+    assert status(scoped(dict(d, scoped=[dict(check, certificate=cert)]))) == ("UNKNOWN", "envelope")
+    stale = dict(changed, scoped=[dict(check, certificate=cert, envelope=r["envelope"])])
+    assert status(scoped(stale)) == ("UNKNOWN", "envelope")
+    assert status(scoped(dict(changed, scoped=[dict(check, certificate=cert, envelope=r2["envelope"])]))) == \
+        ("FOLLOWS", None)
+    alone = run1({"id": "e", "kind": "reports-elaborate", "environment": E0(),
+                  "document": dict(d, scoped=[dict(check, envelope=r["envelope"])])})
+    assert alone["status"] == "error" and "envelope without a certificate" in alone["error"], alone
+    # Inconsistency certificates: the same class.
+    contradiction = [U("safe", "service"), ["not", U("safe", "service")]]
+    theta = doc(report("the_article", "says", "c3", ast(contradiction[0])),
+                report("the_article", "says", "c3", ast(contradiction[1])),
+                scoped=[{"id": "s1", "payloads": ["u1", "u2"], "conclusion": ast(U("reviewed", "service"))}])
+    rt = elaborate(theta)
+    bottom = certificate(E0(), {"keys": []}, contradiction, ["bottom"], rt["envelope"]["environment_id"])
+    theta2 = dict(theta, contexts=past)
+    rt2 = elaborate(theta2)
+    assert status(scoped(theta, inconsistency={"s1": bottom}, envelope=rt["envelope"])) == \
+        ("PAYLOADS INCONSISTENT", None)
+    assert status(scoped(theta, inconsistency={"s1": bottom})) == ("UNKNOWN", "envelope")
+    assert status(scoped(theta2, inconsistency={"s1": bottom}, envelope=rt["envelope"])) == ("UNKNOWN", "envelope")
+    assert status(scoped(theta2, inconsistency={"s1": bottom}, envelope=rt2["envelope"])) == \
+        ("PAYLOADS INCONSISTENT", None)
 
 
 def test_countermodel_validity_is_checked_over_e_reports(lean):

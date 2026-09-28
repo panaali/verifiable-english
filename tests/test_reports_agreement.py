@@ -114,6 +114,11 @@ def test_bridge_and_scoped_targets_agree(lean):
                               "conclusion": ast(U("human", "claude"))}]), E0(), "ScopedEnvironment"),
         (package_doc(scoped=[{"id": "s1", "payloads": [{"unit": "u1", "path": "1"}],
                               "conclusion": ast(U("safe", "service"))}]), E0(), None),
+        # A scoped check's certificate carries its envelope; an envelope alone is malformed.
+        (package_doc(scoped=[{"id": "s1", "payloads": ["u2"], "conclusion": ast(U("safe", "service")),
+                              "certificate": {}, "envelope": {}}]), E0(), None),
+        (package_doc(scoped=[{"id": "s1", "payloads": ["u2"], "conclusion": ast(U("safe", "service")),
+                              "envelope": {}}]), E0(), "InvalidInput"),
     ])
 
 
