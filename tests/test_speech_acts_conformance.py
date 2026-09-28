@@ -624,6 +624,12 @@ def _reference_cases():
     fields = lambda u: f"InvalidInput: invalid question fields for {u}"  # noqa: E731
     command_fields = "InvalidInput: invalid command fields for u"
     unknown = "UnknownSymbol: Unknown constant 'nope'"
+    term, formula = "invalid indexed term", "invalid indexed formula"
+    deep = ["top"]
+    for _ in range(64):
+        deep = ["not", deep]
+    norm_with = lambda **fields: {"norm": {"name": "n1", "predicate": "click_required", "sign": True,  # noqa: E731
+                                           "guard": ["top"], "unless": [], "over": [], **fields}}
     # (name, units or content placement, error)
     placed = [  # contents placed under a unit, a quoted unit and a reading candidate
         ("act dangling", "instruction", click(act="nope"), "UnknownSymbol: regulated predicate nope"),
@@ -643,7 +649,25 @@ def _reference_cases():
         ("reading version dangling", "question", reading("rs", 2), fields("u")),
         ("reading set mistyped", "question", reading(7), fields("u")),
         ("reading set missing", "question", {"question": {"mode": "reading", "version": 1}}, fields("u")),
-        ("formula dangling", "asserted", {"ast": U("reviewed", "nope")}, unknown)]
+        ("formula dangling", "asserted", {"ast": U("reviewed", "nope")}, unknown),
+        # A formula's own references (predicate, constant, binder sort) that are not names, and every other
+        # structure outside the route's P0 form, are the Lean route's P0 decoder error in both checkers.
+        ("guard constant mistyped", "instruction", click(guard=["unary", "disabled", ["const", 7]]), term),
+        ("guard predicate mistyped", "instruction", click(guard=["unary", [], ["const", "check"]]), formula),
+        ("body constant mistyped", "question", polar(["unary", "reviewed", ["const", 7]]), term),
+        ("body constant a list", "question", polar(["unary", "reviewed", ["const", []]]), term),
+        ("body predicate mistyped", "question", polar(["unary", 7, ["const", "atlas"]]), formula),
+        ("body binder sort mistyped", "question", polar(["exists", 7, ["top"]]), formula),
+        ("which body variable mistyped", "question",
+         {"question": {**which_q()["question"], "body": ["unary", "reviewed", ["var", "0"]]}}, "Natural number expected"),
+        ("which body before its sort", "question",
+         {"question": {**which_q(sort=7)["question"], "body": ["unary", "reviewed", ["const", 7]]}}, term),
+        ("formula constant mistyped", "asserted", {"ast": ["unary", "reviewed", ["const", 7]]}, term),
+        ("formula term not an array", "asserted", {"ast": ["unary", "reviewed", "atlas"]}, "array expected"),
+        ("formula of another profile", "asserted", {"ast": ["lt", ["num", "1"], ["num", "2"]]}, formula),
+        ("formula too deep", "asserted", {"ast": deep}, "ResourceLimit: formula depth exceeds 64"),
+        ("norm guard mistyped", "norm", norm_with(guard=["unary", "disabled", ["const", 7]]), term),
+        ("norm carve-out mistyped", "norm", norm_with(unless=[["unary", 7, ["const", "check"]]]), formula)]
     cases = []
     for name, kind, content, error in placed:
         extra = {"units": [ambiguous], "reading_sets": [{**rs_x, "id": "rs"}]}
@@ -674,7 +698,9 @@ def _reference_cases():
                                 ("premises mistyped", query(premises="p"), "InvalidInput: query"),
                                 ("id mistyped", query(id=7), "InvalidInput: query"),
                                 ("target dangling", query(target={"ast": U("reviewed", "nope")}), unknown),
-                                ("target mistyped", query(target=U("reviewed", "atlas")), "InvalidInput: query")]:
+                                ("target mistyped", query(target=U("reviewed", "atlas")), "InvalidInput: query"),
+                                ("target constant mistyped", query(target={"ast": ["unary", "reviewed", ["const", 7]]}),
+                                 term)]:
         cases.append((f"query {name}", {"units": [fact, follows], "queries": [record]}, error))
     cases.append(("query id twice", {"units": [fact, follows], "queries": [query(), query()]},
                   "InvalidInput: duplicate query"))
