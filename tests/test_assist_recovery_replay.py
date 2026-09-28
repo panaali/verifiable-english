@@ -8,7 +8,6 @@ command inputs are replayed through the same checks as live calls.
 import hashlib
 import json
 import random
-import time
 from copy import deepcopy
 
 import pytest
@@ -31,8 +30,25 @@ SELECT_API = dict(actor="translator", paraphrase="Api is safe.", presentation="A
                   situation=SITUATION)
 
 
+@pytest.fixture(autouse=True)
+def fixed_operation_clock(monkeypatch, request):
+    """Replay and cache properties concern state, not elapsed CPU time."""
+    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: 0.0)
+    if request.node.name.split("[")[0] in {
+        "test_recorded_deadline_cannot_swallow_enclosing_replay_deadline",
+        "test_live_budget_still_interrupts_a_slow_step",
+    }:
+        return
+    original_init = Budget.__init__
+    def nonexpiring_budget(self, seconds=None, *, stop=None, replay=False, fire_at=None):
+        original_init(self, seconds, stop=stop if replay else float("inf"),
+                      replay=replay, fire_at=fire_at)
+    monkeypatch.setattr(Budget, "__init__", nonexpiring_budget)
+
+
 def service():
-    return RecoveryService(ENV, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    return RecoveryService(ENV, grammar_version="g1", glossary_version="v1",
+                           reading_set_version="r1", clock=lambda: 0.0)
 
 
 def digest(value):
@@ -424,15 +440,7 @@ def regenerate(ledger):
 
 
 @pytest.mark.parametrize("seed", range(10))
-def test_random_histories_and_tampering_never_approve_without_review(monkeypatch, seed):
-    # Replay must depend on recorded checkpoints, not on how much CPU the test
-    # receives while constructing and tampering with a history.
-    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: 0.0)
-    original_init = Budget.__init__
-    def step_budget(self, seconds=None, *, stop=None, replay=False, fire_at=None):
-        original_init(self, seconds, stop=stop if replay else float("inf"),
-                      replay=replay, fire_at=fire_at)
-    monkeypatch.setattr(Budget, "__init__", step_budget)
+def test_random_histories_and_tampering_never_approve_without_review(seed):
     rng = random.Random(seed)
     recovery = random_history(rng)
     original = recovery.to_ledger()
@@ -608,11 +616,13 @@ def test_recorded_deadline_cannot_swallow_enclosing_replay_deadline(monkeypatch,
     assert phase["delayed"]
 
 
-def test_live_budget_still_interrupts_a_slow_step():
+def test_live_budget_still_interrupts_a_slow_step(monkeypatch):
+    now = [0.0]
+    monkeypatch.setattr(recovery_module.time, "monotonic", lambda: now[0])
     def slow_step():
         budget = Budget(seconds=0.02)
         with budget.guard():
-            time.sleep(0.04)
+            now[0] = 0.04
             pytest.fail("the live deadline did not interrupt the step")
 
     with pytest.raises(_Deadline):
