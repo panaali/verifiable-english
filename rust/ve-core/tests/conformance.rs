@@ -3,6 +3,26 @@ use serde_json::json;
 use ve_core::*;
 
 #[test]
+fn discourse_elaboration_is_an_untrusted_core_carrier() {
+    // Reference resolution belongs to the discourse validator. The Rust core
+    // consumes only the elaborated formula under the stripped base profile.
+    let case = json!({"family":"elaborated-document", "untrusted":true,
+        "environment":{"language":"ve.core@0.2", "profiles":["relational-fol@0"],
+            "spec_revision":"ve-v0.2-expand2-2026-09-25",
+            "vocabulary":{"sorts":{"service":{"description":"service"}},
+                "predicates":{"safe":{"arguments":["service"],"description":"safe"}},
+                "constants":{"api":{"sort":"service","description":"Api"}}}},
+        "ast":[["unary","safe",["const","api"]]],
+        "model":{"complete":true,"domains":{"service":["a"]},
+            "constants":{"api":"a"},"relations":{"safe":[["a"]]}}});
+    assert_eq!(case["untrusted"], true);
+    let env = Environment::from_value(&case["environment"]).unwrap();
+    let doc = Document::from_value(&env, &case["ast"]).unwrap();
+    let model = FiniteModel::from_value(&env, &case["model"]).unwrap();
+    assert_eq!(evaluate_formula(&doc, 0, &model, MAX_EVALUATIONS).unwrap().value, Some(true));
+}
+
+#[test]
 fn defined_declaration_computes_its_table() {
     let env = json!({"language":"ve.core@0.2",
         "profiles":["definitions@0","relational-fol@0"],

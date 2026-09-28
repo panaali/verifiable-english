@@ -13,6 +13,7 @@ import re
 from .admission import token
 from .ast import formula_to_data
 from .errors import VEError
+from .readings import active_reading_sets
 from .wire import digest
 
 PROFILE = "ve.discourse@1"
@@ -198,6 +199,8 @@ def _check_simple_expansion(doc, unit, mention, names, anchors):
             continue
         if form == "ordinal_pair" and name not in target["pair"]:
             continue
+        if form in {"pronoun", "demonstrative"} and _competing_quantifier(doc, mention, name, anchors):
+            continue
         expansion = _expanded_formula(doc, unit, mention, registration["display"])
         if expansion is not None:
             candidates[name] = expansion
@@ -209,6 +212,43 @@ def _check_simple_expansion(doc, unit, mention, names, anchors):
     if candidates[chosen][1] != unit["content"]:
         raise VEError(f"ManifestMismatch: bound.{unit['id']}")
     return candidates[chosen][0]
+
+
+def _contains_var(formula, index=0):
+    if formula == ["var", index]:
+        return True
+    if type(formula) is list:
+        if len(formula) == 3 and formula[0] in {"exists", "forall"}:
+            return _contains_var(formula[2], index + 1)
+        return any(_contains_var(item, index) for item in formula[1:])
+    return False
+
+
+def _same_witness(content):
+    """Conservative fused shape: two clauses under one existential binder."""
+    return (type(content) is list and len(content) == 3 and content[0] == "exists"
+            and type(content[2]) is list and len(content[2]) == 3
+            and content[2][0] == "and"
+            and _contains_var(content[2][1]) and _contains_var(content[2][2]))
+
+
+def _quantifies(formula, sort):
+    if type(formula) is not list:
+        return False
+    if len(formula) == 3 and formula[0] in {"exists", "forall"} and formula[1] == sort:
+        return True
+    return any(_quantifies(item, sort) for item in formula[1:])
+
+
+def _competing_quantifier(doc, mention, constant, anchors):
+    position = mention["span"]
+    enclosing = min((a for a in anchors.values() if _inside(a["span"], position)),
+                    key=lambda a: a["span"][1] - a["span"][0])
+    sort = doc["environment"].constants[constant].sort
+    return any(u["kind"] == "asserted" and u["content"] is not None
+               and _inside(enclosing["span"], u["span"])
+               and u["span"][1] <= position[0] and _quantifies(u["content"], sort)
+               for u in doc["units"])
 
 
 def validate_discourse(doc):
@@ -292,6 +332,8 @@ def validate_discourse(doc):
                 registration = next((n for n in names if n["constant"] == name and _inside(anchors[n["scope"]]["span"], m["span"])), None)
                 if registration is None:
                     raise VEError(f"InaccessibleTarget: {mid}: {name}")
+                if form in {"pronoun", "demonstrative"} and _competing_quantifier(doc, m, name, anchors):
+                    raise VEError(f"InaccessibleTarget: {mid}: {name}")
         elif kind == "anchor":
             if target.get("name") not in anchors:
                 raise VEError(f"DanglingAnchor: {target.get('name')}")
@@ -318,13 +360,16 @@ def validate_discourse(doc):
             raise VEError(f"ResourceLimit: resolution of {uid}")
         presentations[uid] = _check_simple_expansion(doc, unit, producing[0], names, anchors)
     groups = _array(block, "groups")
-    active = __import__("ve.readings", fromlist=["active_reading_sets"]).active_reading_sets(doc["meta"].get("reading_sets", []))
+    active = active_reading_sets(doc["meta"].get("reading_sets", []))
     for group in groups:
         if type(group) is not dict or type(group.get("spans")) is not list or not group["spans"] or len(group["spans"]) > 16:
             raise VEError("InvalidInput: group")
         rs = next((s for s in active if (s["id"], s["version"]) == (group.get("set"), group.get("version"))), None)
         if rs is None or group.get("reading") not in [r["id"] for r in rs["readings"]] or rs["unit"] != group["spans"][0]:
             raise VEError("InvalidInput: group reading")
+        reading = next(r for r in rs["readings"] if r["id"] == group["reading"])
+        if group["reading"] == "same-witness" and not _same_witness(reading.get("content")):
+            raise VEError(f"WitnessSplit: {rs['id']}@{rs['version']}:same-witness")
         for uid in group["spans"]:
             if uid not in units or units[uid]["content"] is not None or any(s["unit"] == uid and s is not rs for s in active):
                 raise VEError(f"IndependentFragment: {uid}")

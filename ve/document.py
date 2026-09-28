@@ -505,6 +505,9 @@ def render_document(path):
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
+        expanded = doc.get("discourse", {}).get("presentations", {}).get(u["id"])
+        if expanded is not None:
+            lines.append("Reviewed wording: " + expanded.strip())
         prefix = "Checked reading: " if u["content"] is not None else "Recorded meaning: "
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
         reading_set = active_by_unit.get(u["id"])
