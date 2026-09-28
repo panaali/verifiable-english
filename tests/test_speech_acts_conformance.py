@@ -198,6 +198,33 @@ def test_query_bound_meaning_ids_agree_with_lean(lean, target):
         assert core(env, document).meaning_ids["u2"] == elaborate(env, document)[key][0]["meaning_id"]
 
 
+@pytest.mark.parametrize("facts,mode,token,wire", [
+    ([U("reviewed", "atlas"), ["not", U("reviewed", "beacon")]], "which_all", ("atlas",), {"all": ["atlas"]}),
+    ([["not", U("reviewed", "atlas")], ["not", U("reviewed", "beacon")]], "which_all", (), {"all": []}),
+    ([U("reviewed", "atlas"), U("reviewed", "beacon")], "which_all", ("atlas", "beacon"),
+     {"all": ["atlas", "beacon"]}),
+    ([U("reviewed", "atlas"), ["not", U("reviewed", "beacon")]], "which_one", "atlas", {"one": "atlas"}),
+    ([U("reviewed", "atlas")], "polar", "yes", "yes"),
+    ([["not", U("reviewed", "atlas")]], "polar", "no", "no")])
+def test_python_answer_certificates_replay_in_lean(lean, facts, mode, token, wire):
+    # Regression: Python folded F(S) of a complete-list answer as one mixed conjunction, so its
+    # certificate's conclusion identity differed from Lean's two conjunctions and replayed only locally.
+    from ve.ast import And
+    from ve.entailment import prove_entailment
+    env = F0()
+    asked = polar(U("reviewed", "atlas")) if mode == "polar" else which(mode)
+    document = {"units": [*(unit(f"a{i}", i, "asserted", {"ast": f}) for i, f in enumerate(facts)),
+                          unit("q", len(facts), "question", asked)]}
+    py = core(env, document)
+    q = py.questions[0]
+    proof = prove_entailment(py.env, py._caller_premises(), And(py.presupposition(q), py.correct(q, token)))
+    assert proof.status == "Found"
+    assert py.check_answer_certificate(q, token, proof.certificate)["status"] == "supported"
+    line = run1({"id": "portable", "kind": "speech-answer", "environment": env, "document": document,
+                 "question": "q", "answer": wire, "evidence": {"certificate": proof.certificate}})
+    assert line.get("answer", line).startswith("supported "), line
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",

@@ -499,9 +499,10 @@ class SpeechDocument:
                 raise VEError(f"AnswerOutsideDomain: {question.unit}, {token}")
             if tuple(x for x in question.domain if x in token) != token:
                 raise VEError(f"AnswerOutsideDomain: {question.unit}, {token}")
-            chosen = set(token)
-            return _all(self._instance(question, a) if a in chosen else Not(self._instance(question, a))
-                        for a in question.domain)
+            # 1.3's two conjunctions, as Lean's `allAnswer`, so a certificate's
+            # conclusion identity is the same in every checker.
+            return And(_all(self._instance(question, a) for a in token),
+                       _all(Not(self._instance(question, a)) for a in question.domain if a not in token))
         raise VEError(f"InvalidInput: mode {question.mode} has no answer formula")
 
 
