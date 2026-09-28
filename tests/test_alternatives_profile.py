@@ -1,17 +1,18 @@
 """Python's declaration and authority boundary for alternatives@0."""
 from copy import deepcopy
+import json
 
 import pytest
 
 from ve.alternatives import run_case
-from ve.document import coverage
-from ve.ast import Binary, Const, Forall, formula_from_data, formula_to_data
+from ve.document import coverage, load_document
+from ve.ast import And, Binary, Const, Eq, Forall, Implies, Not, Var, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.evaluate import evaluate
 from ve.norms import NormDocument, check_conflict
 from ve.norm_english import parse_english as parse_norm_english, render_english as render_norm_english
-from ve.english import parse_english_with_metadata
+from ve.english import EnglishParser, EnglishTraversal, EnglishVocabulary, parse_english_with_metadata
 from ve.parser import parse as parse_strict
 from ve.printer import print_document
 from ve.profiles import LANGUAGE, SPEC_REVISION
@@ -170,13 +171,13 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     units = [
         {"id": "choice", "span": [0, 1], "kind": "asserted", "status": "CHECKED",
          "meaning": "specified", "support": "testimony",
-         "content": {"ast": ["binary", "available", ["const", "pull"], ["const", "R"]]}},
+         "content": ["binary", "available", ["const", "pull"], ["const", "R"]]},
         {"id": "cell", "span": [1, 2], "kind": "asserted", "status": "CHECKED",
          "meaning": "specified", "support": "observation",
-         "content": {"ast": ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]]}},
+         "content": ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]]},
         {"id": "not-cause", "span": [2, 3], "kind": "asserted", "status": "CHECKED",
          "meaning": "specified", "support": "testimony",
-         "content": {"ast": ["not", ["binary", "causes", ["const", "pull"], ["const", "h"]]]}},
+         "content": ["not", ["binary", "causes", ["const", "pull"], ["const", "h"]]]},
     ]
     report = coverage({"environment": env, "units": units, "source": b"abc", "meta": {}})
     detail = report["alternatives"]
@@ -191,6 +192,52 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert detail["proximate_judgments"] == []
     assert report["residual"]["table_complete"] == 1
     assert report["residual"]["counterfactual_leaves"] == 1
+
+
+def test_loaded_document_coverage_keeps_formula_leaves(tmp_path):
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        name: {"sort": sort, "description": name}
+        for name, sort in (("pull", "action"), ("r", "robot"), ("h", "harm"))}
+    atoms = [
+        ["binary", "available", ["const", "pull"], ["const", "r"]],
+        ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]],
+        ["binary", "causes", ["const", "pull"], ["const", "h"]],
+    ]
+    units = [{"id": f"u{i}", "span": [i, i + 1], "kind": "asserted",
+              "meaning": "specified", "support": "testimony", "content": {"ast": atom}}
+             for i, atom in enumerate(atoms)]
+    meta = {"format": "ve-document@1", "environment": raw, "units": units}
+    path = tmp_path / "case.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nabc")
+    detail = coverage(load_document(path))["alternatives"]
+    assert [x["unit"] for x in detail["alternatives_declared"]] == ["u0"]
+    assert [x["unit"] for x in detail["counterfactual_leaves"]] == ["u1"]
+    assert [x["unit"] for x in detail["proximate_judgments"]] == ["u2"]
+
+
+def test_other_action_rendering_preserves_which_outer_action_is_excluded():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "r": {"sort": "robot", "description": "r"},
+        "h": {"sort": "harm", "description": "h"}}
+    env = Environment(raw)
+    words = EnglishVocabulary(env)
+    scope = (("action", "the second action"), ("action", "the first action"))
+    rendered = []
+    for index in (1, 2):
+        formula = Forall("action", Implies(
+            And(Binary("available", Var(0), Const("r")), Not(Eq(Var(0), Var(index)))),
+            Binary("prevents", Var(0), Const("h"))))
+        traversal = EnglishTraversal(env, words)
+        traversal.maximum = {"action": 3}
+        sentence = traversal.formula(formula, scope)
+        parser = EnglishParser(env, sentence, words)
+        assert parser.formula(scope) == formula
+        assert parser.i == len(sentence)
+        rendered.append(sentence)
+    assert rendered[0] != rendered[1]
+    assert "excluding the first action" in rendered[1]
 
 
 def test_english_own_outcome_guard_names_the_semantic_change():

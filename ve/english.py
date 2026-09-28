@@ -592,7 +592,13 @@ class EnglishTraversal:
         noun = self.words.sorts[block['action']]
         prefix = ('another ' if quantifier == 'another' else
                   'every other ' if other else 'every ')
-        return prefix + noun + ' available to ' + self.term(owner, scope) + ' ' + verbal
+        exclusion = ''
+        if other:
+            nearest_action = next(i for i, (sort, _) in enumerate(scope)
+                                  if sort == block['action'])
+            if outer != nearest_action:
+                exclusion = ' excluding ' + self.term(ast.Var(outer), scope)
+        return prefix + noun + ' available to ' + self.term(owner, scope) + exclusion + ' ' + verbal
 
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
@@ -1186,6 +1192,12 @@ class EnglishParser:
                        self.words.sorts[block['chooser']] + ' such that that action is available '
                        'to that ' + self.words.sorts[block['chooser']] + ' and …')
         owner = self.term(scope)
+        if mode != 'every' and self.take(' excluding '):
+            excluded = self.term(scope)
+            if (type(excluded) is not ast.Var or
+                    scope[excluded.index][0] != block['action']):
+                self.error('The excluded action must be an action in scope.')
+            outer_action = excluded.index
         self.space()
         inner = ((block['action'], 'that other ' + noun if mode != 'every' else 'that ' + noun), *scope)
 
@@ -1703,8 +1715,8 @@ def english_lark_grammar(env, **options):
             '%extend formula: alt_available_guard',
             '%extend term: ' + content_lit('that other ' + words.sorts[block['action']]),
             'alt_available_guard: "every" ' + action_noun + ' "available" "to" term alt_verb_phrase'
-            ' | "every" "other" ' + action_noun + ' "available" "to" term alt_verb_phrase'
-            ' | "another" ' + action_noun + ' "available" "to" term alt_verb_phrase',
+            ' | "every" "other" ' + action_noun + ' "available" "to" term ("excluding" term)? alt_verb_phrase'
+            ' | "another" ' + action_noun + ' "available" "to" term ("excluding" term)? alt_verb_phrase',
             'alt_verb_phrase: relative | atom | "either" alt_verb_atom "or" alt_verb_atom'
             ' | "either" alt_verb_atom "or" alt_verb_atom ", or both"'
             ' | "both" alt_verb_atom "and" alt_verb_atom',
