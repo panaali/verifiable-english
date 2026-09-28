@@ -44,42 +44,52 @@ def stripSoft (environment : Json) : Except String Json := do
 
 def invalidBlock : String := "InvalidInput: invalid soft block"
 
-def pairOf (j : Json) : Except String (String × String) := do
-  match ← strings j with
-  | [a, b] => pure (a, b)
-  | _ => throw invalidBlock
+def softNameOf (j : Json) : Except String String :=
+  match j with
+  | .str s => pure s
+  | _ => throw s!"InvalidInput: invalid soft name {j.compress}"
 
-def optString (j : Json) (k : String) : Except String (Option String) :=
-  match j.getObjVal? k with
-  | .error _ => pure none
-  | .ok .null => pure none
-  | .ok (.str s) => pure (some s)
-  | .ok _ => throw invalidBlock
+def pairOf (field : String) (j : Json) : Except String (String × String) := do
+  match j with
+  | .arr #[.str a, .str b] => pure (a, b)
+  | _ => throw s!"InvalidInput: invalid {field} pair"
 
 def listField (j : Json) (k : String) : Except String (List Json) :=
   match j.getObjVal? k with
   | .error _ => pure []
   | .ok (.arr xs) => pure xs.toList
-  | .ok _ => throw invalidBlock
+  | .ok _ => throw s!"InvalidInput: {k} must be an array"
 
 /-- The environment `soft` block (3.1); absent means no parties, ranks or deciders. -/
 def decodeSoftBlock (vocab : Json) (instructionOf : List (String × String)) : Except String SoftEnv := do
   match vocab.getObjVal? "soft" with
   | .error _ => pure ⟨[], [], [], [], .strict, none, none, instructionOf⟩
   | .ok s =>
-    VE.Bridge.displayFields s ["outranking"] ["parties", "ranks", "outranks", "ties", "exception_decider"]
-    let parties ← (← listField s "parties").mapM Json.getStr?
-    let ranks ← (← listField s "ranks").mapM Json.getStr?
-    let outranks ← (← listField s "outranks").mapM pairOf
-    let ties ← (← listField s "ties").mapM pairOf
-    let o ← s.getObjVal? "outranking"
-    VE.Bridge.displayFields o ["mode"] ["decided_by"]
+    match VE.Bridge.displayFields s ["outranking"] ["parties", "ranks", "outranks", "ties", "exception_decider"] with
+    | .ok () => pure ()
+    | .error _ => throw invalidBlock
+    let parties ← (← listField s "parties").mapM softNameOf
+    let ranks ← (← listField s "ranks").mapM softNameOf
+    let outranks ← (← listField s "outranks").mapM (pairOf "outranks")
+    let ties ← (← listField s "ties").mapM (pairOf "ties")
+    let o := s.getObjValD "outranking"
+    match VE.Bridge.displayFields o ["mode"] ["decided_by"] with
+    | .ok () => pure ()
+    | .error _ => throw "InvalidInput: invalid outranking flag"
     let mode ← match o.getObjValD "mode" with
       | .str "strict" => pure Outranking.strict
       | .str "holistic" => pure Outranking.holistic
-      | _ => throw invalidBlock
-    let decider ← optString o "decided_by"
-    let exceptionDecider ← optString s "exception_decider"
+      | _ => throw "InvalidInput: invalid outranking flag"
+    if mode == .strict && (o.getObjVal? "decided_by").toBool then
+      throw "InvalidInput: strict outranking has no decider"
+    let decider ← match o.getObjVal? "decided_by" with
+      | .error _ => pure none
+      | .ok (.str d) => pure (some d)
+      | .ok _ => throw "InvalidInput: invalid decider for outranking"
+    let exceptionDecider ← match s.getObjVal? "exception_decider" with
+      | .error _ => pure none
+      | .ok (.str d) => pure (some d)
+      | .ok _ => throw "InvalidInput: invalid decider for exception"
     pure ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, instructionOf⟩
 
 /-- A decoded soft environment: W1's decoding of the stripped environment, the soft block and
