@@ -110,6 +110,22 @@ def default_sentence(env, predicate):
     return "By default, " + template.format(*(article(n) for n in nouns)) + "."
 
 
+def render_rule_sentence(rule, env, words=None):
+    """Render the content of one rule, including quoted rules outside a layer."""
+    words = _words(env) if words is None else words
+    consequence, scope = _consequence(rule, env, words)
+    sentence = consequence
+    if not isinstance(rule.guard, ast.Top):
+        sentence += ", if " + _guard_text(rule.guard, env, words, scope)
+    if len(rule.unless) == 1:
+        sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
+    sentence += "."
+    if len(rule.unless) > 1:
+        sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
+                                   for u in rule.unless)
+    return sentence
+
+
 def render_english(document: NormDocument, *, handles=None):
     env = document.env
     if handles is not None and (set(handles) != {r.name for r in document.rules}
@@ -127,17 +143,7 @@ def render_english(document: NormDocument, *, handles=None):
                       f"Rule {i} (exception to rules {refs}).")
         else:
             header = f"Rule {i}."
-        consequence, scope = _consequence(rule, env, words)
-        sentence = consequence
-        if not isinstance(rule.guard, ast.Top):
-            sentence += ", if " + _guard_text(rule.guard, env, words, scope)
-        if len(rule.unless) == 1:
-            sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
-        sentence += "."
-        if len(rule.unless) > 1:
-            sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
-                                       for u in rule.unless)
-        block = header + " " + sentence
+        block = header + " " + render_rule_sentence(rule, env, words)
         start = sum(len(line) + 1 for line in lines)
         lines.append(block)
         entries.append({"handle": handles[rule.name] if handles is not None else f"handle-{rule.name}",

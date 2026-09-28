@@ -138,22 +138,26 @@ assume that an unreviewed description is an approved name.
 Reproduce with `uv run python -m conformance.natural_surface`. The committed
 report is `conformance/natural-view-report.json`. The round-trip row samples
 100 unique seeded ASTs for each of eleven environments, including `order@0`.
+The repository scan also validates W1 rule blocks with their identity manifests
+and lists them under `non_formula_documents`. They are outside the formula-only
+natural sentence and `ve.prose@1` counts; malformed rule blocks remain reported
+as skipped sources, which fails the corpus test.
 
 | Corpus | Natural | Total | Natural share | Fallback share |
 |---|---:|---:|---:|---:|
 | `examples/` | 11 | 11 | 100% | 0% |
 | `docs/fluent-examples.md` source | 6 | 6 | 100% | 0% |
-| `usecases/` | 73 | 96 | 76.0% | 24.0% |
+| `usecases/` | 74 | 97 | 76.3% | 23.7% |
 | `tests/data/fluent-items.jsonl` | 6 | 6 | 100% | 0% |
 | Seeded round-trip corpora | 503 | 1,100 | 45.7% | 54.3% |
-| **Total** | **599** | **1,219** | **49.1%** | **50.9%** |
+| **Total** | **600** | **1,220** | **49.2%** | **50.8%** |
 
 Of the 620 explicit forms, 618 needed structural notation or quoted identifiers;
 one candidate changed the AST and one failed the English audit. The current
 disposition ledger identifies 551 needing confirmed display names or vocabulary,
 67 needing notation-free order or closure forms, one candidate AST mismatch,
 and one failed candidate audit. All 620 have per-statement dispositions in the
-report. The fixed cohort remains at 599/1,219 (49.1%), below the adopted 90%
+report. The current corpus remains at 600/1,220 (49.2%), below the adopted 90%
 gate; the adversarial generated environments have many intentionally colliding
 or unconfirmed names, and this branch does not invent names for them. The final output
 was independently checked sentence by sentence for exact AST identity and one
@@ -161,11 +165,11 @@ derivation, with zero wrong readings and no skipped corpus source.
 The report also records the three statement web app example as a complete
 paragraph: exact document round trip, one English derivation, and replay of its
 single claim graph deduction all pass. That prose probe is reported separately
-from the 1,219 formula samples.
+from the 1,220 formula samples.
 
-The report additionally measures 57 real repository `.ve` documents with 107
-statements: 84 are notation-free (78.5%), and all 51 nonempty documents have
-exact whole-prose round trips through the advanced parser. Of those, 43 are
+The report additionally measures 58 real formula `.ve` documents with 108
+statements: 85 are notation-free (78.7%), and all 52 nonempty documents have
+exact whole-prose round trips through the advanced parser. Of those, 44 are
 ready for `ve.prose@1`; eight retain visible repair cases. Six empty sources
 have no prose round trip. These
 are AST/role checks, not independent source-fidelity or human-comprehension
