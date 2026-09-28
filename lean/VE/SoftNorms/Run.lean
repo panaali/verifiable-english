@@ -119,22 +119,30 @@ def openAfterClassification (src : SoftSource) (environment norms pairs : Json) 
   pure (rows.filterMap fun (label, status) =>
     if status == .rankResolved || status == .disjoint then none else some label)
 
-/-- Preserve premise positions while checking whether a certificate needs one coherence
-leaf. The certificate's binding remains to the original complete premise list. -/
-def softWithout (D : SoftDoc) (label : String) : List VE.Formula :=
-  (softLabelled D).map (fun (l, f) => if l == label then .top else f)
+/-- Preserve premise positions while disabling a set of open coherence leaves.
+The certificate's binding remains to the original complete premise list. -/
+def softWithout (D : SoftDoc) (labels : List String) : List VE.Formula :=
+  (softLabelled D).map (fun (l, f) => if labels.contains l then .top else f)
 
-def conflictUses (r : SoftConflictReplay) (label : String) : Bool :=
-  ((targets (soften r.src.D)).zip r.certs).any (fun (t, c) => match c with
-    | some c => !VE.Tableau.checkCertificate (envAt (soften r.src.D) 0)
-        (VE.Norms.backgroundBase (soften r.src.D) ++ softWithout r.src.D label)
+def conflictValidWithout (r : SoftConflictReplay) (labels : List String) : Bool :=
+  ((targets (soften r.src.D)).zip r.certs).all (fun (t, c) => match c with
+    | some c => VE.Tableau.checkCertificate (envAt (soften r.src.D) 0)
+        (VE.Norms.backgroundBase (soften r.src.D) ++ softWithout r.src.D labels)
         (targetConclusion t) c
     | none => false)
 
-def entailmentUses (r : SoftEntailmentReplay) (label : String) : Bool :=
-  !VE.Tableau.checkCertificate (envAt (soften r.src.D) (size (soften r.src.D)))
-    (VE.Norms.background (soften r.src.D) ++ softWithout r.src.D label ++
+def entailmentValidWithout (r : SoftEntailmentReplay) (labels : List String) : Bool :=
+  VE.Tableau.checkCertificate (envAt (soften r.src.D) (size (soften r.src.D)))
+    (VE.Norms.background (soften r.src.D) ++ softWithout r.src.D labels ++
       elaborate (soften r.src.D).T ++ r.premises) r.conclusion r.cert
+
+/-- Keep a sufficient set of open premises. A leaf is removed only if every certificate
+still replays after all earlier removals; independent single-leaf checks are insufficient
+when two leaves can substitute for one another. -/
+def sufficientCoherence (openLabels : List String) (validWithout : List String → Bool) : List String :=
+  let removed := openLabels.foldl (fun removed label =>
+    if validWithout (label :: removed) then label :: removed else removed) []
+  openLabels.filter (!removed.contains ·)
 
 /-! ## Admission -/
 
@@ -217,7 +225,7 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     let r ← replaySoftEntailment j
     let openLabels ← openAfterClassification r.src (j.getObjValD "environment")
       (j.getObjValD "norms") (j.getObjValD "pairs")
-    let conditional := if r.valid then openLabels.filter (entailmentUses r) else []
+    let conditional := if r.valid then sufficientCoherence openLabels (entailmentValidWithout r) else []
     return VE.Route.Wire.ok id [("valid", .bool r.valid),
       ("background", toJson (background' r.src.D).length), ("layers", toJson (elaborate (soften r.src.D).T).length),
       ("conditional_on", toJson conditional)]
@@ -235,7 +243,7 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     let openLabels ← openAfterClassification res.src (j.getObjValD "environment")
       (j.getObjValD "norms") (j.getObjValD "pairs")
-    let conditional := if res.conflictFree then openLabels.filter (conflictUses res) else []
+    let conditional := if res.conflictFree then sufficientCoherence openLabels (conflictValidWithout res) else []
     let budget := (j.getObjValD "budget").getNat?.toOption.getD 10000
     let exhibit ← if (j.getObjVal? "coherent_model").toBool then do
       let ⟨model, _⟩ ← decodeModel res.src
