@@ -118,7 +118,7 @@ class SoftEnvironment(Environment):
             if a in above[b] or b in above[a]:
                 raise VEError(f'TieAgainstOrder: {a}, {b}')
         if len({frozenset(pair) for pair in ties}) != len(ties):
-            raise DuplicateDeclaration('tie')
+            raise DuplicateDeclaration('DuplicateDeclaration: tie')
         instructions = {}
         for name, entry in vocab.get('predicates', {}).items():
             if type(entry) is not dict:

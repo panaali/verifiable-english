@@ -268,6 +268,8 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
   | .ok _ => pure ()
   for (a, b) in env.ties do
     if outranksPlus env a b || outranksPlus env b a then throw s!"TieAgainstOrder: {a}, {b}"
+  if (env.ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != env.ties.length then
+    throw "DuplicateDeclaration: tie"
   for N in D.T.nodes do
     if (derivedList D N).any (fun φ => fsize φ > maxNodes) then
       throw s!"ResourceLimit: derived carve-out of rule {N.name}"
