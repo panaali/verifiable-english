@@ -1,6 +1,6 @@
 # Reports and attitudes (`reports@0`): structured reported content, attitude wrappers and open assessments over `ve-document@1`
 
-> Status: item-1 specification, draft 3 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
+> Status: item-1 specification, draft 4 (2026-09-28), written from [attribution-PLAN.md](attribution-PLAN.md)
 > revision 3. Draft 1 transcribed the converged Astra/Fable design debate
 > (`manage-agents/debates/design-attribution/{astra,fable}.md`: BUILD after six text edits, CONVERGED after
 > round 2); draft 2 applies the converged FIX of the Astra/Fable statement review of draft 1
@@ -8,7 +8,10 @@
 > the nine edits); draft 3 applies the three findings of the read-only verification of draft 2 against that FIX
 > (`manage-agents/attribution-p3ver1.final.md`: independence fixtures over premise subsets that keep the queried
 > vocabulary, well-formed signed atoms in `reports_no_leak`, and `scoped_background_local` as no automatic
-> insertion). It returns for the one focused statement review that gates items 2 to 5 of the plan
+> insertion); draft 4 applies the two findings of the second read-only verification
+> (`manage-agents/attribution-p3ver2.final.md`: a dropped key leaves `topKeys (D ▷ U)` only when no kept unit
+> asserts or denies it, and fixture γ's subset premises list one registration atom per omitted unit). It returns
+> for the one focused statement review that gates items 2 to 5 of the plan
 > (PLAN-EXPAND2 rule 10) and any implementation. Sections 4 to 6 and 9 are the statements under review; section 10
 > gives the fixtures with their definitions (10.1) separated from their expected results (10.2); section 13 lists
 > every point where this draft chose between readings of the plan. Theorem statements and fixtures are
@@ -1168,8 +1171,9 @@ is the number of nodes of all trees. `Expandable D S₀` is `fol.Sat S₀ (neqs 
 statements verbatim. `all_truth_combinations` and `all_truth_combinations_assess` are the two statements behind
 the "different attributions for equivalent payloads", "may and probably independent" and "negation inside versus
 outside" fixtures; each fixture names the premise subset `D ▷ U` (10.1: the top-level units it keeps, every
-dropped key retained in the vocabulary by a registration unit, so that the queried keys are in `keys` or `akeys`
-and not in `topKeys` or `topAKeys`) over which it applies them.
+dropped key retained in the vocabulary by a registration unit, and no kept unit asserting or denying a queried
+key, so that the queried keys are in `keys` or `akeys` and not in `topKeys` or `topAKeys`) over which it applies
+them.
 
 ### 9.3 Theorems: the route, scoped checks, bridges, assessments and the wire
 
@@ -1414,15 +1418,20 @@ after their units; `Γ_author` is empty unless stated. Paths are written `(unit,
 **Premise subsets that keep the vocabulary.** `D ▷ U`, for a list `U` of top-level units of `D`, is the document
 whose top-level units are those of `U` in `D`'s order, followed by one *registration unit* for every unit of `D`
 not in `U`: `The article says that R.` (says, `the_article`, `c3`), where `R` is that unit's report or
-assessment wording (its operand's for a negated unit: a negated node has no key of its own, 1.1). A registration
-unit puts the dropped unit's key, and every key nested in it, into `keys (D ▷ U)` or `akeys (D ▷ U)` without
-asserting or denying it, as `D_β`'s u3 does: `Γ_reports(D ▷ U)` is the signed premises of `U` followed by the
-positive registration atoms `reports__says__i(the_article)`, so the dropped keys are in the vocabulary and not in
+assessment wording (its operand's for a negated unit: a negated node has no key of its own, 1.1); two omitted
+units with one wording, such as `D_γ`'s u2 and u3, give two identical registration units. A registration unit
+puts the dropped unit's key, and every key nested in it, into `keys (D ▷ U)` or `akeys (D ▷ U)` without
+asserting or denying it, as `D_β`'s u3 does: `Γ_reports(D ▷ U)` is the signed premises of `U` followed by one
+positive registration atom `reports__says__i(the_article)` per registration unit. Registration keeps a dropped
+key in the vocabulary; it does not by itself remove the key from `topKeys (D ▷ U)` or `topAKeys (D ▷ U)`. A
+dropped key is outside them exactly when no unit of `U` asserts or denies it, since a kept unit that shares the
+key keeps it asserted (over `D_γ ▷ [u2]`, u3's key is u2's and stays in `topKeys`). Every independence
+expectation of 10.2 names the `D ▷ U` it is over, is over its premises and no other, and queries only keys that
+no unit of that `U` asserts or denies, so each queried key is in `keys (D ▷ U)` or `akeys (D ▷ U)` and not in
 `topKeys (D ▷ U)` or `topAKeys (D ▷ U)`, which is the hypothesis of `unreported_key_free`,
 `all_truth_combinations` and `all_truth_combinations_assess`. None of `D_γ`, `D_ε`, `D_η`, `D_μ` has a `says`
 key, so per-act numbering (1.5) gives every queried predicate the name it has in `D`, and `E_reports(D ▷ U)` is
-`E_reports(D)` plus the registration predicates. Every independence expectation of 10.2 names the `D ▷ U` it is
-over and is over its premises and no other; `D ▷ []` asserts and denies no key of `D`.
+`E_reports(D)` plus the registration predicates; `D ▷ []` asserts and denies no key of `D`.
 
 ```text
 D_α   u1: The article says that the service is safe.                          says, the_article, c3, safe(service)
@@ -1524,11 +1533,14 @@ D_ω   u1: The article says that it is not the case that Anthropic believes that
 - **(γ) Structural content.** u1 and u2 have different canonical content objects, hence different content ids
   and different keys (`content_structural`); u2 and u3 share one key and one atom; `Γ` has three entries with
   two distinct formulas, and over `D_γ` itself the model with both atoms true and `safe` empty is valid and
-  satisfies `Γ`. Independence over `D_γ ▷ [u1]` (u2's key registered; `Γ = [u1's atom,
-  reports__says__1(the_article)]`): the model with the u1 atom true and the u2/u3 atom false is valid and
-  satisfies `Γ`, so no certificate for the u2/u3 atom replays there; over `D_γ ▷ [u2, u3]` the model with the
-  u2/u3 atom true and the u1 atom false likewise, so none for the u1 atom replays (`all_truth_combinations`, the
-  dropped key not in `topKeys`). The residual of `D_γ` counts two report keys and three occurrences.
+  satisfies `Γ`. Independence over `D_γ ▷ [u1]` (u2 and u3 omitted, so two identical registration units for
+  their shared key; `Γ = [u1's atom, reports__says__1(the_article), reports__says__1(the_article)]`, three
+  entries with two distinct formulas): the model with the u1 atom true and the u2/u3 atom false is valid and
+  satisfies `Γ`, so no certificate for the u2/u3 atom replays there; over `D_γ ▷ [u2, u3]` (u1 omitted, one
+  registration unit; `Γ = [u2's atom, u3's atom, reports__says__1(the_article)]`) the model with the u2/u3 atom
+  true and the u1 atom false likewise, so none for the u1 atom replays (`all_truth_combinations`: in each subset
+  the queried key is asserted or denied by no kept unit, so it is not in `topKeys`; `D_γ ▷ [u2]` would not do
+  for u3's key, which u2 keeps asserted). The residual of `D_γ` counts two report keys and three occurrences.
 - **(δ) Intention.** `Γ = [reports__intends__1(the_team)]`; the model with `publishes` empty satisfies `Γ`; no
   `required` symbol exists (`UnknownSymbol` on a `Γ` naming one); paraphrase: "neither that the team publishes
   the results of the service, nor an obligation, nor a promise follows".
@@ -1734,8 +1746,8 @@ theorem name or successful build substitutes for a replayed certificate.
     connectives; the synonyms and non-synonyms (2.2); the checklist (2.3); the round-trip contract and
     `ManifestMismatch` (2.4); the source examples with zero substantive gain (2.5).
 15. The diagnostics (8) and the fixtures (10), each against the definitions, each independence expectation over
-    its named premise subset `D ▷ U` with the queried keys kept in the vocabulary by registration (10.1); the
-    envelope in fixture φ (13.19).
+    its named premise subset `D ▷ U` with the queried keys kept in the vocabulary by registration and asserted or
+    denied by no kept unit (10.1); the envelope in fixture φ (13.19).
 16. The composition gate with `data@0` rejected (11.3) and the trust list (11.4).
 17. The resolved choices of section 13, in particular 13.2 (the profile-gated act list), 13.5 (criteria are not
     premises) and the draft-2 choices 13.15 to 13.19.
@@ -1819,3 +1831,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 | 2026-09-28 | Draft 1 | Item-1 specification from attribution-PLAN.md revision 2: contents, occurrences and keys with tense in the context; the four acts and the complement forms; open assessments with W2's complete record and `unresolved_decider`; `E_reports` and generated names; the English table with the "According to the stated assessment" templates, the past-tense row, the parser binding and the round-trip contract; wire form and identity; the independent semantics `(S, J, A)`, `elab`, `interp`, `restrictJ`; the `Layer.id` route instance with report atoms in `Γ`; `reports_elaboration_faithful` and `reports_old_language_conservative` as the first Lean statements, with `reports_no_leak`, the structure theorems, scoped checks, bridges by path, assessments and the wire; status and residual lines; diagnostics; fixtures α to ψ with definitions separated from expectations; limits, the composition gate and the trust list; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The converged FIX of the Astra/Fable statement review (`manage-agents/debates/attribution-spec/`, CONVERGED after round 3), nine edits: (1) `J` and `A` typed and indexed by the complete key (sort included), `restrictJ` guarded by `keys D` and the domain, typed arguments in every correspondence statement (4.2, 4.3, 9.1, 9.2); (2) `reports_no_leak` restated with `neqs` (signed atoms force holder disequalities; P0 has no distinct-name assumption), `SignedAtom` defined by shape, `Expandable` as the hypothesis of every model-existence theorem, `reports_route_acceptance_base` carrying `neqs (premises D)`, positive documents recovering the draft-1 statements (4.4, 9.2, 9.3); (3) recursive negation: the statement grammar, the `negated` wire form, `elab` through `not`, recursive `Sat` in `IntendedReports`, a nested-negation wording row, one unit sequence, kinds and paths transparent to negation, other connectives deferred (1.1, 2.1, 3.3, 4.1 to 4.3, 13.15, 13.20); (4) the reports envelope `(environment_id(E), document_id(D))` as a checked second binding, identity theorems on canonical objects with `HashCollision` rejection, name distinctness on the document's keys, per-act numbering (1.5, 3.4, 9.2, 9.3, 13.19); (5) nested bridges as `bridge:accepts_at(<holder>,<unit>,<path>)` with explicit unit and path fields beside the frozen root label, assessment nodes bridgeable by any agent, "the record's decider" dropped, 13.8 corrected (3.2, 5.2, 9.1, 9.3); (6) the reports gate around the frozen `classify`, `data@0` rejected (4.1, 9.4, 11.3); (7) non-factivity theorems on formula contents with `M.S = S₀` (9.2, 9.3); (8) fixtures: β registers by nesting, λ with a package statement and `Background(E_q)`, `publishes(organisation, service)` in δ and τ, σ under the restricted act check, ψ(b) rejection and ψ(c) minimal block, μ split into μ, μ′, μ″, independence expectations over named premise subsets, φ through the envelope, ω added (10); (9) exactness: `admit_report_sound` mirrored conjunct for conjunct, `reports_labels_decoded` stated, `finite_witness_decodes` and `scoped_witness_sound` at every universe, `AgreeOn` and `openTerms` defined, every free variable bound, `h` no longer reused. Scoped checks run under the pinned route's background (5.1). Boundary, status table and plan obligations unchanged. Spec only. |
 | 2026-09-28 | Draft 3 | The three findings of the read-only verification of draft 2 against the converged FIX (`manage-agents/attribution-p3ver1.final.md`, FAIL on commit `078de15`): (1) independence fixtures γ, ε, η and μ restated over explicit premise subsets `D ▷ U` that keep the queried keys in the vocabulary by registration under a `says` report (10.1, the device of fixture β): γ no longer requires an asserted atom false, η keeps the past premise and drops the present one, ε and μ no longer use the empty document, and each names the subset over which no certificate replays (9.2, 10.2, checklist 15); (2) `SignedAtom` requires a well-formed atom (a generated predicate applied to a declared constant of its sort), so `reports_no_leak` is stated over well-formed signed atoms and `neqs R` is well-formed over `E` (`neqs_wellFormed`; 4.4, 9.1, 9.2, 13.18, checklist 8); (3) `scoped_background_local` restated as no automatic insertion: a quoted definition premise is never among the literals or report premises and is in `checkedList D Γ` only when the author wrote it into `Γ` (5.1, 9.3, fixture λ, checklist 10). Spec only; the plan's pointer moves to draft 3. |
+| 2026-09-28 | Draft 4 | The two findings of the second read-only verification (`manage-agents/attribution-p3ver2.final.md`, FAIL on commit `b4b5d22`), both in the registration specification of 10.1: (1) registration keeps a dropped key in the vocabulary but does not by itself remove it from `topKeys (D ▷ U)` or `topAKeys (D ▷ U)`; a dropped key is outside them exactly when no kept unit asserts or denies it (over `D_γ ▷ [u2]`, u3's key is u2's and stays asserted), and every independence expectation is stated to query only such keys (9.2, 10.1, 10.2 γ, checklist 15); (2) registration is one unit per omitted unit, so `D_γ ▷ [u1]` has two identical registration premises and its `Γ` lists three entries with two distinct formulas, and `D_γ ▷ [u2, u3]`'s `Γ` is listed (10.1, 10.2 γ). The countermodels, ε, η, μ, `SignedAtom`, `neqs` and `scoped_background_local` are unchanged. Spec only; the plan's pointer moves to draft 4. |
