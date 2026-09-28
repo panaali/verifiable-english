@@ -75,8 +75,8 @@
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "background": {"$ref": "common.json#/$defs/fol_formulas"},
-        "premises": {"$ref": "common.json#/$defs/fol_formulas"},
+        "background": {"$ref": "common.json#/$defs/generated_formulas"},
+        "premises": {"$ref": "common.json#/$defs/generated_formulas"},
         "generators": {"type": "array", "items": {"$ref": "common.json#/$defs/generator"},
           "x-runs": {"key": "", "runs": [["flags", {"$ref": "common.json#/counts/flags"}],
                                          ["definitions", {"$ref": "common.json#/counts/definitions"}],

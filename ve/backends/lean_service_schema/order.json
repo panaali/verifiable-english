@@ -15,7 +15,7 @@
       "evaluate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "evaluate"}}},
       "countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
       "certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "certificate"}}}},
-    "surface": {"$comment": "Order.Surface.parse accepts only a nonempty document.",
+    "surface": {"$comment": "Order.Surface.parse accepts only a nonempty document, and runCase re-decodes each parsed formula with Wire.decodeFormula 64, so the generated formulas are within order_formula.",
       "type": "object", "required": ["id", "status", "ast"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},

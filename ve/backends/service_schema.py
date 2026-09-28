@@ -2,9 +2,10 @@
 
 `lean_service_schema/*.json` is the only description of response shapes; this module
 compiles it (dialect: `lean_service_schema/README.md`) into closures. A validator is
-`check(value, ctx, fuel)` and raises `Invalid` on the first violation. Recursion is
-bounded by the schemas' `x-fuel` limits (at most 64 formula and 64 term levels), and
-arbitrary JSON (echoed ids, `const`) is compared without recursion.
+`check(value, ctx, fuel)` and raises `Invalid` on the first violation. Tagged grammars
+(formulas and terms) are checked with an explicit stack, so a generated formula of any
+depth is checked without recursion; `x-fuel` limits the formulas the Lean decoders read
+to 64 levels. Arbitrary JSON (echoed ids, `const`) is compared without recursion.
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ from decimal import Decimal
 import json
 from pathlib import Path
 import re
+import reprlib
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english")
@@ -137,6 +139,8 @@ class Compiler:
         unknown = set(schema) - _KEYWORDS
         if unknown:
             raise SchemaError(f"unsupported keywords {sorted(unknown)} in {base}")
+        if _is_grammar(schema):
+            return _Grammar(self, schema, base)
         checks = []
         for keyword in _ORDER:
             if keyword in schema:
@@ -340,19 +344,7 @@ class Compiler:
     # Extensions (lean_service_schema/README.md)
 
     def _x_tagged(self, table, schema, base):
-        compiled = {tag: [self.compile(sub, base) for sub in slots] for tag, slots in table.items()}
-
-        def check(value, ctx, fuel):
-            if not isinstance(value, list) or not value or not isinstance(value[0], str):
-                _fail(f"expected a tagged array, got {_short(value)}")
-            slots = compiled.get(value[0])
-            if slots is None:
-                _fail(f"unknown tag {_short(value[0])}")
-            if len(value) != len(slots) + 1:
-                _fail(f"{value[0]} takes {len(slots)} arguments")
-            for element, sub in zip(value[1:], slots):
-                sub(element, ctx, fuel)
-        return check
+        return _Grammar(self, {"x-tagged": table}, base)
 
     def _x_fuel(self, rule, schema, base):
         return None  # applied by `compile` around every other keyword
@@ -595,9 +587,64 @@ def _valid(check, value, ctx, fuel) -> bool:
         return False
 
 
+_SHORT = reprlib.Repr(maxlevel=3, maxlist=4, maxdict=4, maxstring=40, maxother=40)
+
+
 def _short(value: object) -> str:
-    text = repr(value)
+    """A bounded rendering: `reprlib` stops at depth 3, so a deep value never recurses."""
+    text = _SHORT.repr(value)
     return text if len(text) <= 60 else text[:57] + "..."
+
+
+_GRAMMAR_KEYS = frozenset({"x-tagged", "x-fuel", "$comment"})
+
+
+def _is_grammar(schema: object) -> bool:
+    """A tagged grammar: `x-tagged`, optionally with `x-fuel`, and nothing else."""
+    return isinstance(schema, dict) and "x-tagged" in schema and set(schema) <= _GRAMMAR_KEYS
+
+
+class _Grammar:
+    """A tagged grammar checked with an explicit stack. An argument whose schema is a
+    `$ref` to a grammar is pushed rather than called, so a formula of any depth is
+    checked without Python recursion; `x-fuel` counts the entries as before."""
+
+    def __init__(self, compiler: Compiler, schema: dict, base: str):
+        rule = schema.get("x-fuel")
+        self.counter = None if rule is None else compiler.counters.setdefault(rule["counter"], len(compiler.counters))
+        self.limit = None if rule is None else rule["limit"]
+        self.table = {tag: [self._slot(compiler, sub, base) for sub in slots]
+                      for tag, slots in schema["x-tagged"].items()}
+
+    @staticmethod
+    def _slot(compiler: Compiler, sub: object, base: str):
+        if isinstance(sub, dict) and set(sub) - {"$comment"} == {"$ref"}:
+            name, _, pointer = sub["$ref"].partition("#")
+            if _is_grammar(_resolve(compiler.documents.get(name or base, {}), pointer)):
+                return compiler.ref(base, sub["$ref"])  # a cell: its grammar is pushed
+        return compiler.compile(sub, base)
+
+    def __call__(self, value, ctx, fuel):
+        pending = [(self, value, fuel)]
+        while pending:
+            grammar, value, fuel = pending.pop()
+            if grammar.counter is not None:
+                used = fuel.get(grammar.counter, 0) + 1
+                if used > grammar.limit:
+                    _fail(f"nesting exceeds the Lean decoder fuel {grammar.limit}")
+                fuel = {**fuel, grammar.counter: used}
+            if not isinstance(value, list) or not value or not isinstance(value[0], str):
+                _fail(f"expected a tagged array, got {_short(value)}")
+            slots = grammar.table.get(value[0])
+            if slots is None:
+                _fail(f"unknown tag {_short(value[0])}")
+            if len(value) != len(slots) + 1:
+                _fail(f"{value[0]} takes {len(slots)} arguments")
+            for element, slot in zip(value[1:], slots):
+                if isinstance(slot, list):
+                    pending.append((slot[0], element, fuel))
+                else:
+                    slot(element, ctx, fuel)
 
 
 def _verify_order(nodes: object, order: object) -> bool:

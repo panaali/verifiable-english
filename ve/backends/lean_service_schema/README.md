@@ -30,7 +30,7 @@ element of an array (every element must resolve).
 | Keyword | Meaning |
 |---|---|
 | `x-tagged: {tag: [s1, ..., sn]}` | an array `[tag, v1, ..., vn]` with each `vi` valid under `si` |
-| `x-fuel: {counter, limit}` | at most `limit` nested entries into schemas with this counter (Lean decoder fuel) |
+| `x-fuel: {counter, limit}` | at most `limit` nested entries into schemas with this counter (Lean decoder fuel); formulas the runners generate (`generated_formula`) have none, since generation is not bounded by the decoders' depth |
 | `x-echo: p` | equals the context value at `p`, or `null` if it is absent (`Json.getObjValD`) |
 | `x-equals: p` | equals the context value at `p`, which must exist |
 | `x-length: p` | an array as long as the context array at `p` |

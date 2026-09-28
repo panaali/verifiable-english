@@ -100,7 +100,34 @@ def route_cases():
     cases += [{"id": c["id"] + "-bg", "kind": "background", "environment": c["environment"]}
               for c in by_kind["certificate"]]
     cases.append(shared_admission())
+    cases.append(deep_definition_background(route))
     return cases + ADVERSARIAL
+
+
+def negations(depth, leaf):
+    for _ in range(depth - 1):
+        leaf = ["not", leaf]
+    return leaf
+
+
+def deep_definition_background(route, depth=64):
+    """A binary definition whose body has depth `depth` (at most the decoder's 64): its
+    Background premise, two binders and a biconditional around the body, is 4 deeper."""
+    case = deepcopy(next(c for c in route if c.get("id") == "defs-background"))
+    case["id"] = f"deep-definition-{depth}"
+    case["environment"]["vocabulary"]["predicates"]["over"] = {
+        "arguments": ["person", "person"], "description": "is over",
+        "defined": {"arguments": ["person", "person"],
+                    "body": negations(depth, ["binary", "supervises", ["var", 1], ["var", 0]])}}
+    return case
+
+
+def deep_norms_elaboration():
+    """70 rules on one predicate: the elaboration's disjunction of them is deeper than 64."""
+    from tests.test_norms import environment, permission, rule
+    env = environment({"permitted": permission()})
+    return {"id": "deep-rules", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [rule(f"r{j}", "permitted", True).to_dict() for j in range(70)]}
 
 
 def shared_admission():
@@ -175,10 +202,13 @@ def norms_cases():
     quoted["graph"] = {"root": "asserted", "nodes": [{"name": "asserted", "ast": ["top"], "unit": "u2"}]}
     cases.append({"id": "quoted", "kind": "admission", "environment": raw.to_dict(), "document": quoted})
     cases.append({"id": "unsupported", "kind": "evaluate", "norms": []})
+    cases.append(deep_norms_elaboration())
     return cases + route_cases()
 
 
-def english_cases():
+def english_cases(negations=(64, 200)):
+    """Four English payloads; the first also parses fixtures under each count of
+    `negations` negations, deeper than the decoders' 64."""
     import warnings
     from conformance import english_lean as E
     from ve import ast, render
@@ -201,8 +231,17 @@ def english_cases():
             text = render(ast.Document((formula,)), env, "ve_english", **options)
             cases.append({"tokens": E.tokenize(E.lower_sentence_starts(text), letters),
                           "formulas": [E.wire(formula)]})
-        cases += [{"tokens": tokens, "formulas": [E.wire(ast.Top())]} for _, tokens, _ in E.fixtures(lex)][:4]
+        fixtures = [{"tokens": tokens, "formulas": [E.wire(ast.Top())]} for _, tokens, _ in E.fixtures(lex)][:4]
+        cases += fixtures
         cases.append({"tokens": ["no", "such", "words"], "formulas": []})
+        if not payloads:
+            def tokens(formula):
+                text = render(ast.Document((formula,)), env, "ve_english", **options)
+                return E.tokenize(E.lower_sentence_starts(text), letters)
+            once, twice = tokens(ast.Not(ast.Top())), tokens(ast.Not(ast.Not(ast.Top())))
+            prefix = twice[:len(twice) - len(once)]  # one negation
+            cases += [{**fixture, "tokens": prefix * k + fixture["tokens"]}
+                      for fixture in fixtures[:2] for k in negations]
         payloads.append({"environment": E.environment(env), "lexicon": lex, "cases": cases})
     return payloads + [{"environment": {}}, {"lexicon": {}}]
 

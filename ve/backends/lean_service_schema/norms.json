@@ -42,7 +42,7 @@
           "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
           "properties": {
             "generator": {"enum": ["definitions", "literals", "profile"]},
-            "ast": {"$ref": "common.json#/$defs/fol_formula"}}},
+            "ast": {"$ref": "common.json#/$defs/generated_formula"}}},
           "x-runs": {"key": "/generator", "runs": [["definitions", {"$ref": "common.json#/counts/definitions"}],
                                                    ["literals", {"$ref": "common.json#/counts/literals"}],
                                                    ["profile", {"$ref": "common.json#/counts/profile_pairs"}]]}},
@@ -50,13 +50,13 @@
           "type": "object", "required": ["label", "ast"], "additionalProperties": false,
           "properties": {
             "label": {"type": "string", "pattern": "layer:norms:.*"},
-            "ast": {"$ref": "common.json#/$defs/fol_formula"}}}},
+            "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
         "conflict_targets": {"type": "array", "x-cardinality": {"$ref": "common.json#/counts/targets"}, "items": {
           "type": "object", "required": ["target", "sorts", "ast"], "additionalProperties": false,
           "properties": {
             "target": {"type": "string"},
             "sorts": {"$ref": "common.json#/$defs/strings"},
-            "ast": {"$ref": "common.json#/$defs/fol_formula"}}}},
+            "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
         "fragment": {"type": "boolean"}}},
     "norms-certificate": {"type": "object", "required": ["id", "status", "valid", "background", "layers"],
       "additionalProperties": false,
