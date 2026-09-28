@@ -217,24 +217,36 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 
 ## Gate 1 review follow-up (2026-09-27)
 
+DRI decision: "The quiet-machine condition is replaced by a measurable contention condition: a Gate 1 timing run is acceptable when every numerical target is met by its 95% upper bound AND the median runqueue wait (from /proc schedstat) of every workload is <= 0.1 ms; the run records load, runqueue wait p50/p95 and the exact commit."
+
 | Criterion | Result | Evidence |
 |---|---|---|
 | One-shot/service equivalence | 16,556 / 16,556 cases identical across all six modes, including English `null`, fractional, exponent and duplicate-key payloads; zero restarts | [Full parity](../../experiments/lean-service/parity/PARITY.md) |
 | Protocol and supervision faults | 42 focused tests pass: malformed responses, startup EOF and invalid handshakes retry and clean up; unlisted executables are refused by default; malformed and binary request lines receive an error and processing continues | `tests/test_lean_service.py` |
 | Three-session soak | 60,000 mixed-mode requests, zero mismatches and restarts; worst RSS growth 5.24% against the 10% gate | [Session summary](../../experiments/lean-service/soak/SESSIONS.md) |
-| Service-call latency | On the measured 95% confidence upper bounds: ordinary p50 at most 2.039 ms (gate 5 ms), ordinary p95 at most 4.198 ms (gate 20 ms), large certificate p95 50.645 ms (gate 200 ms). First 100 warmup calls and 20 separate cold starts reported; 30 repetitions per batch. | [Latency run](../../experiments/lean-service/latency/LATENCY.md) |
+| Service-call latency and contention | PASS on commit `8bf11607040f3577f33d8e49f951286353185ffa`: 95% upper bounds are ordinary p50 1.496 ms (gate 5 ms), ordinary p95 2.551 ms (gate 20 ms), and large certificate p95 40.805 ms (gate 200 ms). Median runqueue wait is 0.0 ms for all 11 workloads (gate 0.1 ms). | [Current HEAD latency run](../../experiments/lean-service/latency-8bf1160/LATENCY.md) |
+| Full suite | `VE_LEAN_PREBUILT=1 uv run --frozen python -m pytest -q`: 2,412 passed, 5 skipped, 1 live test deselected | Local run on 2026-09-28 |
 | Source and theorem guards | `lake build`, 889-theorem `audit.py`, generated English-copy check and hashes over all 124 VE Lean modules pass | `lean/audit.py`, `lean/VE/Route/frozen.py` |
 
-**Quiet-machine condition remains open.** The 1-minute load average was 3.15–4.85 at the start of these timing runs on 8 logical CPUs, and rose as high as 5.70. The measured upper bounds meet the numerical targets under this contention; the plan also calls for a quiet host. A quiet-machine rerun or explicit gate acceptance is still required.
+**Gate 1 timing status: PASS under the DRI contention condition.** The full frozen workload run on commit
+`8bf11607040f3577f33d8e49f951286353185ffa` used 20 cold starts, 100 warmup calls, 400 persistent and
+40 one-shot calls per workload, and 30 repetitions per batch. The host had 16 logical CPUs and a one-minute
+load average of 5.987 before and 6.659 after. Runqueue wait p50 was 0.0 ms for every workload; the largest
+p95 was 0.031 ms. The [run record](../../experiments/lean-service/latency-8bf1160/LATENCY.md) gives each
+workload's p50/p95 and the exact commit.
 
-**Update (design directive 3, commit `eb97efad`).** The [latest run](../../experiments/lean-service/recheck-20260928-directive3/RECHECK.md)
-meets every numerical target on its upper bounds, including all four batch targets on the pool (2,048 definitions:
-0.938 s median, upper bound 0.974 s). It also measures contention directly: the median runqueue wait was 0.0 ms for
-every workload at load 11 on 16 CPUs. Accepting it as the quiet-machine run is left to the DRI.
-
-The section-4 batch targets are separate from Gate 1. In the latest 30-repetition run, 2,048 definitions took a 1.197 s median against a 1.0 s target and 8 large certificates took 0.310 s against 0.3 s. The other two batch medians were within their targets. These rows remain work for later gates.
+| Section-4 numerical target | 95% upper bound | Limit | Status |
+|---|---:|---:|---|
+| Cold start p95 | 43.304 ms | 150 ms | PASS |
+| Ordinary service call p50 (worst workload) | 1.496 ms | 5 ms | PASS |
+| Ordinary service call p95 (worst workload) | 2.551 ms | 20 ms | PASS |
+| Large certificate service call p95 | 40.805 ms | 200 ms | PASS |
+| 2,048 definitions, pool median | 0.811 s | 1.0 s | PASS |
+| 256 bundles, pool median | 0.124 s | 0.25 s | PASS |
+| 256 conflicts, pool median | 0.114 s | 0.5 s | PASS |
+| 8 large certificates, pool median | 0.147 s | 0.3 s | PASS |
 
 ## Left for later stages
 
 - The section-2.1 glue modes and identities (stage 2b), adapters (2a), end-to-end and pilot latency (gates 2–4).
-- The plan's later assist-ledger latency method under `VE_AUTHORITY=lean` and a quiet-machine Gate 1 timing rerun.
+- The plan's later assist-ledger latency method under `VE_AUTHORITY=lean`.

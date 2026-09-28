@@ -98,7 +98,7 @@ def machine():
                    if line.startswith("model name"))
     except (OSError, StopIteration):
         pass
-    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True,
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
                             text=True).stdout.strip()
     return {"cpu": cpu, "logical_cpus": os.cpu_count(), "loadavg": list(os.getloadavg()),
             "python": sys.version.split()[0], "commit": commit}
