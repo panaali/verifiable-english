@@ -38,6 +38,8 @@ import VE.SpeechActs.Tree
 import VE.SpeechActs.Demand
 import VE.SpeechActs.Answer
 import VE.SpeechActs.Consequence
+import VE.SpeechActs.Wire
+import VE.SpeechActs.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1021,3 +1023,12 @@ import VE.SpeechActs.Consequence
 #print axioms VE.SpeechActs.combine_scope
 #print axioms VE.SpeechActs.two_task_separation
 #print axioms VE.SpeechActs.policy_rules
+#print axioms VE.SpeechActs.Wire.getObjVal_insert
+#print axioms VE.SpeechActs.Wire.canonical_scope
+#print axioms VE.SpeechActs.Wire.scope_in_identity
+#print axioms VE.SpeechActs.Run.valid_transfer
+#print axioms VE.SpeechActs.Run.En_predicates
+#print axioms VE.SpeechActs.Run.premiseStatus_sound
+#print axioms VE.SpeechActs.Run.speech_wire_answer_sound
+#print axioms VE.SpeechActs.Run.speech_wire_consequence_sound
+#print axioms VE.SpeechActs.Run.speech_wire_conflict_witness_sound
