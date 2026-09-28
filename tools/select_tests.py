@@ -47,11 +47,11 @@ def git_lines(*args: str) -> list[str]:
 
 def changed_paths(base: str | None, commit: str | None) -> list[str]:
     if commit:
-        return git_lines("diff-tree", "--no-commit-id", "--name-only", "-r",
+        return git_lines("diff-tree", "--no-renames", "--no-commit-id", "--name-only", "-r",
                          f"{commit}^", commit)
     if base:
-        return git_lines("diff", "--name-only", f"{base}...HEAD")
-    return sorted(set(git_lines("diff", "--name-only", "HEAD") +
+        return git_lines("diff", "--no-renames", "--name-only", f"{base}...HEAD")
+    return sorted(set(git_lines("diff", "--no-renames", "--name-only", "HEAD") +
                       git_lines("ls-files", "--others", "--exclude-standard")))
 
 
