@@ -797,17 +797,6 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
     throw "unit spans must be sorted and non-overlapping"
-  -- These source metadata fields are validated after units, as in Python.
-  if let .ok answers := document.getObjVal? "answers" then
-    let .arr records := answers | throw "InvalidInput: answers"
-    for answer in records do
-      if let .ok flag := answer.getObjVal? "conditional" then
-        match flag with
-        | .bool _ => pure ()
-        | _ => throw "InvalidInput: conditional"
-      match answer.getObjVal? "by" with
-      | .ok (.str name) => unless VE.Route.Admission.token name do throw "InvalidInput: answer record"
-      | _ => throw "InvalidInput: answer record"
   -- Authored bindings (1.1), in document order as Python's `_merge_bindings`: every binding passes the
   -- single-binding checks; one whose reading set is open is pending (1.5) and supplies no entry and declares
   -- nothing; the others are merged, a repeated key being a duplicate.
@@ -876,7 +865,19 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   let D : SpeechDoc := ⟨E, se.ne.rv.literals, scope, se.ne.regulated, norms, commands, questions, queries, asserted⟩
   match hv : validateSpeech D with
   | .error e => throw e
-  | .ok () => pure ⟨se, units, D, by unfold WellFormedSpeech; rw [hv], rfl, rfl, rfl, rfl, rfl⟩
+  | .ok () => do
+    -- Answer metadata follows complete unit and query validation, as in Python.
+    if let .ok answers := document.getObjVal? "answers" then
+      let .arr records := answers | throw "InvalidInput: answers"
+      for answer in records do
+        if let .ok flag := answer.getObjVal? "conditional" then
+          match flag with
+          | .bool _ => pure ()
+          | _ => throw "InvalidInput: conditional"
+        match answer.getObjVal? "by" with
+        | .ok (.str name) => unless VE.Route.Admission.token name do throw "InvalidInput: answer record"
+        | _ => throw "InvalidInput: answer record"
+    pure ⟨se, units, D, by unfold WellFormedSpeech; rw [hv], rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Which units are active (1.2), for the decoded document: a command is in the semantic core exactly when some
 unit of kind `instruction` with `specified` meaning, not the source of a pending reading set, carries it. -/

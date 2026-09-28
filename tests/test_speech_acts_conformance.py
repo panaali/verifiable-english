@@ -1221,6 +1221,21 @@ def test_stated_assertion_meaning_id_matches_content(lean):
                  "document": {"units": [bad]}})["error"] == "unit meaning id does not match content"
 
 
+def test_answer_metadata_validation_follows_unit_validation(lean):
+    env = F0()
+    source = b"Click check.\n"
+    bad_unit = {**unit("u", 0, "instruction", command("require", "nonesuch", ["check"])),
+                "span": [0, len(source)]}
+    bad_answer = {"question": "u", "by": "checker", "support": "model", "evidence": {},
+                  "conditional": 7}
+    with pytest.raises(VEError, match="^UnknownSymbol: regulated predicate nonesuch$"):
+        SpeechSource({"format": "ve-document@2", "environment": env, "units": [bad_unit],
+                      "answers": [bad_answer]}, source, {})
+    assert run1({"id": "answer-order", "kind": "speech-elaborate", "environment": env,
+                 "document": {"units": [bad_unit], "answers": [bad_answer]}})["error"] == \
+        "UnknownSymbol: regulated predicate nonesuch"
+
+
 def test_answer_conditional_is_json_boolean_in_both_decoders(lean):
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
