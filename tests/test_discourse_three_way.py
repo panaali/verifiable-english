@@ -7,19 +7,30 @@ from pathlib import Path
 
 import pytest
 
-from tests.test_discourse import _environment, _sample, _unit, _write
+from tests.test_discourse import _sample, _unit, _write
 from tests.test_discourse_lean import document as lean_document, env as lean_env, run as lean_run
-from ve.document import check_document
+from ve.document import check_document, load_document
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_discourse_route"
 RUST = ROOT / "rust/target/release/ve"
-FORMULA = ["unary", "active", ["const", "api"]]
+FORMULA = ["unary", "deployed", ["const", "api"]]
+
+
+def shared_environment():
+    data = lean_env()
+    data["vocabulary"]["sorts"].pop("document")
+    data["vocabulary"]["predicates"] = {
+        name: value for name, value in data["vocabulary"]["predicates"].items()
+        if name in {"reviewed", "deployed", "ready"}}
+    return data
 
 
 @pytest.mark.parametrize("earlier_alice", [False, True], ids=["alpha", "alpha_prime"])
 def test_named_reference_three_way(tmp_path, earlier_alice):
     source, front = _sample(tmp_path)
+    front["environment"] = shared_environment()
+    front["units"][1]["content"]["ast"] = FORMULA
     if earlier_alice:
         source = b"Api is reviewed.\nAlice is ready.\nIt is deployed.\n"
         alice = source.index(b"Alice")
@@ -40,34 +51,38 @@ def test_named_reference_three_way(tmp_path, earlier_alice):
     front["discourse"]["mentions"][0]["span"] = [it, it + 2]
     front["graph"] = {"root": "claim", "nodes": [
         {"name": "claim", "ast": FORMULA, "unit": target_unit}]}
-    python = check_document(_write(tmp_path, front, source))
+    path = _write(tmp_path, front, source)
+    python = check_document(path)
     assert python["admission"]["admitted"] is True
     assert python["admission"]["report"]["root"]["ast"] == FORMULA
     assert python["reviewed_presentations"][target_unit].strip() == "Api is deployed."
 
-    sentences = ["The API is reviewed."]
+    sentences = ["Api is reviewed."]
     if earlier_alice:
         sentences.append("Alice is ready.")
     sentences.append("It is deployed.")
     lean = lean_document(sentences,
         [("m1", target_unit, "It", "pronoun", {"kind": "entity", "name": "api"})],
+        names=[{"constant": "api", "display": "Api", "scope": "doc"},
+               *([{"constant": "alice", "display": "Alice", "scope": "doc"}]
+                 if earlier_alice else [])],
         graph={"root": "claim", "nodes": [
-            {"name": "claim", "ast": ["unary", "deployed", ["const", "api"]], "unit": target_unit}]})
-    probe = {"id": "fixture", "kind": "discourse-resolve", "environment": lean_env(), "document": lean}
+            {"name": "claim", "ast": FORMULA, "unit": target_unit}]})
+    probe = {"id": "fixture", "kind": "discourse-resolve", "environment": shared_environment(), "document": lean}
     resolved = lean_run([probe])[0]
     assert resolved["status"] == "ok", resolved
-    assert resolved["units"][target_unit]["formula"] == ["unary", "deployed", ["const", "api"]]
+    assert resolved["units"][target_unit]["formula"] == FORMULA
+    assert resolved["environment_id"] == load_document(path)["environment"].environment_id
     lean["discourse"]["definitions_version"] = resolved["environment_id"]
     admitted = lean_run([{**probe, "kind": "admission"}])[0]
     assert admitted["status"] == "ok", admitted
-    assert admitted["report"]["root"]["ast"] == ["unary", "deployed", ["const", "api"]]
+    assert admitted["report"]["root"]["ast"] == FORMULA
 
-    model = {"complete": True, "domains": {"item": ["s"], "agent": ["p"]},
-             "constants": {"api": "s", "alice": "p"},
-             "relations": {"active": [["s"]], "reviewed": [["s"]],
-                           "exempt": [], "owns": [], "links": [], "ready": []}}
+    model = {"complete": True, "domains": {"service": ["s"], "person": ["p"]},
+             "constants": {"api": "s", "alice": "p", "bob": "p"},
+             "relations": {"deployed": [["s"]], "reviewed": [["s"]], "ready": []}}
     case = {"id": "alpha-prime" if earlier_alice else "alpha", "environment": {
-        **_environment(), "profiles": ["relational-fol@0"]},
+        **shared_environment(), "profiles": ["relational-fol@0"]},
         "ast": [FORMULA], "model": model}
     rust = subprocess.run([str(RUST), "conformance"], input=json.dumps(case),
                           text=True, capture_output=True, timeout=30)
