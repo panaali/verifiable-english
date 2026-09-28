@@ -66,6 +66,8 @@ structure Pinned where
   env : VE.Environment
   id : String
   background : List VE.Formula
+  /-- the profile list of its own envelope: the identity domain of its meaning ids -/
+  profiles : List String
 
 instance : Coe Pinned VE.Environment := ⟨Pinned.env⟩
 
@@ -489,7 +491,7 @@ def contentAt (D : ReportDoc) (p : Path) : Option Content := (parentAt D p.unit 
 
 /-- The scope of the author's environment: `E` and its literals. -/
 def authorScope (D : ReportDoc) : Pinned :=
-  ⟨D.E, D.environmentId, VE.Route.Background.literals D.lits⟩
+  ⟨D.E, D.environmentId, VE.Route.Background.literals D.lits, D.profiles⟩
 
 /-- The scope a descent from a node enters: a definition package's pinned one. -/
 def enterScope (s : Pinned) : Content → Pinned
