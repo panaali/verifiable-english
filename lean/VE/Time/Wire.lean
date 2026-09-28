@@ -591,6 +591,23 @@ theorem Admission.sound {w : W6Env} (a : Admission w) :
       a.formula.erase.WellFormed w.vocab.env.erase [] :=
   ⟨units_admit_sound _ _ _ a.admitted, erase_wellTyped (units_admit_sound _ _ _ a.admitted)⟩
 
+/-! ## Static limits of a problem -/
+
+def aggregateLimit : String :=
+  "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+
+/-- The static limits of a quantity problem, after each statement's own limits
+(`decodeQuantity`: 10,000 source nodes, formula and term depth 64, the frozen
+core decoder) and before any model is decoded, any certificate is read or
+anything is evaluated: the regenerated cores of the premises and conclusion
+together have at most 10,000 formula and term nodes (Python
+`check_quantity_limits`, Rust `quantity_limits`, in this order). -/
+def quantityLimits {w : W6Env} (ps : List (Admission w)) (c : Admission w) :
+    Except String Unit :=
+  if ((c :: ps).map (VE.Order.Wire.formulaNodes ·.formula.erase)).foldl (· + ·) 0 > 10000 then
+    .error aggregateLimit
+  else .ok ()
+
 /-! ## Certificates -/
 
 structure W6Certificate where
@@ -613,11 +630,14 @@ def decodeW6Certificate (j : Json) : Except String W6Certificate :=
   | .ok c => .ok c
   | .error e => .error s!"Invalid quantity certificate: {e}"
 
-/-- The outer binding to the annotated statements, the inner binding to their
-regenerated core problem, then the frozen order replay. -/
+/-- The problem's static limits, the outer binding to the annotated statements,
+the inner binding to their regenerated core problem, then the frozen order
+replay. Documents check lemmas and graph edges here, so an oversized problem is
+never established there either. -/
 def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
     (cert : W6Certificate) : Except String Bool :=
-  if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
+  if (quantityLimits ps c).isOk = false then .error aggregateLimit
+  else if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
       cert.conclusionId == c.meaningId) then
     .error "W6 certificate is stale or bound to different annotated statements"
   else if !(cert.core.environment_id == w.targetId &&
@@ -638,6 +658,8 @@ theorem checkW6Certificate_sound {w : W6Env} (ps : List (Admission w)) (c : Admi
       cert.conclusionId = c.meaningId ∧
       TEntails.{v} w.vocab.env (ps.map (·.formula)) c.formula := by
   unfold checkW6Certificate at h
+  split at h
+  · cases h
   split at h
   · cases h
   · rename_i hb
@@ -782,6 +804,7 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
   | "countermodel" => do
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
+    quantityLimits ps c
     let d ← VE.Order.Wire.decodeValidModel w.vocab.core (← j.getObjVal? "model")
     let some refutes := refutesB (sortDomains d).toModel maxEvaluations (ps.map (·.formula.erase))
       c.formula.erase 0 | throw budgetExhausted
@@ -793,6 +816,7 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
   | "certificate" => do
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
+    quantityLimits ps c
     let cert ← decodeW6Certificate (← j.getObjVal? "certificate")
     let valid ← checkW6Certificate ps c cert
     pure (ok id ([("valid", .bool valid), ("premise_meaning_ids", toJson (ps.map (·.meaningId))),

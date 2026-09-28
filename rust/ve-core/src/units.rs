@@ -46,17 +46,42 @@ fn node(v: &Value) -> Result<(&str, &[Value])> {
         a,
     ))
 }
-/// Every array node counts toward 10,000, as in Python's elaborator.
+/// Every array node of the submitted formula counts toward 10,000, before
+/// elaboration (Python `_source_nodes`, Lean `jsonNodes`).
 fn budget(v: &Value) -> Result<()> {
+    if array_nodes(v, 10_000) > 10_000 {
+        return error("ResourceLimit", "quantity AST exceeds node or depth limit");
+    }
+    Ok(())
+}
+/// Array nodes of `v`, counted up to `limit + 1`.
+fn array_nodes(v: &Value, limit: usize) -> usize {
     let mut stack = vec![v];
     let mut count = 0usize;
     while let Some(value) = stack.pop() {
         if let Some(items) = value.as_array() {
             count += 1;
-            if count > 10_000 {
-                return error("ResourceLimit", "quantity AST exceeds node or depth limit");
+            if count > limit {
+                break;
             }
-            stack.extend(items.iter().skip(1));
+            stack.extend(items.iter());
+        }
+    }
+    count
+}
+/// The static limits of a quantity problem, after each statement's own limits
+/// and before the model is decoded or anything is evaluated: the regenerated
+/// cores (premises, then the conclusion) have at most 10,000 formula and term
+/// nodes together (Python `check_quantity_limits`, Lean `quantityLimits`).
+fn quantity_limits(cores: &[&Value]) -> Result<()> {
+    let mut total = 0usize;
+    for core in cores {
+        total += array_nodes(core, 10_000);
+        if total > 10_000 {
+            return error(
+                "ResourceLimit",
+                "premises and conclusion exceed aggregate 10000-node limit",
+            );
         }
     }
     Ok(())
@@ -767,6 +792,7 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
             premises.push(quantity_payload(e, p)?.1);
         }
         let conclusion = quantity_payload(e, &v["conclusion"])?.1;
+        quantity_limits(&premises.iter().chain([&conclusion]).collect::<Vec<_>>())?;
         let case = json!({"id":id,"kind":"countermodel","environment":target,
             "premises":premises,"conclusion":conclusion,"model":v["model"]});
         let checked = order_case(&case)?;
