@@ -1148,4 +1148,5 @@ import VE.Attribution.Wire
 #print axioms VE.Reports.Run.decodeReportsModel_valid
 #print axioms VE.Reports.Run.reports_countermodel_decoded
 #print axioms VE.Reports.Run.runCountermodel_sound
+#print axioms VE.Reports.Run.scopedCertified_sound
 #print axioms VE.Reports.Run.reports_wire_acceptance
