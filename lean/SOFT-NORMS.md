@@ -18,6 +18,7 @@ passes); `VE.lean` and `VE/Audit.lean` gained imports and audit entries only, an
 | `Soften.lean` | every generated formula of `ValueSoft` (`strictDecidesF` on the strict core, `liveF`, `blockedF`, `eligibleF`, `domWith`/`effF`/`dominatedF`), `derived`, `derivedList`, `primeNode`, `soften`; `selects'`, `defaultDecidesF`, `excPremises`, `cohPremise(s)`, `softPremises`; the executable `checkSoft`/`validateSoft`/`WellFormedSoft` with the section 8 diagnostics; `SoftValid`; shape theorems |
 | `Semantics.lean` | the direct semantics (`LiveD` … `DecidesSoftD`, `ValueSoft`, `IntendedSoftAt`, `holdsSoft`); denotation lemmas; `soften_faithful`; fuel, existence, rank resolution, hard over soft, weighing independence, the cone and its independence theorems, `rank_acyclic`, `weighing_points_complete` |
 | `Coherence.lean` | `backgroundBase'`, `background'`, `BaseAdmissible'`, `PrefixAdmissible'`, `NoStrictCollision`, `NoHardPairConflict`, `SoftConflictFree`; the canonical interpretation `canon`; the decomposition and its consequences; `softConflictFreeCheck`; witnesses; `InFragment`, `BaseSubstructure`; the restated route (`softSymLayer`, `softChain`, `softRoute`) and its theorems |
+| `RankProof.lean` | Unconditional rank-resolution proof over the substituted base formulas |
 | `Status.lean` | `PairStatus`, `classificationBackground`; `coh_rank_valid`, `disjoint_sound`, `weighing_point_sound` |
 | `Wire.lean` | the soft environment and norm decoders, `SoftSource`, identity (`softDocumentHash`, `basePrimeJson`, `primeJson`), regenerated outputs, conflict-package, witness and entailment replays |
 | `Admission.lean` | W2 admission with soft norm units (W1's `Norms.Admission` with the soft decoder) |
@@ -69,7 +70,7 @@ Names have prefix `VE.SoftNorms.`.
 | `authority_independent` | If no predicate attributed to party π is in the cone, `O_p°` is invariant under changes to π's predicates (declared attribution only). |
 | `rank_acyclic` | The rank graph is acyclic and `outranks⁺` is irreflexive and transitive. |
 | `rank_resolves` | Two comparable colliding default rules never both select. |
-| `coh_rank_valid` | The coherence conjunct of a comparable colliding pair holds in every structure admissible for `E′_base`. |
+| `coh_rank_valid` | The coherence conjunct of a comparable colliding pair holds in every structure. |
 | `weighing_points_complete` | Every default–default collision on a predicate or across a pair is at a colliding pair of `CP(T)` whose ranks are not comparable. |
 | `soft_premises_substructure` | Under the complete fragment gate every generated soft premise survives sort-respecting substructures of `E′_base`. |
 | `coherent_expands` | W1's pointwise document iff on `T′`: exactly one expansion iff conflict-free (reused). |
@@ -104,17 +105,14 @@ substructure embedding, route plumbing), audited with the same allowlist.
    and the conjunction as `VE.Formula.and (circ D _) (circ D _)`.
 3. `cone_independent`, `hard_never_weighed_global` and `authority_independent` take
    `p ∈ VE.Norms.regulatedNames D.base.T` (`D.T` is a `SoftTree`); the hypothesis is unused.
-4. `coh_rank_valid` takes `hB : B.Admissible (envAt (soften D) 0)`: "valid" means true in
-   every structure admissible for `E′_base`, as `VE.Entails` does. Without it an
-   uninterpreted constant can make substituted atoms and their meanings disagree.
-5. `weighing_point_sound` states the tuple typing as `TupleTyped Mo.asStructure (actSorts D M) vs`
+4. `weighing_point_sound` states the tuple typing as `TupleTyped Mo.asStructure (actSorts D M) vs`
    and the witness formula with `circ`.
-6. `SoftConflictFree` is universe-polymorphic; the wire theorems use universe 0, as W1's do.
-7. `hard_never_weighed` (ii) uses `sameStrictCore`: same `E`, literals, regulated,
+5. `SoftConflictFree` is universe-polymorphic; the wire theorems use universe 0, as W1's do.
+6. `hard_never_weighed` (ii) uses `sameStrictCore`: same `E`, literals, regulated,
    definitions and `nodes.map coreNode` (rank, exception, `hard` and default switches erased).
-8. `rankHeight` is computed by `heightR` with fuel `ranks.length` (the longest ascending
+7. `rankHeight` is computed by `heightR` with fuel `ranks.length` (the longest ascending
    `outranks⁺` chain; stable at that fuel, `heightR_stable`).
-9. `soft_route_intended` is the conflict-freedom-free half of `soft_route_acceptance`
+8. `soft_route_intended` is the conflict-freedom-free half of `soft_route_acceptance`
    (W1 has `norms_route_intended`), used by `Wire.soft_wire_acceptance`.
 
 ## The `ve_soft_norms_route` cases (for the Python harness)

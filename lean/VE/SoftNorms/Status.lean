@@ -1,4 +1,4 @@
-import VE.SoftNorms.Coherence
+import VE.SoftNorms.RankProof
 
 /-! The classification of colliding pairs (docs/spec/soft-norms.md 6.2) and its
 soundness.
@@ -27,23 +27,11 @@ def PairStatus.text : PairStatus → String
 conjunct excluded. -/
 def classificationBackground (D : SoftDoc) : List VE.Formula := VE.Norms.backgroundBase (soften D) ++ excPremises D
 
-/-- Its base form: the RANK-RESOLVED conjunct of `Coh_T` holds in every structure admissible
-for `E′_base`. -/
+/-- Its base form: the RANK-RESOLVED conjunct of `Coh_T` holds in every structure. -/
 theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNode)
-    (hc : (M, N) ∈ collidingPairs D) (hcmp : Comparable D M N = true) (B : VE.Structure.{u})
-    (hB : B.Admissible (envAt (soften D) 0)) : (cohPremise D M N).denote B [] := by
-  have hv := softValid_of_wellFormed D h
-  have hv' := valid_of_wellFormed _ hv.wf
-  obtain ⟨hM, hN, _⟩ := mem_collidingPairs.mp hc
-  have hs := hv.cpSorts _ hc
-  rw [cohPremise, bindAll_denote_nil]
-  intro vs hvs
-  have hρ := tupleVal_typed B _ vs hvs
-  simp only [VE.Formula.denote]
-  rw [canon_subst hv' B hB.1 _ _ _ (hv.selTyped M hM) _ hρ,
-    canon_subst hv' B hB.1 _ _ _ (by have := hv.selTyped N hN; rwa [← hs] at this) _ hρ,
-    selectsPrime_denote, selectsPrime_denote]
-  exact rank_resolves D h M N hc hcmp _ _
+    (hc : (M, N) ∈ collidingPairs D) (hcmp : Comparable D M N = true) (B : VE.Structure.{u}) :
+    (cohPremise D M N).denote B [] :=
+  coh_rank_valid_unconditional D h M N hc hcmp B
 
 /-- 6.2: a DISJOINT certificate proves the conjunct in every base-admissible structure
 satisfying `Exc_T`. -/
