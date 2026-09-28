@@ -84,7 +84,7 @@ def encodeAdmission (id : String) (res : Admitted) : Except String Json := do
     ("presuppositions", Json.mkObj ((presupMentions res.doc).map fun m =>
       (m.id, .str (presuppositionLine m (res.presuppositions m.id))))),
     ("pending", Json.arr (res.pending.map fun (u, d) => Json.arr #[.str u, .str d]).toArray),
-    ("validity", Json.mkObj (res.doc.K.validity.map fun v =>
+    ("validity", Json.mkObj (res.claims.map fun v =>
       (v.unit, .str ((res.validity v.unit).map verdictText |>.getD "none")))),
     ("self_truth", toJson res.selfTruth),
     ("statuses", Json.mkObj ((res.base.doc.units.map VE.Route.Admission.DocUnit.id).map fun u => (u, .str (statusOf res u)))),
@@ -146,7 +146,7 @@ def runCase (j : Json) : Except String Json := do
     encodeAdmission id res
   else if kind == "discourse-validity" then
     let res ← admitDiscourse profiles environment rv document fuelBudget
-    pure (VE.Route.Wire.ok id [("validity", Json.mkObj (res.doc.K.validity.map fun v =>
+    pure (VE.Route.Wire.ok id [("validity", Json.mkObj (res.claims.map fun v =>
       (v.unit, .str ((res.validity v.unit).map verdictText |>.getD "none"))))])
   else if kind == "discourse-resolve" then runResolve profiles environment rv id document
   else if kind == "discourse-joint" then runJoint profiles environment rv id document

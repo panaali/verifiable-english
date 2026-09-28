@@ -91,6 +91,9 @@ structure Admitted where
   innerReportId : String
   boundIds : List (String × String)
   references : Json
+  front : Loader.Front
+  profiles : List String
+  claims : List Validity
 
 def outcomeOf : Except String Admitted → ImportOutcome := outcomeOf'
 
@@ -109,7 +112,7 @@ def lift1 (res : VE.Route.Admission.Admitted) : Admitted :=
     documentId := "", reportId := "", bound := fun _ => none, joint := .error "UnsupportedProfile: no discourse manifest",
     presuppositions := fun _ => none, pending := [], validity := fun _ => none, selfTruth := [],
     premiseUnits := premiseUnitsOf res, environmentId := "", innerReportId := "", boundIds := [],
-    references := Json.arr #[] }
+    references := Json.arr #[], front := ⟨"", .null, [], [], []⟩, profiles := [], claims := [] }
 
 /-! ## Imported and embedded documents (4.1(10)) -/
 
@@ -364,14 +367,9 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
         !(premiseUnitsOf b).contains u && !(pending.map Prod.fst).contains u &&
         (b.report.assumptions.all fun l => l.label != "asserted" || unitOfLeaf b l != some u))
       ("IndependentFragment: " ++ u)],
-  fun _ => allOk D.K.validity fun v => req (!(premiseUnitsOf b).contains v.unit && (bound v.unit).isNone)
-    ("InvalidInput: validity unit " ++ v.unit),
   fun _ => allOk D.K.selfTruth fun u => req (!(premiseUnitsOf b).contains u && (bound u).isNone &&
       (unitOf D.base u).bind DocUnit.content == none)
     ("InvalidInput: self-truth unit " ++ u),
-  fun _ => match dupOf (D.K.validity.map Validity.unit) with
-    | some u => .error ("DuplicateDeclaration: validity " ++ u)
-    | none => .ok (),
   fun _ => match dupOf (D.K.documents.map DocName.name) with
     | some d => .error ("DuplicateDeclaration: document " ++ d)
     | none => .ok (),
@@ -382,7 +380,7 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
     | some k => .error ("DuplicateDeclaration: import " ++ k)
     | none => .ok (),
   fun _ => allOk (D.K.groups.flatMap Group.spans) fun u =>
-    req (!D.K.selfTruth.contains u && !(D.K.validity.map Validity.unit).contains u) ("IndependentFragment: " ++ u),
+    req (!D.K.selfTruth.contains u) ("IndependentFragment: " ++ u),
   fun _ => match VE.Route.dependencyOrder (importNodes D) with
     | .ok _ => .ok ()
     | .error e => .error ("ImportCycle: " ++ e),
@@ -436,6 +434,7 @@ structure Prepared where
   doc : DDoc
   front : Loader.Front
   environmentId : String
+  claims : List Validity
 
 def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
     Except String Prepared := do
@@ -451,17 +450,42 @@ def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabu
   let base := { base₀ with literals := rv.literals, flags := rv.flags }
   let src : Wire.Source := ⟨prose, lex prose⟩
   let K ← Wire.toTokenSpans src base K₀
-  pure ⟨{ E := rv.environment, base, K, sourceId := Loader.sourceId bp prose, text := src.text base,
-          sets := front.sets, status := front.status, prose, files := j.getObjValD "files" }, front, envId⟩
+  -- the document the admission reads holds no validity binding (4.7): the bindings are kept
+  -- apart and read only in the second phase
+  pure ⟨{ E := rv.environment, base, K := { K with validity := [] }, sourceId := Loader.sourceId bp prose,
+          text := src.text base, sets := front.sets, status := front.status, prose, files := j.getObjValD "files" },
+        front, envId, K.validity⟩
 
-/-- The `@2` admission at a positive nesting budget; `check` evaluates an embedded or
-imported document one level down. -/
-def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json)
-    (check : ByteArray → ImportOutcome) : Except String Admitted := do
-  let P ← prepare profiles environment rv j
-  let D := P.doc
-  let front := P.front
-  let envId := P.environmentId
+/-- 3.3: every certificate of the admitted graph is bound to the environment identity under the
+base pair, and a deduction formalising a bound unit is bound to the meaning id of that unit's
+elaboration; every bound formula has a meaning id. -/
+def bindingsOk (D : DDoc) (res : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula)
+    (bp : List String) (envId : String) : Except String Unit := runAll [
+  fun _ => allOk (boundUnits D) fun u => match bound u with
+    | some A => (VE.Route.Wire.meaningId bp envId (VE.Route.Wire.encodeFormula A)).map fun _ => ()
+    | none => .ok (),
+  fun _ => allOk res.wires fun w => match w.deduction with
+    | none => .ok ()
+    | some edge => runAll [
+      fun _ => req (edge.certificate.environment_id == envId) ("StaleTarget: certificate " ++ w.claim.name),
+      fun _ => match w.unit.bind bound with
+        | some A => match VE.Route.Wire.meaningId bp envId (VE.Route.Wire.encodeFormula A) with
+          | .ok mid => req (edge.certificate.conclusion_meaning_id == mid) ("StaleTarget: certificate " ++ w.claim.name)
+          | .error e => .error e
+        | none => .ok ()]]
+
+/-- The validity-free core of a `@2` admission: everything W2 sees is computed from it. -/
+structure CoreResult where
+  base : VE.Route.Admission.Admitted
+  projected : Json
+  bound : String → Option VE.Formula
+  pending : List (String × String)
+
+/-- The core admission of a prepared document (called on the document with every validity
+binding removed, 4.7): the document checks, the projection, W2 on the base pair, the table
+checks after it and the certificate bindings. -/
+def admitCore (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (D : DDoc)
+    (front : Loader.Front) (envId : String) : Except String CoreResult := do
   let K := D.K
   let base := D.base
   let bp := baseProfiles profiles
@@ -490,27 +514,84 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
   let bound : String → Option VE.Formula := fun u =>
     if (pending.map Prod.fst).contains u || (pre.map Prod.fst).contains u then none else boundAll u
   postOk D res bound pending
+  bindingsOk D res bound bp envId
+  pure ⟨res, projected, bound, pending⟩
+
+/-- The second phase's table checks: a validity claim is never a premise and never bound. -/
+def validityPostOk (D : DDoc) (claims : List Validity) (b : VE.Route.Admission.Admitted)
+    (bound : String → Option VE.Formula) : Except String Unit := runAll [
+  fun _ => allOk claims fun v => req (!(premiseUnitsOf b).contains v.unit && (bound v.unit).isNone)
+    ("InvalidInput: validity unit " ++ v.unit),
+  fun _ => match dupOf (claims.map Validity.unit) with
+    | some u => .error ("DuplicateDeclaration: validity " ++ u)
+    | none => .ok (),
+  fun _ => allOk (D.K.groups.flatMap Group.spans) fun u =>
+    req (!(claims.map Validity.unit).contains u) ("IndependentFragment: " ++ u)]
+
+/-- The label a lemma's leaves carry for a reading set, with the manifest's recorded choice in
+place of a concrete one (via `original_index`, 1.5); `v:all` is kept (it selects no branch). -/
+def recordedLabel (ρ : List (String × Nat × Nat)) (set label : String) : String :=
+  match ρ.find? (·.1 == set) with
+  | some (_, v, i) => if label == toString v ++ ":all" then label else toString v ++ ":" ++ toString i
+  | none => label
+
+/-- 9.4: a lemma's reading choices, as the manifest records them. -/
+def choicesAsLabels (ρ : List (String × Nat × Nat)) (L : VE.Route.Admission.Lemma) : List (String × String) :=
+  ((VE.Definitions.Bundle.leafChoices (leafList L)).toOption.getD []).map fun (s, r) => (s, recordedLabel ρ s r)
+
+/-- The recorded reading choices are the lemmas' labels (`manifest_choices_are_labels`). -/
+def choicesOk (K : Manifest) (b : VE.Route.Admission.Admitted) : Except String Unit :=
+  allOk b.doc.lemmas fun L => match VE.Definitions.Bundle.leafChoices (leafList L) with
+    | .ok ch => req (ch == choicesAsLabels K.choices L) ("ManifestMismatch: choices." ++ L.name)
+    | .error e => .error e
+
+/-- The wrapper report identity (3.3). -/
+def wrapperReportId (profiles : List String) (envId documentId innerReportId : String) (references validity : Json) :
+    Except String String :=
+  VE.CertificateWire.digest "ve-discourse-report@1\n" (Json.mkObj [
+    ("profiles", toJson profiles), ("environment_id", .str envId), ("document_id", .str documentId),
+    ("report_id", .str innerReportId), ("references", references), ("validity", validity)])
+
+/-- The validity lines of the report. -/
+def validityJsonOf (claims : List Validity) (validity : String → Option Verdict) : Json :=
+  Json.arr (claims.map fun v => Json.mkObj [("unit", .str v.unit),
+    ("verdict", .str ((validity v.unit).map verdictText |>.getD "none"))]).toArray
+
+/-- The `@2` admission at a positive nesting budget; `check` evaluates an embedded or
+imported document one level down. The core admits the prepared document, which holds no
+validity binding; the bindings are checked and evaluated only in the second phase (4.7). -/
+def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json)
+    (check : ByteArray → ImportOutcome) : Except String Admitted := do
+  let P ← prepare profiles environment rv j
+  let C ← admitCore profiles environment rv P.doc P.front P.environmentId
+  let D := P.doc
+  let K := D.K
+  let envId := P.environmentId
+  let bp := baseProfiles profiles
+  let res := C.base
+  -- the second phase: the validity bindings and the composition gate
+  claimsOk D P.claims
+  validityPostOk D P.claims res C.bound
+  choicesOk K res
   let joint := compatibleChoices K (activeSets D) 64
   jointGate res joint
   let validity : String → Option Verdict := fun u =>
-    (K.validity.find? (·.unit == u)).bind (verdictFor D check)
+    (P.claims.find? (·.unit == u)).bind (verdictFor D check)
   let documentId ← Loader.documentId j
   let innerReportId ← VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion bp}\n"
     (Json.mkObj [("environment_id", .str envId), ("document", .str documentId), ("report", reportJson res.report)])
-  let validityJson := Json.arr (K.validity.map fun v => Json.mkObj [("unit", .str v.unit),
-    ("verdict", .str ((validity v.unit).map verdictText |>.getD "none"))]).toArray
-  let references := referencesJson (Loader.metaOf j) pending
-  let reportId ← VE.CertificateWire.digest "ve-discourse-report@1\n" (Json.mkObj [
-    ("profiles", toJson profiles), ("environment_id", .str envId), ("document_id", .str documentId),
-    ("report_id", .str innerReportId), ("references", references), ("validity", validityJson)])
-  let boundIds ← (boundUnits D).eraseDups.filterMapM fun u => match bound u with
+  let references := referencesJson (Loader.metaOf j) C.pending
+  let reportId ← wrapperReportId profiles envId documentId innerReportId references (validityJsonOf P.claims validity)
+  let boundIds ← (boundUnits D).eraseDups.filterMapM fun u => match C.bound u with
     | some A => do pure (some (u, ← VE.Route.Wire.meaningId bp envId (VE.Route.Wire.encodeFormula A)))
     | none => pure none
+  let premises := premiseUnitsOf res
   let presuppositions : String → Option PresuppositionCarrier := fun id =>
     ((presupMentions D).find? (·.id == id)).bind (carrierIn D res.wires res.doc premises)
-  pure { doc := D, base := res, projected, documentId, reportId, bound, joint, presuppositions, pending,
-         validity, selfTruth := K.selfTruth, premiseUnits := premises, environmentId := envId, innerReportId,
-         boundIds, references }
+  pure { doc := D, base := res, projected := C.projected, documentId, reportId, bound := C.bound, joint,
+         presuppositions, pending := C.pending, validity, selfTruth := K.selfTruth, premiseUnits := premises,
+         environmentId := envId, innerReportId, boundIds, references, front := P.front, profiles,
+         claims := P.claims }
 
 /-- A loaded `@1` text: its front matter's admission object, under its own (discourse-free)
 profiles. -/
