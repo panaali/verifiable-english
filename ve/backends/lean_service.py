@@ -12,10 +12,14 @@ Failure classes:
   restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
   runners' exit-2 diagnostics would; the process stays up.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
-  whose id is not the request's nonce, a handshake from an unexpected build) kills the
-  process. The batch is retried once on a fresh process, since requests are stateless;
+  whose id is not the request's nonce or that the response schemas reject, a handshake
+  from an unexpected build) kills the process. The batch is retried once on a fresh process, since requests are stateless;
   a second failure raises `CheckerUnavailable`, which is never a verdict and never
   `ResourceLimit`. There is no fallback to Python.
+
+Every response line is checked against `lean_service_schema/` (`service_schema.py`),
+the single description of response shapes, including request links such as one
+result per requested lemma and the request's unit kinds.
 
 Supervision: an address-space limit on the process, a per-batch timeout (5 s
 interactive, 60 s for batch callers), recycling after a number of requests or above
@@ -38,67 +42,12 @@ import threading
 import time
 
 from ..errors import ResourceLimit, VEError
+from .service_schema import MODES, Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 SERVICE = "ve-lean@1"
-MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english")
-# Wire shapes from Service.Protocol.runMode and its six pinned runners. The same
-# table gates every successful result; the validators below check field values.
-_ROUTE_FIELDS = {
-    "evaluate": ({"id", "status", "values"},),
-    "countermodel": ({"id", "status", "refutes"},),
-    "certificate": ({"id", "status", "valid", "background"},),
-    "dependency-order": ({"id", "status", "order"},),
-    "bundle": ({"id", "status", "checked", "lemmas"},),
-    "background": ({"id", "status", "background", "premises", "generators"},),
-    "label": ({"id", "status", "label"},),
-    "admission": ({"id", "status", "admitted", "report", "report_id", "kinds"},),
-}
-RESPONSE_SCHEMAS = {
-    "evaluate": {"ok": {"default": ({"id", "status", "values", "value", "canonical"},),
-                        "countermodel": ({"id", "status", "refutes"},)},
-                 "error": ({"id", "status", "error"},),
-                 "case_error": ({"status", "case_index", "error"},)},
-    "check-certificate": {"ok": {"default": ({"id", "status", "valid"},)},
-                          "error": ({"id", "status", "error", "valid"},),
-                          "case_error": ({"status", "case_index", "error", "valid"},)},
-    "order": {"ok": {"evaluate": ({"id", "status", "values"},),
-                     "countermodel": ({"id", "status", "refutes"},),
-                     "certificate": ({"id", "status", "valid"},),
-                     "surface": ({"id", "status", "ast"},)},
-              "error": ({"id", "status", "error", "valid"},),
-              "case_error": ({"status", "case_index", "error", "valid"},)},
-    "route": {"ok": _ROUTE_FIELDS,
-              "error": ({"id", "status", "error"}, {"id", "status", "error", "valid"},
-                        {"id", "status", "error", "generator"},
-                        {"id", "status", "error", "valid", "generator"}),
-              "case_error": ({"status", "case_index", "error"},)},
-    "norms": {"ok": {**_ROUTE_FIELDS,
-                     "norms-elaborate": ({"id", "status", "order", "background", "premises",
-                                           "conflict_targets", "fragment"},),
-                     "norms-certificate": ({"id", "status", "valid", "background", "layers"},),
-                     "norms-conflict": ({"id", "status", "verdict", "targets"},
-                                        {"id", "status", "verdict", "targets", "detail"},
-                                        {"id", "status", "verdict", "target", "targets"})},
-              "error": ({"id", "status", "error"}, {"id", "status", "error", "valid"},
-                        {"id", "status", "error", "generator"},
-                        {"id", "status", "error", "valid", "generator"}),
-              "case_error": ({"status", "case_index", "error"},)},
-    "english": {"ok": {"default": ({"admissible", "covers", "results"},)},
-                "item": ({"parsed", "checked", "rendered", "roundtrip"},),
-                "formula_tags": ("top", "bottom", "unary", "binary", "eq", "not", "and", "or",
-                                 "implies", "forall", "exists"),
-                "term_tags": ("var", "const"),
-                "error": ({"status", "error"},)},
-}
-RESPONSE_ENVELOPE = {"ok": {"id", "status", "mode", "results", "counts"},
-                     "error": {"id", "status", "error"}}
-
-
-def _shape(value: object, choices: tuple[set[str], ...]) -> bool:
-    return isinstance(value, dict) and any(set(value) == fields for fields in choices)
 MAX_LINE_BYTES = 16 * 1024 * 1024
 MAX_CASES = 4096
 BATCH_CASES = 256
@@ -147,247 +96,6 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
-
-
-def _strings(value: object) -> bool:
-    return isinstance(value, list) and all(isinstance(x, str) for x in value)
-
-
-def _booleans(value: object) -> bool:
-    return isinstance(value, list) and all(type(x) is bool for x in value)
-
-
-def _nat(value: object) -> bool:
-    return type(value) is int and value >= 0
-
-
-def _term(value: object) -> bool:
-    return _tree(value, english=False, order=False, term=True)
-
-
-def _integer_text(value: object) -> bool:
-    if not isinstance(value, str) or not value or len(value) > 40:
-        return False
-    digits = value[1:] if value.startswith("-") else value
-    return (bool(digits) and digits.isascii() and digits.isdecimal()
-            and (digits == "0" or digits[0] != "0")
-            and value != "-0")
-
-
-def _formula(value: object) -> bool:
-    return _tree(value, english=False, order=False, term=False)
-
-
-def _order_formula(value: object) -> bool:
-    return _tree(value, english=False, order=True, term=False)
-
-
-def _english_formula(value: object) -> bool:
-    return _tree(value, english=True, order=False, term=False)
-
-
-def _tree(value: object, *, english: bool, order: bool, term: bool) -> bool:
-    """Validate wire ASTs without Python recursion or bool/int equality coercion.
-
-    EnglishRun.encodeFormula/encodeTerm have a smaller vocabulary than Order.Wire:
-    no arithmetic terms and no order atoms. The service advertises JSON depth 256.
-    """
-    pending = [(value, term, 0)]
-    while pending:
-        node, is_term, depth = pending.pop()
-        if depth > 256 or not isinstance(node, list) or not node or not isinstance(node[0], str):
-            return False
-        tag = node[0]
-        if english and tag not in RESPONSE_SCHEMAS["english"]["term_tags" if is_term else "formula_tags"]:
-            return False
-        if is_term:
-            if tag == "var" and len(node) == 2 and _nat(node[1]):
-                continue
-            if tag == "const" and len(node) == 2 and isinstance(node[1], str):
-                continue
-            if order and tag == "num" and len(node) == 2 and _integer_text(node[1]):
-                continue
-            if order and tag == "add" and len(node) == 3:
-                pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
-                continue
-            if order and tag == "scale" and len(node) == 3 and _integer_text(node[1]):
-                pending.append((node[2], True, depth + 1))
-                continue
-            return False
-        if tag in ("top", "bottom") and len(node) == 1:
-            continue
-        if tag == "unary" and len(node) == 3 and isinstance(node[1], str):
-            pending.append((node[2], True, depth + 1))
-        elif tag == "binary" and len(node) == 4 and isinstance(node[1], str):
-            pending.extend(((node[2], True, depth + 1), (node[3], True, depth + 1)))
-        elif tag in (("eq", "lt", "le") if order else ("eq",)) and len(node) == 3:
-            pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
-        elif tag == "not" and len(node) == 2:
-            pending.append((node[1], False, depth + 1))
-        elif tag in ("and", "or", "implies") and len(node) == 3:
-            pending.extend(((node[1], False, depth + 1), (node[2], False, depth + 1)))
-        elif tag in ("forall", "exists") and len(node) == 3 and isinstance(node[1], str):
-            pending.append((node[2], False, depth + 1))
-        else:
-            return False
-    return True
-
-
-def _formulas(value: object) -> bool:
-    return isinstance(value, list) and all(_formula(x) for x in value)
-
-
-def _order_formulas(value: object) -> bool:
-    return isinstance(value, list) and all(_order_formula(x) for x in value)
-
-
-def _same_json(left: object, right: object) -> bool:
-    """Compare echoed JSON IDs without Python's bool/int equality coercion."""
-    pending = [(left, right)]
-    while pending:
-        a, b = pending.pop()
-        if type(a) is not type(b):
-            return False
-        if isinstance(a, dict):
-            if a.keys() != b.keys():
-                return False
-            pending.extend((value, b[key]) for key, value in a.items())
-        elif isinstance(a, list):
-            if len(a) != len(b):
-                return False
-            pending.extend(zip(a, b))
-        elif a != b:
-            return False
-    return True
-
-
-def _value_count_matches(row: dict, case: object) -> bool:
-    ast = case.get("ast") if isinstance(case, dict) else None
-    return isinstance(ast, list) and len(row["values"]) == len(ast)
-
-
-def _claim(value: object) -> bool:
-    return (isinstance(value, dict) and set(value) in ({"name", "ast"}, {"name", "ast", "label"})
-            and isinstance(value["name"], str) and _formula(value["ast"])
-            and ("label" not in value or isinstance(value["label"], str)))
-
-
-def _report(value: object) -> bool:
-    return (isinstance(value, dict) and set(value) == {"root", "assumptions"}
-            and _claim(value["root"]) and isinstance(value["assumptions"], list)
-            and all(_claim(x) for x in value["assumptions"]))
-
-
-def _kind(value: object) -> bool:
-    pending = [(value, 0)]
-    while pending:
-        node, depth = pending.pop()
-        if depth > 256:
-            return False
-        if isinstance(node, str):
-            if node not in {"asserted", "norm", "definition", "question", "instruction",
-                            "example", "exposition", "analogy", "explanation", "meta"}:
-                return False
-            continue
-        if not isinstance(node, list) or not node:
-            return False
-        if node[0] == "attributed" and len(node) == 4 and all(isinstance(x, str) for x in node[1:3]):
-            pending.append((node[3], depth + 1))
-        elif node[0] == "hedged" and len(node) == 3 and isinstance(node[1], str):
-            pending.append((node[2], depth + 1))
-        elif node[0] == "causal" and len(node) == 4 and isinstance(node[1], str):
-            pending.extend(((node[2], depth + 1), (node[3], depth + 1)))
-        elif not (node[0] == "unformalised" and len(node) == 2 and isinstance(node[1], str)):
-            return False
-    return True
-
-
-def _valid_route_result(row: dict, kind: object, mode: str, case: object) -> bool:
-    if not _shape(row, RESPONSE_SCHEMAS[mode]["ok"].get(kind, ())):
-        return False
-    fields = set(row) - {"id", "status"}
-    if kind == "evaluate":
-        return (fields == {"values"} and _booleans(row["values"])
-                and _value_count_matches(row, case))
-    if kind == "countermodel":
-        return fields == {"refutes"} and type(row["refutes"]) is bool
-    if kind == "certificate":
-        return (fields == {"valid", "background"} and type(row["valid"]) is bool
-                and _nat(row["background"]))
-    if kind == "dependency-order":
-        return fields == {"order"} and _strings(row["order"])
-    if kind == "bundle":
-        return (fields == {"checked", "lemmas"} and _nat(row["checked"])
-                and _strings(row["lemmas"]) and row["checked"] == len(row["lemmas"]))
-    if kind == "background":
-        return (fields == {"background", "premises", "generators"}
-                and _formulas(row["background"]) and _formulas(row["premises"])
-                and row["background"] == row["premises"]
-                and _strings(row["generators"])
-                and len(row["background"]) == len(row["generators"]))
-    if kind == "label":
-        return fields == {"label"} and isinstance(row["label"], str)
-    if kind == "admission":
-        report_id = row.get("report_id")
-        return (fields == {"admitted", "report", "report_id", "kinds"}
-                and row["admitted"] is True and _report(row["report"])
-                and isinstance(report_id, str) and len(report_id) == 64
-                and all(c in "0123456789abcdef" for c in report_id)
-                and isinstance(row["kinds"], list) and all(_kind(x) for x in row["kinds"]))
-    if mode != "norms":
-        return False
-    if kind == "norms-elaborate":
-        if fields != {"order", "background", "premises", "conflict_targets", "fragment"}:
-            return False
-        return (_strings(row["order"]) and type(row["fragment"]) is bool
-                and isinstance(row["background"], list)
-                and all(isinstance(x, dict) and set(x) == {"generator", "ast"}
-                        and isinstance(x["generator"], str) and _formula(x["ast"])
-                        for x in row["background"])
-                and isinstance(row["premises"], list)
-                and all(isinstance(x, dict) and set(x) == {"label", "ast"}
-                        and isinstance(x["label"], str) and _formula(x["ast"])
-                        for x in row["premises"])
-                and isinstance(row["conflict_targets"], list)
-                and all(isinstance(x, dict) and set(x) == {"target", "sorts", "ast"}
-                        and isinstance(x["target"], str) and _strings(x["sorts"])
-                        and _formula(x["ast"]) for x in row["conflict_targets"]))
-    if kind == "norms-certificate":
-        return (fields == {"valid", "background", "layers"}
-                and type(row["valid"]) is bool and _nat(row["background"])
-                and _nat(row["layers"]))
-    if kind == "norms-conflict":
-        verdict = row.get("verdict")
-        if verdict not in ("CONFLICT", "CONFLICT-FREE", "UNKNOWN") or not _strings(row.get("targets")):
-            return False
-        witness = isinstance(case, dict) and "witness" in case
-        if witness:
-            return (fields == {"verdict", "target", "targets"}
-                    and verdict in ("CONFLICT", "UNKNOWN")
-                    and isinstance(row["target"], str))
-        return (fields in ({"verdict", "targets"}, {"verdict", "targets", "detail"})
-                and verdict in ("CONFLICT-FREE", "UNKNOWN")
-                and ("detail" not in row or
-                     (verdict == "UNKNOWN" and isinstance(row["detail"], str))))
-    return False
-
-
-def _uses_norms_path(case: object) -> bool:
-    if not isinstance(case, dict):
-        return False
-    env = case.get("environment")
-    vocab = env.get("vocabulary") if isinstance(env, dict) else None
-    preds = vocab.get("predicates") if isinstance(vocab, dict) else None
-    regulated = (isinstance(preds, dict) and any(
-        isinstance(entry, dict) and "regulated" in entry for entry in preds.values()))
-    document = case.get("document")
-    units = document.get("units") if isinstance(document, dict) else None
-    norm_unit = (isinstance(units, list) and any(
-        isinstance(unit, dict) and isinstance(unit.get("content"), dict)
-        and "norm" in unit["content"] for unit in units))
-    kind = case.get("kind")
-    return bool(regulated or "norms" in case or
-                (isinstance(kind, str) and kind.startswith("norms-")) or norm_unit)
 
 
 _hashes: dict[tuple, str] = {}
@@ -650,133 +358,18 @@ class LeanService:
                 # A line the service could not read at all: framing is lost.
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
-        if response.get("status") == "error":
-            if (not _shape(response, (RESPONSE_ENVELOPE["error"],))
-                    or not isinstance(response["error"], str) or not response["error"]):
-                raise _Failure(f"malformed error response {raw[:200]!r}")
-            return raw, response
-        results = response.get("results")
-        counts = response.get("counts")
         try:
             cases = json.loads(cases_text, parse_int=_json_integer)
         except (ValueError, RecursionError):
             cases = None
+        if not isinstance(cases, list) or len(cases) != count:
+            cases = None  # only a line error can answer it
+        request = {"id": nonce, "mode": mode, "cases": cases, "bytes": len(cases_text.strip().encode())}
         try:
-            valid_rows = (isinstance(results, list) and len(results) == count
-                          and all(self._valid_result(mode, row, index, cases[index])
-                                  for index, row in enumerate(results))) if isinstance(cases, list) and len(cases) == count else False
-        except (RecursionError, ValueError, TypeError):
-            valid_rows = False
-        if (not _shape(response, (RESPONSE_ENVELOPE["ok"],))
-                or response.get("status") != "ok" or response.get("mode") != mode
-                or not isinstance(cases, list) or len(cases) != count
-                or not valid_rows
-                or not isinstance(counts, dict) or set(counts) != {"cases", "bytes", "errors"}
-                or type(counts["cases"]) is not int or counts["cases"] != count
-                or type(counts["bytes"]) is not int or counts["bytes"] != len(cases_text.strip().encode())
-                or type(counts["errors"]) is not int
-                or counts["errors"] != sum(row.get("status") == "error" for row in results)):
-            raise _Failure(f"malformed response {raw[:200]!r}")
+            check_response(mode, response, request)
+        except Invalid as exc:
+            raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response
-
-    @staticmethod
-    def _valid_result(mode: str, row: object, index: int, case: object) -> bool:
-        if not isinstance(row, dict):
-            return False
-        if mode == "english":
-            if row.get("status") == "error":
-                return (_shape(row, RESPONSE_SCHEMAS[mode]["error"])
-                        and isinstance(row["error"], str) and bool(row["error"]))
-            if not isinstance(case, dict) or not isinstance(case.get("cases"), list):
-                return False
-            return (_shape(row, RESPONSE_SCHEMAS[mode]["ok"]["default"])
-                    and type(row["admissible"]) is bool and type(row["covers"]) is bool
-                    and isinstance(row["results"], list)
-                    and len(row["results"]) == len(case["cases"])
-                    and all(_shape(item, RESPONSE_SCHEMAS[mode]["item"])
-                            and (item["parsed"] is None or
-                                 (isinstance(item["parsed"], list)
-                                  and all(_english_formula(formula) for formula in item["parsed"])))
-                            and type(item["checked"]) is bool
-                            and (item["rendered"] is None or
-                                 (isinstance(item["rendered"], list)
-                                  and all(isinstance(token, str) or
-                                          (isinstance(token, list) and len(token) == 2
-                                           and isinstance(token[0], str) and _nat(token[1]))
-                                          for token in item["rendered"])))
-                            and type(item["roundtrip"]) is bool
-                            and (not item["checked"] or isinstance(item["rendered"], list))
-                            and (item["checked"] or item["rendered"] is None)
-                            and (item["checked"] or not item["roundtrip"])
-                            for item in row["results"]))
-        status = row.get("status")
-        if status not in ("ok", "error"):
-            return False
-        if "case_index" in row:
-            return (status == "error" and type(row["case_index"]) is int
-                    and row["case_index"] == index
-                    and _shape(row, RESPONSE_SCHEMAS[mode]["case_error"])
-                    and isinstance(row.get("error"), str) and bool(row["error"])
-                    and ("valid" not in row or row["valid"] is False))
-        expected_id = case.get("id") if isinstance(case, dict) else None
-        if "id" not in row or not _same_json(row["id"], expected_id):
-            return False
-        if status == "error":
-            if not isinstance(row.get("error"), str) or not row["error"]:
-                return False
-            if not _shape(row, RESPONSE_SCHEMAS[mode]["error"]):
-                return False
-            if mode in ("check-certificate", "order"):
-                return set(row) == {"id", "status", "error", "valid"} and row["valid"] is False
-            if mode == "evaluate":
-                return set(row) == {"id", "status", "error"}
-            kind = case.get("kind") if isinstance(case, dict) else None
-            norms_path = mode == "norms" and _uses_norms_path(case)
-            fields = {"id", "status", "error"}
-            if not norms_path and kind == "certificate":
-                fields.add("valid")
-            if not norms_path and row["error"].startswith("InvalidModel("):
-                fields.add("generator")
-            return (set(row) == fields and ("valid" not in fields or row["valid"] is False)
-                    and ("generator" not in fields or
-                         row["generator"] == row["error"][13:].split(")", 1)[0]))
-        if not isinstance(expected_id, str) or "error" in row:
-            return False
-        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
-        shape_kind = ("default" if mode == "check-certificate" or
-                      mode == "evaluate" and kind != "countermodel" else kind)
-        if mode in ("evaluate", "check-certificate", "order") and not _shape(
-                row, RESPONSE_SCHEMAS[mode]["ok"].get(shape_kind, ())):
-            return False
-        if mode == "check-certificate":
-            return set(row) == {"id", "status", "valid"} and type(row["valid"]) is bool
-        if mode == "evaluate":
-            if isinstance(case, dict) and case.get("kind") == "countermodel":
-                return set(row) == {"id", "status", "refutes"} and type(row["refutes"]) is bool
-            return (set(row) == {"id", "status", "values", "value", "canonical"}
-                    and _booleans(row["values"]) and bool(row["values"])
-                    and _value_count_matches(row, case)
-                    and type(row["value"]) is bool
-                    and row["value"] == all(row["values"])
-                    and isinstance(row["canonical"], str))
-        if mode == "order":
-            kind = case.get("kind") if isinstance(case, dict) else None
-            key = {"evaluate": "values", "countermodel": "refutes", "certificate": "valid",
-                   "surface": "ast"}.get(kind)
-            if key is None:
-                return False
-            value = row.get(key)
-            return (set(row) == {"id", "status", key} and
-                    (type(value) is bool if key in ("refutes", "valid") else
-                     (_booleans(value) and _value_count_matches(row, case))
-                     if key == "values" else _order_formulas(value)))
-        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
-        if mode in ("route", "norms"):
-            if mode == "norms" and _uses_norms_path(case) and kind not in {
-                    "admission", "norms-elaborate", "norms-certificate", "norms-conflict"}:
-                return False
-            return _valid_route_result(row, kind, mode, case)
-        return False
 
     def _after_request(self) -> None:
         self._served += 1

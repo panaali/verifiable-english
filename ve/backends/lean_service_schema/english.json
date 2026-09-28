@@ -1,0 +1,36 @@
+{
+  "$id": "english.json",
+  "$comment": "Mode english: Service.Protocol.englishReported (the generated copy of VE/English/Run.lean). One result per requested case.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"$ref": "#/$defs/error"},
+    {"$ref": "#/$defs/run"}]},
+  "$defs": {
+    "error": {"type": "object", "required": ["status", "error"], "additionalProperties": false,
+      "properties": {
+        "status": {"const": "error"},
+        "error": {"$ref": "common.json#/$defs/text"}}},
+    "run": {"type": "object", "required": ["admissible", "covers", "results"], "additionalProperties": false,
+      "properties": {
+        "admissible": {"type": "boolean"},
+        "covers": {"type": "boolean"},
+        "results": {"type": "array", "x-zip": {"of": "/cases", "items": {"$ref": "#/$defs/item"}}}}},
+    "token": {"$comment": "EnglishRun.encodeTok: a word, or a label [letter, index].",
+      "anyOf": [
+        {"type": "string"},
+        {"type": "array", "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}], "minItems": 2, "maxItems": 2}]},
+    "item": {"$comment": "EnglishRun.runCase for the case at the same position: rendered iff checked; a roundtrip needs a checked rendering; only nonempty formulas are checked.",
+      "type": "object", "required": ["parsed", "checked", "rendered", "roundtrip"], "additionalProperties": false,
+      "properties": {
+        "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/fol_formulas"}]},
+        "checked": {"type": "boolean"},
+        "rendered": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/token"}}]},
+        "roundtrip": {"type": "boolean"}},
+      "allOf": [
+        {"if": {"properties": {"checked": {"const": true}}},
+         "then": {"properties": {"rendered": {"type": "array"}}},
+         "else": {"properties": {"rendered": {"type": "null"}, "roundtrip": {"const": false}}}},
+        {"if": {"x-case": {"properties": {"formulas": {"maxItems": 0}}}},
+         "then": {"properties": {"checked": {"const": false}}}}]}
+  }
+}
