@@ -221,32 +221,61 @@ def _reading_choice(unit, reading_set):
     return result
 
 
+#: The speech-act kinds a signed choice must share with its wording (3.2); no other kind is checked.
+SPEECH_KINDS = ("asserted", "question", "instruction")
+_SURFACE_SPACE = re.compile("[ \t\n\r\x0b\x0c]+")
+_SURFACE_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
+
+
+def surface_words(text):
+    """The one normalisation of a wording and an act phrase for `surface_kind` (3.2), as Lean's `surfaceWords`.
+
+    ASCII only: the six ASCII whitespace characters of Python's `string.whitespace`
+    separate words (runs collapse to one space, none leads or trails) and only
+    `A`-`Z` fold to `a`-`z`.  Every other character, Unicode whitespace and
+    control characters included, is an ordinary letter.
+    """
+    return " ".join(w for w in _SURFACE_SPACE.split(text) if w).translate(_SURFACE_FOLD)
+
+
 def surface_kind(env, wording):
     """Classify the speech-act shape of a source sentence before a signed choice replaces it.
 
     This deliberately uses only the visible sentence form. The content parser still
     checks the complete command or question where that content is authoritative.
+    Acts are W1's normalised phrases; a `plain` declaration has none.
     """
     if type(wording) is not str:
         raise VEError("InvalidInput: speech wording")
-    text = wording.strip()
-    lower = text.casefold()
-    if text.endswith("?") or lower.startswith(("question ", "is ", "are ", "does ", "do ",
-                                                 "did ", "was ", "were ", "will ", "would ",
-                                                 "who ", "what ", "when ", "where ", "why ",
-                                                 "how ", "which ", "must ", "can ")) and not lower.startswith("do not "):
+    text = surface_words(wording)
+    if text.endswith("?") or text.startswith(("question ", "is ", "are ", "does ", "do ",
+                                                "did ", "was ", "were ", "will ", "would ",
+                                                "who ", "what ", "when ", "where ", "why ",
+                                                "how ", "which ", "must ", "can ")) and not text.startswith("do not "):
         return "question"
-    if lower.startswith(("in this task, ", "this document is task ")):
+    if text.startswith(("in this task, ", "this document is task ")):
         return "binding"
-    if lower.startswith(("do not ", "prove that ", "command ")):
+    if text.startswith(("do not ", "prove that ", "command ")):
         return "instruction"
     for decl in env.predicates.values():
-        if decl.regulated is None:
+        if decl.regulated is None or decl.regulated.act is None:
             continue
-        words = decl.regulated.act.split()
-        if len(words) > 1 and words[0] == "{0}" and lower.startswith(words[1].casefold() + " "):
+        words = surface_words(decl.regulated.act).split(" ")
+        if len(words) > 1 and words[0] == "{0}" and text.startswith(words[1] + " "):
             return "instruction"
     return "asserted"
+
+
+def choice_kind_conflicts(env, kind, wording):
+    """3.2: whether a signed choice of `kind` contradicts its wording's surface kind.
+
+    The wording is always classified (a non-string is `InvalidInput: speech
+    wording`), but only a choice among the speech-act kinds on a wording of a
+    speech-act kind can conflict: a norm, definition, example, binding or quoted
+    choice, or a binding-shaped wording, is never rejected here.
+    """
+    surface = surface_kind(env, wording)
+    return kind in SPEECH_KINDS and surface in SPEECH_KINDS and kind != surface
 
 
 def _binding_entry(env, uid, binding):
@@ -429,10 +458,10 @@ class SpeechDocument:
                 raise VEError("InvalidInput: speech unit id")
             ids.add(uid)
             if uid in latest:
-                if latest[uid]["status"] == "authored" and raw.get("source") is not None:
-                    choice_kind = latest[uid]["readings"][0]["kind"]
-                    if choice_kind != surface_kind(env, raw["source"]):
-                        raise VEError("InvalidInput: choice kind")
+                # A present `source`, `null` included, is the wording (Lean's `decodeUnitIn`).
+                if (latest[uid]["status"] == "authored" and "source" in raw
+                        and choice_kind_conflicts(env, latest[uid]["readings"][0]["kind"], raw["source"])):
+                    raise VEError("InvalidInput: choice kind")
                 raw = _reading_choice(raw, latest[uid])
             self._effective.append(raw)
             pending = uid in self.pending_units

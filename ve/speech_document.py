@@ -18,8 +18,9 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import (SpeechDocument, content_kind_ok, effective_scope, fixed_assertion_ids,
-                          formula_shape, latest_reading_sets, query_records, surface_kind, _reading_choice)
+from .speech_acts import (SpeechDocument, choice_kind_conflicts, content_kind_ok, effective_scope,
+                          fixed_assertion_ids, formula_shape, latest_reading_sets, query_records,
+                          _reading_choice)
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -205,7 +206,7 @@ class SpeechSource:
             if chosen is not None and chosen["status"] == "authored":
                 wording = (fences[unit["id"]] if type(unit["content"]) is dict and "fence" in unit["content"]
                            else source[unit["span"][0]:unit["span"][1]].decode("utf-8"))
-                if chosen["readings"][0]["kind"] != surface_kind(self.env, wording):
+                if choice_kind_conflicts(self.env, chosen["readings"][0]["kind"], wording):
                     raise VEError("InvalidInput: choice kind")
         # 1.1: a fence is read under the effective scope, so a phrase or "you" an
         # authored binding supplies reads as if the block declared it.  The scope is

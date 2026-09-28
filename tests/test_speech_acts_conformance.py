@@ -1155,6 +1155,13 @@ def test_assertion_fence_agrees_with_unfenced_choice(lean, tmp_path, original_ki
      {"ast": U("reviewed", "atlas")}),
     ("Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")}, "question",
      polar(U("reviewed", "atlas"))),
+    # The rule holds among all three speech-act kinds, not only the three directions above.
+    ("Is atlas reviewed?", "question", polar(U("reviewed", "atlas")), "instruction",
+     command("require", "click_required", ["check"])),
+    ("Click check.", "instruction", command("require", "click_required", ["check"]), "question",
+     polar(U("reviewed", "atlas"))),
+    ("Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")}, "instruction",
+     command("require", "click_required", ["check"])),
 ])
 def test_signed_choice_kind_matches_surface_in_both_forms(
         lean, tmp_path, wording, original_kind, original_content, choice_kind, choice_content):
@@ -1170,6 +1177,181 @@ def test_signed_choice_kind_matches_surface_in_both_forms(
     assert run1({"id": "choice-kind", "kind": "speech-elaborate", "environment": env,
                  "document": {"units": [{**units[0], "source": wording}],
                               "reading_sets": [chosen]}})["error"] == "InvalidInput: choice kind"
+
+
+def _outcome(thunk):
+    try:
+        thunk()
+    except VEError as exc:
+        return str(exc)
+    return "ok"
+
+
+def _lean_outcome(result):
+    return "ok" if result.get("status") == "ok" else result.get("error")
+
+
+def _choice_case(env, wording, choice_kind, choice_content, original=None, source=True):
+    """A one-unit document whose signed choice replaces `original`, and its Lean case with the wording as `source`."""
+    original = original or unit("u", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    chosen = reading_set("u", 1, "authored", choice_kind, choice_content)
+    document = {"units": [{**original, **({"source": wording} if source else {})}], "reading_sets": [chosen]}
+    return document, {"id": "choice", "kind": "speech-elaborate", "environment": env, "document": document}
+
+
+def _both_forms(tmp_path, name, env, wording, choice_kind, choice_content):
+    chosen = reading_set("u", 1, "authored", choice_kind, choice_content)
+    _, paths = _fenced_pair(tmp_path, name, env, [wording + "\n"],
+                            [unit("u", 0, "asserted", {"ast": U("reviewed", "atlas")})], "u", reading_sets=[chosen])
+    return [_outcome(lambda p=p: load_speech_document(p)) for p in paths]
+
+
+def test_plain_regulated_predicate_never_crashes_the_surface_kind(lean, tmp_path):
+    # Regression (speech-acts5 A1): a `plain` regulated predicate has no act, and Python's surface check called
+    # `act.split()` on it, raising `AttributeError` for any declarative authored choice, fenced or not; Lean skipped
+    # it and accepted.  A plain declaration never classifies a wording, in both cores.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    env["vocabulary"]["predicates"]["disabled"]["regulated"] = {"role": "plain", "default": "deny"}
+    for wording, kind, content, expected in [
+            ("Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")}, "ok"),
+            ("Click check.", "instruction", command("require", "click_required", ["check"]), "ok"),
+            ("Click check.", "asserted", {"ast": U("reviewed", "atlas")}, "InvalidInput: choice kind")]:
+        assert _both_forms(tmp_path, f"plain-{kind}-{len(wording)}", env, wording, kind, content) == [expected] * 2
+        document, case = _choice_case(env, wording, kind, content)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == expected
+
+
+def test_surface_kind_reads_normalised_acts_in_both_cores(lean, tmp_path):
+    # Regression (speech-acts5 A2): with the accepted act "{0}  click {1}", Lean split the raw act and found no
+    # verb, so "Click check." under an asserted choice was accepted by Lean and rejected by Python, and an
+    # instruction choice the other way.  Both cores read W1's normalised act.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    for name in ("click_required", "click_permitted"):
+        env["vocabulary"]["predicates"][name]["regulated"]["act"] = "{0}  click\t{1}"
+    click = command("require", "click_required", ["check"])
+    for kind, content, expected in [("asserted", {"ast": U("reviewed", "atlas")}, "InvalidInput: choice kind"),
+                                    ("instruction", click, "ok")]:
+        assert _both_forms(tmp_path, f"act-{kind}", env, "Click check.", kind, content) == [expected] * 2
+        document, case = _choice_case(env, "Click check.", kind, content)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == expected
+
+
+_NON_SPEECH_CHOICES = [
+    ("norm", {"norm": {"name": "n1", "predicate": "click_required", "sign": True, "guard": ["top"],
+                       "unless": [], "over": []}}),
+    # W2's reading sets admit formula content only under `asserted` (or a quoted one).
+    *((k, None) for k in ("definition", "example", "exposition", "analogy", "explanation", "meta")),
+    ("binding", {"binding": {"you": "alice"}}),
+    (["attributed", "bob", "says", "question"], polar(U("reviewed", "atlas"))),
+    (["attributed", "bob", "says", "instruction"], command("require", "click_required", ["check"])),
+    (["attributed", "bob", "says", "asserted"], {"ast": U("reviewed", "atlas")}),
+    (["hedged", "likely", "asserted"], {"ast": U("reviewed", "atlas")}),
+    (["hedged", "likely", ["attributed", "bob", "says", "question"]], polar(U("reviewed", "atlas"))),
+]
+
+
+@pytest.mark.parametrize("choice_kind,choice_content", _NON_SPEECH_CHOICES,
+                         ids=[json.dumps(k) for k, _ in _NON_SPEECH_CHOICES])
+def test_non_speech_choice_kinds_are_unaffected_by_the_surface_rule(lean, tmp_path, choice_kind, choice_content):
+    # Regression (speech-acts5 A3, orchestrator correction): the kind rule compared every choice kind with the
+    # wording's surface kind, so every norm, definition, example or quoted choice failed whatever its wording.
+    # The rule is only among asserted, question and instruction: any other choice is accepted on a question,
+    # a declarative, an imperative or a binding wording alike, with the outcome it has without a wording.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    cases, expected = [], []
+    for i, wording in enumerate(["Is atlas reviewed?", "Atlas is reviewed.", "Click check.", "Do not click check.",
+                                 "In this task, you are alice."]):
+        assert _both_forms(tmp_path, f"non-speech-{i}", env, wording, choice_kind, choice_content) == ["ok"] * 2
+        document, case = _choice_case(env, wording, choice_kind, choice_content)
+        bare, bare_case = _choice_case(env, wording, choice_kind, choice_content, source=False)
+        assert _outcome(lambda: core(env, document)) == _outcome(lambda: core(env, bare)) == "ok"
+        # Lean's frozen JSON boundary carries no `null`, the only content an atomic non-speech choice takes.
+        if choice_content is not None:
+            cases += [case, bare_case]
+            expected += ["ok", "ok"]
+    assert [_lean_outcome(r) for r in run(cases)] == expected
+
+
+def test_speech_choice_on_a_binding_wording_is_unchecked(lean):
+    # "Only among the three": a binding-shaped wording has no speech-act surface kind to contradict.
+    env = F0()
+    for kind, content in [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
+                          ("instruction", command("require", "click_required", ["check"]))]:
+        document, case = _choice_case(env, "In this task, you are alice.", kind, content)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok"
+
+
+_SPACES = [" ", "\t", "\n", "\r", "\x0b", "\x0c"]
+_NOT_SPACES = ["\x1c", "\x1d", "\x1e", "\x1f", "\x85", "\xa0", " ", " ", " ", "　", "\x00", "\x7f"]
+
+
+def _surface_variants():
+    bases = ["Is atlas reviewed?", "Atlas is reviewed.", "Atlas is reviewed?", "Click check.", "Do not click check.",
+             "Prove that atlas is reviewed.", "In this task, you are alice."]
+    variants = set()
+    for base in bases:
+        variants |= {base, base.upper(), base.lower(), base.swapcase()}
+        for c in _SPACES + _NOT_SPACES:
+            variants |= {c + base, base + c, base.replace(" ", c, 1), base.replace(" ", c + c)}
+    # Non-ASCII letters that Unicode case mapping would fold onto an ASCII prefix or suffix.
+    variants |= {"Iſ atlas reviewed.", "İs atlas reviewed.", "ıs atlas reviewed.", "Kick check.",
+                 "Atlas is reviewed？", "DO NOT CLICK CHECK.", "dO nOt ClIcK cHeCk.", "CLICK CHECK."}
+    return sorted(variants)
+
+
+def test_surface_normalisation_is_one_ascii_definition_in_both_cores(lean):
+    # Regression (speech-acts5 B): Python stripped and casefolded Unicode while Lean trimmed and lowered ASCII, so
+    # "Atlas is reviewed?\x0c" was a question in Python and a declarative in Lean.  Both cores now read wordings
+    # through one ASCII-only normalisation (3.2).  Differentially over whitespace, case and control characters,
+    # each of the three speech-act choices has one outcome in Python and in Lean.
+    from ve.speech_acts import surface_kind, surface_words
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    E = Environment(env)
+    assert surface_kind(E, "Atlas is reviewed?\x0c") == "question"
+    assert surface_kind(E, "Atlas is reviewed?\x85") == surface_kind(E, "Atlas is reviewed?\xa0") == "asserted"
+    assert surface_kind(E, "Do\x0bnot  click check.") == surface_kind(E, "DO NOT CLICK CHECK.") == "instruction"
+    assert surface_kind(E, "Iſ atlas reviewed.") == surface_kind(E, "İs atlas reviewed.") == "asserted"
+    assert surface_words("\x0c A\tB C \n") == "a b c"
+    choices = [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
+               ("instruction", command("require", "click_required", ["check"]))]
+    cases, python = [], []
+    for wording in _surface_variants():
+        for kind, content in choices:
+            document, case = _choice_case(env, wording, kind, content)
+            cases.append(case)
+            python.append(_outcome(lambda: core(env, document)))
+            expected = ("InvalidInput: choice kind"
+                        if surface_kind(E, wording) in ("asserted", "question", "instruction")
+                        and surface_kind(E, wording) != kind else "ok")
+            assert python[-1] == expected, (wording, kind)
+    lean_results = [_lean_outcome(r) for r in run(cases)]
+    mismatches = [(c["document"]["units"][0]["source"], c["document"]["reading_sets"][0]["readings"][0]["kind"], p, le)
+                  for c, p, le in zip(cases, python, lean_results) if p != le]
+    assert mismatches == []
+
+
+def test_signed_choice_source_null_is_one_diagnostic(lean):
+    # Regression (speech-acts5 B): with `"source": null` Python skipped the wording check and Lean raised
+    # `InvalidInput: speech wording`.  A present `source` that is not a string is that error in both cores,
+    # whatever the choice kind.
+    # Lean's decoder raises it for `null` too, but the route's frozen JSON boundary rejects every `null` first.
+    from test_speech_acts_lean import LEAN
+    env = F0()
+    for value in (None, 7, [], {}, True):
+        for kind, content in [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
+                              ("definition", {"ast": U("reviewed", "atlas")})]:
+            document, case = _choice_case(env, value, kind, content)
+            assert _outcome(lambda: core(env, document)) == "InvalidInput: speech wording"
+            if value is None:
+                completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), capture_output=True,
+                                           text=True, timeout=60)
+                assert completed.returncode != 0 and "expected restricted JSON value" in completed.stderr
+            else:
+                assert _lean_outcome(run1(case)) == "InvalidInput: speech wording"
 
 
 def test_answer_metadata_types_and_unit_meaning_id(lean):

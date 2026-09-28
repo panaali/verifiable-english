@@ -371,9 +371,23 @@ only an active command's `demand` uses (4.2). A formula content (W2's `{"ast": .
 stand under any W2 kind and is checked; only an `asserted` unit's is a premise (1.5). An authored choice (1.5) gives its
 unit the meaning `specified`, except that a chosen reading question means its derived open term.
 The chosen speech-act kind must match the source sentence's surface kind in both inline and English-fenced forms.
-A question-worded sentence cannot choose `asserted`, a declarative cannot choose `question`, and an imperative cannot
-choose `asserted` (`InvalidInput: choice kind`). The choice supplies effective content only after this check. Lean
-checks wording when the speech route receives a unit's `source` field; the source wrapper has the document bytes.
+The rule is only among the three speech-act kinds `asserted`, `question` and `instruction`: a choice of one of them
+on a wording whose surface kind is another of them is `InvalidInput: choice kind` (a question-worded sentence cannot
+choose `asserted` or `instruction`, a declarative cannot choose `question` or `instruction`, an imperative cannot
+choose `asserted` or `question`). Every other choice kind (`norm`, `definition`, `example`, `exposition`, `analogy`,
+`explanation`, `meta`, `binding`, and every quoted kind such as `["attributed", a, "says", "question"]`) and every
+binding-shaped wording ("In this task, ...") is not checked. The choice supplies effective content only after this
+check. Lean checks wording when the speech route receives a unit's `source` field (a present field of any other JSON
+type, `null` included, is `InvalidInput: speech wording` in both cores); the source wrapper has the document bytes.
+The surface kind reads the wording and each act phrase through **one normalisation, ASCII only** (Python's
+`surface_words`, Lean's `surfaceWords`): the six ASCII whitespace characters of Python's `string.whitespace` (space,
+`\t`, `\n`, `\r`, `\x0b`, `\x0c`) separate words, runs collapse to one space and none leads or trails; only `A`-`Z`
+fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), other control characters
+(`\x1c`-`\x1f`, `\x85`) and non-ASCII letters, is an ordinary character. A sentence is a question when its normalised
+form ends with `?` or starts with an interrogative word (not "do not "); a binding when it starts "in this task, " or
+"this document is task "; an instruction when it starts "do not ", "prove that ", "command " or the first word after
+`{0}` of a regulated act phrase. The act phrases are W1's normalised ones (3.1), as both cores decode them; a `plain`
+regulated declaration has no act and never classifies a wording.
 
 **Every reference is resolved and typed at decode time**, identically in Python and Lean (the conformance suite
 checks every field below dangling and mistyped). A reference that is not a name of the JSON type its field takes is a
@@ -1671,6 +1685,11 @@ statements of section 8 are unchanged.
 | B, untyped scope references: an addressee `sort` or `constant` of `[]` raised an uncaught `TypeError` in Python where Lean said `InvalidInput: speech_acts block`; numeric ones gave `UnknownSymbol` in Python | 3.1: every scope reference (addressee sort and constant, definite constants) is a name before it is resolved, and the block's structure and phrase checks precede resolution, in Lean's order, in both checkers. |
 | B, source references: a speech reading set's `unit: []` crashed `SpeechSource` although both cores reject it; a narrowing's `set: []` or `version: []` crashed and `version: true` was taken as version 1 | 3.2: the source wrapper types reading-set `unit`, `version` and `status` with the cores' diagnostic (and a dangling unit with theirs) before W2's checks, and W2's narrowing check requires a set id and a version number, a Boolean excluded (`invalid narrowing`). |
 | B, formula-reference diagnostics: a polar body `["unary", "reviewed", ["const", 7]]` was `UnknownSymbol: Unknown constant 7` in Python and `invalid indexed term` in Lean, in every placement | 3.2: every formula field (guard, body, assertion, target, norm condition, candidate) is first read with the Lean route's frozen P0 decoder structure and texts, which Python checks before its P0 decoder (`formula_shape`); a guard and a which-question body are decoded with their fields, as in Lean. The differential suite checks mistyped formula references under a unit, a quoted unit and a candidate. |
+| A, plain acts: a `plain` regulated predicate (no act) crashed Python's surface-kind check with `AttributeError` on any declarative authored choice, where Lean skipped it | 3.2: a `plain` declaration has no act phrase and never classifies a wording, in both cores. |
+| A, act normalisation: Lean classified wordings with the raw act (`"{0}  click {1}"`) and Python with W1's normalised one, so "Click check." under an asserted choice was rejected by one core and accepted by the other | 3.2: both cores read W1's decoded, normalised act phrases through the one surface normalisation. |
+| A, over-rejection: the kind check compared every choice kind with a four-valued surface kind, so every `norm`, `definition`, `example` or quoted choice failed whatever its wording | 3.2 (orchestrator correction): the rule is only among `asserted`, `question` and `instruction`; every other choice kind and a binding-shaped wording is unchecked. |
+| B, wording normalisation: Python stripped and casefolded Unicode, Lean trimmed and lowered ASCII, so "Atlas is reviewed?\x0c" was a question in Python and a declarative in Lean | 3.2: one ASCII-only normalisation (Python's `string.whitespace`, `A`-`Z` folding), in both cores, differentially tested over whitespace, case and control-character variants. |
+| B, `"source": null`: Python skipped the wording check and Lean raised `InvalidInput: speech wording` | 3.2: a present `source` of any non-string type, `null` included, is `InvalidInput: speech wording` in both cores. |
 
 ## Change log
 
