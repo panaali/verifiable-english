@@ -12,7 +12,7 @@ from ve.ast import (And, Atom, Binary, Bottom, Const, Eq, Exists, Forall, Implie
 from ve.background import background, dependency_order
 from ve.evaluate import evaluate
 from ve.errors import VEError
-from ve.search import check_countermodel
+from ve.search import check_countermodel, find_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
@@ -147,3 +147,22 @@ def test_countermodel_schema_identity_and_budget(monkeypatch, fixture, premises,
         monkeypatch.setenv("VE_AUTHORITY", authority)
         assert check_countermodel(env, premises, conclusion, model,
                                   max_evaluations=budget) == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("options", [
+    {}, {"min_domain_size": 1}, {"nonempty_domains": True},
+    {"max_models": 0}, {"max_evaluations": 0},
+    {"max_models": 0, "max_evaluations": 0},
+])
+def test_search_adapter_preserves_witness_and_budgets(monkeypatch, options):
+    wire = environment()
+    wire["vocabulary"]["sorts"]["person"] = {"description": "A person."}
+    wire["vocabulary"]["constants"] = {}
+    env = Environment(wire)
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = find_countermodel(env, (), Bottom(), max_domain_size=1, **options)
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert find_countermodel(env, (), Bottom(), max_domain_size=1,
+                                 **options).to_dict() == expected.to_dict()

@@ -116,7 +116,11 @@ fn case(v: &Value) -> Result<Value> {
             max_models: number(v, "max_models", 10_000)?,
             max_evaluations: maximum,
         };
-        let mut out = find_countermodel(&env, &problem, bounds)?.to_value();
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let mut out = find_countermodel_min(&env, &problem, bounds,
+                                           minimum.max(usize::from(nonempty)))?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
