@@ -138,6 +138,7 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    speech_acts: object
 
     def __init__(self, data):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
@@ -145,7 +146,10 @@ class Environment:
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
-        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"})
+        required = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
+        if route and "speech-acts@0" in data.get("profiles", []):
+            required.add("speech_acts")
+        require_fields(data, required)
         order = False
         if route:
             family = profile_registry.checker_family(data["profiles"])
@@ -281,6 +285,10 @@ class Environment:
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None)
+        speech_acts = None
+        if route and "speech-acts@0" in data["profiles"]:
+            from .speech_acts import validate_scope
+            speech_acts = validate_scope(data["speech_acts"], sorts, constants, predicates)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -288,7 +296,8 @@ class Environment:
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
-                             ("constants", MappingProxyType(constants))):
+                             ("constants", MappingProxyType(constants)),
+                             ("speech_acts", speech_acts)):
             object.__setattr__(self, field, value)
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
@@ -330,6 +339,7 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
+                **({"speech_acts": self.speech_acts} if self.speech_acts is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
