@@ -235,15 +235,18 @@ def test_python_and_lean_elaborate_identically(generated):
 
 
 def test_rust_computes_the_same_tables(generated):
-    cargo = shutil.which("cargo")
-    if not cargo:
-        pytest.skip("cargo is not available")
     import os
-    env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
-    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
-                            str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
-                           text=True, timeout=HANG_TIMEOUT)
-    assert built.returncode == 0, built.stderr
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert (ROOT / "rust/target/release/ve").is_file(), "gate Rust build missing"
+    else:
+        cargo = shutil.which("cargo")
+        if not cargo:
+            pytest.skip("cargo is not available")
+        env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+        built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
+                                str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
+                               text=True, timeout=HANG_TIMEOUT)
+        assert built.returncode == 0, built.stderr
     requests, expected = [], []
     for index, env, model, _, _ in generated:
         ast = probes(env)

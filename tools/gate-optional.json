@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "optional_backends": {
+    "llguidance": "External constrained-decoding compiler; smoke coverage is optional.",
+    "xgrammar": "External constrained-decoding compiler; smoke coverage is optional."
+  },
+  "optional_tests": [
+    {"nodeid": "tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports", "reason": "could not import 'llguidance'", "backend": "llguidance"},
+    {"nodeid": "tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports", "reason": "could not import 'xgrammar'", "backend": "xgrammar"},
+    {"nodeid": "tests/test_assist.py::test_p5_real_dev_file_loads_when_present", "reason": "P5 materials not available"},
+    {"nodeid": "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available", "reason": "optional pinned FOLIO v2 corpus is not downloaded"},
+    {"nodeid": "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count*", "reason": "pinned tokenizer not cached; test never downloads"},
+    {"nodeid": "tests/test_p1_amendment7.py::test_all_19_retained_calls_reuse_exact_original_responses", "reason": "local dev evidence absent in clean checkout"},
+    {"nodeid": "tests/test_p1_amendment7.py::test_actual_dev_prefix_reconstructs_without_duplicate_trials", "reason": "local dev evidence absent in clean checkout"},
+    {"nodeid": "tests/test_p1_amendment8.py::test_real_dev_evidence_is_retained_and_recovery_spends_nothing", "reason": "local dev evidence absent"},
+    {"nodeid": "tests/test_t1c.py::*", "reason": "run `python -m ve_experiments.t1c.run prepare` first"},
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]", "reason": "admission is outside Rust scope"}
+  ],
+  "deselected_tests": [
+    {"nodeid": "tests/test_llm.py::test_live_*", "reason": "Calls real model CLIs; excluded by the non-live gate."}
+  ]
+}
