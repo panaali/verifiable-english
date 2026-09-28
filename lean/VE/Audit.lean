@@ -44,6 +44,9 @@ import VE.Attribution.Assess
 import VE.Attribution.Bridge
 import VE.Attribution.Route
 import VE.Attribution.Scoped
+import VE.Attribution.Admission
+import VE.Attribution.Run
+import VE.Attribution.Wire
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1124,3 +1127,17 @@ import VE.Attribution.Scoped
 #print axioms VE.Reports.def_premise_shape
 #print axioms VE.Reports.scoped_background_local
 #print axioms VE.Reports.quoted_inconsistency_local
+
+#print axioms VE.Reports.isReportStatement_spec
+#print axioms VE.Reports.isAssessStatement_spec
+#print axioms VE.Reports.enterScope_author
+#print axioms VE.Reports.scopeAux_author
+#print axioms VE.Reports.authorPath_env
+#print axioms VE.Reports.bridgeLeafB_sound
+#print axioms VE.Reports.leafB_sound
+#print axioms VE.Reports.nodeB_sound
+#print axioms VE.Reports.admitNodes_ok
+#print axioms VE.Reports.reports_admission_sound
+#print axioms VE.Reports.reports_labels_decoded
+#print axioms VE.Reports.Run.runAdmission_sound
+#print axioms VE.Reports.Run.reports_wire_acceptance
