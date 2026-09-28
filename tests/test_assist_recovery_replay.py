@@ -443,7 +443,7 @@ def regenerate(ledger):
 @pytest.mark.parametrize("seed", range(10))
 def test_random_histories_and_tampering_never_approve_without_review(seed, monkeypatch):
     # This property checks replay integrity, not the wall-clock deadline. Its
-    # repeated full-ledger replays can exceed eight seconds under xdist load.
+    # repeated full-ledger replays can take longer under xdist load.
     monkeypatch.setattr(recovery_module, "OPERATION_SECONDS", 1800)
     monkeypatch.setattr(ambiguity_patterns, "OPERATION_SECONDS", 1800)
     rng = random.Random(seed)

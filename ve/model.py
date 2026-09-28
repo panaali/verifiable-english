@@ -53,7 +53,7 @@ class FiniteModel:
         return cls.from_dict(env, loads_json(data))
 
     @classmethod
-    def from_dict(cls, env: Any, wire: Any) -> "FiniteModel":
+    def from_dict(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
         _keys(wire, {"complete", "domains", "constants", "relations"}, "")
         if wire["complete"] is not True:
             _fail("complete must be the Boolean true", "/complete")
@@ -160,10 +160,12 @@ class FiniteModel:
                 tuple_count += len(table)
                 relations[definition.name] = frozenset(table)
 
-        normalized = _normalized(domains, constants, relations, defined_names)
-        from .wire import digest
         environment_id = env.environment_id
-        model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
+        model_id = ""
+        if not _defer_model_id:
+            normalized = _normalized(domains, constants, relations, defined_names)
+            from .wire import digest
+            model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
         model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations),
                     environment_id, model_id, tuple(sorted(defined_names)))
         from .background import validate_background
