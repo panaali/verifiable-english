@@ -114,6 +114,44 @@ def questionAst (dec : Wire.Decoded) (q : Question) : Json :=
      | .follows => [("query", queryIdentity dec (q.query.getD ""))]
      | .reading => [("set", toJson (q.readingSet.map Prod.fst)), ("version", toJson (q.readingSet.map Prod.snd))])))]
 
+/-- Source units may state a W2 meaning id; it must equal the regenerated identity. -/
+def checkMeaningIds (dec : Wire.Decoded) (document : Json) : Except String Unit := do
+  let raw ← (← document.getObjVal? "units").getArr?
+  let states ← Wire.readingStates document
+  for j in raw do
+    if let .ok stated := j.getObjVal? "meaning_id" then
+      let id ← stringField j "id"
+      let some u := dec.units.find? (·.id == id) | throw "unit meaning id does not match content"
+      let effective ← match Wire.latestState states id with
+        | some (.authored kind content) => Wire.chosenUnit j kind content
+        | _ => pure j
+      let ast ← match u.role with
+        | .asserted φ => pure (some (enc φ))
+        | .command c => pure (some (commandAst dec c))
+        | .question q | .quotedQuestion q => pure (some (questionAst dec q))
+        | .binding b => pure (some (Json.mkObj [("binding", match b with
+            | .you c => Json.mkObj [("you", .str c)]
+            | .phrase p c => Json.mkObj [("phrase", .str p), ("constant", .str c)]
+            | .task t => Json.mkObj [("task", .str t)])]))
+        | .norm n => pure (some (Json.mkObj [("norm", encodeNode n)]))
+        | .other =>
+          let content := effective.getObjValD "content"
+          let formula := match content with
+            | .arr _ => some content
+            | .obj _ => if Wire.contentTag content == some "ast" then
+                some (content.getObjValD "ast") else none
+            | _ => none
+          match formula with
+          | some data => pure (some (enc (← Wire.decodeClosedField dec.D.E data)))
+          | none => pure none
+      unless stated == (ast.map (fun a => Json.str (meaningOf dec a))).getD .null do
+        throw "unit meaning id does not match content"
+
+def checkedDocument (environment document : Json) : Except String Wire.Decoded := do
+  let dec ← Wire.decodeDocument environment document
+  checkMeaningIds dec document
+  return dec
+
 def elaborated (dec : Wire.Decoded) : List (String × Json) :=
   let D := dec.D
   [("environment_id", .str ((VE.Route.Wire.environmentId dec.se.profiles dec.se.canonical).toOption.getD "")),
@@ -300,7 +338,7 @@ structure AnswerCase where
   replay : AnswerReplay dec.D q
 
 def replayAnswer (j : Json) : Except String AnswerCase := do
-  let dec ← Wire.decodeDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  let dec ← checkedDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let D := dec.D
   let ⟨q, hq⟩ ← findQuestion D (← stringField j "question")
   let modelId := (stringField j "model_id").toOption.getD "m"
@@ -353,7 +391,7 @@ def ConsequenceCase.gap (r : ConsequenceCase) : Bool :=
   | none => false
 
 def replayConsequence (j : Json) : Except String ConsequenceCase := do
-  let dec ← Wire.decodeDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  let dec ← checkedDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let ⟨qr, hq⟩ ← findQuery dec.D (← stringField j "query")
   let cert ← match j.getObjVal? "certificate" with
     | .ok cj => some <$> boundCertificate dec (queryPremises dec.D qr) qr.target cj
@@ -372,7 +410,7 @@ def normsSource (dec : Wire.Decoded) : VE.Norms.Wire.Source :=
 
 def replayWitness (j : Json) :
     Except String ((dec : Wire.Decoded) × VE.Norms.Replay.WitnessData (normsSource dec)) := do
-  let dec ← Wire.decodeDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  let dec ← checkedDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let w ← VE.Norms.Replay.witnessFrom (normsSource dec) (← j.getObjVal? "witness")
   pure ⟨dec, w⟩
 
@@ -418,7 +456,7 @@ def ConflictCase.conflictFree (r : ConflictCase) : Bool := VE.Norms.conflictFree
 def replayConflict (j : Json) : Except String ConflictCase := do
   let environment ← j.getObjVal? "environment"
   let document ← j.getObjVal? "document"
-  let dec ← Wire.decodeDocument environment document
+  let dec ← checkedDocument environment document
   let packages := j.getObjValD "packages"
   pure ⟨dec, (VE.Norms.targets (policy dec.D)).map (decodePackage dec environment document packages)⟩
 
@@ -461,7 +499,7 @@ def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "speech-elaborate" then
-    let dec ← Wire.decodeDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
+    let dec ← checkedDocument (← j.getObjVal? "environment") (← j.getObjVal? "document")
     return VE.Route.Wire.ok id (elaborated dec)
   if kind == "speech-answer" then
     let r ← replayAnswer j
