@@ -393,9 +393,10 @@ def test_report_premises_are_in_the_residual(tmp_path):
     assert lines["reports"] == {"believes present asserted": 1}
     assert lines["assessments"] == {"unresolved_decider asserted": 1, "unresolved_decider denied": 1}
     assert lines["literal_quotations"] == [{"unit": "u1", "path": "1"}]
-    assert [s["id"] for s in lines["scoped_checks"]] == ["s1"]
+    assert [(s["id"], s["status"], s["detail"]) for s in lines["scoped_checks"]] == [("s1", "UNKNOWN", "no evidence")]
     assert lines["unreviewed_acts"] == {"promised": 1}
-    assert {k: coverage["residual"][k] for k in lines} == {
+    assert lines["open_terms"] == ["reports__may__1"]
+    assert {k: coverage["residual"][k] for k in lines} == {"open_terms": 1,
         "reports": 1, "assessments": 2, "literal_quotations": 1, "scoped_checks": 1, "unreviewed_acts": 1}
     assert coverage["residual_total"] == 1 + 1 + 2 + 1 + 1 + 1  # the one generated open term too
 
@@ -428,3 +429,72 @@ def test_nested_unreviewed_acts_enter_the_residual(tmp_path):
         assert lines["unreviewed_acts"] == acts
         assert result["coverage"]["residual"]["unreviewed_acts"] == sum(acts.values())
         assert result["coverage"]["residual_total"] == sum(acts.values())
+
+
+def scoped_certificate(environment_id, checked, conclusion):
+    """Untrusted search for a scoped check over the author's E (no literals here),
+    bound to E's identity as 3.4 binds it."""
+    from ve.ast import _Decoder
+    from ve.entailment import prove_entailment
+    from ve.wire import digest
+    raw = environment().to_dict()
+    raw["vocabulary"].pop("reports")
+    raw["profiles"] = [p for p in raw["profiles"] if p != "reports@0"]
+    decoder = _Decoder()
+    found = prove_entailment(Environment(raw), [decoder.decode(a) for a in checked], decoder.decode(conclusion))
+    domain = "ve-meaning-v0.2:" + ",".join(environment().profiles) + "\n"
+    return dict(found.certificate, environment_id=environment_id,
+                premise_meaning_ids=[digest(domain, {"environment_id": environment_id, "ast": a}) for a in checked],
+                conclusion_meaning_id=digest(domain, {"environment_id": environment_id, "ast": conclusion}))
+
+
+def test_scoped_outcomes_reach_status_and_residual(tmp_path):
+    """Loop B: a valid carried scoped certificate and the same certificate with a
+    stale document envelope gave identical `scoped_checks` entries (id and
+    environment only) and `check_document` returned CHECKED for both, while a
+    direct `reports-scoped` replay told FOLLOWS from UNKNOWN(envelope). Each entry
+    now carries the replayed inner status and detail (6), and the document's
+    status is the meet of every nested result, so it is never above a scoped
+    check's."""
+    from ve.document import coverage, load_document
+    from ve.reports_route import run_case
+    text = "The article says that alice is safe.\n"
+    graph = {"root": "R", "nodes": [{"name": "R", "label": "report:u1", "unit": "u1",
+                                     "ast": ["unary", "reports__says__1", ["const", "article"]]}]}
+    check = {"id": "s1", "payloads": ["u1"], "conclusion": {"ast": SAFE}}
+
+    def run(**front):
+        path = write_report_document(tmp_path, [(text, reported())], graph=graph, **front)
+        result = check_document(path)
+        meta = json.loads(path.read_text().split("\n---\n")[0][4:])
+        route_doc = {k: meta[k] for k in ("units", "contexts", "scoped", "graph")}
+        direct = run_case("reports-scoped", meta["environment"], route_doc)["scoped"]
+        [entry] = result["coverage"]["residual_lines"]["scoped_checks"]
+        assert {k: entry.get(k) for k in ("status", "detail")} == {k: direct[0].get(k) for k in ("status", "detail")}
+        assert result["statuses"]["scoped"] == [entry]
+        # Without the replay (`ve document coverage`) a bound certificate is never FOLLOWS.
+        [unreplayed] = coverage(load_document(path))["residual_lines"]["scoped_checks"]
+        assert unreplayed["status"] == "UNKNOWN"
+        return result, (entry["status"], entry.get("detail")), unreplayed.get("detail")
+
+    envelope = check_document(write_report_document(tmp_path, [(text, reported())], graph=graph,
+                                                    scoped=[check]))["reports"]["envelope"]
+    cert = scoped_certificate(envelope["environment_id"], [SAFE], SAFE)
+    fresh, outcome, unreplayed = run(scoped=[dict(check, certificate=cert, envelope=envelope)])
+    assert outcome == ("FOLLOWS", None) and unreplayed == "not replayed"
+    assert fresh["status"] == "CHECKED" and fresh["statuses"]["document_status"] == "CHECKED"
+    # The reproducer: the context's tense changes, the certificate and its envelope do not.
+    stale, outcome, unreplayed = run(contexts=contexts("past"),
+                                     scoped=[dict(check, certificate=cert, envelope=envelope)])
+    assert outcome == ("UNKNOWN", "envelope") and unreplayed == "envelope"
+    assert stale["status"] == "UNKNOWN" and stale["admission"]["admitted"] is True
+    assert stale["coverage"]["residual"]["scoped_checks"] == 1
+    # The rest of the class: no envelope, no certificate, a bound certificate that does not replay.
+    for front, expected in [
+            ({"scoped": [dict(check, certificate=cert)]}, ("UNKNOWN", "envelope")),
+            ({"scoped": [check]}, ("UNKNOWN", "no evidence")),
+            ({"scoped": [dict(check, certificate=scoped_certificate(envelope["environment_id"], [SAFE],
+                                                                    ["or", SAFE, SAFE]),
+                              envelope=envelope)]}, ("UNKNOWN", "certificate does not replay"))]:
+        result, outcome, _ = run(**front)
+        assert outcome == expected and result["status"] == "UNKNOWN", (front, outcome)

@@ -46,6 +46,7 @@ import VE.Attribution.Route
 import VE.Attribution.Scoped
 import VE.Attribution.Admission
 import VE.Attribution.Run
+import VE.Attribution.Status
 import VE.Attribution.Wire
 
 #print axioms Iceberg.mul_sub
@@ -1150,3 +1151,12 @@ import VE.Attribution.Wire
 #print axioms VE.Reports.Run.runCountermodel_sound
 #print axioms VE.Reports.Run.scopedCertified_sound
 #print axioms VE.Reports.Run.reports_wire_acceptance
+#print axioms VE.Reports.meet_rank_left
+#print axioms VE.Reports.meet_rank_right
+#print axioms VE.Reports.foldl_meet_rank_init
+#print axioms VE.Reports.foldl_meet_rank_le
+#print axioms VE.Reports.foldStatus_le
+#print axioms VE.Reports.rank_checked
+#print axioms VE.Reports.foldStatus_checked
+#print axioms VE.Reports.unitStatus_le
+#print axioms VE.Reports.documentStatus_le

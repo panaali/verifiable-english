@@ -274,9 +274,11 @@ def load_document(path: str | Path):
             original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
             if "meaning_id" in original and original["meaning_id"] != u["meaning_id"]:
                 raise VEError("unit meaning id does not match content")
-        # A report unit's status stays the one its meaning gives (6): OPEN when its
-        # content carries an open term, which ReportsDocument forces for every tree
-        # with an assessment node, nested or not (3.3); CHECKED otherwise.
+        # 6: every unit's status is the meet of its meaning's and every result
+        # nested in its content and kind (an assessment node at any depth is OPEN,
+        # an act outside the slice anywhere in its kind LABELLED).
+        for u, wire in zip(compiled, reports.units):
+            u["status"] = reports.unit_status(wire)
     from .norms import NormDocument
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
@@ -367,7 +369,9 @@ def _assertion_disjunctions(env, sets):
     return result
 
 
-def coverage(doc):
+def coverage(doc, scoped=None):
+    """`scoped`: the reports layer's checked scoped verdicts (`check_document`);
+    without them a scoped check is reported as not replayed."""
     units = doc["units"]
     source = doc["source"]
     kinds = {}
@@ -396,7 +400,7 @@ def coverage(doc):
         # does, and every report or assessment premise is an identified assumption
         # whatever its support, so each line counts into the total.
         residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
-        lines = doc["reports"].residual_lines()
+        lines = doc["reports"].residual_lines(scoped)
         residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
                          for line, detail in lines.items()})
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
@@ -433,10 +437,18 @@ def check_document(path):
                      "open_terms": [o["name"] for o in meta.get("open_terms", [])],
                      **({"graph": meta["graph"]} if "graph" in meta else {})}
         environment = meta["environment"]
-        checked = checked_elaboration(doc["reports"], environment, route_doc)
+        reports = doc["reports"]
+        checked = checked_elaboration(reports, environment, route_doc)
+        # 6: the scoped checks' replayed verdicts, and every unit's and the
+        # document's status as the meet of all nested results, in Python and Lean.
+        replayed = run_case("reports-status", environment, route_doc)
+        statuses = reports.statuses(reports.scoped_verdicts(replayed["scoped"]))
+        if any(replayed.get(key) != statuses[key] for key in ("units", "document_status")):
+            raise VEError("ReportsConformance: Python and Lean differ at statuses")
         result = {"format": "ve-document@1", "status": "UNVERIFIED",
                   "source_id": doc["source_id"], "document_id": doc["document_id"],
-                  "coverage": coverage(doc), "reports": checked}
+                  "coverage": coverage(doc, statuses["scoped"]), "reports": checked,
+                  "statuses": statuses}
         # 7.1 row 4: P0's premise-set line over Background(E_reports) ++ Γ, where Γ
         # is the report premises, the author's asserted units and the graph's
         # admitted leaves, as in the plain W2 path.
@@ -452,11 +464,10 @@ def check_document(path):
         if "admission" in result:
             result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
                                                False if status == "model" else None)
-            # CHECKED needs an admitted graph over a premise set with a model: an
+            # A status needs an admitted graph over a premise set with a model: an
             # inconsistent (or undecided) set makes every certificate vacuous.
             if status == "model":
-                result["status"] = ("OPEN" if any(u["status"] == "OPEN" for u in doc["units"])
-                                    else "CHECKED")
+                result["status"] = statuses["document_status"]
         return result
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
