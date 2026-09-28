@@ -163,8 +163,8 @@ def test_reported_diagnostic_codes(raw, rules, code):
     assert python_error.value.to_dict()["code"] == code
 
 
-def test_rejection_fixtures_and_generated_soft_blocks_share_codes():
-    assert compare_rejected() == 63
+def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
+    assert compare_rejected() == 94
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
@@ -279,7 +279,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 63
+    assert report["rejected_inputs"] == 94
 
 
 @pytest.mark.parametrize("role,sign,effect", [

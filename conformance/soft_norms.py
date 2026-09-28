@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from itertools import combinations
 from pathlib import Path
 import random
 import subprocess
@@ -148,8 +149,28 @@ def generated_invalid_soft_blocks():
             yield raw, []
 
 
+def generated_invalid_soft_rules():
+    """Pairs of independent rule faults check diagnostic precedence."""
+    raw = env()
+    valid = norm("a", "x_required", True, mode="default", exception={
+        "decided_by": "assistant", "sufficient": [], "necessary": [], "factors": []})
+    faults = [
+        {"rank": "z"}, {"alterable": ["z"]}, {"alterable": False},
+        {"hard": True}, {"exception": False},
+        {"exception": {"decided_by": "", "sufficient": [], "necessary": [], "factors": []}},
+        {"exception": {"decided_by": "assistant", "sufficient": [],
+                       "necessary": [], "factors": False}},
+        {"mode": "other"}, {"hard": "yes"},
+    ]
+    for left, right in combinations(faults, 2):
+        if left.keys() & right.keys():
+            continue
+        yield raw, [{"norm": {**valid["norm"], **left, **right}}]
+
+
 def compare_rejected():
-    cases = rejected_sources() + list(generated_invalid_soft_blocks())
+    cases = (rejected_sources() + list(generated_invalid_soft_blocks()) +
+             list(generated_invalid_soft_rules()))
     expected = []
     for raw, rules in cases:
         try:
