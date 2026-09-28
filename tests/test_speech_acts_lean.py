@@ -337,8 +337,10 @@ def test_xi_unbound_slots_and_authored_bindings(lean):
 
 
 def test_pending_reading_set_keeps_its_command_dormant(lean):
-    doc = {"units": [unit("u1", 0, "instruction", command("require", "click_required", ["check"]))],
-           "reading_sets": [{"id": "rs1", "unit": "u1", "version": 1, "status": "open", "readings": []}]}
+    click = command("require", "click_required", ["check"])
+    doc = {"units": [unit("u1", 0, "instruction", click)],
+           "reading_sets": [{"id": "rs1", "unit": "u1", "version": 1, "status": "open",
+                             "readings": [{"id": "r", "kind": "instruction", "content": click}]}]}
     r = elaborate(F0(), doc)
     assert r["commands"] == [] and r["dormant"] == ["u1"]
 
