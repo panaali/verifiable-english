@@ -197,15 +197,33 @@ decreasing_by all_goals simp_wf <;> omega
 def importName (docs : List DocName) (key : String) : String :=
   ((docs.find? fun d => d.refers == .imported key).map DocName.name).getD key
 
-/-- A stored document decodes (its text, envelope and discourse block) and carries the pinned
-identities. -/
+/-- The reading sets of a front matter by id, version and reading ids (their formulas are not
+read): what decoding a discourse block needs to name readings (1.5). -/
+def setIdsOf (front : Json) : List FrontSet :=
+  match front.getObjValD "reading_sets" with
+  | .arr xs => xs.toList.filterMap fun x => do
+    let id ← (x.getObjValD "id").getStr?.toOption
+    let unit ← (x.getObjValD "unit").getStr?.toOption
+    let version ← (x.getObjValD "version").getNat?.toOption
+    let status ← (x.getObjValD "status").getStr?.toOption
+    let readings ← match x.getObjValD "readings" with
+      | .arr rs => some rs.toList
+      | _ => none
+    pure ⟨id, unit, version, status, readings.filterMap fun r => (r.getObjValD "id").getStr?.toOption.map (·, .top)⟩
+  | _ => []
+
+/-- A stored document decodes (its text, envelope and, for `@2`, its whole discourse block, as
+the importing document's own block is decoded) and carries the pinned identities. -/
 def storedOk (files : Json) (name : String) (b : ByteArray) (sid did : Option String) : Except String Unit := do
   let fail := fun (e : String) => "InvalidInput: document " ++ name ++ ": " ++ e
   let p ← (storedPayload files b).mapError fail
   let env := envOfPayload p
   let _ ← (VE.Route.Gate.profilesOf env).mapError fail
   let _ ← (VE.Route.Gate.decodeEnvelope (baseEnvironment env)).mapError fail
-  let _ ← (Wire.decodeTables (Loader.filesOf p) ((Loader.metaOf p).getObjValD "discourse")).mapError fail
+  let block := (Loader.metaOf p).getObjValD "discourse"
+  let _ ← (Wire.decodeTables (Loader.filesOf p) block).mapError fail
+  if formatOf p == some "ve-document@2" then
+    let _ ← (Wire.decodeManifest (setIdsOf (Loader.metaOf p)) (Loader.filesOf p) "" block).mapError fail
   if let some s := sid then req (sourceIdOf b == s) ("StaleTarget: " ++ name)
   let doc ← (Loader.documentId p).mapError fail
   if let some d := did then req (doc == d) ("StaleTarget: " ++ name)

@@ -485,12 +485,175 @@ def group_reading(doc, spans):
     return ["exists", sort, body]
 
 
+# Decoding the block (3.1) -----------------------------------------------------
+
+_ANCHOR_KINDS = {"document", "section", "clause", "item", "article"}
+_TARGET_KINDS = {"entity", "predicate", "unit", "anchor", "rule", "claim", "document"}
+_READINGS = {"assertive", "presuppositional", "distributive"}
+
+
+def _fields(item, required, optional=()):
+    """Exactly the required fields and some of the optional ones (the Lean `displayFields`)."""
+    if type(item) is not dict or not set(required) <= set(item) or set(item) - set(required) - set(optional):
+        raise VEError("InvalidInput: discourse fields")
+
+
+def _string(value):
+    if type(value) is not str:
+        raise VEError("InvalidInput: string expected")
+    return value
+
+
+def _strings(value):
+    if type(value) is not list:
+        raise VEError("InvalidInput: array expected")
+    return [_string(v) for v in value]
+
+
+def _nat(value):
+    if type(value) is not int or value < 0:
+        raise VEError("InvalidInput: natural number expected")
+    return value
+
+
+def _rows(block, key):
+    value = block.get(key, [])
+    if type(value) is not list:
+        raise VEError(f"InvalidInput: discourse.{key}")
+    return value
+
+
+def _optional(item, decode, *keys):
+    for key in keys:
+        if key in item:
+            decode(item[key])
+
+
+def decode_block(block, reading_sets=()):
+    """The strict decode of a `discourse` block (3.1), the Lean `Wire.decodeManifest`: every table
+    has its wire shape, optional fields are absent (never null), and a group's, constraint's or
+    recorded choice's reading names a reading of a declared set version (1.5). It reads no unit
+    and resolves nothing: it is what a stored document must pass (4.1(10))."""
+    from .ast import _Decoder
+    if type(block) is not dict:
+        raise VEError("InvalidInput: discourse block")
+    if not block:
+        return
+    _no_null(block)
+    _fields(block, ("version", "anchors"), (*_BLOCK_KEYS, *_LEAN_ONLY))
+    if block["version"] != PROFILE:
+        raise VEError("InvalidInput: discourse version")
+    _optional(block, _string, "definitions_version", "document_sort")
+    if type(block["anchors"]) is not list:
+        raise VEError("InvalidInput: discourse.anchors")
+    for anchor in block["anchors"]:
+        _fields(anchor, ("id", "kind", "label", "span"), ("parent", "edition", "exports"))
+        _string(anchor["id"]), _string(anchor["label"])
+        if anchor["kind"] not in _ANCHOR_KINDS:
+            raise VEError(f"InvalidInput: anchor kind {anchor['kind']}")
+        _span_shape(anchor["span"])
+        _optional(anchor, _string, "parent", "edition")
+        _optional(anchor, _strings, "exports")
+    for name in _rows(block, "names"):
+        _fields(name, ("constant", "display", "scope"), ("aliases",))
+        _string(name["constant"]), _string(name["display"]), _string(name["scope"])
+        _optional(name, _strings, "aliases")
+    for item in _rows(block, "content_names"):
+        _fields(item, ("name", "units", "scope"))
+        _string(item["name"]), _strings(item["units"]), _string(item["scope"])
+    for mention in _rows(block, "mentions"):
+        _fields(mention, ("id", "unit", "span", "form", "target"), ("restriction", "reading", "presupposition_unit"))
+        _string(mention["id"]), _string(mention["unit"]), _span_shape(mention["span"])
+        if mention["form"] not in _FORM_KINDS:
+            raise VEError(f"InvalidInput: form {mention['form']}")
+        target = mention["target"]
+        _fields(target, ("kind",), ("name", "version", "members", "pair", "units", "content_name"))
+        if target["kind"] not in _TARGET_KINDS:
+            raise VEError(f"InvalidInput: target kind {target['kind']}")
+        _optional(target, _string, "name", "content_name")
+        _optional(target, _nat, "version")
+        _optional(target, _strings, "members", "units")
+        if "pair" in target and len(_strings(target["pair"])) != 2:
+            raise VEError("InvalidInput: pair")
+        if "reading" in mention and mention["reading"] not in _READINGS:
+            raise VEError(f"InvalidInput: reading {mention['reading']}")
+        if "restriction" in mention:
+            try:
+                _Decoder().decode(mention["restriction"])
+            except (VEError, SyntaxError) as exc:
+                raise VEError(f"InvalidInput: restriction of {mention['id']}") from exc
+        _optional(mention, _string, "presupposition_unit")
+    for declaration in _rows(block, "documents"):
+        _fields(declaration, ("name", "display", "refers", "version"),
+                ("author", "supersedes", "scope", "source_id", "document_id"))
+        _string(declaration["name"]), _strings(declaration["display"]), _nat(declaration["version"])
+        refers = declaration["refers"]
+        if refers != "self" and not (type(refers) is dict and len(refers) == 1
+                                     and next(iter(refers)) in {"embedded", "import", "part"}
+                                     and type(next(iter(refers.values()))) is str):
+            raise VEError("InvalidInput: refers")
+        _optional(declaration, _string, "author", "scope", "source_id", "document_id")
+        _optional(declaration, _strings, "supersedes")
+    imports = block.get("imports", {})
+    if type(imports) is not dict:
+        raise VEError("InvalidInput: discourse.imports")
+    for pin in imports.values():
+        _fields(pin, ("source_id", "document_id", "bytes"))
+        _string(pin["source_id"]), _string(pin["document_id"]), _string(pin["bytes"])
+    readings = {(s.get("id"), s.get("version")): [r.get("id") for r in s.get("readings", []) if type(r) is dict]
+                for s in reading_sets if type(s) is dict and type(s.get("readings", [])) is list}
+
+    def reading(set_id, version, reading_id):
+        if reading_id not in readings.get((set_id, version), []):
+            raise VEError(f"InvalidInput: reading {reading_id} not in {set_id}@{version}")
+
+    def triple(value):
+        if (type(value) is not list or len(value) != 3 or type(value[0]) is not str
+                or type(value[2]) is not str):
+            raise VEError("InvalidInput: discourse constraint reading")
+        reading(value[0], _nat(value[1]), value[2])
+
+    for group in _rows(block, "groups"):
+        _fields(group, ("set", "version", "reading", "spans"))
+        reading(_string(group["set"]), _nat(group["version"]), _string(group["reading"]))
+        _strings(group["spans"])
+    for row in _rows(block, "constraints"):
+        _fields(row, ("kind", "a", "b"))
+        if row["kind"] not in {"requires", "excludes"}:
+            raise VEError(f"InvalidInput: constraint kind {row['kind']}")
+        triple(row["a"]), triple(row["b"])
+    for binding in _rows(block, "validity"):
+        _fields(binding, ("unit", "document", "holds"))
+        _string(binding["unit"]), _string(binding["document"])
+        if type(binding["holds"]) is not bool:
+            raise VEError("InvalidInput: validity holds")
+    _strings(block.get("self_truth", []))
+    for choice in _rows(block, "choices"):
+        triple(choice)
+
+
+def _span_shape(value):
+    if type(value) is not list or len(value) != 2:
+        raise VEError("InvalidInput: span")
+    _nat(value[0]), _nat(value[1])
+
+
 # Stored documents (4.1(10)) --------------------------------------------------
 
 def _stored_identities(raw, name):
     from .document import stored_identities
     try:
         return stored_identities(raw)
+    except VEError as exc:
+        raise VEError(f"InvalidInput: document {name}: {exc}") from exc
+
+
+def _stored_block(meta, name):
+    """A stored `@2` document's whole discourse block decodes, as the importing document's does."""
+    if meta["format"] != "ve-document@2":
+        return
+    try:
+        decode_block(meta.get("discourse"), meta.get("reading_sets", []))
     except VEError as exc:
         raise VEError(f"InvalidInput: document {name}: {exc}") from exc
 
@@ -548,12 +711,15 @@ def check_stored_documents(doc, documents, imports, units):
             continue
         raw = path.read_bytes()
         try:
-            _, sid, did = _stored_identities(raw, name)
+            meta, sid, did = _stored_identities(raw, name)
         except VEError:
             if hashlib.sha256(raw).hexdigest() != pin["source_id"]:
                 raise VEError(f"StaleTarget: {name}") from None
             raise
-        if sid != pin["source_id"] or did != pin["document_id"]:
+        if sid != pin["source_id"]:
+            raise VEError(f"StaleTarget: {name}")
+        _stored_block(meta, name)
+        if did != pin["document_id"]:
             raise VEError(f"StaleTarget: {name}")
         stored.append(raw)
     for name, declaration in documents.items():
@@ -561,7 +727,8 @@ def check_stored_documents(doc, documents, imports, units):
         if type(refers) is dict and "embedded" in refers:
             start, end = units[refers["embedded"]]["span"]
             raw = doc["source"][start:end]
-            _, sid, did = _stored_identities(raw, name)
+            meta, sid, did = _stored_identities(raw, name)
+            _stored_block(meta, name)
             if declaration.get("document_id", did) != did or declaration.get("source_id", sid) != sid:
                 raise VEError(f"StaleTarget: {name}")
             stored.append(raw)
@@ -793,6 +960,8 @@ def validate_discourse(doc):
         for uid in group["spans"]:
             units[uid]["status"] = units[rs["unit"]]["status"]
     joint = _joint(block, active)
+    # the block's own wire shape, exactly as a stored document's is decoded (Lean decodeManifest)
+    decode_block(block, active)
     return {"references": references, "groups": groups, "joint": joint,
             "presentations": presentations}
 
