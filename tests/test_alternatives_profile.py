@@ -5,9 +5,14 @@ import pytest
 
 from ve.alternatives import run_case
 from ve.document import coverage
+from ve.ast import Binary, Const, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
+from ve.evaluate import evaluate
+from ve.norms import NormDocument, check_conflict
 from ve.english import parse_english_with_metadata
+from ve.parser import parse as parse_strict
+from ve.printer import print_document
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.surface.registry import by_tag, enabled
 
@@ -67,6 +72,10 @@ def test_block_round_trip_and_identity():
      "AlternativesVerbalisation"),
     (lambda r: r["vocabulary"]["predicates"].update(allows={"arguments": ["action", "harm"],
                                                          "description": "collision"}), "AlternativesReserved"),
+    (lambda r: r["vocabulary"]["predicates"].update(alias={"arguments": ["action", "harm"],
+                                                       "description": "collision",
+                                                       "verbalisation": "{0} prevents {1}"}),
+     "AlternativesReserved: wording"),
     (lambda r: r["alternatives"].update(taken="inaction"), "AlternativesVerbalisation"),
     (lambda r: r["alternatives"].update(leads_to="available"),
      "AlternativesSort: leads_to expects \\(action, harm\\)"),
@@ -116,6 +125,41 @@ def test_fixed_role_wordings_have_one_paraphrase():
     del undeclared["alternatives"]["proximate"]
     with pytest.raises(VEError, match="AlternativesVerbalisation"):
         Environment(undeclared)
+
+
+def test_derived_words_round_trip_without_declared_predicate_tables():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "h": {"sort": "harm", "description": "harm"},
+        "r": {"sort": "robot", "description": "robot"},
+    }
+    env = Environment(raw)
+    for word, sentence, first, second in (
+        ("avoidable", "h is avoidable by r.", "h", "r"),
+        ("unavoidable", "h is unavoidable by r.", "h", "r"),
+        ("allows", "pull allows h to happen.", "pull", "h"),
+        ("prevents", "pull prevents h.", "pull", "h"),
+    ):
+        formula = parse_english_with_metadata(env, sentence).document.formulas[0]
+        assert formula_to_data(env, formula) == ["binary", word, ["const", first], ["const", second]]
+        source_text = f"@{first} {word} @{second}.\n"
+        assert formula_to_data(env, parse_strict(env, source_text).formulas[0]) == formula_to_data(env, formula)
+        assert print_document(env, parse_strict(env, source_text)) == source_text
+    assert set(env.to_dict()["vocabulary"]["predicates"]) == set(raw["vocabulary"]["predicates"])
+    old = deepcopy(raw)
+    del old["alternatives"]
+    old["profiles"].remove("alternatives@0")
+    with pytest.raises(VEError, match="Unknown predicate"):
+        formula_from_data(Environment(old), ["binary", "allows", ["const", "pull"], ["const", "h"]])
+    with pytest.raises(CheckerUnavailable, match="Lean checker"):
+        evaluate(env, Binary("allows", Const("pull"), Const("h")), None)
+    author_rule = {"norm": {"name": "no-allowing", "predicate": "permitted", "sign": False,
+                            "guard": ["exists", "harm", ["binary", "allows", ["var", 1], ["var", 0]]],
+                            "unless": [], "over": []}}
+    document = NormDocument(env, [author_rule])
+    with pytest.raises(CheckerUnavailable, match="Lean checker"):
+        check_conflict(document)
 
 
 def test_coverage_names_declared_alternatives_and_counterfactual_support():
