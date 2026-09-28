@@ -42,12 +42,11 @@ import threading
 import time
 
 from ..errors import ResourceLimit, VEError
-from .service_schema import MODES, Invalid, check_response
+from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
-SERVICE = "ve-lean@1"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 MAX_CASES = 4096
 BATCH_CASES = 256
@@ -238,16 +237,10 @@ class LeanService:
             self.stats["starts"] += 1
             line = self._read_line(time.monotonic() + self.startup_timeout)
             handshake = _decode_json(line)
-            limits = handshake.get("limits") if isinstance(handshake, dict) else None
-            if (not isinstance(handshake, dict) or handshake.get("service") != SERVICE
-                    or type(handshake.get("protocol")) is not int or handshake["protocol"] != 1
-                    or not isinstance(handshake.get("modes"), list)
-                    or not set(MODES) <= set(m for m in handshake["modes"] if isinstance(m, str))
-                    or not isinstance(limits, dict)
-                    or any(type(limits.get(k)) is not int or limits[k] < v for k, v in
-                           (("max_line_bytes", MAX_LINE_BYTES), ("max_cases", MAX_CASES),
-                            ("json_depth", 256)))):
-                raise _Failure(f"unexpected handshake {line[:200]!r}")
+            try:
+                check_handshake(handshake)
+            except Invalid as exc:
+                raise _Failure(f"unexpected handshake ({exc}) {line[:200]!r}") from None
         except CheckerUnavailable:
             self._stop(graceful=False)
             raise
