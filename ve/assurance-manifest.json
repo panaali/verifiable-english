@@ -50,7 +50,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 2642,
+    "total_lines": 4205,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -100,13 +100,23 @@
        "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"},
       {"file": "lean/VE/Alternatives/Admission.lean", "lines": 133, "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
        "ranges": [[1, 133]], "declarations": ["admitDocument"],
-       "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"}
+       "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"},
+      {"file": "lean/VE/Attribution/Admission.lean", "lines": 327, "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+       "ranges": [[1, 327]], "declarations": ["admissionReports"],
+       "reason": "reports document admission and bindings; the full file is pinned conservatively"},
+      {"file": "lean/VE/Attribution/Content.lean", "lines": 726, "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
+       "ranges": [[1, 726]], "declarations": ["canonicalObject", "documentObject", "documentId"],
+       "reason": "report content and document identity JSON; the full file is pinned conservatively"},
+      {"file": "lean/VE/Attribution/Wire.lean", "lines": 510, "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+       "ranges": [[1, 510]], "declarations": ["decodeEnvironment", "decodeContent", "decodeUnit", "decodeDocument"],
+       "reason": "reports environment and document decoder; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
+      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
       "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
       "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
