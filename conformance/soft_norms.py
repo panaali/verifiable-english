@@ -359,11 +359,22 @@ def soft3_accepted():
     ]
 
 
+def _strict_under_default(wrappers):
+    """A strict rule's guard, `wrappers` negations deep, read by a default rule's
+    derived carve-out (through `blocked`) and by the predicate's layer."""
+    guard = ["top"]
+    for _ in range(wrappers):
+        guard = ["not", guard]
+    return [norm("s", "x_required", True, guard=guard), should("d", "x_required", True)]
+
+
 def soft_limits_reproducers():
-    """The directive's class: a derived structure beyond a limit.
+    """soft3-loop.final.md and the directive's class: a derived structure beyond a limit.
 
     Each was accepted by at least one validator before; each is now rejected
     by both at the same check."""
+    # Finding 1: the derived carve-out reaches depth 65 (6.9, both validators).
+    yield "soft-limits-derived-wrappers-54", env(), _strict_under_default(54), "SOFT_RESOURCE_LIMIT"
     # E′ (6.4): the decision predicates are within MAX_IDENTIFIER_BYTES and
     # MAX_PREDICATES; Lean used to accept an E′ that no environment decoder loads.
     yield "soft-limits-excepted-name", env(), [should("a" * 49, "x_required", True)], \
@@ -537,6 +548,8 @@ def multi_faults():
         ("soft-over-hard", "r3-over", (6, 8), "SOFT_OVER_HARD", _set(rule(3, "over"), ["b1"])),
         # d3's decision predicate soft__excepted__d... exceeds MAX_IDENTIFIER_BYTES in E′.
         ("decision-name", "r3-name", (6, 4), "SOFT_RESOURCE_LIMIT", _set(rule(3, "name"), "d" * 49)),
+        # b1's guard is read by d3's derived carve-out (blocked), which passes depth 64.
+        ("derived-depth", "r1-guard", (6, 9), "SOFT_RESOURCE_LIMIT", _set(rule(1, "guard"), _nested(56))),
         ("derived-nodes", "r3-guard", (6, 10), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(9990))),
         ("premise-depth", "r0-sufficient", (6, 11), "SOFT_RESOURCE_LIMIT",
          _set(rule(0, "exception", "sufficient"), [_nested(63)])),

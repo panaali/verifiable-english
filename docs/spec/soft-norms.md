@@ -359,7 +359,7 @@ A soft document `(E, T)` is well-formed when, in this order:
 6. `hard: true` implies `mode = strict` and `alterable = ∅` (`HardConstraintAltered: rule <n>`).
 7. Exception conditions are typed over the rule's context and mention base predicates of `E` only (3.2).
 8. `E′` is within `MAX_IDENTIFIER_BYTES` and `MAX_PREDICATES`; the elaborated `T′` (section 5) is within
-   `MAX_NODES`: at most 8 carve-outs per rule, and the
+   `MAX_NODES`: at most 8 carve-outs per rule, each derived carve-out within `MAX_DEPTH` and `MAX_NODES`, and the
    guards and carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived
    carve-out`); each generated soft premise is within `MAX_DEPTH` and `MAX_NODES` (8, 6.11),
    and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
@@ -827,7 +827,7 @@ the message, a name, or other input.
 | 6.6 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
 | 6.7 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
 | 6.8 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
-| 6.9 | Each rule, in order: with its derived carve-out, at most 8 carve-outs | `SOFT_RESOURCE_LIMIT` |
+| 6.9 | Each rule, in order: with its derived carve-out, at most 8 carve-outs, and the derived carve-out, typed on its own, within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 | 6.10 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
 | 6.11 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 
@@ -854,7 +854,7 @@ one phase, must produce the same code in Python and Lean.
 | `UnknownSymbol: party <π>` | undeclared party in `alterable` or `instruction_of` | error |
 | `DuplicateDeclaration: rank <a>` / `party <π>` | duplicate names in the `soft` block | error |
 | `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` | field consistency (3.1, 3.2) | error |
-| `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` on unfolding; more than 16 ranks; more than 8 parties | error |
+| `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` or `MAX_DEPTH` on unfolding; more than 16 ranks; more than 8 parties | error |
 | `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
 | `ResourceLimit: generated soft premise <label>` | a generated premise beyond `MAX_DEPTH` or `MAX_NODES` (6.11) | error |
 | `UnsupportedProfile: soft-norms@0 requires norms@0` | profile gate | error |
