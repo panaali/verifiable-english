@@ -91,7 +91,7 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 
 | Kind | Extra input | Output |
 |---|---|---|
-| `alt-elaborate` | none | `inlined`, `alternatives` (labelled slot premises), `base_premises`, `followable` (`ast`, `followable`, `clear`), `unmapped_obligations`, and W1's `order`, `background`, `premises`, `conflict_targets`, `fragment` |
+| `alt-elaborate` | none | `legend` (2.3), `inlined`, `alternatives` (labelled slot premises), `base_premises`, `followable` (`ast`, `followable`, `clear`), `unmapped_obligations`, and W1's `order`, `background`, `premises`, `conflict_targets`, `fragment` |
 | `alt-validate` | `scenario` (`model`, `outcomes`), optional `packages` | `InvalidModel(alternatives): …`; else a CONFLICT witness (`target`, `tuple`) if a conflict formula holds; else `model_id`, per-chooser reports and the status text of 5.2 |
 | `alt-conflict` | `packages`, or `witness` (`model`, `outcomes`, `target`, `tuple`) | `CONFLICT-FREE` / `CONFLICT` / `UNKNOWN` |
 | `alt-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `outcomes`, `chooser`) | `FOLLOWABLE` / `DILEMMA` (with the diagnosis) / `UNKNOWN` / `not computed` |
@@ -119,8 +119,8 @@ followability certificate for b′(A) within 50,000 steps (proof search is outsi
   (j.getObjValD "units")` (the W1 case shape the Python transport already sends), not from a
   single `document` field.
 * Not implemented: W2 `admission` with the block and `Run.alternatives_wire_acceptance`
-  (`AltAdmissionAnswer`); the legend and the per-alternative rule reasons of the diagnosis
-  rendering; `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
+  (`AltAdmissionAnswer`); the per-alternative rule reasons of the diagnosis rendering; English
+  renderings of fulfilment bodies other than `avoids` in the legend (the act phrase is quoted); `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
   ones the certificate uses.
 * A conflict target's certificate is accepted over `Background_baseAlt` or, as 4.5 allows, over
   W1's `Background_base` alone (`targetAccepted`; both bindings are tried on replay).
