@@ -6,11 +6,11 @@ import pytest
 
 from ve.alternatives import run_case
 from ve.document import coverage, load_document
-from ve.ast import And, Binary, Const, Eq, Forall, Implies, Not, Var, formula_from_data, formula_to_data
+from ve.ast import And, Binary, Const, Eq, Exists, Forall, Implies, Not, Unary, Var, formula_from_data, formula_to_data
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.evaluate import evaluate
-from ve.norms import NormDocument, check_conflict
+from ve.norms import Norm, NormDocument, check_conflict
 from ve.norm_english import parse_english as parse_norm_english, render_english as render_norm_english
 from ve.english import EnglishParser, EnglishTraversal, EnglishVocabulary, parse_english_with_metadata
 from ve.parser import parse as parse_strict
@@ -287,6 +287,26 @@ def test_other_action_rendering_preserves_which_outer_action_is_excluded():
         rendered.append(sentence)
     assert rendered[0] != rendered[1]
     assert "excluding the first action" in rendered[1]
+
+
+def test_nested_action_guard_round_trips_as_a_norm_block():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "r": {"sort": "robot", "description": "r"},
+        "h": {"sort": "harm", "description": "h"}}
+    env = Environment(raw)
+    texts = []
+    for index in (1, 2):
+        inner = Forall("action", Implies(
+            And(Binary("available", Var(0), Const("r")), Not(Eq(Var(0), Var(index)))),
+            Binary("prevents", Var(0), Const("h"))))
+        guard = Exists("action", And(Unary("inaction", Var(0)), inner))
+        document = NormDocument(env, [Norm("nested", "permitted", True, guard)])
+        text, manifest = render_norm_english(document)
+        assert parse_norm_english(env, text, manifest).document_hash == document.document_hash
+        texts.append(text)
+    assert texts[0] != texts[1]
+    assert "excluding that action" in texts[1]
 
 
 def test_english_own_outcome_guard_names_the_semantic_change():
