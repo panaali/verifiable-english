@@ -290,8 +290,10 @@ class SpeechSource:
             qid = self.document.query_of(command)
             if qid is None or set(record["evidence"]) != {"certificate"}:
                 raise VEError(f"QueryMismatch: {command.unit}")
-            self.document.check_consequence_certificate(qid, record["evidence"]["certificate"])
-            lines.append({"command": command.unit, "status": "certificate", "query": qid})
+            # 5.3 and 5.4: a proof task's certificate line carries the status of Π_q, as a follows line does.
+            line = self.document.check_consequence_certificate(qid, record["evidence"]["certificate"])
+            lines.append({"command": command.unit, "status": "certificate", "query": qid,
+                          "premises": line["premises"], "vacuous": line["vacuous"]})
         return lines
 
     def coverage(self):

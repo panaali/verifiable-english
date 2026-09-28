@@ -259,7 +259,10 @@ def test_iota_single_choice_presupposition_on_both_paths(lean):
     r = elaborate(F0(), both)
     failed = certificate(F0(), r["premises"], ["not", H], r["environment_id"])
     assert answer(F0(), both, "u5", evidence={"presupposition_failed": failed})["answer"] == \
-        "PRESUPPOSITION-FAILED (certificate for ¬H)"
+        "PRESUPPOSITION-FAILED (certificate for ¬H; premises: UNKNOWN (no premise-status evidence); vacuous: unknown)"
+    assert answer(F0(), both, "u5", evidence={"presupposition_failed": failed}, model_id="m2",
+                  premise_status={"model": model(reviewed=[["atlas"], ["beacon"]])})["answer"] == \
+        "PRESUPPOSITION-FAILED (certificate for ¬H; premises: model m2; vacuous: no)"
     empty = {"units": [unit("u5", 2, "question", which("which_one"))]}
     assert answer(F0(), empty, "u5", evidence={"model": model(reviewed=[["atlas"], ["beacon"]])},
                   model_id="m3")["answer"] == "PRESUPPOSITION-FAILED (model m3)"

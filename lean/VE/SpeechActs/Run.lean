@@ -15,7 +15,8 @@ decoded document (`Wire.decodeDocument`); nothing on the wire supplies
 * `speech-answer` with `question`, `evidence` (`{"certificate"}` with `answer`,
   `{"conditional"}` with `answer`, `{"presupposition_failed"}` or `{"model"}`)
   and optionally `premise_status` (`{"model"}` or `{"inconsistent"}`) → the
-  answer line of 5.3. Certificates bind the canonical environment, the
+  answer line of 5.3; every certificate line (a failed presupposition's
+  included) carries the status of the list its certificate was checked over. Certificates bind the canonical environment, the
   regenerated premise list and the exact conclusion.
 * `speech-consequence` with `query`, `certificate` and/or `model`, and optionally
   `premise_status` → `follows` with the status of `Π_q` (5.3), `gap` or
@@ -268,14 +269,14 @@ inductive AnswerReplay (D : SpeechDoc) (q : Question)
       (status : PremiseStatus D (premises D))
   | conditional (a : Answer) (φ : VE.Formula) (hφ : correct D q a = some φ) (c : VE.Tableau.Certificate)
       (status : PremiseStatus D (premises D ++ [presupposition D q]))
-  | presuppositionFailed (c : VE.Tableau.Certificate)
+  | presuppositionFailed (c : VE.Tableau.Certificate) (status : PremiseStatus D (premises D))
   | model (id : String) (m : CheckedModel D (premises D))
 
 /-- Whether the unchanged tableau checker accepts the case's certificate for its exact regenerated query. -/
 def AnswerReplay.accepted {D : SpeechDoc} {q : Question} : AnswerReplay D q → Bool
   | .certificate _ φ _ c _ => VE.Tableau.checkCertificate (En D) (premises D) (.and (presupposition D q) φ) c
   | .conditional _ φ _ c _ => VE.Tableau.checkCertificate (En D) (premises D ++ [presupposition D q]) φ c
-  | .presuppositionFailed c => VE.Tableau.checkCertificate (En D) (premises D) (.not (presupposition D q)) c
+  | .presuppositionFailed c _ => VE.Tableau.checkCertificate (En D) (premises D) (.not (presupposition D q)) c
   | .model .. => true
 
 def AnswerReplay.line {D : SpeechDoc} {q : Question} (r : AnswerReplay D q) : String :=
@@ -283,7 +284,7 @@ def AnswerReplay.line {D : SpeechDoc} {q : Question} (r : AnswerReplay D q) : St
   | .certificate a _ _ _ s, true => s!"supported {answerText a} (certificate; premises: {s.text})"
   | .conditional a _ _ _ s, true => s!"supported {answerText a} given the presupposition (certificate; " ++
       s!"assumption speech:presupposition:{q.unit}; premises with H: {s.text})"
-  | .presuppositionFailed _, true => "PRESUPPOSITION-FAILED (certificate for ¬H)"
+  | .presuppositionFailed _ s, true => s!"PRESUPPOSITION-FAILED (certificate for ¬H; premises: {s.text})"
   | .model id m, _ =>
     if (presupposition D q).eval m.M [] then
       match modelAnswer D q m.M with
@@ -323,7 +324,8 @@ def replayAnswer (j : Json) : Except String AnswerCase := do
     | .error _, .error _, .ok cj, .error _ => do
       let concl := VE.Formula.not (presupposition D q)
       let c ← boundCertificate dec (premises D) concl cj
-      pure (AnswerReplay.presuppositionFailed c)
+      let status ← decodePremiseStatus dec (premises D) modelId j
+      pure (AnswerReplay.presuppositionFailed c status)
     | .error _, .error _, .error _, .ok mj => do
       pure (AnswerReplay.model modelId (← decodeCheckedModel dec (premises D) mj))
     | _, _, _, _ => throw "InvalidInput: evidence"
@@ -529,14 +531,14 @@ theorem speech_wire_answer_sound (j : Json) (r : AnswerCase) (h : replayAnswer j
     (∀ a φ hφ c s, r.replay = .conditional a φ hφ c s → r.replay.accepted = true →
       ∀ S : VE.Structure.{u}, S.Admissible (En r.dec.D) → Sat S (premises r.dec.D) →
         (presupposition r.dec.D r.q).denote S [] → AnswersAt r.dec.D r.q S a) ∧
-    (∀ c, r.replay = .presuppositionFailed c → r.replay.accepted = true →
+    (∀ c s, r.replay = .presuppositionFailed c s → r.replay.accepted = true →
       ∀ S : VE.Structure.{u}, S.Admissible (En r.dec.D) → Sat S (premises r.dec.D) →
         ∀ a, ¬ AnswersAt r.dec.D r.q S a) ∧
     (∀ id m, r.replay = .model id m →
       ∀ a, answerEval r.dec.D r.q m.M a = true ↔ AnswersAt r.dec.D r.q m.M.asStructure a) := by
   have hwf := r.dec.wf
   have hq := r.mem
-  refine ⟨hwf, hq, fun a φ hφ c s he ha => ?_, fun a φ hφ c s he ha => ?_, fun c he ha => ?_,
+  refine ⟨hwf, hq, fun a φ hφ c s he ha => ?_, fun a φ hφ c s he ha => ?_, fun c s he ha => ?_,
     fun id m _ a => model_answers r.dec.D hwf r.q hq m.M m.valid m.background m.sat a⟩
   · rw [he] at ha
     exact support_sound r.dec.D hwf r.q hq a φ hφ c ha
