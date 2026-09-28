@@ -159,6 +159,7 @@ class SpeechSource:
         self.units = []
         cursor = 0
         ids = set()
+        wordings = {}  # unit id -> its span's sentence, the one wording every check of the unit reads (3.2)
         for unit, parent in _parts(raw_units):
             if (type(unit) is not dict or not {"id", "span", "kind", "meaning", "support"} <= set(unit)
                     or set(unit) - {"id", "span", "kind", "meaning", "support", "content",
@@ -186,8 +187,9 @@ class SpeechSource:
                     raise VEError("unit fence must match its id")
                 if unit.get("surface") != "english":
                     raise VEError("speech fence needs English surface")
+            wordings[uid] = wording.strip()
             self.units.append({**unit, "content": content,
-                               **({"source": wording.strip()} if kind in ("instruction", "question") else {}),
+                               **({"source": wordings[uid]} if kind in ("instruction", "question") else {}),
                                **({"parent_id": parent} if parent is not None else {})})
         if cursor != len(source):
             raise VEError("unit spans do not partition all source bytes")
@@ -201,13 +203,16 @@ class SpeechSource:
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
         latest = latest_reading_sets(sets)
+        # 3.2: a signed choice is checked against the source sentence, its unit's span, in the inline and the
+        # fenced form alike (a fence is the unit's content, which the choice replaces).  The core receives the
+        # same wording for every chosen unit, whatever its original kind, so it checks the chosen command or
+        # question against it as it does an unchosen one.
         for unit in self.units:
             chosen = latest.get(unit["id"])
             if chosen is not None and chosen["status"] == "authored":
-                wording = (fences[unit["id"]] if type(unit["content"]) is dict and "fence" in unit["content"]
-                           else source[unit["span"][0]:unit["span"][1]].decode("utf-8"))
-                if choice_kind_conflicts(self.env, chosen["readings"][0]["kind"], wording):
+                if choice_kind_conflicts(self.env, chosen["readings"][0]["kind"], wordings[unit["id"]]):
                     raise VEError("InvalidInput: choice kind")
+                unit["source"] = wordings[unit["id"]]
         # 1.1: a fence is read under the effective scope, so a phrase or "you" an
         # authored binding supplies reads as if the block declared it.  The scope is
         # the document's own merge, so a fenced and an unfenced source agree.

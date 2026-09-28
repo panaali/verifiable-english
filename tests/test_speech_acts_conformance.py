@@ -1410,6 +1410,46 @@ def test_unary_imperative_is_an_instruction_in_both_cores(lean, tmp_path):
         assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok", wording
 
 
+def _source_outcome(env, span, units, fences=None, sets=()):
+    meta = {"format": "ve-document@2", "environment": env, "units": units, "reading_sets": list(sets)}
+    return _outcome(lambda: SpeechSource(meta, span.encode(), fences or {}))
+
+
+_ORIGINALS = {"asserted": {"ast": U("reviewed", "atlas")}, "question": polar(U("reviewed", "atlas")),
+              "instruction": command("require", "click_required", ["check"])}
+_CHOICES = [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
+            ("instruction", command("require", "click_required", ["check"]))]
+
+
+def test_fence_never_replaces_the_source_sentence_in_the_choice_check(lean):
+    # Regression (speech-acts6 A2): with original kind `asserted`, source "Is atlas reviewed?", fence "Atlas is
+    # reviewed." and a signed asserted choice, loading succeeded and supplied an asserted premise, while the
+    # inline document was `InvalidInput: choice kind`: the source wrapper checked the fence text in place of the
+    # source sentence.  The sentence is the unit's span in both forms; the fence is content the choice replaces.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    fence_texts = ["Atlas is reviewed.\n", "Is atlas reviewed?\n", "Click check.\n"]
+    for span in ["Is atlas reviewed?\n", "Atlas is reviewed.\n", "Click check.\n"]:
+        for original, original_content in _ORIGINALS.items():
+            base = {**unit("u", 0, original, original_content), "span": [0, len(span.encode())]}
+            for choice_kind, choice_content in _CHOICES:
+                sets = [reading_set("u", 1, "authored", choice_kind, choice_content)]
+                inline = _source_outcome(env, span, [base], sets=sets)
+                document, case = _choice_case(env, span.strip(), choice_kind, choice_content, original=base)
+                assert inline == _outcome(lambda: core(env, document)), (span, original, choice_kind)
+                assert (inline == "InvalidInput: choice kind") == (_lean_outcome(run1(case)) != "ok")
+                for fence in fence_texts:
+                    fenced = {**base, "content": {"fence": "u"}, "surface": "english"}
+                    assert _source_outcome(env, span, [fenced], {"u": fence}, sets) == inline, \
+                        (span, fence, original, choice_kind)
+    # The reproducer: no asserted premise from a question-worded source.
+    span = "Is atlas reviewed?\n"
+    fenced = {**unit("u", 0, "asserted"), "content": {"fence": "u"}, "surface": "english", "span": [0, len(span)]}
+    assert _source_outcome(env, span, [fenced], {"u": "Atlas is reviewed.\n"},
+                           [reading_set("u", 1, "authored", "asserted", {"ast": U("reviewed", "atlas")})]) == \
+        "InvalidInput: choice kind"
+
+
 def test_answer_metadata_types_and_unit_meaning_id(lean):
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
