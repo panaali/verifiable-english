@@ -34,8 +34,10 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.Alternatives.Background
 import VE.Alternatives.Decl
 import VE.Alternatives.Inline
+import VE.Alternatives.Route
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -947,13 +949,34 @@ import VE.Alternatives.Inline
 -- alternatives@0 (lean/ALTERNATIVES.md)
 #print axioms VE.Alternatives.E_available
 #print axioms VE.Alternatives.E_leadsTo
+#print axioms VE.Alternatives.allowsF_denote
 #print axioms VE.Alternatives.allowsF_wellFormed
+#print axioms VE.Alternatives.altChain_hc
+#print axioms VE.Alternatives.altConflictFreeCheck_target
+#print axioms VE.Alternatives.altPremises_wellFormed
+#print axioms VE.Alternatives.altRouteChain_premises
+#print axioms VE.Alternatives.altRouteChain_restrict
 #print axioms VE.Alternatives.altSemanticCheck_of_wellFormed
 #print axioms VE.Alternatives.altValid_of_wellFormed
+#print axioms VE.Alternatives.alt_conflictFree_prefix
+#print axioms VE.Alternatives.alt_conflict_free
+#print axioms VE.Alternatives.alt_conflict_witness_sound
+#print axioms VE.Alternatives.alt_layer_expands
+#print axioms VE.Alternatives.alt_prefix_satisfaction
+#print axioms VE.Alternatives.alt_restrict_admissible
+#print axioms VE.Alternatives.alt_route_acceptance
+#print axioms VE.Alternatives.alt_route_backgroundComplete
+#print axioms VE.Alternatives.alt_route_backgroundSound
+#print axioms VE.Alternatives.alt_route_countermodel
+#print axioms VE.Alternatives.alt_route_intended
+#print axioms VE.Alternatives.alternative_monotone
+#print axioms VE.Alternatives.alternatives_conservative
 #print axioms VE.Alternatives.alternatives_wellFormed
 #print axioms VE.Alternatives.available_ne_leadsTo
 #print axioms VE.Alternatives.available_not_layer
+#print axioms VE.Alternatives.avoidableF_denote
 #print axioms VE.Alternatives.avoidableF_wellFormed
+#print axioms VE.Alternatives.baseAdmissibleAlt_of_valid
 #print axioms VE.Alternatives.base_available
 #print axioms VE.Alternatives.base_inaction
 #print axioms VE.Alternatives.base_leadsTo
@@ -961,21 +984,37 @@ import VE.Alternatives.Inline
 #print axioms VE.Alternatives.base_taken
 #print axioms VE.Alternatives.binary_withDefinitions
 #print axioms VE.Alternatives.body_wellFormed
+#print axioms VE.Alternatives.denote_forget_preds
+#print axioms VE.Alternatives.emptied_sub
 #print axioms VE.Alternatives.extEnv_predicates_none
 #print axioms VE.Alternatives.extEnv_predicates_some
 #print axioms VE.Alternatives.hide_some
+#print axioms VE.Alternatives.inlineTree_E
 #print axioms VE.Alternatives.inlineTree_shape
 #print axioms VE.Alternatives.inline_base
 #print axioms VE.Alternatives.inline_faithful
 #print axioms VE.Alternatives.inline_wellFormed
 #print axioms VE.Alternatives.leadsTo_not_layer
+#print axioms VE.Alternatives.literals_preds
+#print axioms VE.Alternatives.oldEnv_preds
+#print axioms VE.Alternatives.oneOf_denote
+#print axioms VE.Alternatives.oneOf_wellFormed
+#print axioms VE.Alternatives.ownPremise_denote
+#print axioms VE.Alternatives.ownPremise_wellFormed
+#print axioms VE.Alternatives.owner_unique
+#print axioms VE.Alternatives.prefixAdmissibleAlt_zero
+#print axioms VE.Alternatives.preventsF_denote
 #print axioms VE.Alternatives.preventsF_wellFormed
 #print axioms VE.Alternatives.profileDef_isSome
 #print axioms VE.Alternatives.profileDef_length
 #print axioms VE.Alternatives.profileDef_some
+#print axioms VE.Alternatives.relation_typed
+#print axioms VE.Alternatives.sat_altPremises_restrict
+#print axioms VE.Alternatives.sat_backgroundBaseAlt
 #print axioms VE.Alternatives.sortOf_extEnv
 #print axioms VE.Alternatives.term_denote_withDefinitions
 #print axioms VE.Alternatives.tupleTyped_withDefinitions
+#print axioms VE.Alternatives.unavoidableF_denote
 #print axioms VE.Alternatives.unavoidableF_wellFormed
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
