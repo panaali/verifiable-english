@@ -60,6 +60,11 @@ def test_exact_decimal_and_identity_binds_tags():
     with pytest.raises(VEError, match=r"UnitMismatch\(usd_cent,bp\)"):
         elaborate_quantity(env, quantity(["eq", ["num", "usd_cent", "375"],
                                           ["decimal", "bp", "3.75"]]))
+    with pytest.raises(VEError, match="UnitMismatch"):
+        elaborate_quantity(env, quantity(["eq", ["add", "bp", ["num", "bp", "1"],
+                                                  ["num", "usd_cent", "1"]], ["num", "bp", "2"]]))
+    with pytest.raises(VEError, match="UnitMismatch"):
+        elaborate_quantity(env, quantity(["eq", ["num", "bp", "0"], ["num", "0"]]))
     with pytest.raises(VEError, match="UnitPrecision"):
         elaborate_quantity(env, quantity(["eq", ["decimal", "bp", "3.755"],
                                           ["num", "bp", "375"]]))
