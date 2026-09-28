@@ -523,6 +523,18 @@ def test_lambda_report_extension(lean):
     assert result["reading_verdicts"] == {"report leaf": "UNKNOWN (joint choices)"}
 
 
+def test_recorded_choices_are_the_lemma_labels(lean):
+    """Astra B (manifest_choices_are_labels): a recorded choice must be the lemmas' label."""
+    lemma = {"name": "policy/l1", "conclusion": unary("safe", "api"),
+             "leaves": [{"ast": unary("safe", "api"), "label": "readings:rs5@1:0"}]}
+    doc = joint_doc([])
+    doc["lemmas"] = [lemma]
+    doc["discourse"]["choices"] = [["rs5", 1, "r0"]]
+    assert admit(doc)["status"] == "ok"
+    doc["discourse"]["choices"] = [["rs5", 1, "r1"]]
+    assert admit(doc)["error"] == "ManifestMismatch: choices.policy/l1"
+
+
 # (π) Document names
 
 DOCS = {"documents": [{"name": "this_policy", "display": ["this document", "this policy"], "refers": "self", "version": 3},

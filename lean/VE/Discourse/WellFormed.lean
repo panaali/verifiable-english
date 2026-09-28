@@ -332,10 +332,11 @@ def validityWording (D : DDoc) (u : String) : List (String × Bool) :=
   | some s => D.K.documents.flatMap fun d => [true, false].filterMap fun h =>
       if d.display.any (fun x => lexWords x ++ validityTail h == s) then some (d.name, h) else none
 
-/-- Validity bindings and self-truth labels (4.7): `meta` units without content, and a
-validity binding's document and polarity regenerated from the unit's wording. -/
-def labelsOk (D : DDoc) : Except String Unit := runAll [
-  fun _ => allOk D.K.validity fun v =>
+/-- Validity bindings (4.7): `meta` units without content, not self-truth, naming a declared
+document that is not a `part`, with the document and polarity regenerated from the unit's
+wording. -/
+def claimsOk (D : DDoc) (claims : List Validity) : Except String Unit :=
+  allOk claims fun v =>
     if !(D.base.units.any fun x => x.id == v.unit && decide (x.kind = .«meta») && x.content.isNone) then
       .error ("InvalidInput: validity unit " ++ v.unit)
     else if D.K.selfTruth.contains v.unit then .error ("InvalidInput: " ++ v.unit ++ " is a self-truth sentence")
@@ -348,7 +349,11 @@ def labelsOk (D : DDoc) : Except String Unit := runAll [
             if name != v.document then .error ("ManifestMismatch: validity." ++ v.unit ++ ".document")
             else req (holds == v.holds) ("ManifestMismatch: validity." ++ v.unit ++ ".holds")
           | [] => .error ("InvalidInput: validity unit " ++ v.unit ++ " is not a validity wording")
-          | _ => .error ("InvalidInput: validity unit " ++ v.unit ++ " names more than one document"),
+          | _ => .error ("InvalidInput: validity unit " ++ v.unit ++ " names more than one document")
+
+/-- Validity bindings and self-truth labels (4.7): `meta` units without content. -/
+def labelsOk (D : DDoc) : Except String Unit := runAll [
+  fun _ => claimsOk D D.K.validity,
   fun _ => allOk D.K.selfTruth fun u =>
     req (D.base.units.any fun x => x.id == u && decide (x.kind = .«meta») && x.content.isNone)
       ("InvalidInput: self-truth unit " ++ u)]
