@@ -37,6 +37,7 @@ import VE.Norms.Run
 import VE.SpeechActs.Tree
 import VE.SpeechActs.Demand
 import VE.SpeechActs.Answer
+import VE.SpeechActs.Consequence
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1004,3 +1005,19 @@ import VE.SpeechActs.Answer
 #print axioms VE.SpeechActs.model_answers
 #print axioms VE.SpeechActs.model_presupposition_failed
 #print axioms VE.SpeechActs.countermodel_not_negative
+#print axioms VE.SpeechActs.liftStructure_term
+#print axioms VE.SpeechActs.liftStructure_denote
+#print axioms VE.SpeechActs.liftStructure_admissible
+#print axioms VE.SpeechActs.entails_lower
+#print axioms VE.SpeechActs.follows_sound
+#print axioms VE.SpeechActs.gap_sound
+#print axioms VE.SpeechActs.follows_gap_exclusive
+#print axioms VE.SpeechActs.query_target_separate
+#print axioms VE.SpeechActs.premises_core
+#print axioms VE.SpeechActs.questions_no_premises
+#print axioms VE.SpeechActs.dormant_invariance
+#print axioms VE.SpeechActs.speech_route_acceptance
+#print axioms VE.SpeechActs.answer_bridge_sound
+#print axioms VE.SpeechActs.combine_scope
+#print axioms VE.SpeechActs.two_task_separation
+#print axioms VE.SpeechActs.policy_rules
