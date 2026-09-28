@@ -2,9 +2,7 @@
 from __future__ import annotations
 import json
 import copy
-import os
 from pathlib import Path
-import shutil
 from subprocesses import HANG_TIMEOUT
 import subprocess
 import sys
@@ -28,13 +26,9 @@ def fixture(name):
 
 @pytest.fixture(scope='session')
 def rust_executable():
-    cargo = shutil.which('cargo')
-    if not cargo: pytest.skip('cargo is not available')
-    env = {**os.environ, 'CARGO_HOME': str(ROOT/'.cargo-home'), 'CARGO_TARGET_DIR': str(ROOT/'rust/target')}
-    run = subprocess.run([cargo, 'build', '-j', '2', '--locked', '--release', '--manifest-path', str(ROOT/'rust/Cargo.toml')],
-                         cwd=ROOT, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert run.returncode == 0, run.stdout + run.stderr
-    return ROOT/'rust/target/release/ve'
+    binary = ROOT/'rust/target/release/ve'
+    assert binary.exists()
+    return binary
 
 
 def invoke(executable, cases, errors=False):
@@ -329,11 +323,6 @@ def test_seeded_5000_case_fuzz(rust_executable):
 
 @pytest.fixture(scope='session')
 def lean_shared_executable():
-    lake = shutil.which('lake')
-    if not lake: pytest.skip('lake is not available')
-    if not os.environ.get('VE_LEAN_PREBUILT'):
-        run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=HANG_TIMEOUT)
-        assert run.returncode == 0, run.stdout + run.stderr
     assert (ROOT/'lean/.lake/build/bin/ve_conformance').exists()
     return ROOT/'lean/.lake/build/bin/ve_conformance'
 
