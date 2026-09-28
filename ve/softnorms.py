@@ -15,7 +15,7 @@ from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top,
 from .background import dependency_order
 from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
-from .limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
+from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_PREDICATES
 from .norms import _NAME, Norm, NormDocument, _all, _any, _atom, _bind
 from . import profiles as profile_registry
 from .search import _used_predicates
@@ -613,6 +613,55 @@ def _within_limits(env, formula, context=()):
     return True
 
 
+class _Sized:
+    """A stand-in for an expanded subformula whose size is already known."""
+    __slots__ = ('size',)
+
+    def __init__(self, size):
+        self.size = size
+
+
+def _size(formula, atom=None):
+    """(nodes, depth) of `formula` as `_Checker` counts them, term nodes included.
+
+    `atom` may give the size an atom takes after outcome substitution (an
+    instantiated expansion has its expansion's size). Shared subformulas are
+    measured once, iteratively, so the cost is the formula's size as a graph
+    however large its unfolding, and no recursion limit is reached."""
+    memo = {}
+    pending = [(formula, False)]
+    while pending:
+        node, ready = pending.pop()
+        key = id(node)
+        if key in memo:
+            continue
+        kind = type(node)
+        if kind is _Sized:
+            memo[key] = node.size
+        elif kind in (Top, Bottom):
+            memo[key] = (1, 1)
+        elif kind in (Unary, Binary):
+            sized = atom(node) if atom is not None else None
+            memo[key] = sized if sized is not None else (2 if kind is Unary else 3, 1)
+        elif kind is Eq:
+            memo[key] = (3, 1)
+        elif kind in (Not, Forall, Exists, And, Or, Implies):
+            parts = (node.body,) if kind in (Not, Forall, Exists) else (node.left, node.right)
+            if ready:
+                sizes = [memo[id(part)] for part in parts]
+                memo[key] = (1 + sum(n for n, _ in sizes), 1 + max(d for _, d in sizes))
+            else:
+                pending.append((node, True))
+                pending.extend((part, False) for part in parts)
+        else:
+            raise VEError(f'InvalidInput: unexpected generated node {kind.__name__}')
+    return memo[id(formula)]
+
+
+def _fits(size):
+    return size[0] <= MAX_NODES and size[1] <= MAX_DEPTH
+
+
 def _or_nonempty(items):
     items = tuple(items)
     return _any(items) if items else Bottom()
@@ -681,14 +730,16 @@ class SoftNormDocument:
         self.warnings = tuple(warnings)
         self.extended_env = self._extended_environment()
         self.elaborated = self._soften()
-        self.exception_premises = self._exception_premises()
-        self.coherence_premises = self._coherence_premises()
         # 6.11 and 6.12: every generated premise, serialised on its own as the
         # soft route does, is within MAX_DEPTH and MAX_NODES, so an accepted
-        # document's whole elaboration serialises.
-        for label, formula in (*self.exception_premises, *self.coherence_premises):
+        # document's whole elaboration serialises. A coherence premise is sized
+        # from the expansion table and built only if it fits.
+        self.exception_premises = self._exception_premises()
+        for label, formula in self.exception_premises:
             if not _within_limits(self.extended_env, formula):
                 raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
+        self.expansion_sizes = self._expansion_sizes()
+        self.coherence_premises = self._coherence_premises()
         for label, formula in self.elaborated.premises():
             if not _within_limits(self.extended_env, formula):
                 raise ResourceLimit(f'ResourceLimit: generated norm layer {label}')
@@ -788,10 +839,18 @@ class SoftNormDocument:
             return And(And(rule.core.guard, Not(_any(rule.core.unless))),
                        Not(self._switch(rule)))
 
+        yields = {}
+
         def strict_yields(rule, fuel):
-            own = strict_live(rule) if rule.mode == 'strict' else Bottom()
-            return Or(own, _any(strict_yields(child, fuel - 1) for child in children[rule.core.name])
-                      if fuel else Bottom())
+            # Shared per rule and fuel, so a precedence DAG with many paths is
+            # built as a graph; the limit checks walk its unfolding and stop.
+            key = (rule.core.name, fuel)
+            if key not in yields:
+                own = strict_live(rule) if rule.mode == 'strict' else Bottom()
+                yields[key] = Or(own, _any(strict_yields(child, fuel - 1)
+                                           for child in children[rule.core.name])
+                                 if fuel else Bottom())
+            return yields[key]
 
         def strict_selects(rule):
             if rule.mode != 'strict':
@@ -889,15 +948,39 @@ class SoftNormDocument:
                                      _bind(formula, sorts)))
         return tuple(premises)
 
+    def _expansion_sizes(self):
+        """The size of each regulated predicate's expanded outcome, in layer order.
+
+        `_expand` replaces an atom of a lower regulated predicate by that
+        predicate's expanded outcome, so the size of an expansion is read from
+        the entries before it without expanding anything."""
+        sizes = {}
+        for predicate in self.elaborated.order:
+            sizes[predicate] = self._expanded_size(self.elaborated.outcome(predicate), predicate, sizes)
+        return sizes
+
+    def _expanded_size(self, formula, current, sizes=None):
+        """The size of `self.elaborated._expand(formula, current)`, without expanding."""
+        sizes = self.expansion_sizes if sizes is None else sizes
+        return _size(formula, lambda atom: sizes[atom.predicate]
+                     if atom.predicate != current and atom.predicate in sizes else None)
+
     def _coherence_premises(self):
+        """6.11 for the coherence premises, in order: each is sized first and
+        expanded only if it is within MAX_DEPTH and MAX_NODES."""
         selections = {p: self.elaborated.selection(p)[2] for p in self.elaborated.order}
         premises = []
         for left, right in self.collisions:
             a, b = sorted((left.core.name, right.core.name))
-            la = self.elaborated._expand(selections[left.core.predicate][left.core.name],
-                                         left.core.predicate)
-            rb = self.elaborated._expand(selections[right.core.predicate][right.core.name],
-                                         right.core.predicate)
+            label = f'soft:coherence:{a},{b}'
+            sides = [(selections[r.core.predicate][r.core.name], r.core.predicate) for r in (left, right)]
             sorts = self.env.predicates[left.core.predicate].arguments
-            premises.append((f'soft:coherence:{a},{b}', _bind(Not(And(la, rb)), sorts)))
+            shape = _bind(Not(And(*(_Sized(self._expanded_size(f, p)) for f, p in sides))), sorts)
+            if not _fits(_size(shape)):
+                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
+            la, rb = (self.elaborated._expand(f, p) for f, p in sides)
+            premise = _bind(Not(And(la, rb)), sorts)
+            if not _within_limits(self.extended_env, premise):
+                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
+            premises.append((label, premise))
         return tuple(premises)

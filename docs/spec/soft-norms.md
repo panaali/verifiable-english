@@ -516,7 +516,9 @@ restate rule <k>'s guard over the facts".
 Unfolded size is subject to `MAX_NODES` (10,000 nodes, term nodes included, `ve/limits.py`), which W1 applies to
 the guards and carve-outs of the whole document together (norms.md 11.5); overflow is `ResourceLimit: derived
 carve-out`, never a verdict. The generated premises and layers are bounded one by one (8, 6.11 and 6.12), so a
-document is accepted only if its whole elaboration serialises. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
+document is accepted only if its whole elaboration serialises. Sizes are computed before anything is built (8,
+"Accepted means elaborable"): an unfolding can be exponential in the source, since an expansion inlines each lower
+predicate's expanded outcome at every occurrence and `yields` inlines every path of the precedence DAG. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
 not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
 
 ## 6. Decision assignments, coherence and what CONFLICT-FREE means (review A3)
@@ -839,10 +841,16 @@ of the elaboration (5, 6.1) against the limits of `ve/limits.py` that its
 serialisation meets: `E′` against the vocabulary limits, each derived carve-out,
 generated soft premise and generated layer on its own against `MAX_DEPTH` and
 `MAX_NODES` (term nodes included, as `soft-elaborate` serialises each one), and
-`T′` as a whole against W1's document budget. These are checks on the built
-structures, run last in the table, not bounds computed from the source; the
-checkers stop at the first overrun, so a structure whose unfolding is far
-beyond `MAX_NODES` costs at most `MAX_NODES + 1` steps. A source both
+`T′` as a whole against W1's document budget. These are checks on the
+structures the elaboration builds, run last in the table. Each structure's size
+(nodes, term nodes included, and depth, as the checker counts them) is computed
+from per-rule tables before the structure is built: a rule's `yields` and `eff`
+formulas once per level, a rank's closure once per environment, and each
+regulated predicate's expanded outcome once, read by every expansion that
+inlines it. A structure is built only if its size fits, so one whose unfolding
+is exponential in the source (outcome expansion across layers, a precedence DAG
+of wide diamonds, dominance over a dense rank order) is rejected in time
+polynomial in the source instead of being built. A source both
 validators accept therefore elaborates (`elaborate_soft_document`,
 `soft-elaborate`) without a resource error. A layer states a rule's guard twice
 (where the rule is selected, and where the predicate is silent), so a guard of

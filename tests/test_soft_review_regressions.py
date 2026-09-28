@@ -1,5 +1,6 @@
 """Regressions for the reviewed soft route and its visible open terms."""
 import json
+import time
 
 import pytest
 
@@ -20,16 +21,18 @@ from ve.surface.softnorms import parse_header_options, render_header_options
 from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
-from ve.softnorms import load_soft_document
+from ve.softnorms import load_soft_document, _fits, _size, _within_limits
+from ve.ast import _Checker
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
                                     soft_limits_reproducers, multi_fault_cases, multi_faults,
                                     near_limit_cases, compare_near_limit, _strict_under_default,
-                                    compare_rejected, main as conformance_main)
+                                    compare_rejected, main as conformance_main, soft4_reproducers,
+                                    soft4_near_limit, _plain_chain, _negations, _opposed)
 
 REJECTED_INPUTS = 4417
-ACCEPTED_NEAR_LIMIT = 56
-REJECTED_NEAR_LIMIT = 98
+ACCEPTED_NEAR_LIMIT = 79
+REJECTED_NEAR_LIMIT = 122
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -184,7 +187,7 @@ def test_reported_diagnostic_codes(raw, rules, code):
 
 @pytest.mark.parametrize("name,raw,rules,code",
                          [*loop_recheck_reproducers(), *soft2_reproducers(),
-                          *soft3_reproducers(), *soft_limits_reproducers()])
+                          *soft3_reproducers(), *soft_limits_reproducers(), *soft4_reproducers()])
 def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     with pytest.raises(VEError) as python_error:
         load_soft_document(raw, rules)
@@ -215,6 +218,53 @@ def test_derived_depth_is_checked_by_both_validators(wrappers, check):
         _run({"id": "d", "kind": "soft-elaborate", "environment": env(), "norms": rules})
     assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
     assert str(python_error.value).startswith(check) and str(lean_error.value).startswith(check)
+
+
+def test_coherence_expansion_is_sized_before_it_is_built():
+    # soft4-looprecheck1 B3: 26 plain predicates, each strict rule guarded by 40
+    # negations of its predecessor, and two opposing defaults on the last. Python
+    # expanded the coherence premise before checking it and raised RecursionError.
+    raw, rules = _plain_chain(26, _negations(40), _opposed("p25"))
+    check = "ResourceLimit: generated soft premise"
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(raw, rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "b3", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
+    assert str(python_error.value).startswith(check) and str(lean_error.value).startswith(check)
+
+
+@pytest.mark.parametrize("name,raw,rules,code", list(soft4_reproducers()))
+def test_exponential_unfoldings_are_rejected_without_being_built(name, raw, rules, code):
+    # Each unfolding is beyond 2 ** 24 nodes; both validators size it from their
+    # per-rule tables. A build of it would not finish within these bounds.
+    started = time.monotonic()
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(raw, rules)
+    assert time.monotonic() - started < 10
+    started = time.monotonic()
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert time.monotonic() - started < 30
+    assert python_error.value.code == lean_error.value.code == code
+
+
+def test_generated_sizes_equal_the_checker_walk():
+    # The sizes both validators check are those of the formulas the route serialises.
+    for name, raw, rules in [*soft3_accepted(), *soft4_near_limit()]:
+        try:
+            soft = load_soft_document(raw, rules)
+        except VEError:
+            continue
+        for label, formula in (*soft.exception_premises, *soft.coherence_premises,
+                               *soft.elaborated.premises()):
+            assert _within_limits(soft.extended_env, formula) == _fits(_size(formula)), (name, label)
+            counter = _Checker(soft.extended_env, generated=True)
+            counter.formula(formula)
+            assert counter.nodes == _size(formula)[0], (name, label)
+        for predicate in soft.elaborated.order:
+            assert soft.expansion_sizes[predicate] == _size(
+                soft.elaborated.outcome(predicate, base=True)), (name, predicate)
 
 
 def test_accepted_sources_elaborate_and_rejected_sources_share_codes():

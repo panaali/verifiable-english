@@ -182,7 +182,355 @@ where
 `MAX_NODES` and `MAX_DEPTH`. -/
 def withinLimits (φ : VE.Formula) : Bool := (limitWalk 0 1 φ).isSome
 
+/-! ## Sizes without construction
+
+The size of a generated formula, `(nodes, depth)` as `limitWalk` counts them (term
+nodes included), computed from per-rule tables instead of the formula: a rule's
+`yields` and `eff` formulas are sized once per level and read by every formula
+that inlines them, and an outcome substitution reads the size of each earlier
+layer symbol's expansion (`inst` keeps sizes: terms are variables and constants).
+A structure whose unfolding is far beyond `MAX_NODES` is therefore rejected in
+time polynomial in the source, never built; the formulas are built only once
+their sizes fit. `withinLimits φ` holds exactly when `fits (fsize noSubst φ)`
+(`withinLimits_iff`). -/
+
+abbrev FSize := Nat × Nat
+
+def sLeaf : FSize := (1, 1)
+def sNot (a : FSize) : FSize := (a.1 + 1, a.2 + 1)
+def sBin (a b : FSize) : FSize := (a.1 + b.1 + 1, max a.2 b.2 + 1)
+/-- `anyF` and `allF`: a left fold from a one-node constant. -/
+def sFold (l : List FSize) : FSize := l.foldl sBin sLeaf
+def sBind (sorts : List String) (a : FSize) : FSize := (a.1 + sorts.length, a.2 + sorts.length)
+
+def fits (s : FSize) : Bool := s.1 ≤ maxNodes && s.2 ≤ maxDepth
+
+/-- Formulas typed one after another by one checker: their nodes share one budget. -/
+def fitsTogether (l : List FSize) : Bool :=
+  (l.map (·.1)).foldl (· + ·) 0 ≤ maxNodes && l.all (·.2 ≤ maxDepth)
+
+/-- The size an atom's symbol takes after substitution; `none` keeps the atom. -/
+abbrev STable := String → Option FSize
+
+def noSubst : STable := fun _ => none
+
+def fsize (tbl : STable) : VE.Formula → FSize
+  | .top | .bottom => sLeaf
+  | .unary q _ => (tbl q).getD (2, 1)
+  | .binary q _ _ => (tbl q).getD (3, 1)
+  | .eq .. => (3, 1)
+  | .not a | .all _ a | .ex _ a => sNot (fsize tbl a)
+  | .and a b | .or a b | .implies a b => sBin (fsize tbl a) (fsize tbl b)
+
+theorem tick_eq (n d t : Nat) :
+    limitWalk.tick n d t = if n + 1 + t ≤ maxNodes ∧ d ≤ maxDepth then some (n + 1 + t) else none := by
+  unfold limitWalk.tick
+  by_cases h : n + 1 + t ≤ maxNodes ∧ d ≤ maxDepth
+  · rw [if_pos h, if_neg (by simp only [Bool.or_eq_true, decide_eq_true_eq, not_or]; omega)]
+  · rw [if_neg h, if_pos (by simp only [Bool.or_eq_true, decide_eq_true_eq]; omega)]
+
+theorem fsize_pos (φ : VE.Formula) : 1 ≤ (fsize noSubst φ).1 ∧ 1 ≤ (fsize noSubst φ).2 := by
+  cases φ <;> simp [fsize, noSubst, sLeaf, sNot, sBin]
+
+theorem limitWalk_eq (φ : VE.Formula) : ∀ n d, 1 ≤ d →
+    limitWalk n d φ = if n + (fsize noSubst φ).1 ≤ maxNodes ∧ d - 1 + (fsize noSubst φ).2 ≤ maxDepth
+      then some (n + (fsize noSubst φ).1) else none := by
+  induction φ with
+  | top | bottom | unary | binary | eq =>
+    intro n d hd
+    simp only [limitWalk, tick_eq, fsize, noSubst, sLeaf, Option.getD_none]
+    split <;> split <;> first | rfl | (simp only [Option.some.injEq]; omega) | (exfalso; omega)
+  | not a ih | all _ a ih | ex _ a ih =>
+    intro n d hd
+    have := fsize_pos a
+    simp only [limitWalk, tick_eq, fsize, sNot]
+    split
+    · simp only [Option.bind_eq_bind, Option.bind_some, ih (n + 1 + 0) (d + 1) (by omega)]
+      split <;> split <;> first | rfl | (simp only [Option.some.injEq]; omega) | (exfalso; omega)
+    · simp only [Option.bind_eq_bind, Option.bind_none]
+      split
+      · exfalso; omega
+      · rfl
+  | and a b iha ihb | or a b iha ihb | implies a b iha ihb =>
+    intro n d hd
+    have := fsize_pos a
+    have := fsize_pos b
+    simp only [limitWalk, tick_eq, fsize, sBin]
+    split
+    · simp only [Option.bind_eq_bind, Option.bind_some, iha (n + 1 + 0) (d + 1) (by omega)]
+      split
+      · simp only [Option.bind_some, ihb _ (d + 1) (by omega)]
+        split <;> split <;> first | rfl | (simp only [Option.some.injEq]; omega) | (exfalso; omega)
+      · simp only [Option.bind_eq_bind, Option.bind_none]
+        split
+        · exfalso; omega
+        · rfl
+    · simp only [Option.bind_eq_bind, Option.bind_none]
+      split
+      · exfalso; omega
+      · rfl
+
+/-- A formula is within both limits exactly when its size fits. -/
+theorem withinLimits_iff (φ : VE.Formula) : withinLimits φ = fits (fsize noSubst φ) := by
+  unfold withinLimits fits
+  rw [limitWalk_eq φ 0 1 (Nat.le_refl 1)]
+  by_cases h : (fsize noSubst φ).1 ≤ maxNodes ∧ (fsize noSubst φ).2 ≤ maxDepth
+  · rw [if_pos (by omega)]
+    simp [h.1, h.2]
+  · rw [if_neg (by omega)]
+    simp only [Option.isSome_none]
+    exact (Bool.eq_false_iff.mpr (fun h' => h (by simpa using h'))).symm
+
+/-- A table of sizes, one per rule, indexed by the rule's position. -/
+def at' (a : Array FSize) (i : Nat) : FSize := a.getD i sLeaf
+
+/-- The positions of `ns` named by `names`, in order. -/
+def positions (ns : List SoftNode) (names : List String) : List Nat :=
+  names.filterMap (fun n => ns.findIdx? (·.name == n))
+
+/-- The sizes of a recursion `Y (f + 1) N = .or own_N (anyF (kids_N.map (Y f)))`,
+`Y 0 N = .or own_N (anyF [])`, at level `f`: W1's `yields` and the strict core's
+`strictYieldsIn`. -/
+def levelSizes (own : Array FSize) (kids : Array (List Nat)) : Nat → Array FSize
+  | 0 => own.map (fun s => sBin s sLeaf)
+  | f + 1 =>
+    let prev := levelSizes own kids f
+    (own.zip kids).map (fun (s, ks) => sBin s (sFold (ks.map (at' prev))))
+
+/-- The level read by `selects` at fuel `f`. Precedence height is at most 16 (6.6),
+so a rule's `yields` at every level from 15 on is the same formula: levels past
+16 repeat. -/
+def capLevel (f : Nat) : Nat := min f 16
+
+/-! ### The derived carve-outs (6.9) -/
+
+/-- `strictSelectsIn` on the strict core, for every rule. -/
+def strictSelectsSizes (D : SoftDoc) : Array FSize :=
+  let regs := D.T.regulated
+  let ns := D.T.nodes.map coreNode
+  let live := (ns.map (fun N => fsize noSubst (liveStrictIn regs N))).toArray
+  let own := (ns.map (fun N => if N.mode = .strict then fsize noSubst (liveStrictIn regs N) else sLeaf)).toArray
+  let kids := (ns.map (fun N => positions ns ((childrenIn ns N).map (·.name)))).toArray
+  let lvl := levelSizes own kids (capLevel ns.length)
+  ((ns.zip (List.range ns.length)).map (fun (N, i) =>
+    if N.mode = .strict then
+      sBin (at' live i) (sNot (sFold ((kids.getD i []).map (at' lvl))))
+    else sLeaf)).toArray
+
+/-- `strictDecidesF D p sign`, from the strict selection sizes. -/
+def strictDecidesSize (D : SoftDoc) (sel : Array FSize) (p : String) (sign : Bool) : FSize :=
+  sFold (((D.T.nodes.zip (List.range D.T.nodes.length)).filter
+    (fun (N, _) => N.pred == p && N.sign == sign)).map (fun (_, i) => at' sel i))
+
+def blockedSize (D : SoftDoc) (sel : Array FSize) (N : SoftNode) : FSize :=
+  sBin (sBin (sBin (strictDecidesSize D sel N.pred true) (strictDecidesSize D sel N.pred false))
+      (if N.sign then (match dualPerm D N.pred with
+        | some m => strictDecidesSize D sel m false
+        | none => sLeaf) else sLeaf))
+    (if N.sign then sLeaf else (match dualOblig D N.pred with
+      | some r => strictDecidesSize D sel r true
+      | none => sLeaf))
+
+def eligibleSize (D : SoftDoc) (sel : Array FSize) (N : SoftNode) : FSize :=
+  if N.mode = .default then sBin (fsize noSubst (liveF D N)) (sNot (blockedSize D sel N)) else sLeaf
+
+/-- `domWith D eff N`, from the sizes of the opponents' `eff` and eligibility. -/
+def domSize (D : SoftDoc) (elig eff : Array FSize) (opps : List (SoftNode × Nat)) (N : SoftNode) : FSize :=
+  sFold (opps.map (fun (M, j) =>
+    sBin (if higher D M N = true then
+          sBin (at' eff j) (if D.soft.outranking = .holistic then
+            sNot (fsize noSubst (outweighsF D (act D N) (rk N) (rk M))) else sLeaf)
+         else sLeaf)
+        (if D.soft.outranking = .holistic ∧ higher D N M = true then
+          sBin (at' elig j) (fsize noSubst (outweighsF D (act D N) (rk M) (rk N)))
+         else sLeaf)))
+
+/-- The opponents of every rule with their positions, in `opponents` order. -/
+def opponentTable (D : SoftDoc) : Array (List (SoftNode × Nat)) :=
+  let indexed := D.T.nodes.zip (List.range D.T.nodes.length)
+  (D.T.nodes.map (fun N => indexed.filter (fun (M, _) =>
+    Incompatible D M N && M.mode == .default && Comparable D M N))).toArray
+
+/-- `effF D g` for every rule. -/
+def effSizes (D : SoftDoc) (elig : Array FSize) (opps : Array (List (SoftNode × Nat))) : Nat → Array FSize
+  | 0 => elig
+  | g + 1 =>
+    let prev := effSizes D elig opps g
+    ((D.T.nodes.zip (List.range D.T.nodes.length)).map (fun (N, i) =>
+      sBin (at' elig i) (sNot (domSize D elig prev (opps.getD i []) N)))).toArray
+
+/-- The size of every rule's derived carve-out `derived D N`. -/
+def derivedSizes (D : SoftDoc) : List FSize :=
+  let sel := strictSelectsSizes D
+  let elig := (D.T.nodes.map (eligibleSize D sel)).toArray
+  let opps := opponentTable D
+  let eff := effSizes D elig opps D.soft.ranks.length
+  (D.T.nodes.zip (List.range D.T.nodes.length)).map (fun (N, i) =>
+    match N.mode with
+    | .strict => fsize noSubst (switchF D N)
+    | .default => sBin (sBin (sBin (fsize noSubst (exceptedF D N)) (fsize noSubst (switchF D N)))
+        (blockedSize D sel N)) (domSize D elig eff (opps.getD i []) N))
+
+/-! ### W1's formulas on `T′` (6.11 to 6.15)
+
+After 6.10 the rules of `T′` are explicit and within W1's document budget; what
+may still be exponential is the unfolding of `yields` over the precedence DAG and
+of outcome substitution over the layers. -/
+
+/-- The size of `selects T (fuel T) N` for every rule, atoms sized by `tbl`. -/
+def selectsSizes (T : Tree) (tbl : STable) : Array FSize :=
+  let app := (T.nodes.map (fun N => fsize tbl (applies N))).toArray
+  let kids := (T.nodes.map (fun N => (VE.Norms.children T N).filterMap
+    (fun C => T.nodes.findIdx? (·.name == C.name)))).toArray
+  let lvl := levelSizes app kids (capLevel (VE.Norms.fuel T))
+  (app.zip kids).map (fun (a, ks) => sBin a (sNot (sFold (ks.map (at' lvl)))))
+
+/-- `decides T p sign`. -/
+def decidesSize (T : Tree) (sel : Array FSize) (p : String) (sign : Bool) : FSize :=
+  sFold (((T.nodes.zip (List.range T.nodes.length)).filter
+    (fun (N, _) => N.pred == p && N.sign == sign)).map (fun (_, i) => at' sel i))
+
+/-- `elabPremise T r` from the sizes of `P_p` and `N_p`. -/
+def elabSize (r : Regulated) (P Nn : FSize) : FSize :=
+  let A := fsize noSubst (atom r.name r.sorts)
+  sBind r.sorts (sFold [sBin P A, sBin Nn (sNot A),
+    sBin (sBin (sNot P) (sNot Nn)) (if r.allowByDefault then A else sNot A)])
+
+/-- The expansion table in layer order (each symbol's meaning under the table of
+the symbols before it, as `expTable`), and for each regulated symbol the sizes of
+`P_p°` and `N_p°` under that prefix (`conflict`). -/
+def expansionSizes (T : Tree) : List (String × FSize) × List (String × FSize × FSize) :=
+  (syms T).foldl (fun (tbl, rows) q =>
+    let t : STable := fun n => (tbl.find? (·.1 == n)).map (·.2)
+    match q with
+    | .reg r =>
+      let sel := selectsSizes T t
+      let P := decidesSize T sel r.name true
+      let Nn := decidesSize T sel r.name false
+      (tbl ++ [(r.name, if r.allowByDefault then sNot Nn else P)], rows ++ [(r.name, P, Nn)])
+    | .defn d => (tbl ++ [(d.name, fsize t d.body)], rows)) ([], [])
+
+/-- The sizes of the generated structures of 6.11 to 6.15, in their check order. -/
+structure GeneratedSizes where
+  /-- `softPremises D`: the exception premises, then the coherence premises. -/
+  soft : List FSize
+  /-- `elaborate T′`, one per regulated layer symbol. -/
+  layers : List (String × FSize)
+  /-- `targetConclusion t` for every `t ∈ targets (soften D)`. -/
+  targets : List (String × FSize)
+
+def generatedSizes (D : SoftDoc) : GeneratedSizes :=
+  let T := (soften D).T
+  let (tbl, rows) := expansionSizes T
+  let full : STable := fun n => (tbl.find? (·.1 == n)).map (·.2)
+  let selFull := selectsSizes T full
+  let index (N : SoftNode) : Nat := (D.T.nodes.findIdx? (·.name == N.name)).getD 0
+  let coh := (collidingPairs D).map (fun (M, N) =>
+    sBind (actSorts D M) (sNot (sBin (at' selFull (index M)) (at' selFull (index N)))))
+  let sel := selectsSizes T noSubst
+  let layers := (syms T).filterMap (fun
+    | .reg r => some (r.name, elabSize r (decidesSize T sel r.name true) (decidesSize T sel r.name false))
+    | .defn _ => none)
+  let entry (n : String) : FSize := match T.regulated.find? (·.name == n) with
+    | some _ => (full n).getD sLeaf
+    | none => sLeaf
+  let targets := rows.map (fun (n, P, Nn) => (n, sBind (sortsIn T.regulated n) (sNot (sBin P Nn)))) ++
+    (pairs T).map (fun pr => (pr.req ++ "->" ++ pr.perm,
+      sBind pr.sorts (sNot (sBin (entry pr.req) (sNot (entry pr.perm))))))
+  ⟨(excPremises D).map (fsize noSubst) ++ coh, layers, targets⟩
+
 def dupOf (ns : List String) : Option String := ns.find? (fun n => ns.count n > 1)
+
+/-! ### W1's checks with a memoized precedence height
+
+W1's `check` computes `height` by recursion on every path of the precedence DAG,
+which is exponential in a DAG of wide diamonds (sixteen levels of sixteen rules).
+`checkW1` is the same sequence of checks and diagnostics, with the height of every
+rule computed once per level. -/
+
+/-- W1's `height T f N` for every rule of `T` at level `f`, by position. -/
+def heightLevels (T : Tree) (kids : Array (List Nat)) : Nat → Array Nat
+  | 0 => (T.nodes.map (fun _ => 1)).toArray
+  | f + 1 =>
+    let prev := heightLevels T kids f
+    kids.map (fun ks => 1 + (ks.map (prev.getD · 1)).foldl max 0)
+
+/-- `T.nodes.any (fun N => height T T.nodes.length N > 16)`, after the precedence DAG
+passed `dependencyOrder`. On an acyclic DAG `height T f N = 1 + min f L` for the
+longest path `L` below `N`, so for `f ≥ 16` it exceeds 16 exactly when it does at
+level 16. -/
+def heightExceeds (T : Tree) : Bool :=
+  let kids := (T.nodes.map (fun N => (VE.Norms.children T N).filterMap
+    (fun C => T.nodes.findIdx? (·.name == C.name)))).toArray
+  (heightLevels T kids (min T.nodes.length 16)).any (· > 16)
+
+/-- W1's `check` (declarations, rules, precedence and stratum DAGs), in its order
+and with its diagnostics. -/
+def checkW1 (D : Doc) : Except String Unit := do
+  let T := D.T
+  if T.regulated.length > 64 then throw "ResourceLimit: regulated predicates"
+  let symNames := regulatedNames T ++ T.definitions.map Definition.name
+  if let some n := dupOf symNames then throw s!"DuplicateDeclaration: predicate {n}"
+  for r in T.regulated do
+    unless D.E.predicates r.name == some r.sorts do
+      throw s!"UnknownSymbol: regulated predicate {r.name}"
+    unless r.sorts.length == 1 || r.sorts.length == 2 do
+      throw s!"UnsupportedArity: regulated predicate {r.name}"
+    unless r.sorts.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {r.name}"
+    match r.role, r.act with
+    | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"
+    | .permission, none | .obligation, none =>
+      throw s!"InvalidInput: invalid regulated fields for {r.name}"
+    | _, _ => pure ()
+    if r.role != .obligation && r.permission.isSome then
+      throw s!"InvalidInput: invalid regulated fields for {r.name}"
+  actChecks T.regulated
+  for d in T.definitions do
+    unless D.E.predicates d.name == some d.args do throw s!"UnknownSymbol: defined predicate {d.name}"
+    unless d.args.length == 1 || d.args.length == 2 do
+      throw s!"UnsupportedArity: defined predicate {d.name}"
+    unless d.args.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {d.name}"
+    typeDiagnostic D.E d.args.reverse d.body
+    unless d.body.check D.E d.args.reverse do throw s!"InvalidInput: ill-typed definition {d.name}"
+  if T.nodes.length > 256 then throw "ResourceLimit: rules"
+  let mut names : List String := []
+  let mut nodes := 0
+  for N in T.nodes do
+    unless ruleName N.name do throw s!"InvalidInput: invalid rule name {pyRepr N.name}"
+    if names.contains N.name then throw s!"DuplicateDeclaration: rule {N.name}"
+    names := names ++ [N.name]
+    match T.regulated.find? (·.name == N.pred) with
+    | none => throw s!"UnknownSymbol: regulated predicate {N.pred}"
+    | some r =>
+      if N.carveOuts.length > 8 then throw "InvalidInput: invalid sign or too many carve-outs"
+      for φ in N.guard :: N.carveOuts do
+        typeDiagnostic D.E r.sorts.reverse φ
+        unless φ.check D.E r.sorts.reverse do throw s!"InvalidInput: ill-typed rule {N.name}"
+        nodes := nodes + VE.Bridge.formulaNodes φ
+        if nodes > 10000 then throw "ResourceLimit: AST exceeds 10,000 nodes"
+  for N in T.nodes do
+    for m in N.over do
+      match T.nodes.find? (·.name == m) with
+      | none => throw s!"UnknownRule: rule {m}"
+      | some M =>
+        unless M.pred == N.pred do
+          throw s!"PrecedenceAcrossPredicates: rule {N.name} on {N.pred}, rule {M.name} on {M.pred}"
+  match VE.Route.dependencyOrder (precedenceNodes T) with
+  | .error e => throw e
+  | .ok _ => pure ()
+  if heightExceeds T then throw "ResourceLimit: precedence depth"
+  match VE.Route.dependencyOrder (stratumNodes T) with
+  | .error e => throw e
+  | .ok _ => pure ()
+
+/-- W1's `validate`: `checkW1`, then the conditions of the metatheory. -/
+def validateW1 (D : Doc) : Except String Unit :=
+  match checkW1 D with
+  | .error e => .error e
+  | .ok () => if semanticCheck D then .ok () else .error "InvalidInput: norm document is not stratified"
+
+/-- Whether a rule has a derived carve-out (`derivedList D N ≠ []`), without building it. -/
+def hasDerived (N : SoftNode) : Bool := !(N.mode == .strict && N.alterable.isEmpty)
 
 def sortedDistinct (l : List String) : Bool := decide l.Nodup && l == VE.Route.sortStrings l
 
@@ -270,7 +618,7 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
     if containsDunder p then throw s!"InvalidInput: invalid soft name {p}"
   for p in D.T.definitions.map (·.name) do
     if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
-  VE.Norms.check D.base
+  checkW1 D.base
   for N in D.T.nodes do
     checkSoftRule D N
   for N in D.T.nodes do
@@ -287,17 +635,26 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
   if (env.ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != env.ties.length then
     throw "DuplicateDeclaration: tie"
   -- 6.9: the count, and each derived carve-out on its own within both limits, before
-  -- 6.10 types `T′` and spends W1's one document budget on it.
-  for N in D.T.nodes do
-    if N.carveOuts.length + (derivedList D N).length > 8 ||
-        !(derivedList D N).all withinLimits then
+  -- 6.10 types `T′` and spends W1's one document budget on it. Sized first: a
+  -- carve-out is built only once every carve-out fits.
+  for (N, s) in D.T.nodes.zip (derivedSizes D) do
+    if N.carveOuts.length + (if hasDerived N then 1 else 0) > 8 || (hasDerived N && !fits s) then
       throw s!"ResourceLimit: derived carve-out of rule {N.name}"
-  VE.Norms.validate (soften D)
-  -- 6.11: Python serialises each generated premise through its own `_Checker`.
+  for N in D.T.nodes do
+    unless (derivedList D N).all withinLimits do
+      throw s!"ResourceLimit: derived carve-out of rule {N.name}"
+  validateW1 (soften D)
+  -- 6.11: Python serialises each generated premise through its own `_Checker`; sized
+  -- from the expansion table, then built.
+  let sizes := generatedSizes D
+  for s in sizes.soft do
+    unless fits s do throw "ResourceLimit: generated soft premise"
   for φ in softPremises D do
     unless withinLimits φ do throw "ResourceLimit: generated soft premise"
   -- 6.12: likewise each generated norm layer `layer:norms:<p>`, in layer order, so an
   -- accepted document's whole elaboration serialises.
+  for (p, s) in sizes.layers do
+    unless fits s do throw s!"ResourceLimit: generated norm layer layer:norms:{p}"
   for s in syms (soften D).T do
     if let .reg r := s then
       unless withinLimits (elabPremise (soften D).T r) do
@@ -316,6 +673,7 @@ def softSemanticCheck (D : SoftDoc) : Bool :=
   D.T.nodes.all (fun N => (D.T.regulated.map (·.name)).contains N.pred) &&
   D.soft.outranks.all (fun e => D.soft.ranks.contains e.1 && D.soft.ranks.contains e.2) &&
   (VE.Route.dependencyOrder (rankNodes D.soft)).isOk &&
+  decide (D.soft.below = closureOf D.soft.ranks D.soft.outranks) &&
   D.T.nodes.all (fun N => N.mode != .default ||
     N.over.all (fun m => (D.T.nodes.find? (·.name == m)).all (·.mode == .default))) &&
   decide (decisionNames D).Nodup &&
@@ -379,9 +737,9 @@ theorem softValid_of_wellFormed (D : SoftDoc) (h : WellFormedSoft D = true) : So
   simp only [softSemanticCheck, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
     Bool.not_eq_true', List.contains_iff_mem, Bool.or_eq_true, bne_iff_ne, ne_eq,
     Option.all_eq_true, Option.isNone_iff_eq_none, beq_iff_eq] at hs
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hwf, hn⟩, hr⟩, hpr⟩, hpp⟩, hpn⟩, hpred⟩, hout⟩, hord⟩, hsoh⟩, hdn⟩, hdf⟩, hty⟩, hpt⟩,
-    hst⟩, hcs⟩, hrd⟩, hdt⟩ := hs
-  refine ⟨hwf, hn, hr, hpr, hpp, fun pr hpr' hm => ?_, hpred, ⟨hout, VE.Norms.isOk_ok hord⟩,
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hwf, hn⟩, hr⟩, hpr⟩, hpp⟩, hpn⟩, hpred⟩, hout⟩, hord⟩, hcl⟩, hsoh⟩, hdn⟩, hdf⟩, hty⟩,
+    hpt⟩, hst⟩, hcs⟩, hrd⟩, hdt⟩ := hs
+  refine ⟨hwf, hn, hr, hpr, hpp, fun pr hpr' hm => ?_, hpred, ⟨hout, VE.Norms.isOk_ok hord, hcl⟩,
     fun N hN hd m hm M hM => ?_, hdn, hdf,
     fun N hN φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hty N hN φ hφ),
     fun φ hφ => (VE.check_iff_wellFormed _ _ _).mp (hpt φ hφ),

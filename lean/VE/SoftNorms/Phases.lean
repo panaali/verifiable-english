@@ -113,7 +113,7 @@ def stripEntry (entry : Json) : Json :=
   | .ok kvs => Json.mkObj (kvs.filter (·.1 != "instruction_of"))
   | .error _ => entry
 
-def noBlock (io : List (String × String)) : SoftEnv := ⟨[], [], [], [], .strict, none, none, io⟩
+def noBlock (io : List (String × String)) : SoftEnv := ⟨[], [], [], [], .strict, none, none, io, []⟩
 
 /-- 2.1 to 2.17: the W1 declarations (decoded under the inherited profiles) and the soft block. -/
 def declarations (environment : Json) (profiles : List String) :
@@ -174,7 +174,7 @@ def declarations (environment : Json) (profiles : List String) :
     | .ok _ => fail "SOFT_INVALID_DECIDER" "InvalidInput: invalid decider for exception"
   let outranks ← softPairs block "outranks" "SOFT_INVALID_OUTRANKS_PAIR"
   let ties ← softPairs block "ties" "SOFT_INVALID_TIES_PAIR"
-  pure (ne, ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, io⟩)
+  pure (ne, ⟨parties, ranks, outranks, ties, mode, decider, exceptionDecider, io, closureOf ranks outranks⟩)
 
 /-! ## Phase 3: profiles -/
 
