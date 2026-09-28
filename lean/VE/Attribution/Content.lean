@@ -441,14 +441,19 @@ def SignedAtom (D : ReportDoc) (a : VE.Formula) : Prop :=
   ∃ r ∈ names D, ∃ h, (VE.Formula.unary r (.const h)).WellFormed (envReports D) [] ∧
     (a = .unary r (.const h) ∨ a = .not (.unary r (.const h)))
 
+/-- One row of `neqs`: the disequality between `h` and the holder of a denied
+atom of `P`. -/
+def neqRow (h P : String) : VE.Formula → Option VE.Formula
+  | .not (.unary P' (.const h')) => if P' = P then some (.not (.eq (.const h) (.const h'))) else none
+  | _ => none
+
+def neqsOf (R : List VE.Formula) : VE.Formula → List VE.Formula
+  | .unary P (.const h) => R.filterMap (neqRow h P)
+  | _ => []
+
 /-- The holder disequalities of a signed list: `¬(h = h')` for `P(h) ∈ R` and
 `¬P(h') ∈ R`, in R's order. -/
-def neqs (R : List VE.Formula) : List VE.Formula :=
-  R.flatMap fun a => match a with
-    | .unary P (.const h) => R.filterMap fun b => match b with
-        | .not (.unary P' (.const h')) => if P' = P then some (.not (.eq (.const h) (.const h'))) else none
-        | _ => none
-    | _ => []
+def neqs (R : List VE.Formula) : List VE.Formula := R.flatMap (neqsOf R)
 
 def UniformPolarity (R : List VE.Formula) : Prop :=
   ¬ ∃ P h h', VE.Formula.unary P (.const h) ∈ R ∧ VE.Formula.not (.unary P (.const h')) ∈ R
