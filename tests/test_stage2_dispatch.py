@@ -10,6 +10,7 @@ from ve.backends.diagnostics import checker_error
 from ve.backends.dispatch import authority_for, execute
 from ve.backends.lean_service import CheckerUnavailable
 from ve.backends.rust_jsonl import run as rust_run
+from ve.admission import AdmissionError, validate_label
 from ve.errors import InvalidModel, ResourceLimit, VEError
 
 
@@ -85,3 +86,15 @@ def test_rust_rejects_malformed_evaluation_response(monkeypatch, tmp_path, respo
     case = {"id": "x", "kind": "evaluate-budgeted", "max_evaluations": 1}
     with pytest.raises(CheckerUnavailable):
         rust_run(case, executable=executable, expected_sha256=sha256(b"mock").hexdigest())
+
+
+def test_lean_label_adapter_keeps_value_and_diagnostic(monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = validate_label("asserted")
+    with pytest.raises(AdmissionError) as original:
+        validate_label("bad label")
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert validate_label("asserted") == expected
+    with pytest.raises(AdmissionError) as candidate:
+        validate_label("bad label")
+    assert candidate.value.code == original.value.code
