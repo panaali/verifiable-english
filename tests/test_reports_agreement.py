@@ -190,3 +190,48 @@ def test_well_formedness_boundaries_agree(lean):
         (doc(says, bridges=[bridge("u1"), bridge("u1")]), E0(), "DuplicateDeclaration"),
         (doc(says, scoped=[{"id": "s1", "payloads": ["u1"], "conclusion": safe}] * 2), E0(), "DuplicateDeclaration"),
     ])
+
+
+def test_w2_metadata_is_checked_and_bound_into_the_document(lean):
+    """Astra B: spans, meaning and support were outside `document_id`, and the Lean
+    wire accepted any meaning or support: a changed span, a nonexistent open term and
+    a bogus support returned `ok` with the same envelope."""
+    safe = ast(U("safe", "service"))
+    says = report("the_article", "says", "c3", safe)
+    may = assess("may", safe)
+    base = doc(says, may, open_terms=["genuine"])
+
+    def edited(index, **fields):
+        d = copy.deepcopy(base)
+        d["units"][index].update(fields)
+        return d
+
+    no_support = copy.deepcopy(base)
+    del no_support["units"][0]["support"]
+    plain = copy.deepcopy(base)
+    plain["units"].append({"id": "u3", "span": [9, 10], "kind": "asserted", "content": safe})
+    moved_plain = copy.deepcopy(plain)
+    moved_plain["units"][2]["span"] = [9, 11]
+    cases = [
+        (base, E0(), None),
+        (edited(0, meaning={"open": ["nonexistent"]}), E0(), "InvalidInput"),
+        (edited(0, support="bogus"), E0(), "InvalidInput"),
+        (edited(1, meaning="specified"), E0(), "InvalidInput"),
+        (edited(1, meaning={"open": ["genuine"]}), E0(), "InvalidInput"),
+        (edited(0, meaning={"contextual": "the desk"}), E0(), "InvalidInput"),
+        (edited(0, meaning={"unformalised": "causation"}), E0(), "InvalidInput"),
+        (edited(0, meaning={"open": []}), E0(), "InvalidInput"),
+        (no_support, E0(), "shape"),
+        (edited(0, span=[0, 2]), E0(), None),
+        (edited(0, meaning={"open": ["genuine"]}), E0(), None),
+        (edited(0, support="assumption"), E0(), None),
+        (edited(1, meaning={"open": ["reports__may__1", "genuine"]}), E0(), None),
+        (plain, E0(), None),
+        (moved_plain, E0(), None),
+    ]
+    agree(cases)
+    accepted = [d for d, _, expected in cases if expected is None]
+    envelopes = [r["envelope"]["document_id"] for r in
+                 run([{"id": str(i), "kind": "reports-elaborate", "environment": E0(), "document": d}
+                      for i, d in enumerate(accepted)])]
+    assert len(set(envelopes)) == len(accepted)

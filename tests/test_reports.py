@@ -36,9 +36,10 @@ def report(inner=None, *, holder="article", act="says", literal=None):
                        "content": inner or {"ast": ["unary", "safe", ["const", "alice"]]}}}
 
 
-def unit(content, uid="u1", kind=None):
-    return {"id": uid, "kind": kind or ["attributed", "article", "says", "asserted"],
-            "content": content}
+def unit(content, uid="u1", kind=None, meaning="specified"):
+    index = int(uid[1:])
+    return {"id": uid, "span": [index, index + 1], "kind": kind or ["attributed", "article", "says", "asserted"],
+            "meaning": meaning, "support": "testimony", "content": content}
 
 
 def test_report_payload_does_not_become_an_author_premise():
@@ -72,7 +73,7 @@ def test_assessment_is_open_and_has_a_separate_generated_atom():
     node = {"assessment": {"judgment": "may", "record": "a1",
                            "content": {"ast": ["unary", "safe", ["const", "alice"]]}}}
     doc = ReportsDocument(environment(), contexts(), [assessment],
-                          [unit(node, kind=["hedged", "could", "asserted"])])
+                          [unit(node, kind=["hedged", "could", "asserted"], meaning={"open": ["reports__may__1"]})])
     assert doc.premises == [["unary", "reports__may__1", ["const", "e1"]]]
     assert doc.open_terms[0]["record"]["decided_by"] == "unresolved_decider"
     assert doc.open_terms[0]["record"]["factors"] == ["review status"]
@@ -243,7 +244,7 @@ def test_author_assertions_travel_in_the_wire_form(tmp_path):
 def test_w2_units_are_decoded_as_lean_decodes_them():
     """The same class on the Python side: W2 content is `{"ast": φ}` closed over E,
     canonicalised, and never on a quoted kind."""
-    plain = {"id": "u2", "span": [1, 2], "kind": "asserted", "meaning": "specified",
+    plain = {"id": "u2", "span": [2, 3], "kind": "asserted", "meaning": "specified",
              "support": "assumption", "content": {"ast": SAFE}}
     doc = ReportsDocument(environment(), contexts(), [], [unit(report()), plain])
     assert doc.elaborated()["premises"] == [{"label": "report:u1",

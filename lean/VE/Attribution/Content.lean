@@ -164,6 +164,30 @@ structure ScopedCheck where
   conclusion : VE.Formula
   deriving DecidableEq, Repr
 
+/-- W2's meaning status of a unit (document.md): `specified`, `{"open": names}`,
+`{"contextual": s}` or `{"unformalised": reason}`. -/
+inductive Meaning where
+  | specified
+  | «open» (names : List String)
+  | contextual (s : String)
+  | unformalised (reason : String)
+  deriving DecidableEq, Repr
+
+/-- The W2 metadata of one unit, report or not, in document order: its byte span,
+meaning status and support. Report units carry all of them (3.3); an ordinary
+unit's meaning and support are optional on the Lean wire. -/
+structure UnitMeta where
+  id : String
+  start : Nat
+  stop : Nat
+  meaning : Option Meaning
+  support : Option String
+  deriving DecidableEq, Repr
+
+/-- W2's support values (`ve/document.py`, `SUPPORTS`). -/
+def supports : List String :=
+  ["assumption", "certificate", "observation", "calculation", "statistical", "testimony", "adapter", "none"]
+
 structure ReportDoc where
   /-- the author's environment, with the reports block decoded -/
   E : VE.Environment
@@ -188,6 +212,8 @@ structure ReportDoc where
   /-- the author's declared predicate names: with the generated ones, the
   predicate inventory of `E_reports` that 4.1 step 7 bounds by `MAX_PREDICATES` -/
   authorPredicates : List String
+  /-- every unit's W2 metadata, in document order: bound into `document_id` -/
+  unitMeta : List UnitMeta
 
 def Occurs (D : ReportDoc) (x : Content) : Prop := ∃ u ∈ D.units, x ∈ u.content.nodes
 
@@ -315,6 +341,19 @@ def complementId (D : ReportDoc) (body : Content) (lit : Option String) : String
 
 def pathObject (p : Path) : CJson := .o [("unit", .str p.unit), ("depth", .num p.depth)]
 
+def meaningObject : Meaning → CJson
+  | .specified => .str "specified"
+  | .«open» ns => .o [("open", .a (ns.map .str))]
+  | .contextual s => .o [("contextual", .str s)]
+  | .unformalised r => .o [("unformalised", .str r)]
+
+/-- A unit's W2 metadata as it is hashed: id, span, and meaning and support when present. -/
+def metaObject (m : UnitMeta) : CJson :=
+  .o ([("id", .str m.id), ("span", .a [.num m.start, .num m.stop])] ++
+    (match m.meaning with
+     | some x => [("meaning", meaningObject x)]
+     | none => []) ++ optField "support" m.support)
+
 /-- The canonical document object behind `document_id(D)`. -/
 def documentObject (D : ReportDoc) : CJson :=
   .o [("environment_id", .str D.environmentId),
@@ -330,7 +369,8 @@ def documentObject (D : ReportDoc) : CJson :=
         ("kind", .str (VE.Route.Admission.renderKind x.kind).compress)] ++
         match x.content with
         | some φ => [("content", .ast φ)]
-        | none => [])))])]
+        | none => []))),
+      ("metadata", .a (D.unitMeta.map metaObject))])]
 
 def documentId (D : ReportDoc) : String :=
   match VE.CertificateWire.digest ("ve-reports-" ++ identityVersion D ++ "\n") (documentObject D).toJson with
@@ -624,6 +664,28 @@ def bridgeOk (D : ReportDoc) (b : Bridge) : Bool :=
     | some Eq => Eq.id == D.environmentId
     | none => false
 
+/-- The generated names of the assessment nodes of one unit's tree. -/
+def unitAssessNames (D : ReportDoc) (u : Unit) : List String :=
+  (u.content.nodes.filterMap (assessKeyOf D)).map (assessName D)
+
+/-- 3.3 and W2: the support is W2's; an open meaning names declared or generated
+open terms; a report unit's meaning is `specified` exactly when its tree has no
+assessment node, and otherwise `open`, listing every generated assessment name of
+its tree (so a unit whose content carries an open term is OPEN, 6). -/
+def metaOk (D : ReportDoc) (m : UnitMeta) : Bool :=
+  m.support.all supports.contains &&
+  (match m.meaning with
+   | some (.«open» ns) => !ns.isEmpty && ns.all (fun n => D.w2.openTerms.contains n || (openTerms D).contains n)
+   | some (.contextual s) => !s.isEmpty
+   | some (.unformalised r) => VE.Route.Admission.token r
+   | _ => true) &&
+  (match D.units.find? (·.id == m.id) with
+   | some u => match m.meaning with
+     | some .specified => (unitAssessNames D u).isEmpty
+     | some (.«open» ns) => (unitAssessNames D u).all ns.contains
+     | _ => false
+   | none => true)
+
 /-- `MAX_PREDICATES` of P0, the bound of 4.1 step 7 on `E_reports`. -/
 def maxPredicates : Nat := 256
 
@@ -648,6 +710,7 @@ def WellFormedReports (D : ReportDoc) : Bool :=
   decide (D.units.map (·.id) ++ D.w2.units.map (·.id)).Nodup &&
   decide (D.authorPredicates.length + (names D).length ≤ maxPredicates) &&
   decide (D.bridges.map (·.id)).Nodup &&
-  decide (D.«scoped».map (·.id)).Nodup
+  decide (D.«scoped».map (·.id)).Nodup &&
+  D.unitMeta.all (metaOk D)
 
 end VE.Reports
