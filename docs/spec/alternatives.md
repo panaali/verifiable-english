@@ -1,10 +1,12 @@
 # Alternatives (`alternatives@0`): preventable harm over explicit alternatives, on `norms@0`
 
-> Status: item-1 specification, draft 2 (2026-09-28), written from [causation-PLAN.md](causation-PLAN.md) draft 3,
+> Status: item-1 specification, draft 3 (2026-09-28), written from [causation-PLAN.md](causation-PLAN.md) draft 4,
 > the transcription of the converged Astra + Fable debate (`manage-agents/debates/design-causation/{astra,fable}.md`,
 > REVISE, CONVERGED after round 3), with the ten edits of the Astra + Fable statement review of draft 1
-> (`manage-agents/debates/causation-spec/{astra,fable}.md`, FIX, CONVERGED after round 3) applied; section 12
-> attributes each edit. It is the statement under the repeated item-1 gate, which covers the changed entries (10.13)
+> (`manage-agents/debates/causation-spec/{astra,fable}.md`, FIX, CONVERGED after round 3) applied and attributed in
+> section 12, and the four corrections of Astra's verification of draft 2
+> (`manage-agents/causation-verify1b-astra.final.md`, FAIL) applied and attributed in section 13. It is the
+> statement under the repeated item-1 gate, which covers the changed entries (10.13)
 > and precedes items 2 and 3 (PLAN-EXPAND2 rule 10). Sections 4 to 7 are the statements under review; section 8 gives the fixtures with their
 > definitions (8.1) separated from their expected results (8.2), so that each reviewer derives the expectations from
 > the stated rule sets, premises and models before reading them; section 11 lists every point where this draft chose
@@ -321,9 +323,13 @@ An alternatives document `A = (E, lits, alt, T, Γ)` is well-formed when, in thi
 1. `E` enables `alternatives@0` and `norms@0` and not `soft-norms@0`; the block decodes with no unknown field.
 2. The three sorts exist and are distinct; every role predicate exists, is base, and has exactly the argument sorts
    and the canonical verbalisation of 1.1 (`UnknownSymbol: alternatives.<role> <name>`, `AlternativesRegulated`,
-   `AlternativesSort`, `AlternativesVerbalisation`); no declared sort, predicate or constant of `E` is named
-   `avoidable`, `unavoidable`, `allows` or `prevents` (`AlternativesReserved: <name>`), so `extEnv` (7.1) extends `E`
-   by the four profile words without collision.
+   `AlternativesSort`, `AlternativesVerbalisation`). The role predicates are therefore pairwise distinct: a declared
+   predicate has one argument-sort list and one verbalisation; `available` and `leads_to` differ in sort (chooser
+   versus harm), `leads_to` and `proximate`, and `inaction` and `taken`, differ in verbalisation. A block naming one
+   predicate for two roles fails this clause (fixture l6), and `alternative_monotone` (7.2) relies on the
+   distinctness. No declared sort, predicate or constant of `E` is named `avoidable`, `unavoidable`, `allows` or
+   `prevents` (`AlternativesReserved: <name>`), so `extEnv` (7.1) extends `E` by the four profile words without
+   collision.
 3. `performed`, when present, names a declared W1 pair `(m, q)` both on `(action)` (`AlternativesPerformed: <m>,
    <q>`).
 4. Each fulfilment names an obligation-role predicate whose first sort is the chooser sort, once
@@ -399,8 +405,10 @@ action available to the same robot" is exact. `allows` covers enabling by an act
 `inaction` tells them apart; *causing* is the separate open `causes`, never derived. `inline A φ` replaces every
 profile-word atom in `φ` by its body, capture-avoiding, in one pass (bodies mention no profile word); fulfilment
 names are never atoms (1.3), so nothing else is replaced. `inlineTree A` applies `inline` to every guard, carve-out and unit of `T` and returns the
-W1 `Doc ⟨E, lits, T_inlined⟩`; the route runs W1 on it. Theorem `inline_faithful` (7.2): on any structure, the
-inlined formula denotes exactly what the original denotes when the profile words are interpreted by their bodies.
+W1 `Doc ⟨E, lits, T_inlined⟩`; the route runs W1 on it. Theorem `inline_faithful` (7.2): on every structure
+admissible for `E` (`S.Admissible A.E`), the inlined formula denotes exactly what the original denotes when the
+profile words are interpreted by their bodies. Admissibility is part of the claim, not a convenience: on a structure
+in which a constant of `E` is undefined, a profile-word atom is false while its inlined body may be true (7.2).
 No W1×W3 composition is needed (INTEGRATION-GAPS); when it closes, the bodies may become definition layers with no
 change of meaning. The scenario-only words:
 
@@ -790,8 +798,13 @@ theorem owner_unique (A : AltDoc) (h : WellFormedAlt A = true) (B : VE.Structure
   B.relation A.alt.available [a, r] → B.relation A.alt.available [a, r'] → r = r'
 
 /-- Adding available alternatives to `S` on the same carrier (`extendAvailable`, 7.1) never removes avoidability,
-    an `allows` or a `prevents`. Nothing is claimed for `clear`. Arguments in argument order (4.3). -/
-theorem alternative_monotone (A : AltDoc) (S : VE.Structure) (more : S.Carrier → S.Carrier → Prop)
+    an `allows` or a `prevents`. `WellFormedAlt` is needed: it makes the role predicates pairwise distinct (4.1(2)),
+    in particular `A.alt.available ≠ A.alt.leadsTo`, so `extendAvailable` leaves `leads_to` unchanged. With one
+    predicate `p` in both roles, adding `p(a, h)` to a structure holding `p(a, r)` (action `a`, chooser `r`, harm
+    `h`) keeps ownership and makes `h` unavoidable by `r`. Nothing is claimed for `clear`. Arguments in argument
+    order (4.3). -/
+theorem alternative_monotone (A : AltDoc) (hw : WellFormedAlt A = true) (S : VE.Structure)
+    (more : S.Carrier → S.Carrier → Prop)
     (hS' : Sat (extendAvailable A.alt S more) (altPremises A)) (r h a : S.Carrier) :
   ((avoidableF A.alt).denote S (tupleVal [h, r]) → (avoidableF A.alt).denote (extendAvailable A.alt S more) (tupleVal [h, r])) ∧
   ((allowsF A.alt).denote S (tupleVal [a, h]) → (allowsF A.alt).denote (extendAvailable A.alt S more) (tupleVal [a, h])) ∧
@@ -944,7 +957,8 @@ Proof plan: `inline_faithful` by the capture-avoiding atom-substitution lemma un
 `inline_faithful`; `followable_sound` from those and `conflictFree_expands_document`; `dilemma_witness_sound` from
 `eval_iff_denote`, `baseAdmissible_of_valid` extended by the slot premises, and the document iff; `dilemma_expansion`
 from `followable_denote`; `scenarioConflict_sound` from W1's `conflict_witness_sound` and `conflict_pair_witness_sound`;
-`alternative_monotone` by unfolding the three bodies on `extendAvailable`; `alternatives_conservative` by the
+`alternative_monotone` by unfolding the three bodies on `extendAvailable`, with `A.alt.available ≠ A.alt.leadsTo`
+from `WellFormedAlt` so that the `leads_to` atoms are untouched; `alternatives_conservative` by the
 empty-relation expansion; the route theorems as W1's `Layer.lean` with `PrefixAdmissibleAlt`; the wire theorems by
 W1's chain (decoder soundness → exact regeneration → binding equality → leaf admission → checker soundness). Every
 proof audited under the unchanged allowlist.
@@ -1011,12 +1025,12 @@ naming absent rules are dropped (2.6), so {3, 7} has no precedence edge and only
 |---|---|---|---|
 | a | {3, 7} | `nothing`, `pull`; h1 `harms_human`; `nothing`→h1 | scenario |
 | b | A₀ {3, 7}; A₁ {3, 7} + fact `injures_human(pull)`; A₂ {3, 7′}; B {3, 8} | `nothing`, `pull`; h1, h2 `harms_human`; `nothing`→h1, `pull`→h2 | scenario each; document for A₁, A₂, B |
-| b′ | (A) {3, 7, 9}; (A⁻) {3, 7, 9⁻}; (A5) {3, 5, 7, 9}; (B) {3, 8c, 9_B} with and without `Γ_link` | for (A): scenario b with A₁'s fact; for (B) without `Γ_link`: `R` with `a₀` (`injures_human`, no positive cell), `a₁` (not injuring, `a₁`→h), `nothing` (inaction, `nothing`→h); h `harms_human`; for (B) also scenario b without classification | document; scenario |
+| b′ | (A) {3, 7, 9}; (A⁻) {3, 7, 9⁻}; (A5) {3, 5, 7, 9}; (A⁻5) {3, 5, 7, 9⁻}; (B) {3, 8c, 9_B} with and without `Γ_link` | for (A): scenario b with A₁'s fact; for (B) without `Γ_link`: `R` with `a₀` (`injures_human`, no positive cell), `a₁` (not injuring, `a₁`→h), `nothing` (inaction, `nothing`→h); h `harms_human`; for (B) also scenario b without classification | document; scenario |
 | c | {3, 7}; {3, 8}; {3, 8⁻} | `nothing`, `pull`; h `harms_human`; `nothing`→h, `pull`→h | scenario; document for {3, 8⁻} |
 | d | {1–6}; {3, 6′} | `shield`, `retreat`, `nothing`; hs with `harm_to(hs, R)`; `nothing`→hs; `protects_robot = {shield, retreat}` | document for {1–6}; scenario for {3, 6′} |
 | e | {3, 7, 10} | `nothing`, `act`; hH `harms_humanity`, hp `harms_human`; `nothing`→hH, `act`→hp; fact `injures_human(act)` | document |
 | j | {1–6} | `a₁`, `a₂`, `nothing`; no harms; `ordered = {a₁, a₂}`; nothing injures or protects | document |
-| l | {3, 7} | l1: `nothing`, `wait` both inaction; l2: `taken = {nothing, pull}`; l3: `idle` inaction available to no chooser; l4: `R` with `pull` only, `inaction` declared and empty; l5: model c then `pull₂` added with no positive cell | model |
+| l | {3, 7} | l1: `nothing`, `wait` both inaction; l2: `taken = {nothing, pull}`; l3: `idle` inaction available to no chooser; l4: `R` with `pull` only, `inaction` declared and empty; l5: model c then `pull₂` added with no positive cell; l6: the `asimov-v2` block with `leads_to: "available"` (one predicate in two roles), no model | model; environment for l6 |
 | m | {3, 7} | `a` available to `R1` and `R2`, inactions `n₁` (`R1`) and `n₂` (`R2`); then `a₁` to `R1` and `a₂` to `R2` in place of `a` | model |
 | n | {3, 7, N} with `Rule N (exception to rule 7). Every action may be performed, if there is a robot such that that action is available to that robot and it is not the case that another action available to that robot may be performed.` | none | document |
 | o | {3, 7}; {3, 8} | `nothing`, `act`, `rescue`; h `harms_human`; `nothing`→h, `act`→h | scenario |
@@ -1044,9 +1058,9 @@ life`, fulfilment `refers(a) ∨ gives_safety_information(a)`. g: `serious(harm)
 
 ### 8.2 Expected results
 
-Every rule set in a–k except b′(A⁻) and s2 is CONFLICT-FREE by certificate (no positive and negative rule select
-together; no pair conflict, `required` having no rule or rule 5 only where noted), so followability is computed;
-for b′(A⁻) and s2 it is `not computed`.
+Every rule set in a–k except b′(A⁻), b′(A⁻5) and s2 is CONFLICT-FREE by certificate (no positive and negative rule
+select together; no pair conflict, `required` having no rule or rule 5 only where noted), so followability is
+computed; for b′(A⁻), b′(A⁻5) and s2 it is `not computed`.
 
 - **(a)** `avoidable(h1, R)` (via `pull`); `allows(nothing, h1)`; rule 7 selects at `nothing`: not permitted; `pull`
   permitted by default, nothing required. Scenario: `R has a clear action: pull`; `nothing` is not clear (rule 7).
@@ -1067,7 +1081,10 @@ for b′(A⁻) and s2 it is `not computed`.
   positively (every other alternative injures), with no precedence edge between them (rule 3's `over` names the
   absent rule 2 and is dropped; rule 9⁻ is over rule 7 only), the shape of norms.md fixture i(b); followability `not
   computed: conflict status CONFLICT`. (A5) {3, 5, 7, 9}: document
-  DILEMMA, witness j (OVER-REQUIRED). (B) {3, 8c, 9_B} with `Γ_link`: FOLLOWABLE, `conditional_on: Γ_link` (an
+  DILEMMA, witness j (OVER-REQUIRED). (A⁻5) {3, 5, 7, 9⁻}: CONFLICT at the witness of A⁻, which rule 5 leaves in
+  place (it selects on `required` only and carries no `over` entry, so rules 3 and 9⁻ still select together on
+  `permitted` with no edge between them); followability `not computed: conflict status CONFLICT`, and the
+  OVER-REQUIRED dilemma of A5 is never reached. (B) {3, 8c, 9_B} with `Γ_link`: FOLLOWABLE, `conditional_on: Γ_link` (an
   alternative leading to no human harm discharges every prevention duty and is permitted unless it injures, in
   which case by `Γ_link` it leads to a harm, contradiction; if every alternative leads to a human harm the carve-out
   silences rule 8c and rule 9_B or the default permits one); without `Γ_link`: document DILEMMA at the stated
@@ -1101,8 +1118,10 @@ for b′(A⁻) and s2 it is `not computed`.
 - **(l)** l1 `InvalidModel("alternatives", "R has two inactions: nothing, wait")`; l2 `"R has two taken actions:
   nothing, pull"`; l3 `"action idle belongs to no chooser"`; l4 `"R has no inaction"`; l5: h becomes avoidable,
   `allows(nothing, h)` and `allows(pull, h)` become true, the report's `alternatives_declared` lists `pull₂` among
-  R's alternatives (one model cannot say which alternative was added; `alternative_monotone` is the general claim).
-  All from the Lean route.
+  R's alternatives (one model cannot say which alternative was added; `alternative_monotone`, under `WellFormedAlt`,
+  is the general claim). l6: `AlternativesSort: leads_to expects (action, harm)`, since `available` is declared
+  `(action, robot)`: one predicate cannot serve two roles, which is the case `alternative_monotone`'s hypothesis
+  excludes. l1–l5 from the Lean route; l6 from the block-shape check and the Lean route alike (6).
 - **(m)** `InvalidModel("alternatives", "action a is available to two choosers: R1, R2")`; the split model accepted.
 - **(n)** `DependencyCycle: permitted` from Python and Lean; Python's English diagnostic carries `GuardOnOwnOutcome`
   with rule 9's guard and the sentence that the rewrite changes meaning.
@@ -1129,8 +1148,11 @@ for b′(A⁻) and s2 it is `not computed`.
 - **(r)** r1 unchanged byte for byte. r2: `environment_id` differs only with the block. r3: rejected as today
   (`UnknownSymbol: allows`). r4: CONFLICT-FREE and the entailment's status identical to `ve_norms_route`'s, as
   differential evidence only: the conclusion mentions `permitted` and `required`, outside `oldEnv`, so
-  `alternatives_conservative` does not cover it (4.9, 7.4). r5: proved on both routes with the same certificate;
-  `alternatives_conservative` is the theorem behind the agreement, the premise and conclusion being over `oldEnv`.
+  `alternatives_conservative` does not cover it (4.9, 7.4). r5: proved on both routes, each by a certificate bound to
+  that route's own environment and regenerated premise list (the block changes `environment_id`, r2, and this route
+  adds the slot premises), the two certificates proving the same conclusion and never compared;
+  `alternatives_conservative` is the theorem behind the agreement of the two verdicts, the premise and conclusion
+  being over `oldEnv`, and says nothing about certificate identity.
 - **(s)** s1: conflict status UNKNOWN, followability `not computed: conflict status UNKNOWN`. s2: CONFLICT (rule X
   permits and rule 7 forbids an inaction that allows a human harm), `not computed: conflict status CONFLICT`. s3:
   computed.
@@ -1197,7 +1219,10 @@ true`, and its verdict must agree with Lean's (regression evidence; the trust pa
     rule, `inline_faithful`, `owner_unique`, `alternative_monotone`, `clear_denote`, `followable_denote`,
     `dilemma_witness_sound`, `dilemma_expansion`, `validate_sound`, `ExistenceFacts … rows` and the dilemma wire
     theorem (7.1, 7.2); the reserved names and the absence of fulfilment atoms (4.1(2), 4.3). Unchanged fixtures
-    need no fresh derivation unless an edit changes an assumption they use.
+    need no fresh derivation unless an edit changes an assumption they use. Draft 3 adds to the gate the four
+    verification corrections (13): `alternative_monotone`'s `WellFormedAlt` hypothesis with the distinctness
+    sentence of 4.1(2) and l6; r5's per-route certificates; b′(A⁻5) and the 8.2 header; the admissibility
+    qualification of 4.3.
 
 ## 11. Resolved choices in this draft
 
@@ -1258,8 +1283,15 @@ Each is a point where the plan left a reading open; the review may overturn any 
     counterpart of the surface registry's duplicate refusal (2.1), and the tree carries no fulfilment atoms
     (statement review, Astra 6 and Fable round 2).
 22. **r4 is differential evidence**, not a consequence of `alternatives_conservative`, whose statement is over
-    `oldEnv`; r5 exercises the theorem. A route-level conservativity statement for regulated conclusions was not
-    added (statement review, Fable 5: either edit was acceptable; the smaller one was taken).
+    `oldEnv`; r5 exercises the theorem, each route with a certificate bound to its own environment and premise list
+    (verification, Astra V2: the theorem relates verdicts, not certificates). A route-level conservativity statement
+    for regulated conclusions was not added (statement review, Fable 5: either edit was acceptable; the smaller one
+    was taken).
+23. **`alternative_monotone` assumes `WellFormedAlt`** (verification, Astra V1): the theorem is about a well-formed
+    block, whose role predicates are pairwise distinct (4.1(2)). The alternative, an explicit
+    `A.alt.available ≠ A.alt.leadsTo` hypothesis, was not taken: well-formedness is what every other statement of
+    7.2 assumes, the route establishes it before any theorem applies, and the distinctness of the other role pairs
+    comes with it.
 
 ## 12. Statement review response (draft 1 → draft 2)
 
@@ -1284,9 +1316,24 @@ and r5.
 | Fable 6 — wording | short object form marked on rule 9 and Γ_link; b(A₁) "witness the A₁ model"; l5 without "added" | 2.6, 8.2 |
 | Process | the repeated gate covers the changed entries (10.13); the plan is synchronized in the same commit | 10, causation-PLAN.md |
 
+## 13. Verification response (draft 2 → draft 3)
+
+Source: Astra's read-only verification of draft 2 and plan draft 3 (`manage-agents/causation-verify1b-astra.final.md`,
+FAIL: all ten statement-review fixes represented, four corrections, no objection to the plan's design questions). Each
+correction is applied here and in plan draft 4 (its 9.2). No design changed and no expected result of an existing
+fixture changed; the new fixtures are b′(A⁻5) and l6.
+
+| Item | Correction in this draft | Where |
+|---|---|---|
+| Astra V1 — `alternative_monotone` | `hw : WellFormedAlt A = true` added: it makes the role predicates pairwise distinct, in particular `available ≠ leads_to`, so `extendAvailable` leaves `leads_to` unchanged; without it both roles may name one `p`, and adding `p(a, h)` to `p(a, r)` keeps ownership but removes avoidability. 4.1(2) states the distinctness; l6 is the rejected block; the plan's schema carries the hypothesis | 4.1(2), 7.2, 8.1, 8.2, 10.13, 11.23; plan 3, 5, 6 |
+| Astra V2 — r5 | "the same certificate" withdrawn: the routes bind different environments (the block changes `environment_id`) and different regenerated premise lists, so r5 requires a separately bound certificate per route proving the same conclusion; `alternatives_conservative` accounts for the agreement of the verdicts and does not establish certificate identity | 8.2, 11.22; plan 5 (r) |
+| Astra V3 — plan b′ | "Any of these plus rule 5: DILEMMA" narrowed to (A) and (B) plus rule 5: A⁻ plus rule 5 keeps the permission conflict between rules 3 and 9⁻, so followability stays `not computed`; fixture b′ gains (A⁻5) and the 8.2 header lists it | 8.1, 8.2; plan 5 (b′) |
+| Astra V4 — inlining prose | "on any structure" qualified by admissibility (`S.Admissible A.E`), matching the signature of `inline_faithful` | 4.3; plan 3 |
+
 ## Change log
 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-09-28 | Draft 1 | Item-1 specification from plan draft 2: block with roles, fixed orders and verbalisations, ownership, fulfilments and mapped obligations, two outcome modes; the English table with the `available to` constructs, the binder and the negative-cell wording; wire form, signed rows, identity and package bindings; `WellFormedAlt`; slot premises, `BaseAdmissibleAlt`, existence facts and the broader-class sentence with its cost; definitions and inlining; `table_complete`; conflict over the extended background; `clear`, `followable`, the verdict-scope table, the gate on CONFLICT-FREE and the diagnosis procedure with JOINTLY-UNDISCHARGEABLE; scenario evaluation bound to the model; `GuardOnOwnOutcome` as an author-selected change; conservativity and the ROADMAP line; report, status text, residual lines; diagnostics; every item-2 theorem as a statement in W1's Lean conventions; fixtures a–v with definitions (8.1) separated from expectations (8.2); resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The ten edits of the converged statement review (`manage-agents/debates/causation-spec/`, FIX), section 12: rule subsets drop `over` entries naming absent rules; b′(A⁻) is CONFLICT with followability not computed (8.2 header, 11.16); p4 gains a distinctness unit and p5 keeps the aliased countermodel; p2's document states its positive cell, a scenario's positive rows must lie within the document's cells (p6), rows change neither premise nor hash; argument orders fixed once with `clear(r, a)`; `S.Admissible A.E` on `inline_faithful`, `WellFormedAlt` on `owner_unique`, explicit carrier transport (`clear_denote`, `followable_denote`, `dilemma_expansion`, `extendAvailable`), `ExistenceFacts A M rows` with `RowsConsistent`, validation carried by the dilemma wire theorem; `AlternativesReserved` and no fulfilment atoms; `alt-validate` evaluates the conflict formulas first and a scenario failure is a document DILEMMA only on CONFLICT-FREE; the `no alternatives` branch, legend line 3 and fixture u qualified; r4 differential with r5 added; wording (short object form marked, b(A₁), l5). Checklist item 10.13 names the repeated gate. Spec only. |
+| 2026-09-28 | Draft 3 | The four corrections of Astra's verification of draft 2 (`manage-agents/causation-verify1b-astra.final.md`, FAIL), section 13: `alternative_monotone` takes `WellFormedAlt A = true`, 4.1(2) states that the role predicates are pairwise distinct and fixture l6 rejects a block naming one predicate for two roles; r5 requires a separately bound certificate per route proving the same conclusion, not "the same certificate"; fixture b′ gains (A⁻5), CONFLICT with followability not computed, and the 8.2 header lists it; the inlining prose of 4.3 is qualified by admissibility. Resolved choices 11.22 and 11.23; the repeated gate (10.13) covers the four. Spec only. |
