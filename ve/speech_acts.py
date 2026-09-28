@@ -12,7 +12,6 @@ import re
 from .ast import (And, Const, Eq, Not, Or, Top, Var, _Checker, _Decoder,
                   _to_data, formula_from_data)
 from .errors import ResourceLimit, VEError
-from .identity import meaning_id
 from .norms import Norm, NormDocument, _instantiate
 from .wire import digest
 
@@ -85,7 +84,6 @@ class Command:
     args: tuple[str, ...]
     guard: object
     active: bool = True
-    query_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,14 +174,19 @@ class SpeechDocument:
             raise ResourceLimit("questions")
         self._queries(queries)
         self._check_wordings()
+        # 3.5: a proof task and a follows question bind their query's identity in
+        # place of the bare query id, in the object shape Lean's `commandAst` and
+        # `questionAst` digest.
         for command in self.commands:
-            extra = list(command.query_ids)
-            self.meaning_ids[command.unit] = self._id({"command": self.command_data(command),
-                                                        **({"query_meaning_ids": extra} if extra else {})})
+            data = self.command_data(command)
+            if (qid := self.query_of(command)) is not None:
+                data["query"] = self.query_identity(qid)
+            self.meaning_ids[command.unit] = self._id({"command": data})
         for question in self.questions:
-            extra = self.query_ids(question.query) if question.query else ()
-            self.meaning_ids[question.unit] = self._id({"question": self.question_data(question),
-                                                         **({"query_meaning_ids": list(extra)} if extra else {})})
+            data = self.question_data(question)
+            if question.query is not None:
+                data["query"] = self.query_identity(question.query)
+            self.meaning_ids[question.unit] = self._id({"question": data})
         self.policy = NormDocument(env, [*self.norms, *(self.demand(c) for c in self.commands if c.active)])
         for rule in self.norms:
             if any(edge.startswith("cmd-") for edge in rule.over):
@@ -312,22 +315,25 @@ class SpeechDocument:
                 raise VEError(f"QueryMismatch: {consumers[0]}")
             if query.target in (asserted[u] for u in query.premises):
                 self.warnings.append(f"TrivialQuery: {consumers[0]}")
-        self.commands = [Command(c.unit, c.force, c.act, c.args, c.guard, c.active,
-                                 self.query_ids(qid) if (qid := next((a for a in c.args if a in self.queries), None)) else ())
-                         for c in self.commands]
 
-    def query_ids(self, qid):
+    def query_of(self, command):
+        """The constant in the act's first slot of sort `query` (Lean's `queryOf`)."""
+        sorts = self.env.predicates[command.act].arguments[1:]
+        return next((arg for arg, sort in zip(command.args, sorts) if sort == "query"), None)
+
+    def query_identity(self, qid):
+        """A query as bound into a meaning: its id, premise meaning ids and target meaning id."""
         query = self.queries[qid]
         asserted = dict(self.asserted)
-        return (*[meaning_id(self.env, asserted[u]) for u in query.premises],
-                meaning_id(self.env, query.target))
+        return {"id": qid, "premises": [self._id(_to_data(asserted[u])) for u in query.premises],
+                "target": self._id(_to_data(query.target))}
 
     def _check_wordings(self):
         from .speech_english import parse_speech, _sentence
         by_id = {u["id"]: u for u in self.units}
         for command in self.commands:
             source = by_id[command.unit].get("source")
-            query = next((a for a in command.args if a in self.queries), None)
+            query = self.query_of(command)
             if source is not None and parse_speech(self.env, source, self.scope, query=query)[0] != self.command_data(command):
                 raise VEError(f"InvalidInput: invalid command fields for {command.unit}")
             if source is not None and query is not None and source.startswith("Prove that "):

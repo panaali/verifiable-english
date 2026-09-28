@@ -99,8 +99,8 @@ pairs, JSON object lookup after insertion, the `ULift` lift) audited with the sa
 * **Meaning ids (3.5).** A command's `ast` is `{"command": {"force", "act", "args", "guard"}}`, plus, for a
   proof task (a slot of sort `query`), `"query": {"id", "premises": [premise meaning ids], "target": target
   meaning id}`; a question's is `{"question": {"mode", ...}}` with its body, sort and domain in wording order, the
-  query's identity for `follows`, or the set and version. The spec fixes what is bound, not this JSON shape;
-  Python must adopt the same shape before the ids can be compared.
+  query's identity for `follows`, or the set and version. Spec draft 5 (3.5) fixes this JSON shape, and
+  Python's `SpeechDocument.meaning_ids` digests the same objects (conformance-tested for both query kinds).
 * **Paraphrases** follow 2.1 (`In this task, you are required to click check.`); fixture α's "you must" wording
   is not used. A guard renders as `, where the stated condition holds` until the English layer exists.
 * **Premise status.** Lean has no search budget; without evidence the status is `UNKNOWN (no premise-status
