@@ -11,6 +11,7 @@ import re
 from .ast import decimal_from_wire, MAX_NUMERAL_CHARS
 from .environment import INT_SORT, STRING_SORT, valid_identifier
 from .errors import ResourceLimit, TypeMismatch, UnsupportedProfile, VEError
+from .limits import MAX_NODES
 from .wire import canonical_json, digest, require_fields
 
 SCHEMA = "ve-units@1"
@@ -448,6 +449,20 @@ class _Elaborator:
         return [op, aq, bq], ["and", both, body]
 
 
+def _source_nodes(formula):
+    """Every array node of the submitted formula counts toward 10,000, checked
+    before elaboration so a statement's first diagnostic does not depend on where
+    its type errors sit (Lean `jsonNodes`, Rust `budget`)."""
+    count, stack = 0, [formula]
+    while stack:
+        node = stack.pop()
+        if type(node) is list:
+            count += 1
+            if count > 10000:
+                raise ResourceLimit("Quantity AST exceeds node or depth limit")
+            stack.extend(node)
+
+
 def elaborate_quantity(env, payload):
     """Return canonical annotated payload and regenerated frozen-core formula data."""
     _fields(payload, ("format", "formula"), ("traces", "Q"))
@@ -460,6 +475,7 @@ def elaborate_quantity(env, payload):
         # Trace declarations exist only for trace_all/trace_some, which need
         # integer binders; Rust and Lean gate them identically.
         raise UnsupportedProfile("trace declarations require the missing numbers2 route")
+    _source_nodes(payload["formula"])
     q, core = _Elaborator(env).formula(payload["formula"])
     if "Q" in payload and canonical_json(payload["Q"]) != canonical_json(q):
         raise VEError("Quantity Q differs from regenerated formula")
@@ -526,7 +542,21 @@ def _core_problem(env, premises, conclusion):
                   {"environment_id": env.environment_id, "ast": canonical})
            for canonical, _ in admitted]
     cores = [formula_from_data(target, core) for _, core in admitted]
+    check_quantity_limits(cores)
     return target, ids, cores
+
+
+AGGREGATE_LIMIT = "premises and conclusion exceed aggregate 10000-node limit"
+
+
+def check_quantity_limits(cores):
+    """The static limits of a quantity problem, after each statement's own limits
+    and before any model is decoded, certificate read or evaluation run: the
+    regenerated cores (premises, then the conclusion) have at most 10,000 formula
+    and term nodes together (Lean `quantityLimits`, Rust `quantity_limits`)."""
+    from .search import _node_count
+    if sum(_node_count(core) for core in cores) > MAX_NODES:
+        raise ResourceLimit(AGGREGATE_LIMIT)
 
 
 def prove_quantity(env, premises, conclusion, *, max_steps=10_000):
