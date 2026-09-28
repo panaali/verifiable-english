@@ -253,3 +253,62 @@ def test_w2_units_are_decoded_as_lean_decodes_them():
                 {**plain, "kind": ["attributed", "article", "says", "asserted"]}):
         with pytest.raises(VEError):
             ReportsDocument(environment(), contexts(), [], [unit(report()), bad])
+
+
+A1_RECORD = {"id": "a1", "context": "e1", "decided_by": "unresolved_decider", "necessary": [], "sufficient": [],
+             "factors": [], "precedents": [], "jurisdiction": "news_desk", "version": 1}
+MAY = {"assessment": {"judgment": "may", "record": "a1", "content": {"ast": SAFE}}}
+GENUINE = {"name": "genuine", "arguments": ["person"], "decided_by": "unresolved_decider", "necessary": [],
+           "sufficient": [], "factors": [], "precedents": [], "jurisdiction": "news_desk", "version": 1}
+
+
+def test_open_content_is_open_coverage(tmp_path):
+    """Astra A / Fable B: every report wrapper was forced CHECKED, so a report whose
+    content carries an open term (a nested `may` assessment, a denied assessment, or a
+    declared W2 open term) counted its whole span CHECKED, and an explicit OPEN status
+    was rejected."""
+    nested = reported(report(MAY), ["attributed", "article", "says", ["hedged", "could", "asserted"]],
+                      {"open": ["reports__may__1"]})
+    denied = reported({"negated": MAY}, ["hedged", "could", "asserted"], {"open": ["reports__may__1"]})
+    declared = reported(meaning={"open": ["genuine"]})
+    cases = [("The article says that, according to the stated assessment, alice may be safe.\n", nested),
+             ("It is not the case that, according to the stated assessment, alice may be safe.\n", denied),
+             ("The article says that alice is safe.\n", declared)]
+    front = {"assessments": [A1_RECORD], "open_terms": [GENUINE]}
+    for text, piece in cases:
+        for explicit in ({}, {"status": "OPEN"}):
+            result = check_document(write_report_document(tmp_path, [(text, {**piece, **explicit})], **front))
+            assert result["coverage"]["bytes_by_status"] == {"OPEN": len(text.encode())}, result["coverage"]
+        with pytest.raises(VEError, match="unit status contradicts"):
+            check_document(write_report_document(tmp_path, [(text, {**piece, "status": "CHECKED"})], **front))
+    # The graph-level status follows the units: an admitted document with an open unit is OPEN.
+    graph = {"root": "R", "nodes": [{"name": "R", "label": "report:u1", "unit": "u1",
+                                     "ast": ["unary", "reports__says__1", ["const", "article"]]}]}
+    result = check_document(write_report_document(tmp_path, [cases[2]], graph=graph, **front))
+    assert result["admission"]["admitted"] is True and result["status"] == "OPEN"
+    with pytest.raises(VEError, match="meaning of u1"):
+        check_document(write_report_document(tmp_path, [(cases[0][0], {**nested, "meaning": "specified"})], **front))
+
+
+def test_report_documents_carry_the_premise_set_line(tmp_path):
+    """Fable B: the reports path returned CHECKED from unit statuses alone, with no
+    premise_status and no admission.vacuous (7.1 row 4), so a document whose signed
+    report atoms are inconsistent reported CHECKED."""
+    atom = ["unary", "reports__says__1", ["const", "article"]]
+    graph = {"root": "R", "nodes": [{"name": "R", "label": "report:u1", "unit": "u1", "ast": atom}]}
+    text = "The article says that alice is safe.\n"
+    consistent = check_document(write_report_document(tmp_path, [(text, reported())], graph=graph))
+    assert consistent["premises"]["status"] == "model"
+    assert consistent["admission"]["vacuous"] is False and consistent["status"] == "CHECKED"
+    denied = ("It is not the case that the article says that alice is safe.\n", reported({"negated": report()}))
+    inconsistent = check_document(write_report_document(tmp_path, [(text, reported()), denied], graph=graph))
+    assert inconsistent["premises"]["status"] == "INCONSISTENT"
+    assert inconsistent["admission"]["vacuous"] is True and inconsistent["status"] == "UNVERIFIED"
+    # Author assertions are part of Γ: a report beside an asserted contradiction is vacuous too.
+    contradiction = ("Alice is not safe.\n", {"kind": "asserted", "meaning": "specified", "support": "assumption",
+                                                "content": {"ast": ["and", SAFE, ["not", SAFE]]}})
+    vacuous = check_document(write_report_document(tmp_path, [(text, reported()), contradiction], graph=graph))
+    assert vacuous["premises"]["status"] == "INCONSISTENT" and vacuous["status"] == "UNVERIFIED"
+    # Without a graph the line is still reported.
+    assert check_document(write_report_document(tmp_path, [(text, reported()), denied]))["premises"]["status"] \
+        == "INCONSISTENT"

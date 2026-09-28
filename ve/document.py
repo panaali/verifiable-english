@@ -272,7 +272,9 @@ def load_document(path: str | Path):
             original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
             if "meaning_id" in original and original["meaning_id"] != u["meaning_id"]:
                 raise VEError("unit meaning id does not match content")
-            u["status"] = "OPEN" if reports._is_assessment(u["content"]) else "CHECKED"
+        # A report unit's status stays the one its meaning gives (6): OPEN when its
+        # content carries an open term, which ReportsDocument forces for every tree
+        # with an assessment node, nested or not (3.3); CHECKED otherwise.
     from .norms import NormDocument
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
@@ -421,9 +423,26 @@ def check_document(path):
         result = {"format": "ve-document@1", "status": "UNVERIFIED",
                   "source_id": doc["source_id"], "document_id": doc["document_id"],
                   "coverage": coverage(doc), "reports": checked}
+        # 7.1 row 4: P0's premise-set line over Background(E_reports) ++ Γ, where Γ
+        # is the report premises, the author's asserted units and the graph's
+        # admitted leaves, as in the plain W2 path.
+        extended = doc["reports"].extended_environment
+        premises = [formula_from_data(extended, p["ast"]) for p in checked["premises"]]
+        premises += [formula_from_data(extended, ast) for ast in _fixed_premises(doc, [])]
         if "graph" in route_doc:
             result["admission"] = run_case("admission", environment, route_doc)
-            result["status"] = "OPEN" if any(u["status"] == "OPEN" for u in doc["units"]) else "CHECKED"
+            premises += [formula_from_data(extended, a["ast"])
+                         for a in result["admission"]["report"]["assumptions"]]
+        result["premises"] = premise_status(extended, premises)
+        status = result["premises"]["status"]
+        if "admission" in result:
+            result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
+                                               False if status == "model" else None)
+            # CHECKED needs an admitted graph over a premise set with a model: an
+            # inconsistent (or undecided) set makes every certificate vacuous.
+            if status == "model":
+                result["status"] = ("OPEN" if any(u["status"] == "OPEN" for u in doc["units"])
+                                    else "CHECKED")
         return result
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
