@@ -16,6 +16,7 @@ from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
+from ve.background import background
 from ve.identity import meaning_id
 from ve.model import FiniteModel
 from ve.closure import induction_step
@@ -45,6 +46,20 @@ def invoke(binary, command, cases, *, errors=False):
                             capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode == int(errors), result.stdout + result.stderr
     return json.loads(result.stdout)
+
+
+def test_nary_route_regenerates_literal_background(lean_binary):
+    raw = environment(3).to_dict()
+    raw["vocabulary"]["constants"].update({
+        "litone": {"sort": "$string"}, "littwo": {"sort": "$string"}})
+    env = Environment(raw)
+    row = invoke(lean_binary, "route", [{"id": "nary-background",
+        "kind": "background", "environment": env.to_dict()}])[0]
+    from ve.ast import formula_to_data
+    premises = background(env)
+    assert row["status"] == "ok"
+    assert row["background"] == [formula_to_data(env, item.formula) for item in premises]
+    assert row["generators"] == [item.generator for item in premises]
 
 
 @pytest.fixture(scope="module")

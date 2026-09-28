@@ -60,6 +60,8 @@ def run (profiles : List String) (environment : Json) (id kind : String)
     (j : Json) : Except String Json := do
   let v ← Bridge.decodeEnvironment environment
   let E := v.environment
+  if kind == "background" then
+    return VE.Route.Wire.runBackground id (VE.Route.Background.background (literals v))
   if kind == "evaluate" then
     let M ← decodeModel v (← j.getObjVal? "model")
     let fs ← Bridge.decodeFormulas E (← j.getObjVal? "ast")
