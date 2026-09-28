@@ -1189,18 +1189,24 @@ class EnglishParser:
         self.space()
         inner = ((block['action'], 'that other ' + noun if mode != 'every' else 'that ' + noun), *scope)
 
+        def verb_atom():
+            reference = inner[0][1]
+            if self.source[self.i:].startswith(reference + ' '):
+                return self.atom(inner)
+            return self.atom(inner, relative=True)
+
         def verb_phrase():
             if self.take('either '):
-                left = self.atom(inner, relative=True)
+                left = verb_atom()
                 self.need(' or ')
-                right = self.atom(inner, relative=True)
+                right = verb_atom()
                 self.take(', or both')
                 return ast.Or(left, right)
             if self.take('both '):
-                left = self.atom(inner, relative=True)
+                left = verb_atom()
                 self.need(' and ')
-                return ast.And(left, self.atom(inner, relative=True))
-            return self.atom(inner, relative=True)
+                return ast.And(left, verb_atom())
+            return verb_atom()
 
         body = verb_phrase()
         lifted_owner = ast.Var(owner.index + 1) if type(owner) is ast.Var else owner
@@ -1695,12 +1701,14 @@ def english_lark_grammar(env, **options):
         action_noun = content_lit(words.sorts[block['action']])
         rules += [
             '%extend formula: alt_available_guard',
+            '%extend term: ' + content_lit('that other ' + words.sorts[block['action']]),
             'alt_available_guard: "every" ' + action_noun + ' "available" "to" term alt_verb_phrase'
             ' | "every" "other" ' + action_noun + ' "available" "to" term alt_verb_phrase'
             ' | "another" ' + action_noun + ' "available" "to" term alt_verb_phrase',
-            'alt_verb_phrase: relative | "either" relative "or" relative'
-            ' | "either" relative "or" relative ", or both"'
-            ' | "both" relative "and" relative',
+            'alt_verb_phrase: relative | atom | "either" alt_verb_atom "or" alt_verb_atom'
+            ' | "either" alt_verb_atom "or" alt_verb_atom ", or both"'
+            ' | "both" alt_verb_atom "and" alt_verb_atom',
+            'alt_verb_atom: relative | atom',
         ]
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT

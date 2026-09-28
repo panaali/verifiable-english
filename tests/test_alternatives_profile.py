@@ -238,6 +238,12 @@ def test_available_guard_forms_bind_owner_and_distinguish_other_action():
              "available to r either prevents h or allows h to happen.")
     rendered, manifest = render_norm_english(disjunctive)
     assert parse_norm_english(env, rendered, manifest).document_hash == disjunctive.document_hash
+    explicit = parse_norm_english(
+        env, "Rule 1. Every action may be done, if every other action "
+             "available to r that other action prevents h.")
+    assert explicit.rules[0].guard == parse_norm_english(
+        env, "Rule 1. Every action may be done, if every other action "
+             "available to r prevents h.").rules[0].guard
     with pytest.raises(VEError, match="Another action needs a rule on an action"):
         parse_english_with_metadata(env, "another action available to r prevents h.")
     with pytest.raises(VEError, match="there is a robot such that"):
