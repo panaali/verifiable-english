@@ -1,6 +1,7 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
+import VE.Route.Closure
 import VE.Route.Decode
 import VE.Route.Flags
 import VE.Time.Document
@@ -1114,3 +1115,36 @@ import VE.Norms.Run
 #print axioms VE.Route.Flags.totalFast_iff
 #print axioms VE.Route.Flags.fastFlags_iff
 #print axioms VE.Route.Flags.fastFlags_eq
+#print axioms VE.Route.Budget.body_value
+#print axioms VE.Route.Budget.body_valueN
+#print axioms VE.Route.Budget.named_value
+#print axioms VE.Route.Budget.named_valueN
+#print axioms VE.Route.Closure.bodyClosure_spec
+#print axioms VE.Route.Closure.cacheOK_empty
+#print axioms VE.Route.Closure.cacheOK_insert
+#print axioms VE.Route.Closure.contains_insert
+#print axioms VE.Route.Closure.contains_insertAll
+#print axioms VE.Route.Closure.contains_insertRow
+#print axioms VE.Route.Closure.contains_namedEdgesH
+#print axioms VE.Route.Closure.contains_namedEdges_go
+#print axioms VE.Route.Closure.contains_pivotH
+#print axioms VE.Route.Closure.endpointSet_go
+#print axioms VE.Route.Closure.forPairs_row_spec
+#print axioms VE.Route.Closure.forPairs_spec
+#print axioms VE.Route.Closure.namedClosure_spec
+#print axioms VE.Route.Closure.namedEdgesH_inside
+#print axioms VE.Route.Closure.path_congr
+#print axioms VE.Route.Closure.path_core_iff
+#print axioms VE.Route.Closure.pivotH_closed
+#print axioms VE.Route.Closure.pivotH_extends
+#print axioms VE.Route.Closure.pivotH_inside
+#print axioms VE.Route.Closure.pivotH_preserves
+#print axioms VE.Route.Closure.reachValue_closure
+#print axioms VE.Route.Closure.reachValue_core
+#print axioms VE.Route.Closure.warshallH_closed
+#print axioms VE.Route.Closure.warshallH_extends
+#print axioms VE.Route.Closure.warshallH_iff
+#print axioms VE.Route.Closure.warshallH_inside
+#print axioms VE.Route.Closure.warshallH_preserves
+#print axioms VE.Route.Closure.warshallH_sound
+#print axioms VE.Route.Closure.warshallRun_eq

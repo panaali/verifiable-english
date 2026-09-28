@@ -458,3 +458,103 @@ def test_flags_are_checked_in_one_pass_three_ways():
         assert got["status"] == "error" and got["error"].startswith("InvalidModel(flags)"), got
         [other] = rust([{"id": "b", "environment": env, "model": data, "ast": [["top"]]}])
         assert other["error"]["code"] == "InvalidModel" and "flags" in other["error"]["message"], other
+
+
+# --- Closure families ----------------------------------------------------------
+
+CLOSURE = ("closure@0", "relational-fol@0")
+NARY = ("closure@0", "nary@0", "relational-fol@0")
+
+
+def closure_env(profiles):
+    return envelope({"sorts": {"s": {"description": "items"}},
+                     "predicates": {"e": {"arguments": ["s", "s"], "description": "e"}},
+                     "constants": {"a": {"sort": "s", "description": "a"},
+                                   "b": {"sort": "s", "description": "b"}}}, profiles)
+
+
+def chain(n, reverse=False):
+    names = [f"n{i:04d}" for i in range(n)]
+    domain = names[::-1] if reverse else names
+    return {"complete": True, "domains": {"s": domain}, "constants": {"a": names[0], "b": names[-1]},
+            "relations": {"e": [[names[i], names[i + 1]] for i in range(n - 1)]}}
+
+
+NAMED = ["reach", "plus", ["named", "e"], ["const", "a"], ["const", "b"]]
+BODY = ["reach", "plus", ["body", "s", ["binary", "e", ["var", 1], ["var", 0]]],
+        ["const", "a"], ["const", "b"]]
+
+
+def python_status(env, formula, data):
+    e = Environment(env)
+    result = evaluate(e, formula_from_data(e, formula), FiniteModel.from_dict(e, data), trace=False)
+    return result.value, result.evaluations
+
+
+def closure_agrees(env, formula, data):
+    value, work = python_status(env, formula, data)
+    case = {"id": "r", "environment": env, "model": data, "ast": [formula]}
+    [got] = lean([{**case, "kind": "evaluate"}])
+    [other] = rust([case])
+    if value is None:
+        lean_limit(got, "MAX_EVALUATIONS")
+        rust_limit(other)
+    else:
+        assert got["status"] == "ok" and got["values"] == [value], got
+        assert other["status"] == "ok" and other["values"] == [value], other
+    return value, work
+
+
+@pytest.mark.parametrize("profiles", [CLOSURE, NARY])
+def test_named_closure_charges_meet_the_budget_at_the_same_chain_length(profiles):
+    """A named chain costs 1 + (n − 1) rows + n² pivot visits + the
+    incoming × outgoing pairs: 816 entities fit the budget, 817 do not."""
+    env = closure_env(profiles)
+    assert closure_agrees(env, NAMED, chain(816)) == (True, 998377)
+    assert closure_agrees(env, NAMED, chain(817))[0] is None
+    # Domain order does not change the charges: named pivots are sorted endpoints.
+    assert closure_agrees(env, NAMED, chain(816, reverse=True)) == (True, 998377)
+
+
+@pytest.mark.parametrize("profiles", [CLOSURE, NARY])
+def test_body_closure_charges_meet_the_budget_at_the_same_domain_size(profiles):
+    env = closure_env(profiles)
+    fits = [n for n in (600, 610, 620, 630, 640) if python_status(env, BODY, chain(n))[0] is not None]
+    boundary = max(fits)
+    assert boundary < 640
+    assert closure_agrees(env, BODY, chain(boundary))[0] is True
+    assert closure_agrees(env, BODY, chain(boundary + 10))[0] is None
+    # Body pivots are the whole sort, in sorted order, however the domain is sent.
+    assert closure_agrees(env, BODY, chain(boundary, reverse=True))[0] is True
+
+
+@pytest.mark.parametrize("profiles", [CLOSURE, NARY])
+def test_closure_cache_is_charged_once_per_edge_and_bindings(profiles):
+    """A repeated closure under the same bindings is charged once; under a
+    binder its key includes the binding, so it is charged per entity."""
+    env = closure_env(profiles)
+    data = chain(700)
+    value, work = closure_agrees(env, ["and", NAMED, NAMED], data)
+    assert value is True and work == 734651 + 2
+    assert closure_agrees(env, ["exists", "s", ["not", NAMED]], data)[0] is None
+
+
+@pytest.mark.parametrize("profiles", [CLOSURE, NARY])
+def test_closure_countermodel_budget_three_ways(profiles):
+    env = closure_env(profiles)
+    data = chain(817)
+    e = Environment(env)
+    checked = check_countermodel(e, [], formula_from_data(e, ["not", NAMED]), FiniteModel.from_dict(e, data))
+    assert checked.status == "ResourceLimit"
+    case = {"id": "m", "environment": env, "model": data, "premises": [], "conclusion": ["not", NAMED]}
+    [got] = lean([{**case, "kind": "countermodel"}])
+    lean_limit(got, "MAX_EVALUATIONS")
+    [other] = rust([case])
+    assert other["status"] == "ResourceLimit" and other["valid"] is False, other
+    # On 816 entities the closure fits (1 + 998,377 units) and refutes ¬reach.
+    fitting = {**case, "model": chain(816)}
+    e816 = FiniteModel.from_dict(e, chain(816))
+    assert check_countermodel(e, [], formula_from_data(e, ["not", NAMED]), e816).status == "Valid"
+    [got] = lean([{**fitting, "kind": "countermodel"}])
+    [other] = rust([fitting])
+    assert got["refutes"] is True and other["valid"] is True and other["status"] == "Valid", (got, other)

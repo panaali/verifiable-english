@@ -4,6 +4,7 @@ import VE.Core.Consequence
 import VE.Definitions.Layer
 import VE.Order.Wire
 import VE.Time.Budget
+import VE.Route.Closure
 
 /-! The Python/Rust evaluation budget on the `route` subcommand.
 
@@ -395,17 +396,15 @@ deriving instance Hashable for VE.Closure.Formula
 deriving instance Hashable for VE.Core.Kind
 deriving instance Hashable for VE.Core.Formula
 
-/-- Work spent and the closures already built, by edge and outer bindings. -/
-structure Meter (K : Type) [BEq K] [Hashable K] where
-  work : Nat
-  cache : Std.HashSet (K × List Entity)
+open VE.Route.Closure (Edges Meter EdgeKey CacheOK reachValue namedClosure warshallRun forPairs)
 
-def tickM {K : Type} [BEq K] [Hashable K] (limit : Nat) (s : Meter K)
-    (k : Meter K → Option (Bool × Meter K)) : Option (Bool × Meter K) :=
+/-- Charge one formula visit (Python `tick`) and keep the closures. -/
+def tickM {F : Type} [DecidableEq F] [Hashable F] (limit : Nat) (s : Meter F)
+    (k : Meter F → Option (Bool × Meter F)) : Option (Bool × Meter F) :=
   if limit ≤ s.work then none else k { s with work := s.work + 1 }
 
-theorem tickM_some {K : Type} [BEq K] [Hashable K] {limit : Nat} {s : Meter K}
-    {k : Meter K → Option (Bool × Meter K)} {r : Bool × Meter K} (h : tickM limit s k = some r) :
+theorem tickM_some {F : Type} [DecidableEq F] [Hashable F] {limit : Nat} {s : Meter F}
+    {k : Meter F → Option (Bool × Meter F)} {r : Bool × Meter F} (h : tickM limit s k = some r) :
     k { s with work := s.work + 1 } = some r := by
   unfold tickM at h
   split at h
@@ -420,91 +419,71 @@ def quantS {β σ : Type} (universal : Bool) (step : β → σ → Option (Bool 
     | none => none
     | some (b, s') => if b = universal then quantS universal step vs s' else some (!universal, s')
 
-theorem quantS_sound {β σ : Type} (universal : Bool) (step : β → σ → Option (Bool × σ))
-    (g : β → Bool) : ∀ (l : List β),
-    (∀ v ∈ l, ∀ s r, step v s = some r → r.1 = g v) →
-    ∀ s r, quantS universal step l s = some r →
-      r.1 = (if universal then l.all g else l.any g)
-  | [], _, s, r, h => by
+/-- A quantifier loop's value is the reference value, and it keeps any
+invariant its steps keep. -/
+theorem quantS_sound {β σ : Type} (P : σ → Prop) (universal : Bool)
+    (step : β → σ → Option (Bool × σ)) (g : β → Bool) : ∀ (l : List β),
+    (∀ v ∈ l, ∀ s r, P s → step v s = some r → r.1 = g v ∧ P r.2) →
+    ∀ s r, P s → quantS universal step l s = some r →
+      r.1 = (if universal then l.all g else l.any g) ∧ P r.2
+  | [], _, s, r, hs, h => by
     simp only [quantS, Option.some.injEq] at h
-    subst h; cases universal <;> rfl
-  | v :: vs, hs, s, r, h => by
+    subst h; cases universal <;> exact ⟨rfl, hs⟩
+  | v :: vs, hst, s, r, hs, h => by
     simp only [quantS] at h
     split at h
     · cases h
     · rename_i b s' hstep
-      have hb : b = g v := hs v (List.mem_cons_self ..) s (b, s') hstep
+      obtain ⟨hb, hs'⟩ := hst v (List.mem_cons_self ..) s (b, s') hs hstep
+      simp only at hb
       split at h
       · rename_i hu
-        have := quantS_sound universal step g vs
-          (fun x hx => hs x (List.mem_cons_of_mem _ hx)) s' r h
-        rw [this]
+        obtain ⟨hr, hP⟩ := quantS_sound P universal step g vs
+          (fun x hx => hst x (List.mem_cons_of_mem _ hx)) s' r hs' h
+        refine ⟨?_, hP⟩
+        rw [hr]
         subst hb
         cases universal <;> simp [List.all_cons, List.any_cons, hu]
       · rename_i hu
         simp only [Option.some.injEq] at h
         subst h
         subst hb
+        refine ⟨?_, hs'⟩
         cases universal <;> cases hg : g v <;> simp_all
-
-abbrev Edges := Std.HashSet (Entity × Entity)
-
-/-- Warshall charges over `domain` from `es`, as Python and Rust materialize
-each pivot: one unit per entity, then one per incoming × outgoing pair, whose
-edges are added before the next pivot. `none` when the budget runs out. -/
-def warshallWork (limit : Nat) (domain : List Entity) : List Entity → Edges → Nat → Option Nat
-  | [], _, w => some w
-  | pivot :: rest, es, w =>
-    let w := w + domain.length
-    if limit < w then none else
-    let incoming := domain.filter (fun x => es.contains (x, pivot))
-    let outgoing := domain.filter (fun y => es.contains (pivot, y))
-    let w := w + incoming.length * outgoing.length
-    if limit < w then none else
-    warshallWork limit domain rest
-      (incoming.foldl (fun es x => outgoing.foldl (fun es y => es.insert (x, y)) es) es) w
-
-/-- A named edge relation: one unit per row, then Warshall over its endpoints in
-Python `sorted` / Rust index order (one sort, so local-id order). -/
-def namedWork (limit : Nat) (rows : List (List Entity)) (w : Nat) : Option Nat :=
-  let w := w + rows.length
-  if limit < w then none else
-  let es : Edges := rows.foldl (fun es row => match row with
-    | [a, b] => es.insert (a, b)
-    | _ => es) {}
-  let ends : Std.HashSet Entity := es.fold (fun s e => (s.insert e.1).insert e.2) {}
-  let domain := ends.toList.mergeSort fun a b => decide (a.2 < b.2) || (a.2 == b.2 && decide (a.1 ≤ b.1))
-  warshallWork limit domain domain es w
-
-/-- The body of a body-edge closure at every (x, y) of its sort, x slowest,
-with valuation `y :: x :: ρ`, collecting the true pairs. -/
-def forPairs {σ : Type} (step : Entity → Entity → σ → Option (Bool × σ)) (domain : List Entity) :
-    List Entity → Edges → σ → Option (Edges × σ)
-  | [], es, s => some (es, s)
-  | x :: xs, es, s => match row x domain es s with
-    | none => none
-    | some (es, s) => forPairs step domain xs es s
-where
-  row (x : Entity) : List Entity → Edges → σ → Option (Edges × σ)
-    | [], es, s => some (es, s)
-    | y :: ys, es, s => match step x y s with
-      | none => none
-      | some (b, s) => row x ys (if b then es.insert (x, y) else es) s
 
 /-! ## Closure formulas -/
 
-/-- A closure's cache key without its bindings: Python `f.edge`, Rust `Edge`. -/
-inductive EdgeKey (F : Type) where
-  | named (relation : String)
-  | body (sort : String) (formula : F)
-  deriving BEq, Hashable
+/-- The edges of a cached closure: a named relation's rows, or the body's true
+pairs over its sort under the key's outer bindings. -/
+def closureRel (M : VE.FiniteModel Entity) :
+    EdgeKey VE.Closure.Formula × List Entity → Entity → Entity → Prop
+  | (.named p, _) => fun x y => [x, y] ∈ M.relations p
+  | (.body s a, ρ) => fun x y => x ∈ M.domains s ∧ y ∈ M.domains s ∧ a.eval M (y :: x :: ρ) = true
 
-abbrev CKey := EdgeKey VE.Closure.Formula
+theorem named_value (M : VE.FiniteModel Entity) (k : VE.Closure.Kind) (p : String) (t u : VE.Term)
+    (ρ : List Entity) (c : Edges)
+    (hc : ∀ a b, c.contains (a, b) = true ↔ VE.Closure.Path (fun x y => [x, y] ∈ M.relations p) a b) :
+    reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
+      (VE.Closure.Formula.reachNamed k p t u).eval M ρ := by
+  simp only [VE.Closure.Formula.eval]
+  cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+  exact VE.Route.Closure.reachValue_closure k c _ _ (VE.Closure.mem_namedEdges _) hc _ _
 
-/-- The budgeted closure evaluator; closure values come from the reference
-evaluator once the closure's construction has been charged. -/
+theorem body_value (M : VE.FiniteModel Entity) (k : VE.Closure.Kind) (x : String)
+    (a : VE.Closure.Formula) (t u : VE.Term) (ρ : List Entity) (c : Edges)
+    (hc : ∀ v w, c.contains (v, w) = true ↔ VE.Closure.Path (closureRel M (.body x a, ρ)) v w) :
+    reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
+      (VE.Closure.Formula.reachBody k x a t u).eval M ρ := by
+  simp only [VE.Closure.Formula.eval]
+  cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+  exact VE.Route.Closure.reachValue_closure k c _ _ (VE.Closure.mem_bodyEdges _ _) hc _ _
+
+/-- The budgeted closure evaluator. A reachability node charges its visit and,
+unless its closure is cached for these bindings, the closure's construction;
+its value is read from the closure (`evalC_sound`). -/
 def evalC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
-    List Entity → VE.Closure.Formula → Meter CKey → Option (Bool × Meter CKey)
+    List Entity → VE.Closure.Formula → Meter VE.Closure.Formula →
+      Option (Bool × Meter VE.Closure.Formula)
   | ρ, .not a, s => tickM limit s fun s => (evalC mem M limit ρ a s).map fun r => (!r.1, r.2)
   | ρ, .and a b, s => tickM limit s fun s => match evalC mem M limit ρ a s with
     | none => none
@@ -523,18 +502,22 @@ def evalC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (l
   | ρ, .ex x a, s => tickM limit s fun s =>
     quantS false (fun v => evalC mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .reachNamed k p t u, s => tickM limit s fun s =>
-    let value := (VE.Closure.Formula.reachNamed k p t u).eval M ρ
-    let key : CKey × List Entity := (.named p, ρ)
-    if s.cache.contains key then some (value, s) else
-    (namedWork limit (M.relations p) s.work).map fun w => (value, ⟨w, s.cache.insert key⟩)
+    let value := fun c => reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ)
+    let key := (EdgeKey.named p, ρ)
+    match s.cache[key]? with
+    | some c => some (value c, s)
+    | none => (namedClosure limit (M.relations p) s.work).map
+        fun r => (value r.1, ⟨r.2, s.cache.insert key r.1⟩)
   | ρ, .reachBody k x a t u, s => tickM limit s fun s =>
-    let value := (VE.Closure.Formula.reachBody k x a t u).eval M ρ
-    let key : CKey × List Entity := (.body x a, ρ)
-    if s.cache.contains key then some (value, s) else
-    match forPairs (fun v w => evalC mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
-    | none => none
-    | some (es, s) => (warshallWork limit (M.domains x) (M.domains x) es s.work).map
-        fun w => (value, ⟨w, s.cache.insert key⟩)
+    let value := fun c => reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ)
+    let key := (EdgeKey.body x a, ρ)
+    match s.cache[key]? with
+    | some c => some (value c, s)
+    | none =>
+      match forPairs (fun v w => evalC mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
+      | none => none
+      | some (es, s) => (warshallRun limit (M.domains x) (M.domains x) es s.work).map
+          fun r => (value r.1, ⟨r.2, s.cache.insert key r.1⟩)
   | ρ, .unary p t, s => tickM limit s fun s => some ((match t.denote M.asStructure ρ with
       | some v => mem p [v]
       | none => false), s)
@@ -544,119 +527,151 @@ def evalC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (l
       | _, _ => false), s)
   | ρ, f, s => tickM limit s fun s => some (f.eval M ρ, s)
 
+/-- A budgeted closure value is the reference value, and every cached closure
+stays the finite paths of its edges. -/
 theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
     (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
-    ∀ (f : VE.Closure.Formula) (ρ : List Entity) (s : Meter CKey) (r : Bool × Meter CKey),
-      evalC mem M limit ρ f s = some r → r.1 = f.eval M ρ := by
+    ∀ (f : VE.Closure.Formula) (ρ : List Entity) (s : Meter VE.Closure.Formula)
+      (r : Bool × Meter VE.Closure.Formula), CacheOK (closureRel M) s →
+      evalC mem M limit ρ f s = some r → r.1 = f.eval M ρ ∧ CacheOK (closureRel M) r.2 := by
   intro f
   induction f with
   | top | bottom | eq =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
-    subst h; rfl
+    subst h; exact ⟨rfl, hs⟩
   | unary p t =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
     subst h
+    refine ⟨?_, hs⟩
     simp only [VE.Closure.Formula.eval]
     cases t.denote M.asStructure ρ with
     | none => rfl
     | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | binary p t u =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
     subst h
+    refine ⟨?_, hs⟩
     simp only [VE.Closure.Formula.eval]
     cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
     exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | reachNamed k p t u =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
-    · simp only [Option.some.injEq] at h; subst h; rfl
-    · obtain ⟨w, _, hw⟩ := Option.map_eq_some_iff.mp h
-      subst hw; rfl
-  | reachBody k x a t u _ =>
-    intro ρ s r h
+    · rename_i c hcache
+      simp only [Option.some.injEq] at h
+      subst h
+      exact ⟨named_value M k p t u ρ c (hs _ c hcache), hs⟩
+    · obtain ⟨⟨c, w⟩, hn, rfl⟩ := Option.map_eq_some_iff.mp h
+      have hc := VE.Route.Closure.namedClosure_spec _ _ _ c w hn
+      exact ⟨named_value M k p t u ρ c hc, VE.Route.Closure.cacheOK_insert hs (EdgeKey.named p, ρ) c hc w⟩
+  | reachBody k x a t u ih =>
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
-    · simp only [Option.some.injEq] at h; subst h; rfl
+    · rename_i c hcache
+      simp only [Option.some.injEq] at h
+      subst h
+      exact ⟨body_value M k x a t u ρ c (hs _ c hcache), hs⟩
     · split at h
       · cases h
-      · obtain ⟨w, _, hw⟩ := Option.map_eq_some_iff.mp h
-        subst hw; rfl
+      · rename_i es s₁ hpairs
+        obtain ⟨⟨c, w⟩, hw, rfl⟩ := Option.map_eq_some_iff.mp h
+        obtain ⟨hs₁, hes⟩ := VE.Route.Closure.forPairs_spec (CacheOK (closureRel M))
+          (fun v w => a.eval M (w :: v :: ρ)) _
+          (fun v w s r hs h => ih (w :: v :: ρ) s r hs h) (M.domains x) (M.domains x) {} es _ s₁ hs hpairs
+        have hes' : ∀ v w, es.contains (v, w) = true ↔
+            v ∈ M.domains x ∧ w ∈ M.domains x ∧ a.eval M (w :: v :: ρ) = true := by
+          intro v w; rw [hes]; simp
+        have hc := VE.Route.Closure.bodyClosure_spec limit (M.domains x) _ es hes' _ c w hw
+        exact ⟨body_value M k x a t u ρ c hc, VE.Route.Closure.cacheOK_insert hs₁ (EdgeKey.body x a, ρ) c hc w⟩
   | not a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     cases ha : evalC mem M limit ρ a { s with work := s.work + 1 } with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Closure.Formula.eval, ih ρ _ x ha]
+      obtain ⟨hx, hP⟩ := ih ρ _ x hs ha
+      exact ⟨by simp [VE.Closure.Formula.eval, hx], hP⟩
   | and a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Closure.Formula.eval, ← this, Bool.true_and]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.true_and]; exact hr, hP'⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Closure.Formula.eval, ← this]
+      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
   | or a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Closure.Formula.eval, ← this]
+      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Closure.Formula.eval, ← this, Bool.false_or]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.false_or]; exact hr, hP'⟩
   | implies a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Closure.Formula.eval, ← this, Bool.not_true, Bool.false_or]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.not_true, Bool.false_or]; exact hr, hP'⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Closure.Formula.eval, ← this]
+      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
   | all x a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
-    have := quantS_sound true _ (fun v => a.eval M (v :: ρ)) (M.domains x)
-      (fun v _ s r hv => ih _ s r hv) _ r h
-    simpa [VE.Closure.Formula.eval] using this
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
+    obtain ⟨hv, hP⟩ := quantS_sound (CacheOK (closureRel M)) true _ (fun v => a.eval M (v :: ρ))
+      (M.domains x) (fun v _ s r hs hv => ih _ s r hs hv) _ r hs h
+    exact ⟨by simpa [VE.Closure.Formula.eval] using hv, hP⟩
   | ex x a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
-    have := quantS_sound false _ (fun v => a.eval M (v :: ρ)) (M.domains x)
-      (fun v _ s r hv => ih _ s r hv) _ r h
-    simpa [VE.Closure.Formula.eval] using this
+    have hs : CacheOK (closureRel M) { s with work := s.work + 1 } := hs
+    obtain ⟨hv, hP⟩ := quantS_sound (CacheOK (closureRel M)) false _ (fun v => a.eval M (v :: ρ))
+      (M.domains x) (fun v _ s r hs hv => ih _ s r hs hv) _ r hs h
+    exact ⟨by simpa [VE.Closure.Formula.eval] using hv, hP⟩
 
 /-- Premises first under one budget, a fresh closure cache per formula (Python
 witness checking, Rust `clear_closures`). -/
@@ -680,18 +695,19 @@ theorem refutesC_sound (mem : String → List Entity → Bool) (M : VE.FiniteMod
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Closure.countermodelCheck, evalC_sound mem M limit hmem c [] _ x hc]
+      simp [VE.Closure.countermodelCheck,
+        (evalC_sound mem M limit hmem c [] _ x (VE.Route.Closure.cacheOK_empty _ w) hc).1]
   | p :: ps, c, w, b, h => by
     simp only [refutesC] at h
     split at h
     · cases h
     · rename_i s' hp
-      have := evalC_sound mem M limit hmem p [] _ _ hp
+      have := (evalC_sound mem M limit hmem p [] _ _ (VE.Route.Closure.cacheOK_empty _ w) hp).1
       simp only [Option.some.injEq] at h
       subst h
       simp [VE.Closure.countermodelCheck, ← this]
     · rename_i s' hp
-      have := evalC_sound mem M limit hmem p [] _ _ hp
+      have := (evalC_sound mem M limit hmem p [] _ _ (VE.Route.Closure.cacheOK_empty _ w) hp).1
       rw [refutesC_sound mem M limit hmem ps c _ b h]
       simp [VE.Closure.countermodelCheck, ← this]
 
@@ -721,18 +737,44 @@ theorem valuesC_sound (mem : String → List Entity → Bool) (M : VE.FiniteMode
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := evalC_sound mem M _ hmem f [] _ (b, s) hf
+        have hb := (evalC_sound mem M _ hmem f [] _ (b, s) (VE.Route.Closure.cacheOK_empty _ 0) hf).1
         simp only at hb
         rw [ih bs hr, hb]
         rfl
 
 /-! ## Closure with n-ary atoms -/
 
-abbrev NKey := EdgeKey VE.Core.Formula
+/-- The edges of a cached closure: a named relation's rows, or the body's true
+pairs over its sort under the key's outer bindings. -/
+def closureRelN (M : VE.FiniteModel Entity) :
+    EdgeKey VE.Core.Formula × List Entity → Entity → Entity → Prop
+  | (.named p, _) => fun x y => [x, y] ∈ M.relations p
+  | (.body s a, ρ) => fun x y => x ∈ M.domains s ∧ y ∈ M.domains s ∧ a.eval M (y :: x :: ρ) = true
 
-/-- The same budgeted evaluator over `VE.Core.Formula` (n-ary atoms are leaves). -/
+theorem named_valueN (M : VE.FiniteModel Entity) (k : VE.Core.Kind) (p : String) (t u : VE.Term)
+    (ρ : List Entity) (c : Edges)
+    (hc : ∀ a b, c.contains (a, b) = true ↔ VE.Closure.Path (fun x y => [x, y] ∈ M.relations p) a b) :
+    reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
+      (VE.Core.Formula.reachNamed k p t u).eval M ρ := by
+  simp only [VE.Core.Formula.eval]
+  cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+  exact VE.Route.Closure.reachValue_core k c _ _ (VE.Core.mem_namedEdges _) hc _ _
+
+theorem body_valueN (M : VE.FiniteModel Entity) (k : VE.Core.Kind) (x : String)
+    (a : VE.Core.Formula) (t u : VE.Term) (ρ : List Entity) (c : Edges)
+    (hc : ∀ v w, c.contains (v, w) = true ↔ VE.Closure.Path (closureRelN M (.body x a, ρ)) v w) :
+    reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
+      (VE.Core.Formula.reachBody k x a t u).eval M ρ := by
+  simp only [VE.Core.Formula.eval]
+  cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+  exact VE.Route.Closure.reachValue_core k c _ _ (VE.Core.mem_bodyEdges _ _) hc _ _
+
+/-- The budgeted closure evaluator. A reachability node charges its visit and,
+unless its closure is cached for these bindings, the closure's construction;
+its value is read from the closure (`evalN_sound`). -/
 def evalN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
-    List Entity → VE.Core.Formula → Meter NKey → Option (Bool × Meter NKey)
+    List Entity → VE.Core.Formula → Meter VE.Core.Formula →
+      Option (Bool × Meter VE.Core.Formula)
   | ρ, .not a, s => tickM limit s fun s => (evalN mem M limit ρ a s).map fun r => (!r.1, r.2)
   | ρ, .and a b, s => tickM limit s fun s => match evalN mem M limit ρ a s with
     | none => none
@@ -751,18 +793,22 @@ def evalN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (l
   | ρ, .ex x a, s => tickM limit s fun s =>
     quantS false (fun v => evalN mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .reachNamed k p t u, s => tickM limit s fun s =>
-    let value := (VE.Core.Formula.reachNamed k p t u).eval M ρ
-    let key : NKey × List Entity := (.named p, ρ)
-    if s.cache.contains key then some (value, s) else
-    (namedWork limit (M.relations p) s.work).map fun w => (value, ⟨w, s.cache.insert key⟩)
+    let value := fun c => reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ)
+    let key := (EdgeKey.named p, ρ)
+    match s.cache[key]? with
+    | some c => some (value c, s)
+    | none => (namedClosure limit (M.relations p) s.work).map
+        fun r => (value r.1, ⟨r.2, s.cache.insert key r.1⟩)
   | ρ, .reachBody k x a t u, s => tickM limit s fun s =>
-    let value := (VE.Core.Formula.reachBody k x a t u).eval M ρ
-    let key : NKey × List Entity := (.body x a, ρ)
-    if s.cache.contains key then some (value, s) else
-    match forPairs (fun v w => evalN mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
-    | none => none
-    | some (es, s) => (warshallWork limit (M.domains x) (M.domains x) es s.work).map
-        fun w => (value, ⟨w, s.cache.insert key⟩)
+    let value := fun c => reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ)
+    let key := (EdgeKey.body x a, ρ)
+    match s.cache[key]? with
+    | some c => some (value c, s)
+    | none =>
+      match forPairs (fun v w => evalN mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
+      | none => none
+      | some (es, s) => (warshallRun limit (M.domains x) (M.domains x) es s.work).map
+          fun r => (value r.1, ⟨r.2, s.cache.insert key r.1⟩)
   | ρ, .unary p t, s => tickM limit s fun s => some ((match t.denote M.asStructure ρ with
       | some v => mem p [v]
       | none => false), s)
@@ -776,129 +822,165 @@ def evalN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (l
       | none => false), s)
   | ρ, f, s => tickM limit s fun s => some (f.eval M ρ, s)
 
+/-- A budgeted closure value is the reference value, and every cached closure
+stays the finite paths of its edges. -/
 theorem evalN_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
     (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
-    ∀ (f : VE.Core.Formula) (ρ : List Entity) (s : Meter NKey) (r : Bool × Meter NKey),
-      evalN mem M limit ρ f s = some r → r.1 = f.eval M ρ := by
+    ∀ (f : VE.Core.Formula) (ρ : List Entity) (s : Meter VE.Core.Formula)
+      (r : Bool × Meter VE.Core.Formula), CacheOK (closureRelN M) s →
+      evalN mem M limit ρ f s = some r → r.1 = f.eval M ρ ∧ CacheOK (closureRelN M) r.2 := by
   intro f
   induction f with
   | top | bottom | eq =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
-    subst h; rfl
+    subst h; exact ⟨rfl, hs⟩
   | unary p t =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
     subst h
+    refine ⟨?_, hs⟩
     simp only [VE.Core.Formula.eval]
     cases t.denote M.asStructure ρ with
     | none => rfl
     | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | binary p t u =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
     subst h
+    refine ⟨?_, hs⟩
     simp only [VE.Core.Formula.eval]
     cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
     exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | atom p ts =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only [Option.some.injEq] at h
     subst h
+    refine ⟨?_, hs⟩
     simp only [VE.Core.Formula.eval]
     cases ts.mapM (·.denote M.asStructure ρ) with
     | none => rfl
     | some vs => exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | reachNamed k p t u =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
-    · simp only [Option.some.injEq] at h; subst h; rfl
-    · obtain ⟨w, _, hw⟩ := Option.map_eq_some_iff.mp h
-      subst hw; rfl
-  | reachBody k x a t u _ =>
-    intro ρ s r h
+    · rename_i c hcache
+      simp only [Option.some.injEq] at h
+      subst h
+      exact ⟨named_valueN M k p t u ρ c (hs _ c hcache), hs⟩
+    · obtain ⟨⟨c, w⟩, hn, rfl⟩ := Option.map_eq_some_iff.mp h
+      have hc := VE.Route.Closure.namedClosure_spec _ _ _ c w hn
+      exact ⟨named_valueN M k p t u ρ c hc, VE.Route.Closure.cacheOK_insert hs (EdgeKey.named p, ρ) c hc w⟩
+  | reachBody k x a t u ih =>
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
-    · simp only [Option.some.injEq] at h; subst h; rfl
+    · rename_i c hcache
+      simp only [Option.some.injEq] at h
+      subst h
+      exact ⟨body_valueN M k x a t u ρ c (hs _ c hcache), hs⟩
     · split at h
       · cases h
-      · obtain ⟨w, _, hw⟩ := Option.map_eq_some_iff.mp h
-        subst hw; rfl
+      · rename_i es s₁ hpairs
+        obtain ⟨⟨c, w⟩, hw, rfl⟩ := Option.map_eq_some_iff.mp h
+        obtain ⟨hs₁, hes⟩ := VE.Route.Closure.forPairs_spec (CacheOK (closureRelN M))
+          (fun v w => a.eval M (w :: v :: ρ)) _
+          (fun v w s r hs h => ih (w :: v :: ρ) s r hs h) (M.domains x) (M.domains x) {} es _ s₁ hs hpairs
+        have hes' : ∀ v w, es.contains (v, w) = true ↔
+            v ∈ M.domains x ∧ w ∈ M.domains x ∧ a.eval M (w :: v :: ρ) = true := by
+          intro v w; rw [hes]; simp
+        have hc := VE.Route.Closure.bodyClosure_spec limit (M.domains x) _ es hes' _ c w hw
+        exact ⟨body_valueN M k x a t u ρ c hc, VE.Route.Closure.cacheOK_insert hs₁ (EdgeKey.body x a, ρ) c hc w⟩
   | not a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     cases ha : evalN mem M limit ρ a { s with work := s.work + 1 } with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Core.Formula.eval, ih ρ _ x ha]
+      obtain ⟨hx, hP⟩ := ih ρ _ x hs ha
+      exact ⟨by simp [VE.Core.Formula.eval, hx], hP⟩
   | and a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Core.Formula.eval, ← this, Bool.true_and]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Core.Formula.eval, ← hv, Bool.true_and]; exact hr, hP'⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Core.Formula.eval, ← this]
+      exact ⟨by simp [VE.Core.Formula.eval, ← hv], hP⟩
   | or a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Core.Formula.eval, ← this]
+      exact ⟨by simp [VE.Core.Formula.eval, ← hv], hP⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Core.Formula.eval, ← this, Bool.false_or]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Core.Formula.eval, ← hv, Bool.false_or]; exact hr, hP'⟩
   | implies a b ia ib =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
     simp only at h
     split at h
     · cases h
     · rename_i s' ha
-      have := ia ρ _ _ ha
-      simp only [VE.Core.Formula.eval, ← this, Bool.not_true, Bool.false_or]
-      exact ib ρ _ _ h
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
+      obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
+      exact ⟨by simp only [VE.Core.Formula.eval, ← hv, Bool.not_true, Bool.false_or]; exact hr, hP'⟩
     · rename_i s' ha
-      have := ia ρ _ _ ha
+      obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      simp [VE.Core.Formula.eval, ← this]
+      exact ⟨by simp [VE.Core.Formula.eval, ← hv], hP⟩
   | all x a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
-    have := quantS_sound true _ (fun v => a.eval M (v :: ρ)) (M.domains x)
-      (fun v _ s r hv => ih _ s r hv) _ r h
-    simpa [VE.Core.Formula.eval] using this
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
+    obtain ⟨hv, hP⟩ := quantS_sound (CacheOK (closureRelN M)) true _ (fun v => a.eval M (v :: ρ))
+      (M.domains x) (fun v _ s r hs hv => ih _ s r hs hv) _ r hs h
+    exact ⟨by simpa [VE.Core.Formula.eval] using hv, hP⟩
   | ex x a ih =>
-    intro ρ s r h
+    intro ρ s r hs h
     have h := tickM_some h
-    have := quantS_sound false _ (fun v => a.eval M (v :: ρ)) (M.domains x)
-      (fun v _ s r hv => ih _ s r hv) _ r h
-    simpa [VE.Core.Formula.eval] using this
+    have hs : CacheOK (closureRelN M) { s with work := s.work + 1 } := hs
+    obtain ⟨hv, hP⟩ := quantS_sound (CacheOK (closureRelN M)) false _ (fun v => a.eval M (v :: ρ))
+      (M.domains x) (fun v _ s r hs hv => ih _ s r hs hv) _ r hs h
+    exact ⟨by simpa [VE.Core.Formula.eval] using hv, hP⟩
 
+/-- Premises first under one budget, a fresh closure cache per formula (Python
+witness checking, Rust `clear_closures`). -/
 def refutesN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
     List VE.Core.Formula → VE.Core.Formula → Nat → Option Bool
   | [], c, w => (evalN mem M limit [] c ⟨w, {}⟩).map (fun r => !r.1)
@@ -919,18 +1001,19 @@ theorem refutesN_sound (mem : String → List Entity → Bool) (M : VE.FiniteMod
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Core.countermodelCheck, evalN_sound mem M limit hmem c [] _ x hc]
+      simp [VE.Core.countermodelCheck,
+        (evalN_sound mem M limit hmem c [] _ x (VE.Route.Closure.cacheOK_empty _ w) hc).1]
   | p :: ps, c, w, b, h => by
     simp only [refutesN] at h
     split at h
     · cases h
     · rename_i s' hp
-      have := evalN_sound mem M limit hmem p [] _ _ hp
+      have := (evalN_sound mem M limit hmem p [] _ _ (VE.Route.Closure.cacheOK_empty _ w) hp).1
       simp only [Option.some.injEq] at h
       subst h
       simp [VE.Core.countermodelCheck, ← this]
     · rename_i s' hp
-      have := evalN_sound mem M limit hmem p [] _ _ hp
+      have := (evalN_sound mem M limit hmem p [] _ _ (VE.Route.Closure.cacheOK_empty _ w) hp).1
       rw [refutesN_sound mem M limit hmem ps c _ b h]
       simp [VE.Core.countermodelCheck, ← this]
 
@@ -960,7 +1043,7 @@ theorem valuesN_sound (mem : String → List Entity → Bool) (M : VE.FiniteMode
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := evalN_sound mem M _ hmem f [] _ (b, s) hf
+        have hb := (evalN_sound mem M _ hmem f [] _ (b, s) (VE.Route.Closure.cacheOK_empty _ 0) hf).1
         simp only at hb
         rw [ih bs hr, hb]
         rfl
