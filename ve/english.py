@@ -1179,6 +1179,12 @@ class EnglishParser:
                              if sort == block['action']), None)
         if mode != 'every' and outer_action is None:
             self.error('Another action needs a rule on an action as its reference.')
+        chooser_ref = 'that ' + self.words.sorts[block['chooser']]
+        if (self.source[self.i:].startswith(chooser_ref)
+                and chooser_ref not in self.term_options(scope)):
+            self.error('The chooser has no antecedent; write there is a ' +
+                       self.words.sorts[block['chooser']] + ' such that that action is available '
+                       'to that ' + self.words.sorts[block['chooser']] + ' and …')
         owner = self.term(scope)
         self.space()
         inner = ((block['action'], 'that other ' + noun if mode != 'every' else 'that ' + noun), *scope)

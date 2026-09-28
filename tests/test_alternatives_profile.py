@@ -231,3 +231,6 @@ def test_available_guard_forms_bind_owner_and_distinguish_other_action():
         "not", ["eq", ["var", 0], ["var", 2]]]
     with pytest.raises(VEError, match="Another action needs a rule on an action"):
         parse_english_with_metadata(env, "another action available to r prevents h.")
+    with pytest.raises(VEError, match="there is a robot such that"):
+        parse_norm_english(env, "Rule 1. Every action may be done, if every other "
+                                "action available to that robot prevents h.")
