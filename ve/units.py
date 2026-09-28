@@ -11,7 +11,7 @@ import re
 from .ast import decimal_from_wire, MAX_NUMERAL_CHARS
 from .environment import INT_SORT, valid_identifier
 from .errors import ResourceLimit, UnsupportedProfile, VEError
-from .wire import digest, require_fields
+from .wire import canonical_json, digest, require_fields
 
 SCHEMA = "ve-units@1"
 DIMENSIONLESS = "dimensionless"
@@ -383,7 +383,7 @@ def elaborate_quantity(env, payload):
             raise VEError("Trace horizon must be nonnegative")
         checked.append(t)
     q, core = _Elaborator(env).formula(payload["formula"])
-    if "Q" in payload and payload["Q"] != q:
+    if "Q" in payload and canonical_json(payload["Q"]) != canonical_json(q):
         raise VEError("Quantity Q differs from regenerated formula")
     # The target vocabulary has the same symbols and checker profile, with only
     # W6 declaration fields removed. The frozen checker validates regenerated

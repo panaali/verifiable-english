@@ -67,6 +67,12 @@ def test_exact_decimal_and_identity_binds_tags():
         elaborate_quantity(env, quantity(["eq", ["decimal", "bp", "3.75"],
                                           ["num", "bp", "375"]],
                                          Q=["eq", ["num", "bp", "376"], ["num", "bp", "375"]]))
+    raw_user = environment()
+    raw_user["vocabulary"]["predicates"]["p"] = {"arguments": ["item"], "description": "P"}
+    user_env = Environment(raw_user)
+    with pytest.raises(VEError, match="Q differs"):
+        elaborate_quantity(user_env, quantity(["exists", "item", ["unary", "p", ["var", 0]]],
+            Q=["exists", "item", ["unary", "p", ["var", False]]]))
     implicit, _ = elaborate_quantity(env, quantity(["eq", ["num", "375"], ["num", "375"]]))
     explicit, _ = elaborate_quantity(env, quantity(["eq", ["num", "dimensionless", "375"],
                                                     ["num", "dimensionless", "375"]]))
