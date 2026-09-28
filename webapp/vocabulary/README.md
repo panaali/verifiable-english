@@ -18,10 +18,12 @@ Run the measurement and strict gate from the repository root:
 
 ```bash
 .venv/bin/python -m webapp.vocabulary.audit --strict
+make webapp-build
 ```
 
 The strict gate returns a nonzero exit code while any gap remains. It is
-expected to fail at this measurement point. The regular test checks the
+the prerequisite of the `webapp-build` target, so that build stops on a copy
+violation. It is expected to fail at this measurement point. The regular test checks the
 served page, the source inventory, the vocabulary, all passing VE sentences,
 and all labels; it keeps the measured gaps explicit so the broader suite can
 stay green. To review changes after editing copy, run
