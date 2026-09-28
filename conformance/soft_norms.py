@@ -103,6 +103,11 @@ def loop_recheck_reproducers():
         yield f"exception-typing-before-factors-{variable}", env(), [
             norm("a", "x_required", True, mode="default", exception=exception)], code
 
+    unknown_predicate = {"decided_by": "assistant", "sufficient": [],
+                         "necessary": [], "factors": False}
+    yield "exception-predicate-before-factors", env(), [
+        norm("a", "missing", True, mode="default", exception=unknown_predicate)], "SOFT_INVALID_INPUT"
+
     for names in (("z", "soft__a"), ("soft__a", "z")):
         raw = env({"parties": ["p"], "outranking": {"mode": "strict"}})
         for name in names:

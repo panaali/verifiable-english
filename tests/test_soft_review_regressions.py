@@ -184,7 +184,7 @@ def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 1128
+    assert compare_rejected() == 1129
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
