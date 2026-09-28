@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 224 local Python files and 11 pinned external package files; found 1853 import edges into section 1.1 modules.
+Parsed 237 local Python files and 11 pinned external package files; found 1913 import edges into section 1.1 modules.
 External scans include only the native `ve_webapp/` and `bench/` packages; vendored `ve/`, tests, and conformance copies are excluded. Their paths and source SHA-256 values are pinned in `conformance/baseline-2026-09/external-imports.json`, so replay does not depend on local clones or home paths. Refresh with `--refresh-external` only after reviewing external changes.
 
 ## Symbols
@@ -15,15 +15,15 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 
 | Module | Symbol | Line | Class | Stage 2 adapter → interface for A | Direct import consumers |
 |---|---|---:|:---:|---|---|
-| `ve/admission.py` | `AdmissionError` | 36 | U | — | `tests/test_norm_admission.py:6`, `tests/test_p0_three_way.py:287` |
+| `ve/admission.py` | `AdmissionError` | 36 | U | — | `ve/backends/diagnostics.py:37`, `tests/test_norm_admission.py:6`, `tests/test_p0_three_way.py:287` |
 | `ve/admission.py` | `token` | 40 | U | — | `ve/document.py:14`, `ve/openterms.py:4`, `ve/readings.py:10` |
 | `ve/admission.py` | `Label` | 45 | U | — | — |
 | `ve/admission.py` | `Label.render` | 49 | U | — | — |
 | `ve/admission.py` | `_parse_raw` | 60 | U | — | — |
-| `ve/admission.py` | `parse_label` | 88 | U | — | `ve/bundle.py:20`, `ve/document.py:251`, `ve/document.py:275`, `tests/test_p0_three_way.py:64` |
+| `ve/admission.py` | `parse_label` | 88 | U | — | `ve/bundle.py:20`, `ve/document.py:354`, `ve/document.py:383`, `tests/test_p0_three_way.py:64` |
 | `ve/admission.py` | `validate_label` | 96 | U | — | `ve/argument.py:65`, `ve/bundle.py:20`, `tests/probe_matrix.py:36`, `tests/test_p0_three_way.py:64` |
 | `ve/admission.py` | `_check_kind` | 103 | U | — | `ve/document.py:14`, `ve/readings.py:10` |
-| `ve/admission.py` | `_quoted` | 133 | U | — | — |
+| `ve/admission.py` | `_quoted` | 133 | U | — | `ve/document.py:213` |
 | `ve/admission.py` | `_agent_matches` | 137 | U | — | — |
 | `ve/admission.py` | `_fields` | 141 | U | — | — |
 | `ve/admission.py` | `_nat` | 146 | U | — | — |
@@ -47,7 +47,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/admission.py` | `_check_graph` | 367 | A | `ve/backends/dispatch.py` → Lean admission / label | — |
 | `ve/admission.py` | `_compatible` | 396 | U | — | — |
 | `ve/admission.py` | `_claim_json` | 403 | U | — | — |
-| `ve/admission.py` | `admit_document` | 410 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:234`, `tests/test_norms_three_way.py:304` (+7) |
+| `ve/admission.py` | `admit_document` | 410 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:200`, `tests/test_norms_three_way.py:243` (+9) |
 | `ve/argument.py` | `_checker_build` | 32 | S | — | `tests/test_background.py:7`, `tests/test_p1_history.py:7` |
 | `ve/argument.py` | `_sequence` | 57 | S | — | — |
 | `ve/argument.py` | `_label` | 63 | S | — | — |
@@ -85,29 +85,29 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/argument.py` | `outstanding_obligations` | 627 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_background.py:7` (+1) |
 | `ve/argument.py` | `_predicates` | 667 | S | — | `tests/test_nary.py:55` |
 | `ve/argument.py` | `predicate_use_panel` | 694 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_nary.py:58` |
-| `ve/ast.py` | `Var` | 18 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+43) |
-| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+43) |
-| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:553` (+3) |
-| `ve/ast.py` | `Add` | 34 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+2) |
-| `ve/ast.py` | `Scale` | 40 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:208`, `ve/search.py:242` (+3) |
-| `ve/ast.py` | `Top` | 50 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/attacks.py:14`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+50) |
-| `ve/ast.py` | `Bottom` | 55 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+36) |
-| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+44) |
-| `ve/ast.py` | `Binary` | 66 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+35) |
-| `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+3) |
-| `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+3) |
-| `ve/ast.py` | `Eq` | 85 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+33) |
-| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+46) |
-| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+40) |
-| `ve/ast.py` | `Or` | 102 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/admission.py:16`, `ve/document.py:214`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+29) |
-| `ve/ast.py` | `Implies` | 108 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+32) |
-| `ve/ast.py` | `Forall` | 114 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+40) |
-| `ve/ast.py` | `Exists` | 120 | S | — | `ve/__init__.py:2`, `ve/attacks.py:14`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+34) |
-| `ve/ast.py` | `Named` | 126 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/norms.py:97` (+10) |
+| `ve/ast.py` | `Var` | 18 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+45) |
+| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+44) |
+| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+3) |
+| `ve/ast.py` | `Add` | 34 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281` (+2) |
+| `ve/ast.py` | `Scale` | 40 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281` (+3) |
+| `ve/ast.py` | `Top` | 50 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/attacks.py:14`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+52) |
+| `ve/ast.py` | `Bottom` | 55 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+37) |
+| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+46) |
+| `ve/ast.py` | `Binary` | 66 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+36) |
+| `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+4) |
+| `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+4) |
+| `ve/ast.py` | `Eq` | 85 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+34) |
+| `ve/ast.py` | `Not` | 91 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+48) |
+| `ve/ast.py` | `And` | 96 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+41) |
+| `ve/ast.py` | `Or` | 102 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/admission.py:16`, `ve/document.py:314`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+30) |
+| `ve/ast.py` | `Implies` | 108 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+33) |
+| `ve/ast.py` | `Forall` | 114 | S | — | `ve/__init__.py:2`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+41) |
+| `ve/ast.py` | `Exists` | 120 | S | — | `ve/__init__.py:2`, `ve/attacks.py:14`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+36) |
+| `ve/ast.py` | `Named` | 126 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/norms.py:97` (+11) |
 | `ve/ast.py` | `Body` | 131 | S | — | `ve/__init__.py:2`, `ve/argument.py:16`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/search.py:9` (+7) |
-| `ve/ast.py` | `Reach` | 140 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+15) |
-| `ve/ast.py` | `Lt` | 148 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/probe_matrix.py:553`, `tests/test_natural.py:15` (+2) |
-| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:208`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:553` (+3) |
+| `ve/ast.py` | `Reach` | 140 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+16) |
+| `ve/ast.py` | `Lt` | 148 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:247`, `tests/probe_matrix.py:568`, `tests/test_natural.py:15` (+2) |
+| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:247`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+3) |
 | `ve/ast.py` | `integer_value` | 166 | S | — | — |
 | `ve/ast.py` | `decimal_from_wire` | 175 | S | — | `ve/model.py:93`, `ve/order.py:38` |
 | `ve/ast.py` | `decimal_to_wire` | 186 | S | — | `ve/order.py:38` |
@@ -120,14 +120,14 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/ast.py` | `_Checker.formula` | 242 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+5) |
 | `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6` |
-| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/norms.py:13`, `ve/order.py:38`, `tests/probe_matrix.py:24`, `tests/test_definitions_differential.py:145` (+5) |
-| `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+23) |
+| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/evaluate.py:231`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:122` (+7) |
+| `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+25) |
 | `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:24`, `tests/test_closure_certificates.py:9` (+10) |
-| `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
-| `ve/ast.py` | `_Decoder.__init__` | 380 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
-| `ve/ast.py` | `_Decoder.decode` | 383 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:311` |
-| `ve/ast.py` | `formula_from_data` | 449 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/bundle.py:21` (+24) |
-| `ve/ast.py` | `document_from_data` | 455 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145`, `tests/test_lean_conformance.py:15` (+14) |
+| `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `_Decoder.__init__` | 380 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `_Decoder.decode` | 383 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `formula_from_data` | 449 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/background.py:143` (+25) |
+| `ve/ast.py` | `document_from_data` | 455 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/lean_service_corpus.py:45`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145` (+15) |
 | `ve/ast.py` | `doc_from_json` | 462 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7` |
 | `ve/background.py` | `Premise` | 15 | U | — | — |
 | `ve/background.py` | `_empty` | 20 | D | — | — |
@@ -141,11 +141,13 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/background.py` | `_valid_flags` | 86 | U | — | — |
 | `ve/background.py` | `_definition_premises` | 100 | U | — | — |
 | `ve/background.py` | `_valid_definitions` | 107 | U | — | — |
-| `ve/background.py` | `background` | 130 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/admission.py:17`, `ve/argument.py:645`, `ve/argument.py:511`, `ve/argument.py:590`, `ve/assist/ambiguity_patterns.py:17`, `ve/assist/recovery.py:1173` (+18) |
-| `ve/background.py` | `checked_premises` | 139 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:316` |
-| `ve/background.py` | `validate_background` | 148 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/assist/ambiguity_patterns.py:18`, `ve/assist/recovery.py:1173`, `ve/evaluate.py:184`, `ve/model.py:169`, `ve/norms.py:325`, `ve/norms.py:364` (+1) |
-| `ve/background.py` | `dependency_order` | 160 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/definitions.py:11`, `ve/norms.py:15`, `tests/probe_matrix.py:26`, `tests/test_background.py:10` |
-| `ve/background.py` | `dependency_order_nodes` | 179 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66` |
+| `ve/background.py` | `_background_python` | 130 | U | — | — |
+| `ve/background.py` | `background` | 139 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/admission.py:17`, `ve/argument.py:645`, `ve/argument.py:511`, `ve/argument.py:590`, `ve/assist/ambiguity_patterns.py:17`, `ve/assist/recovery.py:1173` (+19) |
+| `ve/background.py` | `checked_premises` | 158 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:316` |
+| `ve/background.py` | `validate_background` | 167 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/assist/ambiguity_patterns.py:18`, `ve/assist/recovery.py:1173`, `ve/evaluate.py:184`, `ve/model.py:169`, `ve/norms.py:329`, `ve/norms.py:368` (+1) |
+| `ve/background.py` | `_dependency_order_python` | 179 | U | — | — |
+| `ve/background.py` | `dependency_order` | 204 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/definitions.py:11`, `ve/norms.py:15`, `tests/probe_matrix.py:26`, `tests/test_background.py:10`, `tests/test_stage2_evaluation.py:12` |
+| `ve/background.py` | `dependency_order_nodes` | 229 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66` |
 | `ve/bundle.py` | `_english` | 32 | U | — | — |
 | `ve/bundle.py` | `_leaf_choices` | 41 | U | — | — |
 | `ve/bundle.py` | `_bind_leaf` | 66 | U | — | — |
@@ -165,10 +167,10 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/closure.py` | `derive_extra` | 174 | U | — | `ve/entailment.py:627`, `conformance/certificates.py:174`, `conformance/induction.py:37` |
 | `ve/closure.py` | `extra_candidates` | 225 | U | — | `ve/entailment.py:494` |
 | `ve/definitions.py` | `Definition` | 18 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27` |
-| `ve/definitions.py` | `_mentions` | 24 | U | — | `ve/search.py:310` |
+| `ve/definitions.py` | `_mentions` | 24 | U | — | `ve/search.py:349` |
 | `ve/definitions.py` | `_has_reach` | 40 | U | — | — |
 | `ve/definitions.py` | `_atom` | 52 | U | — | `ve/surface/definitions.py:27` |
-| `ve/definitions.py` | `premise` | 62 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27`, `tests/test_document.py:554` |
+| `ve/definitions.py` | `premise` | 62 | U | — | `ve/parser.py:318`, `ve/surface/definitions.py:27`, `tests/test_document.py:823` |
 | `ve/definitions.py` | `_restricted` | 72 | U | — | — |
 | `ve/definitions.py` | `compile_definitions` | 90 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `ve/environment.py:294`, `ve/model.py:141`, `ve/surface/definitions.py:27`, `tests/probe_matrix.py:27`, `tests/test_definitions.py:6` (+2) |
 | `ve/definitions.py` | `expand` | 151 | A | `ve/backends/dispatch.py` → Lean background definitions | `ve/background.py:103`, `tests/test_definitions.py:6` |
@@ -200,7 +202,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/entailment.py` | `_Searcher.prove` | 530 | U | — | `tests/probe_matrix.py:28`, `conformance/induction.py:14`, `conformance/p0.py:714` |
 | `ve/entailment.py` | `_rule` | 540 | U | — | `conformance/induction.py:14`, `ve_experiments/t1c/certificates.py:27` |
 | `ve/entailment.py` | `_binding` | 546 | U | — | `tests/test_closure.py:282`, `tests/test_closure_certificates.py:12`, `tests/test_closure_induction.py:127`, `tests/test_lean_certificates.py:12`, `tests/test_order.py:20`, `conformance/certificates.py:25` (+5) |
-| `ve/entailment.py` | `prove_entailment` | 562 | U | — | `ve/__init__.py:19`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/english.py:1398`, `ve/english.py:1439`, `ve/equivalence.py:14` (+34) |
+| `ve/entailment.py` | `prove_entailment` | 562 | U | — | `ve/__init__.py:19`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/english.py:1398`, `ve/english.py:1439`, `ve/equivalence.py:14` (+36) |
 | `ve/entailment.py` | `_prove_order` | 596 | U | — | — |
 | `ve/entailment.py` | `_Replayer` | 612 | A | `ve/backends/dispatch.py` → Lean certificate replay | `tests/probe_matrix.py:28` |
 | `ve/entailment.py` | `_Replayer.__init__` | 613 | A | `ve/backends/dispatch.py` → Lean certificate replay | `tests/probe_matrix.py:28` |
@@ -217,70 +219,71 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/environment.py` | `RegulatedDecl` | 93 | S | — | — |
 | `ve/environment.py` | `_regulated` | 100 | U | — | — |
 | `ve/environment.py` | `ConstantDecl` | 127 | S | — | — |
-| `ve/environment.py` | `Environment` | 133 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.__init__` | 142 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.from_dict` | 298 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.from_json` | 302 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.to_dict` | 305 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.closure` | 340 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.definition_entries` | 344 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.order` | 349 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.model_sorts` | 353 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.identity_version` | 358 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
-| `ve/environment.py` | `Environment.environment_id` | 365 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+99) |
+| `ve/environment.py` | `Environment` | 133 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.__init__` | 142 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.from_dict` | 298 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.from_json` | 302 | A | `ve/backends/dispatch.py` → Lean environment / route gate | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.to_dict` | 305 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.closure` | 340 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.definition_entries` | 344 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.order` | 349 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.model_sorts` | 353 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.identity_version` | 358 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
+| `ve/environment.py` | `Environment.environment_id` | 365 | S | — | `ve/__init__.py:7`, `ve/__main__.py:9`, `ve/adapters/cedar.py:18`, `ve/admission.py:18`, `ve/argument.py:17`, `ve/argument_fixtures.py:12` (+102) |
 | `ve/evaluate.py` | `Explanation` | 16 | U | — | — |
 | `ve/evaluate.py` | `Explanation.to_dict` | 23 | U | — | — |
 | `ve/evaluate.py` | `EvaluationResult` | 31 | U | — | — |
 | `ve/evaluate.py` | `EvaluationResult.to_dict` | 37 | U | — | — |
-| `ve/evaluate.py` | `_Exhausted` | 42 | U | — | `ve/model.py:142`, `ve/norms.py:356`, `ve/search.py:11` |
-| `ve/evaluate.py` | `_Evaluator` | 46 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
-| `ve/evaluate.py` | `_Evaluator.__init__` | 47 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
-| `ve/evaluate.py` | `_Evaluator.explanation` | 51 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
-| `ve/evaluate.py` | `_Evaluator.tick` | 56 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
-| `ve/evaluate.py` | `_Evaluator.term` | 61 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
-| `ve/evaluate.py` | `_Evaluator.formula` | 74 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:319`, `ve/norms.py:356`, `ve/norms.py:270`, `ve/search.py:11` (+2) |
+| `ve/evaluate.py` | `_Exhausted` | 42 | U | — | `ve/model.py:142`, `ve/norms.py:360`, `ve/search.py:11` |
+| `ve/evaluate.py` | `_Evaluator` | 46 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
+| `ve/evaluate.py` | `_Evaluator.__init__` | 47 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
+| `ve/evaluate.py` | `_Evaluator.explanation` | 51 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
+| `ve/evaluate.py` | `_Evaluator.tick` | 56 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
+| `ve/evaluate.py` | `_Evaluator.term` | 61 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
+| `ve/evaluate.py` | `_Evaluator.formula` | 74 | U | — | `ve/adapters/cedar.py:20`, `ve/model.py:142`, `ve/norms.py:323`, `ve/norms.py:360`, `ve/norms.py:274`, `ve/search.py:11` (+3) |
 | `ve/evaluate.py` | `_validate_model` | 171 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/search.py:11` |
 | `ve/evaluate.py` | `_evaluate_validated` | 189 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/background.py:110`, `ve/search.py:11`, `tests/test_definitions_differential.py:147` |
-| `ve/evaluate.py` | `evaluate` | 213 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/__init__.py:16`, `ve/assist/ambiguity_patterns.py:20`, `ve/assist/recovery.py:20`, `ve/check.py:7`, `ve/equivalence.py:17`, `ve/readings.py:73` (+25) |
+| `ve/evaluate.py` | `evaluate` | 213 | A | `ve/backends/dispatch.py` → Lean evaluate; Rust budgeted evaluation | `ve/__init__.py:16`, `ve/assist/ambiguity_patterns.py:20`, `ve/assist/recovery.py:20`, `ve/check.py:7`, `ve/equivalence.py:17`, `ve/readings.py:73` (+26) |
 | `ve/model.py` | `_fail` | 18 | U | — | — |
 | `ve/model.py` | `_keys` | 22 | U | — | — |
 | `ve/model.py` | `_local_id` | 31 | U | — | — |
-| `ve/model.py` | `FiniteModel` | 40 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+50) |
-| `ve/model.py` | `FiniteModel.from_json` | 51 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+50) |
-| `ve/model.py` | `FiniteModel.from_dict` | 56 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+50) |
-| `ve/model.py` | `FiniteModel.to_dict` | 173 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+50) |
+| `ve/model.py` | `FiniteModel` | 40 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+52) |
+| `ve/model.py` | `FiniteModel.from_json` | 51 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+52) |
+| `ve/model.py` | `FiniteModel.from_dict` | 56 | A | `ve/backends/dispatch.py` → Lean model decode | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+52) |
+| `ve/model.py` | `FiniteModel.to_dict` | 173 | S | — | `ve/__init__.py:15`, `ve/__main__.py:13`, `ve/adapters/cedar.py:21`, `ve/argument.py:20`, `ve/argument_fixtures.py:13`, `ve/assist/ground.py:12` (+52) |
 | `ve/model.py` | `_cell` | 177 | S | — | — |
 | `ve/model.py` | `_normalized` | 182 | S | — | — |
-| `ve/norm_admission.py` | `_check_quoted` | 19 | U | — | — |
+| `ve/norm_admission.py` | `_check_quoted` | 19 | U | — | `ve/document.py:259` |
 | `ve/norm_admission.py` | `admit_norm_document` | 27 | A | `ve/backends/dispatch.py` → Lean norms admission | `ve/admission.py:423`, `tests/probe_matrix.py:39` |
 | `ve/norms.py` | `_all` | 23 | U | — | — |
 | `ve/norms.py` | `_any` | 30 | U | — | — |
 | `ve/norms.py` | `_atom` | 37 | U | — | `ve/norm_strict.py:8` |
-| `ve/norms.py` | `_bind` | 42 | U | — | `tests/test_norms_three_way.py:24`, `external:ve-bench/run.py:38` |
+| `ve/norms.py` | `_bind` | 42 | U | — | `tests/lean_service_corpus.py:107`, `tests/test_norms_three_way.py:24`, `external:ve-bench/run.py:38` |
 | `ve/norms.py` | `_shift_term` | 48 | U | — | — |
 | `ve/norms.py` | `_instantiate` | 59 | U | — | `tests/test_norms_three_way.py:24` |
 | `ve/norms.py` | `_replace_term` | 84 | U | — | — |
 | `ve/norms.py` | `_regulated_closure` | 95 | U | — | — |
 | `ve/norms.py` | `Norm` | 110 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9` |
 | `ve/norms.py` | `Norm.to_dict` | 118 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/test_norms.py:9` |
-| `ve/norms.py` | `NormDocument` | 124 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.__init__` | 125 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument._decode` | 185 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.selection` | 197 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.outcome` | 212 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument._expand` | 218 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.elaborate` | 237 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.premises` | 246 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.meaning_id` | 249 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.conflict_targets` | 255 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.selected_rules` | 269 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.overlap_witnesses` | 280 | U | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `NormDocument.base_environment` | 298 | S | — | `ve/adapters/cedar.py:22`, `ve/norm_admission.py:15`, `ve/norm_english.py:18`, `ve/norm_strict.py:8`, `tests/probe_matrix.py:38`, `tests/test_norm_admission.py:12` (+5) |
-| `ve/norms.py` | `ConflictReport` | 309 | U | — | — |
-| `ve/norms.py` | `check_witness` | 317 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/test_norms.py:9`, `external:ve-webapp/rules.py:7` |
-| `ve/norms.py` | `prove_norm_entailment` | 339 | U | — | `tests/probe_matrix.py:38`, `tests/test_norms_three_way.py:24` |
-| `ve/norms.py` | `check_norm_entailment_certificate` | 346 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:38`, `tests/test_norms_three_way.py:24` |
-| `ve/norms.py` | `check_conflict` | 353 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:38`, `tests/test_cedar_norms.py:8`, `tests/test_norms.py:9`, `tests/test_norms_three_way.py:24`, `external:ve-bench/worker.py:13`, `external:ve-webapp/rules.py:7` |
+| `ve/norms.py` | `norm_meaning_id` | 124 | U | — | `ve/document.py:212` |
+| `ve/norms.py` | `NormDocument` | 130 | S | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.__init__` | 131 | S | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument._decode` | 191 | S | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.selection` | 203 | U | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.outcome` | 218 | U | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument._expand` | 224 | U | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.elaborate` | 243 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.premises` | 252 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.meaning_id` | 255 | S | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.conflict_targets` | 259 | A | `ve/backends/dispatch.py` → Lean norms route | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.selected_rules` | 273 | U | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.overlap_witnesses` | 284 | U | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `NormDocument.base_environment` | 302 | S | — | `ve/adapters/cedar.py:22`, `ve/document.py:238`, `ve/document.py:105`, `ve/document.py:212`, `ve/document.py:477`, `ve/norm_admission.py:15` (+12) |
+| `ve/norms.py` | `ConflictReport` | 313 | U | — | — |
+| `ve/norms.py` | `check_witness` | 321 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/test_norms.py:9`, `external:ve-webapp/rules.py:7` |
+| `ve/norms.py` | `prove_norm_entailment` | 343 | U | — | `tests/lean_service_corpus.py:107`, `tests/probe_matrix.py:38`, `tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `check_norm_entailment_certificate` | 350 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/probe_matrix.py:38`, `tests/test_norms_three_way.py:24` |
+| `ve/norms.py` | `check_conflict` | 357 | A | `ve/backends/dispatch.py` → Lean norms route | `tests/lean_service_corpus.py:107`, `tests/probe_matrix.py:38`, `tests/test_asimov_laws.py:10`, `tests/test_cedar_norms.py:8`, `tests/test_norms.py:9`, `tests/test_norms_three_way.py:24` (+2) |
 | `ve/order.py` | `InvalidTrace` | 49 | U | — | `ve/entailment.py:19`, `tests/probe_matrix.py:48` |
 | `ve/order.py` | `Budget` | 53 | U | — | `ve/entailment.py:19` |
 | `ve/order.py` | `Signed` | 60 | U | — | `tests/probe_matrix.py:48` |
@@ -379,19 +382,19 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/printer.py` | `_Traversal.term` | 506 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.child` | 513 | U | — | `ve/norm_strict.py:10` |
 | `ve/printer.py` | `_Traversal.formula` | 518 | U | — | `ve/norm_strict.py:10` |
-| `ve/printer.py` | `render` | 575 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/document.py:337`, `ve/fluent.py:212`, `ve/fol.py:182`, `ve/natural.py:271` (+20) |
+| `ve/printer.py` | `render` | 575 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/document.py:448`, `ve/fluent.py:212`, `ve/fol.py:182`, `ve/natural.py:271` (+21) |
 | `ve/printer.py` | `render_cell` | 649 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:118`, `tests/test_cli.py:133`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13` |
 | `ve/printer.py` | `measure_view_lengths` | 658 | S | — | `ve/__init__.py:11`, `tests/test_fluent.py:410`, `tests/test_legend.py:11`, `tests/test_views.py:427`, `tests/test_views_polish.py:13` |
 | `ve/printer.py` | `measure_jsonl_lengths` | 680 | S | — | `ve/__main__.py:15`, `tests/test_cli.py:160`, `tests/test_legend.py:11`, `tests/test_views_polish.py:13` |
 | `ve/printer.py` | `print_formula` | 729 | U | — | `ve/__init__.py:11`, `ve/argument.py:22`, `ve/assist/session.py:34`, `ve/english.py:1440`, `tests/probe_matrix.py:34`, `tests/test_assist.py:381` |
-| `ve/printer.py` | `print_document` | 735 | U | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/authoring.py:16`, `ve/check.py:10`, `ve/english.py:1422`, `ve/fol.py:14` (+20) |
+| `ve/printer.py` | `print_document` | 735 | U | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/authoring.py:16`, `ve/check.py:10`, `ve/english.py:1422`, `ve/fol.py:14` (+21) |
 | `ve/printer.py` | `NaturalView` | 742 | S | — | `ve/fol.py:14` |
 | `ve/printer.py` | `NaturalView.to_dict` | 751 | S | — | `ve/fol.py:14` |
 | `ve/printer.py` | `natural_document` | 759 | S | — | `ve/__init__.py:11`, `ve/__main__.py:15`, `ve/fol.py:14`, `ve/natural.py:90`, `tests/test_natural.py:21`, `tests/test_natural.py:496` (+3) |
 | `ve/printer.py` | `natural_formula` | 849 | S | — | `ve/__init__.py:11`, `tests/test_views.py:12` |
 | `ve/profiles.py` | `ProfileRecord` | 12 | S | — | — |
 | `ve/profiles.py` | `checker_family` | 33 | A | `ve/backends/dispatch.py` → Lean route gate | `tests/test_profiles.py:6` |
-| `ve/profiles.py` | `require_checker` | 60 | S | — | `ve/admission.py:21`, `ve/background.py:133`, `ve/background.py:149`, `ve/search.py:442`, `ve/search.py:511` |
+| `ve/profiles.py` | `require_checker` | 60 | S | — | `ve/admission.py:21`, `ve/background.py:133`, `ve/background.py:168`, `ve/search.py:481`, `ve/search.py:550` |
 | `ve/search.py` | `_SearchSpaceLimit` | 19 | U | — | — |
 | `ve/search.py` | `_node_count` | 23 | U | — | — |
 | `ve/search.py` | `_check_aggregate_ast` | 35 | U | — | — |
@@ -400,19 +403,19 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/search.py` | `CountermodelResult.to_dict` | 65 | U | — | `tests/test_equivalence.py:145` |
 | `ve/search.py` | `CountermodelCheck` | 77 | U | — | — |
 | `ve/search.py` | `_check_countermodel_values` | 89 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | — |
-| `ve/search.py` | `check_countermodel` | 109 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/argument.py:23`, `ve/assist/proposer.py:19`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
-| `ve/search.py` | `_used_predicates` | 130 | U | — | `ve/norms.py:17`, `tests/test_closure.py:214` |
-| `ve/search.py` | `_subsets` | 157 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:169` |
-| `ve/search.py` | `_relation_assignments` | 165 | U | — | `tests/test_search_options.py:169` |
-| `ve/search.py` | `_domain_sizes` | 183 | U | — | `tests/test_search_options.py:169` |
-| `ve/search.py` | `_int_terms` | 206 | U | — | — |
-| `ve/search.py` | `_int_value` | 241 | U | — | — |
-| `ve/search.py` | `_order_models` | 252 | U | — | — |
-| `ve/search.py` | `_models` | 305 | U | — | `tests/test_search_options.py:169`, `tests/test_search_options.py:224` |
-| `ve/search.py` | `_nonvacuous` | 347 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:224`, `tests/test_search_options.py:238` |
-| `ve/search.py` | `_validate_options` | 416 | U | — | — |
-| `ve/search.py` | `find_countermodel` | 435 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
-| `ve/search.py` | `find_distinguishing_model` | 505 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:35`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+2) |
+| `ve/search.py` | `check_countermodel` | 109 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/argument.py:23`, `ve/assist/proposer.py:19`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+23) |
+| `ve/search.py` | `_used_predicates` | 169 | U | — | `ve/norms.py:17`, `tests/test_closure.py:214` |
+| `ve/search.py` | `_subsets` | 196 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:169` |
+| `ve/search.py` | `_relation_assignments` | 204 | U | — | `tests/test_search_options.py:169` |
+| `ve/search.py` | `_domain_sizes` | 222 | U | — | `tests/test_search_options.py:169` |
+| `ve/search.py` | `_int_terms` | 245 | U | — | — |
+| `ve/search.py` | `_int_value` | 280 | U | — | — |
+| `ve/search.py` | `_order_models` | 291 | U | — | — |
+| `ve/search.py` | `_models` | 344 | U | — | `tests/test_search_options.py:169`, `tests/test_search_options.py:224` |
+| `ve/search.py` | `_nonvacuous` | 386 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:224`, `tests/test_search_options.py:238` |
+| `ve/search.py` | `_validate_options` | 455 | U | — | — |
+| `ve/search.py` | `find_countermodel` | 474 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
+| `ve/search.py` | `find_distinguishing_model` | 544 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:35`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+2) |
 
 ## Other `ve/` functions
 
@@ -712,19 +715,127 @@ A/C also requires a signature-preserving `ve/backends/dispatch.py` adapter. Trus
 | `ve/authoring.py` | `AuthoringResult.to_dict` | 90 | S | — |
 | `ve/authoring.py` | `_diagnostic` | 103 | S | — |
 | `ve/authoring.py` | `gatekeep` | 117 | S | — |
+| `ve/backends/diagnostics.py` | `checker_error` | 24 | S | — |
+| `ve/backends/diagnostics.py` | `require_ok` | 45 | S | — |
+| `ve/backends/dispatch.py` | `authority_for` | 25 | S | — |
+| `ve/backends/dispatch.py` | `_record` | 38 | S | — |
+| `ve/backends/dispatch.py` | `_classes` | 50 | S | — |
+| `ve/backends/dispatch.py` | `_append` | 107 | S | — |
+| `ve/backends/dispatch.py` | `execute` | 115 | S | — |
+| `ve/backends/lean_runner.py` | `_close` | 14 | S | — |
+| `ve/backends/lean_runner.py` | `run` | 24 | S | — |
+| `ve/backends/lean_service.py` | `CheckerUnavailable` | 65 | S | — |
+| `ve/backends/lean_service.py` | `_Failure` | 70 | S | — |
+| `ve/backends/lean_service.py` | `_decode_json` | 74 | S | — |
+| `ve/backends/lean_service.py` | `_json_integer` | 90 | S | — |
+| `ve/backends/lean_service.py` | `executable_sha256` | 103 | S | — |
+| `ve/backends/lean_service.py` | `_rss_bytes` | 116 | S | — |
+| `ve/backends/lean_service.py` | `LeanService` | 127 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.__init__` | 130 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.build` | 157 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.pid` | 162 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.start` | 165 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.close` | 177 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.__enter__` | 181 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.__exit__` | 185 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.rss` | 188 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._ensure` | 191 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._spawn` | 201 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._stop` | 252 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._stderr_tail` | 278 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._write_all` | 291 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._read_line` | 310 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._request_line` | 336 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._roundtrip` | 340 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._after_request` | 367 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.exchange` | 377 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._failed_attempt` | 407 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._chunks` | 416 | S | — |
+| `ve/backends/lean_service.py` | `LeanService._run_chunk` | 435 | S | — |
+| `ve/backends/lean_service.py` | `LeanService.run` | 448 | S | — |
+| `ve/backends/lean_service.py` | `_texts` | 457 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool` | 461 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.__init__` | 468 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.services` | 475 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.start` | 478 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool._on_idle` | 482 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.run` | 489 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.close` | 522 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.__enter__` | 526 | S | — |
+| `ve/backends/lean_service.py` | `LeanServicePool.__exit__` | 529 | S | — |
+| `ve/backends/rust_jsonl.py` | `run` | 20 | S | — |
+| `ve/backends/service_schema.py` | `Invalid` | 20 | S | — |
+| `ve/backends/service_schema.py` | `SchemaError` | 24 | S | — |
+| `ve/backends/service_schema.py` | `same_json` | 28 | S | — |
+| `ve/backends/service_schema.py` | `_kind` | 48 | S | — |
+| `ve/backends/service_schema.py` | `_resolve` | 69 | S | — |
+| `ve/backends/service_schema.py` | `Context` | 95 | S | — |
+| `ve/backends/service_schema.py` | `Context.__init__` | 99 | S | — |
+| `ve/backends/service_schema.py` | `_fail` | 103 | S | — |
+| `ve/backends/service_schema.py` | `Compiler` | 107 | S | — |
+| `ve/backends/service_schema.py` | `Compiler.__init__` | 110 | S | — |
+| `ve/backends/service_schema.py` | `Compiler.ref` | 115 | S | — |
+| `ve/backends/service_schema.py` | `Compiler.compile` | 130 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._ref` | 169 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._type` | 173 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._enum` | 181 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._const` | 187 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._pattern` | 193 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._minLength` | 201 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._maxLength` | 207 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._minimum` | 213 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._required` | 219 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._properties` | 227 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._additionalProperties` | 240 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._prefixItems` | 256 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._items` | 268 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._minItems` | 281 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._maxItems` | 287 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._contains` | 293 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._anyOf` | 301 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._allOf` | 315 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._not` | 323 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._if` | 331 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_tagged` | 342 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_fuel` | 357 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_echo` | 360 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_equals` | 367 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_length` | 374 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_count` | 381 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_index` | 388 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_member` | 394 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_dependency_order` | 410 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_zip` | 417 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_case` | 431 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_select` | 435 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_same` | 446 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_same_length` | 454 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_in` | 462 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_capture` | 470 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_count_where` | 480 | S | — |
+| `ve/backends/service_schema.py` | `Compiler._x_rows` | 490 | S | — |
+| `ve/backends/service_schema.py` | `_valid` | 512 | S | — |
+| `ve/backends/service_schema.py` | `_short` | 520 | S | — |
+| `ve/backends/service_schema.py` | `_verify_order` | 525 | S | — |
+| `ve/backends/service_schema.py` | `check_handshake` | 553 | S | — |
+| `ve/backends/service_schema.py` | `check_row` | 558 | S | — |
+| `ve/backends/service_schema.py` | `check_response` | 563 | S | — |
 | `ve/check.py` | `check` | 13 | L | Single checked result |
-| `ve/document.py` | `_body` | 30 | S | — |
-| `ve/document.py` | `_split` | 61 | S | — |
-| `ve/document.py` | `_meaning` | 82 | S | — |
-| `ve/document.py` | `_formula` | 97 | S | — |
-| `ve/document.py` | `load_document` | 123 | S | — |
-| `ve/document.py` | `_fixed_and_active` | 205 | S | — |
-| `ve/document.py` | `_assertion_disjunctions` | 213 | S | — |
-| `ve/document.py` | `coverage` | 227 | S | — |
-| `ve/document.py` | `_check_narrowing_choices` | 250 | S | — |
-| `ve/document.py` | `check_document` | 266 | C | Trusted narrowed document assembly from Lean admission, readings and premise-status constituents |
-| `ve/document.py` | `render_document` | 334 | S | — |
-| `ve/document.py` | `main` | 386 | S | — |
+| `ve/document.py` | `_body` | 31 | S | — |
+| `ve/document.py` | `_split` | 62 | S | — |
+| `ve/document.py` | `_meaning` | 83 | S | — |
+| `ve/document.py` | `_content` | 98 | S | — |
+| `ve/document.py` | `_parts` | 132 | S | — |
+| `ve/document.py` | `load_document` | 165 | S | — |
+| `ve/document.py` | `_fixed_and_active` | 292 | S | — |
+| `ve/document.py` | `_fixed_premises` | 297 | S | — |
+| `ve/document.py` | `_unresolved_norm_reading` | 308 | S | — |
+| `ve/document.py` | `_assertion_disjunctions` | 313 | S | — |
+| `ve/document.py` | `coverage` | 327 | S | — |
+| `ve/document.py` | `_check_narrowing_choices` | 353 | S | — |
+| `ve/document.py` | `check_document` | 369 | C | Trusted narrowed document assembly from Lean admission, readings and premise-status constituents |
+| `ve/document.py` | `render_document` | 445 | S | — |
+| `ve/document.py` | `main` | 504 | S | — |
 | `ve/english.py` | `_mentioned_constants` | 56 | S | — |
 | `ve/english.py` | `_has_discourse_binder` | 71 | S | — |
 | `ve/english.py` | `_fold_sentence_initials` | 90 | S | — |
@@ -897,10 +1008,11 @@ A/C also requires a signature-preserving `ve/backends/dispatch.py` adapter. Trus
 | `ve/norm_english.py` | `_parse_guard` | 51 | S | — |
 | `ve/norm_english.py` | `_consequence` | 73 | S | — |
 | `ve/norm_english.py` | `default_sentence` | 95 | S | — |
-| `ve/norm_english.py` | `render_english` | 113 | S | — |
-| `ve/norm_english.py` | `_block_grammar` | 157 | S | — |
-| `ve/norm_english.py` | `_parse_consequence` | 195 | S | — |
-| `ve/norm_english.py` | `parse_english` | 218 | S | — |
+| `ve/norm_english.py` | `render_rule_sentence` | 113 | S | — |
+| `ve/norm_english.py` | `render_english` | 129 | S | — |
+| `ve/norm_english.py` | `_block_grammar` | 163 | S | — |
+| `ve/norm_english.py` | `_parse_consequence` | 201 | S | — |
+| `ve/norm_english.py` | `parse_english` | 224 | S | — |
 | `ve/norm_strict.py` | `print_strict` | 16 | S | — |
 | `ve/norm_strict.py` | `parse_strict` | 37 | S | — |
 | `ve/openterms.py` | `validate_open_terms` | 9 | S | — |
@@ -1188,7 +1300,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `conformance/natural_surface.py` | `ve.environment` | `Environment` | 8 |
 | `conformance/natural_surface.py` | `ve.parser` | `parse` | 8 |
 | `conformance/natural_surface.py` | `ve.printer` | `natural_document` | 8 |
-| `conformance/natural_surface.py` | `ve.printer` | `render` | 13 |
+| `conformance/natural_surface.py` | `ve.printer` | `render` | 14 |
 | `conformance/order.py` | `ve.ast` | `Add` | 29 |
 | `conformance/order.py` | `ve.ast` | `And` | 29 |
 | `conformance/order.py` | `ve.ast` | `Binary` | 29 |
@@ -1276,6 +1388,20 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/explicit_inverse.py` | `ve.ast` | `*module*` | 4 |
 | `tests/explicit_inverse.py` | `ve.printer` | `_NaturalVocabulary` | 5 |
 | `tests/fluent_inverse.py` | `ve.ast` | `*module*` | 8 |
+| `tests/lean_service_corpus.py` | `ve.ast` | `*module*` | 151 |
+| `tests/lean_service_corpus.py` | `ve.ast` | `Not` | 105 |
+| `tests/lean_service_corpus.py` | `ve.ast` | `Top` | 105 |
+| `tests/lean_service_corpus.py` | `ve.ast` | `document_from_data` | 45 |
+| `tests/lean_service_corpus.py` | `ve.ast` | `formula_to_data` | 105 |
+| `tests/lean_service_corpus.py` | `ve.entailment` | `prove_entailment` | 46 |
+| `tests/lean_service_corpus.py` | `ve.entailment` | `prove_entailment` | 106 |
+| `tests/lean_service_corpus.py` | `ve.environment` | `Environment` | 44 |
+| `tests/lean_service_corpus.py` | `ve.norms` | `NormDocument` | 107 |
+| `tests/lean_service_corpus.py` | `ve.norms` | `_bind` | 107 |
+| `tests/lean_service_corpus.py` | `ve.norms` | `check_conflict` | 107 |
+| `tests/lean_service_corpus.py` | `ve.norms` | `prove_norm_entailment` | 107 |
+| `tests/lean_service_corpus.py` | `ve.printer` | `print_document` | 44 |
+| `tests/lean_service_corpus.py` | `ve.printer` | `render` | 151 |
 | `tests/probe_matrix.py` | `ve.admission` | `admit_document` | 36 |
 | `tests/probe_matrix.py` | `ve.admission` | `validate_label` | 36 |
 | `tests/probe_matrix.py` | `ve.argument` | `ArgumentGraph` | 21 |
@@ -1291,12 +1417,12 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.ast` | `Document` | 24 |
 | `tests/probe_matrix.py` | `ve.ast` | `Forall` | 21 |
 | `tests/probe_matrix.py` | `ve.ast` | `Le` | 24 |
-| `tests/probe_matrix.py` | `ve.ast` | `Le` | 553 |
-| `tests/probe_matrix.py` | `ve.ast` | `Lt` | 553 |
+| `tests/probe_matrix.py` | `ve.ast` | `Le` | 568 |
+| `tests/probe_matrix.py` | `ve.ast` | `Lt` | 568 |
 | `tests/probe_matrix.py` | `ve.ast` | `Named` | 21 |
 | `tests/probe_matrix.py` | `ve.ast` | `Not` | 21 |
 | `tests/probe_matrix.py` | `ve.ast` | `Num` | 24 |
-| `tests/probe_matrix.py` | `ve.ast` | `Num` | 553 |
+| `tests/probe_matrix.py` | `ve.ast` | `Num` | 568 |
 | `tests/probe_matrix.py` | `ve.ast` | `Or` | 21 |
 | `tests/probe_matrix.py` | `ve.ast` | `Reach` | 21 |
 | `tests/probe_matrix.py` | `ve.ast` | `Top` | 21 |
@@ -1317,15 +1443,15 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/probe_matrix.py` | `ve.entailment` | `_initial_branch` | 28 |
 | `tests/probe_matrix.py` | `ve.entailment` | `check_entailment_certificate` | 28 |
 | `tests/probe_matrix.py` | `ve.entailment` | `prove_entailment` | 28 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 602 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_LANGUAGE` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_PROFILES` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `CLOSURE_REVISION` | 617 |
 | `tests/probe_matrix.py` | `ve.environment` | `Environment` | 21 |
-| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 602 |
-| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 602 |
+| `tests/probe_matrix.py` | `ve.environment` | `LANGUAGE` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_PROFILES` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `ORDER_REVISION` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `PROFILE` | 617 |
+| `tests/probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 617 |
 | `tests/probe_matrix.py` | `ve.evaluate` | `evaluate` | 30 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 21 |
 | `tests/probe_matrix.py` | `ve.model` | `FiniteModel` | 32 |
@@ -1422,6 +1548,11 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_argument_fixtures.py` | `ve.argument` | `outstanding_obligations` | 1 |
 | `tests/test_argument_fixtures.py` | `ve.argument` | `predicate_use_panel` | 1 |
 | `tests/test_argument_fixtures.py` | `ve.model` | `FiniteModel` | 108 |
+| `tests/test_asimov_laws.py` | `ve.environment` | `Environment` | 6 |
+| `tests/test_asimov_laws.py` | `ve.evaluate` | `_Evaluator` | 7 |
+| `tests/test_asimov_laws.py` | `ve.model` | `FiniteModel` | 8 |
+| `tests/test_asimov_laws.py` | `ve.norms` | `NormDocument` | 10 |
+| `tests/test_asimov_laws.py` | `ve.norms` | `check_conflict` | 10 |
 | `tests/test_assist.py` | `ve.ast` | `And` | 379 |
 | `tests/test_assist.py` | `ve.ast` | `Forall` | 379 |
 | `tests/test_assist.py` | `ve.ast` | `Implies` | 379 |
@@ -1662,15 +1793,20 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_definitions_english.py` | `ve.entailment` | `prove_entailment` | 16 |
 | `tests/test_definitions_english.py` | `ve.environment` | `Environment` | 11 |
 | `tests/test_definitions_english.py` | `ve.profiles` | `SPEC_REVISION` | 18 |
+| `tests/test_document.py` | `ve.ast` | `Exists` | 12 |
 | `tests/test_document.py` | `ve.ast` | `Top` | 12 |
+| `tests/test_document.py` | `ve.ast` | `Unary` | 12 |
+| `tests/test_document.py` | `ve.ast` | `Var` | 12 |
 | `tests/test_document.py` | `ve.ast` | `formula_from_data` | 13 |
-| `tests/test_document.py` | `ve.ast` | `formula_from_data` | 222 |
-| `tests/test_document.py` | `ve.ast` | `formula_to_data` | 555 |
-| `tests/test_document.py` | `ve.definitions` | `compile_definitions` | 554 |
-| `tests/test_document.py` | `ve.definitions` | `premise` | 554 |
+| `tests/test_document.py` | `ve.ast` | `formula_from_data` | 491 |
+| `tests/test_document.py` | `ve.ast` | `formula_to_data` | 18 |
+| `tests/test_document.py` | `ve.ast` | `formula_to_data` | 824 |
+| `tests/test_document.py` | `ve.definitions` | `compile_definitions` | 823 |
+| `tests/test_document.py` | `ve.definitions` | `premise` | 823 |
 | `tests/test_document.py` | `ve.environment` | `Environment` | 9 |
-| `tests/test_document.py` | `ve.evaluate` | `evaluate` | 257 |
+| `tests/test_document.py` | `ve.evaluate` | `evaluate` | 526 |
 | `tests/test_document.py` | `ve.model` | `FiniteModel` | 14 |
+| `tests/test_document.py` | `ve.norms` | `NormDocument` | 17 |
 | `tests/test_english.py` | `ve.ast` | `And` | 10 |
 | `tests/test_english.py` | `ve.ast` | `Binary` | 10 |
 | `tests/test_english.py` | `ve.ast` | `Body` | 12 |
@@ -1889,6 +2025,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_lean_conformance.py` | `ve.parser` | `parse` | 14 |
 | `tests/test_lean_conformance.py` | `ve.printer` | `print_document` | 14 |
 | `tests/test_lean_conformance.py` | `ve.search` | `check_countermodel` | 17 |
+| `tests/test_lean_service_schema.py` | `ve.admission` | `*module*` | 546 |
 | `tests/test_legend.py` | `ve.ast` | `Document` | 10 |
 | `tests/test_legend.py` | `ve.ast` | `Eq` | 10 |
 | `tests/test_legend.py` | `ve.ast` | `Forall` | 10 |
@@ -2001,32 +2138,34 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_norms.py` | `ve.profiles` | `LANGUAGE` | 10 |
 | `tests/test_norms.py` | `ve.profiles` | `SPEC_REVISION` | 10 |
 | `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 183 |
-| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 234 |
-| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 304 |
-| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 332 |
-| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 343 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `And` | 211 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `And` | 235 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 200 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 243 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 286 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 356 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 384 |
+| `tests/test_norms_three_way.py` | `ve.admission` | `admit_document` | 395 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `And` | 263 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `And` | 287 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Const` | 18 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `Const` | 235 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `Eq` | 235 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `Const` | 287 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `Eq` | 287 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Exists` | 18 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `Forall` | 305 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `Implies` | 305 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `Forall` | 357 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `Implies` | 357 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Not` | 18 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Top` | 18 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Unary` | 18 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `Var` | 18 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `_to_data` | 18 |
 | `tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 18 |
-| `tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 211 |
-| `tests/test_norms_three_way.py` | `ve.background` | `background` | 306 |
+| `tests/test_norms_three_way.py` | `ve.ast` | `formula_to_data` | 263 |
+| `tests/test_norms_three_way.py` | `ve.background` | `background` | 358 |
 | `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 166 |
-| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 212 |
-| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 236 |
-| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 403 |
+| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 264 |
+| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 288 |
+| `tests/test_norms_three_way.py` | `ve.entailment` | `prove_entailment` | 455 |
 | `tests/test_norms_three_way.py` | `ve.environment` | `Environment` | 20 |
-| `tests/test_norms_three_way.py` | `ve.evaluate` | `_Evaluator` | 438 |
+| `tests/test_norms_three_way.py` | `ve.evaluate` | `_Evaluator` | 490 |
 | `tests/test_norms_three_way.py` | `ve.evaluate` | `evaluate` | 22 |
 | `tests/test_norms_three_way.py` | `ve.model` | `FiniteModel` | 23 |
 | `tests/test_norms_three_way.py` | `ve.norms` | `NormDocument` | 24 |
@@ -2224,6 +2363,28 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_stage0_probe_matrix.py` | `ve.environment` | `SPEC_REVISION` | 9 |
 | `tests/test_stage0_probe_matrix.py` | `ve.evaluate` | `evaluate` | 8 |
 | `tests/test_stage0_probe_matrix.py` | `ve.model` | `FiniteModel` | 6 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `And` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Atom` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Binary` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Bottom` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Const` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Eq` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Exists` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Forall` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Implies` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Named` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Not` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Or` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Reach` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Top` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Unary` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Var` | 10 |
+| `tests/test_stage2_evaluation.py` | `ve.background` | `background` | 12 |
+| `tests/test_stage2_evaluation.py` | `ve.background` | `dependency_order` | 12 |
+| `tests/test_stage2_evaluation.py` | `ve.environment` | `Environment` | 9 |
+| `tests/test_stage2_evaluation.py` | `ve.evaluate` | `evaluate` | 13 |
+| `tests/test_stage2_evaluation.py` | `ve.model` | `FiniteModel` | 9 |
+| `tests/test_stage2_evaluation.py` | `ve.search` | `check_countermodel` | 15 |
 | `tests/test_surface_registry.py` | `ve.environment` | `Environment` | 50 |
 | `tests/test_t1c.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
 | `tests/test_t1c.py` | `ve.evaluate` | `evaluate` | 5 |
@@ -2477,6 +2638,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/authoring.py` | `ve.environment` | `Environment` | 13 |
 | `ve/authoring.py` | `ve.parser` | `parse` | 15 |
 | `ve/authoring.py` | `ve.printer` | `print_document` | 16 |
+| `ve/backends/diagnostics.py` | `ve.admission` | `AdmissionError` | 37 |
 | `ve/background.py` | `ve.ast` | `And` | 11 |
 | `ve/background.py` | `ve.ast` | `Binary` | 11 |
 | `ve/background.py` | `ve.ast` | `Const` | 11 |
@@ -2488,11 +2650,12 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/background.py` | `ve.ast` | `Not` | 11 |
 | `ve/background.py` | `ve.ast` | `Unary` | 11 |
 | `ve/background.py` | `ve.ast` | `Var` | 11 |
+| `ve/background.py` | `ve.ast` | `formula_from_data` | 143 |
 | `ve/background.py` | `ve.definitions` | `compile_definitions` | 103 |
 | `ve/background.py` | `ve.definitions` | `expand` | 103 |
 | `ve/background.py` | `ve.evaluate` | `_evaluate_validated` | 110 |
 | `ve/background.py` | `ve.profiles` | `require_checker` | 133 |
-| `ve/background.py` | `ve.profiles` | `require_checker` | 149 |
+| `ve/background.py` | `ve.profiles` | `require_checker` | 168 |
 | `ve/bundle.py` | `ve.admission` | `_decode_reading_set` | 20 |
 | `ve/bundle.py` | `ve.admission` | `_disjunction` | 20 |
 | `ve/bundle.py` | `ve.admission` | `parse_label` | 20 |
@@ -2522,17 +2685,24 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/definitions.py` | `ve.background` | `dependency_order` | 11 |
 | `ve/definitions.py` | `ve.environment` | `Environment` | 12 |
 | `ve/document.py` | `ve.admission` | `_check_kind` | 14 |
+| `ve/document.py` | `ve.admission` | `_quoted` | 213 |
 | `ve/document.py` | `ve.admission` | `admit_document` | 14 |
-| `ve/document.py` | `ve.admission` | `parse_label` | 251 |
-| `ve/document.py` | `ve.admission` | `parse_label` | 275 |
+| `ve/document.py` | `ve.admission` | `parse_label` | 354 |
+| `ve/document.py` | `ve.admission` | `parse_label` | 383 |
 | `ve/document.py` | `ve.admission` | `token` | 14 |
 | `ve/document.py` | `ve.ast` | `Document` | 15 |
-| `ve/document.py` | `ve.ast` | `Or` | 214 |
+| `ve/document.py` | `ve.ast` | `Or` | 314 |
 | `ve/document.py` | `ve.ast` | `formula_from_data` | 15 |
 | `ve/document.py` | `ve.ast` | `formula_to_data` | 15 |
 | `ve/document.py` | `ve.environment` | `Environment` | 16 |
-| `ve/document.py` | `ve.parser` | `parse` | 114 |
-| `ve/document.py` | `ve.printer` | `render` | 337 |
+| `ve/document.py` | `ve.norm_admission` | `_check_quoted` | 259 |
+| `ve/document.py` | `ve.norms` | `NormDocument` | 105 |
+| `ve/document.py` | `ve.norms` | `NormDocument` | 212 |
+| `ve/document.py` | `ve.norms` | `NormDocument` | 238 |
+| `ve/document.py` | `ve.norms` | `NormDocument` | 477 |
+| `ve/document.py` | `ve.norms` | `norm_meaning_id` | 212 |
+| `ve/document.py` | `ve.parser` | `parse` | 122 |
+| `ve/document.py` | `ve.printer` | `render` | 448 |
 | `ve/english.py` | `ve.argument` | `ArgumentGraph` | 1438 |
 | `ve/english.py` | `ve.argument` | `Claim` | 1438 |
 | `ve/english.py` | `ve.argument` | `Deduction` | 1438 |
@@ -2638,6 +2808,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/evaluate.py` | `ve.ast` | `Top` | 7 |
 | `ve/evaluate.py` | `ve.ast` | `Unary` | 7 |
 | `ve/evaluate.py` | `ve.ast` | `Var` | 7 |
+| `ve/evaluate.py` | `ve.ast` | `_to_data` | 231 |
 | `ve/evaluate.py` | `ve.ast` | `check_document` | 7 |
 | `ve/evaluate.py` | `ve.ast` | `check_formula` | 7 |
 | `ve/evaluate.py` | `ve.background` | `validate_background` | 184 |
@@ -2707,20 +2878,20 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/norms.py` | `ve.ast` | `_Decoder` | 13 |
 | `ve/norms.py` | `ve.ast` | `_to_data` | 13 |
 | `ve/norms.py` | `ve.background` | `dependency_order` | 15 |
-| `ve/norms.py` | `ve.background` | `validate_background` | 325 |
-| `ve/norms.py` | `ve.background` | `validate_background` | 364 |
-| `ve/norms.py` | `ve.entailment` | `check_entailment_certificate` | 348 |
-| `ve/norms.py` | `ve.entailment` | `check_entailment_certificate` | 358 |
-| `ve/norms.py` | `ve.entailment` | `prove_entailment` | 341 |
-| `ve/norms.py` | `ve.entailment` | `prove_entailment` | 358 |
-| `ve/norms.py` | `ve.environment` | `Environment` | 299 |
-| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 270 |
-| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 319 |
-| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 356 |
-| `ve/norms.py` | `ve.evaluate` | `_Exhausted` | 356 |
-| `ve/norms.py` | `ve.model` | `FiniteModel` | 282 |
-| `ve/norms.py` | `ve.model` | `FiniteModel` | 320 |
-| `ve/norms.py` | `ve.model` | `FiniteModel` | 357 |
+| `ve/norms.py` | `ve.background` | `validate_background` | 329 |
+| `ve/norms.py` | `ve.background` | `validate_background` | 368 |
+| `ve/norms.py` | `ve.entailment` | `check_entailment_certificate` | 352 |
+| `ve/norms.py` | `ve.entailment` | `check_entailment_certificate` | 362 |
+| `ve/norms.py` | `ve.entailment` | `prove_entailment` | 345 |
+| `ve/norms.py` | `ve.entailment` | `prove_entailment` | 362 |
+| `ve/norms.py` | `ve.environment` | `Environment` | 303 |
+| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 274 |
+| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 323 |
+| `ve/norms.py` | `ve.evaluate` | `_Evaluator` | 360 |
+| `ve/norms.py` | `ve.evaluate` | `_Exhausted` | 360 |
+| `ve/norms.py` | `ve.model` | `FiniteModel` | 286 |
+| `ve/norms.py` | `ve.model` | `FiniteModel` | 324 |
+| `ve/norms.py` | `ve.model` | `FiniteModel` | 361 |
 | `ve/norms.py` | `ve.search` | `_used_predicates` | 17 |
 | `ve/openterms.py` | `ve.admission` | `token` | 4 |
 | `ve/openterms.py` | `ve.ast` | `formula_from_data` | 5 |
@@ -2774,40 +2945,41 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/readings.py` | `ve.model` | `FiniteModel` | 74 |
 | `ve/readings.py` | `ve.search` | `check_countermodel` | 157 |
 | `ve/readings.py` | `ve.search` | `find_countermodel` | 157 |
-| `ve/search.py` | `ve.ast` | `Add` | 208 |
-| `ve/search.py` | `ve.ast` | `Add` | 242 |
+| `ve/search.py` | `ve.ast` | `Add` | 247 |
+| `ve/search.py` | `ve.ast` | `Add` | 281 |
 | `ve/search.py` | `ve.ast` | `And` | 9 |
 | `ve/search.py` | `ve.ast` | `Atom` | 9 |
 | `ve/search.py` | `ve.ast` | `Binary` | 9 |
 | `ve/search.py` | `ve.ast` | `Body` | 9 |
-| `ve/search.py` | `ve.ast` | `Const` | 208 |
+| `ve/search.py` | `ve.ast` | `Const` | 247 |
 | `ve/search.py` | `ve.ast` | `Eq` | 9 |
 | `ve/search.py` | `ve.ast` | `Exists` | 9 |
 | `ve/search.py` | `ve.ast` | `Forall` | 9 |
-| `ve/search.py` | `ve.ast` | `INT_SORT` | 259 |
+| `ve/search.py` | `ve.ast` | `INT_SORT` | 298 |
 | `ve/search.py` | `ve.ast` | `Implies` | 9 |
-| `ve/search.py` | `ve.ast` | `Le` | 208 |
-| `ve/search.py` | `ve.ast` | `Lt` | 208 |
+| `ve/search.py` | `ve.ast` | `Le` | 247 |
+| `ve/search.py` | `ve.ast` | `Lt` | 247 |
 | `ve/search.py` | `ve.ast` | `Named` | 9 |
 | `ve/search.py` | `ve.ast` | `Not` | 9 |
-| `ve/search.py` | `ve.ast` | `Num` | 208 |
-| `ve/search.py` | `ve.ast` | `Num` | 242 |
+| `ve/search.py` | `ve.ast` | `Num` | 247 |
+| `ve/search.py` | `ve.ast` | `Num` | 281 |
 | `ve/search.py` | `ve.ast` | `Or` | 9 |
 | `ve/search.py` | `ve.ast` | `Reach` | 9 |
-| `ve/search.py` | `ve.ast` | `Scale` | 208 |
-| `ve/search.py` | `ve.ast` | `Scale` | 242 |
+| `ve/search.py` | `ve.ast` | `Scale` | 247 |
+| `ve/search.py` | `ve.ast` | `Scale` | 281 |
 | `ve/search.py` | `ve.ast` | `Unary` | 9 |
-| `ve/search.py` | `ve.ast` | `Var` | 208 |
-| `ve/search.py` | `ve.ast` | `_Decoder` | 311 |
+| `ve/search.py` | `ve.ast` | `Var` | 247 |
+| `ve/search.py` | `ve.ast` | `_Decoder` | 350 |
+| `ve/search.py` | `ve.ast` | `_to_data` | 122 |
 | `ve/search.py` | `ve.ast` | `check_formula` | 9 |
-| `ve/search.py` | `ve.definitions` | `_mentions` | 310 |
+| `ve/search.py` | `ve.definitions` | `_mentions` | 349 |
 | `ve/search.py` | `ve.evaluate` | `_Evaluator` | 11 |
 | `ve/search.py` | `ve.evaluate` | `_Exhausted` | 11 |
 | `ve/search.py` | `ve.evaluate` | `_evaluate_validated` | 11 |
 | `ve/search.py` | `ve.evaluate` | `_validate_model` | 11 |
 | `ve/search.py` | `ve.model` | `FiniteModel` | 13 |
-| `ve/search.py` | `ve.profiles` | `require_checker` | 442 |
-| `ve/search.py` | `ve.profiles` | `require_checker` | 511 |
+| `ve/search.py` | `ve.profiles` | `require_checker` | 481 |
+| `ve/search.py` | `ve.profiles` | `require_checker` | 550 |
 | `ve/surface/data.py` | `ve.ast` | `And` | 3 |
 | `ve/surface/data.py` | `ve.ast` | `Binary` | 3 |
 | `ve/surface/data.py` | `ve.ast` | `Const` | 3 |
