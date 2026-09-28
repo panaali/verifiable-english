@@ -4,6 +4,8 @@ import json
 
 import pytest
 
+from conformance.alternatives import environment as fixture_environment, rules as fixture_rules
+
 from ve.alternatives import run_case
 from ve.document import check_document, coverage, load_document
 from ve.ast import And, Binary, Const, Eq, Exists, Forall, Implies, Not, Unary, Var, formula_from_data, formula_to_data
@@ -329,6 +331,18 @@ def test_nested_action_guard_round_trips_as_a_norm_block():
         texts.append(text)
     assert texts[0] != texts[1]
     assert "excluding that action" in texts[1]
+
+
+def test_rules_seven_to_nine_canonical_blocks_round_trip():
+    env = Environment(fixture_environment())
+    rules = fixture_rules()
+    document = NormDocument(env, [rules[key] for key in ("3", "7", "8", "9")])
+    text, manifest = render_norm_english(document)
+    assert "allows that harm to happen" in text
+    assert "avoidable by that robot" in text
+    assert "for every second action" in text
+    assert "the second action is available to that robot" in text
+    assert parse_norm_english(env, text, manifest).document_hash == document.document_hash
 
 
 def test_english_own_outcome_guard_names_the_semantic_change():
