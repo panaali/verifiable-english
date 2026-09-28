@@ -8,7 +8,7 @@ from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
                   Num, Add, Scale, Lt, Le)
 from .model import FiniteModel
-from .errors import InvalidModel, ResourceLimit, VEError
+from .errors import CheckerUnavailable, InvalidModel, ResourceLimit, VEError
 from .limits import MAX_EVALUATIONS
 
 
@@ -213,6 +213,8 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
     """Validate the public inputs and evaluate a closed formula or document."""
+    if getattr(env, "alternatives", None) is not None:
+        raise CheckerUnavailable("alternatives@0 requires the Lean checker")
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
     if max_evaluations > MAX_EVALUATIONS:

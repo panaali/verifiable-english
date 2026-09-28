@@ -1,5 +1,6 @@
 """Immutable local vocabulary; descriptions contribute to artifact identity."""
 from dataclasses import dataclass
+from collections.abc import Mapping
 import re
 from types import MappingProxyType
 
@@ -89,6 +90,29 @@ class PredicateDecl:
     defined: bytes | None = None
 
 
+class _ProfilePredicates(Mapping):
+    """Lookup profile words without turning them into declared base tables.
+
+    Enumeration deliberately exposes only declarations. This keeps source
+    identity, models, and generated base vocabularies unchanged.
+    """
+
+    def __init__(self, declared, profile):
+        self.declared = MappingProxyType(declared)
+        self.profile = MappingProxyType(profile)
+
+    def __getitem__(self, name):
+        if name in self.profile:
+            return self.profile[name]
+        return self.declared[name]
+
+    def __iter__(self):
+        return iter(self.declared)
+
+    def __len__(self):
+        return len(self.declared)
+
+
 @dataclass(frozen=True, slots=True)
 class RegulatedDecl:
     role: str
@@ -141,6 +165,11 @@ def _alternatives_block(raw, sorts, predicates, constants):
     for word in ("avoidable", "unavoidable", "allows", "prevents"):
         if word in sorts or word in predicates or word in constants:
             raise VEError(f"AlternativesReserved: {word}")
+    profile_wordings = {"{0} is avoidable by {1}", "{0} is unavoidable by {1}",
+                        "{0} allows {1} to happen", "{0} prevents {1}"}
+    for name, declaration in predicates.items():
+        if declaration.verbalisation in profile_wordings:
+            raise VEError(f"AlternativesReserved: wording for {name}")
     role_sorts = {}
     for role in ("chooser", "action", "harm"):
         name = raw[role]
@@ -394,11 +423,21 @@ class Environment:
             alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants)
         elif has_alternatives:
             raise UnsupportedProfile("alternatives block requires alternatives@0")
+        profile_predicates = {}
+        if alternatives is not None:
+            block = loads_json(alternatives)
+            for name, arguments in (("avoidable", (block["harm"], block["chooser"])),
+                                    ("unavoidable", (block["harm"], block["chooser"])),
+                                    ("allows", (block["action"], block["harm"])),
+                                    ("prevents", (block["action"], block["harm"]))):
+                profile_predicates[name] = PredicateDecl(arguments, "alternatives@0 profile word")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
                              ("profiles", tuple(data["profiles"]) if route else
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
-                             ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
+                             ("sorts", MappingProxyType(sorts)),
+                             ("predicates", _ProfilePredicates(predicates, profile_predicates)
+                              if alternatives is not None else MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants)),
                              ("alternatives", alternatives)):
             object.__setattr__(self, field, value)

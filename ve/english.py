@@ -366,6 +366,12 @@ class EnglishVocabulary:
                     name = block[role]
                     self.predicates[name] = env.predicates[name].verbalisation
                     issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
+            self.predicates.update({
+                'avoidable': '{0} is avoidable by {1}',
+                'unavoidable': '{0} is unavoidable by {1}',
+                'allows': '{0} allows {1} to happen',
+                'prevents': '{0} prevents {1}',
+            })
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
