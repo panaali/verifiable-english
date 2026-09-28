@@ -6,6 +6,7 @@ from unittest.mock import patch
 from contextlib import redirect_stderr
 import io
 from pathlib import Path
+import subprocess
 from tempfile import TemporaryDirectory
 import sys
 from types import ModuleType
@@ -79,6 +80,32 @@ class LayerSelectionTests(unittest.TestCase):
         for source, consumer in cases:
             with self.subTest(source=source, consumer=consumer):
                 self.assertIn(consumer, select([source])["selected"])
+
+    def test_renames_include_deleted_paths_in_all_git_diff_modes(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args):
+                return subprocess.run(["git", "-C", str(root), *args], check=True,
+                                      capture_output=True, text=True).stdout.strip()
+
+            git("init", "-q")
+            (root / "docs").mkdir()
+            (root / "docs/fluent-examples.md").write_text("original\n")
+            git("add", ".")
+            git("-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                "commit", "-qm", "initial")
+            base = git("rev-parse", "HEAD")
+            git("mv", "docs/fluent-examples.md", "docs/fluent.md")
+            expected = {"docs/fluent-examples.md", "docs/fluent.md"}
+            with patch.object(select_tests, "ROOT", root):
+                self.assertEqual(set(select_tests.changed_paths(None, None)), expected)
+            git("-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                "commit", "-qm", "rename")
+            with patch.object(select_tests, "ROOT", root):
+                self.assertEqual(set(select_tests.changed_paths(base, None)), expected)
+                self.assertEqual(set(select_tests.changed_paths(None, "HEAD")), expected)
+            self.assertIn("tests/test_views_polish.py", select(sorted(expected))["selected"])
 
     def test_both_lean_executables_are_tool_consumers(self):
         self.assertIn("tests/test_norms_three_way.py",
