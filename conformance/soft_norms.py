@@ -89,6 +89,33 @@ def rust_sources():
     ]
 
 
+def loop_recheck_reproducers():
+    """Independent faults and ordering changes found in the soft loop recheck."""
+    missing = norm("a", "x_required", True, mode="default")
+    unknown_rank = norm("b", "x_required", True, rank="z")
+    yield "missing-exception-before-next-rule", env(), [missing, unknown_rank], "SOFT_MISSING_EXCEPTION"
+
+    for variable, code in ((0, "SOFT_INVALID_EXCEPTION_CONDITION"),
+                           (1, "SOFT_INVALID_INPUT")):
+        exception = {"decided_by": "assistant", "sufficient": [
+            ["unary", "x_required", ["var", variable]]],
+            "necessary": [], "factors": False}
+        yield f"exception-typing-before-factors-{variable}", env(), [
+            norm("a", "x_required", True, mode="default", exception=exception)], code
+
+    for names in (("z", "soft__a"), ("soft__a", "z")):
+        raw = env({"parties": ["p"], "outranking": {"mode": "strict"}})
+        for name in names:
+            raw["vocabulary"]["predicates"][name] = {
+                "arguments": ["assistant"], "description": name,
+                **({"instruction_of": "missing"} if name == "z" else {})}
+        yield f"predicate-order-{names[0]}", raw, [], "SOFT_INVALID_NAME"
+
+    raw = env({"outranking": {"mode": "bad"}})
+    raw["profiles"].reverse()
+    yield "profile-order-after-soft-block", raw, [], "SOFT_INVALID_OUTRANKING"
+
+
 def rejected_sources():
     """Wire inputs both regenerators must reject with identical diagnostics."""
     return [
@@ -227,7 +254,9 @@ def generated_invalid_exceptions():
 
 
 def compare_rejected():
-    cases = (rejected_sources() + list(generated_invalid_soft_blocks()) +
+    cases = (rejected_sources() +
+             [(raw, rules) for _, raw, rules, _ in loop_recheck_reproducers()] +
+             list(generated_invalid_soft_blocks()) +
              list(generated_invalid_soft_rules()) +
              list(combined_invalid_soft_blocks()) +
              list(generated_invalid_exceptions()))
