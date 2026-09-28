@@ -142,3 +142,25 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     if rejected != (proc.returncode == 1):
         raise unavailable("exit status disagrees with its result rows")
     return rows
+
+
+def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
+    """Transport a raw alternatives case to its dedicated Lean runner."""
+    try:
+        proc = subprocess.run([str(executable), "-"], input=canonical_json([case]),
+                              capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable("ve_alternatives_route is unavailable") from exc
+    if proc.returncode not in (0, 1):
+        raise CheckerUnavailable("ve_alternatives_route failed")
+    try:
+        rows = loads_json(proc.stdout)
+    except VEError as exc:
+        raise CheckerUnavailable("ve_alternatives_route returned invalid JSON") from exc
+    if (type(rows) is not list or len(rows) != 1 or type(rows[0]) is not dict
+            or not _same(rows[0].get("id"), case.get("id"))
+            or rows[0].get("status") not in ("ok", "error")
+            or (rows[0]["status"] == "error" and type(rows[0].get("error")) is not str)
+            or (proc.returncode == 1) != (rows[0]["status"] == "error")):
+        raise CheckerUnavailable("ve_alternatives_route returned an invalid response")
+    return rows[0]

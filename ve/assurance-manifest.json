@@ -50,8 +50,8 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 1885,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. Every other Lean file that handles JSON is classified under `other_json`.",
+    "total_lines": 2642,
+    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
        "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
@@ -81,7 +81,7 @@
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
-      {"file": "lean/VE/Route/Admission.lean", "lines": 687, "sha256": "58106871aec1cd71d28577578c6a1b4ce20bd50562df697d5fbd5f22d34a1f03",
+      {"file": "lean/VE/Route/Admission.lean", "lines": 687, "sha256": "9fc91e6a200da53445a99838a0af86cf2279dc45b607537412dc84aeac7f5be6",
        "ranges": [[101, 124], [206, 245], [421, 540]],
        "declarations": ["decodeKind", "parseLabelRaw", "parseLabel", "decodeUnit", "decodeLeaf", "decodeLemma", "decodeReadingSet", "decodeNode", "checkBindings", "decodeDoc"]},
       {"file": "lean/VE/Norms/Replay.lean", "lines": 393, "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
@@ -91,12 +91,22 @@
        "ranges": [[410, 438]], "declarations": ["decodeLeaf", "decodeLemma"]},
       {"file": "lean/VE/Norms/Admission.lean", "lines": 455, "sha256": "9996af265c1e4148d32b6af4105f688e02bd89cd6bc45dcad83ac49e9d9bdf3f",
        "ranges": [[22, 45]], "declarations": ["splitUnit", "splitDocument"],
-       "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec)"}
+       "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec)"},
+      {"file": "lean/VE/Alternatives/Wire.lean", "lines": 296, "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
+       "ranges": [[1, 296]], "declarations": ["profileGate", "normsView", "decodeBlock", "decodeAltSource"],
+       "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/Alternatives/Replay.lean", "lines": 328, "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
+       "ranges": [[1, 328]], "declarations": ["documentHash", "decodePackage", "sourceOf", "decodeRows", "decodeScenario"],
+       "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"},
+      {"file": "lean/VE/Alternatives/Admission.lean", "lines": 133, "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
+       "ranges": [[1, 133]], "declarations": ["admitDocument"],
+       "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
+      "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
       "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
       "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",

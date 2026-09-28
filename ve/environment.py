@@ -1,4 +1,5 @@
 """Immutable local vocabulary; descriptions contribute to artifact identity."""
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 import re
 from types import MappingProxyType
@@ -90,6 +91,29 @@ class PredicateDecl:
     defined: bytes | None = None
 
 
+class _ProfilePredicates(Mapping):
+    """Lookup profile words without turning them into declared base tables.
+
+    Enumeration deliberately exposes only declarations. This keeps source
+    identity, models, and generated base vocabularies unchanged.
+    """
+
+    def __init__(self, declared, profile):
+        self.declared = MappingProxyType(declared)
+        self.profile = MappingProxyType(profile)
+
+    def __getitem__(self, name):
+        if name in self.profile:
+            return self.profile[name]
+        return self.declared[name]
+
+    def __iter__(self):
+        return iter(self.declared)
+
+    def __len__(self):
+        return len(self.declared)
+
+
 @dataclass(frozen=True, slots=True)
 class RegulatedDecl:
     role: str
@@ -130,6 +154,114 @@ class ConstantDecl:
     description: str | None
 
 
+def _alternatives_block(raw, sorts, predicates, constants):
+    """Check declarations only; Lean owns inlining, validity and followability."""
+    mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
+    optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
+    if type(raw) is not dict or not mandatory <= raw.keys():
+        missing = sorted(mandatory - raw.keys()) if type(raw) is dict else sorted(mandatory)
+        raise VEError(f"InvalidInput: alternatives.{missing[0] if missing else 'block'}")
+    if unknown := sorted(raw.keys() - mandatory - optional):
+        raise VEError(f"InvalidInput: alternatives.{unknown[0]}")
+    for word in ("avoidable", "unavoidable", "allows", "prevents"):
+        if word in sorts or word in predicates or word in constants:
+            raise VEError(f"AlternativesReserved: {word}")
+    profile_wordings = {"{0} is avoidable by {1}", "{0} is unavoidable by {1}",
+                        "{0} allows {1} to happen", "{0} prevents {1}"}
+    for name, declaration in predicates.items():
+        if declaration.verbalisation in profile_wordings:
+            raise VEError(f"AlternativesReserved: wording for {name}")
+    role_sorts = {}
+    for role in ("chooser", "action", "harm"):
+        name = raw[role]
+        if type(name) is not str or name not in sorts:
+            raise UnknownSymbol(f"alternatives.{role} {name}")
+        role_sorts[role] = name
+    if len(set(role_sorts.values())) != 3:
+        raise VEError("AlternativesSort: sorts must be distinct")
+    role_spec = {
+        "available": ((role_sorts["action"], role_sorts["chooser"]), "{0} is available to {1}"),
+        "leads_to": ((role_sorts["action"], role_sorts["harm"]), "{0} leads to {1}"),
+        "inaction": ((role_sorts["action"],), "{0} is inaction"),
+        "taken": ((role_sorts["action"],), "{0} is taken"),
+        "proximate": ((role_sorts["action"], role_sorts["harm"]), "{0} causes {1}"),
+    }
+    declared_roles = [raw[role] for role in role_spec if role in raw]
+    if any(type(name) is not str for name in declared_roles):
+        raise VEError("InvalidInput: alternatives.role")
+    role_names = []
+    for role, (arguments, wording) in role_spec.items():
+        if role not in raw:
+            continue
+        name = raw[role]
+        if type(name) is not str or name not in predicates:
+            raise UnknownSymbol(f"alternatives.{role} {name}")
+        decl = predicates[name]
+        if decl.regulated is not None or decl.defined is not None or decl.functional is not None or decl.total is not None:
+            raise VEError(f"AlternativesRegulated: {role} {name}")
+        if decl.arguments != arguments:
+            raise VEError(f"AlternativesSort: {role} expects ({', '.join(arguments)})")
+        if decl.verbalisation != wording:
+            raise VEError(f'AlternativesVerbalisation: {role} must read "{wording}"')
+        role_names.append(name)
+    if len(set(role_names)) != len(role_names):
+        raise VEError("AlternativesSort: role predicates must be distinct")
+    for role, (_, wording) in role_spec.items():
+        for name, decl in predicates.items():
+            if decl.verbalisation == wording and (role not in raw or raw[role] != name):
+                raise VEError(f'AlternativesVerbalisation: {role} must be declared for "{wording}"')
+    outcomes = raw["outcomes"]
+    if outcomes != "signed":
+        if type(outcomes) is dict and "complete_by" not in outcomes:
+            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
+        if type(outcomes) is not dict or set(outcomes) != {"complete_by"}:
+            raise VEError("InvalidInput: alternatives.outcomes")
+        if type(outcomes["complete_by"]) is not str or not outcomes["complete_by"].strip():
+            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
+    if "decided_by" in raw and (type(raw["decided_by"]) is not str or
+                                len(raw["decided_by"].encode("utf-8")) > 64):
+        raise VEError("InvalidInput: alternatives.decided_by")
+    if "performed" in raw:
+        performed = raw["performed"]
+        if type(performed) is not dict or set(performed) != {"permission", "obligation"}:
+            raise VEError("InvalidInput: alternatives.performed")
+        m, q = performed["permission"], performed["obligation"]
+        pair = (predicates.get(m) if type(m) is str else None,
+                predicates.get(q) if type(q) is str else None)
+        if (any(d is None or d.arguments != (role_sorts["action"],) or d.regulated is None
+                for d in pair) or pair[0].regulated.role != "permission"
+                or pair[1].regulated.role != "obligation"
+                or pair[1].regulated.permission != m):
+            raise VEError(f"AlternativesPerformed: {m}, {q}")
+    fulfilments = raw.get("fulfilments", [])
+    if type(fulfilments) is not list:
+        raise VEError("InvalidInput: alternatives.fulfilments")
+    if len(fulfilments) > 16:
+        raise ResourceLimit("fulfilments")
+    seen = set()
+    for item in fulfilments:
+        if type(item) is not dict or set(item) != {"obligation", "body"}:
+            raise VEError("InvalidInput: alternatives.fulfilments")
+        name = item["obligation"]
+        if type(name) is not str:
+            raise VEError("InvalidInput: alternatives.fulfilments")
+        if name in seen:
+            raise DuplicateDeclaration(f"fulfilment {name}")
+        seen.add(name)
+        decl = predicates.get(name)
+        if decl is None or decl.regulated is None or decl.regulated.role != "obligation" or not decl.arguments or decl.arguments[0] != role_sorts["chooser"]:
+            raise VEError(f"FulfilmentSort: {name}")
+        if "performed" in raw and name == raw["performed"]["obligation"]:
+            raise VEError(f"FulfilmentOnPerformed: {name}")
+        body = item["body"]
+        if body == "avoids":
+            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
+                raise VEError(f"FulfilmentSort: {name}")
+        elif type(body) is not list:
+            raise VEError("InvalidInput: alternatives.fulfilments")
+    return canonical_json(raw)
+
+
 @dataclass(frozen=True, slots=True, init=False)
 class Environment:
     language: str
@@ -139,6 +271,7 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    alternatives: bytes | None
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
@@ -148,7 +281,9 @@ class Environment:
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
-        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"})
+        has_alternatives = route and type(data) is dict and "alternatives" in data
+        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
+                       | ({"alternatives"} if has_alternatives else set()))
         order = False
         if route:
             family = profile_registry.checker_family(data["profiles"])
@@ -286,12 +421,28 @@ class Environment:
                                            if "description" in entry else None)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
+        alternatives = None
+        if route and "alternatives@0" in data["profiles"]:
+            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants)
+        elif has_alternatives:
+            raise UnsupportedProfile("alternatives block requires alternatives@0")
+        profile_predicates = {}
+        if alternatives is not None:
+            block = loads_json(alternatives)
+            for name, arguments in (("avoidable", (block["harm"], block["chooser"])),
+                                    ("unavoidable", (block["harm"], block["chooser"])),
+                                    ("allows", (block["action"], block["harm"])),
+                                    ("prevents", (block["action"], block["harm"]))):
+                profile_predicates[name] = PredicateDecl(arguments, "alternatives@0 profile word")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
                              ("profiles", tuple(data["profiles"]) if route else
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
-                             ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
-                             ("constants", MappingProxyType(constants))):
+                             ("sorts", MappingProxyType(sorts)),
+                             ("predicates", _ProfilePredicates(predicates, profile_predicates)
+                              if alternatives is not None else MappingProxyType(predicates)),
+                             ("constants", MappingProxyType(constants)),
+                             ("alternatives", alternatives)):
             object.__setattr__(self, field, value)
         # All identity-bearing declarations are now immutable. Model search
         # constructs many candidates against this same environment.
@@ -337,6 +488,7 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
+                **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}

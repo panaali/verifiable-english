@@ -303,6 +303,9 @@ class NormDocument:
         return tuple(reports)
 
     def base_environment(self):
+        if self.env.alternatives is not None:
+            from .errors import CheckerUnavailable
+            raise CheckerUnavailable("alternatives@0 requires the Lean checker")
         from .environment import Environment
         data = self.env.to_dict()
         data["vocabulary"]["predicates"] = {

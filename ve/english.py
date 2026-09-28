@@ -360,6 +360,30 @@ class EnglishVocabulary:
                     self.negatives[name] = negative
                     negative_path = path.replace("/verbalisation", "/negative_verbalisation")
                     issues = {i for i in issues if i.path != negative_path}
+        # alternatives@0 fixes these exact forms as part of its declaration
+        # contract. Generic vocabulary lint is deliberately more restrictive
+        # about auxiliary verbs and common words.
+        if getattr(env, 'alternatives', None) is not None:
+            from .wire import loads_json
+            block = loads_json(env.alternatives)
+            for role in ('available', 'leads_to', 'inaction', 'taken', 'proximate'):
+                if role in block:
+                    name = block[role]
+                    self.predicates[name] = env.predicates[name].verbalisation
+                    issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
+            self.predicates.update({
+                'avoidable': '{0} is avoidable by {1}',
+                'unavoidable': '{0} is unavoidable by {1}',
+                'allows': '{0} allows {1} to happen',
+                'prevents': '{0} prevents {1}',
+            })
+            self.input_aliases = [
+                ('avoidable', '{0} is preventable by {1}', False),
+                ('allows', '{0} lets {1} happen', False),
+                (block['leads_to'], '{0} does not lead to {1}', True),
+            ]
+        else:
+            self.input_aliases = []
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
@@ -527,6 +551,67 @@ class EnglishTraversal:
             if b and c: return left + ', and ' + b + ' and ' + c
         return None
 
+    def alternatives_guard(self, value, scope):
+        if getattr(self.env, 'alternatives', None) is None or type(value) not in (ast.Forall, ast.Exists):
+            return None
+        from .wire import loads_json
+        block = loads_json(self.env.alternatives)
+        if value.sort != block['action']:
+            return None
+        if type(value) is ast.Forall and type(value.body) is ast.Implies:
+            condition, body = value.body.left, value.body.right
+            quantifier = 'every'
+        elif type(value) is ast.Exists and type(value.body) is ast.And:
+            condition, body = value.body.left, value.body.right
+            quantifier = 'another'
+        else:
+            return None
+        other = False
+        if type(condition) is ast.And:
+            first, difference = condition.left, condition.right
+            if (type(difference) is not ast.Not or type(difference.body) is not ast.Eq
+                    or difference.body.left != ast.Var(0)
+                    or type(difference.body.right) is not ast.Var):
+                return None
+            outer = difference.body.right.index - 1
+            if (outer < 0 or outer >= len(scope) or scope[outer][0] != block['action']):
+                return None
+            condition, other = first, True
+        if (type(condition) is not ast.Binary or condition.predicate != block['available']
+                or condition.left != ast.Var(0)):
+            return None
+        if quantifier == 'another' and not other:
+            return None
+        owner = condition.right
+        if type(owner) is ast.Var:
+            if owner.index == 0 or owner.index > len(scope):
+                return None
+            owner = ast.Var(owner.index - 1)
+        inner = ((block['action'], 'that other ' + self.words.sorts[block['action']]
+                  if other else 'that ' + self.words.sorts[block['action']]), *scope)
+
+        def vp(atom):
+            return self.relative(atom, inner)
+
+        verbal = vp(body)
+        if verbal is None and type(body) in (ast.And, ast.Or):
+            left, right = vp(body.left), vp(body.right)
+            if left is not None and right is not None:
+                verbal = ('both ' + left + ' and ' + right if type(body) is ast.And else
+                          'either ' + left + ' or ' + right)
+        if verbal is None:
+            return None
+        noun = self.words.sorts[block['action']]
+        prefix = ('another ' if quantifier == 'another' else
+                  'every other ' if other else 'every ')
+        exclusion = ''
+        if other:
+            nearest_action = next(i for i, (sort, _) in enumerate(scope)
+                                  if sort == block['action'])
+            if outer != nearest_action:
+                exclusion = ' excluding ' + self.term(ast.Var(outer), scope)
+        return prefix + noun + ' available to ' + self.term(owner, scope) + exclusion + ' ' + verbal
+
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
         if kind is ast.Exists and 'data@0' in self.env.profiles and type(value.body) is ast.And:
@@ -544,6 +629,9 @@ class EnglishTraversal:
                               else relation.left)
                     return ('the ' + relation.predicate + ' of ' + self.term(source, scope)
                             + ' is ' + property_atom.predicate)
+        special = self.alternatives_guard(value, scope)
+        if special is not None:
+            return special
         record = surface_registry.by_node(value)
         if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
             return record.english_renderer(self, value, scope, depth)
@@ -873,6 +961,7 @@ class EnglishParser:
         for name, template in self.words.predicates.items():
             templates.append((name, template, False))
         templates += [(name, template, True) for name, template in self.words.negatives.items()]
+        templates += self.words.input_aliases
         if not relative:
             templates.append((None, '{0} is the same as {1}', False))
             if order:
@@ -940,7 +1029,8 @@ class EnglishParser:
         if len(nodes) != 1:
             self.error('The vocabulary gives this clause more than one meaning. Use distinct predicate templates.')
         tail = re.match(r'\s+([A-Za-z][A-Za-z0-9_-]*)', self.source[longest:])
-        clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(), *self.words.negatives.values())}
+        clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(),
+                         *self.words.negatives.values(), *(t for _, t, _ in self.words.input_aliases))}
         if tail and tail[1].lower() not in BOUNDARIES | clause_heads:
             names = {n.predicate for _, n in choices if type(n) in (ast.Unary, ast.Binary)}
             names |= {n.body.predicate for _, n in choices if type(n) is ast.Not}
@@ -1063,6 +1153,21 @@ class EnglishParser:
         end = phrase_end(self.source, content)
         end = min(len(self.source), max(end, content, start + 1))
         phrase = self.source[start:end]
+        if getattr(self.env, 'alternatives', None) is not None:
+            lowered = phrase.lower()
+            if lowered.startswith('causes '):
+                self.error("The proximate cause wording needs a declared proximate role; declare it or write 'leads to'.")
+            if lowered.startswith(('results in ', 'brings about ')):
+                self.error("Use the declared Boolean wording 'leads to' for this outcome.")
+            if lowered.startswith(('could lead to ', 'risks ', 'increases the risk of ',
+                                   'contributes to ', 'provides uplift to ')):
+                self.error("This outcome wording is not Boolean. State a supported leads-to cell or label the degree of risk as open.")
+            if lowered.startswith('through inaction allows '):
+                self.error("Through inaction allows has two readings. State whether inaction leads to the harm, or whether an avoidable harm is allowed.")
+            if lowered.startswith('allows a harm to a human being to happen'):
+                self.error("Write the long form: there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen.")
+            if re.match(r'allows\s+\w+\s+to\s+\w+', lowered) and not lowered.endswith(' to happen'):
+                self.error("Permission for a person uses the W1 'may' wording, not causal 'allows'.")
         matches = nearest(phrase, self.words)[:3]
         suggestions = '; '.join(repr(row['wording']) for row in matches)
         raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
@@ -1094,6 +1199,65 @@ class EnglishParser:
             return ast.And(first, second)
         return first
 
+    def alternatives_guard(self, scope):
+        """Expand the three profile guard phrases to ordinary quantified FOL."""
+        from .wire import loads_json
+        block = loads_json(self.env.alternatives)
+        noun = self.words.sorts[block['action']]
+        forms = ((f'every other {noun} available to ', 'other'),
+                 (f'every {noun} available to ', 'every'),
+                 (f'another {noun} available to ', 'another'))
+        mode = next((kind for prefix, kind in forms if self.take(prefix)), None)
+        if mode is None:
+            return None
+        outer_action = next((index for index, (sort, _) in enumerate(scope)
+                             if sort == block['action']), None)
+        if mode != 'every' and outer_action is None:
+            self.error('Another action needs a rule on an action as its reference.')
+        chooser_ref = 'that ' + self.words.sorts[block['chooser']]
+        if (self.source[self.i:].startswith(chooser_ref)
+                and chooser_ref not in self.term_options(scope)):
+            self.error('The chooser has no antecedent; write there is a ' +
+                       self.words.sorts[block['chooser']] + ' such that that action is available '
+                       'to that ' + self.words.sorts[block['chooser']] + ' and …')
+        owner = self.term(scope)
+        if mode != 'every' and self.take(' excluding '):
+            excluded = self.term(scope)
+            if (type(excluded) is not ast.Var or
+                    scope[excluded.index][0] != block['action']):
+                self.error('The excluded action must be an action in scope.')
+            outer_action = excluded.index
+        self.space()
+        inner = ((block['action'], 'that other ' + noun if mode != 'every' else 'that ' + noun), *scope)
+
+        def verb_atom():
+            reference = inner[0][1]
+            if self.source[self.i:].startswith(reference + ' '):
+                return self.atom(inner)
+            return self.atom(inner, relative=True)
+
+        def verb_phrase():
+            if self.take('either '):
+                left = verb_atom()
+                self.need(' or ')
+                right = verb_atom()
+                self.take(', or both')
+                return ast.Or(left, right)
+            if self.take('both '):
+                left = verb_atom()
+                self.need(' and ')
+                return ast.And(left, verb_atom())
+            return verb_atom()
+
+        body = verb_phrase()
+        lifted_owner = ast.Var(owner.index + 1) if type(owner) is ast.Var else owner
+        available = ast.Binary(block['available'], ast.Var(0), lifted_owner)
+        if mode != 'every':
+            available = ast.And(available, ast.Not(ast.Eq(ast.Var(0), ast.Var(outer_action + 1))))
+        self.farthest = max(self.farthest, self.i)
+        return (ast.Exists(block['action'], ast.And(available, body)) if mode == 'another'
+                else ast.Forall(block['action'], ast.Implies(available, body)))
+
     def formula(self, scope=(), depth=0, nesting=1):
         if nesting > MAX_DEPTH:
             self.error(f'This statement exceeds the {MAX_DEPTH}-level nesting limit.', ResourceLimit)
@@ -1108,6 +1272,10 @@ class EnglishParser:
             word = remainder.split(maxsplit=1)[0]
             if word not in self.term_options(scope):
                 self.error('Plural or possessive reference needs an explicit-name or scoped-referent confirmation.')
+        if getattr(self.env, 'alternatives', None) is not None:
+            alternative = self.alternatives_guard(scope)
+            if alternative is not None:
+                return alternative
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
             start = self.i
@@ -1595,6 +1763,21 @@ def english_lark_grammar(env, **options):
         ('LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/'
          if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
+    if getattr(env, 'alternatives', None) is not None:
+        from .wire import loads_json
+        block = loads_json(env.alternatives)
+        action_noun = content_lit(words.sorts[block['action']])
+        rules += [
+            '%extend formula: alt_available_guard',
+            '%extend term: ' + content_lit('that other ' + words.sorts[block['action']]),
+            'alt_available_guard: "every" ' + action_noun + ' "available" "to" term alt_verb_phrase'
+            ' | "every" "other" ' + action_noun + ' "available" "to" term ("excluding" term)? alt_verb_phrase'
+            ' | "another" ' + action_noun + ' "available" "to" term ("excluding" term)? alt_verb_phrase',
+            'alt_verb_phrase: relative | atom | "either" alt_verb_atom "or" alt_verb_atom'
+            ' | "either" alt_verb_atom "or" alt_verb_atom ", or both"'
+            ' | "both" alt_verb_atom "and" alt_verb_atom',
+            'alt_verb_atom: relative | atom',
+        ]
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
     constants = [constant_lit(v) for n, v in words.constants.items() if not is_int(n)]
@@ -1621,8 +1804,8 @@ def english_lark_grammar(env, **options):
                      if prop.arguments == (declaration.arguments[1],))
     relatives = []
     object_relatives = []
-    for templates in (words.predicates, words.negatives):
-        for name, template in templates.items():
+    for name, template in (list(words.predicates.items()) + list(words.negatives.items()) +
+                           [(name, template) for name, template, _ in words.input_aliases]):
             sorts = env.predicates[name].arguments
             slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
             parts = re.split(r'(\{[0-5]\})', template)
