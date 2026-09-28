@@ -74,7 +74,8 @@ def _split(raw: bytes):
     if type(meta) is not dict or meta.get("format") != "ve-document@1":
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
-               "narrowings", "weights", "graph", "lemmas"}
+               "narrowings", "weights", "graph", "lemmas", "contexts", "assessments",
+               "bridges", "scoped"}
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
@@ -101,6 +102,8 @@ def _content(env, unit, fences):
         return None
     if type(content) is not dict or len(content) != 1:
         raise VEError("unit content must bind one formula or norm")
+    if "reports@0" in env.profiles and set(content) & {"report", "assessment", "negated"}:
+        return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
         from .norms import NormDocument
         if "norms@0" not in env.profiles:
@@ -170,6 +173,8 @@ def load_document(path: str | Path):
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
     env = Environment(meta["environment"])
+    if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
+        raise VEError("unknown document metadata")
     open_names = validate_open_terms(env, meta.get("open_terms", []))
     units = meta.get("units")
     if type(units) is not list or not units:
@@ -202,7 +207,7 @@ def load_document(path: str | Path):
         except UnicodeDecodeError as exc:
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
-        kind = _check_kind(unit["kind"])
+        kind = _check_kind(unit["kind"], reports="reports@0" in env.profiles)
         status = _meaning(unit["meaning"], open_names)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
@@ -220,7 +225,7 @@ def load_document(path: str | Path):
             raise VEError("unformalised unit cannot assert content")
         if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
             raise VEError("unformalised kind needs unformalised meaning")
-        if "meaning_id" in unit and unit["meaning_id"] != mid:
+        if "meaning_id" in unit and mid is not None and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")
         if explicit_status is not None and explicit_status not in STATUSES:
@@ -235,6 +240,27 @@ def load_document(path: str | Path):
                          **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
+    reports = None
+    if "reports@0" in env.profiles:
+        from .reports import ReportsDocument
+        if meta.get("reading_sets") or meta.get("graph") or meta.get("lemmas"):
+            raise VEError("reports readings, graph and lemma replay await the Lean route")
+        reported = [u for u in compiled if type(u["content"]) is dict
+                    and set(u["content"]) & {"report", "assessment", "negated"}]
+        reports = ReportsDocument(env, meta.get("contexts", []), meta.get("assessments", []),
+                                  [{"id": u["id"], "span": u["span"], "kind": u["kind"],
+                                    "meaning": u["meaning"], "support": u["support"],
+                                    "content": u["content"]}
+                                   for u in reported], bridges=meta.get("bridges", []),
+                                  scoped=meta.get("scoped", []))
+        for u in reported:
+            u["meaning_id"] = reports.meaning_id(u["content"])
+            original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
+            if "meaning_id" in original and original["meaning_id"] != u["meaning_id"]:
+                raise VEError("unit meaning id does not match content")
+            # Without the reports Lean route, this profile cannot issue a
+            # checked semantic verdict even for a closed complement.
+            u["status"] = "OPEN"
     from .norms import NormDocument
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
@@ -286,6 +312,7 @@ def load_document(path: str | Path):
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
             "units": compiled, "norms": norms,
+            "reports": reports,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
 
 
@@ -340,7 +367,8 @@ def coverage(doc):
     meta = doc["meta"]
     bridge_count = sum(n.get("label", "").startswith("bridge:accepts(")
                        for n in meta.get("graph", {}).get("nodes", []))
-    residual = {"open_terms": len(meta.get("open_terms", [])),
+    residual = {"open_terms": len(meta.get("open_terms", [])) +
+                (len(doc["reports"].open_terms) if doc.get("reports") is not None else 0),
                 "assumptions": sum(u["support"] == "assumption" for u in units),
                 "bridge_leaves": bridge_count,
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
@@ -368,6 +396,12 @@ def _check_narrowing_choices(meta, labels):
 
 def check_document(path):
     doc = load_document(path)
+    if doc["reports"] is not None:
+        # The reports Lean route is a separate proof obligation. Surface the
+        # elaboration for witness search without implying checked semantics.
+        return {"format": "ve-document@1", "status": "UNVERIFIED",
+                "source_id": doc["source_id"], "document_id": doc["document_id"],
+                "coverage": coverage(doc), "reports": doc["reports"].search_payload()}
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
