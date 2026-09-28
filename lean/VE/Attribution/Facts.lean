@@ -24,12 +24,14 @@ structure WF (D : ReportDoc) : Prop where
   lits : ∀ l ∈ D.lits, (D.E.constants l == some VE.Route.Background.stringSort) = true
   «scoped» : ∀ s ∈ D.«scoped», scopedOk D s = true
   bridges : ∀ b ∈ D.bridges, bridgeOk D b = true
+  w2quoted : ∀ x ∈ D.w2.units, (!x.kind.quoted || x.content.isNone) = true
+  allIds : (D.units.map (·.id) ++ D.w2.units.map (·.id)).Nodup
 
 theorem wf_of {D : ReportDoc} (h : WellFormedReports D = true) : WF D := by
   unfold WellFormedReports at h
   simp only [Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at h
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hg, hi⟩, hs⟩, hd⟩, hn⟩, hc⟩, ha⟩, has⟩, hcol⟩, hf⟩, hnd⟩, hl⟩, hsc⟩, hb⟩ := h
-  refine ⟨?_, hi, hs, hd, hn, hc, ha, has, hcol, hf, hnd, hl, hsc, hb⟩
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hg, hi⟩, hs⟩, hd⟩, hn⟩, hc⟩, ha⟩, has⟩, hcol⟩, hf⟩, hnd⟩, hl⟩, hsc⟩, hb⟩, hq⟩, hids⟩ := h
+  refine ⟨?_, hi, hs, hd, hn, hc, ha, has, hcol, hf, hnd, hl, hsc, hb, hq, hids⟩
   cases hr : reportsGate D.profiles with
   | ok x => rfl
   | error e => rw [hr] at hg; simp [Except.toBool] at hg

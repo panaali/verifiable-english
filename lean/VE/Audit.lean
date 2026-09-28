@@ -40,6 +40,10 @@ import VE.Attribution.Facts
 import VE.Attribution.Semantics
 import VE.Attribution.Conservative
 import VE.Attribution.Structure
+import VE.Attribution.Assess
+import VE.Attribution.Bridge
+import VE.Attribution.Route
+import VE.Attribution.Scoped
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1080,3 +1084,43 @@ import VE.Attribution.Structure
 #print axioms VE.Reports.literal_paraphrase_distinct
 #print axioms VE.Reports.all_truth_combinations
 #print axioms VE.Reports.all_truth_combinations_assess
+
+#print axioms VE.Reports.unitOf_eq
+#print axioms VE.Reports.assessment_open_term
+#print axioms VE.Reports.assessment_not_factive
+#print axioms VE.Reports.may_probably_independent
+#print axioms VE.Reports.probably_not_scopes_distinct
+#print axioms VE.Reports.parentAt_root
+#print axioms VE.Reports.envAt_root
+#print axioms VE.Reports.kindOf_quoted
+#print axioms VE.Reports.holder_rule_root
+#print axioms VE.Reports.unit_of_bridgeFormula
+#print axioms VE.Reports.bridge_root_is_legacy
+#print axioms VE.Reports.parseNested_not_root
+#print axioms VE.Reports.bridge_root_parse_frozen
+#print axioms VE.Reports.bridge_nested_label_new
+#print axioms VE.Reports.bridge_formula_exact
+#print axioms VE.Reports.bridge_kind_rejected
+#print axioms VE.Reports.bridge_nested_needs_record
+#print axioms VE.Reports.bridge_assessment_any_agent
+#print axioms VE.Reports.bridge_payload_not_belief
+#print axioms VE.Reports.bridge_through_negation
+#print axioms VE.Reports.reportsRoute_premises
+#print axioms VE.Reports.entails_congr_mem
+#print axioms VE.Reports.literals_wellFormed
+#print axioms VE.Reports.reports_route_acceptance
+#print axioms VE.Reports.reports_route_acceptance_base
+#print axioms VE.Reports.reports_route_acceptance_base_positive
+#print axioms VE.Reports.reports_route_countermodel
+#print axioms VE.Reports.scoped_consequence_sound
+#print axioms VE.Reports.scoped_witness_sound
+#print axioms VE.Reports.scoped_free_canonicalObject
+#print axioms VE.Reports.scoped_free_contentId
+#print axioms VE.Reports.scoped_free_complementId
+#print axioms VE.Reports.scoped_free_keys
+#print axioms VE.Reports.scoped_free_akeys
+#print axioms VE.Reports.scoped_free_elab
+#print axioms VE.Reports.scoped_not_premise
+#print axioms VE.Reports.def_premise_shape
+#print axioms VE.Reports.scoped_background_local
+#print axioms VE.Reports.quoted_inconsistency_local
