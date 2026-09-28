@@ -821,6 +821,7 @@ import VE.Norms.Run
 #print axioms VE.Definitions.Bundle.backgroundLeaves_hold
 #print axioms VE.Definitions.Bundle.bundle_sound
 #print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkAll_length
 #print axioms VE.Definitions.Bundle.checkAll_reading
 #print axioms VE.Definitions.Bundle.checkAll_binding
 #print axioms VE.Definitions.Bundle.checkLemma_sound
