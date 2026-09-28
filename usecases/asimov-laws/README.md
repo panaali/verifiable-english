@@ -13,7 +13,9 @@ declarations; it does not establish their truth.
 
 All twelve sentences in [rules.ve](rules.ve) are **CHECKED**: the English
 parser finds one reading for each and reproduces the identity-bound
-[manifest](rules.manifest.json). `classified as` marks a predicate whose own
+[manifest](rules.manifest.json). The text uses no parser listing
+scaffolding (`first clause: … end first clause`), and a test rejects it.
+`classified as` marks a predicate whose own
 wording the vocabulary lint does not admit. For `injures_human`,
 `harms_human`, `harm_to`, `ordered` and the other base predicates, that is the
 annotator's judgment. For `breaks_first_law`, `breaks_zeroth_law` and
@@ -49,12 +51,13 @@ one exists, the First Law ban stands. Rule 12 replaces v1's demand to take
 *every* protective action with one prevention duty that either of two safe
 alternatives can fulfil. Its two exceptions state Law 3's own priority clause.
 An order that destroys the robot is obeyed, and so is a rescue that destroys
-it. With one threat to the robot, the duty never removes the last clear
-action. The second exception uses `prevents`, so it also applies when no
-alternative leads to the harm and some action is required. Every action then
-avoids the harm, so the clear actions are unchanged. The [environment](environment.json) defaults
-permission to allow, obligation to not required and each derived name to
-false if no rule applies. These completion defaults and the `protects_robot`
+it. The tests check, on sampled models with one threat to the robot, that
+the duty never removes the last clear action; this is not a certificate. The
+second exception uses `prevents`, so it also applies when no alternative
+leads to the harm and some action is required. Every action then avoids the
+harm, so the clear actions are unchanged. The
+[environment](environment.json) defaults permission to allow, obligation to
+not required and each derived name to false if no rule applies. These completion defaults and the `protects_robot`
 annotation are modeling choices.
 
 ## Checker result and coverage
@@ -99,6 +102,7 @@ formula.
 | Harm through inaction | Missing | Checked via `allows` on every alternative and signed `leads_to` outcomes |
 | Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
 | Zeroth priority across a human-injury ban | Open | Checked, with Rule 9's necessity test (a translation choice) |
+| Law 3 yields to Laws 1 and 2 | Partial: yields to Law 1 only | Checked via Rule 12's two exceptions |
 | Followability | No alternatives check | 6 of 9 distinct spec models (17 entries) have a clear action; 3 do not |
 
 ## OPEN: fidelity and evidence
@@ -111,7 +115,7 @@ formula.
 - **OPEN — exact Zeroth Law exception.** The combined 1942 and later wordings
   do not specify a test for when human injury conflicts with protecting
   humanity. Rule 9 permits a First Law breach that prevents a harm to humanity
-  only when no alternative breaks neither law. Proportionality and tradeoffs
+  only when the robot has no lawful option. Proportionality and tradeoffs
   among different harms need an explicit author judgment or a richer policy:
   two necessary breaches are both permitted, however unequal.
 - **OPEN — simultaneous demands.** Two permitted orders can require
