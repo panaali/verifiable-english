@@ -29,13 +29,14 @@ structure WF (D : ReportDoc) : Prop where
   predicateCount : D.authorPredicates.length + (names D).length ≤ maxPredicates
   bridgeIds : (D.bridges.map (·.id)).Nodup
   scopedIds : (D.«scoped».map (·.id)).Nodup
+  unitMeta : ∀ m ∈ D.unitMeta, metaOk D m = true
 
 theorem wf_of {D : ReportDoc} (h : WellFormedReports D = true) : WF D := by
   unfold WellFormedReports at h
   simp only [Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at h
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hg, hi⟩, hs⟩, hd⟩, hn⟩, hc⟩, ha⟩, has⟩, hcol⟩, hf⟩, hnd⟩, hl⟩, hsc⟩, hb⟩, hq⟩, hids⟩,
-    hpc⟩, hbi⟩, hsi⟩ := h
-  refine ⟨?_, hi, hs, hd, hn, hc, ha, has, hcol, hf, hnd, hl, hsc, hb, hq, hids, hpc, hbi, hsi⟩
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hg, hi⟩, hs⟩, hd⟩, hn⟩, hc⟩, ha⟩, has⟩, hcol⟩, hf⟩, hnd⟩, hl⟩, hsc⟩, hb⟩, hq⟩, hids⟩,
+    hpc⟩, hbi⟩, hsi⟩, hm⟩ := h
+  refine ⟨?_, hi, hs, hd, hn, hc, ha, has, hcol, hf, hnd, hl, hsc, hb, hq, hids, hpc, hbi, hsi, hm⟩
   cases hr : reportsGate D.profiles with
   | ok x => rfl
   | error e => rw [hr] at hg; simp [Except.toBool] at hg

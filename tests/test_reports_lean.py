@@ -117,10 +117,30 @@ def unit(uid, start, content):
             "meaning": "specified", "support": "testimony"}
 
 
+def assessment_nodes(content):
+    tag, value = next(iter(content.items()))
+    if tag == "negated":
+        return assessment_nodes(value)
+    if tag == "report":
+        return assessment_nodes(value["content"])
+    if tag == "assessment":
+        return [value] + assessment_nodes(value["content"])
+    return []
+
+
 def doc(*contents, **extra):
+    """3.3: a unit whose tree has an assessment node is `open`, listing generated names;
+    listing every generated assessment name of the document covers its own."""
     d = {"units": [unit(f"u{i + 1}", 2 * i, c) for i, c in enumerate(contents)], "contexts": CONTEXTS,
          "assessments": [A1]}
     d.update(extra)
+    keys = {(n["judgment"], n["record"], json.dumps(n["content"], sort_keys=True))
+            for u in d["units"] for n in assessment_nodes(u["content"])}
+    generated = [f"reports__{j}__{k}" for j in ("may", "probably")
+                 for k in range(1, 1 + sum(key[0] == j for key in keys))]
+    for u in d["units"]:
+        if assessment_nodes(u["content"]):
+            u["meaning"] = {"open": generated}
     return d
 
 

@@ -266,12 +266,7 @@ def load_document(path: str | Path):
                     and set(u["content"]) & {"report", "assessment", "negated"}]
         reports = ReportsDocument(env, meta.get("contexts", []), meta.get("assessments", []),
                                   [_wire_unit(u) for u in compiled], bridges=meta.get("bridges", []),
-                                  scoped=meta.get("scoped", []))
-        generated_open = {o["name"] for o in reports.open_terms}
-        for u in reported:
-            if type(u["meaning"]) is dict and "open" in u["meaning"] and not set(u["meaning"]["open"]) <= (
-                    generated_open | open_names):
-                raise VEError("unknown report open term")
+                                  scoped=meta.get("scoped", []), open_terms=sorted(open_names))
         for u in reported:
             u["meaning_id"] = reports.meaning_id(u["content"])
             original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
@@ -419,6 +414,7 @@ def check_document(path):
         route_doc = {"units": [_wire_unit(u) for u in doc["units"]],
                      "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
                      "bridges": meta.get("bridges", []), "scoped": meta.get("scoped", []),
+                     "open_terms": [o["name"] for o in meta.get("open_terms", [])],
                      **({"graph": meta["graph"]} if "graph" in meta else {})}
         environment = meta["environment"]
         checked = checked_elaboration(doc["reports"], environment, route_doc)

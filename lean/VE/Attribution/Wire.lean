@@ -297,6 +297,29 @@ def DecodedUnit.kind : DecodedUnit → Kind
 
 def reportContentKeys : List String := ["report", "assessment", "negated"]
 
+/-- W2's meaning status, as `ve/document.py` reads it. -/
+def decodeMeaning (j : Json) : Except String Meaning := do
+  if j == .str "specified" then return .specified
+  match ← fields j with
+  | [("open", v)] => pure (.«open» (← strings v))
+  | [("contextual", .str s)] => pure (.contextual s)
+  | [("unformalised", .str r)] => pure (.unformalised r)
+  | _ => throw "invalid meaning status"
+
+/-- A unit's W2 metadata: its span and, when present, meaning and support. -/
+def decodeMeta (j : Json) : Except String UnitMeta := do
+  let id ← stringField j "id"
+  let (start, stop) ← match (← (← j.getObjVal? "span").getArr?).toList with
+    | [a, b] => pure (← a.getNat?, ← b.getNat?)
+    | _ => throw "invalid span"
+  let meaning ← match j.getObjVal? "meaning" with
+    | .ok m => some <$> decodeMeaning m
+    | .error _ => pure none
+  let support ← match j.getObjVal? "support" with
+    | .ok v => some <$> v.getStr?
+    | .error _ => pure none
+  pure ⟨id, start, stop, meaning, support⟩
+
 def decodeUnit (E : VE.Environment) (j : Json) : Except String DecodedUnit := do
   let id ← stringField j "id"
   require (token id) s!"invalid unit id {id}"
@@ -309,7 +332,7 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String DecodedUnit := do
   | .ok content =>
     let ks := (← fields content).map Prod.fst
     if ks.any reportContentKeys.contains then
-      displayFields j ["id", "span", "kind", "content"] ["meaning", "support"]
+      displayFields j ["id", "span", "kind", "content", "meaning", "support"] []
       let c ← decodeContent E id 40 content
       require c.isStatement s!"InvalidInput: invalid content for {id}"
       require (kind == kindOf c) s!"KindMismatch: {id}"
@@ -346,7 +369,9 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
   let E := re.rv.environment
   displayFields document ["units"] ["graph", "lemmas", "open_terms", "reading_sets", "narrowings",
     "contexts", "assessments", "bridges", "scoped"]
-  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnit E)
+  let unitsJson := (← (← document.getObjVal? "units").getArr?).toList
+  let units ← unitsJson.mapM (decodeUnit E)
+  let metas ← unitsJson.mapM decodeMeta
   require (units.length ≤ 10000) "ResourceLimit: unit count"
   require ((units.map DecodedUnit.id).eraseDups.length == units.length) "duplicate unit id"
   require (sortedSpans (units.map DecodedUnit.span)) "unit spans must be sorted and non-overlapping"
@@ -369,7 +394,7 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
     narrowings⟩
   let envId ← VE.Route.Wire.environmentId re.profiles environment
   let D : ReportDoc := ⟨E, re.rv.literals, re.holders, re.evidence, contexts, assessments, reportUnits,
-    bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2, re.predicateNames⟩
+    bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2, re.predicateNames, metas⟩
   pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map (s.id, ·)⟩
 
 /-! ## Diagnostics of 4.1, in the order of section 8 (untrusted text) -/
@@ -425,6 +450,11 @@ def firstFailure (D : ReportDoc) : String :=
   | some b =>
     if (contentAt D b.target).isNone then s!"BridgeTarget: {b.target.unit}"
     else s!"BridgeKindMismatch: {b.target.unit}, {b.target.depth}"
+  | none =>
+  match D.unitMeta.find? (fun m => !metaOk D m) with
+  | some m =>
+    if !(m.support.all supports.contains) then s!"InvalidInput: support of {m.id}"
+    else s!"InvalidInput: meaning of {m.id}"
   | none =>
   if !((names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&
       decide (names D).Nodup && decide (D.authorPredicates.length + (names D).length ≤ maxPredicates)) then

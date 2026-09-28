@@ -140,8 +140,14 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   unit ids unique across both parts and no content on the rest's quoted units, so that
   `bridge_root_is_legacy` holds on the whole W2 view.
 - **`WellFormedReports`** checks, besides 4.1, the facts about generated names that 4.1 step 7 calls validity of
-  `E_reports` (fresh in `E`, at most 64 bytes, pairwise distinct) and that every declared literal is a constant of
-  sort `$string`.
+  `E_reports` (fresh in `E`, at most 64 bytes, pairwise distinct, and with the author's predicates at most
+  `MAX_PREDICATES`, for which `ReportDoc` carries `authorPredicates`), that every declared literal is a constant of
+  sort `$string`, that bridge and scoped ids are distinct (section 8's `DuplicateDeclaration`), and every unit's W2
+  metadata (`metaOk`): W2's support values, open meanings naming declared or generated open terms, and a report
+  unit `specified` exactly when its tree has no assessment node, otherwise `open` listing every generated
+  assessment name of its tree (3.3).
+- **`ReportDoc.unitMeta`** holds every unit's span, meaning and support in document order, and `document_id`
+  hashes it (`"metadata"`), so a changed span, meaning or support changes the envelope.
 - `elab` and `scoped` are Lean keywords: the definition and the field are `«elab»` and `«scoped»`.
 - `envReports_extends` annotates `∀ a : VE.Formula` (the binder's type is not inferable).
 - `finite_witness_decodes` concludes `interp D M = Mo.asStructure`: the spec's relation-wise conclusion compares
@@ -179,9 +185,7 @@ every certificate is replayed by Lean.
 ## Not done
 
 - English surface (item 4), the Python production layer `ve/reports.py` (item 3), Rust.
-- `{"fence": …}` content is rejected; reading-set choices are not part of canonical objects; report units'
-  `meaning` and `support` are shape-checked only; W2's open-term listing on units is not checked against the
-  generated open terms.
+- `{"fence": …}` content is rejected; reading-set choices are not part of canonical objects.
 - The local W1 conflict check of a quoted norm block (fixture κ's "CONFLICT among the quoted rules") is not run:
   the block is only validated by the frozen W1 decoder.
 - `reports-scoped` replays witness models only over the author's `E`; a witness for a quoted package's scope is
