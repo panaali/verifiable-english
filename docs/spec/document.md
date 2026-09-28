@@ -24,7 +24,12 @@ kinds; lists for `attributed`, `hedged`, `causal`, and `unformalised`. Meaning i
 `specified`, `{"contextual":"name"}`, `{"open":["term"]}`, or
 `{"unformalised":"reason"}`. Support is `assumption`, `certificate`,
 `observation`, `calculation`, `statistical`, `testimony`, `adapter`, or `none`.
-These fields are independent: a question with no formula is still a unit.
+Apart from the root reason rule, these fields are independent: a question with
+no formula is still a unit.
+For a root kind `["unformalised", reason]`, meaning must be
+`{"unformalised": reason}` with the same reason. A disagreement is
+`InvalidInput`; the unit has one reason in coverage, counted once. Nested
+unformalised kinds under other roots carry their own reasons.
 `content` is `{"ast":[...]}` for an existing formula or
 `{"fence":"unit_id"}` with `surface` set to `english` or `strict`. An English
 fence goes through the existing all-derivations parser. The optional
