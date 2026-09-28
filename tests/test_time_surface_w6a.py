@@ -2,7 +2,7 @@
 import pytest
 
 from ve.environment import Environment
-from ve.errors import AmbiguousDerivation, SyntaxError, VEError
+from ve.errors import AmbiguousDerivation, VEError
 from ve.surface.time import parse_quantity_sentence, render_quantity_sentence
 
 
@@ -51,7 +51,7 @@ def test_one_reading_roundtrip_without_tag_identifiers():
 def test_ambiguity_and_cross_tag_suppression():
     with pytest.raises(AmbiguousDerivation, match="2 derivations"):
         parse_quantity_sentence(fixture(duplicate=True), "The September PCE estimate equals 3.70%.")
-    with pytest.raises(SyntaxError, match="No W6 quantity reading"):
+    with pytest.raises(VEError, match="UnitMismatch"):
         parse_quantity_sentence(fixture(), "The amount equals 3.75%.")
     forged = {"format": "ve-quantity@1", "traces": [],
               "formula": ["eq", ["const", "usd_cent", "pce_sep"], ["num", "usd_cent", "375"]]}

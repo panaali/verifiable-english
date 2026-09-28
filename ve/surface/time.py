@@ -78,6 +78,7 @@ def parse_quantity_sentence(env, source):
         (" is no later than ", "date_no_later", False),
     )
     readings = []
+    rejected = []
     for connector, operation, reverse in rules:
         if text.count(connector) != 1:
             continue
@@ -93,10 +94,13 @@ def parse_quantity_sentence(env, source):
                 payload = {"format": "ve-quantity@1", "formula": [operation, *pair]}
                 try:
                     canonical, _ = elaborate_quantity(env, payload)
-                except VEError:
+                except VEError as exc:
+                    rejected.append(exc)
                     continue
                 readings.append(canonical)
     if not readings:
+        if len(rejected) == 1:
+            raise rejected[0]
         raise SyntaxError("No W6 quantity reading")
     if len(readings) != 1:
         raise AmbiguousDerivation(f"W6 quantity sentence has {len(readings)} derivations")
