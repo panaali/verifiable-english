@@ -51,7 +51,7 @@ import tempfile
 import threading
 import time
 
-from ..errors import ResourceLimit, VEError
+from ..errors import CheckerUnavailable, ResourceLimit, VEError
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -70,11 +70,6 @@ MAX_REQUESTS = 10_000
 MAX_RESPONSE_BYTES = 1 << 30
 # Room for the request envelope around the cases text within one line.
 ENVELOPE_BYTES = 1024
-
-
-class CheckerUnavailable(VEError):
-    """The checker could not answer: operational, never a verdict or `ResourceLimit`."""
-    code = "CheckerUnavailable"
 
 
 class _Failure(Exception):

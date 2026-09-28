@@ -152,6 +152,23 @@ def checkAll (E : VE.Environment) (bg : List Leaf) (sets : List Admission.Readin
     let k ← checkLemma E bg sets bind known L
     checkAll E bg sets bind (known ++ [k]) Ls
 
+open VE.Order.ProfileGate in
+/-- An accepted bundle reports one known lemma per submitted lemma: the route's
+`checked` and `lemmas` counts equal the submitted count, which the Python
+backend requires of every `ok` row (the manifest's `counts`). -/
+theorem checkAll_length (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
+    ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
+    checkAll E bg sets bind known Ls = .ok res → res.length = known.length + Ls.length
+  | known, [], res, h => by
+    simp only [checkAll, Except.ok.injEq] at h
+    subst h; simp
+  | known, L :: Ls, res, h => by
+    unfold checkAll at h
+    obtain ⟨k, _, h⟩ := bind_ok h
+    rw [checkAll_length E bg sets bind (known ++ [k]) Ls res h]
+    simp; omega
+
 /-! ## Citation soundness -/
 
 theorem mem_appendNew_left (xs ys : List Leaf) : ∀ l ∈ xs, l ∈ appendNew xs ys := by

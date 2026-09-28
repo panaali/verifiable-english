@@ -760,6 +760,13 @@
 'VE.Definitions.Bundle.backgroundLeaves_hold' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Definitions.Bundle.checkAll_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Definitions.Bundle.checkAll_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.mapM_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.legacy_decodeDocument_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.closure_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.core_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.order_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
+'VE.EvaluationCounts.route_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.checkAll_reading' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.checkAll_binding' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Bundle.checkLemma_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -878,4 +885,4 @@
 'VE.Core.Wire.validField' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Wire.run_certificate_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.readings_all_iff' depends on axioms: [propext]
-PASS: 126 source files; 880 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 127 source files; 887 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
