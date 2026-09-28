@@ -14,6 +14,7 @@ W6a quantity statements are now admitted and certified by Lean through a separat
   - Calendar: `num_injective`, `exists_valid_of_le`, `before_iff`, `num_succ`, `valid_iff`, `civilOf_num`.
   - `temporal_iff`, one lemma per operation: `on_iff`, `before_iff_lt`, `after_iff_lt`, `noLater_iff_le`, `shift_iff`, `within_iff`, `elapsed_iff`, plus `within_zero_iff_on`.
   - Counting: `expand_atLeast_iff` (every structure and outer scope), `expand_atLeast_eval_iff`, `expand_exactly_iff`, `expand_atMost_iff`.
+  - Documents: `admit_quantity_report_sound` and `cites_discharged` (citations rest on checked lemmas).
   - `checkW6Certificate_sound`: an accepted `ve-quantity-certificate@1` is bound to the annotated environment and quantity meaning ids, and the statements are entailed over every admissible tagged structure. Relabelling percent to money changes the meaning ids and fails.
 - **Route cases:** admission/evaluation, countermodel (bound to annotated and core ids), certificate, the canonical counting expansion with caps 8/7/7, and `day`/`civil`/`lower`/`render` conversions.
 
@@ -46,19 +47,23 @@ Each finding was fixed as a class, in Python, Lean and Rust where relevant, with
 - **Whole-grammar English (P1).** `parse_w6_sentence` reads a fence with the quantity wordings and with the frozen English grammar over the erased target. Frozen-grammar readings are dimensionless input and must pass annotated admission. Distinct admitted readings across the grammars reject as ambiguous.
 - **Evaluation work (P1).** The news article is the Lean-admitted document `usecases/news-article/news-w6a.ve.md`. `usecases/news-article/coverage-w6a.md` refreshes the table from that run, beside the unchanged dated audit `coverage.md`: rows 7, 13, 21, 22 and 23 are DIRECT, and the totals are recounted from the rows. The measured partition is `coverage.json`, and `tools/coverage_dashboard.py` shows both in ROADMAP. The 30-item FRET sample is re-rated in `experiments/E0/FRET-W6A-RERATING.md` (b 8 → 10, c 18 → 16).
 
+## Loop fix 2 (2026-09-28)
+
+- **Citations (P1, directive).** Quantity documents take checked lemmas: each carries a `ve-quantity-certificate@1` from exactly its transitive leaves to its conclusion, checked by Lean when decoded. A `cite:<bundle>/<lemma>` leaf is admitted when it states that conclusion, and the report must carry the lemma's leaves with their labels. `cites_discharged` proves the report root holds wherever the report's non-citation leaves hold; `admit_quantity_report_sound` now includes this and citation closure. Python mirrors each diagnostic, and Rust regenerates every lemma statement (`lemma_meaning_ids`). `tests/test_w6a_citations.py` checks 19 binding classes in Python and Lean, including reordered, dropped or changed leaves, relabelling to money, raw and stale certificates, and cite leaves that state another statement. The core `ve-bundle@0` checker still refuses extended environments.
+- The earlier loop recheck 1 fixes (whitespace names, decimal round trips, the Lean evaluation budget and the unconditional calendar inverse) were re-verified against the recheck's reproducers on a freshly built `ve_quantity`.
+
 ## Still open
 
 - **W8 fidelity gate.** Not run. It needs 20 sealed model-written sentences per construct, authoring by Opus 5.5 and Haiku 4.5, and a blind Astra audit, and this task makes no model calls. Quantity constructs therefore stay out of `ve assist` (strict-only authoring). `render_quantity_witness` supplies the gate's deterministic witness input (units restored). Document fences are checked for one reading across the whole grammar, as existing English fences are.
-- **Citations.** `cite` labels and lemmas reject on the quantity route with the base route's diagnostic. Citation bundle binding is unimplemented on every route, not just this one.
 - **Premise status of quantity documents.** `ve document check` searches small finite models and does not choose integer values, so it reports UNKNOWN for the news document. The fixture model is the non-vacuity evidence: Lean evaluates the report's leaves and root true in it.
 - **Relational and quantity content in one document.** The news document's relational clauses stay in `claims.ve`, because the quantity route's profile set differs from the relational document's.
 - **W6b (gated on numbers2).** `sunday`, `excluded_sundays`, date/integer binders, traces (`Time.excludedDays_iff`, the guarded Sunday equivalence, `Time.trace_iff`), and the certified Art. I §7 result reject until the proved numbers2 integer-quantifier route exists.
 
 ## Gates run
 
-- `lake build` passed (242 jobs).
-- `lean/audit.py` passed (132 sources, 988 theorem declarations, standard axiom allowlist only).
+- `lake build` passed (246 jobs).
+- `lean/audit.py` passed (135 sources, 1,008 theorem declarations, standard axiom allowlist only).
 - `lean/VE/Route/frozen.py` passed.
-- `cargo test -p ve-core` passed.
-- The repository pytest run (8 chunks) had 2,301 passed, 5 skipped, 1 live test deselected and 1 failure. The failure was `test_assist_deadline.py::test_approval_sealing_is_inside_the_operation_deadline`, a wall-clock deadline test in unchanged `ve/assist` code, run under load average ~9.5; its file passed 35/35 when rerun alone.
+- `cargo build --release` and `cargo test -p ve-core` passed.
+- The full repository pytest run had 2,429 passed, 5 skipped, 1 live test deselected and 1 failure. The failure was `test_assist_deadline.py::test_approval_sealing_is_inside_the_operation_deadline` again. It is a wall-clock deadline test in unchanged `ve/assist` code and ran under load average ~20–30. Its file passed 35/35 when rerun alone.
 - No model calls or push were made.
