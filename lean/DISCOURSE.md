@@ -180,8 +180,28 @@ need renewed statement approval (the approved statement is false or unprovable a
 21. **Checks not implemented in `wellFormed`:** 4.1(9) (the definition/proof dependency DAG; the Lean W2 document has
     no citation graph); `exports` is checked as "a `definition` unit lies inside the anchor".
 
+## Renewal requests
+
+The (renewal) items above cannot be closed by the implementation: each approved statement is false as written,
+and the reviewers' own findings require the behaviour that falsifies it. They are ready for the spec reviewers as a
+mechanical approval. `test_renewal_items_are_counterexamples_to_the_approved_statements` (and the named tests)
+exhibit, on route outputs, the approved statement's hypotheses holding with its conclusion failing; the replacement
+is the proved Lean statement.
+
+| Item | Approved (draft 4) | Counterexample on the route | Replacement to approve |
+|---|---|---|---|
+| 5 | `ill_typed_target`, 9.2: the error starts with `IllTypedTarget: <m>` for **every** slot `m` | η with `Her` → `api`: both slots recorded and accessible, one diagnostic `IllTypedTarget: m1: api` (R1) | `ill_typed_target` (a recorded mention of the unit, the misfitting slot) and `ill_typed_target_single` |
+| 6 | 4.2: every list of accessible constants is a `plural` candidate | θ: `[alice, bob]` and `[bob, alice]` both type-check, so "They are ready." is ambiguous, contradicting the fixture's expected resolution | 4.2 amended: candidates are the earlier coordinations, in order (as ordinal pairs); `AliasEq` is equality |
+| 12 | `validity_import`, 9.6: an import is checked under the importing document's profiles | a valid `@1` import is `UnsupportedProfile` under the importer's `ve.discourse@1` profiles, refuting a true claim (R2) | `validity_import` over `checkImport files b fuel` / `outcomeWith` (the import's own environment and profiles) |
+| 12 | `validity_self`, 9.6: always `checked`/`refuted` | an admission answering `admitted: UNKNOWN` would certify its own validity (R3, `test_unknown_admission_is_an_unknown_outcome`) | `validity_self` under `jointUnknown res.joint = none`, `validity_self_unknown`, `outcome_unknown_of_joint` |
+| 13 | `validity_independent`, 9.6: the W2 result equals the one of `stripValidityJson j` | υ: a self-truth wording bound as a validity claim is `InvalidInput`; the stripped document is admitted (R4) | `validity_stripped` and the relational `validity_independent` |
+| 17 | 9.5 `ParseSound`/`OneReading` on `discourseSurface` | "It is safe." is derived (→ `safe(api)`) but the core parser rejects it: it reads presentations (R5) | the 9.5 theorems on the presentation and source surfaces as listed in item 17 |
+| 20 | `citation_extends_joint`/`report_extends_joint`, 9.4: `∃ c ∈ cs, ExtendsTo ch c` | an authored singleton's label with no open set: `cs = [[]]`, which extends no label, yet `@1` and W2 admit it (R6, `test_authored_reading_labels_extend`) | both theorems with `ExtendsTo ch (c ++ authoredChoice res.doc)` |
+
 ## Not done
 
+- **Unverifiable readings fail closed:** an open set of candidate readings for an unresolved reference (2.4) and a
+  pinned `definition_ref` (no environment declares definition versions) are rejected, not admitted.
 - **Fixtures not covered by tests:** parts of κ (renumbering, `DependencyCycle`), λ lemma-level citations over W3
   bundles, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it needs a certificate), and
   the 1,000-manifest Python/Lean differential. `discourse-joint` reports the joint set and the disjunction, not
