@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -455,6 +456,62 @@ def test_pending_bindings_supply_no_scope_entry(lean):
         with pytest.raises(VEError, match=error):
             core(env, document)
         assert run1({"id": "p", "kind": "speech-elaborate", "environment": env, "document": document})["error"] == error
+
+
+def test_every_candidate_is_checked_as_its_unit_would_be(lean):
+    # Regression: a follows-question candidate naming no query record and a binding candidate with a
+    # malformed phrase were counted as elaborated (class R) by Python; Lean checked no open candidate
+    # at all and accepted `{"command": {}}`.
+    env = F0()
+    asked = unit("u", 0, "question", polar(U("reviewed", "atlas")))
+    follows = {"question": {"mode": "follows", "query": "q1"}}
+    fact = unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    query = [{"id": "q1", "premises": [], "target": {"ast": U("reviewed", "atlas")}}]
+    cases = [
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "question", follows)]}, "QueryMismatch: u"),
+        ({"units": [fact, {**asked, "span": [1, 2]}], "queries": query,
+          "reading_sets": [reading_set("u", 1, "open", "question", follows)]}, "QueryMismatch: u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "instruction",
+                                                         command("require", "submit_required", ["q1"]))]},
+         "QueryMismatch: u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "question",
+                                                         {"question": {"mode": "follows", "query": 1}})]},
+         "InvalidInput: invalid question fields for u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "question", {"question": {"mode": "follows"}})]},
+         "InvalidInput: invalid question fields for u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "binding",
+                                                         {"binding": {"phrase": "bad phrase", "constant": "check"}})]},
+         "InvalidInput: invalid binding fields for u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "binding", {"binding": {"you": "carol"}})]},
+         "UnknownSymbol: carol"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "instruction", {"command": {}})]},
+         "InvalidInput: invalid command fields for u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "instruction",
+                                                         command("require", "click_required", ["atlas"]))]},
+         "TypeMismatch: command args for u"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "instruction",
+                                                         command("require", "click_permitted", ["check"]))]},
+         "MissingObligationRole: {0} click {1}"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "question", U("reviewed", "atlas"))]},
+         "invalid speech reading content"),
+        ({"units": [asked], "reading_sets": [reading_set("u", 1, "open", "asserted", polar(U("reviewed", "atlas")))]},
+         "invalid speech reading content"),
+        ({"units": [asked], "reading_sets": [{**reading_set("u", 1, "open", "question", polar(U("reviewed", "atlas"))),
+                                              "readings": []}]}, "reading sets hold 1 to 64 readings"),
+        ({"units": [asked], "reading_sets": [{**reading_set("u", 1, "open"), "readings": [{"id": "r", "kind": "asserted"}]}]},
+         "invalid reading")]
+    for document, error in cases:
+        with pytest.raises(VEError, match=re.escape(error)):
+            core(env, document)
+        assert run1({"id": "c", "kind": "speech-elaborate", "environment": env, "document": document})["error"] == error
+    # A candidate that asks about a regenerated record is its consumer; well-formed candidates are accepted.
+    for candidate, kind, records in [(follows, "question", query),
+                                     (command("require", "submit_required", ["q1"]), "instruction", query),
+                                     ({"binding": {"phrase": "the check", "constant": "check"}}, "binding", []),
+                                     (["not", U("reviewed", "atlas")], "asserted", [])]:
+        document = {"units": [asked], "queries": records,
+                    "reading_sets": [reading_set("u", 1, "open", kind, candidate)]}
+        assert core(env, document) and elaborate(env, document)
 
 
 def test_cli_and_fences_read_the_effective_scope(lean, tmp_path):

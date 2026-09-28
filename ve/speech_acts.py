@@ -61,6 +61,11 @@ def validate_scope(raw, sorts, constants, predicates):
     return result
 
 
+# The bare kind each tagged content belongs to (W2's kinds, and `binding`).
+_CANDIDATE_KINDS = {"ast": "asserted", "norm": "norm", "command": "instruction", "question": "question",
+                    "binding": "binding"}
+
+
 def _all(formulas):
     result = Top()
     for formula in formulas:
@@ -333,16 +338,27 @@ class SpeechDocument:
         """Every elaborated reading candidate decodes as content of its kind.
 
         Coverage class R claims each candidate is admitted as a command,
-        question, norm or assertion (6); a malformed candidate is rejected,
-        never counted, and only a `null` candidate is unelaborated.
+        question, norm, binding or assertion (6); a malformed candidate is
+        rejected, never counted, and only a `null` candidate is unelaborated.
+        Each is checked as the unit would be were it chosen: its kind agrees
+        with its content, a binding passes the single-binding checks, and a
+        candidate that asks about a query (a follows question, a proof task)
+        is one of the query's consumers, regenerated at its unit (1.4).
         """
+        from .admission import _check_kind
         from .norm_admission import _check_quoted
+        self._candidate_asks = []
         for item in self.reading_sets:
             uid = item["unit"]
-            for reading in item.get("readings", []):
-                if type(reading) is not dict or "content" not in reading:
+            readings = item.get("readings")
+            if type(readings) is not list or not 1 <= len(readings) <= 64:
+                raise VEError("reading sets hold 1 to 64 readings")
+            for reading in readings:
+                if type(reading) is not dict or not {"kind", "content"} <= set(reading):
                     raise VEError("invalid reading")
-                content = reading["content"]
+                content, kind = reading["content"], reading["kind"]
+                if kind != "binding":
+                    _check_kind(kind)
                 if content is None:
                     continue
                 if type(content) is list:
@@ -350,22 +366,22 @@ class SpeechDocument:
                 if type(content) is not dict or len(content) != 1:
                     raise VEError("invalid speech reading content")
                 tag, value = next(iter(content.items()))
+                bare_kind = kind if type(kind) is str else kind[-1] if type(kind) is list and kind else None
+                if bare_kind != _CANDIDATE_KINDS.get(tag):
+                    raise VEError("invalid speech reading content")
                 if tag == "ast":
                     formula_from_data(self.env, value)
                 elif tag == "command":
-                    self._command(uid, value, False)
+                    if (qid := self.query_of(self._command(uid, value, False))) is not None:
+                        self._candidate_asks.append((uid, qid))
                 elif tag == "question":
-                    self._question(uid, value, {"meaning": {"open": [f"intended-reading.{uid}"]}})
+                    question = self._question(uid, value, {"meaning": {"open": [f"intended-reading.{uid}"]}})
+                    if question.query is not None:
+                        self._candidate_asks.append((uid, question.query))
                 elif tag == "norm":
                     _check_quoted(self.env, content)
-                elif tag == "binding":
-                    if (type(value) is not dict or not (set(value) in ({"you"}, {"task"}, {"phrase", "constant"}))
-                            or any(type(v) is not str for v in value.values())):
-                        raise VEError("InvalidInput: binding")
-                    if "task" not in value and value.get("constant", value.get("you")) not in self.env.constants:
-                        raise VEError(f"UnknownSymbol: {value.get('constant', value.get('you'))}")
                 else:
-                    raise VEError("invalid speech reading content")
+                    self._binding_entry(uid, value)
 
     def _command(self, uid, raw, active):
         if (type(raw) is not dict or not {"force", "act", "args"} <= set(raw)
@@ -413,7 +429,7 @@ class SpeechDocument:
             body = _Decoder().decode(raw["body"])
             _Checker(self.env).formula(body, (sort,))
             return Question(uid, mode, body, sort, tuple(domain))
-        if mode == "follows" and set(raw) == {"mode", "query"}:
+        if mode == "follows" and set(raw) == {"mode", "query"} and type(raw["query"]) is str:
             return Question(uid, mode, query=raw["query"])
         if mode == "reading" and set(raw) == {"mode", "set", "version"}:
             if type(raw["version"]) is not int or raw["version"] < 1:
@@ -440,14 +456,17 @@ class SpeechDocument:
         # 1.4: the record is regenerated at every unit that asks, in document
         # order, as Lean's decoder does; a later consumer with more earlier
         # assertions makes a reused record stale.
-        asks = {q.unit: q.query for q in self.questions if q.query is not None}
-        asks.update((c.unit, qid) for c in self.commands if (qid := self.query_of(c)) is not None)
+        # A reading candidate that asks is a consumer at its unit, as it would be if chosen.
+        asks = {}
+        for uid, qid in [*((q.unit, q.query) for q in self.questions if q.query is not None),
+                         *((c.unit, qid) for c in self.commands if (qid := self.query_of(c)) is not None),
+                         *self._candidate_asks]:
+            asks.setdefault(uid, []).append(qid)
         consumers = {}
         before = []
         for raw in self.units:
             uid = raw["id"]
-            if uid in asks:
-                qid = asks[uid]
+            for qid in asks.get(uid, ()):
                 if qid not in self.queries or list(self.queries[qid].premises) != before:
                     raise VEError(f"QueryMismatch: {uid}")
                 consumers.setdefault(qid, uid)

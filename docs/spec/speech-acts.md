@@ -158,7 +158,8 @@ A consequence question and a proof task are about a **query** `(B_q, P)`: `P` is
 wording; `B_q` is "these premises", which at `@0` denotes the asserted units earlier in the document, in document order,
 the `ve.prose@1` convention that a conclusion's dependencies are all earlier unmarked premises (12.3). The query record
 (`queries` in the front matter, 3.2) lists the premise unit ids and the target by meaning id; it is derived content,
-regenerated from the document at every site and compared (`QueryMismatch` on disagreement). The checked premise list of a
+regenerated from the document at every site and compared (`QueryMismatch` on disagreement); a reading candidate that
+asks about a query (a follows question, a proof task) is such a site at its unit, as it would be if chosen. The checked premise list of a
 query is `Background(E) ++ elaborate(policy(D)) ++ B_q` (4.6). The target is never added to `B_q`; if the target is
 itself an earlier asserted unit, the report says so (`TrivialQuery`, a warning) and the task stands.
 
@@ -721,8 +722,10 @@ by its parts. The W2 status is W2's own inference (content and meaning, then the
 class the precedence above, each computed from the unit; the mapping is then checked, and a unit that breaks it is an
 error, never reclassified. "Active" is the latest version of the unit's set (1.5): an earlier version neither makes a
 unit R or U nor counts as unresolved, and `unresolved_sets` counts the units whose latest version is open. An
-elaborated candidate is one whose content decodes and type-checks as a command, question, norm, binding or assertion;
-a malformed candidate is rejected, never counted, and a `null` candidate is unelaborated (U). A signed (authored)
+elaborated candidate is one whose content decodes and type-checks as a command, question, norm, binding or assertion
+of its kind, checked as its unit would be were it chosen (the kind agrees with the content; a binding passes the
+single-binding checks of 1.1; a follows question or proof task names a record regenerated at its unit, 1.4), in every
+checker and for every version; a malformed candidate is rejected, never counted, and a `null` candidate is unelaborated (U). A signed (authored)
 choice is resolved: W2 checks an assertion choice itself (CHECKED ↦ C) and stores any other under OPEN, whose
 elaborated choice is R. C needs a `specified` meaning (a `contextual` unit is W2-LABELLED, so L). Residual counts (5.5)
 accompany the table; per-reading residuals stay under R. Guessed deciders and opaque
@@ -1583,6 +1586,7 @@ statements of section 8 are unchanged.
 | A, unsigned choices: an authored reading set without its `signature` supplied a premise in both cores, though the source loader rejects it | 1.5: only a signed version is a choice in every checker; unsigned authored versions, signed open ones, versions below 1 and sets for no unit of the document are rejected with W2's texts. |
 | A, pending bindings: an open binding unit still bound "you" for active commands in both cores, although its sole candidate bound another constant | 1.1 and 1.5: a pending binding supplies no scope entry, conflicts with and duplicates nothing, and keeps its single-binding checks; a `binding` unit carries binding content in both cores. |
 | A, CLI scope identity: the inspection report gave the embedded environment's id and legend, so alice- and bob-bound documents reported one id and no bound addressee; fences were parsed under the block alone | 1.1: the report, the legend and fence parsing use the effective scope; Python's legend lists definites in Lean's sorted order. |
+| B, candidate validation: a follows-question candidate naming no record and a malformed binding phrase counted as R in Python; Lean read no open candidate and accepted `{"command": {}}` | 1.4 and 6: every candidate of every version is decoded as its kind and checked as its unit would be were it chosen, in both cores; a candidate that asks about a query consumes its record at its unit; reading sets hold 1 to 64 readings with kind and content. |
 
 ## Change log
 

@@ -565,6 +565,104 @@ def bindingKey : Binding → String
   | .phrase p _ => p
   | .task _ => "task"
 
+/-! ## Reading candidates (6) -/
+
+/-- Every reading of every reading-set version: its unit, kind and content (`none` while unelaborated), in W2's
+shape (1 to 64 readings, each with its kind and content). -/
+def readingCandidates (document : Json) : Except String (List (String × Json × Option Json)) := do
+  match document.getObjVal? "reading_sets" with
+  | .error _ => pure []
+  | .ok rs =>
+    let items ← match rs.getArr? with
+      | .ok xs => pure xs.toList
+      | .error _ => throw readingSetsError
+    let per ← items.mapM fun r => do
+      let u := match r.getObjValD "unit" with
+        | .str u => u
+        | _ => ""
+      let cs ← match (r.getObjValD "readings").getArr? with
+        | .ok cs => if 1 ≤ cs.size && cs.size ≤ 64 then pure cs.toList else throw "reading sets hold 1 to 64 readings"
+        | .error _ => throw "reading sets hold 1 to 64 readings"
+      cs.mapM fun c => do
+        unless (c.getObjVal? "kind").isOk && (c.getObjVal? "content").isOk do throw "invalid reading"
+        pure (u, c.getObjValD "kind", match c.getObjValD "content" with
+          | .null => none
+          | x => some x)
+    pure per.flatten
+
+/-- The bare kind of a kind: itself, or the last element of a nested one. -/
+def bareKind : Json → Option String
+  | .str k => some k
+  | .arr xs => match xs.back? with
+    | some (.str k) => some k
+    | _ => none
+  | _ => none
+
+/-- The bare kind each tagged content belongs to (W2's kinds, and `binding`). -/
+def candidateKind : String → Option String
+  | "ast" => some "asserted"
+  | "norm" => some "norm"
+  | "command" => some "instruction"
+  | "question" => some "question"
+  | "binding" => some "binding"
+  | _ => none
+
+/-- A candidate command's single-unit checks: the realising predicate, its role and the argument sorts after the
+addressee's slot, and the guard. A candidate is never active, so the addressee is not required. -/
+def checkCandidateCommand (se : SpeechEnvironment) (c : Command) : Except String Unit := do
+  let E := se.ne.rv.environment
+  let r ← match se.ne.regulated.find? (·.name == c.act), E.predicates c.act with
+    | some r, _ => pure r
+    | none, some _ => throw s!"Missing{if c.force = .require then "Obligation" else "Permission"}Role: {c.act}"
+    | none, none => throw s!"UnknownSymbol: regulated predicate {c.act}"
+  if c.force = .require && r.role != .obligation then throw s!"MissingObligationRole: {r.act.getD c.act}"
+  if c.force = .forbid && r.role != .permission then throw s!"MissingPermissionRole: {r.act.getD c.act}"
+  unless E.predicates c.act == some r.sorts && constsTyped E c.args r.sorts.tail do
+    throw s!"TypeMismatch: command args for {c.unit}"
+  VE.Norms.typeDiagnostic E [] c.guard
+  unless c.guard.check E [] do throw s!"InvalidInput: invalid command fields for {c.unit}"
+
+/-- One reading candidate of unit `u`, checked as the unit would be were it chosen (6): its kind, its content of
+that kind (a malformed candidate is rejected, never counted; `none` is unelaborated), and the query it asks about,
+if any, which is regenerated at `u` (1.4). -/
+def checkCandidate (se : SpeechEnvironment) (scope : Scope) (u : String) (kind : Json) (content? : Option Json) :
+    Except String (Option String) := do
+  let E := se.ne.rv.environment
+  let bad := "invalid speech reading content"
+  unless kind == .str "binding" do
+    let _ ← VE.Route.Admission.decodeKind 16 kind
+  let some content := content? | return none
+  let (tag, value) ← match content with
+    | .arr _ => pure ("ast", content)
+    | .obj _ => match fields content with
+      | .ok [(t, v)] => pure (t, v)
+      | _ => throw bad
+    | _ => throw bad
+  unless (candidateKind tag).isSome && bareKind kind == candidateKind tag do throw bad
+  match tag with
+  | "ast" =>
+    let _ ← VE.Route.Wire.decodeClosed E value
+    pure none
+  | "command" =>
+    let c ← decodeCommand E u value
+    checkCandidateCommand se c
+    pure (match E.predicates c.act with
+      | some (_ :: ss) => ((ss.zip c.args).find? (·.1 == "query")).map Prod.snd
+      | _ => none)
+  | "question" =>
+    let q ← decodeQuestion u value
+    if q.mode == .follows then return q.query
+    if q.mode == .reading && u.utf8ByteSize > 47 then throw "ResourceLimit: open-term name"
+    validateSpeech ⟨E, se.ne.rv.literals, scope, se.ne.regulated, [], [], [q], [], []⟩
+    pure none
+  | "norm" =>
+    let n ← VE.Norms.Wire.decodeNorm content
+    VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
+    pure none
+  | _ =>
+    checkBinding se.ne (← decodeBinding u value)
+    pure none
+
 /-- The unit that asks about a query: a follows question or a proof-task command (a slot of sort `query`). -/
 def queryOf (E : VE.Environment) (u : SpeechUnitInfo) : Option String :=
   match u.role with
@@ -640,10 +738,15 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
     | .ok q => (← q.getArr?).toList.mapM (decodeQuery E)
     | .error _ => pure []
   unless (rawQueries.map (·.1)).eraseDups.length == rawQueries.length do throw "InvalidInput: duplicate query"
+  -- Reading candidates (6), each checked as its unit would be were it chosen; one that asks about a query is a
+  -- consumer at its unit.
+  let mut candidateAsks : List (String × String) := []
+  for (u, kind, content?) in ← readingCandidates document do
+    if let some qid ← checkCandidate se scope u kind content? then candidateAsks := candidateAsks ++ [(u, qid)]
   let mut before : List String := []
   let mut asked : List String := []
   for u in units do
-    if let some qid := queryOf E u then
+    for qid in (queryOf E u).toList ++ (candidateAsks.filter (·.1 == u.id)).map Prod.snd do
       match rawQueries.find? (·.1 == qid) with
       | none => throw s!"QueryMismatch: {u.id}"
       | some (_, ids, _) => unless ids == before do throw s!"QueryMismatch: {u.id}"
