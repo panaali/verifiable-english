@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from tests.test_discourse import _sample, _unit, _write
-from tests.test_discourse_lean import document as lean_document, env as lean_env, run as lean_run
+from tests.test_discourse_lean import case as lean_case, document as lean_document, env as lean_env, run as lean_run
 from ve.document import check_document, load_document
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -67,14 +67,12 @@ def test_named_reference_three_way(tmp_path, earlier_alice):
                *([{"constant": "alice", "display": "Alice", "scope": "doc"}]
                  if earlier_alice else [])],
         graph={"root": "claim", "nodes": [
-            {"name": "claim", "ast": FORMULA, "unit": target_unit}]})
-    probe = {"id": "fixture", "kind": "discourse-resolve", "environment": shared_environment(), "document": lean}
-    resolved = lean_run([probe])[0]
+            {"name": "claim", "ast": FORMULA, "unit": target_unit}]}, contents={target_unit: FORMULA})
+    resolved = lean_run([lean_case("discourse-resolve", lean, shared_environment())])[0]
     assert resolved["status"] == "ok", resolved
     assert resolved["units"][target_unit]["formula"] == FORMULA
     assert resolved["environment_id"] == load_document(path)["environment"].environment_id
-    lean["discourse"]["definitions_version"] = resolved["environment_id"]
-    admitted = lean_run([{**probe, "kind": "admission"}])[0]
+    admitted = lean_run([lean_case("admission", lean, shared_environment())])[0]
     assert admitted["status"] == "ok", admitted
     assert admitted["report"]["root"]["ast"] == FORMULA
 

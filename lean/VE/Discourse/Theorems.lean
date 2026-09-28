@@ -13,6 +13,25 @@ open Lean
 open VE.Order.ProfileGate (bind_ok)
 open VE.Route.Admission (parseLabel AssertedUnit)
 
+/-- What `prepare` establishes: the wrapper passed and the document's environment is the
+route vocabulary's. -/
+theorem prepare_facts (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
+    (P : Prepared) (h : prepare profiles environment rv j = .ok P) :
+    wrapperOk profiles environment j = .ok () ∧ P.doc.E = rv.environment := by
+  unfold prepare at h
+  obtain ⟨_, hw, h⟩ := bind_ok h
+  try dsimp only at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  try dsimp only at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  try dsimp only at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  simp only [pure, Except.pure, Except.ok.injEq] at h
+  subst h
+  exact ⟨hw, rfl⟩
+
 /-- Everything a successful `admit2` establishes about its result. -/
 structure Admit2Facts (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (check : ByteArray → ImportOutcome) (res : Admitted) : Prop where
@@ -21,7 +40,7 @@ structure Admit2Facts (profiles : List String) (environment : Json) (rv : VE.Rou
   base : VE.Route.Admission.admitDocument (baseProfiles profiles) (baseEnvironment environment) rv res.projected = .ok res.base
   premises : res.premiseUnits = premiseUnitsOf res.base
   pending : res.pending = pendingIn res.doc res.base.wires res.base.doc res.premiseUnits
-  post : postOk res.doc res.base res.bound = .ok ()
+  post : postOk res.doc res.base res.bound res.pending = .ok ()
   bound : ∀ u, res.bound u ≠ none → (res.pending.map Prod.fst).contains u = false ∧
     res.bound u = (if (boundUnits res.doc).contains u then (validate res.doc u).toOption else none)
   boundPending : ∀ u, (res.pending.map Prod.fst).contains u = true → res.bound u = none
@@ -29,31 +48,21 @@ structure Admit2Facts (profiles : List String) (environment : Json) (rv : VE.Rou
   gate : ∀ cs, res.joint = .ok cs → gateOk res.base cs = .ok ()
   presuppositions : res.presuppositions = fun id =>
     ((presupMentions res.doc).find? (·.id == id)).bind (carrierIn res.doc res.base.wires res.base.doc res.premiseUnits)
-  validity : res.validity = fun u => (res.doc.K.validity.find? (·.unit == u)).bind
-    (verdictFor res.doc (Wire.prose j) check)
+  validity : res.validity = fun u => (res.doc.K.validity.find? (·.unit == u)).bind (verdictFor res.doc check)
   selfTruth : res.selfTruth = res.doc.K.selfTruth
-  documentId : Wire.documentId2 (Wire.frontMatter j) (Wire.prose j) (Wire.fences j) = .ok res.documentId
+  documentId : Loader.documentId j = .ok res.documentId
   env : res.doc.E = rv.environment
 
 theorem admit2_facts (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (check : ByteArray → ImportOutcome) (res : Admitted) (h : admit2 profiles environment rv j check = .ok res) :
     Admit2Facts profiles environment rv j check res := by
   unfold admit2 at h
-  obtain ⟨_, hw, h⟩ := bind_ok h
+  obtain ⟨P, hP, h⟩ := bind_ok h
   try dsimp only at h
-  obtain ⟨prose, hprose, h⟩ := bind_ok h
-  obtain ⟨dj, hdj, h⟩ := bind_ok h
-  obtain ⟨K₀, hK₀, h⟩ := bind_ok h
-  obtain ⟨base₀, hb₀, h⟩ := bind_ok h
-  try dsimp only at h
-  obtain ⟨_, _, h⟩ := bind_ok h
-  try dsimp only at h
-  obtain ⟨K, hK, h⟩ := bind_ok h
-  try dsimp only at h
-  obtain ⟨envId, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hwf, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   try dsimp only at h
   obtain ⟨_, _, h⟩ := bind_ok h
   try dsimp only at h
@@ -69,9 +78,12 @@ theorem admit2_facts (profiles : List String) (environment : Json) (rv : VE.Rout
   obtain ⟨_, _, h⟩ := bind_ok h
   try dsimp only at h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  try dsimp only at h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
-  refine ⟨hw, hwf, hb, rfl, rfl, hpost, ?_, ?_, rfl, ?_, rfl, rfl, rfl, hdoc, rfl⟩
+  obtain ⟨hw, hE⟩ := prepare_facts profiles environment rv j P hP
+  refine ⟨hw, hwf, hb, rfl, rfl, hpost, ?_, ?_, rfl, ?_, rfl, rfl, rfl, hdoc, hE⟩
   · intro u hu
     simp only at hu ⊢
     split at hu
@@ -100,71 +112,101 @@ theorem admitAt_cases (profiles : List String) (environment : Json) (rv : VE.Rou
     (check : Option (ByteArray → ImportOutcome)) (res : Admitted)
     (h : admitAt profiles environment rv j check = .ok res) :
     ((formatOf j == some "ve-document@1" || formatOf j == none) = true ∧
-      ∃ r, VE.Route.Admission.admitDocument profiles environment rv j = .ok r ∧ res = lift1 r) ∨
-    (formatOf j = some "ve-document@2" ∧ ∃ K₀ c, Wire.decodeManifest (j.getObjValD "discourse") = .ok K₀ ∧
-      integrityOk j K₀ = .ok () ∧ check = some c ∧ admit2 profiles environment rv j c = .ok res) := by
+      ∃ w r, VE.Route.Admission.admitDocument profiles environment rv w = .ok r ∧ res = lift1 r) ∨
+    (formatOf j = some "ve-document@2" ∧ Loader.isPayload j = true ∧ ∃ docs imports c,
+      Wire.decodeTables (Loader.filesOf j) ((Loader.metaOf j).getObjValD "discourse") = .ok (docs, imports) ∧
+      integrityOk j docs imports = .ok () ∧ check = some c ∧ admit2 profiles environment rv j c = .ok res) := by
   unfold admitAt at h
   split at h
-  · split at h
-    · cases h
-    · cases hr : VE.Route.Admission.admitDocument profiles environment rv j with
-      | error e => rw [hr] at h; cases h
-      | ok r =>
-        rw [hr] at h
-        simp only [Except.map, Except.ok.injEq] at h
-        rename_i h1 _
-        exact Or.inl ⟨h1, r, rfl, h.symm⟩
   · rename_i h1
     split at h
+    · cases h
+    · split at h
+      · cases ha : admit1 profiles environment rv j with
+        | error e => rw [ha] at h; cases h
+        | ok r =>
+          rw [ha] at h
+          simp only [Except.map, Except.ok.injEq] at h
+          unfold admit1 at ha
+          obtain ⟨_, _, ha⟩ := bind_ok ha
+          obtain ⟨front, _, ha⟩ := bind_ok ha
+          obtain ⟨_, _, ha⟩ := bind_ok ha
+          exact Or.inl ⟨h1, front.w2, r, ha, h.symm⟩
+      · cases hr : VE.Route.Admission.admitDocument profiles environment rv j with
+        | error e => rw [hr] at h; cases h
+        | ok r =>
+          rw [hr] at h
+          simp only [Except.map, Except.ok.injEq] at h
+          exact Or.inl ⟨h1, j, r, hr, h.symm⟩
+  · split at h
     · cases h
     · rename_i h2
       simp only [bne_iff_ne, ne_eq, Decidable.not_not, beq_iff_eq] at h2
       split at h
       · cases h
-      · rename_i K₀ hK
+      · rename_i hp
+        simp only [Bool.not_eq_true', Bool.not_eq_false] at hp
         split at h
         · cases h
-        · rename_i v hi
+        · rename_i docs imports ht
           split at h
           · cases h
-          · rename_i c
-            exact Or.inr ⟨h2, K₀, c, hK, by cases v; exact hi, rfl, h⟩
+          · rename_i v hi
+            split at h
+            · cases h
+            · rename_i c
+              exact Or.inr ⟨h2, by simpa using hp, docs, imports, c, ht, by cases v; exact hi, rfl, h⟩
 
 theorem admit_cases (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res) :
     ((formatOf j == some "ve-document@1" || formatOf j == none) = true ∧
-      ∃ r, VE.Route.Admission.admitDocument profiles environment rv j = .ok r ∧ res = lift1 r) ∨
-    (formatOf j = some "ve-document@2" ∧ ∃ K₀ n, fuel = n + 1 ∧ Wire.decodeManifest (j.getObjValD "discourse") = .ok K₀ ∧
-      integrityOk j K₀ = .ok () ∧ admit2 profiles environment rv j (fun b => checkImport profiles b n) = .ok res) := by
+      ∃ w r, VE.Route.Admission.admitDocument profiles environment rv w = .ok r ∧ res = lift1 r) ∨
+    (formatOf j = some "ve-document@2" ∧ Loader.isPayload j = true ∧ ∃ docs imports n, fuel = n + 1 ∧
+      Wire.decodeTables (Loader.filesOf j) ((Loader.metaOf j).getObjValD "discourse") = .ok (docs, imports) ∧
+      integrityOk j docs imports = .ok () ∧
+      admit2 profiles environment rv j (checkImport (j.getObjValD "files") · n) = .ok res) := by
   cases fuel with
   | zero =>
-    rcases admitAt_cases profiles environment rv j none res h with h | ⟨_, _, _, _, _, hc, _⟩
+    rcases admitAt_cases profiles environment rv j none res h with h | ⟨_, _, _, _, _, _, _, hc, _⟩
     · exact Or.inl h
     · cases hc
   | succ n =>
-    rcases admitAt_cases profiles environment rv j _ res h with h | ⟨h2, K₀, c, hK, hi, hc, ha⟩
+    rcases admitAt_cases profiles environment rv j _ res h with h | ⟨h2, hp, docs, imports, c, ht, hi, hc, ha⟩
     · exact Or.inl h
     · cases hc
-      exact Or.inr ⟨h2, K₀, n, rfl, hK, hi, ha⟩
+      exact Or.inr ⟨h2, hp, docs, imports, n, rfl, ht, hi, ha⟩
 
 /-! ## 9.6: the `@1` path and the profile adapter -/
 
 theorem formatOf_of (j : Json) (s : String) (h : (j.getObjValD "format").getStr? = .ok s) : formatOf j = some s := by
   simp [formatOf, h, Except.toOption]
 
+theorem getObjValD_ok (j : Json) (k : String) (s : String) (h : (j.getObjValD k).getStr? = .ok s) :
+    (j.getObjVal? k).toBool = true := by
+  cases hj : j.getObjVal? k with
+  | ok v => rfl
+  | error e =>
+    have : j.getObjValD k = .null := by simp [Json.getObjValD, hj, Except.toOption]
+    rw [this] at h
+    cases h
+
+theorem not_payload_of_format (j : Json) (s : String) (h : (j.getObjValD "format").getStr? = .ok s) :
+    Loader.isPayload j = false := by
+  simp [Loader.isPayload, getObjValD_ok j "format" s h]
+
 /-- The `@1` path is delegated unchanged when the profile is off. -/
 theorem format1_unchanged (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (fuel : Nat) (h1 : (j.getObjValD "format").getStr? = .ok "ve-document@1") (hp : "ve.discourse@1" ∉ profiles) :
     admitDiscourse profiles environment rv j fuel = (VE.Route.Admission.admitDocument profiles environment rv j).map lift1 := by
   have hf := formatOf_of j _ h1
-  cases fuel <;> simp [admitDiscourse, admitAt, hf, discourseProfile, hp]
+  have hn := not_payload_of_format j _ h1
+  cases fuel <;> simp [admitDiscourse, admitAt, hf, hn, discourseProfile, hp]
 
 /-- With the profile on, a `@1` document is the profile-gate error, never a silent delegation. -/
 theorem format1_profile_requires_format2 (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
-    (j : Json) (fuel : Nat) (h1 : (j.getObjValD "format").getStr? = .ok "ve-document@1") (hp : "ve.discourse@1" ∈ profiles) :
+    (j : Json) (fuel : Nat) (h1 : formatOf j = some "ve-document@1") (hp : "ve.discourse@1" ∈ profiles) :
     admitDiscourse profiles environment rv j fuel = .error "UnsupportedProfile: ve.discourse@1 requires ve-document@2" := by
-  have hf := formatOf_of j _ h1
-  cases fuel <;> simp [admitDiscourse, admitAt, hf, discourseProfile, hp]
+  cases fuel <;> simp [admitDiscourse, admitAt, h1, discourseProfile, hp]
 
 /-- 3.5: the frozen gate runs on the base pair, and its verdict on the base list is unchanged. -/
 theorem profile_adapter_base (profiles : List String) (environment : Json) (j : Json)
@@ -195,18 +237,17 @@ theorem profile_adapter_base (profiles : List String) (environment : Json) (j : 
     exact (VE.Route.Gate.classify_complete _ _ ha).symm
 
 /-- The `@2` admission is W2's admission of the projected document under the base pair, plus the
-discourse checks. -/
+discourse checks; its document identity is the Python loader's over the same bytes. -/
 theorem admission_projects (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (fuel : Nat) (res : Admitted)
-    (h2 : (j.getObjValD "format").getStr? = .ok "ve-document@2")
+    (h2 : formatOf j = some "ve-document@2")
     (h : admitDiscourse profiles environment rv j fuel = .ok res) :
     VE.Route.Admission.admitDocument (baseProfiles profiles) (baseEnvironment environment) rv res.projected = .ok res.base ∧
     WellFormedDiscourse res.doc = true ∧
     (∀ u A, res.bound u = some A → validate res.doc u = .ok A) ∧
-    Wire.documentId2 (Wire.frontMatter j) (Wire.prose j) (Wire.fences j) = .ok res.documentId := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨hfm, _⟩ | ⟨_, K₀, n, _, _, _, ha⟩
-  · have hf := formatOf_of j _ h2
-    rw [hf] at hfm
+    Loader.documentId j = .ok res.documentId := by
+  rcases admit_cases profiles environment rv j fuel res h with ⟨hfm, _⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
+  · rw [h2] at hfm
     simp at hfm
   · have F := admit2_facts profiles environment rv j _ res ha
     refine ⟨F.base, by simp [WellFormedDiscourse, F.wf, Except.toBool], fun u A hA => ?_, F.documentId⟩
@@ -228,14 +269,15 @@ theorem dup_nodup {xs : List String} {f : String → String}
   | none => exact dupOf_none xs hd
   | some a => rw [hd] at h; cases h
 
-structure PostFacts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula) : Prop where
+structure PostFacts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula)
+    (pending : List (String × String)) : Prop where
   groupedNodup : (D.K.groups.flatMap Group.spans).Nodup
   groups : ∀ g ∈ D.K.groups,
     (b.doc.readingSets.any fun rs => rs.id == g.set && rs.version == g.version &&
         (groupFormula D g).any fun φ => rs.readings[g.reading]? == some φ) = true ∧
     (b.report.assumptions.filter fun l => setOfLabel l.label = some (g.set, g.version)).length ≤ 1 ∧
     ∀ u ∈ g.spans, ((unitOf b.doc u).bind VE.Route.Admission.DocUnit.content == none && (bound u).isNone &&
-        !(premiseUnitsOf b).contains u &&
+        !(premiseUnitsOf b).contains u && !(pending.map Prod.fst).contains u &&
         (b.report.assumptions.all fun l => l.label != "asserted" || unitOfLeaf b l != some u)) = true
   validity : ∀ v ∈ D.K.validity, (!(premiseUnitsOf b).contains v.unit && (bound v.unit).isNone) = true
   selfTruth : ∀ u ∈ D.K.selfTruth, (!(premiseUnitsOf b).contains u && (bound u).isNone &&
@@ -250,7 +292,7 @@ structure PostFacts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String
   depth : depthOf D ≤ 4
 
 theorem postOk_facts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula)
-    (h : postOk D b bound = .ok ()) : PostFacts D b bound := by
+    (pending : List (String × String)) (h : postOk D b bound pending = .ok ()) : PostFacts D b bound pending := by
   unfold postOk at h
   simp only [runAll_cons, runAll_nil, and_true] at h
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩ := h
@@ -270,9 +312,9 @@ theorem postOk_facts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : Strin
 /-- A successful `@2` admission's facts, with its post-admission checks. -/
 theorem admit_facts2 (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (check : ByteArray → ImportOutcome) (res : Admitted) (h : admit2 profiles environment rv j check = .ok res) :
-    Admit2Facts profiles environment rv j check res ∧ PostFacts res.doc res.base res.bound := by
+    Admit2Facts profiles environment rv j check res ∧ PostFacts res.doc res.base res.bound res.pending := by
   have F := admit2_facts profiles environment rv j check res h
-  exact ⟨F, postOk_facts _ _ _ F.post⟩
+  exact ⟨F, postOk_facts _ _ _ _ F.post⟩
 
 theorem find_key {α : Type} (key : α → String) : ∀ (xs : List α) (x : α), (xs.map key).Nodup → x ∈ xs →
     xs.find? (fun y => key y == key x) = some x
@@ -300,7 +342,7 @@ theorem discourse_report_sound (profiles : List String) (environment : Json) (rv
     (∀ w ∈ res.base.wires, VE.Route.Admission.NodeAdmitted res.base.doc w) ∧
     VE.Route.Admission.CitationsClosed res.base.doc res.base.report ∧
     VE.Route.Admission.ChoicesCompatible res.base.report := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, hr, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, hr, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · obtain ⟨_, _, _, _, _, _, _, hs, hn, _, hc, hch⟩ := VE.Route.Admission.admit_report_sound.{u} _ _ _ _ _ hr
     exact ⟨hs, hn, hc, hch⟩
   · obtain ⟨F, _⟩ := admit_facts2 profiles environment rv j _ res ha
@@ -319,7 +361,7 @@ theorem no_discourse_label (profiles : List String) (environment : Json) (rv : V
     unfold VE.Route.Admission.LeafAdmitted at hadm
     rw [← hw]
     split at hadm <;> first | simp_all | exact hadm.elim
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, hr, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, hr, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact key _ _ _ r hr
   · exact key _ _ _ _ (admit2_facts profiles environment rv j _ res ha).base
 
@@ -367,7 +409,7 @@ theorem presupposition_carried (profiles : List String) (environment : Json) (rv
        AssertedUnit res.base.doc u (uniqueD σ Dr) ∧ u ∈ res.premiseUnits) ∨
     (res.presuppositions m.id = none ∧ (m.unit, "PresuppositionUnresolved: " ++ m.id) ∈ res.pending ∧
        res.bound m.unit = none) := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hm (by simp [lift1, emptyManifest])
   · obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
     have hmp : m ∈ presupMentions res.doc := List.mem_filter.mpr ⟨hm, by simp [hr]⟩
@@ -404,15 +446,16 @@ theorem find_group : ∀ (gs : List Group) (g : Group) (u : String), (gs.flatMap
       simp only [List.find?_cons, hb]
       exact find_group gs g u hn.2.1 hg hu
 
-theorem statusOf_grouped (res : Admitted) (P : PostFacts res.doc res.base res.bound)
-    (hv : res.validity = fun u => (res.doc.K.validity.find? (·.unit == u)).bind
-      (verdictFor res.doc (Wire.prose j) check))
+theorem statusOf_grouped (res : Admitted) (P : PostFacts res.doc res.base res.bound res.pending)
+    (hv : res.validity = fun u => (res.doc.K.validity.find? (·.unit == u)).bind (verdictFor res.doc check))
     (hs : res.selfTruth = res.doc.K.selfTruth)
     (g : Group) (hg : g ∈ res.doc.K.groups) (u : String) (hu : u ∈ g.spans) :
-    statusOf res u = groupStatus res.doc g := by
+    statusOf res u = loadedStatus res.doc (g.spans.headD u) := by
   have hin : u ∈ res.doc.K.groups.flatMap Group.spans := List.mem_flatMap.mpr ⟨g, hg, hu⟩
   have hl := P.groupedLabels u hin
   simp only [Bool.and_eq_true, Bool.not_eq_true', List.contains_iff_mem] at hl
+  have hp := (P.groups g hg).2.2 u hu
+  simp only [Bool.and_eq_true, Bool.not_eq_true'] at hp
   unfold statusOf
   have h1 : res.selfTruth.contains u = false := by rw [hs]; simpa using hl.1
   have h2 : res.validity u = none := by
@@ -424,7 +467,7 @@ theorem statusOf_grouped (res : Admitted) (P : PostFacts res.doc res.base res.bo
       simp only [beq_iff_eq] at he
       exact absurd (List.mem_map.mpr ⟨v, hv', he⟩) (by simpa using hl.2)
     rw [this]; rfl
-  simp only [h1, Bool.false_eq_true, if_false, h2]
+  simp only [h1, Bool.false_eq_true, if_false, h2, hp.1.2, unitStatus]
   unfold groupOf
   rw [find_group _ g u P.groupedNodup hg hu]
 
@@ -441,7 +484,7 @@ theorem group_single_assertion (profiles : List String) (environment : Json) (rv
     (∀ l ∈ res.base.report.assumptions, l.label = "asserted" → ∀ u ∈ g.spans, unitOfLeaf res.base l ≠ some u) ∧
     ∀ u ∈ g.spans, (unitOf res.base.doc u).bind VE.Route.Admission.DocUnit.content = none ∧ res.bound u = none ∧
       u ∉ res.premiseUnits ∧ statusOf res u = statusOf res (g.spans.head!) := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hg (by simp [lift1, emptyManifest])
   · obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
     obtain ⟨hrs, hcount, hspans⟩ := P.groups g hg
@@ -459,7 +502,7 @@ theorem group_single_assertion (profiles : List String) (environment : Json) (rv
     · have hx := hspans u hu
       simp only [Bool.and_eq_true, beq_iff_eq, Option.isNone_iff_eq_none, Bool.not_eq_true',
         List.contains_iff_mem] at hx
-      obtain ⟨⟨⟨hc, hb⟩, hp⟩, _⟩ := hx
+      obtain ⟨⟨⟨⟨hc, hb⟩, hp⟩, _⟩, _⟩ := hx
       have hhead : g.spans.head! ∈ g.spans := by
         cases hsp : g.spans with
         | nil => rw [hsp] at hu; cases hu
@@ -467,6 +510,9 @@ theorem group_single_assertion (profiles : List String) (environment : Json) (rv
       refine ⟨hc, hb, by rw [F.premises]; simpa using hp, ?_⟩
       rw [statusOf_grouped res P F.validity F.selfTruth g hg u hu,
         statusOf_grouped res P F.validity F.selfTruth g hg _ hhead]
+      cases hsp : g.spans with
+      | nil => rw [hsp] at hu; cases hu
+      | cons x xs => rfl
 
 /-! ## 9.4: the composition gate -/
 
@@ -495,7 +541,7 @@ theorem citation_extends_joint (profiles : List String) (environment : Json) (rv
     (L : VE.Route.Admission.Lemma) (hL : L ∈ res.base.doc.lemmas) (ch : List (String × String))
     (hch : VE.Definitions.Bundle.leafChoices (leafList L) = .ok ch) :
     ∃ c ∈ cs, ExtendsTo ch c := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · cases hcs
   · obtain ⟨F, _⟩ := admit_facts2 profiles environment rv j _ res ha
     exact (gate_facts (F.gate cs hcs)).1 L hL ch hch
@@ -508,17 +554,10 @@ theorem report_extends_joint (profiles : List String) (environment : Json) (rv :
     (ch : List (String × String))
     (hch : VE.Definitions.Bundle.leafChoices (res.base.report.assumptions.map (fun l => (l.label, l.formula))) = .ok ch) :
     ∃ c ∈ cs, ExtendsTo ch c := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · cases hcs
   · obtain ⟨F, _⟩ := admit_facts2 profiles environment rv j _ res ha
     exact (gate_facts (F.gate cs hcs)).2 ch hch
-
-/-- The per-lemma verdicts that depend on reading choices: UNKNOWN when the joint set is. -/
-def readingVerdicts (res : Admitted) : List (String × String) :=
-  match res.joint with
-  | .error e => if e.startsWith "ResourceLimit" then res.base.doc.lemmas.map fun L => (L.name, "UNKNOWN (joint choices)")
-    else []
-  | .ok _ => []
 
 def CompatibilityDiagnostic (s : String) : Prop := ∃ x, s = "InvalidCompatibility" ++ x
 
@@ -534,7 +573,7 @@ theorem extension_unknown (profiles : List String) (environment : Json) (rv : VE
     (h : admitDiscourse profiles environment rv j fuel = .ok res) (hb : res.joint = .error "ResourceLimit: joint choices") :
     (∀ e, e ∈ res.pending → ¬ CompatibilityDiagnostic e.2) ∧
     ∀ v ∈ readingVerdicts res, v.2 = "UNKNOWN (joint choices)" := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · simp [lift1] at hb
   · obtain ⟨F, _⟩ := admit_facts2 profiles environment rv j _ res ha
     refine ⟨fun e he => ?_, fun v hv => ?_⟩
@@ -548,17 +587,19 @@ theorem extension_unknown (profiles : List String) (environment : Json) (rv : VE
       rw [hb] at hv
       simp only at hv
       split at hv
-      · obtain ⟨L, _, rfl⟩ := List.mem_map.mp hv; rfl
+      · rcases List.mem_append.mp hv with hv | hv
+        · obtain ⟨L, _, rfl⟩ := List.mem_map.mp hv; rfl
+        · rw [List.mem_singleton] at hv; rw [hv]
       · cases hv
 
 
 /-! ## 9.6: validity claims and the truth boundary -/
 
-theorem validity_find (res : Admitted) (P : PostFacts res.doc res.base res.bound) (v : Validity)
+theorem validity_find (res : Admitted) (P : PostFacts res.doc res.base res.bound res.pending) (v : Validity)
     (hv : v ∈ res.doc.K.validity) : res.doc.K.validity.find? (·.unit == v.unit) = some v :=
   find_key Validity.unit _ v P.validityNodup hv
 
-theorem document_find (res : Admitted) (P : PostFacts res.doc res.base res.bound) (d : DocName)
+theorem document_find (res : Admitted) (P : PostFacts res.doc res.base res.bound res.pending) (d : DocName)
     (hd : d ∈ res.doc.K.documents) : res.doc.K.documents.find? (·.name == d.name) = some d :=
   find_key DocName.name _ d P.documentsNodup hd
 
@@ -567,7 +608,7 @@ theorem validity_self (profiles : List String) (environment : Json) (rv : VE.Rou
     (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
     (v : Validity) (hv : v ∈ res.doc.K.validity) (hs : refersSelf res.doc v.document) :
     res.validity v.unit = some (if v.holds then .checked else .refuted) := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hv (by simp [lift1, emptyManifest])
   · obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
     obtain ⟨d, hd, hname, hself⟩ := hs
@@ -579,16 +620,18 @@ theorem validity_self (profiles : List String) (environment : Json) (rv : VE.Rou
     simp [hself]
 
 /-- An import's verdict follows its outcome: absent bytes are `unconfirmed`, stored bytes are
-checked one level down. -/
+checked one level down under the stored document's own environment and profiles
+(`outcomeWith`), never the importing document's. -/
 theorem validity_import (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j (fuel + 1) = .ok res)
     (v : Validity) (hv : v ∈ res.doc.K.validity) (key : String) (hi : refersImport res.doc v.document key)
     (imp : Import) (hk : imp ∈ res.doc.K.imports ∧ imp.key = key) :
     (imp.bytes = none → res.validity v.unit = some (.unconfirmed "import bytes absent")) ∧
-    (∀ b, imp.bytes = some b → res.validity v.unit = some (verdictOf v.holds (checkImport profiles b fuel))) ∧
-    (∀ b, imp.bytes = some b → checkImport profiles b fuel =
-      outcomeOf (admitDiscourse profiles (envOf b) (rvOf b) (jsonOf b) fuel)) := by
-  rcases admit_cases profiles environment rv j (fuel + 1) res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, hn, _, _, ha⟩
+    (∀ b, imp.bytes = some b →
+      res.validity v.unit = some (verdictOf v.holds (checkImport (j.getObjValD "files") b fuel))) ∧
+    (∀ b, imp.bytes = some b → checkImport (j.getObjValD "files") b fuel =
+      outcomeWith (fun ps env rv p => admitDiscourse ps env rv p fuel) (j.getObjValD "files") b) := by
+  rcases admit_cases profiles environment rv j (fuel + 1) res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, hn, _, _, ha⟩
   · exact absurd hv (by simp [lift1, emptyManifest])
   · cases hn
     obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
@@ -597,7 +640,7 @@ theorem validity_import (profiles : List String) (environment : Json) (rv : VE.R
       rw [← hk.2]; exact find_key Import.key _ imp P.importsNodup hk.1
     have hval : res.validity v.unit = match imp.bytes with
         | none => some (.unconfirmed "import bytes absent")
-        | some b => some (verdictOf v.holds (checkImport profiles b fuel)) := by
+        | some b => some (verdictOf v.holds (checkImport (j.getObjValD "files") b fuel)) := by
       rw [F.validity]
       simp only
       rw [validity_find res P v hv]
@@ -611,7 +654,7 @@ theorem validity_unknown_never_checked (profiles : List String) (environment : J
     (j : Json) (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j (fuel + 1) = .ok res)
     (v : Validity) (hv : v ∈ res.doc.K.validity) (key : String) (hi : refersImport res.doc v.document key) (imp : Import)
     (hk : imp ∈ res.doc.K.imports ∧ imp.key = key) (b : ByteArray) (hb : imp.bytes = some b) (r : String)
-    (hu : checkImport profiles b fuel = .unknown r) :
+    (hu : checkImport (j.getObjValD "files") b fuel = .unknown r) :
     res.validity v.unit = some (.unconfirmed r) := by
   rw [(validity_import profiles environment rv j fuel res h v hv key hi imp hk).2.1 b hb, hu]
   rfl
@@ -633,22 +676,21 @@ theorem runAll_head_error (f : Unit → Except String Unit) (fs : List (Unit →
   show (match f () with | .ok _ => runAll fs | .error e => .error e) = _
   rw [h]
 
-theorem integrity_stale (j : Json) (K : Manifest) (imp : Import) (hk : imp ∈ K.imports) (b : ByteArray)
-    (hb : imp.bytes = some b) (hne : sourceIdOf b ≠ imp.sourceId) :
-    ∃ x, integrityOk j K = .error ("StaleTarget: " ++ x) := by
+theorem integrity_stale (j : Json) (docs : List DocName) (imports : List Import) (imp : Import)
+    (hk : imp ∈ imports) (b : ByteArray) (hb : imp.bytes = some b) (hne : sourceIdOf b ≠ imp.sourceId) :
+    ∃ x, integrityOk j docs imports = .error ("StaleTarget: " ++ x) := by
   let stage : Import → Except String Unit := fun imp => match imp.bytes with
-    | some b => req (sourceIdOf b == imp.sourceId)
-        ("StaleTarget: " ++ ((K.documents.find? fun d => d.refers == .imported imp.key).map DocName.name).getD imp.key)
+    | some b => req (sourceIdOf b == imp.sourceId) ("StaleTarget: " ++ importName docs imp.key)
     | none => .ok ()
   have hfail : stage imp ≠ .ok () := by
     simp only [stage, hb]
     intro hr
     exact hne (by simpa using (req_ok _ _).mp hr)
-  cases hs : allOk K.imports stage with
+  cases hs : allOk imports stage with
   | ok v =>
     exact absurd ((allOk_iff _ _).mp (by cases v; exact hs) imp hk) hfail
   | error e =>
-    have hint : integrityOk j K = .error e := runAll_head_error _ _ e hs
+    have hint : integrityOk j docs imports = .error e := by unfold integrityOk; exact runAll_head_error _ _ e hs
     obtain ⟨f, hf, hfe⟩ := runAll_error _ e hs
     obtain ⟨y, _, rfl⟩ := List.mem_map.mp hf
     simp only [stage] at hfe
@@ -663,26 +705,26 @@ theorem integrity_stale (j : Json) (K : Manifest) (imp : Import) (hk : imp ∈ K
 /-- Import integrity is a well-formedness condition of a `@2` document: stored bytes with
 another source id reject the importing document with `StaleTarget`. -/
 theorem stale_import_rejected (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
-    (j : Json) (fuel : Nat) (h2 : (j.getObjValD "format").getStr? = .ok "ve-document@2")
+    (j : Json) (fuel : Nat) (h2 : formatOf j = some "ve-document@2") (hp : Loader.isPayload j = true)
     (imp : Import) (hk : imp ∈ importsOf j)
     (b : ByteArray) (hb : imp.bytes = some b) (hne : sourceIdOf b ≠ imp.sourceId) :
     ∃ x, admitDiscourse profiles environment rv j fuel = .error ("StaleTarget: " ++ x) := by
-  have hf := formatOf_of j _ h2
-  unfold importsOf at hk
-  cases hK : Wire.decodeManifest (j.getObjValD "discourse") with
+  unfold importsOf tablesOf at hk
+  cases hK : Wire.decodeTables (Loader.filesOf j) ((Loader.metaOf j).getObjValD "discourse") with
   | error e => rw [hK] at hk; simp [Except.toOption] at hk
-  | ok K =>
+  | ok T =>
     rw [hK] at hk
-    simp only [Except.toOption, Option.map_some, Option.getD_some] at hk
-    obtain ⟨x, hx⟩ := integrity_stale j K imp hk b hb hne
+    obtain ⟨docs, imports⟩ := T
+    simp only [Except.toOption, Option.getD_some] at hk
+    obtain ⟨x, hx⟩ := integrity_stale j docs imports imp hk b hb hne
     refine ⟨x, ?_⟩
-    cases fuel <;> simp [admitDiscourse, admitAt, hf, hK, hx]
+    cases fuel <;> simp [admitDiscourse, admitAt, h2, hp, hK, hx]
 
 /-- A validity claim is never a premise and never bound. -/
 theorem validity_never_premise (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
     (j : Json) (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
     (v : Validity) (hv : v ∈ res.doc.K.validity) : v.unit ∉ res.premiseUnits ∧ res.bound v.unit = none := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hv (by simp [lift1, emptyManifest])
   · obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
     have := P.validity v hv
@@ -696,7 +738,7 @@ theorem self_truth_never_content (profiles : List String) (environment : Json) (
     (u : String) (hu : u ∈ res.selfTruth) :
     (unitOf res.doc.base u).bind VE.Route.Admission.DocUnit.content = none ∧ u ∉ res.premiseUnits ∧
     res.bound u = none ∧ statusOf res u = "LABELLED" := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hu (by simp [lift1])
   · obtain ⟨F, P⟩ := admit_facts2 profiles environment rv j _ res ha
     have hu' : u ∈ res.doc.K.selfTruth := by rw [← F.selfTruth]; exact hu
@@ -710,12 +752,12 @@ theorem self_truth_never_content (profiles : List String) (environment : Json) (
 theorem import_acyclic (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
     (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res) :
     VE.Route.DagAcyclic (importNodes res.doc) ∧ depthOf res.doc ≤ 4 := by
-  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
-  · refine ⟨?_, by simp [depthOf, chainDepth, lift1, emptyManifest]⟩
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
+  · refine ⟨?_, by simp [depthOf, chainDepth, storedOfDoc, lift1, emptyManifest]⟩
     intro a hp
     have edge : ∀ x y, VE.Route.DepEdge (importNodes (lift1 r).doc) x y → False := by
       rintro x y ⟨m, hm, _, hy⟩
-      simp [importNodes, importNodesAt, dedupNodes, lift1, emptyManifest] at hm
+      simp [importNodes, importNodesAt, storedOfDoc, dedupNodes, lift1, emptyManifest] at hm
       subst hm
       simp [VE.Route.deps] at hy
     have nopath : ∀ x y, VE.Route.DepPath (importNodes (lift1 r).doc) x y → False := by

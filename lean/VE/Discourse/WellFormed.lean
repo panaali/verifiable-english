@@ -243,12 +243,20 @@ def boundOk (D : DDoc) : Except String Unit :=
     | .ok _ => .ok ()
     | .error e => .error e
 
+/-- 4.8: the active open reading sets (the latest version per unit, status `open`), in
+document order: the sets of the joint enumeration. -/
 def activeSets (D : DDoc) : List ReadingSet :=
-  D.base.readingSets.filter fun rs => !D.base.readingSets.any fun o => o.id == rs.id && o.version > rs.version
+  (D.sets.filter (·.status == "open")).map fun s => ⟨s.id, s.version, s.readings.map Prod.snd⟩
 
 /-- The reading the owning set records for a group (the comparison point, never trusted). -/
 def recordedGroupReading (D : DDoc) (g : Group) : Option VE.Formula :=
-  (D.base.readingSets.find? fun rs => rs.id == g.set && rs.version == g.version).bind fun rs => rs.readings[g.reading]?
+  (D.sets.find? fun rs => rs.id == g.set && rs.version == g.version && g.spans.head? == some rs.unit).bind
+    fun rs => (rs.readings[g.reading]?).map Prod.snd
+
+/-- A group's reading as the wire names it: its id in the set version (1.5). -/
+def readingName (D : DDoc) (g : Group) : String :=
+  ((D.sets.find? fun rs => rs.id == g.set && rs.version == g.version).bind fun rs =>
+    (rs.readings[g.reading]?).map Prod.fst).getD (toString g.reading)
 
 /-- The first span of a same-witness group (4.6): exactly one derivation, `a|an|some [ADJ]
 SORT is P.` with no slot; its sort and the body over the witness. -/
@@ -288,12 +296,13 @@ def groupsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.groups.length ≤ 256 && D.K.groups.all (fun g => decide (g.spans.length ≤ 16)) &&
     D.K.constraints.length ≤ 1024) "ResourceLimit: groups",
   fun _ => allOk D.K.groups fun g =>
-    let name := g.set ++ "@" ++ toString g.version ++ ":" ++ toString g.reading
+    let name := g.set ++ "@" ++ toString g.version ++ ":" ++ readingName D g
     match recordedGroupReading D g with
-    | none => .error ("InvalidInput: reading " ++ toString g.reading ++ " not in " ++ g.set ++ "@" ++ toString g.version)
+    | none => .error ("InvalidInput: reading " ++ readingName D g ++ " not in " ++ g.set ++ "@" ++ toString g.version)
     | some φ =>
       if g.spans.isEmpty then .error ("InvalidInput: group " ++ g.set ++ " has no spans") else
-      match g.spans.find? (fun u => (contentOf D u).isSome || (boundUnits D).contains u || !(unitIdsOf D).contains u) with
+      match g.spans.find? (fun u => (contentOf D u).isSome || (boundUnits D).contains u || !(unitIdsOf D).contains u ||
+          D.sets.any fun rs => rs.unit == u && !(rs.id == g.set && rs.version == g.version)) with
       | some u => .error ("IndependentFragment: " ++ u)
       | none =>
         if !sharedWitness φ then .error ("WitnessSplit: " ++ name) else
