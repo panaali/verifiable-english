@@ -1074,22 +1074,27 @@ def test_fenced_signed_reading_uses_derived_meaning(lean, tmp_path):
     assert a.meaning_ids["r"] == b.meaning_ids["r"] == le["questions"][0]["meaning_id"]
 
 
-def _wire_mutations(value, prefix=()):
+def _wire_mutations(value, prefix=(), *, include_null=False):
     """Replace every nested field and container, then probe required/extra keys."""
+    replacements = (7, True, [], {}) + ((None,) if include_null else ())
     if type(value) is dict:
         for key in value:
             path = (*prefix, key)
-            for replacement in (7, True, [], {}):
+            for replacement in replacements:
                 yield path, replacement
-            yield from _wire_mutations(value[key], path)
+            if key in {"unit", "set", "query", "act", "predicate", "constant", "sort"}:
+                yield path, "dangling"
+            yield from _wire_mutations(value[key], path, include_null=include_null)
         for key in value:
             yield (*prefix, key), _MISSING
         yield (*prefix, "extra_wire_field"), "unexpected"
     elif type(value) is list:
         for index, item in enumerate(value):
-            for replacement in (7, True, [], {}):
+            for replacement in replacements:
                 yield (*prefix, index), replacement
-            yield from _wire_mutations(item, (*prefix, index))
+            if prefix and prefix[-1] in {"premises", "args", "domain", "arguments"}:
+                yield (*prefix, index), "dangling"
+            yield from _wire_mutations(item, (*prefix, index), include_null=include_null)
 
 
 _MISSING = object()
@@ -1240,7 +1245,7 @@ def test_generated_source_wire_never_crashes():
                            (reading, reading_source), (alternate, reading_source),
                            (ordinary, ordinary_source)):
         SpeechSource(metadata, body, {})
-        paths = [(path, replacement) for path, replacement in _wire_mutations(metadata)
+        paths = [(path, replacement) for path, replacement in _wire_mutations(metadata, include_null=True)
                  if path[0] != "environment" or path[1:2] == ("speech_acts",) or len(path) == 1]
         for path, replacement in paths:
             changed = _replace_wire(metadata, path, replacement)
