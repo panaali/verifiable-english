@@ -25,6 +25,27 @@ class _SearchSpaceLimit(Exception):
 _model_pool = ContextVar("ve_model_pool", default=None)
 
 
+@dataclass(frozen=True, slots=True)
+class _TerminalModelError:
+    error: Exception
+
+
+def _models_with_terminal_error(models):
+    # tee buffers values but treats a source exception as exhaustion. Make the
+    # failure a buffered value so every reader reaches the same terminal state.
+    try:
+        yield from models
+    except Exception as exc:
+        yield _TerminalModelError(exc)
+
+
+def _read_shared_models(reader):
+    for item in reader:
+        if isinstance(item, _TerminalModelError):
+            raise item.error
+        yield item
+
+
 @contextmanager
 def model_search_scope():
     """Share an ordered model stream among queries in one document check."""
@@ -45,10 +66,11 @@ def _query_models(env, minimum, maximum, used, formulas, *, defer_model_id):
     key = (env.environment_id, minimum, maximum, used,
            formulas if getattr(env, "order", False) else (), defer_model_id)
     if key not in pool:
-        pool[key] = _models(env, minimum, maximum, used, formulas,
-                            _defer_model_id=defer_model_id)
+        pool[key] = _models_with_terminal_error(
+            _models(env, minimum, maximum, used, formulas,
+                    _defer_model_id=defer_model_id))
     pool[key], reader = tee(pool[key])
-    return reader
+    return _read_shared_models(reader)
 
 
 def _node_count(root: Any) -> int:
