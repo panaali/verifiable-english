@@ -36,6 +36,19 @@ def _local_id(value: Any, path: str) -> str:
     return value
 
 
+def _model_limits(wire: Any, sort_names: set[str]) -> None:
+    """The static limits of a submitted model, after its shape and before any
+    entity is read: each domain has at most MAX_ENTITIES entries, then all
+    supplied tables at most MAX_TUPLES rows together (Lean `modelLimits`, Rust
+    `model_limits`). Entries that are not arrays are left to the decoder."""
+    for sort in sorted(sort_names):
+        raw = wire["domains"][sort]
+        if isinstance(raw, list) and len(raw) > MAX_ENTITIES:
+            raise ResourceLimit("domain exceeds entity limit", path=f"/domains/{sort}")
+    if sum(len(raw) for raw in wire["relations"].values() if isinstance(raw, list)) > MAX_TUPLES:
+        raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
+
+
 @dataclass(frozen=True, slots=True)
 class FiniteModel:
     """A defensively copied, validated finite model."""
@@ -74,14 +87,13 @@ class FiniteModel:
                                path="/relations")
         if set(wire["relations"]) != predicate_names:
             _fail("relations must contain exactly the base predicates; defined tables are computed", "/relations")
+        _model_limits(wire, sort_names)
 
         domains: dict[str, tuple[str, ...]] = {}
         for sort in sorted(sort_names):
             raw = wire["domains"][sort]
             if not isinstance(raw, list):
                 _fail("domain must be an array", f"/domains/{sort}")
-            if len(raw) > MAX_ENTITIES:
-                raise ResourceLimit("domain exceeds entity limit", path=f"/domains/{sort}")
             values = tuple(_local_id(x, f"/domains/{sort}/{i}") for i, x in enumerate(raw))
             if len(set(values)) != len(values):
                 _fail("duplicate domain entity", f"/domains/{sort}")
@@ -110,8 +122,6 @@ class FiniteModel:
                 _fail("constant denotes an entity outside its sort", f"/constants/{name}")
             constants[name] = value
 
-        if sum(len(raw) for raw in wire["relations"].values() if isinstance(raw, list)) > MAX_TUPLES:
-            raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
         relations: dict[str, frozenset[tuple[str, ...]]] = {}
         tuple_count = 0
         for name in sorted(predicate_names):

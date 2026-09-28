@@ -153,12 +153,12 @@ def test_defined_table_budget_is_order_independent_three_ways():
 
 
 def test_lean_runners_sort_domains_and_audit_the_bridge():
-    """The frozen decoders keep input order; the runners sort after decoding."""
+    """The decoders keep input order; the runners sort after decoding."""
     time = (ROOT / "lean" / "VE" / "Time" / "Wire.lean").read_text()
     route = (ROOT / "lean" / "VE" / "Route" / "Wire.lean").read_text()
     assert time.count("(sortDomains d).toModel maxEvaluations") == 2
     assert "evalB d.toModel" not in time and "refutesB d.toModel" not in time
-    assert "let data₀ := sortModelData (← VE.Bridge.decodeModelData" in route
+    assert "let data₀ := sortModelData (← Decode.decodeModelData" in route
     audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
     for name in ("VE.Time.eval_domains_perm", "VE.Time.countermodelCheck_domains_perm",
                  "VE.Time.Wire.sortDomains_perm", "VE.Time.Wire.evalB_sorted_sound",

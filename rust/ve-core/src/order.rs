@@ -200,6 +200,7 @@ impl Model {
         {
             return error("InvalidModel", "model declarations differ");
         }
+        crate::model::model_limits(ds, rs)?;
         let mut domains = BTreeMap::new();
         for (s, raw) in ds {
             let mut vals = Vec::new();

@@ -262,3 +262,199 @@ def test_nary_family_sorts_domains_before_the_budget():
         lean_limit(got, "MAX_EVALUATIONS")
         [other] = rust([case])
         rust_limit(other)
+
+
+# --- Static model limits first; tables of every allowed size -------------------
+
+def order_env():
+    return fol(("order@0", "relational-fol@0"), p=["s"], e=["s", "s"])
+
+
+def limit_cases():
+    """Each breaks a static model limit and something checked after it."""
+    bad_ids = {"complete": True, "domains": {"s": ["X"] + [f"e{i}" for i in range(1000)]},
+               "constants": {}, "relations": {"p": [], "e": []}}
+    rows = [["a", "a"]] * 100_001
+    dup_domain = {"complete": True, "domains": {"s": ["a", "a"]}, "constants": {},
+                  "relations": {"p": [], "e": rows}}
+    return [bad_ids, dup_domain]
+
+
+@pytest.mark.parametrize("profiles", [("relational-fol@0",), ("order@0", "relational-fol@0")])
+def test_model_limits_precede_entity_checks_three_ways(profiles):
+    """A 1,001-entity domain with an invalid identifier, and 100,001 rows beside
+    a duplicate entity: the limit is reported first in every backend."""
+    env = fol(profiles, p=["s"], e=["s", "s"])
+    for data in limit_cases():
+        with pytest.raises(ResourceLimit):
+            FiniteModel.from_dict(Environment(env), data)
+        case = {"id": "l", "environment": env, "model": data, "ast": [["top"]]}
+        [got] = lean([{**case, "kind": "evaluate"}])
+        lean_limit(got)
+        [other] = rust([case])
+        rust_limit(other)
+
+
+def test_quantity_model_limits_precede_entity_checks_three_ways():
+    from tests.test_units_lean_w6a import lean as lean_quantity, quantity
+    from tests.test_w6a_review_regressions import raw_environment
+    from ve.units import quantity_countermodel
+    raw = raw_environment({}, sorts={"s": {"description": "s"}},
+                          predicates={"p": {"arguments": ["s"], "description": "p"},
+                                      "e": {"arguments": ["s", "s"], "description": "e"}})
+    for data in limit_cases():
+        with pytest.raises(ResourceLimit):
+            quantity_countermodel(Environment(raw), [], quantity(["bottom"]), data)
+        case = {"environment": raw, "premises": [], "conclusion": quantity(["bottom"]), "model": data}
+        [got] = lean_quantity([{"id": "q", "kind": "countermodel", **case}])
+        lean_limit(got)
+        [other] = rust([{"id": "q", "kind": "quantity", "mode": "countermodel", **case}])
+        rust_limit(other)
+
+
+def full_table():
+    """1,000 entities and 100,000 rows: the largest tables the limits allow."""
+    domain = [f"e{i:03d}" for i in range(1000)]
+    return {"complete": True, "domains": {"s": domain}, "constants": {},
+            "relations": {"p": [], "e": [[domain[k // 1000], domain[k % 1000]] for k in range(100_000)]}}
+
+
+def test_largest_tables_reach_the_budget_quickly_three_ways():
+    """Every atom reads a 100,000-row table in constant time, so the budget, not
+    the table, bounds the work (Lean used to scan the rows for each atom)."""
+    data = full_table()
+    formula = ["forall", "s", ["forall", "s", ["or", ["binary", "e", ["var", 1], ["var", 0]], ["top"]]]]
+    exists = ["exists", "s", ["binary", "e", ["var", 0], ["var", 0]]]
+    for env in (fol(p=["s"], e=["s", "s"]), order_env()):
+        assert python_values(env, [formula, exists], data) == [None, True]
+        case = {"id": "t", "environment": env, "model": data, "ast": [exists]}
+        [got] = lean([{**case, "kind": "evaluate"}])
+        [other] = rust([case])
+        assert got["values"] == [True] and other["values"] == [True], (got, other)
+        case = {**case, "ast": [formula]}
+        [got] = lean([{**case, "kind": "evaluate"}])
+        lean_limit(got, "MAX_EVALUATIONS")
+        [other] = rust([case])
+        rust_limit(other)
+
+
+def test_largest_tables_on_the_quantity_route_three_ways():
+    from tests.test_units_lean_w6a import lean as lean_quantity, quantity
+    from tests.test_w6a_review_regressions import raw_environment
+    from ve.units import quantity_countermodel
+    raw = raw_environment({}, sorts={"s": {"description": "s"}},
+                          predicates={"p": {"arguments": ["s"], "description": "p"},
+                                      "e": {"arguments": ["s", "s"], "description": "e"}})
+    conclusion = quantity(["not", ["forall", "s", ["forall", "s",
+                                                   ["or", ["binary", "e", ["var", 1], ["var", 0]],
+                                                    ["top"]]]]])
+    data = full_table()
+    with pytest.raises(ResourceLimit, match="MAX_EVALUATIONS"):
+        quantity_countermodel(Environment(raw), [], conclusion, data)
+    case = {"environment": raw, "premises": [], "conclusion": conclusion, "model": data}
+    start = time.monotonic()
+    [got] = lean_quantity([{"id": "q", "kind": "countermodel", **case}])
+    assert time.monotonic() - start < WALL
+    lean_limit(got, "MAX_EVALUATIONS")
+    [other] = rust([{"id": "q", "kind": "quantity", "mode": "countermodel", **case}])
+    rust_limit(other)
+
+
+# --- Background of a model --------------------------------------------------------
+
+@pytest.mark.parametrize("n,fits", [(447, True), (448, False)])
+def test_definition_background_is_metered_at_the_same_size_three_ways(n, fits):
+    """Each definition's biconditional is evaluated under its own budget (Python
+    `_valid_definitions`): 447 × 447 rows of ⊥ cost 999,493 units, 448 × 448
+    cost 1,003,969. Rust skipped this check and Lean ran it unmetered."""
+    env = defined(["bottom"], ("s", "s"))
+    data = model([f"e{i:03d}" for i in range(n)], p=[])
+    case = {"id": "b", "environment": env, "model": data, "ast": [["top"]]}
+    [got] = lean([{**case, "kind": "evaluate"}])
+    [other] = rust([case])
+    if fits:
+        assert FiniteModel.from_dict(Environment(env), data).relations["d"] == frozenset()
+        assert got["values"] == [True] and other["values"] == [True], (got, other)
+    else:
+        with pytest.raises(ResourceLimit, match="Definition background evaluation budget"):
+            FiniteModel.from_dict(Environment(env), data)
+        lean_limit(got, "Definition background evaluation budget")
+        rust_limit(other)
+        assert "Definition background evaluation budget" in other["error"]["message"]
+
+
+def test_definitions_share_one_construction_budget_three_ways():
+    """Three unary definitions, each ∀y:t ⊤ over 496 entities of t: each fits its
+    own Background budget (999,001), two tables cost 994,000 together, and the
+    third exhausts the shared construction budget."""
+    def env(names):
+        body = ["forall", "t", ["top"]]
+        predicates = {name: {"arguments": ["s"], "description": name,
+                             "defined": {"arguments": ["s"], "body": body}} for name in names}
+        return envelope({"sorts": {"s": {"description": "s"}, "t": {"description": "t"}},
+                         "constants": {}, "predicates": predicates},
+                        ("definitions@0", "relational-fol@0"))
+    data = {"complete": True, "domains": {"s": [f"e{i:03d}" for i in range(1000)],
+                                          "t": [f"t{i:03d}" for i in range(496)]},
+            "constants": {}, "relations": {}}
+    two, three = env(["d1", "d2"]), env(["d1", "d2", "d3"])
+    FiniteModel.from_dict(Environment(two), data)
+    [got] = lean([{"id": "two", "kind": "evaluate", "environment": two, "model": data, "ast": [["top"]]}])
+    [other] = rust([{"id": "two", "environment": two, "model": data, "ast": [["top"]]}])
+    assert got["values"] == [True] and other["values"] == [True], (got, other)
+    got, other = defined_three_ways(three, data, "Definition model evaluation budget")
+    lean_limit(got, "Definition model evaluation budget")
+    rust_limit(other)
+
+
+def test_supplied_tuples_count_toward_the_defined_tuple_limit_three_ways():
+    """The limit is shared with the supplied tables: 314 × 314 rows of ⊤ fit
+    beside 10 supplied rows, 317 × 317 do not."""
+    for size, fits in ((314, True), (317, False)):
+        domain = [f"e{i:03d}" for i in range(size)]
+        data = model(domain, p=[[e] for e in domain[:10]])
+        env = defined(["top"], ("s", "s"))
+        case = {"id": "d", "environment": env, "model": data, "ast": [["top"]]}
+        [got] = lean([{**case, "kind": "evaluate"}])
+        [other] = rust([case])
+        if fits:
+            FiniteModel.from_dict(Environment(env), data)
+            assert got["status"] == "ok" and got["values"] == [True], got
+            assert other["status"] == "ok" and other["values"] == [True], other
+        else:
+            with pytest.raises(ResourceLimit, match="tuple limit"):
+                FiniteModel.from_dict(Environment(env), data)
+            lean_limit(got, "tuple count")
+            rust_limit(other)
+
+
+def flags_env():
+    return envelope({"sorts": {"s": {"description": "s"}, "t": {"description": "t"}}, "constants": {},
+                     "predicates": {"f": {"arguments": ["s", "t"], "description": "f",
+                                          "functional": True, "total": True}}},
+                    ("data@0", "relational-fol@0"))
+
+
+def test_flags_are_checked_in_one_pass_three_ways():
+    """A functional, total table over 1,000 × 1,000 entities (Lean evaluated the
+    generated premise, three nested quantifiers, for each flagged table)."""
+    from ve.errors import InvalidModel
+    s = [f"s{i:03d}" for i in range(1000)]
+    t = [f"t{i:03d}" for i in range(1000)]
+    rows = [[s[i], t[(7 * i) % 1000]] for i in range(1000)]
+    good = {"complete": True, "domains": {"s": s, "t": t}, "constants": {}, "relations": {"f": rows}}
+    two = {**good, "relations": {"f": rows + [[s[0], t[1]]]}}
+    partial = {**good, "relations": {"f": rows[1:]}}
+    env = flags_env()
+    FiniteModel.from_dict(Environment(env), good)
+    [got] = lean([{"id": "g", "kind": "evaluate", "environment": env, "model": good, "ast": [["top"]]}])
+    [other] = rust([{"id": "g", "environment": env, "model": good, "ast": [["top"]]}])
+    assert got["values"] == [True] and other["values"] == [True], (got, other)
+    for data in (two, partial):
+        with pytest.raises(InvalidModel) as exc:
+            FiniteModel.from_dict(Environment(env), data)
+        assert exc.value.generator == "flags"
+        [got] = lean([{"id": "b", "kind": "evaluate", "environment": env, "model": data, "ast": [["top"]]}])
+        assert got["status"] == "error" and got["error"].startswith("InvalidModel(flags)"), got
+        [other] = rust([{"id": "b", "environment": env, "model": data, "ast": [["top"]]}])
+        assert other["error"]["code"] == "InvalidModel" and "flags" in other["error"]["message"], other

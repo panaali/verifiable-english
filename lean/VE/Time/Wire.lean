@@ -682,23 +682,36 @@ theorem sortDomains_perm (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : Stri
     ((sortDomains d).toModel.domains s).Perm (d.toModel.domains s) :=
   VE.Route.Budget.sortOrderData_perm d s
 
+/-- A hash index of the sorted presentation's tables for `names`, so an atom
+costs what it costs Python and Rust. The runner builds it once per model. -/
+def tableIndex (names : List String) (d : VE.Order.ModelData VE.Order.Wire.Entity) :
+    Std.HashMap String (VE.Route.Budget.OrderRows VE.Order.Wire.Entity) :=
+  VE.Route.Budget.orderIndex names (sortDomains d).toModel
+
+/-- Membership through that index. -/
+abbrev tables (names : List String) (d : VE.Order.ModelData VE.Order.Wire.Entity) :=
+  VE.Route.Budget.orderMem (sortDomains d).toModel (tableIndex names d)
+
 /-- A budgeted value on the sorted presentation is the reference value on the
 submitted model. -/
-theorem evalB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (limit : Nat)
-    (f : VE.Order.Formula) (w : Nat) (r : Bool × Nat)
-    (h : evalB (sortDomains d).toModel limit [] f w = some r) : r.1 = f.eval d.toModel [] := by
-  rw [evalB_sound (sortDomains d).toModel limit f [] w r h]
+theorem evalB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (names : List String)
+    (limit : Nat) (f : VE.Order.Formula) (w : Nat) (r : Bool × Nat)
+    (h : evalB (tables names d) (sortDomains d).toModel limit [] f w = some r) :
+    r.1 = f.eval d.toModel [] := by
+  rw [evalB_sound _ (sortDomains d).toModel limit (VE.Route.Budget.orderMem_iff names _) f [] w r h]
   exact eval_domains_perm (sortDomains d).toModel d.toModel rfl rfl (sortDomains_perm d) f []
 
 /-- A budgeted countermodel verdict on the sorted presentation is the reference
 verdict on the submitted model. -/
-theorem refutesB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (limit : Nat)
-    (ps : List VE.Order.Formula) (c : VE.Order.Formula) (w : Nat) (b : Bool)
-    (h : refutesB (sortDomains d).toModel limit ps c w = some b) :
+theorem refutesB_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (names : List String)
+    (limit : Nat) (ps : List VE.Order.Formula) (c : VE.Order.Formula) (w : Nat) (b : Bool)
+    (h : refutesB (tables names d) (sortDomains d).toModel limit ps c w = some b) :
     b = VE.Order.countermodelCheck d.toModel ps c := by
-  rw [refutesB_sound (sortDomains d).toModel limit ps c w b h]
+  rw [refutesB_sound _ (sortDomains d).toModel limit (VE.Route.Budget.orderMem_iff names _) ps c w b h]
   exact countermodelCheck_domains_perm (sortDomains d).toModel d.toModel rfl rfl
     (sortDomains_perm d) ps c
+
+def predicateNames (w : W6Env) : List String := w.vocab.core.predicates.map Prod.fst
 
 def ok (id : String) (fs : List (String × Json)) : Json :=
   Json.mkObj ([("id", .str id), ("status", .str "ok")] ++ fs)
@@ -779,8 +792,10 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
     let a ← decodeQuantity w (← j.getObjVal? "quantity")
     let value ← match j.getObjVal? "model" with
       | .ok m => do
-        let d ← VE.Order.Wire.decodeValidModel w.vocab.core m
-        match evalB (sortDomains d).toModel maxEvaluations [] a.formula.erase 0 with
+        let d ← VE.Route.Decode.decodeOrderModel w.vocab.core m
+        let idx := tableIndex (predicateNames w) d
+        match evalB (VE.Route.Budget.orderMem (sortDomains d).toModel idx) (sortDomains d).toModel maxEvaluations []
+            a.formula.erase 0 with
         | some (value, work) => pure [("value", Json.bool value), ("evaluations", toJson work)]
         | none => throw budgetExhausted
       | .error _ => pure []
@@ -790,8 +805,11 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
     quantityLimits ps c
-    let d ← VE.Order.Wire.decodeValidModel w.vocab.core (← j.getObjVal? "model")
-    let some refutes := refutesB (sortDomains d).toModel maxEvaluations (ps.map (·.formula.erase))
+    let d ← VE.Route.Decode.decodeOrderModel w.vocab.core (← j.getObjVal? "model")
+    let idx := tableIndex (predicateNames w) d
+    let some refutes := refutesB (VE.Route.Budget.orderMem (sortDomains d).toModel idx)
+      (sortDomains d).toModel maxEvaluations
+      (ps.map (·.formula.erase))
       c.formula.erase 0 | throw budgetExhausted
     pure (ok id ([("refutes", .bool refutes),
       ("premise_meaning_ids", toJson (ps.map (·.meaningId))),

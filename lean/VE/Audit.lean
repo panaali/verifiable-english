@@ -1,6 +1,8 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
+import VE.Route.Decode
+import VE.Route.Flags
 import VE.Time.Document
 import VE.Route.Readings
 import VE.Order.Gate
@@ -820,7 +822,8 @@ import VE.Norms.Run
 #print axioms VE.Definitions.faithful
 #print axioms VE.Route.Wire.decodeModel_background
 #print axioms VE.Route.Wire.decodeModel_intended
-#print axioms VE.Route.Wire.fullBackgroundViolation_none
+#print axioms VE.Route.Wire.definitionsCheck_ok
+#print axioms VE.Route.Wire.backgroundCheck_ok
 #print axioms VE.Definitions.Bundle.backgroundLeaves_hold
 #print axioms VE.Definitions.Bundle.bundle_sound
 #print axioms VE.Definitions.Bundle.checkAll_sound
@@ -1093,3 +1096,21 @@ import VE.Norms.Run
 #print axioms VE.Route.Budget.evalN_sound
 #print axioms VE.Route.Budget.refutesN_sound
 #print axioms VE.Route.Budget.valuesN_sound
+#print axioms VE.Time.memIn_relIndex
+#print axioms VE.Route.Budget.tableMem_iff
+#print axioms VE.Route.Budget.orderMem_iff
+#print axioms VE.Route.Decode.assocIndex_get
+#print axioms VE.Route.Decode.ofList_contains
+#print axioms VE.Route.Decode.memFast_eq
+#print axioms VE.Route.Decode.tupleCheckFast_eq
+#print axioms VE.Route.Decode.validFast_eq
+#print axioms VE.Route.Decode.domainCheckFast_eq
+#print axioms VE.Route.Decode.tupleCheckOrderFast_eq
+#print axioms VE.Route.Decode.validOrderFast_eq
+#print axioms VE.Route.Flags.contains_ofList
+#print axioms VE.Route.Flags.mem_typedRows
+#print axioms VE.Route.Flags.functionalGo_iff
+#print axioms VE.Route.Flags.functionalFast_iff
+#print axioms VE.Route.Flags.totalFast_iff
+#print axioms VE.Route.Flags.fastFlags_iff
+#print axioms VE.Route.Flags.fastFlags_eq
