@@ -90,9 +90,11 @@ def _meaning(value, open_names, *, reports=False):
     status, detail = next(iter(value.items()))
     if status == "contextual" and type(detail) is str and detail:
         return status
-    if status == "open" and type(detail) is list and detail and all(type(x) is str for x in detail) and (
-            set(detail) <= open_names or reports and all(re.fullmatch(r"reports__(?:may|probably)__[1-9][0-9]*", x)
-                                                       for x in detail)):
+    # Each name is declared or, under reports@0, shaped as a generated one; the
+    # reports layer then checks it against the names the document generates.
+    if status == "open" and type(detail) is list and detail and all(
+            type(x) is str and (x in open_names or reports and re.fullmatch(r"reports__(?:may|probably)__[1-9][0-9]*", x))
+            for x in detail):
         return status
     if status == "unformalised" and token(detail):
         return status

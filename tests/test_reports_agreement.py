@@ -122,6 +122,21 @@ def test_bridge_and_scoped_targets_agree(lean):
     ])
 
 
+def test_open_lists_mixing_declared_and_generated_names_agree(lean):
+    """Loop recheck B: an open list naming a declared and a generated term is one
+    document, in Python and in Lean; an unknown name in it is rejected by both."""
+    def with_open(names):
+        d = doc(assess("may", ast(U("safe", "service"))), open_terms=["genuine"])
+        d["units"][0]["meaning"] = {"open": names}
+        return d
+    agree([
+        (with_open(["reports__may__1", "genuine"]), E0(), None),
+        (with_open(["genuine", "reports__may__1"]), E0(), None),
+        (with_open(["reports__may__1", "undeclared"]), E0(), "InvalidInput"),
+        (with_open(["genuine"]), E0(), "InvalidInput"),
+    ])
+
+
 def many_predicates(n):
     env = E0()
     for i in range(n - len(env["vocabulary"]["predicates"])):

@@ -291,6 +291,28 @@ def test_open_content_is_open_coverage(tmp_path):
         check_document(write_report_document(tmp_path, [(cases[0][0], {**nested, "meaning": "specified"})], **front))
 
 
+def test_open_lists_mix_declared_and_generated_terms(tmp_path):
+    """Loop recheck B: the W2 loader accepted an open list only when it was all
+    declared or all generated-shaped, so `["reports__may__1", "genuine"]` with
+    `genuine` declared raised "invalid meaning status", though the reports layer
+    and Lean accept every name that is declared or generated."""
+    text = "According to the stated assessment, alice may be safe.\n"
+    front = {"assessments": [A1_RECORD], "open_terms": [GENUINE]}
+    piece = reported(MAY, ["hedged", "could", "asserted"], {"open": ["reports__may__1", "genuine"]})
+    for order in (["reports__may__1", "genuine"], ["genuine", "reports__may__1"]):
+        mixed = {**piece, "meaning": {"open": order}}
+        result = check_document(write_report_document(tmp_path, [(text, mixed)], **front))
+        assert result["coverage"]["bytes_by_status"] == {"OPEN": len(text.encode())}
+    # Still rejected: a name neither declared nor generated-shaped, and a generated-shaped
+    # name the document does not generate.
+    with pytest.raises(VEError, match="invalid meaning status"):
+        check_document(write_report_document(tmp_path, [(text, {**piece, "meaning": {
+            "open": ["reports__may__1", "undeclared"]}})], **front))
+    with pytest.raises(VEError, match="meaning of u1"):
+        check_document(write_report_document(tmp_path, [(text, {**piece, "meaning": {
+            "open": ["reports__may__1", "reports__may__2", "genuine"]}})], **front))
+
+
 def test_report_documents_carry_the_premise_set_line(tmp_path):
     """Fable B: the reports path returned CHECKED from unit statuses alone, with no
     premise_status and no admission.vacuous (7.1 row 4), so a document whose signed
