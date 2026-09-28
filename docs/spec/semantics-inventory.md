@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 237 local Python files and 11 pinned external package files; found 1913 import edges into section 1.1 modules.
+Parsed 237 local Python files and 11 pinned external package files; found 1916 import edges into section 1.1 modules.
 External scans include only the native `ve_webapp/` and `bench/` packages; vendored `ve/`, tests, and conformance copies are excluded. Their paths and source SHA-256 values are pinned in `conformance/baseline-2026-09/external-imports.json`, so replay does not depend on local clones or home paths. Refresh with `--refresh-external` only after reviewing external changes.
 
 ## Symbols
@@ -120,7 +120,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/ast.py` | `_Checker.formula` | 242 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+5) |
 | `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6` |
-| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/evaluate.py:231`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:122` (+7) |
+| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/evaluate.py:231`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:122` (+8) |
 | `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+25) |
 | `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:24`, `tests/test_closure_certificates.py:9` (+10) |
 | `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
@@ -394,7 +394,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/printer.py` | `natural_formula` | 849 | S | — | `ve/__init__.py:11`, `tests/test_views.py:12` |
 | `ve/profiles.py` | `ProfileRecord` | 12 | S | — | — |
 | `ve/profiles.py` | `checker_family` | 33 | A | `ve/backends/dispatch.py` → Lean route gate | `tests/test_profiles.py:6` |
-| `ve/profiles.py` | `require_checker` | 60 | S | — | `ve/admission.py:21`, `ve/background.py:133`, `ve/background.py:168`, `ve/search.py:481`, `ve/search.py:550` |
+| `ve/profiles.py` | `require_checker` | 60 | S | — | `ve/admission.py:21`, `ve/background.py:133`, `ve/background.py:168`, `ve/search.py:481`, `ve/search.py:555`, `ve/search.py:638` |
 | `ve/search.py` | `_SearchSpaceLimit` | 19 | U | — | — |
 | `ve/search.py` | `_node_count` | 23 | U | — | — |
 | `ve/search.py` | `_check_aggregate_ast` | 35 | U | — | — |
@@ -414,8 +414,9 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/search.py` | `_models` | 344 | U | — | `tests/test_search_options.py:169`, `tests/test_search_options.py:224` |
 | `ve/search.py` | `_nonvacuous` | 386 | U | — | `tests/test_evaluate_search.py:10`, `tests/test_search_options.py:224`, `tests/test_search_options.py:238` |
 | `ve/search.py` | `_validate_options` | 455 | U | — | — |
-| `ve/search.py` | `find_countermodel` | 474 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+22) |
-| `ve/search.py` | `find_distinguishing_model` | 544 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:35`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+2) |
+| `ve/search.py` | `_find_countermodel_python` | 474 | U | — | — |
+| `ve/search.py` | `find_countermodel` | 544 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/__main__.py:17`, `ve/argument.py:23`, `ve/assist/session.py:35`, `ve/attacks.py:21`, `ve/equivalence.py:21` (+23) |
+| `ve/search.py` | `find_distinguishing_model` | 632 | A | `ve/backends/dispatch.py` → Lean countermodel check; Rust search | `ve/__init__.py:17`, `ve/assist/ambiguity_patterns.py:23`, `ve/assist/proposer.py:19`, `tests/probe_matrix.py:35`, `tests/test_background.py:18`, `tests/test_evaluate_search.py:10` (+2) |
 
 ## Other `ve/` functions
 
@@ -2385,6 +2386,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_stage2_evaluation.py` | `ve.evaluate` | `evaluate` | 13 |
 | `tests/test_stage2_evaluation.py` | `ve.model` | `FiniteModel` | 9 |
 | `tests/test_stage2_evaluation.py` | `ve.search` | `check_countermodel` | 15 |
+| `tests/test_stage2_evaluation.py` | `ve.search` | `find_countermodel` | 15 |
 | `tests/test_surface_registry.py` | `ve.environment` | `Environment` | 50 |
 | `tests/test_t1c.py` | `ve.entailment` | `check_entailment_certificate` | 6 |
 | `tests/test_t1c.py` | `ve.evaluate` | `evaluate` | 5 |
@@ -2971,6 +2973,7 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/search.py` | `ve.ast` | `Var` | 247 |
 | `ve/search.py` | `ve.ast` | `_Decoder` | 350 |
 | `ve/search.py` | `ve.ast` | `_to_data` | 122 |
+| `ve/search.py` | `ve.ast` | `_to_data` | 550 |
 | `ve/search.py` | `ve.ast` | `check_formula` | 9 |
 | `ve/search.py` | `ve.definitions` | `_mentions` | 349 |
 | `ve/search.py` | `ve.evaluate` | `_Evaluator` | 11 |
@@ -2979,7 +2982,8 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/search.py` | `ve.evaluate` | `_validate_model` | 11 |
 | `ve/search.py` | `ve.model` | `FiniteModel` | 13 |
 | `ve/search.py` | `ve.profiles` | `require_checker` | 481 |
-| `ve/search.py` | `ve.profiles` | `require_checker` | 550 |
+| `ve/search.py` | `ve.profiles` | `require_checker` | 555 |
+| `ve/search.py` | `ve.profiles` | `require_checker` | 638 |
 | `ve/surface/data.py` | `ve.ast` | `And` | 3 |
 | `ve/surface/data.py` | `ve.ast` | `Binary` | 3 |
 | `ve/surface/data.py` | `ve.ast` | `Const` | 3 |
