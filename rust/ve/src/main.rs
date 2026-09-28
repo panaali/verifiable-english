@@ -34,6 +34,21 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
         }),
     }
 }
+fn nonvacuity(env: &Environment, v: &Value) -> Result<(Option<Formula>, bool)> {
+    let semantic = match v.get("semantic_nonvacuity") {
+        None => false,
+        Some(value) => value.as_bool().ok_or_else(||
+            Error::new("InvalidInput", "semantic_nonvacuity must be Boolean"))?,
+    };
+    let guard = match v.get("nonvacuous_for") {
+        None => None,
+        Some(value) => Some(Document::from_value(env, &json!([value]))?.formulas()[0].clone()),
+    };
+    if semantic && guard.is_none() {
+        return Err(Error::new("InvalidInput", "semantic_nonvacuity requires nonvacuous_for"));
+    }
+    Ok((guard, semantic))
+}
 /// The route kinds that need only a gated envelope: the label grammar and the
 /// dependency-DAG order (same diagnostics as Python and the Lean `route`).
 fn route_case(v: &Value, kind: &str) -> Result<Value> {
@@ -72,6 +87,9 @@ fn case(v: &Value) -> Result<Value> {
     }
     if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
         let env = Environment::from_value(field(v, "environment")?)?;
+        if env.order() {
+            return order_case(v);
+        }
         let doc = Document::from_value(&env, field(v, "ast")?)?;
         let model = FiniteModel::from_value(&env, field(v, "model")?)?;
         let budget = number(v, "max_evaluations", MAX_EVALUATIONS)?;
@@ -97,8 +115,10 @@ fn case(v: &Value) -> Result<Value> {
         let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
             .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
         let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
-        let mut out = find_distinguishing_model(&env, doc.formulas()[0].clone(),
-            doc.formulas()[1].clone(), bounds, minimum.max(usize::from(nonempty)))?.to_value();
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_distinguishing_model_with_nonvacuity(&env, doc.formulas()[0].clone(),
+            doc.formulas()[1].clone(), bounds, minimum.max(usize::from(nonempty)),
+            guard.as_ref(), semantic)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
@@ -136,8 +156,9 @@ fn case(v: &Value) -> Result<Value> {
         let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
             .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
         let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
-        let mut out = find_countermodel_min(&env, &problem, bounds,
-                                           minimum.max(usize::from(nonempty)))?.to_value();
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_countermodel_with_nonvacuity(&env, &problem, bounds,
+            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }

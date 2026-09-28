@@ -32,6 +32,63 @@ def test_lean_admission_preserves_report_and_identity(monkeypatch):
     assert admit_document(case["environment"], case["document"]) == expected
 
 
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+def test_budgeted_order_evaluation_matches_python(monkeypatch):
+    from tests.probe_matrix import model_wire, raw_environment
+    from ve.ast import Le, Num
+    env = Environment(raw_environment(("order@0",)))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    formula = Le(Num(0), Num(1))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = [evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
+                for n in (0, 1, 2)]
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert [evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
+                for n in (0, 1, 2)] == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("semantic", [False, True])
+def test_nonvacuity_search_matches_python(monkeypatch, semantic):
+    from tests.probe_matrix import raw_environment
+    raw = raw_environment(())
+    raw["vocabulary"]["constants"] = {}
+    env = Environment(raw)
+    guard = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
+
+    def search():
+        return find_countermodel(env, (), Bottom(), min_domain_size=1,
+            max_domain_size=1, max_models=4, nonvacuous_for=guard,
+            semantic_nonvacuity=semantic)
+
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = search().to_dict()
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert search().to_dict() == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+def test_nonvacuity_distinguishing_matches_python(monkeypatch):
+    from tests.probe_matrix import raw_environment
+    raw = raw_environment(())
+    raw["vocabulary"]["constants"] = {}
+    env = Environment(raw)
+    guard = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
+
+    def search():
+        return find_distinguishing_model(env, Exists("item", Unary("base", Var(0))),
+            Bottom(), min_domain_size=1, max_domain_size=1, max_models=4,
+            nonvacuous_for=guard, semantic_nonvacuity=True)
+
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = search().to_dict()
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert search().to_dict() == expected
+
+
 @pytest.fixture
 def fixture():
     wire = environment()

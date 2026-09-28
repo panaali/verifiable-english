@@ -149,7 +149,7 @@ struct Models<'a> {
 }
 impl<'a> Models<'a> {
     fn new(env: &'a Environment, document: &Document, maximum: usize,
-           minimum: usize) -> Self {
+           minimum: usize, guard: Option<&Formula>) -> Self {
         let sorts: Vec<_> = env.model_sorts().into_iter().collect();
         let minima: Vec<_> = sorts
             .iter()
@@ -164,6 +164,9 @@ impl<'a> Models<'a> {
         let mut used = BTreeSet::new();
         for f in document.formulas() {
             f.predicates(&mut used);
+        }
+        if let Some(formula) = guard {
+            formula.predicates(&mut used);
         }
         for (name, (functional, total)) in &env.predicate_flags {
             if *functional || *total {
@@ -304,6 +307,90 @@ impl<'a> Models<'a> {
         }
     }
 }
+
+/// Python's conservative non-vacuity filter. It is a search constraint, never
+/// a proof rule: every visited node and semantic-clause disjunct is charged.
+fn nonvacuous(model: &FiniteModel, formula: &Formula, maximum: u64,
+               semantic: bool) -> (bool, u64, bool) {
+    fn clause_guards<'a>(node: &'a Formula, evaluator: &mut Evaluator<'a>,
+                         guards: &mut Vec<&'a Formula>) -> Result<()> {
+        evaluator.tick()?;
+        match node {
+            Formula::Or(left, right) => {
+                clause_guards(left, evaluator, guards)?;
+                clause_guards(right, evaluator, guards)?;
+            }
+            Formula::Not(body) => guards.push(body),
+            _ => {}
+        }
+        Ok(())
+    }
+    fn hit<'a>(guards: &[&'a Formula], bindings: &mut Vec<usize>, path: &[usize],
+               evaluator: &mut Evaluator<'a>, hits: &mut BTreeMap<Vec<usize>, bool>) -> Result<()> {
+        let mut value = true;
+        for guard in guards {
+            value &= evaluator.formula(guard, bindings)?;
+            if !value { break; }
+        }
+        *hits.entry(path.to_vec()).or_insert(false) |= value;
+        Ok(())
+    }
+    fn walk<'a>(node: &'a Formula, model: &FiniteModel, evaluator: &mut Evaluator<'a>,
+                bindings: &mut Vec<usize>, path: &mut Vec<usize>, universal: bool,
+                in_clause: bool, semantic: bool, ok: &mut bool,
+                hits: &mut BTreeMap<Vec<usize>, bool>) -> Result<()> {
+        evaluator.tick()?;
+        match node {
+            Formula::Implies(left, right) => {
+                hit(&[left], bindings, path, evaluator, hits)?;
+                path.push(0);
+                walk(left, model, evaluator, bindings, path, universal, false, semantic, ok, hits)?;
+                path.pop(); path.push(1);
+                walk(right, model, evaluator, bindings, path, universal, false, semantic, ok, hits)?;
+                path.pop();
+            }
+            Formula::And(left, right) | Formula::Or(left, right) => {
+                let is_or = matches!(node, Formula::Or(..));
+                if semantic && universal && is_or && !in_clause {
+                    let mut guards = Vec::new();
+                    clause_guards(node, evaluator, &mut guards)?;
+                    if !guards.is_empty() {
+                        hit(&guards, bindings, path, evaluator, hits)?;
+                    }
+                }
+                path.push(0);
+                walk(left, model, evaluator, bindings, path, universal, is_or, semantic, ok, hits)?;
+                path.pop(); path.push(1);
+                walk(right, model, evaluator, bindings, path, universal, is_or, semantic, ok, hits)?;
+                path.pop();
+            }
+            Formula::Not(body) => {
+                path.push(0);
+                walk(body, model, evaluator, bindings, path, universal, false, semantic, ok, hits)?;
+                path.pop();
+            }
+            Formula::Forall(sort, body) | Formula::Exists(sort, body) => {
+                let domain = &model.domains[sort];
+                if domain.is_empty() { *ok = false; }
+                for entity in 0..domain.len() {
+                    bindings.push(entity); path.push(0);
+                    walk(body, model, evaluator, bindings, path,
+                         universal || matches!(node, Formula::Forall(..)), false,
+                         semantic, ok, hits)?;
+                    path.pop(); bindings.pop();
+                }
+            }
+            _ => {}
+        }
+        Ok(())
+    }
+    let mut evaluator = Evaluator::new(model, maximum);
+    let mut ok = true;
+    let mut hits = BTreeMap::new();
+    let result = walk(formula, model, &mut evaluator, &mut Vec::new(), &mut Vec::new(),
+                      false, false, semantic, &mut ok, &mut hits);
+    (ok && hits.values().all(|v| *v) && result.is_ok(), evaluator.work, result.is_err())
+}
 /// Exhaustive bounded search modulo the extensions of predicates absent from
 /// the formulas. Unused predicates have empty extensions in every witness.
 /// Neither NotFound nor ResourceLimit is evidence of entailment.
@@ -321,19 +408,28 @@ pub fn find_countermodel_min(
     bounds: SearchBounds,
     minimum: usize,
 ) -> Result<SearchResult> {
+    find_countermodel_with_nonvacuity(env, problem, bounds, minimum, None, false)
+}
+
+pub fn find_countermodel_with_nonvacuity(
+    env: &Environment, problem: &CountermodelProblem, bounds: SearchBounds,
+    minimum: usize, guard: Option<&Formula>, semantic: bool,
+) -> Result<SearchResult> {
     problem.document.belongs_to(env)?;
     if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS
         || minimum > bounds.max_domain_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
-    let mut models = Models::new(env, &problem.document, bounds.max_domain_size, minimum);
+    let mut models = Models::new(env, &problem.document, bounds.max_domain_size, minimum, guard);
     let mut result = SearchResult {
         status: "NotFound",
         model: None,
         models_checked: 0,
         evaluations: 0,
         bounds,
-        detail: "all finite models within the domain bound were exhausted",
+        detail: if guard.is_some() {
+            "all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+        } else { "all finite models within the domain bound were exhausted" },
     };
     loop {
         let model = match models.next() {
@@ -353,8 +449,23 @@ pub fn find_countermodel_min(
             result.detail = "model-attempt or evaluation budget exhausted";
             return Ok(result);
         }
-        let (status, _, _, work) =
-            problem.values(&model, bounds.max_evaluations - result.evaluations)?;
+        if let Some(formula) = guard {
+            let (suitable, used, exhausted) = nonvacuous(
+                &model, formula, bounds.max_evaluations - result.evaluations, semantic);
+            result.evaluations += used;
+            if exhausted {
+                result.models_checked += 1;
+                result.status = "ResourceLimit";
+                result.detail = "evaluation budget exhausted";
+                return Ok(result);
+            }
+            if !suitable {
+                result.models_checked += 1;
+                continue;
+            }
+        }
+        let (status, _, _, work) = problem.values(
+            &model, bounds.max_evaluations - result.evaluations)?;
         result.models_checked += 1;
         result.evaluations += work;
         if status == "ResourceLimit" {
@@ -380,16 +491,25 @@ pub fn find_distinguishing_model(
     bounds: SearchBounds,
     minimum: usize,
 ) -> Result<SearchResult> {
+    find_distinguishing_model_with_nonvacuity(env, a, b, bounds, minimum, None, false)
+}
+
+pub fn find_distinguishing_model_with_nonvacuity(
+    env: &Environment, a: Formula, b: Formula, bounds: SearchBounds,
+    minimum: usize, guard: Option<&Formula>, semantic: bool,
+) -> Result<SearchResult> {
     env.require_checker()?;
     let document = Document::check(env, vec![a, b])?;
     if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS
         || minimum > bounds.max_domain_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
-    let mut models = Models::new(env, &document, bounds.max_domain_size, minimum);
+    let mut models = Models::new(env, &document, bounds.max_domain_size, minimum, guard);
     let mut result = SearchResult {
         status: "NotFound", model: None, models_checked: 0, evaluations: 0,
-        bounds, detail: "all finite models within the domain bound were exhausted",
+        bounds, detail: if guard.is_some() {
+            "all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+        } else { "all finite models within the domain bound were exhausted" },
     };
     loop {
         let model = match models.next() {
@@ -407,6 +527,21 @@ pub fn find_distinguishing_model(
             result.status = "ResourceLimit";
             result.detail = "model-attempt or evaluation budget exhausted";
             return Ok(result);
+        }
+        if let Some(formula) = guard {
+            let (suitable, used, exhausted) = nonvacuous(
+                &model, formula, bounds.max_evaluations - result.evaluations, semantic);
+            result.evaluations += used;
+            if exhausted {
+                result.models_checked += 1;
+                result.status = "ResourceLimit";
+                result.detail = "evaluation budget exhausted";
+                return Ok(result);
+            }
+            if !suitable {
+                result.models_checked += 1;
+                continue;
+            }
         }
         let mut evaluator = Evaluator::new(&model, bounds.max_evaluations - result.evaluations);
         let left = evaluator.formula(&document.formulas()[0], &mut Vec::new());
