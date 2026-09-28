@@ -448,3 +448,19 @@ def test_mu_trivial_query_is_a_warning(lean):
            "queries": [{"id": "q1", "premises": ["u1"], "target": {"ast": U("animal", "tom")}}]}
     r = elaborate(F0(), doc)
     assert r["queries"][0]["warning"] == "TrivialQuery: q1" and len(r["commands"]) == 1
+
+
+def test_zeta_retargeted_proof_task_changes_its_meaning_id(lean):
+    premises = [unit("u1", 0, "asserted", U("cat", "tom")), unit("u2", 1, "asserted", U("animal", "tom"))]
+    task = unit("u3", 2, "instruction", command("require", "submit_required", ["q1"]))
+
+    def meaning(target, ids=("u1", "u2")):
+        doc = {"units": premises + [task], "queries": [{"id": "q1", "premises": list(ids), "target": {"ast": target}}]}
+        return elaborate(F0(), doc)["commands"][0]["meaning_id"]
+
+    assert meaning(U("animal", "tom")) != meaning(U("cat", "tom"))
+    assert meaning(U("animal", "tom")) == meaning(U("animal", "tom"))
+    polar_doc = lambda order: {"units": [unit("u7", 0, "question", {"question": {
+        "mode": "which_all", "sort": "service", "domain": order, "body": ["unary", "reviewed", ["var", 0]]}})]}
+    ids = {elaborate(F0(), polar_doc(o))["questions"][0]["meaning_id"] for o in (["atlas", "beacon"], ["beacon", "atlas"])}
+    assert len(ids) == 2
