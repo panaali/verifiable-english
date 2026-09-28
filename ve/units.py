@@ -471,3 +471,59 @@ def quantity_meaning_id(env, payload):
     canonical, _ = elaborate_quantity(env, payload)
     return digest(f"ve-meaning-{env.identity_version}\n",
                   {"environment_id": env.environment_id, "ast": canonical})
+
+
+# --- Quantity evidence: a core order certificate wrapped by the annotated binding
+
+CERTIFICATE_FORMAT = "ve-quantity-certificate@1"
+
+
+def _core_problem(env, premises, conclusion):
+    """Regenerate each annotated statement; return target env, ids and core ASTs."""
+    from .ast import formula_from_data
+    target = erased_environment(env)
+    admitted = [elaborate_quantity(env, p) for p in (*premises, conclusion)]
+    ids = [digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": canonical})
+           for canonical, _ in admitted]
+    cores = [formula_from_data(target, core) for _, core in admitted]
+    return target, ids, cores
+
+
+def prove_quantity(env, premises, conclusion, *, max_steps=10_000):
+    """Search an order certificate for the regenerated problem and bind it to the
+    annotated statements. Returns None when search is inconclusive."""
+    from .entailment import prove_entailment
+    target, ids, cores = _core_problem(env, premises, conclusion)
+    result = prove_entailment(target, cores[:-1], cores[-1], max_steps=max_steps)
+    if result.certificate is None:
+        return None
+    return {"format": CERTIFICATE_FORMAT, "environment_id": env.environment_id,
+            "premise_meaning_ids": ids[:-1], "conclusion_meaning_id": ids[-1],
+            "core": result.certificate}
+
+
+def check_quantity_certificate(env, premises, conclusion, certificate, *, max_steps=10_000):
+    """Early Python check mirroring Lean `checkW6Certificate`: the outer binding to
+    the annotated statements, then the core certificate for their regeneration."""
+    from .entailment import check_entailment_certificate
+    target, ids, cores = _core_problem(env, premises, conclusion)
+    if (type(certificate) is not dict or set(certificate) != {
+            "format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"}
+            or certificate["format"] != CERTIFICATE_FORMAT):
+        raise VEError("Invalid quantity certificate")
+    if (certificate["environment_id"] != env.environment_id
+            or certificate["premise_meaning_ids"] != ids[:-1]
+            or certificate["conclusion_meaning_id"] != ids[-1]):
+        raise VEError("W6 certificate is stale or bound to different annotated statements")
+    return check_entailment_certificate(target, cores[:-1], cores[-1], certificate["core"],
+                                        max_steps=max_steps).valid
+
+
+def quantity_countermodel(env, premises, conclusion, model_data):
+    """Whether finite tables for the target vocabulary refute the regenerated claim."""
+    from .model import FiniteModel
+    from .search import check_countermodel
+    target, _, cores = _core_problem(env, premises, conclusion)
+    return check_countermodel(target, cores[:-1], cores[-1],
+                              FiniteModel.from_dict(target, model_data)).valid
