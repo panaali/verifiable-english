@@ -106,7 +106,8 @@ def test_layer(path: Path, seen: frozenset[Path] = frozenset()) -> int:
         layers.append(5)
     if "rust/target/" in source or "VE_W5_RUST_BIN" in source:
         layers.append(4)
-    if "lean/.lake/" in source or "ve_conformance" in source or "ve_norms_route" in source:
+    if "lean/.lake/" in source or any(name in source for name in
+        ("ve_conformance", "ve_norms_route", "ve_service", "ve_english_run", "ve_response_decode")):
         layers.append(4)
     if '"-m", "ve"' in source or "'-m', 've'" in source:
         layers.append(4)
@@ -191,10 +192,14 @@ def select(paths: list[str], *, full: bool = False) -> dict:
         dependent_tests.update(added)
     selected = sorted(path for path, layer in classified.items()
                       if layer >= minimum or path in ALWAYS or path in dependent_tests)
+    lean_binaries = ("ve_conformance", "ve_norms_route", "ve_service",
+                     "ve_english_run", "ve_response_decode")
+    selected_sources = [(ROOT / p).read_text() for p in selected]
     lean = (fallback or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
             or not (ROOT / "lean/.lake/build/bin/ve_conformance").exists()
-            or (any("ve_norms_route" in (ROOT / p).read_text() for p in selected)
-                and not (ROOT / "lean/.lake/build/bin/ve_norms_route").exists()))
+            or any(any(name in source for source in selected_sources)
+                   and not (ROOT / "lean/.lake/build/bin" / name).exists()
+                   for name in lean_binaries[1:]))
     rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
     rust_release_binary = (rust or (any("rust/target/release/ve" in (ROOT / p).read_text()
                                        or "VE_W5_RUST_BIN" in (ROOT / p).read_text()

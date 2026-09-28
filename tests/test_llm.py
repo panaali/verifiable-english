@@ -2,6 +2,7 @@ import json
 import threading
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 
 from ve_experiments.llm import CODEX_FLAGS, parse_codex_events, BackendError, LLMClient, RawReply, Request, VerdictParseError, parse_verdict, summarize_log
 
@@ -26,7 +27,7 @@ class FakeBackend:
             self.cwds.add(cwd)
         try:
             if self.barrier is not None:
-                self.barrier.wait(timeout=30)
+                self.barrier.wait(timeout=HANG_TIMEOUT)
             if n <= self.fail_first:
                 raise BackendError("transient")
             return RawReply(f"{self.text}", input_tokens=10, output_tokens=5)
@@ -89,7 +90,7 @@ def test_identical_concurrent_requests_make_one_call(tmp_path):
     call = c.call
     together = threading.Barrier(6)
     def simultaneous(*args, **kwargs):
-        together.wait(timeout=30)
+        together.wait(timeout=HANG_TIMEOUT)
         return call(*args, **kwargs)
     c.call = simultaneous
     res = c.map(Request("m", "same") for _ in range(6))

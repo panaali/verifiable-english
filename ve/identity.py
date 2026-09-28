@@ -19,4 +19,5 @@ def source_id(source: str | bytes, env=None) -> str:
 def meaning_id(env, document_or_formula, *, _generated=False) -> str:
     ast = (document_to_data(env, document_or_formula) if type(document_or_formula) is Document
            else formula_to_data(env, document_or_formula, _generated=_generated))
-    return digest(f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": ast})
+    return digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": ast})
