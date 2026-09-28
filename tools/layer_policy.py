@@ -61,6 +61,8 @@ def source_layer(path: str) -> int | None:
     parts = p.parts
     if not parts:
         return None
+    if p.suffix in {".md", ".rst"}:
+        return 5
     if parts[0] == "ve" and p.suffix == ".py":
         if path == "ve/__init__.py":
             return 1  # public API reexports all layers
@@ -72,10 +74,16 @@ def source_layer(path: str) -> int | None:
     if parts[0] == "rust":
         if p.suffix == ".rs":
             return 1 if len(parts) > 1 and parts[1] == "ve-core" else 4
+        if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
+            return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None
     if parts[0] in {"ve_experiments", "experiments", "usecases", "paper"}:
         return 5
     if parts[0] == "tools":
+        if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py",
+                      "check_python_layers.py", "check_lean_imports.py",
+                      "check_rust_deps.py", "test_layer_policy.py"}:
+            return 1  # changing the policy invalidates every selection
         return 4 if p.suffix == ".py" else None
     if parts[0] == "tests":
         return 1 if not p.name.startswith("test_") else 5
@@ -83,6 +91,6 @@ def source_layer(path: str) -> int | None:
         return 1  # shared fixtures and generated reports are cross-cutting
     if path in {"pyproject.toml", "uv.lock", ".importlinter"}:
         return 1
-    if parts[0] == "docs" or p.suffix in {".md", ".rst"}:
+    if parts[0] == "docs":
         return 5
     return None
