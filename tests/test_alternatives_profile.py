@@ -207,6 +207,9 @@ def test_rejected_causal_wordings_offer_a_rewrite(wording, rewrite):
 def test_coverage_names_declared_alternatives_and_counterfactual_support():
     raw = source()
     raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
+    raw["vocabulary"]["constants"] = {
+        name: {"sort": sort, "description": name}
+        for name, sort in (("pull", "action"), ("wait", "action"), ("h", "harm"))}
     env = Environment(raw)
     units = [
         {"id": "choice", "span": [0, 1], "kind": "asserted", "status": "CHECKED",
@@ -226,9 +229,11 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert detail["counterfactual_leaves"] == [
         {"action": "pull", "harm": "h", "leads_to": False, "decider": "case annotator",
          "unit": "cell", "support": "observation"}]
-    assert detail["assumed_harm_free"] == {"decider": "case annotator",
-                                             "premise": "alternatives:table_complete"}
-    assert detail["table_complete"] == detail["assumed_harm_free"]
+    assert detail["assumed_harm_free"] == [
+        {"action": "wait", "harm": "h", "decider": "case annotator",
+         "premise": "alternatives:table_complete"}]
+    assert detail["table_complete"] == {"decider": "case annotator",
+                                          "premise": "alternatives:table_complete"}
     assert detail["proximate_judgments"] == []
     assert report["residual"]["table_complete"] == 1
     assert report["residual"]["counterfactual_leaves"] == 1
@@ -236,9 +241,10 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
 
 def test_loaded_document_coverage_keeps_formula_leaves(tmp_path):
     raw = source()
+    raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
     raw["vocabulary"]["constants"] = {
         name: {"sort": sort, "description": name}
-        for name, sort in (("pull", "action"), ("r", "robot"), ("h", "harm"))}
+        for name, sort in (("pull", "action"), ("wait", "action"), ("r", "robot"), ("h", "harm"))}
     atoms = [
         ["binary", "available", ["const", "pull"], ["const", "r"]],
         ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]],
@@ -254,6 +260,9 @@ def test_loaded_document_coverage_keeps_formula_leaves(tmp_path):
     assert [x["unit"] for x in detail["alternatives_declared"]] == ["u0"]
     assert [x["unit"] for x in detail["counterfactual_leaves"]] == ["u1"]
     assert [x["unit"] for x in detail["proximate_judgments"]] == ["u2"]
+    assert detail["assumed_harm_free"] == [
+        {"action": "wait", "harm": "h", "decider": "case annotator",
+         "premise": "alternatives:table_complete"}]
 
 
 def test_other_action_rendering_preserves_which_outer_action_is_excluded():
