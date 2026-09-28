@@ -142,3 +142,28 @@ def test_spec_p_outcome_completion_and_document_binding_three_way(rust_binary):
     changed["scenario"]["model"]["relations"]["leads_to"].append(["pull", "h1"])
     assert run_case(changed | {"kind": "alt-validate"})["error"] == (
         "InvalidModel(alternatives): premise alternatives:table_complete fails")
+
+
+def test_spec_h3_proximate_claim_requires_leading_to_harm(rust_binary):
+    source = deepcopy(next(c for c in cases() if c["id"] == "h-7"))
+    source.pop("expected_clear")
+    source["id"] = "h3"
+    source["scenario"]["model"]["relations"]["causes"] = [["operate", "hd"]]
+    elaborated = run_case({k: v for k, v in source.items() if k != "scenario"} |
+                          {"kind": "alt-elaborate"})
+    scenario = run_case(source | {"kind": "alt-validate"})
+    assert scenario["error"] == (
+        "InvalidModel(alternatives): operate causes hd but does not lead to it")
+    proximate = next(item["ast"] for item in elaborated["alternatives"]
+                     if item["label"] == "alternatives:proximate")
+    base = base_environment(source["environment"])
+    model_data = source["scenario"]["model"]
+    env = Environment(base)
+    model = FiniteModel.from_dict(env, model_data)
+    assert not evaluate(env, formula_from_data(env, proximate), model, trace=False).value
+    rust = subprocess.run([str(rust_binary), "conformance"],
+                          input=json.dumps([{"id": "h3", "kind": "evaluate", "environment": base,
+                                             "ast": [proximate], "model": model_data}]),
+                          capture_output=True, text=True, timeout=120)
+    assert rust.returncode == 0, rust.stdout + rust.stderr
+    assert json.loads(rust.stdout)[0]["values"] == [False]
