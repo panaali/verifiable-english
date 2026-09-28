@@ -220,7 +220,7 @@ def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
   let env := D.soft
   match N.mode, N.exception with
   | .strict, some _ => throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
-  | .default, none => throw s!"InvalidInput: invalid soft fields for {N.name}"
+  | .default, none => throw s!"InvalidInput: rule {N.name} needs an exception"
   | _, _ => pure ()
   unless sortedDistinct N.alterable do
     throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
