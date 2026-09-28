@@ -7,9 +7,9 @@ exists (the all-derivations gate of 2.1). A formula content is read by the
 existing all-derivations English parser. A sentence alone is not a unit: the
 manifest carries the environment, the context record of each verb and the
 assessment record of each assessment in reading order (a literal quotation's
-content included), the content of each literal quotation and the reading
-choices, and parsing under a manifest that
-the document does not have is ``ManifestMismatch``.
+content included), the content of each literal quotation (read, like every
+part of the result, by the content decoder) and the reading choices, and
+parsing under a manifest that the document does not have is ``ManifestMismatch``.
 """
 from __future__ import annotations
 
@@ -306,6 +306,10 @@ def _bind(reports, node, manifest, cursor):
                 raise VEError("ManifestMismatch: a literal quotation without its content")
             content = literals[cursor["literals"]]
             cursor["literals"] += 1
+            # The manifest, not the grammar, supplies this content: it is read by the
+            # content decoder (holders, acts, contexts, judgments, records, formulas)
+            # before any of its records is compared.
+            reports._node(content, "manifest")
             for key, record in _records(content):
                 records = manifest.get(key, [])
                 if cursor[key] >= len(records) or records[cursor[key]].get("id") != record:
@@ -358,6 +362,9 @@ def parse_report_sentence(reports, text, manifest):
         node = _bind(reports, skeleton, manifest, cursor)
         if cursor != {key: len(manifest.get(key, [])) for key in cursor}:
             raise VEError("ManifestMismatch: the manifest does not match the sentence")
+        # The whole reading, manifest-supplied parts included, is content of this
+        # document under the normal decoder (its depth bound among its checks).
+        reports._node(node, "manifest", top=True)
         if node not in bound:
             bound.append(node)
     if len(bound) != 1:
@@ -377,6 +384,9 @@ def _check_manifest(reports, manifest):
     expected = _manifest_for(reports)
     for key in ("environment_id", "profiles", "choices"):
         if manifest.get(key) != expected[key]:
+            raise VEError(f"ManifestMismatch: {key}")
+    for key in ("contexts", "assessments", "literals"):
+        if type(manifest.get(key, [])) is not list:
             raise VEError(f"ManifestMismatch: {key}")
     for key, table in (("contexts", reports.contexts), ("assessments", reports.assessments)):
         for record in manifest.get(key, []):

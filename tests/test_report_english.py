@@ -244,6 +244,55 @@ def test_literal_manifest_binds_the_quoted_content_records():
         parse_rendered_report(doc, dict(rendered, manifest=dict(rendered["manifest"], contexts=[CONTEXTS[1]])))
 
 
+def test_literal_manifest_content_is_decoded():
+    """Loop recheck B: the manifest's literal content was returned without the
+    content decoder, so `{"ast": ["unary", "undeclared", ...]}` in its place parsed
+    (`meaning_id` rejected it only afterwards), as did a quoted report by an unknown
+    holder and a quoted assessment with an invalid judgment."""
+    quoted = report("article", "says", "c2", SAFE, literal="Service is safe.")
+    doc = document(quoted)
+    rendered = render_report_unit(doc, "u1")
+    text, manifest = rendered["text"], rendered["manifest"]
+    assert parse_report_sentence(doc, text, manifest) == quoted
+
+    def parse_with(literal, **records):
+        return parse_report_sentence(doc, text, dict(manifest, literals=[literal], **records))
+
+    with pytest.raises(VEError, match="undeclared"):
+        parse_with({"ast": ["unary", "undeclared", ["const", "service"]]})
+    for bad in ({"ast": ["unary", "safe", ["const", "claude"]]},  # ill-sorted
+                {"ast": ["unary", "safe", ["var", 0]]}, None, [], "safe", {"ast": SAFE["ast"], "x": 1},
+                {"norm": {}}, {"fence": "u1"}, {"negated": SAFE}):
+        with pytest.raises(VEError):
+            parse_with(bad)
+    # Quoted reports and assessments whose records match the manifest but whose own
+    # fields are not content of this document.
+    contexts = [CONTEXTS[1], CONTEXTS[0]]
+    for bad in (report("nobody", "believes", "c1", SAFE), report("claude", "believes", "c1", SAFE),
+                report("anthropic", "pledges", "c1", SAFE),
+                report("anthropic", "believes", "c1", {"ast": ["unary", "undeclared", ["const", "service"]]}),
+                report("anthropic", "believes", "c1", SAFE, literal=""),
+                {"report": {"holder": "anthropic", "act": "believes", "context": "c1", "content": SAFE, "x": 1}},
+                {"report": "anthropic"}):
+        with pytest.raises(VEError):
+            parse_with(bad, contexts=contexts)
+    for bad in (assess("certainly", SAFE), assess("may", {"ast": ["unary", "undeclared", ["const", "service"]]}),
+                {"assessment": {"judgment": "may", "record": "a1"}}):
+        with pytest.raises(VEError):
+            parse_with(bad, assessments=[A1])
+    # The depth bound of the content decoder holds for manifest-supplied content too.
+    deep = SAFE
+    for _ in range(16):
+        deep = report("anthropic", "believes", "c1", deep)
+    with pytest.raises(VEError, match="depth"):
+        parse_with(deep, contexts=[CONTEXTS[1]] + [CONTEXTS[0]] * 16)
+    # Valid quoted content still binds, and a malformed literals list is a mismatch.
+    assert parse_with(BELIEF, contexts=contexts)["report"]["content"] == BELIEF
+    for literals in ({"0": SAFE}, "x", 1):
+        with pytest.raises(VEError, match="ManifestMismatch"):
+            parse_report_sentence(doc, text, dict(manifest, literals=literals))
+
+
 def test_two_derivations_are_rejected():
     """Two holders displayed alike: the sentence has two readings, so it is neither
     printed nor parsed."""
