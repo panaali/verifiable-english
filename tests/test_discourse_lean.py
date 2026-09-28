@@ -928,3 +928,25 @@ def test_location_binding_never_covers_a_slot(lean, tmp_path):
                        contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
         assert admit(doc)["error"] == "UnrecordedSlot: u2: [0, 1)", form
         assert python_outcome(doc, tmp_path) == "UnrecordedSlot: u2: [17, 19)", form
+
+
+def test_ordinal_competitors_are_their_pairs(lean, tmp_path):
+    """looprecheck1 B (discourse.py:406): two coordinations `[api, alice]` and `[api, bob]` are two
+    candidates of "the former" although both select `api`; both implementations reject."""
+    doc = document(["Api and Alice are reviewed.", "Api and Bob are reviewed.", "The former is deployed."],
+                   [("m1", "u3", "The former", "ordinal_pair", {"kind": "entity", "name": "api", "pair": ["api", "alice"]})],
+                   names=PY_NAMES, contents={"u3": unary("deployed", "api")})
+    assert admit(doc)["error"] == "AmbiguousReference: m1: api"
+    assert python_outcome(doc, tmp_path) == "AmbiguousReference: m1: api"
+    # one coordination: resolved in both
+    single = document(["Api and Alice are reviewed.", "The former is deployed."],
+                      [("m1", "u2", "The former", "ordinal_pair", {"kind": "entity", "name": "api", "pair": ["api", "alice"]})],
+                      names=PY_NAMES, contents={"u2": unary("deployed", "api")})
+    assert admit(single)["bound"] == {"u2": unary("deployed", "api")}
+    assert python_outcome(single, tmp_path)["references"][0]["status"] == "resolved"
+    # a constant registered twice is one declaration error in both, not two candidates
+    twice = document(["Api is reviewed.", "It is deployed."], [("m1", "u2", "It", "pronoun", entity("api"))],
+                     names=[*PY_NAMES, {"constant": "api", "display": "The service", "scope": "doc"}],
+                     contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
+    assert admit(twice)["error"] == "DuplicateDeclaration: name api"
+    assert python_outcome(twice, tmp_path) == "DuplicateDeclaration: name api"

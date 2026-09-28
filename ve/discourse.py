@@ -378,6 +378,10 @@ def _expanded(doc, unit, choices):
         return None
 
 
+def _target_key(target):
+    return tuple((k, tuple(v) if type(v) is list else v) for k in ("kind", "name", "pair") if (v := target.get(k)) is not None)
+
+
 def _same_target(recorded, candidate):
     return all(recorded.get(k) == candidate.get(k) for k in ("kind", "name", "pair"))
 
@@ -405,9 +409,12 @@ def _resolve_unit(doc, unit, rows, names, anchors, readings=()):
     if not typed:
         raise VEError(f"UnresolvedReference: {rows[0]['id']}")
     if len(typed) > 1:
+        # competitors differ when their targets do (the pair of an ordinal included), not only
+        # when the constants they name do: two coordinations are two candidates (4.2)
         for i, m in enumerate(rows):
-            names_at = sorted({combo[i][1] for combo, _ in typed})
-            if len(names_at) > 1:
+            targets = {_target_key(combo[i][0]) for combo, _ in typed}
+            if len(targets) > 1:
+                names_at = sorted({combo[i][1] for combo, _ in typed})
                 raise VEError(f"AmbiguousReference: {m['id']}: {', '.join(names_at)}")
     for m, a in zip(rows, accessible):
         if a is None:
@@ -782,6 +789,10 @@ def validate_discourse(doc):
             raise VEError("InvalidInput: discourse name")
         if type(name.get("display")) is not str or type(name.get("aliases", [])) is not list:
             raise VEError("InvalidInput: discourse name display")
+    constants = [name["constant"] for name in names]
+    for i, constant in enumerate(constants):
+        if constant in constants[:i]:
+            raise VEError(f"DuplicateDeclaration: name {constant}")
     for i, name in enumerate(names):
         for other in names[i + 1:]:
             if set([name["display"], *name.get("aliases", [])]) & set([other["display"], *other.get("aliases", [])]):
