@@ -87,6 +87,7 @@ class PredicateDecl:
     functional: bool | None = None
     total: bool | None = None
     defined: bytes | None = None
+    argument_units: object = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,6 +128,7 @@ def _regulated(raw, args, name):
 class ConstantDecl:
     sort: str
     description: str | None
+    unit: str | None = None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -138,6 +140,8 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    unit_schema: str | None
+    units: object
 
     def __init__(self, data):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
@@ -145,13 +149,19 @@ class Environment:
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
-        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"})
+        extended = type(data) is dict and ("unit_schema" in data or "units" in data)
+        if extended and (not route or "unit_schema" not in data or "units" not in data):
+            raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
+        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
+                       | ({"unit_schema", "units"} if extended else set()))
         order = False
         if route:
             family = profile_registry.checker_family(data["profiles"])
             if data["spec_revision"] != profile_registry.SPEC_REVISION:
                 raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
             order = family == "order"
+            if extended and not {"order@0", "time@0"} <= set(data["profiles"]):
+                raise UnsupportedProfile("ve-units@1 requires order@0 and time@0")
         elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
@@ -163,6 +173,11 @@ class Environment:
         elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
             raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
+        if extended:
+            from .units import validate_units
+            units = validate_units(data["unit_schema"], data["units"])
+        else:
+            units = None
         require_fields(vocab, {"sorts", "predicates", "constants"}, path="/vocabulary")
         for kind in ("sorts", "predicates", "constants"):
             if type(vocab[kind]) is not dict:
@@ -195,6 +210,8 @@ class Environment:
                 raise UnsupportedProfile("Defined predicates cannot carry functional or total flags")
             defined = route and "definitions@0" in data["profiles"] and type(entry) is dict and "defined" in entry
             fields = {"arguments", "description"}
+            if extended and type(entry) is dict and "argument_units" in entry:
+                fields.add("argument_units")
             if defined:
                 fields.add("defined")
             if flagged:
@@ -215,6 +232,10 @@ class Environment:
                 if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                              and not (route and "data@0" in data["profiles"] and sort == STRING_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
+            argument_units = {}
+            if "argument_units" in entry:
+                from .units import validate_slot_units
+                argument_units = validate_slot_units(entry["argument_units"], args, units)
             if flagged and len(args) != 2:
                 raise VEError("Functional and total flags require a binary predicate")
             if flagged and INT_SORT in args:
@@ -236,7 +257,8 @@ class Environment:
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
                                              verbalisation, negative, regulated,
                                              entry.get("functional"), entry.get("total"),
-                                             canonical_json(entry["defined"]) if defined else None)
+                                             canonical_json(entry["defined"]) if defined else None,
+                                             MappingProxyType(argument_units))
         regulated_names = [n for n, p in predicates.items() if p.regulated is not None]
         if len(regulated_names) > 64:
             raise ResourceLimit("regulated predicates")
@@ -273,14 +295,22 @@ class Environment:
             linked.add(reg.permission)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
-            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+            has_unit = extended and type(entry) is dict and "unit" in entry
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set())
+                           | ({"unit"} if has_unit else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
+            if has_unit:
+                from .units import validate_tag
+                if sort != INT_SORT:
+                    raise VEError(f"Unit on non-integer constant {name}")
+                validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
-                                           if "description" in entry else None)
+                                           if "description" in entry else None,
+                                           entry.get("unit") if has_unit else None)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -288,7 +318,9 @@ class Environment:
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
-                             ("constants", MappingProxyType(constants))):
+                             ("constants", MappingProxyType(constants)),
+                             ("unit_schema", data["unit_schema"] if extended else None),
+                             ("units", MappingProxyType(units) if extended else None)):
             object.__setattr__(self, field, value)
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
@@ -327,14 +359,19 @@ class Environment:
                 entry["total"] = declaration.total
             if declaration.defined is not None:
                 entry["defined"] = loads_json(declaration.defined)
+            if declaration.argument_units:
+                entry["argument_units"] = dict(declaration.argument_units)
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
-                                                                      if v.description is not None else {})}
-                                             for k, v in self.constants.items()}}}
+                                                                      if v.description is not None else {}),
+                                                 **({"unit": v.unit} if v.unit is not None else {})}
+                                             for k, v in self.constants.items()}},
+                **({"unit_schema": self.unit_schema, "units": dict(self.units)}
+                   if self.unit_schema is not None else {})}
 
     @property
     def closure(self):
