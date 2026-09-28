@@ -223,9 +223,11 @@
       "tests": ["tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
                 "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
                 "tests/test_rust_conformance.py::test_rust_shared_search",
-                "tests/test_lean_conformance.py::test_oracle_witnesses_replay_in_lean"],
+                "tests/test_lean_conformance.py::test_oracle_witnesses_replay_in_lean",
+                "tests/test_assurance_manifest.py::test_search_reports_found_only_through_the_countermodel_check"],
       "trusted": ["python:implementation"],
-      "notes": ["Search has no theorem; its soundness is countermodel.check's."]
+      "notes": ["Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
+                "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."]
     },
     {
       "id": "certificate.check",

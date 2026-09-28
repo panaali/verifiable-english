@@ -415,6 +415,17 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     return ok and all(guard_hits.values()), evaluator.work, False
 
 
+def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model: FiniteModel,
+                     max_evaluations: int) -> bool:
+    """Search is untrusted generation: a candidate is reported as `Found` only
+    once the countermodel.check verdict entry accepts it, so the witness carries
+    that operation's authority (and a migrated check refuses rather than being
+    bypassed). The check re-evaluates what the search already evaluated, within
+    the caller's budget; its work is not charged to the public search counters.
+    """
+    return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
+
+
 def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity):
     if any(type(x) is not int or x < 0
@@ -489,7 +500,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         checked += 1; work += used
         if status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
-        if valid:
+        if valid and _witness_checked(env, premises, conclusion, model, max_evaluations):
             return finish("Found", model, checked, work)
     # Probe exhaustion once more; this validates but does not evaluate another model.
     try:
@@ -561,7 +572,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         work += right.evaluations; checked += 1
         if right.status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
-        if left.value != right.value:
+        if left.value != right.value and _witness_checked(
+                env, *(((a,), b) if left.value else ((b,), a)), model, max_evaluations):
             return finish("Found", model, checked, work)
     try:
         next(iterator)

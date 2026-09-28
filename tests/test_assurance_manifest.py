@@ -8,6 +8,7 @@ ranges) and exercise the two runtime obligations: operational failure is
 `InvalidInput`; and a migrated operation's verdict can only come from Lean.
 """
 import ast
+from dataclasses import replace
 import importlib
 import json
 import os
@@ -317,6 +318,38 @@ def test_combinations_propagate_unavailability_instead_of_unknown(p0):
             check_readings(p0, sets, raw)
         with pytest.raises(CheckerUnavailable):
             check_readings(p0, sets, ["top"])
+
+
+def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatch):
+    """Review reproducer: both searches returned Found with countermodel.check migrated."""
+    from ve import search
+    from ve.ast import Const, Not, Unary
+    senior = Unary("senior", Const("alice"))
+    assert search.find_countermodel(p0, (), senior).status == "Found"
+    assert search.find_distinguishing_model(p0, senior, Not(senior)).status == "Found"
+    assert search.find_distinguishing_model(p0, Not(senior), senior).status == "Found"
+    with assurance.simulate_migration("countermodel.check"):
+        for run in (lambda: search.find_countermodel(p0, (), senior),
+                    lambda: search.find_distinguishing_model(p0, senior, Not(senior)),
+                    lambda: search.find_distinguishing_model(p0, Not(senior), senior)):
+            with pytest.raises(CheckerUnavailable):
+                run()
+        # NotFound publishes no witness and needs no check.
+        assert search.find_countermodel(p0, (senior,), senior).status == "NotFound"
+    # A candidate the check does not accept is never published.
+    calls = []
+    real = search.check_countermodel
+
+    def refuse(env, premises, conclusion, model, **kwargs):
+        calls.append((tuple(premises), conclusion))
+        return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
+    monkeypatch.setattr(search, "check_countermodel", refuse)
+    assert search.find_countermodel(p0, (), senior).status == "NotFound"
+    assert set(calls) == {((), senior)}
+    calls.clear()
+    assert search.find_distinguishing_model(p0, senior, Not(senior)).status == "NotFound"
+    # Each direction of a distinguishing model is checked as a countermodel to it.
+    assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
 
 
 def test_argument_record_reports_unavailability_not_incompleteness():

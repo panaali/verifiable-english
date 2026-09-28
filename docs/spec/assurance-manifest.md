@@ -150,6 +150,10 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   - The CLI exits 5.
   - With certificate and countermodel checking migrated, `premise_status`, `compare`, `check_readings` and
     `check_argument` report unavailability rather than `UNKNOWN`.
+  - Search reports `Found` only after the `countermodel.check` entry accepts the witness: with that operation
+    migrated, `find_countermodel` and `find_distinguishing_model` raise `CheckerUnavailable`, and a candidate the
+    check refuses is never published. (Proof search already replays its certificate through
+    `check_entailment_certificate` before `Found`.)
 - **Invariants.** No operation is migrated yet, and lean-only operations have no Python verdict path.
 - **This document.** The table in section 7 is generated from the manifest.
 
