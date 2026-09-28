@@ -263,7 +263,7 @@ def accB (D : DDoc) (m : Slot) (t : Target) : Bool :=
   | ⟨.predicate, some p, none, [], none, [], none⟩ =>
     unaryPred D.E p && (
       (m.form == .such && (earlierProperties D m).any (·.1 == p)) ||
-      (m.form == .definitionRef && match namedSection D m with
+      (m.form == .definitionRef && wordAt (ownText D m) m.span.1 == some p && match namedSection D m with
         | some a => a.exports.contains p
         | none => false))
   | ⟨.unit, none, none, [], none, us, cn⟩ =>
@@ -429,7 +429,7 @@ theorem accB_candidates (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = tru
       obtain ⟨_, x, hx, rfl⟩ := h
       exact mem_candidates ((earlierProperties D m).map (fun p => predTarget p.1)) (by simp [candidateParts])
         (List.mem_map.mpr ⟨x, hx, rfl⟩)
-    · obtain ⟨_, h⟩ := h
+    · obtain ⟨⟨_, _⟩, h⟩ := h
       split at h
       · rename_i a ha
         refine mem_candidates (a.exports.map predTarget) (by simp [candidateParts, ha]) ?_
@@ -587,6 +587,6 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
   have hanc : ∀ a, anchorOf D a = anchorOf D₂ a := by intro a; simp only [anchorOf, han]
   have hconstf : constAcc D m = constAcc D₂ m := funext hconst
   unfold Acc accB
-  simp only [hconstf, hconst, hpairs, hprops, hord, hsec, hcq, hu, hanc, hE, hc, hd, hb.1, hb.2]
+  simp only [hconstf, hconst, hpairs, hprops, hord, hsec, hcq, hu, hanc, hE, hc, hd, hb.1, hb.2, hown]
 
 end VE.Discourse

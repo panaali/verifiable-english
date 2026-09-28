@@ -36,6 +36,7 @@ import VE.Norms.Replay
 import VE.Norms.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
+import VE.Discourse.Resolve
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1008,3 +1009,59 @@ import VE.Discourse.Access
 #print axioms VE.Discourse.no_witness_escape
 #print axioms VE.Discourse.nodup_length_le
 #print axioms VE.Discourse.registered_some
+#print axioms VE.Discourse.accepted_no_pruning
+#print axioms VE.Discourse.accepted_unique
+#print axioms VE.Discourse.aligned_refl
+#print axioms VE.Discourse.aligned_spec
+#print axioms VE.Discourse.assignOf_cons_ne
+#print axioms VE.Discourse.assignOf_cons_self
+#print axioms VE.Discourse.assignOf_map
+#print axioms VE.Discourse.canon_kind
+#print axioms VE.Discourse.conjOn_denote
+#print axioms VE.Discourse.conj_denote_at
+#print axioms VE.Discourse.coreEnd_cands
+#print axioms VE.Discourse.coreFormula_congr
+#print axioms VE.Discourse.coreFormula_ok
+#print axioms VE.Discourse.core_agree
+#print axioms VE.Discourse.definite_agree
+#print axioms VE.Discourse.elaborateD_capture
+#print axioms VE.Discourse.elaborate_alias
+#print axioms VE.Discourse.elaborate_congr
+#print axioms VE.Discourse.elaborate_ok
+#print axioms VE.Discourse.ill_typed_target
+#print axioms VE.Discourse.isClaim_ok
+#print axioms VE.Discourse.isW_lt
+#print axioms VE.Discourse.isW_wordAt
+#print axioms VE.Discourse.mapM_of_recorded
+#print axioms VE.Discourse.mapM_recorded
+#print axioms VE.Discourse.map_mem_vectors
+#print axioms VE.Discourse.mem_allForms
+#print axioms VE.Discourse.mem_derivs
+#print axioms VE.Discourse.mem_typedComps
+#print axioms VE.Discourse.modEnd_cands
+#print axioms VE.Discourse.modPred_congr
+#print axioms VE.Discourse.name_mem_nameCands
+#print axioms VE.Discourse.npConsts_congr
+#print axioms VE.Discourse.npConsts_ok
+#print axioms VE.Discourse.npEnd_cands
+#print axioms VE.Discourse.okKind_canon
+#print axioms VE.Discourse.pluralMembers_ok
+#print axioms VE.Discourse.predFormula_congr
+#print axioms VE.Discourse.predFormula_ok
+#print axioms VE.Discourse.propertyOf_ok
+#print axioms VE.Discourse.registered_constant
+#print axioms VE.Discourse.restr_agree
+#print axioms VE.Discourse.slotCands_complete
+#print axioms VE.Discourse.termConst_ok
+#print axioms VE.Discourse.treeEnd_cands
+#print axioms VE.Discourse.unary_var0
+#print axioms VE.Discourse.validate_accepted
+#print axioms VE.Discourse.validate_budget
+#print axioms VE.Discourse.validate_closed
+#print axioms VE.Discourse.validate_ok
+#print axioms VE.Discourse.validate_recorded
+#print axioms VE.Discourse.validate_total
+#print axioms VE.Discourse.wordAt_lt
+#print axioms VE.Discourse.wordAt_mem
+#print axioms VE.Discourse.zip_all_assign
+#print axioms VE.Discourse.zip_all_map
