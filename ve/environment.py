@@ -159,8 +159,6 @@ def _alternatives_block(raw, sorts, predicates, constants):
     declared_roles = [raw[role] for role in role_spec if role in raw]
     if any(type(name) is not str for name in declared_roles):
         raise VEError("InvalidInput: alternatives.role")
-    if len(set(declared_roles)) != len(declared_roles):
-        raise VEError("AlternativesSort: role predicates must be distinct")
     role_names = []
     for role, (arguments, wording) in role_spec.items():
         if role not in raw:
