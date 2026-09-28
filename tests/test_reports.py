@@ -398,3 +398,33 @@ def test_report_premises_are_in_the_residual(tmp_path):
     assert {k: coverage["residual"][k] for k in lines} == {
         "reports": 1, "assessments": 2, "literal_quotations": 1, "scoped_checks": 1, "unreviewed_acts": 1}
     assert coverage["residual_total"] == 1 + 1 + 2 + 1 + 1 + 1  # the one generated open term too
+
+
+def test_nested_unreviewed_acts_enter_the_residual(tmp_path):
+    """Loop B: a content-free, testimony-backed unit whose act outside the slice sat
+    below the root of its kind (`["attributed","article","says",["attributed","alice",
+    "promised","asserted"]]`, and the hedged wrapper) was accepted with no warning, an
+    empty `unreviewed_acts` line and `residual_total` 0. Every act of the kind, at any
+    depth and under any wrapper (attributed, hedged, causal), is now counted, and
+    Python and Lean warn alike."""
+    promised = ["attributed", "alice", "promised", "asserted"]
+    cases = [
+        (["attributed", "article", "says", promised], {"promised": 1}, ["unreviewed act promised in u1 at 1"]),
+        (["hedged", "could", promised], {"promised": 1}, ["unreviewed act promised in u1 at 1"]),
+        (["hedged", "likely", ["attributed", "article", "believes", promised]], {"promised": 1},
+         ["unreviewed act promised in u1 at 1.1"]),
+        (["causal", "because", "asserted", ["attributed", "article", "denies", promised]],
+         {"denies": 1, "promised": 1},
+         ["unreviewed act denies in u1 at 2", "unreviewed act promised in u1 at 2.1"]),
+        (["attributed", "article", "expects", promised], {"expects": 1, "promised": 1},
+         ["unreviewed act expects in u1", "unreviewed act promised in u1 at 1"]),
+        (promised, {"promised": 1}, ["unreviewed act promised in u1"]),
+    ]
+    for kind, acts, warnings in cases:
+        piece = {"kind": kind, "meaning": "specified", "support": "testimony"}
+        result = check_document(write_report_document(tmp_path, [("The article says alice promised.\n", piece)]))
+        assert result["reports"]["warnings"] == warnings
+        lines = result["coverage"]["residual_lines"]
+        assert lines["unreviewed_acts"] == acts
+        assert result["coverage"]["residual"]["unreviewed_acts"] == sum(acts.values())
+        assert result["coverage"]["residual_total"] == sum(acts.values())

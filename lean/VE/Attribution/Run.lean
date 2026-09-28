@@ -66,14 +66,23 @@ def recordJson (r : Assessment) : Json :=
     ("factors", toJson r.factors), ("precedents", toJson r.precedents), ("jurisdiction", .str r.jurisdiction),
     ("version", toJson r.version)]
 
+def childPath (path : String) (step : Nat) : String :=
+  if path.isEmpty then toString step else path ++ "." ++ toString step
+
+/-- Every attributed node of a kind whose act is outside the slice, with its
+path, at any depth: an attributed or hedged body is step 1, a causal kind's
+cause and effect are steps 1 and 2 (`ve/reports.py` `unreviewed_acts`). -/
+def unreviewedActs (path : String) : VE.Route.Admission.Kind → List (String × String)
+  | .attributed _ act body =>
+    (if ["says", "believes", "wants", "intends"].contains act then [] else [(path, act)]) ++
+      unreviewedActs (childPath path 1) body
+  | .hedged _ body => unreviewedActs (childPath path 1) body
+  | .causal _ c e => unreviewedActs (childPath path 1) c ++ unreviewedActs (childPath path 2) e
+  | _ => []
+
 def warnings (dec : Wire.Decoded) : List String :=
-  dec.units.filterMap fun
-    | .w2 x => match x.kind with
-      | .attributed _ act _ =>
-        if ["says", "believes", "wants", "intends"].contains act then none
-        else some s!"unreviewed act {act} in {x.id}"
-      | _ => none
-    | .reports .. => none
+  dec.units.flatMap fun u => (unreviewedActs "" u.kind).map fun (path, act) =>
+    s!"unreviewed act {act} in {u.id}" ++ (if path.isEmpty then "" else s!" at {path}")
 
 def elaborated (dec : Wire.Decoded) (environment : Json) : List (String × Json) :=
   let D := dec.D
