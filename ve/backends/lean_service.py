@@ -162,25 +162,31 @@ def _nat(value: object) -> bool:
 
 
 def _term(value: object) -> bool:
-    return _tree(value, english=False, term=True)
+    return _tree(value, english=False, order=False, term=True)
 
 
 def _integer_text(value: object) -> bool:
-    return (isinstance(value, str) and bool(value)
-            and (value.isascii() and value.isdecimal() or
-                 value[0] == "-" and len(value) > 1 and value[1:].isascii()
-                 and value[1:].isdecimal()))
+    if not isinstance(value, str) or not value or len(value) > 40:
+        return False
+    digits = value[1:] if value.startswith("-") else value
+    return (bool(digits) and digits.isascii() and digits.isdecimal()
+            and (digits == "0" or digits[0] != "0")
+            and value != "-0")
 
 
 def _formula(value: object) -> bool:
-    return _tree(value, english=False, term=False)
+    return _tree(value, english=False, order=False, term=False)
+
+
+def _order_formula(value: object) -> bool:
+    return _tree(value, english=False, order=True, term=False)
 
 
 def _english_formula(value: object) -> bool:
-    return _tree(value, english=True, term=False)
+    return _tree(value, english=True, order=False, term=False)
 
 
-def _tree(value: object, *, english: bool, term: bool) -> bool:
+def _tree(value: object, *, english: bool, order: bool, term: bool) -> bool:
     """Validate wire ASTs without Python recursion or bool/int equality coercion.
 
     EnglishRun.encodeFormula/encodeTerm have a smaller vocabulary than Order.Wire:
@@ -199,12 +205,12 @@ def _tree(value: object, *, english: bool, term: bool) -> bool:
                 continue
             if tag == "const" and len(node) == 2 and isinstance(node[1], str):
                 continue
-            if not english and tag == "num" and len(node) == 2 and _integer_text(node[1]):
+            if order and tag == "num" and len(node) == 2 and _integer_text(node[1]):
                 continue
-            if not english and tag == "add" and len(node) == 3:
+            if order and tag == "add" and len(node) == 3:
                 pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
                 continue
-            if not english and tag == "scale" and len(node) == 3 and _integer_text(node[1]):
+            if order and tag == "scale" and len(node) == 3 and _integer_text(node[1]):
                 pending.append((node[2], True, depth + 1))
                 continue
             return False
@@ -214,7 +220,7 @@ def _tree(value: object, *, english: bool, term: bool) -> bool:
             pending.append((node[2], True, depth + 1))
         elif tag == "binary" and len(node) == 4 and isinstance(node[1], str):
             pending.extend(((node[2], True, depth + 1), (node[3], True, depth + 1)))
-        elif tag in (("eq",) if english else ("eq", "lt", "le")) and len(node) == 3:
+        elif tag in (("eq", "lt", "le") if order else ("eq",)) and len(node) == 3:
             pending.extend(((node[1], True, depth + 1), (node[2], True, depth + 1)))
         elif tag == "not" and len(node) == 2:
             pending.append((node[1], False, depth + 1))
@@ -229,6 +235,35 @@ def _tree(value: object, *, english: bool, term: bool) -> bool:
 
 def _formulas(value: object) -> bool:
     return isinstance(value, list) and all(_formula(x) for x in value)
+
+
+def _order_formulas(value: object) -> bool:
+    return isinstance(value, list) and all(_order_formula(x) for x in value)
+
+
+def _same_json(left: object, right: object) -> bool:
+    """Compare echoed JSON IDs without Python's bool/int equality coercion."""
+    pending = [(left, right)]
+    while pending:
+        a, b = pending.pop()
+        if type(a) is not type(b):
+            return False
+        if isinstance(a, dict):
+            if a.keys() != b.keys():
+                return False
+            pending.extend((value, b[key]) for key, value in a.items())
+        elif isinstance(a, list):
+            if len(a) != len(b):
+                return False
+            pending.extend(zip(a, b))
+        elif a != b:
+            return False
+    return True
+
+
+def _value_count_matches(row: dict, case: object) -> bool:
+    ast = case.get("ast") if isinstance(case, dict) else None
+    return isinstance(ast, list) and len(row["values"]) == len(ast)
 
 
 def _claim(value: object) -> bool:
@@ -272,7 +307,8 @@ def _valid_route_result(row: dict, kind: object, mode: str, case: object) -> boo
         return False
     fields = set(row) - {"id", "status"}
     if kind == "evaluate":
-        return fields == {"values"} and _booleans(row["values"])
+        return (fields == {"values"} and _booleans(row["values"])
+                and _value_count_matches(row, case))
     if kind == "countermodel":
         return fields == {"refutes"} and type(row["refutes"]) is bool
     if kind == "certificate":
@@ -683,8 +719,7 @@ class LeanService:
                     and isinstance(row.get("error"), str) and bool(row["error"])
                     and ("valid" not in row or row["valid"] is False))
         expected_id = case.get("id") if isinstance(case, dict) else None
-        if ("id" not in row or type(row["id"]) is not type(expected_id)
-                or row["id"] != expected_id):
+        if "id" not in row or not _same_json(row["id"], expected_id):
             return False
         if status == "error":
             if not isinstance(row.get("error"), str) or not row["error"]:
@@ -720,6 +755,7 @@ class LeanService:
                 return set(row) == {"id", "status", "refutes"} and type(row["refutes"]) is bool
             return (set(row) == {"id", "status", "values", "value", "canonical"}
                     and _booleans(row["values"]) and bool(row["values"])
+                    and _value_count_matches(row, case)
                     and type(row["value"]) is bool
                     and row["value"] == all(row["values"])
                     and isinstance(row["canonical"], str))
@@ -732,7 +768,8 @@ class LeanService:
             value = row.get(key)
             return (set(row) == {"id", "status", key} and
                     (type(value) is bool if key in ("refutes", "valid") else
-                     _booleans(value) if key == "values" else _formulas(value)))
+                     (_booleans(value) and _value_count_matches(row, case))
+                     if key == "values" else _order_formulas(value)))
         kind = case.get("kind", "evaluate") if isinstance(case, dict) else "evaluate"
         if mode in ("route", "norms"):
             if mode == "norms" and _uses_norms_path(case) and kind not in {
