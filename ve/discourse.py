@@ -1,12 +1,21 @@
-"""Conservative Python adapter for the ve.discourse@1 document profile.
+"""Python adapter for the ve.discourse@1 document profile.
 
 The frozen environment and document routes receive only the base profile list.
-Reference expansion is admitted here only when the expanded English has one
-parse and reproduces the recorded formula. Other reference forms can still be
-recorded on labelled or unformalised units without claiming formula coverage.
+Every reference surface in a unit's source is a slot to account for: a unit
+whose content is admitted must record each one (docs/spec/discourse.md 3.4).
+A recorded pronoun, demonstrative or ordinal pair is resolved here: its
+accessible candidates are read from the source (registrations in scope, no
+competing quantifier of the candidate's sort, the coordinations an ordinal
+refers back to), each candidate is expanded into explicit English, and the
+expansions with one typed parse are the competitors; the recorded target must
+be the unique one and the expansion must reproduce the unit's content. Other
+reference forms are recorded but not elaborated in Python: a unit with content
+that uses one is `UnsupportedProfile`, never admitted unchecked. The Lean route
+(`ve_discourse_route`) is the trusted checker; it reads the same bytes.
 """
 from __future__ import annotations
 
+import hashlib
 from itertools import product
 import re
 
@@ -26,20 +35,31 @@ _FORM_KINDS = {
     "section_ref": {"anchor"}, "navigation": {"anchor", "unit"},
 }
 _LOCATION = {"section_ref", "navigation"}
+_ELABORATED = {"pronoun", "demonstrative", "ordinal_pair"}
 _LIMITS = {"anchors": 1024, "mentions": 4096, "names": 1024,
            "documents": 64, "groups": 256, "constraints": 1024}
+_BLOCK_KEYS = {"version", "definitions_version", "document_sort", "anchors", "names", "content_names",
+               "mentions", "documents", "imports", "groups", "constraints"}
+_LEAN_ONLY = {"validity": "validity claims", "self_truth": "self-truth labels", "choices": "recorded reading choices"}
+_REFERENCE_WORDS = ("it", "she", "he", "her", "him", "his", "its", "their", "they", "them",
+                    "former", "latter", "such")
+_PRONOUNS = ("it", "she", "he", "her", "him")
+_QUANTIFIERS = ("every", "a", "an", "some")
+_CITE_WORDS = ("clause", "section", "article", "lemma")
+_MAX_NESTING = 4
 
 
 def base_environment(meta):
     """Check the outer declaration, then produce the exact frozen input pair."""
     data = meta["environment"]
+    if meta["format"] == "ve-document@1":
+        # Unchanged @1 path: only the profile gate of 1.1 is added.
+        if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
+            raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
+        return data
     if type(data) is not dict or type(data.get("profiles")) is not list:
         raise VEError("invalid environment profiles")
     profiles = data["profiles"]
-    if meta["format"] == "ve-document@1":
-        if PROFILE in profiles:
-            raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
-        return data
     if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:
         raise VEError("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
     if "discourse" not in meta:
@@ -214,63 +234,193 @@ def check_joint_extensions(meta, report, joint):
         raise VEError(f"InvalidCompatibility: report {report['root']['name']}")
 
 
-def _expanded_formula(doc, unit, mention, name):
-    """Parse one explicit replacement; failure is a typed-out competitor."""
-    from .english import parse_english
+# Reading the source ---------------------------------------------------------
+
+def _words(env):
+    """The sort and unary-predicate words a reference surface may use: their symbol names
+    (the Lean route's reading of the same bytes) and the English nouns of the sorts."""
+    from .english import EnglishVocabulary
+    try:
+        nouns = EnglishVocabulary(env).sorts
+    except VEError:
+        nouns = {}
+    sorts = {}
+    for name in env.sorts:
+        sorts[name.lower()] = name
+        noun = nouns.get(name)
+        if type(noun) is str and re.fullmatch(r"[A-Za-z]+", noun):
+            sorts[noun.lower()] = name
+    unary = {name.lower() for name, decl in env.predicates.items() if len(decl.arguments) == 1}
+    return sorts, unary
+
+
+def _word_pattern(words):
+    return "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True)) or r"(?!)"
+
+
+def reference_surfaces(doc, text, displays=()):
+    """Every reference surface of a text as (start, end) character offsets: a reference word,
+    a demonstrative before a sort word, `the` before a unary predicate word, a citation
+    `by <clause|section|...>`, or a document name (3.4; the Lean route's `referenceAt`)."""
+    sorts, unary = _words(doc["environment"])
+    patterns = [r"\b(?:" + "|".join(_REFERENCE_WORDS) + r")\b",
+                r"\b(?:this|that)\s+(?:" + _word_pattern(sorts) + r")\b",
+                r"\bthe\s+(?:" + _word_pattern(unary) + r")\b",
+                r"\bby\s+(?:" + "|".join(_CITE_WORDS) + r")\b"]
+    patterns.extend(r"\b" + re.escape(d) + r"\b" for d in displays if d)
+    found = set()
+    for pattern in patterns:
+        for match in re.finditer(pattern, text, re.I):
+            found.add((match.start(), match.end()))
+    return sorted(found)
+
+
+def _innermost(anchors, span):
+    containing = [a for a in anchors.values() if _inside(a["span"], span)]
+    return min(containing, key=lambda a: a["span"][1] - a["span"][0]) if containing else None
+
+
+def _scope_texts(doc, unit, position):
+    """The texts accessibility reads (4.2): each earlier unit of the unit's innermost anchor,
+    then the unit's own text before the mention."""
+    anchor = _innermost(doc["discourse_anchors"], unit["span"])
+    if anchor is None:
+        return []
+    texts = [u["source"] for u in doc["units"]
+             if u["span"][1] <= unit["span"][0] and _inside(anchor["span"], u["span"])]
+    texts.append(doc["source"][unit["span"][0]:position].decode("utf-8", "replace"))
+    return texts
+
+
+def _competing_quantifier(doc, unit, position, sort):
+    """A quantified mention of `sort` in an earlier sentence of the innermost anchor or earlier in
+    the unit's own sentence: `every|a|an|some [modifier] <sort word>` (the Lean `binderAt`)."""
+    sorts, _ = _words(doc["environment"])
+    nouns = [w for w, s in sorts.items() if s == sort]
+    pattern = re.compile(r"\b(?:" + "|".join(_QUANTIFIERS) + r")\s+(?:[\w-]+\s+)?(?:" + _word_pattern(nouns) + r")\b",
+                         re.I)
+    return any(pattern.search(text) for text in _scope_texts(doc, unit, position))
+
+
+def _spellings(registration):
+    return [registration["display"], *registration.get("aliases", [])]
+
+
+def _coordinations(doc, unit, position, names):
+    """The coordinations `c1 and c2` of registered spellings in the texts accessibility reads,
+    in their order: the antecedents of `the former`/`the latter` (the Lean `earlierPairs`)."""
+    texts = _scope_texts(doc, unit, position)
+    pairs = []
+    for first in names:
+        for second in names:
+            if any(re.search(r"(?<![\w-])" + re.escape(a) + r"\s+and\s+" + re.escape(b) + r"(?![\w-])", text, re.I)
+                   for text in texts for a in _spellings(first) for b in _spellings(second)):
+                pairs.append((first["constant"], second["constant"]))
+    return pairs
+
+
+# Resolution ----------------------------------------------------------------
+
+def _surface_fits(doc, mention):
+    """A recorded pronoun, demonstrative or ordinal pair covers exactly its surface: a pronoun,
+    `this|that <sort word>`, `the former|latter` (otherwise it is no slot: MentionNotSlot)."""
+    surface = doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8", "replace").strip().lower()
+    sorts, _ = _words(doc["environment"])
+    form = mention["form"]
+    if form == "pronoun":
+        return surface in _PRONOUNS
+    if form == "demonstrative":
+        return re.fullmatch(r"(?:this|that)\s+(?:" + _word_pattern(sorts) + ")", surface) is not None
+    return surface in {"the former", "the latter"}
+
+
+def _accessible(doc, unit, mention, names, anchors):
+    """The accessible targets of a recorded pronoun, demonstrative or ordinal pair, each with the
+    constant its expansion names."""
+    form = mention["form"]
     env = doc["environment"]
+    if form == "ordinal_pair":
+        surface = doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8").lower().split()
+        index = {"former": 0, "latter": 1}.get(surface[-1] if surface else "")
+        if index is None:
+            return []
+        scoped = [n for n in names if _inside(anchors[n["scope"]]["span"], unit["span"])]
+        return [({"kind": "entity", "name": pair[index], "pair": list(pair)}, pair[index])
+                for pair in _coordinations(doc, unit, mention["span"][0], scoped)]
+    result = []
+    for registration in names:
+        constant = registration["constant"]
+        if not _inside(anchors[registration["scope"]]["span"], unit["span"]):
+            continue
+        if _competing_quantifier(doc, unit, mention["span"][0], env.constants[constant].sort):
+            continue
+        result.append(({"kind": "entity", "name": constant}, constant))
+    return result
+
+
+def _expanded(doc, unit, choices):
+    """The unit's text with each mention replaced by an explicit name: its one typed parse."""
+    from .english import parse_english
     start, end = unit["span"]
-    a, b = mention["span"]
-    raw = doc["source"][start:a] + name.encode("utf-8") + doc["source"][b:end]
+    raw, cursor = b"", start
+    for mention, display in sorted(choices, key=lambda x: x[0]["span"][0]):
+        raw += doc["source"][cursor:mention["span"][0]] + display.encode("utf-8")
+        cursor = mention["span"][1]
+    raw += doc["source"][cursor:end]
     try:
         expanded = raw.decode("utf-8")
-        parsed = parse_english(env, expanded)
+        parsed = parse_english(doc["environment"], expanded)
         if len(parsed.formulas) != 1:
             return None
-        return expanded, formula_to_data(env, parsed.formulas[0])
+        return expanded, formula_to_data(doc["environment"], parsed.formulas[0])
     except (VEError, UnicodeError):
         return None
 
 
-def _check_simple_expansion(doc, unit, mention, names, anchors):
-    form = mention["form"]
-    if form not in {"pronoun", "demonstrative", "ordinal_pair"}:
-        raise VEError(f"MentionNotSlot: {mention['id']}")
-    target = mention["target"]
-    if target["kind"] != "entity":
-        raise VEError(f"MentionNotSlot: {mention['id']}")
-    candidates = {}
-    for registration in names:
-        name = registration["constant"]
-        if not _inside(anchors[registration["scope"]]["span"], mention["span"]):
-            continue
-        if form == "ordinal_pair" and name not in target["pair"]:
-            continue
-        if form in {"pronoun", "demonstrative"} and _competing_quantifier(doc, mention, name, anchors):
-            continue
-        expansion = _expanded_formula(doc, unit, mention, registration["display"])
+def _same_target(recorded, candidate):
+    return all(recorded.get(k) == candidate.get(k) for k in ("kind", "name", "pair"))
+
+
+def _resolve_unit(doc, unit, rows, names, anchors):
+    """Resolve a unit's recorded pronouns, demonstratives and ordinal pairs together: every
+    accessible assignment is a competitor, a typed expansion is the only filter (4.3)."""
+    displays = {n["constant"]: n["display"] for n in names}
+    candidates = [_accessible(doc, unit, m, names, anchors) for m in rows]
+    typed = []
+    for combo in product(*candidates):
+        expansion = _expanded(doc, unit, [(m, displays[c]) for m, (_, c) in zip(rows, combo)])
         if expansion is not None:
-            candidates[name] = expansion
-    chosen = target.get("name")
-    if chosen not in candidates:
-        raise VEError(f"IllTypedTarget: {mention['id']}: {chosen}")
-    if len(candidates) > 1:
-        raise VEError(f"AmbiguousReference: {mention['id']}: {', '.join(sorted(candidates))}")
-    if candidates[chosen][1] != unit["content"]:
+            typed.append((combo, expansion))
+    recorded = [m["target"] for m in rows]
+    accessible = [next((t for t, _ in cands if _same_target(r, t)), None) for r, cands in zip(recorded, candidates)]
+    if all(a is not None for a in accessible):
+        combo = [(m, displays[a["name"]]) for m, a in zip(rows, accessible)]
+        own = _expanded(doc, unit, combo)
+        if own is None:
+            m = rows[0]
+            raise VEError(f"IllTypedTarget: {m['id']}: {m['target'].get('name')}")
+    if not typed:
+        raise VEError(f"UnresolvedReference: {rows[0]['id']}")
+    if len(typed) > 1:
+        for i, m in enumerate(rows):
+            names_at = sorted({combo[i][1] for combo, _ in typed})
+            if len(names_at) > 1:
+                raise VEError(f"AmbiguousReference: {m['id']}: {', '.join(names_at)}")
+    for m, a in zip(rows, accessible):
+        if a is None:
+            raise VEError(f"InaccessibleTarget: {m['id']}: {m['target'].get('name')}")
+    expanded, formula = typed[0][1]
+    if unit["content"] is not None and formula != unit["content"]:
         raise VEError(f"ManifestMismatch: bound.{unit['id']}")
-    return candidates[chosen][0]
+    return expanded
 
 
-def _surface_matches(doc, mention):
-    a, b = mention["span"]
-    surface = doc["source"][a:b].decode("utf-8").strip().lower()
-    form = mention["form"]
-    if form == "pronoun":
-        return surface in {"it", "she", "he", "they", "them", "her", "him", "his", "its", "their"}
-    if form == "demonstrative":
-        return surface.startswith(("this ", "that "))
-    if form == "ordinal_pair":
-        return surface in {"the former", "the latter"}
-    return True
+# Groups -------------------------------------------------------------------
+
+def _conjuncts(formula):
+    if type(formula) is list and len(formula) == 3 and formula[0] == "and":
+        return _conjuncts(formula[1]) + _conjuncts(formula[2])
+    return [formula]
 
 
 def _contains_var(formula, index=0):
@@ -284,30 +434,154 @@ def _contains_var(formula, index=0):
 
 
 def _same_witness(content):
-    """Conservative fused shape: two clauses under one existential binder."""
+    """One outermost existential whose body is a conjunction in which every conjunct mentions
+    the bound variable (4.6, the Lean `sharedWitness`)."""
     return (type(content) is list and len(content) == 3 and content[0] == "exists"
-            and type(content[2]) is list and len(content[2]) == 3
-            and content[2][0] == "and"
-            and _contains_var(content[2][1]) and _contains_var(content[2][2]))
+            and type(content[2]) is list and len(content[2]) == 3 and content[2][0] == "and"
+            and all(_contains_var(c) for c in _conjuncts(content[2])))
 
 
-def _quantifies(formula, sort):
-    if type(formula) is not list:
-        return False
-    if len(formula) == 3 and formula[0] in {"exists", "forall"} and formula[1] == sort:
-        return True
-    return any(_quantifies(item, sort) for item in formula[1:])
+def _parse_one(doc, text):
+    from .english import parse_english
+    try:
+        parsed = parse_english(doc["environment"], text)
+    except VEError:
+        return None
+    if len(parsed.formulas) != 1:
+        return None
+    return formula_to_data(doc["environment"], parsed.formulas[0])
 
 
-def _competing_quantifier(doc, mention, constant, anchors):
-    position = mention["span"]
-    enclosing = min((a for a in anchors.values() if _inside(a["span"], position)),
-                    key=lambda a: a["span"][1] - a["span"][0])
-    sort = doc["environment"].constants[constant].sort
-    return any(u["kind"] == "asserted" and u["content"] is not None
-               and _inside(enclosing["span"], u["span"])
-               and u["span"][1] <= position[0] and _quantifies(u["content"], sort)
-               for u in doc["units"])
+def group_reading(doc, spans):
+    """The owning set's reading regenerated per group from the spans' English (4.6): the first
+    span `a|an|some [ADJ] NOUN is P.` gives the witness and its body; each later span
+    `PRONOUN is Q.` predicates Q of the same witness (the pronoun read as the first span's noun
+    phrase); the reading is one existential over the conjunction of the bodies."""
+    units = {u["id"]: u for u in doc["units"]}
+    first = re.match(r"(?i)(?:a|an|some)\s+(\S+)\s+(is\s.*)", units[spans[0]]["source"].strip(), re.S)
+    if first is None:
+        return None
+    # `a`, `an` and `some` introduce the same existential witness (the Lean grammar's `some`)
+    subject = "Some " + first[1]
+    opening = _parse_one(doc, subject + " " + first[2])
+    if opening is None or opening[0] != "exists":
+        return None
+    sort, bodies = opening[1], [opening[2]]
+    for uid in spans[1:]:
+        later = re.match(r"(?i)(" + "|".join(_PRONOUNS) + r")\s+(is\s.*)", units[uid]["source"].strip(), re.S)
+        if later is None:
+            return None
+        rewritten = _parse_one(doc, subject + " " + later[2])
+        if rewritten is None or rewritten[0] != "exists" or rewritten[1] != sort:
+            return None
+        bodies.append(rewritten[2])
+    body = bodies[-1]
+    for earlier in reversed(bodies[:-1]):
+        body = ["and", earlier, body]
+    return ["exists", sort, body]
+
+
+# Stored documents (4.1(10)) --------------------------------------------------
+
+def _stored_identities(raw, name):
+    from .document import stored_identities
+    try:
+        return stored_identities(raw)
+    except VEError as exc:
+        raise VEError(f"InvalidInput: document {name}: {exc}") from exc
+
+
+def _stored_children(meta, source, directory):
+    """The stored documents a document names: its imports' sibling files and embedded units."""
+    block = meta.get("discourse", {}) if type(meta.get("discourse")) is dict else {}
+    imports = block.get("imports", {}) if type(block.get("imports", {})) is dict else {}
+    children = []
+    for pin in imports.values():
+        path = directory / pin.get("bytes", "") if type(pin) is dict and type(pin.get("bytes")) is str else None
+        if path is not None and path.is_file():
+            children.append(path.read_bytes())
+    units = {u.get("id"): u for u in meta.get("units", []) if type(u) is dict}
+    for declaration in block.get("documents", []) if type(block.get("documents", [])) is list else []:
+        refers = declaration.get("refers") if type(declaration) is dict else None
+        if type(refers) is dict and "embedded" in refers and refers["embedded"] in units:
+            span = units[refers["embedded"]].get("span")
+            if _span(span, len(source)):
+                children.append(source[span[0]:span[1]])
+    return children
+
+
+def _chain(raws, directory, depth):
+    """Source ids of the stored chain to depth `depth` (None: deeper than the budget)."""
+    from .document import _split, stored_identities
+    ids = []
+    for raw in raws:
+        if depth == 0:
+            return None
+        try:
+            meta, source, _ = _split(raw)
+            source_id = stored_identities(raw)[1]
+        except VEError:
+            ids.append(hashlib.sha256(raw).hexdigest())
+            continue
+        rest = _chain(_stored_children(meta, source, directory), directory, depth - 1)
+        if rest is None:
+            return None
+        ids.extend([source_id, *rest])
+    return ids
+
+
+def check_stored_documents(doc, documents, imports, units):
+    """Integrity of every imported and embedded document (4.1(10)): stored bytes re-fingerprint
+    to their pinned source id, each decodes and its recomputed document id is its pin, the chain
+    repeats no source id and nests at most four deep. Whether a stored document is admitted is
+    the second-phase outcome of a validity claim, never a condition here."""
+    directory = doc["directory"]
+    stored = []
+    for key, pin in imports.items():
+        name = next((n for n, d in documents.items() if d.get("refers") == {"import": key}), key)
+        path = directory / pin["bytes"] if type(pin["bytes"]) is str else None
+        if path is None or not path.is_file():
+            continue
+        raw = path.read_bytes()
+        try:
+            _, sid, did = _stored_identities(raw, name)
+        except VEError:
+            if hashlib.sha256(raw).hexdigest() != pin["source_id"]:
+                raise VEError(f"StaleTarget: {name}") from None
+            raise
+        if sid != pin["source_id"] or did != pin["document_id"]:
+            raise VEError(f"StaleTarget: {name}")
+        stored.append(raw)
+    for name, declaration in documents.items():
+        refers = declaration.get("refers")
+        if type(refers) is dict and "embedded" in refers:
+            start, end = units[refers["embedded"]]["span"]
+            raw = doc["source"][start:end]
+            _, sid, did = _stored_identities(raw, name)
+            if declaration.get("document_id", did) != did or declaration.get("source_id", sid) != sid:
+                raise VEError(f"StaleTarget: {name}")
+            stored.append(raw)
+    chain = _chain(stored, directory, _MAX_NESTING)
+    if chain is None:
+        raise VEError("ResourceLimit: document nesting")
+    seen = {doc["source_id"]}
+    for source_id in chain:
+        if source_id in seen:
+            raise VEError(f"ImportCycle: {source_id}")
+        seen.add(source_id)
+
+
+# The validator ---------------------------------------------------------------
+
+def _unrecorded(doc, unit, rows, displays):
+    """The first reference surface of a content unit that no recorded mention covers."""
+    start = unit["span"][0]
+    for a, b in reference_surfaces(doc, unit["source"], displays):
+        begin = start + len(unit["source"][:a].encode("utf-8"))
+        end = start + len(unit["source"][:b].encode("utf-8"))
+        if not any(_inside(m["span"], [begin, end]) for m in rows):
+            return begin, end
+    return None
 
 
 def validate_discourse(doc):
@@ -315,17 +589,20 @@ def validate_discourse(doc):
     if type(block) is not dict:
         raise VEError("InvalidInput: discourse block")
     _no_null(block)
+    for key, feature in _LEAN_ONLY.items():
+        if block.get(key):
+            raise VEError(f"UnsupportedProfile: ve.discourse@1 {feature} are not implemented in Python")
     if block and block.get("version") != PROFILE:
         raise VEError("InvalidInput: discourse version")
-    if set(block) - {"version", "definitions_version", "document_sort", "anchors", "names",
-                      "content_names", "mentions", "documents", "imports", "groups", "constraints"}:
+    if set(block) - _BLOCK_KEYS - set(_LEAN_ONLY):
         raise VEError("InvalidInput: discourse field")
     if block.get("definitions_version", doc["environment"].environment_id) != doc["environment"].environment_id:
         raise VEError(f"StaleTarget: definitions@{block['definitions_version']}")
-    if not block:
-        return {"references": [], "groups": [], "joint": _joint(block, [])}
     env, units = doc["environment"], {u["id"]: u for u in doc["units"]}
-    anchors = _anchors(block, doc["source"])
+    active = active_reading_sets(doc["meta"].get("reading_sets", []))
+    grouped = set()
+    anchors = _anchors(block, doc["source"]) if block else {}
+    doc["discourse_anchors"] = anchors
     names = _array(block, "names")
     for name in names:
         if type(name) is not dict or name.get("constant") not in env.constants or name.get("scope") not in anchors:
@@ -357,6 +634,9 @@ def validate_discourse(doc):
     imports = block.get("imports", {})
     if type(imports) is not dict or len(imports) > 64:
         raise VEError("ResourceLimit: imports")
+    for key, pin in imports.items():
+        if type(pin) is not dict or set(pin) != {"source_id", "document_id", "bytes"}:
+            raise VEError(f"InvalidInput: import {key}")
     for name, declaration in documents.items():
         refers = declaration.get("refers")
         if refers == "self":
@@ -372,7 +652,7 @@ def validate_discourse(doc):
                     raise VEError(f"UnknownDocument: {name}")
             elif ref_kind == "import":
                 pin = imports.get(ref_id)
-                if type(pin) is not dict or not {"source_id", "document_id", "bytes"} <= set(pin):
+                if pin is None:
                     raise VEError(f"UnknownDocument: {name}")
                 if (declaration.get("source_id"), declaration.get("document_id")) != (
                         pin["source_id"], pin["document_id"]):
@@ -381,6 +661,9 @@ def validate_discourse(doc):
                 raise VEError(f"InvalidInput: document refers {name}")
         else:
             raise VEError(f"InvalidInput: document refers {name}")
+    check_stored_documents(doc, documents, imports, units)
+    displays = [d for declaration in documents.values() for d in declaration.get("display", [])
+                if type(d) is str]
     mentions = _table(_array(block, "mentions"), "id", "mention")
     by_unit = {}
     for mid, m in mentions.items():
@@ -404,32 +687,19 @@ def validate_discourse(doc):
                     break
                 if not _inside(a["span"], b["span"]):
                     raise VEError(f"InvalidInput: mentions {a['id']}, {b['id']} overlap")
-    references = []
-    presentations = {}
+    statuses = {}
     for mid, m in mentions.items():
         target = m["target"]
         kind, form = target["kind"], m["form"]
-        if not _surface_matches(doc, m):
-            raise VEError(f"MentionNotSlot: {mid}")
         if kind == "entity":
-            members = target.get("members")
-            pair = target.get("pair")
             if form == "plural":
+                members = target.get("members")
                 if type(members) is not list or len(members) < 2 or len(set(members)) != len(members):
                     raise VEError("InvalidInput: plural members")
-                selected = members
             elif form == "ordinal_pair":
+                pair = target.get("pair")
                 if type(pair) is not list or len(pair) != 2 or target.get("name") not in pair:
                     raise VEError("InvalidInput: ordinal pair")
-                selected = pair
-            else:
-                selected = [target.get("name")]
-            for name in selected:
-                registration = next((n for n in names if n["constant"] == name and _inside(anchors[n["scope"]]["span"], m["span"])), None)
-                if registration is None:
-                    raise VEError(f"InaccessibleTarget: {mid}: {name}")
-                if form in {"pronoun", "demonstrative"} and _competing_quantifier(doc, m, name, anchors):
-                    raise VEError(f"InaccessibleTarget: {mid}: {name}")
         elif kind == "anchor":
             if target.get("name") not in anchors:
                 raise VEError(f"DanglingAnchor: {target.get('name')}")
@@ -452,30 +722,44 @@ def validate_discourse(doc):
             lemmas = doc["meta"].get("lemmas", [])
             if target.get("name") not in {l.get("meaning_id") for l in lemmas if type(l) is dict}:
                 raise VEError("Citation is absent, cyclic, or not earlier in the bundle")
-        references.append({"mention": mid, "unit": m["unit"], "form": form, "target": target,
-                           "status": "navigation" if form in _LOCATION else "resolved"})
-    for uid, rows in by_unit.items():
-        unit = units[uid]
-        if unit["content"] is None:
-            continue
-        producing = [m for m in rows if m["form"] not in _LOCATION]
-        if not producing:
-            continue
-        if len(producing) != 1 or len(rows) != 1:
-            raise VEError(f"ResourceLimit: resolution of {uid}")
-        presentations[uid] = _check_simple_expansion(doc, unit, producing[0], names, anchors)
-    for unit in doc["units"]:
-        if unit["kind"] != "asserted" or unit["content"] is None:
-            continue
-        start = unit["span"][0]
-        for match in re.finditer(rb"\b(?:it|she|he|they|them|her|him|his|its|their)\b",
-                                 doc["source"][start:unit["span"][1]], re.I):
-            position = start + match.start()
-            if not any(_inside(m["span"], [position, start + match.end()])
-                       for m in by_unit.get(unit["id"], [])):
-                raise VEError(f"UnrecordedSlot: {unit['id']}: [{position}, {start + match.end()})")
+        statuses[mid] = "navigation" if form in _LOCATION else "recorded"
     groups = _array(block, "groups")
-    active = active_reading_sets(doc["meta"].get("reading_sets", []))
+    for group in groups:
+        if type(group) is dict and type(group.get("spans")) is list:
+            grouped.update(group["spans"])
+    presentations = {}
+    for unit in doc["units"]:
+        rows = by_unit.get(unit["id"], [])
+        producing = [m for m in rows if m["form"] not in _LOCATION]
+        has_content = unit["content"] is not None
+        if has_content and unit["id"] not in grouped:
+            gap = _unrecorded(doc, unit, rows, displays)
+            if gap is not None:
+                raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
+        if not producing or unit["id"] in grouped:
+            continue
+        unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
+        if unsupported:
+            if has_content:
+                raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
+                              f"is not implemented in Python ({unit['id']})")
+            continue
+        for m in producing:
+            if not _surface_fits(doc, m):
+                raise VEError(f"MentionNotSlot: {m['id']}")
+        entity = [m for m in producing if m["target"]["kind"] == "entity"]
+        if len(entity) != len(producing):
+            if has_content:
+                raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
+                              f"is not implemented in Python ({unit['id']})")
+            continue
+        presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names, anchors)
+        for m in producing:
+            statuses[m["id"]] = "resolved"
+        if has_content:
+            presentations[unit["id"]] = presentation
+    references = [{"mention": mid, "unit": m["unit"], "form": m["form"], "target": m["target"],
+                   "status": statuses[mid]} for mid, m in mentions.items()]
     for group in groups:
         if type(group) is not dict or type(group.get("spans")) is not list or not group["spans"] or len(group["spans"]) > 16:
             raise VEError("InvalidInput: group")
@@ -484,12 +768,21 @@ def validate_discourse(doc):
             raise VEError("InvalidInput: group reading")
         if rs["status"] == "authored":
             raise VEError("UnsupportedProfile: authored discourse group elaboration is not implemented")
-        reading = next(r for r in rs["readings"] if r["id"] == group["reading"])
-        if group["reading"] == "same-witness" and not _same_witness(reading.get("content")):
-            raise VEError(f"WitnessSplit: {rs['id']}@{rs['version']}:same-witness")
+        name = f"{rs['id']}@{rs['version']}:{group['reading']}"
         for uid in group["spans"]:
             if uid not in units or units[uid]["content"] is not None or any(s["unit"] == uid and s is not rs for s in active):
                 raise VEError(f"IndependentFragment: {uid}")
+            if any(m["form"] not in _LOCATION for m in by_unit.get(uid, [])):
+                raise VEError(f"IndependentFragment: {uid}")
+        reading = next(r for r in rs["readings"] if r["id"] == group["reading"])
+        if not _same_witness(reading.get("content")):
+            raise VEError(f"WitnessSplit: {name}")
+        regenerated = group_reading(doc, group["spans"])
+        if regenerated is None:
+            raise VEError(f"InvalidInput: group {name} spans are outside the supported fragment")
+        if regenerated != reading["content"]:
+            raise VEError(f"ManifestMismatch: groups.{name}")
+        for uid in group["spans"]:
             units[uid]["status"] = units[rs["unit"]]["status"]
     joint = _joint(block, active)
     return {"references": references, "groups": groups, "joint": joint,

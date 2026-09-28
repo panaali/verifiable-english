@@ -164,6 +164,31 @@ def _parts(units):
             raise VEError("MIXED parts must partition their parent span")
 
 
+def _document_id(meta, source, fences):
+    """Bind checked metadata and all authored content, but keep removable weights and JSON
+    layout outside the evidence identity."""
+    identity_payload = {
+        "metadata": {key: value for key, value in meta.items() if key != "weights"},
+        "source": source.decode("utf-8"), "fences": fences}
+    return hashlib.sha256(
+        (meta["format"] + "\n").encode("ascii") + json.dumps(identity_payload, sort_keys=True,
+                                          ensure_ascii=False, separators=(",", ":"),
+                                          allow_nan=False).encode("utf-8")).hexdigest()
+
+
+def stored_identities(raw: bytes):
+    """The front matter, `source_id` and `document_id` of a stored document text: the decode and
+    identity of an imported or embedded document (discourse.md 4.1(10)), not its admission."""
+    meta, source, fences = _split(raw)
+    if not source:
+        raise VEError("document source is empty")
+    if type(meta.get("environment")) is not dict:
+        raise VEError("document needs an embedded environment")
+    from .discourse import base_environment
+    env = Environment(base_environment(meta))
+    return meta, source_id(source, env), _document_id(meta, source, fences)
+
+
 def load_document(path: str | Path):
     raw = Path(path).read_bytes()
     meta, source, fences = _split(raw)
@@ -279,17 +304,9 @@ def load_document(path: str | Path):
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
     sid = source_id(source, env)
-    # Bind checked metadata and all authored content, but keep removable weights
-    # and JSON layout outside the evidence identity.
-    identity_payload = {
-        "metadata": {key: value for key, value in meta.items() if key != "weights"},
-        "source": source.decode("utf-8"), "fences": fences}
-    document_id = hashlib.sha256(
-        (meta["format"] + "\n").encode("ascii") + json.dumps(identity_payload, sort_keys=True,
-                                          ensure_ascii=False, separators=(",", ":"),
-                                          allow_nan=False).encode("utf-8")).hexdigest()
+    document_id = _document_id(meta, source, fences)
     doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
-            "document_id": document_id,
+            "document_id": document_id, "directory": Path(path).parent,
             "units": compiled, "norms": norms,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
     if meta["format"] == "ve-document@2":

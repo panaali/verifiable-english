@@ -63,6 +63,8 @@ def test_profile_adapter_and_explicit_expansion(tmp_path):
 
 def test_empty_profile_preserves_base_meanings_and_changes_document_domain(tmp_path):
     source, front = _sample(tmp_path)
+    source = source.replace(b"It is deployed.", b"Api is deployed.")
+    front["units"][1]["span"][1] = len(source)
     front["discourse"] = {}
     newer = load_document(_write(tmp_path, front, source))
     older = {**front, "format": "ve-document@1", "environment": _environment()}
@@ -90,10 +92,19 @@ def test_unrecorded_and_wrong_surface_slots_fail(tmp_path):
     mention = front["discourse"]["mentions"].pop()
     with pytest.raises(VEError, match="UnrecordedSlot"):
         load_document(_write(tmp_path, front, source))
+    # a recorded mention on "is" leaves "It" unrecorded (the Lean route's order)
     mention["span"] = [source.index(b"is deployed"), source.index(b"is deployed") + 2]
     front["discourse"]["mentions"].append(mention)
-    with pytest.raises(VEError, match="MentionNotSlot"):
+    with pytest.raises(VEError, match="UnrecordedSlot"):
         load_document(_write(tmp_path, front, source))
+    # a recorded pronoun that is no slot of its sentence
+    named = source.replace(b"It is deployed.", b"Api is deployed.")
+    front["units"][1]["span"][1] = len(named)
+    front["discourse"]["anchors"][0]["span"] = [0, len(named)]
+    verb = named.index(b"is deployed")
+    front["discourse"]["mentions"][0]["span"] = [verb, verb + 2]
+    with pytest.raises(VEError, match="MentionNotSlot: m1"):
+        load_document(_write(tmp_path, front, named))
 
 
 def test_rejects_partial_overlap_and_stale_version(tmp_path):
@@ -120,7 +131,8 @@ def test_prior_quantifier_blocks_bare_pronoun(tmp_path):
     front["units"][1]["span"] = [cut, len(source)]
     front["discourse"]["anchors"][0]["span"] = [0, len(source)]
     front["discourse"]["mentions"][0]["span"] = [cut, cut + 2]
-    with pytest.raises(VEError, match="InaccessibleTarget"):
+    # the competing quantifier leaves no accessible candidate (spec beta)
+    with pytest.raises(VEError, match="UnresolvedReference: m1"):
         load_document(_write(tmp_path, front, source))
 
 
@@ -245,4 +257,202 @@ def test_group_propagates_status_and_rejects_independent_fragment(tmp_path):
     assert [u["status"] for u in load_document(path)["units"]] == ["OPEN", "OPEN"]
     front["units"][1]["content"] = {"ast": ["top"]}
     with pytest.raises(VEError, match="IndependentFragment"):
+        load_document(_write(tmp_path, front, source))
+
+
+# Regressions for the discourse reviews (manage-agents discourse-review-astra.final.md and
+# reviews/discourse-review-fable.md).
+
+def _units(sentences, contents=None, kinds=None):
+    source, units = b"", []
+    for i, sentence in enumerate(sentences):
+        uid = f"u{i + 1}"
+        start = len(source)
+        source += sentence.encode() + b"\n"
+        content = (contents or {}).get(uid)
+        kind = (kinds or {}).get(uid, "asserted" if content is not None else "exposition")
+        unit = {"id": uid, "span": [start, len(source)], "kind": kind, "meaning": "specified",
+                "support": "assumption" if content is not None else "none"}
+        if content is not None:
+            unit["content"] = {"ast": content}
+        units.append(unit)
+    return source, units
+
+
+def _front(source, units, mentions=(), names=None, extra=None, environment=None):
+    block = {"version": "ve.discourse@1",
+             "anchors": [{"id": "doc", "kind": "document", "label": "Policy", "span": [0, len(source)]}],
+             "names": names if names is not None else [{"constant": "api", "display": "Api", "scope": "doc"},
+                                                       {"constant": "alice", "display": "Alice", "scope": "doc"}],
+             "mentions": list(mentions)}
+    block.update(extra or {})
+    return {"format": "ve-document@2", "environment": environment or _environment(), "units": units,
+            "discourse": block}
+
+
+def _mention(source, mid, uid, text, form, target, occurrence=0):
+    index = -1
+    for _ in range(occurrence + 1):
+        index = source.index(text.encode(), index + 1)
+    return {"id": mid, "unit": uid, "span": [index, index + len(text.encode())], "form": form, "target": target}
+
+
+def test_unrecorded_surfaces_are_slots_with_or_without_a_block(tmp_path):
+    """Astra A1 (Python side): every reference surface of a content unit must be recorded."""
+    for sentence in ("This service is deployed.", "It is deployed.", "Its owner is deployed."):
+        source, units = _units(["Api is reviewed.", sentence],
+                               {"u1": ["unary", "reviewed", ["const", "api"]], "u2": ["unary", "active", ["const", "api"]]})
+        with pytest.raises(VEError, match="UnrecordedSlot: u2"):
+            load_document(_write(tmp_path, _front(source, units), source))
+        front = _front(source, units)
+        front["discourse"] = {}
+        with pytest.raises(VEError, match="UnrecordedSlot: u2"):
+            load_document(_write(tmp_path, front, source))
+
+
+def test_ordinal_reconstructs_its_coordination(tmp_path):
+    """Astra B: `the former`/`the latter` select a member of an earlier coordination."""
+    pair = {"kind": "entity", "name": "api", "pair": ["api", "alice"]}
+    source, units = _units(["Api and Alice are reviewed.", "The former is deployed."],
+                           {"u2": ["unary", "active", ["const", "api"]]})
+    front = _front(source, units, [_mention(source, "m1", "u2", "The former", "ordinal_pair", pair)])
+    doc = load_document(_write(tmp_path, front, source))
+    assert doc["discourse"]["presentations"]["u2"].strip() == "Api is deployed."
+    assert doc["discourse"]["references"][0]["status"] == "resolved"
+    # the reviewer's reproducer: `the latter` resolved to the first member
+    source, units = _units(["Api and Alice are reviewed.", "The latter is deployed."],
+                           {"u2": ["unary", "active", ["const", "api"]]})
+    front = _front(source, units, [_mention(source, "m1", "u2", "The latter", "ordinal_pair", pair)])
+    with pytest.raises(VEError, match="UnresolvedReference: m1"):
+        load_document(_write(tmp_path, front, source))
+    # no coordination before it: nothing to refer back to
+    source, units = _units(["Api is reviewed.", "The latter is deployed."],
+                           {"u2": ["unary", "active", ["const", "api"]]})
+    front = _front(source, units, [_mention(source, "m1", "u2", "The latter", "ordinal_pair", pair)])
+    with pytest.raises(VEError, match="UnresolvedReference: m1"):
+        load_document(_write(tmp_path, front, source))
+
+
+def _group_front(reading_content, reading_id="same-witness"):
+    source, units = _units(["A service is deployed.", "It is reviewed."], kinds={"u1": "asserted"})
+    data = _environment()
+    env = Environment({**data, "profiles": ["relational-fol@0"]})
+    front = _front(source, units, extra={"groups": [{"set": "rs1", "version": 1, "reading": reading_id,
+                                                     "spans": ["u1", "u2"]}]})
+    front["reading_sets"] = [{"id": "rs1", "unit": "u1", "version": 1, "status": "open", "readings": [
+        {"id": reading_id, "kind": "asserted", "content": reading_content,
+         "meaning_id": meaning_id(env, formula_from_data(env, reading_content)),
+         "admission": {"who": "author", "why": "shared service", "distinguishing_models": {}}}]}]
+    return source, front
+
+
+def test_group_reading_is_regenerated_from_the_spans(tmp_path):
+    """Astra A2 (Python side): the recorded shared-witness reading must be the spans' English."""
+    fused = ["exists", "item", ["and", ["unary", "active", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+    source, front = _group_front(fused)
+    assert [u["status"] for u in load_document(_write(tmp_path, front, source))["units"]] == ["OPEN", "OPEN"]
+    twice = ["exists", "item", ["and", ["unary", "reviewed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+    source, front = _group_front(twice)
+    with pytest.raises(VEError, match="ManifestMismatch: groups.rs1@1:same-witness"):
+        load_document(_write(tmp_path, front, source))
+    # Fable C: the witness check does not depend on the reading's id
+    split = ["and", ["exists", "item", ["unary", "active", ["var", 0]]], ["exists", "item", ["unary", "reviewed", ["var", 0]]]]
+    source, front = _group_front(split, reading_id="fused")
+    with pytest.raises(VEError, match="WitnessSplit: rs1@1:fused"):
+        load_document(_write(tmp_path, front, source))
+
+
+def _document_environment():
+    data = _environment()
+    data["vocabulary"]["sorts"]["document"] = {"description": "Document"}
+    data["vocabulary"]["constants"]["policy2"] = {"sort": "document", "description": "Policy 2"}
+    return data
+
+
+def _import_front(tmp_path, source_id, document_id, stored=True):
+    stored_source, stored_units = _units(["Api is reviewed in policy two."], {"u1": ["unary", "reviewed", ["const", "api"]]})
+    stored_front = {"format": "ve-document@1", "environment": {**_environment(), "profiles": ["relational-fol@0"]},
+                    "units": stored_units}
+    if stored:
+        (tmp_path / "policy2.ve.md").write_bytes(b"---\n" + json.dumps(stored_front).encode() + b"\n---\n" + stored_source)
+    source, units = _units(["Api is reviewed."], {"u1": ["unary", "reviewed", ["const", "api"]]})
+    pins = {"source_id": source_id, "document_id": document_id}
+    front = _front(source, units, environment=_document_environment(), extra={
+        "document_sort": "document",
+        "documents": [{"name": "policy2", "display": ["policy 2"], "refers": {"import": "policy2"}, "version": 2, **pins}],
+        "imports": {"policy2": {**pins, "bytes": "policy2.ve.md"}}})
+    return source, front
+
+
+def test_import_pins_are_enforced(tmp_path):
+    """Astra A5 (Python side): an import's bytes re-fingerprint to both pins."""
+    source, front = _import_front(tmp_path, "x", "y")
+    stored = load_document(tmp_path / "policy2.ve.md")
+    good = _import_front(tmp_path, stored["source_id"], stored["document_id"])
+    load_document(_write(tmp_path, good[1], good[0]))
+    for sid, did in [("0" * 64, stored["document_id"]), (stored["source_id"], "0" * 64)]:
+        source, front = _import_front(tmp_path, sid, did)
+        with pytest.raises(VEError, match="StaleTarget: policy2"):
+            load_document(_write(tmp_path, front, source))
+    source, front = _import_front(tmp_path, stored["source_id"], stored["document_id"])
+    front["discourse"]["documents"][0]["document_id"] = "1" * 64
+    with pytest.raises(VEError, match="ManifestMismatch: documents.policy2"):
+        load_document(_write(tmp_path, front, source))
+    # bytes absent: nothing to check here (the claim would be unconfirmed)
+    (tmp_path / "policy2.ve.md").unlink()
+    source, front = _import_front(tmp_path, "x", "y", stored=False)
+    load_document(_write(tmp_path, front, source))
+
+
+def test_empty_block_keeps_w2_reading_labels(tmp_path):
+    """Fable B4: a W2 document repeated as @2 with an empty block keeps its reading-labelled
+    report (the joint set is the product of the active open sets)."""
+    source, front = _sample(tmp_path)
+    source = source.replace(b"It is deployed.", b"Api is deployed.")
+    front["units"][1]["span"][1] = len(source)
+    front["discourse"] = {}
+    data = _environment()
+    env = Environment({**data, "profiles": ["relational-fol@0"]})
+    ast = front["units"][1]["content"]["ast"]
+    front["units"][1].pop("content")
+    front["reading_sets"] = [{"id": "rs6", "unit": "u2", "version": 1, "status": "open", "readings": [
+        {"id": "a", "kind": "asserted", "content": ast, "meaning_id": meaning_id(env, formula_from_data(env, ast)),
+         "admission": {"who": "author", "why": "recorded choice", "distinguishing_models": {}}}]}]
+    front["graph"] = {"root": "root", "nodes": [{"name": "root", "ast": ast, "label": "readings:rs6@1:0"}]}
+    result = check_document(_write(tmp_path, front, source))
+    assert result["admission"]["admitted"] is True
+
+
+def test_python_reports_only_what_it_checked(tmp_path):
+    """Fable B5: `resolved` only for elaborated mentions; forms Python does not elaborate are
+    recorded, and rejected on content units as UnsupportedProfile (not MentionNotSlot or a
+    resource limit); a location binding beside a pronoun is no resource limit."""
+    plural = {"kind": "entity", "members": ["api", "alice"]}
+    source, units = _units(["Api and Alice are reviewed.", "They are ready."])
+    front = _front(source, units, [dict(_mention(source, "m1", "u2", "They", "plural", plural), reading="distributive")])
+    doc = load_document(_write(tmp_path, front, source))
+    assert doc["discourse"]["references"][0]["status"] == "recorded"
+    units[1]["kind"], units[1]["support"] = "asserted", "assumption"
+    units[1]["content"] = {"ast": ["unary", "ready", ["const", "alice"]]}
+    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented"):
+        load_document(_write(tmp_path, front, source))
+    source, front = _sample(tmp_path)
+    front["discourse"]["mentions"].append(_mention(source, "m2", "u2", "deployed", "navigation",
+                                                   {"kind": "anchor", "name": "doc"}))
+    doc = load_document(_write(tmp_path, front, source))
+    assert [r["status"] for r in doc["discourse"]["references"]] == ["resolved", "navigation"]
+
+
+def test_legacy_profile_environment_still_loads_as_format_1(tmp_path):
+    """Fable B6: the @1 path does not require the v0.2 `profiles` list."""
+    from tests.test_views import vocabulary
+    source, units = _units(["Api is reviewed."], {"u1": ["unary", "reviewed", ["const", "api"]]})
+    front = {"format": "ve-document@1", "environment": vocabulary(), "units": units}
+    assert load_document(_write(tmp_path, front, source))["units"][0]["status"] == "CHECKED"
+
+
+def test_lean_only_block_fields_are_unsupported_not_misread(tmp_path):
+    source, front = _sample(tmp_path)
+    front["discourse"]["validity"] = [{"unit": "u1", "document": "x", "holds": True}]
+    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 validity claims are not implemented in Python"):
         load_document(_write(tmp_path, front, source))
