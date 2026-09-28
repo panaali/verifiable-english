@@ -208,11 +208,16 @@ class SpeechSource:
         if fenced:
             from .speech_english import parse_speech
             scope = effective_scope(self.env, self.units, sets)
+            latest = latest_reading_sets(sets)
             for unit in fenced:
                 text = fences[unit["id"]].strip()
                 parsed, parsed_kind = parse_speech(self.env, text, scope,
                                                    **self._fence_context(unit, text, sets))
-                if parsed_kind != unit["kind"]:
+                reading_set = latest.get(unit["id"])
+                effective_kind = (_reading_choice(unit, reading_set)["kind"]
+                                  if reading_set is not None and reading_set["status"] == "authored"
+                                  else unit["kind"])
+                if parsed_kind != effective_kind:
                     raise VEError("fence kind disagrees with unit")
                 unit["content"] = {"command" if parsed_kind == "instruction" else "question": parsed}
         self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)

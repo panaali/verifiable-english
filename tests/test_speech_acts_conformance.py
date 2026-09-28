@@ -1074,6 +1074,20 @@ def test_fenced_signed_reading_uses_derived_meaning(lean, tmp_path):
     assert a.meaning_ids["r"] == b.meaning_ids["r"] == le["questions"][0]["meaning_id"]
 
 
+def test_fence_kind_uses_signed_choice(lean, tmp_path):
+    env = F0()
+    click = command("require", "click_required", ["check"])
+    sets = [reading_set("u", 1, "authored", "instruction", click)]
+    units, (plain, fenced) = _fenced_pair(
+        tmp_path, "signed-kind", env, ["Click check.\n"],
+        [unit("u", 0, "asserted", {"ast": U("reviewed", "atlas")})], "u", reading_sets=sets)
+    a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+    le = elaborate(env, {"units": units, "reading_sets": sets})
+    assert a.meaning_ids == b.meaning_ids
+    assert [c.unit for c in a.commands if c.active] == [c.unit for c in b.commands if c.active] == \
+        [c["unit"] for c in le["commands"]] == ["u"]
+
+
 def _wire_mutations(value, prefix=(), *, include_null=False):
     """Replace every nested field and container, then probe required/extra keys."""
     replacements = (7, True, [], {}) + ((None,) if include_null else ())
