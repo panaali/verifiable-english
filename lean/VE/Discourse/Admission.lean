@@ -122,6 +122,30 @@ def importChain : Nat → List ByteArray → Option (List String)
 termination_by n bs => (n, bs.length)
 decreasing_by all_goals simp_wf <;> omega
 
+/-- The import graph of the stored chain: each document's source id names the source ids it
+imports (to depth `n`). -/
+def importNodesAt : Nat → List ByteArray → List VE.Route.DepNode
+  | 0, _ => []
+  | n + 1, bs => bs.flatMap fun b =>
+      let K := importsOf (jsonOf b)
+      ⟨sourceIdOf b, K.map Import.sourceId⟩ :: importNodesAt n (K.filterMap Import.bytes)
+
+def dedupNodes : List VE.Route.DepNode → List VE.Route.DepNode
+  | [] => []
+  | n :: ns => if (ns.map VE.Route.DepNode.name).contains n.name then dedupNodes ns else n :: dedupNodes ns
+
+/-- The import graph of a document: its own node, then the stored chain. -/
+def importNodes (D : DDoc) : List VE.Route.DepNode :=
+  dedupNodes (⟨D.sourceId, D.K.imports.map Import.sourceId⟩ :: importNodesAt 4 (D.K.imports.filterMap Import.bytes))
+
+/-- The nesting depth of the stored chain (5 means beyond the budget). -/
+def chainDepth : Nat → List ByteArray → Nat
+  | _, [] => 0
+  | 0, _ :: _ => 5
+  | n + 1, bs => 1 + (bs.map fun b => chainDepth n ((importsOf (jsonOf b)).filterMap Import.bytes)).foldl max 0
+
+def depthOf (D : DDoc) : Nat := chainDepth 5 (D.K.imports.filterMap Import.bytes)
+
 /-- 4.1(10): stored bytes re-fingerprint to their pins, the chain has no repeated source id,
 and nesting is within the budget. -/
 def integrityOk (j : Json) (K : Manifest) : Except String Unit := runAll [
@@ -252,7 +276,11 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
     | some k => .error ("DuplicateDeclaration: import " ++ k)
     | none => .ok (),
   fun _ => allOk (D.K.groups.flatMap Group.spans) fun u =>
-    req (!D.K.selfTruth.contains u && !(D.K.validity.map Validity.unit).contains u) ("IndependentFragment: " ++ u)]
+    req (!D.K.selfTruth.contains u && !(D.K.validity.map Validity.unit).contains u) ("IndependentFragment: " ++ u),
+  fun _ => match VE.Route.dependencyOrder (importNodes D) with
+    | .ok _ => .ok ()
+    | .error e => .error ("ImportCycle: " ++ e),
+  fun _ => req (decide (depthOf D ≤ 4)) "ResourceLimit: document nesting"]
 
 /-- The second phase: a validity claim's verdict from the outcome of checking its document. -/
 def verdictFor (D : DDoc) (prose : String) (check : ByteArray → ImportOutcome) (v : Validity) : Option Verdict :=

@@ -244,14 +244,16 @@ structure PostFacts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String
   importsNodup : (D.K.imports.map Import.key).Nodup
   groupedLabels : ∀ u ∈ D.K.groups.flatMap Group.spans,
     (!D.K.selfTruth.contains u && !(D.K.validity.map Validity.unit).contains u) = true
+  acyclic : ∃ order, VE.Route.dependencyOrder (importNodes D) = .ok order
+  depth : depthOf D ≤ 4
 
 theorem postOk_facts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula)
     (h : postOk D b bound = .ok ()) : PostFacts D b bound := by
   unfold postOk at h
   simp only [runAll_cons, runAll_nil, and_true] at h
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := h
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩ := h
   refine ⟨dup_nodup h1, fun g hg => ?_, fun v hv => ?_, fun u hu => ?_, dup_nodup h5, dup_nodup h6,
-    dup_nodup h7, dup_nodup h8, fun u hu => ?_⟩
+    dup_nodup h7, dup_nodup h8, fun u hu => ?_, ?_, by simpa using (req_ok _ _).mp h11⟩
   · have hg' := (allOk_iff _ _).mp h2 g hg
     simp only [runAll_cons, runAll_nil, and_true, req_ok, decide_eq_true_eq] at hg'
     obtain ⟨a, c, d⟩ := hg'
@@ -259,6 +261,9 @@ theorem postOk_facts (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : Strin
   · exact (req_ok _ _).mp ((allOk_iff _ _).mp h3 v hv)
   · exact (req_ok _ _).mp ((allOk_iff _ _).mp h4 u hu)
   · exact (req_ok _ _).mp ((allOk_iff _ _).mp h9 u hu)
+  · cases ho : VE.Route.dependencyOrder (importNodes D) with
+    | ok order => exact ⟨order, rfl⟩
+    | error e => simp [ho] at h10
 
 /-- A successful `@2` admission's facts, with its post-admission checks. -/
 theorem admit_facts2 (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
@@ -698,5 +703,27 @@ theorem self_truth_never_content (profiles : List String) (environment : Json) (
     refine ⟨this.2, by rw [F.premises]; simpa using this.1.1, this.1.2, ?_⟩
     unfold statusOf
     rw [if_pos (List.contains_iff_mem.mpr hu)]
+
+/-- Stratification: the embed/import chain is acyclic by source id and bounded. -/
+theorem import_acyclic (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
+    (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res) :
+    VE.Route.DagAcyclic (importNodes res.doc) ∧ depthOf res.doc ≤ 4 := by
+  rcases admit_cases profiles environment rv j fuel res h with ⟨_, r, _, rfl⟩ | ⟨_, _, n, _, _, _, ha⟩
+  · refine ⟨?_, by simp [depthOf, chainDepth, lift1, emptyManifest]⟩
+    intro a hp
+    have edge : ∀ x y, VE.Route.DepEdge (importNodes (lift1 r).doc) x y → False := by
+      rintro x y ⟨m, hm, _, hy⟩
+      simp [importNodes, importNodesAt, dedupNodes, lift1, emptyManifest] at hm
+      subst hm
+      simp [VE.Route.deps] at hy
+    have nopath : ∀ x y, VE.Route.DepPath (importNodes (lift1 r).doc) x y → False := by
+      intro x y hxy
+      induction hxy with
+      | edge he => exact edge _ _ he
+      | trans _ _ ih _ => exact ih
+    exact nopath a a hp
+  · obtain ⟨_, P⟩ := admit_facts2 profiles environment rv j _ res ha
+    obtain ⟨order, ho⟩ := P.acyclic
+    exact ⟨(VE.Route.dag_acyclic _ order ho).2.2.2, P.depth⟩
 
 end VE.Discourse

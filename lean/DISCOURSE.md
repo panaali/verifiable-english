@@ -64,7 +64,7 @@ to exactly the elaborated formula. `discourse_parseRender`, `discourse_renderInj
 **Documents and the wire (9.6).** `format1_unchanged`, `format1_profile_requires_format2`,
 `profile_adapter_base`, `admission_projects`, `discourse_report_sound`, `validity_self`, `validity_import`,
 `validity_unknown_never_checked`, `stale_import_rejected`, `validity_never_premise`, `self_truth_never_content`,
-`document_sort_conservative`, `Run.discourse_wire_acceptance`.
+`document_sort_conservative`, `import_acyclic` (the stored import chain passes the shared `dependencyOrder` and is within depth 4), `Run.discourse_wire_acceptance`.
 
 ## Modelling choices and deviations from the statements
 
@@ -115,7 +115,7 @@ to exactly the elaborated formula. `discourse_parseRender`, `discourse_renderInj
 
 - **Theorems:** `validity_independent` (it needs lemmas about rewriting a JSON object, which the toolchain's
   `RBNode` lacks without Batteries), `stale_target_rejected` and `discourse_wire_binding` (certificate envelopes
-  across two admissions), `import_acyclic` (a runtime chain check exists, no theorem), `manifest_choices_are_labels`,
+  across two admissions), `manifest_choices_are_labels`,
   `extension_rejected`.
 - **9.5 `discourse_uniqueDerivation`, `discourse_parseSound`, `discourse_oneReading`:** not stated. On the 9.5
   surface `parse` reads the presentation (core English) while a derivation yields the source text (discourse
