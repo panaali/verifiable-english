@@ -358,7 +358,7 @@ def test_fences_and_ast_content_go_through_annotated_admission(tmp_path):
 
 
 def test_news_coverage_table_matches_its_rows_and_the_run():
-    text = (NEWS / "coverage.md").read_text()
+    text = (NEWS / "coverage-w6a.md").read_text()
     labels = re.findall(r"^\| (\d+b?) \| .*? \| (DIRECT|REIFIED|OPAQUE|NO) \|", text, re.M)
     counts = {label: sum(1 for _, x in labels if x == label)
               for label in ("DIRECT", "REIFIED", "OPAQUE", "NO")}

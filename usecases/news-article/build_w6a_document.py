@@ -11,6 +11,8 @@ consequences (`ve-quantity-certificate@1`, found by `prove_quantity`; Lean
 checks them). Deterministic: rerun to regenerate; tests compare the output.
 
     python usecases/news-article/build_w6a_document.py [--check]
+
+It also writes `coverage.json`, the measured source partition.
 """
 from __future__ import annotations
 
@@ -27,6 +29,7 @@ from ve.model import FiniteModel  # noqa: E402
 from ve.units import erased_environment, prove_quantity, quantity_meaning_id  # noqa: E402
 
 OUTPUT = HERE / "news-w6a.ve.md"
+COVERAGE = HERE / "coverage.json"
 FIXTURE = json.loads((HERE / "w6a-quantity-fixtures.json").read_text())
 SOURCE = (HERE / "source.md").read_bytes()
 
@@ -200,9 +203,23 @@ def build():
     return b"---\n" + json.dumps(meta, indent=1, ensure_ascii=False).encode() + b"\n---\n" + SOURCE
 
 
+def partition(data):
+    """The measured partition of the built document (`coverage.json`, read by
+    tools/coverage_dashboard.py)."""
+    import tempfile
+    from ve.document import coverage, load_document
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / OUTPUT.name
+        path.write_bytes(data)
+        measured = coverage(load_document(path))
+    return (json.dumps({"document": OUTPUT.name, **measured}, indent=1, sort_keys=True) + "\n").encode()
+
+
 if __name__ == "__main__":
     data = build()
+    measured = partition(data)
     if "--check" in sys.argv:
-        sys.exit(0 if OUTPUT.read_bytes() == data else 1)
+        sys.exit(0 if OUTPUT.read_bytes() == data and COVERAGE.read_bytes() == measured else 1)
     OUTPUT.write_bytes(data)
-    print(f"wrote {OUTPUT} ({len(data)} bytes)")
+    COVERAGE.write_bytes(measured)
+    print(f"wrote {OUTPUT} ({len(data)} bytes) and {COVERAGE}")
