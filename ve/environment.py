@@ -161,8 +161,11 @@ class Environment:
             if data["spec_revision"] != profile_registry.SPEC_REVISION:
                 raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
             order = family == "order"
-            if extended and not {"order@0", "time@0"} <= set(data["profiles"]):
-                raise UnsupportedProfile("ve-units@1 requires order@0 and time@0")
+            if extended:
+                from .units import W6_PROFILES
+                if tuple(data["profiles"]) not in W6_PROFILES:
+                    raise UnsupportedProfile("ve-units@1 requires exactly order@0, relational-fol@0 "
+                                             "and time@0, optionally with documents@1")
         elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
@@ -236,10 +239,12 @@ class Environment:
                 if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                              and not (route and "data@0" in data["profiles"] and sort == STRING_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
-            argument_units = {}
+            # An explicit map, even an empty one, is part of the submitted identity.
+            argument_units = None
             if "argument_units" in entry:
                 from .units import validate_slot_units
-                argument_units = validate_slot_units(entry["argument_units"], args, units)
+                argument_units = MappingProxyType(
+                    validate_slot_units(entry["argument_units"], args, units))
             if flagged and len(args) != 2:
                 raise VEError("Functional and total flags require a binary predicate")
             if flagged and INT_SORT in args:
@@ -262,7 +267,7 @@ class Environment:
                                              verbalisation, negative, regulated,
                                              entry.get("functional"), entry.get("total"),
                                              canonical_json(entry["defined"]) if defined else None,
-                                             MappingProxyType(argument_units))
+                                             argument_units)
         regulated_names = [n for n, p in predicates.items() if p.regulated is not None]
         if len(regulated_names) > 64:
             raise ResourceLimit("regulated predicates")
@@ -328,6 +333,14 @@ class Environment:
                              ("unit_schema", data["unit_schema"] if extended else None),
                              ("units", MappingProxyType(units) if extended else None)):
             object.__setattr__(self, field, value)
+        if extended:
+            from .units import validate_extension
+            validate_extension(self.profiles, units, sorts, constants)
+            # Rust and Lean digest the submitted environment; Python digests
+            # to_dict(). Any spelling that does not survive the round trip would
+            # give the same input two identities, so it is rejected.
+            if canonical_json(self.to_dict()) != canonical_json(data):
+                raise VEError("W6 environment does not round-trip to its canonical declaration")
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
             compile_definitions(self, self.definition_entries, version=self.environment_id)
@@ -365,7 +378,7 @@ class Environment:
                 entry["total"] = declaration.total
             if declaration.defined is not None:
                 entry["defined"] = loads_json(declaration.defined)
-            if declaration.argument_units:
+            if declaration.argument_units is not None:
                 entry["argument_units"] = dict(declaration.argument_units)
             return entry
 
