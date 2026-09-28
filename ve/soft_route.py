@@ -27,7 +27,9 @@ def _run(case):
         raise VEError(f"soft route returned invalid JSON: {completed.stderr.strip()}") from exc
     row = rows[0]
     if row.get("status") == "error":
-        raise VEError(row.get("error", "soft route rejected input"))
+        error = VEError(row.get("error", "soft route rejected input"))
+        error.code = row.get("code", error.code)
+        raise error
     if completed.returncode != 0 or row.get("status") != "ok":
         raise VEError(f"soft route failed: {completed.stderr.strip()}")
     return row

@@ -20,7 +20,8 @@ from ve.surface.softnorms import parse_header_options, render_header_options
 from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
-from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows, main as conformance_main
+from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows,
+                                    compare_rejected, main as conformance_main)
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -147,6 +148,25 @@ def test_soft_validation_classes_match_python_and_lean(raw, rules, diagnostic):
     assert str(python_error.value) == str(lean_error.value) == diagnostic
 
 
+@pytest.mark.parametrize("raw,rules,code", [
+    (env(), [norm("a", "x_required", True, mode="default")],
+     "SOFT_MISSING_EXCEPTION"),
+    (env({"ranks": ["a"], "ties": [["a"]], "outranking": {"mode": "strict"}}),
+     [], "SOFT_INVALID_TIES_PAIR"),
+])
+def test_reported_diagnostic_codes(raw, rules, code):
+    with pytest.raises(VEError) as python_error:
+        SoftNormDocument(SoftEnvironment(raw), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "invalid", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert python_error.value.code == lean_error.value.code == code
+    assert python_error.value.to_dict()["code"] == code
+
+
+def test_rejection_fixtures_and_generated_soft_blocks_share_codes():
+    assert compare_rejected() == 59
+
+
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
                                      tuple("abcdefgh")])
 def test_english_switches_round_trip_all_declared_parties(parties):
@@ -259,7 +279,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 11
+    assert report["rejected_inputs"] == 59
 
 
 @pytest.mark.parametrize("role,sign,effect", [

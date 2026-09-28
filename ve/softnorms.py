@@ -19,6 +19,46 @@ from .search import _used_predicates
 from .wire import digest
 
 
+def soft_diagnostic_code(message: str) -> str:
+    """Stable soft rejection class; message wording and names are not part of the code."""
+    checks = (
+        ('needs an exception', 'SOFT_MISSING_EXCEPTION'),
+        ('invalid ties pair', 'SOFT_INVALID_TIES_PAIR'),
+        ('invalid outranks pair', 'SOFT_INVALID_OUTRANKS_PAIR'),
+        ('invalid soft block', 'SOFT_INVALID_BLOCK'),
+        ('invalid outranking flag', 'SOFT_INVALID_OUTRANKING'),
+        ('invalid decider', 'SOFT_INVALID_DECIDER'),
+        ('MissingExceptionDecider:', 'SOFT_MISSING_DECIDER'),
+        ('strict outranking has no decider', 'SOFT_STRICT_OUTRANKING_DECIDER'),
+        ('invalid soft name', 'SOFT_INVALID_NAME'),
+        ('DuplicateDeclaration:', 'SOFT_DUPLICATE_DECLARATION'),
+        ('UnknownRank:', 'SOFT_UNKNOWN_RANK'),
+        ('TieAgainstOrder:', 'SOFT_TIE_AGAINST_ORDER'),
+        ('DependencyCycle:', 'SOFT_DEPENDENCY_CYCLE'),
+        ('UnknownSymbol: party', 'SOFT_UNKNOWN_PARTY'),
+        ('strict and declares an exception', 'SOFT_STRICT_EXCEPTION'),
+        ('exception sufficient must be an array', 'SOFT_EXCEPTION_ARRAY'),
+        ('exception necessary must be an array', 'SOFT_EXCEPTION_ARRAY'),
+        ('invalid factors', 'SOFT_INVALID_FACTORS'),
+        ('alterable of rule', 'SOFT_INVALID_ALTERABLE'),
+        ('HardConstraintAltered:', 'SOFT_HARD_CONSTRAINT'),
+        ('exception condition of rule', 'SOFT_INVALID_EXCEPTION_CONDITION'),
+        ('SoftOverHard:', 'SOFT_OVER_HARD'),
+        ('ResourceLimit:', 'SOFT_RESOURCE_LIMIT'),
+        ('UnsupportedProfile:', 'SOFT_UNSUPPORTED_PROFILE'),
+        (' must be an array', 'SOFT_INVALID_ARRAY'),
+        ('invalid soft fields', 'SOFT_INVALID_RULE_FIELDS'),
+        ('invalid mode for rule', 'SOFT_INVALID_RULE_FIELDS'),
+        ('hard of rule', 'SOFT_INVALID_RULE_FIELDS'),
+    )
+    return next((code for marker, code in checks if marker in message), 'SOFT_INVALID_INPUT')
+
+
+def _code_soft_error(exc: VEError) -> VEError:
+    exc.code = soft_diagnostic_code(str(exc))
+    return exc
+
+
 def soft_digest(domain, payload):
     """The soft norm wire permits null for inherited exception deciders."""
     encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False,
@@ -56,6 +96,13 @@ class SoftEnvironment(Environment):
     it without changing the bytes of environments that lack the profile.
     """
     def __init__(self, data, *, generated=False):
+        try:
+            self._init_soft(data, generated=generated)
+        except VEError as exc:
+            _code_soft_error(exc)
+            raise
+
+    def _init_soft(self, data, *, generated=False):
         if type(data) is not dict or 'soft-norms@0' not in data.get('profiles', []):
             raise UnsupportedProfile('soft-norms@0 is required')
         if 'norms@0' not in data['profiles']:
@@ -176,6 +223,14 @@ class SoftRule:
 
 
 def decode_rule(env: SoftEnvironment, content):
+    try:
+        return _decode_rule(env, content)
+    except VEError as exc:
+        _code_soft_error(exc)
+        raise
+
+
+def _decode_rule(env: SoftEnvironment, content):
     if type(content) is not dict or set(content) != {'norm'} or type(content['norm']) is not dict:
         raise VEError('InvalidInput: expected norm object')
     raw = content['norm']
@@ -269,6 +324,13 @@ def _or_nonempty(items):
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises."""
     def __init__(self, env: SoftEnvironment, units):
+        try:
+            self._init_soft(env, units)
+        except VEError as exc:
+            _code_soft_error(exc)
+            raise
+
+    def _init_soft(self, env: SoftEnvironment, units):
         if not isinstance(env, SoftEnvironment):
             raise UnsupportedProfile('soft-norms@0 is required')
         self.env = env

@@ -704,7 +704,49 @@ every declared sufficient or necessary condition of each `excepted_N` in the con
 about whether a decider of `excepted_N` or `outweighs` takes `π`'s instructions into account, and nothing about base
 facts the environment did not attribute; the report states both limits next to the result.
 
-## 8. Diagnostics (shared text in Python and Lean unless marked)
+## 8. Diagnostics
+
+Soft rejection responses carry a stable `code` alongside the human-readable `error`.
+Python soft validation exceptions expose the same value as `VEError.code` and in
+`VEError.to_dict()`. The code, rather than message wording or embedded names, is
+the Python/Lean conformance contract. Existing P0 and W1 responses keep their
+codes. This is the complete soft code table; the last row covers inherited W1
+and malformed-input diagnostics on the soft route.
+
+| Code | Rejection class |
+|---|---|
+| `SOFT_MISSING_EXCEPTION` | Default rule has no complete exception object. |
+| `SOFT_INVALID_TIES_PAIR` | Malformed, reflexive, or repeated ordered ties pair. |
+| `SOFT_INVALID_OUTRANKS_PAIR` | Malformed, reflexive, or repeated outranks pair. |
+| `SOFT_INVALID_BLOCK` | Soft block has invalid fields or shape. |
+| `SOFT_INVALID_OUTRANKING` | Outranking flag has invalid fields, shape, or mode. |
+| `SOFT_INVALID_DECIDER` | Present decider has invalid type, length, or value. |
+| `SOFT_MISSING_DECIDER` | Required outranking or exception decider is absent. |
+| `SOFT_STRICT_OUTRANKING_DECIDER` | Strict outranking declares a decider. |
+| `SOFT_INVALID_NAME` | Invalid soft declaration or reserved name. |
+| `SOFT_DUPLICATE_DECLARATION` | Duplicate party, rank, or unordered tie. |
+| `SOFT_UNKNOWN_RANK` | Rank reference is undeclared. |
+| `SOFT_TIE_AGAINST_ORDER` | Tie contradicts strict outranking. |
+| `SOFT_DEPENDENCY_CYCLE` | Rank or unfolded norm dependency cycle. |
+| `SOFT_UNKNOWN_PARTY` | Party reference is undeclared. |
+| `SOFT_STRICT_EXCEPTION` | Strict rule declares an exception. |
+| `SOFT_EXCEPTION_ARRAY` | Sufficient or necessary field is not an array. |
+| `SOFT_INVALID_FACTORS` | Exception factors have invalid shape or size. |
+| `SOFT_INVALID_ALTERABLE` | Alterable parties are unsorted, repeated, or malformed. |
+| `SOFT_HARD_CONSTRAINT` | A hard rule is default or alterable. |
+| `SOFT_INVALID_EXCEPTION_CONDITION` | Exception condition mentions a forbidden predicate. |
+| `SOFT_OVER_HARD` | Default rule takes precedence over strict rule. |
+| `SOFT_RESOURCE_LIMIT` | A soft route resource limit is exceeded. |
+| `SOFT_UNSUPPORTED_PROFILE` | Soft route profile gate fails. |
+| `SOFT_INVALID_ARRAY` | A soft block list has the wrong shape. |
+| `SOFT_INVALID_RULE_FIELDS` | Mode, rank, hard, or another typed soft rule field is invalid. |
+| `SOFT_INVALID_INPUT` | Other invalid input, including inherited W1 checks. |
+
+The code table is ordered: where several descriptions match an error, the
+first applicable class wins. New soft rejection paths must be assigned a
+specific code or intentionally use `SOFT_INVALID_INPUT` in both validators.
+
+### Human-readable diagnostics
 
 | Text | When | Kind |
 |---|---|---|
