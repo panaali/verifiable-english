@@ -387,14 +387,18 @@ class ArgumentResult:
                 "unresolved_obligations": list(self.unresolved_obligations), "composed": self.composed,
                 "proof": "Python replay checked" if self.composed else "not_checked", "intent": "unconfirmed",
                 "profiles": list(self.profiles), "lean_checked": self.lean_checked,
-                "lean_status": self.lean_status, "lean_outcome": self.lean_outcome,
-                "lean_detail": self.lean_detail,
+                "lean_status": self.lean_status, "lean_detail": self.lean_detail,
                 "approval": "unassessed", "edges": list(self.edges), "errors": list(self.errors),
                 "composition": self.composition, "checker_build": self.checker_build,
                 "contradictory_premises": list(self.contradictory_premises),
                 "warnings": list(self.warnings)}
         if self.premises:
             data["premises"] = self.premises
+        # Only `unavailable` is new in ve-argument-tableau@1 records; every other
+        # outcome is implied by lean_checked and lean_detail, and is left out so
+        # those records keep their identity (as `premises` is left out when empty).
+        if self.lean_outcome == "unavailable":
+            data["lean_outcome"] = self.lean_outcome
         data["record_id"] = hashlib.sha256(b"ve-argument-diagnostic-record-v1\n" + json.dumps(
             data, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode("ascii")).hexdigest()
         return data

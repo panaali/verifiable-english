@@ -501,7 +501,42 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert outcomes["rejecting"] == ("rejected", "Lean-checked: no", "rejected")
     for name in ("absent", "crash", "hang"):
         assert outcomes[name] == ("unavailable", "Lean-checked: unavailable", "unavailable"), name
-    assert check_argument(graph).to_dict()["lean_outcome"] == "not_requested"
+    assert check_argument(graph).lean_outcome == "not_requested"
+
+
+# ve-argument-tableau@1 record ids of worked_examples() at df874bd (before P0-3), with checker_build
+# (a digest of the checker sources, which changes with any code change) fixed to 64 zeros.
+V1_RECORD_IDS = {
+    None: {"g1": "05e8935ca20c23cf17b6216d685492006ca2da220c9cd61a5fe33717917a9acf",
+           "g2": "2fa0892d7f53f1ebeb06e9741768e3e42d73ccc1cb633eb16f758385d99e7ece",
+           "g3": "c822b6c8608a1d6a56d66cb864d3f54920aabf049476af56d297749c15542cdf"},
+    "lean": {"g1": "05e8935ca20c23cf17b6216d685492006ca2da220c9cd61a5fe33717917a9acf",
+             "g2": "ed1144ee5c21cd71564fcb702ffc62ad25d6684cdbe1f08d026162b6726ed45c",
+             "g3": "d887e4db1243355c94ec8652f0b1ca3c9fcc54ba405a3953b3c70edf1871f2bf"},
+    "rejecting": {"g1": "05e8935ca20c23cf17b6216d685492006ca2da220c9cd61a5fe33717917a9acf",
+                  "g2": "f68c049213cec9920cc72e592bdcc5b75032f93cef770a70aba46ccbe282f16e",
+                  "g3": "9ae3c6a9bfb48b706fb7a8fe0dc8200610156d7f0e568a6a92c1c3ea341f6722"},
+}
+
+
+def test_argument_record_identity_is_unchanged_except_for_unavailability(tmp_path, monkeypatch):
+    """lean_outcome must not change the id of any record a v1 checker could already produce."""
+    from ve import argument, check_argument
+    monkeypatch.setattr(argument, "_checker_build", lambda: "0" * 64)
+    from ve.argument_fixtures import worked_examples
+    rejecting = _fake_lean(tmp_path, "print(json.dumps([{'id': c['id'], 'status': 'ok', 'valid': False} "
+                                     "for c in cases]))", "rejecting")
+    executables = {None: None, "rejecting": rejecting}
+    if (LEAN_BIN / "ve_conformance").exists():
+        executables["lean"] = LEAN_BIN / "ve_conformance"
+    for key, executable in executables.items():
+        for name, graph in worked_examples().items():
+            record = check_argument(graph, lean_executable=executable).to_dict()
+            assert "lean_outcome" not in record, (key, name)
+            assert record["record_id"] == V1_RECORD_IDS[key][name], (key, name)
+    unavailable = check_argument(worked_examples()["g2"], lean_executable=tmp_path / "absent").to_dict()
+    assert unavailable["lean_outcome"] == "unavailable"
+    assert unavailable["lean_status"] == "Lean-checked: unavailable"
 
 
 def test_cli_reports_checker_unavailable_with_its_own_exit_code(tmp_path, capsys):
