@@ -32,6 +32,9 @@ RUST = ROOT / "rust/target/release/ve"
 
 @pytest.fixture(scope="module")
 def lean_executable():
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
+        return LEAN
     if not LEAN.exists():
         lake = shutil.which("lake")
         if lake is None:
@@ -44,6 +47,9 @@ def lean_executable():
 
 @pytest.fixture(scope="module")
 def rust_executable():
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert RUST.is_file(), f"gate Rust build missing: {RUST}"
+        return RUST
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is required for the W1 wire gate")

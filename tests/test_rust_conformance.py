@@ -28,6 +28,10 @@ def fixture(name):
 
 @pytest.fixture(scope='session')
 def rust_executable():
+    if os.environ.get('VE_RUST_PREBUILT'):
+        binary = ROOT/'rust/target/release/ve'
+        assert binary.is_file(), f'gate Rust build missing: {binary}'
+        return binary
     cargo = shutil.which('cargo')
     if not cargo: pytest.skip('cargo is not available')
     env = {**os.environ, 'CARGO_HOME': str(ROOT/'.cargo-home'), 'CARGO_TARGET_DIR': str(ROOT/'rust/target')}

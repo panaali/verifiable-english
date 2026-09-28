@@ -102,7 +102,9 @@ path or stdin. Exit 0 means every case was evaluated, 1 means a case was
 rejected, and 2 means malformed restricted JSON or incorrect invocation.
 Logical false is a successful result. Rejections have `{id, status: "error",
 error: string}`. `expected` and `expected_refutes` are never read by Lean.
-With no `lake`, Python golden checks run but Lean checks are explicitly skipped.
+With no `lake`, standalone pytest skips Lean checks. The full verification
+entry point is `python3 tools/gate.py`, which requires Lean and fails on any
+unlisted skip. Its checked-in optional policy is `tools/gate-optional.json`.
 
 The bridge validates vocabulary declarations, typed ASTs and model inventories.
 Successful model decoding is now proved to imply semantic admissibility.
@@ -148,9 +150,10 @@ python conformance/generate.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest tests/test_rust_conformance.py -q
 ```
 
-The Python test builds Rust when `cargo` is available, otherwise skips its Rust
-checks. It similarly skips Lean checks when `lake` is absent. Available tools
-that fail to build cause test failures, not skips. It checks every fixture file
+Standalone Python tests build Rust when `cargo` is available, otherwise skip
+its Rust checks. They similarly skip Lean checks when `lake` is absent. The
+full gate builds each backend once, runs native `cargo test`, reuses those
+artifacts, and fails if either required backend is missing. It checks every fixture file
 above, including the new countermodels; the original Python/Lean test remains
 unchanged. CLI regressions check that an oversized JSONL record produces one
 error and later records still run, and that empty premises files are rejected.
