@@ -34,7 +34,7 @@
   "reviewed_broad_handlers": {
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
-    "ve/assist/cli.py:main": "CheckerUnavailable is caught first and exits 5; other failures print an error and exit 2",
+    "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
     "ve/assist/proposer.py:_call": "the language-model backend boundary; a proposer failure is logged, and proposals are untrusted input that is checked afterwards",
     "ve/assist/recovery.py:RecoveryService._command": "the command error is journalled by exception type and re-raised or recorded; nothing is converted into a verdict",
     "ve/assist/recovery.py:RecoveryService._legacy_command": "as _command, for the legacy journal format",

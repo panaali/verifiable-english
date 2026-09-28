@@ -1460,7 +1460,7 @@ def parse_english_argument(env, source, **options):
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
     graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
-    result = check_argument(graph, search=False)
+    result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
         raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
     return graph
