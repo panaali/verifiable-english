@@ -27,6 +27,7 @@ CHECKS = (
     ("uv", "run", "--frozen", "--group", "dev", "python", "tools/check_python_layers.py"),
     ("python3", "tools/check_lean_imports.py"),
     ("python3", "tools/check_rust_deps.py"),
+    ("python3", "tools/test_layer_policy.py"),
 )
 
 
@@ -98,13 +99,14 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     for path in paths:
         if path.startswith("tests/test_") and path.endswith(".py"):
             layers[path] = test_layer(ROOT / path) if (ROOT / path).exists() else 1
-    minimum = 1 if full or not paths or None in layers.values() else min(layers.values())
+    fallback = full or not paths or None in layers.values()
+    minimum = 1 if fallback else min(layers.values())
     classified = {path.relative_to(ROOT).as_posix(): test_layer(path) for path in TESTS}
     selected = sorted(path for path, layer in classified.items()
                       if layer >= minimum or path in ALWAYS or path in paths)
-    lean = (full or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
+    lean = (fallback or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
             or not (ROOT / "lean/.lake/build/bin/ve_conformance").exists())
-    rust = full or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
+    rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
     rust_binary = (rust or (any("rust/target/" in (ROOT / p).read_text()
                                or "VE_W5_RUST_BIN" in (ROOT / p).read_text()
                                for p in selected)
