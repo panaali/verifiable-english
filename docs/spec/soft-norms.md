@@ -358,8 +358,10 @@ A soft document `(E, T)` is well-formed when, in this order:
    tree. A strict child of a default parent is allowed.
 6. `hard: true` implies `mode = strict` and `alterable = ∅` (`HardConstraintAltered: rule <n>`).
 7. Exception conditions are typed over the rule's context and mention base predicates of `E` only (3.2).
-8. The elaborated `T′` (section 5) is within `MAX_NODES`: at most 8 carve-outs per rule, and the guards and
-   carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived carve-out`),
+8. `E′` is within `MAX_IDENTIFIER_BYTES` and `MAX_PREDICATES`; the elaborated `T′` (section 5) is within
+   `MAX_NODES`: at most 8 carve-outs per rule, and the
+   guards and carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived
+   carve-out`); each generated soft premise is within `MAX_DEPTH` and `MAX_NODES` (8, 6.11),
    and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
    `DualGuardCycle` hint when the cycle is absent on `T` (5.2).
 
@@ -820,13 +822,14 @@ the message, a name, or other input.
 | 6.1 | **Semantic checks.** `outranks` is acyclic | `SOFT_DEPENDENCY_CYCLE` |
 | 6.2 | No tie between comparable ranks | `SOFT_TIE_AGAINST_ORDER` |
 | 6.3 | Ties are distinct as unordered pairs | `SOFT_DUPLICATE_DECLARATION` |
-| 6.4 | *Inherited:* the guards and carve-outs of every rule of `T`, in order, are within W1's one document budget (`MAX_NODES`, norms.md 11.5), `SOFT_RESOURCE_LIMIT`; then author precedence is acyclic | `SOFT_RESOURCE_LIMIT`, `SOFT_DEPENDENCY_CYCLE` |
-| 6.5 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
-| 6.6 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
-| 6.7 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
-| 6.8 | Each rule, in order: with its derived carve-out, at most 8 carve-outs | `SOFT_RESOURCE_LIMIT` |
-| 6.9 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
-| 6.10 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.4 | `E′` is within the vocabulary limits: each decision predicate name (the `excepted` names, then the `off` names, then the `outweighs` names, 1.3), in order, is within `MAX_IDENTIFIER_BYTES`; then `E′` declares at most `MAX_PREDICATES` predicates | `SOFT_RESOURCE_LIMIT` |
+| 6.5 | *Inherited:* the guards and carve-outs of every rule of `T`, in order, are within W1's one document budget (`MAX_NODES`, norms.md 11.5), `SOFT_RESOURCE_LIMIT`; then author precedence is acyclic | `SOFT_RESOURCE_LIMIT`, `SOFT_DEPENDENCY_CYCLE` |
+| 6.6 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
+| 6.7 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
+| 6.8 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
+| 6.9 | Each rule, in order: with its derived carve-out, at most 8 carve-outs | `SOFT_RESOURCE_LIMIT` |
+| 6.10 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
+| 6.11 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
 
 A standalone environment (the English layer, generated `E′`) runs the same
 table with no norm objects. A single norm unit decoded on its own (a quoted
@@ -852,6 +855,8 @@ one phase, must produce the same code in Python and Lean.
 | `DuplicateDeclaration: rank <a>` / `party <π>` | duplicate names in the `soft` block | error |
 | `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` | field consistency (3.1, 3.2) | error |
 | `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` on unfolding; more than 16 ranks; more than 8 parties | error |
+| `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
+| `ResourceLimit: generated soft premise <label>` | a generated premise beyond `MAX_DEPTH` or `MAX_NODES` (6.11) | error |
 | `UnsupportedProfile: soft-norms@0 requires norms@0` | profile gate | error |
 | `RankAgainstPrecedence: rule <n> over <m>` | author edge against the ranks (4.1) | warning |
 | `Overlap(<n>, <m>)` | two same-sign rules both selecting (W1) | warning |
