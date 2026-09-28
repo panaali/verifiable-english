@@ -960,6 +960,10 @@ import VE.Alternatives.Wire
 #print axioms VE.Alternatives.Replay.alternatives_wire_dilemma_sound
 #print axioms VE.Alternatives.Replay.alternatives_wire_followable_sound
 #print axioms VE.Alternatives.Replay.sourceOf_ok
+#print axioms VE.Alternatives.Admission.report_consequence
+#print axioms VE.Alternatives.Run.runAdmission_sound
+#print axioms VE.Alternatives.Run.alternatives_wire_acceptance
+#print axioms VE.Alternatives.validate_sound_decoded
 #print axioms VE.Alternatives.allowsF_denote
 #print axioms VE.Alternatives.allowsF_wellFormed
 #print axioms VE.Alternatives.altChain_hc

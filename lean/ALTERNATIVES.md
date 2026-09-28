@@ -21,6 +21,7 @@ no `lean/VE/Norms/*` and no `lean/VE/Route/*` source changed (`python3 VE/Route/
 | `Examples.lean` | build-time `#guard` regressions on the 8.1 fixture shapes (see below) |
 | `Wire.lean` | profile gate, the W1 view (block stripped), strict block decoder, verbalisations, base units and the regenerated `table_complete`, `decodeAltSource`, `alt-elaborate` outputs |
 | `Replay.lean` | source-bound conflict, followability, dilemma and entailment packages and the wire theorems |
+| `Admission.lean` | W2 document and graph admission with regenerated slot and layer leaves, source-bound certificate checks and report consequence |
 | `Run.lean`, `../AlternativesMain.lean` | the `ve_alternatives_route` executable |
 
 ## Conventions
@@ -58,6 +59,7 @@ Names have prefix `VE.Alternatives.`.
 | `dilemma_expansion` | On a document expansion whose base restriction satisfies the slot premises, a typed chooser at which `¬followable°` holds has no clear alternative. |
 | `followable_eval_iff_denote` | Finite evaluation of `¬followable°` agrees with its denotation. |
 | `validate_sound` | Successful validation (with the Bridge decoder's `M.Valid`) gives `backgroundValidAlt`, `Γ_base` by evaluation, `BaseAdmissibleAlt` and the rows and existence facts. |
+| `validate_sound_decoded` | Successful validation of a decoded scenario gives the same conclusion; its decoder supplies structural validity. |
 | `scenarioConflict_sound` | A conflict formula true at a typed tuple of a validated scenario refutes conflict-freedom of the model and `AltConflictFree`. |
 | `alt_prefix_satisfaction`, `alt_conflictFree_prefix` | W1's prefix characterisation and local test, over the extended base. |
 | `altRoute`, `alt_route_backgroundSound`, `alt_route_backgroundComplete` | The composed frozen P0 route of the inlined document with `BaseAdmissibleAlt` as input admissibility; `backgroundAlt` is sound and complete for its output. |
@@ -66,6 +68,7 @@ Names have prefix `VE.Alternatives.`.
 | `Replay.alternatives_wire_followable_sound` | A raw followability replay (CONFLICT-FREE packages and an accepted followability package): decoding, well-formedness, `AltConflictFree` and the FOLLOWABLE claim of `followable_sound`. |
 | `Replay.alternatives_wire_dilemma_sound` | A raw dilemma replay: decoding, well-formedness, `AltConflictFree`, successful validation of the witness with its rows, a typed chooser, `¬followable°` evaluated true, and the refutation of the document-wide claim. |
 | `Replay.alternatives_wire_acceptance` | A raw entailment replay with an accepted certificate over `backgroundAlt ++ layer premises ++ premises`: the conclusion under the direct semantics with the slot premises, and, given `AltConflictFree` and base formulas, over every `BaseAdmissibleAlt` structure. |
+| `Run.alternatives_wire_acceptance` | A raw W2 admission answer equals the checked report bound to the complete alternatives source; its root follows from regenerated premises and the remaining report assumptions. |
 
 The remaining theorems are helper lemmas (typing of the bodies and premises, denotation lemmas of
 the profile words, the Boolean checks' soundness, list lemmas) audited with the same allowlist.
@@ -96,6 +99,7 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 | `alt-conflict` | `packages`, or `witness` (`model`, `outcomes`, `target`, `tuple`) | `CONFLICT-FREE` / `CONFLICT` / `UNKNOWN` |
 | `alt-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `outcomes`, `chooser`) | `FOLLOWABLE` / `DILEMMA` (with the diagnosis) / `UNKNOWN` / `not computed` |
 | `alt-certificate` | `premises`, `conclusion`, `certificate` | `valid`, `background`, `layers`, `conditional_on` |
+| `admission` | W2 `document` with units and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
 
 Cases without the profile, the block or an `alt-*` kind are delegated unchanged to
 `VE.Norms.Run`.
@@ -122,14 +126,19 @@ all three evaluators.
 * `validate_sound` takes `M.Valid (envAt (inlineTree A) 0)` as a hypothesis. A `FiniteModel`'s
   relation table is a function and cannot be enumerated, so structural admissibility is
   established by the Bridge decoder (`decodeScenario`, as W1's `witnessFrom`), and the dilemma
-  wire theorem uses that decoded fact. `validateAlternatives` additionally needs an `EntityName`
+  wire theorem uses `validate_sound_decoded`, which states the full conclusion without a caller-supplied
+  validity hypothesis for a decoded scenario. The proposed 7.2 statement over an arbitrary
+  `FiniteModel` cannot follow from the current Boolean validator: changing an unused relation
+  table can break `M.Valid` without changing any Boolean check. `validateAlternatives` additionally needs an `EntityName`
   instance to render entity names in its failure texts; success does not depend on it.
 * The wire statements decode from `(j.getObjValD "environment") (j.getObjValD "norms")
   (j.getObjValD "units")` (the W1 case shape the Python transport already sends), not from a
   single `document` field.
-* Not implemented: W2 `admission` with the block and `Run.alternatives_wire_acceptance`
-  (`AltAdmissionAnswer`); the per-alternative rule reasons of the diagnosis rendering; English
-  renderings of fulfilment bodies other than `avoids` in the legend (the act phrase is quoted); `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
+* W2 `admission` with the block checks regenerated alternatives and layer leaves,
+  W2 provenance and certificate bindings, and has `Run.alternatives_wire_acceptance`
+  (`AltAdmissionAnswer`) over the checked graph and regenerated premises. The per-alternative
+  rule reasons of the diagnosis rendering and English renderings of fulfilment bodies other than `avoids`
+  remain incomplete; `conditional_on` of a FOLLOWABLE answer lists every `Γ_base` label rather than the
   ones the certificate uses.
 * A conflict target's certificate is accepted over `Background_baseAlt` or, as 4.5 allows, over
   W1's `Background_base` alone (`targetAccepted`; both bindings are tried on replay).

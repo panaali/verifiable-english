@@ -413,6 +413,13 @@ def admit_document(environment, document) -> dict:
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
     env = environment if type(environment) is Environment else Environment(environment)
+    if env.alternatives is not None:
+        from .alternatives import run_case
+        result = run_case({"id": "admission", "kind": "admission",
+                           "environment": env.to_dict(), "document": document})
+        if result.get("status") != "ok":
+            raise AdmissionError(result.get("error", "alternatives admission failed"))
+        return {key: value for key, value in result.items() if key not in ("id", "status")}
     # The norms route takes every input with a norm construct (11.4): a
     # regulated declaration or norm content, as Lean `usesNormsPath` does.
     if ("norms@0" in env.profiles and
