@@ -85,13 +85,15 @@ def _bind_leaf(label, formula, reading_sets):
 def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> dict:
     """The Lean route's verdict on a whole bundle, in one run.
 
-    Raises `CheckerUnavailable` when Lean gives no well-formed answer; a
-    returned row with `status: error` is Lean's rejection.
+    Raises `CheckerUnavailable` when Lean gives no well-formed answer (an `ok`
+    row must carry `lemmas`, one meaning-ID string per submitted lemma, and
+    `checked`, their count); a returned row with `status: error` is Lean's
+    rejection.
     """
     case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
              **({} if document is None else {"document": document})}]
     return lean_backend.run("bundle.check", lean_executable, case, runner="ve_conformance",
-                            mode="route", timeout=LEAN_REPLAY_TIMEOUT, fields={"lemmas": list})[0]
+                            mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
 
 
 @semantic_entry("bundle.check")

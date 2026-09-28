@@ -18,7 +18,7 @@ public semantic operation. Each entry records:
 | `assurance` | `current` label on records today (always `experimental`) and the label the plan grants `at_switch`, with the reason |
 | `python` | every Python function that produces the verdict, as `module:qualname` |
 | `outcomes` | the verdict, semantic-unknown, rejection, budget and operational outcome values (section 2) |
-| `lean` | `bindings` (executable, mode, case kinds, the `response` fields of an `ok` row, dispatch files), `planned_modes`, `theorems` (audited names), `planned_theorems`, `decoders` (trusted decoder files on the path) |
+| `lean` | `bindings` (executable, mode, case kinds, the typed `response` fields of an `ok` row and their `counts`, dispatch files), `planned_modes`, `theorems` (audited names), `planned_theorems`, `decoders` (trusted decoder files on the path) |
 | `rust` | Rust CLI commands on the path and their role |
 | `lean_call_sites` | the Python functions that invoke Lean for this operation |
 | `tests` | tests that back the operation (conformance, differential and three-way checks) |
@@ -58,7 +58,7 @@ How an operational failure surfaces:
 
 | Where | Before P0-3 | Now |
 |---|---|---|
-| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count or id mismatch, a row outside the response schema, or an exit status that contradicts the rows all raise `CheckerUnavailable`. The schema: `status` is `ok` or `error`; an `error` row has a string `error`; an `ok` row names its case `id` and carries every field the caller reads, with its type (`lemmas` for bundles, `valid` and on the route `background` for arguments). Only a well-formed `status: error` row, or a well-formed `ok` row whose content differs from the expected acceptance, is Lean's semantic rejection |
+| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count or id mismatch, a row outside the response schema, or an exit status that contradicts the rows all raise `CheckerUnavailable`. The schema: `status` is `ok` or `error`; an `error` row has a string `error`; an `ok` row names its case `id` and carries every field of its binding's `response` with the declared type, element types included, and every declared `counts` holds (a bundle's `lemmas` is an array of strings and `checked` a nat, both counting the submitted lemmas; an argument's `valid` is a Boolean and, on the route, `background` a nat). Only a well-formed `status: error` row, or a well-formed `ok` row whose content differs from the expected acceptance, is Lean's semantic rejection |
 | `check_bundle(lean_executable=...)` | `VEError` (`InvalidInput`) for an unavailable Lean; a crash surfaced as `SyntaxError` or `ResourceLimit` | raises `CheckerUnavailable`. A Lean rejection still raises `VEError`. The result carries `lean_outcome`: `accepted`, `not_requested` or `not_applicable` (no lemmas) |
 | `check_argument(lean_executable=...)` | `lean_checked: false` for both rejection and unavailability; only `lean_detail` wording differed | `ArgumentResult.lean_outcome` (and `outstanding_obligations`): `accepted`, `rejected`, `unavailable`, `not_requested` or `not_applicable`; `lean_status` reads `Lean-checked: unavailable`. The `ve-argument-tableau@1` record carries `lean_outcome` only when it is `unavailable`: every other outcome is implied by `lean_checked` and `lean_detail`, so those records keep their pre-P0-3 `record_id` (pinned by a test with `checker_build` fixed). The Lean replay is an optional cross-check while authority is Python, so the Python verdict is unaffected |
 | `check_argument` when a verdict it needs is unavailable | would have become `InvalidInput` or an edge error had the exception been a `VEError` | `status: CheckerUnavailable`, `composed: false`, `proof: not_checked`, with the error in `errors`. Callers that act on the status (`parse_english_argument`, assist `status`) call `ArgumentResult.require_available()`, which re-raises it, so it never reads as a failed replay or a `SyntaxError` |
@@ -78,7 +78,13 @@ A combination that needs the verdict (readings, premise status, compare, the arg
 `ve.backends.lean.run` checks every call against the operation's declared Lean `bindings` (executable, mode and case
 kinds) and, for callers inside `ve`, its declared `lean_call_sites` before starting a process. An undeclared call is a
 programming error (`RuntimeError`), not an outcome. Every `ok` row must carry the binding's declared `response`
-fields; a row without them is `CheckerUnavailable`.
+fields with their declared types and satisfy its `counts`; any other row is `CheckerUnavailable`, and callers read only
+rows that passed. A `response` type is `bool`, `nat` (a non-negative integer, never a Boolean), `string`, `object`,
+`json` (any value; the caller compares its content) or `array<T>` (every element of type `T`). A `counts` entry
+`FIELD: case.NAME` or `FIELD: row.NAME` requires the length of array `FIELD` (or the value of nat `FIELD`) to equal
+the length of the submitted case's array `NAME` or of the row's declared array `NAME`; each is a property of the
+runner's output (for bundles `VE.Definitions.Bundle.checkAll_length`, for dependency order
+`VE.Route.verifyOrder_sound` with the duplicate-name check).
 
 Migrating an operation (SEMANTICS-MIGRATION-PLAN stage 4):
 
@@ -164,7 +170,7 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   - The routing itself is executed, not matched as strings: `conformance/binding_probes.py` holds one case of the
     operation for every (operation, executable, mode, kind) binding, and the set of probes must equal the set of
     bindings. Each probe goes through `ve.backends.lean.run` to the built runner in its declared mode and must come
-    back `ok` with the binding's declared `response` fields, and every other mode of the same executable must reject
+    back `ok` with the binding's declared `response` fields, types and counts, and every other mode of the same executable must reject
     it. Moving a binding to another mode or kind therefore fails without Lean (no probe) and with Lean (the probe is
     not routed there).
 - **Theorems.** Every listed theorem is audited in `lean/axioms.txt`. A planned theorem that appears there fails the
