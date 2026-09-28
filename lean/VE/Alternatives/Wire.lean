@@ -238,9 +238,39 @@ def unmappedObligations (A : AltDoc) : List Regulated :=
 def labelled (labels : List String) (fs : List VE.Formula) : Json :=
   Json.arr ((labels.zip fs).map (fun (l, a) => Json.mkObj [("label", .str l), ("ast", enc a)])).toArray
 
+/-- 2.3: the legend generated from the block (untrusted text; the English surface renders the
+fulfilment bodies other than `avoids`). -/
+def legend (A : AltDoc) : List String :=
+  let a := A.alt
+  let decider := match a.outcomes with
+    | .completeBy d => d
+    | .signed => a.decidedBy.getD "unstated"
+  let quoted (act : Option String) := s!"\"{act.getD ""}\""
+  [s!"Each {a.chooser} faces one choice among the actions available to it and takes at most one of them.",
+   s!"Each {a.action} is available to at most one {a.chooser}."] ++
+  (if a.inaction.isSome then [s!"Doing nothing counts as one of a {a.chooser}'s actions; every checked situation " ++
+      s!"lists exactly one inaction per {a.chooser} with any alternative."] else []) ++
+  [s!"\"<{a.action}> leads to <{a.harm}>\" records the declared model; for an action not taken it is a " ++
+      s!"counterfactual judgment by {a.decidedBy.getD "unstated"}.",
+   match a.outcomes with
+   | .signed => "Every cell of the outcome table is stated."
+   | .completeBy _ => s!"An action leads to a harm only where this document says so; {decider} stands behind " ++
+       "every unstated cell."] ++
+  (if a.proximate.isSome then [s!"\"<{a.action}> causes <{a.harm}>\" records a proximate-cause judgment by " ++
+      s!"{a.decidedBy.getD "unstated"}; an action that causes a harm leads to it."] else []) ++
+  a.fulfilments.map (fun f =>
+    let act := quoted ((findReg A.T f.obligation).bind (·.act))
+    if f.body == .not (.binary a.leadsTo (.var 1) (.var 0)) then
+      s!"A {a.chooser} fulfils {act} by taking an action that does not lead to that {a.harm}."
+    else s!"A {a.chooser} fulfils {act} by taking an action that satisfies its declared fulfilment.") ++
+  (match unmappedObligations A with
+   | [] => []
+   | rs => [s!"The following duties do not bear on the choice: {", ".intercalate (rs.map (fun r => quoted r.act))}."])
+
 def regenerated (src : AltSource) : List (String × Json) :=
   let A := src.A
-  [("inlined", Json.arr ((inlineTree A).T.nodes.map encodeNode).toArray),
+  [("legend", toJson (legend A)),
+   ("inlined", Json.arr ((inlineTree A).T.nodes.map encodeNode).toArray),
    ("alternatives", labelled (altPremiseLabels A) (altPremises A)),
    ("base_premises", labelled src.labels A.Γ),
    ("followable", Json.mkObj [("ast", enc (allFollowable A)), ("followable", enc (followableF A)),
