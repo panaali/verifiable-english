@@ -13,3 +13,4 @@ import VE.Norms.Replay
 import VE.SoftNorms.Run
 import VE.English.Run
 import VE.Rights.Examples
+import VE.Rights.Run
