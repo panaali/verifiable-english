@@ -109,8 +109,7 @@ class ReportsDocument:
                     {"report", "assessment", "negated"}):
                 w2_units.append({"id": unit["id"], "kind": json.dumps(unit.get("kind"),
                                   ensure_ascii=False, separators=(",", ":")),
-                                 **({"content": unit["content"]["ast"]} if type(unit.get("content")) is dict
-                                     and "ast" in unit["content"] else {})})
+                                 **self._w2_content(unit)})
                 continue
             content_object = self._node(unit["content"], unit["id"], top=True)
             if "kind" in unit and not self._kind_matches(unit["kind"], unit["content"]):
@@ -157,6 +156,18 @@ class ReportsDocument:
                                   "w2_units": w2_units}})
         self.envelope = {"environment_id": environment.environment_id,
                          "document_id": self.document_id}
+
+    def _w2_content(self, unit):
+        """An ordinary W2 unit's content as the Lean decoder reads it: absent, or
+        exactly ``{"ast": φ}`` with φ closed over E, never on a quoted kind."""
+        if "content" not in unit or unit["content"] is None:
+            return {}
+        content = unit["content"]
+        if type(unit.get("kind")) is list and unit["kind"][0] in ("attributed", "hedged"):
+            raise VEError(f"InvalidInput: invalid content for {unit['id']}")
+        if type(content) is not dict or set(content) != {"ast"}:
+            raise VEError(f"InvalidInput: invalid content for {unit['id']}")
+        return {"content": formula_to_data(self.environment, formula_from_data(self.environment, content["ast"]))}
 
     @staticmethod
     def _context_object(row):
