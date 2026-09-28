@@ -39,8 +39,10 @@ import VE.Alternatives.Decl
 import VE.Alternatives.Examples
 import VE.Alternatives.Followable
 import VE.Alternatives.Inline
+import VE.Alternatives.Replay
 import VE.Alternatives.Route
 import VE.Alternatives.Validate
+import VE.Alternatives.Wire
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -952,6 +954,11 @@ import VE.Alternatives.Validate
 -- alternatives@0 (lean/ALTERNATIVES.md)
 #print axioms VE.Alternatives.E_available
 #print axioms VE.Alternatives.E_leadsTo
+#print axioms VE.Alternatives.Replay.alternatives_wire_acceptance
+#print axioms VE.Alternatives.Replay.alternatives_wire_conflict_sound
+#print axioms VE.Alternatives.Replay.alternatives_wire_dilemma_sound
+#print axioms VE.Alternatives.Replay.alternatives_wire_followable_sound
+#print axioms VE.Alternatives.Replay.sourceOf_ok
 #print axioms VE.Alternatives.allowsF_denote
 #print axioms VE.Alternatives.allowsF_wellFormed
 #print axioms VE.Alternatives.altChain_hc
