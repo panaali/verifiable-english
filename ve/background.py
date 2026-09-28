@@ -127,13 +127,32 @@ HOOKS: dict[str, tuple[Callable, Callable]] = {
 }
 
 
-def background(env) -> tuple[Premise, ...]:
+def _background_python(env) -> tuple[Premise, ...]:
     # Every checking site consults Background, so the gate on checker families
     # that have not landed sits here and in validate_background.
     from .profiles import require_checker
     require_checker(env)
     return tuple(Premise(formula, generator)
                  for generator, (make, _) in HOOKS.items() for formula in make(env))
+
+
+def background(env) -> tuple[Premise, ...]:
+    """Environment premises from the selected authority, with the legacy type."""
+    from .backends.dispatch import execute
+    from .backends.lean_runner import run
+    from .ast import formula_from_data
+
+    case = {"id": "background", "kind": "background", "environment": env.to_dict()}
+
+    def lean():
+        row = run("route", [case])[0]
+        if len(row["premises"]) != len(row["generators"]):
+            from .backends.lean_service import CheckerUnavailable
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
+        return tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
+                     for wire, generator in zip(row["premises"], row["generators"], strict=True))
+
+    return execute("background", case, lambda: _background_python(env), lean=lean)
 
 
 def checked_premises(env, layer_premises, case_premises):
