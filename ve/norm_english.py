@@ -318,11 +318,11 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         document = NormDocument(env, rules)
     except VEError as exc:
         if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
-                any(_mentions_own_outcome(rule.guard, rule.predicate,
+                any(_mentions_own_outcome(formula, rule.predicate,
                                           len(env.predicates[rule.predicate].arguments))
-                    for rule in rules)):
-            raise VEError(f"{exc}; GuardOnOwnOutcome: A factual guard about other "
-                          "actions changes the rule's meaning and does not track "
+                    for rule in rules for formula in (rule.guard, *rule.unless))):
+            raise VEError(f"{exc}; GuardOnOwnOutcome: A condition on this rule's own "
+                          "outcome changes the rule's meaning and does not track "
                           "later rules that forbid them for other reasons.") from exc
         raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
