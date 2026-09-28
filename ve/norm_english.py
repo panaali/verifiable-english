@@ -71,19 +71,17 @@ def _parse_guard(source, env, words, scope):
     return formula
 
 
-def _mentions_own_outcome(formula, predicate, arity, depth=0):
-    """Distinguish the rule's own tuple from another action's outcome."""
+def _mentions_outcome(formula, predicate):
+    """Find a deontic self-edge at any tuple, including another action."""
     if isinstance(formula, (ast.Unary, ast.Binary)):
-        terms = (formula.term,) if isinstance(formula, ast.Unary) else (formula.left, formula.right)
-        return (formula.predicate == predicate and len(terms) == arity and
-                terms == tuple(ast.Var(depth + arity - i - 1) for i in range(arity)))
+        return formula.predicate == predicate
     if isinstance(formula, (ast.Forall, ast.Exists)):
-        return _mentions_own_outcome(formula.body, predicate, arity, depth + 1)
+        return _mentions_outcome(formula.body, predicate)
     if isinstance(formula, ast.Not):
-        return _mentions_own_outcome(formula.body, predicate, arity, depth)
+        return _mentions_outcome(formula.body, predicate)
     if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
-        return (_mentions_own_outcome(formula.left, predicate, arity, depth) or
-                _mentions_own_outcome(formula.right, predicate, arity, depth))
+        return (_mentions_outcome(formula.left, predicate) or
+                _mentions_outcome(formula.right, predicate))
     return False
 
 
@@ -318,12 +316,15 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         document = NormDocument(env, rules)
     except VEError as exc:
         if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
-                any(_mentions_own_outcome(formula, rule.predicate,
-                                          len(env.predicates[rule.predicate].arguments))
+                any(_mentions_outcome(formula, rule.predicate)
                     for rule in rules for formula in (rule.guard, *rule.unless))):
             raise VEError(f"{exc}; GuardOnOwnOutcome: A condition on this rule's own "
-                          "outcome changes the rule's meaning and does not track "
-                          "later rules that forbid them for other reasons.") from exc
+                          "predicate creates a cycle. An author may instead select a factual guard "
+                          "like Rule 9: there is a robot such that that action is available to "
+                          "that robot and every other action available to that robot injures a human being or "
+                          "allows a harm to a human being to happen. This changes the rule's "
+                          "meaning and does not track later rules that forbid those actions "
+                          "for other reasons.") from exc
         raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")

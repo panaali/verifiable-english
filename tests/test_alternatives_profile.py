@@ -255,6 +255,34 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert report["residual"]["counterfactual_leaves"] == 1
 
 
+@pytest.mark.parametrize("kind", [
+    ["attributed", "witness", "says", "asserted"],
+    ["hedged", "likely", "asserted"],
+])
+def test_coverage_quoted_outcomes_are_not_asserted_cells(kind):
+    raw = source()
+    raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
+    raw["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "h": {"sort": "harm", "description": "h"},
+        "r": {"sort": "robot", "description": "r"},
+    }
+    atom = ["binary", "leads_to", ["const", "pull"], ["const", "h"]]
+    units = [
+        {"id": "quoted", "span": [0, 1], "kind": kind, "status": "CHECKED",
+         "meaning": "specified", "support": "testimony", "content": atom},
+        {"id": "choice", "span": [1, 2], "kind": "asserted", "status": "CHECKED",
+         "meaning": "specified", "support": "observation",
+         "content": ["binary", "available", ["const", "pull"], ["const", "r"]]},
+    ]
+    detail = coverage({"environment": Environment(raw), "units": units,
+                       "source": b"ab", "meta": {}})["alternatives"]
+    assert detail["counterfactual_leaves"] == []
+    assert detail["assumed_harm_free"] == [
+        {"action": "pull", "harm": "h", "decider": "case annotator",
+         "premise": "alternatives:table_complete"}]
+
+
 def test_loaded_document_coverage_keeps_formula_leaves(tmp_path):
     raw = source()
     raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
@@ -366,17 +394,18 @@ def test_english_own_outcome_guard_names_the_semantic_change():
                                 "if that action may be done.")
 
 
-def test_other_action_outcome_cycle_is_not_mislabeled_as_own_outcome():
+def test_other_action_outcome_cycle_offers_fact_guard_as_change_of_meaning():
     raw = source()
     raw["vocabulary"]["constants"] = {"r": {"sort": "robot", "description": "r"}}
     env = Environment(raw)
-    with pytest.raises(VEError, match=r"^DependencyCycle: permitted$"):
-        parse_norm_english(env, "Rule 1. Every action may be done, if every other "
-                                "action available to r may be done.")
-    with pytest.raises(VEError, match="GuardOnOwnOutcome: .*own outcome"):
+    for condition in ("every other action available to r may be done",
+                      "it is not the case that another action available to r may be done"):
+        with pytest.raises(VEError, match="GuardOnOwnOutcome: .*Rule 9:.*every other action available to that robot.*changes the rule's meaning"):
+            parse_norm_english(env, f"Rule 1. Every action may be done, if {condition}.")
+    with pytest.raises(VEError, match="GuardOnOwnOutcome: .*own predicate"):
         parse_norm_english(env, "Rule 1. Every action may be done, unless "
                                 "that action may be done.")
-    with pytest.raises(VEError, match=r"^DependencyCycle: permitted$"):
+    with pytest.raises(VEError, match="GuardOnOwnOutcome: .*changes the rule's meaning"):
         parse_norm_english(env, "Rule 1. Every action may be done, unless every other "
                                 "action available to r may be done.")
 

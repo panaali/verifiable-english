@@ -350,6 +350,8 @@ def coverage(doc):
         block = loads_json(doc["environment"].alternatives)
         declared, cells, proximate = [], [], []
         for unit in units:
+            if unit["kind"] != "asserted":
+                continue
             content = unit["content"]
             # Compiled formula content is the AST itself; norm content is a dict.
             ast = content
