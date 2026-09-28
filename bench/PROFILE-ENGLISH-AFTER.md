@@ -1,6 +1,6 @@
 # English path optimization: before and after
 
-The same offline harness (`PATH=$HOME/.elan/bin:$PATH PYTHONPATH=.:bench lake env /home/seyran/code/ve-profile/.venv/bin/python bench/profile_english.py`) ran five sequential warm-process repeats per case, except editor catalogues, which ran 20. Each case had one untimed warm-up. It called no proposer or model service. Raw repeat times, input hashes, machine load, and cProfile rows are in [before](PROFILE-ENGLISH-BEFORE.json) and [after](PROFILE-ENGLISH-AFTER.json).
+The before artifact used five timed repeats per case. The current offline harness (`PATH=$HOME/.elan/bin:$PATH PYTHONPATH=.:bench lake env /home/seyran/code/ve-profile/.venv/bin/python bench/profile_english.py`) gives each case one untimed warm-up, then five timed repeats except editor catalogues, which get 20. It calls no proposer or model service. Raw repeat times, input hashes, machine load, and cProfile rows are in [before](PROFILE-ENGLISH-BEFORE.json) and [after](PROFILE-ENGLISH-AFTER.json).
 
 | Path | Before p50 / p95 ms | After p50 / p95 ms |
 |---|---:|---:|

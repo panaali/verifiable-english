@@ -54,7 +54,7 @@ def test_after_metadata_and_every_sample_agree():
 def test_published_comparison_matches_raw_json():
     before, after = _data("BEFORE"), _data("AFTER")
     report = (BENCH / "PROFILE-ENGLISH-AFTER.md").read_text()
-    assert "five sequential warm-process repeats per case, except editor catalogues, which ran 20" in report
+    assert "one untimed warm-up, then five timed repeats except editor catalogues, which get 20" in report
     assert not re.search(r"\b[\d,]+ passed\b", report)  # Results change after new commits.
     paths = {
         "BlueDot document check": lambda data: data["documents"]["bluedot"]["stats"],
