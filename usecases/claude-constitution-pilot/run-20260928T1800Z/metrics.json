@@ -1,0 +1,219 @@
+{
+  "run": "20260928T1800Z",
+  "baseline_tag": "ve-green-layers",
+  "previous_run": "20260928T0600Z",
+  "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
+  "source_bytes": 184893,
+  "bytes_accounted": 184893,
+  "bytes_accounted_percent": 100,
+  "sentence_clause_units": {
+    "units_total": 1124,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 1,
+      "READINGS": 0,
+      "UNFORMALISED": 1083
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 48,
+      "READINGS": 0,
+      "UNFORMALISED": 184474
+    }
+  },
+  "aggregated_to_previous_boundaries": {
+    "units_total": 299,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 10,
+      "OPEN": 0,
+      "READINGS": 0,
+      "UNFORMALISED": 258,
+      "MIXED": 30
+    },
+    "bytes_by_substatus": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 48,
+      "READINGS": 0,
+      "UNFORMALISED": 184474
+    }
+  },
+  "claimed_covered_bytes": 419,
+  "claimed_covered_percent": 0.2266,
+  "audit_verified_covered_bytes": 22,
+  "audit_verified_covered_percent": 0.0119,
+  "audit_verified_basis": "The independent 27 September audit checked the 22-byte assertion. Its 28 September follow-up sampled no newly OPEN unit. The OPEN norm remains unaudited.",
+  "open_terms": [
+    {
+      "name": "broad_safety",
+      "arguments": [
+        "claude",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human oversight",
+        "principal hierarchy",
+        "current phase of AI development"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    },
+    {
+      "name": "appropriate_oversight",
+      "arguments": [
+        "mechanism",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human authorization",
+        "ability to correct AI",
+        "misuse of power"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    },
+    {
+      "name": "genuine_helpfulness",
+      "arguments": [
+        "action",
+        "principal",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "benefit to operators and users",
+        "longer term interests",
+        "other people affected"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    },
+    {
+      "name": "ethical_harm",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "severity",
+        "likelihood",
+        "who bears harm",
+        "possible benefits"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    },
+    {
+      "name": "good_judgment",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "competing values",
+        "uncertainty",
+        "context"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    },
+    {
+      "name": "child_sexual_abuse_material",
+      "arguments": [
+        "material",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "whether the material is child sexual abuse material"
+      ],
+      "precedents": [],
+      "jurisdiction": "claude_constitution",
+      "version": 1
+    }
+  ],
+  "reading_sets": {
+    "count": 0,
+    "unresolved": 0
+  },
+  "missing_feature_tally": {
+    "other:discourse": 78,
+    "quantities": 119,
+    "norms": 676,
+    "causation": 80,
+    "time": 9,
+    "counting": 31,
+    "defaults": 54,
+    "modality/belief": 24,
+    "attribution": 12
+  },
+  "heading_presuppositions_exposed": 29,
+  "check_verdicts": {
+    "document_loaded_and_english_fence_parsed": true,
+    "graph_admitted": true,
+    "premises_status": "model",
+    "premises_model_id": "ae6b5dad7d04fb336defd0bf68bbae98e63daee8238272f450fc90137c4241f5",
+    "reading_plan": "single",
+    "source_id": "b4de1ef1b06bb94a69a921d99ff7cae20bb39876b5687a655eb0cef1aa4b6c47",
+    "document_id": "8ba587d591593665fafc4393943002f04f208a093bdadd64ca9c4c66af065cc8",
+    "coverage_percent": 100,
+    "natural_render_checked_clause": "Claude is not human."
+  },
+  "change_from_previous_run": {
+    "source_changed": false,
+    "segmentation_changed": false,
+    "status_changes": 0,
+    "semantic_upgrades_from_newly_merged_features": 0,
+    "formal_content_changed": false,
+    "translation_sha256_unchanged": "038c04cb9d7a6d21f457b4d6b7c2784e0f6c4f50a9c9ce5dcc3419025731f6bc",
+    "reason": "The ve-green-layers merge adds architecture checks and test selection but no new expressive construct.",
+    "historical_audit_rejected_u0214_still_unformalised": true
+  },
+  "previous_run_sentence_clause_units": {
+    "units_total": 1124,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 1,
+      "READINGS": 0,
+      "UNFORMALISED": 1083
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 48,
+      "READINGS": 0,
+      "UNFORMALISED": 184474
+    }
+  },
+  "limitations": [
+    "Unformalised units retain source wording but have no admitted formal reading.",
+    "No formal reading set was added; ambiguities in unformalised prose remain unresolved.",
+    "The strict prohibition depends on an unresolved classification of child sexual abuse material.",
+    "The document renderer calls the OPEN rule a Checked reading, although the ledger and coverage report mark it OPEN."
+  ]
+}
