@@ -50,6 +50,13 @@ grammar (`parse_w6_sentence`). Graph nodes carry `quantity` instead of `ast`,
 and deductions carry `ve-quantity-certificate@1`. Lean `VE.Time.Document`
 admits the graph with the base provenance rules and no Background, and binds
 the report to the annotated meaning ids (`admit_quantity_report_sound`).
+A quantity lemma is `{"name", "conclusion", "leaves", "certificate"}`: leaves
+are `{"quantity", "label"}` with no `cite` label, and the certificate is a
+`ve-quantity-certificate@1` from exactly the leaves, in order, to the
+conclusion, checked when the lemma is decoded. A `cite:<bundle>/<lemma>` leaf
+states that conclusion and the report carries every lemma leaf with its label,
+so the root holds wherever the report's non-citation leaves hold
+(`cites_discharged`).
 
 A source unit that contains both checked and unresolved text has
 `{"id", "span", "status":"MIXED", "parts":[...]}`. Each part has the ordinary
