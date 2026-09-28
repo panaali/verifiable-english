@@ -94,13 +94,16 @@ def semantic_entry(op_id: str, *, engine: str = "python"):
     return wrap
 
 
-def require_lean_binding(op_id: str, executable: str, mode: str, kinds=()) -> None:
-    """A Lean call must use a mode (and case kinds) the manifest declares for `op_id`."""
+def require_lean_binding(op_id: str, executable: str, mode: str, kinds=()) -> dict:
+    """The binding the manifest declares for `op_id` with this mode (and case kinds).
+
+    Its `response` names the fields every `ok` row of the operation carries.
+    """
     lean = operation(op_id).get("lean") or {}
     for binding in lean.get("bindings", ()):
         if binding["executable"] == executable and binding["mode"] == mode and \
                 set(kinds) <= set(binding.get("kinds", ())):
-            return
+            return binding
     raise RuntimeError(f"Lean call {executable} {mode or '(default)'} {sorted(set(kinds))} "
                        f"is not declared for {op_id} in the assurance manifest")
 
