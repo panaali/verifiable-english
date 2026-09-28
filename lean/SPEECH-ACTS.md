@@ -96,6 +96,11 @@ pairs, JSON object lookup after insertion, the `ULift` lift) audited with the sa
   `TypeMismatch: invalid command fields for <u>`; an asserted unit that does not type is `InvalidInput:
   ill-typed asserted unit <u>`; environment mismatch in `combine` is `InvalidInput: combined documents need one
   environment identity`.
+* **Meaning ids (3.5).** A command's `ast` is `{"command": {"force", "act", "args", "guard"}}`, plus, for a
+  proof task (a slot of sort `query`), `"query": {"id", "premises": [premise meaning ids], "target": target
+  meaning id}`; a question's is `{"question": {"mode", ...}}` with its body, sort and domain in wording order, the
+  query's identity for `follows`, or the set and version. The spec fixes what is bound, not this JSON shape;
+  Python must adopt the same shape before the ids can be compared.
 * **Paraphrases** follow 2.1 (`In this task, you are required to click check.`); fixture α's "you must" wording
   is not used. A guard renders as `, where the stated condition holds` until the English layer exists.
 * **Premise status.** Lean has no search budget; without evidence the status is `UNKNOWN (no premise-status
@@ -113,7 +118,7 @@ profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit 
 
 | Kind | Extra input | Output |
 |---|---|---|
-| `speech-elaborate` | none | `environment_id`, `scope`, `legend`, `premises` (the regenerated `premises(D)`), `policy` (W1 `norms-elaborate` output), `commands` (rule, paraphrase), `dormant`, `questions`, `queries` |
+| `speech-elaborate` | none | `environment_id`, `scope`, `legend`, `premises` (the regenerated `premises(D)`), `policy` (W1 `norms-elaborate` output), `commands` (rule, paraphrase, `meaning_id`), `dormant`, `questions` (with `meaning_id`), `queries` |
 | `speech-answer` | `question`, `evidence` (`certificate` or `conditional` with `answer`, `presupposition_failed`, `model`), optional `premise_status` (`model` or `inconsistent`), optional `model_id` | the answer line of 5.3 |
 | `speech-consequence` | `query`, `certificate` and/or `model` | `follows (certificate)`, `gap (model <id>)`, `unresolved (no accepted evidence)`; `CheckerConflict` when both hold |
 | `speech-conflict` | `packages` (target → `{"environment_id", "document_hash", "target", "certificate"}`) | `CONFLICT-FREE`, or `UNKNOWN` with the first target lacking an accepted certificate; the outer binding is the canonical environment id, the document hash `ve-speech-acts-<identity version>` over `{"environment_id", "document"}` and the target; the inner certificate binds the regenerated base environment (scope block, regulated predicates, `speech-acts@0` and `norms@0` removed), `Background_base` and `∀x̄. ¬conflict` |
@@ -134,7 +139,6 @@ Lean regenerates.
   input is rejected with `UnsupportedProfile: case kind admission is not available on the speech-acts route`.
   It needs the `ve-document@2` JSON (front matter, source, fences) as the route input and Lean decoders
   mirroring `ve/readings.py`'s `validate_reading_sets` and `validate_narrowings`.
-* **Identity of units.** Command and question meaning ids (3.5, including a proof task's query premise and
-  target meaning ids) are not computed; answer, compliance and nomination records are accepted as keys but not
-  decoded; there is no compliance line.
+* **Records.** Answer, compliance and nomination records are accepted as document keys but not decoded; there
+  is no compliance line and no nomination status; binding units have no meaning id.
 * **Python and Rust** (plan items 2 and 4) and the English layer (item 3).

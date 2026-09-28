@@ -77,6 +77,41 @@ def questionJson (D : SpeechDoc) (q : Question) : Json :=
     | .follows => [("query", toJson q.query)]
     | .reading => [("set", toJson (q.readingSet.map Prod.fst)), ("version", toJson (q.readingSet.map Prod.snd))])
 
+/-! ## Meaning identities (3.5) -/
+
+/-- The `ve-meaning` digest of an AST under the document's canonical environment id. -/
+def meaningOf (dec : Wire.Decoded) (ast : Json) : String :=
+  match VE.Route.Wire.environmentId dec.se.profiles dec.se.canonical with
+  | .ok envId => (VE.Route.Wire.meaningId dec.se.profiles envId ast).toOption.getD ""
+  | .error _ => ""
+
+/-- A query as bound into a meaning: its id, its regenerated premise meaning ids and its target meaning id. -/
+def queryIdentity (dec : Wire.Decoded) (i : String) : Json :=
+  match dec.D.queries.find? (·.id == i) with
+  | some qr => Json.mkObj [("id", .str i), ("premises", toJson (qr.premises.map (fun a => meaningOf dec (enc a)))),
+      ("target", .str (meaningOf dec (enc qr.target)))]
+  | none => Json.mkObj [("id", .str i)]
+
+/-- The command object of 3.5; a proof task (a slot of sort `query`) carries its query's identity. -/
+def commandAst (dec : Wire.Decoded) (c : Command) : Json :=
+  let query := match dec.D.E.predicates c.act with
+    | some (_ :: ss) => ((ss.zip c.args).find? (·.1 == "query")).map Prod.snd
+    | _ => none
+  Json.mkObj [("command", Json.mkObj ([("force", Wire.encodeForce c.force), ("act", .str c.act),
+    ("args", toJson c.args), ("guard", enc c.guard)] ++
+    match query with
+    | some i => [("query", queryIdentity dec i)]
+    | none => []))]
+
+/-- The question object of 3.5: derived mode, sort, domain, body, the query's identity, the reading set. -/
+def questionAst (dec : Wire.Decoded) (q : Question) : Json :=
+  Json.mkObj [("question", Json.mkObj ([("mode", .str (Wire.modeName q.mode))] ++
+    (match q.mode with
+     | .polar => [("body", enc q.body)]
+     | .whichAll | .whichOne => [("sort", toJson q.sort), ("domain", toJson q.domain), ("body", enc q.body)]
+     | .follows => [("query", queryIdentity dec (q.query.getD ""))]
+     | .reading => [("set", toJson (q.readingSet.map Prod.fst)), ("version", toJson (q.readingSet.map Prod.snd))])))]
+
 def elaborated (dec : Wire.Decoded) : List (String × Json) :=
   let D := dec.D
   [("environment_id", .str ((VE.Route.Wire.environmentId dec.se.profiles dec.se.canonical).toOption.getD "")),
@@ -86,11 +121,12 @@ def elaborated (dec : Wire.Decoded) : List (String × Json) :=
    ("policy", Json.mkObj (VE.Norms.Wire.regenerated (policy D))),
    ("commands", Json.arr (D.commands.map (fun c => Json.mkObj [("unit", .str c.unit),
       ("force", Wire.encodeForce c.force), ("demand", encodeNode (demand D c)),
-      ("paraphrase", .str (paraphrase D c))])).toArray),
+      ("paraphrase", .str (paraphrase D c)), ("meaning_id", .str (meaningOf dec (commandAst dec c)))])).toArray),
    ("dormant", toJson (dec.units.filterMap (fun u => match u.role, Wire.activeCommand u with
       | .command _, none => some u.id
       | _, _ => none))),
-   ("questions", Json.arr (D.questions.map (questionJson D)).toArray),
+   ("questions", Json.arr (D.questions.map (fun q =>
+      (questionJson D q).setObjVal! "meaning_id" (.str (meaningOf dec (questionAst dec q))))).toArray),
    ("queries", Json.arr (D.queries.map (fun qr => Json.mkObj ([("id", .str qr.id),
       ("premises", Json.arr (qr.premises.map enc).toArray), ("target", enc qr.target)] ++
       (if trivialQuery D qr then [("warning", .str s!"TrivialQuery: {qr.id}")] else [])))).toArray)]
