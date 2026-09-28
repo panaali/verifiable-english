@@ -28,6 +28,9 @@ def _check_quoted(env, content):
 @semantic_entry("admission")
 def admit_norm_document(environment, document):
     env = environment if type(environment) is Environment else Environment(environment)
+    if env.alternatives is not None:
+        from .admission import admit_document
+        return admit_document(env, document)
     if "norms@0" not in env.profiles:
         raise UnsupportedProfile("norms@0 is required")
     if env.closure or env.order:
