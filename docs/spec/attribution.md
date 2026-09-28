@@ -1257,6 +1257,14 @@ theorem probably_not_scopes_distinct (D) (h) (a : String) (q : VE.Formula)
   canonicalObject D (.formula (.not q)) ≠ canonicalObject D (.formula q) ∧
   assessName D ⟨.probably, a, contentId D (.formula (.not q))⟩ ≠ assessName D ⟨.probably, a, contentId D (.formula q)⟩
 
+/-- 9.4: the reports gate is a function around the frozen classifier, never a change to it. -/
+def reportsGate (ps : List String) : Except String Unit
+  -- requires "reports@0" ∈ ps, VE.Route.Gate.classify (ps.erase "reports@0") = .ok .fol, and none of
+  -- "norms@0", "definitions@0", "data@0" in ps; diagnostics as in section 8
+theorem reports_gate_sound (ps : List String) (h : reportsGate ps = .ok ()) :
+  "reports@0" ∈ ps ∧ VE.Route.Gate.classify (ps.erase "reports@0") = .ok .fol ∧
+  "norms@0" ∉ ps ∧ "definitions@0" ∉ ps ∧ "data@0" ∉ ps
+
 /-- 9.4: the wire. The admitted record carries the decoded document, the decoded wire nodes, the graph, the
     report and the recomputed envelope. -/
 structure ReportsAdmitted where
