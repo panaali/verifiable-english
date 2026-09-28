@@ -312,6 +312,19 @@ def test_eta_presupposition_carriers(lean):
     assert result["presuppositions"] == {"m2": "discourse:presupposition:m2: unresolved"}
 
 
+def test_eta_pending_content_is_never_a_premise(lean):
+    """Astra A3: submitting the presuppositional claim as content does not make it a premise."""
+    claim = ["forall", "person", ["implies", MANAGER, ["unary", "ready", ["var", 0]]]]
+    used = eta("presuppositional", contents={"u2": claim},
+               graph={"root": "claim", "nodes": [{"name": "claim", "ast": claim, "unit": "u2"}]})
+    assert admit(used, env(PERSON))["error"] == "AdmissionError: node claim is not admitted under label asserted"
+    unused = eta("presuppositional", contents={"u2": claim})
+    result = admit(unused, env(PERSON))
+    assert result["status"] == "ok", result
+    assert result["pending"] == [["u2", "PresuppositionUnresolved: m2"]]
+    assert result["bound"] == {} and result["statuses"]["u2"] != "CHECKED"
+
+
 # (θ) Plural
 
 def test_theta_plural(lean):

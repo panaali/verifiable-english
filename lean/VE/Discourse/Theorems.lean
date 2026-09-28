@@ -59,6 +59,8 @@ theorem admit2_facts (profiles : List String) (environment : Json) (rv : VE.Rout
   try dsimp only at h
   obtain ⟨b, hb, h⟩ := bind_ok h
   try dsimp only at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  try dsimp only at h
   obtain ⟨_, hpost, h⟩ := bind_ok h
   try dsimp only at h
   obtain ⟨_, hgate, h⟩ := bind_ok h
