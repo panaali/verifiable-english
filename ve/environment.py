@@ -129,6 +129,7 @@ class ConstantDecl:
     sort: str
     description: str | None
     unit: str | None = None
+    verbalisation: str | None = None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -296,8 +297,9 @@ class Environment:
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
             has_unit = extended and type(entry) is dict and "unit" in entry
+            has_words = extended and type(entry) is dict and "verbalisation" in entry
             require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set())
-                           | ({"unit"} if has_unit else set()),
+                           | ({"unit"} if has_unit else set()) | ({"verbalisation"} if has_words else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
@@ -310,7 +312,8 @@ class Environment:
                 validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None,
-                                           entry.get("unit") if has_unit else None)
+                                           entry.get("unit") if has_unit else None,
+                                           _verbalisation(entry["verbalisation"]) if has_words else None)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -368,7 +371,9 @@ class Environment:
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
                                                                       if v.description is not None else {}),
-                                                 **({"unit": v.unit} if v.unit is not None else {})}
+                                                 **({"unit": v.unit} if v.unit is not None else {}),
+                                                 **({"verbalisation": v.verbalisation}
+                                                    if v.verbalisation is not None else {})}
                                              for k, v in self.constants.items()}},
                 **({"unit_schema": self.unit_schema, "units": dict(self.units)}
                    if self.unit_schema is not None else {})}
