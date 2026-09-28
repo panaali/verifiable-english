@@ -37,7 +37,7 @@ def lean_layer(module: str) -> int | None:
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
-        "VE.Order.Surface",
+        "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:
         return 3
     if module.startswith(("VE.Core.", "VE.Json")) or module in {
@@ -61,6 +61,8 @@ def source_layer(path: str) -> int | None:
     parts = p.parts
     if not parts:
         return None
+    if path in {"docs/english-surface.md", "docs/fluent-examples.md"}:
+        return 1  # generated documents asserted by surface tests
     if p.suffix in {".md", ".rst"} and parts[0] not in {"tests", "conformance"}:
         return 5
     if parts[0] == "ve" and p.suffix == ".py":
