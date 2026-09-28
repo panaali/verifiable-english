@@ -406,6 +406,7 @@ def erased_environment(env):
         declaration.pop("argument_units", None)
     for declaration in data["vocabulary"]["constants"].values():
         declaration.pop("unit", None)
+        declaration.pop("verbalisation", None)
     return Environment(data)
 
 
