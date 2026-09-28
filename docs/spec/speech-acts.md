@@ -370,6 +370,10 @@ pending, or with a meaning other than `specified`) keeps every check of its own 
 only an active command's `demand` uses (4.2). A formula content (W2's `{"ast": ...}` or the P0 route's bare AST) may
 stand under any W2 kind and is checked; only an `asserted` unit's is a premise (1.5). An authored choice (1.5) gives its
 unit the meaning `specified`, except that a chosen reading question means its derived open term.
+The chosen speech-act kind must match the source sentence's surface kind in both inline and English-fenced forms.
+A question-worded sentence cannot choose `asserted`, a declarative cannot choose `question`, and an imperative cannot
+choose `asserted` (`InvalidInput: choice kind`). The choice supplies effective content only after this check. Lean
+checks wording when the speech route receives a unit's `source` field; the source wrapper has the document bytes.
 
 **Every reference is resolved and typed at decode time**, identically in Python and Lean (the conformance suite
 checks every field below dangling and mistyped). A reference that is not a name of the JSON type its field takes is a
@@ -429,7 +433,8 @@ counted as a unit. Every other unit reaches P0 as W2 sends it today.
 An answer record's `answer` is a token of the question's mode (`AnswerOutsideDomain` otherwise); its `support` is one of
 W2's support kinds; the route recomputes the answer line from the evidence and rejects a record whose stated answer or
 judgment the evidence does not establish (`AnswerMismatch`). If present, `conditional` is a JSON Boolean
-(`InvalidInput: conditional` otherwise). A `judgment` is `follows` or `gap` only (`refuted` is not a
+(`InvalidInput: conditional` otherwise). `by` is a nonempty token (`InvalidInput: answer record` otherwise).
+A `judgment` is `follows` or `gap` only (`refuted` is not a
 value: `InvalidInput: judgment`); `unresolved` is the absence of a record. A nomination names a candidate index of the
 bound set at the bound version (`NominationOutsideSet`) and is recorded as a W2 narrowing with `support: testimony`
 citing the question and the nomination unit; the checker never treats it as proof of intent. A compliance record names

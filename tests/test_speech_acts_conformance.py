@@ -1148,6 +1148,79 @@ def test_assertion_fence_agrees_with_unfenced_choice(lean, tmp_path, original_ki
     assert [u for u, _ in a.asserted] == [u for u, _ in b.asserted] == ["u"]
 
 
+@pytest.mark.parametrize("wording,original_kind,original_content,choice_kind,choice_content", [
+    ("Is atlas reviewed?", "question", polar(U("reviewed", "atlas")), "asserted",
+     {"ast": U("reviewed", "atlas")}),
+    ("Click check.", "instruction", command("require", "click_required", ["check"]), "asserted",
+     {"ast": U("reviewed", "atlas")}),
+    ("Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")}, "question",
+     polar(U("reviewed", "atlas"))),
+])
+def test_signed_choice_kind_matches_surface_in_both_forms(
+        lean, tmp_path, wording, original_kind, original_content, choice_kind, choice_content):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    chosen = reading_set("u", 1, "authored", choice_kind, choice_content)
+    units, (plain, fenced) = _fenced_pair(
+        tmp_path, f"choice-surface-{choice_kind}-{original_kind}", env, [wording + "\n"],
+        [unit("u", 0, original_kind, original_content)], "u", reading_sets=[chosen])
+    for path in (plain, fenced):
+        with pytest.raises(VEError, match="^InvalidInput: choice kind$"):
+            load_speech_document(path)
+    assert run1({"id": "choice-kind", "kind": "speech-elaborate", "environment": env,
+                 "document": {"units": [{**units[0], "source": wording}],
+                              "reading_sets": [chosen]}})["error"] == "InvalidInput: choice kind"
+
+
+def test_answer_metadata_types_and_unit_meaning_id(lean):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    source = b"Is atlas reviewed?\n"
+    question = {**unit("q", 0, "question", polar(U("reviewed", "atlas"))),
+                "span": [0, len(source)]}
+    answer = {"question": "q", "by": "checker", "support": "model", "answer": "yes",
+              "evidence": {"model": model(reviewed=[["atlas"]])}}
+    base = {"format": "ve-document@2", "environment": env, "units": [question]}
+    for value in (7, True, [], {}, ""):
+        bad = {**answer, "by": value}
+        with pytest.raises(VEError, match="^InvalidInput: answer record$"):
+            SpeechSource({**base, "answers": [bad]}, source, {})
+        assert run1({"id": "answer-by", "kind": "speech-elaborate", "environment": env,
+                     "document": {"units": [question], "answers": [bad]}})["error"] == "InvalidInput: answer record"
+    with pytest.raises(VEError, match="^InvalidInput: answer record$"):
+        SpeechSource({**base, "answers": [{**answer, "by": None}]}, source, {})
+    with pytest.raises(VEError, match="^InvalidInput: answers$"):
+        SpeechSource({**base, "answers": 7}, source, {})
+    assert run1({"id": "answers", "kind": "speech-elaborate", "environment": env,
+                 "document": {"units": [question], "answers": 7}})["error"] == "InvalidInput: answers"
+
+    valid_id = core(env, {"units": [question]}).meaning_ids["q"]
+    assert SpeechSource({**base, "units": [{**question, "meaning_id": valid_id}]}, source, {}).document.meaning_ids["q"] == valid_id
+    assert elaborate(env, {"units": [{**question, "meaning_id": valid_id}]})["questions"][0]["meaning_id"] == valid_id
+    with pytest.raises(VEError, match="^unit meaning id does not match content$"):
+        SpeechSource({**base, "units": [{**question, "meaning_id": "stale"}]}, source, {})
+    assert run1({"id": "meaning-id", "kind": "speech-elaborate", "environment": env,
+                 "document": {"units": [{**question, "meaning_id": "stale"}]}})["error"] == \
+        "unit meaning id does not match content"
+
+
+def test_stated_assertion_meaning_id_matches_content(lean):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    source = b"Atlas is reviewed.\n"
+    fact = {**unit("u", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+            "span": [0, len(source)]}
+    valid = _meaning_id(env, U("reviewed", "atlas"))
+    assert SpeechSource({"format": "ve-document@2", "environment": env,
+                         "units": [{**fact, "meaning_id": valid}]}, source, {})
+    assert U("reviewed", "atlas") in elaborate(env, {"units": [{**fact, "meaning_id": valid}]})["premises"]
+    bad = {**fact, "meaning_id": "stale"}
+    with pytest.raises(VEError, match="^unit meaning id does not match content$"):
+        SpeechSource({"format": "ve-document@2", "environment": env, "units": [bad]}, source, {})
+    assert run1({"id": "meaning-id-asserted", "kind": "speech-elaborate", "environment": env,
+                 "document": {"units": [bad]}})["error"] == "unit meaning id does not match content"
+
+
 def test_answer_conditional_is_json_boolean_in_both_decoders(lean):
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"

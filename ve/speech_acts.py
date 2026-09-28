@@ -221,6 +221,34 @@ def _reading_choice(unit, reading_set):
     return result
 
 
+def surface_kind(env, wording):
+    """Classify the speech-act shape of a source sentence before a signed choice replaces it.
+
+    This deliberately uses only the visible sentence form. The content parser still
+    checks the complete command or question where that content is authoritative.
+    """
+    if type(wording) is not str:
+        raise VEError("InvalidInput: speech wording")
+    text = wording.strip()
+    lower = text.casefold()
+    if text.endswith("?") or lower.startswith(("question ", "is ", "are ", "does ", "do ",
+                                                 "did ", "was ", "were ", "will ", "would ",
+                                                 "who ", "what ", "when ", "where ", "why ",
+                                                 "how ", "which ", "must ", "can ")) and not lower.startswith("do not "):
+        return "question"
+    if lower.startswith(("in this task, ", "this document is task ")):
+        return "binding"
+    if lower.startswith(("do not ", "prove that ", "command ")):
+        return "instruction"
+    for decl in env.predicates.values():
+        if decl.regulated is None:
+            continue
+        words = decl.regulated.act.split()
+        if len(words) > 1 and words[0] == "{0}" and lower.startswith(words[1].casefold() + " "):
+            return "instruction"
+    return "asserted"
+
+
 def _binding_entry(env, uid, binding):
     """The legend entry one binding (a unit's or a candidate's) supplies, checked as the block's entry.
 
@@ -401,6 +429,10 @@ class SpeechDocument:
                 raise VEError("InvalidInput: speech unit id")
             ids.add(uid)
             if uid in latest:
+                if latest[uid]["status"] == "authored" and raw.get("source") is not None:
+                    choice_kind = latest[uid]["readings"][0]["kind"]
+                    if choice_kind != surface_kind(env, raw["source"]):
+                        raise VEError("InvalidInput: choice kind")
                 raw = _reading_choice(raw, latest[uid])
             self._effective.append(raw)
             pending = uid in self.pending_units
