@@ -24,9 +24,10 @@ from ve.softnorms import load_soft_document
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
                                     soft_limits_reproducers, multi_fault_cases, multi_faults,
+                                    _strict_under_default,
                                     compare_rejected, main as conformance_main)
 
-REJECTED_INPUTS = 4387
+REJECTED_INPUTS = 4397
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -196,6 +197,18 @@ def test_node_budgets_admit_the_same_sources(name, raw, rules):
     python = load_soft_document(raw, rules)
     lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert lean["environment_prime"] == python.extended_env.to_dict()
+
+
+@pytest.mark.parametrize("wrappers,check", [(54, "ResourceLimit: derived carve-out of rule d")])
+def test_derived_depth_is_checked_by_both_validators(wrappers, check):
+    # soft3-loop.final.md: Lean bounded the derived carve-out's nodes but not its depth.
+    rules = _strict_under_default(wrappers)
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(env(), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "d", "kind": "soft-elaborate", "environment": env(), "norms": rules})
+    assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
+    assert str(python_error.value).startswith(check) and str(lean_error.value).startswith(check)
 
 
 def test_multi_fault_generator_covers_the_table():

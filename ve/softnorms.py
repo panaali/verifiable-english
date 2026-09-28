@@ -11,7 +11,7 @@ import hashlib
 import json
 
 from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Bottom, Unary, Var,
-                  _Checker, _Decoder, _to_data, formula_to_data)
+                  _Checker, _Decoder, _to_data)
 from .background import dependency_order
 from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
@@ -601,6 +601,18 @@ def _decision_name(rule, party=None):
     return f'soft__off__{root}__{party}' if party else f'soft__excepted__{root}'
 
 
+def _within_limits(env, formula, context=()):
+    """One generated formula, typed on its own, is within MAX_DEPTH and MAX_NODES.
+
+    The checker stops at the first overrun, so a formula whose unfolding is far
+    larger than MAX_NODES costs at most MAX_NODES + 1 steps."""
+    try:
+        _Checker(env, generated=True).formula(formula, context)
+    except ResourceLimit:
+        return False
+    return True
+
+
 def _or_nonempty(items):
     items = tuple(items)
     return _any(items) if items else Bottom()
@@ -671,11 +683,11 @@ class SoftNormDocument:
         self.elaborated = self._soften()
         self.exception_premises = self._exception_premises()
         self.coherence_premises = self._coherence_premises()
+        # 6.11: every generated premise, serialised on its own as the soft
+        # route does, is within MAX_DEPTH and MAX_NODES.
         for label, formula in (*self.exception_premises, *self.coherence_premises):
-            try:
-                formula_to_data(self.extended_env, formula, _generated=True)
-            except ResourceLimit as exc:
-                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}') from exc
+            if not _within_limits(self.extended_env, formula):
+                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
@@ -848,7 +860,8 @@ class SoftNormDocument:
                                     self._switch(rule)), blocked(rule)),
                              dominated(rule, len(self.env.soft.get('ranks', []))))
             unless = (*core.unless, derived) if not isinstance(derived, Bottom) else core.unless
-            if len(unless) > 8:
+            if len(unless) > 8 or not _within_limits(self.extended_env, derived, context=(
+                    tuple(reversed(self.env.predicates[core.predicate].arguments)))):
                 raise ResourceLimit(f'ResourceLimit: derived carve-out of rule {core.name}')
             result.append(Norm(core.name, core.predicate, core.sign, core.guard, unless, core.over))
         try:

@@ -158,20 +158,29 @@ def softPremises (D : SoftDoc) : List VE.Formula := excPremises D ++ cohPremises
 
 /-! ## The executable check (4.1, 8) -/
 
-/-- Formula size in formula nodes. `MAX_NODES` also counts term nodes
-(`Bridge.formulaNodes`); W1's check bounds that count over `T′` (6.9). -/
-def fsize : VE.Formula → Nat
-  | .top | .bottom | .unary .. | .binary .. | .eq .. => 1
-  | .not a | .all _ a | .ex _ a => 1 + fsize a
-  | .and a b | .or a b | .implies a b => 1 + fsize a + fsize b
-
 def maxNodes : Nat := 10000
+def maxDepth : Nat := 64
 
-/-- Formula nesting depth, as Python's `_Checker` counts it (`MAX_DEPTH`). -/
-def fdepth : VE.Formula → Nat
-  | .top | .bottom | .unary .. | .binary .. | .eq .. => 1
-  | .not a | .all _ a | .ex _ a => 1 + fdepth a
-  | .and a b | .or a b | .implies a b => 1 + max (fdepth a) (fdepth b)
+/-- Python's `_Checker` budgets (`MAX_NODES`, term nodes included, and `MAX_DEPTH`)
+on one generated formula, with `n` nodes already spent and the formula at depth
+`d`: each formula node counts, then its depth is checked, then each term of an
+atom counts. The node count after the formula, or `none` at the first overrun.
+The walk stops there, so it visits at most `MAX_NODES + 1` nodes of a formula
+however large its unfolding. -/
+def limitWalk (n d : Nat) : VE.Formula → Option Nat
+  | .top | .bottom => tick n d 0
+  | .unary .. => tick n d 1
+  | .binary .. | .eq .. => tick n d 2
+  | .not a | .all _ a | .ex _ a => tick n d 0 >>= fun m => limitWalk m (d + 1) a
+  | .and a b | .or a b | .implies a b =>
+    tick n d 0 >>= fun m => limitWalk m (d + 1) a >>= fun k => limitWalk k (d + 1) b
+where
+  tick (n d terms : Nat) : Option Nat :=
+    if n + 1 > maxNodes || d > maxDepth || n + 1 + terms > maxNodes then none else some (n + 1 + terms)
+
+/-- One generated formula, serialised on its own (a fresh `_Checker`), is within
+`MAX_NODES` and `MAX_DEPTH`. -/
+def withinLimits (φ : VE.Formula) : Bool := (limitWalk 0 1 φ).isSome
 
 def dupOf (ns : List String) : Option String := ns.find? (fun n => ns.count n > 1)
 
@@ -277,15 +286,16 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
     if outranksPlus env a b || outranksPlus env b a then throw s!"TieAgainstOrder: {a}, {b}"
   if (env.ties.map (fun (a, b) => if a ≤ b then (a, b) else (b, a))).eraseDups.length != env.ties.length then
     throw "DuplicateDeclaration: tie"
+  -- 6.9: the count, and each derived carve-out on its own within both limits, before
+  -- 6.10 types `T′` and spends W1's one document budget on it.
   for N in D.T.nodes do
     if N.carveOuts.length + (derivedList D N).length > 8 ||
-        (derivedList D N).any (fun φ => fsize φ > maxNodes) then
+        !(derivedList D N).all withinLimits then
       throw s!"ResourceLimit: derived carve-out of rule {N.name}"
   VE.Norms.validate (soften D)
   -- 6.11: Python serialises each generated premise through its own `_Checker`.
   for φ in softPremises D do
-    if VE.Bridge.formulaNodes φ > maxNodes || fdepth φ > 64 then
-      throw "ResourceLimit: generated soft premise"
+    unless withinLimits φ do throw "ResourceLimit: generated soft premise"
 where
   dependencyOrderOf (env : SoftEnv) : Except String (List String) := VE.Route.dependencyOrder (rankNodes env)
 
