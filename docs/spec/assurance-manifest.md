@@ -25,8 +25,16 @@ public semantic operation. Each entry records:
 | `trusted` | ids from the top-level `trusted` table: what a reader must trust for this operation's verdict |
 | `notes` | recorded gaps and conflations |
 
-The top level also holds the `trusted` component table, the pinned Lean decoder ranges (section 4) and the
-reviewed broad exception handlers (section 5).
+The top level also holds the `trusted` component table, the pinned Lean decoder ranges (section 4), the
+reviewed broad exception handlers (section 5), `plan_operations` and `non_verdict_api`.
+
+**Completeness.** Comparing the decorated functions with the `python` entries cannot find an operation that has
+neither. Two further checks can: `plan_operations` maps every operation listed in the migration plan's section 2.3
+and every new Lean mode of its section 2.1 to the manifest operations that carry it (the test parses the plan), and
+every public name of the `ve` package is either a verdict entry (a function, or a class with an entry method such
+as `Environment.__init__`, `FiniteModel.from_dict` or `Claim.claim_id`) or listed in `non_verdict_api` with the
+reason it produces no verdict. Environment validation, model validation, identity and reference validation are
+operations for this reason.
 
 ## 2. Operational failure versus semantic UNKNOWN
 
@@ -172,6 +180,8 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
     migrated, `find_countermodel` and `find_distinguishing_model` raise `CheckerUnavailable`, and a candidate the
     check refuses is never published. (Proof search already replays its certificate through
     `check_entailment_certificate` before `Found`.)
+- **Completeness.** The plan's operations and new Lean modes map to operations (`plan_operations`), and every public
+  name of `ve` is an entry or classified in `non_verdict_api`.
 - **Invariants.** No operation is migrated yet, and lean-only operations have no Python verdict path.
 - **This document.** The table in section 7 is generated from the manifest.
 
@@ -193,7 +203,9 @@ the manifest `notes`, not changed:
 | Operation | Class | Authority now → target | Assurance now / at switch | Python entries | Lean bindings | Lean theorems | Rust | Trusted |
 |---|---|---|---|---|---|---|---|---|
 | `parse` | leaf | python → lean | experimental / experimental | `ve.parser:parse_with_metadata`<br>`ve.parser:parse`<br>`ve.parser:canonicalize`<br>`ve.parser:is_canonical` | `ve_conformance (default)`<br>`ve_conformance order surface` | `VE.Surface.parse_print`<br>`VE.Surface.parse_wellFormed`<br>`VE.Surface.normalize_idempotent`<br>`VE.Surface.print_injective`<br>`VE.Surface.accepted_normalize_eq_iff`<br>`VE.Surface.parse_print_propositional`<br>`VE.Closure.Surface.parse_print_named`<br>`VE.Core.Surface.parse_print_named` | `parse`<br>`format` | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`lean:order-surface-parser` |
-| `typing` | leaf | python → lean | experimental / reference-theorems-checked | `ve.ast:check_formula`<br>`ve.ast:check_document` | none | `VE.check_iff_wellFormed`<br>`VE.Closure.check_iff_wellFormed`<br>`VE.Order.check_iff_wellFormed`<br>`VE.Core.check_iff_wellFormed` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `typing` | leaf | python → lean | experimental / reference-theorems-checked | `ve.ast:check_formula`<br>`ve.ast:check_document`<br>`ve.ast:formula_from_data`<br>`ve.ast:formula_to_data` | none | `VE.check_iff_wellFormed`<br>`VE.Closure.check_iff_wellFormed`<br>`VE.Order.check_iff_wellFormed`<br>`VE.Core.check_iff_wellFormed` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `environment` | leaf | python → lean | experimental / experimental | `ve.environment:Environment.__init__` | none | `VE.Route.Gate.decodeEnvelope_sound`<br>`VE.Route.Gate.classify_sound`<br>`VE.Route.Gate.classify_complete`<br>`VE.Route.Run.route_gate`<br>`VE.Route.Run.route_gate_rejects`<br>`VE.Order.profile_gate` | `conformance` | `python:implementation`<br>`python:wire` |
+| `model` | leaf | python → lean | experimental / experimental | `ve.model:FiniteModel.from_dict` | none | `VE.Bridge.decodeModel_valid`<br>`VE.Route.Wire.decodeModel_valid`<br>`VE.Route.Wire.decodeModel_background`<br>`VE.Route.Wire.decodeModel_intended` | `conformance` | `python:implementation`<br>`python:wire` |
 | `evaluate` | leaf | python → lean | experimental / reference-theorems-checked | `ve.evaluate:evaluate` | `ve_conformance (default)`<br>`ve_conformance route evaluate`<br>`ve_conformance order evaluate` | `VE.eval_iff_denote`<br>`VE.eval_false_iff_not_denote`<br>`VE.document_eval_iff_denote`<br>`VE.Closure.eval_iff_denote`<br>`VE.Order.eval_iff_denote`<br>`VE.Core.eval_iff_denote`<br>`VE.Bridge.decodeModel_valid`<br>`VE.Route.Wire.decodeModel_valid` | `evaluate`<br>`conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `countermodel.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.search:check_countermodel` | `ve_conformance (default) countermodel`<br>`ve_conformance route countermodel`<br>`ve_conformance order countermodel` | `VE.countermodelCheck_iff`<br>`VE.countermodel_sound`<br>`VE.Closure.countermodelCheck_iff`<br>`VE.Closure.countermodel_sound`<br>`VE.Order.countermodelCheck_iff`<br>`VE.Order.countermodel_sound`<br>`VE.Order.checkCountermodel_sound`<br>`VE.Core.countermodelCheck_iff`<br>`VE.Core.countermodel_sound`<br>`VE.Bridge.decodeModel_valid`<br>`VE.Bridge.decoded_countermodel_sound`<br>`VE.Bridge.CountermodelQuery.refutes_sound`<br>`VE.Route.Wire.decodeModel_valid` | `check-countermodel`<br>`conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `countermodel.search` | search | python → rust | experimental / experimental | `ve.search:find_countermodel`<br>`ve.search:find_distinguishing_model` | none | none | `countermodel`<br>`conformance` | `python:implementation` |
@@ -205,12 +217,14 @@ the manifest `notes`, not changed:
 | `soft.elaborate` | leaf | lean-only → lean | experimental / experimental | none | none | none | none | `lean:kernel`<br>`lean:compiler` |
 | `admission` | leaf | python → lean | experimental / experimental | `ve.admission:admit_document`<br>`ve.norm_admission:admit_norm_document` | `ve_conformance route admission`<br>`ve_norms_route (default) admission` | `VE.Route.Admission.admit_report_sound`<br>`VE.Route.Admission.admit_string_sound`<br>`VE.Route.Admission.admit_labels_decoded`<br>`VE.Norms.Admission.admitDocument_spec`<br>`VE.Norms.Admission.norms_wire_admission_sound`<br>`VE.Norms.Admission.norms_wire_report_consequence`<br>`VE.Norms.Run.runAdmission_sound`<br>`VE.Norms.Run.norms_wire_acceptance` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:record-identity` |
 | `label` | leaf | python → lean | experimental / experimental | `ve.admission:parse_label`<br>`ve.admission:validate_label` | `ve_conformance route label` | `VE.Route.Admission.parseLabel_render` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `identity` | leaf | python → lean | experimental / experimental | `ve.identity:source_id`<br>`ve.identity:meaning_id`<br>`ve.argument:Claim.claim_id`<br>`ve.argument:deduction_identity` | none | none | `conformance` | `python:implementation`<br>`python:wire` |
 | `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Route.readings_all_sound (planned)`<br>`VE.Route.readings_none_sound (planned)`<br>`VE.Route.readings_some_sound (planned)` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
 | `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.backgroundLeaves_hold` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
+| `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
 | `document.check` | combination | python → lean | experimental / experimental | `ve.document:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
 <!-- END GENERATED -->
@@ -221,4 +235,4 @@ the manifest `notes`, not changed:
   manifest is their source when stage 4 adds them.
 - `docs/spec/theorem-coverage.md`: the `at_switch` column is the plan's initial list, still to be confirmed.
 - The `VE_AUTHORITY` flag, the Lean service, shadow mode and the planned Lean modes (`parse`, `normalize`, `check`,
-  `model`, `graph`, `readings`, `identity`).
+  `environment`, `model`, `graph`, `readings`, `identity`); each is carried by an operation's `planned_modes`.

@@ -7,6 +7,7 @@ from typing import Any, Mapping
 import re
 from itertools import product
 
+from .assurance import semantic_entry
 from .errors import InvalidModel, ResourceLimit
 from .limits import MAX_ENTITIES, MAX_IDENTIFIER_BYTES, MAX_PACKAGE_BYTES, MAX_TUPLES
 
@@ -53,6 +54,7 @@ class FiniteModel:
         return cls.from_dict(env, loads_json(data))
 
     @classmethod
+    @semantic_entry("model")
     def from_dict(cls, env: Any, wire: Any) -> "FiniteModel":
         _keys(wire, {"complete", "domains", "constants", "relations"}, "")
         if wire["complete"] is not True:

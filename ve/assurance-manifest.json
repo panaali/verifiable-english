@@ -29,6 +29,7 @@
     "python:composition-rule": "argument.py reachability walk, leaf list and composed flag (class C until the Lean graph mode)",
     "python:readings-rule": "readings.py disjunction and shared-model premise assembly and the ALL/SOME/NONE relabelling (class C until Readings.lean)",
     "python:equivalence.compare": "the two-direction rule of equivalence.compare (class C, trusted and narrowed)",
+    "python:reference-rule": "the VALID/INVALID/UNKNOWN rule of equivalence.validate_reference over checked models and replayed certificates (class C)",
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
@@ -103,6 +104,43 @@
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path"
     }
   },
+  "plan_operations": {
+    "note": "Every operation named in SEMANTICS-MIGRATION-PLAN.md section 2.3 (Operations) and every new Lean mode of section 2.1, mapped to the manifest operations that carry it; the test parses the plan.",
+    "operations": {
+      "parse/accept": ["parse"], "canonicalize": ["parse"], "typing": ["typing"],
+      "environment validation": ["environment"], "model validation": ["model"],
+      "evaluate": ["evaluate"], "evaluate with trace": ["evaluate"], "countermodel check": ["countermodel.check"],
+      "countermodel search (each option)": ["countermodel.search"], "distinguishing model": ["countermodel.search"],
+      "certificate replay (v0, extended, closure, order, core)": ["certificate.check"],
+      "Background": ["definitions.elaborate"], "definitions elaboration": ["definitions.elaborate"],
+      "dependency order": ["definitions.elaborate"], "admission": ["admission"], "label": ["label"],
+      "bundle": ["bundle.check"],
+      "norms elaborate/conflict/certificate/admission": ["norms.elaborate", "norms.conflict", "norms.certificate", "admission"],
+      "readings": ["readings"], "argument check (graph)": ["graph.compose"], "compare": ["compare"],
+      "premise status": ["premise-status"]
+    }
+  },
+  "non_verdict_api": [
+    {"names": ["And", "Binary", "Body", "Bottom", "Const", "Document", "Edge", "Eq", "Exists", "Forall", "Formula",
+               "Implies", "Named", "Not", "Or", "Reach", "Term", "Top", "Unary", "Var"],
+     "reason": "AST node types; constructing a node asserts nothing (typing is the typing entries)"},
+    {"names": ["ArgumentGraph", "ArgumentResult", "Budgets", "ComparisonResult", "Deduction", "DirectionResult",
+               "EntailmentCertificateCheck", "EntailmentResult", "Evidence", "InductionInvariant", "ReferenceValidation"],
+     "reason": "input and result containers; their verdicts come from the entries that fill them"},
+    {"names": ["DIFFERENT", "EQUIVALENT", "UNKNOWN", "VEError"], "reason": "constants and the error base class"},
+    {"names": ["doc_from_json", "document_from_data", "document_to_data", "document_from_named_fol",
+               "document_to_named_fol", "render_fol"],
+     "reason": "wire and FOL conversion; every document is typed by the typing entry check_document"},
+    {"names": ["is_weaker", "is_stronger"], "reason": "relabel the verdict of the compare entry"},
+    {"names": ["in_two_variable_fragment"], "reason": "syntactic classification, no semantic verdict"},
+    {"names": ["prove_entailment"],
+     "reason": "untrusted proof generation; it reports Found only after the certificate.check entry replays the certificate"},
+    {"names": ["lint_english_vocabulary", "lint_vocabulary", "suggest_vocabulary"],
+     "reason": "vocabulary authoring aids; they propose or warn and never admit"},
+    {"names": ["measure_view_lengths", "natural_document", "natural_formula", "print_document", "print_formula",
+               "render", "render_vocabulary", "outstanding_obligations", "predicate_use_panel"],
+     "reason": "display of already checked values (python:display)"}
+  ],
   "operations": [
     {
       "id": "parse",
@@ -145,7 +183,7 @@
       "authority": "python",
       "target": "lean",
       "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked", "reason": "check_iff_wellFormed per family"},
-      "python": ["ve.ast:check_formula", "ve.ast:check_document"],
+      "python": ["ve.ast:check_formula", "ve.ast:check_document", "ve.ast:formula_from_data", "ve.ast:formula_to_data"],
       "outcomes": {"verdict": ["well-typed"], "unknown": [],
                    "rejection": ["TypeMismatch", "UnknownSymbol", "UnboundVariable", "UnsupportedProfile", "InvalidInput"],
                    "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
@@ -163,7 +201,65 @@
                 "tests/test_order.py::test_typing_separates_objects_and_integers",
                 "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"],
       "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders"],
-      "notes": ["Lean types every formula it decodes in every mode; a standalone typing request is the planned `check` mode."]
+      "notes": ["Lean types every formula it decodes in every mode; a standalone typing request is the planned `check` mode.",
+                "formula_from_data and formula_to_data type-check while decoding or encoding, so they are typing entries like check_document (which document_from_data and document_to_data call)."]
+    },
+    {
+      "id": "environment",
+      "summary": "environment validation: envelope, profile gate, vocabulary and definitions; environment_id",
+      "class": "leaf",
+      "authority": "python",
+      "target": "lean",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "decodeEnvelope_sound and route_gate pin the profile gate only; the vocabulary decoders have no refinement theorem (lean:decoders)"},
+      "python": ["ve.environment:Environment.__init__"],
+      "outcomes": {"verdict": ["validated environment", "environment_id"], "unknown": [],
+                   "rejection": ["UnsupportedProfile", "DuplicateDeclaration", "UnknownSymbol", "InvalidInput"],
+                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "lean": {
+        "bindings": [],
+        "planned_modes": ["environment"],
+        "theorems": ["VE.Route.Gate.decodeEnvelope_sound", "VE.Route.Gate.classify_sound", "VE.Route.Gate.classify_complete",
+                     "VE.Route.Run.route_gate", "VE.Route.Run.route_gate_rejects", "VE.Order.profile_gate"],
+        "planned_theorems": [],
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Closure/Bridge.lean", "lean/VE/Core/Bridge.lean",
+                     "lean/VE/Route/Gate.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Norms/Wire.lean"]
+      },
+      "rust": {"commands": ["conformance"], "role": "environment decoding and environment_id in every Rust case"},
+      "lean_call_sites": [],
+      "tests": ["tests/test_conformance.py::test_environment_rejects_unknown_fields_and_lone_surrogates",
+                "tests/test_conformance.py::test_environment_identity_ignores_json_format_and_key_order",
+                "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"],
+      "trusted": ["python:implementation", "python:wire"],
+      "notes": ["Lean decodes and gates the environment of every case in every mode; a standalone request is the planned `environment` mode (migration plan 2.1). Every other operation depends on it."]
+    },
+    {
+      "id": "model",
+      "summary": "finite-model validation (admissibility, defined tables, data Background); model_id",
+      "class": "leaf",
+      "authority": "python",
+      "target": "lean",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "decodeModel_valid proves decoded models admissible; the wire correspondence is lean:decoders"},
+      "python": ["ve.model:FiniteModel.from_dict"],
+      "outcomes": {"verdict": ["validated model", "model_id"], "unknown": [],
+                   "rejection": ["InvalidModel", "InvalidInput"],
+                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "lean": {
+        "bindings": [],
+        "planned_modes": ["model"],
+        "theorems": ["VE.Bridge.decodeModel_valid", "VE.Route.Wire.decodeModel_valid",
+                     "VE.Route.Wire.decodeModel_background", "VE.Route.Wire.decodeModel_intended"],
+        "planned_theorems": [],
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Core/Wire.lean"]
+      },
+      "rust": {"commands": ["conformance"], "role": "model decoding and model_id in every Rust case"},
+      "lean_call_sites": [],
+      "tests": ["tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
+                "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
+                "tests/test_rust_conformance.py::test_rust_shared_identities"],
+      "trusted": ["python:implementation", "python:wire"],
+      "notes": ["Lean validates every model it decodes in evaluate and countermodel cases; a standalone request, with model_id, is the planned `model` mode (migration plan 2.1, 2.2)."]
     },
     {
       "id": "evaluate",
@@ -491,6 +587,32 @@
       "notes": []
     },
     {
+      "id": "identity",
+      "summary": "semantic identities: source_id, meaning_id, claim_id, edge_id (environment_id and model_id are computed by environment and model)",
+      "class": "leaf",
+      "authority": "python",
+      "target": "lean",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "SHA-256 and canonical JSON have vector tests, no proof; trusted as today (migration plan 2.2)"},
+      "python": ["ve.identity:source_id", "ve.identity:meaning_id", "ve.argument:Claim.claim_id", "ve.argument:deduction_identity"],
+      "outcomes": {"verdict": ["identity digest"], "unknown": [],
+                   "rejection": ["SyntaxError", "InvalidInput"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "lean": {
+        "bindings": [],
+        "planned_modes": ["identity"],
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": ["lean/VE/CertificateWire.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean"]
+      },
+      "rust": {"commands": ["conformance"], "role": "environment_id, meaning_id and model_id in every Rust case"},
+      "lean_call_sites": [],
+      "tests": ["tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
+                "tests/test_rust_conformance.py::test_rust_shared_identities",
+                "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"],
+      "trusted": ["python:implementation", "python:wire"],
+      "notes": ["Lean recomputes environment_id and meaning_id on every binding it accepts (Route.Wire.bindingOk, admission checkBindings) but not source_id, claim_id or edge_id; those are the planned `identity` and `graph` modes. graph_id and record ids stay Python (python:record-identity)."]
+    },
+    {
       "id": "readings",
       "summary": "reading-set classification ALL/SOME/NONE",
       "class": "combination",
@@ -648,6 +770,25 @@
                 "tests/test_equivalence.py::test_proof_and_model_outputs_are_independently_replayed"],
       "trusted": ["python:implementation", "python:equivalence.compare"],
       "notes": []
+    },
+    {
+      "id": "reference.validate",
+      "summary": "reference validation VALID/INVALID/UNKNOWN: a checked non-vacuous satisfying model and a falsifying model",
+      "class": "combination",
+      "authority": "python",
+      "target": "python",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "class C, trusted and narrowed like compare: a Python rule over checked constituents"},
+      "python": ["ve.equivalence:validate_reference"],
+      "outcomes": {"verdict": ["VALID", "INVALID"], "unknown": ["UNKNOWN"],
+                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "lean": null,
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": ["tests/test_equivalence.py::test_reference_validation_requires_non_vacuous_satisfaction_and_nonvalidity",
+                "tests/test_assurance_manifest.py::test_combinations_propagate_unavailability_instead_of_unknown"],
+      "trusted": ["python:implementation", "python:reference-rule"],
+      "notes": ["Every model is checked by countermodel.check and every certificate by certificate.check; an unavailable constituent propagates as CheckerUnavailable, never UNKNOWN."]
     },
     {
       "id": "document.check",

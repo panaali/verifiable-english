@@ -52,7 +52,7 @@ def _resolve(entry):
     value = importlib.import_module(module)
     for part in qualname.split("."):
         value = getattr(value, part)
-    return value
+    return value.fget if isinstance(value, property) else value
 
 
 def _manifest_entries():
@@ -64,7 +64,8 @@ def _manifest_entries():
 def test_schema_and_vocabulary():
     assert MANIFEST["version"] == assurance.MANIFEST_VERSION
     assert set(MANIFEST) == {"version", "spec", "migration_plan", "outcome_classes", "authorities", "trusted",
-                             "reviewed_broad_handlers", "lean_decoders", "operations"}
+                             "reviewed_broad_handlers", "lean_decoders", "plan_operations", "non_verdict_api",
+                             "operations"}
     assert (ROOT / MANIFEST["spec"]).exists() and (ROOT / MANIFEST["migration_plan"]).exists()
     assert set(MANIFEST["authorities"]) == set(assurance.AUTHORITIES)
     ids = [op["id"] for op in OPS]
@@ -281,6 +282,73 @@ def test_nothing_is_migrated_yet():
     assert assurance.enforced_operations() == frozenset()
 
 
+# --- completeness: omissions that no decorator comparison can see ----------------
+
+def _plan_section(heading):
+    text = (ROOT / MANIFEST["migration_plan"]).read_text()
+    return text.split(heading, 1)[1].split("\n### ", 1)[0]
+
+
+def test_every_plan_operation_has_a_manifest_operation():
+    """Review reproducer: environment and model validation (plan 2.3) had no operation entry."""
+    section = _plan_section("### 2.3 ")
+    listed = re.search(r"^- \*\*Operations:\*\* (.*?)\n- \*\*", section, re.S | re.M).group(1)
+    listed = " ".join(listed.split()).rstrip(".")
+    names = [name.strip() for name in re.split(r",\s*(?![^()]*\))", listed)]
+    mapping = MANIFEST["plan_operations"]["operations"]
+    assert names == list(mapping), set(names) ^ set(mapping)
+    ids = {op["id"] for op in OPS}
+    for name, ops in mapping.items():
+        assert ops and set(ops) <= ids, name
+
+
+def test_every_planned_lean_mode_is_carried_by_an_operation():
+    """Review reproducer: the plan's `identity` mode (2.1) was named in the spec but carried by no operation."""
+    section = _plan_section("### 2.1 ")
+    rows = re.findall(r"^\| `([^`]+)`[^|]*\|.*\| (new [^|]*)\|$", section, re.M)
+    assert rows
+    planned = {mode for op in OPS for mode in (op["lean"] or {}).get("planned_modes", ())}
+    bound = {(b["mode"], kind) for op in OPS for b in (op["lean"] or {}).get("bindings", ())
+             for kind in b["kinds"]}
+    for mode, _ in rows:
+        if "/" in mode:   # an extension of an existing route kind, e.g. route/evaluate
+            assert tuple(mode.split("/", 1)) in bound, mode
+        else:
+            assert mode in planned, mode
+
+
+def _public_api():
+    import types
+    import ve
+    return {name: getattr(ve, name) for name in dir(ve)
+            if not name.startswith("_") and not isinstance(getattr(ve, name), types.ModuleType)}
+
+
+def _is_entry(value):
+    if hasattr(value, "__ve_operation__"):
+        return True
+    if isinstance(value, type):
+        for attribute in vars(value).values():
+            attribute = attribute.fget if isinstance(attribute, property) else attribute
+            attribute = getattr(attribute, "__func__", attribute)
+            if hasattr(attribute, "__ve_operation__"):
+                return True
+    return False
+
+
+def test_every_public_api_name_is_an_entry_or_classified():
+    """An unmarked public verdict producer (validate_reference was one) fails here."""
+    api = _public_api()
+    entries = {name for name, value in api.items() if _is_entry(value)}
+    classified = [name for group in MANIFEST["non_verdict_api"] for name in group["names"]]
+    assert len(classified) == len(set(classified))
+    assert all(group["reason"] for group in MANIFEST["non_verdict_api"])
+    assert not entries & set(classified), entries & set(classified)
+    assert set(api) == entries | set(classified), "\n".join(sorted(set(api) ^ (entries | set(classified))))
+    assert {"Environment", "FiniteModel", "Claim", "meaning_id", "source_id", "validate_reference",
+            "formula_from_data", "formula_to_data"} <= entries
+
+
 def test_lean_only_operations_have_no_python_verdict_path():
     for op in OPS:
         if op["authority"] == "lean-only":
@@ -444,7 +512,7 @@ LEAVES = ("certificate.check", "countermodel.check")
 
 def test_combinations_propagate_unavailability_instead_of_unknown(p0):
     from ve.ast import Bottom, Const, Not, Top, Unary
-    from ve.equivalence import compare
+    from ve.equivalence import compare, validate_reference
     from ve.readings import check_readings
     from ve.vacuity import premise_status
     senior = Unary("senior", Const("alice"))
@@ -464,6 +532,9 @@ def test_combinations_propagate_unavailability_instead_of_unknown(p0):
             check_readings(p0, sets, raw)
         with pytest.raises(CheckerUnavailable):
             check_readings(p0, sets, ["top"])
+        for formula in (senior, Top(), Bottom()):
+            with pytest.raises(CheckerUnavailable):
+                validate_reference(p0, formula)
 
 
 def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatch):

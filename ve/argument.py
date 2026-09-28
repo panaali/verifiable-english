@@ -104,6 +104,7 @@ class Claim:
                    meaning_id(env, ast), evidence_ids, _label(label))
 
     @property
+    @semantic_entry("identity")
     def claim_id(self):
         # Aliases and factual support do not change the committed statement.
         payload = {"environment_id": self.environment_id,
@@ -239,6 +240,7 @@ class ArgumentGraph:
         return cls.from_dict(loads_json(data))
 
 
+@semantic_entry("identity")
 def deduction_identity(graph, deduction):
     claims = {c.name: c for c in graph.claims}
     return digest("ve-deduction-v1\n", {"version": ARGUMENT_VERSION,
