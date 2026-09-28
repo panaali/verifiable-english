@@ -210,9 +210,11 @@ class SpeechDocument:
                 if bare_kind != "norm":
                     raise VEError("InvalidInput: norm content requires norm kind")
                 # 1.5 and W2: an author norm unit is active unless its reading is pending.
-                norm = NormDocument._decode(content)
                 if kind == "norm" and not pending:
-                    self.norms.append(norm)
+                    self.norms.append(NormDocument._decode(content))
+                else:  # dormant norms keep every single-rule check, as Lean's decoder
+                    from .norm_admission import _check_quoted
+                    _check_quoted(env, content)
             elif kind == "asserted":
                 # W2's fixed asserted premises: asserted content outside a pending
                 # reading set, or the author's signed singleton choice (1.5).
@@ -236,6 +238,7 @@ class SpeechDocument:
             self.env = Environment({**env.to_dict(), "speech_acts": self.scope})
         for uid, binding in self.bindings:
             self.meaning_ids[uid] = self._id({"binding": binding})
+        self._check_candidates()
         if len(self.questions) > 256:
             raise ResourceLimit("questions")
         self._queries(queries)
@@ -288,6 +291,44 @@ class SpeechDocument:
                 if actual not in self.env.constants:
                     raise VEError(f"UnknownSymbol: {actual}")
                 self.scope.setdefault("definites", {})[key] = actual
+
+    def _check_candidates(self):
+        """Every elaborated reading candidate decodes as content of its kind.
+
+        Coverage class R claims each candidate is admitted as a command,
+        question, norm or assertion (6); a malformed candidate is rejected,
+        never counted, and only a `null` candidate is unelaborated.
+        """
+        from .norm_admission import _check_quoted
+        for item in self.reading_sets:
+            uid = item["unit"]
+            for reading in item.get("readings", []):
+                if type(reading) is not dict or "content" not in reading:
+                    raise VEError("invalid reading")
+                content = reading["content"]
+                if content is None:
+                    continue
+                if type(content) is list:
+                    content = {"ast": content}
+                if type(content) is not dict or len(content) != 1:
+                    raise VEError("invalid speech reading content")
+                tag, value = next(iter(content.items()))
+                if tag == "ast":
+                    formula_from_data(self.env, value)
+                elif tag == "command":
+                    self._command(uid, value, False)
+                elif tag == "question":
+                    self._question(uid, value, {"meaning": {"open": [f"intended-reading.{uid}"]}})
+                elif tag == "norm":
+                    _check_quoted(self.env, content)
+                elif tag == "binding":
+                    if (type(value) is not dict or not (set(value) in ({"you"}, {"task"}, {"phrase", "constant"}))
+                            or any(type(v) is not str for v in value.values())):
+                        raise VEError("InvalidInput: binding")
+                    if "task" not in value and value.get("constant", value.get("you")) not in self.env.constants:
+                        raise VEError(f"UnknownSymbol: {value.get('constant', value.get('you'))}")
+                else:
+                    raise VEError("invalid speech reading content")
 
     def _command(self, uid, raw, active):
         if (type(raw) is not dict or not {"force", "act", "args"} <= set(raw)
