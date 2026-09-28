@@ -1,0 +1,157 @@
+[
+  {
+    "layer": 1,
+    "source": "ve/wire.py",
+    "selected_files": 96,
+    "full_files": 96,
+    "witness": "tests/test_conformance.py::test_jcs_utf16_key_order_and_string_escaping_golden",
+    "witness_exit": 1,
+    "witness_failures": [
+      "tests/test_conformance.py::test_jcs_utf16_key_order_and_string_escaping_golden"
+    ],
+    "witness_seconds": 3.5,
+    "excluded_files": 0,
+    "excluded_exit": 0,
+    "excluded_failures": [],
+    "excluded_seconds": 0.0
+  },
+  {
+    "layer": 2,
+    "source": "ve/profiles.py",
+    "selected_files": 96,
+    "full_files": 96,
+    "witness": "tests/test_profiles.py::test_route_families_and_identity",
+    "witness_exit": 1,
+    "witness_failures": [
+      "tests/test_profiles.py::test_route_families_and_identity"
+    ],
+    "witness_seconds": 3.0,
+    "excluded_files": 0,
+    "excluded_exit": 0,
+    "excluded_failures": [],
+    "excluded_seconds": 0.0
+  },
+  {
+    "layer": 3,
+    "source": "ve/grammar.py",
+    "selected_files": 90,
+    "full_files": 96,
+    "witness": "tests/test_grammar.py::test_all_dialects_are_nonempty_and_closed_vocabulary",
+    "witness_exit": 1,
+    "witness_failures": [
+      "tests/test_grammar.py::test_all_dialects_are_nonempty_and_closed_vocabulary[gbnf]",
+      "tests/test_grammar.py::test_all_dialects_are_nonempty_and_closed_vocabulary[lark]"
+    ],
+    "witness_seconds": 3.1,
+    "excluded_files": 6,
+    "excluded_exit": 0,
+    "excluded_failures": [],
+    "excluded_seconds": 27.0
+  },
+  {
+    "layer": 4,
+    "source": "ve/adapters/gatekeeper.py",
+    "selected_files": 76,
+    "full_files": 96,
+    "witness": "tests/test_gatekeeper_adapter.py::test_gatekeeper_exemption_uses_verified_globs",
+    "witness_exit": 1,
+    "witness_failures": [
+      "tests/test_gatekeeper_adapter.py::test_gatekeeper_exemption_uses_verified_globs"
+    ],
+    "witness_seconds": 2.7,
+    "excluded_files": 20,
+    "excluded_exit": 0,
+    "excluded_failures": [],
+    "excluded_seconds": 135.5
+  },
+  {
+    "layer": 5,
+    "source": "ve_experiments/t1c/materials.py",
+    "selected_files": 52,
+    "full_files": 96,
+    "witness": "tests/test_t1c.py::test_generator_ground_truth",
+    "witness_exit": 1,
+    "witness_failures": [
+      "tests/test_t1c.py::test_generator_ground_truth"
+    ],
+    "witness_seconds": 3.8,
+    "excluded_files": 44,
+    "excluded_exit": 0,
+    "excluded_failures": [],
+    "excluded_seconds": 1137.2,
+    "excluded_chunks": [
+      {
+        "files": [
+          "tests/test_argument_adversarial.py",
+          "tests/test_attacks.py",
+          "tests/test_authoring.py",
+          "tests/test_background.py",
+          "tests/test_cedar_attributes.py",
+          "tests/test_closure.py",
+          "tests/test_closure_certificates.py",
+          "tests/test_data_adapters.py",
+          "tests/test_data_flags.py",
+          "tests/test_data_surface.py",
+          "tests/test_data_three_way.py"
+        ],
+        "exit": 0,
+        "failures": [],
+        "seconds": 28.0
+      },
+      {
+        "files": [
+          "tests/test_definitions.py",
+          "tests/test_definitions_differential.py",
+          "tests/test_document.py",
+          "tests/test_english_evidence.py",
+          "tests/test_english_unambiguity.py",
+          "tests/test_entailment_adversarial.py",
+          "tests/test_entailment_properties.py",
+          "tests/test_equivalence.py",
+          "tests/test_equivalence_properties.py",
+          "tests/test_evaluate_search.py",
+          "tests/test_fluent.py"
+        ],
+        "exit": 0,
+        "failures": [],
+        "seconds": 962.9
+      },
+      {
+        "files": [
+          "tests/test_fol_names.py",
+          "tests/test_grammar.py",
+          "tests/test_grammar_backends.py",
+          "tests/test_lean_certificates.py",
+          "tests/test_legend.py",
+          "tests/test_nary.py",
+          "tests/test_nary_differential.py",
+          "tests/test_norm_admission.py",
+          "tests/test_norm_english.py",
+          "tests/test_norms.py",
+          "tests/test_order.py"
+        ],
+        "exit": 0,
+        "failures": [],
+        "seconds": 97.2
+      },
+      {
+        "files": [
+          "tests/test_order_gate.py",
+          "tests/test_order_grammar.py",
+          "tests/test_order_round2.py",
+          "tests/test_parser_renderer.py",
+          "tests/test_profiles.py",
+          "tests/test_properties.py",
+          "tests/test_search_options.py",
+          "tests/test_surface_registry.py",
+          "tests/test_vacuity.py",
+          "tests/test_views.py",
+          "tests/test_views_polish.py"
+        ],
+        "exit": 0,
+        "failures": [],
+        "seconds": 49.1
+      }
+    ]
+  }
+]
