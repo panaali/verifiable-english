@@ -7,7 +7,8 @@ import pytest
 
 from conformance.p0 import environment
 from ve import Environment, FiniteModel
-from ve.ast import And, Binary, Bottom, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Unary, Var
+from ve.ast import (And, Atom, Binary, Bottom, Const, Eq, Exists, Forall, Implies,
+                    Named, Not, Or, Reach, Top, Unary, Var)
 from ve.background import background, dependency_order
 from ve.evaluate import evaluate
 from ve.errors import VEError
@@ -114,6 +115,23 @@ def test_traced_evaluation_matches_python(monkeypatch, fixture, formula, budget,
         actual = evaluate(env, formula, model, trace=True,
                           max_evaluations=budget, max_trace_nodes=trace_budget)
         assert actual.to_dict() == expected.to_dict()
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("profiles,formula", [
+    (("closure@0",), Reach("star", Named("step"), Const("x"), Const("x"))),
+    (("closure@0", "nary@0"), Atom("triple", (Const("x"), Const("y"), Const("x")))),
+])
+def test_traced_profile_cases_match_python(monkeypatch, profiles, formula):
+    from tests.probe_matrix import model_wire, raw_environment
+    env = Environment(raw_environment(profiles))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = evaluate(env, formula, model, trace=True, max_evaluations=100)
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert evaluate(env, formula, model, trace=True,
+                        max_evaluations=100).to_dict() == expected.to_dict()
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
