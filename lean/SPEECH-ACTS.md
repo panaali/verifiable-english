@@ -121,7 +121,7 @@ profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit 
 |---|---|---|
 | `speech-elaborate` | none | `environment_id`, `scope`, `legend`, `premises` (the regenerated `premises(D)`), `policy` (W1 `norms-elaborate` output), `commands` (rule, paraphrase, `meaning_id`), `dormant`, `questions` (with `meaning_id`), `queries` |
 | `speech-answer` | `question`, `evidence` (`certificate` or `conditional` with `answer`, `presupposition_failed`, `model`), optional `premise_status` (`model` or `inconsistent`), optional `model_id` | the answer line of 5.3 |
-| `speech-consequence` | `query`, `certificate` and/or `model` | `follows (certificate)`, `gap (model <id>)`, `unresolved (no accepted evidence)`; `CheckerConflict` when both hold |
+| `speech-consequence` | `query`, `certificate` and/or `model`, optional `premise_status` (as `speech-answer`) and `model_id` | `follows (certificate; premises: <status>; vacuous: <no, yes or unknown>)`, `gap (model <id>)`, `unresolved (no accepted evidence)`; `CheckerConflict` when both hold |
 | `speech-conflict` | `packages` (target → `{"environment_id", "document_hash", "target", "certificate"}`) | `CONFLICT-FREE`, or `UNKNOWN` with the first target lacking an accepted certificate; the outer binding is the canonical environment id, the document hash `ve-speech-acts-<identity version>` over `{"environment_id", "document"}` and the target; the inner certificate binds the regenerated base environment (scope block, regulated predicates, `speech-acts@0` and `norms@0` removed), `Background_base` and `∀x̄. ¬conflict` |
 | `speech-conflict` | `witness` (W1's shape) | `CONFLICT` or `UNKNOWN` on the regenerated policy |
 

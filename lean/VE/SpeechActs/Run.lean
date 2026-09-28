@@ -17,8 +17,9 @@ decoded document (`Wire.decodeDocument`); nothing on the wire supplies
   and optionally `premise_status` (`{"model"}` or `{"inconsistent"}`) → the
   answer line of 5.3. Certificates bind the canonical environment, the
   regenerated premise list and the exact conclusion.
-* `speech-consequence` with `query` and `certificate` and/or `model` →
-  `follows`, `gap` or `unresolved` (`CheckerConflict` when both succeed).
+* `speech-consequence` with `query`, `certificate` and/or `model`, and optionally
+  `premise_status` → `follows` with the status of `Π_q` (5.3), `gap` or
+  `unresolved` (`CheckerConflict` when both succeed).
 * `speech-conflict` with `witness` (W1's witness shape on the regenerated
   policy) → `CONFLICT` or `UNKNOWN`.
 * Cases without a speech-act construct delegate unchanged to
@@ -336,6 +337,8 @@ structure ConsequenceCase where
   mem : qr ∈ dec.D.queries
   cert : Option VE.Tableau.Certificate
   model : Option (CheckedModel dec.D (queryPremises dec.D qr))
+  /-- 5.3: P0's status of `Π_q`, the list a `follows` certificate is checked over -/
+  status : PremiseStatus dec.D (queryPremises dec.D qr)
 
 def ConsequenceCase.follows (r : ConsequenceCase) : Bool :=
   match r.cert with
@@ -356,7 +359,8 @@ def replayConsequence (j : Json) : Except String ConsequenceCase := do
   let model ← match j.getObjVal? "model" with
     | .ok mj => some <$> decodeCheckedModel dec (queryPremises dec.D qr) mj
     | .error _ => pure none
-  pure ⟨dec, qr, hq, cert, model⟩
+  let status ← decodePremiseStatus dec (queryPremises dec.D qr) ((stringField j "model_id").toOption.getD "m") j
+  pure ⟨dec, qr, hq, cert, model, status⟩
 
 /-! ## Conflict witnesses (`speech-conflict`) -/
 
@@ -464,7 +468,7 @@ def runCase (j : Json) : Except String Json := do
     let r ← replayConsequence j
     if r.follows && r.gap then throw "CheckerConflict"
     let judgment :=
-      if r.follows then "follows (certificate)"
+      if r.follows then s!"follows (certificate; premises: {r.status.text})"
       else if r.gap then "gap (model " ++ (stringField j "model_id").toOption.getD "m" ++ ")"
       else "unresolved (no accepted evidence)"
     return VE.Route.Wire.ok id [("query", .str r.qr.id), ("judgment", .str judgment)]

@@ -633,7 +633,8 @@ answer: supported <a> (certificate; assumptions: <leaves>;
       | PRESUPPOSITION-FAILED (certificate for ¬H | model <id>)
       | UNKNOWN (<budget>)
       | UNANSWERED
-judgment (follows questions): follows (certificate; premises: model <id> | INCONSISTENT (certificate) | UNKNOWN (<budget>))
+judgment (follows questions): follows (certificate; premises: model <id> | INCONSISTENT (certificate) | UNKNOWN (<budget>);
+                                              vacuous: no | yes | unknown)
                             | gap (model <id>) | unresolved (<budget>)
 nomination (reading questions): <i> by <agent> (testimony) | CLARIFICATION-OPEN (none | multiple | outside set)
 ```
@@ -1554,6 +1555,7 @@ statements of section 8 are unchanged.
 | B, query pinning: Python compared a reused query only at its earliest consumer | 1.4 as written ("at every site"): each follows question and each command with a `query` slot, in document order, compares the record with the asserted units before it; a record no unit asks about is `QueryMismatch: <query>` in both checkers. |
 | A, premise leakage; B, reading activeness: pending assertions and norms stayed active in Python; Python kept authored commands dormant while Lean let historical open versions suppress resolved ones; authored singleton assertions were premises in neither; `combine` reactivated pending commands | 1.2 and 1.5: the latest reading-set version decides for every unit kind (open: pending, no rule, no premise; authored: the signed choice is the unit's kind and content); content-less asserted units need a set and unformalised units carry no content, as W2; `combine` carries reading sets and queries. |
 | A, scope identity: bindings that supply "you" (or a definite) changed demands but kept the environment and meaning ids | 1.1 and 3.1: identities bind the canonical environment of the effective scope, as if the block declared the supplied entry; an empty definites map is canonically absent (Python had kept `{}`). |
+| B, vacuity: Python's `supported` and `follows` lines had no premise status, so contradictory premises certified both answers silently; Lean's `follows` line had none either | 5.3: every certificate line, `follows` included, carries the status of its exact list and `vacuous: no | yes | unknown` (the follows grammar gains the vacuity it derives). Python searches for the status within its budget (a checked model, a replayed inconsistency certificate, or UNKNOWN); Lean replays supplied `premise_status` evidence. |
 
 ## Change log
 

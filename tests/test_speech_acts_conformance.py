@@ -393,6 +393,44 @@ def test_authored_bindings_are_bound_into_every_identity(lean):
         elaborate(F0(definites={}), {"units": []})["environment_id"]
 
 
+def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
+    # Regression: contradictory premises certified both polar answers in Python with no premise
+    # status, and Lean's `follows` line omitted the status of Π_q.
+    from ve.ast import And
+    from ve.entailment import prove_entailment
+    env = F0()
+    facts = [unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+             unit("n", 1, "asserted", {"ast": ["not", U("reviewed", "atlas")]})]
+    document = {"units": facts + [unit("q", 2, "question", polar(U("reviewed", "atlas")))]}
+    py = core(env, document)
+    q = py.questions[0]
+    for token in ("yes", "no"):
+        proof = prove_entailment(py.env, py._caller_premises(), And(py.presupposition(q), py.correct(q, token)))
+        line = py.check_answer_certificate(q, token, proof.certificate)
+        assert (line["premises"]["status"], line["vacuous"]) == ("INCONSISTENT", "yes")
+        lean_line = run1({"id": "v", "kind": "speech-answer", "environment": env, "document": document,
+                          "question": "q", "answer": token, "evidence": {"certificate": proof.certificate},
+                          "premise_status": {"inconsistent": line["premises"]["certificate"]}})["answer"]
+        assert lean_line == f"supported {token} (certificate; premises: INCONSISTENT (certificate); vacuous: yes)"
+    follows = {"units": facts + [unit("f", 2, "question", {"question": {"mode": "follows", "query": "q1"}})],
+               "queries": [{"id": "q1", "premises": ["p", "n"], "target": {"ast": U("reviewed", "beacon")}}]}
+    py = core(env, follows)
+    proof = prove_entailment(py.env, py._caller_premises("q1"), py.queries["q1"].target)
+    line = py.check_consequence_certificate("q1", proof.certificate)
+    assert (line["status"], line["premises"]["status"], line["vacuous"]) == ("follows", "INCONSISTENT", "yes")
+    judgment = run1({"id": "f", "kind": "speech-consequence", "environment": env, "document": follows, "query": "q1",
+                     "certificate": proof.certificate,
+                     "premise_status": {"inconsistent": line["premises"]["certificate"]}})["judgment"]
+    assert judgment == "follows (certificate; premises: INCONSISTENT (certificate); vacuous: yes)"
+    # Consistent premises: a checked model, not vacuous.
+    consistent = {"units": facts[:1] + [unit("q", 2, "question", polar(U("reviewed", "atlas")))]}
+    py = core(env, consistent)
+    q = py.questions[0]
+    proof = prove_entailment(py.env, py._caller_premises(), And(py.presupposition(q), py.correct(q, "yes")))
+    line = py.check_answer_certificate(q, "yes", proof.certificate)
+    assert (line["premises"]["status"], line["vacuous"]) == ("model", "no")
+
+
 def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",
