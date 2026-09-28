@@ -340,17 +340,17 @@ def caseDigests (text : String) : Except String (Array String) := do
 def bound (index : Nat) (digest : String) (result : Json) : Json :=
   Json.mkObj [("index", toJson index), ("digest", .str digest), ("result", result)]
 
-/-- `results`, each bound to its position and its case digest in `digests`. -/
-def boundResults (r : Request) (cases : Array (Except String Json)) (digests : Array String) :
-    Array Json :=
-  (results r cases).mapIdx fun i x => bound i (digests.getD i "") x
+/-- Results, each bound to its position and its case digest in `digests`. -/
+def bindResults (rs : Array Json) (digests : Array String) : Array Json :=
+  rs.mapIdx fun i x => bound i (digests.getD i "") x
 
 /-- The response to a request whose cases decode to `cases` and whose case digests are
-`digests` (one per case). -/
+`digests` (one per case). The results are computed once, for both `results` and
+`counts`. -/
 def response (r : Request) (cases : Array (Except String Json)) (digests : Array String) : Json :=
   let rs := results r cases
   Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
-    ("results", .arr (boundResults r cases digests)),
+    ("results", .arr (bindResults rs digests)),
     ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
       ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
@@ -443,8 +443,8 @@ theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) 
 its case digest. -/
 theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (digests : Array String)
     (i : Nat) (h : i < cases.size) :
-    (boundResults r cases digests)[i]? =
+    (bindResults (results r cases) digests)[i]? =
       some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
-  simp [boundResults, results, h]
+  simp [bindResults, results, h]
 
 end VE.Service

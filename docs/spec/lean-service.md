@@ -184,7 +184,7 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   mode is its runner, by `rfl`), `caseResult_ok` (a decoded case gets `runMode`), `runRequest_ok` (a request
   within budget whose cases decode, one per case digest, is answered with `response`), `results_eq` (result `i`
   is `caseResult` of case `i`), `boundResults_eq` (bound result `i` is `caseResult` of case `i` with position
-  `i` and its case digest). Trusted and not proved: `objectMembers`, `decodeRequest`, the
+  `i` and its case digest, over `bindResults`, which binds the results `response` computes once). Trusted and not proved: `objectMembers`, `decodeRequest`, the
   restricted decoder, `caseDigests` (pinned to `caseTexts` and `caseDigest` by a `#guard`, and to the client's
   splitter by a randomized test against the service), and `Sha256.digest`. `Sha256.digest` is pinned by `#guard`s to the FIPS 180-4 vectors
   and to `VE.CertificateWire.sha256` on 130 inputs, and by the client comparing it with Python's `hashlib`.
