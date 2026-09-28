@@ -153,3 +153,120 @@ def test_rust_day_numbers_match_datetime_on_10000_dates():
     assert len(results) == 10000
     assert all(result["status"] == "ok" and result["Q"][1] == ["num", "day", result["id"]]
                for result in results)
+
+
+# --- Review regressions: Rust decides every class exactly as Python ---------
+
+from tests.test_w6a_review_regressions import (COLLIDING_UNITS, IDENTITY_VARIANTS, money,
+                                               raw_environment)
+from ve.errors import VEError
+
+
+def _rust_quantity(raw, formula=("top",), **more):
+    return rust({"id": "review", "kind": "quantity", "environment": raw,
+                 "quantity": {"format": "ve-quantity@1", "formula": list(formula), **more}})
+
+
+def test_rust_rejects_every_display_collision_class():
+    for units in COLLIDING_UNITS:
+        result = _rust_quantity(raw_environment(units))
+        assert result["status"] == "error", units
+        assert "DisplayCollision" in result["error"]["message"], (units, result)
+
+
+def test_rust_rejects_non_normalized_display_strings():
+    for text in ["", " $", "$  ", "U\tS", "US $", "a  b", "US $", "US\x1c$"]:
+        with pytest.raises(VEError):
+            Environment(raw_environment({"usd": money("USD", text)}))
+        assert _rust_quantity(raw_environment({"usd": money("USD", text)}))["status"] == "error", text
+    assert _rust_quantity(raw_environment({"usd": money("USD", "US$ ")}))["status"] == "ok"
+
+
+def test_rust_rejects_the_undeclared_date_tag_like_python():
+    for formula in (["date_on", ["date", "2026-09-16"], ["date", "2026-09-16"]],
+                    ["eq", ["date", "2026-09-16"], ["date", "2026-09-16"]]):
+        with pytest.raises(VEError, match=r"UnknownUnit\(day\)"):
+            elaborate_quantity(Environment(raw_environment({})),
+                               {"format": "ve-quantity@1", "formula": formula})
+        result = _rust_quantity(raw_environment({}), formula)
+        assert result["status"] == "error" and "UnknownUnit(day)" in result["error"]["message"]
+
+
+def test_rust_and_python_identities_agree_on_every_spelling():
+    for variant in IDENTITY_VARIANTS:
+        raw = raw_environment(variant.get("units"), variant.get("constants"),
+                              predicates=variant.get("predicates"))
+        env = Environment(raw)
+        payload = {"format": "ve-quantity@1", "formula": ["top"]}
+        result = _rust_quantity(raw)
+        assert result["status"] == "ok", result
+        assert result["environment_id"] == env.environment_id
+        assert result["meaning_id"] == quantity_meaning_id(env, payload)
+        assert result["target_environment_id"] == erased_environment(env).environment_id
+
+
+def test_rust_gates_traces_sorts_profiles_and_literals_like_python():
+    trace = {"name": "w", "tick_tag": "dimensionless", "origin": "e", "horizon": "1"}
+    raw = raw_environment(sorts={"item": {"description": "i"}},
+                          constants={"e": {"sort": "item", "description": "e"}})
+    with pytest.raises(VEError, match="numbers2"):
+        elaborate_quantity(Environment(raw), {"format": "ve-quantity@1", "formula": ["top"],
+                                              "traces": [trace]})
+    assert "numbers2" in _rust_quantity(raw, traces=[trace])["error"]["message"]
+    rejected = []
+    for sort in ("bp", "dimensionless"):
+        rejected.append(raw_environment(sorts={sort: {"description": "s"}}))
+    for profiles in (["data@0", "order@0", "relational-fol@0", "time@0"],
+                     ["definitions@0", "order@0", "relational-fol@0", "time@0"]):
+        changed = raw_environment()
+        changed["profiles"] = profiles
+        rejected.append(changed)
+    rejected.append(raw_environment(constants={"s": {"sort": "$string"}}))
+    rejected.append(raw_environment(constants={"c": {"sort": "$int", "description": "c",
+                                                     "verbalisation": 3}}))
+    for raw in rejected:
+        with pytest.raises(VEError):
+            Environment(raw)
+        assert _rust_quantity(raw)["status"] == "error", raw
+    documents = raw_environment()
+    documents["profiles"] = ["documents@1", "order@0", "relational-fol@0", "time@0"]
+    assert _rust_quantity(documents)["status"] == "ok"
+    assert Environment(documents).environment_id == _rust_quantity(documents)["environment_id"]
+
+
+def test_rust_orders_invalid_date_before_date_range_like_python():
+    raw = raw_environment({"day": {"scale": "1", "display": {"kind": "iso_date"}}})
+    env = Environment(raw)
+    for spelling, message in (("1969-13-45", "InvalidDate"), ("0000-01-01", "InvalidDate"),
+                              ("1969-12-31", "DateRange"), ("2100-02-29", "InvalidDate"),
+                              ("2000-02-29", None)):
+        formula = ["date_on", ["date", spelling], ["date", spelling]]
+        result = _rust_quantity(raw, formula)
+        if message is None:
+            elaborate_quantity(env, {"format": "ve-quantity@1", "formula": formula})
+            assert result["status"] == "ok"
+            continue
+        with pytest.raises(VEError, match=message):
+            elaborate_quantity(env, {"format": "ve-quantity@1", "formula": formula})
+        assert message in result["error"]["message"], result
+
+
+def test_rust_budgets_formula_and_term_depth_separately_like_python():
+    raw = raw_environment()
+    env = Environment(raw)
+    term = ["num", "bp", "1"]
+    for _ in range(60):
+        term = ["add", "bp", term, ["num", "bp", "1"]]
+    formula = ["eq", term, term]
+    for _ in range(60):
+        formula = ["not", formula]
+    payload = {"format": "ve-quantity@1", "formula": formula}
+    canonical, _ = elaborate_quantity(env, payload)
+    result = _rust_quantity(raw, formula)
+    assert result["status"] == "ok" and result["Q"] == canonical["formula"]
+    deep = ["not", ["top"]]
+    for _ in range(64):
+        deep = ["not", deep]
+    with pytest.raises(VEError, match="depth"):
+        elaborate_quantity(env, {"format": "ve-quantity@1", "formula": deep})
+    assert "depth" in _rust_quantity(raw, deep)["error"]["message"]
