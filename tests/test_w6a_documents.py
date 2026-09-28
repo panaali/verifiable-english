@@ -209,6 +209,79 @@ def test_reading_choices_bind_and_must_agree():
     assert "not admitted" in str(python) and "not admitted" in got["error"]
 
 
+# --- The news article --------------------------------------------------------
+
+def news_document():
+    path = NEWS / "news-w6a.ve.md"
+    doc = load_document(path)
+    active = active_reading_sets(doc["meta"].get("reading_sets", []))
+    return path, doc, quantity_admission_input(doc, active)
+
+
+def test_news_document_is_regenerated_deterministically():
+    process = subprocess.run([str(ROOT / ".venv" / "bin" / "python"),
+                              str(NEWS / "build_w6a_document.py"), "--check"], timeout=600)
+    assert process.returncode == 0, "rerun usecases/news-article/build_w6a_document.py"
+
+
+def test_news_document_is_admitted_by_lean_with_the_python_report():
+    path, doc, admission = news_document()
+    result = check_document(path)
+    [got] = lean([{"id": "news", "kind": "document", "environment": doc["meta"]["environment"],
+                   "document": admission}])
+    assert got["status"] == "ok", got
+    assert got["report_id"] == result["admission"]["core_report_id"]
+    assert got["report"] == result["admission"]["report"]
+    [other] = rust([{"id": "news", "kind": "quantity", "mode": "document",
+                     "environment": doc["meta"]["environment"], "document": admission}])
+    assert other["status"] == "ok"
+    labels = {a.get("label", "asserted") for a in got["report"]["assumptions"]}
+    assert "readings:first_target_year@1:all" in labels
+    assert {"bridge:accepts(fomc,s6_range)", "bridge:accepts(warsh,s14_goal)"} <= labels
+
+
+def test_news_document_partitions_the_pinned_source():
+    import hashlib
+    _, doc, _ = news_document()
+    assert hashlib.sha256(doc["source"]).hexdigest() == \
+        "b905818ecbc38c479a273d1503430745d1f2c9697215752572922ccedd73545b"
+    result = check_document(NEWS / "news-w6a.ve.md")
+    coverage = result["coverage"]
+    assert coverage["source_bytes"] == coverage["accounted_bytes"] == 5448
+    assert sum(coverage["bytes_by_status"].values()) == 5448
+    checked = {u["id"] for u in doc["units"] if u["status"] == "CHECKED"}
+    assert checked == {"s1_date", "s2_range", "s6_range", "s7_goal", "s11_pce", "s12_target",
+                       "s13_growth", "s13_unemployment", "s14_goal"}
+    # Residuals stay visible: missing operands, the count, vague degrees, the
+    # projection horizon and the unresolved reading of "not ... until".
+    reasons = coverage["unformalised_reasons"]
+    for reason in ("missing_old_range", "count_exceeds_bound", "missing_previous_expectation",
+                   "vague_degree", "vague_timelier", "vague_pledge_manner"):
+        assert reasons.get(reason) == 1
+    assert coverage["residual"]["open_terms"] == 1
+    assert coverage["residual"]["unresolved_reading_sets"] == 1
+    statuses = {u["id"]: u["status"] for u in doc["units"]}
+    assert statuses["s6_years"] == "OPEN" and statuses["s12_year"] == "OPEN"
+
+
+def test_news_report_is_not_vacuous_in_the_fixture_model():
+    """The fixture model satisfies every report assumption and the root, by
+    Lean's budgeted evaluation of the regenerated cores."""
+    _, doc, _ = news_document()
+    raw = doc["meta"]["environment"]
+    env = Environment(raw)
+    model = json.loads((NEWS / "w6a-quantity-fixtures.json").read_text())["model"]
+    result = check_document(NEWS / "news-w6a.ve.md")
+    claims = [result["admission"]["report"]["root"], *result["admission"]["report"]["assumptions"]]
+    got = lean([{"id": c["name"], "environment": raw, "quantity": c["quantity"], "model": model}
+                for c in claims])
+    assert all(g["status"] == "ok" and g["value"] is True for g in got), got
+    target = erased_environment(env)
+    finite = FiniteModel.from_dict(target, model)
+    assert all(evaluate(target, core_formula(env, c["quantity"])[1], finite, trace=False).value
+               for c in claims)
+
+
 # --- Whole-grammar English and strict fences ------------------------------------
 
 def grammar_env():
