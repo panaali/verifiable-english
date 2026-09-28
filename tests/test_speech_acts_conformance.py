@@ -1127,6 +1127,69 @@ def test_fence_kind_uses_signed_choice(lean, tmp_path):
         [c["unit"] for c in le["commands"]] == ["u"]
 
 
+@pytest.mark.parametrize("original_kind,original_content,authored", [
+    ("asserted", {"ast": U("reviewed", "beacon")}, True),
+    ("question", polar(U("reviewed", "beacon")), True),
+    ("asserted", {"ast": U("reviewed", "atlas")}, False),
+])
+def test_assertion_fence_agrees_with_unfenced_choice(lean, tmp_path, original_kind, original_content, authored):
+    # The signed assertion replaces even a different original kind or content.
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    chosen = {"ast": U("reviewed", "atlas")}
+    sets = [reading_set("u", 1, "authored", "asserted", chosen)] if authored else []
+    units, (plain, fenced) = _fenced_pair(
+        tmp_path, f"asserted-{original_kind}-{authored}", env, ["Atlas is reviewed.\n"],
+        [unit("u", 0, original_kind, original_content)], "u", reading_sets=sets)
+    a, b = load_speech_document(plain).document, load_speech_document(fenced).document
+    le = elaborate(env, {"units": units, "reading_sets": sets})
+    assert a.meaning_ids == b.meaning_ids
+    assert [_to_data(f) for f in a.premises()] == [_to_data(f) for f in b.premises()] == le["premises"]
+    assert [u for u, _ in a.asserted] == [u for u, _ in b.asserted] == ["u"]
+
+
+def test_answer_conditional_is_json_boolean_in_both_decoders(lean):
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    source = b"Is atlas reviewed?\n"
+    question = {**unit("q", 0, "question", polar(U("reviewed", "atlas"))), "span": [0, len(source)]}
+    record = {"question": "q", "by": "checker", "support": "model", "answer": "yes",
+              "evidence": {"model": model(reviewed=[["atlas"]])}}
+    meta = {"format": "ve-document@2", "environment": env, "units": [question]}
+
+    for flag in (False, True):
+        answer = {**record, "conditional": flag}
+        assert SpeechSource({**meta, "answers": [answer]}, source, {}).answer_lines[0]["status"] == "evaluated"
+        assert elaborate(env, {"units": [question], "answers": [answer]})["questions"][0]["unit"] == "q"
+
+    for flag in (0, 1, "false", [], {}):
+        answer = {**record, "conditional": flag}
+        with pytest.raises(VEError, match="^InvalidInput: conditional$"):
+            SpeechSource({**meta, "answers": [answer]}, source, {})
+        assert run1({"id": "conditional", "kind": "speech-elaborate", "environment": env,
+                     "document": {"units": [question], "answers": [answer]}})["error"] == "InvalidInput: conditional"
+    with pytest.raises(VEError, match="^InvalidInput: conditional$"):
+        SpeechSource({**meta, "answers": [{**record, "conditional": None}]}, source, {})
+
+
+def test_independent_wire_faults_are_rejected_in_both_decoders(lean):
+    # P1 will align the first diagnostic's order. Both routes must reject every
+    # document even when a later malformed field is decoded before an earlier one.
+    env = F0()
+    cases = [
+        [unit("c1", 0, "instruction", command("require", "nonesuch", ["check"])),
+         unit("c2", 1, "instruction", command("maybe", "click_required", ["check"]))],
+        [unit("b", 0, "binding", {"binding": {"you": 7}}),
+         unit("c", 1, "instruction", command("maybe", "click_required", ["check"]))],
+    ]
+    for units in cases:
+        document = {"units": units}
+        with pytest.raises(VEError):
+            core(env, document)
+        assert run1({"id": "two-faults", "kind": "speech-elaborate", "environment": env,
+                     "document": document})["status"] == "error"
+
+
 def _wire_mutations(value, prefix=(), *, include_null=False):
     """Replace every nested field and container, then probe required/extra keys."""
     replacements = (7, True, [], {}) + ((None,) if include_null else ())
