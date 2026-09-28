@@ -79,12 +79,38 @@ def main(argv=None):
     if argv[:1] == ["document"]:
         from .document import main as document_main
         return document_main(argv[1:])
+    if argv[:1] == ["speech-acts"]:
+        speech_parser = argparse.ArgumentParser(prog="python -m ve speech-acts")
+        speech_parser.add_argument("path", help="experimental ve-document@2 source")
+        options = speech_parser.parse_args(argv[1:])
+        try:
+            from .speech_document import load_speech_document
+            from .ast import _to_data
+            from .speech_english import legend
+            source = load_speech_document(options.path)
+            doc = source.document
+            _emit({"status": "experimental", "document_id": source.document_id,
+                   "environment_id": source.env.environment_id,
+                   "legend": legend(source.env),
+                   "rules": [rule.to_dict() for rule in doc.policy.rules],
+                   "questions": [{"unit": q.unit, "mode": q.mode,
+                                  "presupposition": None if q.mode == "reading"
+                                  else _to_data(doc.presupposition(q))}
+                                 for q in doc.questions],
+                   "warnings": doc.warnings, "reading_plan": source.reading_plan,
+                   "answers": source.answer_lines, "compliance": source.compliance_lines,
+                   "coverage": source.coverage()})
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
     commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
     commands.add_parser("definitions", help="preview definition wordings; --adopt English definitions and glossaries")
     commands.add_parser("document", help="document check, render, coverage and readings")
+    commands.add_parser("speech-acts", help="experimental speech-act source inspection")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
