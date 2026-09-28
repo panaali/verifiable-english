@@ -168,6 +168,52 @@ def _joint(block, active):
             "constraints": len(decoded)}
 
 
+def joint_assertion(env, active, joint):
+    """The disjunction of compatible conjunctions, for the frozen premise gate."""
+    from .ast import And, Or, Top, formula_from_data
+
+    if joint["status"] != "complete":
+        return None
+    open_sets = [rs for rs in active if rs["status"] == "open"]
+    if any(any(r["kind"] != "asserted" or r["content"] is None
+               for r in rs["readings"]) for rs in open_sets):
+        return None
+    alternatives = []
+    for choice in joint["choices"]:
+        conjuncts = [formula_from_data(env, rs["readings"][choice[f"{rs['id']}@{rs['version']}"]]["content"])
+                     for rs in open_sets]
+        value = Top()
+        for formula in reversed(conjuncts):
+            value = And(formula, value)
+        alternatives.append(value)
+    value = alternatives[-1]
+    for formula in reversed(alternatives[:-1]):
+        value = Or(formula, value)
+    return value
+
+
+def check_joint_extensions(meta, report, joint):
+    """Require each lemma and the final report to fit one complete joint choice."""
+    from .admission import parse_label
+
+    if joint["status"] != "complete":
+        return
+
+    def extends(leaves):
+        labels = [parse_label(leaf.get("label")) for leaf in leaves]
+        choices = [(label.args[0], label.args[1], label.args[2])
+                   for label in labels if label is not None and label.kind == "readings"
+                   and label.args[2] is not None]
+        return any(all(choice.get(f"{name}@{version}") == index
+                       for name, version, index in choices) for choice in joint["choices"])
+
+    for lemma in meta.get("lemmas", []):
+        if not extends(lemma["leaves"]):
+            raise VEError(f"InvalidCompatibility: citation {lemma['name']}")
+    if not extends(report["assumptions"]):
+        raise VEError(f"InvalidCompatibility: report {report['root']['name']}")
+
+
 def _expanded_formula(doc, unit, mention, name):
     """Parse one explicit replacement; failure is a typed-out competitor."""
     from .english import parse_english
