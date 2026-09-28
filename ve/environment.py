@@ -97,7 +97,7 @@ class RegulatedDecl:
     permission: str | None = None
 
 
-def _regulated(raw, args, name, *, speech=False):
+def _regulated(raw, args, name):
     if type(raw) is not dict or "role" not in raw or "default" not in raw:
         raise VEError(f"InvalidInput: regulated declaration {name} needs role and default")
     role, default = raw["role"], raw["default"]
@@ -115,9 +115,7 @@ def _regulated(raw, args, name, *, speech=False):
         if (len(act) > 80 or not act.startswith("{0} ")
                 or slots != [str(i) for i in range(len(args))]
                 or len(words) < 2 or not all(re.fullmatch(r"[A-Za-z][A-Za-z'-]*", w) for w in words)
-                or any(w.lower() in RESERVED for w in words if w != "slot" and not
-                       (speech and act == "{0} submit a certificate for {1}" and
-                        len(args) == 2 and args[1] == "query" and w.lower() == "for"))):
+                or any(w.lower() in RESERVED for w in words if w != "slot")):
             raise VEError(f"InvalidInput: invalid act phrase for {name}")
     permission = raw.get("permission")
     if permission is not None and type(permission) is not str:
@@ -233,9 +231,7 @@ class Environment:
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
-            regulated = (_regulated(entry["regulated"], args, name,
-                                    speech=route and "speech-acts@0" in data["profiles"])
-                         if "regulated" in entry else None)
+            regulated = _regulated(entry["regulated"], args, name) if "regulated" in entry else None
             if defined:
                 payload = entry["defined"]
                 require_fields(payload, {"arguments", "body"}, path=f"/vocabulary/predicates/{name}/defined")

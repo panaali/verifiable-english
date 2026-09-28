@@ -145,11 +145,12 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None):
         if query is None:
             raise VEError("InvalidInput: query required")
         _sentence(env, text[len("Prove that "):-len(" using these premises.")] + ".")
+        from .speech_acts import PROOF_TASK_ACT
         candidates = [(name, decl) for name, decl in env.predicates.items()
                       if decl.regulated is not None and decl.regulated.role == "obligation"
-                      and decl.regulated.act == "{0} submit a certificate for {1}"]
+                      and decl.regulated.act == PROOF_TASK_ACT and decl.arguments[1:] == ("query",)]
         if len(candidates) != 1:
-            raise VEError("MissingObligationRole: {0} submit a certificate for {1}")
+            raise VEError(f"MissingObligationRole: {PROOF_TASK_ACT}")
         return {"force": "require", "act": candidates[0][0], "args": [query], "guard": ["top"]}, "instruction"
     if text.endswith("."):
         plain = text[:-1]
