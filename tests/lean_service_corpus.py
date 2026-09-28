@@ -176,6 +176,24 @@ def english_cases():
 
 def corpus():
     """{mode: [case, ...]} with every result kind of every mode."""
+    from tests.probe_matrix import raw_environment, model_wire
+    from ve import Environment, FiniteModel
+    env = Environment(raw_environment(()))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    standalone_env = [{"id": "ok", "environment": env.to_dict()},
+                      {"id": "bad", "environment": {}}, *ADVERSARIAL]
+    standalone_model = [{"id": "ok", "environment": env.to_dict(),
+                         "model": model.to_dict()},
+                        {"id": "bad", "environment": env.to_dict(), "model": {}},
+                        *ADVERSARIAL]
+    identities = [{"id": "source", "kind": "source", "source": "true.\n",
+                   "environment": env.to_dict()},
+                  {"id": "meaning", "kind": "meaning", "environment": env.to_dict(),
+                   "ast": ["top"]},
+                  {"id": "model", "kind": "model", "environment": env.to_dict(),
+                   "model": model.to_dict()},
+                  {"id": "bad", "kind": "unknown"}, *ADVERSARIAL]
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
-            "english": english_cases()}
+            "english": english_cases(), "environment": standalone_env,
+            "model": standalone_model, "identity": identities}
