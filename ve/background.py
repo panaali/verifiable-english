@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Callable, NamedTuple
 
+from .assurance import semantic_entry
 from .ast import And, Binary, Const, Eq, Exists, Forall, Formula, Implies, Not, Unary, Var
 from .errors import InvalidModel, ResourceLimit
 
@@ -127,6 +128,7 @@ HOOKS: dict[str, tuple[Callable, Callable]] = {
 }
 
 
+@semantic_entry("definitions.elaborate")
 def background(env) -> tuple[Premise, ...]:
     # Every checking site consults Background, so the gate on checker families
     # that have not landed sits here and in validate_background.
@@ -145,6 +147,7 @@ def checked_premises(env, layer_premises, case_premises):
             tuple(layer_premises) + tuple(case_premises))
 
 
+@semantic_entry("definitions.elaborate")
 def validate_background(env, model) -> None:
     from .profiles import require_checker
     require_checker(env)
@@ -157,6 +160,7 @@ def validate_background(env, model) -> None:
             raise
 
 
+@semantic_entry("definitions.elaborate")
 def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     """Dependencies precede dependents in one DAG over defined and regulated symbols."""
     from .errors import ResourceLimit, VEError

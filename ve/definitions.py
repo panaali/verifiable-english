@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .assurance import semantic_entry
 from . import ast
 from .background import dependency_order
 from .environment import Environment
@@ -87,6 +88,7 @@ def _restricted(env: Environment, allowed: set[str]) -> Environment:
 _COMPILED: dict[tuple[str, str], tuple[Definition, ...]] = {}
 
 
+@semantic_entry("definitions.elaborate")
 def compile_definitions(env: Environment, entries: dict[str, dict], *,
                         version: str) -> tuple[Definition, ...]:
     """Check declared bodies and order them below their dependents.
@@ -148,6 +150,7 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     return tuple(ordered)
 
 
+@semantic_entry("definitions.elaborate")
 def expand(definitions: tuple[Definition, ...]) -> tuple[ast.Formula, ...]:
     """Executable statement-layer elaboration in dependency order."""
     return tuple(premise(definition) for definition in definitions)

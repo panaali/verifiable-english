@@ -1,10 +1,9 @@
 """Checked reports route and independent Python/Lean elaboration comparison."""
 from __future__ import annotations
 
-import json
 from pathlib import Path
-import subprocess
 
+from .backends.lean import run_reports_case
 from .errors import UnsupportedProfile, VEError
 
 EXECUTABLE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_reports_route"
@@ -27,14 +26,9 @@ def run_case(kind, environment, document):
         raise UnsupportedProfile("reports@0 needs the built ve_reports_route executable")
     case = _without_null({"id": "document", "kind": kind,
                           "environment": environment, "document": document})
-    try:
-        proc = subprocess.run([str(EXECUTABLE), "-"], input=json.dumps([case], ensure_ascii=False),
-                              capture_output=True, text=True, timeout=60, check=False)
-        [result] = json.loads(proc.stdout)
-    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
-        raise VEError("reports Lean route failed") from exc
+    result = run_reports_case(EXECUTABLE, case, timeout=60)
     if result.get("status") != "ok":
-        raise VEError(result.get("error", proc.stderr or "reports Lean route rejected document"))
+        raise VEError(result.get("error", "reports Lean route rejected document"))
     return result
 
 

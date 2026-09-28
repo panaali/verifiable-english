@@ -10,9 +10,10 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
+from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                    Not, Or, Top, Unary, Var, Reach, Named, check_document, _Checker)
-from .errors import ResourceLimit, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .identity import meaning_id
 from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
 from .wire import canonical_json
@@ -567,6 +568,8 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     InductionInvariant hints with explicit captured tableau parameter tokens.
     The certificate includes each selected formula and all three subproofs.
     """
+    if getattr(env, "alternatives", None) is not None:
+        raise CheckerUnavailable("alternatives@0 requires the Lean checker")
     premises = _validate_inputs(env, premises, conclusion)
     if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
         raise ValueError("max_steps must be a nonnegative integer")
@@ -664,11 +667,15 @@ class _Replayer:
             self.replay(_apply(branch, node["at"], parameter, additions), child, depth + 1)
 
 
+@semantic_entry("certificate.check")
 def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: Any,
                                  certificate: Any, *, max_steps: int = 10_000,
                                  _background: bool = True,
                                  _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
     """Replay a certificate against the exact environment and ordered formulas."""
+    if getattr(env, "alternatives", None) is not None:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0,
+                                          "alternatives@0 requires the Lean checker")
     try:
         # Validate data before equality comparisons: even binding fields cannot
         # carry arbitrary Python objects or their overloaded comparison methods.
