@@ -376,14 +376,16 @@ def coverage(doc):
         unmapped = [name for name, predicate in doc["environment"].predicates.items()
                     if predicate.regulated is not None and predicate.regulated.role == "obligation"
                     and name != performed and name not in mapped]
+        completion = ({"decider": block["outcomes"]["complete_by"],
+                       "premise": "alternatives:table_complete"}
+                      if type(block["outcomes"]) is dict else None)
         alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
-                        "assumed_harm_free": ({"decider": block["outcomes"]["complete_by"],
-                                               "premise": "alternatives:table_complete"}
-                                              if type(block["outcomes"]) is dict else None),
+                        "assumed_harm_free": completion, "table_complete": completion,
                         "proximate_judgments": proximate, "unmapped_obligations": unmapped,
                         "dilemmas": [], "narrowings": meta.get("narrowings", [])}
         residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
-                         "assumed_harm_free": int(alternatives["assumed_harm_free"] is not None),
+                         "assumed_harm_free": int(completion is not None),
+                         "table_complete": int(completion is not None),
                          "proximate_judgments": len(proximate),
                          "unmapped_obligations": len(unmapped), "dilemmas": 0,
                          "narrowings": len(alternatives["narrowings"])})
