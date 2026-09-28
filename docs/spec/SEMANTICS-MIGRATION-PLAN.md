@@ -279,7 +279,7 @@ Protocol (resolves the section-C clarifications):
 **Gate 1.** Byte-identical results against the one-shot executables on every conformance fixture, report
 generator and the stage-0 baseline; a 20,000-request mixed-mode soak with RSS growth under 10% and no restarts;
 fault injection (kill, hang, garbage output, truncated line, over-long line) fails closed; `audit.py` and the
-hash test clean; the per-request latency gate of section 4 met on a quiet machine.
+hash test clean; the per-request latency gate of section 4 met under the contention condition below.
 
 ### Stage 2: adapters, new Lean modes, coverage closure, Rust extensions (4–6 weeks, overlaps stage 1)
 
@@ -417,9 +417,11 @@ binary-size report in the merge message.
 
 ## 4. Performance and compatibility gates (finding B3)
 
+DRI decision: "The quiet-machine condition is replaced by a measurable contention condition: a Gate 1 timing run is acceptable when every numerical target is met by its 95% upper bound AND the median runqueue wait (from /proc schedstat) of every workload is <= 0.1 ms; the run records load, runqueue wait p50/p95 and the exact commit."
+
 Measurement method, replacing "five repetitions": latency is a per-request distribution over a full replay of
 the assist ledgers and the suite under `VE_AUTHORITY=lean` (at least 20,000 requests), in three independent
-sessions on a quiet machine; p50, p95 and p99 are reported with 95% bootstrap confidence intervals and the gate
+sessions under the contention condition above; p50, p95 and p99 are reported with 95% bootstrap confidence intervals and the gate
 applies to the upper bound. The first 100 requests after a service start are reported separately as the
 cold-start figure. End-to-end times are taken at the Python public-function boundary (for example `check_step`
 entry to return), so IPC, JSON encoding and supervision are included. Document throughput is measured on each
