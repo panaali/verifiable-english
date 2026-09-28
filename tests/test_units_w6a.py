@@ -93,6 +93,14 @@ def test_declaration_rejections_and_slot_tags():
     with pytest.raises(VEError, match="DisplayCollision"):
         Environment(raw)
     env = Environment(environment())
+    bare = environment()
+    bare["vocabulary"] = {"sorts": {}, "predicates": {}, "constants": {}}
+    bare["units"] = {}
+    empty_extension = Environment(bare)
+    no_extension = dict(bare)
+    no_extension.pop("unit_schema")
+    no_extension.pop("units")
+    assert empty_extension.environment_id != Environment(no_extension).environment_id
     with pytest.raises(UnsupportedProfile, match="annotated admission"):
         ast.formula_from_data(env, ["lt", ["num", "375"], ["num", "400"]])
     with pytest.raises(VEError, match="UnitMismatch"):
