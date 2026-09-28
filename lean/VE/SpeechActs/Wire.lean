@@ -410,7 +410,7 @@ def innerKind : VE.Route.Admission.Kind → VE.Route.Admission.Kind
 def wraps (kind bare : VE.Route.Admission.Kind) : Bool := innerKind kind == bare
 
 def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo := do
-  VE.Bridge.displayFields j ["id", "span", "kind"] ["meaning", "support", "content"]
+  VE.Bridge.displayFields j ["id", "span", "kind"] ["meaning", "support", "content", "source", "meaning_id"]
   let id ← stringField j "id"
   unless VE.Route.Admission.token id do throw s!"invalid unit id {id}"
   let (start, stop) ← match (← (← j.getObjVal? "span").getArr?).toList with
@@ -548,6 +548,26 @@ def chosenMeaning (j : Json) (content : Option Json) : Json :=
   | some (Json.str "reading"), Json.str i => Json.mkObj [("open", Json.arr #[Json.str ("intended-reading." ++ i)])]
   | _, _ => Json.str "specified"
 
+/-- The visible sentence shape, checked before an authored reading replaces the unit. -/
+def surfaceKind (environment : Json) (source : String) : String := Id.run do
+  let text := source.trim.toLower
+  if text.endsWith "?" ||
+      (["question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
+        "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can "].any text.startsWith &&
+       !text.startsWith "do not ") then return "question"
+  if text.startsWith "in this task, " || text.startsWith "this document is task " then return "binding"
+  if text.startsWith "do not " || text.startsWith "prove that " || text.startsWith "command " then
+    return "instruction"
+  let predicates := ((environment.getObjValD "vocabulary").getObjValD "predicates")
+  for (_, p) in (fields predicates).toOption.getD [] do
+    let act := ((p.getObjValD "regulated").getObjValD "act")
+    if let .str wording := act then
+      match wording.toLower.splitOn " " with
+      | "{0}" :: verb :: _ =>
+        if text.startsWith (verb ++ " ") then return "instruction"
+      | _ => pure ()
+  return "asserted"
+
 /-- The unit as its latest reading set leaves it: an authored choice supplies the kind, its meaning
 (`chosenMeaning`) and the content (W2's formula-only assertion candidates are bare ASTs, which `decodeUnit`
 reads). -/
@@ -560,14 +580,21 @@ def chosenUnit (j : Json) (kind : Json) (content : Option Json) : Except String 
     | none => []))
 
 /-- Decode one unit under the document's reading sets. -/
-def decodeUnitIn (E : VE.Environment) (states : List (String × Nat × ReadingState)) (j : Json) :
+def decodeUnitIn (E : VE.Environment) (environment : Json)
+    (states : List (String × Nat × ReadingState)) (j : Json) :
     Except String SpeechUnitInfo := do
   let id := match j.getObjValD "id" with
     | .str i => i
     | _ => ""
   match latestState states id with
   | some .pending => pure { (← decodeUnit E j) with pending := true }
-  | some (.authored kind content) => decodeUnit E (← chosenUnit j kind content)
+  | some (.authored kind content) => do
+    match j.getObjVal? "source" with
+    | .ok (.str source) =>
+      unless kind == Json.str (surfaceKind environment source) do throw "InvalidInput: choice kind"
+    | .ok _ => throw "InvalidInput: speech wording"
+    | .error _ => pure ()
+    decodeUnit E (← chosenUnit j kind content)
   | none =>
     if j.getObjValD "kind" == .str "asserted" && !(j.getObjVal? "content").isOk &&
         !states.any (·.1 == id) then
@@ -763,21 +790,24 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   let E := se.ne.rv.environment
   VE.Bridge.displayFields document ["units"]
     ["queries", "answers", "compliance", "graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
-  -- Source answer records are not replayed by this route, but their optional
-  -- conditional flag still has the same wire type and diagnostic as Python.
-  if let .ok answers := document.getObjVal? "answers" then
-    for answer in (← answers.getArr?).toList do
-      if let .ok flag := answer.getObjVal? "conditional" then
-        match flag with
-        | .bool _ => pure ()
-        | _ => throw "InvalidInput: conditional"
   let states ← readingStates document
-  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E states)
+  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E environment states)
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"
   unless (units.map (·.id)).eraseDups.length == units.length do throw "duplicate unit id"
   unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
     throw "unit spans must be sorted and non-overlapping"
+  -- These source metadata fields are validated after units, as in Python.
+  if let .ok answers := document.getObjVal? "answers" then
+    let .arr records := answers | throw "InvalidInput: answers"
+    for answer in records do
+      if let .ok flag := answer.getObjVal? "conditional" then
+        match flag with
+        | .bool _ => pure ()
+        | _ => throw "InvalidInput: conditional"
+      match answer.getObjVal? "by" with
+      | .ok (.str name) => unless VE.Route.Admission.token name do throw "InvalidInput: answer record"
+      | _ => throw "InvalidInput: answer record"
   -- Authored bindings (1.1), in document order as Python's `_merge_bindings`: every binding passes the
   -- single-binding checks; one whose reading set is open is pending (1.5) and supplies no entry and declares
   -- nothing; the others are merged, a repeated key being a duplicate.
