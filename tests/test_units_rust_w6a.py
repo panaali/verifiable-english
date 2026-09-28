@@ -107,3 +107,24 @@ def test_display_collision_rejects_on_both_decoders():
     result = rust({"id": "collision", "kind": "quantity", "environment": raw,
                    "quantity": {"format": "ve-quantity@1", "formula": ["top"]}})
     assert result["status"] == "error" and "DisplayCollision" in result["error"]["message"]
+
+
+def test_integer_predicate_slot_is_checked_before_erasure():
+    raw = json.loads(FIXTURE.read_text())["environment"]
+    raw["vocabulary"]["predicates"]["reported"] = {
+        "arguments": ["$int"], "argument_units": {"0": "bp"}, "description": "reported rate"}
+    env = Environment(raw)
+    good = {"format": "ve-quantity@1", "formula": ["unary", "reported", ["num", "bp", "375"]]}
+    canonical, core = elaborate_quantity(env, good)
+    model = {"complete": True, "domains": {},
+             "constants": {k: "0" for k in raw["vocabulary"]["constants"]},
+             "relations": {"reported": [["375"]]}}
+    result = rust({"id": "slot", "kind": "quantity", "environment": raw,
+                   "quantity": good, "model": model})
+    assert result["status"] == "ok" and result["Q"] == canonical["formula"]
+    assert result["core"] == core and result["value"] is True
+    bad = {"format": "ve-quantity@1", "formula": ["unary", "reported", ["num", "calendar_year", "375"]]}
+    with pytest.raises(Exception, match="UnitMismatch"):
+        elaborate_quantity(env, bad)
+    rejected = rust({"id": "slot-bad", "kind": "quantity", "environment": raw, "quantity": bad})
+    assert rejected["status"] == "error" and "UnitMismatch" in rejected["error"]["message"]
