@@ -15,6 +15,36 @@ open VE.Order
 /-- Python/Rust `MAX_EVALUATIONS`. -/
 def maxEvaluations : Nat := 1000000
 
+/-! Relation membership in constant time, as Python's `frozenset` and Rust's
+`BTreeSet` tables: a hash set per listed predicate, the list otherwise. -/
+
+/-- A hash set of rows for each listed predicate. -/
+def relIndex {β : Type} [BEq β] [Hashable β] (rel : String → List (List β)) (ps : List String) :
+    Std.HashMap String (Std.HashSet (List β)) :=
+  ps.foldr (fun p m => m.insert p (Std.HashSet.ofList (rel p))) {}
+
+/-- Whether `row` is in `rel p`, through the index when it lists `p`. -/
+def memIn {β : Type} [BEq β] [Hashable β] (rel : String → List (List β))
+    (idx : Std.HashMap String (Std.HashSet (List β))) (p : String) (row : List β) : Bool :=
+  match idx[p]? with
+  | some h => h.contains row
+  | none => (rel p).contains row
+
+theorem memIn_relIndex {β : Type} [BEq β] [LawfulBEq β] [Hashable β]
+    (rel : String → List (List β)) (ps : List String) (p : String) (row : List β) :
+    memIn rel (relIndex rel ps) p row = true ↔ row ∈ rel p := by
+  induction ps with
+  | nil => simp [memIn, relIndex]
+  | cons q ps ih =>
+    simp only [memIn, relIndex, List.foldr_cons] at ih ⊢
+    rw [Std.HashMap.getElem?_insert]
+    by_cases h : q = p
+    · subst h
+      simp [Std.HashSet.contains_ofList]
+    · have hb : (q == p) = false := beq_eq_false_iff_ne.mpr h
+      simp only [hb, Bool.false_eq_true, ↓reduceIte]
+      exact ih
+
 /-- A quantifier loop: stop at the first entity whose value differs from
 `universal`; with no such entity the value is `universal`. -/
 def quantB {β : Type} (universal : Bool) (step : β → Nat → Option (Bool × Nat)) :
@@ -28,26 +58,35 @@ def quantB {β : Type} (universal : Bool) (step : β → Nat → Option (Bool ×
 def charge (limit w : Nat) (k : Nat → Option (Bool × Nat)) : Option (Bool × Nat) :=
   if limit ≤ w then none else k (w + 1)
 
-/-- The budgeted evaluator; `w` is the work already spent. -/
-def evalB {α : Type} [DecidableEq α] (M : FiniteModel α) (limit : Nat) :
-    List (Value α) → Formula → Nat → Option (Bool × Nat)
-  | ρ, .not a, w => charge limit w fun w => (evalB M limit ρ a w).map fun r => (!r.1, r.2)
-  | ρ, .and a b, w => charge limit w fun w => match evalB M limit ρ a w with
+/-- The budgeted evaluator; `w` is the work already spent. Atoms read their
+table through `mem` (`memIn` over `relIndex`), which must agree with list
+membership (`evalB_sound`). -/
+def evalB {α : Type} [DecidableEq α] (mem : String → List (Value α) → Bool) (M : FiniteModel α)
+    (limit : Nat) : List (Value α) → Formula → Nat → Option (Bool × Nat)
+  | ρ, .not a, w => charge limit w fun w => (evalB mem M limit ρ a w).map fun r => (!r.1, r.2)
+  | ρ, .and a b, w => charge limit w fun w => match evalB mem M limit ρ a w with
     | none => none
-    | some (true, w) => evalB M limit ρ b w
+    | some (true, w) => evalB mem M limit ρ b w
     | some (false, w) => some (false, w)
-  | ρ, .or a b, w => charge limit w fun w => match evalB M limit ρ a w with
+  | ρ, .or a b, w => charge limit w fun w => match evalB mem M limit ρ a w with
     | none => none
     | some (true, w) => some (true, w)
-    | some (false, w) => evalB M limit ρ b w
-  | ρ, .implies a b, w => charge limit w fun w => match evalB M limit ρ a w with
+    | some (false, w) => evalB mem M limit ρ b w
+  | ρ, .implies a b, w => charge limit w fun w => match evalB mem M limit ρ a w with
     | none => none
-    | some (true, w) => evalB M limit ρ b w
+    | some (true, w) => evalB mem M limit ρ b w
     | some (false, w) => some (true, w)
   | ρ, .all s a, w => charge limit w fun w =>
-    quantB true (fun v => evalB M limit (.inl v :: ρ) a) (M.domains s) w
+    quantB true (fun v => evalB mem M limit (.inl v :: ρ) a) (M.domains s) w
   | ρ, .ex s a, w => charge limit w fun w =>
-    quantB false (fun v => evalB M limit (.inl v :: ρ) a) (M.domains s) w
+    quantB false (fun v => evalB mem M limit (.inl v :: ρ) a) (M.domains s) w
+  | ρ, .unary p t, w => charge limit w fun w => some ((match t.denote M.asStructure ρ with
+      | some v => mem p [v]
+      | none => false), w)
+  | ρ, .binary p t u, w => charge limit w fun w =>
+    some ((match t.denote M.asStructure ρ, u.denote M.asStructure ρ with
+      | some v, some x => mem p [v, x]
+      | _, _ => false), w)
   | ρ, f, w => charge limit w fun w => some (f.eval M ρ, w)
 
 theorem quantB_sound {β : Type} (universal : Bool) (step : β → Nat → Option (Bool × Nat))
@@ -85,20 +124,38 @@ theorem charge_some {limit w : Nat} {k : Nat → Option (Bool × Nat)} {r : Bool
   · exact h
 
 /-- **Budget soundness.** A budgeted value is the reference evaluator's value. -/
-theorem evalB_sound {α : Type} [DecidableEq α] (M : FiniteModel α) (limit : Nat) :
+theorem evalB_sound {α : Type} [DecidableEq α] (mem : String → List (Value α) → Bool)
+    (M : FiniteModel α) (limit : Nat) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (f : Formula) (ρ : List (Value α)) (w : Nat) (r : Bool × Nat),
-      evalB M limit ρ f w = some r → r.1 = f.eval M ρ := by
+      evalB mem M limit ρ f w = some r → r.1 = f.eval M ρ := by
   intro f
   induction f with
-  | top | bottom | unary | binary | eq | lt | le =>
+  | top | bottom | eq | lt | le =>
     intro ρ w r h
     have h := charge_some h
     simp only [Option.some.injEq] at h
     subst h; rfl
+  | unary p t =>
+    intro ρ w r h
+    have h := charge_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [Formula.eval]
+    cases t.denote M.asStructure ρ with
+    | none => rfl
+    | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
+  | binary p t u =>
+    intro ρ w r h
+    have h := charge_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [Formula.eval]
+    cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+    exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | not a ih =>
     intro ρ w r h
     have h := charge_some h
-    cases ha : evalB M limit ρ a (w + 1) with
+    cases ha : evalB mem M limit ρ a (w + 1) with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
@@ -166,39 +223,40 @@ theorem evalB_sound {α : Type} [DecidableEq α] (M : FiniteModel α) (limit : N
 /-- The countermodel check under one shared budget, premises first in order,
 stopping at the first false premise (Python `_check_countermodel_values`,
 Rust `order_case`). `none` is UNKNOWN. -/
-def refutesB {α : Type} [DecidableEq α] (M : FiniteModel α) (limit : Nat) :
-    List Formula → Formula → Nat → Option Bool
-  | [], c, w => (evalB M limit [] c w).map (fun r => !r.1)
-  | p :: ps, c, w => match evalB M limit [] p w with
+def refutesB {α : Type} [DecidableEq α] (mem : String → List (Value α) → Bool) (M : FiniteModel α)
+    (limit : Nat) : List Formula → Formula → Nat → Option Bool
+  | [], c, w => (evalB mem M limit [] c w).map (fun r => !r.1)
+  | p :: ps, c, w => match evalB mem M limit [] p w with
     | none => none
     | some (false, _) => some false
-    | some (true, w) => refutesB M limit ps c w
+    | some (true, w) => refutesB mem M limit ps c w
 
 /-- A budgeted countermodel verdict is the reference verdict. -/
-theorem refutesB_sound {α : Type} [DecidableEq α] (M : FiniteModel α) (limit : Nat) :
+theorem refutesB_sound {α : Type} [DecidableEq α] (mem : String → List (Value α) → Bool)
+    (M : FiniteModel α) (limit : Nat) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (ps : List Formula) (c : Formula) (w : Nat) (b : Bool),
-      refutesB M limit ps c w = some b → b = countermodelCheck M ps c
+      refutesB mem M limit ps c w = some b → b = countermodelCheck M ps c
   | [], c, w, b, h => by
     simp only [refutesB] at h
-    cases hc : evalB M limit [] c w with
+    cases hc : evalB mem M limit [] c w with
     | none => rw [hc] at h; cases h
     | some x =>
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [countermodelCheck, evalB_sound M limit c [] w x hc]
+      simp [countermodelCheck, evalB_sound mem M limit hmem c [] w x hc]
   | p :: ps, c, w, b, h => by
     simp only [refutesB] at h
     split at h
     · cases h
     · rename_i w' hp
-      have := evalB_sound M limit p [] w _ hp
+      have := evalB_sound mem M limit hmem p [] w _ hp
       simp only [Option.some.injEq] at h
       subst h
       simp [countermodelCheck, ← this]
     · rename_i w' hp
-      have := evalB_sound M limit p [] w _ hp
-      rw [refutesB_sound M limit ps c w' b h]
+      have := evalB_sound mem M limit hmem p [] w _ hp
+      rw [refutesB_sound mem M limit hmem ps c w' b h]
       simp [countermodelCheck, ← this]
 
 theorem denote_domains_irrelevant {α : Type} (M N : FiniteModel α)

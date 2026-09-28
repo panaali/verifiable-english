@@ -17,12 +17,18 @@ def modelVocabulary (v : VE.Bridge.Vocabulary) : VE.Bridge.Vocabulary :=
 budgeted evaluator stops quantifiers at the first decisive entity. -/
 def decodeModel (v : VE.Bridge.Vocabulary) (j : Json) :
     Except String (VE.FiniteModel VE.Bridge.Entity) := do
-  let data := VE.Route.Wire.sortModelData (← VE.Bridge.decodeModelData (modelVocabulary v) j)
-  unless data.valid (modelVocabulary v) do throw "model is not semantically admissible"
+  let data := VE.Route.Wire.sortModelData (← VE.Route.Decode.decodeModelData (modelVocabulary v) j)
+  unless VE.Route.Decode.validFast data (modelVocabulary v) do
+    throw "model is not semantically admissible"
   let M := data.toModel
   match VE.Route.Wire.backgroundViolation M (literals v) with
   | some g => throw (VE.Route.Wire.invalidModel g)
   | none => pure M
+
+/-- A hash index of a decoded model's tables, for every declared predicate. -/
+def index (v : VE.Bridge.Vocabulary) (M : VE.FiniteModel VE.Bridge.Entity) :
+    Std.HashMap String (Std.HashSet (List VE.Bridge.Entity)) :=
+  VE.Route.Budget.tableIndex ((modelVocabulary v).predicates.map Prod.fst) M
 
 def decodeTrace : Nat → Json → Except String Tableau.Trace
   | 0, _ => throw "ResourceLimit: certificate expansion depth exceeds 124"
@@ -66,7 +72,7 @@ def run (profiles : List String) (environment : Json) (id kind : String)
     let fs ← Bridge.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
     let M ← decodeModel v (← j.getObjVal? "model")
-    return VE.Route.Wire.ok id [("values", toJson (← VE.Route.Budget.valuesN M fs))]
+    return VE.Route.Wire.ok id [("values", toJson (← VE.Route.Budget.valuesN (VE.Route.Budget.tableMem M (index v M)) M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← Bridge.decodeFormulas E premisesJson
   let c ← Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
@@ -74,7 +80,9 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   VE.Route.Wire.nodeLimit ((c :: ps).map Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeModel v (← j.getObjVal? "model")
-    let some refutes := VE.Route.Budget.refutesN M VE.Time.maxEvaluations ps c 0
+    let idx := index v M
+    let some refutes := VE.Route.Budget.refutesN (VE.Route.Budget.tableMem M idx) M
+      VE.Time.maxEvaluations ps c 0
       | throw VE.Route.Budget.budgetExhausted
     return VE.Route.Wire.ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"

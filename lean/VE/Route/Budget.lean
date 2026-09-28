@@ -34,42 +34,68 @@ def budgetExhausted : String :=
 /-! ## Relational formulas -/
 
 /-- The budgeted evaluator for `VE.Formula`; `w` is the work already spent. -/
-def evalF {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (limit : Nat) :
+def evalF {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (limit : Nat) :
     List α → VE.Formula → Nat → Option (Bool × Nat)
-  | ρ, .not a, w => charge limit w fun w => (evalF M limit ρ a w).map fun r => (!r.1, r.2)
-  | ρ, .and a b, w => charge limit w fun w => match evalF M limit ρ a w with
+  | ρ, .not a, w => charge limit w fun w => (evalF mem M limit ρ a w).map fun r => (!r.1, r.2)
+  | ρ, .and a b, w => charge limit w fun w => match evalF mem M limit ρ a w with
     | none => none
-    | some (true, w) => evalF M limit ρ b w
+    | some (true, w) => evalF mem M limit ρ b w
     | some (false, w) => some (false, w)
-  | ρ, .or a b, w => charge limit w fun w => match evalF M limit ρ a w with
+  | ρ, .or a b, w => charge limit w fun w => match evalF mem M limit ρ a w with
     | none => none
     | some (true, w) => some (true, w)
-    | some (false, w) => evalF M limit ρ b w
-  | ρ, .implies a b, w => charge limit w fun w => match evalF M limit ρ a w with
+    | some (false, w) => evalF mem M limit ρ b w
+  | ρ, .implies a b, w => charge limit w fun w => match evalF mem M limit ρ a w with
     | none => none
-    | some (true, w) => evalF M limit ρ b w
+    | some (true, w) => evalF mem M limit ρ b w
     | some (false, w) => some (true, w)
   | ρ, .all s a, w => charge limit w fun w =>
-    quantB true (fun v => evalF M limit (v :: ρ) a) (M.domains s) w
+    quantB true (fun v => evalF mem M limit (v :: ρ) a) (M.domains s) w
   | ρ, .ex s a, w => charge limit w fun w =>
-    quantB false (fun v => evalF M limit (v :: ρ) a) (M.domains s) w
+    quantB false (fun v => evalF mem M limit (v :: ρ) a) (M.domains s) w
+  | ρ, .unary p t, w => charge limit w fun w => some ((match t.denote M.asStructure ρ with
+      | some v => mem p [v]
+      | none => false), w)
+  | ρ, .binary p t u, w => charge limit w fun w =>
+    some ((match t.denote M.asStructure ρ, u.denote M.asStructure ρ with
+      | some v, some x => mem p [v, x]
+      | _, _ => false), w)
   | ρ, f, w => charge limit w fun w => some (f.eval M ρ, w)
 
 /-- A budgeted relational value is the reference value. -/
-theorem evalF_sound {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (limit : Nat) :
+theorem evalF_sound {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (limit : Nat) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (f : VE.Formula) (ρ : List α) (w : Nat) (r : Bool × Nat),
-      evalF M limit ρ f w = some r → r.1 = f.eval M ρ := by
+      evalF mem M limit ρ f w = some r → r.1 = f.eval M ρ := by
   intro f
   induction f with
-  | top | bottom | unary | binary | eq =>
+  | top | bottom | eq =>
     intro ρ w r h
     have h := charge_some h
     simp only [Option.some.injEq] at h
     subst h; rfl
+  | unary p t =>
+    intro ρ w r h
+    have h := charge_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Formula.eval]
+    cases t.denote M.asStructure ρ with
+    | none => rfl
+    | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
+  | binary p t u =>
+    intro ρ w r h
+    have h := charge_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Formula.eval]
+    cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+    exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | not a ih =>
     intro ρ w r h
     have h := charge_some h
-    cases ha : evalF M limit ρ a (w + 1) with
+    cases ha : evalF mem M limit ρ a (w + 1) with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
@@ -137,60 +163,64 @@ theorem evalF_sound {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (limit 
 /-- The countermodel check under one shared budget, premises first, stopping
 at the first false premise (Python `_check_countermodel_values`, Rust
 `CountermodelProblem::values`). `none` is UNKNOWN. -/
-def refutesF {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (limit : Nat) :
+def refutesF {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (limit : Nat) :
     List VE.Formula → VE.Formula → Nat → Option Bool
-  | [], c, w => (evalF M limit [] c w).map (fun r => !r.1)
-  | p :: ps, c, w => match evalF M limit [] p w with
+  | [], c, w => (evalF mem M limit [] c w).map (fun r => !r.1)
+  | p :: ps, c, w => match evalF mem M limit [] p w with
     | none => none
     | some (false, _) => some false
-    | some (true, w) => refutesF M limit ps c w
+    | some (true, w) => refutesF mem M limit ps c w
 
-theorem refutesF_sound {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (limit : Nat) :
+theorem refutesF_sound {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (limit : Nat) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (ps : List VE.Formula) (c : VE.Formula) (w : Nat) (b : Bool),
-      refutesF M limit ps c w = some b → b = VE.countermodelCheck M ps c
+      refutesF mem M limit ps c w = some b → b = VE.countermodelCheck M ps c
   | [], c, w, b, h => by
     simp only [refutesF] at h
-    cases hc : evalF M limit [] c w with
+    cases hc : evalF mem M limit [] c w with
     | none => rw [hc] at h; cases h
     | some x =>
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.countermodelCheck, evalF_sound M limit c [] w x hc]
+      simp [VE.countermodelCheck, evalF_sound mem M limit hmem c [] w x hc]
   | p :: ps, c, w, b, h => by
     simp only [refutesF] at h
     split at h
     · cases h
     · rename_i w' hp
-      have := evalF_sound M limit p [] w _ hp
+      have := evalF_sound mem M limit hmem p [] w _ hp
       simp only [Option.some.injEq] at h
       subst h
       simp [VE.countermodelCheck, ← this]
     · rename_i w' hp
-      have := evalF_sound M limit p [] w _ hp
-      rw [refutesF_sound M limit ps c w' b h]
+      have := evalF_sound mem M limit hmem p [] w _ hp
+      rw [refutesF_sound mem M limit hmem ps c w' b h]
       simp [VE.countermodelCheck, ← this]
 
 /-- Each formula of a document under its own budget, as Rust `evaluate_formula`
 and Python's per-formula evaluation; the first exhausted formula is UNKNOWN. -/
-def valuesF {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (fs : List VE.Formula) :
+def valuesF {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (fs : List VE.Formula) :
     Except String (List Bool) :=
-  fs.mapM fun f => match evalF M maxEvaluations [] f 0 with
+  fs.mapM fun f => match evalF mem M maxEvaluations [] f 0 with
     | some (b, _) => .ok b
     | none => .error budgetExhausted
 
-theorem valuesF_sound {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (fs : List VE.Formula)
-    (vs : List Bool) (h : valuesF M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
+theorem valuesF_sound {α : Type} [DecidableEq α] (mem : String → List α → Bool) (M : VE.FiniteModel α)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) (fs : List VE.Formula)
+    (vs : List Bool) (h : valuesF mem M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
   induction fs generalizing vs with
   | nil => simp only [valuesF, List.mapM_nil, pure, Except.pure, Except.ok.injEq] at h; simp [← h]
   | cons f fs ih =>
     simp only [valuesF, List.mapM_cons] at h ih
-    cases hf : evalF M maxEvaluations [] f 0 with
+    cases hf : evalF mem M maxEvaluations [] f 0 with
     | none => rw [hf] at h; cases h
     | some r =>
       obtain ⟨b, w⟩ := r
       rw [hf] at h
-      cases hr : List.mapM (fun f => match evalF M maxEvaluations [] f 0 with
+      cases hr : List.mapM (fun f => match evalF mem M maxEvaluations [] f 0 with
           | some (b, _) => Except.ok b
           | none => Except.error budgetExhausted) fs with
       | error e => rw [hr] at h; cases h
@@ -198,7 +228,7 @@ theorem valuesF_sound {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (fs :
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := evalF_sound M _ f [] 0 (b, w) hf
+        have hb := evalF_sound mem M _ hmem f [] 0 (b, w) hf
         simp only at hb
         rw [ih bs hr, hb]
         rfl
@@ -230,26 +260,68 @@ theorem sortOrderData_perm (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : St
     lookup_map (fun xs : List VE.Order.Wire.Entity => xs.mergeSort fun a b => decide (a.2 ≤ b.2))]
   cases VE.Order.lookup d.domains s <;> simp [List.mergeSort_perm]
 
+instance hashableValue {α : Type} [Hashable α] : Hashable (VE.Order.Value α) where
+  hash
+    | .inl a => mixHash 3 (hash a)
+    | .inr z => mixHash 5 (hash z)
+
+/-! An index is data: callers build it once (`let idx := ...`) and pass
+`orderMem M idx` or `tableMem M idx`, so no lookup rebuilds it. -/
+
+/-- A hash set of order rows, cells compared by decidable equality. -/
+abbrev OrderRows (α : Type) [DecidableEq α] [Hashable α] :=
+  @Std.HashSet (List (VE.Order.Value α)) (@List.instBEq _ instBEqOfDecidableEq) _
+
+/-- A hash index of the listed predicates' order tables. -/
+def orderIndex {α : Type} [DecidableEq α] [Hashable α] (ps : List String)
+    (M : VE.Order.FiniteModel α) : Std.HashMap String (OrderRows α) :=
+  @VE.Time.relIndex _ instBEqOfDecidableEq _ M.relations ps
+
+def orderMem {α : Type} [DecidableEq α] [Hashable α] (M : VE.Order.FiniteModel α)
+    (idx : Std.HashMap String (OrderRows α))
+    (p : String) (row : List (VE.Order.Value α)) : Bool :=
+  @VE.Time.memIn _ instBEqOfDecidableEq _ M.relations idx p row
+
+theorem orderMem_iff {α : Type} [DecidableEq α] [Hashable α] (ps : List String)
+    (M : VE.Order.FiniteModel α) (p : String) (row : List (VE.Order.Value α)) :
+    orderMem M (orderIndex ps M) p row = true ↔ row ∈ M.relations p :=
+  @VE.Time.memIn_relIndex _ instBEqOfDecidableEq _ _ M.relations ps p row
+
+/-- A hash index of the listed predicates' relational tables. -/
+def tableIndex {α : Type} [BEq α] [Hashable α] (ps : List String) (M : VE.FiniteModel α) :
+    Std.HashMap String (Std.HashSet (List α)) :=
+  VE.Time.relIndex M.relations ps
+
+def tableMem {α : Type} [BEq α] [Hashable α] (M : VE.FiniteModel α)
+    (idx : Std.HashMap String (Std.HashSet (List α))) (p : String) (row : List α) : Bool :=
+  VE.Time.memIn M.relations idx p row
+
+theorem tableMem_iff {α : Type} [BEq α] [LawfulBEq α] [Hashable α] (ps : List String)
+    (M : VE.FiniteModel α) (p : String) (row : List α) :
+    tableMem M (tableIndex ps M) p row = true ↔ row ∈ M.relations p :=
+  VE.Time.memIn_relIndex M.relations ps p row
+
 /-- Each order formula under its own budget (Rust `order_case`). -/
-def orderValues {α : Type} [DecidableEq α] (M : VE.Order.FiniteModel α)
-    (fs : List VE.Order.Formula) : Except String (List Bool) :=
-  fs.mapM fun f => match VE.Time.evalB M maxEvaluations [] f 0 with
+def orderValues {α : Type} [DecidableEq α] (mem : String → List (VE.Order.Value α) → Bool)
+    (M : VE.Order.FiniteModel α) (fs : List VE.Order.Formula) : Except String (List Bool) :=
+  fs.mapM fun f => match VE.Time.evalB mem M maxEvaluations [] f 0 with
     | some (b, _) => .ok b
     | none => .error budgetExhausted
 
-theorem orderValues_sound {α : Type} [DecidableEq α] (M : VE.Order.FiniteModel α)
-    (fs : List VE.Order.Formula) (vs : List Bool) (h : orderValues M fs = .ok vs) :
+theorem orderValues_sound {α : Type} [DecidableEq α] (mem : String → List (VE.Order.Value α) → Bool)
+    (M : VE.Order.FiniteModel α) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p)
+    (fs : List VE.Order.Formula) (vs : List Bool) (h : orderValues mem M fs = .ok vs) :
     vs = fs.map (fun f => f.eval M []) := by
   induction fs generalizing vs with
   | nil => simp only [orderValues, List.mapM_nil, pure, Except.pure, Except.ok.injEq] at h; simp [← h]
   | cons f fs ih =>
     simp only [orderValues, List.mapM_cons] at h ih
-    cases hf : VE.Time.evalB M maxEvaluations [] f 0 with
+    cases hf : VE.Time.evalB mem M maxEvaluations [] f 0 with
     | none => rw [hf] at h; cases h
     | some r =>
       obtain ⟨b, w⟩ := r
       rw [hf] at h
-      cases hr : List.mapM (fun f => match VE.Time.evalB M maxEvaluations [] f 0 with
+      cases hr : List.mapM (fun f => match VE.Time.evalB mem M maxEvaluations [] f 0 with
           | some (b, _) => Except.ok b
           | none => Except.error budgetExhausted) fs with
       | error e => rw [hr] at h; cases h
@@ -257,28 +329,30 @@ theorem orderValues_sound {α : Type} [DecidableEq α] (M : VE.Order.FiniteModel
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := VE.Time.evalB_sound M _ f [] 0 (b, w) hf
+        have hb := VE.Time.evalB_sound mem M _ hmem f [] 0 (b, w) hf
         simp only at hb
         rw [ih bs hr, hb]
         rfl
 
 /-- Budgeted order values on the sorted presentation are the reference values
 on the submitted model. -/
-theorem orderValues_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity)
+theorem orderValues_sorted_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (ps : List String)
     (fs : List VE.Order.Formula) (vs : List Bool)
-    (h : orderValues (sortOrderData d).toModel fs = .ok vs) :
+    (h : orderValues (orderMem (sortOrderData d).toModel (orderIndex ps (sortOrderData d).toModel))
+      (sortOrderData d).toModel fs = .ok vs) :
     vs = fs.map (fun f => f.eval d.toModel []) := by
-  rw [orderValues_sound _ fs vs h]
+  rw [orderValues_sound _ _ (orderMem_iff ps _) fs vs h]
   exact List.map_congr_left fun f _ =>
     VE.Time.eval_domains_perm (sortOrderData d).toModel d.toModel rfl rfl (sortOrderData_perm d) f []
 
 /-- A budgeted order countermodel verdict on the sorted presentation is the
 reference verdict on the submitted model. -/
 theorem refutesB_sortOrderData_sound (d : VE.Order.ModelData VE.Order.Wire.Entity) (limit : Nat)
-    (ps : List VE.Order.Formula) (c : VE.Order.Formula) (w : Nat) (b : Bool)
-    (h : VE.Time.refutesB (sortOrderData d).toModel limit ps c w = some b) :
+    (names : List String) (ps : List VE.Order.Formula) (c : VE.Order.Formula) (w : Nat) (b : Bool)
+    (h : VE.Time.refutesB (orderMem (sortOrderData d).toModel (orderIndex names (sortOrderData d).toModel))
+      (sortOrderData d).toModel limit ps c w = some b) :
     b = VE.Order.countermodelCheck d.toModel ps c := by
-  rw [VE.Time.refutesB_sound _ limit ps c w b h]
+  rw [VE.Time.refutesB_sound _ _ limit (orderMem_iff names _) ps c w b h]
   exact VE.Time.countermodelCheck_domains_perm (sortOrderData d).toModel d.toModel rfl rfl
     (sortOrderData_perm d) ps c
 
@@ -292,14 +366,14 @@ order (the first argument varies slowest; `acc` is the reversed prefix, which
 is the body's valuation), each charged to the shared budget; a true row counts
 toward the 100,000-tuple limit at once. The state is (work, tuples, rows in
 reverse candidate order). -/
-def tableB (M : VE.FiniteModel Entity) (body : VE.Formula) :
+def tableB (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (body : VE.Formula) :
     List String → List Entity → Nat × Nat × List (List Entity) →
       Except String (Nat × Nat × List (List Entity))
-  | [], acc, (w, n, rows) => match evalF M maxEvaluations acc body w with
+  | [], acc, (w, n, rows) => match evalF mem M maxEvaluations acc body w with
     | none => .error definitionBudget
     | some (true, w) => if n + 1 > 100000 then .error tupleLimit else .ok (w, n + 1, acc.reverse :: rows)
     | some (false, w) => .ok (w, n, rows)
-  | s :: ss, acc, st => (M.domains s).foldlM (fun st v => tableB M body ss (v :: acc) st) st
+  | s :: ss, acc, st => (M.domains s).foldlM (fun st v => tableB mem M body ss (v :: acc) st) st
 
 /-- Every defined table in dependency order under one budget, starting from
 the supplied tuples (Python `FiniteModel.from_dict`, Rust `FiniteModel::from_value`). -/
@@ -307,7 +381,9 @@ def computeDefinedB (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) :
     Except String VE.Bridge.ModelData := do
   let base := (d.relations.map (fun p => p.2.length)).foldl (· + ·) 0
   let (d, _, _) ← ds.foldlM (fun (d, w, n) (x : VE.Definitions.Def) => do
-      let (w, n, rows) ← tableB d.toModel x.body x.args [] (w, n, [])
+      let M := d.toModel
+      let idx := tableIndex (d.relations.map Prod.fst) M
+      let (w, n, rows) ← tableB (tableMem M idx) M x.body x.args [] (w, n, [])
       pure ({ d with relations := d.relations ++ [(x.name, rows.reverse)] }, w, n)) (d, 0, base)
   pure d
 
@@ -427,25 +503,25 @@ abbrev CKey := EdgeKey VE.Closure.Formula
 
 /-- The budgeted closure evaluator; closure values come from the reference
 evaluator once the closure's construction has been charged. -/
-def evalC (M : VE.FiniteModel Entity) (limit : Nat) :
+def evalC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
     List Entity → VE.Closure.Formula → Meter CKey → Option (Bool × Meter CKey)
-  | ρ, .not a, s => tickM limit s fun s => (evalC M limit ρ a s).map fun r => (!r.1, r.2)
-  | ρ, .and a b, s => tickM limit s fun s => match evalC M limit ρ a s with
+  | ρ, .not a, s => tickM limit s fun s => (evalC mem M limit ρ a s).map fun r => (!r.1, r.2)
+  | ρ, .and a b, s => tickM limit s fun s => match evalC mem M limit ρ a s with
     | none => none
-    | some (true, s) => evalC M limit ρ b s
+    | some (true, s) => evalC mem M limit ρ b s
     | some (false, s) => some (false, s)
-  | ρ, .or a b, s => tickM limit s fun s => match evalC M limit ρ a s with
+  | ρ, .or a b, s => tickM limit s fun s => match evalC mem M limit ρ a s with
     | none => none
     | some (true, s) => some (true, s)
-    | some (false, s) => evalC M limit ρ b s
-  | ρ, .implies a b, s => tickM limit s fun s => match evalC M limit ρ a s with
+    | some (false, s) => evalC mem M limit ρ b s
+  | ρ, .implies a b, s => tickM limit s fun s => match evalC mem M limit ρ a s with
     | none => none
-    | some (true, s) => evalC M limit ρ b s
+    | some (true, s) => evalC mem M limit ρ b s
     | some (false, s) => some (true, s)
   | ρ, .all x a, s => tickM limit s fun s =>
-    quantS true (fun v => evalC M limit (v :: ρ) a) (M.domains x) s
+    quantS true (fun v => evalC mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .ex x a, s => tickM limit s fun s =>
-    quantS false (fun v => evalC M limit (v :: ρ) a) (M.domains x) s
+    quantS false (fun v => evalC mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .reachNamed k p t u, s => tickM limit s fun s =>
     let value := (VE.Closure.Formula.reachNamed k p t u).eval M ρ
     let key : CKey × List Entity := (.named p, ρ)
@@ -455,22 +531,47 @@ def evalC (M : VE.FiniteModel Entity) (limit : Nat) :
     let value := (VE.Closure.Formula.reachBody k x a t u).eval M ρ
     let key : CKey × List Entity := (.body x a, ρ)
     if s.cache.contains key then some (value, s) else
-    match forPairs (fun v w => evalC M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
+    match forPairs (fun v w => evalC mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
     | none => none
     | some (es, s) => (warshallWork limit (M.domains x) (M.domains x) es s.work).map
         fun w => (value, ⟨w, s.cache.insert key⟩)
+  | ρ, .unary p t, s => tickM limit s fun s => some ((match t.denote M.asStructure ρ with
+      | some v => mem p [v]
+      | none => false), s)
+  | ρ, .binary p t u, s => tickM limit s fun s =>
+    some ((match t.denote M.asStructure ρ, u.denote M.asStructure ρ with
+      | some v, some x => mem p [v, x]
+      | _, _ => false), s)
   | ρ, f, s => tickM limit s fun s => some (f.eval M ρ, s)
 
-theorem evalC_sound (M : VE.FiniteModel Entity) (limit : Nat) :
+theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (f : VE.Closure.Formula) (ρ : List Entity) (s : Meter CKey) (r : Bool × Meter CKey),
-      evalC M limit ρ f s = some r → r.1 = f.eval M ρ := by
+      evalC mem M limit ρ f s = some r → r.1 = f.eval M ρ := by
   intro f
   induction f with
-  | top | bottom | unary | binary | eq =>
+  | top | bottom | eq =>
     intro ρ s r h
     have h := tickM_some h
     simp only [Option.some.injEq] at h
     subst h; rfl
+  | unary p t =>
+    intro ρ s r h
+    have h := tickM_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Closure.Formula.eval]
+    cases t.denote M.asStructure ρ with
+    | none => rfl
+    | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
+  | binary p t u =>
+    intro ρ s r h
+    have h := tickM_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Closure.Formula.eval]
+    cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+    exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | reachNamed k p t u =>
     intro ρ s r h
     have h := tickM_some h
@@ -492,7 +593,7 @@ theorem evalC_sound (M : VE.FiniteModel Entity) (limit : Nat) :
   | not a ih =>
     intro ρ s r h
     have h := tickM_some h
-    cases ha : evalC M limit ρ a { s with work := s.work + 1 } with
+    cases ha : evalC mem M limit ρ a { s with work := s.work + 1 } with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
@@ -559,58 +660,60 @@ theorem evalC_sound (M : VE.FiniteModel Entity) (limit : Nat) :
 
 /-- Premises first under one budget, a fresh closure cache per formula (Python
 witness checking, Rust `clear_closures`). -/
-def refutesC (M : VE.FiniteModel Entity) (limit : Nat) :
+def refutesC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
     List VE.Closure.Formula → VE.Closure.Formula → Nat → Option Bool
-  | [], c, w => (evalC M limit [] c ⟨w, {}⟩).map (fun r => !r.1)
-  | p :: ps, c, w => match evalC M limit [] p ⟨w, {}⟩ with
+  | [], c, w => (evalC mem M limit [] c ⟨w, {}⟩).map (fun r => !r.1)
+  | p :: ps, c, w => match evalC mem M limit [] p ⟨w, {}⟩ with
     | none => none
     | some (false, _) => some false
-    | some (true, s) => refutesC M limit ps c s.work
+    | some (true, s) => refutesC mem M limit ps c s.work
 
-theorem refutesC_sound (M : VE.FiniteModel Entity) (limit : Nat) :
+theorem refutesC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (ps : List VE.Closure.Formula) (c : VE.Closure.Formula) (w : Nat) (b : Bool),
-      refutesC M limit ps c w = some b → b = VE.Closure.countermodelCheck M ps c
+      refutesC mem M limit ps c w = some b → b = VE.Closure.countermodelCheck M ps c
   | [], c, w, b, h => by
     simp only [refutesC] at h
-    cases hc : evalC M limit [] c ⟨w, {}⟩ with
+    cases hc : evalC mem M limit [] c ⟨w, {}⟩ with
     | none => rw [hc] at h; cases h
     | some x =>
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Closure.countermodelCheck, evalC_sound M limit c [] _ x hc]
+      simp [VE.Closure.countermodelCheck, evalC_sound mem M limit hmem c [] _ x hc]
   | p :: ps, c, w, b, h => by
     simp only [refutesC] at h
     split at h
     · cases h
     · rename_i s' hp
-      have := evalC_sound M limit p [] _ _ hp
+      have := evalC_sound mem M limit hmem p [] _ _ hp
       simp only [Option.some.injEq] at h
       subst h
       simp [VE.Closure.countermodelCheck, ← this]
     · rename_i s' hp
-      have := evalC_sound M limit p [] _ _ hp
-      rw [refutesC_sound M limit ps c _ b h]
+      have := evalC_sound mem M limit hmem p [] _ _ hp
+      rw [refutesC_sound mem M limit hmem ps c _ b h]
       simp [VE.Closure.countermodelCheck, ← this]
 
-def valuesC (M : VE.FiniteModel Entity) (fs : List VE.Closure.Formula) :
+def valuesC (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (fs : List VE.Closure.Formula) :
     Except String (List Bool) :=
-  fs.mapM fun f => match evalC M maxEvaluations [] f ⟨0, {}⟩ with
+  fs.mapM fun f => match evalC mem M maxEvaluations [] f ⟨0, {}⟩ with
     | some (b, _) => .ok b
     | none => .error budgetExhausted
 
-theorem valuesC_sound (M : VE.FiniteModel Entity) (fs : List VE.Closure.Formula)
-    (vs : List Bool) (h : valuesC M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
+theorem valuesC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) (fs : List VE.Closure.Formula)
+    (vs : List Bool) (h : valuesC mem M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
   induction fs generalizing vs with
   | nil => simp only [valuesC, List.mapM_nil, pure, Except.pure, Except.ok.injEq] at h; simp [← h]
   | cons f fs ih =>
     simp only [valuesC, List.mapM_cons] at h ih
-    cases hf : evalC M maxEvaluations [] f ⟨0, {}⟩ with
+    cases hf : evalC mem M maxEvaluations [] f ⟨0, {}⟩ with
     | none => rw [hf] at h; cases h
     | some r =>
       obtain ⟨b, s⟩ := r
       rw [hf] at h
-      cases hr : List.mapM (fun f => match evalC M maxEvaluations [] f ⟨0, {}⟩ with
+      cases hr : List.mapM (fun f => match evalC mem M maxEvaluations [] f ⟨0, {}⟩ with
           | some (b, _) => Except.ok b
           | none => Except.error budgetExhausted) fs with
       | error e => rw [hr] at h; cases h
@@ -618,7 +721,7 @@ theorem valuesC_sound (M : VE.FiniteModel Entity) (fs : List VE.Closure.Formula)
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := evalC_sound M _ f [] _ (b, s) hf
+        have hb := evalC_sound mem M _ hmem f [] _ (b, s) hf
         simp only at hb
         rw [ih bs hr, hb]
         rfl
@@ -628,25 +731,25 @@ theorem valuesC_sound (M : VE.FiniteModel Entity) (fs : List VE.Closure.Formula)
 abbrev NKey := EdgeKey VE.Core.Formula
 
 /-- The same budgeted evaluator over `VE.Core.Formula` (n-ary atoms are leaves). -/
-def evalN (M : VE.FiniteModel Entity) (limit : Nat) :
+def evalN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
     List Entity → VE.Core.Formula → Meter NKey → Option (Bool × Meter NKey)
-  | ρ, .not a, s => tickM limit s fun s => (evalN M limit ρ a s).map fun r => (!r.1, r.2)
-  | ρ, .and a b, s => tickM limit s fun s => match evalN M limit ρ a s with
+  | ρ, .not a, s => tickM limit s fun s => (evalN mem M limit ρ a s).map fun r => (!r.1, r.2)
+  | ρ, .and a b, s => tickM limit s fun s => match evalN mem M limit ρ a s with
     | none => none
-    | some (true, s) => evalN M limit ρ b s
+    | some (true, s) => evalN mem M limit ρ b s
     | some (false, s) => some (false, s)
-  | ρ, .or a b, s => tickM limit s fun s => match evalN M limit ρ a s with
+  | ρ, .or a b, s => tickM limit s fun s => match evalN mem M limit ρ a s with
     | none => none
     | some (true, s) => some (true, s)
-    | some (false, s) => evalN M limit ρ b s
-  | ρ, .implies a b, s => tickM limit s fun s => match evalN M limit ρ a s with
+    | some (false, s) => evalN mem M limit ρ b s
+  | ρ, .implies a b, s => tickM limit s fun s => match evalN mem M limit ρ a s with
     | none => none
-    | some (true, s) => evalN M limit ρ b s
+    | some (true, s) => evalN mem M limit ρ b s
     | some (false, s) => some (true, s)
   | ρ, .all x a, s => tickM limit s fun s =>
-    quantS true (fun v => evalN M limit (v :: ρ) a) (M.domains x) s
+    quantS true (fun v => evalN mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .ex x a, s => tickM limit s fun s =>
-    quantS false (fun v => evalN M limit (v :: ρ) a) (M.domains x) s
+    quantS false (fun v => evalN mem M limit (v :: ρ) a) (M.domains x) s
   | ρ, .reachNamed k p t u, s => tickM limit s fun s =>
     let value := (VE.Core.Formula.reachNamed k p t u).eval M ρ
     let key : NKey × List Entity := (.named p, ρ)
@@ -656,22 +759,60 @@ def evalN (M : VE.FiniteModel Entity) (limit : Nat) :
     let value := (VE.Core.Formula.reachBody k x a t u).eval M ρ
     let key : NKey × List Entity := (.body x a, ρ)
     if s.cache.contains key then some (value, s) else
-    match forPairs (fun v w => evalN M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
+    match forPairs (fun v w => evalN mem M limit (w :: v :: ρ) a) (M.domains x) (M.domains x) {} s with
     | none => none
     | some (es, s) => (warshallWork limit (M.domains x) (M.domains x) es s.work).map
         fun w => (value, ⟨w, s.cache.insert key⟩)
+  | ρ, .unary p t, s => tickM limit s fun s => some ((match t.denote M.asStructure ρ with
+      | some v => mem p [v]
+      | none => false), s)
+  | ρ, .binary p t u, s => tickM limit s fun s =>
+    some ((match t.denote M.asStructure ρ, u.denote M.asStructure ρ with
+      | some v, some x => mem p [v, x]
+      | _, _ => false), s)
+  | ρ, .atom p ts, s => tickM limit s fun s =>
+    some ((match ts.mapM (·.denote M.asStructure ρ) with
+      | some vs => mem p vs
+      | none => false), s)
   | ρ, f, s => tickM limit s fun s => some (f.eval M ρ, s)
 
-theorem evalN_sound (M : VE.FiniteModel Entity) (limit : Nat) :
+theorem evalN_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (f : VE.Core.Formula) (ρ : List Entity) (s : Meter NKey) (r : Bool × Meter NKey),
-      evalN M limit ρ f s = some r → r.1 = f.eval M ρ := by
+      evalN mem M limit ρ f s = some r → r.1 = f.eval M ρ := by
   intro f
   induction f with
-  | top | bottom | unary | binary | atom | eq =>
+  | top | bottom | eq =>
     intro ρ s r h
     have h := tickM_some h
     simp only [Option.some.injEq] at h
     subst h; rfl
+  | unary p t =>
+    intro ρ s r h
+    have h := tickM_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Core.Formula.eval]
+    cases t.denote M.asStructure ρ with
+    | none => rfl
+    | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
+  | binary p t u =>
+    intro ρ s r h
+    have h := tickM_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Core.Formula.eval]
+    cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
+    exact Bool.eq_iff_iff.mpr (by simp [hmem])
+  | atom p ts =>
+    intro ρ s r h
+    have h := tickM_some h
+    simp only [Option.some.injEq] at h
+    subst h
+    simp only [VE.Core.Formula.eval]
+    cases ts.mapM (·.denote M.asStructure ρ) with
+    | none => rfl
+    | some vs => exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | reachNamed k p t u =>
     intro ρ s r h
     have h := tickM_some h
@@ -693,7 +834,7 @@ theorem evalN_sound (M : VE.FiniteModel Entity) (limit : Nat) :
   | not a ih =>
     intro ρ s r h
     have h := tickM_some h
-    cases ha : evalN M limit ρ a { s with work := s.work + 1 } with
+    cases ha : evalN mem M limit ρ a { s with work := s.work + 1 } with
     | none => rw [ha] at h; cases h
     | some x =>
       rw [ha] at h
@@ -758,58 +899,60 @@ theorem evalN_sound (M : VE.FiniteModel Entity) (limit : Nat) :
       (fun v _ s r hv => ih _ s r hv) _ r h
     simpa [VE.Core.Formula.eval] using this
 
-def refutesN (M : VE.FiniteModel Entity) (limit : Nat) :
+def refutesN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat) :
     List VE.Core.Formula → VE.Core.Formula → Nat → Option Bool
-  | [], c, w => (evalN M limit [] c ⟨w, {}⟩).map (fun r => !r.1)
-  | p :: ps, c, w => match evalN M limit [] p ⟨w, {}⟩ with
+  | [], c, w => (evalN mem M limit [] c ⟨w, {}⟩).map (fun r => !r.1)
+  | p :: ps, c, w => match evalN mem M limit [] p ⟨w, {}⟩ with
     | none => none
     | some (false, _) => some false
-    | some (true, s) => refutesN M limit ps c s.work
+    | some (true, s) => refutesN mem M limit ps c s.work
 
-theorem refutesN_sound (M : VE.FiniteModel Entity) (limit : Nat) :
+theorem refutesN_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (limit : Nat)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
     ∀ (ps : List VE.Core.Formula) (c : VE.Core.Formula) (w : Nat) (b : Bool),
-      refutesN M limit ps c w = some b → b = VE.Core.countermodelCheck M ps c
+      refutesN mem M limit ps c w = some b → b = VE.Core.countermodelCheck M ps c
   | [], c, w, b, h => by
     simp only [refutesN] at h
-    cases hc : evalN M limit [] c ⟨w, {}⟩ with
+    cases hc : evalN mem M limit [] c ⟨w, {}⟩ with
     | none => rw [hc] at h; cases h
     | some x =>
       rw [hc] at h
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
-      simp [VE.Core.countermodelCheck, evalN_sound M limit c [] _ x hc]
+      simp [VE.Core.countermodelCheck, evalN_sound mem M limit hmem c [] _ x hc]
   | p :: ps, c, w, b, h => by
     simp only [refutesN] at h
     split at h
     · cases h
     · rename_i s' hp
-      have := evalN_sound M limit p [] _ _ hp
+      have := evalN_sound mem M limit hmem p [] _ _ hp
       simp only [Option.some.injEq] at h
       subst h
       simp [VE.Core.countermodelCheck, ← this]
     · rename_i s' hp
-      have := evalN_sound M limit p [] _ _ hp
-      rw [refutesN_sound M limit ps c _ b h]
+      have := evalN_sound mem M limit hmem p [] _ _ hp
+      rw [refutesN_sound mem M limit hmem ps c _ b h]
       simp [VE.Core.countermodelCheck, ← this]
 
-def valuesN (M : VE.FiniteModel Entity) (fs : List VE.Core.Formula) :
+def valuesN (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (fs : List VE.Core.Formula) :
     Except String (List Bool) :=
-  fs.mapM fun f => match evalN M maxEvaluations [] f ⟨0, {}⟩ with
+  fs.mapM fun f => match evalN mem M maxEvaluations [] f ⟨0, {}⟩ with
     | some (b, _) => .ok b
     | none => .error budgetExhausted
 
-theorem valuesN_sound (M : VE.FiniteModel Entity) (fs : List VE.Core.Formula)
-    (vs : List Bool) (h : valuesN M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
+theorem valuesN_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity)
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) (fs : List VE.Core.Formula)
+    (vs : List Bool) (h : valuesN mem M fs = .ok vs) : vs = fs.map (fun f => f.eval M []) := by
   induction fs generalizing vs with
   | nil => simp only [valuesN, List.mapM_nil, pure, Except.pure, Except.ok.injEq] at h; simp [← h]
   | cons f fs ih =>
     simp only [valuesN, List.mapM_cons] at h ih
-    cases hf : evalN M maxEvaluations [] f ⟨0, {}⟩ with
+    cases hf : evalN mem M maxEvaluations [] f ⟨0, {}⟩ with
     | none => rw [hf] at h; cases h
     | some r =>
       obtain ⟨b, s⟩ := r
       rw [hf] at h
-      cases hr : List.mapM (fun f => match evalN M maxEvaluations [] f ⟨0, {}⟩ with
+      cases hr : List.mapM (fun f => match evalN mem M maxEvaluations [] f ⟨0, {}⟩ with
           | some (b, _) => Except.ok b
           | none => Except.error budgetExhausted) fs with
       | error e => rw [hr] at h; cases h
@@ -817,7 +960,7 @@ theorem valuesN_sound (M : VE.FiniteModel Entity) (fs : List VE.Core.Formula)
         rw [hr] at h
         simp only [bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
         subst h
-        have hb := evalN_sound M _ f [] _ (b, s) hf
+        have hb := evalN_sound mem M _ hmem f [] _ (b, s) hf
         simp only at hb
         rw [ih bs hr, hb]
         rfl

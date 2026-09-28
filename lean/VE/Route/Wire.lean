@@ -6,6 +6,8 @@ import VE.Order.ModelCheck
 import VE.Closure.Bridge
 import VE.Definitions.Elaborate
 import VE.Route.Budget
+import VE.Route.Decode
+import VE.Route.Flags
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -241,11 +243,6 @@ def fullBackground (rv : RouteVocabulary) : List (VE.Formula × String) :=
     (VE.Definitions.expand rv.definitions).map (fun a => (a, "definitions")) ++
     Background.background rv.literals
 
-/-- The first regenerated Background premise the model violates, with its generator. -/
-def fullBackgroundViolation {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (rv : RouteVocabulary) :
-    Option String :=
-  ((fullBackground rv).find? (fun p => !p.1.eval M [])).map Prod.snd
-
 /-- Each submitted domain in Python `sorted` and Rust `sort` order. The
 defined-table work stops quantifiers at the first decisive entity, so whether it
 exhausts the budget depends on this order; the model's entities do not change. -/
@@ -261,6 +258,52 @@ def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
     else .ok ()
   | .error _ => .ok ()
 
+/-- A hash index of a decoded model's tables, for every declared predicate. -/
+def modelIndex (rv : RouteVocabulary) (M : VE.FiniteModel VE.Bridge.Entity) :
+    Std.HashMap String (Std.HashSet (List VE.Bridge.Entity)) :=
+  Budget.tableIndex (rv.modelVocabulary.predicates.map Prod.fst) M
+
+def definitionBackgroundBudget : String :=
+  "ResourceLimit: Definition background evaluation budget exhausted"
+
+/-- Each definition's biconditional under its own evaluation budget (Python
+`_valid_definitions`, Rust `definition_premise`): UNKNOWN is `ResourceLimit`. -/
+def definitionsCheck (mem : String → List VE.Bridge.Entity → Bool)
+    (M : VE.FiniteModel VE.Bridge.Entity) : List VE.Formula → Except String Unit
+  | [] => .ok ()
+  | a :: as => match Budget.evalF mem M maxEvaluations [] a 0 with
+    | none => .error definitionBackgroundBudget
+    | some (false, _) => .error (invalidModel "definitions")
+    | some (true, _) => definitionsCheck mem M as
+
+theorem definitionsCheck_ok (mem : String → List VE.Bridge.Entity → Bool)
+    (M : VE.FiniteModel VE.Bridge.Entity) (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
+    ∀ (as : List VE.Formula), definitionsCheck mem M as = .ok () → as.all (fun a => a.eval M []) = true
+  | [], _ => rfl
+  | a :: as, h => by
+    simp only [definitionsCheck] at h
+    split at h
+    · cases h
+    · cases h
+    · rename_i w ha
+      have hv := Budget.evalF_sound mem M maxEvaluations hmem a [] 0 _ ha
+      simp only [List.all_cons, Bool.and_eq_true]
+      exact ⟨hv.symm, definitionsCheck_ok mem M hmem as h⟩
+
+/-- Background on the decoded model, in Python's order: the flagged tables in
+one pass (`Flags.fastFlags_eq`), each definition under its own budget, then
+the literals. -/
+def backgroundCheck (rv : RouteVocabulary) (M : VE.FiniteModel VE.Bridge.Entity) :
+    Except String Unit :=
+  if !Flags.fastFlags M rv.flags then .error (invalidModel "flags")
+  else
+    let idx := modelIndex rv M
+    match definitionsCheck (Budget.tableMem M idx) M (VE.Definitions.expand rv.definitions) with
+    | .error e => .error e
+    | .ok () => match backgroundViolation M rv.literals with
+      | some g => .error (invalidModel g)
+      | none => .ok ()
+
 /-- Decode finite tables for the base predicates (their static limits: domain
 size and tuple count), compute the defined tables under the shared evaluation
 budget and tuple limit, one candidate row at a time (`Budget.computeDefinedB`),
@@ -269,13 +312,12 @@ literals is `InvalidModel(literals)`, a supplied defined table is
 `InvalidModel(definitions)`, never a truth value. -/
 def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
   noDefinedTables rv j
-  let data₀ := sortModelData (← VE.Bridge.decodeModelData rv.baseModelVocabulary j)
+  let data₀ := sortModelData (← Decode.decodeModelData rv.baseModelVocabulary j)
   let data ← Budget.computeDefinedB data₀ rv.definitions
-  Gate.require (data.valid rv.modelVocabulary) "model is not semantically admissible"
+  Gate.require (Decode.validFast data rv.modelVocabulary) "model is not semantically admissible"
   let M := data.toModel
-  match fullBackgroundViolation M rv with
-  | some g => throw (invalidModel g)
-  | none => pure M
+  backgroundCheck rv M
+  pure M
 
 theorem backgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteModel α)
     (lits : List String) (h : backgroundViolation M lits = none) : Background.literalsValid M lits = true := by
@@ -286,19 +328,26 @@ theorem backgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteMode
     (List.mem_map.mpr ⟨a, ha, rfl⟩)
   simpa using hn
 
-/-- A model with no violation satisfies every regenerated Background premise. -/
-theorem fullBackgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteModel α)
-    (rv : RouteVocabulary) (h : fullBackgroundViolation M rv = none) :
+/-- A model passing the Background check satisfies every regenerated
+definitions and literals premise. -/
+theorem backgroundCheck_ok (rv : RouteVocabulary) (M : VE.FiniteModel VE.Bridge.Entity)
+    (h : backgroundCheck rv M = .ok ()) :
     (VE.Definitions.background rv.definitions rv.literals).all (fun a => a.eval M []) = true := by
-  unfold fullBackgroundViolation at h
-  have hn := List.find?_eq_none.mp (Option.map_eq_none_iff.mp h)
-  apply List.all_eq_true.mpr
-  intro a ha
-  rcases List.mem_append.mp ha with ha | ha
-  · simpa using hn (a, "definitions") (List.mem_append_left _
-      (List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩)))
-  · simpa using hn (a, "literals") (List.mem_append_right _
-      (List.mem_map.mpr ⟨a, ha, rfl⟩))
+  unfold backgroundCheck at h
+  split at h
+  · cases h
+  dsimp only at h
+  split at h
+  · cases h
+  rename_i hd
+  have hdefs := definitionsCheck_ok _ M (Budget.tableMem_iff _ M) _ hd
+  split at h
+  · cases h
+  rename_i hn
+  have hlits := backgroundViolation_none M rv.literals hn
+  unfold VE.Definitions.background
+  simp only [List.all_append, Bool.and_eq_true]
+  exact ⟨hdefs, hlits⟩
 
 open VE.Order.ProfileGate in
 /-- A decoded model is structurally admissible for the full vocabulary and
@@ -313,12 +362,10 @@ theorem decodeModel_background (rv : RouteVocabulary) (j : Json) (M : VE.FiniteM
   obtain ⟨data, _, h⟩ := bind_ok h
   obtain ⟨_, hv, h⟩ := bind_ok h
   have hvalid := Gate.require_ok hv
-  dsimp only at h
-  split at h
-  · cases h
-  · rename_i hn
-    cases h
-    exact ⟨VE.Bridge.modelData_valid _ rv.modelVocabulary hvalid, fullBackgroundViolation_none _ rv hn⟩
+  rw [Decode.validFast_eq] at hvalid
+  obtain ⟨_, hb, h⟩ := bind_ok h
+  cases h
+  exact ⟨VE.Bridge.modelData_valid _ rv.modelVocabulary hvalid, backgroundCheck_ok rv _ hb⟩
 
 open VE.Order.ProfileGate in
 /-- A decoded model is admissible for the environment and satisfies the
@@ -347,7 +394,7 @@ premise before any evaluation or countermodel verdict. -/
 def decodeDataModel (rv : RouteVocabulary) (j : Json) :
     Except String (VE.FiniteModel VE.Bridge.Entity) := do
   let M ← decodeModel rv j
-  unless VE.Data.Background.flagsValid M rv.flags do
+  unless Flags.fastFlags M rv.flags do
     throw (invalidModel "flags")
   pure M
 
@@ -364,7 +411,8 @@ theorem decodeDataModel_valid (rv : RouteVocabulary) (j : Json)
   · rename_i hf
     cases h
     refine ⟨decodeModel_valid rv j M hd, ?_⟩
-    exact VE.Data.Background.flags_model_valid _ rv.flags (by simpa using hf)
+    exact VE.Data.Background.flags_model_valid _ rv.flags
+      (by simpa [Flags.fastFlags_eq] using hf)
   · cases h
 
 /-- A data model with separate base flags and defined predicates satisfies both
@@ -445,14 +493,17 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
     let fs ← decodeFormulas E (← j.getObjVal? "ast") (profiles.contains "data@0")
     if fs.isEmpty then throw "empty document"
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    return ok id [("values", toJson (← Budget.valuesF M fs))]
+    let idx := modelIndex rv M
+    return ok id [("values", toJson (← Budget.valuesF (Budget.tableMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← decodeFormulas E premisesJson (profiles.contains "data@0")
   let c ← decodeClosed E (← j.getObjVal? "conclusion") (profiles.contains "data@0")
   nodeLimit ((c :: ps).map VE.Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    let some refutes := Budget.refutesF M maxEvaluations ps c 0 | throw Budget.budgetExhausted
+    let idx := modelIndex rv M
+    let some refutes := Budget.refutesF (Budget.tableMem M idx) M maxEvaluations ps c 0
+      | throw Budget.budgetExhausted
     return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
@@ -476,7 +527,8 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
       throw "$string quantification requires data stage 2"
     if fs.isEmpty then throw "empty document"
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    return ok id [("values", toJson (← Budget.valuesC M fs))]
+    let idx := modelIndex rv M
+    return ok id [("values", toJson (← Budget.valuesC (Budget.tableMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
   if profiles.contains "data@0" && ps.any closureUsesStringBinder then
@@ -488,7 +540,9 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   nodeLimit ((c :: ps).map VE.Closure.Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    let some refutes := Budget.refutesC M maxEvaluations ps c 0 | throw Budget.budgetExhausted
+    let idx := modelIndex rv M
+    let some refutes := Budget.refutesC (Budget.tableMem M idx) M maxEvaluations ps c 0
+      | throw Budget.budgetExhausted
     return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeClosureCertificate (← j.getObjVal? "certificate")
@@ -504,7 +558,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
 (`InvalidModel(literals)` on aliasing literals, never a truth value). -/
 def decodeOrderModel (rv : RouteOrderVocabulary) (j : Json) :
     Except String (VE.Order.ModelData VE.Order.Wire.Entity) := do
-  let d ← VE.Order.Wire.decodeValidModel rv.modelVocabulary j
+  let d ← Decode.decodeOrderModel rv.modelVocabulary j
   unless Background.orderLiteralsValid d.toModel rv.literals do throw (invalidModel "literals")
   pure d
 
@@ -522,6 +576,11 @@ theorem decodeOrderModel_valid (rv : RouteOrderVocabulary) (j : Json)
     simpa using hv
   · cases h
 
+/-- A hash index of a decoded order model's tables, for every declared predicate. -/
+def orderIndex (rv : RouteOrderVocabulary) (M : VE.Order.FiniteModel VE.Order.Wire.Entity) :
+    Std.HashMap String (Budget.OrderRows VE.Order.Wire.Entity) :=
+  Budget.orderIndex (rv.modelVocabulary.predicates.map Prod.fst) M
+
 /-- Order family: the numbers2 order decoders; Background is the order form of
 `literals`, regenerated from the declared literals and bound like the others. -/
 def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocabulary) (id kind : String)
@@ -531,7 +590,9 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     let fs ← VE.Order.Wire.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
     let d ← decodeOrderModel rv (← j.getObjVal? "model")
-    return ok id [("values", toJson (← Budget.orderValues (Budget.sortOrderData d).toModel fs))]
+    let M := (Budget.sortOrderData d).toModel
+    let idx := orderIndex rv M
+    return ok id [("values", toJson (← Budget.orderValues (Budget.orderMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Order.Wire.decodeFormulas E premisesJson
   let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
@@ -539,7 +600,9 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
   nodeLimit ((c :: ps).map VE.Order.Wire.formulaNodes)
   if kind == "countermodel" then
     let d ← decodeOrderModel rv (← j.getObjVal? "model")
-    let some refutes := VE.Time.refutesB (Budget.sortOrderData d).toModel maxEvaluations ps c 0
+    let M := (Budget.sortOrderData d).toModel
+    let idx := orderIndex rv M
+    let some refutes := VE.Time.refutesB (Budget.orderMem M idx) M maxEvaluations ps c 0
       | throw Budget.budgetExhausted
     return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
