@@ -98,6 +98,35 @@ def test_spec_s2_conflict_three_way(rust_binary):
     assert json.loads(rust.stdout)[0]["values"] == [True]
 
 
+@pytest.mark.parametrize("with_rule_five", [False, True], ids=["A-minus", "A-minus-5"])
+def test_spec_bprime_unrelated_permission_conflict_three_way(with_rule_five, rust_binary):
+    case = deepcopy(next(c for c in cases() if c["id"] == "bprime-A"))
+    case.pop("expected_clear")
+    case["id"] = "bprime-Aminus5" if with_rule_five else "bprime-Aminus"
+    selected = ("3", "5", "7", "9m") if with_rule_five else ("3", "7", "9m")
+    case["norms"] = [deepcopy(rules()[name]) for name in selected]
+    case["scenario"]["model"]["relations"]["injures_human"] = [["nothing"], ["pull"]]
+    elaborated = run_case({k: v for k, v in case.items() if k != "scenario"} |
+                          {"kind": "alt-elaborate"})
+    scenario = run_case(case | {"kind": "alt-validate"})
+    assert (scenario["verdict"], scenario["target"], scenario["tuple"]) == (
+        "CONFLICT", "permitted", ["nothing"])
+    target = next(item for item in elaborated["conflict_targets"]
+                  if item["target"] == "permitted")
+    formula = ["exists", "action", target["ast"]]
+    base = base_environment(case["environment"])
+    model_data = case["scenario"]["model"]
+    env = Environment(base)
+    model = FiniteModel.from_dict(env, model_data)
+    assert evaluate(env, formula_from_data(env, formula), model, trace=False).value
+    rust = subprocess.run([str(rust_binary), "conformance"],
+                          input=json.dumps([{"id": case["id"], "kind": "evaluate", "environment": base,
+                                             "ast": [formula], "model": model_data}]),
+                          capture_output=True, text=True, timeout=120)
+    assert rust.returncode == 0, rust.stdout + rust.stderr
+    assert json.loads(rust.stdout)[0]["values"] == [True]
+
+
 def test_spec_p_outcome_completion_and_document_binding_three_way(rust_binary):
     source = deepcopy(next(c for c in cases() if c["id"] == "a"))
     source.pop("expected_clear")

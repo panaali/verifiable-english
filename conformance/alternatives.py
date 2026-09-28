@@ -54,6 +54,15 @@ def rule(name, predicate, sign, guard):
 def rules():
     human_allows = ["exists", "harm", ["and", ["unary", "harms_human", ["var", 0]],
                                        ["binary", "allows", ["var", 1], ["var", 0]]]]
+    other_injures_or_allows = [
+        "exists", "robot", ["and", ["binary", "available", ["var", 1], ["var", 0]],
+                            ["forall", "action", ["implies",
+                                ["and", ["binary", "available", ["var", 0], ["var", 1]],
+                                 ["not", ["eq", ["var", 0], ["var", 2]]]],
+                                ["or", ["unary", "injures_human", ["var", 0]],
+                                 ["exists", "harm", ["and",
+                                     ["unary", "harms_human", ["var", 0]],
+                                     ["binary", "allows", ["var", 1], ["var", 0]]]]]]]]]
     return {
         "1": rule("law-3-permission", "permitted", True, ["unary", "protects_robot", ["var", 0]]),
         "2": {"norm": {**rule("law-2-permission", "permitted", True,
@@ -80,6 +89,12 @@ def rules():
                    ["binary", "avoidable", ["var", 0], ["var", 1]]]),
         "8m": rule("prevent-harm", "prevent_required", True,
                    ["unary", "harms_human", ["var", 0]]),
+        "9": {"norm": {**rule("necessary-injury", "permitted", True,
+                                other_injures_or_allows)["norm"],
+                       "over": ["law-1-direct", "inaction-allows"]}},
+        "9m": {"norm": {**rule("necessary-injury", "permitted", True,
+                                 other_injures_or_allows)["norm"],
+                        "over": ["inaction-allows"]}},
         "6p": rule("prevent-self-harm", "prevent_required", True,
                    ["and", ["binary", "harm_to", ["var", 0], ["var", 1]],
                     ["binary", "avoidable", ["var", 0], ["var", 1]]]),
@@ -168,6 +183,8 @@ def cases():
          (("nothing", "h1"), ("pull", "h2")), (), ()),
         ("b-B", ("3", "8"), ("nothing", "pull"), ("h1", "h2"),
          (("nothing", "h1"), ("pull", "h2")), (), ()),
+        ("bprime-A", ("3", "7", "9"), ("nothing", "pull"), ("h1", "h2"),
+         (("nothing", "h1"), ("pull", "h2")), ("pull",), ("nothing", "pull")),
         ("c-7", ("3", "7"), ("nothing", "pull"), ("h",),
          (("nothing", "h"), ("pull", "h")), (), ("nothing", "pull")),
         ("c-8", ("3", "8"), ("nothing", "pull"), ("h",),
@@ -198,6 +215,9 @@ def cases():
          scenario(["nothing", "act"], ["hh", "hp"], (("nothing", "hh"), ("act", "hp")),
                   injured=("act",), human=("hp",), humanity=("hh",)), []),
         ("j", ("1", "2", "3full", "4", "5", "6"),
+         scenario(["a1", "a2", "nothing"], [], (), human=(),
+                  facts={"ordered": [["a1"], ["a2"]]}), []),
+        ("bprime-A5", ("3", "5", "7", "9"),
          scenario(["a1", "a2", "nothing"], [], (), human=(),
                   facts={"ordered": [["a1"], ["a2"]]}), []),
         ("l5", ("3", "7"),
