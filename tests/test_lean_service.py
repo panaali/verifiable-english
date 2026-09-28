@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -15,10 +16,11 @@ import threading
 import time
 
 import pytest
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import (CheckerUnavailable, LeanService, LeanServicePool, MODES,
-                                      executable_sha256)
+                                      RESPONSE_SCHEMAS, executable_sha256)
 from ve.errors import ResourceLimit, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,6 +52,19 @@ def test_english_mode_is_the_generated_copy_of_the_english_runner():
     result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
                             capture_output=True, text=True, timeout=60)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_response_schemas_follow_lean_protocol_and_english_encoder():
+    protocol = (ROOT / "lean/VE/Service/Protocol.lean").read_text()
+    names = re.findall(r'^  \| \.(\w+) => "([^"]+)"$', protocol, re.M)
+    dispatch = re.findall(r'^  \| \.(\w+), j => ', protocol, re.M)
+    assert {name for _, name in names} == set(MODES) == set(RESPONSE_SCHEMAS)
+    assert {constructor for constructor, _ in names} == set(dispatch)
+    runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
+    terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
+    formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
+    assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(RESPONSE_SCHEMAS["english"]["term_tags"])
+    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(RESPONSE_SCHEMAS["english"]["formula_tags"])
 
 
 def test_handshake(service_executable):
@@ -329,6 +344,13 @@ for line in sys.stdin:
         print('{"id":' + json.dumps(request["id"]) + ',"status":"ok","mode":"evaluate",'
               '"results":[{"status":"ok","value":NaN}],'
               '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
+    if behaviour == "scripted":
+        answer = json.load(open(marker))
+        if answer.get("id") == "__nonce__":
+            answer["id"] = request["id"]
+        if isinstance(answer.get("counts"), dict) and answer["counts"].get("bytes") == "__bytes__":
+            answer["counts"]["bytes"] = len(json.dumps(request["cases"], separators=(",", ":")))
+        print(json.dumps(answer), flush=True); continue
     n = len(request["cases"])
     if behaviour in ("missing-valid", "string-valid", "wrong-case-id", "english-nested-bool"):
         if request["mode"] == "english":
@@ -361,6 +383,29 @@ for line in sys.stdin:
                           "results": [malformed[behaviour]], "counts": {"cases": 1,
                           "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                           "errors": 0}}), flush=True); continue
+    if behaviour in ("english-order-atom", "english-checked-no-render", "english-deep-formula",
+                     "background-boolean-premise"):
+        if behaviour == "background-boolean-premise":
+            row = {"id": request["cases"][0]["id"], "status": "ok",
+                   "background": [["eq", ["var", 0], ["var", 0]]],
+                   "premises": [["eq", ["var", False], ["var", 0]]],
+                   "generators": ["g"]}
+        else:
+            parsed = [["lt", ["num", "0"], ["num", "1"]]] if behaviour == "english-order-atom" else None
+            row = {"admissible": True, "covers": True,
+                   "results": [{"parsed": parsed, "checked": behaviour == "english-checked-no-render",
+                                "rendered": None, "roundtrip": behaviour == "english-checked-no-render"}]}
+        prefix = json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"]})[:-1]
+        counts = json.dumps({"cases": 1, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
+                             "errors": 0})
+        if behaviour == "english-deep-formula":
+            deep = '["not",' * 1200 + '["top"]' + ']' * 1200
+            result = '{"admissible":true,"covers":true,"results":[{"parsed":[' + deep + \
+                     '],"checked":false,"rendered":null,"roundtrip":false}]}'
+        else:
+            result = json.dumps(row, separators=(",", ":"))
+        print(prefix + ',"results":[' + result + '],"counts":' + counts + '}', flush=True)
+        continue
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
                       "results": [{"id": case.get("id"), "status": "ok", "values": [True],
                                    "value": True, "canonical": ""} for case in request["cases"]],
@@ -417,13 +462,72 @@ def test_one_retry_recovers_a_hung_batch(tmp_path):
     ("norms-bad-verdict", "norms", {"id": "c", "kind": "norms-conflict"}),
     ("english-bad-formula", "english", {"cases": [{}]}),
     ("english-negative-label", "english", {"cases": [{}]}),
+    ("english-order-atom", "english", {"cases": [{}]}),
+    ("english-checked-no-render", "english", {"cases": [{}]}),
+    ("english-deep-formula", "english", {"cases": [{}]}),
+    ("background-boolean-premise", "route", {"id": "c", "kind": "background"}),
+    ("background-boolean-premise", "norms", {"id": "c", "kind": "background"}),
 ])
 def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mode, case):
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
     with pytest.raises(CheckerUnavailable, match="malformed response"):
         service.run(mode, [case])
     assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+    assert service.pid is None
     service.close()
+
+
+_SCHEMA_SEEDS = {
+    "evaluate": ({"id": "c"}, {"id": "c", "status": "ok", "values": [True],
+                              "value": True, "canonical": ""}),
+    "check-certificate": ({"id": "c"}, {"id": "c", "status": "ok", "valid": True}),
+    "order": ({"id": "c", "kind": "certificate"}, {"id": "c", "status": "ok", "valid": True}),
+    "route": ({"id": "c", "kind": "evaluate"}, {"id": "c", "status": "ok", "values": [True]}),
+    "norms": ({"id": "c", "kind": "norms-certificate"},
+              {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0}),
+    "english": ({"cases": [{}]}, {"admissible": True, "covers": True,
+                                 "results": [{"parsed": None, "checked": False,
+                                              "rendered": None, "roundtrip": False}]}),
+}
+
+
+@settings(max_examples=48, deadline=None,
+          suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(mode=st.sampled_from(MODES), mutation=st.sampled_from(
+    ("wrong-mode", "wrong-nonce", "wrong-status", "wrong-count", "missing-row-field",
+     "extra-row-field", "wrong-row-type", "wrong-error-shape")))
+def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation):
+    case, row = _SCHEMA_SEEDS[mode]
+    answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row.copy()],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": 0}}
+    if mutation == "wrong-mode":
+        answer["mode"] = next(other for other in MODES if other != mode)
+    elif mutation == "wrong-nonce":
+        answer["id"] = "other"
+    elif mutation == "wrong-status":
+        answer["status"] = "unknown"
+    elif mutation == "wrong-count":
+        answer["counts"]["cases"] = 2
+    elif mutation == "missing-row-field":
+        answer["results"][0].pop(next(iter(row)))
+    elif mutation == "extra-row-field":
+        answer["results"][0]["extra"] = 1
+    elif mutation == "wrong-row-type":
+        field = "admissible" if mode == "english" else "valid" if mode in (
+            "check-certificate", "order", "norms") else "values"
+        answer["results"][0][field] = "true"
+    else:
+        answer = {"id": "__nonce__", "status": "error", "error": {"message": "bad"}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    service = LeanService(executable, allow_unlisted_build=True)
+    try:
+        with pytest.raises(CheckerUnavailable):
+            service.run(mode, [case])
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+        assert service.pid is None
+    finally:
+        service.close()
 
 
 @pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
