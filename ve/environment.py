@@ -148,8 +148,6 @@ class Environment:
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
         fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
-        if route and "reports@0" in data.get("profiles", []):
-            fields.add("reports")
         require_fields(data, fields)
         order = False
         if route:
@@ -168,7 +166,11 @@ class Environment:
         elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
             raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
-        require_fields(vocab, {"sorts", "predicates", "constants"}, path="/vocabulary")
+        if route and "reports@0" in data["profiles"] and type(vocab) is dict and "reports" not in vocab:
+            raise UnsupportedProfile("reports@0 needs a reports block")
+        require_fields(vocab, {"sorts", "predicates", "constants"} |
+                       ({"reports"} if route and "reports@0" in data["profiles"] else set()),
+                       path="/vocabulary")
         for kind in ("sorts", "predicates", "constants"):
             if type(vocab[kind]) is not dict:
                 raise VEError(f"{kind} must be an object")
@@ -291,15 +293,15 @@ class Environment:
                                            if "verbalisation" in entry else None)
         reports = None
         if route and "reports@0" in data["profiles"]:
-            raw_reports = data["reports"]
-            require_fields(raw_reports, {"holders", "evidence"}, path="/reports")
+            raw_reports = vocab["reports"]
+            require_fields(raw_reports, {"holders", "evidence"}, path="/vocabulary/reports")
             holders, evidence = raw_reports["holders"], raw_reports["evidence"]
             if (type(holders) is not list or not 1 <= len(holders) <= 8
                     or len(set(holders)) != len(holders) or any(h not in sorts for h in holders)):
                 raise UnknownSymbol("holder sort")
             if type(evidence) is not str or evidence not in sorts:
                 raise UnknownSymbol("evidence sort")
-            if any(type(c.get("verbalisation")) is str and
+            if any(c.get("sort") in holders and type(c.get("verbalisation")) is str and
                    c["verbalisation"].casefold() == "the stated assessment"
                    for c in vocab["constants"].values()):
                 raise VEError("InvalidInput: holder verbalisation reserved")
@@ -356,15 +358,15 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
-                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
-                   if self.reports is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                 "constants": {k: {"sort": v.sort, **({"description": v.description}
                                                                       if v.description is not None else {}),
                                    **({"verbalisation": v.verbalisation}
                                       if v.verbalisation is not None else {})}
-                                             for k, v in self.constants.items()}}}
+                                             for k, v in self.constants.items()},
+                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
+                   if self.reports is not None else {})}}
 
     @property
     def closure(self):

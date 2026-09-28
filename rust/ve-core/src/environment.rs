@@ -146,9 +146,8 @@ impl Environment {
         let closure = modern && !route && !order;
         let reports = route && data.get("profiles").and_then(Value::as_array)
             .is_some_and(|p| p.contains(&json!("reports@0")));
-        let mut envelope = vec!["language", if modern { "profiles" } else { "profile" },
-                                "spec_revision", "vocabulary"];
-        if reports { envelope.push("reports"); }
+        let envelope = vec!["language", if modern { "profiles" } else { "profile" },
+                            "spec_revision", "vocabulary"];
         let obj = fields(data, &envelope, "InvalidInput")?;
         let profiles: Vec<String> = if route {
             obj["profiles"]
@@ -194,12 +193,15 @@ impl Environment {
             }
             let has = |name: &str| profiles.iter().any(|p| p == name);
             if has("reports@0") {
+                if obj["vocabulary"].get("reports").is_none() {
+                    return error("UnsupportedProfile", "reports@0 needs a reports block");
+                }
                 for other in ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"] {
                     if has(other) {
                         return error("UnsupportedProfile", format!("reports@0 with {other} layers"));
                     }
                 }
-                let block = fields(&obj["reports"], &["holders", "evidence"], "InvalidInput")?;
+                let block = fields(&obj["vocabulary"]["reports"], &["holders", "evidence"], "InvalidInput")?;
                 let holders = block["holders"].as_array().ok_or_else(|| Error::new("InvalidInput", "reports holders"))?;
                 if holders.is_empty() || holders.len() > 8 {
                     return error("ResourceLimit", "reports holders");
@@ -269,14 +271,15 @@ impl Environment {
         }
         let vocab = fields(
             &obj["vocabulary"],
-            &["sorts", "predicates", "constants"],
+            if reports { &["sorts", "predicates", "constants", "reports"] }
+            else { &["sorts", "predicates", "constants"] },
             "InvalidInput",
         )?;
         let sorts = object(&vocab["sorts"], "InvalidInput")?;
         let preds = object(&vocab["predicates"], "InvalidInput")?;
         let consts = object(&vocab["constants"], "InvalidInput")?;
         if reports {
-            let block = &obj["reports"];
+            let block = &vocab["reports"];
             for holder in block["holders"].as_array().unwrap() {
                 if !sorts.contains_key(holder.as_str().unwrap()) {
                     return error("UnknownSymbol", "holder sort");
