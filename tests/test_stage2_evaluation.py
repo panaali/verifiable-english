@@ -10,6 +10,7 @@ from ve import Environment, FiniteModel
 from ve.ast import And, Bottom, Top
 from ve.background import background
 from ve.evaluate import evaluate
+from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
@@ -56,3 +57,18 @@ def test_shadow_evaluation_has_no_divergence(monkeypatch, fixture, tmp_path):
     monkeypatch.setenv("VE_AUTHORITY", "shadow")
     assert evaluate(env, Top(), model, trace=False).value is True
     assert not log.exists()
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("premises,conclusion,budget", [
+    ((Top(),), Bottom(), 2), ((Bottom(),), Top(), 2),
+    ((Top(),), Bottom(), 1),
+])
+def test_countermodel_schema_identity_and_budget(monkeypatch, fixture, premises, conclusion, budget):
+    env, model = fixture
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = check_countermodel(env, premises, conclusion, model, max_evaluations=budget)
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert check_countermodel(env, premises, conclusion, model,
+                                  max_evaluations=budget) == expected
