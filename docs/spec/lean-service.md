@@ -92,6 +92,20 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
   fallback to Python. Cancellation is out of band only (the kill).
+- Response shapes have one source: `ve/backends/lean_service_schema/` (one JSON schema file per mode plus the
+  envelope and shared Lean value domains; dialect in its `README.md`). `ve/backends/service_schema.py`
+  compiles it; the supervisor has no other shape checks. The schemas carry the Lean enumerations (kinds,
+  acts, modalities, relations, generators, verdicts), the Lean decoders' fuel (formula and term depth 64,
+  kind depth 16), nonempty evaluations and surface parses, and the request links: one value per requested
+  formula, one result per English case, `checked` and meaning ids of every requested lemma, the requested
+  unit kinds, report claims that are request nodes (assumptions only leaves), `verifyOrder` for dependency
+  orders, the requested label and witness target. A response outside them is an operational failure.
+- `lean/ResponseDecode.lean` (`ve_response_decode`, test tooling outside `VE/`, no theorems) decodes
+  responses with the Lean decoders and runner dispatch. `tests/test_lean_service_schema.py` requires the
+  schemas and it to accept every genuine response over a corpus with every mode and result kind, to agree on
+  every mutation of them (dropped, altered, retyped, enum-swapped, truncated and extra fields; joint
+  request/result mutations; altered requests; kind, label, depth and numeral probes), and shows that each of
+  18 weakenings of the schemas is caught.
 - A line error from a healthy service is deterministic: `ResourceLimit` for budgets, otherwise `VEError`; the
   process stays up.
 - `RLIMIT_AS` 4 GiB on the child (`prlimit`, or `setrlimit` before exec where `prlimit` is missing);
@@ -108,7 +122,8 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   of case `i`). Trusted and not proved: `objectMembers`, `decodeRequest`, and the restricted decoder.
 - `lean/VE/Service/EnglishRun.lean`: generated copy (deviation 3).
 - `lean/Serve.lean`: IO loop.
-- `lean/VE/Audit.lean`: one import and nine `#print axioms` lines. `lean/lakefile.toml`: two executables.
+- `lean/VE/Audit.lean`: one import and nine `#print axioms` lines. `lean/lakefile.toml`: two executables, and
+  the untrusted test oracle `ve_response_decode`.
 - No pre-existing trusted checker module under `lean/VE/` changed during stage 1;
   `VE/Route/frozen.py` now pins all 124 VE Lean modules.
 
