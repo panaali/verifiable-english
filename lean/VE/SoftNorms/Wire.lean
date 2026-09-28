@@ -153,7 +153,7 @@ def decodeException (name : String) (j : Json) : Except String Exception := do
 
 /-- One soft norm object; `mode` defaults to `strict`, so every `norms@0` object decodes
 with unchanged meaning. -/
-def decodeSoftNorm (j : Json) : Except String SoftNode := do
+def decodeSoftNorm (soft : SoftEnv) (j : Json) : Except String SoftNode := do
   exactFields j ["norm"]
   let raw ← j.getObjVal? "norm"
   let obj ← fields raw
@@ -168,22 +168,30 @@ def decodeSoftNorm (j : Json) : Except String SoftNode := do
   let rank ← match raw.getObjVal? "rank" with
     | .error _ | .ok .null => pure none
     | .ok (.str r) => pure (some r)
-    | .ok _ => throw bad
+    | .ok value => throw s!"UnknownRank: rule {N.name}, {value.compress}"
+  if let some r := rank then
+    unless soft.ranks.contains r do throw s!"UnknownRank: rule {N.name}, {r}"
   let alterable ← match raw.getObjVal? "alterable" with
     | .error _ => pure []
     | .ok v => match strings v with
       | .ok ps => pure ps
       | .error _ => throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
+  unless sortedDistinct alterable do
+    throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
+  for π in alterable do
+    unless soft.parties.contains π do throw s!"UnknownSymbol: party {π}"
+  let hard ← match raw.getObjVal? "hard" with
+    | .error _ => pure false
+    | .ok (.bool b) => pure b
+    | .ok _ => throw bad
+  if hard && (mode == .default || !alterable.isEmpty) then
+    throw s!"HardConstraintAltered: rule {N.name}"
   let exception ← match raw.getObjVal? "exception" with
     | .error _ | .ok .null => pure none
     | .ok e => do
       if mode == .strict then
         throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
       some <$> decodeException N.name e
-  let hard ← match raw.getObjVal? "hard" with
-    | .error _ => pure false
-    | .ok (.bool b) => pure b
-    | .ok _ => throw bad
   pure { N with mode, rank, alterable, exception, hard }
 
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
@@ -219,7 +227,7 @@ def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"
   if units.length > 256 then throw "ResourceLimit: rules"
-  let nodes ← units.mapM decodeSoftNorm
+  let nodes ← units.mapM (decodeSoftNorm se.soft)
   let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], nodes⟩⟩
   match hv : validateSoft D with
   | .error e => throw e
