@@ -149,3 +149,8 @@ This refines the earlier "writing goes through the assistant" split: the assista
 ## Synonyms and varied wording (2026-09-26)
 
 Writers vary words for readability ("staff", "employees", "personnel"); VE allows it. A document glossary declares synonyms once ("In this document, staff, employees and personnel mean the same thing"); each is an alias definition (W3, conservative, Lean-proved) so the checker treats them as one concept, while the display keeps the author's word choice (meaning identity is separate from wording). Authoring mode: the IDE asks in plain English when a new word appears ("Does 'personnel' mean the same as 'staff' here?") and adds the alias on confirmation. Translation mode: an explicit statement in the source (a definition, "employees (staff)") is recorded with its citation; synonymy that is only "clear from context" is an interpretation, kept as a reading set (same / different) with the translator's cited reason, and the checker reports whether any conclusion depends on it.
+
+
+## Self-reference boundary (2026-09-28)
+
+"This document" is allowed as a name (scope, version, supersedes). A document may state that OTHER documents, identified by fingerprint, were checked, and that claim can be confirmed by re-running the check. A document may never assert its own validity or truth: validity lives in the external report (Tarski-style layering), which also rules out liar-type paradoxes such as "This document is not valid".
