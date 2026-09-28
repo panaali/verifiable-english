@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import copy
 import json
+import random
 import shutil
 import subprocess
 from pathlib import Path
@@ -20,6 +21,7 @@ import pytest
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
 from ve.environment import Environment
+from ve.reports import ReportsDocument
 from ve.wire import digest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -561,3 +563,152 @@ def test_b13_depth_bound(lean):
     out = run1({"id": "e", "kind": "reports-elaborate", "environment": E0(),
                 "document": doc(report("the_article", "says", "c3", nest(16)))})
     assert out["status"] == "error"
+
+
+def python_elaboration(d, env=None):
+    env = env or E0()
+    return ReportsDocument(Environment(env), d.get("contexts", []), d.get("assessments", []),
+                           d["units"], bridges=d.get("bridges", []), scoped=d.get("scoped", [])).elaborated()
+
+
+def test_python_lean_differential_spec_fixtures(lean):
+    safe = ast(U("safe", "service"))
+    helpful = ast(U("helpful", "claude"))
+    belief = report("anthropic", "believes", "c1", helpful)
+    cases = [
+        doc(report("the_article", "says", "c3", safe)),  # alpha
+        doc(report("anthropic", "believes", "c1", ast(U("reviewed", "service"))),
+            report("anthropic", "believes", "c1", ast(["implies", U("reviewed", "service"), U("safe", "service")])),
+            report("the_article", "says", "c3", report("anthropic", "believes", "c1", safe)),
+            scoped=[{"id": "s1", "payloads": ["u1", "u2"], "conclusion": safe}]),  # beta
+        doc(report("anthropic", "believes", "c1", ast(["and", U("safe", "service"), U("safe", "service")])),
+            report("anthropic", "believes", "c1", safe), report("anthropic", "believes", "c1", safe)),  # gamma
+        doc(report("the_team", "intends", "c1", ast(["binary", "publishes", ["const", "the_team"],
+                                                       ["const", "service"]]))),  # delta
+        doc(report("anthropic", "believes", "c1", ast(["not", U("human", "claude")])),
+            neg(report("anthropic", "believes", "c1", ast(U("human", "claude"))))),  # epsilon
+        doc(report("the_article", "says", "c3", belief)),  # zeta
+        doc(report("anthropic", "believes", "c2", ast(U("was_helpful", "claude"))), belief),  # eta
+        doc(report("the_article", "says", "c3", safe),
+            report("the_article", "says", "c3", ast(["not", U("safe", "service")])),
+            scoped=[{"id": "s1", "payloads": ["u1", "u2"], "conclusion": ast(["bottom"])}]),  # theta
+        doc(assess("may", safe), assess("probably", safe),
+            assess("probably", ast(["not", U("safe", "service")]))),  # mu
+        doc(report("the_article", "says", "c3", neg(belief)), belief),  # omega
+        doc(report("the_article", "says", "c3", safe, literal="The service is safe."),
+            report("the_article", "says", "c3", safe)),  # B14 prime
+        dict(doc(report("the_article", "says", "c3", belief)),
+             bridges=[{"id": "b1", "unit": "u1", "path": "1", "accepted_by": "reviewer_ann", "reason": []}]),
+    ]
+    quote_env = copy.deepcopy(E0())
+    quote_env["profiles"] = ["norms@0", "relational-fol@0"]
+    del quote_env["vocabulary"]["reports"]
+    quoted_norm = doc(report("the_article", "says", "c3",
+                             {"norm": {"environment": quote_env, "norms": []}}))
+    quoted_norm["units"][0]["kind"] = ["attributed", "the_article", "says", "norm"]
+    cases.append(quoted_norm)  # kappa: locally validated W1 block
+    definition_env = {"language": LANGUAGE, "profiles": ["definitions@0", "relational-fol@0"],
+                      "spec_revision": REVISION,
+                      "vocabulary": {"sorts": {"system": {"description": "system"}},
+                                     "predicates": {"reviewed": {"arguments": ["system"], "description": "reviewed"},
+                                                    "safe": {"arguments": ["system"], "description": "safe",
+                                                             "defined": {"arguments": ["system"],
+                                                                         "body": U("reviewed", "service")[:2] +
+                                                                         [["var", 0]]}}},
+                                     "constants": {"service": {"sort": "system", "description": "service"}}}}
+    quoted_definition = doc(report("the_article", "says", "c3",
+                                   {"definition": {"environment": definition_env,
+                                                   "content": ast(U("reviewed", "service"))}}),
+                            scoped=[{"id": "s1", "payloads": [{"unit": "u1", "path": "1"}],
+                                     "conclusion": ast(U("safe", "service"))}])
+    quoted_definition["units"][0]["kind"] = ["attributed", "the_article", "says", "definition"]
+    cases.append(quoted_definition)  # lambda: pinned W3 scope
+    cases.append({"units": [{"id": "u1", "span": [0, 1],
+                             "kind": ["attributed", "the_team", "promised", "asserted"]}],
+                  "contexts": CONTEXTS})  # sigma: labelled, unreviewed act
+    keys = ("environment_reports_id", "keys", "premises", "open_terms", "bridge_formulas",
+            "content_ids", "envelope", "warnings")
+    lean_results = run([{"id": str(i), "kind": "reports-elaborate", "environment": E0(), "document": d}
+                        for i, d in enumerate(cases)])
+    for d, result in zip(cases, lean_results, strict=True):
+        assert result["status"] == "ok", result
+        python = python_elaboration(d)
+        assert {k: python[k] for k in keys} == {k: result[k] for k in keys}
+
+
+def test_python_lean_differential_generated_chi(lean):
+    rng = random.Random(20260928)
+    leaves = [ast(U("safe", "service")), ast(U("helpful", "claude")),
+              ast(["not", U("safe", "service")])]
+
+    def content(depth):
+        node = copy.deepcopy(rng.choice(leaves))
+        for _ in range(depth):
+            if rng.randrange(5) == 0:
+                node = assess(rng.choice(["may", "probably"]), node)
+            else:
+                act = rng.choice(["says", "believes", "wants", "intends"])
+                holder = rng.choice(["anthropic", "the_team", "the_article"])
+                node = report(holder, act, rng.choice(["c1", "c2", "c3"]), node,
+                              literal=rng.choice([None, None, "exact words"]))
+        return node
+
+    cases = []
+    for _ in range(1000):
+        nodes = [content(rng.randint(1, 3)) for _ in range(rng.randint(1, 3))]
+        nodes = [neg(n) if rng.randrange(4) == 0 else n for n in nodes]
+        cases.append(doc(*nodes))
+    results = run([{"id": str(i), "kind": "reports-elaborate", "environment": E0(), "document": d}
+                   for i, d in enumerate(cases)])
+    assert len(results) == len(cases)
+    for d, result in zip(cases, results, strict=True):
+        assert result["status"] == "ok", result
+        python = python_elaboration(d)
+        assert all(python[k] == result[k] for k in ("environment_reports_id", "keys", "premises",
+                    "open_terms", "bridge_formulas", "content_ids", "envelope", "warnings"))
+
+
+def test_rust_report_witness_replays_in_lean(lean):
+    binary = ROOT / "rust/target/debug/ve"
+    if not binary.exists():
+        built = subprocess.run(["cargo", "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
+                               capture_output=True, text=True, timeout=600)
+        assert built.returncode == 0, built.stdout + built.stderr
+    cases = [
+        (doc(report("the_article", "says", "c3", ast(U("safe", "service")))), U("safe", "service")),
+        (doc(report("the_team", "intends", "c1", ast(["binary", "publishes", ["const", "the_team"],
+                                                     ["const", "service"]]))),
+         ["binary", "publishes", ["const", "the_team"], ["const", "service"]]),
+        (doc(report("anthropic", "believes", "c1", ast(U("reviewed", "service"))),
+             report("anthropic", "believes", "c1",
+                    ast(["implies", U("reviewed", "service"), U("safe", "service")])),
+             report("the_article", "says", "c3", report("anthropic", "believes", "c1",
+                                                         ast(U("safe", "service"))))), U("safe", "service")),
+        (doc(report("anthropic", "believes", "c1", ast(["not", U("human", "claude")])),
+             neg(report("anthropic", "believes", "c1", ast(U("human", "claude"))))),
+         U("safe", "service")),
+        (zeta(), U("helpful", "claude")),
+        (doc(report("anthropic", "believes", "c2", ast(U("was_helpful", "claude"))),
+             report("anthropic", "believes", "c1", ast(U("helpful", "claude")))), U("safe", "service")),
+        (doc(report("the_article", "says", "c3", ast(U("safe", "service"))),
+             report("the_article", "says", "c3", ast(["not", U("safe", "service")]))),
+         U("safe", "service")),
+        (doc(assess("may", ast(U("safe", "service"))),
+             assess("probably", ast(U("safe", "service"))),
+             assess("probably", ast(["not", U("safe", "service")]))), U("safe", "service")),
+        (doc(report("the_article", "says", "c3",
+                    neg(report("anthropic", "believes", "c1", ast(U("helpful", "claude"))))),
+             report("anthropic", "believes", "c1", ast(U("helpful", "claude")))), U("safe", "service")),
+    ]
+    payloads = [ReportsDocument(Environment(E0()), d["contexts"], d["assessments"], d["units"])
+                .search_payload(conclusion) for d, conclusion in cases]
+    searched = subprocess.run([str(binary), "conformance", "-"], input=json.dumps(payloads),
+                              capture_output=True, text=True, timeout=120)
+    assert searched.returncode == 0, searched.stderr
+    witnesses = json.loads(searched.stdout)
+    for (d, conclusion), payload, witness in zip(cases, payloads, witnesses, strict=True):
+        assert witness["status"] == "Found" and witness["untrusted"] is True
+        assert witness["envelope"] == payload["envelope"]
+        replay = run1({"id": "rust", "kind": "reports-countermodel", "environment": E0(),
+                       "document": d, "premises": [], "conclusion": conclusion, "model": witness["model"]})
+        assert replay["status"] == "ok" and replay["refutes"] is True, replay
