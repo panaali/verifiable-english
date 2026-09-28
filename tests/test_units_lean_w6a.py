@@ -112,7 +112,8 @@ HOSTILE = [
     (["trace_some", "w", ["top"]], "numbers2"),
     (["atom", "p", []], "n-ary"),
     (["eq", ["var", "bp", 0], ["num", "bp", "0"]], "numbers2"),
-    (["eq", ["decimal", "bp", "1" * 41], ["num", "bp", "0"]], "40 characters"),
+    (["eq", ["decimal", "bp", "1" * 41], ["num", "bp", "0"]], "40 digits"),
+    (["eq", ["decimal", "bp", "-1." + "0" * 40], ["num", "bp", "0"]], "40 digits"),
 ]
 
 

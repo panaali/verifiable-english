@@ -129,10 +129,12 @@ def digitOf (c : Char) : Option Nat :=
 
 def digitList (cs : List Char) : Option (List Nat) := cs.mapM digitOf
 
-/-- `-?(0|[1-9][0-9]*)(\.[0-9]+)?`, at most 40 characters. -/
+/-- `-?(0|[1-9][0-9]*)(\.[0-9]+)?` with at most 40 digits; sign and point are
+not counted, so every admitted coordinate's rendering reparses (at most 40
+characters rendered with at most 39 places has at most 40 digits). -/
 def parseDecimal (s : String) : Except String Dec := do
-  if s.length > maxNumeralChars then
-    throw s!"ResourceLimit: Decimal literal exceeds {maxNumeralChars} characters"
+  if (s.toList.filter (fun c => (digitOf c).isSome)).length > maxNumeralChars then
+    throw s!"ResourceLimit: Decimal literal exceeds {maxNumeralChars} digits"
   let invalid := s!"Invalid decimal literal {s.quote}"
   let (neg, body) := match s.toList with
     | '-' :: rest => (true, rest)

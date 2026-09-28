@@ -89,14 +89,34 @@ def isSpace (c : Char) : Bool :=
     n == 0x3000
 
 /-- Nonempty words joined by single spaces; an input symbol may end in one space. -/
-def displayString (s : String) (trailing : Bool) : Except String Unit := do
-  if s.isEmpty then throw "Display string must be nonempty"
-  if s.length > 256 then throw "ResourceLimit: Display string exceeds 256 characters"
+def displayString (s : String) (trailing : Bool) (what := "Display string") :
+    Except String Unit := do
+  if s.isEmpty then throw s!"{what} must be nonempty"
+  if s.length > 256 then throw s!"ResourceLimit: {what} exceeds 256 characters"
   let words := s.splitOn " "
   let words := if trailing && words.length > 1 && words.getLast? == some "" then words.dropLast
     else words
   if words.any (fun w => w.isEmpty || w.any isSpace) then
-    throw s!"Display string {s.quote} must be whitespace-normalized"
+    throw s!"{what} {s.quote} must be whitespace-normalized"
+
+/-- The sentence-initial spelling of a name: its first letter ASCII-uppercased. -/
+def sentenceInitial (s : String) : String :=
+  match s.toList with
+  | c :: cs => String.mk (c.toUpper :: cs)
+  | [] => s
+
+/-- Constant names survive sentence normalization, and no two share a spelling,
+even when one starts a sentence, so a rendered name reads back as itself. -/
+def checkVerbalisations (constants : List (String × Json)) : Except String Unit := do
+  let mut seen : List (String × String) := []
+  for (c, entry) in constants do
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      let w ← words.getStr?
+      displayString w false "Verbalisation"
+      let key := sentenceInitial w
+      if let some (_, other) := seen.find? (·.1 == key) then
+        throw s!"VerbalisationCollision({other}, {c})"
+      seen := (key, c) :: seen
 
 def shape (j : Json) (required optional : List String) : Except String Unit := do
   let names := (← fields j).map Prod.fst
@@ -276,11 +296,8 @@ def decodeEnvironment (env : Json) : Except String W6Env := do
         unless validTag t do throw s!"UnknownUnit({t})"
         pure t
       | .error _ => pure dimensionless
-    if let .ok words := entry.getObjVal? "verbalisation" then
-      let w ← words.getStr?
-      if w.isEmpty then throw "Verbalisations must be nonempty strings"
-      if w.length > 256 then throw "ResourceLimit: Verbalisation exceeds 256 characters"
     pure (c, if sort == "$int" then QType.qty tag else QType.obj sort)
+  checkVerbalisations constantFields
   let target ← eraseEnvironment env
   -- Every legacy declaration rule is the frozen order decoder's, on the target.
   let _ ← VE.Route.Wire.decodeOrderVocabulary (← target.getObjVal? "vocabulary")

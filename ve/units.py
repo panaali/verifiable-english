@@ -87,21 +87,42 @@ def validate_units(schema, raw):
     return raw
 
 
-def display_string(s, *, trailing_space=False):
+def display_string(s, *, trailing_space=False, what="Display string"):
     """Nonempty words of non-space characters joined by single spaces.
 
     An input symbol may end in one space ("EUR "). Other whitespace, and
     spacing the sentence normalizer would rewrite, is rejected."""
     if type(s) is not str or not s:
-        raise VEError("Display string must be nonempty")
+        raise VEError(f"{what} must be nonempty")
     if len(s) > 256:
-        raise ResourceLimit("Display string exceeds 256 characters")
+        raise ResourceLimit(f"{what} exceeds 256 characters")
     words = s.split(" ")
     if trailing_space and len(words) > 1 and words[-1] == "":
         words = words[:-1]
     if any(not word or SPACES & set(word) for word in words):
-        raise VEError(f"Display string {s!r} must be whitespace-normalized")
+        raise VEError(f"{what} {s!r} must be whitespace-normalized")
     return s
+
+
+def sentence_initial(words):
+    """The sentence-initial spelling of a name: its first letter ASCII-uppercased."""
+    first = words[:1]
+    return (first.upper() if "a" <= first <= "z" else first) + words[1:]
+
+
+def check_verbalisations(constants):
+    """Constant names are spelled so that the sentence normalizer keeps them and
+    no two share a spelling, even when one starts a sentence. Then a rendered
+    name is read back as exactly its own constant."""
+    spellings = {}
+    for name, decl in constants.items():
+        if decl.verbalisation is None:
+            continue
+        display_string(decl.verbalisation, what="Verbalisation")
+        key = sentence_initial(decl.verbalisation)
+        if key in spellings:
+            raise VEError(f"VerbalisationCollision({spellings[key]}, {name})")
+        spellings[key] = name
 
 
 def display_affixes(units):
@@ -179,12 +200,21 @@ def validate_extension(profiles, units, sorts, constants):
             raise VEError(f"Unit tag {tag} collides with a declared sort")
     if any(decl.sort == STRING_SORT for decl in constants.values()):
         raise UnsupportedProfile("$string literals are not admitted with ve-units@1")
+    check_verbalisations(constants)
+
+
+def decimal_digits(text):
+    return sum(c in "0123456789" for c in text)
 
 
 def decimal_exact(text, tag, env):
+    """Lower a decimal literal of at most 40 digits (sign and point uncounted).
+
+    Every admitted coordinate (at most 40 characters) renders on any declared
+    scale (at most 39 places) with at most 40 digits, so rendering reparses."""
     validate_tag(tag, env.units)
-    if type(text) is str and len(text) > MAX_NUMERAL_CHARS:
-        raise ResourceLimit(f"Decimal literal exceeds {MAX_NUMERAL_CHARS} characters")
+    if type(text) is str and decimal_digits(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit(f"Decimal literal exceeds {MAX_NUMERAL_CHARS} digits")
     if type(text) is not str or not _DECIMAL.fullmatch(text):
         raise VEError(f"Invalid decimal literal {text!r}")
     scale = 1 if tag == DIMENSIONLESS else int(env.units[tag]["scale"])

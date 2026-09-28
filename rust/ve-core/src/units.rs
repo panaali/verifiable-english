@@ -96,9 +96,11 @@ fn scale(e: &Value, tag: &str) -> Result<BigInt> {
     }
     Ok(n)
 }
+/// At most 40 digits, sign and point uncounted: every admitted coordinate
+/// renders on every declared scale within that bound, so rendering reparses.
 fn exact_decimal(e: &Value, tag: &str, s: &str) -> Result<String> {
-    if s.chars().count() > 40 {
-        return error("ResourceLimit", "Decimal literal exceeds 40 characters");
+    if s.bytes().filter(|b| b.is_ascii_digit()).count() > 40 {
+        return error("ResourceLimit", "Decimal literal exceeds 40 digits");
     }
     let unsigned = s.strip_prefix('-').unwrap_or(s);
     let p: Vec<_> = unsigned.split('.').collect();
@@ -449,12 +451,15 @@ fn formula(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Value,
 /// Nonempty words of non-space characters joined by single spaces; an input
 /// symbol may end in one space.
 fn display_string(v: &Value, trailing_space: bool) -> Result<String> {
+    spaced(v, trailing_space, "Display string")
+}
+fn spaced(v: &Value, trailing_space: bool, what: &str) -> Result<String> {
     let s = string(v)?;
     if s.is_empty() {
-        return error("InvalidInput", "Display string must be nonempty");
+        return error("InvalidInput", format!("{what} must be nonempty"));
     }
     if s.chars().count() > 256 {
-        return error("ResourceLimit", "Display string exceeds 256 characters");
+        return error("ResourceLimit", format!("{what} exceeds 256 characters"));
     }
     let mut words: Vec<&str> = s.split(' ').collect();
     if trailing_space && words.len() > 1 && words.last() == Some(&"") {
@@ -463,7 +468,7 @@ fn display_string(v: &Value, trailing_space: bool) -> Result<String> {
     if words.iter().any(|w| w.is_empty() || w.chars().any(is_space)) {
         return error(
             "InvalidInput",
-            format!("Display string {s:?} must be whitespace-normalized"),
+            format!("{what} {s:?} must be whitespace-normalized"),
         );
     }
     Ok(s.to_owned())
@@ -639,7 +644,8 @@ fn declarations(e: &Value) -> Result<()> {
             }
         }
     }
-    for (_, c) in object(&e["vocabulary"]["constants"])? {
+    let mut spellings = std::collections::HashMap::new();
+    for (name, c) in object(&e["vocabulary"]["constants"])? {
         if c.get("sort") == Some(&json!("$string")) {
             return error(
                 "UnsupportedProfile",
@@ -653,16 +659,26 @@ fn declarations(e: &Value) -> Result<()> {
             unit(e, string(u)?)?;
         }
         if let Some(words) = c.get("verbalisation") {
-            let words = string(words)?;
-            if words.is_empty() {
-                return error("InvalidInput", "Verbalisations must be nonempty strings");
-            }
-            if words.chars().count() > 256 {
-                return error("ResourceLimit", "Verbalisation exceeds 256 characters");
+            // Normalized like a display string, and distinct from every other
+            // constant's spelling even at the start of a sentence.
+            let key = sentence_initial(&spaced(words, false, "Verbalisation")?);
+            if let Some(other) = spellings.insert(key, name.clone()) {
+                return error(
+                    "InvalidInput",
+                    format!("VerbalisationCollision({other}, {name})"),
+                );
             }
         }
     }
     Ok(())
+}
+/// The sentence-initial spelling of a name: its first letter ASCII-uppercased.
+fn sentence_initial(words: &str) -> String {
+    let mut chars = words.chars();
+    match chars.next() {
+        Some(first) => first.to_ascii_uppercase().to_string() + chars.as_str(),
+        None => String::new(),
+    }
 }
 /// The regenerated core target environment: W6 declaration fields removed.
 fn erased(e: &Value) -> Value {
