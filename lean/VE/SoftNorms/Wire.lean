@@ -173,7 +173,7 @@ def decodeSoftNorm (j : Json) : Except String SoftNode := do
     | .error _ => pure []
     | .ok v => match strings v with
       | .ok ps => pure ps
-      | .error _ => throw bad
+      | .error _ => throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
   let exception ← match raw.getObjVal? "exception" with
     | .error _ | .ok .null => pure none
     | .ok e => do

@@ -218,27 +218,27 @@ def checkSoftEnv (D : SoftDoc) : Except String Unit := do
 decider, `hard`, exception typing. -/
 def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
   let env := D.soft
+  if let some a := N.rank then
+    unless env.ranks.contains a do throw s!"UnknownRank: rule {N.name}, {a}"
+  unless sortedDistinct N.alterable do
+    throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
+  for π in N.alterable do
+    unless env.parties.contains π do throw s!"UnknownSymbol: party {π}"
+  if N.hard && (N.mode == .default || !N.alterable.isEmpty) then
+    throw s!"HardConstraintAltered: rule {N.name}"
   match N.mode, N.exception with
   | .strict, some _ => throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
   | .default, none => throw s!"InvalidInput: rule {N.name} needs an exception"
   | _, _ => pure ()
-  unless sortedDistinct N.alterable do
-    throw s!"InvalidInput: alterable of rule {N.name} must be sorted and distinct"
   if let some e := N.exception then
-    unless e.factors.all (·.utf8ByteSize ≤ 200) do
-      throw s!"InvalidInput: invalid factors of rule {N.name}"
     unless e.decidedBy.all (fun d => !d.isEmpty && d.utf8ByteSize ≤ 64) do
       throw s!"InvalidInput: invalid decider for rule {N.name}"
-  if let some a := N.rank then
-    unless env.ranks.contains a do throw s!"UnknownRank: rule {N.name}, {a}"
-  for π in N.alterable do
-    unless env.parties.contains π do throw s!"UnknownSymbol: party {π}"
   if let some e := N.exception then
     if e.decidedBy.isNone && env.exceptionDecider.isNone then
       throw s!"MissingExceptionDecider: rule {N.name}"
-  if N.hard && (N.mode == .default || !N.alterable.isEmpty) then
-    throw s!"HardConstraintAltered: rule {N.name}"
   if let some e := N.exception then
+    unless e.factors.all (·.utf8ByteSize ≤ 200) do
+      throw s!"InvalidInput: invalid factors of rule {N.name}"
     for C in e.sufficient ++ e.necessary do
       if let some q := (preds C).find? (fun q => definedOrRegulated D q || reservedPredicate q) then
         throw s!"InvalidInput: exception condition of rule {N.name} mentions {q}"
