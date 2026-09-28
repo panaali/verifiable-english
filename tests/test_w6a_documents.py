@@ -373,3 +373,31 @@ def test_news_coverage_table_matches_its_rows_and_the_run():
     leaves = {(a["name"], a.get("label", "asserted")) for a in result["admission"]["report"]["assumptions"]}
     kinds = Counter(label.split(":")[0] for _, label in leaves)
     assert kinds == {"asserted": 2, "bridge": 6, "readings": 1}
+
+
+# --- W8 input: witnesses in document terms --------------------------------------
+
+def test_witnesses_render_with_units_restored_and_read_back():
+    """Every rendered value, put in the approved `equals` wording, parses back to
+    exactly the model's coordinate with its tag."""
+    from ve.surface.time import parse_quantity_sentence, render_quantity_witness
+    fixture = json.loads((NEWS / "w6a-quantity-fixtures.json").read_text())
+    env = Environment(fixture["environment"])
+    model = copy.deepcopy(fixture["model"])
+    model["constants"]["first_projected_target_year"] = "2030"  # the S12 distinguishing model
+    lines = render_quantity_witness(env, model)
+    assert "The first projected target year is calendar year 2030." in lines
+    assert "The new target lower bound is 3.75%." in lines
+    assert "The decision date is 2026-09-16." in lines
+    names = {d.verbalisation: n for n, d in env.constants.items()}
+    for line in lines:
+        words, value = line[:-1].split(" is ", 1)
+        name = names[words] if words in names else names[words[:1].lower() + words[1:]]
+        parsed = parse_quantity_sentence(env, f"{words} equals {value}.")
+        tag = env.constants[name].unit
+        assert parsed["formula"] == ["eq", ["const", tag, name],
+                                     ["num", tag, model["constants"][name]]], line
+    outside = copy.deepcopy(fixture["model"])
+    outside["constants"]["decision_date"] = "-1"
+    assert "The decision date is day number -1 (outside 1970-01-01 to 9999-12-31)." in \
+        render_quantity_witness(env, outside)
