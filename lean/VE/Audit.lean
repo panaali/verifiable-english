@@ -38,6 +38,8 @@ import VE.Attribution.Content
 import VE.Attribution.Elaborate
 import VE.Attribution.Facts
 import VE.Attribution.Semantics
+import VE.Attribution.Conservative
+import VE.Attribution.Structure
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1033,3 +1035,48 @@ import VE.Attribution.Semantics
 #print axioms VE.Reports.mem_dedup
 #print axioms VE.Reports.length_dedup
 #print axioms VE.Reports.reports_gate_sound
+
+#print axioms VE.Reports.neqRow_eq_some
+#print axioms VE.Reports.mem_neqs
+#print axioms VE.Reports.neqs_sat_of_sat
+#print axioms VE.Reports.neqs_denote_congr
+#print axioms VE.Reports.uniform_neqs
+#print axioms VE.Reports.positive_uniform
+#print axioms VE.Reports.neqs_wellFormed
+#print axioms VE.Reports.positive_expandable
+#print axioms VE.Reports.assertedJ_top
+#print axioms VE.Reports.assertedA_top
+#print axioms VE.Reports.assertedJ_premise
+#print axioms VE.Reports.assertedA_premise
+#print axioms VE.Reports.mkSource_intended
+#print axioms VE.Reports.source_over_any_structure
+#print axioms VE.Reports.source_over_any_structure_iff
+#print axioms VE.Reports.unreported_key_free
+#print axioms VE.Reports.expansion_exists
+#print axioms VE.Reports.expansion_exists_iff
+#print axioms VE.Reports.forget_denote
+#print axioms VE.Reports.admissible_envReports_of_old
+#print axioms VE.Reports.reports_old_language_conservative
+#print axioms VE.Reports.expandBy_old
+#print axioms VE.Reports.reports_no_leak
+#print axioms VE.Reports.reports_no_leak_uniform
+#print axioms VE.Reports.occurs_formula_wellFormed
+#print axioms VE.Reports.attitude_not_factive
+#print axioms VE.Reports.no_closure_under_consequence
+#print axioms VE.Reports.nested_independent
+#print axioms VE.Reports.premise_entailed
+#print axioms VE.Reports.nested_positive_entailed
+#print axioms VE.Reports.nested_positive_refuted
+#print axioms VE.Reports.nested_negated_entailed
+#print axioms VE.Reports.nested_negated_refuted
+#print axioms VE.Reports.holder_atom_free
+#print axioms VE.Reports.optField_inj
+#print axioms VE.Reports.complementObject_inj
+#print axioms VE.Reports.canonicalObject_formula_inj
+#print axioms VE.Reports.not_ne_self
+#print axioms VE.Reports.negation_scopes_distinct
+#print axioms VE.Reports.tense_keys_distinct
+#print axioms VE.Reports.content_structural
+#print axioms VE.Reports.literal_paraphrase_distinct
+#print axioms VE.Reports.all_truth_combinations
+#print axioms VE.Reports.all_truth_combinations_assess
