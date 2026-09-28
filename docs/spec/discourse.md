@@ -1,6 +1,6 @@
 # Discourse and cross-reference (`ve.discourse@1` over `ve-document@2`): names, anaphora, descriptions, document references and correlated readings
 
-> Status: item-1 specification, draft 3 (2026-09-28). Draft 1 was written from [discourse-PLAN.md](discourse-PLAN.md)
+> Status: item-1 specification, draft 4 (2026-09-28). Draft 1 was written from [discourse-PLAN.md](discourse-PLAN.md)
 > as revised by the converged Astra/Fable debate (`manage-agents/debates/design-discourse/{astra,fable}.md`, round 2,
 > edits J1 to J8) and the lead's additional input recorded in that debate's `TOPIC.md` (document names, validity
 > claims by fingerprint, the truth boundary). Draft 2 applies the converged Astra + Fable statement review of draft 1
@@ -10,7 +10,10 @@
 > compatible joint choice), import integrity separated from admission outcome with rejection distinguished from
 > UNKNOWN, exact theorem contracts, corrected boundary fixtures, and the natural-view difference). Draft 3 applies the
 > first verification pass of draft 2 (`manage-agents/discourse-p3ver1.final.md`, FAIL, four defects: η's signature,
-> nested mentions as slots, the natural-view agreement condition, `compatible_no_sets` at limit zero). It is the statement
+> nested mentions as slots, the natural-view agreement condition, `compatible_no_sets` at limit zero). Draft 4 applies
+> the second verification pass (`manage-agents/discourse-p3ver2.final.md`, FAIL, two defects: set coincidence is a
+> sufficient, not a necessary, condition for natural-view agreement; a binary restriction's other argument is a nested
+> slot's target only where the description contains a nested mention). It is the statement
 > under the Astra + Fable item-1 review that gates sequences 2 to 5 of the plan (PLAN-EXPAND2 rule 10); convergence on
 > the repair list is not a PASS for these files, and both reviewers re-review the complete amended gate (definitions,
 > adapter contracts, theorem statements and fixtures together, with their consistency with the plan) before sequence
@@ -549,9 +552,11 @@ no competing binder of their sort in the innermost anchor, and the sort of the p
 two agree where their inputs coincide: the natural view's candidate set (the constants mentioned earlier in the
 document) equals the manifest's set of accessible, type-checking candidates modulo aliases, and the natural view's
 competing-quantifier set (every earlier binder, document-wide) is empty exactly when the manifest's (the earlier
-binders of the candidates' sorts in the innermost anchor or the same sentence) is. A shared sort is not that
-condition and is not sufficient for it: two `service` constants registered at the mention's scope with only one of
-them mentioned earlier are one natural-view candidate but two typed manifest candidates (`AmbiguousReference`);
+binders of the candidates' sorts in the innermost anchor or the same sentence) is. That coincidence is sufficient
+for agreement, not necessary: both rules can reject a mention with different candidate sets (α′). A shared sort is
+not that condition and is not sufficient for it: two `service` constants registered at the mention's scope with only
+one of them mentioned earlier are one natural-view candidate but two typed manifest candidates
+(`AmbiguousReference`);
 two sorts with one typed candidate are rejected there and accepted here; a binder in an earlier anchor rejects there
 and does not compete here. Fixture α′ (section 10) records these differences as intended.
 
@@ -621,7 +626,9 @@ no witness constant, no choice function, no fresh predicate (`elaborate_no_new_s
 ### 4.5 Definite descriptions
 
 For an explicit restriction `D` (a declared unary predicate, or a declared binary predicate with its other
-argument a resolved entity, the target of the nested slot of 1.4, e.g. `manager_of(x, alice)`), with
+argument a resolved entity: a declared constant recorded in the manifest's `restriction`, as the contextual
+`owns(x, api)` below, or, where the description contains a nested mention, the target of that nested slot of 1.4,
+as `manager_of(x, alice)` in η), with
 `U(D) := ∃x (D(x) ∧ ∀y (D(y) → y = x))`:
 
 ```text
@@ -1614,8 +1621,11 @@ that registers them; the type check of 4.3 is what leaves one.
   accessible type-checking candidates). Competing-quantifier sets: u1 "A service is deployed." and u2 "The API is
   reviewed." in `sec1`, u3 "It is safe." in `sec2`: the natural view rejects (one constant mentioned, but an
   earlier quantified mention, document-wide) and the manifest resolves m1 → `api` (the binder is outside u3's
-  innermost anchor, as in β's second case). The two agree exactly where the candidate and competing-quantifier
-  sets coincide (4.2).
+  innermost anchor, as in β's second case). The two agree where the candidate and competing-quantifier sets
+  coincide (4.2); coincidence is sufficient, not necessary: with `beta` and a third service constant `gamma`
+  registered at scope `doc`, `api` and `beta` mentioned earlier, no quantifier and u2 removed, both reject u3
+  (natural view: two constants; manifest: `AmbiguousReference: m1: api, beta, gamma`) although the candidate sets
+  are two versus three constants.
 - **(β) Competing quantifier.** u1 "A service is deployed." u2 "The API is reviewed." u3 "It is safe." Expected:
   `UnresolvedReference: m1` in authoring with the question "Does ‘it’ mean the API, or the service just mentioned?"
   offering "The API is safe." and the group reading "Some service is deployed and safe." (with u1); translation: an
@@ -1878,9 +1888,9 @@ Each is a point where the plan or the debate left a reading open; the review may
     derivation and assignment and compares every type-checking competitor against it; recorded targets and
     reading choices never prune. A manifest therefore supersedes the natural-view rule by sort-typing and scoping
     it, and the two agree where the natural view's candidate and competing-quantifier sets coincide with the
-    manifest's type-checking accessible candidates and sort-scoped competing binders (a shared sort is not
-    sufficient; α′ records the intended differences) rather than being forced to coincide, which would undo the
-    typed filter.
+    manifest's type-checking accessible candidates and sort-scoped competing binders (a sufficient condition, not
+    a necessary one; a shared sort is not sufficient; α′ records the intended differences) rather than being forced
+    to coincide, which would undo the typed filter.
 18. **The profile adapter (review A3, Astra round 3).** `ve.discourse@1` is validated by the wrapper and stripped
     from both the list and the environment JSON before every frozen call; identities are computed under the base
     pair; the wrapper report binds the original declaration. This mirrors `Norms/Replay.lean`.
@@ -1908,3 +1918,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-09-28 | Draft 1 | Item-1 specification from the plan as revised by the converged debate (J1 to J8) and the lead's document-name/validity/truth input: the manifest with seven target kinds; the English table; wire form and the `@2` identity domain; accessibility, resolution, elaboration and `Intended`; descriptions with the presupposition leaf; same-witness groups with the J5 negatives; document names, validity claims in a second phase, the self-truth label and stratification; the joint set with declared constraints and the nonempty requirement; the three operations with the J2 citation wording; report, diagnostics; every theorem of the plan's five obligation groups plus documents as a statement; fixtures α to ω; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | The converged Astra + Fable statement review of draft 1 applied (`manage-agents/debates/discourse-spec`, rounds 1 to 3, FIX). F1: typed competitors, `IllTypedTarget`, per-fixture signatures. F2/A1: `Accepted` with one recorded typed (d, σ) outside the universal, slots as (unit, span, form), targets looked up in `K.mentions`, slot correspondence (`UnrecordedSlot`/`MentionNotSlot`), no pruning, typed candidates for pairs, lists and `such`. F3: `Acc`'s inputs listed; `acc_no_heuristic` over equal anchor trees and innermost-anchor texts. F4/A4: `validity_import` over the three outcomes, `stale_import_rejected` separate, rejection distinct from UNKNOWN, 4.1(10) reduced to decode, identity, cycle and depth. F5/A2: `group_single_assertion` over the owning set's leaf; owning set exempt from `IndependentFragment`; formulas validated per group; nested mentions; location versus formula bindings; `members`, `pair`, `units`, `content_names`, `exports`. F6: `target.units` and `content_names`. F7: `Meaning := Formula`, `presentation_expands`, `LexiconCovers`. F8: `such` dropped from the constant forms; `original_index` mapping; `S.domain σ a`; θ decode-time `InvalidInput`; υ over any document name; VISION commit pinned; the natural-view difference stated with fixture α′. A3: the profile adapter (`baseProfiles`, `baseEnvironment`, identities under the base pair, wrapper binding the original declaration; `profile_adapter_base`, `format1_profile_requires_format2`); the presupposition carriers (`presupposition_carried`, `no_discourse_label`); the composition gate (`ExtendsTo`, `citation_extends_joint`, `report_extends_joint`, `extension_rejected`, `extension_unknown`). A5: binder sorts on `uniqueD`/`assertive`/`presupposed`/`fused`, `.ex`, typed hypotheses throughout, `independent_shortcut` with its enumeration premise, `admission_projects` for `@2` inputs under the base pair, constant freshness in `document_sort_conservative`, `stale_target_rejected` over the bound envelope. A6: `conj [] = .top`, `compatible_empty_error` under completed enumeration, ξ corrected (two ready owners), μ's pending candidate outside the inventory. Soft composition clause (5, 11). Checklist 12 now the complete amended gate; resolved choices 17 to 24. Spec only. |
 | 2026-09-28 | Draft 3 | The first verification pass of draft 2 applied (`manage-agents/discourse-p3ver1.final.md`, FAIL). F1: η declares `reviewed : person` (the default `reviewed : service` made "Alice is reviewed" ill-typed) and registers `api` and `alice` only, so that `Her` has one type-checking candidate. A2/F2: a nested mention is a slot of the unit's derivation, not a non-slot binding: 1.4 states that both the `possessive` and the enclosing `definite` are slots, the inner substituted first and the recorded `restriction` compared with the regenerated one (`ManifestMismatch: mentions.<m>.restriction`); `slots(d)`, `recordedSlots` and `elaborateD` fix the order (enclosing before nested; innermost substituted first); 4.1(6) and η state the slot correspondence over nested mentions too. F8: the natural-view agreement condition is the coincidence of the candidate sets and of the competing-quantifier sets (4.2), not a shared sort; α′ adds the one-sort counterexample (a registered, unmentioned second `service` constant) and the earlier-anchor binder case; 9.8, the section 10 closing paragraph and 13.17 say the same. A6: `compatible_no_sets` takes `0 < n` (`productSize [] = 1`, so `compatible_budget` applies at `n = 0`); the `compatibleChoices` comment and 4.8 say so. Spec only. |
+| 2026-09-28 | Draft 4 | The second verification pass applied (`manage-agents/discourse-p3ver2.final.md`, FAIL, two defects). F8: coincidence of the candidate and competing-quantifier sets is a sufficient condition for natural-view agreement, not a necessary one (4.2; α′ adds the case where both reject with two versus three candidates; 13.17; the plan's "only where" removed). 4.5: a binary restriction's other argument is a resolved entity; it is the nested slot's target only where the description contains a nested mention (η), and a contextual description without one ("the owner" as `owns(x, api)`) carries the constant in the manifest's `restriction`. Spec only. |
