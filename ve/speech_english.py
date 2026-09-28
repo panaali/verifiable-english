@@ -6,6 +6,7 @@ import re
 
 from .ast import _Checker, _Decoder, _to_data
 from .english import parse_english
+from .environment import RESERVED
 from .errors import VEError
 
 
@@ -23,6 +24,32 @@ def _name(env, text):
     return matches[0]
 
 
+# Words that make a wording a sentence rather than one predicate: W1's reserved
+# words (connectives, negation, quantifiers, modals) and the other quantifier and
+# connective words of the English surface.
+_SENTENCE_WORDS = RESERVED | {"some", "all", "each", "any", "only", "unless", "none", "nor", "but", "both",
+                              "either", "neither", "nothing", "nobody", "everything", "without"}
+
+
+def _opaque(env, rest):
+    """The sentence a declared gloss would hide behind one predicate (6), if any.
+
+    A copular gloss may only name a property: a connective, negation or
+    quantifier word, a declared constant or a bound definite phrase inside it
+    is a sentence the gloss would answer as one opaque atom.
+    """
+    words = [w.casefold() for w in re.findall(r"[A-Za-z0-9_']+", rest)][1:]  # after the copula "is"
+    constants = {name.casefold() for name in env.constants}
+    padded = " " + " ".join(words) + " "
+    for word in words:
+        if word in _SENTENCE_WORDS or word.endswith("n't") or word in constants:
+            return word
+    for phrase in (env.speech_acts or {}).get("definites", {}):
+        if " " + phrase.casefold() + " " in padded:
+            return phrase
+    return None
+
+
 def _copular(env, name, rest):
     """Match a declared unary copula without asking P0 to parse a question."""
     from .ast import Const, Unary
@@ -30,6 +57,8 @@ def _copular(env, name, rest):
                if len(decl.arguments) == 1 and decl.arguments[0] == env.constants[name].sort
                and decl.verbalisation is not None
                and decl.verbalisation.casefold() == ("{0} " + rest).casefold()]
+    if matches and (hidden := _opaque(env, rest)) is not None:
+        raise VEError(f"OpaqueWording: '{rest}' is a sentence about '{hidden}', not one declared property")
     if len(matches) == 1:
         return matches[0]
     if len(matches) > 1:
@@ -42,8 +71,9 @@ def _sentence(env, source):
     if match:
         try:
             return _copular(env, _name(env, match[1]), match[2])
-        except VEError:
-            pass
+        except VEError as exc:
+            if str(exc).startswith("OpaqueWording"):
+                raise
     return _formula(env, source)
 
 
