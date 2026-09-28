@@ -20,7 +20,7 @@ from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
 from .speech_acts import (SpeechDocument, choice_kind_conflicts, content_kind_ok, effective_scope,
                           fixed_assertion_ids, formula_shape, latest_reading_sets, query_records,
-                          _reading_choice)
+                          wording_text, _reading_choice)
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -187,7 +187,7 @@ class SpeechSource:
                     raise VEError("unit fence must match its id")
                 if unit.get("surface") != "english":
                     raise VEError("speech fence needs English surface")
-            wordings[uid] = wording.strip()
+            wordings[uid] = wording_text(wording)
             self.units.append({**unit, "content": content,
                                **({"source": wordings[uid]} if kind in ("instruction", "question") else {}),
                                **({"parent_id": parent} if parent is not None else {})})
@@ -223,7 +223,7 @@ class SpeechSource:
             from .speech_english import parse_speech
             scope = effective_scope(self.env, self.units, sets)
             for unit in fenced:
-                text = fences[unit["id"]].strip()
+                text = wording_text(fences[unit["id"]])
                 reading_set = latest.get(unit["id"])
                 if reading_set is not None and reading_set["status"] == "authored":
                     continue

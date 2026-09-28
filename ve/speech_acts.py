@@ -223,7 +223,8 @@ def _reading_choice(unit, reading_set):
 
 #: The speech-act kinds a signed choice must share with its wording (3.2); no other kind is checked.
 SPEECH_KINDS = ("asserted", "question", "instruction")
-_SURFACE_SPACE = re.compile("[ \t\n\r\x0b\x0c]+")
+_SURFACE_SPACES = " \t\n\r\x0b\x0c"
+_SURFACE_SPACE = re.compile(f"[{_SURFACE_SPACES}]+")
 _SURFACE_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 # What may follow an act's verb in its wording: a word break ("Click check."), the end of a unary
 # command ("Click.") or its condition ("Click, if ..."). An act word's own `'` and `-`, a name's `_`,
@@ -240,6 +241,21 @@ def surface_words(text):
     control characters included, is an ordinary letter.
     """
     return " ".join(w for w in _SURFACE_SPACE.split(text) if w).translate(_SURFACE_FOLD)
+
+
+def wording_text(text):
+    """A unit's wording without leading or trailing ASCII whitespace, the only whitespace `surface_words` knows.
+
+    Every reader of a wording (the source wrapper's span and fence, the speech
+    parser) trims with this, so no path sees a different sentence: Unicode
+    whitespace such as U+00A0 is part of the wording, never stripped.
+    """
+    return text.strip(_SURFACE_SPACES)
+
+
+def ascii_fold(text):
+    """`A`-`Z` folded to `a`-`z` and nothing else, the case rule of `surface_words`."""
+    return text.translate(_SURFACE_FOLD)
 
 
 def _starts_with_word(text, word):
@@ -743,8 +759,8 @@ class SpeechDocument:
             if source is not None and parse_speech(self.env, source, self.scope, query=query,
                                                    warnings=lint)[0] != self.command_data(command):
                 raise VEError(f"InvalidInput: invalid command fields for {command.unit}")
-            if source is not None and query is not None and source.startswith("Prove that "):
-                wording = source[len("Prove that "):-len(" using these premises.")] + "."
+            if source is not None and query is not None and wording_text(source).startswith("Prove that "):
+                wording = wording_text(source)[len("Prove that "):-len(" using these premises.")] + "."
                 if _sentence(self.env, wording) != self.queries[query].target:
                     raise VEError(f"QueryMismatch: {command.unit}")
             self.warnings.extend(f"{w} in {command.unit}" for w in dict.fromkeys(lint))
@@ -756,7 +772,7 @@ class SpeechDocument:
                                                    warnings=lint)[0] != self.question_data(question):
                 raise VEError(f"ModeMismatch: {question.unit}")
             if source is not None and question.query is not None:
-                wording = source[len("Does it follow from these premises that "):-1] + "."
+                wording = wording_text(source)[len("Does it follow from these premises that "):-1] + "."
                 if _sentence(self.env, wording) != self.queries[question.query].target:
                     raise VEError(f"QueryMismatch: {question.unit}")
             self.warnings.extend(f"{w} in {question.unit}" for w in dict.fromkeys(lint))

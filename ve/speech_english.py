@@ -8,6 +8,7 @@ from .ast import _Checker, _Decoder, _to_data
 from .english import parse_english
 from .environment import RESERVED
 from .errors import VEError
+from .speech_acts import ascii_fold, wording_text
 
 
 def _formula(env, sentence):
@@ -18,7 +19,7 @@ def _formula(env, sentence):
 
 
 def _name(env, text):
-    matches = [name for name in env.constants if name.casefold() == text.casefold()]
+    matches = [name for name in env.constants if ascii_fold(name) == ascii_fold(text)]
     if len(matches) != 1:
         raise VEError(f"UnknownAlternative: wording, {text}")
     return matches[0]
@@ -80,7 +81,7 @@ def _copular(env, name, rest, warnings=None):
     matches = [Unary(predicate, Const(name)) for predicate, decl in env.predicates.items()
                if len(decl.arguments) == 1 and decl.arguments[0] == env.constants[name].sort
                and decl.verbalisation is not None
-               and decl.verbalisation.casefold() == ("{0} " + rest).casefold()]
+               and ascii_fold(decl.verbalisation) == ascii_fold("{0} " + rest)]
     if matches and warnings is not None and (hidden := _opaque(env, rest)) is not None:
         warnings.append(f"OpaqueWording: '{rest}' contains '{hidden}' and is read as one declared predicate")
     if len(matches) == 1:
@@ -153,7 +154,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
     """
     if type(source) is not str:
         raise VEError("InvalidInput: speech wording")
-    text = source.strip()
+    text = wording_text(source)
     if not text:
         raise VEError("InvalidInput: speech wording")
     if text == "Which reading did you mean?":
@@ -220,7 +221,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
         matches = []
         wrong_role = []
         for phrase, predicate, args, role in _command_candidates(env, scope):
-            if plain.casefold() == phrase.casefold():
+            if ascii_fold(plain) == ascii_fold(phrase):
                 if role == ("permission" if forbidden else "obligation"):
                     matches.append((predicate, args, role))
                 else:
