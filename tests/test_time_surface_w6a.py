@@ -55,6 +55,10 @@ def test_one_reading_roundtrip_without_tag_identifiers():
            "The amount equals USD 3.75."
     assert parse_quantity_sentence(env, "The return date is on 16 September 2026.") == \
            parse_quantity_sentence(env, "The return date is on 2026-09-16.")
+    difference = parse_quantity_sentence(env,
+        "The September PCE estimate minus the June PCE estimate equals 0.10 percentage points.")
+    assert difference["formula"] == ["eq", ["add", "bp", ["const", "bp", "pce_sep"],
+        ["scale", "bp", "-1", ["const", "bp", "pce_jun"]]], ["num", "bp", "10"]]
 
 
 def test_ambiguity_and_cross_tag_suppression():
