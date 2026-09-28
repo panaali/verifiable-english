@@ -35,7 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SoftNorms.Run
-import VE.Rights.Correlate
+import VE.Rights.Bar
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1150,18 +1150,63 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.weighing_sub_decisions
 #print axioms VE.SoftNorms.yieldsD_prime
 #print axioms VE.SoftNorms.yields_strict
+#print axioms VE.Rights.applies_bar
+#print axioms VE.Rights.applies_eq
+#print axioms VE.Rights.barNode_mem
 #print axioms VE.Rights.barNodes_nil
+#print axioms VE.Rights.bar_blocks
+#print axioms VE.Rights.bar_denote
+#print axioms VE.Rights.bar_mode
+#print axioms VE.Rights.bar_value
+#print axioms VE.Rights.blocked_eq
+#print axioms VE.Rights.catalaValue_false
+#print axioms VE.Rights.catalaValue_true
 #print axioms VE.Rights.condKeys_nil
+#print axioms VE.Rights.correlate_faithful
 #print axioms VE.Rights.correlate_identity
 #print axioms VE.Rights.correlate_identity_top
 #print axioms VE.Rights.correlate_identity_top_env
 #print axioms VE.Rights.correlate_shape
+#print axioms VE.Rights.correlate_value
 #print axioms VE.Rights.correlate_wellFormed
+#print axioms VE.Rights.decides_eq
+#print axioms VE.Rights.domWith_eq
+#print axioms VE.Rights.dominated_eq
+#print axioms VE.Rights.eff_eq
+#print axioms VE.Rights.eligible_eq
 #print axioms VE.Rights.envR_of_no_gen
+#print axioms VE.Rights.exists_child_split
 #print axioms VE.Rights.genDecls_nil
 #print axioms VE.Rights.holderConj_top
 #print axioms VE.Rights.limKeys_nil
+#print axioms VE.Rights.limPackList_denote
+#print axioms VE.Rights.lineNode_correlate
+#print axioms VE.Rights.lineNode_direct
+#print axioms VE.Rights.lineNode_mem
+#print axioms VE.Rights.liveR_denote
+#print axioms VE.Rights.live_bar
+#print axioms VE.Rights.mem_barNodes
 #print axioms VE.Rights.mem_barPreds
+#print axioms VE.Rights.mem_childrenIn_direct
+#print axioms VE.Rights.mem_children_correlate
+#print axioms VE.Rights.mem_correlate_nodes
 #print axioms VE.Rights.mem_dedup
+#print axioms VE.Rights.mem_tupleSet
+#print axioms VE.Rights.not_mem_children_bar
+#print axioms VE.Rights.owes_outcome
+#print axioms VE.Rights.projections_agree
+#print axioms VE.Rights.regOf_name
 #print axioms VE.Rights.rightsValid_of_wellFormed
+#print axioms VE.Rights.same_effect_delivered
 #print axioms VE.Rights.scopeLimits_nil
+#print axioms VE.Rights.selects_bar
+#print axioms VE.Rights.selects_eq
+#print axioms VE.Rights.strictDecidesR_denote
+#print axioms VE.Rights.strictDecides_eq
+#print axioms VE.Rights.strictSelects_bar
+#print axioms VE.Rights.strictSelects_eq
+#print axioms VE.Rights.strictYields_bar
+#print axioms VE.Rights.strictYields_eq
+#print axioms VE.Rights.valueSoft_of_decides
+#print axioms VE.Rights.yields_bar
+#print axioms VE.Rights.yields_eq
