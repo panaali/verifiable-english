@@ -105,6 +105,9 @@ def parse_quantity_sentence(env, source):
 
 def render_quantity_sentence(env, canonical):
     """Render the admitted literal/constant comparison wordings without tags."""
+    checked, _ = elaborate_quantity(env, canonical)
+    if checked != canonical or canonical["traces"]:
+        raise UnsupportedProfile("Quantity wording cannot omit canonical annotations or trace declarations")
     formula = canonical["formula"]
     if formula[0] not in ("eq", "lt", "le", "date_on", "date_before",
                           "date_after", "date_no_later"):
