@@ -2,14 +2,12 @@
 import cProfile
 import hashlib
 import json
-import os
 import platform
 import pstats
 import re
-import statistics
-import time
 from pathlib import Path
 
+from timing import measure, stats
 from ve.ast import Document, formula_from_data
 from ve.document import check_document, load_document
 from ve.english import parse_english, render_english
@@ -48,21 +46,6 @@ def profile(fn, n=18):
                          'own_s': round(own, 6), 'cum_s': round(cum, 6)})
     return sorted(rows, key=lambda x: x['cum_s'], reverse=True)[:n]
 
-def measure(fn):
-    vals = []
-    loads = []
-    for _ in range(5):
-        loads.append([round(v, 3) for v in os.getloadavg()])
-        start = time.perf_counter()
-        fn()
-        vals.append(round((time.perf_counter()-start)*1000, 3))
-    return vals, loads
-
-def stats(vals):
-    return {'p50_ms': round(statistics.median(vals), 3),
-            'p95_ms': round(sorted(vals)[-1]*.8+sorted(vals)[-2]*.2, 3),
-            'max_ms': max(vals)}
-
 def tokens(s):
     return len(re.findall(r"\w+|[^\w\s]", s))
 
@@ -92,7 +75,7 @@ def main():
     out = {'machine': {'platform': platform.platform(), 'python': platform.python_version(),
                         'cpus': __import__('os').cpu_count()},
            'repeats': 5, 'documents': {}, 'sentences': [], 'raw_source': {}, 'editor': {},
-           'method': 'Warm process, sequential runs; cProfile in a separate invocation; load sampled before each timed call.'}
+           'method': 'One untimed warm-up per case, then sequential timed runs; editor catalogues use 20 samples. cProfile is separate; load is sampled before each timed call.'}
     loaded = {}
     cases = []
     for label, path in DOCS.items():
@@ -179,7 +162,7 @@ def main():
         parse_result = editor_parse()
         pv, p_load = measure(editor_parse)
         def catalogue(): return review(env,src,bindings,pattern_id=pattern)
-        vals, loads = measure(catalogue)
+        vals, loads = measure(catalogue, repeats=20)
         result = catalogue()
         out['editor'][label] = {'source': src, 'parse_result': parse_result,
                                'parse_ms': pv, 'parse_load': p_load, 'parse_stats': stats(pv),
