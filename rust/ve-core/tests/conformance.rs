@@ -6,20 +6,30 @@ use ve_core::*;
 fn discourse_elaboration_is_an_untrusted_core_carrier() {
     // Reference resolution belongs to the discourse validator. The Rust core
     // consumes only the elaborated formula under the stripped base profile.
-    let case = json!({"family":"elaborated-document", "untrusted":true,
-        "environment":{"language":"ve.core@0.2", "profiles":["relational-fol@0"],
-            "spec_revision":"ve-v0.2-expand2-2026-09-25",
-            "vocabulary":{"sorts":{"service":{"description":"service"}},
-                "predicates":{"safe":{"arguments":["service"],"description":"safe"}},
-                "constants":{"api":{"sort":"service","description":"Api"}}}},
-        "ast":[["unary","safe",["const","api"]]],
+    let environment = json!({"language":"ve.core@0.2", "profiles":["relational-fol@0"],
+        "spec_revision":"ve-v0.2-expand2-2026-09-25",
+        "vocabulary":{"sorts":{"service":{"description":"service"}},
+            "predicates":{"safe":{"arguments":["service"],"description":"safe"}},
+            "constants":{"api":{"sort":"service","description":"Api"}}}});
+    let case = json!({"id":"alpha","family":"elaborated-document", "untrusted":true,
+        "environment":environment, "formulas":[["unary","safe",["const","api"]]],
         "model":{"complete":true,"domains":{"service":["a"]},
             "constants":{"api":"a"},"relations":{"safe":[["a"]]}}});
-    assert_eq!(case["untrusted"], true);
-    let env = Environment::from_value(&case["environment"]).unwrap();
-    let doc = Document::from_value(&env, &case["ast"]).unwrap();
-    let model = FiniteModel::from_value(&env, &case["model"]).unwrap();
-    assert_eq!(evaluate_formula(&doc, 0, &model, MAX_EVALUATIONS).unwrap().value, Some(true));
+    let out = elaborated_document_case(&case).unwrap();
+    assert_eq!(out["family"], ELABORATED_DOCUMENT);
+    assert_eq!(out["untrusted"], true);
+    assert_eq!(out["values"], json!([true]));
+    assert_eq!(out["premises"]["status"], "model");
+    let env = Environment::from_value(&environment).unwrap();
+    let doc = Document::from_value(&env, &case["formulas"]).unwrap();
+    assert_eq!(out["meaning_ids"], json!([doc.formula_meaning_id(0).unwrap()]));
+    // the family is untrusted input by construction, and never the discourse profile
+    let mut trusted = case.clone();
+    trusted["untrusted"] = json!(false);
+    assert_eq!(elaborated_document_case(&trusted).unwrap_err().code, "InvalidInput");
+    let mut profiled = case.clone();
+    profiled["environment"]["profiles"] = json!(["relational-fol@0", "ve.discourse@1"]);
+    assert_eq!(elaborated_document_case(&profiled).unwrap_err().code, "UnsupportedProfile");
 }
 
 #[test]
