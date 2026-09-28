@@ -32,11 +32,16 @@ def _reading_sets(env, sets, unit_ids):
     """
     if type(sets) is not list:
         raise VEError("reading_sets must be a list")
+    if any(type(item) is not dict or type(item.get("readings")) is not list for item in sets):
+        raise VEError("invalid reading set")
     ordinary = [r for r in sets if all(c.get("kind") == "asserted" and
                 (c.get("content") is None or type(c["content"]) is list)
-                for c in r.get("readings", []))]
+                for c in r["readings"] if type(c) is dict)
+                and all(type(c) is dict for c in r["readings"])]
     validate_reading_sets(env, ordinary, unit_ids)
     seen = {(r["id"], r["version"]) for r in ordinary}
+    owners = {r["id"]: r["unit"] for r in ordinary}
+    units = {r["unit"]: r["id"] for r in ordinary}
     for item in sets:
         if item in ordinary:
             continue
@@ -48,9 +53,16 @@ def _reading_sets(env, sets, unit_ids):
         if (not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1
                 or key in seen or item["unit"] not in unit_ids or item["status"] not in ("open", "authored")):
             raise VEError("invalid or duplicate reading set version")
+        if (item["id"] in owners and owners[item["id"]] != item["unit"]
+                or item["unit"] in units and units[item["unit"]] != item["id"]):
+            raise VEError("one reading set per source unit; versions must keep their unit")
         seen.add(key)
+        owners[item["id"]] = item["unit"]
+        units[item["unit"]] = item["id"]
         if type(item["readings"]) is not list or not 1 <= len(item["readings"]) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
+        if any(type(reading) is not dict for reading in item["readings"]):
+            raise VEError("invalid reading")
         if item["status"] == "authored" and (len(item["readings"]) != 1 or not token(item.get("signature"))):
             raise VEError("authored reading needs one signed choice")
         if item["status"] == "open" and "signature" in item:
@@ -67,11 +79,31 @@ def _reading_sets(env, sets, unit_ids):
             if reading["content"] is not None and (type(reading["content"]) is not dict
                                                     or len(reading["content"]) != 1):
                 raise VEError("invalid speech reading content")
+            if reading["content"] is not None:
+                tag = next(iter(reading["content"]))
+                if tag not in {"ast", "norm", "command", "question", "binding"}:
+                    raise VEError("invalid speech reading content")
+                kind = reading["kind"]
+                bare_kind = kind if type(kind) is str else kind[-1] if type(kind) is list else None
+                if bare_kind != {"ast": "asserted", "norm": "norm", "command": "instruction",
+                                 "question": "question", "binding": "binding"}[tag]:
+                    raise VEError("invalid speech reading content")
             admission = reading["admission"]
             if (type(admission) is not dict or set(admission) != {"who", "why", "distinguishing_models"}
-                    or not token(admission["who"]) or type(admission["why"]) is not str
+                    or not token(admission["who"]) or type(admission["why"]) is not str or not admission["why"]
                     or type(admission["distinguishing_models"]) is not dict):
                 raise VEError("invalid reading admission")
+            if (set(admission["distinguishing_models"]) !=
+                    {other["id"] for other in item["readings"]} - {reading["id"]}):
+                raise VEError("each other reading needs a distinguishing model id")
+            if not all(token(v) for v in admission["distinguishing_models"].values()):
+                raise VEError("invalid distinguishing model id")
+        model_ids = {model_id for reading in item["readings"]
+                     for model_id in reading["admission"]["distinguishing_models"].values()}
+        if type(item.get("models", {})) is not dict or set(item.get("models", {})) != model_ids:
+            raise VEError("distinguishing models must be supplied by id")
+        if "rejected_history" in item and type(item["rejected_history"]) is not list:
+            raise VEError("invalid rejected reading history")
     validate_narrowings([], sets, unit_ids)
 
 
@@ -277,9 +309,27 @@ def load_speech_document(path):
     boundary = raw.find(b"\n---\n", 4)
     if boundary < 0:
         raise VEError("unclosed JSON front matter")
+    def unique_fields(pairs):
+        result = {}
+        for name, value in pairs:
+            if name in result:
+                raise ValueError("duplicate front-matter field")
+            result[name] = value
+        return result
+
+    def integer(value):
+        number = int(value)
+        if not 0 <= number <= 2**53 - 1:
+            raise ValueError("front-matter integer out of range")
+        return number
+
+    def invalid_number(_value):
+        raise ValueError("unsupported front-matter number")
+
     try:
-        meta = json.loads(raw[4:boundary].decode("utf-8"))
-    except (ValueError, UnicodeError) as exc:
+        meta = json.loads(raw[4:boundary].decode("utf-8"), object_pairs_hook=unique_fields,
+                          parse_int=integer, parse_float=invalid_number, parse_constant=invalid_number)
+    except (ValueError, UnicodeError, RecursionError) as exc:
         raise VEError("invalid JSON front matter") from exc
     source, fences = _body(raw[boundary + 5:])
     return SpeechSource(meta, source, fences)

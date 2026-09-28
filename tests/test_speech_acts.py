@@ -89,7 +89,7 @@ def test_prohibition_is_permission_negative_and_quoted_is_dormant():
     assert len(doc.policy.rules) == 1
     rule = doc.policy.rules[0]
     assert rule.name == "cmd-u1" and rule.sign is False and rule.predicate == "share_permitted"
-    assert rule.guard.left.left.right == Eq(Var(1), Const("alice"))
+    assert rule.guard.left.left == Eq(Var(1), Const("alice"))
     assert rule.guard.left.right == Eq(Var(0), Const("token1"))
     assert doc.premises() == SpeechDocument(env, [active]).premises()
     bad = command("u1", "forbid", "open_required", "desk1")
@@ -209,6 +209,25 @@ def test_v2_source_identity_partition_and_coverage(tmp_path):
     changed = deepcopy(meta)
     changed["environment"]["speech_acts"]["task"] = "t2"
     assert save(changed).document_id != first.document_id
+    malformed = deepcopy(meta)
+    malformed["reading_sets"] = [1]
+    with pytest.raises(VEError, match="invalid reading set"):
+        save(malformed)
+    reading = {"id": "r1", "kind": "instruction", "meaning_id": "candidate",
+               "content": {"command": {"force": "require", "act": "open_required",
+                                       "args": ["desk1"]}},
+               "admission": {"who": "author", "why": "This is the intended command.",
+                             "distinguishing_models": {}}}
+    wrong_owner = deepcopy(meta)
+    wrong_owner["reading_sets"] = [
+        {"id": "rs1", "unit": "u1", "version": 1, "status": "open", "readings": [reading]},
+        {"id": "rs1", "unit": "u2", "version": 2, "status": "open", "readings": [reading]},
+    ]
+    with pytest.raises(VEError, match="versions must keep their unit"):
+        save(wrong_owner)
+    path.write_text('---\n{"format":"ve-document@2","format":"ve-document@2"}\n---\n' + source)
+    with pytest.raises(VEError, match="invalid JSON front matter"):
+        load_speech_document(path)
 
 
 def test_model_answer_scope_and_presupposition_failure():
