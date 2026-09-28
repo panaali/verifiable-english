@@ -53,6 +53,8 @@ def test_one_reading_roundtrip_without_tag_identifiers():
         assert all(tag not in rendered for tag in ("bp", "usd_cent", "elapsed_day", ":day"))
     assert render_quantity_sentence(env, parse_quantity_sentence(env, "The amount equals $3.75.")) == \
            "The amount equals USD 3.75."
+    assert parse_quantity_sentence(env, "The return date is on 16 September 2026.") == \
+           parse_quantity_sentence(env, "The return date is on 2026-09-16.")
 
 
 def test_ambiguity_and_cross_tag_suppression():

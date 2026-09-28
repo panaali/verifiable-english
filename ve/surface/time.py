@@ -9,10 +9,12 @@ import re
 from itertools import product
 
 from ..errors import AmbiguousDerivation, SyntaxError, UnsupportedProfile, VEError
-from ..units import DIMENSIONLESS, decimal_exact, elaborate_quantity, render_coordinate
+from ..units import DIMENSIONLESS, day_number, decimal_exact, elaborate_quantity, render_coordinate
 
 _DEC = r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?"
 _DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z", re.ASCII)
+_MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August",
+           "September", "October", "November", "December")
 
 
 def _constant_readings(env, phrase):
@@ -25,6 +27,11 @@ def _literal_readings(env, phrase):
     readings = []
     if _DATE.fullmatch(phrase) and "day" in env.units:
         readings.append(["date", phrase])
+    long_date = re.fullmatch(r"([1-9]|[12][0-9]|3[01]) ([A-Z][a-z]+) ([0-9]{4})", phrase)
+    if long_date and long_date[2] in _MONTHS and "day" in env.units:
+        iso = f"{long_date[3]}-{_MONTHS.index(long_date[2])+1:02d}-{int(long_date[1]):02d}"
+        day_number(iso)
+        readings.append(["date", iso])
     if re.fullmatch(_DEC, phrase, re.ASCII):
         readings.append(["decimal", DIMENSIONLESS, phrase])
     for tag, record in env.units.items():
