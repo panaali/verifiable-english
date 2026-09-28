@@ -390,7 +390,7 @@ depth exceeds 64`; then P0's first type diagnostic (`UnknownSymbol: Unknown cons
 <u>` or `AlternativeSort: <u>`. The same holds for the unit's reading candidates and for quoted units.
 
 W2's `content` may also be an English or strict fence; the English fence goes through the all-derivations parser and
-yields the same command or question object (2.1); the fence's surface and the object are the same unit. A fence is read
+yields the same assertion, command or question object (2.1); the fence's surface and the object are the same unit. A fence is read
 under the effective scope (1.1), computed by the document's own binding merge over its effective units, so a fenced and
 an unfenced source of one document agree; nothing else (a query record, a candidate asking about one) is checked out
 of its document context to compute that scope. A wording that names neither its query nor its reading set leaves them
@@ -428,7 +428,8 @@ counted as a unit. Every other unit reaches P0 as W2 sends it today.
 
 An answer record's `answer` is a token of the question's mode (`AnswerOutsideDomain` otherwise); its `support` is one of
 W2's support kinds; the route recomputes the answer line from the evidence and rejects a record whose stated answer or
-judgment the evidence does not establish (`AnswerMismatch`). A `judgment` is `follows` or `gap` only (`refuted` is not a
+judgment the evidence does not establish (`AnswerMismatch`). If present, `conditional` is a JSON Boolean
+(`InvalidInput: conditional` otherwise). A `judgment` is `follows` or `gap` only (`refuted` is not a
 value: `InvalidInput: judgment`); `unresolved` is the absence of a record. A nomination names a candidate index of the
 bound set at the bound version (`NominationOutsideSet`) and is recorded as a W2 narrowing with `support: testimony`
 citing the question and the nomination unit; the checker never treats it as proof of intent. A compliance record names
@@ -822,6 +823,12 @@ Order: the profile gate; the environment block; W1's declaration checks; units i
 mode, domain, query); `policy(D)` through W1's `check` (its diagnostics verbatim); queries; answer and compliance
 records. English diagnostics carry the span and the plain-language expectation as today. Existing P0, W1 and W2
 diagnostics are unchanged.
+
+Known limitation: when one document has two independent wire faults, Python and Lean can reject with different first
+diagnostics. For example, units `[c1: command act nonesuch, c2: command force maybe]` yield `UnknownSymbol` in Python
+and `InvalidInput: force` in Lean; `[b: binding {"you": 7}, c: command force maybe]` reverses the first-fault order.
+Both checkers reject these documents. The P1 shared wire contract with code generation in ARCH-ROADMAP will align
+validation order as well as individual diagnostics.
 
 ## 8. Lean (item 2): definitions and the exact statements to prove
 
