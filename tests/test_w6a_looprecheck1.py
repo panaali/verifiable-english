@@ -64,9 +64,18 @@ def test_names_the_normalizer_rewrites_reject_three_ways(words):
 
 
 def test_every_python_space_is_rejected_inside_a_name():
-    for space in sorted(SPACES - {" "}):
+    spaces = sorted(SPACES - {" "})
+    raws = [raw_environment(constants={"a": named("bp", f"the{space}rate")}) for space in spaces]
+    for raw in raws:
         with pytest.raises(VEError, match="whitespace-normalized"):
-            Environment(raw_environment(constants={"a": named("bp", f"the{space}rate")}))
+            Environment(raw)
+    probe = quantity(["top"])
+    for got in lean([{"id": str(i), "environment": raw, "quantity": probe}
+                     for i, raw in enumerate(raws)]):
+        assert got["status"] == "error" and "must be whitespace-normalized" in got["error"], got
+    for got in rust([{"id": str(i), "kind": "quantity", "environment": raw, "quantity": probe}
+                     for i, raw in enumerate(raws)]):
+        assert got["status"] == "error" and "must be whitespace-normalized" in got["error"]["message"], got
 
 
 @pytest.mark.parametrize("first,second", [
@@ -133,6 +142,36 @@ def test_render_then_parse_is_identity_or_rejected_never_another_reading():
             assert back == canonical, (words, sentence)
             checked += 1
     assert checked > 500
+
+
+WHOLE_POOL = ["the rate", "The rate", "c0", "c1", "start", "the c1", "c1 rate", "rate",
+              "the rate equals", "0", "3.75%"]
+
+
+def test_whole_grammar_reads_a_rendering_as_itself_or_rejects():
+    """The document route's parser (quantity wordings plus the frozen English
+    grammar over the erased target) never reads a rendering as another formula,
+    including when a name spells another constant's identifier."""
+    from ve.surface.time import parse_w6_sentence
+    checked = 0
+    for words in product(WHOLE_POOL, repeat=2):
+        try:
+            env = roundtrip_env(words)
+        except VEError:
+            continue
+        terms = [["const", "bp", "c0"], ["const", "bp", "c1"], ["decimal", "bp", "3.75"]]
+        for op, left, right in product(("eq", "lt", "le"), terms, terms):
+            if left[0] == right[0] == "decimal":
+                continue
+            canonical, _ = elaborate_quantity(env, quantity([op, left, right]))
+            sentence = render_quantity_sentence(env, canonical)
+            try:
+                back = parse_w6_sentence(env, sentence)
+            except VEError:
+                continue
+            assert back == canonical, (words, sentence)
+            checked += 1
+    assert checked > 200
 
 
 def test_review_reproducer_cannot_be_declared():
