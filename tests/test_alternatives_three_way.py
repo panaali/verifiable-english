@@ -9,7 +9,7 @@ import subprocess
 
 import pytest
 
-from conformance.alternatives import base_environment, cases
+from conformance.alternatives import base_environment, cases, rules
 from ve.alternatives import run_case
 from ve.ast import formula_from_data
 from ve.environment import Environment
@@ -66,3 +66,28 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     rust_values = json.loads(rust.stdout)[0]["values"]
     expected = [bool(report["clear"]), *(bool(report[name]) for name in names)]
     assert python_values == rust_values == expected, case["id"]
+
+
+def test_spec_s2_conflict_three_way(rust_binary):
+    case = next(c for c in cases() if c["id"] == "a")
+    source = {k: v for k, v in case.items() if k != "expected_clear"}
+    source["norms"] = [*source["norms"], rules()["X"]]
+    source["id"] = "s2"
+    elaborated = run_case({k: v for k, v in source.items() if k != "scenario"} |
+                          {"kind": "alt-elaborate"})
+    scenario = run_case(source | {"kind": "alt-validate"})
+    assert (scenario["verdict"], scenario["target"], scenario["tuple"]) == (
+        "CONFLICT", "permitted", ["nothing"])
+    target = next(t for t in elaborated["conflict_targets"] if t["target"] == "permitted")
+    formula = ["exists", "action", target["ast"]]
+    base = base_environment(source["environment"])
+    model_data = source["scenario"]["model"]
+    env = Environment(base)
+    model = FiniteModel.from_dict(env, model_data)
+    assert evaluate(env, formula_from_data(env, formula), model, trace=False).value
+    rust = subprocess.run([str(rust_binary), "conformance"],
+                          input=json.dumps([{"id": "s2", "kind": "evaluate", "environment": base,
+                                             "ast": [formula], "model": model_data}]),
+                          capture_output=True, text=True, timeout=120)
+    assert rust.returncode == 0, rust.stdout + rust.stderr
+    assert json.loads(rust.stdout)[0]["values"] == [True]

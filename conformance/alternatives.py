@@ -87,6 +87,8 @@ def rules():
                    ["and", ["unary", "inaction", ["var", 0]],
                     ["exists", "harm", ["and", ["unary", "harms_humanity", ["var", 0]],
                                           ["binary", "allows", ["var", 1], ["var", 0]]]]]),
+        "X": rule("inaction-permitted", "permitted", True,
+                  ["unary", "inaction", ["var", 0]]),
     }
 
 
