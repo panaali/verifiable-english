@@ -457,7 +457,7 @@ impl Environment {
             let literal = route && decl.get("sort") == Some(&json!("$string"));
             let mut keys = vec!["sort"];
             if !literal || decl.get("description").is_some() { keys.push("description"); }
-            if decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
+            if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
             let d = fields(decl, &keys, "InvalidInput")?;
             let s = string(&d["sort"], "UnknownSymbol")?;
             if !sorts.contains_key(s) && !(order && s == "$int") && !(route && s == "$string") {
