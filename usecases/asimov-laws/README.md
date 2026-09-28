@@ -39,7 +39,7 @@ translation makes to state it.
 | 9 | Zeroth Law priority: an action preventing a harm to humanity is permitted even though it breaks the First Law, unless its robot has a lawful option. | source priority; the necessity test is this translation's |
 | 10 | Zeroth Law: an action that breaks the Zeroth Law is forbidden; it overrides Rules 8 and 9. | source (later law) |
 | 11 | Law 2: an ordered action is required when it is permitted. | source |
-| 12 | Law 3: the robot must avoid each avoidable harm to its continued existence. A selected action fulfils this mapped duty when it does not lead to that harm. | source, without its exception |
+| 12 | Law 3: the robot must avoid each avoidable harm to its continued existence, as long as that does not conflict with Laws 1 and 2. The first *Except when* drops the duty when every permitted action leads to the harm. The second drops it when some required action does not prevent the harm. A selected action fulfils this mapped duty when it does not lead to that harm. | source |
 
 Rules 1–2 and 11 keep the v1 candidate-action reading. Rule 9 lets the Zeroth
 Law excuse a First Law breach only when it is necessary. A lawful option breaks
@@ -47,7 +47,12 @@ neither law, so it allows no avoidable harm to humanity and prevents every
 collective harm that the excused action prevents. It is also permitted. While
 one exists, the First Law ban stands. Rule 12 replaces v1's demand to take
 *every* protective action with one prevention duty that either of two safe
-alternatives can fulfil. The [environment](environment.json) defaults
+alternatives can fulfil. Its two exceptions state Law 3's own priority clause.
+An order that destroys the robot is obeyed, and so is a rescue that destroys
+it. With one threat to the robot, the duty never removes the last clear
+action. The second exception uses `prevents`, so it also applies when no
+alternative leads to the harm and some action is required. Every action then
+avoids the harm, so the clear actions are unchanged. The [environment](environment.json) defaults
 permission to allow, obligation to not required and each derived name to
 false if no rule applies. These completion defaults and the `protects_robot`
 annotation are modeling choices.
@@ -95,10 +100,12 @@ FOLLOWABLE certificate.
   among different harms need an explicit author judgment or a richer policy:
   two necessary breaches are both permitted, however unequal.
 - **OPEN — simultaneous demands.** Two permitted orders can require
-  incompatible actions, as scenario `j` shows. Avoiding a harm to a human and
-  preserving the robot can also demand different alternatives. W1 precedence
-  resolves competing rules about one regulated predicate on one action; it
-  does not rank different mapped obligations or choose among actions.
+  incompatible actions, as scenario `j` shows. Two threats to the robot, each
+  avoided only by a different permitted action, leave no clear action. The
+  source speaks of one existence and gives no ranking between such threats.
+  W1 precedence resolves competing rules about one regulated predicate on one
+  action; it does not rank different mapped obligations or choose among
+  actions.
 - **OPEN — time and uncertain outcomes.** The signed table gives a single
   Boolean outcome for each action and harm at one decision. Multi-step plans,
   uncertain outcomes, joint prevention, and an independently justified causal

@@ -1,7 +1,7 @@
 {
   "environment_id": "d65ee04e775ba89f1d5e29f70575b74dd9b9f481f399fe25f0b0b461baccf9c2",
-  "document_hash": "86e56a42940ec7843ab7fa2b62f146f0255e57ddf84627950e09a2b729c6a25a",
-  "text_digest": "0fcd87a030a9398ffe1cadab0fba4cd225cd4a78ea57b4b58a07f2cf94cd01d9",
+  "document_hash": "d442d50c74b8fc15a3dbe2937b2924b908458fbae8baa2f07ddc37874c2e8dcd",
+  "text_digest": "0f2720be48230e94dff4f1acaac743dcc01b13b7bf024badd52028ce0d5034fc",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -108,7 +108,7 @@
       "number": 12,
       "span": [
         1645,
-        1799
+        2020
       ]
     }
   ]
