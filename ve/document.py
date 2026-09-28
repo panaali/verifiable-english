@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import re
 from pathlib import Path
 
 from .admission import _check_kind, admit_document, token
@@ -81,7 +82,7 @@ def _split(raw: bytes):
     return meta, *_body(raw[boundary + 5:])
 
 
-def _meaning(value, open_names):
+def _meaning(value, open_names, *, reports=False):
     if value == "specified":
         return "specified"
     if type(value) is not dict or len(value) != 1:
@@ -89,7 +90,9 @@ def _meaning(value, open_names):
     status, detail = next(iter(value.items()))
     if status == "contextual" and type(detail) is str and detail:
         return status
-    if status == "open" and type(detail) is list and detail and all(type(x) is str for x in detail) and set(detail) <= open_names:
+    if status == "open" and type(detail) is list and detail and all(type(x) is str for x in detail) and (
+            set(detail) <= open_names or reports and all(re.fullmatch(r"reports__(?:may|probably)__[1-9][0-9]*", x)
+                                                       for x in detail)):
         return status
     if status == "unformalised" and token(detail):
         return status
@@ -208,7 +211,7 @@ def load_document(path: str | Path):
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
         kind = _check_kind(unit["kind"], reports="reports@0" in env.profiles)
-        status = _meaning(unit["meaning"], open_names)
+        status = _meaning(unit["meaning"], open_names, reports="reports@0" in env.profiles)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
         content, mid = _content(env, unit, fences) if unit.get("content") is not None else (None, None)
@@ -243,24 +246,27 @@ def load_document(path: str | Path):
     reports = None
     if "reports@0" in env.profiles:
         from .reports import ReportsDocument
-        if meta.get("reading_sets") or meta.get("graph") or meta.get("lemmas"):
-            raise VEError("reports readings, graph and lemma replay await the Lean route")
+        if meta.get("reading_sets") or meta.get("lemmas"):
+            raise VEError("reports readings and lemma replay await the Lean route")
         reported = [u for u in compiled if type(u["content"]) is dict
                     and set(u["content"]) & {"report", "assessment", "negated"}]
         reports = ReportsDocument(env, meta.get("contexts", []), meta.get("assessments", []),
                                   [{"id": u["id"], "span": u["span"], "kind": u["kind"],
                                     "meaning": u["meaning"], "support": u["support"],
                                     "content": u["content"]}
-                                   for u in reported], bridges=meta.get("bridges", []),
+                                  for u in compiled], bridges=meta.get("bridges", []),
                                   scoped=meta.get("scoped", []))
+        generated_open = {o["name"] for o in reports.open_terms}
+        for u in reported:
+            if type(u["meaning"]) is dict and "open" in u["meaning"] and not set(u["meaning"]["open"]) <= (
+                    generated_open | open_names):
+                raise VEError("unknown report open term")
         for u in reported:
             u["meaning_id"] = reports.meaning_id(u["content"])
             original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
             if "meaning_id" in original and original["meaning_id"] != u["meaning_id"]:
                 raise VEError("unit meaning id does not match content")
-            # Without the reports Lean route, this profile cannot issue a
-            # checked semantic verdict even for a closed complement.
-            u["status"] = "OPEN"
+            u["status"] = "OPEN" if reports._is_assessment(u["content"]) else "CHECKED"
     from .norms import NormDocument
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
@@ -397,11 +403,24 @@ def _check_narrowing_choices(meta, labels):
 def check_document(path):
     doc = load_document(path)
     if doc["reports"] is not None:
-        # The reports Lean route is a separate proof obligation. Surface the
-        # elaboration for witness search without implying checked semantics.
-        return {"format": "ve-document@1", "status": "UNVERIFIED",
-                "source_id": doc["source_id"], "document_id": doc["document_id"],
-                "coverage": coverage(doc), "reports": doc["reports"].search_payload()}
+        from .reports_route import checked_elaboration, run_case
+        meta = doc["meta"]
+        route_doc = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
+                                "meaning": u["meaning"], "support": u["support"],
+                                **({"content": u["content"]} if u["content"] is not None else {})}
+                               for u in doc["units"]],
+                     "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
+                     "bridges": meta.get("bridges", []), "scoped": meta.get("scoped", []),
+                     **({"graph": meta["graph"]} if "graph" in meta else {})}
+        environment = meta["environment"]
+        checked = checked_elaboration(doc["reports"], environment, route_doc)
+        result = {"format": "ve-document@1", "status": "UNVERIFIED",
+                  "source_id": doc["source_id"], "document_id": doc["document_id"],
+                  "coverage": coverage(doc), "reports": checked}
+        if "graph" in route_doc:
+            result["admission"] = run_case("admission", environment, route_doc)
+            result["status"] = "OPEN" if any(u["status"] == "OPEN" for u in doc["units"]) else "CHECKED"
+        return result
     env = doc["environment"]
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
