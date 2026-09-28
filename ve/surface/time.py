@@ -99,6 +99,23 @@ def parse_quantity_sentence(env, source):
     elapsed = re.fullmatch(r"The elapsed duration from (.+?) to (.+?) equals (.+)", text)
     if elapsed:
         offer("elapsed_days", (elapsed[1], elapsed[2], elapsed[3]))
+    points = re.fullmatch(r"(.+?) minus (.+?) equals (.+) percentage points", text)
+    if points:
+        percent_tags = [tag for tag, record in env.units.items()
+                        if record["display"]["kind"] == "percent"]
+        if len(percent_tags) == 1:
+            tag = percent_tags[0]
+            for left, right in product(_terms(env, points[1][0].lower() + points[1][1:]),
+                                       _terms(env, points[2])):
+                payload = {"format": "ve-quantity@1", "formula": ["eq",
+                    ["add", tag, left, ["scale", tag, "-1", right]],
+                    ["decimal", tag, points[3]]]}
+                try:
+                    canonical, _ = elaborate_quantity(env, payload)
+                except VEError as exc:
+                    rejected.append(exc)
+                    continue
+                readings.append(canonical)
     for connector, operation, reverse in rules:
         if text.count(connector) != 1:
             continue
@@ -148,6 +165,15 @@ def render_quantity_sentence(env, canonical):
             if declaration is not None and declaration.verbalisation is not None:
                 return declaration.verbalisation
         raise UnsupportedProfile("Quantity English requires named constants or literals")
+    if (formula[0] == "eq" and formula[1][0] == "add" and
+            formula[1][3][0] == "scale" and formula[1][3][2] == "-1" and
+            formula[2][0] == "num" and formula[1][1] == formula[2][1] and
+            formula[2][1] in env.units and
+            env.units[formula[2][1]]["display"]["kind"] == "percent"):
+        first = term(formula[1][2])
+        second = term(formula[1][3][3])
+        amount = render_coordinate(formula[2][1], int(formula[2][2]), env).removesuffix("%")
+        return first[0].upper() + first[1:] + f" minus {second} equals {amount} percentage points."
     if formula[0] == "elapsed_days":
         return (f"The elapsed duration from {term(formula[1])} to {term(formula[2])} "
                 f"equals {term(formula[3])}.")
