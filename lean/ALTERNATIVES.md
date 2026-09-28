@@ -107,7 +107,7 @@ witnesses replay as DILEMMA with NONE-PERMITTED, JOINTLY-UNDISCHARGEABLE and OVE
 rule-free document's followability certificate replays as FOLLOWABLE. The Python search found no
 followability certificate for b′(A) within 50,000 steps (proof search is outside this item).
 
-`tests/test_alternatives_three_way.py` checks the a, b, c, d, e, j and o scenario shapes:
+`tests/test_alternatives_three_way.py` checks the a, b, c, d, e, f, g, h, j, l5, o, t and u scenario shapes:
 Lean validates each model and reports its clear actions; Python and Rust evaluate
 Lean's closed followability and four profile probes over the same base model.
 The s2 conflict target is also compared three ways.

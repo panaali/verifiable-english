@@ -321,9 +321,9 @@ evaluations. The report is `order-report.json`; `tests/test_order.py` reruns the
 corpus. Rust evaluates checked order ASTs and supplied models via its separate
 order route.
 
-## P0 route fixtures
+## Alternatives route fixtures
 
-`alternatives.py` generates the a, b, c, d, e, j and o scenario shapes from
+`alternatives.py` generates the a, b, c, d, e, f, g, h, j, l5, o, t and u scenario shapes from
 `docs/spec/alternatives.md` §8. `tests/test_alternatives_three_way.py` asks the
 Lean alternatives route to validate each scenario and generate its closed
 followability formula plus existential probes for all four profile words.
@@ -337,6 +337,8 @@ The p1, p2 and p6 cases check that signed rows reject an unstated cell,
 premise, and a new positive row outside the document cells is rejected. For
 p2, Python and Rust also evaluate Lean's followability, avoidability and
 allows formulas on the accepted model.
+
+## P0 route fixtures
 
 `elaborated-document.json` contains the `ve.core@0.2` envelope, two declared
 `$string` literals, a valid model, and three rejected profile combinations.
