@@ -15,7 +15,7 @@ from ve.environment import Environment
 from ve.errors import VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
-from ve.softnorms import SoftEnvironment, SoftNormDocument
+from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
 from tests.test_soft_norms_lean import env, norm, should, ranks
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -120,6 +120,268 @@ def loop_recheck_reproducers():
     raw = env({"outranking": {"mode": "bad"}})
     raw["profiles"].reverse()
     yield "profile-order-after-soft-block", raw, [], "SOFT_INVALID_OUTRANKING"
+
+
+def _predicate(name, **fields):
+    return {"arguments": ["assistant"], "description": name, **fields}
+
+
+def _declare(raw, **entries):
+    """Add predicate entries W1's fixture builder would reject."""
+    raw["vocabulary"]["predicates"].update(entries)
+    return raw
+
+
+def soft2_reproducers():
+    """The soft2 loop findings and one instance of each bug class they exposed."""
+    long_factor = {"decided_by": "assistant", "sufficient": [], "necessary": [],
+                   "factors": ["x" * 201]}
+    yield "soft2-factors-before-next-rule-rank", env(), [
+        norm("a", "x_required", True, mode="default", exception=long_factor),
+        norm("b", "x_required", True, rank="z")], "SOFT_INVALID_FACTORS"
+    yield "soft2-next-rule-rank-after-factors", env(), [
+        norm("b", "x_required", True, rank="z"),
+        norm("a", "x_required", True, mode="default", exception=long_factor)], "SOFT_INVALID_FACTORS"
+    # Environment cross references wait for every rule's fields.
+    raw = _declare(env({"parties": ["p"], "outranking": {"mode": "strict"}}),
+                   z=_predicate("z", instruction_of="missing"))
+    yield "soft2-rule-fields-before-environment-references", raw, [
+        norm("a", "x_required", True, mode="default", exception=long_factor)], "SOFT_INVALID_FACTORS"
+    raw = env({"ranks": ["a", "b"], "outranks": [["a", "b"], ["b", "a"]],
+               "outranking": {"mode": "strict"}})
+    yield "soft2-rule-references-before-rank-cycle", raw, [
+        norm("a", "x_required", True, rank="z")], "SOFT_UNKNOWN_RANK"
+
+    # Malformed declarations are checked after reserved names, never skipped.
+    raw = _declare(env(), soft__a=False)
+    yield "soft2-malformed-reserved-predicate", raw, [], "SOFT_INVALID_NAME"
+    raw = _declare(env({"parties": ["p"], "outranking": {"mode": "strict"}}),
+                   soft__a=False, z=_predicate("z", instruction_of="missing"))
+    yield "soft2-malformed-reserved-before-party", raw, [], "SOFT_INVALID_NAME"
+    raw = _declare(env(), w=False)
+    yield "soft2-malformed-predicate", raw, [], "SOFT_INVALID_INPUT"
+    raw = _declare(env(), w=False, soft__a=_predicate("soft__a"))
+    yield "soft2-reserved-before-malformed-predicate", raw, [], "SOFT_INVALID_NAME"
+    raw = _declare(env({"parties": ["p"], "outranking": {"mode": "strict"}}),
+                   w=False, z=_predicate("z", instruction_of="missing"))
+    yield "soft2-malformed-predicate-before-party", raw, [], "SOFT_INVALID_INPUT"
+    raw = _declare(env(), d=_predicate("d", defined={"arguments": ["assistant"], "body": ["top"]}))
+    yield "soft2-defined-without-definitions", raw, [], "SOFT_INVALID_INPUT"
+
+    # Profiles are one phase with one code, whatever the decoder that sees them first.
+    raw = env()
+    raw["profiles"].reverse()
+    yield "soft2-profiles-reversed", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = env()
+    raw["profiles"].append("soft-norms@0")
+    yield "soft2-profiles-duplicate", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = env({"outranking": {"mode": "bad"}})
+    raw["profiles"].append("soft-norms@0")
+    yield "soft2-declarations-before-profiles", raw, [], "SOFT_INVALID_OUTRANKING"
+    raw = env(profiles=("closure@0", "norms@0", "soft-norms@0"))
+    yield "soft2-checker-profile", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = env(profiles=("norms@0", "other@0", "soft-norms@0"))
+    yield "soft2-unknown-profile", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = _declare(env(profiles=("definitions@0", "norms@0", "soft-norms@0")),
+                   d=_predicate("d", defined={"arguments": ["assistant"], "body": ["top"]}))
+    yield "soft2-definitions-unsupported", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = env()
+    raw["language"] = "ve.core@0.1"
+    yield "soft2-language", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+    raw = env()
+    raw["spec_revision"] = "other"
+    yield "soft2-spec-revision", raw, [], "SOFT_UNSUPPORTED_PROFILE"
+
+    # Inherited W1 classes are fixed by the check's position, not the message.
+    yield "soft2-parties-limit", env({"parties": [f"p{i}" for i in range(9)],
+                                      "outranking": {"mode": "strict"}}), [], "SOFT_RESOURCE_LIMIT"
+    yield "soft2-ranks-limit", env({"ranks": [f"r{i}" for i in range(17)],
+                                    "outranking": {"mode": "strict"}}), [], "SOFT_RESOURCE_LIMIT"
+    yield "soft2-rules-limit", env(), [norm(f"r{i}", "x_required", True) for i in range(257)], \
+        "SOFT_RESOURCE_LIMIT"
+    yield "soft2-duplicate-rule", env(), [norm("a", "x_required", True),
+                                          norm("a", "x_required", False)], "SOFT_DUPLICATE_DECLARATION"
+    chain = [norm("r0", "x_required", True)] + [
+        norm(f"r{i}", "x_required", True, over=[f"r{i - 1}"]) for i in range(1, 17)]
+    yield "soft2-precedence-depth", env(), chain, "SOFT_RESOURCE_LIMIT"
+    carve = [["unary", "q", ["var", 0]]] * 8
+    yield "soft2-derived-carve-out-count", env(extra={"q": _predicate("q")}), [
+        should("a", "x_required", True, unless=carve)], "SOFT_RESOURCE_LIMIT"
+    many = {f"p{i:03}": _predicate(f"p{i:03}") for i in range(300)}
+    yield "soft2-inherited-vocabulary-limit", _declare(env(), **many), [], "SOFT_INVALID_INPUT"
+    yield "soft2-non-string-rank", env(), [norm("a", "x_required", True, rank=7)], \
+        "SOFT_INVALID_RULE_FIELDS"
+    yield "soft2-closure-guard", env(), [norm("a", "x_required", True, guard=(
+        "reach", "plus", ["named", "x_required"], ["var", 0], ["var", 0]), rank="z")], \
+        "SOFT_INVALID_INPUT"
+
+
+# The multi-fault generator. A valid base source, then faults each tagged with its
+# position in the validation table (8) and its code. Faults in one group touch the
+# same field and are never combined; otherwise faults are independent, so the
+# expected diagnostic is the fault with the least table position.
+
+def multi_fault_base():
+    block = {"parties": ["p", "q"], "ranks": ["a", "b", "c"], "outranks": [["a", "b"]],
+             "ties": [["b", "c"]], "outranking": {"mode": "strict"},
+             "exception_decider": "assistant"}
+    raw = _declare(env(block, extra={"u": _predicate("u")}), q=_predicate("q", instruction_of="p"))
+    exception = {"decided_by": "assistant", "sufficient": [["unary", "q", ["var", 0]]],
+                 "necessary": [], "factors": ["f"]}
+    rules = [norm("a0", "x_required", True, mode="default", rank="a", exception=exception),
+             norm("b1", "x_permitted", False, alterable=["p", "q"]),
+             norm("c2", "x_required", False, mode="default", rank="b", over=["a0"],
+                  exception={"sufficient": [], "necessary": [], "factors": []}),
+             norm("d3", "x_permitted", True, mode="default", exception=dict(exception))]
+    return raw, rules
+
+
+def _set(path, value):
+    def apply(raw, rules):
+        target = raw if path[0] == "env" else rules
+        for key in path[1:-1]:
+            target = target[key]
+        if value is _DELETE:
+            del target[path[-1]]
+        else:
+            target[path[-1]] = deepcopy(value)
+    return apply
+
+
+_DELETE = object()
+
+
+def _profiles(update):
+    def apply(raw, rules):
+        raw["profiles"] = update(raw["profiles"])
+    return apply
+
+
+def multi_faults():
+    """(name, group, table position, code, mutation)."""
+    E, R = ("env",), ("rules",)
+    V, S = E + ("vocabulary",), E + ("vocabulary", "soft")
+    P = V + ("predicates",)
+    rule = lambda i, *path: R + (i, "norm") + path
+    return [
+        ("language", "language", (1, 2), "SOFT_UNSUPPORTED_PROFILE", _set(E + ("language",), "x")),
+        ("revision", "revision", (1, 4), "SOFT_UNSUPPORTED_PROFILE", _set(E + ("spec_revision",), "x")),
+        ("vocabulary-field", "vocabulary", (1, 5), "SOFT_INVALID_INPUT", _set(V + ("extra",), {})),
+        ("profiles-shape", "profiles", (1, 3), "SOFT_UNSUPPORTED_PROFILE", _set(E + ("profiles",), "x")),
+        ("reserved-name", "soft__a", (2, 1, "soft__a"), "SOFT_INVALID_NAME",
+         _set(P + ("soft__a",), False)),
+        ("reserved-name-z", "soft__z", (2, 1, "soft__z"), "SOFT_INVALID_NAME",
+         _set(P + ("soft__z",), _predicate("soft__z"))),
+        ("instruction-type", "q-instruction", (2, 2), "SOFT_INVALID_INPUT",
+         _set(P + ("q", "instruction_of"), 3)),
+        ("malformed-predicate", "w", (2, 3), "SOFT_INVALID_INPUT", _set(P + ("w",), False)),
+        ("block-field", "block", (2, 4), "SOFT_INVALID_BLOCK", _set(S + ("extra",), 1)),
+        ("parties-shape", "parties", (2, 5), "SOFT_INVALID_ARRAY", _set(S + ("parties",), "p")),
+        ("party-name", "parties", (2, 7), "SOFT_INVALID_NAME", _set(S + ("parties",), ["p", "Q!"])),
+        ("party-repeat", "parties", (2, 7), "SOFT_DUPLICATE_DECLARATION",
+         _set(S + ("parties",), ["p", "q", "p"])),
+        ("rank-repeat", "ranks", (2, 8), "SOFT_DUPLICATE_DECLARATION",
+         _set(S + ("ranks",), ["a", "b", "c", "a"])),
+        ("outranking-mode", "outranking", (2, 9), "SOFT_INVALID_OUTRANKING",
+         _set(S + ("outranking",), {"mode": "other"})),
+        ("strict-decider", "outranking", (2, 10), "SOFT_STRICT_OUTRANKING_DECIDER",
+         _set(S + ("outranking",), {"mode": "strict", "decided_by": "x"})),
+        ("holistic-decider", "outranking", (2, 12), "SOFT_MISSING_DECIDER",
+         _set(S + ("outranking",), {"mode": "holistic"})),
+        ("exception-decider", "exception-decider", (2, 14), "SOFT_INVALID_DECIDER",
+         _set(S + ("exception_decider",), "")),
+        ("outranks-pair", "outranks", (2, 16), "SOFT_INVALID_OUTRANKS_PAIR",
+         _set(S + ("outranks",), [["a", "b"], ["a", "a"]])),
+        ("ties-pair", "ties", (2, 17), "SOFT_INVALID_TIES_PAIR",
+         _set(S + ("ties",), [["b", "c"], ["b", "c"]])),
+        ("profiles-order", "profiles", (3, 1), "SOFT_UNSUPPORTED_PROFILE", _profiles(lambda ps: ps[::-1])),
+        ("profiles-repeat", "profiles", (3, 1), "SOFT_UNSUPPORTED_PROFILE",
+         _profiles(lambda ps: sorted(ps + ["norms@0"]))),
+        ("profile-unknown", "profiles", (3, 2), "SOFT_UNSUPPORTED_PROFILE",
+         _profiles(lambda ps: sorted(ps + ["zz@0"]))),
+        ("profile-norms", "profiles", (3, 3), "SOFT_UNSUPPORTED_PROFILE",
+         _profiles(lambda ps: [p for p in ps if p != "norms@0"])),
+        ("profile-checker", "profiles", (3, 4), "SOFT_UNSUPPORTED_PROFILE",
+         _profiles(lambda ps: sorted(ps + ["closure@0"]))),
+        *[fault for i in range(4) for fault in (
+            (f"r{i}-field", f"r{i}-extra", (4, i, 1), "SOFT_INVALID_INPUT", _set(rule(i, "extra"), 1)),
+            (f"r{i}-sign", f"r{i}-sign", (4, i, 2), "SOFT_INVALID_INPUT", _set(rule(i, "sign"), "yes")),
+            (f"r{i}-mode", f"r{i}-mode", (4, i, 3), "SOFT_INVALID_RULE_FIELDS", _set(rule(i, "mode"), "x")),
+            (f"r{i}-rank-type", f"r{i}-rank", (4, i, 4), "SOFT_INVALID_RULE_FIELDS",
+             _set(rule(i, "rank"), 7)),
+            (f"r{i}-alterable", f"r{i}-alterable", (4, i, 5), "SOFT_INVALID_ALTERABLE",
+             _set(rule(i, "alterable"), ["q", "p"])),
+            (f"r{i}-hard-type", f"r{i}-hard", (4, i, 6), "SOFT_INVALID_RULE_FIELDS",
+             _set(rule(i, "hard"), "yes")),
+            (f"r{i}-rank", f"r{i}-rank", (5, 4, i, 5), "SOFT_UNKNOWN_RANK", _set(rule(i, "rank"), "z")),
+            (f"r{i}-party", f"r{i}-alterable", (5, 4, i, 6), "SOFT_UNKNOWN_PARTY",
+             _set(rule(i, "alterable"), ["zz"])),
+            (f"r{i}-guard", f"r{i}-guard", (5, 4, i, 7), "SOFT_INVALID_INPUT",
+             _set(rule(i, "guard"), ["unary", "nosuch", ["var", 0]])),
+            (f"r{i}-predicate", f"r{i}-predicate", (5, 4, i, 4), "SOFT_INVALID_INPUT",
+             _set(rule(i, "predicate"), "u")),
+            (f"r{i}-over", f"r{i}-over", (5, 4, i, 9), "SOFT_INVALID_INPUT",
+             _set(rule(i, "over"), ["nosuch"])),
+        )],
+        *[fault for i in (0, 2, 3) for fault in (
+            (f"r{i}-hard", f"r{i}-hard", (4, i, 7), "SOFT_HARD_CONSTRAINT", _set(rule(i, "hard"), True)),
+            (f"r{i}-exception", f"r{i}-factors", (4, i, 9), "SOFT_MISSING_EXCEPTION",
+             _set(rule(i, "exception", "factors"), _DELETE)),
+            (f"r{i}-sufficient", f"r{i}-sufficient", (4, i, 13), "SOFT_EXCEPTION_ARRAY",
+             _set(rule(i, "exception", "sufficient"), {})),
+            (f"r{i}-condition-syntax", f"r{i}-sufficient", (4, i, 13), "SOFT_INVALID_INPUT",
+             _set(rule(i, "exception", "sufficient"), [["bogus"]])),
+            (f"r{i}-factors", f"r{i}-factors", (4, i, 14), "SOFT_INVALID_FACTORS",
+             _set(rule(i, "exception", "factors"), ["x" * 201])),
+            (f"r{i}-condition", f"r{i}-sufficient", (5, 4, i, 8), "SOFT_INVALID_EXCEPTION_CONDITION",
+             _set(rule(i, "exception", "sufficient"), [["unary", "x_permitted", ["var", 0]]])),
+        )],
+        *[fault for i in (0, 3) for fault in (
+            (f"r{i}-decider-type", f"r{i}-decider", (4, i, 10), "SOFT_INVALID_DECIDER",
+             _set(rule(i, "exception", "decided_by"), 3)),
+            (f"r{i}-decider", f"r{i}-decider", (4, i, 12), "SOFT_INVALID_DECIDER",
+             _set(rule(i, "exception", "decided_by"), "")),
+        )],
+        ("r1-strict-exception", "r1-exception", (4, 1, 8), "SOFT_STRICT_EXCEPTION",
+         _set(rule(1, "exception"), {})),
+        ("inherited-decider", "exception-decider", (4, 2, 11), "SOFT_MISSING_DECIDER",
+         _set(S + ("exception_decider",), _DELETE)),
+        ("instruction-party", "q-instruction", (5, 1), "SOFT_UNKNOWN_PARTY",
+         _set(P + ("q", "instruction_of"), "zz")),
+        ("outranks-rank", "outranks", (5, 2, 0), "SOFT_UNKNOWN_RANK", _set(S + ("outranks",), [["a", "z"]])),
+        ("ties-rank", "ties", (5, 2, 1), "SOFT_UNKNOWN_RANK", _set(S + ("ties",), [["b", "z"]])),
+        ("duplicate-rule", "r3-name", (5, 3), "SOFT_DUPLICATE_DECLARATION", _set(rule(3, "name"), "b1")),
+        ("rank-cycle", "outranks", (6, 1), "SOFT_DEPENDENCY_CYCLE",
+         _set(S + ("outranks",), [["a", "b"], ["b", "a"]])),
+        ("tie-against-order", "ties", (6, 2), "SOFT_TIE_AGAINST_ORDER",
+         _set(S + ("ties",), [["b", "c"], ["a", "b"]])),
+        ("tie-repeat", "ties", (6, 3), "SOFT_DUPLICATE_DECLARATION",
+         _set(S + ("ties",), [["b", "c"], ["c", "b"]])),
+        ("precedence-cycle", "r0-over", (6, 4), "SOFT_DEPENDENCY_CYCLE", _set(rule(0, "over"), ["c2"])),
+        ("soft-over-hard", "r3-over", (6, 7), "SOFT_OVER_HARD", _set(rule(3, "over"), ["b1"])),
+    ]
+
+
+def multi_fault_cases(pairs=900, triples=600, seed=0):
+    """Two or three faults from different phases, and two within one phase.
+
+    Every pair within one phase is kept; the other pairs and the triples are a
+    deterministic sample. Yields (name, raw, rules, expected code)."""
+    faults = multi_faults()
+    rng = random.Random(seed)
+    combos = [c for c in combinations(faults, 2) if c[0][1] != c[1][1]]
+    same_phase = [c for c in combos if c[0][2][0] == c[1][2][0]]
+    other = [c for c in combos if c[0][2][0] != c[1][2][0]]
+    chosen = same_phase + rng.sample(other, min(pairs, len(other)))
+    three = [c for c in combinations(faults, 3) if len({f[1] for f in c}) == 3
+             and len({f[2][0] for f in c}) >= 2]
+    chosen += rng.sample(three, min(triples, len(three)))
+    for combo in chosen:
+        raw, rules = multi_fault_base()
+        for fault in combo:
+            fault[4](raw, rules)
+        first = min(combo, key=lambda f: f[2])
+        yield "+".join(f[0] for f in combo), raw, rules, first[3]
 
 
 def rejected_sources():
@@ -259,9 +521,15 @@ def generated_invalid_exceptions():
         yield env(), [norm("a", "x_required", True, mode="default", exception=exception)]
 
 
+def expected_rejections():
+    """Named sources whose first diagnostic the validation table (8) fixes."""
+    return [*loop_recheck_reproducers(), *soft2_reproducers(), *multi_fault_cases()]
+
+
 def compare_rejected():
+    named = expected_rejections()
     cases = (rejected_sources() +
-             [(raw, rules) for _, raw, rules, _ in loop_recheck_reproducers()] +
+             [(raw, rules) for _, raw, rules, _ in named] +
              list(generated_invalid_soft_blocks()) +
              list(generated_invalid_soft_rules()) +
              list(combined_invalid_soft_blocks()) +
@@ -269,7 +537,7 @@ def compare_rejected():
     expected = []
     for raw, rules in cases:
         try:
-            SoftNormDocument(SoftEnvironment(raw), rules)
+            load_soft_document(raw, rules)
         except VEError as exc:
             expected.append((str(exc), exc.code))
         else:
@@ -277,7 +545,7 @@ def compare_rejected():
     wire = [{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": rules}
             for i, (raw, rules) in enumerate(cases)]
     run = subprocess.run([str(LEAN), "-"], input=json.dumps(wire), text=True,
-                         capture_output=True, timeout=120, check=False)
+                         capture_output=True, timeout=300, check=False)
     rows = json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong rejected row count")
@@ -286,6 +554,10 @@ def compare_rejected():
             raise AssertionError((i, error, code, row))
         if i < len(rejected_sources()) and row.get("error") != error:
             raise AssertionError((i, error, row))
+    offset = len(rejected_sources())
+    for i, (name, _, _, table_code) in enumerate(named):
+        if expected[offset + i][1] != table_code:
+            raise AssertionError((name, table_code, expected[offset + i]))
     return len(cases)
 
 
