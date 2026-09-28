@@ -421,6 +421,95 @@ def soft_limits_reproducers():
         should(f"n{i}", "x_required", True) for i in range(3)], "SOFT_RESOURCE_LIMIT"
 
 
+def _plain_chain(count, guard_of, extra_rules=()):
+    """Plain deny predicates p0 … p{count-1}; a positive strict rule on each, guarded by
+    `top` for p0 and `guard_of(<predecessor atom>)` after, then `extra_rules`."""
+    extra = {f"p{i}": _predicate(f"p{i}", regulated={"role": "plain", "default": "deny"})
+             for i in range(count)}
+    rules = [norm(f"r{i}", f"p{i}", True,
+                  guard=["top"] if i == 0 else guard_of(["unary", f"p{i - 1}", ["var", 0]]))
+             for i in range(count)]
+    return env(extra=extra), rules + list(extra_rules)
+
+
+def _twice(atom):
+    return ["and", atom, atom]
+
+
+def _negations(times):
+    def wrap(formula):
+        for _ in range(times):
+            formula = ["not", formula]
+        return formula
+    return wrap
+
+
+def _opposed(predicate):
+    """Two opposing default rules on one predicate: a colliding pair, one coherence premise."""
+    return [should("da", predicate, True), should("db", predicate, False)]
+
+
+def _diamond(levels, width, default=False):
+    """`levels` ranks of `width` strict rules on x_required, each over every rule of
+    the level before: width ** (levels - 1) precedence paths from the top."""
+    rules = [norm(f"r{i}x{j}", "x_required", True,
+                  over=[f"r{i - 1}x{m}" for m in range(width)] if i else [])
+             for i in range(levels) for j in range(width)]
+    return env(), rules + ([should("d", "x_required", True)] if default else [])
+
+
+def _rank_tower(ranks_count, per_rank, mode="strict", dense=True):
+    """Default rules of alternating sign at every rank; `dense` declares every pair of
+    the order, so the rank graph has 2 ** (ranks_count - 2) paths from the top."""
+    names = [f"k{i}" for i in range(ranks_count)]
+    edges = ([[a, b] for i, a in enumerate(names) for b in names[i + 1:]] if dense
+             else [[a, b] for a, b in zip(names, names[1:])])
+    block = {"ranks": names, "outranks": edges, "outranking": {"mode": mode}}
+    if mode == "holistic":
+        block["outranking"]["decided_by"] = "assistant"
+    return env(block), [should(f"n{i}x{j}", "x_required", (i + j) % 2 == 0, rank=names[i])
+                        for i in range(ranks_count) for j in range(per_rank)]
+
+
+def soft4_reproducers():
+    """soft4-looprecheck1.final.md B3 and its class: a derived structure whose
+    unfolding is exponential in the source (outcome expansion across layers,
+    precedence paths, dominance over ranks), built before its limit was checked.
+
+    Python raised RecursionError or ran for hours and Lean ran for hours; each is
+    now sized from per-rule tables and rejected at its check by both."""
+    raw, rules = _plain_chain(26, _negations(40), _opposed("p25"))
+    yield "soft4-coherence-negations-26", raw, rules, "SOFT_RESOURCE_LIMIT"
+    raw, rules = _plain_chain(40, _twice, _opposed("p39"))
+    yield "soft4-coherence-doubling-40", raw, rules, "SOFT_RESOURCE_LIMIT"
+    raw, rules = _diamond(15, 16)
+    yield "soft4-layer-diamond-15x16", raw, rules, "SOFT_RESOURCE_LIMIT"
+    raw, rules = _diamond(15, 16, default=True)
+    yield "soft4-derived-diamond-15x16", raw, rules, "SOFT_RESOURCE_LIMIT"
+    for mode in ("strict", "holistic"):
+        raw, rules = _rank_tower(16, 2, mode)
+        yield f"soft4-derived-rank-tower-{mode}", raw, rules, "SOFT_RESOURCE_LIMIT"
+    raw, rules = _rank_tower(16, 15, "holistic")
+    yield "soft4-vocabulary-rank-tower", raw, rules, "SOFT_RESOURCE_LIMIT"
+
+
+def soft4_near_limit():
+    """Each exponential family swept across its limit, so both sides of every boundary
+    are compared: coherence premises by nodes and by depth, layers and derived
+    carve-outs over precedence diamonds, derived carve-outs over rank towers."""
+    for count in range(6, 12):
+        yield (f"soft4-near-doubling-{count}", *_plain_chain(count, _twice, _opposed(f"p{count - 1}")))
+    for times in range(6, 12):
+        yield (f"soft4-near-negations-{times}", *_plain_chain(5, _negations(times), _opposed("p4")))
+    for levels, width in ((3, 3), (4, 3), (5, 3), (6, 3), (4, 4), (5, 4), (3, 6)):
+        for default in (False, True):
+            yield (f"soft4-near-diamond-{levels}x{width}{'-default' if default else ''}",
+                   *_diamond(levels, width, default))
+    for ranks_count in range(3, 10):
+        for mode in ("strict", "holistic"):
+            yield (f"soft4-near-rank-tower-{ranks_count}-{mode}", *_rank_tower(ranks_count, 1, mode))
+
+
 def near_limit_sources(count=120, seed=0):
     """Seeded sources near every budget: deep guards, many exception
     conditions, large guards (the 8191-node doubled tree among them), shared
@@ -482,7 +571,8 @@ def near_limit_cases():
     return [*soft3_accepted(), *((name, raw, rules) for name, raw, rules, _ in rust_sources()),
             ("multi-fault-base", raw, rules),
             *((name, raw, rules) for name, raw, rules, _ in soft_limits_reproducers()),
-            *near_limit_sources()]
+            *((name, raw, rules) for name, raw, rules, _ in soft4_reproducers()),
+            *soft4_near_limit(), *near_limit_sources()]
 
 
 def compare_near_limit(sources):

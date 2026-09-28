@@ -9,7 +9,8 @@ A `SoftDoc` is a W1 document whose rules carry the soft attributes; `D.base` is 
 W1 document obtained by dropping them. Nothing here refers to the elaboration: the
 generated formulas, `soften` and `WellFormedSoft` are in `Soften.lean`.
 
-The rank closure is computed by `belowF` with fuel `ranks.length`; on a document
+The rank closure is specified by `belowF` with fuel `ranks.length` and computed once
+per environment, one level at a time (`closureOf`, `mem_belowLevels`); on a document
 whose rank graph passes the shared `VE.Route.dependencyOrder` check it is exactly
 reachability (`outranksPlus_iff_path`), hence irreflexive and transitive. `rankHeight`
 is the spec's longest ascending chain, computed with the same fuel; `rankHeight_lt`
@@ -53,6 +54,9 @@ structure SoftEnv where
   exceptionDecider : Option String
   /-- base predicate ↦ party -/
   instructionOf : List (String × String)
+  /-- The rank closure, `closureOf ranks outranks`, computed once when the block is
+  decoded (`RanksValid.closure`); `outranksPlus` reads it. -/
+  below : List (String × List String)
   deriving DecidableEq, Repr
 
 structure SoftTree where
@@ -168,8 +172,30 @@ def belowF (env : SoftEnv) : Nat → String → List String
   | 0, _ => []
   | f + 1, a => (directBelow env a).flatMap (fun c => c :: belowF env f c)
 
+def dedup {α : Type} [BEq α] : List α → List α
+  | [] => []
+  | x :: xs => if (dedup xs).contains x then dedup xs else x :: dedup xs
+
+/-- The entry of `a` in a closure table (`[]` if absent). -/
+def belowAt (tbl : List (String × List String)) (a : String) : List String :=
+  ((tbl.find? (·.1 == a)).map (·.2)).getD []
+
+/-- `belowF` at level `f` for every source of an edge, one level at a time, each
+entry without repeats: the same members (`mem_belowLevels`), without enumerating
+the paths of the rank graph (exponential in a dense declared order). -/
+def belowLevels (outranks : List (String × String)) : Nat → List (String × List String)
+  | 0 => []
+  | f + 1 =>
+    let prev := belowLevels outranks f
+    (dedup (outranks.map (·.1))).map (fun a =>
+      (a, dedup (((outranks.filter (·.1 == a)).map (·.2)).flatMap (fun c => c :: belowAt prev c))))
+
+/-- The closure table stored in `SoftEnv.below`. -/
+def closureOf (ranks : List String) (outranks : List (String × String)) : List (String × List String) :=
+  belowLevels outranks ranks.length
+
 /-- `a outranks⁺ b`: the transitive closure of the declared edges. -/
-def outranksPlus (env : SoftEnv) (a b : String) : Bool := (belowF env env.ranks.length a).contains b
+def outranksPlus (env : SoftEnv) (a b : String) : Bool := (belowAt env.below a).contains b
 
 /-- The rank dependency graph: `a → b` for each declared `a outranks b`. -/
 def rankNodes (env : SoftEnv) : List DepNode := env.ranks.map (fun a => ⟨a, directBelow env a⟩)
@@ -245,10 +271,6 @@ def outweighsName (a L H : String) : String := "soft__outweighs__" ++ L ++ "__" 
 `H` above `L`. -/
 def pairTriple (D : SoftDoc) (M N : SoftNode) : String × String × String :=
   if higher D M N then (act D N, rk N, rk M) else (act D M, rk M, rk N)
-
-def dedup {α : Type} [BEq α] : List α → List α
-  | [] => []
-  | x :: xs => if (dedup xs).contains x then dedup xs else x :: dedup xs
 
 /-- The `outweighs` triples, under the holistic flag only, in `CP(T)` order, first occurrence kept. -/
 def outweighsTriples (D : SoftDoc) : List (String × String × String) :=
@@ -336,6 +358,7 @@ variable (env : SoftEnv)
 structure RanksValid : Prop where
   declared : ∀ e ∈ env.outranks, e.1 ∈ env.ranks ∧ e.2 ∈ env.ranks
   order : ∃ o, dependencyOrder (rankNodes env) = .ok o
+  closure : env.below = closureOf env.ranks env.outranks
 
 variable {env}
 
@@ -428,9 +451,53 @@ theorem path_belowF (hv : RanksValid env) {a b : String} (h : DepPath (rankNodes
   have ha : a ∈ o := (hm a).mpr (path_source_mem hv h).1
   exact key _ a b (Nat.lt_of_lt_of_le (idxOf_lt_length ha) hlen) h
 
+theorem mem_dedup {α : Type} [BEq α] [LawfulBEq α] {x : α} : ∀ {l : List α}, x ∈ dedup l ↔ x ∈ l
+  | [] => by simp [dedup]
+  | y :: ys => by
+    simp only [dedup]
+    split
+    · rename_i h
+      rw [mem_dedup, List.mem_cons]
+      refine ⟨Or.inr, ?_⟩
+      rintro (rfl | h')
+      · exact mem_dedup.mp (List.contains_iff_mem.mp h)
+      · exact h'
+    · simp only [List.mem_cons, mem_dedup]
+
+theorem belowAt_map (keys : List String) (g : String → List String) (a : String) :
+    belowAt (keys.map (fun k => (k, g k))) a = if a ∈ keys then g a else [] := by
+  induction keys with
+  | nil => simp [belowAt]
+  | cons k ks ih =>
+    by_cases h : k = a
+    · subst h
+      simp [belowAt]
+    · unfold belowAt at ih ⊢
+      have hk : (k == a) = false := by simpa using h
+      simp only [List.map_cons, List.find?_cons, hk, List.mem_cons] at ih ⊢
+      rw [ih]
+      by_cases ha : a ∈ ks
+      · simp [ha]
+      · simp [ha, Ne.symm h]
+
+/-- The closure table has exactly the members of `belowF`. -/
+theorem mem_belowLevels : ∀ (f : Nat) (a b : String),
+    b ∈ belowAt (belowLevels env.outranks f) a ↔ b ∈ belowF env f a
+  | 0, a, b => by simp [belowLevels, belowAt, belowF]
+  | f + 1, a, b => by
+    simp only [belowLevels, belowAt_map, mem_dedup]
+    split
+    · simp only [mem_dedup, List.mem_flatMap, List.mem_cons, mem_belowLevels f, belowF, directBelow]
+    · rename_i h
+      have hd : directBelow env a = [] := by
+        apply List.eq_nil_iff_forall_not_mem.mpr
+        intro c hc
+        exact h (List.mem_map.mpr ⟨(a, c), mem_directBelow.mp hc, rfl⟩)
+      simp [belowF, hd]
+
 theorem outranksPlus_iff_path (hv : RanksValid env) (a b : String) :
     outranksPlus env a b = true ↔ DepPath (rankNodes env) a b := by
-  simp only [outranksPlus, List.contains_iff_mem]
+  simp only [outranksPlus, List.contains_iff_mem, hv.closure, closureOf, mem_belowLevels]
   exact ⟨belowF_path hv _ a b, path_belowF hv⟩
 
 theorem outranksPlus_irrefl (hv : RanksValid env) (a : String) : outranksPlus env a a = false := by

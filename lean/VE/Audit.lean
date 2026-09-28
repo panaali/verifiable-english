@@ -960,6 +960,7 @@ import VE.SoftNorms.Run
 #print axioms VE.SoftNorms.appliesD_prime
 #print axioms VE.SoftNorms.authority_independent
 #print axioms VE.SoftNorms.baseAdmissiblePrime_of_valid
+#print axioms VE.SoftNorms.belowAt_map
 #print axioms VE.SoftNorms.belowF_mono
 #print axioms VE.SoftNorms.belowF_path
 #print axioms VE.SoftNorms.blocked_denote
@@ -1021,6 +1022,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.expTable_cone
 #print axioms VE.SoftNorms.find_key
 #print axioms VE.SoftNorms.flatMap_disjoint
+#print axioms VE.SoftNorms.fsize_pos
 #print axioms VE.SoftNorms.fuel_soften
 #print axioms VE.SoftNorms.hard_never_weighed
 #print axioms VE.SoftNorms.hard_never_weighed_global
@@ -1040,16 +1042,19 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.incompatible_symm
 #print axioms VE.SoftNorms.le_maxOf
 #print axioms VE.SoftNorms.length_le_of_nodup_subset
+#print axioms VE.SoftNorms.limitWalk_eq
 #print axioms VE.SoftNorms.liveStrictIn_denote
 #print axioms VE.SoftNorms.liveStrict_core
 #print axioms VE.SoftNorms.live_denote
 #print axioms VE.SoftNorms.maxOf_le
+#print axioms VE.SoftNorms.mem_belowLevels
 #print axioms VE.SoftNorms.mem_childrenIn_iff
 #print axioms VE.SoftNorms.mem_childrenIn_map
 #print axioms VE.SoftNorms.mem_children_core
 #print axioms VE.SoftNorms.mem_children_map
 #print axioms VE.SoftNorms.mem_children_prime
 #print axioms VE.SoftNorms.mem_collidingPairs
+#print axioms VE.SoftNorms.mem_dedup
 #print axioms VE.SoftNorms.mem_directBelow
 #print axioms VE.SoftNorms.mem_preds_anyF
 #print axioms VE.SoftNorms.mem_preds_atom
@@ -1143,9 +1148,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.substWith_foldl_or
 #print axioms VE.SoftNorms.subst_selects_blocked
 #print axioms VE.SoftNorms.term_embed
+#print axioms VE.SoftNorms.tick_eq
 #print axioms VE.SoftNorms.universal_down
 #print axioms VE.SoftNorms.weighing_point_sound
 #print axioms VE.SoftNorms.weighing_points_complete
 #print axioms VE.SoftNorms.weighing_sub_decisions
+#print axioms VE.SoftNorms.withinLimits_iff
 #print axioms VE.SoftNorms.yieldsD_prime
 #print axioms VE.SoftNorms.yields_strict

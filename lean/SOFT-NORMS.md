@@ -14,8 +14,8 @@ passes); `VE.lean` and `VE/Audit.lean` gained imports and audit entries only, an
 
 | File | Contents |
 |---|---|
-| `Tree.lean` | `Mode`, `Outranking`, `Exception`, `SoftNode` (a W1 `Node` plus mode, rank, alterable, exception, hard), `SoftEnv`, `SoftTree`, `SoftDoc` and its W1 base; declarations (`sortsOf`, `dualPerm`, `dualOblig`, `actKey`, `act`); children; the rank closure `outranksPlus` and `rankHeight`; `Incompatible`, `Comparable`, `collidingPairs`; the decision vocabulary (`exceptedName`, `offName`, `outweighsName`, `decisions`, `envPrime`, `weighingSyms`, `attributed`) |
-| `Soften.lean` | every generated formula of `ValueSoft` (`strictDecidesF` on the strict core, `liveF`, `blockedF`, `eligibleF`, `domWith`/`effF`/`dominatedF`), `derived`, `derivedList`, `primeNode`, `soften`; `selects'`, `defaultDecidesF`, `excPremises`, `cohPremise(s)`, `softPremises`; the executable `checkSoft`/`validateSoft`/`WellFormedSoft` with the section 8 diagnostics; `SoftValid`; shape theorems |
+| `Tree.lean` | `Mode`, `Outranking`, `Exception`, `SoftNode` (a W1 `Node` plus mode, rank, alterable, exception, hard), `SoftEnv`, `SoftTree`, `SoftDoc` and its W1 base; declarations (`sortsOf`, `dualPerm`, `dualOblig`, `actKey`, `act`); children; the rank closure `outranksPlus` (read from `SoftEnv.below`, computed once per environment by `closureOf`, with the members of `belowF`: `mem_belowLevels`) and `rankHeight`; `Incompatible`, `Comparable`, `collidingPairs`; the decision vocabulary (`exceptedName`, `offName`, `outweighsName`, `decisions`, `envPrime`, `weighingSyms`, `attributed`) |
+| `Soften.lean` | every generated formula of `ValueSoft` (`strictDecidesF` on the strict core, `liveF`, `blockedF`, `eligibleF`, `domWith`/`effF`/`dominatedF`), `derived`, `derivedList`, `primeNode`, `soften`; `selects'`, `defaultDecidesF`, `excPremises`, `cohPremise(s)`, `softPremises`; the sizes of the generated formulas computed without building them (`fsize`, `derivedSizes`, `generatedSizes`; `withinLimits_iff`); `checkW1`/`validateW1` (W1's `check`/`validate` with the precedence height memoized per level); the executable `checkSoft`/`validateSoft`/`WellFormedSoft` with the section 8 diagnostics; `SoftValid`; shape theorems |
 | `Semantics.lean` | the direct semantics (`LiveD` … `DecidesSoftD`, `ValueSoft`, `IntendedSoftAt`, `holdsSoft`); denotation lemmas; `soften_faithful`; fuel, existence, rank resolution, hard over soft, weighing independence, the cone and its independence theorems, `rank_acyclic`, `weighing_points_complete` |
 | `Coherence.lean` | `backgroundBase'`, `background'`, `BaseAdmissible'`, `PrefixAdmissible'`, `NoStrictCollision`, `NoHardPairConflict`, `SoftConflictFree`; the canonical interpretation `canon`; the decomposition and its consequences; `softConflictFreeCheck`; witnesses; `InFragment`, `BaseSubstructure`; the restated route (`softSymLayer`, `softChain`, `softRoute`) and its theorems |
 | `RankProof.lean` | Unconditional rank-resolution proof over the substituted base formulas |
@@ -100,7 +100,11 @@ substructure embedding, route plumbing), audited with the same allowlist.
 ## Statement deviations (all recorded here for the reviewers)
 
 1. `WellFormedSoft` lives in `Soften.lean`, not `Tree.lean`: its last step is W1's
-   `validate` on `soften D`.
+   `validate` on `soften D`. Its diagnostics run `checkW1`, W1's `check` with the same
+   checks and messages but the precedence height memoized per level, because W1's
+   `height` recursion visits every path of a DAG of wide diamonds; `softSemanticCheck`
+   still requires W1's own `WellFormed (soften D)`, reached only once every generated
+   structure is within the limits.
 2. `hard_over_soft_base` writes `φ°` as `circ D φ := subst (soften D).T (size (soften D)) φ`
    and the conjunction as `VE.Formula.and (circ D _) (circ D _)`.
 3. `cone_independent`, `hard_never_weighed_global` and `authority_independent` take
@@ -114,6 +118,14 @@ substructure embedding, route plumbing), audited with the same allowlist.
    `outranks⁺` chain; stable at that fuel, `heightR_stable`).
 8. `soft_route_intended` is the conflict-freedom-free half of `soft_route_acceptance`
    (W1 has `norms_route_intended`), used by `Wire.soft_wire_acceptance`.
+9. `SoftEnv` carries `below`, the rank closure computed when the block is decoded, so
+   `outranksPlus` is a lookup instead of a path enumeration of the rank graph;
+   `RanksValid.closure` states that it is `closureOf ranks outranks`, checked by
+   `softSemanticCheck`.
+10. The limit checks of 8 (6.9, 6.11, 6.12) compare sizes computed from per-rule tables
+   (`fsize`, `derivedSizes`, `generatedSizes`) with `MAX_NODES` and `MAX_DEPTH` before
+   the formulas are built, then check the built formulas with `withinLimits`;
+   `withinLimits_iff` equates the two on any formula.
 
 ## The `ve_soft_norms_route` cases (for the Python harness)
 
