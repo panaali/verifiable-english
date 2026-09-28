@@ -91,32 +91,46 @@ and Rust, but no theorem covers it. The Lean side trusts the kernel and its thre
 `lean/audit.py` into `lean/axioms.txt`), the compiler and runtime (`lean:compiler`), the runner dispatch
 (`lean:runner-glue`) and the hand-written decoders.
 
-**Hand-written Lean decoders (`lean:decoders`), 1,862 lines.** These are the JSON parser, the wire decoders, the
-canonical serializers and the SHA-256 identity code. No refinement theorem relates them to the wire specification.
-Decoded models are proved admissible and decoded formulas are typed by the proved checker, but the correspondence
-with the specified wire format is trusted. The manifest pins each range, and the test checks the following:
+**Hand-written Lean decoders (`lean:decoders`), 1,886 lines.** These are the JSON parser, the wire decoders, the
+canonical serializers, the SHA-256 identity code and the norms document split that rewrites a document before it
+is decoded. No refinement theorem relates them to the wire specification. Decoded models are proved admissible and
+decoded formulas are typed by the proved checker, but the correspondence with the specified wire format is trusted.
+The manifest pins each range, and the test checks the following:
 
 - every range starts and ends on a declaration boundary;
 - every listed declaration starts inside a range;
-- the ranges sum to `total_lines`.
+- the ranges sum to `total_lines`;
+- each file's line count and SHA-256 equal the pinned `lines` and `sha256`.
 
-Moving decoder code therefore forces a manifest update.
+The last check pins the whole file, not only the ranges: code appended right after a range, or any other edit to a
+decoder file, fails the test until a reviewer confirms the ranges still cover the decoders and updates the pins.
+Every other Lean file that reads or builds JSON must be classified under `other_json` with the reason it is not a
+decoder (runner glue, the order surface parser, theorem statements, executable regressions, the English harness).
+The test compares that classification with a scan of `lean/`, so a new JSON-handling file cannot go unlisted.
 
-| File | Lines | Ranges |
-|---|---:|---|
-| `lean/VE/Json.lean` | 136 | 1–136 |
-| `lean/VE/Bridge.lean` | 235 | 14–248 |
-| `lean/VE/CertificateWire.lean` | 164 | 11–163 (SHA-256, canonical JSON, trace decoders), 177–187 |
-| `lean/VE/Closure/Bridge.lean` | 58 | 9–66 |
-| `lean/VE/Core/Bridge.lean` | 117 | 10–126 |
-| `lean/VE/Core/Wire.lean` | 49 | 10–58 |
-| `lean/VE/Route/Wire.lean` | 353 | 24–311, 380–388, 418–458, 528–535, 586–592 |
-| `lean/VE/Order/Wire.lean` | 217 | 24–233, 247–253 |
-| `lean/VE/Norms/Wire.lean` | 213 | 24–236 |
-| `lean/VE/Route/Gate.lean` | 38 | 126–163 (partly covered by `decodeEnvelope_sound`) |
-| `lean/VE/Route/Admission.lean` | 184 | 101–124, 206–245, 421–540 |
-| `lean/VE/Norms/Replay.lean` | 69 | 92–140, 272–291 |
-| `lean/VE/Definitions/Bundle.lean` | 29 | 393–421 |
+`lean/VE/Norms/Admission.lean` lines 22–45 (`splitUnit`, `splitDocument`) are pinned because they rewrite the wire
+document before `decodeDoc` sees it and `admitDocument_spec` takes their result as given; the remaining JSON reads
+in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
+
+<!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->
+| File | File lines | Decoder lines | Ranges | File SHA-256 |
+|---|---:|---:|---|---|
+| `lean/VE/Json.lean` | 136 | 136 | 1–136 | `6ebfede93d1b…` |
+| `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `967a6ee39961…` |
+| `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
+| `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
+| `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
+| `lean/VE/Core/Wire.lean` | 145 | 49 | 10–58 | `5561ccd07ab1…` |
+| `lean/VE/Route/Wire.lean` | 598 | 353 | 24–311, 380–388, 418–458, 528–535, 586–592 | `1bb7ce7e2fc6…` |
+| `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
+| `lean/VE/Norms/Wire.lean` | 237 | 213 | 24–236 | `63ba6e267be9…` |
+| `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
+| `lean/VE/Route/Admission.lean` | 687 | 184 | 101–124, 206–245, 421–540 | `58106871aec1…` |
+| `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
+| `lean/VE/Definitions/Bundle.lean` | 449 | 29 | 393–421 | `3b31f0a62c01…` |
+| `lean/VE/Norms/Admission.lean` | 455 | 24 | 22–45 | `9996af265c1e…` |
+| **total** | | **1,886** | | |
+<!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
 dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theorem depends on.

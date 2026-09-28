@@ -362,6 +362,52 @@ def test_trusted_decoder_line_ranges_are_pinned():
     assert total == MANIFEST["lean_decoders"]["total_lines"]
 
 
+def _pin_problems(root, entries):
+    import hashlib
+    problems = []
+    for entry in entries:
+        data = (root / entry["file"]).read_bytes()
+        lines = data.count(b"\n") + (0 if data.endswith(b"\n") or not data else 1)
+        digest = hashlib.sha256(data).hexdigest()
+        if (lines, digest) != (entry["lines"], entry["sha256"]):
+            problems.append(f'{entry["file"]}: review the ranges, then pin "lines": {lines}, "sha256": "{digest}"')
+    return problems
+
+
+def test_decoder_files_are_pinned_whole():
+    """Range-boundary checks accept a new declaration right after a range; the file pin does not."""
+    problems = _pin_problems(ROOT, MANIFEST["lean_decoders"]["files"])
+    assert not problems, "\n".join(problems)
+
+
+def test_decoder_pin_detects_code_appended_after_a_range(tmp_path):
+    """Review reproducer: a def appended right after a range passed the boundary checks."""
+    entry = next(e for e in MANIFEST["lean_decoders"]["files"] if e["file"] == "lean/VE/Route/Wire.lean")
+    lines = (ROOT / entry["file"]).read_text().split("\n")
+    end = entry["ranges"][-1][1]
+    appended = "def decodeExtra (j : Json) : Except String Json := pure j"
+    assert DECLARATION.match(appended)   # the boundary check alone accepts it
+    copy = tmp_path / entry["file"]
+    copy.parent.mkdir(parents=True)
+    copy.write_text("\n".join(lines[:end] + [appended, ""] + lines[end:]))
+    assert _pin_problems(tmp_path, [entry])
+
+
+JSON_USE = re.compile(r"getObjVal\?|getObjValD|getObjValAs\?|setObjVal!|Json\.mkObj|getArr\?|getStr\?")
+
+
+def test_every_json_handling_lean_file_is_classified():
+    """A Lean file that reads or builds JSON is a pinned decoder or has a recorded reason under other_json."""
+    lean = ROOT / "lean"
+    found = {path.relative_to(ROOT).as_posix() for path in lean.rglob("*.lean")
+             if ".lake" not in path.parts and JSON_USE.search(path.read_text())}
+    decoders = {entry["file"] for entry in MANIFEST["lean_decoders"]["files"]}
+    other = MANIFEST["lean_decoders"]["other_json"]
+    assert not decoders & set(other)
+    assert found == decoders | set(other), "\n".join(sorted(found ^ (decoders | set(other))))
+    assert all(reason for reason in other.values())
+
+
 # --- the authority guard ------------------------------------------------------
 
 def test_guard_blocks_every_python_entry_once_migrated():
@@ -748,8 +794,12 @@ def test_argument_require_available():
 
 # --- documentation ------------------------------------------------------------
 
-def test_spec_table_is_generated_from_the_manifest():
+def test_spec_tables_are_generated_from_the_manifest():
     text = (ROOT / "docs/spec/assurance-manifest.md").read_text()
-    begin, end = "<!-- BEGIN GENERATED: python tools/assurance_manifest.py --write -->\n", "<!-- END GENERATED -->"
-    assert begin in text and end in text
-    assert text.split(begin, 1)[1].split(end, 1)[0] == assurance.render_markdown()
+    end = "<!-- END GENERATED -->"
+    for begin, render in (
+            ("<!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->\n",
+             assurance.render_decoders_markdown),
+            ("<!-- BEGIN GENERATED: python tools/assurance_manifest.py --write -->\n", assurance.render_markdown)):
+        assert begin in text and end in text
+        assert text.split(begin, 1)[1].split(end, 1)[0] == render()
