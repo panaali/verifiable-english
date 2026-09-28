@@ -23,32 +23,32 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/admission.py` | `parse_label` | 88 | U | — | `ve/bundle.py:20`, `ve/document.py:354`, `ve/document.py:383`, `tests/test_p0_three_way.py:64` |
 | `ve/admission.py` | `_validate_label_python` | 96 | U | — | — |
 | `ve/admission.py` | `validate_label` | 102 | U | — | `ve/argument.py:65`, `ve/bundle.py:20`, `tests/probe_matrix.py:36`, `tests/test_p0_three_way.py:64`, `tests/test_stage2_dispatch.py:13` |
-| `ve/admission.py` | `_check_kind` | 123 | U | — | `ve/document.py:14`, `ve/readings.py:10` |
-| `ve/admission.py` | `_quoted` | 153 | U | — | `ve/document.py:213` |
-| `ve/admission.py` | `_agent_matches` | 157 | U | — | — |
-| `ve/admission.py` | `_fields` | 161 | U | — | — |
-| `ve/admission.py` | `_nat` | 166 | U | — | — |
-| `ve/admission.py` | `_array` | 172 | U | — | — |
-| `ve/admission.py` | `_tokens` | 178 | U | — | — |
-| `ve/admission.py` | `_Unit` | 187 | U | — | — |
-| `ve/admission.py` | `_Node` | 195 | U | — | — |
-| `ve/admission.py` | `_decode_unit` | 205 | U | — | — |
-| `ve/admission.py` | `_decode_leaf` | 223 | U | — | — |
-| `ve/admission.py` | `_decode_lemma` | 237 | U | — | — |
-| `ve/admission.py` | `_decode_reading_set` | 252 | U | — | `ve/bundle.py:20` |
-| `ve/admission.py` | `_disjunction` | 266 | U | — | `ve/bundle.py:20` |
-| `ve/admission.py` | `_Doc` | 273 | U | — | — |
-| `ve/admission.py` | `_decode_doc` | 282 | U | — | — |
-| `ve/admission.py` | `_decode_node` | 304 | U | — | — |
-| `ve/admission.py` | `_unit` | 330 | U | — | — |
-| `ve/admission.py` | `_asserted_unit` | 334 | U | — | — |
-| `ve/admission.py` | `_leaf_admitted` | 338 | U | — | — |
-| `ve/admission.py` | `_node_admitted` | 368 | U | — | — |
-| `ve/admission.py` | `_diagnostic` | 374 | U | — | — |
-| `ve/admission.py` | `_check_graph` | 387 | A | `ve/backends/dispatch.py` → Lean admission / label | — |
-| `ve/admission.py` | `_compatible` | 416 | U | — | — |
-| `ve/admission.py` | `_claim_json` | 423 | U | — | — |
-| `ve/admission.py` | `admit_document` | 430 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:200`, `tests/test_norms_three_way.py:243` (+9) |
+| `ve/admission.py` | `_check_kind` | 125 | U | — | `ve/document.py:14`, `ve/readings.py:10` |
+| `ve/admission.py` | `_quoted` | 155 | U | — | `ve/document.py:213` |
+| `ve/admission.py` | `_agent_matches` | 159 | U | — | — |
+| `ve/admission.py` | `_fields` | 163 | U | — | — |
+| `ve/admission.py` | `_nat` | 168 | U | — | — |
+| `ve/admission.py` | `_array` | 174 | U | — | — |
+| `ve/admission.py` | `_tokens` | 180 | U | — | — |
+| `ve/admission.py` | `_Unit` | 189 | U | — | — |
+| `ve/admission.py` | `_Node` | 197 | U | — | — |
+| `ve/admission.py` | `_decode_unit` | 207 | U | — | — |
+| `ve/admission.py` | `_decode_leaf` | 225 | U | — | — |
+| `ve/admission.py` | `_decode_lemma` | 239 | U | — | — |
+| `ve/admission.py` | `_decode_reading_set` | 254 | U | — | `ve/bundle.py:20` |
+| `ve/admission.py` | `_disjunction` | 268 | U | — | `ve/bundle.py:20` |
+| `ve/admission.py` | `_Doc` | 275 | U | — | — |
+| `ve/admission.py` | `_decode_doc` | 284 | U | — | — |
+| `ve/admission.py` | `_decode_node` | 306 | U | — | — |
+| `ve/admission.py` | `_unit` | 332 | U | — | — |
+| `ve/admission.py` | `_asserted_unit` | 336 | U | — | — |
+| `ve/admission.py` | `_leaf_admitted` | 340 | U | — | — |
+| `ve/admission.py` | `_node_admitted` | 370 | U | — | — |
+| `ve/admission.py` | `_diagnostic` | 376 | U | — | — |
+| `ve/admission.py` | `_check_graph` | 389 | A | `ve/backends/dispatch.py` → Lean admission / label | — |
+| `ve/admission.py` | `_compatible` | 418 | U | — | — |
+| `ve/admission.py` | `_claim_json` | 425 | U | — | — |
+| `ve/admission.py` | `admit_document` | 432 | A | `ve/backends/dispatch.py` → Lean admission / label | `ve/document.py:14`, `tests/probe_matrix.py:36`, `tests/test_norm_admission.py:6`, `tests/test_norms_three_way.py:183`, `tests/test_norms_three_way.py:200`, `tests/test_norms_three_way.py:243` (+9) |
 | `ve/argument.py` | `_checker_build` | 32 | S | — | `tests/test_background.py:7`, `tests/test_p1_history.py:7` |
 | `ve/argument.py` | `_sequence` | 57 | S | — | — |
 | `ve/argument.py` | `_label` | 63 | S | — | — |
@@ -148,7 +148,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/background.py` | `validate_background` | 167 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/assist/ambiguity_patterns.py:18`, `ve/assist/recovery.py:1173`, `ve/evaluate.py:184`, `ve/model.py:169`, `ve/norms.py:329`, `ve/norms.py:368` (+1) |
 | `ve/background.py` | `_dependency_order_python` | 179 | U | — | — |
 | `ve/background.py` | `dependency_order` | 204 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `ve/definitions.py:11`, `ve/norms.py:15`, `tests/probe_matrix.py:26`, `tests/test_background.py:10`, `tests/test_stage2_evaluation.py:13` |
-| `ve/background.py` | `dependency_order_nodes` | 229 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66` |
+| `ve/background.py` | `dependency_order_nodes` | 231 | A | `ve/backends/dispatch.py` → Lean background / dependency-order | `tests/test_p0_three_way.py:66` |
 | `ve/bundle.py` | `_english` | 32 | U | — | — |
 | `ve/bundle.py` | `_leaf_choices` | 41 | U | — | — |
 | `ve/bundle.py` | `_bind_leaf` | 66 | U | — | — |
@@ -208,7 +208,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/entailment.py` | `_Replayer` | 612 | A | `ve/backends/dispatch.py` → Lean certificate replay | `tests/probe_matrix.py:28` |
 | `ve/entailment.py` | `_Replayer.__init__` | 613 | A | `ve/backends/dispatch.py` → Lean certificate replay | `tests/probe_matrix.py:28` |
 | `ve/entailment.py` | `_Replayer.replay` | 617 | A | `ve/backends/dispatch.py` → Lean certificate replay | `tests/probe_matrix.py:28` |
-| `ve/entailment.py` | `check_entailment_certificate` | 667 | A | `ve/backends/dispatch.py` → Lean certificate replay | `ve/__init__.py:19`, `ve/admission.py:390`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/bundle.py:23`, `ve/equivalence.py:14` (+28) |
+| `ve/entailment.py` | `check_entailment_certificate` | 667 | A | `ve/backends/dispatch.py` → Lean certificate replay | `ve/__init__.py:19`, `ve/admission.py:392`, `ve/argument.py:394`, `ve/assist/session.py:30`, `ve/bundle.py:23`, `ve/equivalence.py:14` (+28) |
 | `ve/environment.py` | `valid_identifier` | 30 | S | — | `ve/assist/session.py:31`, `ve/assist/sources.py:23`, `ve/fol.py:10`, `ve/propose.py:13`, `tests/test_propose.py:12` |
 | `ve/environment.py` | `validate_identifier` | 34 | S | — | `ve/argument.py:17`, `ve/equivalence.py:15` |
 | `ve/environment.py` | `_description` | 42 | U | — | — |
@@ -255,7 +255,7 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/model.py` | `_cell` | 177 | S | — | — |
 | `ve/model.py` | `_normalized` | 182 | S | — | — |
 | `ve/norm_admission.py` | `_check_quoted` | 19 | U | — | `ve/document.py:259` |
-| `ve/norm_admission.py` | `admit_norm_document` | 27 | A | `ve/backends/dispatch.py` → Lean norms admission | `ve/admission.py:443`, `tests/probe_matrix.py:39` |
+| `ve/norm_admission.py` | `admit_norm_document` | 27 | A | `ve/backends/dispatch.py` → Lean norms admission | `ve/admission.py:445`, `tests/probe_matrix.py:39` |
 | `ve/norms.py` | `_all` | 23 | U | — | — |
 | `ve/norms.py` | `_any` | 30 | U | — | — |
 | `ve/norms.py` | `_atom` | 37 | U | — | `ve/norm_strict.py:8` |
@@ -2559,9 +2559,9 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `ve/admission.py` | `ve.background` | `HOOKS` | 17 |
 | `ve/admission.py` | `ve.background` | `_DEPENDENCY_ENVIRONMENT` | 17 |
 | `ve/admission.py` | `ve.background` | `background` | 17 |
-| `ve/admission.py` | `ve.entailment` | `check_entailment_certificate` | 390 |
+| `ve/admission.py` | `ve.entailment` | `check_entailment_certificate` | 392 |
 | `ve/admission.py` | `ve.environment` | `Environment` | 18 |
-| `ve/admission.py` | `ve.norm_admission` | `admit_norm_document` | 443 |
+| `ve/admission.py` | `ve.norm_admission` | `admit_norm_document` | 445 |
 | `ve/admission.py` | `ve.profiles` | `LANGUAGE` | 21 |
 | `ve/admission.py` | `ve.profiles` | `require_checker` | 21 |
 | `ve/argument.py` | `ve.admission` | `validate_label` | 65 |
