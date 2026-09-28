@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import pytest
 
@@ -12,6 +13,7 @@ from ve.ast import (And, Atom, Binary, Bottom, Const, Eq, Exists, Forall, Implie
 from ve.background import background, dependency_order
 from ve.evaluate import evaluate
 from ve.errors import VEError
+from ve.backends.lean_service import CheckerUnavailable
 from ve.search import check_countermodel, find_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +93,19 @@ def test_shadow_evaluation_has_no_divergence(monkeypatch, fixture, tmp_path):
     monkeypatch.setenv("VE_AUTHORITY", "shadow")
     assert evaluate(env, Top(), model, trace=False).value is True
     assert not log.exists()
+
+
+def test_missing_rust_binary_fails_closed_and_shadow_records_it(monkeypatch, fixture, tmp_path):
+    env, model = fixture
+    monkeypatch.setenv("VE_RUST_JSONL", str(tmp_path / "missing-ve"))
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    with pytest.raises(CheckerUnavailable):
+        evaluate(env, Top(), model, trace=True)
+    log = tmp_path / "shadow.jsonl"
+    monkeypatch.setenv("VE_SHADOW_LOG", str(log))
+    monkeypatch.setenv("VE_AUTHORITY", "shadow")
+    assert evaluate(env, Top(), model, trace=True).value is True
+    assert json.loads(log.read_text())["lean"]["code"] == "CheckerUnavailable"
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
