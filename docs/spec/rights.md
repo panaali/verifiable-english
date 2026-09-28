@@ -1,12 +1,14 @@
 # Rights (`rights@0`): holders, incident lines, limitations and the bar over `soft-norms@0`
 
-> Status: item-1 specification, draft 3 (2026-09-28), written from [rights-PLAN.md](rights-PLAN.md) draft 4, the
+> Status: item-1 specification, draft 4 (2026-09-28), written from [rights-PLAN.md](rights-PLAN.md) draft 5, the
 > transcription of the converged Astra/Fable design debate (`manage-agents/debates/design-rights/{astra,fable}.md`),
 > applying the converged statement review of draft 1 (`manage-agents/debates/rights-spec/{astra,fable}.md`: FIX,
-> CONVERGED after round 3) and the statement-only verification of draft 2 (`manage-agents/rights-verify-astra.final.md`:
-> FAIL, five corrections, no redesign); section 14 maps each finding of both rounds to its change. It is the statement
+> CONVERGED after round 3), the statement-only verification of draft 2 (`manage-agents/rights-verify-astra.final.md`:
+> FAIL, five corrections, no redesign) and the statement-only verification of draft 3
+> (`manage-agents/rights-verify1b-astra.final.md`: FAIL, three corrections, no redesign); section 14 maps each finding
+> of the three rounds to its change. It is the statement
 > under the Astra + Fable item-1 review that gates items 2, 3 and 4 (PLAN-EXPAND2 rule 10) and any implementation:
-> draft 3 goes back to statement-only verification, and a new draft alone opens nothing. Sections 4 to 6 and 9 are the statements
+> draft 4 goes back to statement-only verification, and a new draft alone opens nothing. Sections 4 to 6 and 9 are the statements
 > under review; section 13 lists every point where this draft chose between readings of the plan. Theorem
 > statements and fixtures are implementation obligations, not claims of completed proofs or tests. Inputs: [norms.md](norms.md) (W1, cited `norms.md n`), [soft-norms.md](soft-norms.md)
 > (cited `soft-norms n`; its Lean names are reused), [document.md](document.md) (W2), [VISION.md](../../VISION.md),
@@ -111,7 +113,7 @@ limitation L   := stable name; scope ⊆ rights or `all`; kinds ⊆ {claim, libe
                   decider (a string or `unstated`); conditions; factors (strings, no premise); an English
                   verbalisation template (generated, 2.1)
 condition c    := name; role ∈ {necessary, sufficient}; decider (or inherited from L); verbalisation
-per act a in scope (an act of some line in scope):
+per act a in scope (the act of some line N of a right R with R ∈ scope(L) and kind(N) ∈ kinds(L), 4.2):
   lim_{L,a}     a fresh open base predicate with a's argument sorts,   name rights__lim__<k>    (k by 1.6)
   cond_{L,c,a}  a fresh open base predicate with a's argument sorts,   name rights__cond__<k>   (k by 1.6)
 premises Lim_D  necessary c:  ∀x̄. lim_{L,a}(x̄) → cond_{L,c,a}(x̄)      label rights:limitation:<L>:<act key>:necessary:<c>
@@ -215,7 +217,7 @@ that rendering.
 | `The limitation of <act phrase instance> is decided by <decider>.` / `Limitations in this document are decided by <decider>.` | Names who decides `lim` for that act / for every act. | `decided_by` |
 | `limitation m holds where <act phrase instance>` (guard atom) | The limitation of this act holds here. | atom `lim_{L,a}(x̄)` |
 | `<condition phrase> where <act phrase instance>` (guard atom) | The condition holds for this act here. | atom `cond_{L,c,a}(x̄)` |
-| `Nothing in this document gives any bearer a right to <act phrase> aimed at the destruction of a right.` | No liberty in this document permits such an act; whether an act is so aimed is decided by <decider>; an obligation or an outside permission for the act is reported as a conflict, not overridden. | bar, rule reading |
+| `Nothing in this document gives any bearer a right to <act phrase> aimed at the destruction of a right.` | No liberty in this document permits such an act; whether an act is so aimed is decided by <decider>. A default permission or prohibition of the act, and a default duty to do it, give way to the bar there (blocked, 4.3). A strict duty to do the act, or a strict permission for it written outside any right, that applies where the bar applies is reported as a conflict with its situation, not overridden. | bar, rule reading |
 | `Whether any right in this document permits an act aimed at the destruction of a right is checked, not ruled.` | The checker reports, per act, whether such a permission is derivable. | bar, query reading |
 | `Reading every right in this document with the same <bearer \| polarity \| incident \| force>, because <unit>[, <unit>]*.` | A coupling: the named axis is chosen once for every listed right; every result under it says so. | `coupling:<id>` (6) |
 | `No <holder> shall be <passive act>.` (input only) | Not a line: the bearer is missing. | rewrite to a `Claim of right n` per bearer sort or the `No one may` fan-out |
@@ -635,12 +637,17 @@ Under the rule reading, `bar_blocks` (9.2): at every point where `aimed_m` holds
 right-derived, then `ValueSoft_m = some false` wherever `aimed_m` holds. `bar_blocks` also states the bar's reach
 across the dual pair: a default obligation `+` line whose predicate's permission dual is `m` is blocked where
 `aimed_m` holds (soft-norms 4.2 step 2, `forbid` against `require`), which 4.5 attributes to the mechanism `bar`
-through `barReach` (fixture ψ). Both are theorems about `correlate`'s own output. What they do not cover is stated
-as the composition assumption: an adopter's positive rule on `m` (no bar edge over it) selecting where the bar
-selects is W1's intra-predicate conflict; a strict obligation on the same act (a claim line of another right whose
-bearer sort is the holder sort, or an adopter's rule; soft-norms 1.4's dual pair) selecting there is a pair conflict
-`O_r ∧ ¬O_m`, since a strict rule is never blocked; both are reported CONFLICT with a witness by the unchanged
-conflict check, never silently resolved. Under the query reading the report runs, per `m`, the entailment
+through `barReach` (fixture ψ). Its third conjunct ranges over every default node of `T″`, right-derived or
+outside rights: a default rule on `m` of either sign and a default obligation `+` rule on `m`'s dual are blocked by
+the bar's strict decision wherever `aimed_m` holds (soft-norms 4.2 step 2), so a default outside permission or
+prohibition of the act and a default duty to do it are never in conflict with the bar (fixture η). Both are
+theorems about `correlate`'s own output. What they do not cover is stated as the composition assumption, and it
+concerns **selecting strict rules only**: an adopter's strict positive rule on `m` (no bar edge over it) selecting
+where the bar selects is W1's intra-predicate conflict; a strict obligation on the same act (a claim line of another
+right whose bearer sort is the holder sort, or an adopter's rule; soft-norms 1.4's dual pair) selecting there is a
+pair conflict `O_r ∧ ¬O_m`, since a strict rule is never blocked; both are reported CONFLICT with a witness by the
+unchanged conflict check, never silently resolved. The paraphrase of 2.1 and the report row of 7.1 state exactly
+this division: default rules give way, selecting strict rules conflict. Under the query reading the report runs, per `m`, the entailment
 `background″ ++ layer premises ⊢ ∀x̄. aimed_m(x̄) → ¬m(x̄)` and shows the certificate or a coherent countermodel
 "exhibiting the liberty".
 
@@ -739,7 +746,7 @@ per unit. A cited result carries its choices and couplings; citing it under inco
 | Can the rights and duties contradict each other? | W1 conflict check on `T″′` over `Background_base″`; soft classification of `CP(T″)` (soft-norms 6.2) | CONFLICT (strict collision between two right lines or with an outside rule, or a pair conflict with a strict rule or a completion; both rights named) / CONFLICT-FREE conditional on `Coh_T` and `Lim_D` / UNKNOWN; per default pair RANK-RESOLVED (cited ranking named) / DISJOINT / WEIGHING POINT / UNKNOWN; strict–default blocking shown under the default line |
 | Is every narrowing of a right licensed? | `limitationScope` (4.5) | per line: each mechanism licensed by (limitation / cited / certified / collision / effect delivered by strict rule `M` / bar) or `UnlicensedLimitation` |
 | Do outcomes depend on the protected predicates? | `noDistinction` (4.6) | per right-derived predicate: `independent` / depends: cited lines `E`, uncited `ProtectedInCone`; the decider sentence beside every result |
-| Does any right permit a destructive act? | rule reading: `bar_blocks`, `bar_value`, composition conflicts; query reading: per-`m` entailment | rule: blocked, with any obligation or outside permission conflict listed; query: certificate or countermodel per `m` |
+| Does any right permit a destructive act? | rule reading: `bar_blocks`, `bar_value`, composition conflicts; query reading: per-`m` entailment | rule, per `m`: every right-derived positive line on `m` barred; every default rule on `m` and every default obligation `+` rule on its dual blocked (shown under the default rule, never a conflict); each strict obligation on the act and each strict outside permission on `m` that selects where `aimed_m` holds listed as CONFLICT with its witness (4.7); query: certificate or countermodel per `m` |
 
 ### 7.2 Residual lines (W2 coverage, item 5)
 
@@ -897,7 +904,8 @@ def WellFormedRights (D : RightsDoc) : Bool               -- 4.1, then WellForme
 
 /-- 4.2: total; on a well-formed input the real elaboration, otherwise a junk document. -/
 def holderConj (D : RightsDoc) (N : Line) (G : VE.Formula) : VE.Formula   -- G ∧ H_R at the holder slot; G when H_R = top
-def limPack (D : RightsDoc) (N : Line) : VE.Formula                        -- limpack_N, the packed disjunction; .bot when no limitation is in scope
+def limPack (D : RightsDoc) (N : Line) : VE.Formula                        -- limpack_N: ⋁ of limF D L N over the L with inScope D L N.right N (right and
+                                                                           -- source kind both filtered, 4.2); .bot when no limitation is in scope
 def limPackList (D : RightsDoc) (N : Line) : List VE.Formula               -- [limPack D N], or [] when no limitation is in scope
 def nodeOf (D : RightsDoc) (N : Line) : SoftNode                           -- guard, carve-outs, name, over as 4.2
 def barNodes (D : RightsDoc) : List SoftNode                               -- by predicate name, rule names rights-bar-<k>
@@ -1043,21 +1051,26 @@ theorem same_effect_delivered (D : RightsDoc) (h : WellFormedRights D = true) (S
     (hno : ¬ StrictDecidesD (correlate D) S (tupleVal vs) N.node.pred (!N.node.sign)) :
   ValueSoft (correlate D) (regOf D N.node.pred) S vs = some N.node.sign
 
-/-- 4.7: scoped to correlate's own output; the third conjunct is soft-norms 4.2 step 2 across the dual pair (a
-    default `require` blocked by the bar's strict `forbid`), the reach 4.5 attributes to the mechanism `bar`. -/
+/-- 4.7: scoped to correlate's own output; the third conjunct is soft-norms 4.2 step 2 under the bar's strict
+    decision, over every default node of T″ (a right line or a rule outside rights): a default rule on m of either
+    sign, and a default `require` on m's dual blocked by the bar's strict `forbid`; on a right line the dual-pair
+    case is the reach 4.5 attributes to the mechanism `bar` (barReach). -/
 theorem bar_blocks (D : RightsDoc) (h : WellFormedRights D = true) (hb : ruleReading D = true)
     (m : String) (hm : rightPermission D m = true) (S : VE.Structure) (ρ : VE.Valuation S)
     (ha : (aimedF D m).denote S ρ) :
   (∀ RN ∈ linesOf D, RN.2.node.pred = m → RN.2.node.sign = true → ¬ SelectsRN D S ρ RN.2) ∧
   StrictDecidesD (correlate D) S ρ m false ∧
-  (∀ RN ∈ linesOf D, RN.2.node.mode = .default → RN.2.node.sign = true →
-     VE.SoftNorms.dualPerm (correlate D) RN.2.node.pred = some m → ¬ SelectsRN D S ρ RN.2)
+  (∀ M ∈ (correlate D).T.nodes, M.mode = .default →
+     (M.pred = m ∨ (M.sign = true ∧ VE.SoftNorms.dualPerm (correlate D) M.pred = some m)) →
+     ¬ SelectsSoftD (correlate D) S ρ (VE.SoftNorms.fuel (correlate D)) M)
+-- For a right line N the third conjunct at M := nodeOf D N is ¬ SelectsRN D S ρ N (definitional).
 theorem bar_value (D) (h) (hb) (m) (hm)
     (honly : ∀ M ∈ (correlate D).T.nodes, M.pred = m → M.sign = true → ∃ RN ∈ linesOf D, nodeOf D RN.2 = M)
     (S : VE.Structure) (vs : List S.Carrier) (ha : (aimedF D m).denote S (tupleVal vs)) :
   ValueSoft (correlate D) (regOf D m) S vs = some false
--- Composition (not a theorem, the stated assumption): a positive rule on m outside honly, or a strict obligation
--- on m's act, selecting where aimed_m holds is a W1 conflict point of T″′ and is reported by the unchanged check.
+-- Composition (not a theorem, the stated assumption; selecting strict rules only): a strict positive rule on m
+-- outside honly, or a strict obligation on m's act, selecting where aimed_m holds is a W1 conflict point of T″′ and
+-- is reported by the unchanged check. A default one is blocked there by the third conjunct and is never a conflict.
 
 /-- 4.5: with no finding, a line in scope gives way only where some limitation covering it holds (the pack), a cited
     mechanism is active, another right's line collides, a strict rule of its own effect selects, or the bar applies,
@@ -1213,7 +1226,7 @@ every checker call to the unchanged W1 and soft functions on the regenerated dat
 | `rights-projections` | a finite base model and optionally a holder or bearer constant | `rights_of`, `duties_of` in document terms |
 | `rights-scope` | `certificates` per uncited mechanism | findings, or `licensed` with the licence per mechanism |
 | `rights-conflict` | `packages` per target over `Background_base″`, or `witness` | `CONFLICT-FREE` (with `conditional_on`) / `CONFLICT` (classified, rights named) / `UNKNOWN` |
-| `rights-bar` | rule reading: none; query reading: per `m` a certificate or countermodel | per `m` blocked / composition conflicts, or certificate / countermodel |
+| `rights-bar` | rule reading: none; query reading: per `m` a certificate or countermodel | per `m`: barred right lines, blocked default rules (on `m` or its dual), strict composition conflicts with witnesses (7.1); or certificate / countermodel |
 | `rights-certificate` | `premises`, `conclusion`, `certificate` | `valid`, `background`, `layers`, `conditional_on` |
 | `admission` | W2 document with right units, reading sets, couplings and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
 
@@ -1274,7 +1287,10 @@ the expected wire and residual bytes carry the generated names with the renderin
 - **(ε) Power and immunity.** Art. 16 power with `H_R = of_full_age(h)` on `marry_permitted(person, person)`
   (`alters`: `holder_slot` 0, `status` married, `recognition` recognise_marriage_required): two instances,
   powerLiberty then powerRecognition, both guarded by `of_full_age`, both matched by a limitation with `kinds:
-  [power]` and neither by `kinds: [liberty]`; situation: Ann of full age, Texas does not recognise:
+  [power]` and neither by `kinds: [liberty]`; a strict claim line added to right 16 by `includes` (`Every state must
+  register the marriage of each person`) is matched by `kinds: [claim]` and by neither `kinds: [power]` nor `kinds:
+  [liberty]`, so its `limpack` omits a power-only limitation that both power instances carry (4.2's source-kind
+  filter); situation: Ann of full age, Texas does not recognise:
   `owes_{recognise}(Texas, Ann)` true (powerRecognition is a duty line), `free_{marry}(Ann, Bob)` true (powerLiberty
   is a liberty line); `O_{recognise_marriage_required}(Texas, Ann)` true; nothing about post-marriage duties is
   derivable (no such predicate exists); Ann not of full age: neither instance selects. Art. 15(2) immunity on
@@ -1295,8 +1311,15 @@ the expected wire and residual bytes carry the generated names with the renderin
   claim line needs the holder in an object slot, which `impart(person, idea)` lacks, so the claim-line form of the
   same conflict is fixture ψ's): pair CONFLICT `O_r ∧ ¬O_m` at `(Ann, I)` with the witness; add instead an adopter's
   hard `Every person may impart each idea` without `(exception to …)`: intra-predicate CONFLICT at the same point;
-  neither is silently resolved. Query reading: the entailment `∀x̄. aimed(x̄) → ¬impart_permitted(x̄)` fails and the
-  countermodel exhibits the liberty (`aimed` true, permitted).
+  neither is silently resolved. Add instead an adopter's default `Every person generally may impart each idea`,
+  or a default `Every person should not impart each idea`, or a default `Every person should impart each idea`
+  (obligation `+` on the dual `impart_required`), each outside rights and uncited: at `(Ann, I)` the bar's strict
+  decision blocks it (soft-norms 4.2 step 2; `bar_blocks`'s third conjunct at that node), it does not select, no
+  conflict is reported, `ValueRight_{impart_permitted} = some false` and, for the third, `ValueRight_{impart_required}
+  = some false` (the deny default); the report shows the blocking under the default rule and lists no
+  `UnlicensedLimitation`, since the audit ranges over right lines only; as strict rules the same three give the two
+  conflicts above and, for `must not`, the bar's own effect and no conflict. Query reading: the entailment
+  `∀x̄. aimed(x̄) → ¬impart_permitted(x̄)` fails and the countermodel exhibits the liberty (`aimed` true, permitted).
 - **(θ) Identity.** Every row of norms.md 10.1 and soft-norms 10 whose rule fits a shape of 1.2 (subject sort a
   declared bearer or holder sort, role and sign of a claim, liberty or immunity, at most six author carve-outs) and
   the limits of 11, wrapped as a one-line right with `H_R = ⊤`, no limitation, no bar: `correlate_identity_top`
@@ -1376,16 +1399,31 @@ the expected wire and residual bytes carry the generated names with the renderin
   Every person should not publish each item about each person, if that item attacks the honour of the second
   person` (`holder_slot: 2`): where `aimed_{publish_about}` holds the claim is blocked by `bar_m` (same predicate,
   same sign): listed as `bar`, no finding.
-- **(τ) The certified target.** Right 9's claim with author carve-out `unless that person is a diplomat` and
-  limitation 29. Certificate for `(own_N ∧ diplomat)° → limpack_N` accepted: licensed; at a situation where the own
-  guard is false, `diplomat` true and `lim` false the line is silent by its own guard; `NarrowsAt(carveOut 1)` is
-  true there, since the table's activity is the unguarded `U_1 = diplomat`, but `narrowings_complete` says nothing
-  (its own-guard hypothesis fails), `limitation_scope_sound` says nothing (likewise) and `licensed_certified_sound`
-  concludes nothing, because its activation hypothesis is the guarded certification condition `cond_n° = (own_N ∧
-  diplomat)°`, false there, not the bare activity; the audit lists no finding, the certificate standing; a
-  certificate for the stronger `diplomat → limpack_N` is
-  also accepted; under two limitations (ρ) a certificate for `(own_N ∧ diplomat)° → lim_{l29,arrest}` is not the
-  target and does not license.
+- **(τ) The certified target.** Right 9's claim (`Every state must not arrest each person, if that arrest is
+  arbitrary`, own guard `arbitrary(s, p)`) under limitation 29, which in this fixture additionally declares the
+  sufficient condition `diplomatic_immunity` (`Limitation 29 holds where the arrest is barred by diplomatic
+  immunity.`; illustrative, no source clause; the pattern of κ), so `Lim_D` contains `∀s p.
+  cond_{l29,diplomatic_immunity,arrest}(s, p) → lim_{l29,arrest}(s, p)` with label
+  `rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity`. The line's author carve-out is `unless that
+  person is a diplomat and the arrest is barred by diplomatic immunity where that state arrests that person`, `U_1 =
+  diplomat(p) ∧ cond_{l29,diplomatic_immunity,arrest}(s, p)`, uncited. The target `(own_N ∧ U_1)° → limpack_N` is
+  entailed over `Background_base″` through that sufficient premise alone (`°` is the identity on these base atoms):
+  its certificate is accepted, the mechanism `carveOut 1` is licensed (certified), the certificate's leaves name the
+  premise above and the report lists it under `limitation_premises_used`; without the sufficient condition no
+  premise of `Background_base″` mentions `lim_{l29,arrest}` positively and no certificate for the target exists.
+  Situation A: own guard false (the arrest is not arbitrary), `diplomat` true, `cond_{l29,diplomatic_immunity,arrest}`
+  true, hence `lim_{l29,arrest}` true in every admissible base (the sufficient premise); the line is silent by its
+  own guard and by the pack; `NarrowsAt(carveOut 1)` is true there, since the table's activity is the unguarded
+  `U_1`, but `narrowings_complete` says nothing (its own-guard hypothesis fails), `limitation_scope_sound` says
+  nothing (likewise) and `licensed_certified_sound` concludes nothing, because its activation hypothesis is the
+  guarded certification condition `cond_n° = (own_N ∧ U_1)°`, false there, not the bare activity; the audit lists no
+  finding, the certificate standing. Situation B: own guard false, `diplomat` true, the condition false and `lim`
+  false: base-admissible (`Lim_D` is satisfied), `U_1` false, the line silent by its own guard only. Situation B is
+  a countermodel to the stronger `diplomat → limpack_N`, so a certificate submitted for that formula is rejected
+  (`checkCertificate` is sound over `Background_base″`); the audit consults certificates for the target formula
+  only, and the unguarded `U_1° → limpack_N`, entailed here because `U_1` carries the sufficient atom, is neither
+  the target nor consulted. Under two limitations (ρ) a certificate for `(own_N ∧ U_1)° → lim_{l29,arrest}` is not
+  the target and does not license.
 - **(υ) Generated names.** A limitation named `l-` followed by sixty `a` (62 bytes) over act `arrest_permitted`
   with condition `determined_by_law`: admitted; the predicates are `rights__lim__1` and `rights__cond__1` and the
   residual renders them as `limitation 29, arrest_permitted` and `limitation 29, arrest_permitted, determined by
@@ -1474,8 +1512,9 @@ Python's and Lean's regenerated ones (regression evidence; the trust path is Lea
    with `limpack_N` first and every condition outcome-substituted, the certification target `cond_n° → limpack_N`.
 7. The restricted invariance claim (4.6): `cone_independent` with `Q := protected` on protected-free cones only;
    `E` listed; the decider sentence.
-8. The bar (4.7): `bar_blocks` with its dual-pair conjunct, `bar_value`, the composition assumption, the query
-   reading.
+8. The bar (4.7): `bar_blocks` with its blocking conjunct over every default node on `m` or on `m`'s dual,
+   `bar_value`, the composition assumption restricted to selecting strict rules and the matching paraphrase (2.1)
+   and report row (7.1), the query reading.
 9. The restated route (5.2, 9.3) with `BaseAdmissible″`; `conditional_on` with `rights:limitation:*` and
    `coupling:<id>`; vacuity (5.3).
 10. Readings and couplings (3.3, 6): per-unit base, candidate labels, the coupling semantics and enumeration per
@@ -1538,7 +1577,7 @@ Each is a point where the plan left a reading open; the review may overturn any 
 18. **Releases are rejected, not admitted as liberties**: `need not` fits no shape and the bar ranges over
     permission predicates only; admitting a release as a liberty would be a design change.
 
-## 14. Statement-review response table (draft 1 → draft 2)
+## 14. Statement-review response tables (drafts 1 to 4)
 
 The rights-spec review (`manage-agents/debates/rights-spec/{astra,fable}.md`, FIX, CONVERGED after round 3). Where
 the two round-3 formulations differed (names by index or by rejection; `holder_slot` as a field or derived), this
@@ -1568,6 +1607,15 @@ unrelated redesign, no objection to the plan's three choices; applied in draft 3
 | Condition grammar — strict text used the hyphen-only `name` for condition names against 3.2's underscore identifiers | `identifier` (the predicate grammar of 3.2) for condition names in 3.4, with the two tokens distinguished in words | 3.4 | round-trip suite (10, generated) |
 | Fixture τ — `NarrowsAt(carveOut)` stays true where `diplomat` holds; only the guarded certification condition fails | τ restated: the activity is true, `narrowings_complete` and `limitation_scope_sound` are silent because their own-guard hypothesis fails, and `licensed_certified_sound` is inapplicable through its guarded activation hypothesis | 10 | (τ) |
 
+Statement-only verification of draft 3 (`manage-agents/rights-verify1b-astra.final.md`: FAIL, three corrections, no
+unrelated redesign, no objection to the plan's three choices; applied in draft 4, no design change):
+
+| Finding | Change in this draft | Where | Regression |
+|---|---|---|---|
+| Bar paraphrases — 2.1 and the 7.1 report row promised a conflict for any obligation or outside permission on the act, while a default obligation `+` on `m`'s dual and a default outside permission on `m` are blocked by the bar's strict decision | the conflict claim restricted to selecting strict rules (a strict obligation on the act; a strict permission outside any right), default rules stated to give way; 7.1's row and 9.4's `rights-bar` output synchronised; 4.7 states the division; `bar_blocks`'s third conjunct widened to every default node of `T″` on `m` (either sign) or a default obligation `+` on `m`'s dual, right-derived or outside, so the blocking claim is theorem-backed | 2.1, 4.7, 7.1, 9.2, 9.4, 12 | (η) extended with the three default outside rules |
+| Fixture τ — accepted the stronger `diplomat → limpack_N` although its own situation (`diplomat` true, `lim` false) refutes it, and named no premise under which the guarded target is entailed | τ rebuilt: limitation 29 declares the sufficient condition `diplomatic_immunity`, the carve-out carries that condition's atom beside `diplomat`, so the guarded target is entailed through the `Lim_D` sufficient premise (its label listed); situation A (activity true, own guard false, `lim` forced true) keeps the theorems' silence; situation B (condition false, `lim` false) is the admissible countermodel under which the stronger certificate is rejected; the unguarded `U_1° → limpack_N` noted as entailed but neither the target nor consulted | 10 | (τ) |
+| Plan 1.2 — `limpack_N` omitted the source-kind filter `kind(N) ∈ kinds(L)` of 4.2, so a power-only limitation would narrow the other kinds of the same right | the filter added to the plan's `limpack_N` and `kinds` to its limitation definition (plan 1.1, 1.2); 1.3 names both filters where it says "in scope"; the `limPack` comment in 9.1 written over `inScope` | 1.3, 9.1; plan 1.1, 1.2 | (ε) (`kinds: [power]` matches neither a claim nor a liberty of the same right) |
+
 ## Change log
 
 | Date | Revision | Changes |
@@ -1575,3 +1623,4 @@ unrelated redesign, no objection to the plan's three choices; applied in draft 3
 | 2026-09-27 | Draft 1 | Item-1 specification from plan draft 2: the rights block, rights and incident lines with the shape table and holder slots, fan-out, limitations with per-act open predicates, named condition predicates and `Lim_D`, the bar under two readings, `E″`; the English table with the three limitation sentences, the bar sentences, the coupling sentence and the generated wordings; wire form, candidate labels, couplings, strict text, identity; `WellFormedRights`, `correlate`, `ValueRight`, projections, `Narrows` with the licensing table, the restricted `noDistinction`, the scoped bar; the conditional contract with `BaseAdmissible″`; readings and couplings; report, status text, diagnostics; every item-4 theorem as a statement in W1/soft conventions; fixtures α to π; limits; review checklist; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-28 | Draft 2 | Applied the converged rights-spec statement review (FIX, round 3), no design change: `limpack_N` as the first disjunct and certification target of `limitation_scope_sound`; `blockedBy` at soft-norms 4.2 step 2's width with same-effect blocking licensed by construction and `same_effect_delivered`, the bar's surfaces folded into `bar`; `owes_outcome` with membership and typing; every mechanism condition outcome-substituted on `B`; `rightDerived_regulated`; generated names by index under reserved prefixes (1.6); `alters.holder_slot`; instance kinds with the source kind kept; `E″`/`E″′` staging and `correlate_identity_top` as `correlate D = flattenTop D`; couplings per component with `CouplingUnsatisfiable`; releases rejected; fixtures β, ε, θ, ι, κ, μ, ν, ο corrected and ρ to χ added; response table (14). Spec only. |
 | 2026-09-28 | Draft 3 | Applied the statement-only verification of draft 2 (FAIL, five corrections), no design change: the bar's reach across the dual pair (`barReach`; the mechanism `bar` covers a default obligation `+` line on `m`'s dual; `limitation_scope_sound`'s fifth disjunct and `bar_blocks` extended; 4.3 and 4.7 state the dual-pair blocking); derived switch names may overflow the 64-byte identifier limit and are rejected as `ResourceLimit`, the 1.6 and 11 guarantees corrected; `identifier` for condition names in the strict-text grammar; fixtures σ (ternary act for the bar case), η (parenthetical) and τ (activity versus guarded certification condition) corrected, υ extended, ψ added; second table in 14. Spec only. |
+| 2026-09-28 | Draft 4 | Applied the statement-only verification of draft 3 (FAIL, three corrections), no design change: the bar paraphrase (2.1) and report row (7.1) restrict the conflict claim to selecting strict rules and state that default rules on `m` or its dual give way; `bar_blocks`'s third conjunct widened to every default node of `T″` (right-derived or outside) and 4.7, 9.4 and 12 synchronised; fixture η extended with default outside rules; fixture τ rebuilt over a declared sufficient condition of limitation 29 whose `Lim_D` premise entails the guarded target, with the stronger unguarded certificate rejected by an admissible countermodel; 1.3 and the `limPack` comment name the source-kind filter (the plan's `limpack_N` corrected); third table in 14. Spec only. |
