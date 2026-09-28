@@ -20,7 +20,8 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import (CheckerUnavailable, LeanService, LeanServicePool, MODES,
-                                      RESPONSE_SCHEMAS, executable_sha256)
+                                      executable_sha256)
+from ve.backends.service_schema import DIRECTORY as SCHEMAS
 from ve.errors import ResourceLimit, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,17 +55,41 @@ def test_english_mode_is_the_generated_copy_of_the_english_runner():
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-def test_response_schemas_follow_lean_protocol_and_english_encoder():
+def _lean_strings(path, start, end="\n\n"):
+    text = (ROOT / "lean" / path).read_text()
+    return re.findall(r'"([^"]+)"', text.split(start, 1)[1].split(end, 1)[0])
+
+
+def test_response_schemas_follow_lean_sources():
+    """Every mode has one schema file, and the schema enumerations are the Lean ones."""
     protocol = (ROOT / "lean/VE/Service/Protocol.lean").read_text()
     names = re.findall(r'^  \| \.(\w+) => "([^"]+)"$', protocol, re.M)
     dispatch = re.findall(r'^  \| \.(\w+), j => ', protocol, re.M)
-    assert {name for _, name in names} == set(MODES) == set(RESPONSE_SCHEMAS)
+    files = {p.stem for p in SCHEMAS.glob("*.json")} - {"common", "envelope"}
+    assert {name for _, name in names} == set(MODES) == files
     assert {constructor for constructor, _ in names} == set(dispatch)
+    common = json.loads((SCHEMAS / "common.json").read_text())["$defs"]
+    admission = "VE/Route/Admission.lean"
+    assert common["act"]["enum"] == _lean_strings(admission, "def acts : List String :=", "\n")
+    assert common["modality"]["enum"] == _lean_strings(admission, "def modalities : List String :=", "\n")
+    assert common["relation"]["enum"] == _lean_strings(admission, "def relations : List String :=", "\n")
+    atomic = re.findall(r'^  \| "(\w+)" => some', (ROOT / "lean" / admission).read_text(), re.M)
+    assert common["atomic_kind"]["enum"] == atomic
+    assert common["generator"]["enum"] == _lean_strings("VE/Route/Background.lean",
+                                                        "def generators : List String :=", "\n")
+    kind = common["kind"]["anyOf"][1]["x-tagged"]
+    rendered = re.findall(r'Json.arr #\[\.str "(\w+)"', (ROOT / "lean" / admission).read_text())
+    assert set(kind) == set(rendered)
     runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
-    assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(RESPONSE_SCHEMAS["english"]["term_tags"])
-    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(RESPONSE_SCHEMAS["english"]["formula_tags"])
+    assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(common["fol_term"]["x-tagged"])
+    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common["fol_formula"]["x-tagged"])
+    order = (ROOT / "lean/VE/Order/Wire.lean").read_text()
+    order_terms = order.split("def decodeTerm :", 1)[1].split("def decodeFormula :", 1)[0]
+    order_formulas = order.split("def decodeFormula :", 1)[1].split("def termNodes", 1)[0]
+    assert set(re.findall(r'\[\.str "(\w+)"', order_terms)) == set(common["order_term"]["x-tagged"])
+    assert set(re.findall(r'\[\.str "(\w+)"', order_formulas)) == set(common["order_formula"]["x-tagged"])
 
 
 def test_handshake(service_executable):
@@ -359,7 +384,7 @@ for line in sys.stdin:
         if answer.get("id") == "__nonce__":
             answer["id"] = request["id"]
         if isinstance(answer.get("counts"), dict) and answer["counts"].get("bytes") == "__bytes__":
-            answer["counts"]["bytes"] = len(json.dumps(request["cases"], separators=(",", ":")))
+            answer["counts"]["bytes"] = len(line.split(',"cases":', 1)[1].rstrip()[:-1].strip().encode())
         print(json.dumps(answer), flush=True); continue
     n = len(request["cases"])
     if behaviour in ("missing-valid", "string-valid", "wrong-case-id", "english-nested-bool"):
