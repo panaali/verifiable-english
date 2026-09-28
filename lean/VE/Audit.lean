@@ -1,5 +1,6 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
+import VE.Route.Budget
 import VE.Time.Document
 import VE.Route.Readings
 import VE.Order.Gate
@@ -1073,7 +1074,22 @@ import VE.Norms.Run
 #print axioms VE.Time.expand_atLeast_eval_iff
 #print axioms VE.Time.expand_exactly_iff
 #print axioms VE.Time.expand_atMost_iff
-#print axioms VE.Time.Wire.lookup_map
 #print axioms VE.Time.Wire.QVocab.core_environment
 #print axioms VE.Time.Wire.Admission.sound
 #print axioms VE.Time.Wire.checkW6Certificate_sound
+#print axioms VE.Route.Budget.lookup_map
+#print axioms VE.Route.Budget.sortOrderData_perm
+#print axioms VE.Route.Budget.orderValues_sound
+#print axioms VE.Route.Budget.orderValues_sorted_sound
+#print axioms VE.Route.Budget.refutesB_sortOrderData_sound
+#print axioms VE.Route.Budget.evalF_sound
+#print axioms VE.Route.Budget.refutesF_sound
+#print axioms VE.Route.Budget.valuesF_sound
+#print axioms VE.Route.Budget.tickM_some
+#print axioms VE.Route.Budget.quantS_sound
+#print axioms VE.Route.Budget.evalC_sound
+#print axioms VE.Route.Budget.refutesC_sound
+#print axioms VE.Route.Budget.valuesC_sound
+#print axioms VE.Route.Budget.evalN_sound
+#print axioms VE.Route.Budget.refutesN_sound
+#print axioms VE.Route.Budget.valuesN_sound

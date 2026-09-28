@@ -13,9 +13,11 @@ def literals (v : VE.Bridge.Vocabulary) : List String :=
 def modelVocabulary (v : VE.Bridge.Vocabulary) : VE.Bridge.Vocabulary :=
   { v with sorts := v.sorts ++ (if (literals v).isEmpty then [] else ["$string"]) }
 
+/-- Decoded tables with each domain in Python/Rust order (`sortModelData`): the
+budgeted evaluator stops quantifiers at the first decisive entity. -/
 def decodeModel (v : VE.Bridge.Vocabulary) (j : Json) :
     Except String (VE.FiniteModel VE.Bridge.Entity) := do
-  let data ← VE.Bridge.decodeModelData (modelVocabulary v) j
+  let data := VE.Route.Wire.sortModelData (← VE.Bridge.decodeModelData (modelVocabulary v) j)
   unless data.valid (modelVocabulary v) do throw "model is not semantically admissible"
   let M := data.toModel
   match VE.Route.Wire.backgroundViolation M (literals v) with
@@ -61,19 +63,20 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   let v ← Bridge.decodeEnvironment environment
   let E := v.environment
   if kind == "evaluate" then
-    let M ← decodeModel v (← j.getObjVal? "model")
     let fs ← Bridge.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
-    return VE.Route.Wire.ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
+    let M ← decodeModel v (← j.getObjVal? "model")
+    return VE.Route.Wire.ok id [("values", toJson (← VE.Route.Budget.valuesN M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← Bridge.decodeFormulas E premisesJson
   let c ← Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
   Bridge.checkFormula E c "conclusion"
-  if ((c :: ps).map Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
-    throw "ResourceLimit: AST node count"
+  VE.Route.Wire.nodeLimit ((c :: ps).map Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeModel v (← j.getObjVal? "model")
-    return VE.Route.Wire.ok id [("refutes", .bool (countermodelCheck M ps c))]
+    let some refutes := VE.Route.Budget.refutesN M VE.Time.maxEvaluations ps c 0
+      | throw VE.Route.Budget.budgetExhausted
+    return VE.Route.Wire.ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← decodeCertificate (← j.getObjVal? "certificate")
   let background := VE.Route.Background.literals (literals v)

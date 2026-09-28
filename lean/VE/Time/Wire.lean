@@ -64,23 +64,12 @@ def QVocab.core (v : QVocab) : VE.Order.Vocabulary :=
   ⟨v.sorts, v.predicates.map (fun p => (p.1, p.2.map QType.erase)),
     v.constants.map (fun c => (c.1, c.2.erase))⟩
 
-theorem lookup_map {β γ : Type} (f : β → γ) (xs : List (String × β)) (k : String) :
-    VE.Order.lookup (xs.map (fun p => (p.1, f p.2))) k = (VE.Order.lookup xs k).map f := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih =>
-    by_cases h : x.1 = k
-    · simp [VE.Order.lookup, h]
-    · have hb : (x.1 == k) = false := beq_eq_false_iff_ne.mpr h
-      simp only [VE.Order.lookup, List.map_cons, List.find?_cons, hb] at ih ⊢
-      exact ih
-
 /-- The checker's environment is exactly the erasure of the admitted one. -/
 theorem QVocab.core_environment (v : QVocab) : v.core.environment = v.env.erase := by
   unfold QVocab.core QVocab.env QEnv.erase VE.Order.Vocabulary.environment
   congr 1
-  · funext p; exact lookup_map (List.map QType.erase) v.predicates p
-  · funext c; exact lookup_map QType.erase v.constants c
+  · funext p; exact VE.Route.Budget.lookup_map (List.map QType.erase) v.predicates p
+  · funext c; exact VE.Route.Budget.lookup_map QType.erase v.constants c
 
 /-! ## Environment admission -/
 
@@ -683,19 +672,15 @@ theorem checkW6Certificate_sound {w : W6Env} (ps : List (Admission w)) (c : Admi
 def budgetExhausted : String :=
   "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
 
-/-- Each submitted domain in Python `sorted` and Rust `sort` order (local
-identifiers are ASCII, so code-point, byte and `String` order agree). `evalB`
-stops at the first decisive entity, so its work, and whether the budget runs
-out, depends on this order; values never do (`eval_domains_perm`). -/
-def sortDomains (d : VE.Order.ModelData VE.Order.Wire.Entity) :
-    VE.Order.ModelData VE.Order.Wire.Entity :=
-  { d with domains := d.domains.map fun p => (p.1, p.2.mergeSort fun a b => decide (a.2 ≤ b.2)) }
+/-- Each submitted domain in Python `sorted` and Rust `sort` order, shared with
+the route's order family (`VE.Route.Budget.sortOrderData`). `evalB` stops at the
+first decisive entity, so its work, and whether the budget runs out, depends on
+this order; values never do (`eval_domains_perm`). -/
+abbrev sortDomains := VE.Route.Budget.sortOrderData
 
 theorem sortDomains_perm (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : String) :
-    ((sortDomains d).toModel.domains s).Perm (d.toModel.domains s) := by
-  simp only [sortDomains, VE.Order.ModelData.toModel,
-    lookup_map (fun xs : List VE.Order.Wire.Entity => xs.mergeSort fun a b => decide (a.2 ≤ b.2))]
-  cases VE.Order.lookup d.domains s <;> simp [List.mergeSort_perm]
+    ((sortDomains d).toModel.domains s).Perm (d.toModel.domains s) :=
+  VE.Route.Budget.sortOrderData_perm d s
 
 /-- A budgeted value on the sorted presentation is the reference value on the
 submitted model. -/
