@@ -524,7 +524,8 @@ def _lean_deductions(graph, claims, records, reachable, executable):
         cases = [{**case, 'kind': 'certificate'} for case in cases]
     try:
         rows = lean_backend.run("graph.compose", executable, cases, runner="ve_conformance",
-                                mode='route' if route else 'check-certificate', timeout=LEAN_REPLAY_TIMEOUT)
+                                mode='route' if route else 'check-certificate', timeout=LEAN_REPLAY_TIMEOUT,
+                                fields={'valid': bool, **({'background': int} if route else {})})
     except CheckerUnavailable as exc:
         return False, f"Lean replay unavailable (operational, not a verdict): {exc.message}", "unavailable"
     if route:

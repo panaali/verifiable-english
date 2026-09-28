@@ -50,7 +50,7 @@ How an operational failure surfaces:
 
 | Where | Before P0-3 | Now |
 |---|---|---|
-| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count or id mismatch, or an exit status that contradicts the rows all raise `CheckerUnavailable`. A returned `status: error` row is Lean's semantic rejection |
+| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count or id mismatch, a row outside the response schema, or an exit status that contradicts the rows all raise `CheckerUnavailable`. The schema: `status` is `ok` or `error`; an `error` row has a string `error`; an `ok` row names its case `id` and carries every field the caller reads, with its type (`lemmas` for bundles, `valid` and on the route `background` for arguments). Only a well-formed `status: error` row, or a well-formed `ok` row whose content differs from the expected acceptance, is Lean's semantic rejection |
 | `check_bundle(lean_executable=...)` | `VEError` (`InvalidInput`) for an unavailable Lean; a crash surfaced as `SyntaxError` or `ResourceLimit` | raises `CheckerUnavailable`. A Lean rejection still raises `VEError`. The result carries `lean_outcome`: `accepted`, `not_requested` or `not_applicable` (no lemmas) |
 | `check_argument(lean_executable=...)` | `lean_checked: false` for both rejection and unavailability; only `lean_detail` wording differed | `lean_outcome`: `accepted`, `rejected`, `unavailable`, `not_requested` or `not_applicable`; `lean_status` reads `Lean-checked: unavailable`. The Lean replay is an optional cross-check while authority is Python, so the Python verdict is unaffected |
 | `check_argument` when a verdict it needs is unavailable | would have become `InvalidInput` or an edge error had the exception been a `VEError` | `status: CheckerUnavailable`, `composed: false`, `proof: not_checked`, with the error in `errors`. Callers that act on the status (`parse_english_argument`, assist `status`) call `ArgumentResult.require_available()`, which re-raises it, so it never reads as a failed replay or a `SyntaxError` |
@@ -141,8 +141,10 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   `BaseException`, `RuntimeError`, bare) is listed under `reviewed_broad_handlers` with the reason it cannot turn an
   operational failure into a verdict. A new one fails the test until it is reviewed.
 - **Runtime behaviour.**
-  - Backend fault injection (missing, crash, signal, usage error, garbage, empty, wrong row count, wrong ids,
-    inconsistent exit status, hang) yields `CheckerUnavailable`.
+  - Backend fault injection (missing, crash, signal, usage error, garbage, empty, wrong row count, wrong ids or
+    case indices, rows without a status, an error message, a case id or a caller field, ill-typed fields,
+    inconsistent exit status, hang) yields `CheckerUnavailable`; for bundles and arguments a malformed row is never
+    a rejection.
   - A `status: error` row is returned as a rejection.
   - Bundles and arguments separate rejection from unavailability.
   - The CLI exits 5.
