@@ -1,0 +1,52 @@
+{
+  "format": "ve-w6a-fixtures@1",
+  "source_sha256": "b905818ecbc38c479a273d1503430745d1f2c9697215752572922ccedd73545b",
+  "status": "regenerated-only; no W6 Lean admission or English fidelity claim",
+  "environment": {
+    "language": "ve.core@0.2",
+    "profiles": ["order@0", "relational-fol@0", "time@0"],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {
+        "decision_date": {"sort": "$int", "unit": "day", "description": "date of the reported Fed decision"},
+        "new_target_lower": {"sort": "$int", "unit": "bp", "description": "lower endpoint of the new target rate range in S2"},
+        "new_target_upper": {"sort": "$int", "unit": "bp", "description": "upper endpoint of the new target rate range in S2"},
+        "pce_september_estimate": {"sort": "$int", "unit": "bp", "description": "September estimate of PCE inflation reported in S11"},
+        "pce_june_estimate": {"sort": "$int", "unit": "bp", "description": "June estimate of PCE inflation reported in S11"},
+        "target_rate": {"sort": "$int", "unit": "bp", "description": "inflation target named in S12"},
+        "first_projected_target_year": {"sort": "$int", "unit": "calendar_year", "description": "first year in the selected forecast reading of S12"},
+        "growth_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected growth figure in S13"},
+        "growth_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected growth figure in S13"},
+        "unemployment_old_projection": {"sort": "$int", "unit": "bp", "description": "earlier projected unemployment figure in S13"},
+        "unemployment_new_projection": {"sort": "$int", "unit": "bp", "description": "revised projected unemployment figure in S13"}
+      }
+    },
+    "unit_schema": "ve-units@1",
+    "units": {
+      "bp": {"scale": "100", "display": {"kind": "percent"}},
+      "calendar_year": {"scale": "1", "display": {"kind": "decimal", "label": "calendar year", "placement": "prefix"}},
+      "day": {"scale": "1", "display": {"kind": "iso_date"}}
+    }
+  },
+  "cases": [
+    {"id": "N01", "row": "1", "kind": "asserted", "formula": ["date_on", ["const", "day", "decision_date"], ["date", "2026-09-16"]]},
+    {"id": "N07-lower", "row": "7", "kind": "asserted", "formula": ["eq", ["const", "bp", "new_target_lower"], ["decimal", "bp", "3.75"]]},
+    {"id": "N07-upper", "row": "7", "kind": "asserted", "formula": ["eq", ["const", "bp", "new_target_upper"], ["decimal", "bp", "4.00"]]},
+    {"id": "N21-september", "row": "21", "kind": "asserted", "formula": ["eq", ["const", "bp", "pce_september_estimate"], ["decimal", "bp", "3.70"]]},
+    {"id": "N21-june", "row": "21", "kind": "asserted", "formula": ["eq", ["const", "bp", "pce_june_estimate"], ["decimal", "bp", "3.60"]]},
+    {"id": "N22-rate", "row": "22", "kind": "asserted", "formula": ["eq", ["const", "bp", "target_rate"], ["decimal", "bp", "2.00"]]},
+    {"id": "N22-year", "row": "22", "kind": "selected forecast reading", "formula": ["eq", ["const", "calendar_year", "first_projected_target_year"], ["decimal", "calendar_year", "2029"]]},
+    {"id": "N23-growth-old", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "growth_old_projection"], ["decimal", "bp", "2.20"]]},
+    {"id": "N23-growth-new", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "growth_new_projection"], ["decimal", "bp", "2.30"]]},
+    {"id": "N23-unemployment-old", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "unemployment_old_projection"], ["decimal", "bp", "4.30"]]},
+    {"id": "N23-unemployment-new", "row": "23", "kind": "projected", "formula": ["eq", ["const", "bp", "unemployment_new_projection"], ["decimal", "bp", "4.10"]]}
+  ],
+  "residuals": [
+    {"id": "N07b", "row": "7b", "status": "NO", "reason": "old range endpoints are absent"},
+    {"id": "N08", "row": "8", "status": "REIFIED", "reason": "16 of 18 exceeds the exact-count bound of 7"},
+    {"id": "N22b", "row": "22b", "status": "NO", "reason": "previous expected target year is absent"},
+    {"id": "N23-slightly", "row": "23", "status": "OPEN", "reason": "slightly has no supplied metric or cutoff"}
+  ]
+}
