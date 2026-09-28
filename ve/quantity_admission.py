@@ -6,7 +6,9 @@ Every statement is regenerated and admitted before erasure. Deductions carry a
 `ve-quantity-certificate@1` bound to the annotated meaning ids of exactly their
 premise nodes and the node. Provenance rules and diagnostics are the base
 route's. The units-only layer generates no Background, so background leaves are
-never admitted; citations need a checked bundle binding on every route.
+never admitted. Citations are bound by checked lemmas: a lemma's certificate
+establishes its conclusion from exactly its transitive leaves, a `cite` leaf
+states that conclusion, and the report must carry the lemma's leaves.
 Lean (`ve_quantity`, case kind `document`) is the authority.
 """
 from __future__ import annotations
@@ -18,8 +20,6 @@ from .admission import (AdmissionError, GRAPH_REJECTED, _array, _check_kind, _co
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .units import CERTIFICATE_FORMAT, check_quantity_certificate, elaborate_quantity, quantity_meaning_id
 from .wire import canonical_json, digest
-
-CITATIONS = "document citations require a checked bundle binding"
 
 
 class _Unit(NamedTuple):
@@ -103,13 +103,60 @@ def _decode_node(env, data):
         premises = tuple(_array(data["premises"]))
         if not all(type(p) is str for p in premises):
             raise VEError("expected strings")
-        certificate = data["certificate"]
-        if (type(certificate) is not dict or set(certificate) != {
-                "format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"}
-                or certificate["format"] != CERTIFICATE_FORMAT):
-            # A raw order certificate, or any other object, is not W6 evidence.
-            raise VEError("Invalid quantity certificate")
+        _certificate(data["certificate"])
     return _Node(name, payload, label, unit, premises, data.get("certificate"))
+
+
+def _certificate(certificate):
+    if (type(certificate) is not dict or set(certificate) != {
+            "format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"}
+            or certificate["format"] != CERTIFICATE_FORMAT):
+        # A raw order certificate, or any other object, is not W6 evidence.
+        raise VEError("Invalid quantity certificate")
+    return certificate
+
+
+class _Lemma(NamedTuple):
+    name: str
+    conclusion: dict  # canonical ve-quantity@1 object
+    leaves: list  # [(canonical ve-quantity@1 object, label)]
+
+
+def _decode_leaf(env, data):
+    _fields(data, ("quantity", "label"))
+    label = data["label"]
+    if type(label) is not str:
+        raise VEError("expected a string")
+    parsed = parse_label(label)
+    if parsed is None:
+        raise AdmissionError(f"AdmissionError: invalid label {label}")
+    if parsed.kind == "cite":
+        raise AdmissionError("AdmissionError: lemma leaves must be transitive (no cite labels)")
+    return _q(env, data["quantity"]), label
+
+
+def _decode_lemma(env, data):
+    """Lean `decodeLemma`: the certificate must establish the conclusion from
+    exactly the leaves, in order, bound to their annotated meaning ids."""
+    _fields(data, ("name", "conclusion", "leaves", "certificate"))
+    name = data["name"]
+    if type(name) is not str:
+        raise VEError("expected a string")
+    parsed = parse_label("cite:" + name)
+    if parsed is None or parsed.kind != "cite":
+        raise VEError(f"invalid lemma name {name}")
+    conclusion = _q(env, data["conclusion"])
+    leaves = [_decode_leaf(env, leaf) for leaf in _array(data["leaves"])]
+    if len(leaves) > 1000:
+        raise ResourceLimit("ResourceLimit: lemma leaves")
+    certificate = _certificate(data["certificate"])
+    try:
+        valid = check_quantity_certificate(env, [p for p, _ in leaves], conclusion, certificate)
+    except VEError:
+        valid = False
+    if not valid:
+        raise AdmissionError(f"AdmissionError: lemma {name} is not established by its certificate")
+    return _Lemma(name, conclusion, leaves)
 
 
 def _disjunction(readings):
@@ -121,6 +168,7 @@ def _disjunction(readings):
 
 class _Doc(NamedTuple):
     units: list
+    lemmas: list
     open_terms: list
     reading_sets: list
     narrowings: list
@@ -146,6 +194,9 @@ def _leaf_admitted(doc, node):
                     for u in doc.units))
     if node.unit is not None:
         return False
+    if kind == "cite":
+        return any(m.name == f"{a[0]}/{a[1]}" and _key(m.conclusion["formula"]) == _key(formula)
+                   for m in doc.lemmas)
     if kind == "open":
         return a[0] in doc.open_terms
     if kind == "readings":
@@ -158,7 +209,7 @@ def _leaf_admitted(doc, node):
         return False
     if kind == "narrowing":
         return a[0] in doc.narrowings
-    return False  # background (none generated) and cite (unsupported)
+    return False  # background: the units-only layer generates none
 
 
 def _node_admitted(doc, node):
@@ -215,8 +266,6 @@ def admit_quantity_document(env, document) -> dict:
     if "documents@1" not in env.profiles:
         raise UnsupportedProfile("quantity documents require documents@1")
     _fields(document, ("units", "graph"), ("lemmas", "open_terms", "reading_sets", "narrowings"))
-    if "lemmas" in document and _array(document["lemmas"]):
-        raise UnsupportedProfile(CITATIONS)
     units = [_decode_unit(env, u) for u in _array(document["units"])]
     if len(units) > 10000:
         raise ResourceLimit("ResourceLimit: unit count")
@@ -225,13 +274,16 @@ def admit_quantity_document(env, document) -> dict:
     if any(a.stop > b.start for a, b in zip(units, units[1:])):
         raise VEError("unit spans must be sorted and non-overlapping")
     optional = {key: _array(document[key]) if key in document else []
-                for key in ("open_terms", "reading_sets", "narrowings")}
+                for key in ("lemmas", "open_terms", "reading_sets", "narrowings")}
+    lemmas = [_decode_lemma(env, m) for m in optional["lemmas"]]
+    if len({m.name for m in lemmas}) != len(lemmas):
+        raise VEError("duplicate lemma")
     open_terms = _tokens(optional["open_terms"])
     reading_sets = [_decode_reading_set(env, r) for r in optional["reading_sets"]]
     if len({(r[0], r[1]) for r in reading_sets}) != len(reading_sets):
         raise VEError("duplicate reading set version")
     narrowings = _tokens(optional["narrowings"])
-    doc = _Doc(units, open_terms, reading_sets, narrowings)
+    doc = _Doc(units, lemmas, open_terms, reading_sets, narrowings)
     graph = document["graph"]
     _fields(graph, ("root", "nodes"))
     if type(graph["root"]) is not str:
@@ -240,8 +292,6 @@ def admit_quantity_document(env, document) -> dict:
     if len(raw_nodes) > 1000:
         raise ResourceLimit("ResourceLimit: graph node count")
     nodes = [_decode_node(env, n) for n in raw_nodes]
-    if any((label := parse_label(n.label)) is not None and label.kind == "cite" for n in nodes):
-        raise UnsupportedProfile(CITATIONS)
     for n in nodes:
         if not _node_admitted(doc, n):
             raise AdmissionError(_diagnostic(doc, n))
@@ -249,6 +299,14 @@ def admit_quantity_document(env, document) -> dict:
     if graph["root"] not in entries:
         raise VEError(GRAPH_REJECTED)
     root, assumptions = entries[graph["root"]]
+    for _, _, label in assumptions:
+        parsed = parse_label(label)
+        if parsed is None or parsed.kind != "cite":
+            continue
+        for lemma in (m for m in lemmas if m.name == f"{parsed.args[0]}/{parsed.args[1]}"):
+            if not all(any(_key(y[1]["formula"]) == _key(p["formula"]) and y[2] == leaf_label
+                           for y in assumptions) for p, leaf_label in lemma.leaves):
+                raise AdmissionError("AdmissionError: a cited lemma's leaves are missing from the report")
     if not all(_compatible(a[2], b[2]) for a in assumptions for b in assumptions):
         raise AdmissionError("AdmissionError: incompatible reading choices")
     report = {"root": _claim(env, root.name, root.payload, root.label),

@@ -997,6 +997,8 @@ import VE.Norms.Run
 #print axioms VE.Time.Document.lookupEntry_mem
 #print axioms VE.Time.Document.mapM_lookup_mem
 #print axioms VE.Time.Document.checkGraph_good
+#print axioms VE.Time.Document.isCite_parse
+#print axioms VE.Time.Document.cites_discharged
 #print axioms VE.Time.Document.admitDecoded_sound
 #print axioms VE.Time.Document.admit_quantity_report_sound
 #print axioms VE.Time.decimal_exact

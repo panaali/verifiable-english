@@ -807,8 +807,9 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
     Ok(out)
 }
 /// A W6 quantity document: decode and regenerate every unit, reading and node
-/// statement. Admission (provenance rules, certificate replay and the report)
-/// belongs to Lean; this reports the regenerated annotated meaning ids only.
+/// statement, including lemma conclusions and leaves. Admission (provenance
+/// rules, certificate replay, citation closure and the report) belongs to Lean;
+/// this reports the regenerated annotated meaning ids only.
 fn quantity_document(v: &Value) -> Result<Value> {
     shape(v, &["kind", "mode", "environment", "document"], &["id"])?;
     if v["kind"] != "quantity" {
@@ -825,12 +826,6 @@ fn quantity_document(v: &Value) -> Result<Value> {
         &["units", "graph"],
         &["lemmas", "open_terms", "reading_sets", "narrowings"],
     )?;
-    if d.get("lemmas").map(array).transpose()?.is_some_and(|l| !l.is_empty()) {
-        return error(
-            "UnsupportedProfile",
-            "document citations require a checked bundle binding",
-        );
-    }
     let id = v.get("id").cloned().unwrap_or(json!(""));
     let mut units = vec![];
     for u in array(&d["units"])? {
@@ -839,6 +834,17 @@ fn quantity_document(v: &Value) -> Result<Value> {
             Some(q) => json!(meaning(e, q)?),
             None => Value::Null,
         });
+    }
+    // Checked lemmas: Lean replays each certificate against exactly its leaves.
+    let mut lemmas = vec![];
+    for m in d.get("lemmas").map(array).transpose()?.unwrap_or(&vec![]) {
+        shape(m, &["name", "conclusion", "leaves", "certificate"], &[])?;
+        let mut leaves = vec![];
+        for leaf in array(&m["leaves"])? {
+            shape(leaf, &["quantity", "label"], &[])?;
+            leaves.push(json!(meaning(e, &leaf["quantity"])?));
+        }
+        lemmas.push(json!({"conclusion":meaning(e, &m["conclusion"])?,"leaves":leaves}));
     }
     for r in d
         .get("reading_sets")
@@ -863,7 +869,7 @@ fn quantity_document(v: &Value) -> Result<Value> {
         nodes.push(json!(meaning(e, &n["quantity"])?));
     }
     Ok(json!({"id":id,"status":"ok","assurance":"regeneration-only",
-        "unit_meaning_ids":units,"node_meaning_ids":nodes}))
+        "unit_meaning_ids":units,"lemma_meaning_ids":lemmas,"node_meaning_ids":nodes}))
 }
 /// The annotated meaning id of one submitted quantity statement.
 fn meaning(e: &Value, p: &Value) -> Result<String> {
