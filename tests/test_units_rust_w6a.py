@@ -31,12 +31,7 @@ def test_news_regeneration_ids_and_evaluation_agree():
     fixture = json.loads(FIXTURE.read_text())
     env = Environment(fixture["environment"])
     target = erased_environment(env)
-    values = {"decision_date": "20712", "new_target_lower": "375", "new_target_upper": "400",
-              "pce_september_estimate": "370", "pce_june_estimate": "360", "target_rate": "200",
-              "first_projected_target_year": "2029", "growth_old_projection": "220",
-              "growth_new_projection": "230", "unemployment_old_projection": "430",
-              "unemployment_new_projection": "410"}
-    model_data = {"complete": True, "domains": {}, "constants": values, "relations": {}}
+    model_data = fixture["model"]
     model = FiniteModel.from_dict(target, model_data)
     for item in fixture["cases"]:
         payload = {"format": "ve-quantity@1", "formula": item["formula"]}
