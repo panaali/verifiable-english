@@ -270,8 +270,19 @@ def decodeAnswer (j : Json) : Except String Answer :=
 /-- A closed formula field (a guard, an assertion, a query target): the P0 route's decoder, with Python's first
 type diagnostic (norms.md 11.1) before its check, so an undeclared constant or predicate is `UnknownSymbol` in both
 checkers. -/
+def decodeBudgetFormula (j : Json) : Except String VE.Formula := do
+  let φ ← VE.Bridge.decodeFormula 64 j
+  if VE.Bridge.formulaNodes φ > 10000 then throw "ResourceLimit: AST exceeds depth or node budget"
+  pure φ
+
+def decodeBudgetNorm (j : Json) : Except String VE.Norms.Node := do
+  let n ← VE.Norms.Wire.decodeNorm j
+  if (n.guard :: n.carveOuts).any (fun φ => VE.Bridge.formulaNodes φ > 10000) then
+    throw "ResourceLimit: AST exceeds depth or node budget"
+  pure n
+
 def decodeClosedField (E : VE.Environment) (j : Json) : Except String VE.Formula := do
-  VE.Norms.typeDiagnostic E [] (← VE.Bridge.decodeFormula 64 j)
+  VE.Norms.typeDiagnostic E [] (← decodeBudgetFormula j)
   VE.Route.Wire.decodeClosed E j
 
 /-- Command content `{"force", "act", "args", "guard"?}` (3.2). -/
@@ -308,7 +319,7 @@ def decodeQuestion (u : String) (j : Json) : Except String Question := do
   | .ok () => pure ()
   | .error _ => throw bad
   let body ← match mode with
-    | .polar | .whichAll | .whichOne => VE.Bridge.decodeFormula 64 (j.getObjValD "body")
+    | .polar | .whichAll | .whichOne => decodeBudgetFormula (j.getObjValD "body")
     | _ => pure .top
   let sort ← match mode with
     | .whichAll | .whichOne => match j.getObjValD "sort" with
@@ -429,7 +440,7 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
         else throw "InvalidInput: question content requires question kind"
       | some "binding" => throw "InvalidInput: binding content requires binding kind"
       | some "norm" =>
-        if wraps kind .norm then pure (Role.norm (← VE.Norms.Wire.decodeNorm content))
+        if wraps kind .norm then pure (Role.norm (← decodeBudgetNorm content))
         else throw "InvalidInput: norm content requires norm kind"
       | tag =>
         -- A formula: the P0 route's bare AST, or W2's `{"ast": ...}`.
@@ -703,7 +714,7 @@ def checkCandidate (se : SpeechEnvironment) (scope : Scope) (keys : List (String
     checkLoneQuestion se scope keys q
     pure (if q.mode == .follows then q.query else none)
   | "norm" =>
-    let n ← VE.Norms.Wire.decodeNorm content
+    let n ← decodeBudgetNorm content
     VE.Norms.validate ⟨E, se.ne.rv.literals, ⟨se.ne.regulated, [], [{ n with over := [] }]⟩⟩
     pure none
   | _ =>
