@@ -330,6 +330,10 @@ def test_zeta_nested_bridges(lean):
     assert r["bridge_formulas"] == []
     rb = elaborate(dict(zeta(), bridges=b1))
     assert rb["bridge_formulas"] == [{"id": "b1", "unit": "u1", "depth": 1, "ast": U("helpful", "claude")}]
+    root = [{"id": "b0", "unit": "u1", "accepted_by": "reviewer_ann", "reason": []}]  # a root target may have one
+    rr = elaborate(dict(zeta(), bridges=root))
+    assert rr["bridge_formulas"] == [{"id": "b0", "unit": "u1", "depth": 0,
+                                      "ast": U("reports__believes__1", "anthropic")}]
 
 
 def test_eta_tense_keys(lean):

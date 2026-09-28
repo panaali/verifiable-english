@@ -365,8 +365,8 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
 def firstFailure (D : ReportDoc) : String :=
   let nodes := allNodes D
   let bad := nodes.find? (fun x => !nodeOk D x)
-  let unitOfNode := fun (x : Content) => (D.units.find? (fun u => (u.content.nodes.length > 0) &&
-    decide (u.content.nodes.length ≥ 1) && (u.content.nodes.any fun y => (canonicalObject D y == canonicalObject D x)))).map (·.id)
+  let unitOfNode := fun (x : Content) =>
+    (D.units.find? (fun u => u.content.nodes.any fun y => canonicalObject D y == canonicalObject D x)).map (·.id)
   if !(decide (D.contexts.map (·.id)).Nodup) then "DuplicateDeclaration: context"
   else if !(decide (D.assessments.map (·.id)).Nodup) then "DuplicateDeclaration: assessment"
   else match D.assessments.find? (fun a => !assessmentOk D a) with
