@@ -1,8 +1,17 @@
-//! W6a ground-unit regeneration for Rust conformance. No proof certificates.
+//! W6a ground-unit regeneration for Rust conformance. No proof certificates:
+//! Rust regenerates, evaluates and checks countermodels; Lean certifies.
 use crate::{Error, Result, digest, error, order_case};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
-use std::collections::BTreeSet;
+use std::fmt;
+
+const NUMBERS2: &str = "$int quantification requires the missing numbers2 route";
+const POINTS_SUFFIX: &str = " percentage points";
+/// Exactly the characters for which Python's `str.isspace()` holds.
+fn is_space(c: char) -> bool {
+    matches!(c as u32, 9..=13 | 28..=32 | 0x85 | 0xA0 | 0x1680 | 0x2000..=0x200A
+        | 0x2028 | 0x2029 | 0x202F | 0x205F | 0x3000)
+}
 
 fn object(v: &Value) -> Result<&serde_json::Map<String, Value>> {
     v.as_object()
@@ -37,20 +46,17 @@ fn node(v: &Value) -> Result<(&str, &[Value])> {
         a,
     ))
 }
+/// Every array node counts toward 10,000, as in Python's elaborator.
 fn budget(v: &Value) -> Result<()> {
-    let mut stack = vec![(v, 1usize)];
+    let mut stack = vec![v];
     let mut count = 0usize;
-    while let Some((value, depth)) = stack.pop() {
+    while let Some(value) = stack.pop() {
         if let Some(items) = value.as_array() {
             count += 1;
-            if count > 10_000 || depth > 64 {
+            if count > 10_000 {
                 return error("ResourceLimit", "quantity AST exceeds node or depth limit");
             }
-            if items.len() > 1 {
-                for item in &items[1..] {
-                    stack.push((item, depth + 1));
-                }
-            }
+            stack.extend(items.iter().skip(1));
         }
     }
     Ok(())
@@ -91,7 +97,7 @@ fn scale(e: &Value, tag: &str) -> Result<BigInt> {
     Ok(n)
 }
 fn exact_decimal(e: &Value, tag: &str, s: &str) -> Result<String> {
-    if s.len() > 40 {
+    if s.chars().count() > 40 {
         return error("ResourceLimit", "decimal literal exceeds 40 characters");
     }
     let unsigned = s.strip_prefix('-').unwrap_or(s);
@@ -128,6 +134,8 @@ fn exact_decimal(e: &Value, tag: &str, s: &str) -> Result<String> {
 fn leap(y: i32) -> bool {
     y % 4 == 0 && (y % 100 != 0 || y % 400 == 0)
 }
+/// Calendar validity first (`InvalidDate`), then the supported interval
+/// (`DateRange`), in Python's order.
 fn date_number(s: &str) -> Result<String> {
     let b = s.as_bytes();
     if b.len() != 10
@@ -138,14 +146,11 @@ fn date_number(s: &str) -> Result<String> {
             .enumerate()
             .all(|(i, x)| i == 4 || i == 7 || x.is_ascii_digit())
     {
-        return error("InvalidInput", "InvalidDate");
+        return error("InvalidInput", format!("InvalidDate({s})"));
     }
     let y: i32 = s[..4].parse().unwrap_or(0);
     let m: usize = s[5..7].parse().unwrap_or(0);
     let d: i32 = s[8..].parse().unwrap_or(0);
-    if !(1970..=9999).contains(&y) || !(1..=12).contains(&m) {
-        return error("InvalidInput", "DateRange");
-    }
     let days = [
         31,
         if leap(y) { 29 } else { 28 },
@@ -160,31 +165,98 @@ fn date_number(s: &str) -> Result<String> {
         30,
         31,
     ];
-    if d < 1 || d > days[m - 1] {
-        return error("InvalidInput", "InvalidDate");
+    if y < 1 || !(1..=12).contains(&m) || d < 1 || d > days[m - 1] {
+        return error("InvalidInput", format!("InvalidDate({s})"));
+    }
+    if y < 1970 {
+        return error("InvalidInput", format!("DateRange({s})"));
     }
     let years = (1970..y)
         .map(|v| if leap(v) { 366 } else { 365 })
         .sum::<i32>();
     Ok((years + days[..m - 1].iter().sum::<i32>() + d - 1).to_string())
 }
-fn same(a: &str, b: &str) -> Result<()> {
-    if a == b {
-        Ok(())
-    } else {
-        error("TypeMismatch", format!("UnitMismatch({a},{b})"))
+
+/// Statement types: unit tags and user sorts are separate namespaces.
+#[derive(Clone, PartialEq, Eq, Debug)]
+enum Ty {
+    Unit(String),
+    Sort(String),
+}
+impl fmt::Display for Ty {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Ty::Unit(t) => write!(f, "unit {t}"),
+            Ty::Sort(s) => write!(f, "sort {s}"),
+        }
     }
 }
-fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(String, Value, Value)> {
-    if depth > 64 {
-        return error("ResourceLimit", "quantity term depth");
+fn same(a: &Ty, b: &Ty) -> Result<()> {
+    match (a, b) {
+        _ if a == b => Ok(()),
+        (Ty::Unit(x), Ty::Unit(y)) => error("TypeMismatch", format!("UnitMismatch({x},{y})")),
+        _ => error("TypeMismatch", format!("TypeMismatch({a},{b})")),
     }
+}
+fn quantity(tag: &str) -> Ty {
+    Ty::Unit(tag.to_owned())
+}
+fn depth_ok(depth: usize) -> Result<()> {
+    if depth > 64 {
+        return error("ResourceLimit", "quantity AST exceeds node or depth limit");
+    }
+    Ok(())
+}
+/// Term depth is counted from each atom, separately from formula depth.
+fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Ty, Value, Value)> {
+    depth_ok(depth)?;
     let (op, a) = node(v)?;
     match (op, a.len()) {
+        ("var", 2) => {
+            let i = a[1]
+                .as_u64()
+                .ok_or_else(|| Error::new("UnboundVariable", "invalid index"))?;
+            let sort = ctx
+                .get(i as usize)
+                .ok_or_else(|| Error::new("UnboundVariable", "unbound index"))?;
+            Ok((Ty::Sort(sort.clone()), v.clone(), v.clone()))
+        }
+        ("var", 3) => error("UnsupportedProfile", NUMBERS2),
+        ("const", 2 | 3) => {
+            let name = string(a.last().unwrap())?;
+            let d = e["vocabulary"]["constants"]
+                .get(name)
+                .ok_or_else(|| Error::new("UnknownSymbol", "unknown quantity constant"))?;
+            let sort = string(&d["sort"])?;
+            if sort != "$int" {
+                if a.len() != 2 {
+                    return error("TypeMismatch", "unit on object constant");
+                }
+                return Ok((Ty::Sort(sort.into()), v.clone(), v.clone()));
+            }
+            let tag = if a.len() == 3 {
+                unit(e, string(&a[1])?)?
+            } else {
+                "dimensionless"
+            };
+            same(
+                &quantity(tag),
+                &quantity(
+                    d.get("unit")
+                        .and_then(Value::as_str)
+                        .unwrap_or("dimensionless"),
+                ),
+            )?;
+            Ok((
+                quantity(tag),
+                json!(["const", tag, name]),
+                json!(["const", name]),
+            ))
+        }
         ("num", 2) => {
             let n = int(string(&a[1])?)?.to_string();
             Ok((
-                "dimensionless".into(),
+                quantity("dimensionless"),
                 json!(["num", "dimensionless", n]),
                 json!(["num", n]),
             ))
@@ -196,41 +268,12 @@ fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(String, V
             } else {
                 exact_decimal(e, tag, string(&a[2])?)?
             };
-            Ok((tag.into(), json!(["num", tag, n]), json!(["num", n])))
+            Ok((quantity(tag), json!(["num", tag, n]), json!(["num", n])))
         }
         ("date", 2) => {
             unit(e, "day")?;
             let n = date_number(string(&a[1])?)?;
-            Ok(("day".into(), json!(["num", "day", n]), json!(["num", n])))
-        }
-        ("const", 2 | 3) => {
-            let name = string(a.last().unwrap())?;
-            let d = e["vocabulary"]["constants"]
-                .get(name)
-                .ok_or_else(|| Error::new("UnknownSymbol", "unknown quantity constant"))?;
-            let sort = string(&d["sort"])?;
-            if sort != "$int" {
-                if a.len() != 2 {
-                    return error("TypeMismatch", "unit on object constant");
-                }
-                return Ok((sort.into(), v.clone(), v.clone()));
-            }
-            let tag = if a.len() == 3 {
-                unit(e, string(&a[1])?)?
-            } else {
-                "dimensionless"
-            };
-            same(
-                tag,
-                d.get("unit")
-                    .and_then(Value::as_str)
-                    .unwrap_or("dimensionless"),
-            )?;
-            Ok((
-                tag.into(),
-                json!(["const", tag, name]),
-                json!(["const", name]),
-            ))
+            Ok((quantity("day"), json!(["num", "day", n]), json!(["num", n])))
         }
         ("add", 3 | 4) => {
             let (tag, l, r) = if a.len() == 4 {
@@ -240,13 +283,13 @@ fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(String, V
             };
             let (lt, lq, lc) = term(e, l, ctx, depth + 1)?;
             let (rt, rq, rc) = term(e, r, ctx, depth + 1)?;
-            same(tag, &lt)?;
-            same(tag, &rt)?;
+            same(&lt, &rt)?;
+            same(&quantity(tag), &lt)?;
             if tag == "day" {
                 return error("TypeMismatch", "calendar dates cannot be added");
             }
             Ok((
-                tag.into(),
+                quantity(tag),
                 json!(["add", tag, lq, rq]),
                 json!(["add", lc, rc]),
             ))
@@ -259,35 +302,16 @@ fn term(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(String, V
             };
             let c = int(string(c)?)?.to_string();
             let (tt, tq, tc) = term(e, t, ctx, depth + 1)?;
-            same(tag, &tt)?;
+            same(&quantity(tag), &tt)?;
             if tag == "day" {
                 return error("TypeMismatch", "calendar dates cannot be scaled");
             }
             Ok((
-                tag.into(),
+                quantity(tag),
                 json!(["scale", tag, c, tq]),
                 json!(["scale", c, tc]),
             ))
         }
-        ("var", 2) => {
-            let i = a[1]
-                .as_u64()
-                .ok_or_else(|| Error::new("UnboundVariable", "invalid index"))?;
-            let sort = ctx
-                .get(i as usize)
-                .ok_or_else(|| Error::new("UnboundVariable", "unbound index"))?;
-            if sort == "$int" {
-                return error(
-                    "UnsupportedProfile",
-                    "$int quantification requires the missing numbers2 route",
-                );
-            }
-            Ok((sort.clone(), v.clone(), v.clone()))
-        }
-        ("var", 3) => error(
-            "UnsupportedProfile",
-            "$int quantification requires the missing numbers2 route",
-        ),
         _ => error("SyntaxError", "invalid quantity term"),
     }
 }
@@ -298,21 +322,16 @@ fn guard(t: &Value) -> Value {
         ["le", t, ["num", "2932896"]]
     ])
 }
-fn temporal(
-    e: &Value,
-    op: &str,
-    a: &[Value],
-    ctx: &[String],
-    depth: usize,
-) -> Result<(Value, Value)> {
+fn temporal(e: &Value, op: &str, a: &[Value], ctx: &[String]) -> Result<(Value, Value)> {
     let three = ["within_days", "shift_days", "elapsed_days"].contains(&op);
     if a.len() != if three { 4 } else { 3 } {
         return error("SyntaxError", "invalid temporal arity");
     }
-    let (ta, qa, ca) = term(e, &a[1], ctx, depth + 1)?;
-    let (tb, qb, cb) = term(e, &a[2], ctx, depth + 1)?;
-    same(&ta, "day")?;
-    same(&tb, "day")?;
+    let (ta, qa, ca) = term(e, &a[1], ctx, 1)?;
+    let (tb, qb, cb) = term(e, &a[2], ctx, 1)?;
+    let day = quantity(unit(e, "day")?);
+    same(&ta, &day)?;
+    same(&tb, &day)?;
     let both = json!(["and", guard(&ca), guard(&cb)]);
     let (q, body) = match op {
         "date_on" => (json!([op, qa, qb]), json!(["eq", ca, cb])),
@@ -320,8 +339,8 @@ fn temporal(
         "date_after" => (json!([op, qa, qb]), json!(["lt", cb, ca])),
         "date_no_later" => (json!([op, qa, qb]), json!(["le", ca, cb])),
         "elapsed_days" => {
-            let (tv, qv, cv) = term(e, &a[3], ctx, depth + 1)?;
-            same(&tv, "elapsed_day")?;
+            let (tv, qv, cv) = term(e, &a[3], ctx, 1)?;
+            same(&tv, &quantity(unit(e, "elapsed_day")?))?;
             (
                 json!([op, qa, qb, qv]),
                 json!(["eq", cv, ["add", cb, ["scale", "-1", ca]]]),
@@ -346,18 +365,16 @@ fn temporal(
     Ok((q, json!(["and", both, body])))
 }
 fn formula(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Value, Value)> {
-    if depth > 64 {
-        return error("ResourceLimit", "quantity formula depth");
-    }
+    depth_ok(depth)?;
     let (op, a) = node(v)?;
     match (op, a.len()) {
         ("top" | "bottom", 1) => Ok((v.clone(), v.clone())),
         ("eq" | "lt" | "le", 3) => {
-            let (lt, lq, lc) = term(e, &a[1], ctx, depth + 1)?;
-            let (rt, rq, rc) = term(e, &a[2], ctx, depth + 1)?;
+            let (lt, lq, lc) = term(e, &a[1], ctx, 1)?;
+            let (rt, rq, rc) = term(e, &a[2], ctx, 1)?;
             same(&lt, &rt)?;
-            if op != "eq" && lt != "dimensionless" && e["units"].get(&lt).is_none() {
-                return error("TypeMismatch", "order needs integers");
+            if op != "eq" && !matches!(lt, Ty::Unit(_)) {
+                return error("TypeMismatch", "order needs quantity terms");
             }
             Ok((json!([op, lq, rq]), json!([op, lc, rc])))
         }
@@ -373,21 +390,28 @@ fn formula(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Value,
             let mut q = vec![json!(op), json!(name)];
             let mut core = q.clone();
             for (i, arg) in a[2..].iter().enumerate() {
-                let expected = if signature[i] == "$int" {
-                    decl.get("argument_units")
-                        .and_then(|m| m.get(i.to_string()))
-                        .and_then(Value::as_str)
-                        .unwrap_or("dimensionless")
+                let sort = string(&signature[i])?;
+                let expected = if sort == "$int" {
+                    quantity(
+                        decl.get("argument_units")
+                            .and_then(|m| m.get(i.to_string()))
+                            .and_then(Value::as_str)
+                            .unwrap_or("dimensionless"),
+                    )
                 } else {
-                    string(&signature[i])?
+                    Ty::Sort(sort.to_owned())
                 };
-                let (found, tq, tc) = term(e, arg, ctx, depth + 1)?;
-                same(expected, &found)?;
+                let (found, tq, tc) = term(e, arg, ctx, 1)?;
+                same(&found, &expected)?;
                 q.push(tq);
                 core.push(tc);
             }
             Ok((json!(q), json!(core)))
         }
+        ("atom", _) => error(
+            "UnsupportedProfile",
+            "n-ary atoms are not admitted on the order@0 quantity route",
+        ),
         ("not", 2) => {
             let (q, c) = formula(e, &a[1], ctx, depth + 1)?;
             Ok((json!([op, q]), json!([op, c])))
@@ -397,40 +421,111 @@ fn formula(e: &Value, v: &Value, ctx: &[String], depth: usize) -> Result<(Value,
             let (rq, rc) = formula(e, &a[2], ctx, depth + 1)?;
             Ok((json!([op, lq, rq]), json!([op, lc, rc])))
         }
+        ("forall" | "exists", 3 | 4) if a[1] == "$int" => error("UnsupportedProfile", NUMBERS2),
         ("forall" | "exists", 3) => {
             let sort = string(&a[1])?;
-            if sort == "$int" {
-                return error(
-                    "UnsupportedProfile",
-                    "$int quantification requires the missing numbers2 route",
-                );
-            }
             if e["vocabulary"]["sorts"].get(sort).is_none() {
-                return error("UnknownSymbol", "unknown binder sort");
+                return error("InvalidInput", "Invalid quantity binder");
             }
             let mut next = vec![sort.to_owned()];
             next.extend_from_slice(ctx);
             let (q, c) = formula(e, &a[2], &next, depth + 1)?;
             Ok((json!([op, sort, q]), json!([op, sort, c])))
         }
+        ("forall" | "exists", _) => error("InvalidInput", "Invalid quantity binder"),
         (
             "date_on" | "date_before" | "date_after" | "date_no_later" | "within_days"
             | "shift_days" | "elapsed_days",
             _,
-        ) => temporal(e, op, a, ctx, depth),
+        ) => temporal(e, op, a, ctx),
         (
             "sunday" | "excluded_sundays" | "forall_date" | "exists_date" | "trace_all"
-            | "trace_some" | "forall" | "exists",
+            | "trace_some",
             _,
-        ) => error(
-            "UnsupportedProfile",
-            "$int quantification requires the missing numbers2 route",
-        ),
-        _ => error(
-            "UnsupportedProfile",
-            "quantity formula route not supported in Rust",
-        ),
+        ) => error("UnsupportedProfile", NUMBERS2),
+        _ => error("InvalidInput", format!("Unknown quantity formula {op}")),
     }
+}
+/// Nonempty words of non-space characters joined by single spaces; an input
+/// symbol may end in one space.
+fn display_string(v: &Value, trailing_space: bool) -> Result<String> {
+    let s = string(v)?;
+    if s.is_empty() {
+        return error("InvalidInput", "Display string must be nonempty");
+    }
+    if s.chars().count() > 256 {
+        return error("ResourceLimit", "Display string exceeds 256 characters");
+    }
+    let mut words: Vec<&str> = s.split(' ').collect();
+    if trailing_space && words.len() > 1 && words.last() == Some(&"") {
+        words.pop();
+    }
+    if words.iter().any(|w| w.is_empty() || w.chars().any(is_space)) {
+        return error(
+            "InvalidInput",
+            format!("Display string {s:?} must be whitespace-normalized"),
+        );
+    }
+    Ok(s.to_owned())
+}
+/// Every enabled literal affix, canonical or alias: (is_prefix, text).
+fn affixes(units: &serde_json::Map<String, Value>) -> Result<Vec<(bool, String)>> {
+    let mut forms = vec![];
+    for record in units.values() {
+        let d = &record["display"];
+        match string(&d["kind"])? {
+            "percent" => {
+                forms.push((false, "%".to_owned()));
+                forms.push((false, POINTS_SUFFIX.to_owned()));
+            }
+            "money" => {
+                forms.push((true, format!("{} ", string(&d["currency"])?)));
+                if let Some(symbol) = d.get("input_symbol") {
+                    forms.push((true, string(symbol)?.to_owned()));
+                }
+            }
+            "decimal" => {
+                let label = string(&d["label"])?;
+                if d.get("placement") == Some(&json!("prefix")) {
+                    forms.push((true, format!("{label} ")));
+                } else {
+                    forms.push((false, format!(" {label}")));
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(forms)
+}
+/// No affix touches the amount with a digit, sign or point, and no affix
+/// extends another on the same side (Python `check_display_injective`).
+fn display_injective(units: &serde_json::Map<String, Value>) -> Result<()> {
+    let forms = affixes(units)?;
+    let amount = |c: Option<char>| c.is_some_and(|c| c == '-' || c == '.' || c.is_ascii_digit());
+    for (prefix, text) in &forms {
+        let edge = if *prefix {
+            text.chars().next()
+        } else {
+            text.chars().last()
+        };
+        if amount(edge) {
+            return error("InvalidInput", format!("DisplayCollision({text:?} touches the amount)"));
+        }
+    }
+    for (i, (prefix, text)) in forms.iter().enumerate() {
+        for (other_prefix, other) in &forms[i + 1..] {
+            let extends = prefix == other_prefix
+                && if *prefix {
+                    text.starts_with(other.as_str()) || other.starts_with(text.as_str())
+                } else {
+                    text.ends_with(other.as_str()) || other.ends_with(text.as_str())
+                };
+            if extends {
+                return error("InvalidInput", format!("DisplayCollision({text:?}, {other:?})"));
+            }
+        }
+    }
+    Ok(())
 }
 fn declarations(e: &Value) -> Result<()> {
     shape(
@@ -454,27 +549,22 @@ fn declarations(e: &Value) -> Result<()> {
             "quantity route requires ve-units@1 on ve.core@0.2",
         );
     }
-    let profiles = array(&e["profiles"])?;
-    if !["order@0", "relational-fol@0", "time@0"]
-        .iter()
-        .all(|p| profiles.contains(&json!(p)))
+    let profiles = &e["profiles"];
+    if profiles != &json!(["order@0", "relational-fol@0", "time@0"])
+        && profiles != &json!(["documents@1", "order@0", "relational-fol@0", "time@0"])
     {
         return error(
             "UnsupportedProfile",
-            "quantities require order@0 and time@0",
+            "ve-units@1 requires exactly order@0, relational-fol@0 and time@0, optionally with documents@1",
         );
     }
     let u = object(&e["units"])?;
     if u.len() > 64 {
         return error("ResourceLimit", "At most 64 unit tags");
     }
-    let mut forms = BTreeSet::new();
-    let mut money_codes = BTreeSet::new();
-    let mut decimal_prefixes = BTreeSet::new();
     for (tag, record) in u {
-        crate::environment::identifier(tag, "InvalidInput")?;
-        if tag == "dimensionless" {
-            return error("InvalidInput", "reserved unit tag");
+        if crate::environment::identifier(tag, "InvalidInput").is_err() || tag == "dimensionless" {
+            return error("InvalidInput", format!("Invalid unit tag {tag:?}"));
         }
         scale(e, tag)?;
         let d = &record["display"];
@@ -482,35 +572,21 @@ fn declarations(e: &Value) -> Result<()> {
             d.get("kind")
                 .ok_or_else(|| Error::new("InvalidInput", "display kind missing"))?,
         )?;
-        let key = match kind {
-            "percent" => {
-                shape(d, &["kind"], &[])?;
-                "percent".into()
-            }
+        match kind {
+            "percent" => shape(d, &["kind"], &[])?,
             "money" => {
                 shape(d, &["kind", "currency"], &["input_symbol"])?;
                 let c = string(&d["currency"])?;
                 if c.len() != 3 || !c.bytes().all(|b| b.is_ascii_uppercase()) {
                     return error("InvalidInput", "invalid currency");
                 }
-                money_codes.insert(c.to_owned());
-                if let Some(raw) = d.get("input_symbol") {
-                    let symbol = string(raw)?;
-                    if symbol.is_empty()
-                        || symbol.chars().count() > 256
-                        || !forms.insert(format!("symbol:{symbol}"))
-                    {
-                        return error("InvalidInput", "DisplayCollision(input_symbol)");
-                    }
+                if let Some(symbol) = d.get("input_symbol") {
+                    display_string(symbol, true)?;
                 }
-                format!("money:{c}")
             }
             "decimal" => {
                 shape(d, &["kind", "label"], &["placement"])?;
-                let label = string(&d["label"])?;
-                if label.is_empty() || label.chars().count() > 256 {
-                    return error("InvalidInput", "invalid label");
-                }
+                display_string(&d["label"], false)?;
                 let placement = d
                     .get("placement")
                     .map(string)
@@ -519,22 +595,14 @@ fn declarations(e: &Value) -> Result<()> {
                 if placement != "prefix" && placement != "suffix" {
                     return error("InvalidInput", "invalid placement");
                 }
-                if placement == "prefix" {
-                    decimal_prefixes.insert(label.to_owned());
-                }
-                format!("decimal:{label}")
             }
             "iso_date" => {
                 shape(d, &["kind"], &[])?;
                 if tag != "day" || record["scale"] != "1" {
                     return error("InvalidInput", "iso_date requires day at scale 1");
                 }
-                "iso_date".into()
             }
             _ => return error("InvalidInput", "unknown display kind"),
-        };
-        if !forms.insert(key) {
-            return error("InvalidInput", "DisplayCollision");
         }
         if tag == "day" && record != &json!({"scale":"1","display":{"kind":"iso_date"}}) {
             return error("InvalidInput", "reserved day declaration");
@@ -545,10 +613,17 @@ fn declarations(e: &Value) -> Result<()> {
             return error("InvalidInput", "reserved elapsed_day declaration");
         }
     }
-    if money_codes.intersection(&decimal_prefixes).next().is_some() {
-        return error("InvalidInput", "DisplayCollision(currency label)");
-    }
+    display_injective(u)?;
     shape(&e["vocabulary"], &["sorts", "predicates", "constants"], &[])?;
+    let sorts = object(&e["vocabulary"]["sorts"])?;
+    for tag in std::iter::once("dimensionless").chain(u.keys().map(String::as_str)) {
+        if sorts.contains_key(tag) {
+            return error(
+                "InvalidInput",
+                format!("Unit tag {tag} collides with a declared sort"),
+            );
+        }
+    }
     for (_, p) in object(&e["vocabulary"]["predicates"])? {
         if let Some(slots) = p.get("argument_units") {
             for (slot, u) in object(slots)? {
@@ -565,29 +640,58 @@ fn declarations(e: &Value) -> Result<()> {
         }
     }
     for (_, c) in object(&e["vocabulary"]["constants"])? {
+        if c.get("sort") == Some(&json!("$string")) {
+            return error(
+                "UnsupportedProfile",
+                "$string literals are not admitted with ve-units@1",
+            );
+        }
         if let Some(u) = c.get("unit") {
             if c["sort"] != "$int" {
                 return error("InvalidInput", "unit on non-integer constant");
             }
             unit(e, string(u)?)?;
         }
+        if let Some(words) = c.get("verbalisation") {
+            let words = string(words)?;
+            if words.is_empty() {
+                return error("InvalidInput", "Verbalisations must be nonempty strings");
+            }
+            if words.chars().count() > 256 {
+                return error("ResourceLimit", "Verbalisation exceeds 256 characters");
+            }
+        }
     }
     Ok(())
 }
-/// Decode annotated source, regenerate Q and core, and validate the core AST.
-/// This is evaluation-only and cannot certify a W6 claim.
-pub fn quantity_case(v: &Value) -> Result<Value> {
-    shape(v, &["kind", "environment", "quantity"], &["id", "model"])?;
-    if v["kind"] != "quantity" {
-        return error("InvalidInput", "quantity kind required");
+/// The regenerated core target environment: W6 declaration fields removed.
+fn erased(e: &Value) -> Value {
+    let mut target = e.clone();
+    target.as_object_mut().unwrap().remove("unit_schema");
+    target.as_object_mut().unwrap().remove("units");
+    for c in target["vocabulary"]["constants"]
+        .as_object_mut()
+        .unwrap()
+        .values_mut()
+    {
+        if let Some(c) = c.as_object_mut() {
+            c.remove("unit");
+            c.remove("verbalisation");
+        }
     }
-    let e = v
-        .get("environment")
-        .ok_or_else(|| Error::new("InvalidInput", "environment missing"))?;
-    declarations(e)?;
-    let p = v
-        .get("quantity")
-        .ok_or_else(|| Error::new("InvalidInput", "quantity missing"))?;
+    for p in target["vocabulary"]["predicates"]
+        .as_object_mut()
+        .unwrap()
+        .values_mut()
+    {
+        if let Some(p) = p.as_object_mut() {
+            p.remove("argument_units");
+        }
+    }
+    target
+}
+/// Decode one submitted quantity object; regenerate Q and the core formula.
+fn quantity_payload(e: &Value, p: &Value) -> Result<(Value, Value)> {
     shape(p, &["format", "formula"], &["traces", "Q"])?;
     if p["format"] != "ve-quantity@1" {
         return error("UnsupportedProfile", "quantity format");
@@ -596,7 +700,7 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
     if !array(&traces)?.is_empty() {
         return error(
             "UnsupportedProfile",
-            "trace declarations require numbers2 route",
+            "trace declarations require the missing numbers2 route",
         );
     }
     budget(&p["formula"])?;
@@ -607,27 +711,48 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
             "Quantity Q differs from regenerated formula",
         );
     }
-    let mut target = e.clone();
-    target.as_object_mut().unwrap().remove("unit_schema");
-    target.as_object_mut().unwrap().remove("units");
-    for c in target["vocabulary"]["constants"]
-        .as_object_mut()
-        .unwrap()
-        .values_mut()
-    {
-        let c = c.as_object_mut().unwrap();
-        c.remove("unit");
-        c.remove("verbalisation");
+    Ok((q, core))
+}
+/// Decode annotated source, regenerate Q and core, and validate the core AST.
+/// This is evaluation-only and cannot certify a W6 claim. A `countermodel`
+/// case takes annotated `premises` and `conclusion` instead of `quantity`.
+pub fn quantity_case(v: &Value) -> Result<Value> {
+    let countermodel = v.get("mode") == Some(&json!("countermodel"));
+    if countermodel {
+        shape(
+            v,
+            &["kind", "mode", "environment", "premises", "conclusion", "model"],
+            &["id"],
+        )?;
+    } else {
+        shape(v, &["kind", "environment", "quantity"], &["id", "model"])?;
     }
-    for p in target["vocabulary"]["predicates"]
-        .as_object_mut()
-        .unwrap()
-        .values_mut()
-    {
-        p.as_object_mut().unwrap().remove("argument_units");
+    if v["kind"] != "quantity" {
+        return error("InvalidInput", "quantity kind required");
     }
-    let mut case = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"kind":"evaluate",
-        "environment":target,"ast":[core.clone()]});
+    let e = v
+        .get("environment")
+        .ok_or_else(|| Error::new("InvalidInput", "environment missing"))?;
+    declarations(e)?;
+    let target = erased(e);
+    let id = v.get("id").cloned().unwrap_or(json!(""));
+    if countermodel {
+        let mut premises = vec![];
+        for p in array(&v["premises"])? {
+            premises.push(quantity_payload(e, p)?.1);
+        }
+        let conclusion = quantity_payload(e, &v["conclusion"])?.1;
+        let case = json!({"id":id,"kind":"countermodel","environment":target,
+            "premises":premises,"conclusion":conclusion,"model":v["model"]});
+        let checked = order_case(&case)?;
+        return Ok(json!({"id":id,"status":"ok","assurance":"regeneration-only",
+            "refutes":checked["valid"]}));
+    }
+    let p = v
+        .get("quantity")
+        .ok_or_else(|| Error::new("InvalidInput", "quantity missing"))?;
+    let (q, core) = quantity_payload(e, p)?;
+    let mut case = json!({"id":id,"kind":"evaluate","environment":target,"ast":[core.clone()]});
     if let Some(model) = v.get("model") {
         case["model"] = model.clone();
     }
@@ -647,7 +772,7 @@ pub fn quantity_case(v: &Value) -> Result<Value> {
         &format!("ve-meaning-{version}\n"),
         &json!({"environment_id":environment_id,"ast":canonical}),
     )?;
-    let mut out = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok",
+    let mut out = json!({"id":id,"status":"ok",
         "assurance":"regeneration-only",
         "Q":q,"core":core,"environment_id":environment_id,
         "target_environment_id":checked["environment_id"],"meaning_id":meaning_id});
