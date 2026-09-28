@@ -536,11 +536,17 @@ def unresolvedText (D : DDoc) (u : String) (s : List Tok) (ds : List DTree) : St
       | some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText m
       | none => "UnresolvedReference: " ++ u
 
-def ambiguityText (D : DDoc) (u : String) (d d' : DTree) (vec vec' : List Target) : String :=
+/-- Two type-checking competitors disagree: at the first slot where their targets differ, every
+target a competitor of the same derivation gives it, sorted (8: `AmbiguousReference: <mention>:
+<targets>`). -/
+def ambiguityText (D : DDoc) (u : String) (d d' : DTree) (vec vec' : List Target)
+    (comps : List (DTree × List Target × VE.Formula)) : String :=
   if d'.tree == d.tree && d'.slots == d.slots then
     match d.slots.find? (fun m => !decide (AliasEq D (assignOf d.slots vec' m) (assignOf d.slots vec m))) with
-    | some m => "AmbiguousReference: " ++ mentionIdAt D m ++ ": " ++ targetText (assignOf d.slots vec m) ++ ", " ++
-        targetText (assignOf d.slots vec' m)
+    | some m =>
+      let targets := ((comps.filter fun x => x.1.tree == d.tree && x.1.slots == d.slots).map fun x =>
+        targetText (assignOf d.slots x.2.1 m)).eraseDups.mergeSort fun a b => decide (a ≤ b)
+      "AmbiguousReference: " ++ mentionIdAt D m ++ ": " ++ ", ".intercalate targets
     | none => "AmbiguousReference: " ++ u
   else "AmbiguityError: " ++ u ++ " has more than one derivation"
 
@@ -584,7 +590,7 @@ def validate (D : DDoc) (unit : String) : Except String VE.Formula :=
       | [] => .error (unresolvedText D unit s ds)
       | (d, vec, _) :: rest =>
         match rest.find? (fun x => !aligned D d x.1 vec x.2.1) with
-        | some x => .error (ambiguityText D unit d x.1 vec x.2.1)
+        | some x => .error (ambiguityText D unit d x.1 vec x.2.1 (typedComps D ds))
         | none => checkRecorded D unit d vec
 
 /-- The supported fragment: within the validator's budgets. -/

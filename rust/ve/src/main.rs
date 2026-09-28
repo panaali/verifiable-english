@@ -70,6 +70,9 @@ fn case(v: &Value) -> Result<Value> {
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
     }
+    if v.get("family").is_some() {
+        return elaborated_document_case(v);
+    }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
         .and_then(Value::as_array)
