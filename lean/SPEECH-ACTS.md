@@ -70,6 +70,7 @@ Names have prefix `VE.SpeechActs.`.
 | `Run.speech_wire_answer_sound` | A `speech-answer` replay whose certificate is accepted establishes the answer on every admissible model of the regenerated premises (conditionally, or as a presupposition failure, by evidence kind); on the model path the evaluator's answers are exactly `AnswersAt`. |
 | `Run.speech_wire_consequence_sound` | `follows` from a replay is entailment over the regenerated `Π_q`; `gap` is its refutation; never both. |
 | `Run.speech_wire_conflict_witness_sound` | A `CONFLICT` witness on the regenerated policy refutes its conflict-freedom and the document property. |
+| `Run.speech_wire_conflict_free_sound` | A `CONFLICT-FREE` package replay makes every base-admissible structure conflict-free for the regenerated policy (W1's `conflictFreeCheck_sound`), the hypothesis of `speech_route_acceptance`. |
 | `Run.premiseStatus_sound` | A model status is a model of the checked list; an inconsistency certificate refutes every admissible model of it. |
 
 The remaining theorems are helper lemmas (formula typing and closedness, `eqsFrom` denotation, sublists and
@@ -115,10 +116,12 @@ profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit 
 | `speech-elaborate` | none | `environment_id`, `scope`, `legend`, `premises` (the regenerated `premises(D)`), `policy` (W1 `norms-elaborate` output), `commands` (rule, paraphrase), `dormant`, `questions`, `queries` |
 | `speech-answer` | `question`, `evidence` (`certificate` or `conditional` with `answer`, `presupposition_failed`, `model`), optional `premise_status` (`model` or `inconsistent`), optional `model_id` | the answer line of 5.3 |
 | `speech-consequence` | `query`, `certificate` and/or `model` | `follows (certificate)`, `gap (model <id>)`, `unresolved (no accepted evidence)`; `CheckerConflict` when both hold |
+| `speech-conflict` | `packages` (target → `{"environment_id", "document_hash", "target", "certificate"}`) | `CONFLICT-FREE`, or `UNKNOWN` with the first target lacking an accepted certificate; the outer binding is the canonical environment id, the document hash `ve-speech-acts-<identity version>` over `{"environment_id", "document"}` and the target; the inner certificate binds the regenerated base environment (scope block, regulated predicates, `speech-acts@0` and `norms@0` removed), `Background_base` and `∀x̄. ¬conflict` |
 | `speech-conflict` | `witness` (W1's shape) | `CONFLICT` or `UNKNOWN` on the regenerated policy |
 
 Cases without a speech-act construct (profile, block, `speech-*` kind, `binding` unit, command or question
-content) delegate unchanged to `Norms.Run.runCase`. `tests/test_speech_acts_lean.py` runs sixteen section 9
+content) delegate unchanged to `Norms.Run.runCase`. A query whose target is one of its pinned premises carries
+the warning `TrivialQuery: <query id>` in `speech-elaborate`. `tests/test_speech_acts_lean.py` runs eighteen section 9
 fixtures against the executable; the Python prover serves only as an untrusted certificate search over the lists
 Lean regenerates.
 
@@ -133,6 +136,5 @@ Lean regenerates.
   mirroring `ve/readings.py`'s `validate_reading_sets` and `validate_narrowings`.
 * **Identity of units.** Command and question meaning ids (3.5, including a proof task's query premise and
   target meaning ids) are not computed; answer, compliance and nomination records are accepted as keys but not
-  decoded; there is no compliance line; `TrivialQuery` is not reported.
-* **`speech-conflict` packages** (the CONFLICT-FREE half) are not implemented; witnesses are.
+  decoded; there is no compliance line.
 * **Python and Rust** (plan items 2 and 4) and the English layer (item 3).

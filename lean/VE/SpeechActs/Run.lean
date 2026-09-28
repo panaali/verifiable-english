@@ -91,8 +91,9 @@ def elaborated (dec : Wire.Decoded) : List (String × Json) :=
       | .command _, none => some u.id
       | _, _ => none))),
    ("questions", Json.arr (D.questions.map (questionJson D)).toArray),
-   ("queries", Json.arr (D.queries.map (fun qr => Json.mkObj [("id", .str qr.id),
-      ("premises", Json.arr (qr.premises.map enc).toArray), ("target", enc qr.target)])).toArray)]
+   ("queries", Json.arr (D.queries.map (fun qr => Json.mkObj ([("id", .str qr.id),
+      ("premises", Json.arr (qr.premises.map enc).toArray), ("target", enc qr.target)] ++
+      (if trivialQuery D qr then [("warning", .str s!"TrivialQuery: {qr.id}")] else [])))).toArray)]
 
 /-! ## Models (model path): base tables supplied, regulated tables computed -/
 
@@ -333,6 +334,68 @@ def replayWitness (j : Json) :
   let w ← VE.Norms.Replay.witnessFrom (normsSource dec) (← j.getObjVal? "witness")
   pure ⟨dec, w⟩
 
+/-! ## Conflict packages (`speech-conflict`, CONFLICT-FREE) -/
+
+/-- The regenerated base environment: the scope block and the `speech-acts@0` profile removed, then W1's base
+environment (regulated predicates and `norms@0` removed). -/
+def baseEnvironmentJson (environment : Json) : Except String Json := do
+  VE.Norms.Replay.baseEnvironmentJson (← Wire.stripSpeech environment)
+
+/-- The speech-act document hash: the complete source document under the canonical environment id. -/
+def documentHash (dec : Wire.Decoded) (document : Json) : Except String String := do
+  let envId ← VE.Route.Wire.environmentId dec.se.profiles dec.se.canonical
+  VE.CertificateWire.digest s!"ve-speech-acts-{VE.Route.Wire.identityVersion dec.se.profiles}\n"
+    (Json.mkObj [("environment_id", .str envId), ("document", document)])
+
+/-- One target's package: `none` unless the outer binding (canonical environment id, document hash, target)
+matches the source and the inner certificate binds the regenerated base environment, `Background_base` and
+`∀x̄. ¬conflict`. -/
+def decodePackage (dec : Wire.Decoded) (environment document packages : Json)
+    (t : String × List String × VE.Formula) : Option VE.Tableau.Certificate := Id.run do
+  let D := policy dec.D
+  let some baseEnv := (baseEnvironmentJson environment).toOption | none
+  let some baseProfiles := (strings (baseEnv.getObjValD "profiles")).toOption | none
+  let some envId := (VE.Route.Wire.environmentId dec.se.profiles dec.se.canonical).toOption | none
+  let some docHash := (documentHash dec document).toOption | none
+  let package := packages.getObjValD t.1
+  unless package.getObjValD "environment_id" == .str envId &&
+      package.getObjValD "document_hash" == .str docHash &&
+      package.getObjValD "target" == .str t.1 do return none
+  let some c := (VE.CertificateWire.decodeCertificate (package.getObjValD "certificate")).toOption | none
+  match VE.Route.Wire.bindingOk baseProfiles baseEnv ((VE.Norms.backgroundBase D).map enc)
+      (enc (VE.Norms.targetConclusion t)) c.environment_id c.premise_meaning_ids c.conclusion_meaning_id with
+  | .ok () => some c
+  | .error _ => none
+
+structure ConflictCase where
+  dec : Wire.Decoded
+  certs : List (Option VE.Tableau.Certificate)
+
+def ConflictCase.conflictFree (r : ConflictCase) : Bool := VE.Norms.conflictFreeCheck (policy r.dec.D) r.certs
+
+def replayConflict (j : Json) : Except String ConflictCase := do
+  let environment ← j.getObjVal? "environment"
+  let document ← j.getObjVal? "document"
+  let dec ← Wire.decodeDocument environment document
+  let packages := j.getObjValD "packages"
+  pure ⟨dec, (VE.Norms.targets (policy dec.D)).map (decodePackage dec environment document packages)⟩
+
+/-- The first target without an accepted certificate. -/
+def firstFailure (r : ConflictCase) : Option String :=
+  let D := policy r.dec.D
+  (((VE.Norms.targets D).zip r.certs).find? (fun (t, c) => match c with
+    | some c => !VE.Tableau.checkCertificate (envAt D 0) (VE.Norms.backgroundBase D) (VE.Norms.targetConclusion t) c
+    | none => true)).map (fun (t, _) => s!"no accepted certificate for {t.1}")
+
+/-- A CONFLICT-FREE verdict: every base-admissible structure is conflict-free for the regenerated policy
+(W1's `conflictFreeCheck_sound`), so W1's route theorems apply to it (`speech_route_acceptance`). -/
+theorem speech_wire_conflict_free_sound (j : Json) (r : ConflictCase) (h : replayConflict j = .ok r)
+    (hv : r.conflictFree = true) :
+    WellFormedSpeech r.dec.D = true ∧
+      ∀ B : VE.Structure.{u}, VE.Norms.BaseAdmissible (policy r.dec.D) B → VE.Norms.ConflictFree (policy r.dec.D) B :=
+  ⟨r.dec.wf, fun B hB => VE.Norms.conflictFreeCheck_sound (policy r.dec.D) (policy_wellFormed r.dec.D r.dec.wf)
+    r.certs hv B hB⟩
+
 /-! ## The public entry point -/
 
 /-- A speech-act construct: the `speech-acts@0` profile, the scope block, a `speech-*` kind, or a unit of kind
@@ -369,6 +432,13 @@ def runCase (j : Json) : Except String Json := do
       else if r.gap then "gap (model " ++ (stringField j "model_id").toOption.getD "m" ++ ")"
       else "unresolved (no accepted evidence)"
     return VE.Route.Wire.ok id [("query", .str r.qr.id), ("judgment", .str judgment)]
+  if kind == "speech-conflict" && !(j.getObjVal? "witness").toBool then
+    let r ← replayConflict j
+    return VE.Route.Wire.ok id ([("verdict", .str (if r.conflictFree then "CONFLICT-FREE" else "UNKNOWN")),
+      ("targets", toJson ((VE.Norms.targets (policy r.dec.D)).map (·.1)))] ++
+      match firstFailure r with
+      | some d => if r.conflictFree then [] else [("detail", .str d)]
+      | none => [])
   if kind == "speech-conflict" then
     let ⟨dec, w⟩ ← replayWitness j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),

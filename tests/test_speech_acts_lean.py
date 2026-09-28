@@ -395,3 +395,56 @@ def test_norm_cases_still_delegate(lean):
     env["profiles"] = ["norms@0", "relational-fol@0"]
     r = run1({"id": "n", "kind": "norms-elaborate", "environment": env, "norms": []})
     assert r["status"] == "ok" and "premises" in r
+
+
+def packages(env, doc, r):
+    """Conflict packages over the regenerated targets, bound as `Run.decodePackage` requires."""
+    base = copy.deepcopy(env)
+    base.pop("speech_acts")
+    base["profiles"] = [p for p in base["profiles"] if p not in ("speech-acts@0", "norms@0")]
+    base["vocabulary"]["predicates"] = {p: e for p, e in base["vocabulary"]["predicates"].items()
+                                        if "regulated" not in e}
+    version = "v0.2:" + ",".join(base["profiles"])
+    base_id = digest(f"ve-environment-{version}\n", base)
+    doc_hash = digest("ve-speech-acts-v0.2:" + ",".join(env["profiles"]) + "\n",
+                      {"environment_id": r["environment_id"], "document": doc})
+    decoder, out = _Decoder(), {}
+    for target in r["policy"]["conflict_targets"]:
+        conclusion = ["not", target["ast"]]
+        for s in reversed(target["sorts"]):
+            conclusion = ["forall", s, conclusion]
+        found = prove_entailment(Environment(base), [], decoder.decode(conclusion), max_steps=20000)
+        if found.certificate is None:
+            continue
+        cert = dict(found.certificate)
+        cert["environment_id"] = base_id
+        cert["premise_meaning_ids"] = []
+        cert["conclusion_meaning_id"] = digest(f"ve-meaning-{version}\n", {"environment_id": base_id, "ast": conclusion})
+        out[target["target"]] = {"environment_id": r["environment_id"], "document_hash": doc_hash,
+                                 "target": target["target"], "certificate": cert}
+    return out
+
+
+def test_alpha_policy_is_conflict_free_by_replayed_packages(lean):
+    doc = {"units": [unit("u1", 0, "instruction", command("require", "click_required", ["check"]))]}
+    r = elaborate(F0(), doc)
+    case = {"id": "c", "kind": "speech-conflict", "environment": F0(), "document": doc,
+            "packages": packages(F0(), doc, r)}
+    assert run1(case)["verdict"] == "CONFLICT-FREE"
+    # Packages bound to another task are stale for this document.
+    other = F0(task="t2")
+    stale = run1({**case, "environment": other})
+    assert stale["verdict"] == "UNKNOWN" and stale["detail"].startswith("no accepted certificate for")
+    both = {"units": doc["units"] + [unit("u2", 2, "instruction", command("forbid", "click_permitted", ["check"]))]}
+    r = elaborate(F0(), both)
+    result = run1({"id": "c", "kind": "speech-conflict", "environment": F0(), "document": both,
+                   "packages": packages(F0(), both, r)})
+    assert result["verdict"] == "UNKNOWN"
+
+
+def test_mu_trivial_query_is_a_warning(lean):
+    doc = {"units": [unit("u1", 0, "asserted", U("animal", "tom")),
+                     unit("u3", 2, "instruction", command("require", "submit_required", ["q1"]))],
+           "queries": [{"id": "q1", "premises": ["u1"], "target": {"ast": U("animal", "tom")}}]}
+    r = elaborate(F0(), doc)
+    assert r["queries"][0]["warning"] == "TrivialQuery: q1" and len(r["commands"]) == 1
