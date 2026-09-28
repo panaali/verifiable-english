@@ -96,3 +96,14 @@ def test_user_sort_counting_expansion_agrees_on_a_finite_model():
     assert result["status"] == "ok" and result["value"] is True
     assert result["Q"] == canonical["formula"] and result["core"] == core
     assert evaluate(target, formula_from_data(target, core), model, trace=False).value is True
+
+
+def test_display_collision_rejects_on_both_decoders():
+    fixture = json.loads(FIXTURE.read_text())
+    raw = fixture["environment"]
+    raw["units"]["other_percent"] = {"scale": "100", "display": {"kind": "percent"}}
+    with pytest.raises(Exception, match="DisplayCollision"):
+        Environment(raw)
+    result = rust({"id": "collision", "kind": "quantity", "environment": raw,
+                   "quantity": {"format": "ve-quantity@1", "formula": ["top"]}})
+    assert result["status"] == "error" and "DisplayCollision" in result["error"]["message"]
