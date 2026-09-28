@@ -22,6 +22,9 @@ CASES = (
     (1, "ve/wire.py", "tests/test_conformance.py::test_jcs_utf16_key_order_and_string_escaping_golden",
      "def canonical_json(value) -> bytes:\n    validate_json(value)\n",
      "def canonical_json(value) -> bytes:\n    validate_json(value)\n    return b'{}'  # injected layer-1 fault\n"),
+    (1, "ve/surface/registry.py", "tests/test_surface_registry.py::test_keywords_cover_statement_initial_literals",
+     "def keywords() -> tuple[tuple[str, SurfaceRecord], ...]:\n    return KEYWORDS\n",
+     "def keywords() -> tuple[tuple[str, SurfaceRecord], ...]:\n    return ()  # injected registry fault\n"),
     (2, "ve/profiles.py", "tests/test_profiles.py::test_route_families_and_identity",
      "    checker = [p for p in profiles if p in ",
      "    return 'invalid'  # injected layer-2 fault\n    checker = [p for p in profiles if p in "),
@@ -117,7 +120,7 @@ def main() -> int:
                "excluded_files": len(excluded), "excluded_exit": excluded_code,
                "excluded_failures": sorted(excluded_fail), "excluded_seconds": excluded_seconds,
                "excluded_chunks": excluded_chunks}
-        results = sorted((old for old in results if old["layer"] != layer),
+        results = sorted((old for old in results if old["source"] != relative),
                          key=lambda old: old["layer"]) + [row]
         results.sort(key=lambda old: old["layer"])
         output.write_text(json.dumps(results, indent=2) + "\n")
