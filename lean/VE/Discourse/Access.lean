@@ -253,7 +253,8 @@ def accB (D : DDoc) (m : Slot) (t : Target) : Bool :=
           | none => false)
     else c == "binder:0" && m.form == .definite
   | ⟨.entity, none, none, ms, none, [], none⟩ =>
-    m.form == .plural && decide (2 ≤ ms.length) && decide ms.Nodup && ms.all (constAcc D m)
+    m.form == .plural && (earlierPairs D m).any (fun p => ms == [p.1, p.2]) && decide ms.Nodup &&
+      ms.all (constAcc D m)
   | ⟨.entity, some c, none, [], some p, [], none⟩ =>
     m.form == .ordinalPair && (earlierPairs D m).contains p && constAcc D m p.1 && constAcc D m p.2 &&
       match ordinalIndex D m with
@@ -287,7 +288,7 @@ def candidateParts (D : DDoc) (m : Slot) : List (List Target) :=
   let consts := D.K.names.map Name.constant
   [consts.map entityTarget,
    [entityTarget "binder:0"],
-   (List.range (consts.length + 1)).flatMap (fun k => (tuplesOf consts k).map listTarget),
+   (earlierPairs D m).map (fun p => listTarget [p.1, p.2]),
    (earlierPairs D m).flatMap (fun p => [pairTarget p.1 p, pairTarget p.2 p]),
    (earlierProperties D m).map (fun p => predTarget p.1),
    (match namedSection D m with | some a => a.exports.map predTarget | none => []),
@@ -301,16 +302,13 @@ def candidates (D : DDoc) (m : Slot) : List Target := (candidateParts D m).flatt
 
 def accessible (D : DDoc) (m : Slot) : List Target := (candidates D m).filter (accB D m)
 
-/-- Equal, or the same constants through declared aliases. Targets name constants, so an
-alias never changes a target; a distributive plural names the same constants in any
-order (the members are compared in registration order). -/
-def regs (D : DDoc) : List String := (D.K.names.map Name.constant).eraseDups
+/-- The canonical form of a target modulo declared aliases. Targets name constants, never the
+spelling a mention used, so a declared alias never changes a target and the canonical form is
+the target itself; in particular two plurals with the same members in another order are two
+targets (a plural's candidates are the coordinations of the text, in their order, 4.2). -/
+def canonTarget (_D : DDoc) (t : Target) : Target := t
 
-def canonMembers (D : DDoc) (ms : List String) : List String :=
-  if ms.all (regs D).contains then (regs D).filter ms.contains else ms
-
-def canonTarget (D : DDoc) (t : Target) : Target := { t with members := canonMembers D t.members }
-
+/-- Equal modulo declared aliases (4.3), which for constant-naming targets is equality. -/
 def AliasEq (D : DDoc) (t t' : Target) : Prop := canonTarget D t = canonTarget D t'
 
 instance (D : DDoc) (t t' : Target) : Decidable (AliasEq D t t') := inferInstanceAs (Decidable (_ = _))
@@ -406,14 +404,10 @@ theorem accB_candidates (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = tru
       rw [h.1]
       exact mem_candidates [entityTarget "binder:0"] (by simp [candidateParts]) (List.mem_singleton_self _)
   · rename_i ms
-    simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at h
-    obtain ⟨⟨⟨_, _⟩, hn⟩, hc⟩ := h
-    have hsub : ∀ x ∈ ms, x ∈ D.K.names.map Name.constant := fun x hx => constAcc_mem (hc x hx)
-    have hle := nodup_length_le ms _ hn hsub
-    exact mem_candidates ((List.range ((D.K.names.map Name.constant).length + 1)).flatMap
-      (fun k => (tuplesOf (D.K.names.map Name.constant) k).map listTarget))
-      (by simp [candidateParts]) (List.mem_flatMap.mpr ⟨ms.length,
-      List.mem_range.mpr (by omega), List.mem_map.mpr ⟨ms, (mem_tuplesOf _ _ _).mpr ⟨rfl, hsub⟩, rfl⟩⟩)
+    simp only [Bool.and_eq_true, List.any_eq_true, beq_iff_eq] at h
+    obtain ⟨⟨⟨_, p, hp, rfl⟩, _⟩, _⟩ := h
+    exact mem_candidates ((earlierPairs D m).map (fun p => listTarget [p.1, p.2]))
+      (by simp [candidateParts]) (List.mem_map.mpr ⟨p, hp, rfl⟩)
   · rename_i c p
     simp only [Bool.and_eq_true, List.contains_iff_mem] at h
     obtain ⟨⟨⟨⟨_, hp⟩, _⟩, _⟩, hk⟩ := h

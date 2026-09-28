@@ -67,7 +67,7 @@ def slotCands (D : DDoc) (m : Slot) : List Target :=
   match m.form with
   | .pronoun | .demonstrative | .possessive => consts.map entityTarget
   | .definite => [entityTarget "binder:0"]
-  | .plural => (List.range (consts.length + 1)).flatMap fun k => (tuplesOf consts k).map listTarget
+  | .plural => (earlierPairs D m).map fun p => listTarget [p.1, p.2]
   | .ordinalPair => (earlierPairs D m).flatMap fun p => [pairTarget p.1 p, pairTarget p.2 p]
   | .such => (earlierProperties D m).map fun p => predTarget p.1
   | .definitionRef => match namedSection D m with
@@ -99,14 +99,11 @@ theorem slotCands_complete (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = 
       simp only [hf]
       exact List.mem_singleton_self _
   · rename_i ms
-    simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, beq_iff_eq] at h
-    obtain ⟨⟨⟨hf, _⟩, hn⟩, hc⟩ := h
-    have hsub : ∀ x ∈ ms, x ∈ D.K.names.map Name.constant := fun x hx => constAcc_mem (hc x hx)
-    have hle := nodup_length_le ms _ hn hsub
+    simp only [Bool.and_eq_true, List.any_eq_true, beq_iff_eq] at h
+    obtain ⟨⟨⟨hf, p, hp, rfl⟩, _⟩, _⟩ := h
     unfold slotCands
     simp only [hf]
-    exact List.mem_flatMap.mpr ⟨ms.length, List.mem_range.mpr (by omega),
-      List.mem_map.mpr ⟨ms, (mem_tuplesOf _ _ _).mpr ⟨rfl, hsub⟩, rfl⟩⟩
+    exact List.mem_map.mpr ⟨p, hp, rfl⟩
   · rename_i c p
     simp only [Bool.and_eq_true, List.contains_iff_mem, beq_iff_eq] at h
     obtain ⟨⟨⟨⟨hf, hp⟩, _⟩, _⟩, hk⟩ := h
@@ -417,10 +414,7 @@ def recordedSlots (D : DDoc) (u : String) : List Slot :=
   ((D.K.mentions.filter fun x => x.unit == u && formulaForm x.form).map
     fun x => (⟨x.unit, x.span, x.form⟩ : Slot)).mergeSort slotBefore
 
-def pluralCount (n : Nat) : Nat := (List.range (n + 1)).foldl (fun acc k => acc + n ^ k) 0
-
-def candCount (D : DDoc) (m : Slot) : Nat :=
-  if m.form == .plural then pluralCount D.K.names.length else (slotCands D m).length
+def candCount (D : DDoc) (m : Slot) : Nat := (slotCands D m).length
 
 /-- The number of competitor assignments, computed before any is built. -/
 def workOf (D : DDoc) (ds : List DTree) : Nat :=

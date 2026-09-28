@@ -335,8 +335,11 @@ def test_theta_plural(lean):
     reversed_members = document(["Alice and Bob are reviewed.", "They are ready."],
                                 [("m1", "u2", "They", "plural", {"kind": "entity", "members": ["bob", "alice"]},
                                   {"reading": "distributive"})])
-    assert unit_result(resolve(reversed_members, env(PERSON)), "u2") == ["and", unary("ready", "alice"),
-                                                                         unary("ready", "bob")]
+    # Astra B: members are the coordination's, in its order; a permutation is another target
+    assert unit_result(resolve(reversed_members, env(PERSON)), "u2") == "InaccessibleTarget: m1: bob, alice"
+    unlisted = document(["Alice is reviewed.", "Bob is reviewed.", "They are ready."],
+                        [("m1", "u3", "They", "plural", target, {"reading": "distributive"})])
+    assert unit_result(resolve(unlisted, env(PERSON)), "u3") == "UnresolvedReference: m1"
     collective = document(["Alice and Bob are reviewed.", "They are ready."],
                           [("m1", "u2", "They", "plural", target, {"reading": "collective"})])
     assert admit_raw(collective, env(PERSON))["error"] == "InvalidInput: reading collective"
