@@ -36,6 +36,7 @@ import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SpeechActs.Tree
 import VE.SpeechActs.Demand
+import VE.SpeechActs.Answer
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -979,3 +980,27 @@ import VE.SpeechActs.Demand
 #print axioms VE.SpeechActs.demand_conflict_local
 #print axioms VE.SpeechActs.demand_conflict
 #print axioms VE.SpeechActs.scope_single
+#print axioms VE.SpeechActs.mem_sublistsOf
+#print axioms VE.SpeechActs.sublist_ext
+#print axioms VE.SpeechActs.mem_pairsOf
+#print axioms VE.SpeechActs.correct_mem_tokens
+#print axioms VE.SpeechActs.tokens_correct
+#print axioms VE.SpeechActs.correct_polar
+#print axioms VE.SpeechActs.correct_one
+#print axioms VE.SpeechActs.presupposition_one
+#print axioms VE.SpeechActs.not_contains_iff
+#print axioms VE.SpeechActs.allAnswer_denote
+#print axioms VE.SpeechActs.which_nodup
+#print axioms VE.SpeechActs.answers_polar
+#print axioms VE.SpeechActs.answers_one
+#print axioms VE.SpeechActs.answersAt_all_iff
+#print axioms VE.SpeechActs.answers_all
+#print axioms VE.SpeechActs.answers_all_empty
+#print axioms VE.SpeechActs.answers_presupposition
+#print axioms VE.SpeechActs.support_sound
+#print axioms VE.SpeechActs.support_conditional_sound
+#print axioms VE.SpeechActs.support_exclusive
+#print axioms VE.SpeechActs.support_exclusive_one
+#print axioms VE.SpeechActs.model_answers
+#print axioms VE.SpeechActs.model_presupposition_failed
+#print axioms VE.SpeechActs.countermodel_not_negative
