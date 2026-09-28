@@ -130,18 +130,125 @@ def decodeReportsModel (c : Wire.Checked) (j : Json) : Except String (VE.FiniteM
   VE.Route.Admission.require (VE.Route.Background.literalsValid M c.dec.D.lits) (VE.Route.Wire.invalidModel "literals")
   pure M
 
-def runCountermodel (c : Wire.Checked) (id : String) (j : Json) : Except String Json := do
+/-! The model vocabulary the executable decodes against is regenerated from the
+document (the author's tables and one unary table per generated predicate). Its
+environment has exactly the constants and predicate signatures of `E_reports`,
+so the executable validity check gives the `Mo.Valid (envReports D)` that
+`reports_route_countermodel` assumes. -/
+
+theorem lookup_append {α : Type} (xs ys : List (String × α)) (k : String) :
+    VE.Bridge.lookup (xs ++ ys) k = (VE.Bridge.lookup xs k).or (VE.Bridge.lookup ys k) := by
+  unfold VE.Bridge.lookup
+  rw [List.find?_append]
+  cases xs.find? (fun x => x.1 == k) <;> rfl
+
+theorem reportsModel_constants (c : Wire.Checked) (k : String) :
+    (Wire.reportsModelVocabulary c.dec.re c.dec.D).environment.constants k = (envReports c.dec.D).constants k := by
+  show VE.Bridge.lookup c.dec.re.rv.vocabulary.constants k = c.dec.D.E.constants k
+  rw [c.dec.hE]
+  rfl
+
+theorem reportsModel_predicates (c : Wire.Checked) (p : String) :
+    (Wire.reportsModelVocabulary c.dec.re c.dec.D).environment.predicates p = (envReports c.dec.D).predicates p := by
+  have hw := wf_of c.wf
+  have hold : VE.Bridge.lookup c.dec.re.rv.vocabulary.predicates p = c.dec.D.E.predicates p := by
+    rw [c.dec.hE]; rfl
+  show VE.Bridge.lookup (c.dec.re.rv.vocabulary.predicates ++
+      (Wire.generated c.dec.D).map (fun (n, ss, _) => (n, ss))) p =
+    (match keyOf c.dec.D p with
+     | some (.inl k) => some [k.sort] | some (.inr _) => some [c.dec.D.evidence] | none => c.dec.D.E.predicates p)
+  rw [lookup_append, hold]
+  unfold Wire.generated keyOf VE.Bridge.lookup
+  simp only [List.map_append, List.map_map, List.find?_append, List.find?_map]
+  cases hk : (keys c.dec.D).find? (fun k => reportName c.dec.D k == p) with
+  | some k =>
+    have hmem := List.mem_of_find?_eq_some hk
+    have hname : reportName c.dec.D k = p := by simpa using List.find?_some hk
+    have hn : p ∈ names c.dec.D := by
+      rw [← hname]; exact List.mem_append_left _ (List.mem_map_of_mem hmem)
+    simp [Function.comp_def, hk, fresh_pred hw hn]
+  | none =>
+    cases ha : (akeys c.dec.D).find? (fun k => assessName c.dec.D k == p) with
+    | some k =>
+      have hmem := List.mem_of_find?_eq_some ha
+      have hname : assessName c.dec.D k = p := by simpa using List.find?_some ha
+      have hn : p ∈ names c.dec.D := by
+        rw [← hname]; exact List.mem_append_right _ (List.mem_map_of_mem hmem)
+      simp [Function.comp_def, hk, ha, fresh_pred hw hn]
+    | none =>
+      simp [Function.comp_def, hk, ha]
+
+theorem valid_congr {α : Type} {M : VE.FiniteModel α} {E E' : VE.Environment}
+    (hc : ∀ k, E.constants k = E'.constants k) (hp : ∀ p, E.predicates p = E'.predicates p)
+    (h : M.Valid E) : M.Valid E' := by
+  obtain ⟨h1, h2⟩ := h
+  refine ⟨fun k s hk => h1 k s (by rw [hc]; exact hk), fun p vs hr => ?_⟩
+  obtain ⟨ss, hs, ht⟩ := h2 p vs hr
+  exact ⟨ss, by rw [← hp]; exact hs, ht⟩
+
+/-- A model the executable decodes is admissible over `E_reports` and meets the
+literals. -/
+theorem decodeReportsModel_valid (c : Wire.Checked) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
+    (h : decodeReportsModel c j = .ok M) :
+    M.Valid (envReports c.dec.D) ∧ VE.Route.Background.literalsValid M c.dec.D.lits = true := by
+  unfold decodeReportsModel at h
+  obtain ⟨data, _, h⟩ := bind_ok h
+  obtain ⟨_, hv, h⟩ := bind_ok h
+  obtain ⟨_, hl, h⟩ := bind_ok h
+  cases h
+  exact ⟨valid_congr (reportsModel_constants c) (reportsModel_predicates c)
+      (VE.Bridge.modelData_valid data _ (VE.Route.Gate.require_ok hv)), VE.Route.Gate.require_ok hl⟩
+
+/-- `reports_route_countermodel` for the executable's own check: a model the
+executable decodes (validity by the regenerated model vocabulary, literals) and
+that refutes `Γ_reports ++ Γ ⊢ φ` refutes the route statement and decodes to a
+source model of the document in which Γ holds and φ fails. -/
+theorem reports_countermodel_decoded (c : Wire.Checked) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
+    (hM : decodeReportsModel c j = .ok M) (Γ : List VE.Formula) (φ : VE.Formula)
+    (checked : VE.countermodelCheck M (premises c.dec.D ++ Γ) φ = true) :
+    ¬ VE.Route.Background.EntailsString.{0} (envReports c.dec.D) c.dec.D.lits (premises c.dec.D ++ Γ) φ ∧
+    ¬ VE.Entails.{0} (envReports c.dec.D) (checkedList c.dec.D Γ) φ ∧
+    ∃ S : Source.{0} c.dec.D, IntendedReports c.dec.D S ∧ VE.Route.fol.Sat (interp c.dec.D S) Γ ∧
+      ¬ φ.denote (interp c.dec.D S) [] := by
+  obtain ⟨hv, hl⟩ := decodeReportsModel_valid c j M hM
+  have hn : c.dec.D.lits.Nodup := by rw [c.dec.hlits]; exact c.dec.re.rv.nodup
+  exact reports_route_countermodel c.dec.D c.wf hn Γ φ M hv hl checked
+
+/-- The answer of a `reports-countermodel` case. -/
+def countermodelAnswer (c : Wire.Checked) (id : String) (Γ : List VE.Formula) (φ : VE.Formula)
+    (M : VE.FiniteModel VE.Bridge.Entity) : Json :=
   let D := c.dec.D
-  let Γ ← VE.Route.Wire.decodeFormulas (envReports D) (← j.getObjVal? "premises")
-  let φ ← VE.Route.Wire.decodeClosed (envReports D) (← j.getObjVal? "conclusion")
-  let M ← decodeReportsModel c (← j.getObjVal? "model")
   let rendering := (Wire.generated D).map fun (n, _, key) =>
     Json.mkObj [("name", .str n), ("key", key),
       ("holds_of", toJson ((M.relations n).filterMap fun
         | [v] => some v.2
         | _ => none))]
-  pure (VE.Route.Wire.ok id [("refutes", .bool (VE.countermodelCheck M (premises D ++ Γ) φ)),
-    ("source_model", Json.arr rendering.toArray)])
+  VE.Route.Wire.ok id [("refutes", .bool (VE.countermodelCheck M (premises D ++ Γ) φ)),
+    ("source_model", Json.arr rendering.toArray)]
+
+def runCountermodel (c : Wire.Checked) (id : String) (j : Json) : Except String Json := do
+  let D := c.dec.D
+  let Γ ← VE.Route.Wire.decodeFormulas (envReports D) (← j.getObjVal? "premises")
+  let φ ← VE.Route.Wire.decodeClosed (envReports D) (← j.getObjVal? "conclusion")
+  let M ← decodeReportsModel c (← j.getObjVal? "model")
+  pure (countermodelAnswer c id Γ φ M)
+
+/-- A `reports-countermodel` answer reports `refutes` for a model the executable
+decoded from the case's own `model`; with `reports_countermodel_decoded`, a
+`true` answer refutes the route statement and gives a source model. -/
+theorem runCountermodel_sound (c : Wire.Checked) (id : String) (j answer : Json)
+    (h : runCountermodel c id j = .ok answer) :
+    ∃ Γ φ mj M, j.getObjVal? "model" = .ok mj ∧ decodeReportsModel c mj = .ok M ∧
+      answer = countermodelAnswer c id Γ φ M := by
+  unfold runCountermodel at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨Γ, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨φ, _, h⟩ := bind_ok h
+  obtain ⟨mj, hmj, h⟩ := bind_ok h
+  obtain ⟨M, hM, h⟩ := bind_ok h
+  cases h
+  exact ⟨Γ, φ, mj, M, hmj, hM, rfl⟩
 
 /-! ## reports-scoped -/
 

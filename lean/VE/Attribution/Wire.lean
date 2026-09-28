@@ -358,6 +358,9 @@ structure Decoded where
   D : ReportDoc
   units : List DecodedUnit
   scopedCertificates : List (String × Json)
+  /-- the document's environment and literals are the decoded vocabulary's -/
+  hE : D.E = re.rv.environment
+  hlits : D.lits = re.rv.literals
 
 def optionalArray (j : Json) (key : String) : Except String (List Json) :=
   match j.getObjVal? key with
@@ -395,7 +398,7 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
   let envId ← VE.Route.Wire.environmentId re.profiles environment
   let D : ReportDoc := ⟨E, re.rv.literals, re.holders, re.evidence, contexts, assessments, reportUnits,
     bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2, re.predicateNames, metas⟩
-  pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map (s.id, ·)⟩
+  pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map (s.id, ·), rfl, rfl⟩
 
 /-! ## Diagnostics of 4.1, in the order of section 8 (untrusted text) -/
 

@@ -773,3 +773,22 @@ def test_graph_certificates_carry_the_outer_binding(lean):
     assert stale["status"] == "error" and "bound to another document" in stale["error"], stale
     fresh = admission(dict(changed, graph=graph(r2["envelope"])))
     assert fresh["status"] == "ok" and fresh["admitted"] is True
+
+
+def test_countermodel_validity_is_checked_over_e_reports(lean):
+    """Astra B: `reports_route_countermodel` assumes `Mo.Valid (envReports D)`; the
+    executable's check on its regenerated model vocabulary is now proved to give it
+    (`Run.decodeReportsModel_valid`). Here, that check at work: a generated predicate
+    holding of an entity outside its holder sort is not a model over E_reports."""
+    d = doc(report("the_article", "says", "c3", ast(U("safe", "service"))))
+    r = elaborate(d)
+    name = premises(r)[0][1]
+    case = {"id": "m", "kind": "reports-countermodel", "environment": E0(), "document": d, "premises": [],
+            "conclusion": U("safe", "service")}
+    good = run1(dict(case, model=model(r, **{name: [["the_article"]]})))
+    assert good["status"] == "ok" and good["refutes"] is True
+    wrong_sort = run1(dict(case, model=model(r, **{name: [["service"]]})))
+    assert wrong_sort["status"] == "error", wrong_sort
+    missing = model(r)
+    del missing["relations"][name]
+    assert run1(dict(case, model=missing))["status"] == "error"
