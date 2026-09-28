@@ -71,6 +71,67 @@ def validate_scope(raw, sorts, constants, predicates):
     return result
 
 
+# The frozen P0 wire form the Lean route decodes (`VE.Bridge.decodeFormula`): the
+# relational tags and their arities.  Every other profile is outside the route (1.6).
+_P0_FORMULA = {"top": 1, "bottom": 1, "unary": 3, "binary": 4, "eq": 3, "not": 2, "and": 3, "or": 3,
+               "implies": 3, "forall": 3, "exists": 3}
+
+
+def _p0_term(data):
+    if type(data) is not list:
+        raise VEError("array expected")
+    if len(data) == 2 and data[0] == "var":
+        if type(data[1]) is not int or data[1] < 0:
+            raise VEError("Natural number expected")
+    elif not (len(data) == 2 and data[0] == "const" and type(data[1]) is str):
+        raise VEError("invalid indexed term")
+
+
+def formula_shape(data, fuel=64):
+    """A formula field's structure, exactly as the Lean route's P0 decoder reads it and with its texts.
+
+    A predicate, constant or binder sort that is not a name, an unknown tag and
+    a term that is no variable or constant are rejected here, before P0's
+    decoder and first type diagnostic, so both checkers report one error for
+    every formula field (guard, body, assertion, target, norm condition).
+    """
+    if fuel == 0:
+        raise ResourceLimit("formula depth exceeds 64")
+    if type(data) is not list:
+        raise VEError("array expected")
+    tag = data[0] if data and type(data[0]) is str else None
+    if _P0_FORMULA.get(tag) != len(data) or (tag in ("unary", "binary", "forall", "exists")
+                                             and type(data[1]) is not str):
+        raise VEError("invalid indexed formula")
+    if tag in ("unary", "binary", "eq"):
+        for term in data[2 if tag != "eq" else 1:]:
+            _p0_term(term)
+    elif tag in ("not", "and", "or", "implies", "forall", "exists"):
+        for part in data[2 if tag in ("forall", "exists") else 1:]:
+            formula_shape(part, fuel - 1)
+
+
+def _formula(env, data):
+    """A closed formula field: the route's structure (`formula_shape`), then P0's decoder and type check."""
+    formula_shape(data)
+    return formula_from_data(env, data)
+
+
+def _norm_shapes(content):
+    """A norm's conditions pass `formula_shape` where Lean's `decodeNorm` reaches them.
+
+    That is after W1's own field checks (both decoders' shape, name, predicate,
+    sign and edge types), which W1's decoders then repeat with their texts.
+    """
+    raw = content.get("norm") if type(content) is dict and set(content) == {"norm"} else None
+    if (type(raw) is dict and set(raw) == {"name", "predicate", "sign", "guard", "unless", "over"}
+            and type(raw["name"]) is str and type(raw["predicate"]) is str and type(raw["sign"]) is bool
+            and type(raw["unless"]) is list and type(raw["over"]) is list
+            and all(type(edge) is str for edge in raw["over"])):
+        for condition in (raw["guard"], *raw["unless"]):
+            formula_shape(condition)
+
+
 # The bare kind each tagged content belongs to (W2's kinds, and `binding`).
 _CANDIDATE_KINDS = {"ast": "asserted", "norm": "norm", "command": "instruction", "question": "question",
                     "binding": "binding"}
@@ -328,6 +389,7 @@ class SpeechDocument:
                 if not content_kind_ok(kind, "norm"):
                     raise VEError("InvalidInput: norm content requires norm kind")
                 # 1.5 and W2: an author norm unit is active unless its reading is pending.
+                _norm_shapes(content)
                 if kind == "norm" and not pending:
                     self.norms.append(NormDocument._decode(content))
                 else:  # dormant norms keep every single-rule check, as Lean's decoder
@@ -343,7 +405,7 @@ class SpeechDocument:
                 elif type(content) is not list:
                     raise VEError("InvalidInput: asserted content" if kind == "asserted"
                                   else "InvalidInput: misplaced speech content")
-                formula = formula_from_data(env, content)
+                formula = _formula(env, content)
                 if kind == "asserted" and not pending:
                     self.asserted.append((uid, formula))
             elif kind == "asserted" and not any(r["unit"] == uid for r in self.reading_sets):
@@ -420,7 +482,7 @@ class SpeechDocument:
                 if not content_kind_ok(kind, tag):
                     raise VEError("invalid speech reading content")
                 if tag == "ast":
-                    formula_from_data(self.env, value)
+                    _formula(self.env, value)
                 elif tag == "command":
                     if (qid := self.query_of(self._command(uid, value, False))) is not None:
                         self._dormant_asks.append((uid, qid))
@@ -432,6 +494,7 @@ class SpeechDocument:
                     if question.mode == "reading":
                         self.candidate_questions.append((item, question))
                 elif tag == "norm":
+                    _norm_shapes(content)
                     _check_quoted(self.env, content)
                 else:
                     _binding_entry(self.env, uid, value)
@@ -446,6 +509,8 @@ class SpeechDocument:
         # Every reference is a name (Lean's `decodeCommand`), then resolved and typed.
         if type(predicate) is not str or type(args) is not list or any(type(a) is not str for a in args):
             raise VEError(f"InvalidInput: invalid command fields for {uid}")
+        # The guard is decoded with the fields, as by Lean's `decodeCommand`.
+        guard = _formula(self.env, raw.get("guard", ["top"]))
         if predicate not in self.env.predicates:
             raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
         decl = self.env.predicates[predicate]
@@ -458,7 +523,6 @@ class SpeechDocument:
                 raise VEError(f"UnknownSymbol: {arg}")
         if [self.env.constants[a].sort for a in args] != list(decl.arguments[1:]):
             raise VEError(f"TypeMismatch: command args for {uid}")
-        guard = formula_from_data(self.env, raw.get("guard", ["top"]))
         return Command(uid, force, predicate, tuple(raw["args"]), guard, active)
 
     def _question(self, uid, raw, unit):
@@ -466,8 +530,10 @@ class SpeechDocument:
             raise VEError(f"InvalidInput: invalid question fields for {uid}")
         mode = raw["mode"]
         if mode == "polar" and set(raw) == {"mode", "body"}:
-            return Question(uid, mode, formula_from_data(self.env, raw["body"]))
+            return Question(uid, mode, _formula(self.env, raw["body"]))
         if mode in ("which_all", "which_one") and set(raw) == {"mode", "sort", "domain", "body"}:
+            # The body's structure is decoded with the fields, as by Lean's `decodeQuestion`.
+            formula_shape(raw["body"])
             sort, domain = raw["sort"], raw["domain"]
             # Names first, then resolved and typed, in Lean's `checkSpeech` order.
             if type(sort) is not str or type(domain) is not list or any(type(n) is not str for n in domain):
@@ -511,7 +577,7 @@ class SpeechDocument:
                     or type(raw["premises"]) is not list or any(type(p) is not str for p in raw["premises"])
                     or type(raw["target"]) is not dict or set(raw["target"]) != {"ast"}):
                 raise VEError("InvalidInput: query")
-            target = formula_from_data(self.env, raw["target"]["ast"])
+            target = _formula(self.env, raw["target"]["ast"])
             qid = raw["id"]
             if qid in self.queries:
                 raise VEError("InvalidInput: duplicate query")

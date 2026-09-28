@@ -380,8 +380,13 @@ resolves to nothing is `UnknownSymbol: regulated predicate <p>` (act), `UnknownS
 constant), `UnknownSymbol: sort <s>`, `UnknownAlternative: <u>, <c>`, `QueryMismatch: <u>` (a query no record
 regenerates at `<u>`, or a premise id that is no earlier asserted unit), `InvalidInput: invalid question fields for <u>`
 (a reading question's `(set, version)` that is no reading-set version of the document), `invalid reading set unit or
-status`, `UnknownRule: rule <r>`, and, inside a formula (guard, body, assertion, target), P0's first type diagnostic
-(`UnknownSymbol: Unknown constant '<c>'`, ...); a declared constant of the wrong sort is `TypeMismatch: command args for
+status`, `UnknownRule: rule <r>`, and, inside a formula (guard, body, assertion, target, norm condition), first the
+structure of the Lean route's frozen P0 decoder (`VE.Bridge.decodeFormula`) with its texts, which Python's route
+checks before its own P0 decoder (`formula_shape`): a predicate or binder sort that is not a name, an unknown tag or
+arity and every tag outside the route's relational profile are `invalid indexed formula`, a constant that is not a name
+and a term that is no variable or constant `invalid indexed term`, a variable index that is not a natural number
+`Natural number expected`, a non-array node `array expected`, and more than 64 formula levels `ResourceLimit: formula
+depth exceeds 64`; then P0's first type diagnostic (`UnknownSymbol: Unknown constant '<c>'`, ...); a declared constant of the wrong sort is `TypeMismatch: command args for
 <u>` or `AlternativeSort: <u>`. The same holds for the unit's reading candidates and for quoted units.
 
 W2's `content` may also be an English or strict fence; the English fence goes through the all-derivations parser and
@@ -1647,6 +1652,7 @@ statements of section 8 are unchanged.
 | B, fenced scope: `effective_scope()` built a binding-only document without its query records, so a fence beside an open binding whose candidate asks about `q1` raised `QueryMismatch: b` | 3.2: the effective scope is the document's own binding merge, with no partial document; fenced and unfenced sources agree, including when the record's premises are asserted units outside the bindings. |
 | B, untyped scope references: an addressee `sort` or `constant` of `[]` raised an uncaught `TypeError` in Python where Lean said `InvalidInput: speech_acts block`; numeric ones gave `UnknownSymbol` in Python | 3.1: every scope reference (addressee sort and constant, definite constants) is a name before it is resolved, and the block's structure and phrase checks precede resolution, in Lean's order, in both checkers. |
 | B, source references: a speech reading set's `unit: []` crashed `SpeechSource` although both cores reject it; a narrowing's `set: []` or `version: []` crashed and `version: true` was taken as version 1 | 3.2: the source wrapper types reading-set `unit`, `version` and `status` with the cores' diagnostic (and a dangling unit with theirs) before W2's checks, and W2's narrowing check requires a set id and a version number, a Boolean excluded (`invalid narrowing`). |
+| B, formula-reference diagnostics: a polar body `["unary", "reviewed", ["const", 7]]` was `UnknownSymbol: Unknown constant 7` in Python and `invalid indexed term` in Lean, in every placement | 3.2: every formula field (guard, body, assertion, target, norm condition, candidate) is first read with the Lean route's frozen P0 decoder structure and texts, which Python checks before its P0 decoder (`formula_shape`); a guard and a which-question body are decoded with their fields, as in Lean. The differential suite checks mistyped formula references under a unit, a quoted unit and a candidate. |
 
 ## Change log
 

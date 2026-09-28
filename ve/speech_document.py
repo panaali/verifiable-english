@@ -17,7 +17,7 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import SpeechDocument, content_kind_ok, effective_scope, latest_reading_sets
+from .speech_acts import SpeechDocument, content_kind_ok, effective_scope, formula_shape, latest_reading_sets
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -39,6 +39,11 @@ def _reading_sets(env, sets, unit_ids):
     if any(type(item.get("unit")) is not str or type(item.get("version")) is not int
            or item.get("status") not in ("open", "authored") for item in sets):
         raise VEError("InvalidInput: reading sets on the speech-acts route need their unit, version and status")
+    # A formula candidate's structure as the Lean route reads it (`formula_shape`).
+    for item in sets:
+        for reading in item["readings"]:
+            if type(reading) is dict and type(reading.get("content")) is list:
+                formula_shape(reading["content"])
     ordinary = [r for r in sets if all(c.get("kind") == "asserted" and
                 (c.get("content") is None or type(c["content"]) is list)
                 for c in r["readings"] if type(c) is dict)

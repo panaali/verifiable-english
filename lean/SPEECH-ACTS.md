@@ -119,7 +119,9 @@ profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit 
 its meaning; every candidate of every version is decoded and checked as its unit would be were it chosen, and
 one that asks about a query consumes that record at its unit; a reading question names an `(id, version)` of
 these sets, `readingSetKeys`). Every reference is resolved and typed at decode time with Python's diagnostic
-(spec 3.2): formula fields report P0's first type diagnostic (`decodeClosedField`), quoted questions keep a
+(spec 3.2): formula fields report the frozen P0 decoder's structural error (`invalid indexed term`, ...), which
+Python's route reproduces (`formula_shape`), then P0's first type diagnostic (`decodeClosedField`); the scope
+block's references are names before they are resolved (`parseScope`), as in Python; quoted questions keep a
 candidate's checks (`checkLoneQuestion`), dormant commands keep their own checks without an addressee, and
 bindings are checked and merged in document order. Wire constants are declaration names (lower case). The frozen restricted JSON input parser rejects `null`, so W2's unelaborated (`"content": null`)
 candidates cannot reach the route, and an authored choice needs its content.
