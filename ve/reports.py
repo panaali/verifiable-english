@@ -39,6 +39,27 @@ def _id(domain, value):
     return hashlib.sha256(domain.encode("ascii") + _canonical(value)).hexdigest()
 
 
+# 6: one status order (Lean `Status.rank`): UNFORMALISED, OPEN and UNKNOWN below
+# LABELLED below CHECKED.
+STATUS_RANK = {"UNFORMALISED": 0, "OPEN": 1, "UNKNOWN": 2, "LABELLED": 3, "CHECKED": 4}
+# 5.1: a scoped check decided with evidence (Lean `verdictStatus`); anything else is UNKNOWN.
+DECIDED = frozenset(("FOLLOWS", "DOES NOT FOLLOW", "PAYLOADS INCONSISTENT"))
+
+
+def fold_status(statuses):
+    """The meet of every result under the one order (Lean `foldStatus`): CHECKED
+    for none, and only when every result is."""
+    result = "CHECKED"
+    for status in statuses:
+        if STATUS_RANK[status] < STATUS_RANK[result]:
+            result = status
+    return result
+
+
+def verdict_status(verdict):
+    return "CHECKED" if verdict.get("status") in DECIDED else "UNKNOWN"
+
+
 def _path(path, step):
     return f"{path}.{step}" if path else str(step)
 
@@ -222,18 +243,88 @@ class ReportsDocument:
                 return {status: detail}
         raise VEError("invalid meaning status")
 
-    def _assessment_names(self, node):
-        """The generated names of the assessment nodes of one tree (Lean `unitAssessNames`)."""
+    def _assessment_items(self, node, depth=0):
+        """The assessment nodes of one tree with their paths and generated names
+        (Lean `unitAssessNames`, `Run.assessItems`)."""
         tag, value = next(iter(node.items()))
         if tag == "negated":
-            return self._assessment_names(value)
+            return self._assessment_items(value, depth)
         if tag == "report":
-            return self._assessment_names(value["content"])
+            return self._assessment_items(value["content"], depth + 1)
         if tag == "assessment":
             cid = self._remember(self._node(value["content"], "names"))
-            return ([self.names[(1, (value["judgment"], value["record"], cid))]]
-                    + self._assessment_names(value["content"]))
+            return ([{"path": ".".join(["1"] * depth),
+                      "name": self.names[(1, (value["judgment"], value["record"], cid))]}]
+                    + self._assessment_items(value["content"], depth + 1))
         return []
+
+    def _assessment_names(self, node):
+        return [item["name"] for item in self._assessment_items(node)]
+
+    def nested_results(self, unit):
+        """6: the results computed for a unit's nested content and kind (Lean
+        `Run.nestedResults`): every assessment node OPEN, every act outside the
+        slice LABELLED."""
+        content = unit.get("content")
+        assessments = (self._assessment_items(content) if type(content) is dict and
+                       set(content) & {"report", "assessment", "negated"} else [])
+        return ([{"item": "assessment", **item, "status": "OPEN"} for item in assessments]
+                + [{"item": "act", **item, "status": "LABELLED"} for item in unreviewed_acts(unit.get("kind"))])
+
+    def unit_status(self, unit):
+        """6: the meet of the unit's own meaning status (W2's inference, Lean
+        `meaningStatus`) and every nested result."""
+        meaning = self._meaning(unit["meaning"]) if "meaning" in unit else None
+        own = ("CHECKED" if meaning == "specified" and unit.get("content") is not None else
+               "OPEN" if type(meaning) is dict and "open" in meaning else
+               "UNFORMALISED" if type(meaning) is dict and "unformalised" in meaning else "LABELLED")
+        return fold_status([own] + [item["status"] for item in self.nested_results(unit)])
+
+    def scoped_expectation(self, row):
+        """What Python decides of a scoped check before any replay (3.4; Lean
+        `scopedCertificate`, `scopedVerdict`): with no carried certificate,
+        UNKNOWN(no evidence); with one whose envelope is absent or not the
+        recomputed one, UNKNOWN(envelope); a bound one is for the replay (None)."""
+        if row.get("certificate") is None:
+            return {"status": "UNKNOWN", "detail": "no evidence"}
+        if row.get("envelope") != self.envelope:
+            return {"status": "UNKNOWN", "detail": "envelope"}
+        return None
+
+    def scoped_verdicts(self, verdicts=None):
+        """Section 6's `scoped_checks` entries: each check's id, environment and
+        inner status with its detail. `verdicts` are the Lean `reports-scoped`
+        verdicts of the document's carried certificates, checked against what
+        Python decides on its own; without them a bound certificate is reported
+        UNKNOWN(not replayed), never FOLLOWS."""
+        if verdicts is not None and (type(verdicts) is not list or len(verdicts) != len(self.scoped)):
+            raise VEError("ReportsConformance: Python and Lean differ at scoped")
+        entries = []
+        for index, (row, scoped) in enumerate(zip(self.scoped, self.scoped_objects)):
+            environment_id = self._resolve(scoped["payloads"][0])[1].environment_id
+            expected = self.scoped_expectation(row)
+            if verdicts is None:
+                outcome = expected or {"status": "UNKNOWN", "detail": "not replayed"}
+            else:
+                verdict = verdicts[index]
+                outcome = {k: verdict[k] for k in ("status", "detail") if k in verdict}
+                allowed = ([expected] if expected is not None else
+                           [{"status": "FOLLOWS"}, {"status": "UNKNOWN", "detail": "certificate does not replay"}])
+                if (verdict.get("id") != row["id"] or verdict.get("environment_id") != environment_id
+                        or outcome not in allowed):
+                    raise VEError(f"ReportsConformance: Python and Lean differ at scoped check {row['id']}")
+            entries.append({"id": row["id"], "environment_id": environment_id, **outcome})
+        return entries
+
+    def statuses(self, verdicts):
+        """6: every unit's status with its nested results, and the document's,
+        the meet of the units' statuses and every scoped check's (Lean
+        `reports-status`). `verdicts` are `scoped_verdicts` entries."""
+        units = [{"id": u["id"], "status": self.unit_status(u), "nested": self.nested_results(u)}
+                 for u in self.units]
+        return {"units": units, "scoped": verdicts,
+                "document_status": fold_status([u["status"] for u in units] +
+                                               [verdict_status(v) for v in verdicts])}
 
     def _check_metadata(self, row):
         """3.3, W2 and 6 (Lean `metaOk`): W2's support values; an open meaning names
@@ -312,7 +403,7 @@ class ReportsDocument:
                 or type(row["payloads"]) is not list or type(row["conclusion"]) is not dict
                 or set(row["conclusion"]) != {"ast"}):
             raise VEError("InvalidInput: scoped")
-        if "envelope" in row and "certificate" not in row:
+        if row.get("envelope") is not None and row.get("certificate") is None:
             raise VEError(f"InvalidInput: envelope without a certificate on scoped check {row['id']}")
         payloads = [self._path_object(p) for p in row["payloads"]]
         if len(payloads) > 64:
@@ -497,14 +588,18 @@ class ReportsDocument:
                 "warnings": [f"unreviewed act {a['act']} in {u['id']}" + (f" at {a['path']}" if a["path"] else "")
                              for u in self.units for a in unreviewed_acts(u.get("kind"))]}
 
-    def residual_lines(self):
-        """Section 6's residual lines of the reports layer: every report and
-        assessment premise (an identified assumption, asserted or denied), every
-        literal quotation at any depth, every scoped check and every act outside
-        the slice at any depth of a unit's kind. W2's lines and `bridges_nested` are counted by
-        `ve.document.coverage` from the graph."""
-        lines = {"reports": {}, "assessments": {}, "literal_quotations": [], "scoped_checks": [],
-                 "unreviewed_acts": {}}
+    def residual_lines(self, scoped=None):
+        """Section 6's residual lines of the reports layer: every open term,
+        declared or generated (so each assessment node, at any depth, is named),
+        every report and assessment premise (an identified assumption, asserted
+        or denied), every literal quotation at any depth, every scoped check with
+        its inner status and detail (`scoped`: checked `scoped_verdicts` entries,
+        computed without a replay when absent) and every act outside the slice at
+        any depth of a unit's kind. W2's other lines and `bridges_nested` are
+        counted by `ve.document.coverage` from the graph."""
+        lines = {"open_terms": list(self.declared_open_terms) + [term["name"] for term in self.open_terms],
+                 "reports": {}, "assessments": {}, "literal_quotations": [],
+                 "scoped_checks": self.scoped_verdicts() if scoped is None else scoped, "unreviewed_acts": {}}
 
         def count(line, key):
             lines[line][key] = lines[line].get(key, 0) + 1
@@ -531,9 +626,6 @@ class ReportsDocument:
             else:
                 count("assessments", f"{self.assessments[value['record']]['decided_by']} {polarity}")
             literals(content, unit["id"], [])
-        for row, scoped in zip(self.scoped, self.scoped_objects):
-            environment = self._resolve(scoped["payloads"][0])[1]
-            lines["scoped_checks"].append({"id": row["id"], "environment_id": environment.environment_id})
         for entry in lines["literal_quotations"]:
             entry["path"] = ".".join(entry["path"])
         return lines

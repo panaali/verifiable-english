@@ -1,4 +1,5 @@
 import VE.Attribution.Admission
+import VE.Attribution.Status
 import VE.Route.Run
 
 /-! The `ve_reports_route` executable (spec 9.4), invoked as
@@ -30,6 +31,11 @@ document (`Wire.decodeDocument`); nothing on the wire supplies them.
   only certificates are unbound is UNKNOWN with detail `envelope`. Witness
   models are replayed for checks over the author's E only; a witness for a
   quoted package's scope is reported UNKNOWN.
+* `reports-status`, with the inputs of `reports-scoped` → `units` (each unit's
+  status and its nested results: every assessment node OPEN with its path and
+  generated name, every act outside the slice in its kind LABELLED with its
+  path), `scoped` (the `reports-scoped` verdicts) and `document_status`, the
+  meet of the units' statuses and the verdicts' (`Status.documentStatus_le`).
 * `admission` of a document under `reports@0` → `admitted`, `report`,
   `report_id`, `envelope`, `kinds` (`Run.reports_wire_acceptance`).
 * Cases without a reports construct delegate unchanged to
@@ -330,6 +336,9 @@ def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except Strin
       return Json.mkObj (base ++ [("status", .str "PAYLOADS INCONSISTENT")])
     -- a certificate offered for another document or environment is not evidence
     let unbound := certJson.isSome && !certOuter || inconsistency.isSome && !outerBound D j
+    -- a bound certificate that does not replay is named, not reported as no evidence
+    let detail := if unbound then "envelope"
+      else if certJson.isSome || inconsistency.isSome then "certificate does not replay" else "no evidence"
     match certificateFor j "witnesses" s.id with
     | some mj =>
       if Eq.id == D.environmentId then
@@ -340,7 +349,54 @@ def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except Strin
       else return Json.mkObj (base ++ [("status", .str "UNKNOWN"),
         ("detail", .str "witness replay over a quoted package's scope is not implemented")])
     | none => pure (Json.mkObj (base ++ [("status", .str "UNKNOWN"),
-        ("detail", .str (if unbound then "envelope" else "no evidence"))]))
+        ("detail", .str detail)]))
+
+/-! ## reports-status -/
+
+def depthPath (d : Nat) : String := String.intercalate "." (List.replicate d "1")
+
+/-- Every assessment node of a content tree, with its depth and generated name
+(`ve/reports.py` `_assessment_items`). -/
+def assessItems (D : ReportDoc) : Nat → Content → List (Nat × String)
+  | d, .negated n => assessItems D d n
+  | d, .report _ _ _ b _ => assessItems D (d + 1) b
+  | d, .assessment j a b => (d, assessName D ⟨j, a, contentId D b⟩) :: assessItems D (d + 1) b
+  | _, _ => []
+
+/-- The results computed for a unit's nested content and kind. -/
+def nestedResults (D : ReportDoc) (u : Wire.DecodedUnit) : List (Json × Status) :=
+  (match u with
+   | .reports x .. => (assessItems D 0 x.content).map fun (d, n) =>
+       (Json.mkObj [("item", .str "assessment"), ("path", .str (depthPath d)), ("name", .str n),
+         ("status", .str Status.open.render)], Status.open)
+   | .w2 _ => []) ++
+  (unreviewedActs "" u.kind).map fun (p, a) =>
+    (Json.mkObj [("item", .str "act"), ("path", .str p), ("act", .str a),
+      ("status", .str Status.labelled.render)], Status.labelled)
+
+def hasContent : Wire.DecodedUnit → Bool
+  | .reports .. => true
+  | .w2 x => x.content.isSome
+
+def verdictOf (v : Json) : Status :=
+  match v.getObjValD "status" with
+  | .str s => verdictStatus s
+  | _ => .unknown
+
+def runStatus (c : Wire.Checked) (id : String) (j : Json) : Except String Json := do
+  let D := c.dec.D
+  let verdicts ← D.«scoped».mapM (scopedVerdict c j)
+  let units := (c.dec.units.zip D.unitMeta).map fun (u, m) =>
+    let nested := nestedResults D u
+    (u.id, unitStatus (meaningStatus (hasContent u) m.meaning) (nested.map Prod.snd), nested.map Prod.fst)
+  let status := documentStatus (units.map (·.2.1)) (verdicts.map verdictOf)
+  pure (VE.Route.Wire.ok id [
+    ("units", Json.arr (units.map fun (uid, s, nested) =>
+      Json.mkObj [("id", .str uid), ("status", .str s.render), ("nested", Json.arr nested.toArray)]).toArray),
+    ("scoped", Json.arr verdicts.toArray),
+    ("document_status", .str status.render),
+    ("envelope", envelopeJson D D.environmentId),
+    ("bindings", Json.mkObj [("envelope", .bool (outerBound D j))])])
 
 /-! ## admission -/
 
@@ -415,6 +471,8 @@ def runCase (j : Json) : Except String Json := do
       return VE.Route.Wire.ok id [("scoped", Json.arr verdicts.toArray),
         ("envelope", envelopeJson c.dec.D c.dec.D.environmentId),
         ("bindings", Json.mkObj [("envelope", .bool (outerBound c.dec.D j))])]
+    if kind == "reports-status" then
+      return ← runStatus c id j
   if usesReportsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the reports route"
   VE.Route.Run.runCase j
