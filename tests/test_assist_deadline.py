@@ -377,10 +377,12 @@ def test_approval_sealing_is_inside_the_operation_deadline(monkeypatch):
     def slow_first_seal(self):
         calls.append(None)
         if len(calls) == 1:
-            _busy(0.5)
+            _busy(9)
         return original(self)
     monkeypatch.setattr(recovery.RecoveryService, "_seal", slow_first_seal)
-    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.3)
+    # Leave enough time to reach the seal even when other xdist workers are busy.
+    # The first seal still exceeds the real operation deadline.
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 8)
     with pytest.raises(ValueError, match="approval operation deadline"):
         service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
