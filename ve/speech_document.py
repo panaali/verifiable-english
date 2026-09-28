@@ -34,6 +34,11 @@ def _reading_sets(env, sets, unit_ids):
         raise VEError("reading_sets must be a list")
     if any(type(item) is not dict or type(item.get("readings")) is not list for item in sets):
         raise VEError("invalid reading set")
+    # Every reference is a name (or a version number) before it is resolved, with the
+    # cores' diagnostic (`latest_reading_sets`, Lean's `readingStates`), in W2's sets too.
+    if any(type(item.get("unit")) is not str or type(item.get("version")) is not int
+           or item.get("status") not in ("open", "authored") for item in sets):
+        raise VEError("InvalidInput: reading sets on the speech-acts route need their unit, version and status")
     ordinary = [r for r in sets if all(c.get("kind") == "asserted" and
                 (c.get("content") is None or type(c["content"]) is list)
                 for c in r["readings"] if type(c) is dict)
@@ -50,9 +55,10 @@ def _reading_sets(env, sets, unit_ids):
                                 "rejected_history", "models"}):
             raise VEError("invalid reading set")
         key = item["id"], item["version"]
-        if (not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1
-                or key in seen or item["unit"] not in unit_ids or item["status"] not in ("open", "authored")):
+        if not token(item["id"]) or item["version"] < 1 or key in seen:
             raise VEError("invalid or duplicate reading set version")
+        if item["unit"] not in unit_ids:  # W2's and the cores' text for a dangling unit
+            raise VEError("invalid reading set unit or status")
         if (item["id"] in owners and owners[item["id"]] != item["unit"]
                 or item["unit"] in units and units[item["unit"]] != item["id"]):
             raise VEError("one reading set per source unit; versions must keep their unit")

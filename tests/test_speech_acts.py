@@ -394,6 +394,47 @@ def _intended_reading(uid, set_id, version):
                         f"sufficient: exactly one nomination of {wording}"]}
 
 
+def test_source_reading_set_and_narrowing_references_are_typed_before_they_are_resolved():
+    # Regression: a speech reading set's `unit: []` crashed `SpeechSource` with a TypeError although both cores
+    # reject it cleanly; a narrowing's `set: []` or `version: []` crashed too, and `version: true` was taken as
+    # version 1.  Every source reference is a name (or a version number) before it is looked up, with the cores'
+    # diagnostic for reading sets, and a narrowing's cited version is a set id and a version number.
+    from ve.speech_document import SpeechSource
+    open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
+    typed = "InvalidInput: reading sets on the speech-acts route need their unit, version and status"
+    speech = _candidate("instruction", open_cmd)
+    formula = _candidate("asserted", _to_data(Unary("reviewed", Const("atlas"))))
+    for candidate in (speech, formula):  # a speech set and one W2 checks itself
+        for owner, error in (([], typed), (7, typed), ({}, typed), (None, typed), ("nope", "invalid reading set unit or status")):
+            with pytest.raises(VEError, match=f"^{error}$"):
+                _source("instruction", open_cmd, [{**_set(1, "open", [candidate]), "unit": owner}])
+            with pytest.raises(VEError, match=f"^{error}$"):  # the core agrees
+                SpeechDocument(environment(), [unit("u", "instruction", open_cmd)],
+                               reading_sets=[{**_set(1, "open", [candidate]), "unit": owner}])
+        for version in ([], True, "1", None):
+            with pytest.raises(VEError, match=f"^{typed}$"):
+                _source("instruction", open_cmd, [{**_set(1, "open", [candidate]), "version": version}])
+    env = environment()
+    text = b"Open the desk.\n"
+
+    def narrowed(**fields):
+        narrowing = {"id": "n1", "set": "rs", "version": 1, "keeps": ["r1"], "by": "author", "reason_spans": ["u"],
+                     **fields}
+        return SpeechSource({"format": "ve-document@2", "environment": env.to_dict(),
+                             "units": [{"id": "u", "span": [0, len(text)], "kind": "instruction",
+                                        "meaning": "specified", "support": "none", "content": open_cmd}],
+                             "reading_sets": [_set(1, "open", [speech])], "narrowings": [narrowing]}, text, {})
+
+    assert narrowed().narrowings[0]["version"] == 1
+    for fields in ({"set": []}, {"set": 7}, {"set": {}}, {"version": []}, {"version": True}, {"version": "1"},
+                   {"version": 0}):
+        with pytest.raises(VEError, match="^invalid narrowing$"):
+            narrowed(**fields)
+    for fields in ({"set": "other"}, {"version": 2}):
+        with pytest.raises(VEError, match="^narrowing cites unknown reading set version$"):
+            narrowed(**fields)
+
+
 def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
     # Regression: an open candidate {"question": {"mode": "reading", "set": "missing", "version": 1}} was
     # accepted by both cores despite the nonexistent set, and the source wrapper counted it as R without the
