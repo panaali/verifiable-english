@@ -35,7 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.SoftNorms.Run
-import VE.Rights.Bar
+import VE.Rights.Distinction
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1161,6 +1161,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.blocked_eq
 #print axioms VE.Rights.catalaValue_false
 #print axioms VE.Rights.catalaValue_true
+#print axioms VE.Rights.condF_of_narrowsAt
 #print axioms VE.Rights.condKeys_nil
 #print axioms VE.Rights.correlate_faithful
 #print axioms VE.Rights.correlate_identity
@@ -1170,6 +1171,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.correlate_value
 #print axioms VE.Rights.correlate_wellFormed
 #print axioms VE.Rights.decides_eq
+#print axioms VE.Rights.direct_names_nodup
+#print axioms VE.Rights.domOne_denote
 #print axioms VE.Rights.domWith_eq
 #print axioms VE.Rights.dominated_eq
 #print axioms VE.Rights.eff_eq
@@ -1178,24 +1181,45 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.exists_child_split
 #print axioms VE.Rights.genDecls_nil
 #print axioms VE.Rights.holderConj_top
+#print axioms VE.Rights.independentReported_iff
+#print axioms VE.Rights.licensed_cases
+#print axioms VE.Rights.licensed_certified_sound
+#print axioms VE.Rights.licensed_of_scope
 #print axioms VE.Rights.limKeys_nil
 #print axioms VE.Rights.limPackList_denote
+#print axioms VE.Rights.limitation_scope_sound
 #print axioms VE.Rights.lineNode_correlate
 #print axioms VE.Rights.lineNode_direct
 #print axioms VE.Rights.lineNode_mem
 #print axioms VE.Rights.liveR_denote
 #print axioms VE.Rights.live_bar
+#print axioms VE.Rights.live_fail
 #print axioms VE.Rights.mem_barNodes
 #print axioms VE.Rights.mem_barPreds
 #print axioms VE.Rights.mem_childrenIn_direct
 #print axioms VE.Rights.mem_children_correlate
 #print axioms VE.Rights.mem_correlate_nodes
 #print axioms VE.Rights.mem_dedup
+#print axioms VE.Rights.mem_narrowings_bar
+#print axioms VE.Rights.mem_narrowings_blockedBy
+#print axioms VE.Rights.mem_narrowings_carveOut
+#print axioms VE.Rights.mem_narrowings_dominatedBy
+#print axioms VE.Rights.mem_narrowings_excepted
+#print axioms VE.Rights.mem_narrowings_exception
+#print axioms VE.Rights.mem_narrowings_limPack
+#print axioms VE.Rights.mem_narrowings_switch
 #print axioms VE.Rights.mem_tupleSet
+#print axioms VE.Rights.narrowings_complete
+#print axioms VE.Rights.narrowings_complete_of_valid
+#print axioms VE.Rights.noDistinction_sound
+#print axioms VE.Rights.no_distinction_sound
+#print axioms VE.Rights.nodeNamed_mem
+#print axioms VE.Rights.nodeNamed_self
 #print axioms VE.Rights.not_mem_children_bar
 #print axioms VE.Rights.owes_outcome
 #print axioms VE.Rights.projections_agree
 #print axioms VE.Rights.regOf_name
+#print axioms VE.Rights.rightDerived_regulated
 #print axioms VE.Rights.rightsValid_of_wellFormed
 #print axioms VE.Rights.same_effect_delivered
 #print axioms VE.Rights.scopeLimits_nil
