@@ -380,12 +380,24 @@ def coverage(doc):
         completion = ({"decider": block["outcomes"]["complete_by"],
                        "premise": "alternatives:table_complete"}
                       if type(block["outcomes"]) is dict else None)
+        # Enumerate the named cells for which the general completion premise
+        # supplies a negative answer, excluding every explicitly stated cell.
+        actions = {name for name, const in doc["environment"].constants.items()
+                   if const.sort == block["action"]}
+        actions.update(item["action"] for item in declared)
+        harms = {name for name, const in doc["environment"].constants.items()
+                 if const.sort == block["harm"]}
+        harms.update(item["harm"] for item in cells)
+        stated = {(item["action"], item["harm"]) for item in cells}
+        assumed = ([{"action": action, "harm": harm, **completion}
+                    for action in sorted(actions) for harm in sorted(harms)
+                    if (action, harm) not in stated] if completion else [])
         alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
-                        "assumed_harm_free": completion, "table_complete": completion,
+                        "assumed_harm_free": assumed, "table_complete": completion,
                         "proximate_judgments": proximate, "unmapped_obligations": unmapped,
                         "dilemmas": [], "narrowings": meta.get("narrowings", [])}
         residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
-                         "assumed_harm_free": int(completion is not None),
+                         "assumed_harm_free": len(assumed),
                          "table_complete": int(completion is not None),
                          "proximate_judgments": len(proximate),
                          "unmapped_obligations": len(unmapped), "dilemmas": 0,
