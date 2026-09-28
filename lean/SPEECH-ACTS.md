@@ -115,7 +115,10 @@ Every case is `{"id", "kind", "environment", "document", ...}`; the environment 
 profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit objects with `id`, `span`,
 `kind`, optional `meaning`, `support`, `content`), optional `queries` and optional W2-form `reading_sets`
 (read for `unit`, `version`, `status` and, for an authored version, its one reading's `kind` and
-`content`: the latest version of a unit's set decides, open keeping it pending, authored supplying its meaning). Wire constants are declaration names (lower case).
+`content`: the latest version of a unit's set decides, open keeping it pending, authored supplying its
+meaning). Wire constants are declaration names (lower case). The frozen restricted JSON input parser
+rejects `null`, so W2's unelaborated (`"content": null`) candidates cannot reach the route; an open set's
+candidates are not read, and an authored choice needs its content.
 
 | Kind | Extra input | Output |
 |---|---|---|
