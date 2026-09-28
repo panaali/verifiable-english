@@ -75,3 +75,31 @@ class UnsupportedProfile(VEError):
 
 class ResourceLimit(VEError):
     code = "ResourceLimit"
+
+
+class CheckerUnavailable(RuntimeError):
+    """An operational failure: no verdict was obtained, so none is reported.
+
+    A missing or mismatched backend, a crash, a timeout, malformed backend
+    output, or an operation whose verdict authority cannot run on this path.
+    Deliberately not a `VEError` (nor a `ValueError`): no handler that turns
+    input errors into `InvalidInput`, or exhausted budgets into `UNKNOWN` or
+    `ResourceLimit`, can absorb it. See docs/spec/assurance-manifest.md.
+    """
+    code = "CheckerUnavailable"
+
+    def __init__(self, message: str, *, operation: str = "", backend: str = ""):
+        super().__init__(message)
+        self.message, self.operation, self.backend = message, operation, backend
+
+    def to_dict(self) -> dict:
+        result = {"code": self.code, "message": self.message}
+        if self.operation:
+            result["operation"] = self.operation
+        if self.backend:
+            result["backend"] = self.backend
+        return result
+
+
+class AuthorityViolation(CheckerUnavailable):
+    """A migrated operation reached a non-authoritative implementation."""
