@@ -31,24 +31,27 @@
       "norms-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-elaborate"}}},
       "norms-certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-certificate"}}},
       "norms-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-conflict"}}}},
-    "norms-elaborate": {"$comment": "Norms.Wire.regenerated.",
+    "norms-elaborate": {"$comment": "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair.",
       "type": "object", "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
       "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "order": {"$ref": "common.json#/$defs/strings"},
+        "order": {"$ref": "common.json#/$defs/strings", "x-cardinality": {"$ref": "common.json#/counts/regulated"}},
         "background": {"type": "array", "items": {
           "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
           "properties": {
             "generator": {"enum": ["definitions", "literals", "profile"]},
-            "ast": {"$ref": "common.json#/$defs/fol_formula"}}}},
-        "premises": {"type": "array", "items": {
+            "ast": {"$ref": "common.json#/$defs/fol_formula"}}},
+          "x-runs": {"key": "/generator", "runs": [["definitions", {"$ref": "common.json#/counts/definitions"}],
+                                                   ["literals", {"$ref": "common.json#/counts/literals"}],
+                                                   ["profile", {"$ref": "common.json#/counts/profile_pairs"}]]}},
+        "premises": {"type": "array", "x-cardinality": {"$ref": "common.json#/counts/regulated"}, "items": {
           "type": "object", "required": ["label", "ast"], "additionalProperties": false,
           "properties": {
             "label": {"type": "string", "pattern": "layer:norms:.*"},
             "ast": {"$ref": "common.json#/$defs/fol_formula"}}}},
-        "conflict_targets": {"type": "array", "items": {
+        "conflict_targets": {"type": "array", "x-cardinality": {"$ref": "common.json#/counts/targets"}, "items": {
           "type": "object", "required": ["target", "sorts", "ast"], "additionalProperties": false,
           "properties": {
             "target": {"type": "string"},
@@ -61,8 +64,8 @@
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
         "valid": {"type": "boolean"},
-        "background": {"$ref": "common.json#/$defs/nat"},
-        "layers": {"$ref": "common.json#/$defs/nat"}}},
+        "background": {"$ref": "common.json#/$defs/nat", "x-cardinality": {"$ref": "common.json#/counts/norms_background"}},
+        "layers": {"$ref": "common.json#/$defs/nat", "x-cardinality": {"$ref": "common.json#/counts/regulated"}}}},
     "norms-witness": {"$comment": "Norms.Replay.witnessFrom: the requested target, one of the regenerated targets.",
       "type": "object", "required": ["id", "status", "verdict", "target", "targets"], "additionalProperties": false,
       "properties": {
@@ -70,7 +73,7 @@
         "status": {"const": "ok"},
         "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
         "target": {"type": "string", "x-equals": "/witness/target"},
-        "targets": {"$ref": "common.json#/$defs/strings"}},
+        "targets": {"$ref": "common.json#/$defs/strings", "x-cardinality": {"$ref": "common.json#/counts/targets"}}},
       "x-in": [["/target", "/targets"]]},
     "norms-conflict": {"$comment": "Norms.Replay.replayConflict: detail only with UNKNOWN.",
       "type": "object", "required": ["id", "status", "verdict", "targets"], "additionalProperties": false,
@@ -78,7 +81,7 @@
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
         "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]},
-        "targets": {"$ref": "common.json#/$defs/strings"},
+        "targets": {"$ref": "common.json#/$defs/strings", "x-cardinality": {"$ref": "common.json#/counts/targets"}},
         "detail": {"type": "string"}},
       "if": {"required": ["detail"]},
       "then": {"properties": {"verdict": {"const": "UNKNOWN"}}}}

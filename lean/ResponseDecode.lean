@@ -65,6 +65,56 @@ def path (j : Json) : List String → Except String Json
 
 def length (j : Json) : Except String Nat := do pure (← j.getArr?).size
 
+/-! ## Counts of regenerated lists (schema README: Counts) -/
+
+/-- The members of the request's array or object at `p`. -/
+def members (case : Json) (p : List String) : Except String (List Json) := do
+  match ← path case p with
+  | .arr xs => pure xs.toList
+  | .obj kvs => pure (kvs.foldl (fun acc _ v => v :: acc) [])
+  | _ => throw "not an array or object"
+
+def countWhere (case : Json) (p : List String) (f : Json → Bool) : Except String Nat := do
+  pure ((← members case p).filter f).length
+
+def isTrue (e : Json) (k : String) : Bool :=
+  match e.getObjVal? k with
+  | .ok (.bool true) => true
+  | _ => false
+
+def predicates : List String := ["environment", "vocabulary", "predicates"]
+
+/-- `Data.Background.generate`: one premise per functional and one per total flag. -/
+def flagsCount (case : Json) : Except String Nat := do
+  pure ((← countWhere case predicates (isTrue · "functional")) + (← countWhere case predicates (isTrue · "total")))
+
+/-- `Definitions.expand`: one biconditional per defined predicate. -/
+def definitionsCount (case : Json) : Except String Nat := countWhere case predicates (has · "defined")
+
+/-- `Background.literals`: one premise per pair of `$string` literals. -/
+def literalsCount (case : Json) : Except String Nat := do
+  let n ← countWhere case ["environment", "vocabulary", "constants"]
+    (fun e => e.getObjValD "sort" == .str "$string")
+  pure (n * (n - 1) / 2)
+
+/-- `Norms.syms`: one layer per regulated predicate. -/
+def regulatedCount (case : Json) : Except String Nat := countWhere case predicates (has · "regulated")
+
+/-- `Norms.pairs`: one per obligation with a permission dual. -/
+def pairsCount (case : Json) : Except String Nat := countWhere case predicates fun e =>
+  match e.getObjVal? "regulated" with
+  | .ok r => r.getObjValD "role" == .str "obligation" && (match r.getObjVal? "permission" with
+      | .ok (.str _) => true
+      | _ => false)
+  | .error _ => false
+
+/-- The request's runs of generators, in generator order. -/
+def runs (case : Json) (counts : List (String × (Json → Except String Nat))) : Except String (List Json) := do
+  let mut out := []
+  for (g, count) in counts do
+    out := out ++ List.replicate (← count case) (Json.str g)
+  pure out
+
 /-- The values of `values`: one per requested formula, and never an empty document. -/
 def values (row case : Json) : Check := do
   let vs ← (← field row "values").getArr?
@@ -201,6 +251,8 @@ def background (row case : Json) : Check := do
   let gs ← field row "generators"
   array gs (fun g => do need (VE.Route.Background.generators.contains (← g.getStr?)) "generator")
   need ((← length bg) == (← length gs)) "one generator per premise"
+  let expected ← runs case [("flags", flagsCount), ("definitions", definitionsCount), ("literals", literalsCount)]
+  need ((← gs.getArr?).toList == expected) "generators are not the regenerated Background's"
 
 def label (row case : Json) : Check := do
   okRow row case ["label"]
@@ -222,7 +274,9 @@ def routeOk (row case : Json) : Check := do
   | "countermodel" => do okRow row case ["refutes"]; bool (← field row "refutes")
   | "certificate" => do
     okRow row case ["valid", "background"]
-    bool (← field row "valid"); nat (← field row "background")
+    bool (← field row "valid")
+    let n := (← flagsCount case) + (← definitionsCount case) + (← literalsCount case)
+    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
   | "dependency-order" => dependencyOrder row case
   | "bundle" => bundle row case
   | "background" => background row case
@@ -238,18 +292,27 @@ def objects (j : Json) (required : List String) (f : Json → Check) : Check :=
 
 def normsElaborate (row case : Json) : Check := do
   okRow row case ["order", "background", "premises", "conflict_targets", "fragment"]
-  let _ ← VE.Bridge.strings (← field row "order")
-  objects (← field row "background") ["generator", "ast"] fun x => do
+  let order ← VE.Bridge.strings (← field row "order")
+  let background ← field row "background"
+  objects background ["generator", "ast"] fun x => do
     need (["definitions", "literals", "profile"].contains (← (← field x "generator").getStr?)) "generator"
     folFormula (← field x "ast")
-  objects (← field row "premises") ["label", "ast"] fun x => do
+  let premises ← field row "premises"
+  objects premises ["label", "ast"] fun x => do
     need ((← (← field x "label").getStr?).startsWith "layer:norms:") "layer label"
     folFormula (← field x "ast")
-  objects (← field row "conflict_targets") ["target", "sorts", "ast"] fun x => do
+  let targets ← field row "conflict_targets"
+  objects targets ["target", "sorts", "ast"] fun x => do
     string (← field x "target")
     let _ ← VE.Bridge.strings (← field x "sorts")
     folFormula (← field x "ast")
   bool (← field row "fragment")
+  let layers ← regulatedCount case
+  need (order.length == layers && (← length premises) == layers) "one layer per regulated predicate"
+  need ((← length targets) == layers + (← pairsCount case)) "one target per layer and profile pair"
+  let expected ← runs case [("definitions", definitionsCount), ("literals", literalsCount), ("profile", pairsCount)]
+  need ((← background.getArr?).toList.map (·.getObjValD "generator") == expected)
+    "Background is not the regenerated generators'"
 
 def normsOk (row case : Json) : Check := do
   match ← VE.Route.Run.caseKind case with
@@ -257,8 +320,12 @@ def normsOk (row case : Json) : Check := do
   | "norms-elaborate" => normsElaborate row case
   | "norms-certificate" => do
     okRow row case ["valid", "background", "layers"]
-    bool (← field row "valid"); nat (← field row "background"); nat (← field row "layers")
+    bool (← field row "valid")
+    let n := (← definitionsCount case) + (← literalsCount case) + (← pairsCount case)
+    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
+    need ((← (← field row "layers").getNat?) == (← regulatedCount case)) "one layer per regulated predicate"
   | "norms-conflict" =>
+    let count := (← regulatedCount case) + (← pairsCount case)
     if has case "witness" then do
       okRow row case ["verdict", "target", "targets"]
       need (["CONFLICT", "UNKNOWN"].contains (← (← field row "verdict").getStr?)) "verdict"
@@ -266,11 +333,12 @@ def normsOk (row case : Json) : Check := do
       let targets ← VE.Bridge.strings (← field row "targets")
       need (targets.contains target) "target is not a regenerated target"
       need ((← path case ["witness", "target"]) == .str target) "not the requested target"
+      need (targets.length == count) "one target per layer and profile pair"
     else do
       okRow row case ["verdict", "targets"] ["detail"]
       let verdict ← (← field row "verdict").getStr?
       need (["CONFLICT-FREE", "UNKNOWN"].contains verdict) "verdict"
-      let _ ← VE.Bridge.strings (← field row "targets")
+      need ((← VE.Bridge.strings (← field row "targets")).length == count) "one target per layer and profile pair"
       if let .ok d := row.getObjVal? "detail" then
         string d
         need (verdict == "UNKNOWN") "detail without UNKNOWN"

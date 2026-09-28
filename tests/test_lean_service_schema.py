@@ -268,7 +268,7 @@ def fuzz(genuine, executables):
         items += [(mode, req, [res]) for req, res in joint_mutations(request, response, rng, 8)]
         items += [(mode, req, [response]) for req in request_mutations(request, rng, 6)]
     items += (kind_items(genuine) + label_items(genuine) + depth_items(genuine) + report_items(genuine)
-              + graph_items(genuine))
+              + graph_items(genuine) + count_items(genuine))
     return items, lean_verdicts(executables[1], items)
 
 
@@ -281,7 +281,9 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
 @pytest.mark.parametrize("weaken", [
     "modality", "act", "relation", "token", "kind-fuel", "formula-fuel", "values-nonempty",
     "values-count", "claim-member", "kinds-link", "lemmas-link", "checked-count", "order-link",
-    "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false"])
+    "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false", "background-runs",
+    "certificate-count", "norms-layers", "norms-order", "norms-targets", "norms-background",
+    "norms-certificate", "conflict-targets", "literal-pairs"])
 def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
     """The differential harness has teeth: each weakening of the schemas disagrees with
     the Lean decoders on some mutation."""
@@ -312,6 +314,23 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
      "assumptions-unfold": lambda: edit(common, lambda d: d["admission"]["properties"]["report"]["properties"][
          "assumptions"].pop("x-unfolds")),
      "valid-false": lambda: edit(common, lambda d: d["error_valid"]["properties"].update(valid={"type": "boolean"})),
+     "background-runs": lambda: edit("route.json", lambda d: d["background"]["properties"]["generators"].pop("x-runs")),
+     "certificate-count": lambda: edit("route.json",
+                                       lambda d: d["certificate"]["properties"]["background"].pop("x-cardinality")),
+     "norms-layers": lambda: edit("norms.json",
+                                  lambda d: d["norms-elaborate"]["properties"]["premises"].pop("x-cardinality")),
+     "norms-order": lambda: edit("norms.json",
+                                 lambda d: d["norms-elaborate"]["properties"]["order"].pop("x-cardinality")),
+     "norms-targets": lambda: edit("norms.json", lambda d: d["norms-elaborate"]["properties"][
+         "conflict_targets"].pop("x-cardinality")),
+     "norms-background": lambda: edit("norms.json",
+                                      lambda d: d["norms-elaborate"]["properties"]["background"].pop("x-runs")),
+     "norms-certificate": lambda: edit("norms.json", lambda d: d["norms-certificate"]["properties"][
+         "layers"].pop("x-cardinality")),
+     "conflict-targets": lambda: edit("norms.json",
+                                      lambda d: d["norms-conflict"]["properties"]["targets"].pop("x-cardinality")),
+     "literal-pairs": lambda: _edit_counts(
+         tmp_path, lambda c: c["literals"].update(pairs={"sum": [c["literals"]["pairs"], 1]})),
      }[weaken]()
     compiler = Compiler(tmp_path)
     rows = {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
@@ -325,6 +344,12 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
             return False
     ours = [accepts(mode, request, r) for mode, request, responses in items for r in responses]
     assert any(a != (b == "accept") for a, b in zip(ours, lean))
+
+
+def _edit_counts(directory, change):
+    document = json.loads((directory / "common.json").read_text())
+    change(document["counts"])
+    (directory / "common.json").write_text(json.dumps(document))
 
 
 def _linked(genuine, mode, kind):
@@ -418,6 +443,85 @@ def test_graph_unfolding_agrees_with_the_lean_graph_conditions(genuine, executab
     assert "accept" in verdicts and any(v != "accept" for v in verdicts)
 
 
+REGENERATED = {  # (mode, kind): the result fields regenerated from the environment
+    ("route", "background"): ("background", "premises", "generators"),
+    ("route", "certificate"): ("background",),
+    ("norms", "background"): ("background", "premises", "generators"),
+    ("norms", "certificate"): ("background",),
+    ("norms", "norms-elaborate"): ("order", "background", "premises", "conflict_targets"),
+    ("norms", "norms-certificate"): ("background", "layers"),
+    ("norms", "norms-conflict"): ("targets",),
+}
+
+
+def _count_mutants(row, fields):
+    """Each regenerated list emptied, shortened, extended or reordered, and each count moved."""
+    for field in fields:
+        value = row[field]
+        if isinstance(value, list):
+            changes = [[], value[:-1], value[1:], value + value[-1:], value[::-1], value[-1:] + value[:-1]]
+            if field in ("background", "premises", "generators") and "generators" in row:
+                # the route Background: all three arrays together
+                yield {**row, **{f: [] for f in ("background", "premises", "generators")}}
+                for keep in (slice(None, -1), slice(1, None)):
+                    yield {**row, **{f: row[f][keep] for f in ("background", "premises", "generators")}}
+            for changed in changes:
+                if changed != value:
+                    yield {**row, field: changed}
+        else:
+            for changed in (value - 1, value + 1):
+                if changed >= 0:
+                    yield {**row, field: changed}
+    if "generators" in row:
+        for other in ("flags", "definitions", "literals"):
+            if row["generators"] and other != row["generators"][0]:
+                yield {**row, "generators": [other] + row["generators"][1:]}
+
+
+def _environment_mutants(case):
+    """The environment with one more or one fewer regenerated declaration."""
+    vocabulary = case["environment"]["vocabulary"]
+    predicates, constants = vocabulary["predicates"], vocabulary["constants"]
+    yield {"constants": {**constants, "zeta": {"sort": "$string"}}}
+    yield {"constants": {**constants, "zeta": {"sort": "$string"}, "eta": {"sort": "$string"}}}
+    yield {"constants": {k: v for k, v in constants.items() if v.get("sort") != "$string"}}
+    for name, entry in predicates.items():
+        for key in ("defined", "regulated", "functional", "total"):
+            if key in entry:
+                yield {"predicates": {**predicates, name: {k: v for k, v in entry.items() if k != key}}}
+        if isinstance(entry.get("regulated"), dict):
+            regulated = entry["regulated"]
+            yield {"predicates": {**predicates, name: {**entry, "regulated": {
+                **regulated, "role": "plain" if regulated.get("role") == "obligation" else "obligation"}}}}
+            yield {"predicates": {**predicates, name: {**entry, "regulated": {**regulated, "permission": None}}}}
+        if len(entry.get("arguments", ())) == 2:
+            yield {"predicates": {**predicates, name: {**entry, "functional": True, "total": True}}}
+    yield {"predicates": [], "constants": []}
+
+
+def count_items(genuine):
+    """Regenerated lists and counts: altered results against their request, and the
+    genuine result against environments with more or fewer regenerated declarations."""
+    items = []
+    for (mode, kind), fields in REGENERATED.items():
+        for request, response, i in _linked(genuine, mode, kind)[:6]:
+            row, case = response["results"][i], request["cases"][i]
+            for changed in _count_mutants(row, fields):
+                res = deepcopy(response)
+                res["results"][i] = changed
+                items.append((mode, request, [res]))
+            for change in _environment_mutants(case):
+                req = deepcopy(request)
+                req["cases"][i]["environment"]["vocabulary"].update(change)
+                items.append((mode, req, [response]))
+    return items
+
+
+def test_regenerated_counts_agree_with_lean(genuine, executables):
+    verdicts = assert_agreement(executables[1], count_items(genuine))
+    assert "accept" in verdicts and any(v != "accept" for v in verdicts)
+
+
 def test_kind_domain_agrees_with_decode_kind(genuine, executables):
     verdicts = assert_agreement(executables[1], kind_items(genuine))
     assert "accept" in verdicts and any(v != "accept" for v in verdicts)
@@ -463,11 +567,12 @@ def _deep_term(depth):
 
 def depth_items(genuine):
     items = []
-    for request, response, i in _linked(genuine, "route", "background")[:1]:
+    for request, response, i in [x for x in _linked(genuine, "route", "background")
+                                 if x[1]["results"][x[2]]["premises"]][:1]:
         for depth in (63, 64, 65):
             res = deepcopy(response)
-            res["results"][i]["background"] = res["results"][i]["premises"] = [_deep_formula(depth, ["top"])]
-            res["results"][i]["generators"] = ["literals"]
+            for field in ("background", "premises"):
+                res["results"][i][field][0] = _deep_formula(depth, ["top"])
             items.append(("route", request, [res]))
     for request, response, i in _linked(genuine, "order", "surface")[:1]:
         for formula in [_deep_formula(d, ["lt", ["num", "0"], ["num", "1"]]) for d in (64, 65)] + [
@@ -573,6 +678,53 @@ def test_admission_assumptions_are_the_graph_unfolding(tmp_path, genuine, mode, 
     bad = deepcopy(row)
     bad["report"]["assumptions"] = changed
     _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("mode", ["route", "norms"])
+@pytest.mark.parametrize("change", ["empty", "drop-definition", "drop-literal", "relabel"])
+def test_regenerated_background_keeps_every_premise(tmp_path, genuine, mode, change):
+    """mig1c-looprecheck1 B: the five-premise defs-background response with all three
+    arrays emptied was accepted. Each generator's premise count is fixed by the request."""
+    case, row = _genuine_row(genuine, mode, "background", lambda c, r: c["id"] == "defs-background")
+    assert row["generators"] == ["definitions"] * 4 + ["literals"]
+    keep = {"empty": slice(0, 0), "drop-definition": slice(1, None), "drop-literal": slice(None, -1),
+            "relabel": slice(None)}[change]
+    bad = {**row, **{f: row[f][keep] for f in ("background", "premises", "generators")}}
+    if change == "relabel":
+        bad["generators"] = ["definitions"] * 5
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("name", ["e2", "e-literals"])
+@pytest.mark.parametrize("fields", [("order",), ("premises",), ("conflict_targets",), ("background",),
+                                    ("order", "premises", "conflict_targets"),
+                                    ("order", "background", "premises", "conflict_targets")])
+@pytest.mark.parametrize("truncate", ["empty", "drop-last"])
+def test_regenerated_norms_elaboration_keeps_every_layer(tmp_path, genuine, name, fields, truncate):
+    """mig1c-looprecheck1 B: emptied order, premises and conflict targets of a nonempty
+    elaboration were accepted. Their lengths are fixed by the regulated predicates and
+    profile pairs, and Background by its generators."""
+    case, row = _genuine_row(genuine, "norms", "norms-elaborate", lambda c, r: c["id"] == name)
+    assert all(row[f] for f in fields)
+    bad = {**row, **{f: [] if truncate == "empty" else row[f][:-1] for f in fields}}
+    _scripted_rejected(tmp_path, "norms", case, row, bad)
+
+
+@pytest.mark.parametrize("mode,kind,field,name", [
+    ("route", "certificate", "background", "data-definition-certificate"),
+    ("norms", "certificate", "background", "defs-certificate-uses-definitions"),
+    ("norms", "norms-certificate", "layers", "certificate"),
+    ("norms", "norms-certificate", "background", "certificate"),
+    ("norms", "norms-conflict", "targets", "c2"),
+    ("norms", "norms-conflict", "targets", "w0"),
+])
+def test_regenerated_counts_fail_closed(tmp_path, genuine, mode, kind, field, name):
+    """The same class for counts and target lists: each is the request's count."""
+    case, row = _genuine_row(genuine, mode, kind, lambda c, r: c["id"] == name)
+    value = row[field]
+    for bad in ([], value[:-1]) if isinstance(value, list) else (value + 1, max(value - 1, 0) if value else 1):
+        if bad != value:
+            _scripted_rejected(tmp_path, mode, case, row, {**row, field: bad})
 
 
 @pytest.mark.parametrize("mode", ["route", "norms"])

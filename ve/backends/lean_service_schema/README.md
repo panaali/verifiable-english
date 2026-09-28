@@ -48,3 +48,18 @@ element of an array (every element must resolve).
 | `x-capture: {source, pattern, target}` | `pattern` matches a prefix of `source`; group 1 equals `target` |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |
 | `x-rows: true` | element `i` is valid under the mode's `row` with context `cases[i]` |
+| `x-cardinality: c` | an array of length `c`, or the integer `c`, for the count `c` of the context |
+| `x-runs: {key, runs: [[v1, c1], ...]}` | an array of `c1` elements whose value at the pointer `key` (`""`: the element) is `v1`, then `c2` elements with `v2`, ... |
+
+## Counts
+
+A count is a number of things the Lean runner regenerates from the request case (for
+example one Background premise per pair of declared `$string` literals), so a
+regenerated list that loses or gains elements is rejected. A count is one of:
+
+* an integer;
+* `{"$ref": "file.json#/..."}`, the count there (`common.json#/counts` names them);
+* `{"count": p, "where": s}`: the number of members (array elements or object values) of
+  the context value at `p` that are valid under `s`; the value must be an array or object;
+* `{"pairs": c}`: `c·(c−1)/2`;
+* `{"sum": [c1, ...]}`.
