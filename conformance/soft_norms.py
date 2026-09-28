@@ -344,18 +344,23 @@ def _nested(depth):
 
 
 def soft3_accepted():
-    """Sources at each node budget that both validators accept."""
-    half = _doubled(11)
+    """Sources at each budget that both validators accept and that elaborate.
+
+    A layer states a rule's guard twice (selected, and silent), so the layer
+    budgets (6.12) bind before the source and document budgets: the largest
+    guard is 4981 nodes for a strict rule and 4964 for a default one."""
     return [
-        ("guard-8191", env(), [norm("a", "x_required", True, guard=["and", half, half])]),
-        ("strict-guard-10000", env(), [norm("a", "x_required", True, guard=_exact(10000))]),
-        ("default-guard-9980", env(), [should("a", "x_required", True, guard=_exact(9980))]),
+        ("strict-guard-4981", env(), [norm("a", "x_required", True, guard=_exact(4981))]),
+        ("default-guard-4964", env(), [should("a", "x_required", True, guard=_exact(4964))]),
+        ("document-guards-2487", env(), [norm("r0", "x_required", True, guard=_exact(2487)),
+                                         norm("r1", "x_required", True, guard=_exact(2487))]),
         ("premise-nodes-9996", env(), [
             should("a", "x_required", True, exception=_exception("sufficient", _exact(9996)))]),
         ("premise-depth-62", env(), [
             should("a", "x_required", True, exception=_exception("sufficient", _nested(62)))]),
-        ("document-nodes-9999", env(), [norm("r0", "x_required", True, guard=_exact(4999)),
-                                        norm("r1", "x_required", True, guard=_exact(5000))]),
+        ("strict-guard-depth-56", env(), [norm("a", "x_required", True, guard=_nested(56))]),
+        ("default-guard-depth-56", env(), [should("a", "x_required", True, guard=_nested(56))]),
+        ("derived-guard-wrappers-43", env(), _strict_under_default(43)),
     ]
 
 
@@ -371,10 +376,36 @@ def _strict_under_default(wrappers):
 def soft_limits_reproducers():
     """soft3-loop.final.md and the directive's class: a derived structure beyond a limit.
 
-    Each was accepted by at least one validator before; each is now rejected
-    by both at the same check."""
+    Each was accepted by at least one validator before and could not be
+    elaborated; each is now rejected by both at the same check."""
+    half = _doubled(11)
     # Finding 1: the derived carve-out reaches depth 65 (6.9, both validators).
     yield "soft-limits-derived-wrappers-54", env(), _strict_under_default(54), "SOFT_RESOURCE_LIMIT"
+    # 53 negations: the derived carve-out fits, but the layer nests it past depth 64 (6.12).
+    yield "soft-limits-layer-wrappers-53", env(), _strict_under_default(53), "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-layer-wrappers-44", env(), _strict_under_default(44), "SOFT_RESOURCE_LIMIT"
+    # Finding 2: the four formerly accepted fixtures whose layers exceed MAX_NODES.
+    yield "soft-limits-guard-8191", env(), [
+        norm("a", "x_required", True, guard=["and", half, half])], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-strict-guard-10000", env(), [
+        norm("a", "x_required", True, guard=_exact(10000))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-default-guard-9980", env(), [
+        should("a", "x_required", True, guard=_exact(9980))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-document-nodes-9999", env(), [
+        norm("r0", "x_required", True, guard=_exact(4999)),
+        norm("r1", "x_required", True, guard=_exact(5000))], "SOFT_RESOURCE_LIMIT"
+    # One past each accepted boundary of soft3_accepted.
+    yield "soft-limits-strict-guard-4982", env(), [
+        norm("a", "x_required", True, guard=_exact(4982))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-default-guard-4965", env(), [
+        should("a", "x_required", True, guard=_exact(4965))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-document-guards-2488", env(), [
+        norm("r0", "x_required", True, guard=_exact(2487)),
+        norm("r1", "x_required", True, guard=_exact(2488))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-strict-guard-depth-57", env(), [
+        norm("a", "x_required", True, guard=_nested(57))], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-default-guard-depth-57", env(), [
+        should("a", "x_required", True, guard=_nested(57))], "SOFT_RESOURCE_LIMIT"
     # E′ (6.4): the decision predicates are within MAX_IDENTIFIER_BYTES and
     # MAX_PREDICATES; Lean used to accept an E′ that no environment decoder loads.
     yield "soft-limits-excepted-name", env(), [should("a" * 49, "x_required", True)], \
@@ -553,6 +584,8 @@ def multi_faults():
         ("derived-nodes", "r3-guard", (6, 10), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(9990))),
         ("premise-depth", "r0-sufficient", (6, 11), "SOFT_RESOURCE_LIMIT",
          _set(rule(0, "exception", "sufficient"), [_nested(63)])),
+        # d3's guard is read by no derived carve-out or premise; its layer states it twice.
+        ("layer-nodes", "r3-guard", (6, 12), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(6000))),
     ]
 
 

@@ -27,7 +27,7 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
                                     _strict_under_default,
                                     compare_rejected, main as conformance_main)
 
-REJECTED_INPUTS = 4397
+REJECTED_INPUTS = 4417
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -197,9 +197,13 @@ def test_node_budgets_admit_the_same_sources(name, raw, rules):
     python = load_soft_document(raw, rules)
     lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert lean["environment_prime"] == python.extended_env.to_dict()
+    # Accepted means elaborable: the public route serialises every generated formula.
+    assert elaborate_soft_document(python)["premises"] == lean["premises"]
 
 
-@pytest.mark.parametrize("wrappers,check", [(54, "ResourceLimit: derived carve-out of rule d")])
+@pytest.mark.parametrize("wrappers,check", [(54, "ResourceLimit: derived carve-out of rule d"),
+                                            (53, "ResourceLimit: generated norm layer"),
+                                            (44, "ResourceLimit: generated norm layer")])
 def test_derived_depth_is_checked_by_both_validators(wrappers, check):
     # soft3-loop.final.md: Lean bounded the derived carve-out's nodes but not its depth.
     rules = _strict_under_default(wrappers)

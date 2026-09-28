@@ -95,7 +95,7 @@ def primeVocabulary (se : SoftEnvironment) (D : SoftDoc) : Except String Unit :=
 
 /-- Decode the environment and the soft norm objects: the validation table of 8 over the whole
 source (`Phases.checkSource`), the vocabulary limits of `E′` (6.4), then `WellFormedSoft`,
-whose remaining diagnostics are the semantic checks 6.5 to 6.11. -/
+whose remaining diagnostics are the semantic checks 6.5 to 6.12. -/
 def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
   let c ← match Phases.checkSource environment norms with
     | .ok c => pure c
