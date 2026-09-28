@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import subprocess
 
-from .ast import formula_to_data
+from .ast import _Checker, _to_data, formula_to_data
 from .errors import VEError
 from .softnorms import SoftEnvironment, SoftNormDocument, check_soft_source
 
@@ -44,16 +44,43 @@ def elaborate_soft_document(soft_document: SoftNormDocument):
     return check_regenerated(soft_document, elaborated)
 
 
+def _open_data(env, formula, sorts):
+    """An open generated formula over a tuple of `sorts`, serialised through the checker."""
+    _Checker(env, generated=True).formula(formula, tuple(reversed(sorts)))
+    return _to_data(formula)
+
+
 def check_regenerated(soft_document: SoftNormDocument, elaborated):
-    """Compare Lean's `soft-elaborate` row with Python's regeneration.
+    """Compare every output of Lean's `soft-elaborate` row with Python's regeneration.
 
     Every generated formula is serialised through the checker's limits; an
-    accepted document is within them (validation table 6.4 and 6.9 to 6.12)."""
+    accepted document is within them (validation table 6.4 and 6.9 to 6.13)."""
     if soft_document.extended_env.to_dict() != elaborated["environment_prime"]:
         raise VEError("soft route regeneration mismatch: extended environment")
     decisions = {item["name"] for item in elaborated["decisions"]}
     if decisions != soft_document.extended_env.decision_names:
         raise VEError("soft route regeneration mismatch: decision predicates")
+    env, doc = soft_document.extended_env, soft_document.elaborated
+    py_derived = []
+    for rule, prime in zip(soft_document.rules, doc.rules, strict=True):
+        derived = prime.unless[-1] if len(prime.unless) > len(rule.core.unless) else None
+        py_derived.append({"rule": rule.core.name, "ast": None if derived is None else _open_data(
+            env, derived, env.predicates[rule.core.predicate].arguments)})
+    if py_derived != elaborated["derived"]:
+        raise VEError("soft route regeneration mismatch: derived carve-outs")
+    if list(doc.order) != elaborated["order"]:
+        raise VEError("soft route regeneration mismatch: layer order")
+    py_pairs = [([left.core.name, right.core.name], label, formula_to_data(env, formula, _generated=True))
+                for (left, right), (label, formula) in zip(soft_document.collisions,
+                                                           soft_document.coherence_premises, strict=True)]
+    if py_pairs != [(item["pair"], item["label"], item["ast"]) for item in elaborated["colliding_pairs"]]:
+        raise VEError("soft route regeneration mismatch: colliding pairs")
+    base = doc.base_environment()
+    py_targets = [(name, list(sorts), _open_data(base, formula, sorts))
+                  for name, sorts, formula in doc.conflict_targets()]
+    if py_targets != [(item["target"], item["sorts"], item["ast"])
+                      for item in elaborated["conflict_targets"]]:
+        raise VEError("soft route regeneration mismatch: conflict targets")
     py_layers = [(label, formula_to_data(soft_document.extended_env, formula, _generated=True))
                  for label, formula in soft_document.elaborated.premises()]
     lean_layers = [(item["label"], item["ast"]) for item in elaborated["premises"]]

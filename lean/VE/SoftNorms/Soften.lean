@@ -659,6 +659,12 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
     if let .reg r := s then
       unless withinLimits (elabPremise (soften D).T r) do
         throw s!"ResourceLimit: generated norm layer layer:norms:{r.name}"
+  -- 6.13: each conflict target's certified conclusion `∀x̄. ¬conflict`, in target order,
+  -- on its own: a target expands every lower predicate's outcome.
+  for (t, s) in sizes.targets do
+    unless fits s do throw s!"ResourceLimit: generated conflict target {t}"
+  for t in targets (soften D) do
+    unless withinLimits (targetConclusion t) do throw s!"ResourceLimit: generated conflict target {t.1}"
 where
   dependencyOrderOf (env : SoftEnv) : Except String (List String) := VE.Route.dependencyOrder (rankNodes env)
 

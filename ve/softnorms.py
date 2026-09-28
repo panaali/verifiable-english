@@ -743,6 +743,7 @@ class SoftNormDocument:
         for label, formula in self.elaborated.premises():
             if not _within_limits(self.extended_env, formula):
                 raise ResourceLimit(f'ResourceLimit: generated norm layer {label}')
+        self._check_conflict_targets()
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
@@ -964,6 +965,27 @@ class SoftNormDocument:
         sizes = self.expansion_sizes if sizes is None else sizes
         return _size(formula, lambda atom: sizes[atom.predicate]
                      if atom.predicate != current and atom.predicate in sizes else None)
+
+    def _check_conflict_targets(self):
+        """6.13: the certified conclusion `∀x̄. ¬conflict` of each conflict target, in
+        `conflict_targets` order, is within MAX_DEPTH and MAX_NODES on its own. A
+        target expands every lower predicate's outcome, so it is sized from the
+        expansion table and never built here."""
+        doc = self.elaborated
+        targets = []
+        for predicate in doc.order:
+            positive, negative, _ = doc.selection(predicate)
+            targets.append((predicate, doc.env.predicates[predicate].arguments,
+                            And(*(_Sized(self._expanded_size(f, predicate)) for f in (positive, negative)))))
+        for required, decl in sorted(doc.env.predicates.items()):
+            reg = decl.regulated
+            if reg is not None and reg.permission is not None:
+                targets.append((f'{required}->{reg.permission}', decl.arguments,
+                                And(_Sized(self.expansion_sizes[required]),
+                                    Not(_Sized(self.expansion_sizes[reg.permission])))))
+        for name, sorts, conflict in targets:
+            if not _fits(_size(_bind(Not(conflict), sorts))):
+                raise ResourceLimit(f'ResourceLimit: generated conflict target {name}')
 
     def _coherence_premises(self):
         """6.11 for the coherence premises, in order: each is sized first and

@@ -471,6 +471,14 @@ def _rank_tower(ranks_count, per_rank, mode="strict", dense=True):
                         for i in range(ranks_count) for j in range(per_rank)]
 
 
+def _dual_outcomes(count):
+    """A doubling chain p0 … p{count-1}, and rules requiring x and forbidding it
+    guarded by the chain's last predicate: the pair target states both expansions."""
+    atom = ["unary", f"p{count - 1}", ["var", 0]]
+    return _plain_chain(count, _twice, [norm("a", "x_required", True, guard=atom),
+                                        norm("b", "x_permitted", False, guard=atom)])
+
+
 def soft4_reproducers():
     """soft4-looprecheck1.final.md B3 and its class: a derived structure whose
     unfolding is exponential in the source (outcome expansion across layers,
@@ -480,6 +488,15 @@ def soft4_reproducers():
     now sized from per-rule tables and rejected at its check by both."""
     raw, rules = _plain_chain(26, _negations(40), _opposed("p25"))
     yield "soft4-coherence-negations-26", raw, rules, "SOFT_RESOURCE_LIMIT"
+    # B2: each strict rule guarded by its predecessor twice; the p10 conflict target
+    # expands to 18,427 nodes, which both validators accepted and no decoder loads.
+    raw, rules = _plain_chain(11, _twice)
+    yield "soft4-target-doubling-11", raw, rules, "SOFT_RESOURCE_LIMIT"
+    raw, rules = _plain_chain(40, _twice)
+    yield "soft4-target-doubling-40", raw, rules, "SOFT_RESOURCE_LIMIT"
+    # The pair target `r->m` states both outcomes: each fits on its own, the pair does not.
+    raw, rules = _dual_outcomes(10)
+    yield "soft4-pair-target-10", raw, rules, "SOFT_RESOURCE_LIMIT"
     raw, rules = _plain_chain(40, _twice, _opposed("p39"))
     yield "soft4-coherence-doubling-40", raw, rules, "SOFT_RESOURCE_LIMIT"
     raw, rules = _diamond(15, 16)
@@ -495,10 +512,13 @@ def soft4_reproducers():
 
 def soft4_near_limit():
     """Each exponential family swept across its limit, so both sides of every boundary
-    are compared: coherence premises by nodes and by depth, layers and derived
-    carve-outs over precedence diamonds, derived carve-outs over rank towers."""
+    are compared: coherence premises by nodes and by depth, conflict targets and
+    pair targets, layers and derived carve-outs over precedence diamonds, derived
+    carve-outs over rank towers."""
     for count in range(6, 12):
         yield (f"soft4-near-doubling-{count}", *_plain_chain(count, _twice, _opposed(f"p{count - 1}")))
+        yield f"soft4-near-target-{count}", *_plain_chain(count, _twice)
+        yield f"soft4-near-pair-target-{count}", *_dual_outcomes(count)
     for times in range(6, 12):
         yield (f"soft4-near-negations-{times}", *_plain_chain(5, _negations(times), _opposed("p4")))
     for levels, width in ((3, 3), (4, 3), (5, 3), (6, 3), (4, 4), (5, 4), (3, 6)):
