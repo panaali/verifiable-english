@@ -1,5 +1,9 @@
-"""Asimov v2: authored English, certified consistency, and spec scenarios."""
+"""Asimov v2: authored English, certified consistency, spec scenarios and regressions."""
 import json
+import os
+import random
+import shutil
+import subprocess
 from functools import lru_cache
 from pathlib import Path
 
@@ -7,15 +11,18 @@ import pytest
 
 from conformance.alternatives import base_environment, cases, scenario
 from ve.alternatives import run_case
-from ve.ast import Not, _Decoder
+from ve.ast import Not, _Decoder, formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
+from ve.evaluate import evaluate
+from ve.model import FiniteModel
 from ve.norm_english import parse_english, render_english
 from ve.norms import _bind
 from ve.wire import digest
 
 
-ROOT = Path(__file__).resolve().parents[1] / "usecases" / "asimov-laws"
+REPO = Path(__file__).resolve().parents[1]
+ROOT = REPO / "usecases" / "asimov-laws"
 
 
 @lru_cache(maxsize=1)
@@ -28,10 +35,19 @@ def load():
     return data, doc, source, manifest
 
 
-def case(kind="alt-elaborate", **extra):
-    data, doc, _, _ = load()
+def norms(replace=None):
+    """The authored rules, with one rule's guard and carve-outs optionally replaced."""
+    rules = [rule.to_dict() for rule in load()[1].rules]
+    for rule in rules:
+        if replace and rule["norm"]["name"] in replace:
+            rule["norm"].update(replace[rule["norm"]["name"]])
+    return rules
+
+
+def case(kind="alt-elaborate", rules=None, **extra):
+    data = load()[0]
     return {"id": "asimov-v2", "kind": kind, "environment": data,
-            "norms": [rule.to_dict() for rule in doc.rules], **extra}
+            "norms": norms() if rules is None else rules, **extra}
 
 
 def conflict_packages():
@@ -73,7 +89,7 @@ def test_authored_rules_have_one_reading_and_declared_priority():
         ("law-0-prevention-exception", "permitted", ("law-1-ban",), 1),
         ("law-0-ban", "permitted", ("law-1-ban", "law-0-prevention-exception"), 0),
         ("law-2-obey", "required", (), 0),
-        ("law-3-preserve", "prevent_required", (), 0),
+        ("law-3-preserve", "prevent_required", (), 2),
     ]
 
 
@@ -132,6 +148,11 @@ def test_spec_scenarios_show_inaction_priority_and_choice(name, clear):
     assert report["choosers"][0]["clear"] == clear
 
 
+# An independent reading of the source for one robot: Law 0 over Law 1 over
+# Law 2 over Law 3. The Zeroth Law excuses a First Law breach only when it
+# prevents a harm to humanity and no alternative breaks neither law. Law 3's
+# prevention duty holds only while some permitted action avoids the harm and
+# every required action prevents it.
 SELF, HUMAN, HUMANITY = ("hs",), ("hp",), ("hh",)
 HARMS = SELF + HUMAN + HUMANITY
 
@@ -144,9 +165,46 @@ def model(actions, positive, *, ordered=(), injured=(), injured_humanity=()):
                            "injures_humanity": [[a] for a in injured_humanity]})
 
 
+def source_reading(situation):
+    relations = situation["model"]["relations"]
+    actions = situation["model"]["domains"]["action"]
+    leads = {tuple(pair) for pair in relations["leads_to"]}
+    marked = lambda name: {row[0] for row in relations[name]}
+    avoidable = lambda h: any((a, h) not in leads for a in actions)
+    allows = lambda a, h: (a, h) in leads and avoidable(h)
+    prevents = lambda a, h: (a, h) not in leads and any((b, h) in leads for b in actions)
+    first = {a for a in actions
+             if a in marked("injures_human") or any(allows(a, h) for h in HUMAN)}
+    zeroth = {a for a in actions
+              if a in marked("injures_humanity") or any(allows(a, h) for h in HUMANITY)}
+    lawful_option = any(a not in first | zeroth for a in actions)
+    permitted = [a for a in actions if a not in zeroth and (
+        a not in first or (any(prevents(a, h) for h in HUMANITY) and not lawful_option))]
+    required = [a for a in permitted if a in marked("ordered")]
+    duties = [h for h in SELF if avoidable(h)
+              and any((a, h) not in leads for a in permitted)
+              and all(prevents(a, h) for a in required)]
+    clear = [a for a in permitted if set(required) <= {a}
+             and all((a, h) not in leads for h in duties)]
+    return {"permitted": permitted, "required": required, "clear": clear}
+
+
 # Review findings P1: each reproducer, then its class.
 REGRESSIONS = {
-    # Rule 5: the Zeroth Law excuses only a necessary First Law breach.
+    # Rule 12 (review: rule 9): Law 3 yields to Laws 1 and 2.
+    "obedience-destroys-robot": (model(["nothing", "obey"], [("obey", "hs")],
+                                       ordered=["obey"]), ["obey"]),
+    "obedience-destroys-robot-retreat-available": (
+        model(["nothing", "obey", "retreat"], [("obey", "hs"), ("nothing", "hs")],
+              ordered=["obey"]), ["obey"]),
+    "rescue-destroys-robot": (model(["nothing", "rescue"],
+                                    [("rescue", "hs"), ("nothing", "hp")]), ["rescue"]),
+    "ordered-action-preserves-robot": (
+        model(["nothing", "shield", "retreat"], [("nothing", "hs")], ordered=["shield"]),
+        ["shield"]),
+    "self-preservation-without-conflict": (
+        model(["nothing", "shield", "retreat"], [("nothing", "hs")]), ["shield", "retreat"]),
+    # Rule 9 (review: rule 5): the Zeroth Law excuses only a necessary First Law breach.
     "ordered-unnecessary-injury": (
         model(["nothing", "act", "rescue"], [("nothing", "hh")], ordered=["act"],
               injured=["act"]), ["rescue"]),
@@ -162,7 +220,8 @@ REGRESSIONS = {
     "harmless-looking-rescue-breaks-zeroth-law": (
         model(["nothing", "act", "rescue"], [("nothing", "hh"), ("rescue", "hh")],
               injured=["act"], injured_humanity=["rescue"]), ["act"]),
-    # Rules 4 and 7: any alternative that lets an avoidable harm happen, not only inaction.
+    # Rules 4 and 6 (review: rules 4 and 7): any alternative that lets an avoidable
+    # harm happen, not only inaction.
     "unrelated-work-while-human-harmed": (
         model(["nothing", "work", "rescue"], [("nothing", "hp"), ("work", "hp")]), ["rescue"]),
     "unrelated-work-while-humanity-harmed": (
@@ -180,4 +239,71 @@ def test_review_reproducers_have_the_source_reading(name):
     situation, clear = REGRESSIONS[name]
     report = run_case(case("alt-validate", scenario=situation))
     assert report["status"] == "ok"
-    assert report["choosers"][0]["clear"] == clear
+    chooser = report["choosers"][0]
+    assert chooser["clear"] == clear
+    expected = source_reading(situation)
+    assert {key: chooser[key] for key in expected} == expected
+
+
+def sampled_models(count, seed):
+    rng = random.Random(seed)
+    actions = ["nothing", "a1", "a2"]
+    for _ in range(count):
+        positive = [(a, h) for a in actions for h in HARMS if rng.random() < 0.35]
+        choose = lambda p: [a for a in actions[1:] if rng.random() < p]
+        yield model(actions, positive, ordered=choose(0.4), injured=choose(0.3),
+                    injured_humanity=choose(0.1))
+
+
+def test_lean_reports_match_the_source_reading_on_sampled_models():
+    for situation in sampled_models(24, 1942):
+        report = run_case(case("alt-validate", scenario=situation))
+        assert report["status"] == "ok", report
+        chooser = report["choosers"][0]
+        expected = source_reading(situation)
+        assert {key: chooser[key] for key in expected} == expected, situation["model"]
+
+
+@pytest.fixture(scope="module")
+def rust_binary():
+    cargo = shutil.which("cargo")
+    if cargo is None:
+        pytest.skip("cargo is unavailable")
+    env = {**os.environ, "CARGO_HOME": str(REPO / ".cargo-home"),
+           "CARGO_TARGET_DIR": str(REPO / "rust/target")}
+    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
+                            "--manifest-path", str(REPO / "rust/Cargo.toml")],
+                           env=env, capture_output=True, text=True, timeout=600)
+    assert built.returncode == 0, built.stdout + built.stderr
+    return REPO / "rust/target/release/ve"
+
+
+def test_followability_agrees_across_python_rust_and_source_reading(rust_binary):
+    """Lean elaborates; Python and Rust evaluate the closed base formula.
+
+    Law 3's prevention duty never removes the last clear action: the full rule
+    set is followable exactly where it is followable without Rule 12. The v2
+    duty, with no exception for Laws 1 and 2, fails that on the same sample.
+    """
+    data = load()[0]
+    base = base_environment(data)
+    env = Environment(base)
+    without_law_3 = [r for r in norms() if r["norm"]["name"] != "law-3-preserve"]
+    v2_law_3 = norms({"law-3-preserve": {"unless": []}})
+    formulas = [run_case(case(rules=rules))["followable"]["ast"]
+                for rules in (norms(), without_law_3, v2_law_3)]
+    situations = [*(item[0] for item in REGRESSIONS.values()), *sampled_models(300, 1985)]
+    python = []
+    for situation in situations:
+        finite = FiniteModel.from_dict(env, situation["model"])
+        python.append([evaluate(env, formula_from_data(env, f), finite, trace=False).value
+                       for f in formulas])
+    rust = subprocess.run([str(rust_binary), "conformance"], input=json.dumps([
+        {"id": str(i), "kind": "evaluate", "environment": base, "ast": formulas,
+         "model": situation["model"]} for i, situation in enumerate(situations)]),
+        capture_output=True, text=True, timeout=300)
+    assert rust.returncode == 0, rust.stdout + rust.stderr
+    assert [row["values"] for row in json.loads(rust.stdout)] == python
+    assert [row[0] for row in python] == [bool(source_reading(s)["clear"]) for s in situations]
+    assert all(full == unranked for full, unranked, _ in python)
+    assert any(unranked and not v2 for _, unranked, v2 in python)
