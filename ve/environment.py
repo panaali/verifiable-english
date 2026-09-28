@@ -281,7 +281,8 @@ class Environment:
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
             require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set())
-                           | ({"verbalisation"} if "verbalisation" in entry else set()),
+                           | ({"verbalisation"} if route and "reports@0" in data["profiles"]
+                              and "verbalisation" in entry else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
