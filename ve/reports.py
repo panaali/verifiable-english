@@ -285,12 +285,15 @@ class ReportsDocument:
     def _scoped_object(self, row):
         """3.2 and 4.1 step 5 (Lean `decodeScoped`, `scopedOk`): at most 64 payloads,
         each a formula node (`ScopedTarget`), all in one scope with a conclusion
-        closed over it (`ScopedEnvironment`)."""
+        closed over it (`ScopedEnvironment`). A carried certificate may carry its
+        envelope (3.4); an envelope without a certificate is malformed."""
         if (type(row) is not dict or not {"id", "payloads", "conclusion"} <= set(row)
-                or set(row) - {"id", "payloads", "conclusion", "certificate"} or type(row["id"]) is not str
+                or set(row) - {"id", "payloads", "conclusion", "certificate", "envelope"} or type(row["id"]) is not str
                 or type(row["payloads"]) is not list or type(row["conclusion"]) is not dict
                 or set(row["conclusion"]) != {"ast"}):
             raise VEError("InvalidInput: scoped")
+        if "envelope" in row and "certificate" not in row:
+            raise VEError(f"InvalidInput: envelope without a certificate on scoped check {row['id']}")
         payloads = [self._path_object(p) for p in row["payloads"]]
         if len(payloads) > 64:
             raise ResourceLimit("ResourceLimit: scoped payloads")

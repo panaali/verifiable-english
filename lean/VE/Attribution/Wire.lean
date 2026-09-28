@@ -268,14 +268,19 @@ def decodeBridge (j : Json) : Except String Bridge := do
     | .error _ => pure 0
   pure ⟨id, ⟨u, depth⟩, ← stringField j "accepted_by", ← strings (← j.getObjVal? "reason")⟩
 
-def decodeScoped (j : Json) : Except String (ScopedCheck × Option Json) := do
-  displayFields j ["id", "payloads", "conclusion"] ["certificate"]
+/-- A scoped check with its optional certificate and the certificate's
+envelope (3.4); an envelope without a certificate is malformed. -/
+def decodeScoped (j : Json) : Except String (ScopedCheck × Option (Json × Option Json)) := do
+  displayFields j ["id", "payloads", "conclusion"] ["certificate", "envelope"]
   let id ← stringField j "id"
   let payloads ← (← (← j.getObjVal? "payloads").getArr?).toList.mapM decodePath
   let c ← j.getObjVal? "conclusion"
   exactFields c ["ast"]
   let conclusion ← VE.Bridge.decodeFormula 64 (← c.getObjVal? "ast")
-  pure (⟨id, payloads, conclusion⟩, (j.getObjVal? "certificate").toOption)
+  let certificate := (j.getObjVal? "certificate").toOption
+  let envelope := (j.getObjVal? "envelope").toOption
+  require (certificate.isSome || envelope.isNone) s!"InvalidInput: envelope without a certificate on scoped check {id}"
+  pure (⟨id, payloads, conclusion⟩, certificate.map (·, envelope))
 
 /-! ## Documents -/
 
@@ -353,12 +358,13 @@ def sortedSpans : List (Nat × Nat) → Bool
   | _ => true
 
 /-- A decoded reports document: the environment, the document, the raw unit
-decodings and the scoped checks' optional certificates. -/
+decodings and the scoped checks' optional certificates, each with its optional
+envelope. -/
 structure Decoded where
   re : ReportsEnvironment
   D : ReportDoc
   units : List DecodedUnit
-  scopedCertificates : List (String × Json)
+  scopedCertificates : List (String × Json × Option Json)
   /-- the document's environment and literals are the decoded vocabulary's -/
   hE : D.E = re.rv.environment
   hlits : D.lits = re.rv.literals
@@ -399,7 +405,7 @@ def decodeDocumentRaw (environment document : Json) : Except String Decoded := d
   let envId ← VE.Route.Wire.environmentId re.profiles environment
   let D : ReportDoc := ⟨E, re.rv.literals, re.holders, re.evidence, contexts, assessments, reportUnits,
     bridges, scopedChecks.map Prod.fst, re.profiles, envId, w2, re.predicateNames, metas⟩
-  pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map (s.id, ·), rfl, rfl⟩
+  pure ⟨re, D, units, scopedChecks.filterMap fun (s, c) => c.map fun (cj, e) => (s.id, cj, e), rfl, rfl⟩
 
 /-! ## Diagnostics of 4.1, in the order of section 8 (untrusted text) -/
 

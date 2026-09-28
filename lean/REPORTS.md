@@ -118,6 +118,12 @@ Route, scoped checks, assessments, bridges, wire (9.3).
   envelope (3.4's outer binding: a graph node with a `certificate` has an `envelope` field
   `{"environment_id", "document_id"}`, removed before the frozen W2 node decoder reads the node), and its report is a `SoundReport` at `E_reports` whose assumptions are
   decoded leaves admitted by `ReportsLeafAdmitted`, with closed citations and compatible choices.
+- `Run.scopedCertified_sound`: a scoped certificate (FOLLOWS, or PAYLOADS INCONSISTENT with `⊥`) counts only
+  with both bindings of 3.4: its envelope is the recomputed one and it replays under the inner binding at the
+  check's pinned scope. A `reports-scoped` case's `certificates` and `inconsistency` are bound by the case's
+  `envelope`; a certificate a scoped check carries in the document is bound by that check's own `envelope` field
+  (not part of `document_id`; an envelope without a certificate is `InvalidInput`). A check whose only
+  certificates are unbound is UNKNOWN with detail `envelope`.
 - `Run.reports_wire_acceptance`: a successful `admission` answer is exactly the encoding of such an admission of
   the case's own environment and document.
 - `Run.decodeReportsModel_valid`, `Run.reports_countermodel_decoded`, `Run.runCountermodel_sound`: the model
