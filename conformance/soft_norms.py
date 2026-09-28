@@ -73,6 +73,8 @@ def rust_sources():
          [norm("h", "x_required", True, alterable=["user"])], []),
         ("switch-off", env({"parties": ["user"], "outranking": {"mode": "strict"}}),
          [norm("h", "x_required", True, alterable=["user"])], ["soft__off__h__user"]),
+        ("three-switches", env({"parties": ["a", "b", "c"], "outranking": {"mode": "strict"}}),
+         [norm("h", "x_required", True, alterable=["a", "b", "c"])], ["soft__off__h__c"]),
         ("holistic-high", env(ranks(["high", "low"], "holistic")),
          [should("h", "x_required", True, rank="high"),
           should("l", "x_required", False, rank="low")], []),
@@ -96,6 +98,15 @@ def rejected_sources():
         (env(), [norm("a", "x_required", True, alterable=["user"])]),
         (env(), [norm("a", "x_required", True, mode="default", exception={
             "decided_by": "", "sufficient": [], "necessary": [], "factors": []})]),
+        (env({"outranking": {"mode": "strict", "decided_by": "assistant"}}), []),
+        (env({"ranks": ["a", "b"], "ties": [["a", "b"], ["a", "b"]],
+              "outranking": {"mode": "strict"}}), []),
+        (env({"ranks": ["a", "b"], "outranks": [["a", "b"], ["a", "b"]],
+              "outranking": {"mode": "strict"}}), []),
+        (env(), [norm("a", "x_required", True, mode="default",
+                      exception={"decided_by": "assistant"})]),
+        (env({"parties": ["assistant", "user"], "outranking": {"mode": "strict"}}),
+         [norm("a", "x_required", True, alterable=["user", "assistant"])]),
     ]
 
 

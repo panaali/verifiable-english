@@ -7,7 +7,7 @@ from ve.ast import Forall, Top, Unary, Var
 from ve.ast import formula_from_data
 from ve.document import check_document, coverage, render_document
 from ve.entailment import prove_entailment
-from ve.errors import VEError
+from ve.errors import SyntaxError, VEError
 from ve.norm_english import parse_english, render_english
 from ve.norm_strict import parse_strict, print_strict
 from ve.norms import NormDocument, prove_norm_entailment, check_norm_entailment_certificate
@@ -16,6 +16,8 @@ from ve.softnorms import SoftEnvironment
 from ve.soft_route import _run, classify_soft_pairs, check_soft_conflict, elaborate_soft_document
 from ve.surface.softnorms import SoftNorm
 from ve.surface.softnorms import rule_paraphrase
+from ve.surface.softnorms import parse_header_options, render_header_options
+from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
 from conformance.soft_norms import RUST_FIXTURES, rust_fixture_rows, main as conformance_main
@@ -107,6 +109,95 @@ def test_python_lean_reject_same_soft_input(raw, rules, diagnostic):
     assert str(python_error.value) == str(lean_error.value) == diagnostic
 
 
+@pytest.mark.parametrize("raw,rules,diagnostic", [
+    (env({"outranking": {"mode": "strict", "decided_by": "assistant"}}), [],
+     "InvalidInput: strict outranking has no decider"),
+    (env({"ranks": ["a", "b"], "ties": [["a", "b"], ["a", "b"]],
+          "outranking": {"mode": "strict"}}), [], "InvalidInput: invalid ties pair"),
+    (env({"ranks": ["a", "b"], "outranks": [["a", "b"], ["a", "b"]],
+          "outranking": {"mode": "strict"}}), [], "InvalidInput: invalid outranks pair"),
+    (env(), [norm("a", "x_required", True, mode="default",
+                  exception={"decided_by": "assistant"})],
+     "InvalidInput: rule a needs an exception"),
+    (env(), [norm("a", "x_required", True, mode="default",
+                  exception={"decided_by": "assistant", "sufficient": {},
+                             "necessary": [], "factors": []})],
+     "InvalidInput: exception sufficient must be an array"),
+    (env(), [norm("a", "x_required", True, mode="default",
+                  exception={"decided_by": "assistant", "sufficient": [],
+                             "necessary": [], "factors": "safety"})],
+     "InvalidInput: invalid factors of rule a"),
+    (env(), [norm("a", "x_required", True, exception={})],
+     "InvalidInput: rule a is strict and declares an exception"),
+    (env({"parties": ["assistant", "user"], "outranking": {"mode": "strict"}}),
+     [norm("a", "x_required", True, alterable=["user", "assistant"])],
+     "InvalidInput: alterable of rule a must be sorted and distinct"),
+])
+def test_soft_validation_classes_match_python_and_lean(raw, rules, diagnostic):
+    with pytest.raises(VEError) as python_error:
+        SoftNormDocument(SoftEnvironment(raw), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "invalid", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert str(python_error.value) == str(lean_error.value) == diagnostic
+
+
+@pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
+                                     tuple("abcdefgh")])
+def test_english_switches_round_trip_all_declared_parties(parties):
+    raw = _soft_env().to_dict()
+    raw["vocabulary"]["soft"]["parties"] = list(parties)
+    environment = SoftEnvironment(raw)
+    authored = SoftNormDocument(environment, [
+        SoftNorm("a", "required", True, Top(), alterable=parties).to_dict()])
+    source, manifest = render_english(authored)
+    assert parse_english(environment, source, manifest).rules[0].alterable == parties
+    assert parse_header_options(render_header_options((), parties)[2:-1]) == ((), parties)
+
+
+@pytest.mark.parametrize("header", ["a and a may turn off", "a and may turn off",
+                                   "a, b may turn off", "a and b and may turn off"])
+def test_english_switches_reject_malformed_lists(header):
+    with pytest.raises(SyntaxError):
+        parse_header_options(header)
+
+
+def test_strict_switch_rendering_shows_open_party(tmp_path):
+    raw = env({"parties": ["user"], "outranking": {"mode": "strict"}})
+    rule = norm("a", "x_required", True, alterable=["user"])
+    meta = {"format": "ve-document@1", "environment": raw,
+            "units": [{"id": "u", "span": [0, 2], "kind": "norm", "meaning": "specified",
+                       "support": "none", "content": rule}]}
+    path = tmp_path / "switch.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
+    assert check_document(path)["coverage"]["soft_status"] == "OPEN"
+    rendered = render_document(path)
+    assert "Open rule reading:" in rendered
+    assert "user may turn it off for this situation" in rendered
+
+
+def test_unused_coherence_is_not_a_certificate_dependency():
+    raw = env()
+    rules = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    row = _run({"id": "e", "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert row["conditional_on"] == ["soft:coherence:a,b"]
+    prime = row["environment_prime"]
+    profiles = prime["profiles"]
+    env_id = digest("ve-environment-v0.2:" + ",".join(profiles) + "\n", prime)
+    premises = [item["ast"] for item in row["background"] + row["premises"]]
+    meaning = lambda ast: digest("ve-meaning-v0.2:" + ",".join(profiles) + "\n",
+                                 {"environment_id": env_id, "ast": ast})
+    certificate = {"checker_version": "ve-tableau-checker@2",
+                   "environment_id": env_id,
+                   "premise_meaning_ids": [meaning(ast) for ast in premises],
+                   "conclusion_meaning_id": meaning(["top"]),
+                   "trace": {"rule": "close"}}
+    result = _run({"id": "c", "kind": "soft-certificate", "environment": raw,
+                   "norms": rules, "premises": [], "conclusion": ["top"],
+                   "certificate": certificate})
+    assert result["valid"] is True
+    assert result["conditional_on"] == []
+
+
 def test_public_soft_pair_and_conflict_entrypoints():
     soft = SoftNormDocument(SoftEnvironment(env()),
                             [should("a", "x_required", True),
@@ -134,7 +225,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 6
+    assert report["rejected_inputs"] == 11
 
 
 @pytest.mark.parametrize("role,sign,effect", [

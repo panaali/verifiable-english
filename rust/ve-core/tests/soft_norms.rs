@@ -10,7 +10,7 @@ fn replay_untrusted_soft_elaborations() {
         "../../../conformance/soft_norms_rust.json"
     ))
     .unwrap();
-    assert_eq!(cases.as_array().unwrap().len(), 24);
+    assert_eq!(cases.as_array().unwrap().len(), 27);
     for case in cases.as_array().unwrap() {
         let name = case["id"].as_str().unwrap();
         assert_eq!(case["untrusted"], Value::Bool(true), "{name} source trust flag");
