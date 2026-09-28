@@ -10,7 +10,8 @@ import subprocess
 import sys
 
 from ve.ast import formula_to_data
-from ve.ast import formula_from_data
+from ve.ast import formula_from_data, Top
+from ve.norms import check_conflict, prove_norm_entailment
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.evaluate import evaluate
@@ -347,16 +348,18 @@ def _nested(depth):
 def soft3_accepted():
     """Sources at each budget that both validators accept and that elaborate.
 
-    A layer states a rule's guard twice (selected, and silent), so the layer
-    budgets (6.12) bind before the source and document budgets: the largest
-    guard is 4981 nodes for a strict rule and 4964 for a default one."""
+    A layer states a rule's guard twice (selected, and silent), and the layers
+    share one checker's budget with the conclusion of an entailment query (6.15),
+    so the layer budgets bind before the source and document budgets: the largest
+    guard is 4970 nodes for a strict rule and 4953 for a default one. The soft
+    premises share one budget with the rest of background′ (6.14)."""
     return [
-        ("strict-guard-4981", env(), [norm("a", "x_required", True, guard=_exact(4981))]),
-        ("default-guard-4964", env(), [should("a", "x_required", True, guard=_exact(4964))]),
-        ("document-guards-2487", env(), [norm("r0", "x_required", True, guard=_exact(2487)),
-                                         norm("r1", "x_required", True, guard=_exact(2487))]),
-        ("premise-nodes-9996", env(), [
-            should("a", "x_required", True, exception=_exception("sufficient", _exact(9996)))]),
+        ("strict-guard-4970", env(), [norm("a", "x_required", True, guard=_exact(4970))]),
+        ("default-guard-4953", env(), [should("a", "x_required", True, guard=_exact(4953))]),
+        ("document-guards-2481-2482", env(), [norm("r0", "x_required", True, guard=_exact(2481)),
+                                              norm("r1", "x_required", True, guard=_exact(2482))]),
+        ("premise-nodes-9990", env(), [
+            should("a", "x_required", True, exception=_exception("sufficient", _exact(9990)))]),
         ("premise-depth-62", env(), [
             should("a", "x_required", True, exception=_exception("sufficient", _nested(62)))]),
         ("strict-guard-depth-56", env(), [norm("a", "x_required", True, guard=_nested(56))]),
@@ -479,6 +482,34 @@ def _dual_outcomes(count):
                                         norm("b", "x_permitted", False, guard=atom)])
 
 
+def soft4_aggregate_reproducers():
+    """soft4-looprecheck1.final.md B1: two accepted fixtures whose elaboration
+    fits formula by formula but not as the entailment route types it, one
+    checker over a list: the layers of strict-guard-4981 are 10,021 nodes, and
+    the background′ of premise-nodes-9996 is 10,006. Each is now rejected at the
+    aggregate row, with the sources one past each new accepted boundary."""
+    yield "soft4-layers-strict-guard-4981", env(), [
+        norm("a", "x_required", True, guard=_exact(4981))], "SOFT_RESOURCE_LIMIT"
+    yield "soft4-background-premise-nodes-9996", env(), [
+        should("a", "x_required", True, exception=_exception("sufficient", _exact(9996)))], \
+        "SOFT_RESOURCE_LIMIT"
+    yield "soft4-layers-strict-guard-4971", env(), [
+        norm("a", "x_required", True, guard=_exact(4971))], "SOFT_RESOURCE_LIMIT"
+    yield "soft4-layers-default-guard-4954", env(), [
+        should("a", "x_required", True, guard=_exact(4954))], "SOFT_RESOURCE_LIMIT"
+    yield "soft4-layers-document-guards-2481-2483", env(), [
+        norm("r0", "x_required", True, guard=_exact(2481)),
+        norm("r1", "x_required", True, guard=_exact(2483))], "SOFT_RESOURCE_LIMIT"
+    yield "soft4-background-premise-nodes-9991", env(), [
+        should("a", "x_required", True, exception=_exception("sufficient", _exact(9991)))], \
+        "SOFT_RESOURCE_LIMIT"
+    # Two exception premises that fit one by one but not together.
+    yield "soft4-background-two-premises", env(), [
+        should("a", "x_required", True, exception={
+            **_exception("sufficient", _exact(4995)), "necessary": [_exact(4995)]})], \
+        "SOFT_RESOURCE_LIMIT"
+
+
 def soft4_reproducers():
     """soft4-looprecheck1.final.md B3 and its class: a derived structure whose
     unfolding is exponential in the source (outcome expansion across layers,
@@ -592,13 +623,22 @@ def near_limit_cases():
             ("multi-fault-base", raw, rules),
             *((name, raw, rules) for name, raw, rules, _ in soft_limits_reproducers()),
             *((name, raw, rules) for name, raw, rules, _ in soft4_reproducers()),
+            *((name, raw, rules) for name, raw, rules, _ in soft4_aggregate_reproducers()),
             *soft4_near_limit(), *near_limit_sources()]
 
 
+def smallest_queries(soft):
+    """Accepted means usable (6.14, 6.15): the smallest entailment query on the
+    elaboration, `⊢ ⊤`, and a proof attempt for every conflict target type-check
+    within the checker's limits; a ResourceLimit here fails the comparison."""
+    prove_norm_entailment(soft.elaborated, (), Top(), max_steps=50)
+    check_conflict(soft.elaborated, prove=True, tableau_steps=50)
+
+
 def compare_near_limit(sources):
-    """accepted => Lean accepts and `check_regenerated` (the public elaboration
-    check) passes; rejected => Lean rejects with the same code. Returns the
-    accepted and rejected counts."""
+    """accepted => Lean accepts, `check_regenerated` (the public elaboration
+    check) passes and the smallest queries run; rejected => Lean rejects with
+    the same code. Returns the accepted and rejected counts."""
     expected = []
     for name, raw, rules in sources:
         try:
@@ -623,6 +663,7 @@ def compare_near_limit(sources):
         if row.get("status") != "ok":
             raise AssertionError((name, "accepted by Python", row))
         check_regenerated(soft, row)
+        smallest_queries(soft)
         accepted += 1
     return accepted, len(sources) - accepted
 

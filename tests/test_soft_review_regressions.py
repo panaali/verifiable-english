@@ -29,11 +29,12 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
                                     near_limit_cases, compare_near_limit, _strict_under_default,
                                     compare_rejected, main as conformance_main, soft4_reproducers,
                                     soft4_near_limit, _plain_chain, _negations, _opposed,
-                                    _twice, _dual_outcomes)
+                                    _twice, _dual_outcomes, soft4_aggregate_reproducers,
+                                    smallest_queries, _exact, _exception)
 
 REJECTED_INPUTS = 4417
-ACCEPTED_NEAR_LIMIT = 87
-REJECTED_NEAR_LIMIT = 129
+ACCEPTED_NEAR_LIMIT = 86
+REJECTED_NEAR_LIMIT = 137
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -188,7 +189,8 @@ def test_reported_diagnostic_codes(raw, rules, code):
 
 @pytest.mark.parametrize("name,raw,rules,code",
                          [*loop_recheck_reproducers(), *soft2_reproducers(),
-                          *soft3_reproducers(), *soft_limits_reproducers(), *soft4_reproducers()])
+                          *soft3_reproducers(), *soft_limits_reproducers(), *soft4_reproducers(),
+                          *soft4_aggregate_reproducers()])
 def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     with pytest.raises(VEError) as python_error:
         load_soft_document(raw, rules)
@@ -203,8 +205,28 @@ def test_node_budgets_admit_the_same_sources(name, raw, rules):
     python = load_soft_document(raw, rules)
     lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert lean["environment_prime"] == python.extended_env.to_dict()
-    # Accepted means elaborable: the public route serialises every generated formula.
+    # Accepted means elaborable: the public route serialises every generated formula,
+    # and the smallest entailment and conflict queries on the elaboration type-check.
     assert elaborate_soft_document(python)["premises"] == lean["premises"]
+    smallest_queries(python)
+
+
+@pytest.mark.parametrize("rules,check", [
+    ([norm("a", "x_required", True, guard=_exact(4981))], "ResourceLimit: generated norm layers"),
+    ([should("a", "x_required", True, exception=_exception("sufficient", _exact(9996)))],
+     "ResourceLimit: generated background")])
+def test_aggregate_limits_are_checked_at_admission(rules, check):
+    # soft4-looprecheck1 B1: strict-guard-4981 (layers of 10,021 nodes) and
+    # premise-nodes-9996 (a background′ of 10,006) were accepted and elaborated,
+    # then `prove_norm_entailment(d.elaborated, (), ⊤)` raised ResourceLimit: the
+    # entailment route types the layers and the conclusion with one checker, and
+    # background′ with another. Both validators now reject them at 6.15 and 6.14.
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(env(), rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": "b1", "kind": "soft-elaborate", "environment": env(), "norms": rules})
+    assert python_error.value.code == lean_error.value.code == "SOFT_RESOURCE_LIMIT"
+    assert str(python_error.value) == str(lean_error.value) == check
 
 
 @pytest.mark.parametrize("wrappers,check", [(54, "ResourceLimit: derived carve-out of rule d"),

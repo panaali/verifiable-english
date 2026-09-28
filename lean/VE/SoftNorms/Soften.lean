@@ -665,6 +665,13 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
     unless fits s do throw s!"ResourceLimit: generated conflict target {t}"
   for t in targets (soften D) do
     unless withinLimits (targetConclusion t) do throw s!"ResourceLimit: generated conflict target {t.1}"
+  -- 6.14 and 6.15: what the entailment route types with one checker, and so one
+  -- `MAX_NODES` budget: all of `background′`, and the layers followed by the one-node
+  -- conclusion `⊤` of the smallest query.
+  unless fitsTogether ((VE.Norms.background (soften D)).map (fsize noSubst) ++ sizes.soft) do
+    throw "ResourceLimit: generated background"
+  unless fitsTogether (sizes.layers.map (·.2) ++ [fsize noSubst .top]) do
+    throw "ResourceLimit: generated norm layers"
 where
   dependencyOrderOf (env : SoftEnv) : Except String (List String) := VE.Route.dependencyOrder (rankNodes env)
 

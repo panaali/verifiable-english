@@ -12,7 +12,7 @@ import json
 
 from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Bottom, Unary, Var,
                   _Checker, _Decoder, _to_data)
-from .background import dependency_order
+from .background import background, dependency_order
 from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_PREDICATES
@@ -601,13 +601,16 @@ def _decision_name(rule, party=None):
     return f'soft__off__{root}__{party}' if party else f'soft__excepted__{root}'
 
 
-def _within_limits(env, formula, context=()):
-    """One generated formula, typed on its own, is within MAX_DEPTH and MAX_NODES.
+def _within_limits(env, *formulas, context=()):
+    """Generated formulas, typed in order by one checker (one MAX_NODES budget),
+    are within MAX_DEPTH and MAX_NODES.
 
-    The checker stops at the first overrun, so a formula whose unfolding is far
-    larger than MAX_NODES costs at most MAX_NODES + 1 steps."""
+    The checker stops at the first overrun, so formulas whose unfolding is far
+    larger than MAX_NODES cost at most MAX_NODES + 1 steps."""
+    checker = _Checker(env, generated=True)
     try:
-        _Checker(env, generated=True).formula(formula, context)
+        for formula in formulas:
+            checker.formula(formula, context)
     except ResourceLimit:
         return False
     return True
@@ -747,6 +750,13 @@ class SoftNormDocument:
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
+        # 6.14 and 6.15: what the entailment route types with one checker, and
+        # so one MAX_NODES budget: all of background′, and the layers followed by
+        # the smallest conclusion ⊤ (`prove_norm_entailment(elaborated, (), ⊤)`).
+        if not _within_limits(self.extended_env, *(p.formula for p in background(self.extended_env))):
+            raise ResourceLimit('ResourceLimit: generated background')
+        if not _within_limits(self.extended_env, *(f for _, f in self.elaborated.premises()), Top()):
+            raise ResourceLimit('ResourceLimit: generated norm layers')
 
     def _act(self, rule):
         decl = self.env.predicates[rule.core.predicate]
