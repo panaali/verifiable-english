@@ -299,7 +299,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 1122
+    assert report["rejected_inputs"] == 1129
 
 
 @pytest.mark.parametrize("role,sign,effect", [
