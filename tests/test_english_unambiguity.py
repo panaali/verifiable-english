@@ -2,6 +2,7 @@ from pathlib import Path
 import signal
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 from lark import Tree
 
 from ve.english import parse_english
@@ -186,7 +187,7 @@ def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
     monkeypatch.setattr(unambiguity, "_monotonic", lambda: elapsed[0])
     with ThreadPoolExecutor(max_workers=1) as pool:
         with pytest.raises(ResourceLimit, match="Earley time budget"):
-            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=30)
+            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=HANG_TIMEOUT)
     assert 0 < iterations[0] < 100
 
 

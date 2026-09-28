@@ -37,22 +37,24 @@
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
     "ve/assist/proposer.py:_call": "the language-model backend boundary; a proposer failure is logged, and proposals are untrusted input that is checked afterwards",
-    "ve/assist/recovery.py:RecoveryService._command": "the command error is journalled by exception type and re-raised or recorded; nothing is converted into a verdict",
+    "ve/assist/recovery.py:RecoveryService._command_uncached": "the command error is journalled by exception type and re-raised or recorded; nothing is converted into a verdict",
     "ve/assist/recovery.py:RecoveryService._legacy_command": "as _command, for the legacy journal format",
     "ve/assist/recovery.py:RecoveryService._replay_inner": "journal replay: a recorded failure must recur; the comparison with the journal decides",
     "ve/assist/recovery.py:RecoveryService.request_proposer": "the language-model backend boundary; a failed proposal is an outcome of kind `failed`",
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
+    "ve/backends/lean_service.py:LeanServicePool.run.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
+    "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 1886,
+    "total_lines": 1885,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
-      {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "6ebfede93d1b473e402298bcc59cff11836e945335952b228bd3d439447fefbd",
-       "ranges": [[1, 136]], "declarations": ["value", "parse", "parseCases"]},
+      {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+       "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
       {"file": "lean/VE/Bridge.lean", "lines": 282, "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
        "ranges": [[14, 248]],
        "declarations": ["fields", "decodeEnvironment", "decodeModelData", "decodeModel", "decodeFormula", "decodeDocument", "decodeCountermodel"]},
@@ -74,8 +76,8 @@
       {"file": "lean/VE/Order/Wire.lean", "lines": 292, "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
        "ranges": [[24, 233], [247, 253]],
        "declarations": ["decodeEnvironment", "decodeFormula", "decodeModel", "decodeTrace", "decodeCertificate", "environmentId", "meaningId"]},
-      {"file": "lean/VE/Norms/Wire.lean", "lines": 237, "sha256": "63ba6e267be91ff2a71def905b5ea1eecd3b1433e5c511ffbc018f4970640159",
-       "ranges": [[24, 236]],
+      {"file": "lean/VE/Norms/Wire.lean", "lines": 238, "sha256": "5f36179e4729e7454a7b8851452c92aa26be190c47fdd073fe556f8312638735",
+       "ranges": [[25, 236]],
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
@@ -102,7 +104,10 @@
       "lean/VE/Order/WireGate.lean": "JSON access only inside theorem statements (order route gate)",
       "lean/VE/EvaluationCounts.lean": "JSON access only inside theorem statements (evaluation answers count the submitted formulas)",
       "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
-      "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path"
+      "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
+      "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
+      "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
+      "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path"
     }
   },
   "plan_operations": {

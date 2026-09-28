@@ -35,6 +35,7 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
 import VE.EvaluationCounts
+import VE.Service.Protocol
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -949,3 +950,14 @@ import VE.EvaluationCounts
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+#print axioms VE.Service.runMode_evaluate
+#print axioms VE.Service.runMode_checkCertificate
+#print axioms VE.Service.runMode_order
+#print axioms VE.Service.runMode_route
+#print axioms VE.Service.runMode_norms
+#print axioms VE.Service.runMode_english
+#print axioms VE.Service.caseResult_ok
+#print axioms VE.Service.runRequest_ok
+#print axioms VE.Service.results_eq
+#print axioms VE.Service.boundResults_eq
+#print axioms VE.Service.respond_decoded

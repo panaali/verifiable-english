@@ -7,6 +7,8 @@ or semantic rewriting is admitted.
 from __future__ import annotations
 
 from collections import Counter
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 import json
 import re
@@ -21,6 +23,8 @@ from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
 from .surface import registry as surface_registry
+
+_sentence_parse_cache = ContextVar("ve_sentence_parse_cache", default=None)
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
@@ -1353,7 +1357,7 @@ class EnglishParser:
         return ast.Document(tuple(formulas))
 
 
-def _parse_english_document(env, source, *, _with_structure=False, **options):
+def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1390,6 +1394,30 @@ def _parse_english_document(env, source, *, _with_structure=False, **options):
                        if re.search(r'\n\s*\n', source[spans[index - 1][1]:spans[index][0]]))
         return (*result, spans, breaks)
     return result
+
+
+def _parse_english_document(env, source, *, _with_structure=False, **options):
+    """Reuse exact sentence audits within an explicitly scoped editor operation."""
+    cache = _sentence_parse_cache.get()
+    if cache is None or options or _with_structure or type(source) is not str:
+        return _parse_english_document_uncached(env, source, _with_structure=_with_structure, **options)
+    key = (env.environment_id, source)
+    if key not in cache:
+        cache[key] = _parse_english_document_uncached(env, source)
+    return cache[key]
+
+
+@contextmanager
+def sentence_parse_cache():
+    """Bound parse reuse to one editor request; no mutable global parse state."""
+    if _sentence_parse_cache.get() is not None:
+        yield
+        return
+    token = _sentence_parse_cache.set({})
+    try:
+        yield
+    finally:
+        _sentence_parse_cache.reset(token)
 
 
 def _check_conclusions(env, document, conclusions):

@@ -20,6 +20,7 @@ from ..errors import VEError
 from ..evaluate import evaluate
 from ..model import FiniteModel
 from ..identity import meaning_id
+from ..english import sentence_parse_cache
 from .ambiguity_patterns import (CATALOGUE_VERSION, OPERATION_SECONDS, SEARCH_LIMITS,
                                  MAX_CANDIDATES, MAX_COMPARISONS, MAX_CARDS, Budget, _Deadline,
                                  checked_wording)
@@ -255,6 +256,10 @@ class RecoveryService:
     # -- command log -------------------------------------------------------
 
     def _command(self, _name, /, _started_at=None, **args):
+        with sentence_parse_cache():
+            return self._command_uncached(_name, _started_at=_started_at, **args)
+
+    def _command_uncached(self, _name, /, _started_at=None, **args):
         """Run one top-level command as a transaction and append its record.
 
         Live and replayed commands both run on the JSON-decoded arguments, so
@@ -453,6 +458,11 @@ class RecoveryService:
 
     @classmethod
     def _replay(cls, env, ledger, clock=time.time, budget=None):
+        with sentence_parse_cache():
+            return cls._replay_uncached(env, ledger, clock, budget)
+
+    @classmethod
+    def _replay_uncached(cls, env, ledger, clock=time.time, budget=None):
         """Derive a service from genesis by replaying every recorded command."""
         budget = Budget(OPERATION_SECONDS) if budget is None else budget
         with budget.guard():
