@@ -137,6 +137,26 @@ def test_open_lists_mixing_declared_and_generated_names_agree(lean):
     ])
 
 
+def test_root_unformalised_reason_agrees(lean):
+    """A root marker and meaning name one reason; nested markers may name another."""
+    base = doc(report("the_article", "says", "c3", ast(U("safe", "service"))))
+
+    def with_kind(kind, meaning):
+        d = copy.deepcopy(base)
+        d["units"].append({"id": "u2", "span": [2, 3], "kind": kind, "support": "none",
+                           **({"meaning": meaning} if meaning is not None else {})})
+        return d
+
+    agree([
+        (with_kind(["unformalised", "opaque"], {"unformalised": "opaque"}), E0(), None),
+        (with_kind(["unformalised", "opaque"], {"unformalised": "noun_complement"}), E0(), "InvalidInput"),
+        (with_kind(["unformalised", "opaque"], "specified"), E0(), "InvalidInput"),
+        (with_kind(["unformalised", "opaque"], None), E0(), "InvalidInput"),
+        (with_kind(["causal", "because", ["unformalised", "opaque"], "asserted"],
+                   {"unformalised": "noun_complement"}), E0(), None),
+    ])
+
+
 def many_predicates(n):
     env = E0()
     for i in range(n - len(env["vocabulary"]["predicates"])):

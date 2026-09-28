@@ -240,10 +240,11 @@ def load_document(path: str | Path):
             elif kind != "norm":
                 raise VEError("norm content requires a norm or quoted kind")
             mid = norm_meaning_id(env, NormDocument._decode(content))
+        if (type(kind) is list and kind[0] == "unformalised" and
+                unit["meaning"] != {"unformalised": kind[1]}):
+            raise VEError(f"InvalidInput: unformalised kind reason does not match meaning of {uid}")
         if status == "unformalised" and content is not None:
             raise VEError("unformalised unit cannot assert content")
-        if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
-            raise VEError("unformalised kind needs unformalised meaning")
         if "meaning_id" in unit and mid is not None and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")

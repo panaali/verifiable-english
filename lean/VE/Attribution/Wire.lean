@@ -464,6 +464,8 @@ def firstFailure (D : ReportDoc) : String :=
   match D.unitMeta.find? (fun m => !metaOk D m) with
   | some m =>
     if !(m.support.all supports.contains) then s!"InvalidInput: support of {m.id}"
+    else if !rootReasonOk D m then
+      s!"InvalidInput: unformalised kind reason does not match meaning of {m.id}"
     else s!"InvalidInput: meaning of {m.id}"
   | none =>
   if !((names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&

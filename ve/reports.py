@@ -354,6 +354,11 @@ class ReportsDocument:
         uid, meaning = row["id"], row.get("meaning")
         if "support" in row and (type(row["support"]) is not str or row["support"] not in SUPPORTS):
             raise VEError(f"InvalidInput: support of {uid}")
+        unit_meta = next(u for u in self.units if u["id"] == uid)
+        kind = unit_meta["kind"]
+        if (type(kind) is list and len(kind) == 2 and kind[0] == "unformalised" and
+                meaning != {"unformalised": kind[1]}):
+            raise VEError(f"InvalidInput: unformalised kind reason does not match meaning of {uid}")
         generated = {term["name"] for term in self.open_terms}
         valid = (meaning is None or meaning == "specified"
                  or "open" in meaning and bool(meaning["open"]) and all(

@@ -668,12 +668,22 @@ def bridgeOk (D : ReportDoc) (b : Bridge) : Bool :=
 def unitAssessNames (D : ReportDoc) (u : Unit) : List String :=
   (u.content.nodes.filterMap (assessKeyOf D)).map (assessName D)
 
+/-- A root unformalised marker and the unit meaning carry one reason. Nested
+markers remain independent results of the kind tree. -/
+def rootReasonOk (D : ReportDoc) (m : UnitMeta) : Bool :=
+  match D.w2.units.find? (·.id == m.id) with
+  | some u => match u.kind with
+    | .unformalised r => decide (m.meaning = some (.unformalised r))
+    | _ => true
+  | none => true
+
 /-- 3.3 and W2: the support is W2's; an open meaning names declared or generated
 open terms; a report unit's meaning is `specified` exactly when its tree has no
 assessment node, and otherwise `open`, listing every generated assessment name of
 its tree (so a unit whose content carries an open term is OPEN, 6). -/
 def metaOk (D : ReportDoc) (m : UnitMeta) : Bool :=
   m.support.all supports.contains &&
+  rootReasonOk D m &&
   (match m.meaning with
    | some (.«open» ns) => !ns.isEmpty && ns.all (fun n => D.w2.openTerms.contains n || (openTerms D).contains n)
    | some (.contextual s) => !s.isEmpty
