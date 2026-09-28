@@ -746,11 +746,308 @@ theorem validate_complete (D : DDoc) (h : WellFormedDiscourse D = true) (u : Str
 
 /-! ## The intended meaning and faithfulness (9.3) -/
 
-/-- 4.4: the intended meaning: some accepted-shape derivation and validated assignment (the
-recorded, accessible, type-checking one) whose slot-by-slot meaning holds in `S`. -/
+/-! ## Typing a derivation directly (without the elaboration)
+
+`TreeTyped D d σ` sorts a derivation under an assignment: each predicate is applied to terms
+of its declared sorts (constants, a plural's members, the binder of a quantifier or a
+description), each quantifier and description binds a declared sort, and a relational
+restriction's other argument has the relation's sort. It reads the tree and the targets only;
+`elaborate_typed` shows it is exactly the type check of the elaboration. -/
+
+def RestrTyped (D : DDoc) (σ : Assignment) : Restr → Prop
+  | .noun q => ∃ s, D.E.predicates q = some [s] ∧ s ∈ D.E.sorts
+  | .rel q poss => ∃ s r c, D.E.predicates q = some [s, r] ∧ termConst (canonTarget D (σ poss)) = some c ∧
+      s ∈ D.E.sorts ∧ D.E.constants c = some r
+
+def PredTyped (D : DDoc) (σ : Assignment) (subj : NP) (p : String) : Prop :=
+  match subj with
+  | .definite _ r => RestrTyped D σ r ∧ ∃ s Dr, restrFormula D σ r = some (s, Dr) ∧ D.E.predicates p = some [s]
+  | _ => ∃ cs s, npConsts D σ subj = some cs ∧ D.E.predicates p = some [s] ∧ ∀ c ∈ cs, D.E.constants c = some s
+
+def ModTyped (D : DDoc) (σ : Assignment) (md : Mod) (srt : String) : Prop :=
+  match modPred D σ md with
+  | some none => True
+  | some (some q) => D.E.predicates q = some [srt]
+  | none => False
+
+def CoreTyped (D : DDoc) (σ : Assignment) : Core → Prop
+  | .pred subj _ p => PredTyped D σ subj p
+  | .coord a _ b _ p => ∃ s, D.E.predicates p = some [s] ∧ D.E.constants a = some s ∧ D.E.constants b = some s
+  | .rel subj p obj => ∃ a b s r, npConsts D σ subj = some [a] ∧ npConsts D σ obj = some [b] ∧
+      D.E.predicates p = some [s, r] ∧ D.E.constants a = some s ∧ D.E.constants b = some r
+  | .every md srt p | .some _ md srt p => srt ∈ D.E.sorts ∧ ModTyped D σ md srt ∧ D.E.predicates p = some [srt]
+  | .everyDef m srt p _ => srt ∈ D.E.sorts ∧
+      (∃ q, propertyOf (canonTarget D (σ m)) = some q ∧ D.E.predicates q = some [srt]) ∧ D.E.predicates p = some [srt]
+
+def TreeTyped (D : DDoc) (d : DTree) (σ : Assignment) : Prop :=
+  match d.tree with
+  | .core c | .cite _ c => CoreTyped D σ c
+
+theorem conj_wf (E : VE.Environment) (Γ : List String) : ∀ l : List VE.Formula,
+    (conj l).WellFormed E Γ ↔ ∀ r ∈ l, r.WellFormed E Γ
+  | [] => by simp [conj, VE.Formula.WellFormed]
+  | [a] => by simp [conj]
+  | a :: b :: l => by simp [conj, VE.Formula.WellFormed, conj_wf E Γ (b :: l)]
+
+theorem npConsts_ne (D : DDoc) (σ : Assignment) (np : NP) (cs : List String) (h : npConsts D σ np = some cs) :
+    cs ≠ [] := by
+  cases np with
+  | name c k => simp only [npConsts, Option.some.injEq] at h; subst h; simp
+  | slot m =>
+    simp only [npConsts] at h
+    split at h
+    · unfold pluralMembers at h
+      split at h
+      · split at h
+        · rename_i ms _ hl
+          cases h
+          intro he; rw [he] at hl; simp at hl
+        · cases h
+      · cases h
+    · cases hc : termConst (canonTarget D (σ m)) with
+      | none => rw [hc] at h; cases h
+      | some c => rw [hc] at h; simp only [Option.map_some, Option.some.injEq] at h; subst h; simp
+  | definite => simp [npConsts] at h
+
+theorem conjOn_wf (E : VE.Environment) (p : String) (cs : List String) (hne : cs ≠ []) :
+    (conjOn p cs).WellFormed E [] ↔ ∃ s, E.predicates p = some [s] ∧ ∀ c ∈ cs, E.constants c = some s := by
+  unfold conjOn
+  rw [conj_wf]
+  simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, VE.Formula.WellFormed,
+    VE.Term.sortOf]
+  constructor
+  · intro h
+    obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
+    obtain ⟨s, hp, _⟩ := h c hc
+    refine ⟨s, hp, fun c' hc' => ?_⟩
+    obtain ⟨s', hp', hs'⟩ := h c' hc'
+    rw [hp] at hp'
+    cases hp'
+    exact hs'
+  · rintro ⟨s, hp, hs⟩ c hc
+    exact ⟨s, hp, hs c hc⟩
+
+theorem restr_wf (D : DDoc) (σ : Assignment) (r : Restr) (s : String) (Dr : VE.Formula)
+    (h : restrFormula D σ r = some (s, Dr)) (Γ : List String) :
+    (s ∈ D.E.sorts ∧ Dr.WellFormed D.E (s :: Γ)) ↔ RestrTyped D σ r := by
+  cases r with
+  | noun q =>
+    simp only [restrFormula] at h
+    split at h
+    · rename_i s' hq
+      cases h
+      simp [VE.Formula.WellFormed, VE.Term.sortOf, RestrTyped, hq]
+    · cases h
+  | rel q poss =>
+    simp only [restrFormula] at h
+    split at h
+    · rename_i s' r' c hq hc
+      cases h
+      simp only [VE.Formula.WellFormed, VE.Term.sortOf, RestrTyped, hq, hc, List.getElem?_cons_zero,
+        Option.some.injEq, List.cons.injEq, and_true]
+      constructor
+      · rintro ⟨hs, s1, r, ⟨rfl, rfl⟩, _, hcr⟩; exact ⟨_, _, _, ⟨rfl, rfl⟩, rfl, hs, hcr⟩
+      · rintro ⟨s1, r, c', ⟨rfl, rfl⟩, rfl, hs, hcr⟩; exact ⟨hs, _, _, ⟨rfl, rfl⟩, rfl, hcr⟩
+    · cases h
+
+theorem unary_var_wf (E : VE.Environment) (p s : String) (Γ : List String) :
+    (VE.Formula.unary p (.var 0)).WellFormed E (s :: Γ) ↔ E.predicates p = some [s] := by
+  simp [VE.Formula.WellFormed, VE.Term.sortOf]
+
+/-- The type check of an elaboration is the typing of its derivation. -/
+theorem core_typed (D : DDoc) (σ : Assignment) (c : Core) (A : VE.Formula) (h : coreFormula D σ c = some A) :
+    A.WellFormed D.E [] ↔ CoreTyped D σ c := by
+  cases c with
+  | pred subj are p =>
+    simp only [coreFormula, CoreTyped] at h ⊢
+    cases subj with
+    | definite m r =>
+      simp only [predFormula, definiteFormula, PredTyped] at h ⊢
+      split at h
+      · cases hr : restrFormula D σ r with
+        | none => rw [hr] at h; simp at h
+        | some x =>
+          obtain ⟨s, Dr⟩ := x
+          rw [hr] at h
+          have h0 := restr_wf D σ r s Dr hr []
+          have h1 := restr_wf D σ r s Dr hr [s]
+          have hex : (∃ s' Dr', some (s, Dr) = some (s', Dr') ∧ D.E.predicates p = some [s']) ↔
+              D.E.predicates p = some [s] := by
+            constructor
+            · rintro ⟨s', Dr', he, hp⟩; cases he; exact hp
+            · intro hp; exact ⟨s, Dr, rfl, hp⟩
+          rw [hex]
+          cases hread : readingAt D m with
+          | none => rw [hread] at h; simp at h
+          | some rd =>
+            rw [hread] at h
+            cases rd with
+            | assertive =>
+              simp only [Option.some.injEq] at h
+              subst h
+              have heq : (VE.Formula.eq (.var 0) (.var 1)).WellFormed D.E [s, s] := ⟨s, rfl, rfl⟩
+              change s ∈ D.E.sorts ∧ (Dr.WellFormed D.E [s] ∧ ((s ∈ D.E.sorts ∧ (Dr.WellFormed D.E [s, s] ∧
+                (VE.Formula.eq (.var 0) (.var 1)).WellFormed D.E [s, s])) ∧
+                (VE.Formula.unary p (.var 0)).WellFormed D.E [s])) ↔ _
+              rw [unary_var_wf, ← h0]
+              constructor
+              · rintro ⟨hs, hd, _, hp⟩; exact ⟨⟨hs, hd⟩, hp⟩
+              · rintro ⟨⟨hs, hd⟩, hp⟩; exact ⟨hs, hd, ⟨hs, (h1.mpr (h0.mp ⟨hs, hd⟩)).2, heq⟩, hp⟩
+            | presuppositional =>
+              simp only [Option.some.injEq] at h
+              subst h
+              change s ∈ D.E.sorts ∧ (Dr.WellFormed D.E [s] ∧ (VE.Formula.unary p (.var 0)).WellFormed D.E [s]) ↔ _
+              rw [unary_var_wf, ← h0]
+              constructor
+              · rintro ⟨hs, hd, hp⟩; exact ⟨⟨hs, hd⟩, hp⟩
+              · rintro ⟨⟨hs, hd⟩, hp⟩; exact ⟨hs, hd, hp⟩
+            | distributive => simp at h
+      · cases h
+    | name c k =>
+      simp only [predFormula, PredTyped] at h ⊢
+      cases hc : npConsts D σ (.name c k) with
+      | none => rw [hc] at h; cases h
+      | some cs =>
+        rw [hc] at h
+        simp only [Option.map_some, Option.some.injEq] at h
+        subst h
+        rw [conjOn_wf D.E p cs (npConsts_ne D σ _ cs hc)]
+        simp
+    | slot m =>
+      simp only [predFormula, PredTyped] at h ⊢
+      cases hc : npConsts D σ (.slot m) with
+      | none => rw [hc] at h; cases h
+      | some cs =>
+        rw [hc] at h
+        simp only [Option.map_some, Option.some.injEq] at h
+        subst h
+        rw [conjOn_wf D.E p cs (npConsts_ne D σ _ cs hc)]
+        simp
+  | coord a ka b kb p =>
+    simp only [coreFormula, CoreTyped, Option.some.injEq] at h ⊢
+    subst h
+    simp only [VE.Formula.WellFormed, VE.Term.sortOf]
+    constructor
+    · rintro ⟨⟨s, hp, ha⟩, ⟨s', hp', hb⟩⟩
+      rw [hp] at hp'; cases hp'
+      exact ⟨s, hp, ha, hb⟩
+    · rintro ⟨s, hp, ha, hb⟩
+      exact ⟨⟨s, hp, ha⟩, ⟨s, hp, hb⟩⟩
+  | rel subj p obj =>
+    simp only [coreFormula, CoreTyped] at h ⊢
+    unfold relFormula at h
+    split at h
+    · rename_i a b ha hb
+      cases h
+      simp only [VE.Formula.WellFormed, VE.Term.sortOf]
+      constructor
+      · rintro ⟨s, r, hp, hsa, hsb⟩; exact ⟨a, b, s, r, ha, hb, hp, hsa, hsb⟩
+      · rintro ⟨a', b', s, r, ha', hb', hp, hsa, hsb⟩
+        rw [ha] at ha'; rw [hb] at hb'
+        cases ha'; cases hb'
+        exact ⟨s, r, hp, hsa, hsb⟩
+    · cases h
+  | every md srt p =>
+    simp only [coreFormula, CoreTyped, ModTyped] at h ⊢
+    cases hq : modPred D σ md with
+    | none => rw [hq] at h; cases h
+    | some q =>
+      rw [hq] at h
+      simp only [Option.map_some, Option.some.injEq] at h
+      subst h
+      cases q with
+      | none => simp [VE.Formula.WellFormed, quantBody, VE.Term.sortOf, eq_comm]
+      | some q => simp [VE.Formula.WellFormed, quantBody, VE.Term.sortOf, eq_comm]
+  | some an md srt p =>
+    simp only [coreFormula, CoreTyped, ModTyped] at h ⊢
+    cases hq : modPred D σ md with
+    | none => rw [hq] at h; cases h
+    | some q =>
+      rw [hq] at h
+      simp only [Option.map_some, Option.some.injEq] at h
+      subst h
+      cases q with
+      | none => simp [VE.Formula.WellFormed, quantBody, VE.Term.sortOf, eq_comm]
+      | some q => simp [VE.Formula.WellFormed, quantBody, VE.Term.sortOf, eq_comm]
+  | everyDef m srt p sec =>
+    simp only [coreFormula, CoreTyped] at h ⊢
+    cases hq : propertyOf (canonTarget D (σ m)) with
+    | none => rw [hq] at h; cases h
+    | some q =>
+      rw [hq] at h
+      simp only [Option.map_some, Option.some.injEq] at h
+      subst h
+      simp [VE.Formula.WellFormed, VE.Term.sortOf, eq_comm]
+
+/-- The type check of an elaboration is the typing of its derivation, read off the tree. -/
+theorem elaborate_typed (D : DDoc) (d : DTree) (σ : Assignment) (A : VE.Formula) (h : elaborateD D d σ = some A) :
+    A.check D.E [] = true ↔ TreeTyped D d σ := by
+  rw [VE.check_iff_wellFormed]
+  unfold elaborateD at h
+  unfold TreeTyped
+  split at h
+  · rename_i c hc
+    rw [hc]
+    exact core_typed D σ c A h
+  · rename_i m c hc
+    rw [hc]
+    split at h
+    · exact core_typed D σ c A h
+    · cases h
+
+/-- Where the slot-by-slot meaning is defined, so is the elaboration. -/
+theorem elaborate_of_meaning (D : DDoc) (S : VE.Structure.{u}) (d : DTree) (σ : Assignment)
+    (h : (meaningOf D S d σ).isSome = true) : (elaborateD D d σ).isSome = true := by
+  have core : ∀ c, (coreMeaning D S σ c).isSome = true → (coreFormula D σ c).isSome = true := by
+    intro c hc
+    cases c with
+    | pred subj are p =>
+      cases subj with
+      | definite m r =>
+        simp only [coreMeaning, coreFormula, predMeaning, predFormula, definiteMeaning, definiteFormula] at hc ⊢
+        split at hc
+        · rename_i hb
+          rw [if_pos hb]
+          have hfst := (restr_agree D S σ r).1
+          cases hr : restrMeaning D S σ r with
+          | none => rw [hr] at hc; simp at hc
+          | some x =>
+            obtain ⟨s, R⟩ := x
+            rw [hr] at hc hfst
+            cases hf : restrFormula D σ r with
+            | none => rw [hf] at hfst; cases hfst
+            | some y =>
+              obtain ⟨s', Dr⟩ := y
+              cases hrd : readingAt D m with
+              | none => rw [hrd] at hc; simp at hc
+              | some rd => rw [hrd] at hc; cases rd <;> simp_all
+        · simp at hc
+      | name c k => simpa [coreMeaning, coreFormula, predMeaning, predFormula] using hc
+      | slot m => simpa [coreMeaning, coreFormula, predMeaning, predFormula] using hc
+    | coord => simp [coreFormula]
+    | rel subj p obj =>
+      simp only [coreMeaning, coreFormula, relFormula] at hc ⊢
+      split at hc
+      · rename_i a b ha hb; simp [ha, hb]
+      · simp at hc
+    | every md srt p => simpa [coreMeaning, coreFormula] using hc
+    | some an md srt p => simpa [coreMeaning, coreFormula] using hc
+    | everyDef m srt p sec => simpa [coreMeaning, coreFormula] using hc
+  rcases d with ⟨t, sl⟩
+  cases t with
+  | core c => exact core c h
+  | cite m c =>
+    simp only [meaningOf, elaborateD] at h ⊢
+    split at h
+    · rename_i hcl; simp only [hcl, if_true]; exact core c h
+    · simp at h
+
+/-- 4.4: the intended meaning: some derivation and validated assignment (the recorded,
+accessible, well-sorted one) whose slot-by-slot meaning holds in `S`, all read off the tree
+and the targets directly, without the elaboration. -/
 def Intended (D : DDoc) (u : String) (s : List Tok) (S : VE.Structure.{u}) : Prop :=
   ∃ d σ, Derives D u s d ∧ (∀ m ∈ d.slots, Acc D m (σ m) ∧ recordedTarget D m = some (σ m)) ∧
-    (∃ A, elaborateD D d σ = some A ∧ A.check D.E [] = true) ∧ SlotMeaning D S [] d σ
+    TreeTyped D d σ ∧ SlotMeaning D S [] d σ
 
 /-- 4.4: the elaborated formula holds exactly when the intended meaning does, on every
 admissible structure. -/
@@ -761,9 +1058,16 @@ theorem elaborate_faithful (D : DDoc) (h : WellFormedDiscourse D = true) (u : St
   constructor
   · intro hA
     obtain ⟨d, σ, hd, hr, he, hck, _⟩ := hacc
-    exact ⟨d, σ, hd, hr, ⟨A, he, hck⟩,
+    exact ⟨d, σ, hd, hr, (elaborate_typed D d σ A he).mp hck,
       (elaborateD_capture D d σ A he S hS [] (VE.typed_empty S)).mp hA⟩
-  · rintro ⟨d', σ', hd', hr', ⟨A', he', hc'⟩, hM⟩
+  · rintro ⟨d', σ', hd', hr', hty, hM⟩
+    have hsome : (meaningOf D S d' σ').isSome = true := by
+      unfold SlotMeaning at hM
+      cases hmo : meaningOf D S d' σ' with
+      | none => rw [hmo] at hM; exact hM.elim
+      | some _ => rfl
+    obtain ⟨A', he'⟩ := Option.isSome_iff_exists.mp (elaborate_of_meaning D S d' σ' hsome)
+    have hc' := (elaborate_typed D d' σ' A' he').mpr hty
     have hAA := accepted_no_pruning D u s A hacc d' σ' A' hd' (fun m hm => (hr' m hm).1) he' hc'
     rw [← hAA]
     exact (elaborateD_capture D d' σ' A' he' S hS [] (VE.typed_empty S)).mpr hM
