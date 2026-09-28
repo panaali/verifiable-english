@@ -58,7 +58,7 @@ How an operational failure surfaces:
 
 | Where | Before P0-3 | Now |
 |---|---|---|
-| `ve.backends.lean.run`, the only external-checker call in `ve` | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count, id or case-index mismatch (compared with their JSON types: `false` never names case 0), a row outside the response schema, or an exit status that contradicts the rows all raise `CheckerUnavailable`. The schema: `status` is `ok` or `error`; an `error` row has a string `error`; an `ok` row names its case `id` and carries every field of its binding's `response` with the declared type, element types included, and every declared `counts` holds (a bundle's `lemmas` is an array of strings and `checked` a nat, both counting the submitted lemmas; an argument's `valid` is a Boolean and, on the route, `background` a nat). Only a well-formed `status: error` row, or a well-formed `ok` row whose content differs from the expected acceptance, is Lean's semantic rejection |
+| `ve.backends.lean.run`, the external-checker call currently used by semantic operations | n/a | a missing binary, `OSError`, timeout, signal or unexpected exit status, non-JSON output, a row count, id or case-index mismatch (compared with their JSON types: `false` never names case 0), a row outside the response schema, or an exit status that contradicts the rows all raise `CheckerUnavailable`. The schema: `status` is `ok` or `error`; an `error` row has a string `error`; an `ok` row names its case `id` and carries every field of its binding's `response` with the declared type, element types included, and every declared `counts` holds (a bundle's `lemmas` is an array of strings and `checked` a nat, both counting the submitted lemmas; an argument's `valid` is a Boolean and, on the route, `background` a nat). Only a well-formed `status: error` row, or a well-formed `ok` row whose content differs from the expected acceptance, is Lean's semantic rejection |
 | `check_bundle(lean_executable=...)` | `VEError` (`InvalidInput`) for an unavailable Lean; a crash surfaced as `SyntaxError` or `ResourceLimit` | raises `CheckerUnavailable`. A Lean rejection still raises `VEError`. The result carries `lean_outcome`: `accepted`, `not_requested` or `not_applicable` (no lemmas) |
 | `check_argument(lean_executable=...)` | `lean_checked: false` for both rejection and unavailability; only `lean_detail` wording differed | `ArgumentResult.lean_outcome` (and `outstanding_obligations`): `accepted`, `rejected`, `unavailable`, `not_requested` or `not_applicable`; `lean_status` reads `Lean-checked: unavailable`. The `ve-argument-tableau@1` record carries `lean_outcome` only when it is `unavailable`: every other outcome is implied by `lean_checked` and `lean_detail`, so those records keep their pre-P0-3 `record_id` (pinned by a test with `checker_build` fixed). The Lean replay is an optional cross-check while authority is Python, so the Python verdict is unaffected |
 | `check_argument` when a verdict it needs is unavailable | would have become `InvalidInput` or an edge error had the exception been a `VEError` | `status: CheckerUnavailable`, `composed: false`, `proof: not_checked`, with the error in `errors`. Callers that act on the status (`parse_english_argument`, assist `status`) call `ArgumentResult.require_available()`, which re-raises it, so it never reads as a failed replay or a `SyntaxError` |
@@ -109,7 +109,7 @@ and Rust, but no theorem covers it. The Lean side trusts the kernel and its thre
 `lean/audit.py` into `lean/axioms.txt`), the compiler and runtime (`lean:compiler`), the runner dispatch
 (`lean:runner-glue`) and the hand-written decoders.
 
-**Hand-written Lean decoders (`lean:decoders`), 1,886 lines.** These are the JSON parser, the wire decoders, the
+**Hand-written Lean decoders (`lean:decoders`), 1,885 lines.** These are the JSON parser, the wire decoders, the
 canonical serializers, the SHA-256 identity code and the norms document split that rewrites a document before it
 is decoded. No refinement theorem relates them to the wire specification. Decoded models are proved admissible and
 decoded formulas are typed by the proved checker, but the correspondence with the specified wire format is trusted.
@@ -133,7 +133,7 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 <!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
 |---|---:|---:|---|---|
-| `lean/VE/Json.lean` | 136 | 136 | 1–136 | `6ebfede93d1b…` |
+| `lean/VE/Json.lean` | 136 | 136 | 1–136 | `c5891a586979…` |
 | `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `967a6ee39961…` |
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
@@ -141,13 +141,13 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/Core/Wire.lean` | 145 | 49 | 10–58 | `5561ccd07ab1…` |
 | `lean/VE/Route/Wire.lean` | 598 | 353 | 24–311, 380–388, 418–458, 528–535, 586–592 | `1bb7ce7e2fc6…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
-| `lean/VE/Norms/Wire.lean` | 237 | 213 | 24–236 | `63ba6e267be9…` |
+| `lean/VE/Norms/Wire.lean` | 238 | 212 | 25–236 | `5f36179e4729…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
 | `lean/VE/Route/Admission.lean` | 687 | 184 | 101–124, 206–245, 421–540 | `58106871aec1…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
 | `lean/VE/Definitions/Bundle.lean` | 466 | 29 | 410–438 | `88375034efc2…` |
 | `lean/VE/Norms/Admission.lean` | 455 | 24 | 22–45 | `9996af265c1e…` |
-| **total** | | **1,886** | | |
+| **total** | | **1,885** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -164,7 +164,8 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   backend is imported (module or function alias, absolute or relative import); the operation argument must be a
   literal, and any other reference to `run` (stored, passed or rebound) fails the test. At run time `run` also
   refuses a caller inside `ve` that is not a declared call site of the operation, which covers indirections the
-  scan cannot see. Only `ve/backends/lean.py` may import `subprocess`.
+  scan cannot see. Only `ve/backends/lean.py` and the additive stage-1
+  `ve/backends/lean_service.py` may import `subprocess`.
 - **Lean bindings.**
   - Each executable is a `lean_exe` in `lean/lakefile.toml`.
   - Each mode string occurs in its root file.
@@ -250,5 +251,7 @@ the manifest `notes`, not changed:
 - Records do not yet carry the stage-4 `authority`, `assurance`, `covered_operations` and `trusted` fields. The
   manifest is their source when stage 4 adds them.
 - `docs/spec/theorem-coverage.md`: the `at_switch` column is the plan's initial list, still to be confirmed.
-- The `VE_AUTHORITY` flag, the Lean service, shadow mode and the planned Lean modes (`parse`, `normalize`, `check`,
-  `environment`, `model`, `graph`, `readings`, `identity`); each is carried by an operation's `planned_modes`.
+- The `VE_AUTHORITY` flag, use of the stage-1 Lean service by semantic operations, shadow mode and the planned
+  Lean modes (`parse`, `normalize`, `check`, `environment`, `model`, `graph`, `readings`, `identity`); each planned
+  mode is carried by an operation's `planned_modes`. The service is available but has no manifest binding or
+  semantic call site until the stage-2 adapters are implemented.

@@ -1,5 +1,5 @@
 """Immutable local vocabulary; descriptions contribute to artifact identity."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
 from types import MappingProxyType
 
@@ -139,6 +139,7 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
     def __init__(self, data):
@@ -292,6 +293,10 @@ class Environment:
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
             object.__setattr__(self, field, value)
+        # All identity-bearing declarations are now immutable. Model search
+        # constructs many candidates against this same environment.
+        object.__setattr__(self, "_environment_id",
+                           digest(f"ve-environment-{self.identity_version}\n", self.to_dict()))
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
             compile_definitions(self, self.definition_entries, version=self.environment_id)
@@ -365,4 +370,4 @@ class Environment:
 
     @property
     def environment_id(self):
-        return digest(f"ve-environment-{self.identity_version}\n", self.to_dict())
+        return self._environment_id

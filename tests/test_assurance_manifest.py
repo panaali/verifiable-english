@@ -247,7 +247,7 @@ def test_only_the_backend_starts_processes():
                      [node.module] if isinstance(node, ast.ImportFrom) and node.level == 0 else [])
             if any(name in ("subprocess", "multiprocessing") or name.startswith("subprocess.") for name in names):
                 starters.add(rel.as_posix())
-    assert starters == {"ve/backends/lean.py"}
+    assert starters == {"ve/backends/lean.py", "ve/backends/lean_service.py"}
 
 
 def test_broad_exception_handlers_are_reviewed():

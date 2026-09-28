@@ -106,12 +106,12 @@ export CARGO_TARGET_DIR="$PWD/rust/target"
 export CARGO_BUILD_JOBS=1
 (cd lean && lake build)
 uv run python lean/audit.py
-VE_LEAN_PREBUILT=1 uv run pytest -q
+uv run pytest -q
 cargo test -j 1 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
 ```
 
-`VE_LEAN_PREBUILT=1` keeps pytest from starting a nested build. It requires the
-preceding successful build. The committed closure corpus has 46 models and 866
+Pytest builds the Lean and Rust backends once per invocation under a shared artifact lock.
+The committed closure corpus has 46 models and 866
 formulas: exhaustive two-vertex directed graphs, empty sorts, isolated vertices,
 self-loops, cycles, reversed paths, captured filters and nested closures. Lean
 also checks every corpus model as a countermodel request. These are development
