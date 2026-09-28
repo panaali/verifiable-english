@@ -201,7 +201,8 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     assert result["admission"]["report"]["assumptions"][0]["label"] == "bridge:accepts_at(alice,u1,1)"
     residual = result["coverage"]["residual"]
     assert residual["bridges_nested"] == 1 and residual["bridge_leaves"] == 0
-    assert result["coverage"]["residual_total"] == 1
+    assert result["coverage"]["residual"]["reports"] == 1  # the says premise itself
+    assert result["coverage"]["residual_total"] == 2
     root = dict(metadata, units=[dict(metadata["units"][0], content=inner,
                                       kind=["attributed", "alice", "believes", "asserted"])],
                 bridges=[], graph={"root": "B", "nodes": [{"name": "B", "label": "bridge:accepts(alice,u1)",
@@ -349,3 +350,51 @@ def test_report_documents_carry_the_premise_set_line(tmp_path):
     # Without a graph the line is still reported.
     assert check_document(write_report_document(tmp_path, [(text, reported()), denied]))["premises"]["status"] \
         == "INCONSISTENT"
+
+
+def test_report_premises_are_in_the_residual(tmp_path):
+    """Loop recheck B: a testimony-backed report with an admitted `report:u1` leaf was
+    CHECKED and listed that assumption, yet residual_total was 0, for asserted, denied
+    and literal reports alike; section 6's `reports`, `assessments`,
+    `literal_quotations`, `scoped_checks` and `unreviewed_acts` lines were missing."""
+    atom = ["unary", "reports__says__1", ["const", "article"]]
+    cases = [
+        ("The article says that alice is safe.\n", reported(), atom, {"says present asserted": 1}, 0),
+        ("It is not the case that the article says that alice is safe.\n",
+         reported({"negated": report()}), ["not", atom], {"says present denied": 1}, 0),
+        ('The article says, "Alice is safe".\n', reported(report(literal="Alice is safe")), atom,
+         {"says present asserted": 1}, 1),
+    ]
+    for text, piece, leaf, reports_line, literal_count in cases:
+        graph = {"root": "R", "nodes": [{"name": "R", "label": "report:u1", "unit": "u1", "ast": leaf}]}
+        result = check_document(write_report_document(tmp_path, [(text, piece)], graph=graph))
+        assert result["status"] == "CHECKED"
+        assert [a["label"] for a in result["admission"]["report"]["assumptions"]] == ["report:u1"]
+        residual, lines = result["coverage"]["residual"], result["coverage"]["residual_lines"]
+        assert lines["reports"] == reports_line and residual["reports"] == 1
+        assert residual["literal_quotations"] == literal_count
+        assert result["coverage"]["residual_total"] == 1 + literal_count
+    # The rest of the class: a literal quotation below the root, an assessment premise
+    # (asserted and denied, by decider), a scoped check and an unreviewed act.
+    nested = reported(report(report(literal="Alice is safe", holder="alice"), act="believes"),
+                      ["attributed", "article", "believes", ["attributed", "alice", "says", "asserted"]])
+    front = {"assessments": [A1_RECORD],
+             "scoped": [{"id": "s1", "payloads": [{"unit": "u1", "path": "1"}], "conclusion": {"ast": SAFE}}]}
+    path = write_report_document(tmp_path, [
+        ("The article believes that alice says, \"Alice is safe\".\n", nested),
+        ("According to the stated assessment, alice may be safe.\n",
+         reported(MAY, ["hedged", "could", "asserted"], {"open": ["reports__may__1"]})),
+        ("It is not the case that, according to the stated assessment, alice may be safe.\n",
+         reported({"negated": MAY}, ["hedged", "could", "asserted"], {"open": ["reports__may__1"]})),
+        ("The article promised alice is safe.\n", {"kind": ["attributed", "article", "promised", "asserted"],
+                                                 "meaning": "specified", "support": "testimony"})], **front)
+    coverage = check_document(path)["coverage"]
+    lines = coverage["residual_lines"]
+    assert lines["reports"] == {"believes present asserted": 1}
+    assert lines["assessments"] == {"unresolved_decider asserted": 1, "unresolved_decider denied": 1}
+    assert lines["literal_quotations"] == [{"unit": "u1", "path": "1"}]
+    assert [s["id"] for s in lines["scoped_checks"]] == ["s1"]
+    assert lines["unreviewed_acts"] == {"promised": 1}
+    assert {k: coverage["residual"][k] for k in lines} == {
+        "reports": 1, "assessments": 2, "literal_quotations": 1, "scoped_checks": 1, "unreviewed_acts": 1}
+    assert coverage["residual_total"] == 1 + 1 + 2 + 1 + 1 + 1  # the one generated open term too

@@ -390,13 +390,20 @@ def coverage(doc):
                 "assumptions": sum(u["support"] == "assumption" for u in units),
                 "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    lines = {}
     if doc.get("reports") is not None:
-        # 6: a nested bridge (`bridge:accepts_at`) assumes its payload as a root one does.
+        # 6: a nested bridge (`bridge:accepts_at`) assumes its payload as a root one
+        # does, and every report or assessment premise is an identified assumption
+        # whatever its support, so each line counts into the total.
         residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
+        lines = doc["reports"].residual_lines()
+        residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
+                         for line, detail in lines.items()})
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
-            "residual": residual, "residual_total": sum(residual.values())}
+            "residual": residual, "residual_total": sum(residual.values()),
+            **({"residual_lines": lines} if lines else {})}
 
 
 def _check_narrowing_choices(meta, labels):
