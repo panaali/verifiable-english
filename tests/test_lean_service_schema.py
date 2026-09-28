@@ -7,6 +7,8 @@
   enum-swapped, truncated and extra fields, at every depth) are accepted by the schemas
   exactly when the Lean decoders accept them. Request-linked values are also mutated
   together with their request, so each value domain is compared on its own.
+* The harness has teeth: each of a list of schema weakenings disagrees with Lean on
+  some mutation.
 * Each finding of the mig1 rechecks is a scripted replacement of a genuine response
   that must fail closed, after one retry, as `CheckerUnavailable`.
 """
@@ -536,3 +538,37 @@ def test_order_surface_of_zero_less_than_one_is_nonempty(executables):
         [empty] = service.run("order", [{**env, "id": "e", "source": ""}])
     assert row["status"] == "ok" and row["ast"] == [["lt", ["num", "0"], ["num", "1"]]]
     assert empty["status"] == "error"
+
+
+def test_python_reference_decoders_agree_with_schema_domains():
+    """The Python admission decoders (ve/admission.py) have the schema's kind and label
+    domains: enumerations, tokens, fuel and canonical labels."""
+    from ve import admission
+    from ve.errors import VEError
+    from ve.backends.service_schema import _compiler
+    assert admission.ATOMIC_KINDS == tuple(COMMON["atomic_kind"]["enum"])
+    assert admission.ACTS == tuple(COMMON["act"]["enum"])
+    assert admission.MODALITIES == tuple(COMMON["modality"]["enum"])
+    assert admission.RELATIONS == tuple(COMMON["relation"]["enum"])
+    assert set(admission.GENERATORS) == set(COMMON["generator"]["enum"])
+    kind = _compiler.ref("common.json", "#/$defs/kind")[0]
+    label = _compiler.ref("common.json", "#/$defs/label")[0]
+
+    def accepts(check, value):
+        try:
+            check(value, Context(None), {})
+            return True
+        except Invalid:
+            return False
+
+    def python_kind(value):
+        try:
+            admission._check_kind(value)
+            return True
+        except VEError:
+            return False
+
+    for value in KINDS + [_nested_kind(16), _nested_kind(17)]:
+        assert python_kind(value) == accepts(kind, value), value
+    for value in LABELS + STRINGS:
+        assert (admission.parse_label(value) is not None) == accepts(label, value), value
