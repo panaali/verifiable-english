@@ -151,21 +151,21 @@ def test_dates_and_duration_are_distinct():
         day_number("2100-02-29")
 
 
-def test_trace_declarations_are_identity_bound_before_trace_route_exists():
+def test_trace_declarations_are_gated_like_rust_and_lean():
+    # Review (Fable 1): Python minted an id for a nonempty traces array that Rust
+    # rejected. Declarations only serve trace_all/trace_some, which are W6b.
     raw = environment()
     raw["vocabulary"]["constants"]["other_event"] = {"sort": "item", "description": "other event"}
     env = Environment(raw)
     trace = {"name": "review_window", "tick_tag": "elapsed_day", "origin": "event", "horizon": "10"}
-    first = quantity(["top"], traces=[trace])
-    second = quantity(["top"], traces=[{**trace, "origin": "other_event"}])
-    assert elaborate_quantity(env, first)[1] == elaborate_quantity(env, second)[1]
-    assert quantity_meaning_id(env, first) != quantity_meaning_id(env, second)
-    with pytest.raises(VEError, match="Duplicate"):
-        elaborate_quantity(env, quantity(["top"], traces=[trace, trace]))
-    with pytest.raises(VEError, match="origin"):
-        elaborate_quantity(env, quantity(["top"], traces=[{**trace, "origin": "missing"}]))
+    for traces in ([trace], [trace, trace], [{**trace, "origin": "missing"}], [{}]):
+        with pytest.raises(UnsupportedProfile, match="numbers2"):
+            elaborate_quantity(env, quantity(["top"], traces=traces))
     with pytest.raises(UnsupportedProfile, match="numbers2"):
         elaborate_quantity(env, quantity(["trace_all", "review_window", ["top"]], traces=[trace]))
+    with pytest.raises(UnsupportedProfile, match="numbers2"):
+        elaborate_quantity(env, quantity(["trace_all", "review_window", ["top"]]))
+    assert elaborate_quantity(env, quantity(["top"], traces=[]))[0]["traces"] == []
 
 
 def test_fine_percent_uses_a_separate_environment_without_conversion():
