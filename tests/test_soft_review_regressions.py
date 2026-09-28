@@ -24,10 +24,12 @@ from ve.softnorms import load_soft_document
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
                                     soft_limits_reproducers, multi_fault_cases, multi_faults,
-                                    _strict_under_default,
+                                    near_limit_cases, compare_near_limit, _strict_under_default,
                                     compare_rejected, main as conformance_main)
 
 REJECTED_INPUTS = 4417
+ACCEPTED_NEAR_LIMIT = 56
+REJECTED_NEAR_LIMIT = 98
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -215,6 +217,13 @@ def test_derived_depth_is_checked_by_both_validators(wrappers, check):
     assert str(python_error.value).startswith(check) and str(lean_error.value).startswith(check)
 
 
+def test_accepted_sources_elaborate_and_rejected_sources_share_codes():
+    # Every accepted fixture and the near-limit generator: accepted implies Lean
+    # accepts and the public regeneration check passes; rejected implies the same code.
+    accepted, rejected = compare_near_limit(near_limit_cases())
+    assert (accepted, rejected) == (ACCEPTED_NEAR_LIMIT, REJECTED_NEAR_LIMIT)
+
+
 def test_multi_fault_generator_covers_the_table():
     faults = multi_faults()
     assert {f[2][0] for f in faults} == {1, 2, 3, 4, 5, 6}
@@ -360,6 +369,8 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
     assert report["rejected_inputs"] == REJECTED_INPUTS
+    assert report["near_limit_accepted"] == ACCEPTED_NEAR_LIMIT
+    assert report["near_limit_rejected"] == REJECTED_NEAR_LIMIT
 
 
 @pytest.mark.parametrize("role,sign,effect", [
