@@ -85,8 +85,8 @@
       {"file": "lean/VE/Norms/Replay.lean", "lines": 393, "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
        "ranges": [[92, 140], [272, 291]],
        "declarations": ["baseEnvironmentJson", "documentHash", "decodePackage", "witnessFrom"]},
-      {"file": "lean/VE/Definitions/Bundle.lean", "lines": 449, "sha256": "3b31f0a62c0177234cbaa1c3b841bf376109e02dfedf449671d4c3b0d893abbe",
-       "ranges": [[393, 421]], "declarations": ["decodeLeaf", "decodeLemma"]},
+      {"file": "lean/VE/Definitions/Bundle.lean", "lines": 466, "sha256": "88375034efc2d02df39d980a7deea2e126b8a5134ee1a379480b72a91ca2ad0b",
+       "ranges": [[410, 438]], "declarations": ["decodeLeaf", "decodeLemma"]},
       {"file": "lean/VE/Norms/Admission.lean", "lines": 455, "sha256": "9996af265c1e4148d32b6af4105f688e02bd89cd6bc45dcad83ac49e9d9bdf3f",
        "ranges": [[22, 45]], "declarations": ["splitUnit", "splitDocument"],
        "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec)"}
@@ -689,7 +689,7 @@
           {"executable": "ve_conformance", "mode": "route", "kinds": ["bundle"], "response": ["lemmas", "checked"], "dispatch": ["lean/VE/Route/Run.lean"]}
         ],
         "planned_modes": [],
-        "theorems": ["VE.Definitions.Bundle.bundle_sound", "VE.Definitions.Bundle.checkAll_sound",
+        "theorems": ["VE.Definitions.Bundle.bundle_sound", "VE.Definitions.Bundle.checkAll_sound", "VE.Definitions.Bundle.checkAll_length",
                      "VE.Definitions.Bundle.backgroundLeaves_hold"],
         "planned_theorems": [],
         "decoders": ["lean/VE/Json.lean", "lean/VE/Definitions/Bundle.lean", "lean/VE/Route/Admission.lean", "lean/VE/Route/Wire.lean"]
