@@ -39,6 +39,7 @@ import VE.Alternatives.Decl
 import VE.Alternatives.Followable
 import VE.Alternatives.Inline
 import VE.Alternatives.Route
+import VE.Alternatives.Validate
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -992,6 +993,9 @@ import VE.Alternatives.Route
 #print axioms VE.Alternatives.denote_forget_preds
 #print axioms VE.Alternatives.dilemma_expansion
 #print axioms VE.Alternatives.dilemma_witness_sound
+#print axioms VE.Alternatives.e1B_sound
+#print axioms VE.Alternatives.e2B_sound
+#print axioms VE.Alternatives.e3B_sound
 #print axioms VE.Alternatives.emptied_sub
 #print axioms VE.Alternatives.expansion_meanings
 #print axioms VE.Alternatives.expansion_relation_typed
@@ -1012,6 +1016,8 @@ import VE.Alternatives.Route
 #print axioms VE.Alternatives.inst_var0_denote
 #print axioms VE.Alternatives.leadsTo_not_layer
 #print axioms VE.Alternatives.literals_preds
+#print axioms VE.Alternatives.mem_availOf
+#print axioms VE.Alternatives.mem_ownersOf
 #print axioms VE.Alternatives.oBase_relation
 #print axioms VE.Alternatives.oBase_wellFormed
 #print axioms VE.Alternatives.oldEnv_preds
@@ -1029,12 +1035,19 @@ import VE.Alternatives.Route
 #print axioms VE.Alternatives.profileDef_some
 #print axioms VE.Alternatives.relation_typed
 #print axioms VE.Alternatives.restrict_available
+#print axioms VE.Alternatives.rowDenotes_true
+#print axioms VE.Alternatives.rowsB_sound
 #print axioms VE.Alternatives.sat_altPremises_restrict
 #print axioms VE.Alternatives.sat_backgroundBaseAlt
+#print axioms VE.Alternatives.scenarioConflict_sound
 #print axioms VE.Alternatives.sortOf_extEnv
 #print axioms VE.Alternatives.term_denote_withDefinitions
 #print axioms VE.Alternatives.tupleTyped_withDefinitions
+#print axioms VE.Alternatives.tuples_typed
 #print axioms VE.Alternatives.unavoidableF_denote
 #print axioms VE.Alternatives.unavoidableF_wellFormed
+#print axioms VE.Alternatives.validateAlternativesWith_ok
+#print axioms VE.Alternatives.validateAlternatives_labels
+#print axioms VE.Alternatives.validate_sound
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
