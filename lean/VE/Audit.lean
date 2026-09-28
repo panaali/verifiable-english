@@ -44,6 +44,8 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.EvaluationCounts
+import VE.Service.Protocol
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -831,6 +833,13 @@ import VE.Alternatives.Wire
 #print axioms VE.Definitions.Bundle.backgroundLeaves_hold
 #print axioms VE.Definitions.Bundle.bundle_sound
 #print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkAll_length
+#print axioms VE.EvaluationCounts.mapM_length
+#print axioms VE.EvaluationCounts.legacy_decodeDocument_length
+#print axioms VE.EvaluationCounts.closure_decodeFormulas_length
+#print axioms VE.EvaluationCounts.core_decodeFormulas_length
+#print axioms VE.EvaluationCounts.order_decodeFormulas_length
+#print axioms VE.EvaluationCounts.route_decodeFormulas_length
 #print axioms VE.Definitions.Bundle.checkAll_reading
 #print axioms VE.Definitions.Bundle.checkAll_binding
 #print axioms VE.Definitions.Bundle.checkLemma_sound
@@ -951,7 +960,6 @@ import VE.Alternatives.Wire
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
-
 -- alternatives@0 (lean/ALTERNATIVES.md)
 #print axioms VE.Alternatives.E_available
 #print axioms VE.Alternatives.E_leadsTo
@@ -1065,3 +1073,14 @@ import VE.Alternatives.Wire
 #print axioms VE.Alternatives.validate_sound
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
+#print axioms VE.Service.runMode_evaluate
+#print axioms VE.Service.runMode_checkCertificate
+#print axioms VE.Service.runMode_order
+#print axioms VE.Service.runMode_route
+#print axioms VE.Service.runMode_norms
+#print axioms VE.Service.runMode_english
+#print axioms VE.Service.caseResult_ok
+#print axioms VE.Service.runRequest_ok
+#print axioms VE.Service.results_eq
+#print axioms VE.Service.boundResults_eq
+#print axioms VE.Service.respond_decoded

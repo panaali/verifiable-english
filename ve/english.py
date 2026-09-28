@@ -7,11 +7,14 @@ or semantic rewriting is admitted.
 from __future__ import annotations
 
 from collections import Counter
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 import json
 import re
 import warnings
 
+from .assurance import semantic_entry
 from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
@@ -20,6 +23,8 @@ from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
 from .surface import registry as surface_registry
+
+_sentence_parse_cache = ContextVar("ve_sentence_parse_cache", default=None)
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
@@ -1520,7 +1525,7 @@ class EnglishParser:
         return ast.Document(tuple(formulas))
 
 
-def _parse_english_document(env, source, *, _with_structure=False, **options):
+def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1559,6 +1564,30 @@ def _parse_english_document(env, source, *, _with_structure=False, **options):
     return result
 
 
+def _parse_english_document(env, source, *, _with_structure=False, **options):
+    """Reuse exact sentence audits within an explicitly scoped editor operation."""
+    cache = _sentence_parse_cache.get()
+    if cache is None or options or _with_structure or type(source) is not str:
+        return _parse_english_document_uncached(env, source, _with_structure=_with_structure, **options)
+    key = (env.environment_id, source)
+    if key not in cache:
+        cache[key] = _parse_english_document_uncached(env, source)
+    return cache[key]
+
+
+@contextmanager
+def sentence_parse_cache():
+    """Bound parse reuse to one editor request; no mutable global parse state."""
+    if _sentence_parse_cache.get() is not None:
+        yield
+        return
+    token = _sentence_parse_cache.set({})
+    try:
+        yield
+    finally:
+        _sentence_parse_cache.reset(token)
+
+
 def _check_conclusions(env, document, conclusions):
     """A marker uses every earlier unmarked premise in this document."""
     if not conclusions:
@@ -1576,6 +1605,7 @@ def _check_conclusions(env, document, conclusions):
                               + result.status)
 
 
+@semantic_entry("english.admission")
 def parse_english_with_metadata(env, source, **options):
     document, source, words, conclusions = _parse_english_document(env, source, **options)
     try:
@@ -1592,10 +1622,12 @@ def parse_english_with_metadata(env, source, **options):
                               **words.provenance, conclusions=conclusions)
 
 
+@semantic_entry("english.admission")
 def parse_english(env, source, **options):
     return _parse_english_document(env, source, **options)[0]
 
 
+@semantic_entry("english.admission")
 def parse_english_argument(env, source, **options):
     """Build checked claim-graph edges for marked conclusions.
 
@@ -1624,7 +1656,7 @@ def parse_english_argument(env, source, **options):
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
     graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
-    result = check_argument(graph, search=False)
+    result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
         raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
     return graph

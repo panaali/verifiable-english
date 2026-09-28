@@ -93,7 +93,7 @@ def parse (text : String) (depth : Nat := 256) : Except String Json := do
 /-- Split only the outer batch array, without recursively decoding its cases.
 Each slice still goes through the restricted parser. This lets a depth error
 stay local to one case without allocating a deeply nested Json value. -/
-private def caseTexts (text : String) : Except String (Array String) := do
+def caseTexts (text : String) : Except String (Array String) := do
   let text := text.trim
   if !text.startsWith "[" then return #[text]
   unless text.endsWith "]" do throw "unterminated batch array"
