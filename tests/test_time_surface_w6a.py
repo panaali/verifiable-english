@@ -14,6 +14,8 @@ def fixture(duplicate=False):
                     "verbalisation": "the June PCE estimate"},
         "return_date": {"sort": "$int", "unit": "day", "description": "return date",
                         "verbalisation": "the return date"},
+        "decision_date": {"sort": "$int", "unit": "day", "description": "decision date",
+                          "verbalisation": "the decision date"},
         "amount": {"sort": "$int", "unit": "usd_cent", "description": "USD amount",
                    "verbalisation": "the amount"},
     }
@@ -28,7 +30,8 @@ def fixture(duplicate=False):
             "bp": {"scale": "100", "display": {"kind": "percent"}},
             "usd_cent": {"scale": "100", "display": {"kind": "money", "currency": "USD",
                                                           "input_symbol": "$"}},
-            "day": {"scale": "1", "display": {"kind": "iso_date"}}}})
+            "day": {"scale": "1", "display": {"kind": "iso_date"}},
+            "elapsed_day": {"scale": "1", "display": {"kind": "decimal", "label": "days"}}}})
 
 
 def test_one_reading_roundtrip_without_tag_identifiers():
@@ -37,13 +40,16 @@ def test_one_reading_roundtrip_without_tag_identifiers():
         "The September PCE estimate equals 3.70%.",
         "The September PCE estimate is greater than the June PCE estimate.",
         "The return date is after 2026-09-16.",
+        "The return date is on or after the decision date and on or before 10 days after the decision date.",
+        "The return date is 10 days after the decision date.",
+        "The elapsed duration from the decision date to the return date equals 10 days.",
         "The amount equals USD 3.75.",
     ]
     for sentence in examples:
         q = parse_quantity_sentence(env, sentence)
         rendered = render_quantity_sentence(env, q)
         assert parse_quantity_sentence(env, rendered) == q
-        assert all(tag not in rendered for tag in ("bp", "usd_cent", "day"))
+        assert all(tag not in rendered for tag in ("bp", "usd_cent", "elapsed_day", ":day"))
     assert render_quantity_sentence(env, parse_quantity_sentence(env, "The amount equals $3.75.")) == \
            "The amount equals USD 3.75."
 

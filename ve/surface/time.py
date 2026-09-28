@@ -6,6 +6,7 @@ whole-grammar all-derivations and Lean correspondence checks are connected.
 from __future__ import annotations
 
 import re
+from itertools import product
 
 from ..errors import AmbiguousDerivation, SyntaxError, UnsupportedProfile, VEError
 from ..units import DIMENSIONLESS, decimal_exact, elaborate_quantity, render_coordinate
@@ -79,6 +80,25 @@ def parse_quantity_sentence(env, source):
     )
     readings = []
     rejected = []
+    def offer(operation, phrases, suffix=()):
+        for terms in product(*(_terms(env, phrase) for phrase in phrases)):
+            payload = {"format": "ve-quantity@1", "formula": [operation, *terms, *suffix]}
+            try:
+                canonical, _ = elaborate_quantity(env, payload)
+            except VEError as exc:
+                rejected.append(exc)
+                continue
+            readings.append(canonical)
+
+    within = re.fullmatch(r"(.+?) is on or after (.+?) and on or before (0|[1-9][0-9]*) days after (.+)", text)
+    if within and within[2] == within[4]:
+        offer("within_days", (within[1][0].lower() + within[1][1:], within[2]), (within[3],))
+    shifted = re.fullmatch(r"(.+?) is (0|[1-9][0-9]*) days after (.+)", text)
+    if shifted:
+        offer("shift_days", (shifted[1][0].lower() + shifted[1][1:], shifted[3]), (shifted[2],))
+    elapsed = re.fullmatch(r"The elapsed duration from (.+?) to (.+?) equals (.+)", text)
+    if elapsed:
+        offer("elapsed_days", (elapsed[1], elapsed[2], elapsed[3]))
     for connector, operation, reverse in rules:
         if text.count(connector) != 1:
             continue
@@ -114,9 +134,10 @@ def render_quantity_sentence(env, canonical):
         raise UnsupportedProfile("Quantity wording cannot omit canonical annotations or trace declarations")
     formula = canonical["formula"]
     if formula[0] not in ("eq", "lt", "le", "date_on", "date_before",
-                          "date_after", "date_no_later"):
+                          "date_after", "date_no_later", "within_days", "shift_days",
+                          "elapsed_days"):
         raise UnsupportedProfile("No controlled W6 wording for this operation")
-    if len(formula) != 3:
+    if len(formula) != (4 if formula[0] in ("within_days", "shift_days", "elapsed_days") else 3):
         raise SyntaxError("Invalid quantity comparison")
     def term(node):
         if node[0] == "num" and len(node) == 3:
@@ -127,7 +148,15 @@ def render_quantity_sentence(env, canonical):
             if declaration is not None and declaration.verbalisation is not None:
                 return declaration.verbalisation
         raise UnsupportedProfile("Quantity English requires named constants or literals")
+    if formula[0] == "elapsed_days":
+        return (f"The elapsed duration from {term(formula[1])} to {term(formula[2])} "
+                f"equals {term(formula[3])}.")
     left, right = term(formula[1]), term(formula[2])
+    if formula[0] == "within_days":
+        return (left[0].upper() + left[1:] + f" is on or after {right} and on or before "
+                f"{formula[3]} days after {right}.")
+    if formula[0] == "shift_days":
+        return left[0].upper() + left[1:] + f" is {formula[3]} days after {right}."
     connector = {"eq": " equals ", "lt": " is less than ", "le": " is at most ",
                  "date_on": " is on ", "date_before": " is before ",
                  "date_after": " is after ", "date_no_later": " is no later than "}[formula[0]]
