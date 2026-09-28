@@ -41,6 +41,14 @@ def elaborate_soft_document(soft_document: SoftNormDocument):
     norms = [rule.to_dict() for rule in soft_document.rules]
     elaborated = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
                        "environment": env.to_dict(), "norms": norms})
+    return check_regenerated(soft_document, elaborated)
+
+
+def check_regenerated(soft_document: SoftNormDocument, elaborated):
+    """Compare Lean's `soft-elaborate` row with Python's regeneration.
+
+    Every generated formula is serialised through the checker's limits; an
+    accepted document is within them (validation table 6.4 and 6.9 to 6.12)."""
     if soft_document.extended_env.to_dict() != elaborated["environment_prime"]:
         raise VEError("soft route regeneration mismatch: extended environment")
     decisions = {item["name"] for item in elaborated["decisions"]}

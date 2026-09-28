@@ -16,6 +16,7 @@ from ve.errors import VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
+from ve.soft_route import check_regenerated
 from tests.test_soft_norms_lean import env, norm, should, ranks
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -418,6 +419,102 @@ def soft_limits_reproducers():
     many = {f"e{i}": {"arguments": ["assistant"], "description": "e"} for i in range(252)}
     yield "soft-limits-extended-vocabulary", env(extra=many), [
         should(f"n{i}", "x_required", True) for i in range(3)], "SOFT_RESOURCE_LIMIT"
+
+
+def near_limit_sources(count=120, seed=0):
+    """Seeded sources near every budget: deep guards, many exception
+    conditions, large guards (the 8191-node doubled tree among them), shared
+    guards under default rules, and ranked collisions."""
+    rng = random.Random(seed)
+    extra = {"q": {"arguments": ["assistant"], "description": "q"}}
+    leaves = ('["top"]', '["unary", "q", ["var", 0]]')
+
+    def leaf():
+        return json.loads(rng.choice(leaves))
+
+    def formula():
+        kind = rng.randrange(5)
+        if kind == 0:
+            return _nested(rng.randint(40, 64))
+        if kind == 1:
+            return _exact(rng.choice([rng.randint(2400, 2600), rng.randint(4900, 5050),
+                                      rng.randint(9900, 10000)]))
+        if kind == 2:
+            return ["and", _doubled(11), _doubled(11)]
+        if kind == 3:
+            return _doubled(rng.randint(8, 12))
+        return _exact(rng.randint(1, 64))
+
+    def json_leaf(tree):
+        return json.loads(json.dumps(tree).replace('["top"]', json.dumps(leaf()), 1))
+
+    levels = ["high", "middle", "low"]
+    for index in range(count):
+        mode = rng.choice(["strict", "holistic"])
+        block = {"ranks": levels, "outranks": [["high", "middle"], ["middle", "low"]],
+                 "ties": [], "outranking": {"mode": mode}, "parties": ["user"]}
+        if mode == "holistic":
+            block["outranking"]["decided_by"] = "assistant"
+        raw = env(block, extra=extra)
+        rules = []
+        for i in range(rng.randint(1, 4)):
+            pred = rng.choice(["x_required", "x_permitted"])
+            fields = {}
+            if rng.randrange(2):
+                conditions = {"sufficient": [], "necessary": []}
+                for _ in range(rng.choice([0, 1, 2, 8, 24])):
+                    conditions[rng.choice(["sufficient", "necessary"])].append(
+                        json_leaf(formula()) if rng.randrange(8) == 0 else leaf())
+                fields = {"mode": "default", "rank": rng.choice(levels),
+                          "exception": {"decided_by": "assistant", "factors": [], **conditions}}
+            elif rng.randrange(3) == 0:
+                fields["alterable"] = ["user"]
+            guard = json_leaf(formula()) if rng.randrange(2) else leaf()
+            unless = [leaf() for _ in range(rng.choice([0, 0, 1, 7, 8]))]
+            rules.append(norm(f"n{i}", pred, rng.choice([True, False]),
+                              guard=guard, unless=unless, **fields))
+        yield f"near-limit-{seed}-{index}", raw, rules
+
+
+def near_limit_cases():
+    """Every accepted fixture, the limits reproducers and the near-limit generator."""
+    raw, rules = multi_fault_base()
+    return [*soft3_accepted(), *((name, raw, rules) for name, raw, rules, _ in rust_sources()),
+            ("multi-fault-base", raw, rules),
+            *((name, raw, rules) for name, raw, rules, _ in soft_limits_reproducers()),
+            *near_limit_sources()]
+
+
+def compare_near_limit(sources):
+    """accepted => Lean accepts and `check_regenerated` (the public elaboration
+    check) passes; rejected => Lean rejects with the same code. Returns the
+    accepted and rejected counts."""
+    expected = []
+    for name, raw, rules in sources:
+        try:
+            expected.append((name, load_soft_document(raw, rules), None))
+        except VEError as exc:
+            expected.append((name, None, exc.code))
+    wire = [{"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
+            for name, raw, rules in sources]
+    rows = []
+    for batch in _batches(wire):
+        run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
+                             capture_output=True, timeout=600, check=False)
+        rows += json.loads(run.stdout)
+    if len(rows) != len(sources):
+        raise AssertionError("Lean returned the wrong near-limit row count")
+    accepted = 0
+    for (name, soft, code), row in zip(expected, rows):
+        if soft is None:
+            if row.get("status") != "error" or row.get("code") != code:
+                raise AssertionError((name, code, row))
+            continue
+        if row.get("status") != "ok":
+            raise AssertionError((name, "accepted by Python", row))
+        check_regenerated(soft, row)
+        accepted += 1
+    return accepted, len(sources) - accepted
 
 
 # The multi-fault generator. A valid base source, then faults each tagged with its
@@ -884,24 +981,18 @@ def main():
         for i, ((_, _, soft), row) in enumerate(zip(batch, rows)):
             if row.get("status") != "ok":
                 raise AssertionError((compared + i, row))
-            py_layers = [(l, formula_to_data(soft.extended_env, f, _generated=True))
-                         for l, f in soft.elaborated.premises()]
-            lean_layers = [(p["label"], p["ast"]) for p in row["premises"]]
-            py_soft = [(l, formula_to_data(soft.extended_env, f, _generated=True))
-                       for l, f in soft.extended_env.soft_premises]
-            lean_soft = [(p["label"], p["ast"]) for p in row["background"]
-                         if p["generator"] == "soft"]
-            if (soft.extended_env.to_dict() != row["environment_prime"] or
-                    py_layers != lean_layers or py_soft != lean_soft or
-                    list(soft.warnings) != row["warnings"] or
-                    set(soft.extended_env.decision_names) !=
-                    {d["name"] for d in row["decisions"]}):
-                raise AssertionError(f"regeneration mismatch at seed {seed - len(batch) + i}")
+            try:
+                check_regenerated(soft, row)
+            except VEError as exc:
+                raise AssertionError(f"regeneration mismatch at seed {seed - len(batch) + i}") from exc
         compared += len(batch)
+    near_accepted, near_rejected = compare_near_limit(near_limit_cases())
     print(json.dumps({"accepted_trees": compared, "seeds_examined": seed,
                       "environment_matches": compared, "layer_matches": compared,
                       "soft_background_matches": compared, "decision_matches": compared,
-                      "rejected_inputs": compare_rejected()}))
+                      "rejected_inputs": compare_rejected(),
+                      "near_limit_accepted": near_accepted,
+                      "near_limit_rejected": near_rejected}))
 
 
 if __name__ == "__main__":
