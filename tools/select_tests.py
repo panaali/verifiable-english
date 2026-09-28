@@ -23,6 +23,11 @@ ALWAYS = {
     "tests/test_conformance.py", "tests/test_lean_conformance.py",
     "tests/test_replay_conservativity.py", "tests/test_p0_three_way.py",
 }
+TEST_LAYER_OVERRIDES = {
+    # Wall-clock deadlines and randomized histories are measurements.
+    "tests/test_assist_deadline.py": 5,
+    "tests/test_assist_recovery_replay.py": 5,
+}
 CHECKS = (
     ("uv", "run", "--frozen", "--group", "dev", "python", "tools/check_python_layers.py"),
     ("python3", "tools/check_lean_imports.py"),
@@ -62,6 +67,9 @@ EXPORTS = exports()
 
 def test_layer(path: Path) -> int:
     """Classify by imported provider; the highest direct provider owns the test."""
+    relative = path.relative_to(ROOT).as_posix()
+    if relative in TEST_LAYER_OVERRIDES:
+        return TEST_LAYER_OVERRIDES[relative]
     tree = ast.parse(path.read_text())
     layers = []
     for node in ast.walk(tree):
