@@ -135,6 +135,18 @@ def simulate_migration(*op_ids: str):
         _simulated = previous
 
 
+def render_decoders_markdown() -> str:
+    """The generated pinned-decoder table in docs/spec/assurance-manifest.md section 4."""
+    decoders = _MANIFEST["lean_decoders"]
+    rows = ["| File | File lines | Decoder lines | Ranges | File SHA-256 |", "|---|---:|---:|---|---|"]
+    for entry in decoders["files"]:
+        count = sum(end - start + 1 for start, end in entry["ranges"])
+        ranges = ", ".join(f"{start}–{end}" for start, end in entry["ranges"])
+        rows.append(f"| `{entry['file']}` | {entry['lines']} | {count} | {ranges} | `{entry['sha256'][:12]}…` |")
+    rows.append(f"| **total** | | **{decoders['total_lines']:,}** | | |")
+    return "\n".join(rows) + "\n"
+
+
 def render_markdown() -> str:
     """The generated per-operation table in docs/spec/assurance-manifest.md."""
     def cell(values):
