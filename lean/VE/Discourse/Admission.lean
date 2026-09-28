@@ -95,7 +95,23 @@ structure Admitted where
   profiles : List String
   claims : List Validity
 
-def outcomeOf : Except String Admitted → ImportOutcome := outcomeOf'
+/-- Why a successful admission is still incomplete (4.1(8)): its joint set hit the budget, so the
+admission and every reading-dependent verdict are UNKNOWN (`admitted: UNKNOWN`). -/
+def jointUnknown : Except String (List Choice) → Option String
+  | .error e => if e.startsWith "ResourceLimit" then some e else none
+  | .ok _ => none
+
+/-- A document's own outcome from its (successful) admission's joint set: `admitted` only when
+the admission completed. -/
+def selfOutcome (joint : Except String (List Choice)) : ImportOutcome :=
+  match jointUnknown joint with
+  | some e => .unknown e
+  | none => .admitted
+
+/-- 4.7: an admission that answers `admitted: UNKNOWN` is `unknown`, never `admitted`. -/
+def outcomeOf : Except String Admitted → ImportOutcome
+  | .ok res => selfOutcome res.joint
+  | .error e => outcomeOf' (α := Unit) (.error e)
 
 def emptyManifest : Manifest :=
   ⟨"", "", [], [], [], [], [], [], [], [], [], [], []⟩
@@ -394,11 +410,13 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
     | .error e => .error ("ImportCycle: " ++ e),
   fun _ => req (decide (depthOf D ≤ 4)) "ResourceLimit: document nesting"]
 
-/-- The second phase: a validity claim's verdict from the outcome of checking its document. -/
-def verdictFor (D : DDoc) (check : ByteArray → ImportOutcome) (v : Validity) : Option Verdict :=
+/-- The second phase: a validity claim's verdict from the outcome of checking its document;
+`self` is this document's own outcome (`unknown` when its joint set hit the budget). -/
+def verdictFor (D : DDoc) (self : ImportOutcome) (check : ByteArray → ImportOutcome) (v : Validity) :
+    Option Verdict :=
   match D.K.documents.find? (·.name == v.document) with
   | some d => match d.refers with
-    | .self => some (if v.holds then .checked else .refuted)
+    | .self => some (verdictOf v.holds self)
     | .imported k => match D.K.imports.find? (·.key == k) with
       | some imp => match imp.bytes with
         | none => some (.unconfirmed "import bytes absent")
@@ -591,7 +609,7 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
   let joint := compatibleChoices K (activeSets D) 64
   jointGate res joint
   let validity : String → Option Verdict := fun u =>
-    (P.claims.find? (·.unit == u)).bind (verdictFor D check)
+    (P.claims.find? (·.unit == u)).bind (verdictFor D (selfOutcome joint) check)
   let documentId ← Loader.documentId j
   let innerReportId ← VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion bp}\n"
     (Json.mkObj [("environment_id", .str envId), ("document", .str documentId), ("report", reportJson res.report)])

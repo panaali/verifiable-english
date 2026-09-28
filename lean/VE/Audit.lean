@@ -1178,6 +1178,9 @@ import VE.Discourse.English
 #print axioms VE.Discourse.validity_import
 #print axioms VE.Discourse.validity_never_premise
 #print axioms VE.Discourse.validity_self
+#print axioms VE.Discourse.validity_self_outcome
+#print axioms VE.Discourse.validity_self_unknown
+#print axioms VE.Discourse.outcome_unknown_of_joint
 #print axioms VE.Discourse.validity_unknown_never_checked
 #print axioms VE.Discourse.Run.discourse_wire_acceptance
 #print axioms VE.Discourse.discourse_parseRender
