@@ -1,7 +1,7 @@
 {
-  "environment_id": "cc40df6b6002314113e79210a9d3e3db78b39687ddb4d3b299db0df731d976c6",
-  "document_hash": "2b5b5e59316e98ffc025e03ccd7af29d25970cb6ebbf179a0a14cc608bb2d541",
-  "text_digest": "fbf4a0c266d337eebb7905212264951f689f65ca1aa8a254b2f1c138d1b3db1d",
+  "environment_id": "fa0ef0a9024f8425b4a5a2f86a7a0d621a3d99963a9109722bcc844bf2d18c89",
+  "document_hash": "dd0f975851fffa317b58b8038ca0a25d9f9ed5b501306fabb59150118efb8050",
+  "text_digest": "e5682f6a7d5c053b579761db913aa3f2b68bb4c39ea3badd93aacd9ee1bc5b98",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -9,7 +9,7 @@
       "number": 1,
       "span": [
         0,
-        68
+        88
       ]
     },
     {
@@ -17,8 +17,8 @@
       "name": "law-2-permission",
       "number": 2,
       "span": [
-        69,
-        156
+        89,
+        192
       ]
     },
     {
@@ -26,35 +26,62 @@
       "name": "law-1-direct",
       "number": 3,
       "span": [
-        157,
-        271
+        193,
+        307
+      ]
+    },
+    {
+      "handle": "handle-law-1-inaction",
+      "name": "law-1-inaction",
+      "number": 4,
+      "span": [
+        308,
+        611
+      ]
+    },
+    {
+      "handle": "handle-law-0-prevention-exception",
+      "name": "law-0-prevention-exception",
+      "number": 5,
+      "span": [
+        612,
+        790
       ]
     },
     {
       "handle": "handle-law-0-direct",
       "name": "law-0-direct",
-      "number": 4,
+      "number": 6,
       "span": [
-        272,
-        389
+        791,
+        912
+      ]
+    },
+    {
+      "handle": "handle-law-0-inaction",
+      "name": "law-0-inaction",
+      "number": 7,
+      "span": [
+        913,
+        1223
       ]
     },
     {
       "handle": "handle-law-2-obey",
       "name": "law-2-obey",
-      "number": 5,
+      "number": 8,
       "span": [
-        390,
-        494
+        1224,
+        1344
       ]
     },
     {
       "handle": "handle-law-3-preserve",
       "name": "law-3-preserve",
-      "number": 6,
+      "number": 9,
       "span": [
-        495,
-        602
+        1345,
+        1498
       ]
     }
   ]

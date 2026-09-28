@@ -1,41 +1,161 @@
 {
   "language": "ve.core@0.2",
-  "profiles": ["norms@0", "relational-fol@0"],
+  "profiles": [
+    "alternatives@0",
+    "norms@0",
+    "relational-fol@0"
+  ],
   "spec_revision": "ve-v0.2-expand2-2026-09-25",
   "vocabulary": {
-    "sorts": {"action": {"description": "A candidate action by a robot"}},
+    "sorts": {
+      "robot": {
+        "description": "robot"
+      },
+      "action": {
+        "description": "action"
+      },
+      "harm": {
+        "description": "harm"
+      }
+    },
     "predicates": {
-      "injures_humanity": {
-        "arguments": ["action"],
-        "description": "The action injures humanity, as judged by the Asimov case annotator",
-        "verbalisation": "{0} injures humanity"
+      "available": {
+        "arguments": [
+          "action",
+          "robot"
+        ],
+        "description": "{0} is available to {1}",
+        "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+        "arguments": [
+          "action",
+          "harm"
+        ],
+        "description": "{0} leads to {1}",
+        "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is inaction",
+        "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is taken",
+        "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+        "arguments": [
+          "harm"
+        ],
+        "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+        "arguments": [
+          "harm"
+        ],
+        "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+        "arguments": [
+          "harm",
+          "robot"
+        ],
+        "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to {1}"
       },
       "injures_human": {
-        "arguments": ["action"],
+        "arguments": [
+          "action"
+        ],
         "description": "The action injures a human being, as judged by the Asimov case annotator",
         "verbalisation": "{0} injures a human being"
       },
+      "injures_humanity": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures humanity, as judged by the Asimov case annotator",
+        "verbalisation": "{0} injures humanity"
+      },
       "ordered": {
-        "arguments": ["action"],
-        "description": "A qualified human being ordered the robot to perform the action, as judged by the Asimov case annotator",
+        "arguments": [
+          "action"
+        ],
+        "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
         "verbalisation": "{0} is ordered"
       },
       "protects_robot": {
-        "arguments": ["action"],
-        "description": "The action protects the acting robot's existence",
+        "arguments": [
+          "action"
+        ],
+        "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
         "verbalisation": "{0} is protective"
       },
       "permitted": {
-        "arguments": ["action"],
-        "description": "The acting robot is permitted to perform this action",
-        "regulated": {"role": "permission", "default": "allow", "act": "{0} be performed"}
+        "arguments": [
+          "action"
+        ],
+        "description": "permission",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} be performed"
+        }
       },
       "required": {
-        "arguments": ["action"],
-        "description": "The acting robot is required to perform this action",
-        "regulated": {"role": "obligation", "default": "deny", "act": "{0} be performed", "permission": "permitted"}
+        "arguments": [
+          "action"
+        ],
+        "description": "obligation",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be performed",
+          "permission": "permitted"
+        }
+      },
+      "prevent_required": {
+        "arguments": [
+          "robot",
+          "harm"
+        ],
+        "description": "prevention",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} prevent {1}"
+        }
       }
     },
     "constants": {}
+  },
+  "alternatives": {
+    "chooser": "robot",
+    "action": "action",
+    "harm": "harm",
+    "available": "available",
+    "leads_to": "leads_to",
+    "outcomes": "signed",
+    "decided_by": "Asimov case annotator",
+    "performed": {
+      "permission": "permitted",
+      "obligation": "required"
+    },
+    "inaction": "inaction",
+    "taken": "taken",
+    "fulfilments": [
+      {
+        "obligation": "prevent_required",
+        "body": "avoids"
+      }
+    ]
   }
 }

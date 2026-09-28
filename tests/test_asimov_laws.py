@@ -1,113 +1,110 @@
-"""The checked, deliberately limited action reading of Asimov's laws."""
-from dataclasses import replace
+"""Asimov v2: authored English, certified consistency, and spec scenarios."""
 import json
+from functools import lru_cache
 from pathlib import Path
 
+import pytest
+
+from conformance.alternatives import base_environment, cases
+from ve.alternatives import run_case
+from ve.ast import Not, _Decoder
+from ve.entailment import prove_entailment
 from ve.environment import Environment
-from ve.evaluate import _Evaluator
-from ve.model import FiniteModel
 from ve.norm_english import parse_english, render_english
-from ve.norms import NormDocument, check_conflict
+from ve.norms import _bind
+from ve.wire import digest
 
 
 ROOT = Path(__file__).resolve().parents[1] / "usecases" / "asimov-laws"
 
 
+@lru_cache(maxsize=1)
 def load():
-    env = Environment(json.loads((ROOT / "environment.json").read_text()))
+    data = json.loads((ROOT / "environment.json").read_text())
     source = (ROOT / "rules.ve").read_text()
     manifest = json.loads((ROOT / "rules.manifest.json").read_text())
+    env = Environment(data)
     doc = parse_english(env, source, manifest)
-    return doc, source, manifest
+    return data, doc, source, manifest
 
 
-def scenario(doc, *, ordered=False, protects=False, human_harm=False, humanity_harm=False):
-    relations = {p: [] for p in doc.base_environment().predicates}
-    for predicate, holds in (("ordered", ordered), ("protects_robot", protects),
-                             ("injures_human", human_harm), ("injures_humanity", humanity_harm)):
-        if holds:
-            relations[predicate] = [["act"]]
-    return FiniteModel.from_dict(doc.base_environment(), {
-        "complete": True, "domains": {"action": ["act"]},
-        "constants": {}, "relations": relations,
-    })
+def case(kind="alt-elaborate", **extra):
+    data, doc, _, _ = load()
+    return {"id": "asimov-v2", "kind": kind, "environment": data,
+            "norms": [rule.to_dict() for rule in doc.rules], **extra}
 
 
-def outcome(doc, model, predicate, action="act"):
-    evaluator = _Evaluator(doc.base_environment(), model, 100_000, trace=False)
-    return evaluator.formula(doc.outcome(predicate, base=True), (("action", action),))[0]
+def conflict_packages():
+    source = case()
+    env = Environment(source["environment"])
+    base = Environment(base_environment(source["environment"]))
+    elaborated = run_case(source)
+    document_hash = digest(f"ve-alternatives-{env.identity_version}\n", {
+        "environment_id": env.environment_id, "norms": source["norms"], "units": []})
+    packages = {}
+    for target in elaborated["conflict_targets"]:
+        conclusion = _bind(Not(_Decoder().decode(target["ast"])), target["sorts"])
+        proof = prove_entailment(base, (), conclusion, max_steps=20000)
+        assert proof.status == "Found", target["target"]
+        packages[target["target"]] = {
+            "environment_id": env.environment_id, "document_hash": document_hash,
+            "target": target["target"], "certificate": proof.certificate}
+    return packages
 
 
-def test_authoring_round_trip_priority_and_conflict_certificate():
-    doc, source, manifest = load()
+def spec_scenario(name):
+    return next(item["scenario"] for item in cases() if item["id"] == name)
+
+
+def test_authored_rules_have_one_reading_and_declared_priority():
+    data, doc, source, manifest = load()
     assert render_english(doc) == (source, manifest)
-    assert [(r.name, r.over) for r in doc.rules[:4]] == [
+    assert data["alternatives"]["fulfilments"] == [
+        {"obligation": "prevent_required", "body": "avoids"}]
+    assert [(r.name, r.over) for r in doc.rules] == [
         ("law-3-permission", ()),
         ("law-2-permission", ("law-3-permission",)),
         ("law-1-direct", ("law-2-permission",)),
-        ("law-0-direct", ("law-1-direct",)),
+        ("law-1-inaction", ("law-2-permission",)),
+        ("law-0-prevention-exception", ("law-1-direct", "law-1-inaction")),
+        ("law-0-direct", ("law-1-direct", "law-0-prevention-exception")),
+        ("law-0-inaction", ("law-1-inaction", "law-0-prevention-exception")),
+        ("law-2-obey", ()),
+        ("law-3-preserve", ()),
     ]
-    assert check_conflict(doc, prove=True).status == "CONFLICT-FREE"
 
 
-def test_order_to_harm_human_and_safe_order():
-    doc, _, _ = load()
-    harmful = scenario(doc, ordered=True, human_harm=True)
-    assert not outcome(doc, harmful, "permitted")
-    assert not outcome(doc, harmful, "required")
-    assert check_conflict(doc, model=harmful, prove=True).status == "CONFLICT-FREE"
-
-    safe = scenario(doc, ordered=True)
-    assert outcome(doc, safe, "permitted")
-    assert outcome(doc, safe, "required")
-
-
-def test_zeroth_direct_ban_and_self_protection():
-    doc, _, _ = load()
-    collective_harm = scenario(doc, ordered=True, humanity_harm=True)
-    assert not outcome(doc, collective_harm, "permitted")
-    assert not outcome(doc, collective_harm, "required")
-
-    protection = scenario(doc, protects=True)
-    assert outcome(doc, protection, "permitted")
-    assert outcome(doc, protection, "required")
+def test_checker_certifies_conflict_free_and_replays_dilemma():
+    packages = conflict_packages()
+    assert len(packages) == 4
+    assert run_case(case("alt-conflict", packages=packages))["verdict"] == "CONFLICT-FREE"
+    for name, diagnosis in (("b-A1", "NONE-PERMITTED"), ("j", "OVER-REQUIRED")):
+        result = run_case(case("alt-followable", packages=packages,
+                               witness={**spec_scenario(name), "chooser": "r"}))
+        assert result["verdict"] == "DILEMMA"
+        assert result["diagnosis"].startswith(diagnosis)
 
 
-def test_harmful_order_without_first_law_precedence_has_plain_english_witness():
-    doc, _, _ = load()
-    rules = [replace(r, over=()) if r.name == "law-1-direct" else r for r in doc.rules]
-    unprioritised = NormDocument(doc.env, rules)
-    witness = check_conflict(unprioritised, model=scenario(unprioritised, ordered=True, human_harm=True))
-    assert witness.status == "CONFLICT"
-    assert witness.target == "permitted"
-    assert "rule law-2-permission permits" in witness.situation
-    assert "rule law-1-direct forbids" in witness.situation
-
-
-def test_two_compatible_protective_alternatives_expose_law_three_approximation():
-    doc, _, _ = load()
-    relations = {p: [] for p in doc.base_environment().predicates}
-    relations["protects_robot"] = [["shield"], ["retreat"]]
-    model = FiniteModel.from_dict(doc.base_environment(), {
-        "complete": True, "domains": {"action": ["shield", "retreat"]},
-        "constants": {}, "relations": relations,
-    })
-    for action in ("shield", "retreat"):
-        assert outcome(doc, model, "permitted", action)
-        assert outcome(doc, model, "required", action)
-    assert check_conflict(doc, model=model, prove=True).status == "CONFLICT-FREE"
-
-    readme = (ROOT / "README.md").read_text()
-    assert "Rule 6 is an illustrative assumption" in readme
-    assert "**UNFORMALISED:** The source's Law 3 preservation obligation" in readme
-
-
-def test_completion_defaults_allow_unclassified_action_without_requiring_it():
-    doc, _, _ = load()
-    unclassified = scenario(doc)
-    assert outcome(doc, unclassified, "permitted")
-    assert not outcome(doc, unclassified, "required")
-
-    readme = (ROOT / "README.md").read_text()
-    assert "permission defaults to allow" in readme
-    assert "obligation defaults to not required" in readme
+@pytest.mark.parametrize("name,clear", [
+    ("a", ["pull"]),
+    ("b-A0", ["pull"]),
+    ("b-A1", []),
+    ("b-A2", ["pull"]),
+    ("b-B", ["pull"]),
+    ("bprime-A", []),
+    ("c-7", ["nothing", "pull"]),
+    ("c-8", ["nothing", "pull"]),
+    ("c-8m", ["nothing", "pull"]),
+    ("d-full", ["shield", "retreat"]),
+    ("d-prevention", ["shield", "retreat"]),
+    ("e", ["act"]),
+    ("j", []),
+    ("o-7", ["act", "rescue"]),
+    ("o-8", ["act", "rescue"]),
+    ("bprime-A5", []),
+    ("l5", ["pull", "pull2"]),
+])
+def test_spec_scenarios_show_inaction_priority_and_choice(name, clear):
+    report = run_case(case("alt-validate", scenario=spec_scenario(name)))
+    assert report["status"] == "ok"
+    assert report["choosers"][0]["clear"] == clear
