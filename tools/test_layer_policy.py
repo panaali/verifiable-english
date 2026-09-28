@@ -12,6 +12,8 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertEqual(plan["minimum_layer"], 5)
         self.assertLess(plan["selected_count"], plan["full_count"])
         self.assertIn("tests/test_t1c.py", plan["selected"])
+        self.assertIn("tests/test_assist_recovery_replay.py", plan["selected"])
+        self.assertIn("tests/test_assist_deadline.py", plan["selected"])
         self.assertTrue(set(plan["always"]) <= set(plan["selected"]))
         usecase = select(["usecases/asimov-laws/rules.ve"])
         self.assertIn("tests/test_asimov_laws.py", usecase["selected"])
@@ -28,6 +30,8 @@ class LayerSelectionTests(unittest.TestCase):
         plan = select(["new-unmapped-format.xyz"])
         self.assertEqual(plan["selected_count"], plan["full_count"])
         self.assertTrue(plan["lean_build"] and plan["rust_build"])
+        shared = select(["conformance/README.md"])
+        self.assertEqual(shared["minimum_layer"], 1)
 
 
 if __name__ == "__main__":

@@ -61,7 +61,7 @@ def source_layer(path: str) -> int | None:
     parts = p.parts
     if not parts:
         return None
-    if p.suffix in {".md", ".rst"}:
+    if p.suffix in {".md", ".rst"} and parts[0] not in {"tests", "conformance"}:
         return 5
     if parts[0] == "ve" and p.suffix == ".py":
         if path == "ve/__init__.py":
