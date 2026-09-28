@@ -126,9 +126,11 @@ profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit 
 
 Cases without a speech-act construct (profile, block, `speech-*` kind, `binding` unit, command or question
 content) delegate unchanged to `Norms.Run.runCase`. A query whose target is one of its pinned premises carries
-the warning `TrivialQuery: <query id>` in `speech-elaborate`. `tests/test_speech_acts_lean.py` runs eighteen section 9
+the warning `TrivialQuery: <query id>` in `speech-elaborate`. `tests/test_speech_acts_lean.py` runs section 9
 fixtures against the executable; the Python prover serves only as an untrusted certificate search over the lists
-Lean regenerates.
+Lean regenerates. `tests/test_speech_acts_conformance.py` compares Python and Lean regeneration and answer
+evaluation with Rust's FOL evaluation of their common finite-model projection. It also exercises a complete
+source file through Python's experimental inspection path; Rust has no speech-act document decoder.
 
 ## Not done
 
@@ -141,4 +143,7 @@ Lean regenerates.
   mirroring `ve/readings.py`'s `validate_reading_sets` and `validate_narrowings`.
 * **Records.** Answer, compliance and nomination records are accepted as document keys but not decoded; there
   is no compliance line and no nomination status; binding units have no meaning id.
-* **Python and Rust** (plan items 2 and 4) and the English layer (item 3).
+* **Route-wide conformance and English fidelity.** Python's experimental `SpeechDocument`, `SpeechSource` and
+  restricted English parser are present. The section 9 shared fixtures above cover a subset of semantic results;
+  Rust still has no speech-act parser or admission route. W8 replay/approval, all-derivations English checks and
+  the human fidelity gate (plan item 3) remain open.
