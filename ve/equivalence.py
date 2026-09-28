@@ -358,6 +358,7 @@ class ReferenceValidation:
                 "certificates": self.certificates, "attempts": list(self.attempts)}
 
 
+@semantic_entry("reference.validate")
 def validate_reference(env, f: Formula, budgets=None) -> ReferenceValidation:
     """Require a checked non-vacuous satisfying model and a falsifying model.
 

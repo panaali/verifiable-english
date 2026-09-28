@@ -369,6 +369,7 @@ def _to_data(node):
     return [record.wire_tag, node.sort, _to_data(node.body)]
 
 
+@semantic_entry("typing")
 def formula_to_data(env: Environment, formula: Formula, *, _generated=False):
     _Checker(env, generated=_generated).formula(formula)
     return _to_data(formula)
@@ -449,6 +450,7 @@ class _Decoder:
         return record.node_type(data[1], self.decode(data[2], depth + 1))
 
 
+@semantic_entry("typing")
 def formula_from_data(env: Environment, data, *, _generated=False) -> Formula:
     formula = _Decoder().decode(data)
     _Checker(env, generated=_generated).formula(formula)
