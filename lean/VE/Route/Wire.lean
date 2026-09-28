@@ -5,6 +5,7 @@ import VE.Order.Wire
 import VE.Order.ModelCheck
 import VE.Closure.Bridge
 import VE.Definitions.Elaborate
+import VE.Route.Budget
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -18,6 +19,7 @@ decoded literals; the wire never supplies it. Identity uses the domain
 namespace VE.Route.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings identifier reserved generatedName)
+open VE.Time (maxEvaluations)
 
 /-- A decoded FOL/closure vocabulary, its declared `$string` literals and its
 identity-bound definitions (W3), elaborated in dependency order and checked. -/
@@ -244,45 +246,6 @@ def fullBackgroundViolation {α : Type} [DecidableEq α] (M : VE.FiniteModel α)
     Option String :=
   ((fullBackground rv).find? (fun p => !p.1.eval M [])).map Prod.snd
 
-/-- Every tuple over the listed sorts' domains, in domain order. -/
-def tuples {α : Type} (M : VE.FiniteModel α) : List String → List (List α)
-  | [] => [[]]
-  | s :: ss => (M.domains s).flatMap (fun v => (tuples M ss).map (v :: ·))
-
-/-- Formula evaluations charged by Python and Rust, including the node visit
-and only branches reached by short-circuit evaluation. -/
-def formulaWork {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) :
-    VE.Formula → Nat
-  | .top | .bottom | .unary .. | .binary .. | .eq .. => 1
-  | .not a => 1 + formulaWork M ρ a
-  | .and a b => 1 + formulaWork M ρ a + (if a.eval M ρ then formulaWork M ρ b else 0)
-  | .or a b => 1 + formulaWork M ρ a + (if a.eval M ρ then 0 else formulaWork M ρ b)
-  | .implies a b => 1 + formulaWork M ρ a + (if a.eval M ρ then formulaWork M ρ b else 0)
-  | .all s a =>
-    let domain := M.domains s
-    let passed := domain.takeWhile (fun v => a.eval M (v :: ρ))
-    1 + (passed.map (fun v => formulaWork M (v :: ρ) a)).foldl (· + ·) 0 +
-      ((domain[passed.length]?).map (fun v => formulaWork M (v :: ρ) a)).getD 0
-  | .ex s a =>
-    let domain := M.domains s
-    let failed := domain.takeWhile (fun v => !(a.eval M (v :: ρ)))
-    1 + (failed.map (fun v => formulaWork M (v :: ρ) a)).foldl (· + ·) 0 +
-      ((domain[failed.length]?).map (fun v => formulaWork M (v :: ρ) a)).getD 0
-
-/-- Defined tables and evaluation work in dependency order. -/
-def computeDefined (d : VE.Bridge.ModelData) : List VE.Definitions.Def → VE.Bridge.ModelData × Nat
-  | [] => (d, 0)
-  | x :: xs =>
-    let candidates := tuples d.toModel x.args
-    let rows := candidates.filter (fun row => x.body.eval d.toModel row.reverse)
-    let work := (candidates.map (fun row => formulaWork d.toModel row.reverse x.body)).foldl (· + ·) 0
-    let (data, rest) := computeDefined { d with relations := d.relations ++ [(x.name, rows)] } xs
-    (data, work + rest)
-
-/-- The candidate rows of every defined table, bounded like the supplied tables. -/
-def definitionWork (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) : Nat :=
-  (ds.map (fun x => (x.args.map (fun s => (d.toModel.domains s).length)).foldl (· * ·) 1)).foldl (· + ·) 0
-
 /-- Each submitted domain in Python `sorted` and Rust `sort` order. The
 defined-table work stops quantifiers at the first decisive entity, so whether it
 exhausts the budget depends on this order; the model's entities do not change. -/
@@ -298,17 +261,16 @@ def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
     else .ok ()
   | .error _ => .ok ()
 
-/-- Decode finite tables for the base predicates, compute the defined tables,
+/-- Decode finite tables for the base predicates (their static limits: domain
+size and tuple count), compute the defined tables under the shared evaluation
+budget and tuple limit, one candidate row at a time (`Budget.computeDefinedB`),
 check structural admissibility, then Background: a model aliasing two declared
 literals is `InvalidModel(literals)`, a supplied defined table is
 `InvalidModel(definitions)`, never a truth value. -/
 def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
   noDefinedTables rv j
   let data₀ := sortModelData (← VE.Bridge.decodeModelData rv.baseModelVocabulary j)
-  let (data, work) := computeDefined data₀ rv.definitions
-  Gate.require (work ≤ 1000000) "ResourceLimit: Definition model evaluation budget exhausted"
-  Gate.require ((data.relations.map (fun p => p.2.length)).foldl (· + ·) 0 ≤ 100000)
-    "ResourceLimit: tuple count"
+  let data ← Budget.computeDefinedB data₀ rv.definitions
   Gate.require (data.valid rv.modelVocabulary) "model is not semantically admissible"
   let M := data.toModel
   match fullBackgroundViolation M rv with
@@ -347,9 +309,8 @@ theorem decodeModel_background (rv : RouteVocabulary) (j : Json) (M : VE.FiniteM
       (VE.Definitions.background rv.definitions rv.literals).all (fun a => a.eval M []) = true := by
   unfold decodeModel at h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨data, _, h⟩ := bind_ok h
-  obtain ⟨_, _, h⟩ := bind_ok h
-  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hv, h⟩ := bind_ok h
   have hvalid := Gate.require_ok hv
   dsimp only at h
@@ -437,12 +398,20 @@ def closureUsesStringBinder : VE.Closure.Formula → Bool
 
 /-! ## Formula decoding for the FOL family -/
 
+/-- The aggregate AST limit of a case, checked on the decoded formulas (each
+already within depth 64) before any model is decoded, any defined table is
+built or anything is evaluated: the document, or the premises and conclusion
+together, have at most 10,000 nodes (Python `_check_aggregate_ast` and
+`check_document`, Rust's shared node counter). -/
+def nodeLimit (sizes : List Nat) : Except String Unit :=
+  if sizes.foldl (· + ·) 0 > 10000 then .error "ResourceLimit: AST node count" else .ok ()
+
 def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
     Except String (List VE.Formula) := do
   let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
   if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
-  if (fs.map VE.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
+  nodeLimit (fs.map VE.Bridge.formulaNodes)
   pure fs
 
 def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
@@ -473,16 +442,18 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
     return ok id [("premises", toJson ((fullBackground rv).map (encodeFormula ∘ Prod.fst))),
       ("generators", toJson ((fullBackground rv).map Prod.snd))]
   if kind == "evaluate" then
-    let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← decodeFormulas E (← j.getObjVal? "ast") (profiles.contains "data@0")
     if fs.isEmpty then throw "empty document"
-    return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
+    return ok id [("values", toJson (← Budget.valuesF M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← decodeFormulas E premisesJson (profiles.contains "data@0")
   let c ← decodeClosed E (← j.getObjVal? "conclusion") (profiles.contains "data@0")
+  nodeLimit ((c :: ps).map VE.Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    return ok id [("refutes", .bool (VE.countermodelCheck M ps c))]
+    let some refutes := Budget.refutesF M maxEvaluations ps c 0 | throw Budget.budgetExhausted
+    return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
   let background := (fullBackground rv).map Prod.fst
@@ -500,12 +471,12 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
     return ok id [("premises", toJson ((fullBackground rv).map (encodeFormula ∘ Prod.fst))),
       ("generators", toJson ((fullBackground rv).map Prod.snd))]
   if kind == "evaluate" then
-    let M ← decodeDataModel rv (← j.getObjVal? "model")
     let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")
     if profiles.contains "data@0" && fs.any closureUsesStringBinder then
       throw "$string quantification requires data stage 2"
     if fs.isEmpty then throw "empty document"
-    return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
+    let M ← decodeDataModel rv (← j.getObjVal? "model")
+    return ok id [("values", toJson (← Budget.valuesC M fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
   if profiles.contains "data@0" && ps.any closureUsesStringBinder then
@@ -514,11 +485,11 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   if profiles.contains "data@0" && closureUsesStringBinder c then
     throw "$string quantification requires data stage 2"
   unless c.check E [] do throw "ill-typed or unbound conclusion"
-  if ((c :: ps).map VE.Closure.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
-    throw "ResourceLimit: AST node count"
+  nodeLimit ((c :: ps).map VE.Closure.Bridge.formulaNodes)
   if kind == "countermodel" then
     let M ← decodeDataModel rv (← j.getObjVal? "model")
-    return ok id [("refutes", .bool (VE.Closure.countermodelCheck M ps c))]
+    let some refutes := Budget.refutesC M maxEvaluations ps c 0 | throw Budget.budgetExhausted
+    return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.CertificateWire.decodeClosureCertificate (← j.getObjVal? "certificate")
   let background := (fullBackground rv).map Prod.fst
@@ -557,19 +528,20 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     (j : Json) : Except String Json := do
   let E := rv.vocabulary.environment
   if kind == "evaluate" then
-    let d ← decodeOrderModel rv (← j.getObjVal? "model")
     let fs ← VE.Order.Wire.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
-    return ok id [("values", toJson (fs.map (fun a => a.eval d.toModel [])))]
+    let d ← decodeOrderModel rv (← j.getObjVal? "model")
+    return ok id [("values", toJson (← Budget.orderValues (Budget.sortOrderData d).toModel fs))]
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Order.Wire.decodeFormulas E premisesJson
   let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
   unless c.check E [] do throw "ill-typed or unbound conclusion"
-  if ((c :: ps).map VE.Order.Wire.formulaNodes).foldl (· + ·) 0 > 10000 then
-    throw "ResourceLimit: AST node count"
+  nodeLimit ((c :: ps).map VE.Order.Wire.formulaNodes)
   if kind == "countermodel" then
     let d ← decodeOrderModel rv (← j.getObjVal? "model")
-    return ok id [("refutes", .bool (VE.Order.checkCountermodel rv.vocabulary d ps c))]
+    let some refutes := VE.Time.refutesB (Budget.sortOrderData d).toModel maxEvaluations ps c 0
+      | throw Budget.budgetExhausted
+    return ok id [("refutes", .bool refutes)]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "certificate")
   let background := Background.orderLiterals rv.literals
