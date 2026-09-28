@@ -43,7 +43,7 @@ def _bindings(decl, words):
 
 
 def _guard_text(formula, env, words, scope):
-    traversal = EnglishTraversal(env, words, word_markers=True)
+    traversal = EnglishTraversal(env, words, word_markers=env.alternatives is not None)
     traversal.maximum = Counter(sort for sort, _ in scope)
     return traversal.formula(formula, scope)
 
