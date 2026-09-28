@@ -13,3 +13,4 @@ import VE.Norms.Replay
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
+import VE.Discourse.Resolve
