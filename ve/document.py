@@ -480,7 +480,6 @@ def check_document(path):
         assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
     rights = doc["rights_document"]
     if rights is not None:
-        assertions.extend(formula for _, formula in rights.limitation_premises)
         result["rights"] = {
             "environment_id": doc["environment"].environment_id,
             "limitation_predicates": [{"name": generated, "limitation": limit, "act": act}

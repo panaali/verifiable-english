@@ -8,6 +8,7 @@ from tests.test_norms import environment, obligation, permission
 from ve.document import check_document, render_document
 from ve.soft_route import elaborate_soft_document
 from ve.softnorms import SoftEnvironment
+from ve.background import background
 from ve.surface.rights import parse_line, render_line
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
@@ -63,6 +64,7 @@ def test_claim_is_one_soft_rule_and_limitation_is_one_pack():
     assert len(doc.soft_document.rules[0].core.unless) == 1
     assert [label for label, _ in doc.limitation_premises] == [
         "rights:limitation:l29:protect_permitted:necessary:law"]
+    assert sum(p.generator == "rights" for p in background(doc.soft_document.extended_env)) == 1
 
 
 def test_right_requires_incident_and_claim_shape():
