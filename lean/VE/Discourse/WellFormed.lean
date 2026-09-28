@@ -246,9 +246,40 @@ def boundOk (D : DDoc) : Except String Unit :=
 def activeSets (D : DDoc) : List ReadingSet :=
   D.base.readingSets.filter fun rs => !D.base.readingSets.any fun o => o.id == rs.id && o.version > rs.version
 
-/-- The owning set's reading, regenerated per group. -/
-def groupFormula (D : DDoc) (g : Group) : Option VE.Formula :=
+/-- The reading the owning set records for a group (the comparison point, never trusted). -/
+def recordedGroupReading (D : DDoc) (g : Group) : Option VE.Formula :=
   (D.base.readingSets.find? fun rs => rs.id == g.set && rs.version == g.version).bind fun rs => rs.readings[g.reading]?
+
+/-- The first span of a same-witness group (4.6): exactly one derivation, `a|an|some [ADJ]
+SORT is P.` with no slot; its sort and the body over the witness. -/
+def witnessOpening (D : DDoc) (u : String) : Option (String × VE.Formula) :=
+  match D.text u with
+  | none => none
+  | some s => match derivs D u s with
+    | [⟨.core (.some _ .none srt p), []⟩] => some (srt, .unary p (.var 0))
+    | [⟨.core (.some _ (.adj q) srt p), []⟩] => some (srt, .and (.unary q (.var 0)) (.unary p (.var 0)))
+    | _ => none
+
+/-- A later span of a same-witness group: exactly one derivation, `PRONOUN is P.`, with `P`
+a unary predicate of the witness's sort; its body over the witness. -/
+def witnessContinuation (D : DDoc) (srt u : String) : Option VE.Formula :=
+  match D.text u with
+  | none => none
+  | some s => match derivs D u s with
+    | [⟨.core (.pred (.slot m) false p), _⟩] =>
+      if m.form == .pronoun && D.E.predicates p == some [srt] then some (.unary p (.var 0)) else none
+    | _ => none
+
+/-- The owning set's reading, regenerated per group from the spans' English (4.6): one
+existential over the opening span's sort whose body conjoins every span's predication of
+the witness. The recorded reading is compared with it, never used in its place. -/
+def groupFormula (D : DDoc) (g : Group) : Option VE.Formula :=
+  match g.spans with
+  | [] => none
+  | first :: rest => do
+    let (srt, body) ← witnessOpening D first
+    let later ← rest.mapM (witnessContinuation D srt)
+    pure (.ex srt (conj (body :: later)))
 
 def owningUnit (_D : DDoc) (g : Group) : Option String := g.spans.head?
 
@@ -257,14 +288,18 @@ def groupsOk (D : DDoc) : Except String Unit := runAll [
   fun _ => req (D.K.groups.length ≤ 256 && D.K.groups.all (fun g => decide (g.spans.length ≤ 16)) &&
     D.K.constraints.length ≤ 1024) "ResourceLimit: groups",
   fun _ => allOk D.K.groups fun g =>
-    match groupFormula D g with
+    let name := g.set ++ "@" ++ toString g.version ++ ":" ++ toString g.reading
+    match recordedGroupReading D g with
     | none => .error ("InvalidInput: reading " ++ toString g.reading ++ " not in " ++ g.set ++ "@" ++ toString g.version)
     | some φ =>
       if g.spans.isEmpty then .error ("InvalidInput: group " ++ g.set ++ " has no spans") else
       match g.spans.find? (fun u => (contentOf D u).isSome || (boundUnits D).contains u || !(unitIdsOf D).contains u) with
       | some u => .error ("IndependentFragment: " ++ u)
-      | none => req (sharedWitness φ)
-          ("WitnessSplit: " ++ g.set ++ "@" ++ toString g.version ++ ":" ++ toString g.reading),
+      | none =>
+        if !sharedWitness φ then .error ("WitnessSplit: " ++ name) else
+        match groupFormula D g with
+        | none => .error ("InvalidInput: group " ++ name ++ " spans are outside the supported fragment")
+        | some ψ => req (ψ == φ) ("ManifestMismatch: groups." ++ name),
   fun _ => allOk D.K.constraints fun k => req ([k.a, k.b].all fun (s, v, i) =>
       (activeSets D).any fun rs => rs.id == s && rs.version == v && decide (i < rs.readings.length))
     ("InvalidInput: constraint names an inactive reading")]

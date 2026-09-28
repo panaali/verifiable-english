@@ -347,9 +347,9 @@ def test_theta_plural(lean):
 
 # (μ) Same-witness fusion and the J5 negatives
 
-def fusion(content=None, extra_sets=(), reading=None):
+def fusion(content=None, extra_sets=(), reading=None, opening="A service is deployed."):
     fused = ["exists", "service", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
-    doc = document(["A service is deployed.", "It is reviewed."], contents=content,
+    doc = document([opening, "It is reviewed."], contents=content,
                    extra={"groups": [{"set": "rs1", "version": 1, "reading": 0, "spans": ["u1", "u2"]}]})
     doc["reading_sets"] = [{"id": "rs1", "version": 1, "readings": [reading or fused]}, *extra_sets]
     return doc
@@ -364,6 +364,16 @@ def test_mu_group_single_assertion(lean):
     split = ["and", ["exists", "service", ["unary", "deployed", ["var", 0]]],
              ["exists", "service", ["unary", "reviewed", ["var", 0]]]]
     assert admit(fusion(reading=split))["error"] == "WitnessSplit: rs1@1:0"
+
+
+def test_mu_group_reading_is_regenerated(lean):
+    """Astra A2: a shared-witness reading that is not the spans' English is a manifest mismatch."""
+    def fused(p, q):
+        return ["exists", "service", ["and", ["unary", p, ["var", 0]], ["unary", q, ["var", 0]]]]
+    for reading in (fused("safe", "safe"), fused("reviewed", "deployed"), fused("deployed", "safe")):
+        assert admit(fusion(reading=reading))["error"] == "ManifestMismatch: groups.rs1@1:0", reading
+    universal = fusion(opening="Every service is deployed.")
+    assert admit(universal)["error"] == "InvalidInput: group rs1@1:0 spans are outside the supported fragment"
 
 
 # (ν) Universal plus it
