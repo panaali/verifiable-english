@@ -20,7 +20,9 @@ from ve.surface.softnorms import parse_header_options, render_header_options
 from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
+from ve.softnorms import load_soft_document
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
+                                    soft2_reproducers, multi_fault_cases, multi_faults,
                                     compare_rejected, main as conformance_main)
 
 
@@ -174,17 +176,47 @@ def test_reported_diagnostic_codes(raw, rules, code):
     assert python_error.value.to_dict()["code"] == code
 
 
-@pytest.mark.parametrize("name,raw,rules,code", list(loop_recheck_reproducers()))
+@pytest.mark.parametrize("name,raw,rules,code",
+                         [*loop_recheck_reproducers(), *soft2_reproducers()])
 def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     with pytest.raises(VEError) as python_error:
-        SoftNormDocument(SoftEnvironment(raw), rules)
+        load_soft_document(raw, rules)
     with pytest.raises(VEError) as lean_error:
         _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
     assert python_error.value.code == lean_error.value.code == code
+    assert python_error.value.to_dict()["code"] == code
+
+
+def test_multi_fault_generator_covers_the_table():
+    faults = multi_faults()
+    assert {f[2][0] for f in faults} == {1, 2, 3, 4, 5, 6}
+    cases = list(multi_fault_cases())
+    sizes = {name.count("+") + 1 for name, *_ in cases}
+    assert sizes == {2, 3}
+    phases = {name: {f[2][0] for f in faults if f[0] in name.split("+")} for name, *_ in cases}
+    assert any(len(p) == 1 for p in phases.values())
+    assert any(len(p) >= 2 for p in phases.values())
+    assert len({code for *_, code in cases}) >= 20
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 1129
+    assert compare_rejected() == 4100
+
+
+def test_document_checks_environment_and_rules_as_one_source(tmp_path):
+    raw = env({"parties": ["p"], "outranking": {"mode": "strict"}})
+    raw["vocabulary"]["predicates"]["z"] = {"arguments": ["assistant"], "description": "z",
+                                            "instruction_of": "missing"}
+    rule = should("a", "x_required", True)
+    rule["norm"]["exception"]["factors"] = ["x" * 201]
+    meta = {"format": "ve-document@1", "environment": raw,
+            "units": [{"id": "u", "span": [0, 2], "kind": "norm",
+                       "meaning": "specified", "support": "none", "content": rule}]}
+    path = tmp_path / "faults.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
+    with pytest.raises(VEError) as error:
+        check_document(path)
+    assert error.value.code == "SOFT_INVALID_FACTORS"
 
 
 @pytest.mark.parametrize("parties", [("a",), ("a", "b"), ("a", "b", "c"),
@@ -299,7 +331,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 1129
+    assert report["rejected_inputs"] == 4100
 
 
 @pytest.mark.parametrize("role,sign,effect", [
