@@ -1,10 +1,12 @@
 # W6: quantities, unit identity, and calendar conventions
 
-> Status: **draft for the required statement review**, 2026-09-27; repository
-> baseline `9db5a20`. This specifies W6 of [PLAN-EXPAND2](../../PLAN-EXPAND2.md#w6-quantities-in-documents-dates-scaled-decimals-counting-sugar-and-finite-traces-on-top-of-order0).
-> Rule 10 and binding decision 9.3 require Astra + Fable xhigh review before
-> build. No review, implementation, Lean proof, or coverage gain is claimed by
-> this document. Preparing it uses no model calls.
+> Status: **converged REVISE applied**, 2026-09-28; repository baseline
+> `9db5a20`, original draft `6923008`. This specifies W6 of [PLAN-EXPAND2](../../PLAN-EXPAND2.md#w6-quantities-in-documents-dates-scaled-decimals-counting-sugar-and-finite-traces-on-top-of-order0).
+> This revision applies [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
+> plus [Fable round 3(a–c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z),
+> as selected by the writing task. Rule 10 and decision 9.3 still require
+> section re-review of the amended contracts before build. No implementation,
+> Lean proof, or coverage gain is claimed. This revision uses no model calls.
 >
 > Priority: [NORTH-STAR, rank 3](/home/seyran/code/ve-northstar/NORTH-STAR.md#feature-priority),
 > commit `01b1090`: quantities/units and graded comparisons, with separate open
@@ -52,6 +54,35 @@ The new environment extension is `unit_schema: "ve-units@1"` and `units`, a
 map from unit identifiers to records. These fields are admitted only on the
 W6 route. An absent extension preserves the old environment bytes and enables
 none of this syntax. An explicit but empty extension is a distinct environment.
+These are `document.environment.unit_schema` and `document.environment.units`;
+`document.units` remains the array of source units. There is no field collision
+and no `unit_tags` rename. One complete nested front-matter example, for the
+source bytes `3.75% < 4.00%.\n` (15 UTF-8 bytes), is:
+
+```json
+{
+  "format": "ve-document@1",
+  "environment": {
+    "language": "ve.core@0.2",
+    "profiles": ["documents@1", "order@0", "relational-fol@0", "time@0"],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {"sorts": {}, "predicates": {}, "constants": {}},
+    "unit_schema": "ve-units@1",
+    "units": {"bp": {"scale": "100", "display": {"kind": "percent"}}}
+  },
+  "units": [{
+    "id": "bounds", "span": [0, 15], "kind": "asserted",
+    "meaning": "specified", "support": "assumption",
+    "content": {"quantity": {
+      "format": "ve-quantity@1", "traces": [],
+      "formula": ["lt", ["decimal", "bp", "3.75"], ["decimal", "bp", "4.00"]]
+    }}
+  }]
+}
+```
+
+This is proposed W6 input, not currently accepted input. Section 3 defines
+the submitted literal forms and their canonical identity representation.
 The two fields must occur together. In an extended environment, legacy-shaped
 formula content is interpreted only as dimensionless source input and must
 pass the same annotated admission; it cannot bypass tagged signature checks.
@@ -103,11 +134,12 @@ environment hook, without editing existing `ve/ast.py` constructors.
   equality of scales, labels or an inferred physical dimension. Two tags with
   identical declarations remain incompatible. Different currencies need
   different tags. `%` is not a universally shared quantity type.
-* `$3.75` is accepted only when the environment's enabled surface has exactly
-  one declared currency interpretation for `$`; otherwise it is ambiguous.
-  The example above binds it explicitly to USD. Canonical English says
-  `USD 3.75`. Labels that collide use the explicit wording `3.75 in unit <tag>`;
-  the parser never guesses from context.
+* Environment admission requires injective display forms on the enabled
+  surface: at most one `percent` tag, one tag per currency code, one tag per
+  `input_symbol`, and pairwise distinct `decimal` labels. Other collisions
+  between enabled forms also reject; a unit identifier is never an English
+  disambiguation escape. `$3.75` in the example binds to USD and canonically
+  renders `USD 3.75`. The parser never guesses a tag from context.
 
 Unit declarations, including unused ones and display labels, enter
 `environment_id`. The source claim's context (which estimate, whose age, which
@@ -170,6 +202,10 @@ A percentage *level* and a percentage-point *change* use the same `bp` grid:
 `0.25 percentage points`. This is same-tag subtraction, not a conversion to
 a new tag. The renderer recognizes the difference expression; a standalone
 change quantity needs an identity-bound declaration naming it as a change.
+“N percentage points” is an input alias for a `bp` literal only on the
+right-hand side of an equality stating a same-tag difference, as in section 4;
+it renders with the same wording there and rejects elsewhere. This alias does
+not introduce a new tag or authorize relative-percentage arithmetic.
 “Increased by 0.25%” is not rewritten to “increased by 0.25 percentage points”:
 the former may be a relative change. No rate baseline is invented.
 
@@ -177,8 +213,26 @@ the former may be a relative change. No rate baseline is invented.
 
 ### 3.1 Canonical representation
 
-A W6 document's proposed content form is
-`{"quantity":{"format":"ve-quantity@1","formula":Q}}`. `Q` is a separate
+A W6 document submits
+`{"quantity":{"format":"ve-quantity@1","formula":S,"traces":T}}`.
+`S` is the pre-lowering statement tree supplied to Lean, not merely the
+already-lowered coordinates. It uses the annotated grammar below plus the
+literal forms `["decimal", tag, decimal_string]` (arity 2) and
+`["date", iso_date_string]` (arity 1, fixed tag `day`). Decimal strings carry
+the signed value in the declared display unit, without a percent/currency
+suffix; date strings use section 6.1's ISO form. Lean executes the exact
+decimal conversion underlying `Time.decimal_exact` and the proved date
+conversion, rejecting invalid or off-grid literals, to regenerate `Q`.
+Already-coordinate `["num", tag, integer_string]` input is permitted but
+asserts only that coordinate, not correspondence to a different source literal.
+
+`T` is the trace-declaration array specified in section 6.4; omission
+canonicalizes to `[]`. An optional `Q` field in the submitted quantity object
+is an untrusted claimed lowered tree and must equal regeneration structurally.
+It is omitted from the canonical identity payload. The latter is exactly
+`{"format":"ve-quantity@1","formula":Q,"traces":T}` with canonical `T`.
+Unknown fields reject. Counting sugar has already expanded before `S` and
+identity; it has no separate counting wire node. `Q` is a separate
 statement-layer tree: existing formula constructors are retained, but each
 integer term and integer binder carries its tag. In this tree alone:
 
@@ -203,6 +257,7 @@ whose omitted entry can be interpreted differently by two readers. Decoders
 select this grammar only under `ve-quantity@1`; legacy AST decoders must not
 accept these extra fields. Temporal forms are specified in section 6 and are
 regenerated in Lean; a sender cannot substitute their claimed expansion.
+The literal-only `decimal` and `date` nodes never survive in `Q`.
 
 The quantity `meaning_id` uses the existing environment-bound v0.2 meaning
 domain, with the entire canonical `ve-quantity@1` object as its `ast` payload,
@@ -227,7 +282,9 @@ formula reached through a reading or citation, the W6 route must:
 2. Reconstruct scope and check every term, constant, binder, signature slot,
    comparison, and arithmetic operation. Check calendar operations separately.
    Python provides early diagnostics; Lean `Time.units_admit` is authoritative.
-3. Regenerate literal/calendar lowering in Lean and obtain the erased formula
+3. From submitted `S`, regenerate literal lowering in Lean and require any
+   supplied `Q` to equal that annotated result structurally. Regenerate the
+   calendar/trace operations retained in `Q`, then obtain the erased formula
    and target environment. Decode no user-supplied erased formula as authority;
    if one accompanies the source, require structural equality with regeneration.
 4. Verify the quantity identity, erased identity, environments, profiles,
@@ -236,6 +293,16 @@ formula reached through a reading or citation, the W6 route must:
 5. Bind the report and transitive support to the approved annotated statement,
    including reading choices, open-term versions and bridge leaves. Render
    quantities from those annotations, including counterexample values.
+
+The English route must derive `S` uniquely from the text, and any accompanying
+`S`, `Q`, or `meaning_id` must agree with that derivation and its regeneration.
+In particular, `3.75%` supplies `["decimal", "bp", "3.75"]`: pairing it with
+an individually well-typed `376:bp` in a supplied `Q` rejects in Lean, before
+erasure. Hashing both objects does not establish correspondence. Text-to-`S`
+fidelity remains the surface/W8 gate, with Python/Rust differential checks;
+Lean checks the submitted literals, not the original English bytes. Retain
+the counting theorem and substitution tests without claiming that Lean can
+recover original counting sugar from its already-expanded input.
 
 Raw order certificates remain valid for their old raw order claims. They
 cannot by themselves certify a W6 quantity statement. Relabelling an erased
@@ -279,9 +346,9 @@ approved verbalisation, not an unproved functional lookup.
 | “The lower target bound is at least 3.75%.” | `375:bp <= lower`; inclusive |
 | “The upper target bound is at most 4.00%.” | `upper <= 400:bp`; inclusive |
 | “The reported rate is from 3.75% through 4.00%, including both bounds.” | conjunction of the two inclusive inequalities |
-| “The difference between the September estimate and the June estimate equals 0.10 percentage points.” | September minus June `= 10:bp`; ordered subtraction |
-| “For every integer n, n is at most n.” | dimensionless binder and occurrences |
-| “For every quantity q in unit bp, q is at most 4.00%.” | all integer coordinates in tag `bp`; no hidden finite domain |
+| “The September estimate minus the June estimate equals 0.10 percentage points.” | September minus June `= 10:bp`; ordered subtraction |
+| “For every integer n, n is at most n.” | dimensionless binder and occurrences; **gated on numbers2** |
+| “For every percentage q, q is at most 4.00%.” | all integer coordinates in the sole percent-display tag (`bp` here); no hidden finite domain; **gated on numbers2** |
 | “The return date is after 2026-09-16.” | section 6's guarded strict date-coordinate comparison |
 
 “Between”, “by”, “over”, “higher”, “within a month”, bare “always”, and an
@@ -333,6 +400,15 @@ atMost(n, P)  = not atLeast(n+1, P)
 n of the m S are P = exactly(m, S) and exactly(n, S and P)
 ```
 
+Canonical conjunctions are right-associated, with no trailing `true`. Under
+binder `xj`, list `xj != x1`, ..., `xj != x(j-1)` in that order, then `P(xj)`,
+then the next existential if present. Each inequality is `not (xj = xi)`;
+the predicate comes after distinctness tests. Preserve the displayed order
+of the two conjuncts in `exactly` and `n of the m`, and of `S and P`.
+Fresh binders shift outer indices capture-safely. This fixes the expanded
+AST identity as well as the evaluator's traversal; equivalent reassociation
+is not the canonical expansion.
+
 Counts are nonnegative integer literals. Admit `at least n` for `n <= 8`,
 `exactly n` / `at most n` for `n <= 7`, and `n of the m` only for
 `0 <= n <= 7` and `0 <= m <= 7`. The case `n > m` remains an expressible
@@ -344,14 +420,27 @@ over an integer sort still ranges over all integers, never a model's listed
 sample. Ordinary resource limits apply after expansion; a failed search is
 UNKNOWN, not a certificate of nonexistence.
 
+The caps are **admission bounds, not evaluation guarantees**. With this
+expansion and the current `MAX_EVALUATIONS = 1,000,000`, `exactly 7` and
+`7 of the 7` cannot evaluate true in any finite model: a true instance has
+at least seven satisfying entities, and refuting the embedded `at least 8`
+already exceeds the budget on those entities alone. They may evaluate false,
+report UNKNOWN naming the exhausted budget, or be certified on the proof
+route. Section 8 gate 4 pins positive six-entity evaluation fixtures and
+seven-entity UNKNOWN fixtures. Restoring guaranteed positive evaluation at
+seven requires a separately reviewed evaluator/expansion change; no budget
+increase is adopted here. User-sort counting belongs to W6a; counting over
+`$int` is **gated on numbers2** and never uses a finite sample as its domain.
+
 Ratios are not division terms. A source “1 in 1,000” might describe a finite
 population, an illustrative scenario, or a statistical claim. W6 must preserve
 that reading and its denominator. As an independent arithmetic illustration,
 the exact scalar `0.1%` is `10:bp`; `0.0001%` cannot be represented by `bp`
-without loss. A separately declared percent-display tag at scale 1,000,000 can
-represent the latter with coordinate 100, but there is no conversion or
-comparison across that tag and `bp`. This does not license treating the
-constitution's hypothetical ratios as measured probabilities.
+without loss. In a **separate environment**, whose only percent-display tag
+has scale 1,000,000, the latter has coordinate 100. That environment does not
+also declare `bp`; section 2.1's display-injectivity rule still holds. There is
+no conversion or comparison across the two environments/tags. This does not
+license treating the constitution's hypothetical ratios as measured probabilities.
 
 Similarly, a two-thirds voting threshold is not `66.67%`. If independently
 supported integer counts `yes` and `eligible` are supplied in the same tag,
@@ -385,7 +474,8 @@ quantifier over “integer day coordinates” ranges over all integers. English
 “for every date d” expands with the visible guard
 `validDate(d) := 0 <= d and d <= 2932896`; existential date quantification
 conjoins that guard. This is a formula abbreviation, not a new predicate
-whose truth a model may supply. Named day coordinates can likewise be out
+whose truth a model may supply. Both forms of date quantification are
+**gated on numbers2**. Named day coordinates can likewise be out
 of display range in an unconstrained integer model: report the coordinate
 and `DateRange` diagnostic, never fabricate a calendar date or discard a
 counterexample. Date operations below contain explicit guards, so any model
@@ -405,16 +495,30 @@ The direct temporal meaning and regenerated integer formula must agree.
 | `date_before(t,d)` / “t is before d” | `G(d,t) and t < d` |
 | `date_after(t,d)` / “t is after d” | `G(d,t) and d < t` |
 | `date_no_later(t,d)` / “t is no later than d” | `G(d,t) and t <= d` |
-| `within_days(t,d,n)` / “t is within n days of d, including both endpoints” | `G(d,t) and d <= t and t <= d+n` |
+| `within_days(t,d,n)` / “t is on or after d and on or before n days after d” | `G(d,t) and d <= t and t <= d+n` |
 | `shift_days(t,d,n)` / “t is n days after d” | `G(d,t) and t = d+n` |
 | `elapsed_days(d,t,v)` / “The elapsed duration from d to t equals v days” | `G(d,t) and v = t-d`; `v:elapsed_day` |
-| `sunday(t)` / “t is a Sunday” | `validDate(t) and exists q:dimensionless. t = 7*q+3` |
+| `sunday(t)` / “t is a Sunday” | `validDate(t) and exists q:dimensionless. t = 7*q+3`; **gated on numbers2** |
+| `["excluded_sundays", D, d, n]` / section 6.3's wording | Arity 3; `D,d:day`, literal `n >= 0`; section 6.3's guarded disjunction; **gated on numbers2** |
+| `["forall_date", body]` / “For every date d, ...” | Arity 1; binds `d:day` at de Bruijn index 0; `forall d. validDate(d) -> body`; **gated on numbers2** |
+| `["exists_date", body]` / “For some date d, ...” | Arity 1; binds `d:day` at index 0; `exists d. validDate(d) and body`; **gated on numbers2** |
+| `["trace_all", name, body]` / section 6.4's universal wording | Arity 2; trace reference plus formula; binds position `t` at index 0 with the referenced tick tag; section 6.4's bounded universal; **gated on numbers2** |
+| `["trace_some", name, body]` / section 6.4's existential wording | Arity 2; same reference/scope, bounded existential; **gated on numbers2** |
 
 Wire operations are arrays `[operation, operands...]` with the names and
-operand order in this table; operands are annotated terms, except `n`, a
-canonical nonnegative integer literal string. Each operation has its listed
-arity and unit signature. `elapsed_days` uses a tagged quantity for `v`;
-its signed value distinguishes duration from the nonnegative deadline offset.
+operand order in this table. `date_on`, `date_before`, `date_after` and
+`date_no_later` have arity 2 and two `day` terms; `within_days` and `shift_days`
+have arity 3 with two `day` terms and `n`, a canonical nonnegative integer
+literal string. `elapsed_days` has arity 3 (`day`, `day`, `elapsed_day`);
+`sunday` has arity 1 (`day`). The first seven operations are quantifier-free
+and belong to W6a. The additional rows specify their own operand types.
+`body` is an annotated formula, not a term; `name` is an identifier resolving
+only in the containing quantity object's `traces` array. Missing references
+reject; there is no implicit current trace or lookup in another claim.
+Date and trace binders scope over their body only, shift outer indices by
+one, and require every occurrence to match the bound tag. Lean generates
+guards and fresh residue binders capture-safely. `elapsed_days` uses a tagged
+quantity for `v`; its signed value distinguishes duration from the nonnegative deadline offset.
 The fixed literal offset `n` is part of the operation, not a day-valued date.
 
 These checked operations permit date shifting and date subtraction despite
@@ -424,8 +528,9 @@ generates the integer additions/equalities itself. This generated arithmetic
 is not a user-authored exception to the homogeneous arithmetic rule. Supplying
 a date-plus-money expression or manually retagging a date as days is rejected.
 
-“Within n days of d” has the plan's **forward** interval `[d,d+n]`, not a
-symmetric interval. At `n=0` only `d` is included. “After” excludes its bound;
+The explicit “on or after d and on or before n days after d” wording denotes
+the plan's **forward** interval `[d,d+n]`; bare “within n days of d” is not an
+alias. At `n=0` only `d` is included. “After” excludes its bound;
 “no later than” includes it. An offset may cross a leap day or a year boundary.
 For an exact shift or excluded-day deadline, if the computed date leaves the
 supported display interval, there is no satisfying endpoint assignment;
@@ -444,6 +549,10 @@ model rather than a new W6 timezone theorem.
 
 ### 6.3 Sundays excepted
 
+This entire operation is **gated on numbers2**; the baseline must reject it
+with `UnsupportedProfile` naming `$int` quantification and the missing
+numbers2 route before certification.
+
 `excluded_sundays(D,d,n)` says that `D` is the deadline **n non-Sundays after
 d**, excluding the starting date and including the ending date. Its direct
 definition is the least `D >= d` for which the number of non-Sundays in
@@ -456,9 +565,16 @@ Lean regenerates seven offsets `off(k,n)` and admits:
 
 ```text
 validDate(d) and validDate(D) and
-  and over k=0..6:
-    ((exists q:dimensionless. d = 7*q+k) -> D = d+off(k,n))
+  or over k=0..6:
+    (exists q:dimensionless. d = 7*q+k and D = d+off(k,n))
 ```
+
+The disjunction is right-associated in residue order 0 through 6, with a
+fresh `q` in each branch and both date guards retained. This is the canonical
+expansion, replacing the plan's conjunction of residue implications. Require
+a Lean equivalence lemma between the guarded disjunction and guarded
+implication form, as well as `Time.excludedDays_iff`; equivalent truth alone
+does not make their wire identities interchangeable.
 
 This is fixed-coefficient integer arithmetic after expansion, with no trusted
 table of deadlines on the wire. The offset function must have a bounded
@@ -473,10 +589,30 @@ legal exceptions cannot be inferred from this calendar calculation.
 
 ### 6.4 Finite traces
 
-A finite trace declares an origin, tick unit, and nonnegative integer horizon
-`H` in identity-bound document content. The scope is `[0,H]`, inclusive, so
-there are `H+1` positions. Write “At every position from 0 through H, ...” and
-“At some position from 0 through H, ...”; standalone unbounded “always” and
+Finite traces are **gated on numbers2**. Each trace is declared in the
+containing `ve-quantity@1` object's `traces` array, with exactly these fields:
+
+```json
+{"name":"review_window","tick_tag":"elapsed_day","origin":"presentment","horizon":"10"}
+```
+
+`name` is a unique identifier within that quantity object; canonical `T`
+sorts declarations by name. `tick_tag` resolves to `dimensionless` or a
+declared scale-1 non-date unit. `origin` resolves to a constant in the
+identity-bound environment vocabulary naming a reference event in a user
+sort; it is not a free string, date coordinate, variable, or trace reference.
+`horizon` is a canonical nonnegative integer literal string under the existing
+numeral-length limit. Reject unknown fields, duplicate names, unresolved or
+ill-typed references, and invalid horizons. All declarations, including unused
+ones, enter quantity identity. They cannot be shared by name across claims.
+
+`["trace_all", "review_window", body]` or
+`["trace_some", "review_window", body]` explicitly selects that declaration.
+Each binds one integer position with its tick tag at de Bruijn index 0 in
+`body`; nesting obeys the usual index shifts and does not rebind trace names.
+The scope is `[0,H]`, inclusive, so there are `H+1` positions. Write “At every position from 0 through H, ...” and
+“At some position from 0 through H, ...”, naming the selected trace by its
+approved wording; ambiguous selection rejects. Standalone unbounded “always” and
 “eventually” are not offered as interchangeable wordings.
 
 The tick unit is `dimensionless` or a declared scale-1 non-date unit. A trace
@@ -489,6 +625,9 @@ Elaborate to `forall t. (0 <= t and t <= H) -> phi(t)` and
 substitution. `H=0` contains position 0; negative horizons reject. The bounds
 are in the formula, never a finite interpretation of the entire integer sort.
 Changing `H`, origin or tick unit changes the approved document/claim identity.
+In particular, replacing only `origin` with another declared reference-event
+constant leaves the erased formula unchanged but changes quantity identity
+and invalidates the old approval, proof/model wrapper and citations.
 No infinite-trace, real-time or liveness conclusion follows. Any `phi` requiring
 the deferred mixed n-ary/order route remains unsupported. FRET must be
 re-rated using user-sort time separately, as the plan requires.
@@ -514,7 +653,7 @@ estimate subject, projection period and old/new role; never reuse one unnamed
 
 | Fixture / source row | Proposed admitted numerical wording and core | Required result / residual |
 |---|---|---|
-| N01 / row 1, S1 | “The decision date is on 2026-09-16.” `decision_date = 20712:day`, with date guards. | Date payload direct; weekday checks Wednesday. No inference about who voted or future increases. |
+| N01 / row 1, S1 | “The decision date is on 2026-09-16.” `decision_date = 20712:day`, with date guards. | Date payload direct in W6a; the certified weekday check (Wednesday) is **gated on numbers2**. No inference about who voted or future increases. |
 | N07 / row 7, S2 | “The new target lower bound equals 3.75%. The new target upper bound equals 4.00%.” Coordinates `375`, `400`, tag `bp`. | Numeric bounds DIRECT; certify `375 < 400`. A range is two bounds, not a single midpoint or an asserted realised rate. |
 | N07b / row 7b, S2 | Quarter-percentage-point move: magnitude token `25:bp`. | **NO for the old/new comparison**, as required by the plan: no old endpoint is supplied. Do not insert 3.50% or derive it from an invented equality. The magnitude token alone is representable. |
 | N08 / row 8, S3 | “Exactly 16 of the 18 policymakers ...”, and “2 of the 18 ...”. | Direct count rejected: denominator 18 exceeds 7 for exact counting. Plan target remains REIFIED, explicitly with an unchecked count; not DIRECT or certified cardinality. No silent enumeration of 18 witnesses. |
@@ -574,6 +713,8 @@ non-Sundays in `(d,D]` gives:
 | Sunday / 2026-09-20 | 3 | 11 | 2026-10-01 |
 
 Residues use the declared epoch: Thursday=0 and Sunday=3 throughout.
+The elaboration, checked models and certified entailment in this fixture are
+**gated on numbers2**; independent calendar enumeration alone does not lift it.
 Every row needs a checked model agreeing with the brute-force calendar.
 Given valid presentment/return/deadline dates, certify that return on elapsed
 day 11 is always timely. Refute “return on elapsed day 12 is always timely”
@@ -590,10 +731,11 @@ statement review must assess these meanings before implementation starts.
 | `Time.units_admit_sound` | Successful executable admission implies every integer occurrence/binder, signature slot and canonical time operation has the declared compatible tag; no unchecked field or operation reaches erasure. |
 | `Time.erase_wellTyped` | Erasing an admitted quantity statement yields a well-typed formula in the selected, supported core environment. |
 | `Time.units_faithful` | Evaluation of an admitted annotated statement in its direct tagged semantics equals evaluation of its regenerated core formula; the units-only environment maps give a unique corresponding tagged interpretation for each admissible lower structure. This preserves truth, not measurement accuracy. |
-| `Time.decimal_exact` | Decimal lowering succeeds iff the input is on the declared integer grid, and canonical rendering recovers exactly that value/tag without rounding. |
+| `Time.decimal_exact` | Decimal lowering succeeds iff the input is on the declared integer grid, and canonical rendering recovers exactly that value/tag without rounding. Lean executes this conversion on submitted `S` and checks structural correspondence with any supplied `Q`; original text-to-`S` fidelity is a separate W8 obligation. |
 | `Time.dayNumber` inverse / monotonicity | Every accepted date has its unique day coordinate, inverse rendering recovers it, and chronological order agrees with integer order throughout the supported interval. |
 | `Time.temporal_iff` | Guarded endpoint, shift and elapsed-duration formulas express exactly section 6's direct calendar meanings, including signed differences and range boundaries. |
 | `Time.excludedDays_iff` | The seven-case deadline equals the least day with n non-Sundays in `(d,D]`, including n=0. |
+| Guarded Sunday-expansion equivalence | With both date guards retained, section 6.3's disjunction of existential residue cases is equivalent to the previous conjunction of residue implications. |
 | `expand_atLeast_iff` and substitution lemmas | The nested fresh-binder expansion holds iff at least n distinct witnesses satisfy the property, in finite and general structures, with outer scopes preserved. |
 | `Time.trace_iff` | Bounded universal/existential expansion quantifies exactly over the inclusive trace positions and preserves substitution and units. |
 | W6 composed admission/report soundness | An accepted W6 report refers to the bound annotated claims and their admitted readings/support, and its regenerated core evidence justifies those claims. Raw erased evidence alone cannot produce this report. |
@@ -609,25 +751,61 @@ Required conformance and authoring gates:
    scale/display, unused new declarations, changed horizons, and wrong erased
    payloads either change the appropriate identity or reject; none preserve a
    reusable approval. Include the same erased AST under two different tags in
-   the same environment, and mutated citations/proofs/models.
+   the same environment, and mutated citations/proofs/models. Pair submitted
+   `3.75%` / `["decimal", "bp", "3.75"]` with a well-typed `376:bp` in supplied
+   `Q`: Python, Rust and Lean must reject the mismatch. Mutate only a trace's
+   origin to another valid event constant: the erased formula stays the same,
+   but quantity identity changes and old approval/citations/proof/model wrappers
+   fail. Reject duplicate/unresolved trace references and wrong binder tags.
 2. **Exact arithmetic:** round-trip all section 2 examples; reject excess
    precision, cross-currency comparison, raw integer-to-unit coercion, and
    rounding to `66.67%`. Show that a literal zero also needs the right tag.
    Compare Python/Lean lowering and Rust evaluation over deterministic signed
-   decimals and values near the existing numeral-length limit.
+   decimals and values near the existing numeral-length limit. Reject
+   environments with colliding percent, currency-code, input-symbol or decimal
+   label displays. Test the percentage-point alias in its sole allowed
+   difference position and reject it elsewhere; the fine-percent fixture uses
+   a separate environment with one percent-display tag.
 3. **Calendar:** compare `dayNumber` with Python `datetime` on 10,000
    deterministic accepted dates, including both range endpoints, year ends,
    2000-02-29 and the 2100 exception. Reject invalid/pre-epoch/pre-Gregorian
    literals; test signed elapsed differences, date-versus-duration comparison,
    `n=0`, start exclusion, Sunday endpoints and all seven deadline residues.
+   Date binders, weekday/Sunday cases and section 7.3's proof/witness checks
+   are **gated on numbers2**; quantifier-free conversion/date cases are W6a.
    Separately check proof/witness requirements in section 7.3; brute-force
    agreement is evidence for the implementation, not the Lean theorem.
-4. **Counting/trace:** `at least 8`, `exactly 7`, and `7 of the 7` evaluate
-   within `MAX_EVALUATIONS`; `at least 9`, `exactly 8`, `16 of the 18` reject
-   at the counting bound. Include zero, the inconsistent `2 of the 1`,
-   repeated witnesses, outer-variable
-   references, nested counts, same-spelled binder names, mixed unit binders,
-   H=0 and out-of-horizon witnesses. Unexpanded counting never certifies.
+4. **Counting/trace:** retain admission caps 8/7/7, separately from evaluation
+   guarantees. Pin the section 5 canonical expansion and finite models with
+   one user sort `item`, exactly the listed entities `e1` through `eN`, no
+   others, no constants, and unary predicates `P` and `S` true of every entity.
+   The predicate bodies are single unary atoms; `S and P` is that ordered
+   two-atom conjunction. Use the current evaluator with `trace=False` and
+   `max_evaluations=MAX_EVALUATIONS=1,000,000`; no trace-node budget participates.
+   These counts were reproduced locally while applying the revision and must
+   be asserted by the build's regression fixtures:
+
+   | Input | N | Required finite-evaluation result | Evaluations |
+   |---|---:|---|---:|
+   | `at least 8 P` | 8 | true (`Satisfied`) | 359 |
+   | `exactly 6 P` | 6 | true (`Satisfied`) | 120,536 |
+   | `6 of the 6 S are P` | 6 | true (`Satisfied`) | 244,997 |
+   | `exactly 7 P` | 7 | `ResourceLimit`, value absent; report UNKNOWN naming `MAX_EVALUATIONS` | 1,000,000 |
+   | `7 of the 7 S are P` | 7 | `ResourceLimit`, value absent; report UNKNOWN naming `MAX_EVALUATIONS` | 1,000,000 |
+   | `at least 8 P` | 7 | `ResourceLimit`, value absent; report UNKNOWN naming `MAX_EVALUATIONS` | 1,000,000 |
+
+   The positive seven-count fixtures must never be reported false or as
+   successfully evaluated. Under this expansion and budget, `exactly 7` and
+   `7 of the 7` cannot evaluate true in any model; false/UNKNOWN or a separately
+   checked proof-route result remain possible. The six-entity positive envelope
+   is fixture-specific, not a guarantee for arbitrary predicates or domains.
+   `at least 9`, `exactly 8`, `at most 8` and `16 of the 18` reject at admission
+   naming the bound; both numerator and denominator bounds are tested.
+   Include zero, the admitted but inconsistent `2 of the 1`, repeated witnesses,
+   outer-variable references, nested counts and same-spelled binder names.
+   Mixed integer-unit binders, traces, `H=0` and out-of-horizon witnesses are
+   **gated on numbers2**. Unexpanded counting never certifies. These fixtures
+   amend W6(4), subject to decision 9.3 section re-review.
 5. **Source fidelity:** N07/N21/N22/N23 gain direct numeric representations;
    N07b/N22b keep their missing-operand residuals; N08 remains uncertified
    cardinality. Preserve the C fixtures' hypotheticals, kinds, readings and
@@ -640,7 +818,11 @@ Required conformance and authoring gates:
    approved wording, paraphrase, satisfying example and rejected alternative
    with units restored in every witness. Until its fidelity gate passes a
    construct remains strict-only; an internal annotated wire tree is not a
-   user-facing English feature.
+   user-facing English feature. Strict-only is an authoring gate, never
+   permission to admit an unsupported route. Baseline integer-quantifier
+   constructs must reject with `UnsupportedProfile` naming `$int`
+   quantification and the missing numbers2 route until that proved route
+   is available.
 
 Use the existing source/package/node/depth/evaluation budgets and diagnostics;
 resource limits cannot produce acceptance or a false logical result. Exact
@@ -668,16 +850,28 @@ The reviewers must explicitly settle these concretisations of the plan:
   literal spelling are absent from meaning identity; temporal operation
   parameters remain bound so Lean can regenerate and justify their erasure.
 
-If review treats any choice as a departure from W6, record the amendment in
-PLAN-EXPAND2's change log and obtain the section re-review required by decision
-9.3 before building it. This draft itself does not amend the adopted plan.
+The selected REVISE changes W6(4)'s evaluation acceptance, the canonical Sunday
+expansion, and W6 scheduling. Those amendments are recorded in PLAN-EXPAND2's
+change log and affected passages. Obtain the section re-review required by
+decision 9.3 before building the amended contracts; applying these edits is
+not that re-review. Admission caps remain 8/7/7.
+
+The adopted split is W6a (sections 2–3's ground quantities, section 5's
+user-sort counting, and the seven quantifier-free date operations) and W6b
+(`sunday`, `excluded_sundays`, date/integer binders, finite traces, and section
+7.3's certified timing fixture). W6a can start without numbers2 under the
+existing P0 admission, section-review, proof, conformance and English-fidelity
+gates. W6b waits for numbers2; W4 stage 1 remains required for n-ary relations
+over user sorts. Neither profile registration nor strict authoring lifts an
+unsupported route.
 
 After review, the W6 owner implements `ve/units.py`, `ve/surface/time.py`,
 `ve/surface/count.py`, `lean/VE/Time/*`, and the news fixtures. Coordinate
 environment/content decoding, identity and route admission through the P0/W2
 owners; Rust must receive the matching W6 boundary. Do not edit `ve/ast.py`
-or `ve/evaluate.py` to add a new logical constructor. Confirm numbers2's
-integer-quantifier route and W4 stage 1 are actually merged and supported:
+or `ve/evaluate.py` to add a new logical constructor. For the dependent slice,
+confirm numbers2's integer-quantifier route and W4 stage 1 are actually merged
+and supported:
 the baseline's order documentation still describes the earlier ground-only
 boundary, so registration alone is not that evidence. Gate calendar/trace
 forms requiring integer quantifiers until the proved route exists.
@@ -687,4 +881,25 @@ statements and audited proofs, local deterministic acceptance results, W8
 status, and refreshed source coverage with residuals. Conversions, unbounded
 counting, real-number measures, probabilities in formulas, timezones and
 W4 stage 2 retain the plan's deferred status and triggers. No model call or
-pre-build review has been run as part of writing this draft.
+new section re-review has been run as part of applying this revision.
+
+## 10. Change log
+
+* **2026-09-28 — selected converged REVISE.** Applied
+  [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
+  plus [Fable round 3 additions (a)–(c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z)
+  from the [design-units debate](/home/seyran/code/manage-agents/debates/design-units/result.txt).
+  Retained caps 8/7/7, separated admission from evaluation, pinned positive
+  six-entity and UNKNOWN seven-entity fixtures, and recorded the inability of
+  positive exact-seven counts to evaluate within the current budget. Specified
+  submitted literals and Lean regeneration of `Q`, the mismatch rejection,
+  trace declarations/references and date-binder/deadline wire forms. Added
+  display injectivity, English without tag identifiers, the percentage-point
+  alias, signed subtraction and explicit forward-window wording, a nested
+  `units` example, and the isolated fine-percent environment. Adopted the
+  guarded disjunctive Sunday expansion with equivalence proof, explicit
+  numbers2 rejection and W6a/W6b scheduling. Updated the plan's affected
+  contracts and change log; decision 9.3 section re-review remains required.
+  This applies the task's selected combination, not Astra round 3's different
+  cap-6/Q-only proposal. Local evaluator checks supply exact fixture costs;
+  no model calls, new review, implementation or coverage gain is claimed.
