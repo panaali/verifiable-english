@@ -286,3 +286,31 @@ def test_lean_budget_theorems_are_audited():
     audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
     for name in ("evalB_sound", "refutesB_sound", "quantB_sound"):
         assert f"#print axioms VE.Time.{name}\n" in audit
+
+
+# --- P2: the calendar inverse is unconditional -------------------------------
+
+def test_calendar_inverse_statement_is_unconditional():
+    source = (ROOT / "lean" / "VE" / "Time" / "Calendar.lean").read_text()
+    assert "theorem civilOf_num {D : Civil} (hD : D.Valid) : civilOf D.num = some D" in source
+    assert "theorem civilOf_complete {n : Nat} (hn : n ≤ dateMax) :" in source
+    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    for name in ("civilOf_num", "civilOf_complete", "civilCandidate_spec", "civilOf_isSome_iff"):
+        assert f"#print axioms VE.Time.{name}\n" in audit
+
+
+def test_every_month_boundary_converts_like_python():
+    from datetime import date, timedelta
+    days = set()
+    for year in (1970, 1971, 1972, 1999, 2000, 2024, 2100, 2400, 9998, 9999):
+        for month in range(1, 13):
+            first = date(year, month, 1)
+            days.add((first - date(1970, 1, 1)).days)
+            days.add((first - date(1970, 1, 1)).days - 1)
+            days.add((first - date(1970, 1, 1)).days + 27)
+    days = sorted(d for d in days if 0 <= d <= 2932896) + [2932896]
+    results = lean([{"id": str(d), "kind": "civil", "day": d} for d in days])
+    for d, got in zip(days, results):
+        assert got["status"] == "ok" and got["date"] == iso_date(d), (d, got)
+    [past] = lean([{"id": "p", "kind": "civil", "day": 2932897}])
+    assert past["status"] == "error" and "DateRange" in past["error"]

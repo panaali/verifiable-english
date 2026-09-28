@@ -380,12 +380,17 @@ def findYear (n : Nat) : Nat → Nat → Nat
   | 0, y => y
   | fuel + 1, y => if daysToYear (y + 1) ≤ n then findYear n fuel (y + 1) else y
 
-/-- The untrusted candidate date for coordinate `n`. -/
+/-- The month of day-of-year `r` in year `y`, searching upward from month `m`. -/
+def findMonth (y r : Nat) : Nat → Nat → Nat
+  | 0, m => m
+  | fuel + 1, m => if m < 12 ∧ daysBeforeMonth y (m + 1) ≤ r then findMonth y r fuel (m + 1) else m
+
+/-- The candidate date for coordinate `n`; `civilCandidate_spec` proves it is the
+accepted date with that coordinate whenever `n ≤ dateMax`. -/
 def civilCandidate (n : Nat) : Civil :=
   let y := findYear n 64 (1970 + n / 366)
   let r := n - daysToYear y
-  let m := ((List.range 12).map (· + 1)).foldl (fun m k =>
-    if daysBeforeMonth y k ≤ r then k else m) 1
+  let m := findMonth y r 11 1
   ⟨y, m, r - daysBeforeMonth y m + 1⟩
 
 def checkedCivil (n : Nat) (D : Civil) : Option Civil :=
@@ -406,8 +411,116 @@ theorem checkedCivil_sound {n : Nat} {C D : Civil} (h : checkedCivil n C = some 
 theorem civilOf_sound {n : Nat} {D : Civil} (h : civilOf n = some D) : D.Valid ∧ D.num = n :=
   checkedCivil_sound h
 
-/-- Rendering then decoding recovers an accepted date: the inverse is unique. -/
-theorem civilOf_num {D E : Civil} (hD : D.Valid) (h : civilOf D.num = some E) : E = D :=
-  num_injective (civilOf_sound h).1.1 hD.1 (civilOf_sound h).2
+theorem yearLen_le (y : Nat) : yearLen y ≤ 366 := by rw [yearLen_eq]; split <;> omega
+
+/-- Each year after the epoch has 365 or 366 days. -/
+theorem daysToYear_bounds (k : Nat) :
+    365 * k ≤ daysToYear (1970 + k) ∧ daysToYear (1970 + k) ≤ 366 * k := by
+  induction k with
+  | zero => simp [daysToYear_epoch]
+  | succ k ih =>
+    rw [show 1970 + (k + 1) = 1970 + k + 1 by omega, daysToYear_succ (by omega)]
+    have := yearLen_ge (1970 + k)
+    have := yearLen_le (1970 + k)
+    omega
+
+/-- The year search ends at the year containing `n` if that year is within reach. -/
+theorem findYear_spec (n : Nat) : ∀ (fuel y : Nat), daysToYear y ≤ n →
+    n < daysToYear (y + fuel + 1) →
+    daysToYear (findYear n fuel y) ≤ n ∧ n < daysToYear (findYear n fuel y + 1) ∧
+      y ≤ findYear n fuel y
+  | 0, y, h1, h2 => by
+    simp only [findYear]
+    exact ⟨h1, by simpa using h2, Nat.le_refl y⟩
+  | fuel + 1, y, h1, h2 => by
+    rw [findYear]
+    split
+    · rename_i h
+      have := findYear_spec n fuel (y + 1) h (by rw [show y + 1 + fuel + 1 = y + (fuel + 1) + 1 by omega]; exact h2)
+      exact ⟨this.1, this.2.1, by omega⟩
+    · rename_i h
+      exact ⟨h1, by omega, Nat.le_refl y⟩
+
+/-- The month search ends at the month containing day-of-year `r`. -/
+theorem findMonth_spec (y r : Nat) : ∀ (fuel m : Nat), 1 ≤ m → m ≤ 12 →
+    daysBeforeMonth y m ≤ r → 12 ≤ m + fuel →
+    1 ≤ findMonth y r fuel m ∧ findMonth y r fuel m ≤ 12 ∧
+      daysBeforeMonth y (findMonth y r fuel m) ≤ r ∧
+      (findMonth y r fuel m = 12 ∨ r < daysBeforeMonth y (findMonth y r fuel m + 1))
+  | 0, m, h1, h12, hd, hf => ⟨h1, h12, hd, Or.inl (show m = 12 by omega)⟩
+  | fuel + 1, m, h1, h12, hd, hf => by
+    unfold findMonth
+    split
+    · rename_i h
+      exact findMonth_spec y r fuel (m + 1) (by omega) (by omega) h.2 (by omega)
+    · rename_i h
+      refine ⟨h1, h12, hd, ?_⟩
+      by_cases hm : m < 12
+      · exact Or.inr (by omega)
+      · exact Or.inl (by omega)
+
+theorem daysToYear_tenThousand : daysToYear 10000 = dateMax + 1 := by
+  simp [daysToYear, yearStart, dateMax]
+
+/-- **Completeness of conversion**: every coordinate in `0..dateMax` has its
+accepted date as the candidate. -/
+theorem civilCandidate_spec {n : Nat} (hn : n ≤ dateMax) :
+    (civilCandidate n).Valid ∧ (civilCandidate n).num = n := by
+  have hmax : dateMax = 2932896 := rfl
+  have hlo := (daysToYear_bounds (n / 366)).2
+  have hhi := (daysToYear_bounds (n / 366 + 65)).1
+  obtain ⟨hy1, hy2, hy3⟩ := findYear_spec n 64 (1970 + n / 366) (by omega)
+    (by rw [show 1970 + n / 366 + 64 + 1 = 1970 + (n / 366 + 65) by omega]; omega)
+  unfold civilCandidate
+  dsimp only
+  generalize findYear n 64 (1970 + n / 366) = y at hy1 hy2 hy3
+  have hy : 1970 ≤ y := by omega
+  rw [daysToYear_succ hy] at hy2
+  have hyl := daysBeforeMonth_thirteen y
+  obtain ⟨hm1, hm12, hmd, hmr⟩ := findMonth_spec y (n - daysToYear y) 11 1 (by omega) (by omega)
+    (by simp [daysBeforeMonth, monthLen]) (by omega)
+  generalize findMonth y (n - daysToYear y) 11 1 = m at hm1 hm12 hmd hmr
+  have hlen : n - daysToYear y - daysBeforeMonth y m < monthLen y m := by
+    rcases hmr with hm | hm
+    · subst hm
+      rw [daysBeforeMonth_succ] at hyl
+      omega
+    · rw [daysBeforeMonth_succ] at hm
+      omega
+  have h9999 : y ≤ 9999 := by
+    apply Classical.byContradiction
+    intro hc
+    have := daysToYear_mono (show 10000 ≤ y by omega)
+    rw [daysToYear_tenThousand] at this
+    omega
+  have hday : 1 ≤ n - daysToYear y - daysBeforeMonth y m + 1 := by omega
+  have hdm : n - daysToYear y - daysBeforeMonth y m + 1 ≤ monthLen y m := by omega
+  have hnum : daysToYear y + daysBeforeMonth y m + (n - daysToYear y - daysBeforeMonth y m + 1 - 1)
+      = n := by omega
+  exact ⟨⟨⟨hy, hm1, hm12, hday, hdm⟩, h9999⟩, hnum⟩
+
+/-- Every coordinate in `0..dateMax` converts to a date. -/
+theorem civilOf_complete {n : Nat} (hn : n ≤ dateMax) : civilOf n = some (civilCandidate n) := by
+  obtain ⟨⟨hp, h9⟩, hnum⟩ := civilCandidate_spec hn
+  unfold civilOf checkedCivil
+  rw [if_pos]
+  simp [(Civil.properB_iff _).mpr hp, hnum, h9]
+
+/-- **Calendar inverse**: every accepted date converts to its coordinate and back. -/
+theorem civilOf_num {D : Civil} (hD : D.Valid) : civilOf D.num = some D := by
+  have h := civilOf_complete ((valid_iff hD.1).mp hD)
+  rw [h, num_injective (civilCandidate_spec ((valid_iff hD.1).mp hD)).1.1 hD.1
+    (civilCandidate_spec ((valid_iff hD.1).mp hD)).2]
+
+/-- Conversion is defined exactly on `0..dateMax`. -/
+theorem civilOf_isSome_iff (n : Nat) : (civilOf n).isSome ↔ n ≤ dateMax := by
+  constructor
+  · intro h
+    obtain ⟨D, hD⟩ := Option.isSome_iff_exists.mp h
+    obtain ⟨hv, hn⟩ := civilOf_sound hD
+    exact hn ▸ (valid_iff hv.1).mp hv
+  · intro h
+    rw [civilOf_complete h]
+    rfl
 
 end VE.Time
