@@ -115,7 +115,8 @@ def _content(env, unit, fences):
     if next(iter(content)) in {"right", "right_lines", "limitation", "bar"}:
         if "rights@0" not in env.profiles:
             raise VEError("UnsupportedProfile: rights@0 is required")
-        return content, None
+        from .readings import rights_meaning_id
+        return content, rights_meaning_id(env, content)
     if "ast" in content:
         formula = formula_from_data(env, content["ast"])
         return formula_to_data(env, formula), meaning_id(env, formula)
