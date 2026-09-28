@@ -267,7 +267,8 @@ def fuzz(genuine, executables):
         items.append((mode, request, mutations(response, rng, 14, 3)))
         items += [(mode, req, [res]) for req, res in joint_mutations(request, response, rng, 8)]
         items += [(mode, req, [response]) for req in request_mutations(request, rng, 6)]
-    items += kind_items(genuine) + label_items(genuine) + depth_items(genuine) + report_items(genuine)
+    items += (kind_items(genuine) + label_items(genuine) + depth_items(genuine) + report_items(genuine)
+              + graph_items(genuine))
     return items, lean_verdicts(executables[1], items)
 
 
@@ -280,7 +281,7 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
 @pytest.mark.parametrize("weaken", [
     "modality", "act", "relation", "token", "kind-fuel", "formula-fuel", "values-nonempty",
     "values-count", "claim-member", "kinds-link", "lemmas-link", "checked-count", "order-link",
-    "surface-nonempty", "label", "english-checked", "assumption-leaf", "valid-false"])
+    "surface-nonempty", "label", "english-checked", "assumptions-unfold", "valid-false"])
 def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
     """The differential harness has teeth: each weakening of the schemas disagrees with
     the Lean decoders on some mutation."""
@@ -308,8 +309,8 @@ def test_fuzz_detects_a_weakened_schema(tmp_path, fuzz, weaken):
      "surface-nonempty": lambda: edit("order.json", lambda d: d["surface"]["properties"]["ast"].pop("minItems")),
      "label": lambda: edit(common, lambda d: d["label"].update(pattern=".*")),
      "english-checked": lambda: edit("english.json", lambda d: d["item"]["allOf"].pop()),
-     "assumption-leaf": lambda: edit(common, lambda d: d["admission"]["properties"]["report"]["properties"][
-         "assumptions"]["items"].pop("x-member")),
+     "assumptions-unfold": lambda: edit(common, lambda d: d["admission"]["properties"]["report"]["properties"][
+         "assumptions"].pop("x-unfolds")),
      "valid-false": lambda: edit(common, lambda d: d["error_valid"]["properties"].update(valid={"type": "boolean"})),
      }[weaken]()
     compiler = Compiler(tmp_path)
@@ -366,8 +367,8 @@ def kind_items(genuine):
 
 
 def report_items(genuine):
-    """Reports: assumptions are leaves of the request graph, in any multiplicity; the root
-    is the graph's root."""
+    """Reports: assumptions are exactly the ordered unfolding of the request graph from its
+    root; the root is the graph's root."""
     items = []
     for mode in ("route", "norms"):
         for request, response, i in _linked(genuine, mode, "admission"):
@@ -375,11 +376,46 @@ def report_items(genuine):
             root, assumptions = report["root"], report["assumptions"]
             for changed in ({"assumptions": assumptions + [root]}, {"assumptions": assumptions * 2},
                             {"assumptions": assumptions[::-1]}, {"assumptions": []},
+                            {"assumptions": assumptions[1:]}, {"assumptions": assumptions[:-1]},
+                            {"assumptions": assumptions[1:2] + assumptions[:1] + assumptions[2:]},
+                            {"assumptions": assumptions[-1:] + assumptions[1:]},
                             {"root": assumptions[0]} if assumptions else {}):
                 res = deepcopy(response)
                 res["results"][i]["report"].update(changed)
                 items.append((mode, request, [res]))
     return items
+
+
+def graph_items(genuine):
+    """The unfolding's conditions on the request graph (`VE.Graph.check`): the genuine
+    report against graphs with a later or dangling premise, a duplicate name, a deduction
+    without its certificate, a leaf with one, another root, and an extra premise."""
+    items = []
+    for mode in ("route", "norms"):
+        for request, response, i in _linked(genuine, mode, "admission"):
+            graph = request["cases"][i]["document"]["graph"]
+            nodes = graph["nodes"]
+            deductions = [k for k, n in enumerate(nodes) if "premises" in n]
+            changes = [{"nodes": nodes[::-1]}, {"nodes": nodes + nodes[:1]}, {"root": "missing"},
+                       {"root": nodes[0]["name"]}, {"nodes": [{**nodes[0], "certificate": {}}] + nodes[1:]}]
+            for k in deductions[:1]:
+                edited = deepcopy(nodes)
+                del edited[k]["certificate"]
+                changes.append({"nodes": edited})
+                for premise in ("missing", nodes[k]["name"], nodes[-1]["name"], nodes[0]["name"]):
+                    edited = deepcopy(nodes)
+                    edited[k]["premises"] = edited[k]["premises"] + [premise]
+                    changes.append({"nodes": edited})
+            for change in changes:
+                req = deepcopy(request)
+                req["cases"][i]["document"]["graph"].update(change)
+                items.append((mode, req, [response]))
+    return items
+
+
+def test_graph_unfolding_agrees_with_the_lean_graph_conditions(genuine, executables):
+    verdicts = assert_agreement(executables[1], graph_items(genuine) + report_items(genuine))
+    assert "accept" in verdicts and any(v != "accept" for v in verdicts)
 
 
 def test_kind_domain_agrees_with_decode_kind(genuine, executables):
@@ -510,6 +546,32 @@ def test_truncated_request_linked_results_fail_closed(tmp_path, genuine, mode, f
             bad["checked"] = len(bad["lemmas"])
     else:
         bad.update(truncated)
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("mode", ["route", "norms"])
+@pytest.mark.parametrize("name,change", [
+    ("bridge-background", "empty"), ("shared-leaves", "empty"), ("shared-leaves", "drop-last"),
+    ("shared-leaves", "drop-first"), ("shared-leaves", "duplicate"), ("shared-leaves", "reorder"),
+    ("shared-leaves", "substitute"), ("shared-leaves", "deduction")])
+def test_admission_assumptions_are_the_graph_unfolding(tmp_path, genuine, mode, name, change):
+    """mig1c-looprecheck1 A: a report whose assumptions were replaced by [] kept
+    `admitted: true` and was accepted. The assumptions are exactly the root's ordered
+    unfolding, so every loss, repetition, reordering or substitution of a leaf fails closed
+    (each substitute is still a node, and a leaf, of the request)."""
+    case, row = _genuine_row(genuine, mode, "admission", lambda c, r: c["id"] == name)
+    assumptions = row["report"]["assumptions"]
+    nodes = {n["name"]: {k: n[k] for k in ("name", "ast", "label") if k in n}
+             for n in case["document"]["graph"]["nodes"]}
+    assert assumptions and all(a in nodes.values() for a in assumptions)
+    changed = {"empty": lambda: [], "drop-last": lambda: assumptions[:-1],
+               "drop-first": lambda: assumptions[1:], "duplicate": lambda: assumptions + assumptions[:1],
+               "reorder": lambda: assumptions[1:2] + assumptions[:1] + assumptions[2:],
+               "substitute": lambda: [nodes["b"]] + assumptions[1:],
+               "deduction": lambda: [nodes["mid"]] + assumptions[3:]}[change]()
+    assert changed != assumptions
+    bad = deepcopy(row)
+    bad["report"]["assumptions"] = changed
     _scripted_rejected(tmp_path, mode, case, row, bad)
 
 

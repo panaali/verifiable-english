@@ -38,6 +38,7 @@ element of an array (every element must resolve).
 | `x-index: true` | the position of the result in the response |
 | `x-member: {of: p, keys, where}` | the instance's `keys` equal those of some context element at `p` (absent keys stay absent) valid under `where` (default `true`) |
 | `x-dependency-order: p` | `Route.verifyOrder` accepts the instance for the dependency nodes at `p` |
+| `x-unfolds: p` | the instance is the ordered leaf list (`VE.Graph.Unfolds`) of the context claim graph at `p` (`{"root", "nodes"}`), unfolded from its root: names are unique, `premises` and `certificate` come together, every premise names an earlier node, and each leaf is its node's `name`, `ast` and `label` (absent keys stay absent) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |
 | `x-case: s` | the context is valid under `s` |
 | `x-select: [{when, then}, ...]` | the first `when` valid for the context selects `then`; none fails |

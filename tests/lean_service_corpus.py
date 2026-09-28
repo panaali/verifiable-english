@@ -95,7 +95,35 @@ def route_cases():
     certificate = by_kind["certificate"][0]
     cases.append({**certificate, "id": "invalid-model", "kind": "evaluate",
                   "model": {"domains": {}, "constants": {}, "relations": {}}, "ast": [["top"]]})
+    # Background of every certificate environment: flags, definitions and literals on
+    # the FOL, closure and order families.
+    cases += [{"id": c["id"] + "-bg", "kind": "background", "environment": c["environment"]}
+              for c in by_kind["certificate"]]
+    cases.append(shared_admission())
     return cases + ADVERSARIAL
+
+
+def shared_admission():
+    """An admitted graph whose unfolding repeats shared leaves:
+    root <- [mid, b, mid], mid <- [a, b, a], so the report lists a b a b a b a."""
+    from tests.test_data_flags import environment
+    from ve.ast import Top
+    from ve.entailment import prove_entailment
+    from ve.identity import meaning_id
+    env = environment()
+    proof = prove_entailment(env, (), Top())
+    assert proof.status == "Found"
+
+    def deduce(name, premises):
+        certificate = deepcopy(proof.certificate)
+        certificate["premise_meaning_ids"] = [meaning_id(env, Top())] * len(premises)
+        return {"name": name, "ast": ["top"], "premises": premises, "certificate": certificate}
+
+    nodes = [{"name": "a", "ast": ["top"], "unit": "u"}, {"name": "b", "ast": ["top"], "unit": "u"},
+             deduce("mid", ["a", "b", "a"]), deduce("root", ["mid", "b", "mid"])]
+    document = {"units": [{"id": "u", "span": [0, 1], "kind": "asserted", "content": ["top"]}],
+                "graph": {"root": "root", "nodes": nodes}}
+    return {"id": "shared-leaves", "kind": "admission", "environment": env.to_dict(), "document": document}
 
 
 def norms_cases():
@@ -127,6 +155,11 @@ def norms_cases():
                                     "document_hash": doc.document_hash, "target": target,
                                     "certificate": proof.certificate}
         cases.append({**lean_case(f"c{i}", doc), "kind": "norms-conflict", "packages": packages})
+        cases.append({**lean_case(f"e{i}", doc), "kind": "norms-elaborate"})
+    literals = pair.to_dict()
+    literals["vocabulary"]["constants"].update({c: {"sort": "$string"} for c in ("alpha", "beta", "gamma")})
+    cases.append({"id": "e-literals", "kind": "norms-elaborate", "environment": literals,
+                  "norms": [r.to_dict() for r in documents[2].rules]})
     doc = NormDocument(environment({"permitted": permission()}), [rule("allow", "permitted", True)])
     conclusion = doc.elaborate("permitted")
     proof = prove_norm_entailment(doc, (Top(),), conclusion)
