@@ -732,3 +732,44 @@ def test_rust_report_witness_replays_in_lean(lean):
         replay = run1({"id": "rust", "kind": "reports-countermodel", "environment": E0(),
                        "document": d, "premises": [], "conclusion": conclusion, "model": witness["model"]})
         assert replay["status"] == "ok" and replay["refutes"] is True, replay
+
+
+def test_graph_certificates_carry_the_outer_binding(lean):
+    """Astra A: admission checked only a deduction certificate's inner binding, so a
+    certificate made before the sole context's tense changed (E_reports and every
+    premise byte-identical, document_id changed) was still admitted (3.4)."""
+    d = doc(report("the_article", "says", "c3", ast(U("safe", "service"))))
+    r = elaborate(d)
+    atom = premises(r)[0]
+    conclusion = ["or", atom, U("safe", "service")]
+    cert = certificate(E0(), r, [atom], conclusion, r["environment_reports_id"])
+    assert cert is not None
+
+    def graph(envelope, leaf_envelope=None):
+        leaf = {"name": "L", "label": "report:u1", "unit": "u1", "ast": atom}
+        if leaf_envelope is not None:
+            leaf["envelope"] = leaf_envelope
+        root = {"name": "R", "ast": conclusion, "premises": ["L"], "certificate": cert}
+        if envelope is not None:
+            root["envelope"] = envelope
+        return {"root": "R", "nodes": [leaf, root]}
+
+    out = admission(dict(d, graph=graph(r["envelope"])))
+    assert out["status"] == "ok" and out["admitted"] is True, out
+    assert out["envelope"] == r["envelope"]
+    missing = admission(dict(d, graph=graph(None)))
+    assert missing["status"] == "error" and "lacks the reports envelope" in missing["error"]
+    extra = admission(dict(d, graph=graph(r["envelope"], leaf_envelope=r["envelope"])))
+    assert extra["status"] == "error" and "envelope without a certificate" in extra["error"]
+    widened = admission(dict(d, graph=graph(dict(r["envelope"], note="x"))))
+    assert widened["status"] == "error"
+    # The reproducer: the sole context's tense changes, the certificate does not.
+    past = [dict(c, tense="past") if c["id"] == "c3" else c for c in CONTEXTS]
+    changed = dict(d, contexts=past)
+    r2 = elaborate(changed)
+    assert r2["environment_reports_id"] == r["environment_reports_id"] and premises(r2) == premises(r)
+    assert r2["envelope"]["document_id"] != r["envelope"]["document_id"]
+    stale = admission(dict(changed, graph=graph(r["envelope"])))
+    assert stale["status"] == "error" and "bound to another document" in stale["error"], stale
+    fresh = admission(dict(changed, graph=graph(r2["envelope"])))
+    assert fresh["status"] == "ok" and fresh["admitted"] is True

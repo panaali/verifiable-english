@@ -103,9 +103,7 @@ def innerBound (profiles : List String) (envReportsJson : Json) (checked : List 
 
 def outerBound (D : ReportDoc) (j : Json) : Bool :=
   match j.getObjVal? "envelope" with
-  | .ok e => e.getObjValD "environment_id" == .str D.environmentId &&
-      e.getObjValD "document_id" == .str (documentId D) &&
-      (VE.Bridge.exactFields e ["environment_id", "document_id"]).toBool
+  | .ok e => envelopeMatches D.environmentId (documentId D) e
   | .error _ => false
 
 def runCertificate (c : Wire.Checked) (environment : Json) (id : String) (j : Json) : Except String Json := do

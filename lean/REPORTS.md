@@ -114,7 +114,9 @@ Route, scoped checks, assessments, bridges, wire (9.3).
 - `reports_gate_sound`: a list the gate accepts is, minus `reports@0`, one the frozen classifier classifies as
   FOL, and has no `norms@0`, `definitions@0` or `data@0`.
 - `reports_admission_sound`, `reports_labels_decoded`: an admitted document is well-formed and decoded from the
-  input, its envelope is recomputed, and its report is a `SoundReport` at `E_reports` whose assumptions are
+  input, its envelope is recomputed, every node of the input graph that carries a certificate carries exactly that
+  envelope (3.4's outer binding: a graph node with a `certificate` has an `envelope` field
+  `{"environment_id", "document_id"}`, removed before the frozen W2 node decoder reads the node), and its report is a `SoundReport` at `E_reports` whose assumptions are
   decoded leaves admitted by `ReportsLeafAdmitted`, with closed citations and compatible choices.
 - `Run.reports_wire_acceptance`: a successful `admission` answer is exactly the encoding of such an admission of
   the case's own environment and document.

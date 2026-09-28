@@ -1137,6 +1137,7 @@ import VE.Attribution.Wire
 #print axioms VE.Reports.leafB_sound
 #print axioms VE.Reports.nodeB_sound
 #print axioms VE.Reports.admitNodes_ok
+#print axioms VE.Reports.checkOuter_ok
 #print axioms VE.Reports.reports_admission_sound
 #print axioms VE.Reports.reports_labels_decoded
 #print axioms VE.Reports.Run.runAdmission_sound

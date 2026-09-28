@@ -6,8 +6,11 @@ regenerated signed premise of their unit, bridge leaves admitted by
 `BridgeAdmitted` (root ones coincide with the legacy rule,
 `bridge_root_is_legacy`), and every other label by the unchanged `LeafAdmitted`
 on the W2 view. Certificates of graph deductions bind `environment_id` of the
-regenerated `E_reports` (the inner binding of 3.4); the admission records the
-recomputed envelope `(environment_id(E), document_id(D))`. -/
+regenerated `E_reports` (the inner binding of 3.4) and carry the reports
+envelope `{"environment_id", "document_id"}` they were produced for, which must
+be the recomputed `(environment_id(E), document_id(D))` (the outer binding of
+3.4): generated names are ordinal, so the inner binding alone survives a changed
+tense or payload. The admission records the recomputed envelope. -/
 namespace VE.Reports
 open Lean
 open VE.Route.Admission (WireNode LeafAdmitted AssertedUnit CitationsClosed ChoicesCompatible)
@@ -24,6 +27,8 @@ structure ReportsAdmitted where
   report : VE.Graph.Report
   /-- (environment_id(E), document_id(D)), recomputed from the raw input -/
   envelope : String × String
+  /-- the raw graph nodes, each certificate with its outer binding -/
+  graphNodes : List Json
 
 /-- The leaf rule under the profile. -/
 def ReportsLeafAdmitted (D : ReportDoc) (w : VE.Route.Admission.WireNode) : Prop :=
@@ -177,6 +182,47 @@ theorem admitNodes_ok (D : ReportDoc) (ws : List VE.Route.Admission.WireNode) (x
     have := List.find?_eq_none.mp hf w hw
     exact nodeB_sound (by simpa using this)
 
+/-! ## The outer binding of graph certificates (3.4) -/
+
+/-- The reports envelope, exactly: `{"environment_id", "document_id"}` with the
+recomputed values (as `Run.outerBound` checks a `reports-certificate` case). -/
+def envelopeMatches (envId docId : String) (e : Json) : Bool :=
+  e.getObjValD "environment_id" == .str envId && e.getObjValD "document_id" == .str docId &&
+    (exactFields e ["environment_id", "document_id"]).toBool
+
+def hasField (n : Json) (k : String) : Bool := (n.getObjVal? k).toBool
+
+/-- A graph node with a certificate carries the recomputed envelope; a node
+without one carries none. -/
+def nodeOuterOk (envId docId : String) (n : Json) : Bool :=
+  if hasField n "certificate" then envelopeMatches envId docId (n.getObjValD "envelope")
+  else !hasField n "envelope"
+
+def outerDiagnostic (n : Json) : String :=
+  let name := (n.getObjValD "name").getStr?.toOption.getD "?"
+  if !hasField n "certificate" then s!"InvalidInput: envelope without a certificate on node {name}"
+  else if !hasField n "envelope" then s!"AdmissionError: the certificate of node {name} lacks the reports envelope"
+  else s!"AdmissionError: the certificate of node {name} is bound to another document or environment"
+
+def checkOuter (envId docId : String) (ns : List Json) : Except String _root_.Unit :=
+  match ns.find? (fun n => !nodeOuterOk envId docId n) with
+  | some n => .error (outerDiagnostic n)
+  | none => .ok ()
+
+theorem checkOuter_ok {envId docId : String} {ns : List Json} {x : _root_.Unit}
+    (h : checkOuter envId docId ns = .ok x) : ∀ n ∈ ns, nodeOuterOk envId docId n = true := by
+  unfold checkOuter at h
+  split at h
+  · cases h
+  · rename_i hf
+    intro n hn
+    simpa using List.find?_eq_none.mp hf n hn
+
+/-- The node as the frozen W2 decoder reads it: without the reports envelope. -/
+def stripEnvelope : Json → Json
+  | .obj kvs => .obj (kvs.erase "envelope")
+  | n => n
+
 /-! ## Admission -/
 
 /-- Admission of a W2 document under `reports@0`: decode and check the reports
@@ -188,12 +234,14 @@ def admissionReports (profiles : List String) (environment : Json) (j : Json) :
   let c ← Wire.decodeDocument environment j
   let D := c.dec.D
   VE.Route.Admission.require (c.dec.re.profiles == profiles) "InvalidInput: profiles"
+  let envId ← VE.Route.Wire.environmentId profiles environment
   let graphJson ← j.getObjVal? "graph"
   exactFields graphJson ["root", "nodes"]
   let root ← stringField graphJson "root"
   let nodeArray ← (← graphJson.getObjVal? "nodes").getArr?
   VE.Route.Admission.require (nodeArray.size ≤ 1000) "ResourceLimit: graph node count"
-  let decoded ← nodeArray.toList.mapM (VE.Route.Admission.decodeNode (envReports D) false)
+  checkOuter envId (documentId D) nodeArray.toList
+  let decoded ← (nodeArray.toList.map stripEnvelope).mapM (VE.Route.Admission.decodeNode (envReports D) false)
   VE.Route.Admission.checkBindings profiles (Wire.environmentReportsJson environment D) decoded
   let wires := decoded.map Prod.fst
   admitNodes D wires
@@ -202,18 +250,22 @@ def admissionReports (profiles : List String) (environment : Json) (j : Json) :
   VE.Route.Admission.require (decide (CitationsClosed (w2Doc D) r))
     "AdmissionError: a cited lemma's leaves are missing from the report"
   VE.Route.Admission.require (decide (ChoicesCompatible r)) "AdmissionError: incompatible reading choices"
-  let envId ← VE.Route.Wire.environmentId profiles environment
-  pure ⟨D, wires, g, r, (envId, documentId D)⟩
+  pure ⟨D, wires, g, r, (envId, documentId D), nodeArray.toList⟩
 
 /-- Mirrors VE.Route.Admission.admit_report_sound conjunct for conjunct, with
 the envelope added. The spec's envelope conjunct compares an `Except` with a
 string; it is stated here as the success of the recomputation (lean/REPORTS.md,
-deviations), and the decoded document is the one the raw input decodes to. -/
+deviations), and the decoded document is the one the raw input decodes to.
+Every node of the input graph that carries a certificate carries exactly the
+recomputed reports envelope (3.4's outer binding). -/
 theorem reports_admission_sound (profiles : List String) (environment : Json) (j : Json) (res : ReportsAdmitted)
     (h : admissionReports profiles environment j = .ok res) :
     WellFormedReports res.D = true ∧
     (∃ c, Wire.decodeDocument environment j = .ok c ∧ c.dec.D = res.D) ∧
     VE.Route.Wire.environmentId profiles environment = .ok res.envelope.1 ∧ res.envelope.2 = documentId res.D ∧
+    (∃ g ns, j.getObjVal? "graph" = .ok g ∧ g.getObjVal? "nodes" = .ok ns ∧ ns.getArr? = .ok res.graphNodes.toArray) ∧
+    (∀ n ∈ res.graphNodes, hasField n "certificate" = true →
+      envelopeMatches res.envelope.1 res.envelope.2 (n.getObjValD "envelope") = true) ∧
     res.graph.nodes = res.wires.map VE.Route.Admission.WireNode.toNode ∧
     VE.Graph.Acyclic res.graph ∧ (res.graph.nodes.map (fun n => n.claim.name)).Nodup ∧
     res.report.root.name = res.graph.root ∧
@@ -225,24 +277,31 @@ theorem reports_admission_sound (profiles : List String) (environment : Json) (j
   unfold admissionReports at h
   obtain ⟨c, hc, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
-  obtain ⟨gj, _, h⟩ := bind_ok h
+  obtain ⟨envId, henv, h⟩ := bind_ok h
+  obtain ⟨gj, hgj, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨root, _, h⟩ := bind_ok h
-  obtain ⟨nj, _, h⟩ := bind_ok h
-  obtain ⟨arr, _, h⟩ := bind_ok h
+  obtain ⟨nj, hnj, h⟩ := bind_ok h
+  obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, hout, h⟩ := bind_ok h
   obtain ⟨decoded, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hadm, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
   obtain ⟨_, hcit, h⟩ := bind_ok h
   obtain ⟨_, hch, h⟩ := bind_ok h
-  obtain ⟨envId, henv, h⟩ := bind_ok h
   cases h
   have hnodes := admitNodes_ok _ _ _ hadm
   obtain ⟨hacyc, hnd, hroot, hsound⟩ :=
     VE.Graph.check_sound.{u} _ _ r (VE.Route.Admission.checkGraph_ok _ _ r hr)
-  refine ⟨c.wf, ⟨c, hc, rfl⟩, henv, rfl, rfl, hacyc, hnd, hroot, hsound, hnodes, ?_,
+  have houter : ∀ n ∈ arr.toList, hasField n "certificate" = true →
+      envelopeMatches envId (documentId c.dec.D) (n.getObjValD "envelope") = true := by
+    intro n hn hcert
+    have := checkOuter_ok hout n hn
+    simpa [nodeOuterOk, hcert] using this
+  refine ⟨c.wf, ⟨c, hc, rfl⟩, henv, rfl, ⟨gj, nj, hgj, hnj, by simpa using harr⟩, houter, rfl, hacyc, hnd, hroot,
+    hsound, hnodes, ?_,
     of_decide_eq_true (VE.Route.Gate.require_ok hcit), of_decide_eq_true (VE.Route.Gate.require_ok hch)⟩
   intro leaf hl
   obtain ⟨node, hn, hcl, hde⟩ := (hsound.2.2.1 leaf hl).2
@@ -261,7 +320,8 @@ theorem reports_labels_decoded (profiles : List String) (environment : Json) (j 
     ∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
       w.claim.label = leaf.label ∧ w.claim.name = leaf.name ∧ w.claim.formula = leaf.formula := by
   intro leaf hl
-  obtain ⟨w, hw, rfl, _, _⟩ := (reports_admission_sound.{0} profiles environment j res h).2.2.2.2.2.2.2.2.2.2.1 leaf hl
+  obtain ⟨w, hw, rfl, _, _⟩ :=
+    (reports_admission_sound.{0} profiles environment j res h).2.2.2.2.2.2.2.2.2.2.2.2.1 leaf hl
   exact ⟨w, hw, rfl, rfl, rfl⟩
 
 end VE.Reports
