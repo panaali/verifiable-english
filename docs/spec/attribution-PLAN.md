@@ -7,7 +7,7 @@ item-1 draft asked of the plan (`manage-agents/debates/attribution-spec/{astra,f
 round 3): signed report premises versus vocabulary conservativity, and negation as the only connective admitted
 over report statements. The boundary, the status table and the Lean obligations are unchanged (change log at the
 end). Four design pages; summary follows. No implementation or pilot gain is claimed. The item-1 statement spec is
-[attribution.md](attribution.md), draft 2.
+[attribution.md](attribution.md), draft 3.
 
 ## 1 / 4 — Semantics and boundary
 
