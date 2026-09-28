@@ -23,8 +23,10 @@ def validate_reading_sets(env, values, unit_ids):
         required = {"id", "unit", "version", "status", "readings"}
         if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history", "models"}:
             raise VEError("invalid reading set")
+        if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1:
+            raise VEError("invalid or duplicate reading set version")
         key = (item["id"], item["version"])
-        if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1 or key in seen:
+        if key in seen:
             raise VEError("invalid or duplicate reading set version")
         seen.add(key)
         if type(item["unit"]) is not str or item["unit"] not in unit_ids or item["status"] not in ("authored", "open"):

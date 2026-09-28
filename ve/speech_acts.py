@@ -45,13 +45,13 @@ def validate_scope(raw, sorts, constants, predicates):
     if type(definites) is not dict or any(type(c) is not str for c in definites.values()):
         raise block
     normalized = {}
-    reserved = {"is", "are", "must", "may", "not", "you", "which", "one", "task"}
     for phrase, constant in definites.items():
         if type(phrase) is not str or len(phrase.encode()) > 80 or not _PHRASE.fullmatch(phrase):
             raise block
         key = " ".join(phrase.split())
-        if (key in normalized or key[4:].lower() in reserved or
-                key in constants or key[4:] in predicates):
+        if key in normalized or key in constants or key in sorts or key.lower() in {
+                "true", "false", "is", "equals", "not", "and", "or", "if", "then", "for",
+                "every", "there", "exists", "believes", "must", "eventually"}:
             raise block
         normalized[key] = constant
     if addressee is not None:
@@ -176,6 +176,7 @@ def latest_reading_sets(sets):
     """
     from .admission import token
     latest = {}
+    seen = set()
     for item in sets:
         if (type(item) is not dict or type(item.get("unit")) is not str
                 or type(item.get("version")) is not int or item.get("status") not in ("open", "authored")):
@@ -190,8 +191,9 @@ def latest_reading_sets(sets):
         if item["status"] == "open" and "signature" in item:
             raise VEError("open reading set cannot have an author signature")
         unit = item["unit"]
-        if unit in latest and latest[unit]["version"] == item["version"]:
+        if (unit, item["version"]) in seen:
             raise VEError("invalid or duplicate reading set version")
+        seen.add((unit, item["version"]))
         if unit not in latest or item["version"] > latest[unit]["version"]:
             latest[unit] = item
     return latest
@@ -360,9 +362,15 @@ class SpeechDocument:
         if any(p.functional is not None or p.total is not None for p in env.predicates.values()):
             raise VEError("UnsupportedProfile: speech-acts@0 with functional")
         from .admission import _check_kind
+        if type(units) not in (list, tuple):
+            raise VEError("array expected")
+        if type(reading_sets) not in (list, tuple):
+            raise VEError("InvalidInput: reading sets on the speech-acts route need their unit, version and status")
         self.env = env
         self.scope = env.to_dict()["speech_acts"]
         self.units = tuple(units)
+        if type(queries) not in (list, tuple):
+            raise VEError("array expected")
         self.query_records = tuple(queries)
         self.reading_sets = tuple(reading_sets)
         latest = latest_reading_sets(self.reading_sets)
