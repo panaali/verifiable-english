@@ -212,7 +212,7 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
 
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
-    """Validate the public inputs and evaluate a closed formula or document."""
+    """Evaluate under the selected authority while keeping the public schema."""
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
     if max_evaluations > MAX_EVALUATIONS:
@@ -228,5 +228,42 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         check_formula(env, value)
         formulas = (value,)
     model = _validate_model(env, model)
-    return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
-                               max_trace_nodes=max_trace_nodes, trace=trace)
+    from .ast import _to_data
+    from .backends.dispatch import execute
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.lean_runner import run as lean_run
+    from .backends.rust_jsonl import run as rust_run
+
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": env.to_dict(),
+            "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
+            "max_evaluations": min(max_evaluations, max_trace_nodes) if trace else max_evaluations}
+
+    def python():
+        return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
+                                   max_trace_nodes=max_trace_nodes, trace=trace)
+
+    def rust():
+        if trace:
+            raise CheckerUnavailable("CheckerUnavailable: Rust evaluation trace is not implemented")
+        row = rust_run(case)
+        return EvaluationResult(row["status"], row["value"], None, row["evaluations"])
+
+    def lean():
+        result = rust()
+        if result.status == "ResourceLimit":
+            return result
+        if env.language == "ve.core@0.2":
+            request = {"id": "evaluate", "kind": "evaluate", "environment": env.to_dict(),
+                       "model": model.to_dict(), "ast": case["ast"]}
+            checked = lean_run("route", [request])[0]
+            value = all(checked["values"])
+        else:
+            request = {"id": "evaluate", "environment": env.to_dict(),
+                       "model": model.to_dict(), "ast": case["ast"]}
+            checked = lean_run("evaluate", [request])[0]
+            value = checked["value"]
+        if value != result.value:
+            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust evaluation disagree")
+        return result
+
+    return execute("evaluate", case, python, lean=lean, rust=rust)
