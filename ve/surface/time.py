@@ -12,7 +12,7 @@ from itertools import product
 
 from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError, UnsupportedProfile, VEError
 from ..units import (DIMENSIONLESS, POINTS_SUFFIX, day_number, decimal_exact, elaborate_quantity,
-                     render_coordinate)
+                     render_coordinate, sentence_initial)
 
 _DEC = r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?"
 _NAT = re.compile(r"0|[1-9][0-9]*\Z", re.ASCII)
@@ -42,10 +42,6 @@ _ELAPSED = (" to ", " equals ")
 _POINTS = (" minus ", " equals ")
 
 
-def _capitalized(phrase):
-    return phrase[:1].upper() + phrase[1:]
-
-
 def _constant_readings(env, phrase, initial):
     """A constant matches its approved phrase; at sentence start also its
     capitalized form. Literals are never case-folded."""
@@ -53,7 +49,7 @@ def _constant_readings(env, phrase, initial):
             if decl.sort == "$int" else ["const", name]
             for name, decl in env.constants.items()
             if decl.verbalisation is not None and
-            (decl.verbalisation == phrase or initial and _capitalized(decl.verbalisation) == phrase)]
+            (decl.verbalisation == phrase or initial and sentence_initial(decl.verbalisation) == phrase)]
 
 
 def _literal_readings(env, phrase):
@@ -201,7 +197,7 @@ def render_quantity_sentence(env, canonical):
             declaration = env.constants.get(node[-1])
             if declaration is not None and declaration.verbalisation is not None:
                 words = declaration.verbalisation
-                return _capitalized(words) if initial else words
+                return sentence_initial(words) if initial else words
         raise UnsupportedProfile("Quantity English requires named constants or literals")
 
     if (formula[0] == "eq" and formula[1][0] == "add" and

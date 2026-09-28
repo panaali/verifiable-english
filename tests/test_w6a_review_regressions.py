@@ -253,10 +253,12 @@ def test_initial_folding_applies_to_names_only():
         ["eq", ["num", "calendar_year", "2029"], ["const", "calendar_year", "year"]]
 
 
-def test_capitalization_collision_is_ambiguous():
+def test_capitalization_collision_rejects_at_declaration():
+    # Formerly admitted and ambiguous at parse time; since loop recheck 1 two
+    # names sharing a sentence-initial spelling are rejected when declared.
     raw = raw_environment(constants={"a": named("bp", "the rate"), "b": named("bp", "The rate")})
-    with pytest.raises(AmbiguousDerivation):
-        parse_quantity_sentence(Environment(raw), "The rate equals 2.00%.")
+    with pytest.raises(VEError, match=r"VerbalisationCollision\(a, b\)"):
+        Environment(raw)
 
 
 # --- Astra P2: the literal `date` names the reserved tag -----------------------

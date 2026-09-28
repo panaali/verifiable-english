@@ -2,7 +2,7 @@
 import pytest
 
 from ve.environment import Environment
-from ve.errors import AmbiguousDerivation, SyntaxError, VEError
+from ve.errors import SyntaxError, VEError
 from ve.surface.time import parse_quantity_sentence, render_quantity_sentence
 
 
@@ -62,8 +62,10 @@ def test_one_reading_roundtrip_without_tag_identifiers():
 
 
 def test_ambiguity_and_cross_tag_suppression():
-    with pytest.raises(AmbiguousDerivation, match="2 derivations"):
-        parse_quantity_sentence(fixture(duplicate=True), "The September PCE estimate equals 3.70%.")
+    # Two constants sharing one name are rejected when declared (loop recheck 1);
+    # connector-built ambiguity is covered by test_w6a_review_regressions.
+    with pytest.raises(VEError, match="VerbalisationCollision"):
+        fixture(duplicate=True)
     with pytest.raises(VEError, match="UnitMismatch"):
         parse_quantity_sentence(fixture(), "The amount equals 3.75%.")
     with pytest.raises(SyntaxError, match="No W6 quantity reading"):
