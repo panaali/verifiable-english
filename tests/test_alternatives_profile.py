@@ -206,6 +206,20 @@ def test_rejected_causal_wordings_offer_a_rewrite(wording, rewrite):
         parse_english_with_metadata(Environment(raw), f"pull {wording}.")
 
 
+def test_undeclared_proximate_and_deontic_allowance_are_distinguished():
+    raw = source()
+    raw["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "h": {"sort": "harm", "description": "h"},
+        "r": {"sort": "robot", "description": "r"}}
+    with pytest.raises(VEError, match="W1 'may'"):
+        parse_english_with_metadata(Environment(raw), "pull allows r to pull.")
+    del raw["alternatives"]["proximate"]
+    del raw["vocabulary"]["predicates"]["causes"]
+    with pytest.raises(VEError, match="declare it or write 'leads to'"):
+        parse_english_with_metadata(Environment(raw), "pull causes h.")
+
+
 def test_coverage_names_declared_alternatives_and_counterfactual_support():
     raw = source()
     raw["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
