@@ -127,6 +127,7 @@ def _regulated(raw, args, name):
 class ConstantDecl:
     sort: str
     description: str | None
+    verbalisation: str | None = None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -138,14 +139,18 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    reports: object
 
-    def __init__(self, data):
+    def __init__(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
-        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"})
+        fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
+        if route and "reports@0" in data.get("profiles", []):
+            fields.add("reports")
+        require_fields(data, fields)
         order = False
         if route:
             family = profile_registry.checker_family(data["profiles"])
@@ -273,14 +278,34 @@ class Environment:
             linked.add(reg.permission)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
-            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set())
+                           | ({"verbalisation"} if "verbalisation" in entry else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"])
-                                           if "description" in entry else None)
+                                           if "description" in entry else None,
+                                           _verbalisation(entry["verbalisation"])
+                                           if "verbalisation" in entry else None)
+        reports = None
+        if route and "reports@0" in data["profiles"]:
+            raw_reports = data["reports"]
+            require_fields(raw_reports, {"holders", "evidence"}, path="/reports")
+            holders, evidence = raw_reports["holders"], raw_reports["evidence"]
+            if (type(holders) is not list or not 1 <= len(holders) <= 8
+                    or len(set(holders)) != len(holders) or any(h not in sorts for h in holders)):
+                raise UnknownSymbol("holder sort")
+            if type(evidence) is not str or evidence not in sorts:
+                raise UnknownSymbol("evidence sort")
+            if any(type(c.get("verbalisation")) is str and
+                   c["verbalisation"].casefold() == "the stated assessment"
+                   for c in vocab["constants"].values()):
+                raise VEError("InvalidInput: holder verbalisation reserved")
+            if not _generated_reports and any(name.startswith("reports__") for name in predicates):
+                raise VEError("InvalidInput: author predicate begins with reports__")
+            reports = {"holders": tuple(holders), "evidence": evidence}
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -290,6 +315,7 @@ class Environment:
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
             object.__setattr__(self, field, value)
+        object.__setattr__(self, "reports", reports)
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
             compile_definitions(self, self.definition_entries, version=self.environment_id)
@@ -330,10 +356,14 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
+                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
+                   if self.reports is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
-                               "constants": {k: {"sort": v.sort, **({"description": v.description}
-                                                                      if v.description is not None else {})}
+                "constants": {k: {"sort": v.sort, **({"description": v.description}
+                                                                      if v.description is not None else {}),
+                                   **({"verbalisation": v.verbalisation}
+                                      if v.verbalisation is not None else {})}
                                              for k, v in self.constants.items()}}}
 
     @property
