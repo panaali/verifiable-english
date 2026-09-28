@@ -337,6 +337,12 @@ The p1, p2 and p6 cases check that signed rows reject an unstated cell,
 premise, and a new positive row outside the document cells is rejected. For
 p2, Python and Rust also evaluate Lean's followability, avoidability and
 allows formulas on the accepted model.
+The same test module binds Python prover certificates to the complete
+alternatives source, replays CONFLICT-FREE and the b-A₁, b-B and j DILEMMA
+witnesses in Lean, and replays a rule-free FOLLOWABLE certificate. A changed
+block decider invalidates the conflict packages. Fixture h3 checks that an
+unsupported proximate-cause claim fails Lean model validation and that Python
+and Rust both evaluate the generated proximate premise as false.
 
 ## P0 route fixtures
 
