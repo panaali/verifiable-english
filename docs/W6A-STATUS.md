@@ -52,14 +52,23 @@ Each finding was fixed as a class, in Python, Lean and Rust where relevant, with
 - **Citations (P1, directive).** Quantity documents take checked lemmas: each carries a `ve-quantity-certificate@1` from exactly its transitive leaves to its conclusion, checked by Lean when decoded. A `cite:<bundle>/<lemma>` leaf is admitted when it states that conclusion, and the report must carry the lemma's leaves with their labels. `cites_discharged` proves the report root holds wherever the report's non-citation leaves hold; `admit_quantity_report_sound` now includes this and citation closure. Python mirrors each diagnostic, and Rust regenerates every lemma statement (`lemma_meaning_ids`). `tests/test_w6a_citations.py` checks 19 binding classes in Python and Lean, including reordered, dropped or changed leaves, relabelling to money, raw and stale certificates, and cite leaves that state another statement. The core `ve-bundle@0` checker still refuses extended environments.
 - The earlier loop recheck 1 fixes (whitespace names, decimal round trips, the Lean evaluation budget and the unconditional calendar inverse) were re-verified against the recheck's reproducers on a freshly built `ve_quantity`.
 
+## Loop fix 3 (2026-09-28)
+
+- **Domain order under the budget (P2).** Python and Rust sort every submitted domain when they load a model. Lean kept the input order, so a budgeted quantifier could stop at a different first decisive entity. On domain `["b","a"]`, Lean answered `∃x.(p(x) ∨ ∀y₁…∀y₁₉.⊤)` true after three evaluations, and a countermodel for its negation refuted, where Python and Rust exhausted `MAX_EVALUATIONS`. Below the budget, only the reported `evaluations` count differed. The frozen decoders are unchanged. The quantity runner now sorts each domain before `evalB` and `refutesB` (`VE.Time.Wire.sortDomains`). The same class was also in the relational route: the defined-table budget (`computeDefined`) now runs over sorted domains (`sortModelData`). `eval_domains_perm` and `countermodelCheck_domains_perm` prove that reordering a domain never changes a reference value, and `evalB_sorted_sound` and `refutesB_sorted_sound` state the runners' answers against the submitted model. `tests/test_w6a_looprecheck2.py` checks, three ways, the reviewer's reproducer in both orders, the countermodel route, evaluation counts on every permutation of a four-entity domain, premise short-circuiting, and the defined-table budget.
+
 ## Still open
 
-- **W8 fidelity gate.** Not run. It needs 20 sealed model-written sentences per construct, authoring by Opus 5.5 and Haiku 4.5, and a blind Astra audit, and this task makes no model calls. Quantity constructs therefore stay out of `ve assist` (strict-only authoring). `render_quantity_witness` supplies the gate's deterministic witness input (units restored). Document fences are checked for one reading across the whole grammar, as existing English fences are.
+- **W8 fidelity gate.** Not run; loop recheck 2 (P1) names it as the directive's remaining item. It needs 20 sealed model-written sentences per construct, authoring by Opus 5.5 and Haiku 4.5, and a blind Astra audit, and this task makes no model calls. Quantity constructs therefore stay out of `ve assist` (strict-only authoring). `render_quantity_witness` supplies the gate's deterministic witness input (units restored). Document fences are checked for one reading across the whole grammar, as existing English fences are.
 - **Premise status of quantity documents.** `ve document check` searches small finite models and does not choose integer values, so it reports UNKNOWN for the news document. The fixture model is the non-vacuity evidence: Lean evaluates the report's leaves and root true in it.
 - **Relational and quantity content in one document.** The news document's relational clauses stay in `claims.ve`, because the quantity route's profile set differs from the relational document's.
 - **W6b (gated on numbers2).** `sunday`, `excluded_sundays`, date/integer binders, traces (`Time.excludedDays_iff`, the guarded Sunday equivalence, `Time.trace_iff`), and the certified Art. I §7 result reject until the proved numbers2 integer-quantifier route exists.
 
 ## Gates run
+
+- Loop fix 3: `lake build` passed (246 jobs). `lean/audit.py` passed (135 sources, 1,014 theorem declarations, standard axiom allowlist only). `lean/VE/Route/frozen.py` passed, and the fix leaves the frozen decoders unchanged. Rust was not changed.
+- Loop fix 3 full pytest run: 2,435 passed, 5 skipped, 1 live test deselected, 1 failure. The failure was `test_assist_deadline.py::test_approval_sealing_is_inside_the_operation_deadline` again, the wall-clock test in unchanged `ve/assist` code. Its file passed 35/35 when rerun alone.
+
+Loop fix 2:
 
 - `lake build` passed (246 jobs).
 - `lean/audit.py` passed (135 sources, 1,008 theorem declarations, standard axiom allowlist only).
