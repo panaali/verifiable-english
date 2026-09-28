@@ -135,6 +135,20 @@ def _content(env, unit, fences):
     return formula_to_data(env, formula), meaning_id(env, formula)
 
 
+def _wire_unit(unit):
+    """A compiled unit in the reports wire form that Python and Lean both decode.
+
+    Report content is already a wire tree; a compiled formula is the bare AST
+    and goes back into its ``{"ast": ...}`` wrapper (fence text included, since
+    the Lean route decodes no surface text).
+    """
+    content = unit["content"]
+    if content is not None and not (type(content) is dict and set(content) & {"report", "assessment", "negated"}):
+        content = {"ast": content}
+    return {"id": unit["id"], "span": unit["span"], "kind": unit["kind"], "meaning": unit["meaning"],
+            "support": unit["support"], **({"content": content} if content is not None else {})}
+
+
 def _parts(units):
     """Flatten an explicitly partitioned mixed source unit for W2 admission.
 
@@ -251,10 +265,7 @@ def load_document(path: str | Path):
         reported = [u for u in compiled if type(u["content"]) is dict
                     and set(u["content"]) & {"report", "assessment", "negated"}]
         reports = ReportsDocument(env, meta.get("contexts", []), meta.get("assessments", []),
-                                  [{"id": u["id"], "span": u["span"], "kind": u["kind"],
-                                    "meaning": u["meaning"], "support": u["support"],
-                                    "content": u["content"]}
-                                  for u in compiled], bridges=meta.get("bridges", []),
+                                  [_wire_unit(u) for u in compiled], bridges=meta.get("bridges", []),
                                   scoped=meta.get("scoped", []))
         generated_open = {o["name"] for o in reports.open_terms}
         for u in reported:
@@ -405,10 +416,7 @@ def check_document(path):
     if doc["reports"] is not None:
         from .reports_route import checked_elaboration, run_case
         meta = doc["meta"]
-        route_doc = {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
-                                "meaning": u["meaning"], "support": u["support"],
-                                **({"content": u["content"]} if u["content"] is not None else {})}
-                               for u in doc["units"]],
+        route_doc = {"units": [_wire_unit(u) for u in doc["units"]],
                      "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
                      "bridges": meta.get("bridges", []), "scoped": meta.get("scoped", []),
                      **({"graph": meta["graph"]} if "graph" in meta else {})}

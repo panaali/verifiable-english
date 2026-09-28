@@ -198,3 +198,57 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
     with pytest.raises(VEError):
         check_document(path)
+
+
+def write_report_document(tmp_path, pieces, name="doc.md", **front):
+    """pieces: (source text, unit fields without id/span); units are u1, u2, ... in order."""
+    units, cursor, source = [], 0, ""
+    for index, (text, fields) in enumerate(pieces, 1):
+        units.append({"id": f"u{index}", "span": [cursor, cursor + len(text.encode())], **fields})
+        cursor += len(text.encode())
+        source += text
+    fences = "".join(f"```ve {f}\n{t}\n```\n" for f, t in front.pop("fences", {}).items())
+    metadata = {"format": "ve-document@1", "environment": environment().to_dict(),
+                "contexts": contexts(), "units": units, **front}
+    path = tmp_path / name
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source + fences)
+    return path
+
+
+def reported(content=None, kind=None, meaning="specified"):
+    return {"kind": kind or ["attributed", "article", "says", "asserted"], "meaning": meaning,
+            "support": "testimony", "content": content or report()}
+
+
+SAFE = ["unary", "safe", ["const", "alice"]]
+
+
+def test_author_assertions_travel_in_the_wire_form(tmp_path):
+    """Astra B: an ordinary asserted unit (AST or fenced English) beside a report unit
+    reached Lean as a bare AST list ("object expected")."""
+    path = write_report_document(tmp_path, [
+        ("The article says that Alice is safe.\n", reported()),
+        ("Alice is safe.\n", {"kind": "asserted", "meaning": "specified", "support": "assumption",
+                              "content": {"ast": SAFE}}),
+        ("Alice is safe, again.\n", {"kind": "asserted", "meaning": "specified", "support": "assumption",
+                                     "surface": "english", "content": {"fence": "u3"}})],
+        fences={"u3": "Alice is safe."},
+        graph={"root": "R", "nodes": [{"name": "R", "unit": "u2", "ast": SAFE}]})
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    assert result["admission"]["envelope"] == result["reports"]["envelope"]
+    assert result["coverage"]["bytes_by_status"]["CHECKED"] == result["coverage"]["source_bytes"]
+
+
+def test_w2_units_are_decoded_as_lean_decodes_them():
+    """The same class on the Python side: W2 content is `{"ast": φ}` closed over E,
+    canonicalised, and never on a quoted kind."""
+    plain = {"id": "u2", "span": [1, 2], "kind": "asserted", "meaning": "specified",
+             "support": "assumption", "content": {"ast": SAFE}}
+    doc = ReportsDocument(environment(), contexts(), [], [unit(report()), plain])
+    assert doc.elaborated()["premises"] == [{"label": "report:u1",
+                                             "ast": ["unary", "reports__says__1", ["const", "article"]]}]
+    for bad in ({**plain, "content": SAFE}, {**plain, "content": {"ast": ["unary", "safe", ["var", 0]]}},
+                {**plain, "kind": ["attributed", "article", "says", "asserted"]}):
+        with pytest.raises(VEError):
+            ReportsDocument(environment(), contexts(), [], [unit(report()), bad])
