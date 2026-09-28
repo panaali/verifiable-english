@@ -6,6 +6,9 @@ with the executable `ve_discourse_route` (`DiscourseMain.lean`, its own `[[lean_
 `VE/Audit.lean` and `lakefile.toml` gain imports, audit lines and the new target only. Every theorem is audited
 (`python lean/audit.py`): no `sorry`, no added axiom, only `propext`, `Classical.choice`, `Quot.sound`.
 Fixture tests: `tests/test_discourse_lean.py` (24 tests over fixtures α to φ).
+The merged Python adapter has its own conservative tests in `tests/test_discourse.py`.
+`tests/test_discourse_three_way.py` checks α and α′ with a shared vocabulary and formula
+through Python admission, Lean resolution/admission and Rust core evaluation.
 
 ## Files
 
@@ -123,5 +126,6 @@ to exactly the elaborated formula. `discourse_parseRender`, `discourse_renderInj
   accepted derivation is `accepted_unique` and `Accepted`'s own clause. This is a spec point to raise.
 - **Fixtures not covered by tests:** parts of κ (renumbering, `DependencyCycle`), λ lemma-level citations (W3
   bundles), σ embedded documents, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it
-  needs a certificate), and the Python/Lean differential over generated manifests (sequence 2 has no Python
-  validator yet). `discourse-joint` reports the joint set and the disjunction, not ALL/NONE/SOME verdicts.
+  needs a certificate), and the Python/Lean differential over generated manifests. The Python adapter covers
+  fewer sentence forms than the Lean route. `discourse-joint` reports the joint set and the disjunction, not
+  ALL/NONE/SOME verdicts.
