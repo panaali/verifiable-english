@@ -34,6 +34,10 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.Attribution.Content
+import VE.Attribution.Elaborate
+import VE.Attribution.Facts
+import VE.Attribution.Semantics
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -941,3 +945,91 @@ import VE.Norms.Run
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+
+#print axioms VE.Reports.Content.isStatement_iff
+#print axioms VE.Reports.Content.mem_nodes_self
+#print axioms VE.Reports.env_ext
+#print axioms VE.Reports.envReports_extends
+#print axioms VE.Reports.names_fresh
+#print axioms VE.Reports.names_injective_on_keys
+#print axioms VE.Reports.hide_envReports
+#print axioms VE.Reports.premises_signed
+#print axioms VE.Reports.signedAtom_wellFormed
+#print axioms VE.Reports.premises_wellFormed
+#print axioms VE.Reports.length_filterMap_of_isSome
+#print axioms VE.Reports.premises_all
+#print axioms VE.Reports.length_filterMap_two
+#print axioms VE.Reports.keys_finite
+#print axioms VE.Reports.content_depth_bounded
+#print axioms VE.Reports.mem_digestTable_content
+#print axioms VE.Reports.mem_digestTable_complement
+#print axioms VE.Reports.no_collision
+#print axioms VE.Reports.no_collision_complement
+#print axioms VE.Reports.interp_rel
+#print axioms VE.Reports.interp_rel_report
+#print axioms VE.Reports.interp_rel_assess
+#print axioms VE.Reports.interp_rel_old
+#print axioms VE.Reports.interp_admissible
+#print axioms VE.Reports.denote_atom
+#print axioms VE.Reports.sat_report_iff
+#print axioms VE.Reports.sat_assess_iff
+#print axioms VE.Reports.unit_denote_iff
+#print axioms VE.Reports.unit_premise_some
+#print axioms VE.Reports.sat_premises_iff
+#print axioms VE.Reports.reports_elaboration_faithful
+#print axioms VE.Reports.restrictJ_admissible
+#print axioms VE.Reports.gen_rel_domain
+#print axioms VE.Reports.gen_rel_domain_assess
+#print axioms VE.Reports.reports_elaboration_faithful_out
+#print axioms VE.Reports.struct_eq_of_rel
+#print axioms VE.Reports.forget_interp
+#print axioms VE.Reports.restrict_interp
+#print axioms VE.Reports.interp_restrict
+#print axioms VE.Reports.interp_restrict_eq
+#print axioms VE.Reports.old_formula_invariant
+#print axioms VE.Reports.finite_witness_decodes
+#print axioms VE.Reports.wf_of
+#print axioms VE.Reports.Content.nodes_trans
+#print axioms VE.Reports.mem_allNodes
+#print axioms VE.Reports.top_mem_allNodes
+#print axioms VE.Reports.occurs_sub
+#print axioms VE.Reports.body_mem_report
+#print axioms VE.Reports.body_mem_assessment
+#print axioms VE.Reports.operand_mem_negated
+#print axioms VE.Reports.nodeOk_of_occurs
+#print axioms VE.Reports.mem_keys
+#print axioms VE.Reports.mem_akeys
+#print axioms VE.Reports.report_key_mem
+#print axioms VE.Reports.assess_key_mem
+#print axioms VE.Reports.inj_of_nodup_map
+#print axioms VE.Reports.reportName_mem
+#print axioms VE.Reports.assessName_mem
+#print axioms VE.Reports.reportName_inj
+#print axioms VE.Reports.assessName_inj
+#print axioms VE.Reports.reportName_ne_assessName
+#print axioms VE.Reports.findEq
+#print axioms VE.Reports.keyOf_eq_inl
+#print axioms VE.Reports.keyOf_eq_inr
+#print axioms VE.Reports.keyOf_eq_none
+#print axioms VE.Reports.keyOf_reportName
+#print axioms VE.Reports.keyOf_assessName
+#print axioms VE.Reports.fresh_pred
+#print axioms VE.Reports.not_mem_names_of_pred
+#print axioms VE.Reports.envReports_pred_old
+#print axioms VE.Reports.envReports_pred_report
+#print axioms VE.Reports.envReports_pred_assess
+#print axioms VE.Reports.envReports_pred_of_old
+#print axioms VE.Reports.envReports_pred_names
+#print axioms VE.Reports.holderSort_const
+#print axioms VE.Reports.recordOf_mem
+#print axioms VE.Reports.recordOf_context
+#print axioms VE.Reports.contextOf_mem
+#print axioms VE.Reports.const_exists
+#print axioms VE.Reports.unit_shape
+#print axioms VE.Reports.mem_premises
+#print axioms VE.Reports.unitPremise_mem
+
+#print axioms VE.Reports.CJson.o_inj
+#print axioms VE.Reports.mem_dedup
+#print axioms VE.Reports.length_dedup
+#print axioms VE.Reports.reports_gate_sound
