@@ -840,3 +840,27 @@ def test_pending_unit_readings_never_reach_w2(lean, tmp_path):
         # Python does not elaborate descriptions: a unit with meaning using one is unsupported
         assert python_outcome(doc, tmp_path, env(PERSON)).startswith(
             "UnsupportedProfile: ve.discourse@1 definite, possessive elaboration is not implemented in Python (u2)")
+
+
+def test_unknown_admission_is_an_unknown_outcome(lean, tmp_path):
+    """looprecheck1 A (Admission.lean:98): a document whose own admission answers `admitted:
+    UNKNOWN` (seven binary sets, 128 joint choices) is an unknown outcome, so a validity claim
+    about it is unconfirmed for either polarity; the same holds for a claim about this document."""
+    inner = joint_doc([], sets=7)
+    assert admit(inner)["admitted"] == "UNKNOWN"
+    body, source_id, document_id = stored(tmp_path, inner, env())
+    for holds in (True, False):
+        result = claim(holds, import_docs(source_id, document_id), {"policy2.ve.md": body})
+        assert result["validity"] == {"u1": "unconfirmed (ResourceLimit: joint choices)"}, result
+        assert result["statuses"]["u1"] == "LABELLED"
+    sentences = ["The API is reviewed."] + ["The API is safe."] * 7 + ["This document is a valid VE document."]
+    extra = {**copy.deepcopy(DOCS), "validity": [{"unit": "u9", "document": "this_policy", "holds": True}]}
+    own = document(sentences, contents={"u1": unary("reviewed", "api")}, extra=extra,
+                   kinds={**{f"u{k}": "asserted" for k in range(2, 9)}, "u9": "meta"})
+    own["reading_sets"] = [reading_set(env(constants=DOC_CONSTANTS), f"rs{k}", f"u{k}", [("r0", unary("safe", "api")),
+                                                                  ("r1", unary("deployed", "api"))])
+                           for k in range(2, 9)]
+    result = admit(own, env(constants=DOC_CONSTANTS))
+    assert result["admitted"] == "UNKNOWN", result
+    assert result["validity"] == {"u9": "unconfirmed (ResourceLimit: joint choices)"}
+    assert result["statuses"]["u9"] == "LABELLED"

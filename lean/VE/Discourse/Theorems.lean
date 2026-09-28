@@ -115,7 +115,8 @@ structure Admit2Facts (profiles : List String) (environment : Json) (rv : VE.Rou
   gate : ∀ cs, res.joint = .ok cs → gateOk res.base cs = .ok ()
   presuppositions : res.presuppositions = fun id =>
     ((presupMentions res.doc).find? (·.id == id)).bind (carrierIn res.doc res.base.wires res.base.doc res.premiseUnits)
-  validity : res.validity = fun u => (res.claims.find? (·.unit == u)).bind (verdictFor res.doc check)
+  validity : res.validity = fun u =>
+    (res.claims.find? (·.unit == u)).bind (verdictFor res.doc (selfOutcome res.joint) check)
   selfTruth : res.selfTruth = res.doc.K.selfTruth
   documentId : Loader.documentId j = .ok res.documentId
   references : res.references = referencesJson (Loader.metaOf j) res.pending
@@ -527,7 +528,7 @@ theorem find_group : ∀ (gs : List Group) (g : Group) (u : String), (gs.flatMap
 
 theorem statusOf_grouped (res : Admitted) (P : PostFacts res.doc res.base res.bound res.pending)
     (V : ValidityFacts res.doc res.claims res.base res.bound)
-    (hv : res.validity = fun u => (res.claims.find? (·.unit == u)).bind (verdictFor res.doc check))
+    (hv : res.validity = fun u => (res.claims.find? (·.unit == u)).bind (verdictFor res.doc so check))
     (hs : res.selfTruth = res.doc.K.selfTruth)
     (g : Group) (hg : g ∈ res.doc.K.groups) (u : String) (hu : u ∈ g.spans) :
     statusOf res u = loadedStatus res.doc (g.spans.headD u) := by
@@ -684,11 +685,12 @@ theorem document_find (res : Admitted) (P : PostFacts res.doc res.base res.bound
     (hd : d ∈ res.doc.K.documents) : res.doc.K.documents.find? (·.name == d.name) = some d :=
   find_key DocName.name _ d P.documentsNodup hd
 
-/-- 4.7: a validity claim about this document is `checked` exactly when it asserts validity. -/
-theorem validity_self (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
-    (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
+/-- 4.7: a validity claim about this document follows the document's own outcome: `admitted`
+when the admission completed, `unknown` when its joint set hit the budget. -/
+theorem validity_self_outcome (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (j : Json) (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
     (v : Validity) (hv : v ∈ res.claims) (hs : refersSelf res.doc v.document) :
-    res.validity v.unit = some (if v.holds then .checked else .refuted) := by
+    res.validity v.unit = some (verdictOf v.holds (selfOutcome res.joint)) := by
   rcases admit_cases profiles environment rv j fuel res h with ⟨_, _, r, _, rfl⟩ | ⟨_, _, _, _, n, _, _, _, ha⟩
   · exact absurd hv (by simp [lift1, emptyManifest])
   · obtain ⟨F, P, V⟩ := admit_facts2 profiles environment rv j _ res ha
@@ -699,6 +701,31 @@ theorem validity_self (profiles : List String) (environment : Json) (rv : VE.Rou
     simp only [Option.bind_some, verdictFor]
     rw [← hname, document_find res P d hd]
     simp [hself]
+
+/-- 4.7: in a completed admission a validity claim about this document is `checked` exactly
+when it asserts validity. -/
+theorem validity_self (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
+    (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
+    (v : Validity) (hv : v ∈ res.claims) (hs : refersSelf res.doc v.document) (hc : jointUnknown res.joint = none) :
+    res.validity v.unit = some (if v.holds then .checked else .refuted) := by
+  rw [validity_self_outcome profiles environment rv j fuel res h v hv hs]
+  simp [selfOutcome, hc, verdictOf]
+
+/-- 4.7: when this document's joint set hit the budget its own outcome is unknown, so a claim
+about it is `unconfirmed` for either polarity (never `checked`). -/
+theorem validity_self_unknown (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (j : Json) (fuel : Nat) (res : Admitted) (h : admitDiscourse profiles environment rv j fuel = .ok res)
+    (v : Validity) (hv : v ∈ res.claims) (hs : refersSelf res.doc v.document) (e : String)
+    (hc : jointUnknown res.joint = some e) :
+    res.validity v.unit = some (.unconfirmed e) := by
+  rw [validity_self_outcome profiles environment rv j fuel res h v hv hs]
+  simp [selfOutcome, hc, verdictOf]
+
+/-- 4.7: an import whose own admission answers `admitted: UNKNOWN` (its joint set hit the budget)
+is an `unknown` outcome, never `admitted`. -/
+theorem outcome_unknown_of_joint (res : Admitted) (e : String) (hc : jointUnknown res.joint = some e) :
+    outcomeOf (.ok res) = .unknown e := by
+  simp [outcomeOf, selfOutcome, hc]
 
 /-- An import's verdict follows its outcome: absent bytes are `unconfirmed`, stored bytes are
 checked one level down under the stored document's own environment and profiles

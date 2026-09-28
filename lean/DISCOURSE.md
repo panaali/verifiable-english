@@ -64,7 +64,8 @@ surface (`discourseSourceSurface`).
 
 **Documents and the wire (9.6).** `format1_unchanged`, `format1_profile_requires_format2`,
 `profile_adapter_base`, `admission_projects`, `discourse_report_sound`, `validity_stripped`,
-`validity_independent`, `validity_self`, `validity_import`, `validity_unknown_never_checked`,
+`validity_independent`, `validity_self` (with `validity_self_outcome`, `validity_self_unknown`), `validity_import`,
+`outcome_unknown_of_joint`, `validity_unknown_never_checked`,
 `stale_import_rejected`, `validity_never_premise`, `self_truth_never_content`, `document_sort_conservative`,
 `import_acyclic`, `discourse_wire_binding`, `stale_target_rejected`, `Run.discourse_wire_acceptance`.
 
@@ -129,8 +130,12 @@ need renewed statement approval (the approved statement is false or unprovable a
 11. **The loader.** JSON `null` (which the restricted parser does not read), fenced English or strict content, norm
     content and `MIXED` units are `NotImplemented: <feature>`. A `@2` input is the document text; a W2 admission
     object with a `format` field is the unchanged `@1` path.
-12. **(renewal) Outcomes and `validity_import`.** `outcomeOf` also treats `NotImplemented` as `unknown` (a check the
-    route cannot complete is never a rejection). The approved `validity_import` checks an import under the
+12. **(renewal) Outcomes, `validity_self` and `validity_import`.** `outcomeOf` also treats `NotImplemented` as
+    `unknown` (a check the route cannot complete is never a rejection), and a successful admission whose joint set hit
+    the budget (`admitted: UNKNOWN`, 4.1(8)) as `unknown` (`outcome_unknown_of_joint`): "ResourceLimit (any)" of 4.7.
+    The same holds for `self`: this document's outcome is `unknown` when its own joint set hit the budget, so the
+    approved `validity_self` (always `checked`/`refuted`) is proved under `jointUnknown res.joint = none`, and
+    `validity_self_unknown` gives `unconfirmed` otherwise. The approved `validity_import` checks an import under the
     *importing* document's profiles (`checkImport profiles b fuel`); an import is checked under its own environment
     and profiles instead (`checkImport files b fuel`, through `outcomeWith`), which the spec needs to adopt.
 13. **(renewal) `validity_independent`.** The approved equation over `stripValidityJson j` is false: fixture υ makes
