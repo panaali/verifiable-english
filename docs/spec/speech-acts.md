@@ -1,0 +1,1135 @@
+# Speech acts (`speech-acts@0`): commands and questions over `norms@0` and `ve-document@2`
+
+> Status: item-1 specification, draft 1 (2026-09-28), written from [speech-acts-PLAN.md](speech-acts-PLAN.md) draft 2, the
+> plan as revised by the converged Astra/Fable design debate (`manage-agents/debates/design-speech-acts/{astra,fable}.md`,
+> CONVERGED after round 2, verdict BUILD with exact edits; the plan's section 5 maps each edit). It is the statement under
+> the Astra + Fable item-1 review that gates items 2, 3 and 4 (PLAN-EXPAND2 rule 10) and any implementation. Sections 4
+> to 6 and 8 are the statements under review; section 12 lists every point where this draft chose between readings of
+> the plan. Theorem statements and fixtures are implementation obligations, not claims of completed proofs or tests.
+> Inputs: [norms.md](norms.md) (W1, cited `norms.md n`), [document.md](document.md) (W2), the W3
+> [definitions statements](../../lean/VE/Definitions/STATEMENTS.md), [debate-protocol.md](debate-protocol.md) (the
+> judgments `follows`, `gap`, `unresolved`), [VISION.md](../../VISION.md), `lean/VE/Norms/*` and
+> [lean/NORMS.md](../../lean/NORMS.md) (the W1 Lean names this spec reuses), [INTEGRATION-GAPS.md](../INTEGRATION-GAPS.md)
+> (the W1/W3/W5 combinations still closed), the [natural view](../natural-view.md) (`ve.prose@1`). Nothing here changes a
+> frozen contract, a `norms@0` or `ve-document@1` hash, a W1 theorem statement or a checker function.
+
+## 0. Scope, one paragraph
+
+A **command** is a scoped demand on a named addressee; a **question** is a request for a response that satisfies a
+typed answer contract. Neither asserts its embedded proposition, and reading or checking either never executes anything.
+An active authored command elaborates, deterministically and mechanically, into one W1 rule whose consequence atom is
+the declared act's regulated predicate and whose guard binds the situation variables to the scope's constants by
+equality (norms.md 3.3); W1's applicability, completion and conflict semantics then say what the document's policy
+requires, and W1's route theorems carry proof and countermodel results. A question carries a wording-derived response
+mode, a closed presupposition formula `H(Q)` and one closed correctness formula `F(a)` per response token; an answer is
+supported by a replayed certificate for `H(Q) ∧ F(a)` over the pinned premises, or evaluated in one explicitly supplied
+valid model, and lack of proof is UNKNOWN, never "no". Consequence questions and proof tasks reuse the certificate and
+countermodel checkers under the debate protocol's `follows`, `gap` and `unresolved`. The report keeps four things apart:
+the meaning admitted, the norm outcome and conflict status, the answer evidence and its scope, and the compliance
+evidence. Exactly one scope per document, rendered as a writable legend, binds "you", every definite object and the task;
+a command with an unbound slot is a repair case; documents with different scopes are never merged into one policy.
+
+In this specification: the scope, commands, questions and queries (1), the English (2), the wire form and identity (3),
+the semantics (4), the report (5), the coverage projection (6), diagnostics (7), the Lean definitions and every item-2
+theorem as a statement (8), the item-1 acceptance fixtures (9), limits (10), the review checklist (11) and the resolved
+choices (12).
+
+Out of scope, by the plan: temporal, causal, epistemic or execution logic in any action name; deadlines, fulfilment over
+time, ability and authority; requests, advice, invitations and permission-granting utterances as commands; open-domain
+"which" questions, explanations and unrestricted mathematical solutions (they need declared rubrics or richer profiles);
+adoption of a quoted command into a policy (no norm bridge exists in W1; 12.8); the English parsing and rendering
+implementation, W8 replay/approval and the human fidelity gate (plan items 3 and 5); any coverage number (plan item 5).
+
+## 1. What a speech-act document is
+
+A speech-act document is a `ve-document@2` (3.5) over an environment that enables `speech-acts@0` and `norms@0`, whose
+units may be, beside W2's existing kinds, active commands (kind `instruction` with command content), questions (kind
+`question` with question content) and authored bindings (kind `binding`). Its policy is a W1 tree (norms.md 1) made of the
+document's active norm units and the elaborated active commands; everything W1 requires of that tree holds unchanged.
+
+### 1.1 Scope: task, addressee, definite objects (the legend)
+
+```text
+scope(E)     := one per environment, in the `speech_acts` block (3.1), identity-bound like `regulated`:
+  task         a token naming the task or session every command and question of the document is about
+  addressee    optional: (sort, constant) bound to the word "you"; mandatory when any command or any unit
+               mentioning "you" is present (UnboundSlot: you otherwise)
+  definites    a finite map from a definite phrase ("the token", "the writing desk") to a declared constant of E;
+               the phrase passes the existing template linter (finite word grammar, 80 bytes); a phrase equal to a
+               declared constant name, a sort noun or an existing English keyword is InvalidInput
+queries(D)   := named pinned premise/target pairs (1.4), in the document front matter
+```
+
+The scope is rendered as the **legend** (2.1), exactly as W1 renders the completion defaults as `By default, ...`
+(norms.md 2.1, 13.4): legend sentences are not document units, sit outside the byte partition and take no status. The
+same sentences are writable: a source may contain them as units of kind `binding` (3.2), in which case each must agree
+with the environment block (`BindingConflict` otherwise) or, when the block omits that entry, supplies it; an authored
+binding is a typed declaration unit with admitted meaning and is counted like any other unit (6). The environment's
+`speech_acts` block is part of the canonical environment bytes, so two documents with different tasks, addressees or
+definite bindings have different `environment_id`s (3.5); this is how "one pinned semantic scope per policy evaluation"
+is realised at `@0` (4.8).
+
+### 1.2 Commands
+
+```text
+command c    := unit id u (the rule name is cmd-<u>); force ∈ {require, forbid}; the declared act (norms.md 3.1 identity:
+                ordered argument sorts and canonical act phrase); the predicate realising the force: the act's obligation
+                predicate for require, its permission predicate for forbid; args: one bound constant per act slot after
+                slot 0 (slot 0 is the addressee, bound by the scope); an optional closed guard G_c over E ("if ...");
+                issuer: the document's author, or the attributed agent when the unit is quoted (provenance, not a field)
+active       := kind exactly `instruction`, meaning `specified`, command content present, every slot bound, and the
+                unit not inside a pending (open) reading set; every other command unit is dormant (1.5)
+demand(c)    := the W1 node  name cmd-<u>; pred the realising predicate; sign (force = require); guard
+                (x̄ = (you, args)) ∧ G_c written with equality atoms in the predicate's context; no carve-outs; no
+                precedence edges (4.2)
+policy(D)    := the W1 tree over E: regulated declarations of E; no definitions (1.6); nodes = the active author norm
+                units in document order ++ demand(c) for every active command c in document order
+```
+
+A `require` on an act with no declared obligation role is `MissingObligationRole: <act>`; a `forbid` on an act with no
+declared permission role is `MissingPermissionRole: <act>`: a prohibition is `¬permitted_act(ā)`, **never**
+`¬required_act(ā)` (norms.md 2.1: `must not` is the permission role, `need not` the obligation role), and the checker
+does not choose a substitute. When both roles describe one act, W1's mandatory dual link (norms.md 3.1) already holds.
+Every realising predicate and its default is declared in the environment as norms.md 3.1 requires, so the W1 legend
+(`By default, a user need not click a control.`) renders beside the scope legend; nothing here replaces a default.
+
+The issuer's authority is provenance (the unit's kind and the document's provenance record) or a named assumption; it is
+not a theorem and the checker never derives it. Norm checking establishes what the policy requires and whether it can
+conflict; it never establishes that the act was done, could be done, by when, or by whose authority (5.4).
+
+### 1.3 Questions and response modes
+
+```text
+question q   := unit id u; mode ∈ {polar, which_all, which_one, follows, reading}, derived from the wording (2.1) and
+                never authored (a stored mode field is derived content: ModeMismatch when it disagrees, 3.2);
+                body: a closed formula (polar, follows) or a formula with one free variable of the alternatives' sort
+                (which_all, which_one); domain: for which modes, the listed alternatives, distinct declared constants of
+                one sort, in wording order (2 to 16); for follows, a query id (1.4); for reading, a reading-set id and
+                version (document.md); asker: the author or the attributed agent (provenance); addressee: the scope's,
+                when the wording mentions "you"
+tokens(q)    := polar: {yes, no}; which_one: the domain; which_all: every subset S of the domain, including ∅;
+                follows: {follows, gap, unresolved} (report outcomes, not answer tokens: 4.6); reading: an index into the
+                bound reading set (a nomination, 4.6)
+H(q)         := the presupposition, one closed formula:
+                polar, which_all, follows:  ⊤
+                which_one over {a₁..aₙ}:    (⋁ᵢ P(aᵢ)) ∧ ⋀_{i<j} ¬(P(aᵢ) ∧ P(aⱼ))        exactly one alternative
+                reading:                     no formula; the named assumption "exactly one intended reading" (4.6)
+F(q, a)      := the correctness formula of a token, closed:
+                polar:      F(yes) = P,  F(no) = ¬P
+                which_one:  F(a) = P(a)
+                which_all:  F(S) = ⋀_{a∈S} P(a) ∧ ⋀_{a∈dom∖S} ¬P(a)
+```
+
+`P(a)` is W1's capture-avoiding instantiation `inst` of the body at the constant. "Which of Atlas and Beacon" is a
+**deliberately restricted named domain**: it presupposes nothing about other services. An open-domain "which" ("Which
+services are reviewed?") is outside `@0`: it carries the empirical claim that the names an answer lists exhaust a wider
+domain, and the IDE's rewrite to a restricted domain records that domain closure as a named assumption in translation
+(2.3, 12.2). Existence and uniqueness for single mode are in `H(q)`, shown in the residual, never inferred from asking.
+
+### 1.4 Queries: pinned premise/target pairs
+
+A consequence question and a proof task are about a **query** `(B_q, P)`: `P` is the target sentence embedded in the
+wording; `B_q` is "these premises", which at `@0` denotes the asserted units earlier in the document, in document order,
+the `ve.prose@1` convention that a conclusion's dependencies are all earlier unmarked premises (12.3). The query record
+(`queries` in the front matter, 3.2) lists the premise unit ids and the target by meaning id; it is derived content,
+regenerated from the document at every site and compared (`QueryMismatch` on disagreement). The checked premise list of a
+query is `Background(E) ++ elaborate(policy(D)) ++ B_q` (4.6). The target is never added to `B_q`; if the target is
+itself an earlier asserted unit, the report says so (`TrivialQuery`, a warning) and the task stands.
+
+A proof task ("Prove that ... using these premises.") is a **command** on the declared act `{0} submit a certificate for
+{1}` whose second slot has the sort `query` and is bound to the query's constant (the query id is declared as a constant
+of that sort in E). It is the one act whose completion the checker itself can witness: a replayed certificate for exactly
+`(B_q, P)` is compliance evidence of kind `certificate` (5.4). It establishes certificate validity, not understanding.
+
+### 1.5 Active and dormant units; what supplies a premise
+
+Only an active command (1.2) and an active author norm unit contribute a W1 rule. A quoted, hedged, attributed or
+example command, a command in a pending reading set, a command with an unbound slot, every question, every answer record
+and every binding contribute **no premise**. The premises a speech-act document is checked against are exactly
+
+```text
+premises(D) := Background(E) ++ elaborate(policy(D)) ++ asserted(D)
+```
+
+with `asserted(D)` W2's fixed asserted premises (document.md: fixed assertions and authored singleton choices) and the
+layer premises regenerated at every site (norms.md 11.3). No embedded proposition of a command or question is a premise
+through its occurrence there (4.7). A reading set over commands or questions is checked per complete compatible choice,
+up to W2's limit of 64; the assertion-disjunction shortcut (`readings_all_iff`) is inapplicable to them.
+
+### 1.6 Supported combinations at `@0`
+
+`speech-acts@0` requires `norms@0` (`UnsupportedProfile: speech-acts@0 requires norms@0`) and the FOL checker family.
+`closure@0`, `order@0` and `nary@0` with the route are `UnsupportedProfile`, as are W3 `defined` declarations and W5
+`functional`/`total` flags in an environment used by this route (INTEGRATION-GAPS: the norms route rejects them with norm
+constructs; this route inherits the gate whether or not a command is present, 12.5). N-ary acts, temporal arguments and
+existential objects inside an act ("file some report") follow norms.md 0 and 2.4: the object is inside the declared act
+phrase or the sentence is not a command.
+
+## 2. The English (one reading each; rejected as today when `speech-acts@0` is off)
+
+### 2.1 Wordings
+
+Every wording has exactly one reading, conditional on the legend, which is itself the first thing the reader sees.
+Imperatives are the declared act phrase (norms.md 2.4) with slot 0 dropped and the later slots filled by a declared
+constant name or a bound definite phrase, so elaboration to `demand(c)` is mechanical. `<rest>` is the remainder of a
+copular predicate wording `{0} is <rest>`; `<sentence>` is any closed sentence of the existing English surface.
+
+| Wording | The one reading (the IDE's paraphrase) | Formal effect |
+|---|---|---|
+| `This document is task <task>.` (legend) | Every command and question below is about this task and no other. | `scope.task` |
+| `In this task, you are <constant>.` (legend) | "You" names this addressee throughout. | `scope.addressee` |
+| `In this task, the <noun phrase> is <constant>.` (legend) | This definite phrase names this object throughout. | `scope.definites` |
+| `<Act phrase after slot 0, first word capitalised, later slots filled>.` e.g. `Click Check.` | In this task, you are required to click Check. Nothing is claimed about whether you did. | `demand`: `+` on the obligation predicate, guard `x0 = you ∧ x1 = Check` |
+| `Do not <act phrase, same shape>.` e.g. `Do not share the token.` | In this task, you are not permitted to share the token. | `demand`: `−` on the permission predicate |
+| `..., if <condition>.` on a command | The demand holds only in situations where the condition holds. | guard `G_c` |
+| `Is <constant> <rest>?` e.g. `Is Atlas reviewed?` | Asks whether Atlas is reviewed; "yes" is correct exactly when it is, "no" exactly when it is not. | polar, `F(yes) = P`, `F(no) = ¬P` |
+| `Is it the case that <sentence>?` | Asks whether the sentence holds; the same contract. | polar over any closed sentence |
+| `Which of <A>, <B>[, <C>...] and <Z> are <rest>?` | Asks for the complete list of these named alternatives that are `<rest>`; "none" is a possible answer; nothing is presupposed about anything not named. | which_all, `H = ⊤` |
+| `Which one of <A>, ... and <Z> is <rest>?` | Asks which single named alternative is `<rest>`; that exactly one is, is presupposed and shown in the residual. | which_one, `H` = exactly one |
+| `Does it follow from these premises that <sentence>?` | Asks whether the sentence follows from the premises above; the answer is a checked proof, a checked counter-situation, or "not established". | follows over query `(B_q, P)` |
+| `Prove that <sentence> using these premises.` | In this task, you are required to submit an accepted proof of the sentence from the premises above. The task may be impossible. | command on `{0} submit a certificate for {1}` |
+| `Which reading did you mean?` (after a reading set) | Asks the addressee which of the displayed readings, at the displayed version, was intended; the reply is testimony. | reading over `(set, version)` |
+| `Answer question <n>.` | In this task, you are required to answer that question. | command on `{0} answer {1}` with the question's constant |
+
+The paraphrases never show logic. `you` renders as the addressee's name in the inspector and as "you" in the text;
+a definite phrase renders as written and means the bound constant; a constant not bound to a phrase renders by name.
+Wordings not in this table are not speech-act wordings (2.3).
+
+### 2.2 Synonyms and non-synonyms
+
+Input synonyms, rendered canonically and shown in the paraphrase: `Please <command>` for `<command>` **only in authoring
+after W8 approval** (plan item 3); in translation "please" makes the unit a reading set `{require, request}` whose request
+reading is unsupported, so the unit is U (6). `Don't` for `Do not`. Nothing else.
+
+Not synonyms: `Never <act>` (temporal); `You must <act>` and `You may <act>` (the first is a W1 rule with a constant
+subject, rejected by W1 with the `Every <noun>` rewrite; the second grants a permission and is not a command at all: the
+hint `PermissionNotCommand` offers the W1 rewrite `Every <noun> may <act>.`); `Could you <act>?`, `Would you <act>?`
+(requests; unsupported); `Should <constant> <act>?` (a soft-norm question; outside this route).
+
+### 2.3 How the IDE resolves ambiguity, in English (norms.md 2.6 extended)
+
+| The author wrote | Competing readings shown as paraphrases with an example situation | Rewrites offered |
+|---|---|---|
+| `Share the token.` with no binding for "the token" | none: the phrase is unbound (`UnboundSlot: the token`) | add the legend sentence `In this task, the token is <constant>.`; in translation the unit is `unformalised(unbound-slot)` |
+| `Click Check and save.` | (a) two independent demands; (b) click, then save, in that order (an order the route cannot state) | two commands `Click Check.` `Save.` when no order is meant (authoring, after approval); in translation a reading set {(a), (b)} whose (b) is unsupported, hence U (`CoordinatedActs`) |
+| `Must Alice open the desk?` | (a) duty: "Is Alice required to open the desk?" (polar over `open_required(Alice, Desk1)`); (b) necessity: "Does it follow from these premises that Alice opens the desk?" (follows over `done_open(Alice, Desk1)`) | pick (a) or (b); both are elaborated, so in translation the unit is R |
+| `Can you open the desk?` | (a) permission: "Are you permitted to open the desk?"; (b) ability (unsupported); (c) request (unsupported) | (a) as `Is it the case that you are permitted to open the desk?`; in translation the set {a, b, c} is U with per-reading residuals |
+| `Which services are reviewed?` | open domain: the answer would claim that the listed services are all the services | `Which of Atlas and Beacon are reviewed?` when the sort's constants are known; in translation the narrowing records the domain closure `Every service is Atlas or Beacon.` as a named assumption (`domain-closure:<unit>`) |
+| `Did every sampled district report a drop?` | none at `@0`: the past-tense inversion needs an inflection the surface does not infer | `Is it the case that every sampled district reported a drop?` when `{0} reported a drop` is the declared wording |
+| `Choose authoring or translation mode.` | none: a disjunction in object position is not a bound object | declare the act `{0} choose a mode` (object inside the act, norms.md 2.4) and write `Choose a mode.`; or bind two constants and write two commands |
+| `Change example now?` | none: "now" is temporal; the sentence is not a polar wording | `Is it the case that ...` over a declared present-tense wording, without "now"; else `unformalised(temporal)` |
+| `You may close the desk.` | not a command wording (`PermissionNotCommand`) | `Every user may close each desk.` (W1) |
+
+The distinguishing situation is a checked finite model rendered in document terms (W8 de-elaboration), as W1.
+
+### 2.4 The reader's checklist (norms.md 2.5 extended)
+
+For every accepted command the assistant shows, in English only: the legend it depends on; the deterministic paraphrase
+naming the addressee, the act, the object and the task; the W1 default of the realising predicate; whether the policy
+can conflict at that demand and, if so, the witness situation; and the sentence "Nothing here records that the act was
+done." For every accepted question: the mode in words ("a yes/no question", "a complete-list question over Atlas and
+Beacon", "a single-choice question", "a does-it-follow question", "a which-reading question"); the presupposition in
+words when there is one ("exactly one of Atlas and Beacon is reviewed"); the current answer line (5.3) with its evidence
+kind and scope ("proved from the premises above", "true in the situation shown, and only there", "not established"); and,
+for a question with no answer record, "no answer has been given". For a proof task: the pinned premises and target, and
+"an accepted proof shows that the sentence follows from these premises; it does not show that anyone understood it".
+
+## 3. Declarations, wire form, strict form and identity
+
+### 3.1 The environment `speech_acts` block (identity-bound like `regulated`)
+
+```json
+"speech_acts": {"task": "tutorial-3",
+                "addressee": {"sort": "user", "constant": "Alice"},
+                "definites": {"the token": "Token1", "the writing desk": "Desk1", "the desk": "Desk1"}},
+"predicates": {"click_required": {"arguments": ["user", "control"], "description": "...",
+                                  "regulated": {"role": "obligation", "default": "deny", "act": "{0} click {1}",
+                                                "permission": "click_permitted"}},
+               "click_permitted": {"arguments": ["user", "control"], "description": "...",
+                                   "regulated": {"role": "permission", "default": "allow", "act": "{0} click {1}"}},
+               "share_permitted": {"arguments": ["user", "token"], "description": "...",
+                                   "regulated": {"role": "permission", "default": "allow", "act": "{0} share {1}"}},
+               "submit_required": {"arguments": ["user", "query"], "description": "...",
+                                   "regulated": {"role": "obligation", "default": "deny",
+                                                 "act": "{0} submit a certificate for {1}",
+                                                 "permission": "submit_permitted"}}, ...}
+```
+
+`task` is a token (`[A-Za-z0-9_.-]`, at most 64 bytes) and mandatory; `addressee.sort` is a declared sort and
+`addressee.constant` a declared constant of that sort (`UnknownSymbol` otherwise); `definites` has at most 64 entries,
+each phrase distinct after whitespace normalisation, each constant declared. Unknown fields are `InvalidInput:
+speech_acts block`. The block is part of the canonical environment bytes, so `environment_id` changes when any of it
+changes and is unchanged for every existing environment (none has the block). The `regulated` declarations are W1's
+(norms.md 3.1) and unchanged. The sort `query` and one constant per query id are ordinary declarations when the document
+uses proof tasks.
+
+### 3.2 Unit contents (W2 units of kinds `instruction`, `question`, `binding`)
+
+```json
+{"id": "u1", "span": [0, 12], "kind": "instruction", "meaning": "specified", "support": "none",
+ "content": {"command": {"force": "require", "act": "click_required", "args": ["Check"], "guard": ["top"]}}}
+
+{"id": "u7", "span": [120, 138], "kind": "question", "meaning": "specified", "support": "none",
+ "content": {"question": {"mode": "which_all", "sort": "service", "domain": ["Atlas", "Beacon"],
+                          "body": ["unary", "reviewed", ["var", 0]]}}}
+
+{"id": "u9", "span": [200, 258], "kind": "question", "meaning": "specified", "support": "none",
+ "content": {"question": {"mode": "follows", "query": "q1"}}}
+
+{"id": "u0", "span": [0, 27], "kind": "binding", "meaning": "specified", "support": "none",
+ "content": {"binding": {"you": "Alice"}}}          // or {"phrase": "the token", "constant": "Token1"} or {"task": "tutorial-3"}
+```
+
+Front matter additions: `"queries": [{"id": "q1", "premises": ["u3", "u4"], "target": {"ast": [...]}}]` (derived,
+regenerated: `QueryMismatch`), `"answers"` and `"compliance"` (3.3). Command content: `force` ∈ `{require, forbid}`
+(`InvalidInput: force` otherwise; permission-granting is not a force); `act` names the realising predicate, whose role
+must match the force (`MissingObligationRole` / `MissingPermissionRole`, naming the act phrase); `args` are constants of
+the predicate's later sorts, one per slot (`TypeMismatch`); `guard` is a closed formula in the P0 wire form (`["top"]`
+when absent). Question content: `mode` is derived content and must equal the mode the wording determines (`ModeMismatch:
+<unit>`); `domain` lists 2 to 16 distinct declared constants of `sort` (`UnknownAlternative`, `DuplicateAlternative`,
+`AlternativeSort`); `body` is over the context `[sort]` for which modes and closed for polar; `query` names a query for
+`follows`; `reading` mode carries `{"set": id, "version": n}`. Binding content is exactly one legend entry. Norm content
+under a non-norm kind, command content under a non-instruction kind and question content under a non-question kind are
+rejected, never discarded, as W1 rejects misplaced norm content; a quoted kind wrapping `instruction` keeps its command
+content dormant and every single-unit check still applies (as W1's `checkQuoted`).
+
+W2's `content` may also be an English or strict fence; the English fence goes through the all-derivations parser and
+yields the same command or question object (2.1); the fence's surface and the object are the same unit.
+
+### 3.3 Answer and compliance records (document metadata, evidence, never premises)
+
+```json
+"answers": [{"question": "u7", "by": "checker", "support": "certificate",
+             "answer": {"all": ["Atlas"]}, "evidence": {"certificate": {...}}},
+            {"question": "u5", "by": "checker", "support": "certificate", "conditional": true,
+             "answer": {"one": "Atlas"}, "evidence": {"certificate": {...}}},
+            {"question": "u6", "by": "checker", "support": "model", "answer": "no", "evidence": {"model": {...}}},
+            {"question": "u9", "by": "checker", "support": "certificate", "judgment": "follows",
+             "evidence": {"certificate": {...}}},
+            {"question": "u11", "by": "author", "support": "testimony", "nominate": 0}],
+"compliance": [{"command": "u2", "evidence": {"certificate": {...}}},
+               {"command": "u1", "evidence": {"unit": "u12"}}]
+```
+
+An answer record's `answer` is a token of the question's mode (`AnswerOutsideDomain` otherwise); its `support` is one of
+W2's support kinds; the route recomputes the answer line from the evidence and rejects a record whose stated answer or
+judgment the evidence does not establish (`AnswerMismatch`). A `judgment` is `follows` or `gap` only (`refuted` is not a
+value: `InvalidInput: judgment`); `unresolved` is the absence of a record. A nomination names a candidate index of the
+bound set at the bound version (`NominationOutsideSet`) and is recorded as a W2 narrowing with `support: testimony`
+citing the question and the nomination unit; the checker never treats it as proof of intent. A compliance record names
+either an asserted unit whose content is the act's `done` fact (norms.md 4.3: `done_click(Alice, Check)`, a base
+predicate, with that unit's support kind), or, for a proof task, a certificate for exactly the pinned query.
+
+### 3.4 Strict text (the fallback of P0 3.2)
+
+```ebnf
+legend     = "task ", token, "." | "you ", constant, "." | "the ", phrase, " is ", constant, "." ;
+command    = "command ", name, ": ", ("require" | "forbid"), " (", ground-atom, ")", [ " if (", formula, ")" ], "." ;
+question   = "question ", name, ": ", mode, "." ;
+mode       = "polar (", formula, ")" | "which-all ", sort, " [", constant, { ", ", constant }, "] (", formula, ")"
+           | "which-one ", sort, " [", constant, { ", ", constant }, "] (", formula, ")"
+           | "follows ", query-id | "reading ", set-id, "@", version ;
+```
+
+The ground atom's arguments are the addressee constant then the bound constants in slot order (`@Alice click_required
+@Check`); a which body uses `x0` for the alternative. `print(parse(s)) = s` on canonical text; English and strict forms
+round-trip through the same objects with W1's preserved name metadata for rule names (norms.md 11.2).
+
+### 3.5 Identity (`ve-document@2`)
+
+`ve-document@2` is `ve-document@1` (document.md) plus: the `binding` kind, command and question content, `queries`,
+`answers`, `compliance` and the `speech_acts` environment block. Its document identity is
+`sha256("ve-document@2\n" + canonical(identity_payload))` with W2's payload (metadata without removable weights, source,
+fences), so no `ve-document@1` identity moves and every `ve-document@1` document is a valid `ve-document@2` document with
+the same units and, under the new domain string, a new document id. `environment_id` binds the `speech_acts` block beside
+`regulated` (3.1). A command unit's `meaning_id` is `sha256("ve-meaning-<identity_version>\n" +
+canonical({"environment_id", "ast"}))` with `ast` the command object; a question's likewise with the question object
+including the derived mode, sort, domain, body, query (with its premise meaning ids and target meaning id) and
+reading-set id and version; a binding's with the binding object. The report identity is P0's
+`{"environment_id", "document", "report"}` over the complete validated source document; every certificate in an answer,
+compliance or consequence record is bound to the recomputed environment id, the regenerated premise list (1.5 or the
+query's, 4.6) and the exact conclusion (`H(q) ∧ F(a)`, `F(a)` with `H(q)` as a premise, or the target); a replay against
+a document whose scope block, regulated declaration, query premise set, active command set or asserted premise set
+differs is stale. Removable weights and JSON layout are outside every identity, as in W2.
+
+## 4. Semantics
+
+### 4.1 Well-formedness (`WellFormedSpeech`)
+
+A speech-act document `D` over `E` is well-formed when, in this order:
+
+1. `E` enables `speech-acts@0`, `norms@0` and `relational-fol@0` only among statement and checker profiles that this
+   route admits (1.6); the `speech_acts` block decodes (3.1).
+2. Every unit decodes under W2's rules with the kinds and contents of 3.2; spans partition the source; MIXED parts as W2.
+3. Every command's act, role, args and guard type-check (3.2); every command has the addressee bound (`UnboundSlot: you`)
+   and every definite phrase it uses bound (`UnboundSlot: <phrase>`); a command unit that fails this is rejected in
+   authoring and is `unformalised(unbound-slot)` in translation, never active.
+4. Every question's derived mode equals its stored mode; domains, sorts and bodies type-check; every `follows` question
+   names a query whose premise ids are asserted units earlier in the document and whose target is closed and typed;
+   every `reading` question names an existing set and version.
+5. `policy(D)` is W1 well-formed (norms.md 4.1) over `E`: the author norm units and the command rules together pass
+   `Norms.WellFormed`, including both DAGs; a rule naming a command in `over` is `UnknownRule: rule cmd-<u>` (commands
+   take no precedence and are taken precedence over by nothing at `@0`, 12.4); at most 256 rules in total.
+6. Every answer, compliance and nomination record names an existing question or command of the right kind, a token of
+   its mode, and evidence of a permitted kind (3.3).
+7. Every authored binding agrees with the environment block or supplies a missing entry; two bindings of one phrase or
+   of "you" are `DuplicateDeclaration: binding <phrase>`.
+
+### 4.2 Command elaboration `demand(c)` and the regenerated policy
+
+For a command `c` on the realising predicate `p` with sorts `(s₀, s₁, ..., sₖ)` (slot 0 the addressee), bound constants
+`(you, a₁, ..., aₖ)` and guard `G_c`, in the predicate's context `[sₖ, ..., s₀]` (de Bruijn as norms.md 3.2: index 0 is
+the last argument):
+
+```text
+eqGuard(c)   := (var k = @you) ∧ (var (k−1) = @a₁) ∧ ... ∧ (var 0 = @aₖ)         one equality per situation variable
+demand(c)    := Node { name cmd-<u>, pred p, sign (force = require), guard eqGuard(c) ∧ G_c, carveOuts [], over [] }
+```
+
+This is exactly norms.md 3.3's "a rule about a constant writes `if (x0 equals @view)`", and W1's `ConsequenceArguments`
+holds by construction: the consequence atom's arguments are the situation variables. `policy(D)` (1.2) is a `norms@0`
+tree; W1's `elaborate`, `Value`, `holdsCatala`, conflict formulas, `ConflictFree`, `DocumentExpansion` and every route
+theorem apply to it unchanged. The layer premise of `p` is regenerated at every site from the decoded active units and
+the scope; a premise list on the wire is untrusted regression input for Rust only (norms.md 11.6).
+
+### 4.3 The direct command semantics
+
+Independently of the elaborator, a command means: *at the bound tuple, when its guard holds, the rule applies with its
+sign; it applies nowhere else.* In W1's direct vocabulary (`AppliesD`, `Value`, `IntendedAt`):
+
+```text
+boundTuple(c, S)  := the tuple (you, a₁, ..., aₖ) denoted in S, in argument order (some tuple iff every constant denotes)
+AppliesD (policy D).T S (tupleVal v̄) (demand c)   ⟺   boundTuple(c, S) = some v̄  ∧  S ⊨ G_c        (theorem demand_applies)
+```
+
+Hence, when the elaboration holds and no opposite-sign rule of the policy decides at that tuple, `p` holds there exactly
+when the force is `require` (`demand_consequence`, 8.2): a `require` contributes `required_act(ā)` and a `forbid`
+contributes `¬permitted_act(ā)`; and where an opposite rule also decides, the policy is a W1 CONFLICT at that tuple with
+the witness situation, never a silent override. Defaults are W1's completions: a command never changes them; a
+`require` on a deny-by-default obligation is what makes the act required at all.
+
+### 4.4 Presuppositions, correctness and `Answers(Q, S)`
+
+For a question `q` (1.3) and a structure `S` admissible for the complete environment:
+
+```text
+Answers(q, S) := { a ∈ tokens(q) | S ⊨ H(q) ∧ F(q, a) }
+```
+
+Facts about this set (theorems in 8.3): a polar question has at most one answer in `S`; a single-choice question has at
+most one (from `H`); a complete-list question has exactly one, the subset of the domain that satisfies `P` in `S`, and
+that subset may be empty. Where `S ⊭ H(q)`, `Answers(q, S) = ∅`: no token is correct, and in particular "no" is not.
+
+### 4.5 Answer support: the proof path and the model path
+
+Let `Π := premises(D)` (1.5) and `E_n` the complete environment.
+
+```text
+Supported(q, a)          := an accepted certificate  Π ⊢ H(q) ∧ F(q, a)                          (evidence kind: certificate)
+SupportedGiven(q, a)     := an accepted certificate  Π ++ [H(q)] ⊢ F(q, a)                       (conditional; H(q) is a named
+                            assumption in the residual, leaf speech:presupposition:<u>; the certificate supports the answer
+                            conditional on that assumption and does not establish the presupposition)
+PresuppositionFailed(q)  := an accepted certificate  Π ⊢ ¬H(q), or a validated finite model M of Π with M ⊭ H(q)
+Evaluated(q, M)          := a validated finite model M of Π (Background validated, regulated tables computed as norms.md
+                            11.3) with M ⊨ H(q): Answers(q, M) computed by the finite evaluator; evidence kind: model;
+                            scope: that model only
+UNKNOWN(q)               := none of the above within budget; the budget named
+```
+
+`Supported(q, a)` gives `a ∈ Answers(q, S)` in every admissible `S` satisfying `Π` (`support_sound`). Two opposite
+polar answers, or two single-choice answers, are both supported only when `Π` is unsatisfiable (`support_exclusive`);
+the report then shows the contradiction in the premises and marks every dependent certificate `vacuous` (P0 3.8), as the
+debate protocol requires for coexisting `follows` and `refuted`. On the model path, `M ⊭ H(q)` is reported as
+PRESUPPOSITION-FAILED and never as a negative answer; a countermodel to `Π ⇒ P` is evidence about that model and
+establishes neither `Π ⇒ ¬P` nor "no". Every answer line retains its assumptions (the certificate's used leaves, including
+`speech:presupposition:<u>` when conditional), its evidence kind and its vacuity status.
+
+### 4.6 Consequence questions, proof tasks and reading questions
+
+For a query `(B_q, P)` let `Π_q := Background(E) ++ elaborate(policy(D)) ++ B_q`.
+
+```text
+follows     := an accepted certificate  Π_q ⊢ P                                                 (Entails, by checkCertificate_sound)
+gap         := a validated finite model M of Π_q with M ⊭ P                                     (¬Entails, by eval_iff_denote)
+unresolved  := neither within budget; the budget named
+```
+
+Exactly these three; `refuted` (a certificate for `Π_q ⊢ ¬P`) is not imported: the plan forbids reading a countermodel
+as `Π_q ⇒ ¬P`, and a document that wants the negation asks the polar question "Is it the case that not P?" whose "yes"
+is that certificate. `follows` and `gap` for the same `(E, Π_q, P)` cannot both be sound (`follows_gap_exclusive`); the
+implementation reports `CheckerConflict` and withholds a record, as debate-protocol.md prescribes.
+
+A **proof task** is the command of 1.4; its compliance evidence is a replayed certificate for exactly `Π_q ⊢ P`, bound to
+the query's meaning ids. A submission whose premise list differs from `Π_q` in any way, including adding `P`, is
+`QueryMismatch`. Acceptance establishes `Entails(E_n, Π_q, P)` and generates the premise `done_submit(you, q)` labelled
+`speech:compliance:<u>` (the only checker-generated `done` fact); it establishes nothing about the submitter.
+
+A **reading question** binds `(set, version)`. A nomination of candidate `i` by agent `g` is testimony: it records a
+W2 narrowing (document.md: cites the set and version, keeps the readings, cites the question and the nomination unit as
+its reason, never modifies the set), so later checks can depend on the chosen reading under the label
+`readings:<set>@<version>:<i>` with the narrowing's provenance visible; it is never proof of intent or of fidelity. No
+nomination, two nominations, or a nomination outside the set leaves the status `CLARIFICATION-OPEN` and records nothing.
+The presupposition "exactly one intended reading" is a named assumption `intended-reading:<set>@<version>` in the residual.
+
+### 4.7 Exact consequence correspondence and dormant-request invariance
+
+The consequences of a speech-act document are **exactly** those of `premises(D)`: `Background(E)`, the regenerated
+active W1 layers of `policy(D)` (the author's norm units and the elaborated active commands) and the fixed asserted
+premises. Two things follow and are theorems (8.4):
+
+- **No embedded proposition is a premise by occurrence.** `premises(D)` is a function of `E`, the active norm units, the
+  active commands and the asserted units alone; the body of a question, the proposition inside a command ("that the
+  token is shared"), an answer record and a compliance record contribute nothing. A supported answer may enter a later
+  deduction only through the leaf `speech:answer:<u>:<a>`, admitted exactly when it equals `H(q) ∧ F(q, a)` for an answer
+  supported by certificate over `premises(D)` (never for a model-evaluated answer), with the certificate's own leaves
+  retained; that is the answer-to-claim bridge, and it states exactly what licenses it.
+- **Ordinary composition is preserved.** From the admitted requirement `required_open(Alice, Desk1)` (a layer
+  consequence) and the explicit asserted premise `required_open(Alice, Desk1) → reviewed(Atlas)`, the checker derives
+  `reviewed(Atlas)`: W1's `norms_route_acceptance` on `policy(D)` is reused verbatim. Nothing in this route bars a
+  document's own premises from mentioning regulated predicates.
+- **Dormant-request invariance.** For two well-formed documents over the same environment (hence the same scope and
+  declarations) with the same active norm units, the same active commands and the same asserted premises, `premises(D)`
+  and `policy(D)` coincide, so every certificate replays identically, every countermodel is a countermodel of both and
+  every conflict status agrees: adding, removing, quoting or answering a dormant unit changes no verdict. A change to the
+  scope block or to a regulated declaration is a declaration change: a new `environment_id`, hence a new document under
+  W2's rules, handled by identity, not by this invariance.
+
+### 4.8 Scope: one pinned semantic scope per policy evaluation
+
+W1's situation variables are exactly the act's arguments (norms.md 1) and carry no task coordinate, so nothing in a
+regulated relation records which task a requirement belongs to. At `@0` the rule is therefore structural: `policy(D)` is
+built from one document over one environment, every command rule is guarded by that environment's addressee constant,
+and a policy evaluation never combines rules from documents with different `speech_acts` blocks. `combine(D₁, D₂)`, the
+only way two documents' units reach one policy (a bundle or a multi-source check), returns `ScopeMismatch: <task₁>,
+<task₂>` when the blocks differ, and the W3 citation rule already requires one environment identity across a bundle
+(Definitions/STATEMENTS.md), which the block is part of. Consequently "Open the desk." in task A and "Do not open the
+desk." in task B are never a CONFLICT: they are never in one relation. The same two sentences in one scope are a genuine
+W1 pair conflict at `(Alice, Desk1)` with that witness. A scope-preserving encoding that would let differently scoped
+demands share a relation (a task argument on the act) is a separately specified and verified profile, not `@0`.
+
+## 5. The report: four separate lines per unit
+
+### 5.1 Meaning admitted
+
+Per unit: `admitted` (the object of 3.2 and its paraphrase), `repair: UnboundSlot <phrase>`, `readings: <set>@<v>,
+<n> candidates` (each candidate's own line beneath), `unformalised(<reason>)`. A well-formed unanswered question is
+`admitted` with the answer line `UNANSWERED`: checked semantics, no checked answer.
+
+### 5.2 Norm outcome and conflict (commands)
+
+The W1 report of `policy(D)` (norms.md 5.2): document status CONFLICT-FREE (certificates per target) / CONFLICT (witness
+situation, rendered) / UNKNOWN (budget), and, per command, its demand in English ("In this task, Alice must click
+Check.") and the outcome at its tuple under the exhibited premise-set model or by certificate (`premises(D) ⊢ p(ā)`).
+A conflict involving a command names the command and the rule or command it collides with and the situation; a
+command's demand is never silently overridden.
+
+### 5.3 Answer evidence and its scope (questions)
+
+```text
+answer: supported <a> (certificate; assumptions: <leaves>; vacuous: yes|no)
+      | supported <a> given the presupposition (certificate; assumption speech:presupposition:<u>)
+      | evaluated <a> in model <id> (this situation only)
+      | PRESUPPOSITION-FAILED (certificate for ¬H | model <id>)
+      | UNKNOWN (<budget>)
+      | UNANSWERED
+judgment (follows questions): follows (certificate) | gap (model <id>) | unresolved (<budget>)
+nomination (reading questions): <i> by <agent> (testimony) | CLARIFICATION-OPEN (none | multiple | outside set)
+```
+
+### 5.4 Compliance evidence (commands)
+
+```text
+compliance: none
+          | external: unit <id> (<support kind>)          an asserted done_act(ā) unit with its own support
+          | certificate: query <q>                        a proof task's replayed certificate
+```
+
+Compliance is never inferred from the demand, from an answer, or from the passage of time; "external" repeats the
+unit's support kind (observation, testimony, adapter, ...) and adds nothing. Physical completion requires external
+evidence; "a clear explanation" is an open term with W2's decider, criteria and version, or `unformalised` if no adequate
+contract exists.
+
+### 5.5 Status text
+
+```text
+policy: CONFLICT-FREE (<k> certificates) | CONFLICT: <rule or command> against <rule or command> at <situation> | UNKNOWN (<budget>)
+scope: task <task>; you = <constant>; <n> definite bindings; <m> commands active, <d> dormant
+questions: <a> answered (<c> by certificate, <e> in a model), <p> presupposition failures, <u> unknown, <w> unanswered
+compliance: <x> of <m> commands with evidence (<y> external, <z> certificates)
+```
+
+Residual lines beside W2's (open terms, named assumptions, bridge leaves, unresolved reading sets): `presuppositions`
+(assumed, per question), `intended-reading` assumptions, `domain-closure` assumptions from rewrites, `unbound-slots`,
+`dormant-commands` (quoted, example, pending), `unanswered`, `answer-bridges` (leaves `speech:answer:*` used).
+
+## 6. Coverage projection C/L/O/R/U
+
+W2 reports `bytes_by_kind` and `bytes_by_status` (CHECKED / OPEN / LABELLED / UNFORMALISED / MIXED parts). This route
+adds a disjoint projection `bytes_by_class` over the same partition, totalling the source byte count, without rewriting
+either W2 table. Each unit or MIXED part is first split by substance, then classed by precedence:
+
+```text
+non-substantive  := whitespace, punctuation and separators, list markers, headings and labels with no content
+                    (W2 LABELLED), display numbers                                                   → L
+substantive, in this order:
+  U  any unbound slot; any unsupported component (temporal, coordination with order, ability, request, permission
+     grant, open-domain which, pronoun, past-tense inversion); an active reading set with an unelaborated reading;
+     unformalised(...)
+  R  else an active open reading set whose every candidate is elaborated (each admitted as a command, question, norm
+     or assertion), with each candidate's residual retained beneath it
+  O  else a meaning `{"open": [...]}`, or a question whose presupposition or a command whose guard is an open term
+  C  else: admitted, every context slot bound, every presupposition formalised and either proved or retained as a named
+     assumption in the residual; completion and answer truth are irrelevant to C
+```
+
+Failing C never by itself yields U: necessity versus duty ("Must Alice open the desk?") is R; "a clear explanation" is
+O. Environment-declared bindings and defaults are the legend, outside the partition, no class. An authored `binding`
+unit is substantive and C when it binds a declared phrase or "you" to a declared constant, U otherwise (a legend sentence
+carrying a normative default or a factual assertion is never L). Reconciliation with W2: CHECKED ↦ C; OPEN ↦ R, O or U
+by the rules above (W2 stores readings under OPEN; the class says which); LABELLED ↦ L; UNFORMALISED ↦ U; a MIXED unit
+by its parts. Residual counts (5.5) accompany the table; per-reading residuals stay under R. Guessed deciders and opaque
+action glosses earn no C: an action declaration cannot hide a sentence behind an opaque predicate and claim fidelity
+(2.3, the `choose a mode` row declares the object inside the act only when that is the meaning).
+
+## 7. Diagnostics (shared text in Python and Lean unless marked)
+
+| Text | When | Kind |
+|---|---|---|
+| `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate; closure, order, n-ary, W3 definitions or W5 flags with the route (1.6) | error |
+| `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3) | error |
+| `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, alternative or query constant | error |
+| `UnboundSlot: you` / `UnboundSlot: <phrase>` | a command or "you"-mentioning unit without a binding (4.1(3)); English layer adds the legend rewrite | error (authoring) / `unformalised(unbound-slot)` (translation) |
+| `BindingConflict: <phrase>` / `DuplicateDeclaration: binding <phrase>` | an authored binding disagrees with the block or repeats | error |
+| `MissingObligationRole: <act>` / `MissingPermissionRole: <act>` | `require` on an act without an obligation role; `forbid` on an act without a permission role | error |
+| `ModeMismatch: <u>` | stored mode differs from the wording-derived mode | error |
+| `UnknownAlternative: <u>, <name>` / `DuplicateAlternative: <u>, <name>` / `AlternativeSort: <u>` | domain checks | error |
+| `UnknownRule: rule cmd-<u>` | an author rule names a command in `over` | error (W1 text) |
+| `ScopeMismatch: <task₁>, <task₂>` | combining documents with different `speech_acts` blocks (4.8) | error |
+| `QueryMismatch: <u>` | a stored query or a submitted certificate's premise list differs from the regenerated `Π_q` | error |
+| `AnswerOutsideDomain: <u>, <token>` / `AnswerMismatch: <u>` / `NominationOutsideSet: <u>` | answer records (3.3) | error |
+| `TrivialQuery: <u>` | the target is an earlier asserted unit | warning |
+| `CheckerConflict` | `follows` and `gap` artifacts for one `(E, Π_q, P)` (debate-protocol.md) | operational error |
+| `ResourceLimit: rules` / `alternatives` / `definites` / `questions` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions | error |
+| `CoordinatedActs`, `PermissionNotCommand`, `ModalQuestion`, `OpenDomainWhich`, `TemporalWording` | English-layer hints with the rewrites of 2.3 (Python only) | hint |
+| `Overlap(<n>, <m>)`, `DependencyCycle`, `PrecedenceAcrossPredicates`, `ConsequenceArguments`, ... | W1's, unchanged, on `policy(D)` | as W1 |
+
+Order: the profile gate; the environment block; W1's declaration checks; units in document order (kind, content, slots,
+mode, domain, query); `policy(D)` through W1's `check` (its diagnostics verbatim); queries; answer and compliance
+records. English diagnostics carry the span and the plain-language expectation as today. Existing P0, W1 and W2
+diagnostics are unchanged.
+
+## 8. Lean (item 2): definitions and the exact statements to prove
+
+Files: `lean/VE/SpeechActs/Tree.lean` (scope, commands, questions, queries, `WellFormedSpeech`), `Demand.lean`
+(`eqGuard`, `demand`, `policy`, `premises`, the direct semantics and faithfulness), `Answer.lean` (`presupposition`,
+`correct`, `tokens`, `AnswersAt`, support and model theorems), `Consequence.lean` (queries, `follows`/`gap`), `Wire.lean`,
+`Admission.lean`, `Run.lean` (the `ve_speech_acts_route` executable) and `lean/SPEECH-ACTS.md` listing each theorem in
+plain words. Frozen `Norms/*`, `Route/*` and all P0 sources are untouched; `VE.lean`, `VE/Audit.lean` and `lakefile.toml`
+gain imports, audit entries and the new target only; the audit allowlist is unchanged and no theorem uses `sorry`. Names
+below have prefix `VE.SpeechActs.`; W1 names are `VE.Norms.*` as in `lean/NORMS.md`. The blocks are statement schemata:
+helper names are defined here, not already implemented Lean. Conventions are W1's: relation tuples in argument order,
+`tupleVal` for valuations, `[]` for closed formulas, `E_n := envAt (policy D) (size (policy D))`.
+
+### 8.1 Definitions
+
+```lean
+namespace VE.SpeechActs
+open VE.Norms (Regulated Node Tree Doc WellFormed elaborate elabPremise Value IntendedAt holdsCatala tupleVal Sat
+  background backgroundBase BaseAdmissible ConflictFree DocumentExpansion envAt size pairs regulatedNames
+  definitionsHold profileHold inst forget fuel AppliesD DecidesD)
+
+inductive Force | require | forbid
+inductive Mode | polar | whichAll | whichOne | follows | reading
+
+structure Scope where
+  task      : String
+  addressee : Option (String × String)        -- (sort, constant)
+  definites : List (String × String)          -- (phrase, constant), sorted by phrase
+
+structure Command where
+  unit  : String
+  force : Force
+  act   : String                              -- the realising regulated predicate
+  args  : List String                         -- constants for the slots after slot 0
+  guard : VE.Formula                          -- closed; .top when absent
+
+structure Query where
+  id       : String
+  premises : List VE.Formula                  -- regenerated from the pinned unit ids, document order
+  target   : VE.Formula
+
+structure Question where
+  unit       : String
+  mode       : Mode
+  body       : VE.Formula                     -- closed (polar); context [sort] (which modes); ignored otherwise
+  sort       : Option String
+  domain     : List String                    -- 2 to 16 distinct constants of `sort`, wording order
+  query      : Option String
+  readingSet : Option (String × Nat)
+
+inductive Answer
+  | yes | no
+  | one (a : String)
+  | all (S : List String)                     -- a sorted sublist of the domain
+
+structure SpeechDoc where
+  E         : VE.Environment
+  lits      : List String
+  scope     : Scope
+  norms     : List Node                       -- active author norm units, document order
+  commands  : List Command                    -- active commands, document order (1.2)
+  questions : List Question
+  queries   : List Query
+  asserted  : List VE.Formula                 -- W2's fixed asserted premises
+
+def regOf (D : SpeechDoc) (p : String) : Option Regulated
+def actSorts (D : SpeechDoc) (c : Command) : List String                 -- E.predicates c.act
+def addresseeConst (D : SpeechDoc) : Option String
+/-- One equality per situation variable: slot i of n+1 slots is `var (n - i)`; slot 0 is the addressee (4.2). -/
+def eqGuard (D : SpeechDoc) (c : Command) : VE.Formula
+def demand (D : SpeechDoc) (c : Command) : Node :=
+  { name := "cmd-" ++ c.unit, pred := c.act, sign := decide (c.force = .require),
+    guard := .and (eqGuard D c) c.guard, carveOuts := [], over := [] }
+def policy (D : SpeechDoc) : Doc :=
+  ⟨D.E, D.lits, ⟨regulatedOf D.E, [], D.norms ++ D.commands.map (demand D)⟩⟩
+def premises (D : SpeechDoc) : List VE.Formula :=
+  background (policy D) ++ elaborate (policy D).T ++ D.asserted
+def En (D : SpeechDoc) : VE.Environment := envAt (policy D) (size (policy D))
+
+/-- 4.1, executable, with the diagnostics of section 7; includes Norms.WellFormed (policy D). -/
+def WellFormedSpeech (D : SpeechDoc) : Bool
+
+/-- 4.3: the bound tuple of a command in a structure, argument order. -/
+def boundTuple (D : SpeechDoc) (c : Command) (S : VE.Structure) : Option (List S.Carrier)
+
+/-- 1.3: presupposition, tokens and correctness. -/
+def presupposition (D : SpeechDoc) (q : Question) : VE.Formula          -- H(q); .top for polar, whichAll, follows
+def tokens (D : SpeechDoc) (q : Question) : List Answer
+def correct (D : SpeechDoc) (q : Question) : Answer → Option VE.Formula  -- F(q, a); none off the token list
+def AnswersAt (D : SpeechDoc) (q : Question) (S : VE.Structure) (a : Answer) : Prop :=
+  a ∈ tokens D q ∧ (presupposition D q).denote S [] ∧ ∃ φ, correct D q a = some φ ∧ φ.denote S []
+/-- The finite evaluator's answer test (model path). -/
+def answerEval {α} [DecidableEq α] (D : SpeechDoc) (q : Question) (M : VE.FiniteModel α) (a : Answer) : Bool
+
+/-- 4.6 -/
+def queryPremises (D : SpeechDoc) (qr : Query) : List VE.Formula :=
+  background (policy D) ++ elaborate (policy D).T ++ qr.premises
+
+/-- 4.8: the only way two documents' units reach one policy. -/
+def combine (D₁ D₂ : SpeechDoc) : Except String SpeechDoc
+
+/-- The active-unit projection: what `premises` may depend on. -/
+def core (D : SpeechDoc) : VE.Environment × List String × Scope × List Node × List Command × List VE.Formula :=
+  (D.E, D.lits, D.scope, D.norms, D.commands, D.asserted)
+```
+
+`regulatedOf D.E` reads the W1 declarations; `answerEval` evaluates `H(q)` and `F(q, a)` with `Formula.eval` under `[]`.
+`tokens` for `whichAll` lists every sorted sublist of the domain (at most 2¹⁶ tokens; the report enumerates only the
+answers present in records, never the token list).
+
+### 8.2 Theorems: commands
+
+```lean
+/-- 4.1 ⇒ W1 well-formedness of the regenerated policy. -/
+theorem policy_wellFormed (D : SpeechDoc) (h : WellFormedSpeech D = true) : WellFormed (policy D) = true
+
+/-- The shape of every command rule: consequence over the situation variables, equality guard, no carve-outs, no edges. -/
+theorem demand_shape (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands) :
+  (demand D c).carveOuts = [] ∧ (demand D c).over = [] ∧ (demand D c).pred = c.act ∧
+  ((demand D c).guard.WellFormed D.E (actSorts D c).reverse)
+
+/-- Polarity: require realises the obligation role with sign +, forbid the permission role with sign −. -/
+theorem demand_polarity (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands) :
+  (c.force = .require → (demand D c).sign = true  ∧ ∃ r, regOf D c.act = some r ∧ r.role = .obligation) ∧
+  (c.force = .forbid  → (demand D c).sign = false ∧ ∃ r, regOf D c.act = some r ∧ r.role = .permission)
+
+/-- 4.3, faithfulness of the elaborated guard to the direct reading: the rule applies exactly at the bound tuple when
+    the guard holds. -/
+theorem demand_applies (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands)
+    (S : VE.Structure) (hS : S.Admissible (En D)) (vs : List S.Carrier)
+    (typed : VE.TupleTyped S (actSorts D c) vs) :
+  AppliesD (policy D).T S (tupleVal vs) (demand D c) ↔ (boundTuple D c S = some vs ∧ c.guard.denote S [])
+
+/-- The command's normative contribution: where the elaboration holds and no opposite rule decides at the bound tuple,
+    the realising predicate holds there iff the force is require (required_act(ā), respectively ¬permitted_act(ā)). -/
+theorem demand_consequence (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands)
+    (S : VE.Structure) (hS : S.Admissible (En D)) (hel : Sat S (elaborate (policy D).T))
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (actSorts D c) vs)
+    (hb : boundTuple D c S = some vs) (hg : c.guard.denote S [])
+    (hno : ¬ DecidesD (policy D).T S (tupleVal vs) c.act (!decide (c.force = .require))) :
+  S.relation c.act vs ↔ c.force = .require
+
+/-- Where an opposite rule does decide there, the policy is a W1 conflict at that tuple (never a silent override). -/
+theorem demand_conflict (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands)
+    (S : VE.Structure) (hS : S.Admissible (En D)) (vs : List S.Carrier) (typed : VE.TupleTyped S (actSorts D c) vs)
+    (hb : boundTuple D c S = some vs) (hg : c.guard.denote S [])
+    (hop : DecidesD (policy D).T S (tupleVal vs) c.act (!decide (c.force = .require))) :
+  ¬ Sat S (elaborate (policy D).T) ∧
+  ¬ ConflictFree (policy D) (VE.Norms.restrictAll (policy D).T S)
+
+/-- Every command rule is guarded by the one addressee of the scope. -/
+theorem scope_single (D : SpeechDoc) (h : WellFormedSpeech D = true) (c : Command) (hc : c ∈ D.commands) :
+  ∃ you, addresseeConst D = some you ∧ VE.Norms.preds (eqGuard D c) = [] ∧
+    (∀ S : VE.Structure, ∀ vs, boundTuple D c S = some vs → vs.head? = S.constant you)
+```
+
+### 8.3 Theorems: questions and answers
+
+```lean
+/-- 4.4: at most one polar answer; at most one single-choice answer; exactly one complete-list answer; none when H fails. -/
+theorem answers_polar (D) (h : WellFormedSpeech D = true) (q) (hq : q ∈ D.questions) (hm : q.mode = .polar)
+    (S : VE.Structure) : ¬ (AnswersAt D q S .yes ∧ AnswersAt D q S .no)
+theorem answers_one (D) (h) (q) (hq) (hm : q.mode = .whichOne) (S : VE.Structure) (a b : String) :
+  AnswersAt D q S (.one a) → AnswersAt D q S (.one b) → a = b
+theorem answers_all (D) (h) (q) (hq) (hm : q.mode = .whichAll) (S : VE.Structure) (hS : S.Admissible (En D)) :
+  ∃ T, AnswersAt D q S (.all T) ∧ ∀ T₂, AnswersAt D q S (.all T₂) → T₂ = T
+theorem answers_all_empty (D) (h) (q) (hq) (hm : q.mode = .whichAll) (S : VE.Structure) (hS : S.Admissible (En D))
+    (hnone : ∀ a ∈ q.domain, ¬ (inst q.body (.const a)).denote S []) : AnswersAt D q S (.all [])
+theorem answers_presupposition (D) (h) (q) (hq) (S : VE.Structure) (hH : ¬ (presupposition D q).denote S []) :
+  ∀ a, ¬ AnswersAt D q S a
+
+/-- 4.5, proof path. -/
+theorem support_sound (D) (h) (q) (hq) (a : Answer) (φ : VE.Formula) (hφ : correct D q a = some φ)
+    (c : VE.Tableau.Certificate)
+    (acc : VE.Tableau.checkCertificate (En D) (premises D) (.and (presupposition D q) φ) c = true) :
+  ∀ S : VE.Structure, S.Admissible (En D) → Sat S (premises D) → AnswersAt D q S a
+theorem support_conditional_sound (D) (h) (q) (hq) (a) (φ) (hφ : correct D q a = some φ) (c)
+    (acc : VE.Tableau.checkCertificate (En D) (premises D ++ [presupposition D q]) φ c = true) :
+  ∀ S : VE.Structure, S.Admissible (En D) → Sat S (premises D) → (presupposition D q).denote S [] → AnswersAt D q S a
+/-- Opposite answers are both supported only over unsatisfiable premises. -/
+theorem support_exclusive (D) (h) (q) (hq) (hm : q.mode = .polar) (cy cn : VE.Tableau.Certificate)
+    (hy : VE.Tableau.checkCertificate (En D) (premises D) (.and (presupposition D q) q.body) cy = true)
+    (hn : VE.Tableau.checkCertificate (En D) (premises D) (.and (presupposition D q) (.not q.body)) cn = true) :
+  ¬ ∃ S : VE.Structure, S.Admissible (En D) ∧ Sat S (premises D)
+
+/-- 4.5, model path: the evaluator's answers are exactly AnswersAt in that model; a failed presupposition yields none. -/
+theorem model_answers {α} [DecidableEq α] (D) (h) (q) (hq) (M : VE.FiniteModel α) (valid : M.Valid (En D))
+    (hb : VE.Norms.backgroundValid (policy D) M = true) (hp : (premises D).all (fun φ => φ.eval M []) = true)
+    (a : Answer) : answerEval D q M a = true ↔ AnswersAt D q M.asStructure a
+theorem model_presupposition_failed {α} [DecidableEq α] (D) (h) (q) (hq) (M : VE.FiniteModel α)
+    (hH : (presupposition D q).eval M [] = false) : ∀ a, answerEval D q M a = false
+/-- A countermodel to P is evidence about that model only: it does not give ¬P over the premises. -/
+theorem countermodel_not_negative {α} [DecidableEq α] (D) (h) (q) (hq) (hm : q.mode = .polar) (M : VE.FiniteModel α)
+    (valid : M.Valid (En D)) (hp : (premises D).all (fun φ => φ.eval M []) = true) (hn : q.body.eval M [] = false) :
+  AnswersAt D q M.asStructure .no ∧ ¬ (∀ S : VE.Structure, S.Admissible (En D) → Sat S (premises D) → AnswersAt D q S .no)
+  -- the second conjunct under the hypothesis that some admissible model of the premises satisfies q.body
+```
+
+### 8.4 Theorems: consequence questions, correspondence, invariance, scope
+
+```lean
+/-- 4.6 -/
+theorem follows_sound (D) (h) (qr : Query) (hq : qr ∈ D.queries) (c : VE.Tableau.Certificate)
+    (acc : VE.Tableau.checkCertificate (En D) (queryPremises D qr) qr.target c = true) :
+  VE.Entails (En D) (queryPremises D qr) qr.target
+theorem gap_sound {α} [DecidableEq α] (D) (h) (qr) (hq) (M : VE.FiniteModel α) (valid : M.Valid (En D))
+    (hb : VE.Norms.backgroundValid (policy D) M = true)
+    (hs : (queryPremises D qr).all (fun φ => φ.eval M []) = true) (hn : qr.target.eval M [] = false) :
+  ¬ VE.Entails (En D) (queryPremises D qr) qr.target
+theorem follows_gap_exclusive {α} [DecidableEq α] (D) (h) (qr) (hq) (c) (acc) (M) (valid) (hb) (hs) (hn) : False
+/-- The target never enters its own premise list through the query. -/
+theorem query_target_separate (D) (h) (qr) (hq : qr ∈ D.queries) :
+  qr.premises = pinnedAsserted D qr ∧ (qr.target ∈ qr.premises → trivialQuery D qr = true)
+
+/-- 4.7: premises depend only on the active core; questions, answers, compliance and dormant units contribute nothing. -/
+theorem premises_core (D D₂ : SpeechDoc) (h : WellFormedSpeech D = true) (h₂ : WellFormedSpeech D₂ = true)
+    (hc : core D = core D₂) : premises D = premises D₂ ∧ policy D = policy D₂
+theorem questions_no_premises (D) (h) (q) (hq : q ∈ D.questions) :
+  premises D = premises { D with questions := D.questions.erase q }
+/-- Dormant-request invariance as verdict invariance: the same certificates replay and the same models refute. -/
+theorem dormant_invariance (D D₂ : SpeechDoc) (h) (h₂) (hc : core D = core D₂)
+    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate) :
+  (VE.Tableau.checkCertificate (En D) (premises D ++ Γ) φ c = VE.Tableau.checkCertificate (En D₂) (premises D₂ ++ Γ) φ c) ∧
+  (∀ B, BaseAdmissible (policy D) B → (ConflictFree (policy D) B ↔ ConflictFree (policy D₂) B))
+/-- Ordinary composition preserved: W1's route acceptance on the regenerated policy, verbatim. -/
+theorem speech_route_acceptance (D) (h) (hc : ∀ B, BaseAdmissible (policy D) B → ConflictFree (policy D) B)
+    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
+    (hΓ : ∀ a ∈ Γ, a.WellFormed (En D) []) (hφ : φ.WellFormed (En D) [])
+    (acc : VE.Tableau.checkCertificate (En D) (background (policy D) ++ elaborate (policy D).T ++ Γ) φ c = true) :
+  (∀ S : VE.Structure, S.Admissible (En D) → holdsCatala (policy D).T S → definitionsHold (policy D) S →
+     profileHold (policy D) S → Sat S (backgroundBase (policy D)) → Sat S Γ → φ.denote S []) ∧
+  ((∀ a ∈ Γ, a.WellFormed (envAt (policy D) 0) []) → φ.WellFormed (envAt (policy D) 0) [] →
+     ∀ B, BaseAdmissible (policy D) B → Sat B Γ → φ.denote B [])
+  -- := VE.Norms.norms_route_acceptance (policy D) (policy_wellFormed D h) hc Γ φ c hΓ hφ acc
+/-- The answer-to-claim bridge licenses exactly H ∧ F of a certificate-supported answer. -/
+theorem answer_bridge_sound (D) (h) (q) (hq) (a) (φ) (hφ : correct D q a = some φ) (c)
+    (acc : VE.Tableau.checkCertificate (En D) (premises D) (.and (presupposition D q) φ) c = true)
+    (S : VE.Structure) (hS : S.Admissible (En D)) (hp : Sat S (premises D)) :
+  (.and (presupposition D q) φ).denote S []
+
+/-- 4.8 -/
+theorem combine_scope (D₁ D₂ D : SpeechDoc) (h : combine D₁ D₂ = .ok D) :
+  D₁.scope = D₂.scope ∧ D₁.E = D₂.E ∧ D.commands = D₁.commands ++ D₂.commands
+theorem two_task_separation (D₁ D₂ : SpeechDoc) (hs : D₁.scope ≠ D₂.scope) :
+  combine D₁ D₂ = .error ("ScopeMismatch: " ++ D₁.scope.task ++ ", " ++ D₂.scope.task)
+/-- No policy contains rules of two scopes: every rule of policy D is an author unit of D or a demand of D's commands. -/
+theorem policy_rules (D) (h) (N : Node) (hN : N ∈ (policy D).T.nodes) :
+  N ∈ D.norms ∨ ∃ c ∈ D.commands, N = demand D c
+```
+
+### 8.5 Theorems: wire and report
+
+```lean
+/-- The scope is in the canonical environment bytes (3.5). -/
+theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope)
+    (h : Wire.decodeSpeechEnvironment j = .ok (E, sc)) :
+  ∃ b, (Wire.canonicalEnvironmentJson j).toOption = some b ∧ b.getObjVal? "speech_acts" = .ok (Wire.encodeScope sc)
+
+/-- Which units are active: exactly kind `instruction`, specified meaning, command content, bound slots, no pending
+    reading set (1.2). -/
+theorem active_commands (j : Json) (D : SpeechDoc) (h : Wire.decodeSpeechSource j = .ok D) (c : Command) :
+  c ∈ D.commands ↔ ActiveInstructionUnit j c
+
+/-- 11.4-shaped acceptance from the public entry point. -/
+theorem speech_wire_acceptance (j a : Json) (h : Run.runCase j = .ok a)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hs : Run.usesSpeechPath j = true) :
+  ∃ D, Wire.decodeSpeechSource j = .ok D ∧ WellFormedSpeech D = true ∧
+    a = encodeAdmitted (regeneratedAdmission D) ∧
+    BindingsMatchSourceAndRegeneration j D a ∧ Admission.ReportAdmitted D a ∧
+    (∀ S : VE.Structure, S.Admissible (En D) → Sat S (premises D) → Sat S (reportOtherAssumptions D a) →
+       (reportConclusion D a).denote S []) ∧
+    (∀ line ∈ answerLines a, AnswerEvidence D line) ∧
+    (∀ line ∈ complianceLines a, ComplianceEvidence D line) ∧
+    (∀ line ∈ judgmentLines a, JudgmentEvidence D line)
+```
+
+`ReportAdmitted` is the norms extension of P0's admission relation (`Norms.Admission.admitDocument_spec`) with the
+route-local leaves `speech:presupposition:<u>` (equal to `presupposition D q`), `speech:answer:<u>:<a>` (equal to
+`H ∧ F` of a certificate-supported answer over `premises D`, with that certificate's leaves retained) and
+`speech:compliance:<u>` (equal to the `done` atom of a proof task with an accepted certificate for its query) admitted
+only when equal to the regenerated formulas. `AnswerEvidence D line` says: `supported` carries an accepted certificate
+for `H ∧ F` over `premises D`; `supported given` carries one over `premises D ++ [H]` and lists the presupposition leaf;
+`evaluated` carries a validated model of `premises D` with `H` true in which `answerEval` is true; `PRESUPPOSITION-FAILED`
+carries a certificate for `¬H` or a validated model with `H` false; `UNKNOWN` and `UNANSWERED` carry nothing and claim
+nothing. `JudgmentEvidence` is `follows_sound`'s or `gap_sound`'s hypothesis; `ComplianceEvidence` is an asserted `done`
+unit with its support kind or an accepted certificate for exactly `queryPremises D qr ⊢ qr.target`. Hash equality is
+equality of recomputed canonical digests, not a claim that SHA-256 is injective.
+
+### 8.6 The executable `ve_speech_acts_route`
+
+`lean/.lake/build/bin/ve_speech_acts_route <cases.json>`, root `SpeechActsMain.lean`, a new Lake target; `Run.main` is
+the executable root and no frozen file changes (norms.md 11.4). On raw input it runs the frozen envelope and profile
+gate, requires `speech-acts@0` and `norms@0`, decodes the environment through the W1 norms decoder plus a strict scope
+decoder (unknown fields rejected; the original complete environment hashed), decodes units, queries, answers and
+compliance, runs `WellFormedSpeech`, regenerates `policy(D)`, `premises(D)`, every `H(q)`, `F(q, a)` and `Π_q`, validates
+bindings and delegates every checker call to the unchanged W1 and P0 functions on the regenerated data.
+
+| Kind | Extra input | Output |
+|---|---|---|
+| `speech-elaborate` | none | `scope`, `legend` (sentences), `policy` (W1 `norms-elaborate` output on `policy(D)`), per command `demand` (rule AST, paraphrase), per question `mode`, `presupposition`, `tokens` (polar, single) or `domain`, per query `premises`, `target` |
+| `speech-answer` | `question`, `evidence` (`certificate` / `model` / `conditional`) | the answer line of 5.3 |
+| `speech-consequence` | `query`, `certificate` or `model` | `follows` / `gap` / `unresolved` with detail |
+| `speech-conflict` | W1 packages or witness on `policy(D)` | W1's verdict |
+| `admission` | W2 `ve-document@2` with commands, questions, bindings, records and graph | `admitted`, `report`, `report_id`, `kinds`, `classes` (6), the status text of 5.5 |
+
+W1 and P0 cases without speech constructs delegate unchanged to `Norms.Run.runCase`; malformed speech inputs never fall
+back after a failed speech decode.
+
+### 8.7 What is not claimed
+
+No theorem about the English surface (plan item 3) or about an author's intent: `demand`, `presupposition` and `correct`
+are the statements under this review and W8's fidelity gate. No theorem that a nomination reflects intent, that a
+`done` unit is true, or that an accepted proof shows understanding. No `refuted` judgment. No completeness of the answer
+search or of the conflict check beyond norms.md 7 on `policy(D)`. No adoption of quoted commands (12.8). No claim about
+combinations 1.6 excludes. No coverage number: section 6 defines a projection, not a result.
+
+## 9. Acceptance fixtures for item 1
+
+Deterministic, hand-written expected results; required from Python and, where the Lean route has a case kind, from Lean
+(`tests/test_speech_acts*.py`, the `speech-acts` conformance family). Unless a fixture says otherwise, the environment
+is F0: sorts `user`, `control`, `token`, `desk`, `service`, `thing`, `query`; constants `Alice : user`, `Check : control`,
+`Token1 : token`, `Desk1 : desk`, `Atlas Beacon : service`, `Tom : thing`, `q1 : query`; base predicates
+`reviewed(service)` "{0} is reviewed", `cat(thing)` "{0} is a cat", `animal(thing)` "{0} is an animal",
+`disabled(control)` "{0} is disabled", `done_click(user, control)`, `done_open(user, desk)`, `done_submit(user, query)`;
+regulated as in 3.1 plus `open_required`/`open_permitted(user, desk)` (obligation deny, permission allow, act
+`{0} open {1}`); scope task `t1`, addressee `Alice`, definites `the token ↦ Token1`, `the desk ↦ Desk1`,
+`the writing desk ↦ Desk1`. `Γ` is empty; "the premises" are the document's asserted units.
+
+- **(α) Click Check.** Active command `u1`. `demand` is `rule cmd-u1: for every user x0, for every control x1,
+  (x0 click_required x1) if ((x0 equals @Alice) and (x1 equals @Check)).`; `premises(D)` entails
+  `click_required(Alice, Check)` by certificate; a countermodel to `done_click(Alice, Check)` exists and the report's
+  compliance line is `none`; the paraphrase reads "In this task, you must click Check." with the default legend "By
+  default, a user need not click a control."; policy CONFLICT-FREE. Python and Lean `speech-elaborate` agree byte for byte.
+- **(β) Prohibition versus optionality.** `Do not share the token.` → `¬share_permitted(Alice, Token1)`, sign `−` on the
+  permission predicate; `premises(D)` entails `¬share_permitted(Alice, Token1)` and entails nothing about
+  `share_required` (no such predicate). A wire object with `force: forbid` and `act: share_required` (declared as an
+  obligation-only act `{0} share {1}` in a variant environment): `MissingPermissionRole: {0} share {1}`; never
+  `¬share_required`. `force: permit`: `InvalidInput: force`.
+- **(γ) Two tasks.** Document A (task `ta`): `Open the desk.`; document B (task `tb`, same declarations): `Do not open the
+  desk.`. `environment_id(A) ≠ environment_id(B)`; `combine(A, B)` is `ScopeMismatch: ta, tb`; neither document is a
+  CONFLICT (each CONFLICT-FREE). The two sentences in one document (task `t1`): CONFLICT with witness `(Alice, Desk1)`
+  on the pair `open_required → open_permitted`, rendered "cmd-u1 requires opening; cmd-u2 forbids it".
+- **(δ) Conflicting duties.** `Click Check.` beside the author rule `Rule 1. Every user must not click each control, if
+  that control is disabled.`: CONFLICT with witness "Check is disabled; cmd-u1 requires clicking; rule 1 forbids it";
+  with the asserted unit `Check is not disabled.` the conflict check is still CONFLICT (base structures are unconstrained
+  by document premises) while the premise set is consistent and the outcome line at the tuple is "required, not
+  permitted where Check is disabled". A rule with `over: [cmd-u1]`: `UnknownRule: rule cmd-u1`.
+- **(ε) Quoted command.** `The manual says: "Click Check."` as `["attributed", "manual", "says", "instruction"]`: no
+  rule; `premises(D)` equals the document's without that unit (`dormant_invariance`); the unit is dormant in the status
+  text; a graph leaf `layer:norms:click_required` whose formula includes a rule for the quoted command is rejected;
+  the single-unit checks still run on the quoted content (a misspelt act is rejected).
+- **(ζ) Forged context.** Replay (α)'s certificate with the addressee rebound to `Bob`: stale (new environment id);
+  with `the token` rebound: stale; with the query premise list of (μ) extended by the target: `QueryMismatch: u2`; with
+  an answer record whose stated answer the certificate does not establish: `AnswerMismatch`.
+- **(η) Polar.** `Is Atlas reviewed?` with `Atlas is reviewed.` asserted: `supported yes (certificate)`; "no" not
+  supported. With no premise about Atlas: UNKNOWN for both within budget, although a countermodel to `reviewed(Atlas)`
+  exists; supplying that model: `evaluated no in model m1 (this situation only)`. Quantified body: `Is it the case that
+  every sampled district reported a drop?` over a variant environment with `sampled(district)` and `reported_drop(district)`:
+  polar over `∀d. sampled(d) → reported_drop(d)`; `Did every sampled district report a drop?` is rejected with the
+  `Is it the case that` rewrite.
+- **(θ) Complete list.** `Which of Atlas and Beacon are reviewed?` (mode `which_all`, `H = ⊤`). With `Atlas is not
+  reviewed.` and `Beacon is not reviewed.`: `supported none (certificate)` (the token `all []`). With `Atlas is
+  reviewed.` and `Beacon is not reviewed.`: `supported Atlas`. With only `Atlas is reviewed.`: UNKNOWN (no token is
+  provable), never "Atlas" as a partial answer; in a model with both reviewed: `evaluated Atlas and Beacon in model m2`.
+- **(ι) Single choice and presupposition.** `Which one of Atlas and Beacon is reviewed?` (`H = (P(Atlas) ∨ P(Beacon)) ∧
+  ¬(P(Atlas) ∧ P(Beacon))`). Both reviewed asserted: PRESUPPOSITION-FAILED (certificate for `¬H`), never "two answers"
+  and never "no". `Atlas is reviewed.` and `Beacon is not reviewed.`: `supported Atlas` with `H` proved. Only `Atlas is
+  reviewed.`: `supported Atlas given the presupposition` (certificate over `premises ++ [H]`, residual
+  `speech:presupposition:u5`), and the unconditional line UNKNOWN. Model path in a model with both reviewed:
+  PRESUPPOSITION-FAILED (model m3). The paraphrase shows "exactly one of Atlas and Beacon is reviewed" as presupposed.
+- **(κ) Mode from wording.** The plural wording with stored `mode: which_one`: `ModeMismatch: u5`; the singular wording
+  with `which_all`: `ModeMismatch`. Renaming the alternatives' order changes the domain list and the meaning id; the
+  paraphrase is unchanged in substance.
+- **(λ) Consequence question.** `Tom is a cat.` `Every cat is an animal.` `Does it follow from these premises that Tom is
+  an animal?`: query `q1` with premises `[u1, u2]`; `follows` (certificate). Drop `u2`: `gap` with the model "Tom is a
+  cat and not an animal". Both budgets zero: `unresolved (tableau: 0; search: 0)`. A record with `judgment: refuted`:
+  `InvalidInput: judgment`. A certificate and a gap model together: `CheckerConflict`, no record.
+- **(μ) Proof task.** `Prove that Tom is an animal using these premises.` after (λ)'s two premises: command on
+  `submit_required(Alice, q1)`; a submitted certificate for `Π_q ⊢ animal(Tom)`: `compliance: certificate q1`,
+  `done_submit(Alice, q1)` labelled `speech:compliance:u3`; a certificate whose premise list adds `animal(Tom)`:
+  `QueryMismatch: u3`; with `u2` dropped the task stands (`compliance: none`; the report says the target is not
+  established, not that the task is wrong); with `Tom is an animal.` asserted earlier: `TrivialQuery: u3` and the task
+  still stands. The report never contains the word "understood".
+- **(ν) Reading question.** A reading set `rs1@2` over an earlier unit with two candidates; `Which reading did you mean?`
+  bound to `(rs1, 2)`. Nomination `0` by `author`: a narrowing recorded, `support: testimony`, status line
+  `nominated 0 by author (testimony)`; nomination `2`: `NominationOutsideSet: u6`, CLARIFICATION-OPEN; two nominations:
+  CLARIFICATION-OPEN (multiple); none: CLARIFICATION-OPEN (none). The residual lists `intended-reading:rs1@2`.
+- **(ξ) Unbound slot.** `Share the token.` with `the token` removed from `definites`: authoring rejects with
+  `UnboundSlot: the token` and the legend rewrite; translation admits the unit as `unformalised(unbound-slot)` (U);
+  adding the authored binding unit `In this task, the token is Token1.` (kind `binding`, C) makes the command active.
+  `Click Check.` with no addressee: `UnboundSlot: you`.
+- **(ο) Modal questions.** `Must Alice open the desk?`: reading set {polar over `open_required(Alice, Desk1)`, follows
+  over `done_open(Alice, Desk1)`}; both elaborated; class R with each reading's residual. `Can you open the desk?`:
+  {polar over `open_permitted(Alice, Desk1)`, ability (unsupported), request (unsupported)}; class U; the permission
+  reading's own line is shown beneath.
+- **(π) Coordination.** `Click Check and save.`: `CoordinatedActs` with the two-command rewrite; the rewritten pair is
+  two active commands; translation keeps the reading set {two commands, ordered sequence} whose second reading is
+  unsupported: U.
+- **(ρ) Permission grant.** `You may close the desk.`: not a command wording; hint `PermissionNotCommand` with the W1
+  rewrite `Every user may close each desk.`; as a unit, `unformalised(permission-grant)`, U; no rule, no premise.
+- **(σ) Please.** `Please click Check.`: authoring accepts after approval and renders `Click Check.`; translation makes
+  the unit a reading set {require, request}, U; the require reading's demand is shown beneath it.
+- **(τ) Inconsistent premises.** `Atlas is reviewed.` and `Atlas is not reviewed.` with `Is Atlas reviewed?`: both
+  "yes" and "no" supported; the premise-set check reports inconsistency; both answer lines `vacuous: yes` and the
+  report shows the contradiction; (θ) over the same premises likewise.
+- **(υ) Budgets.** (η) with the tableau budget zero: UNKNOWN naming the budget; (λ) with both zero: `unresolved`;
+  never an answer, never `gap`.
+- **(φ) Profiles.** `speech-acts@0` without `norms@0`: `UnsupportedProfile: speech-acts@0 requires norms@0`; with
+  `closure@0`: `UnsupportedProfile: speech-acts@0 with closure@0`; F0 plus a `defined` predicate, with or without a
+  command: `UnsupportedProfile: speech-acts@0 with definitions`; F0 plus a `functional` flag likewise.
+- **(χ) Mixed span.** `Open the writing desk. It contains the token.` as one MIXED unit: part 1 an active command (C);
+  part 2 `unformalised(pronoun)` (U); the two parts partition the span; `bytes_by_class` and `bytes_by_status` each
+  total the source length and reconcile by the table of 6.
+- **(ψ) Coverage projection.** A document with the legend in the environment, one active command, one polar question
+  answered by certificate, one unanswered `which_all` question, (ο)'s two units, (ν)'s reading question and a heading:
+  classes C, C, C (answer truth irrelevant), R, U, C (the reading question: mode admitted, the singular presupposition a
+  named assumption), L; the environment legend contributes no bytes; an authored `binding` unit for `you` counts C;
+  totals reconcile with W2's status table.
+- **(ω) Identity.** Every existing fixture, identity, certificate and wire hash unchanged; every `ve-document@1` fixture
+  loads under `ve-document@2` with the same units and a new document id; changing `task`, the addressee or a definite
+  changes `environment_id` and stales every certificate; adding an answer record changes the document and report ids
+  and not `premises(D)`; two questions differing only in domain order have different meaning ids.
+- **(αα) Catalogue and tutorial sentences.** `Open the writing desk.` (C, `open_required(Alice, Desk1)`); `Choose
+  authoring or translation mode.` (U with the `choose a mode` rewrite; after declaring `{0} choose a mode`, `Choose a
+  mode.` is C); `Change example now?` (U, `TemporalWording`); the tutorial's `Does the conclusion follow?` after a
+  worked argument is the consequence question over that argument's premises and conclusion (follows or gap as the
+  argument is).
+- **(ββ) Composition.** (α) with the asserted premise `If Alice must click Check then Atlas is reviewed.`: a certificate
+  for `reviewed(Atlas)` over `premises(D)` replays (`speech_route_acceptance`); dropping the command makes the same
+  certificate fail; the question `Is Atlas reviewed?` then has `supported yes` whose used leaves include
+  `layer:norms:click_required` and the asserted unit.
+
+Beside these: norms.md 10.6 to 10.10 repeated on generated speech-act documents (surface round trip of legend, commands
+and questions with metadata; identity of every existing fixture unchanged; certificate binding against a changed scope,
+declaration, query or record; differential `policy`/`premises`/`H`/`F` Python versus Lean on 1,000 generated documents;
+W1 DAG diagnostics on `policy(D)`).
+
+## 10. Limits, regeneration, Rust
+
+Rules ≤ 256 including command rules, regulated predicates ≤ 64, definites ≤ 64, alternatives ≤ 16 per question,
+questions ≤ 256, reading sets and choices as W2 (64 complete choices), formulas within `MAX_NODES`; witness and answer
+search use the existing bounds and `MAX_EVALUATIONS`; every overflow is `ResourceLimit` with the limit named, never a
+truth value. `policy(D)`, `premises(D)`, every `H(q)`, `F(q, a)`, `Π_q` and every leaf formula are regenerated from the
+decoded units, records and declarations at every trusted site (norms.md 11.3); a finite model supplies base tables
+(including `done` tables) and a supplied regulated table is rejected as in W1. Rust never elaborates speech acts: on the
+`elaborated-document` family a speech-act case carries the Python-generated `premises(D)`, `H`, `F` and `Π_q` marked
+`untrusted: true`, and its verdict must agree with Python's and Lean's regenerated ones (regression evidence; the trust
+path is Lean).
+
+## 11. Statement review checklist (Astra + Fable, before items 2, 3 and 4)
+
+1. `demand(c)` (4.2): equality guards in the predicate's context, no carve-outs, no edges; `policy(D)` as one W1 tree;
+   `demand_applies` and `demand_consequence` as the faithfulness statements; `demand_conflict` for the opposite case.
+2. Polarity and roles: `require` on the obligation role, `forbid` on the permission role, `MissingPermissionRole`,
+   never `¬required` (1.2, 8.2).
+3. `H(q)`, `tokens`, `F(q, a)` and `Answers(q, S)` (1.3, 4.4): the single-mode presupposition; the restricted domain
+   with `H = ⊤`; open-domain "which" excluded (12.2); the four `answers_*` facts.
+4. The two answer paths (4.5): `Supported`, `SupportedGiven` with the presupposition leaf, PRESUPPOSITION-FAILED on
+   both paths, UNKNOWN, `support_exclusive` and vacuity; `countermodel_not_negative`.
+5. Consequence questions (4.6): exactly `follows`, `gap`, `unresolved`; `refuted` not imported; proof tasks as commands
+   on the `submit a certificate` act with `QueryMismatch`; reading nominations as testimony narrowings.
+6. Exact correspondence and invariance (4.7, 8.4): `premises_core`, `dormant_invariance`, the answer bridge leaf, and
+   W1's `norms_route_acceptance` reused on `policy(D)`.
+7. Scope (4.8): the block in the environment; `combine` and `ScopeMismatch`; `scope_single`, `policy_rules`,
+   `two_task_separation`; the two-task fixture (γ).
+8. The English table (2.1): one reading per wording; imperatives from the act phrase; the legend family; the two
+   synonyms; the non-synonyms; the rewrites of 2.3 and the reader's checklist (2.4).
+9. The report's four lines (5) and the coverage projection (6): C's entry conditions, U/R/O/C precedence, L
+   non-substantive only, legend outside the partition, authored bindings as units.
+10. The diagnostics (7) and every fixture (9) against the definitions; the wire theorem (8.5) and the executable (8.6).
+11. Open questions for the reviewers: is "these premises" = earlier asserted units (12.3) the right pinning for
+    consequence questions in translation, or should the query always be named? Is the `binding` kind acceptable as a
+    route-local kind, given `ve-document@2` is a new format anyway (12.1)?
+12. The resolved choices of section 12.
+
+## 12. Resolved choices in this draft
+
+Each is a point where the plan left a reading open; the review may overturn any of them.
+
+1. **The scope block lives in the environment**, identity-bound, so that "one scope per document" and "one pinned
+   scope per policy evaluation" coincide through `environment_id`, and W3's one-environment bundle rule already
+   enforces the separation. Authored `binding` units are a route-local kind of `ve-document@2` (as `rights@0` added
+   unit kinds) and must agree with the block.
+2. **Open-domain "which" is outside `@0`.** The plan's "empirical claim that the listed names exhaust a wider domain"
+   is realised as the IDE's rewrite to a restricted domain plus, in translation, the recorded domain-closure named
+   assumption; a presupposition that depends on the answer given is not a presupposition, so it is not put in `H(q)`.
+3. **"These premises" denotes the earlier asserted units** in document order, the `ve.prose@1` dependency convention,
+   and the query record is derived content. A named query form is not offered at `@0`.
+4. **Commands take no precedence edges** and cannot be named in `over`. A conflict between a command and a rule is
+   reported as a W1 CONFLICT with its witness; the author's fix is a rule or a rewrite, never an implicit priority.
+5. **`speech-acts@0` requires `norms@0`** and inherits the norms route's rejection of W3 definitions and W5 flags for
+   the whole route, questions-only documents included, until INTEGRATION-GAPS closes; one gate, no partial path.
+6. **Compliance reuses W1's `done` base predicates.** Only a proof task's replayed certificate generates a `done`
+   premise (`speech:compliance:<u>`); every other completion claim is an asserted unit with its own support kind.
+7. **Reading nominations are W2 narrowings with testimony support**; "exactly one intended reading" is a non-formal
+   named assumption, not a formula, since the set is not a domain of constants.
+8. **Adoption of quoted commands is deferred**: W1 has no norm bridge, quoted norm content contributes no layer, and the
+   same holds for quoted commands; the plan's "separate attributed adoption with a verified norm bridge" is a later
+   item with its own statement review.
+9. **Proof tasks are commands on a declared act with a `query` sort**, the one act whose completion the checker can
+   witness; the query constant is an ordinary declaration so identity binding needs no new mechanism.
+10. **Two polar wordings.** `Is <constant> <rest>?` for copular predicate wordings and `Is it the case that
+    <sentence>?` for every closed sentence; which-questions are restricted to copular unary wordings, because the
+    surface infers no inflection or do-support (english-surface.md).
+11. **A command guard is optional `if`**, a closed formula; guards over regulated predicates follow W1's stratification.
+12. **`ModeMismatch` is an admission rejection**, following Astra's "reject mismatching stored fields": the wording is
+    authoritative and the stored mode is derived content.
+13. **The `Do not` wording is the only negative imperative**; `Don't` is its one synonym; `Never` is temporal.
+14. **The coverage projection splits substance first**, then applies U, R, O, C; W2's status table is unchanged and
+    the reconciliation is a fixed mapping (6).
+
+## Change log
+
+| Date | Revision | Changes |
+|---|---|---|
+| 2026-09-28 | Draft 1 | Item-1 specification from plan draft 2: scope block and legend; commands as W1 rules with equality guards, roles and polarity; questions with wording-derived modes, `H(q)`, `F(q, a)` and `Answers(q, S)`; proof and model paths with PRESUPPOSITION-FAILED and conditional support; consequence questions under `follows`/`gap`/`unresolved`; proof tasks and reading nominations; exact consequence correspondence, dormant invariance and the two-task rule; the four-line report; the C/L/O/R/U projection; diagnostics; every item-2 theorem as a statement in W1's Lean conventions; fixtures α to ββ; resolved choices. Spec only: no code, Lean or frozen contract changed. |
