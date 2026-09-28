@@ -15,6 +15,7 @@ from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top,
 from .background import dependency_order
 from .environment import Environment, valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
+from .limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from .norms import _NAME, Norm, NormDocument, _all, _any, _atom, _bind
 from . import profiles as profile_registry
 from .search import _used_predicates
@@ -624,6 +625,21 @@ class SoftNormDocument:
         fields = [_rule_fields(unit, env.soft.get('exception_decider')) for unit in units]
         _document_references(env, env.soft.get('parties', []), env.soft.get('ranks', []), fields)
         self.rules = tuple(_soft_rule(x) for x in fields)
+        self.collisions = tuple(sorted(((min(left, right, key=lambda r: r.core.name),
+                                         max(left, right, key=lambda r: r.core.name))
+                                        for i, left in enumerate(self.rules)
+                                        for right in self.rules[i + 1:]
+                                        if left.mode == right.mode == 'default'
+                                        and self._incompatible(left, right)),
+                                       key=lambda pair: (pair[0].core.name, pair[1].core.name)))
+        # 6.4: E′ is within the vocabulary limits before anything is elaborated.
+        self.decisions = self._decisions()
+        for prefix in ('soft__excepted__', 'soft__off__', 'soft__outweighs__'):
+            for name in self.decisions:
+                if name.startswith(prefix) and len(name.encode('utf-8')) > MAX_IDENTIFIER_BYTES:
+                    raise ResourceLimit(f'ResourceLimit: decision predicate {name}')
+        if len(env.predicates) + len(self.decisions) > MAX_PREDICATES:
+            raise ResourceLimit('ResourceLimit: extended vocabulary')
         self.core = NormDocument(env, [r.core for r in self.rules])
         by_name = {r.core.name: r for r in self.rules}
         for rule in self.rules:
@@ -634,13 +650,6 @@ class SoftNormDocument:
         self.document_hash = soft_digest(f've-soft-norms-{env.identity_version}\n',
                                          {'environment_id': env.environment_id,
                                           'document': [r.to_dict() for r in self.rules]})
-        self.collisions = tuple(sorted(((min(left, right, key=lambda r: r.core.name),
-                                         max(left, right, key=lambda r: r.core.name))
-                                        for i, left in enumerate(self.rules)
-                                        for right in self.rules[i + 1:]
-                                        if left.mode == right.mode == 'default'
-                                        and self._incompatible(left, right)),
-                                       key=lambda pair: (pair[0].core.name, pair[1].core.name)))
         warnings = []
         for rule in self.rules:
             for parent_name in rule.core.over:
@@ -705,9 +714,8 @@ class SoftNormDocument:
         key = permission[0] if permission else keys[0]
         return f'soft__outweighs__{low}__{high}__{key}'
 
-    def _extended_environment(self):
-        data = self.env.to_dict()
-        predicates = data['vocabulary']['predicates']
+    def _decisions(self):
+        """The decision predicates of E′ and their argument sorts."""
         generated = {}
         for rule in self.rules:
             args = list(self.env.predicates[rule.core.predicate].arguments)
@@ -722,6 +730,12 @@ class SoftNormDocument:
                     name = self._outweighs_name(*pair, self._act(left),
                                                 self.env.predicates[left.core.predicate].arguments)
                     generated[name] = list(self.env.predicates[left.core.predicate].arguments)
+        return generated
+
+    def _extended_environment(self):
+        data = self.env.to_dict()
+        predicates = data['vocabulary']['predicates']
+        generated = self.decisions
         for name, args in generated.items():
             if name in predicates:
                 raise VEError(f'InvalidInput: generated predicate collision {name}')

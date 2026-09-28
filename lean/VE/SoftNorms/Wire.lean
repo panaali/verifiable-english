@@ -85,15 +85,24 @@ structure SoftSource where
   lits : D.lits = se.ne.rv.literals
   defs : D.T.definitions = []
 
+/-- 6.4: `E′` is within the vocabulary limits: each decision predicate name within
+`MAX_IDENTIFIER_BYTES`, and at most `MAX_PREDICATES` predicates. -/
+def primeVocabulary (se : SoftEnvironment) (D : SoftDoc) : Except String Unit := do
+  for n in decisionNames D do
+    if n.utf8ByteSize > 64 then throw s!"ResourceLimit: decision predicate {n}"
+  if se.ne.rv.vocabulary.predicates.length + (decisions D).length > 256 then
+    throw "ResourceLimit: extended vocabulary"
+
 /-- Decode the environment and the soft norm objects: the validation table of 8 over the whole
-source (`Phases.checkSource`), then `WellFormedSoft`, whose remaining diagnostics are the
-semantic checks 6.4 to 6.10. -/
+source (`Phases.checkSource`), the vocabulary limits of `E′` (6.4), then `WellFormedSoft`,
+whose remaining diagnostics are the semantic checks 6.5 to 6.11. -/
 def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
   let c ← match Phases.checkSource environment norms with
     | .ok c => pure c
     | .error f => throw f.message
   let se : SoftEnvironment := ⟨c.ne, c.soft, c.profiles, environment⟩
   let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], c.nodes⟩⟩
+  primeVocabulary se D
   match hv : validateSoft D with
   | .error e => throw e
   | .ok () => pure ⟨se, D, by unfold WellFormedSoft; rw [hv], rfl, rfl, rfl⟩

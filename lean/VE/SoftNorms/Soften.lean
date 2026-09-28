@@ -282,7 +282,7 @@ def checkSoft (D : SoftDoc) : Except String Unit := do
         (derivedList D N).any (fun φ => fsize φ > maxNodes) then
       throw s!"ResourceLimit: derived carve-out of rule {N.name}"
   VE.Norms.validate (soften D)
-  -- 6.10: Python serialises each generated premise through one `_Checker`.
+  -- 6.11: Python serialises each generated premise through its own `_Checker`.
   for φ in softPremises D do
     if VE.Bridge.formulaNodes φ > maxNodes || fdepth φ > 64 then
       throw "ResourceLimit: generated soft premise"

@@ -269,7 +269,7 @@ def soft3_reproducers():
     # Python's node budgets, at each position the table gives them: the decoder's
     # per formula (4.2, 4.13), the checker's per rule over its guard, carve-outs
     # and exception conditions (5.7, 5.8), the W1 checker's over the whole of T
-    # (6.4) and of T' (6.9), and each generated premise's (6.10).
+    # (6.5) and of T' (6.10), and each generated premise's (6.11).
     big = _doubled(13)  # 16,383 nodes
     yield "soft3-guard-nodes-before-rank", env(), [
         norm("a", "x_required", True, guard=big, rank="missing")], "SOFT_INVALID_INPUT"
@@ -357,6 +357,25 @@ def soft3_accepted():
         ("document-nodes-9999", env(), [norm("r0", "x_required", True, guard=_exact(4999)),
                                         norm("r1", "x_required", True, guard=_exact(5000))]),
     ]
+
+
+def soft_limits_reproducers():
+    """The directive's class: a derived structure beyond a limit.
+
+    Each was accepted by at least one validator before; each is now rejected
+    by both at the same check."""
+    # E′ (6.4): the decision predicates are within MAX_IDENTIFIER_BYTES and
+    # MAX_PREDICATES; Lean used to accept an E′ that no environment decoder loads.
+    yield "soft-limits-excepted-name", env(), [should("a" * 49, "x_required", True)], \
+        "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-off-name", env({"parties": ["p" * 30], "outranking": {"mode": "strict"}}), [
+        norm("r" * 30, "x_required", True, alterable=["p" * 30])], "SOFT_RESOURCE_LIMIT"
+    yield "soft-limits-outweighs-name", env(ranks(["h" * 20, "l" * 20], "holistic")), [
+        should("a", "x_required", True, rank="h" * 20),
+        should("b", "x_required", False, rank="l" * 20)], "SOFT_RESOURCE_LIMIT"
+    many = {f"e{i}": {"arguments": ["assistant"], "description": "e"} for i in range(252)}
+    yield "soft-limits-extended-vocabulary", env(extra=many), [
+        should(f"n{i}", "x_required", True) for i in range(3)], "SOFT_RESOURCE_LIMIT"
 
 
 # The multi-fault generator. A valid base source, then faults each tagged with its
@@ -513,11 +532,13 @@ def multi_faults():
          _set(S + ("ties",), [["b", "c"], ["a", "b"]])),
         ("tie-repeat", "ties", (6, 3), "SOFT_DUPLICATE_DECLARATION",
          _set(S + ("ties",), [["b", "c"], ["c", "b"]])),
-        ("document-nodes", "unless", (6, 4, 0), "SOFT_RESOURCE_LIMIT", _carve_outs(range(3), _doubled(11))),
-        ("precedence-cycle", "r0-over", (6, 4, 1), "SOFT_DEPENDENCY_CYCLE", _set(rule(0, "over"), ["c2"])),
-        ("soft-over-hard", "r3-over", (6, 7), "SOFT_OVER_HARD", _set(rule(3, "over"), ["b1"])),
-        ("derived-nodes", "r3-guard", (6, 9), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(9990))),
-        ("premise-depth", "r0-sufficient", (6, 10), "SOFT_RESOURCE_LIMIT",
+        ("document-nodes", "unless", (6, 5, 0), "SOFT_RESOURCE_LIMIT", _carve_outs(range(3), _doubled(11))),
+        ("precedence-cycle", "r0-over", (6, 5, 1), "SOFT_DEPENDENCY_CYCLE", _set(rule(0, "over"), ["c2"])),
+        ("soft-over-hard", "r3-over", (6, 8), "SOFT_OVER_HARD", _set(rule(3, "over"), ["b1"])),
+        # d3's decision predicate soft__excepted__d... exceeds MAX_IDENTIFIER_BYTES in E′.
+        ("decision-name", "r3-name", (6, 4), "SOFT_RESOURCE_LIMIT", _set(rule(3, "name"), "d" * 49)),
+        ("derived-nodes", "r3-guard", (6, 10), "SOFT_RESOURCE_LIMIT", _set(rule(3, "guard"), _exact(9990))),
+        ("premise-depth", "r0-sufficient", (6, 11), "SOFT_RESOURCE_LIMIT",
          _set(rule(0, "exception", "sufficient"), [_nested(63)])),
     ]
 
@@ -684,7 +705,7 @@ def generated_invalid_exceptions():
 def expected_rejections():
     """Named sources whose first diagnostic the validation table (8) fixes."""
     return [*loop_recheck_reproducers(), *soft2_reproducers(), *soft3_reproducers(),
-            *multi_fault_cases()]
+            *soft_limits_reproducers(), *multi_fault_cases()]
 
 
 def _batches(cases, limit=8 << 20):

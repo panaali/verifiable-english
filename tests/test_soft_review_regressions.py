@@ -23,8 +23,10 @@ from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
 from ve.softnorms import load_soft_document
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
-                                    multi_fault_cases, multi_faults,
+                                    soft_limits_reproducers, multi_fault_cases, multi_faults,
                                     compare_rejected, main as conformance_main)
+
+REJECTED_INPUTS = 4387
 
 
 def test_english_default_cannot_enter_w1_semantics():
@@ -179,7 +181,7 @@ def test_reported_diagnostic_codes(raw, rules, code):
 
 @pytest.mark.parametrize("name,raw,rules,code",
                          [*loop_recheck_reproducers(), *soft2_reproducers(),
-                          *soft3_reproducers()])
+                          *soft3_reproducers(), *soft_limits_reproducers()])
 def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     with pytest.raises(VEError) as python_error:
         load_soft_document(raw, rules)
@@ -209,7 +211,7 @@ def test_multi_fault_generator_covers_the_table():
 
 
 def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == 4375
+    assert compare_rejected() == REJECTED_INPUTS
 
 
 def test_document_checks_environment_and_rules_as_one_source(tmp_path):
@@ -340,7 +342,7 @@ def test_generated_soft_conformance_is_part_of_suite(capsys):
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
-    assert report["rejected_inputs"] == 4375
+    assert report["rejected_inputs"] == REJECTED_INPUTS
 
 
 @pytest.mark.parametrize("role,sign,effect", [
