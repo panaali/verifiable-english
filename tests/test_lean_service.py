@@ -100,6 +100,34 @@ def test_response_schemas_follow_lean_sources():
     assert set(re.findall(r'\[\.str "(\w+)"', order_formulas)) == set(common["order_formula"]["x-tagged"])
 
 
+def _random_value(rng, depth=0):
+    options = [lambda: 1, lambda: 'a\\"b,]}\\\\' * rng.randrange(3), lambda: "é,[{ü"]
+    if depth < 4:
+        options += [lambda: [_random_value(rng, depth + 1) for _ in range(rng.randrange(3))],
+                    lambda: {f'k{i},"[': _random_value(rng, depth + 1) for i in range(rng.randrange(3))}]
+    return rng.choice(options)()
+
+
+def test_client_case_digests_are_the_services(service_executable):
+    """`case_texts` mirrors `VE.JsonInput.caseTexts` and the service digests each case
+    in one byte pass (`VE.Service.caseDigests`): on random batches with escaped quotes,
+    backslashes, delimiters inside strings, non-ASCII text and JSON whitespace between
+    cases, the client's digests are the service's (a mismatch would fail closed)."""
+    import random
+    rng = random.Random(20260928)
+    with LeanService(service_executable) as service:
+        for _ in range(60):
+            cases = [{"id": str(k), "x": _random_value(rng)} for k in range(rng.randrange(1, 6))]
+            texts = [json.dumps(c, ensure_ascii=False, separators=(",", rng.choice([":", " : "])))
+                     for c in cases]
+            text = rng.choice(["", " ", "\t"]) + "[" + rng.choice(["", " "]) + \
+                rng.choice([",", " ,\t", "\r, "]).join(texts) + rng.choice(["", "\r"]) + "] "
+            assert case_texts(text) == texts
+            _, response = service.exchange("evaluate", text, len(cases))
+            assert [b["digest"] for b in response["results"]] == [case_digest(t) for t in texts]
+        assert service.stats["retries"] == 0
+
+
 def test_handshake(service_executable):
     with LeanService(service_executable) as service:
         assert service.handshake["service"] == "ve-lean@1"
