@@ -122,14 +122,114 @@ def test_python_entries_resolve_to_guarded_callables():
         assert {(name, op_id) for name, _ in rows} <= _manifest_entries()
 
 
+BACKEND = "ve.backends.lean"
+
+
+def _absolute(module, node):
+    """The absolute module named by an ImportFrom in `module`."""
+    if not node.level:
+        return node.module or ""
+    package = module.split(".")
+    package = package[:len(package) - node.level] if not module.endswith("__init__") else package
+    return ".".join(package + ([node.module] if node.module else []))
+
+
+def _backend_calls(module, tree, is_package=False):
+    """(qualname, operation) for every call of ve.backends.lean.run in `tree`, however imported,
+    and every other reference to that function (which the test forbids)."""
+    context = module if not is_package else module + ".__init__"
+    modules, functions = {}, set()   # local name -> dotted module; local names of `run`
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.asname:
+                    modules[alias.asname] = alias.name
+                else:
+                    modules[alias.name.split(".")[0]] = alias.name.split(".")[0]
+        elif isinstance(node, ast.ImportFrom):
+            base = _absolute(context, node)
+            for alias in node.names:
+                name = alias.asname or alias.name
+                if base == BACKEND and alias.name == "run":
+                    functions.add(name)
+                elif base == BACKEND and alias.name == "*":
+                    functions.add("run")
+                else:
+                    modules[name] = f"{base}.{alias.name}"
+
+    def dotted(expr):
+        if isinstance(expr, ast.Name):
+            return modules.get(expr.id)
+        if isinstance(expr, ast.Attribute):
+            head = dotted(expr.value)
+            return head and f"{head}.{expr.attr}"
+        return None
+
+    def is_run(expr):
+        return ((isinstance(expr, ast.Name) and expr.id in functions)
+                or (isinstance(expr, ast.Attribute) and expr.attr == "run" and dotted(expr.value) == BACKEND))
+
+    calls, references = set(), set()
+
+    def visit(node, qualname):
+        # Each use is attributed to its innermost enclosing function (or "<module>").
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            qualname = node.name if qualname == "<module>" else f"{qualname}.{node.name}"
+        children = list(ast.iter_child_nodes(node))
+        if isinstance(node, ast.Call) and is_run(node.func):
+            operation = node.args[0] if node.args else None
+            calls.add((qualname, operation.value if isinstance(operation, ast.Constant) else None))
+            children.remove(node.func)
+        elif is_run(node):
+            references.add(qualname)
+            return
+        for child in children:
+            visit(child, qualname)
+
+    visit(tree, "<module>")
+    return calls, references
+
+
+def test_backend_call_scanner_sees_through_aliases():
+    source = """
+from .backends import lean as lb
+from ve.backends.lean import run as go
+import ve.backends.lean as vbl
+import ve.backends.lean
+from . import backends
+
+def a():
+    lb.run("bundle.check", 1)
+def b():
+    go("bundle.check", 1)
+def c():
+    vbl.run("graph.compose", 1)
+def d():
+    ve.backends.lean.run("graph.compose", 1)
+def e():
+    backends.lean.run("bundle.check", 1)
+def f():
+    table = {"x": lb.run}
+def g(op):
+    lb.run(op, 1)
+"""
+    calls, references = _backend_calls("ve.sample", ast.parse(source))
+    assert {(q, o) for q, o in calls if q in "abcdeg"} == {
+        ("a", "bundle.check"), ("b", "bundle.check"), ("c", "graph.compose"), ("d", "graph.compose"),
+        ("e", "bundle.check"), ("g", None)}
+    assert references == {"f"}
+
+
 def test_lean_call_sites_are_exactly_the_backend_calls():
-    sites = set()
-    for module, _, tree in _modules():
-        for qualname, node in _qualified(tree):
-            for call in ast.walk(node):
-                if (isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute)
-                        and call.func.attr == "run" and getattr(call.func.value, "id", None) == "lean_backend"):
-                    sites.add((f"{module}:{qualname}", call.args[0].value))
+    sites, references = set(), set()
+    for module, rel, tree in _modules():
+        if rel.as_posix() == "ve/backends/lean.py":
+            continue
+        calls, refs = _backend_calls(module, tree, rel.name == "__init__.py")
+        sites |= {(f"{module}:{qualname}", op) for qualname, op in calls}
+        references |= {f"{module}:{qualname}" for qualname in refs}
+    assert not references, f"ve.backends.lean.run used other than as a direct call: {sorted(references)}"
+    assert all(op is not None for _, op in sites), "the operation of a Lean call must be a literal"
     declared = {(site, op["id"]) for op in OPS for site in op["lean_call_sites"]}
     assert sites == declared
     for site, op_id in declared:
@@ -431,6 +531,21 @@ def test_backend_rejection_is_returned_as_a_semantic_row(tmp_path):
                                 "for c in cases])); sys.exit(1)")
     rows = lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=5)
     assert rows == [{"id": "bundle", "status": "error", "error": "forged"}]
+
+
+def test_undeclared_call_site_inside_ve_is_refused(tmp_path):
+    """The runtime complement of the static scan: an alias the scan cannot see still fails."""
+    namespace = {"__name__": "ve.rogue", "backend": lean_backend, "absent": tmp_path / "absent"}
+    exec("def rogue():\n    run = getattr(backend, 'r' + 'un')\n"
+         "    return run('bundle.check', absent, [{'id': 'b', 'kind': 'bundle'}], runner='ve_conformance',"
+         " mode='route', timeout=1)\n", namespace)
+    with pytest.raises(RuntimeError, match="not a declared Lean call site"):
+        namespace["rogue"]()
+    namespace["__name__"] = "tools.rogue"   # outside the package: no public verdict, not restricted
+    exec("def rogue():\n    return backend.run('bundle.check', absent, [{'id': 'b', 'kind': 'bundle'}],"
+         " runner='ve_conformance', mode='route', timeout=1)\n", namespace)
+    with pytest.raises(CheckerUnavailable):
+        namespace["rogue"]()
 
 
 @pytest.mark.parametrize("op_id, runner, mode, case", [
