@@ -119,6 +119,23 @@ def openAfterClassification (src : SoftSource) (environment norms pairs : Json) 
   pure (rows.filterMap fun (label, status) =>
     if status == .rankResolved || status == .disjoint then none else some label)
 
+/-- Preserve premise positions while checking whether a certificate needs one coherence
+leaf. The certificate's binding remains to the original complete premise list. -/
+def softWithout (D : SoftDoc) (label : String) : List VE.Formula :=
+  (softLabelled D).map (fun (l, f) => if l == label then .top else f)
+
+def conflictUses (r : SoftConflictReplay) (label : String) : Bool :=
+  ((targets (soften r.src.D)).zip r.certs).any (fun (t, c) => match c with
+    | some c => !VE.Tableau.checkCertificate (envAt (soften r.src.D) 0)
+        (VE.Norms.backgroundBase (soften r.src.D) ++ softWithout r.src.D label)
+        (targetConclusion t) c
+    | none => false)
+
+def entailmentUses (r : SoftEntailmentReplay) (label : String) : Bool :=
+  !VE.Tableau.checkCertificate (envAt (soften r.src.D) (size (soften r.src.D)))
+    (VE.Norms.background (soften r.src.D) ++ softWithout r.src.D label ++
+      elaborate (soften r.src.D).T ++ r.premises) r.conclusion r.cert
+
 /-! ## Admission -/
 
 /-- The answer for an admitted document: W1's fields and `conditional_on`. -/
@@ -198,8 +215,9 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id (← pairsResult src environment norms (j.getObjValD "pairs"))
   if kind == "soft-certificate" then
     let r ← replaySoftEntailment j
-    let conditional ← openAfterClassification r.src (j.getObjValD "environment")
+    let openLabels ← openAfterClassification r.src (j.getObjValD "environment")
       (j.getObjValD "norms") (j.getObjValD "pairs")
+    let conditional := if r.valid then openLabels.filter (entailmentUses r) else []
     return VE.Route.Wire.ok id [("valid", .bool r.valid),
       ("background", toJson (background' r.src.D).length), ("layers", toJson (elaborate (soften r.src.D).T).length),
       ("conditional_on", toJson conditional)]
@@ -215,8 +233,9 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "soft-conflict" then
     let res ← replaySoftConflict j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
-    let conditional ← openAfterClassification res.src (j.getObjValD "environment")
+    let openLabels ← openAfterClassification res.src (j.getObjValD "environment")
       (j.getObjValD "norms") (j.getObjValD "pairs")
+    let conditional := if res.conflictFree then openLabels.filter (conflictUses res) else []
     let budget := (j.getObjValD "budget").getNat?.toOption.getD 10000
     let exhibit ← if (j.getObjVal? "coherent_model").toBool then do
       let ⟨model, _⟩ ← decodeModel res.src
