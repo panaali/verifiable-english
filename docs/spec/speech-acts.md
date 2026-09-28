@@ -485,7 +485,9 @@ and target meaning id**, so a proof task's meaning is bound to what it asks to b
 its premise set, while keeping the name `q1` changes the command's meaning id and stales its compliance certificate
 (fixture ζ). A question's `meaning_id` is likewise over the question object including the derived mode, sort, domain,
 body, query (with its premise meaning ids and target meaning id) and reading-set id and version; a binding's is over
-the binding object. The objects are fixed JSON so that every checker digests the same bytes: a command is
+the binding object. A quoted question (question content under a quoted kind, 3.2) is asked by nobody but has the
+meaning id of its question object, exactly as a dormant command has its command's: a stated `meaning_id` on its unit
+must equal it in both cores. The objects are fixed JSON so that every checker digests the same bytes: a command is
 `{"command": {"force", "act", "args", "guard"}}`, a proof task adding `"query": {"id", "premises": [<premise meaning
 ids>], "target": <target meaning id>}` inside the command object; a question is `{"question": {"mode", ...}}` with
 `body` (polar), `sort`, `domain` and `body` (which modes), `"query": {"id", "premises", "target"}` as above (follows),
@@ -1690,6 +1692,7 @@ statements of section 8 are unchanged.
 | A, over-rejection: the kind check compared every choice kind with a four-valued surface kind, so every `norm`, `definition`, `example` or quoted choice failed whatever its wording | 3.2 (orchestrator correction): the rule is only among `asserted`, `question` and `instruction`; every other choice kind and a binding-shaped wording is unchecked. |
 | B, wording normalisation: Python stripped and casefolded Unicode, Lean trimmed and lowered ASCII, so "Atlas is reviewed?\x0c" was a question in Python and a declarative in Lean | 3.2: one ASCII-only normalisation (Python's `string.whitespace`, `A`-`Z` folding), in both cores, differentially tested over whitespace, case and control-character variants. |
 | B, `"source": null`: Python skipped the wording check and Lean raised `InvalidInput: speech wording` | 3.2: a present `source` of any non-string type, `null` included, is `InvalidInput: speech wording` in both cores. |
+| B, quoted-question meaning ids: Python expected no `meaning_id` on a quoted-question unit, Lean regenerated the question object's | 3.5: a quoted question has its question object's meaning id in both cores. |
 
 ## Change log
 
