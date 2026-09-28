@@ -8,6 +8,7 @@ from itertools import combinations, product, tee
 import math
 from typing import Any, Iterator, Sequence
 
+from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, And, Atom, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
@@ -159,6 +160,7 @@ def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any,
     return valid, tuple(values), bool(result.value), work, ("Valid" if valid else "NotCountermodel")
 
 
+@semantic_entry("countermodel.check")
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
     """Independently validate and check a purported finite countermodel."""
@@ -484,6 +486,17 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     return ok and all(guard_hits.values()), evaluator.work, False
 
 
+def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model: FiniteModel,
+                     max_evaluations: int) -> bool:
+    """Search is untrusted generation: a candidate is reported as `Found` only
+    once the countermodel.check verdict entry accepts it, so the witness carries
+    that operation's authority (and a migrated check refuses rather than being
+    bypassed). The check re-evaluates what the search already evaluated, within
+    the caller's budget; its work is not charged to the public search counters.
+    """
+    return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
+
+
 def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity):
     if any(type(x) is not int or x < 0
@@ -503,6 +516,7 @@ def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluati
     return minimum_size
 
 
+@semantic_entry("countermodel.search")
 def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
                       min_domain_size: int = 0, nonempty_domains: bool = False,
                       nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
@@ -560,7 +574,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         if valid:
             if not model.model_id:
                 model = FiniteModel.from_dict(env, model.to_dict())
-            return finish("Found", model, checked, work)
+            if _witness_checked(env, premises, conclusion, model, max_evaluations):
+                return finish("Found", model, checked, work)
     # Probe exhaustion once more; this validates but does not evaluate another model.
     try:
         next(iterator)
@@ -575,6 +590,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     return finish("ResourceLimit", None, checked, work, "model-attempt budget exhausted")
 
 
+@semantic_entry("countermodel.search")
 def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
                               min_domain_size: int = 0, nonempty_domains: bool = False,
                               nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
@@ -634,7 +650,9 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         if left.value != right.value:
             if not model.model_id:
                 model = FiniteModel.from_dict(env, model.to_dict())
-            return finish("Found", model, checked, work)
+            if _witness_checked(env, *(((a,), b) if left.value else ((b,), a)),
+                                model, max_evaluations):
+                return finish("Found", model, checked, work)
     try:
         next(iterator)
     except StopIteration:

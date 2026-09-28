@@ -2,6 +2,7 @@
 
 This is experimental runtime checking, not a proof certificate or intent sign-off.
 """
+from .assurance import semantic_entry
 from .ast import Document, check_document, document_from_data, document_to_data
 from .errors import VEError
 from .evaluate import evaluate
@@ -10,6 +11,7 @@ from .parser import parse
 from .printer import print_document
 
 
+@semantic_entry("check")
 def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True, surface="strict",
           vocabulary=None, accept_suggested_vocabulary=False):
     paraphrase = None

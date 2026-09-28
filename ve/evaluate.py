@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
                   Num, Add, Scale, Lt, Le)
@@ -210,6 +211,7 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)
 
 
+@semantic_entry("evaluate")
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
     """Validate the public inputs and evaluate a closed formula or document."""

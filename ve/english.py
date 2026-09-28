@@ -14,6 +14,7 @@ import json
 import re
 import warnings
 
+from .assurance import semantic_entry
 from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
@@ -1436,6 +1437,7 @@ def _check_conclusions(env, document, conclusions):
                               + result.status)
 
 
+@semantic_entry("english.admission")
 def parse_english_with_metadata(env, source, **options):
     document, source, words, conclusions = _parse_english_document(env, source, **options)
     try:
@@ -1452,10 +1454,12 @@ def parse_english_with_metadata(env, source, **options):
                               **words.provenance, conclusions=conclusions)
 
 
+@semantic_entry("english.admission")
 def parse_english(env, source, **options):
     return _parse_english_document(env, source, **options)[0]
 
 
+@semantic_entry("english.admission")
 def parse_english_argument(env, source, **options):
     """Build checked claim-graph edges for marked conclusions.
 
@@ -1484,7 +1488,7 @@ def parse_english_argument(env, source, **options):
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
     graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
-    result = check_argument(graph, search=False)
+    result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
         raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
     return graph

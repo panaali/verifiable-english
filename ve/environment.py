@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 import re
 from types import MappingProxyType
 
+from .assurance import semantic_entry
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES, MAX_SORTS
 from .wire import canonical_json, digest, loads_json, require_fields
@@ -140,6 +141,7 @@ class Environment:
     constants: object
     _environment_id: str = field(repr=False, compare=False)
 
+    @semantic_entry("environment")
     def __init__(self, data):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
