@@ -8,8 +8,9 @@ import pytest
 from conformance.p0 import environment
 from ve import Environment, FiniteModel
 from ve.ast import And, Binary, Bottom, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Unary, Var
-from ve.background import background
+from ve.background import background, dependency_order
 from ve.evaluate import evaluate
+from ve.errors import VEError
 from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +44,29 @@ def test_lean_background_preserves_named_premises(monkeypatch, fixture):
     expected = background(env)
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert background(env) == expected
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("dependencies", [
+    {}, {"b": {"a"}, "a": set()},
+    {"a": {"outside"}, "b": set(), "c": {"a", "b"}},
+])
+def test_lean_dependency_order_preserves_signature(monkeypatch, dependencies):
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = dependency_order(dependencies)
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert dependency_order(dependencies) == expected
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+def test_lean_dependency_cycle_keeps_diagnostic_code(monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    with pytest.raises(VEError) as original:
+        dependency_order({"a": {"b"}, "b": {"a"}})
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    with pytest.raises(VEError) as candidate:
+        dependency_order({"a": {"b"}, "b": {"a"}})
+    assert candidate.value.code == original.value.code
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")

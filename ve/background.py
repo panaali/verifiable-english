@@ -176,8 +176,7 @@ def validate_background(env, model) -> None:
             raise
 
 
-def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
-    """Dependencies precede dependents in one DAG over defined and regulated symbols."""
+def _dependency_order_python(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     from .errors import ResourceLimit, VEError
     if len(dependencies) > 256:
         raise ResourceLimit("dependency graph size")
@@ -193,6 +192,38 @@ def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tup
         for mentions in remaining.values():
             mentions.discard(ready)
     return tuple(ordered)
+
+
+_DEPENDENCY_ENVIRONMENT = {
+    "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {"sorts": {}, "predicates": {}, "constants": {}},
+}
+
+
+def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
+    """Dependencies precede dependents in one DAG over defined and regulated symbols."""
+    from .backends.dispatch import execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+    from .errors import ResourceLimit
+
+    if len(dependencies) > 256:
+        raise ResourceLimit("dependency graph size")
+    case = {"id": "dependency-order", "kind": "dependency-order",
+            "environment": _DEPENDENCY_ENVIRONMENT,
+            "nodes": [{"name": name, "mentions": sorted(dependencies[name])}
+                      for name in sorted(dependencies)]}
+
+    def lean():
+        order = run("route", [case])[0]["order"]
+        if (type(order) is not list or len(order) != len(dependencies)
+                or set(order) != set(dependencies)):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean dependency order")
+        return tuple(order)
+
+    return execute("dependency_order", case,
+                   lambda: _dependency_order_python(dependencies), lean=lean)
 
 
 def dependency_order_nodes(nodes) -> tuple[str, ...]:
