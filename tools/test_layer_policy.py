@@ -13,6 +13,8 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertLess(plan["selected_count"], plan["full_count"])
         self.assertIn("tests/test_t1c.py", plan["selected"])
         self.assertTrue(set(plan["always"]) <= set(plan["selected"]))
+        usecase = select(["usecases/asimov-laws/rules.ve"])
+        self.assertIn("tests/test_asimov_laws.py", usecase["selected"])
 
     def test_native_inputs_schedule_their_builds(self):
         lean = select(["lean/VE/Norms/Wire.lean"])
