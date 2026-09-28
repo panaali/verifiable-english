@@ -9,6 +9,7 @@ from ve.document import check_document, render_document
 from ve.soft_route import elaborate_soft_document
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
+from ve.readings import plan_choices, validate_couplings
 
 
 def rights_env():
@@ -95,3 +96,62 @@ def test_rule_bar_elaborates_over_right_liberty():
     assert [r.core.name for r in doc.soft_document.rules] == ["may-act", "rights-bar-1"]
     assert doc.soft_document.rules[-1].core.over == ("may-act",)
     assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
+
+
+def test_couplings_keep_only_shared_axis_choices():
+    sets = [{"id": name, "version": 1, "unit": name, "status": "open",
+             "readings": [{"id": f"{name}-{value}", "labels": {"force": value}}
+                          for value in ("strict", "default")]}
+            for name in ("a", "b")]
+    couplings = [{"id": "same-force", "axis": "force",
+                  "sets": [{"set": name, "version": 1} for name in ("a", "b")],
+                  "by": "translator", "reason_spans": ["preamble"]}]
+    validate_couplings(RightsEnvironment(rights_env()), couplings, sets,
+                       {"a", "b", "preamble"})
+    plan = plan_choices(sets, couplings=couplings)
+    assert plan["route"] == "enumerate"
+    assert plan["choices"] == [{"a": 0, "b": 0}, {"a": 1, "b": 1}]
+    assert plan["conditional_on"] == ["coupling:same-force"]
+    sets[1]["readings"] = [sets[1]["readings"][0]]
+    assert plan_choices(sets, couplings=couplings)["choices"] == [{"a": 0, "b": 0}]
+
+
+def test_fan_out_generates_one_rule_per_bearer_sort():
+    raw = rights_env()
+    raw["vocabulary"]["rights"]["bearers"] = ["state", "person"]
+    raw["vocabulary"]["predicates"]["person_protect_permitted"] = permission(
+        "allow", act="{0} protect {1}", args=("person", "person"))
+    fan = {"kind": "claim", "cites": {}, "holder_slot": 1,
+           "fan_out": {"state": "protect_permitted", "person": "person_protect_permitted"},
+           "norm": {"name": "no-protect", "predicate": None, "sign": False,
+                    "guard": ["top"], "unless": [], "over": []}}
+    doc = correlate(raw, [right([fan])])
+    assert [(i["bearer"], i["rule"].core.name) for i in doc.instances] == [
+        ("person", "rights-fan-1"), ("state", "rights-fan-2")]
+    assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
+
+
+def test_power_splits_into_liberty_and_recognition():
+    raw = rights_env()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["marry_permitted"] = permission("allow", act="{0} marry", args=("person",))
+    predicates["recognise_required"] = obligation(
+        "deny", None, act="{0} recognise {1}", args=("state", "person"))
+    predicates["married"] = {"arguments": ["person"], "description": "married"}
+    raw["vocabulary"]["rights"]["alters"] = {
+        "marry_permitted": {"holder_slot": 0, "status": "married",
+                            "recognition": "recognise_required"}}
+    power = {"kind": "power", "cites": {},
+             "liberty": {"name": "may-marry", "predicate": "marry_permitted", "sign": True,
+                         "guard": ["top"], "unless": [], "over": []},
+             "recognition": {"name": "recognise-marriage", "predicate": "recognise_required",
+                             "sign": True, "guard": ["top"], "unless": [], "over": []}}
+    doc = correlate(raw, [right([power])])
+    assert [i["kind"] for i in doc.instances] == ["powerLiberty", "powerRecognition"]
+    assert [r.core.name for r in doc.soft_document.rules] == ["may-marry", "recognise-marriage"]
+    assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
+
+
+def test_rights_soft_regeneration_conformance():
+    from conformance.rights import run
+    assert run(8) == 8

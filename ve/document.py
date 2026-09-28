@@ -18,7 +18,7 @@ from .errors import VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices,
-                       validate_narrowings, validate_reading_sets)
+                       validate_couplings, validate_narrowings, validate_reading_sets)
 from .wire import digest
 from .vacuity import premise_status
 
@@ -77,6 +77,8 @@ def _split(raw: bytes):
                "narrowings", "couplings", "weights", "graph", "lemmas"}
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
+    if "couplings" in meta and "rights@0" not in meta.get("environment", {}).get("profiles", []):
+        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
     return meta, *_body(raw[boundary + 5:])
 
 
@@ -283,8 +285,10 @@ def load_document(path: str | Path):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(formula_env, reading_sets, unit_ids)
+    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids)
     active = active_reading_sets(reading_sets)
+    couplings = meta.get("couplings", [])
+    validate_couplings(env, couplings, reading_sets, unit_ids)
     units_by_id = {u["id"]: u for u in compiled}
     for reading_set in active:
         unit = units_by_id[reading_set["unit"]]
@@ -342,7 +346,9 @@ def load_document(path: str | Path):
             "document_id": document_id,
             "units": compiled, "norms": norms, "soft_document": soft_document,
             "rights_document": rights_document,
-            "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
+            "reading_plan": plan_choices(active if couplings else
+                                         [r for r in active if r["status"] == "open"],
+                                         couplings=couplings)}
 
 
 def _fixed_and_active(doc):
@@ -684,7 +690,8 @@ def main(argv=None):
                         if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
                         for r in sets]
             data = check_readings(doc["environment"], sets, conclusion,
-                                  fixed=_fixed_premises(doc, sets))
+                                  fixed=_fixed_premises(doc, sets),
+                                  couplings=doc["meta"].get("couplings", []))
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
         else:
