@@ -11,6 +11,4 @@ import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
 import VE.English.Run
-import VE.Time.Semantics
-import VE.Time.Count
-import VE.Time.Decimal
+import VE.Time.Wire
