@@ -25,6 +25,7 @@ INT_SORT = "$int"
 STRING_SORT = "$string"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually no".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
+_ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
 
 def valid_identifier(name) -> bool:
@@ -303,7 +304,9 @@ class Environment:
             if type(evidence) is not str or evidence not in sorts:
                 raise UnknownSymbol("evidence sort")
             if any(c.get("sort") in holders and type(c.get("verbalisation")) is str and
-                   c["verbalisation"].casefold() == "the stated assessment"
+                   # ASCII case folding only, as Lean's String.toLower: no
+                   # Unicode fold may reach the reserved words by another path.
+                   c["verbalisation"].translate(_ASCII_LOWER) == "the stated assessment"
                    for c in vocab["constants"].values()):
                 raise VEError("InvalidInput: holder verbalisation reserved")
             if not _generated_reports and any(name.startswith("reports__") for name in predicates):

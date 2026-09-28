@@ -185,6 +185,9 @@ structure ReportDoc where
   /-- the rest of the W2 document: its other units (asserted, labelled), lemmas,
   open terms, reading sets and narrowings, as the frozen W2 admission reads them -/
   w2 : VE.Route.Admission.Doc
+  /-- the author's declared predicate names: with the generated ones, the
+  predicate inventory of `E_reports` that 4.1 step 7 bounds by `MAX_PREDICATES` -/
+  authorPredicates : List String
 
 def Occurs (D : ReportDoc) (x : Content) : Prop := ∃ u ∈ D.units, x ∈ u.content.nodes
 
@@ -621,6 +624,9 @@ def bridgeOk (D : ReportDoc) (b : Bridge) : Bool :=
     | some Eq => Eq.id == D.environmentId
     | none => false
 
+/-- `MAX_PREDICATES` of P0, the bound of 4.1 step 7 on `E_reports`. -/
+def maxPredicates : Nat := 256
+
 /-- 4.1, as one executable check. The HashCollision part compares the objects of
 `digestTable` and no other. -/
 def WellFormedReports (D : ReportDoc) : Bool :=
@@ -639,6 +645,9 @@ def WellFormedReports (D : ReportDoc) : Bool :=
   D.«scoped».all (scopedOk D) &&
   D.bridges.all (bridgeOk D) &&
   D.w2.units.all (fun x => !x.kind.quoted || x.content.isNone) &&
-  decide (D.units.map (·.id) ++ D.w2.units.map (·.id)).Nodup
+  decide (D.units.map (·.id) ++ D.w2.units.map (·.id)).Nodup &&
+  decide (D.authorPredicates.length + (names D).length ≤ maxPredicates) &&
+  decide (D.bridges.map (·.id)).Nodup &&
+  decide (D.«scoped».map (·.id)).Nodup
 
 end VE.Reports
