@@ -980,6 +980,10 @@ import VE.Norms.Run
 #print axioms VE.Time.checkedCivil_sound
 #print axioms VE.Time.civilOf_sound
 #print axioms VE.Time.civilOf_num
+#print axioms VE.Time.quantB_sound
+#print axioms VE.Time.charge_some
+#print axioms VE.Time.evalB_sound
+#print axioms VE.Time.refutesB_sound
 #print axioms VE.Time.decimal_exact
 #print axioms VE.Time.lower_none_iff
 #print axioms VE.Time.digitsVal_append

@@ -2,6 +2,7 @@ import VE.Route.Wire
 import VE.Time.Semantics
 import VE.Time.Count
 import VE.Time.Decimal
+import VE.Time.Budget
 
 /-! The `quantity` subcommand of `ve_conformance`: Lean admission of W6a
 `ve-units@1` environments and `ve-quantity@1` statements (units-schema §3).
@@ -14,8 +15,9 @@ equal it, admits the statement with the proved `QFormula.admits`, and erases it
 (`QFormula.erase`). The frozen order decoder re-checks the regenerated core in
 the regenerated target environment, whose identity is recomputed here.
 
-Cases (`kind`): `admission` (default; with an optional `model` it also evaluates),
-`countermodel`, `certificate` (a `ve-quantity-certificate@1` wrapping an order
+Cases (`kind`): `admission` (default; with an optional `model` it also evaluates
+under the Python/Rust budget, `evalB_sound`), `countermodel` (the same budget,
+`refutesB_sound`), `certificate` (a `ve-quantity-certificate@1` wrapping an order
 certificate for the regenerated problem; see `checkW6Certificate_sound`),
 `count` (the canonical counting expansion), and the conversions `day`,
 `civil`, `lower`, `render` used by the differential tests. -/
@@ -648,6 +650,10 @@ theorem checkW6Certificate_sound {w : W6Env} (ps : List (Admission w)) (c : Admi
 
 /-! ## The runner -/
 
+/-- UNKNOWN: evaluation stopped at the Python/Rust budget, never a truth value. -/
+def budgetExhausted : String :=
+  "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+
 def ok (id : String) (fs : List (String × Json)) : Json :=
   Json.mkObj ([("id", .str id), ("status", .str "ok")] ++ fs)
 
@@ -723,7 +729,9 @@ def runCase (j : Json) : Except String Json := do
     let value ← match j.getObjVal? "model" with
       | .ok m => do
         let d ← VE.Order.Wire.decodeValidModel w.vocab.core m
-        pure [("value", Json.bool (a.formula.erase.eval d.toModel []))]
+        match evalB d.toModel maxEvaluations [] a.formula.erase 0 with
+        | some (value, work) => pure [("value", Json.bool value), ("evaluations", toJson work)]
+        | none => throw budgetExhausted
       | .error _ => pure []
     pure (ok id ([("assurance", .str "lean-admitted"), ("Q", a.Q), ("core", a.core),
       ("meaning_id", .str a.meaningId), ("core_meaning_id", .str a.coreId)] ++ ids ++ value))
@@ -731,8 +739,9 @@ def runCase (j : Json) : Except String Json := do
     let ps ← admissions w (← j.getObjVal? "premises")
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
     let d ← VE.Order.Wire.decodeValidModel w.vocab.core (← j.getObjVal? "model")
-    pure (ok id ([("refutes", .bool (VE.Order.checkCountermodel w.vocab.core d
-      (ps.map (·.formula.erase)) c.formula.erase)),
+    let some refutes := refutesB d.toModel maxEvaluations (ps.map (·.formula.erase))
+      c.formula.erase 0 | throw budgetExhausted
+    pure (ok id ([("refutes", .bool refutes),
       ("premise_meaning_ids", toJson (ps.map (·.meaningId))),
       ("conclusion_meaning_id", .str c.meaningId),
       ("core_premise_meaning_ids", toJson (ps.map (·.coreId))),
