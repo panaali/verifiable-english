@@ -107,7 +107,7 @@ def validate_reading_sets(env, values, unit_ids):
                         continue  # other-kind elaboration is pending; the checking route reports UNKNOWN
                     if rights_enabled and (type(reading["content"]) is dict or
                                            type(other["content"]) is dict):
-                        continue  # Rights situations need the correlated soft vocabulary.
+                        raise VEError("UnsupportedProfile: rights distinguishing situation validation pending")
                     model = FiniteModel.from_dict(env, models[model_id])
                     a = evaluate(env, formula_from_data(env, reading["content"]), model, trace=False)
                     b = evaluate(env, formula_from_data(env, other["content"]), model, trace=False)
