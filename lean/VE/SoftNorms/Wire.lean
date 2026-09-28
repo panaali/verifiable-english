@@ -117,6 +117,9 @@ def softKeys : List String := ["mode", "rank", "alterable", "exception", "hard"]
 
 def decodeException (name : String) (j : Json) : Except String Exception := do
   let bad := s!"InvalidInput: invalid soft fields for {name}"
+  match j with
+  | .obj _ => pure ()
+  | _ => throw s!"InvalidInput: rule {name} needs an exception"
   match VE.Bridge.displayFields j [] ["decided_by", "sufficient", "necessary", "factors"] with
   | .error _ => throw bad
   | .ok () => pure ()
@@ -126,17 +129,17 @@ def decodeException (name : String) (j : Json) : Except String Exception := do
   let decidedBy ← match j.getObjVal? "decided_by" with
     | .error _ | .ok .null => pure none
     | .ok (.str s) => pure (some s)
-    | .ok _ => throw bad
+    | .ok _ => throw s!"InvalidInput: invalid decider for rule {name}"
   let formulas (k : String) : Except String (List VE.Formula) := do
     match j.getObjVal? k with
     | .error _ => pure []
     | .ok (.arr xs) => xs.toList.mapM (VE.Bridge.decodeFormula 64)
-    | .ok _ => throw bad
+    | .ok _ => throw s!"InvalidInput: exception {k} must be an array"
   let factors ← match j.getObjVal? "factors" with
-    | .error _ => pure []
+    | .error _ => throw s!"InvalidInput: rule {name} needs an exception"
     | .ok v => match strings v with
       | .ok fs => pure fs
-      | .error _ => throw bad
+      | .error _ => throw s!"InvalidInput: invalid factors of rule {name}"
   pure ⟨decidedBy, ← formulas "sufficient", ← formulas "necessary", factors⟩
 
 /-- One soft norm object; `mode` defaults to `strict`, so every `norms@0` object decodes
@@ -164,7 +167,10 @@ def decodeSoftNorm (j : Json) : Except String SoftNode := do
       | .error _ => throw bad
   let exception ← match raw.getObjVal? "exception" with
     | .error _ | .ok .null => pure none
-    | .ok e => some <$> decodeException N.name e
+    | .ok e => do
+      if mode == .strict then
+        throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
+      some <$> decodeException N.name e
   let hard ← match raw.getObjVal? "hard" with
     | .error _ => pure false
     | .ok (.bool b) => pure b
