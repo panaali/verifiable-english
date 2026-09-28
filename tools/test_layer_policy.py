@@ -42,8 +42,25 @@ class LayerSelectionTests(unittest.TestCase):
         rust = select(["rust/ve/src/main.rs"])
         self.assertIn(["lake", "build"], lean["commands"])
         self.assertTrue(any(command[:2] == ["cargo", "test"] for command in rust["commands"]))
-        self.assertTrue(any(command[:2] == ["cargo", "build"] for command in rust["commands"]))
+        self.assertIn(["cargo", "build", "--locked", "--release", "--manifest-path",
+                       "rust/Cargo.toml", "-p", "ve"], rust["commands"])
+        self.assertIn(["cargo", "build", "--locked", "--manifest-path",
+                       "rust/Cargo.toml", "-p", "ve"], rust["commands"])
+        self.assertLess(rust["commands"].index(["cargo", "build", "--locked",
+                                                  "--manifest-path", "rust/Cargo.toml",
+                                                  "-p", "ve"]), len(rust["commands"]) - 1)
         self.assertIn("tests/test_rust_conformance.py", rust["selected"])
+        self.assertIn("tests/test_nary_differential.py", rust["selected"])
+
+    def test_missing_debug_cli_is_built_for_selected_differential_test(self):
+        real_exists = Path.exists
+        debug = select_tests.ROOT / "rust/target/debug/ve"
+        with patch.object(Path, "exists", lambda path: False if path == debug
+                          else real_exists(path)):
+            plan = select(["ve/search.py"])
+        self.assertIn("tests/test_nary_differential.py", plan["selected"])
+        self.assertIn(["cargo", "build", "--locked", "--manifest-path",
+                       "rust/Cargo.toml", "-p", "ve"], plan["commands"])
 
     def test_unknown_input_falls_back_to_full_native_and_python_suite(self):
         plan = select(["new-unmapped-format.xyz"])
