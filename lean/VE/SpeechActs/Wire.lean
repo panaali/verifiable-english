@@ -360,7 +360,8 @@ structure SpeechUnitInfo where
   kind : Json
   meaning : Json
   role : Role
-  /-- the unit is the source unit of an open (pending) W2 reading set -/
+  /-- the latest version of the unit's W2 reading set is open (pending); an authored latest version has
+  already supplied the chosen kind and content, and earlier versions are history -/
   pending : Bool := false
 
 def contentTag (content : Json) : Option String :=
@@ -388,6 +389,8 @@ def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo :=
   let kindJ ← j.getObjVal? "kind"
   let meaning := j.getObjValD "meaning"
   let content? := (j.getObjVal? "content").toOption
+  if (meaning.getObjVal? "unformalised").isOk && content?.isSome then
+    throw "unformalised unit cannot assert content"
   if kindJ == .str "binding" then
     let some content := content? | throw s!"InvalidInput: invalid binding fields for {id}"
     unless contentTag content == some "binding" do throw s!"InvalidInput: invalid binding fields for {id}"
@@ -431,23 +434,81 @@ def activeNorm (u : SpeechUnitInfo) : Option Node :=
   | .norm n => if u.kind == .str "norm" && !u.pending then some n else none
   | _ => none
 
-/-- W2's fixed asserted premises: asserted units with content, not pending. -/
+/-- W2's fixed asserted premises: asserted units with content, not pending (an authored singleton choice has
+supplied its unit's content, 1.5). -/
 def fixedAssertion (u : SpeechUnitInfo) : Option (String × VE.Formula) :=
   match u.role with
   | .asserted φ => if !u.pending then some (u.id, φ) else none
   | _ => none
 
-/-- The source units of open W2 reading sets (`ve/readings.py`: `unit`, `status`). -/
-def pendingUnits (document : Json) : Except String (List String) := do
+/-- What one W2 reading-set version says about its source unit: still `open` (pending), or the author's
+signed singleton choice with the chosen reading's kind and content (`none` while unelaborated). -/
+inductive ReadingState
+  | pending
+  | authored (kind : Json) (content : Option Json)
+
+def readingSetsError : String :=
+  "InvalidInput: reading sets on the speech-acts route need their unit, version and status"
+
+/-- The W2 reading-set versions of a document (`ve/readings.py`: `unit`, `version`, `status`, and the one
+reading of an authored version), one entry per version. -/
+def readingStates (document : Json) : Except String (List (String × Nat × ReadingState)) := do
   match document.getObjVal? "reading_sets" with
   | .error _ => pure []
   | .ok rs =>
-    let items ← rs.getArr?
-    items.toList.filterMapM fun r => do
-      match r.getObjVal? "unit", r.getObjVal? "status" with
-      | .ok (.str u), .ok (.str "open") => pure (some u)
-      | .ok (.str _), .ok (.str "authored") => pure none
-      | _, _ => throw "InvalidInput: reading sets on the speech-acts route need their unit and status (W2 form)"
+    let items ← match rs.getArr? with
+      | .ok xs => pure xs.toList
+      | .error _ => throw readingSetsError
+    let states ← items.mapM fun r => do
+      match r.getObjVal? "unit", (r.getObjValD "version").getNat?, r.getObjVal? "status" with
+      | .ok (.str u), .ok v, .ok (.str "open") => pure (u, v, ReadingState.pending)
+      | .ok (.str u), .ok v, .ok (.str "authored") =>
+        match (r.getObjValD "readings").getArr? with
+        | .ok #[c] =>
+          unless (c.getObjVal? "kind").isOk && (c.getObjVal? "content").isOk do
+            throw "authored reading needs one signed choice"
+          let content := match c.getObjValD "content" with
+            | .null => none
+            | x => some x
+          pure (u, v, ReadingState.authored (c.getObjValD "kind") content)
+        | _ => throw "authored reading needs one signed choice"
+      | _, _, _ => throw readingSetsError
+    let keys := states.map (fun (u, v, _) => (u, v))
+    unless keys.eraseDups.length == keys.length do throw "invalid or duplicate reading set version"
+    pure states
+
+/-- 1.2 and 1.5: the latest version of a unit's reading set decides (W2's `active_reading_sets`); earlier
+versions are history. -/
+def latestState (states : List (String × Nat × ReadingState)) (u : String) : Option ReadingState :=
+  let mine := states.filter (·.1 == u)
+  match (mine.map (·.2.1)).max? with
+  | none => none
+  | some v => (mine.find? (·.2.1 == v)).map (·.2.2)
+
+/-- The unit as its latest reading set leaves it: an authored choice supplies the kind, a specified meaning
+and the content (W2's formula-only assertion candidates are bare ASTs, which `decodeUnit` reads). -/
+def chosenUnit (j : Json) (kind : Json) (content : Option Json) : Except String Json := do
+  let fs ← fields j
+  let kept := fs.filter (fun kv => kv.1 != "kind" && kv.1 != "meaning" && kv.1 != "content")
+  pure (Json.mkObj (kept ++ [("kind", kind), ("meaning", .str "specified")] ++
+    match content with
+    | some c => [("content", c)]
+    | none => []))
+
+/-- Decode one unit under the document's reading sets. -/
+def decodeUnitIn (E : VE.Environment) (states : List (String × Nat × ReadingState)) (j : Json) :
+    Except String SpeechUnitInfo := do
+  let id := match j.getObjValD "id" with
+    | .str i => i
+    | _ => ""
+  match latestState states id with
+  | some .pending => pure { (← decodeUnit E j) with pending := true }
+  | some (.authored kind content) => decodeUnit E (← chosenUnit j kind content)
+  | none =>
+    if j.getObjValD "kind" == .str "asserted" && !(j.getObjVal? "content").isOk &&
+        !states.any (·.1 == id) then
+      throw "asserted unit needs content or a reading set"
+    decodeUnit E j
 
 /-- A query record `{"id", "premises", "target": {"ast"}}` (3.2), before regeneration. -/
 def decodeQuery (E : VE.Environment) (j : Json) : Except String (String × List String × VE.Formula) := do
@@ -509,9 +570,8 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   let E := se.ne.rv.environment
   VE.Bridge.displayFields document ["units"]
     ["queries", "answers", "compliance", "graph", "lemmas", "open_terms", "reading_sets", "narrowings"]
-  let units₀ ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnit E)
-  let pending ← pendingUnits document
-  let units := units₀.map (fun u => { u with pending := pending.contains u.id })
+  let states ← readingStates document
+  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E states)
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"
   unless (units.map (·.id)).eraseDups.length == units.length do throw "duplicate unit id"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do

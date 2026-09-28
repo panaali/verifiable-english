@@ -114,7 +114,8 @@ pairs, JSON object lookup after insertion, the `ULift` lift) audited with the sa
 Every case is `{"id", "kind", "environment", "document", ...}`; the environment carries the three allowlisted
 profiles and the top-level `speech_acts` block; `document` has `units` (W2 unit objects with `id`, `span`,
 `kind`, optional `meaning`, `support`, `content`), optional `queries` and optional W2-form `reading_sets`
-(read for `unit` and `status` only). Wire constants are declaration names (lower case).
+(read for `unit`, `version`, `status` and, for an authored version, its one reading's `kind` and
+`content`: the latest version of a unit's set decides, open keeping it pending, authored supplying its meaning). Wire constants are declaration names (lower case).
 
 | Kind | Extra input | Output |
 |---|---|---|

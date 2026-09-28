@@ -191,8 +191,7 @@ class SpeechSource:
         self.reading_sets = sets
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
-        pending = {r["unit"] for r in active_reading_sets(sets)}
-        self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), pending_units=pending)
+        self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)
         by_name = {term["name"]: term for term in self.open_terms}
         for question in self.document.questions:
             if question.mode == "reading":

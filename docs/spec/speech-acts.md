@@ -91,7 +91,7 @@ command c    := unit id u (the rule name is cmd-<u>); force ∈ {require, forbid
                 slot 0 (slot 0 is the addressee, bound by the scope); an optional closed guard G_c over E ("if ...");
                 issuer: the document's author, or the attributed agent when the unit is quoted (provenance, not a field)
 active       := kind exactly `instruction`, meaning `specified`, command content present, every slot bound, and the
-                unit not inside a pending (open) reading set; every other command unit is dormant (1.5)
+                unit not pending (the latest version of its reading set is not open); every other command unit is dormant (1.5)
 demand(c)    := the W1 node  name cmd-<u>; pred the realising predicate; sign (force = require); guard
                 (x̄ = (you, args)) ∧ G_c written with equality atoms in the predicate's context; no carve-outs; no
                 precedence edges (4.2)
@@ -171,7 +171,13 @@ premises(D) := Background(E) ++ elaborate(policy(D)) ++ asserted(D)
 ```
 
 with `asserted(D)` W2's fixed asserted premises (document.md: fixed assertions and authored singleton choices) and the
-layer premises regenerated at every site (norms.md 11.3). No embedded proposition of a command or question is a premise
+layer premises regenerated at every site (norms.md 11.3). As in W2 (`active_reading_sets`), the **latest version** of
+a unit's reading set decides, for every unit kind: an `open` latest version makes the unit pending, so its command is
+dormant, its norm contributes no rule and its assertion no premise; an `authored` latest version is the author's
+signed singleton choice, whose kind and content are the unit's (a specified meaning), so an authored assertion is a
+fixed premise and an authored command or norm is active when its kind is; earlier versions are history and change
+nothing. An asserted unit without content and without a reading set is rejected, as W2 rejects it.
+`combine` (4.8) carries every document's reading sets and query records with its units. No embedded proposition of a command or question is a premise
 through its occurrence there (4.7). `policy(D)` itself excludes every pending command: a command inside an open reading
 set is dormant (1.2) and contributes no rule to `policy(D)` under any choice. It is W2's readings query (`ve document
 readings`, document.md), not `policy(D)`, that checks a reading set over commands or questions per complete compatible
@@ -1542,6 +1548,7 @@ statements of section 8 are unchanged.
 | A, meaning ids: proof tasks and follows questions digested different objects in Python and Lean | 3.5: the command and question objects are fixed JSON, the query's identity nested as `query: {id, premises, target}`. |
 | B, certificate portability: Python folded `F(S)` of a complete-list answer as one mixed conjunction | No text change: 1.3's `⋀_{a∈S} P(a) ∧ ⋀_{a∈dom∖S} ¬P(a)` is two conjunctions, each folded from `⊤` in domain order (W1's `allF`), in every checker. |
 | B, query pinning: Python compared a reused query only at its earliest consumer | 1.4 as written ("at every site"): each follows question and each command with a `query` slot, in document order, compares the record with the asserted units before it; a record no unit asks about is `QueryMismatch: <query>` in both checkers. |
+| A, premise leakage; B, reading activeness: pending assertions and norms stayed active in Python; Python kept authored commands dormant while Lean let historical open versions suppress resolved ones; authored singleton assertions were premises in neither; `combine` reactivated pending commands | 1.2 and 1.5: the latest reading-set version decides for every unit kind (open: pending, no rule, no premise; authored: the signed choice is the unit's kind and content); content-less asserted units need a set and unformalised units carry no content, as W2; `combine` carries reading sets and queries. |
 
 ## Change log
 

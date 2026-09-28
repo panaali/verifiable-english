@@ -76,6 +76,45 @@ def _any(formulas):
     return result
 
 
+def latest_reading_sets(sets):
+    """1.2 and 1.5 over W2's reading sets: per source unit, the latest version decides.
+
+    An `open` latest version keeps the unit pending (dormant, no premise); an
+    `authored` one is the author's signed singleton choice.  Earlier versions
+    are history and change nothing, as W2's `active_reading_sets`.
+    """
+    latest = {}
+    for item in sets:
+        if (type(item) is not dict or type(item.get("unit")) is not str
+                or type(item.get("version")) is not int or item.get("status") not in ("open", "authored")):
+            raise VEError("InvalidInput: reading sets on the speech-acts route need their unit, version and status")
+        if item["status"] == "authored" and (type(item.get("readings")) is not list or len(item["readings"]) != 1
+                                             or type(item["readings"][0]) is not dict
+                                             or not {"kind", "content"} <= set(item["readings"][0])):
+            raise VEError("authored reading needs one signed choice")
+        unit = item["unit"]
+        if unit in latest and latest[unit]["version"] == item["version"]:
+            raise VEError("invalid or duplicate reading set version")
+        if unit not in latest or item["version"] > latest[unit]["version"]:
+            latest[unit] = item
+    return latest
+
+
+def _reading_choice(unit, reading_set):
+    """The unit as its latest reading set leaves it: a signed choice supplies kind and content."""
+    if reading_set["status"] != "authored":
+        return {k: v for k, v in unit.items() if k != "source"}
+    choice = reading_set["readings"][0]
+    content = choice["content"]
+    if type(content) is list:  # W2's formula-only assertion candidate
+        content = {"ast": content}
+    result = {k: v for k, v in unit.items() if k not in ("content", "source")}
+    result.update({"kind": choice["kind"], "meaning": "specified"})
+    if content is not None:
+        result["content"] = content
+    return result
+
+
 @dataclass(frozen=True, slots=True)
 class Command:
     unit: str
@@ -111,7 +150,7 @@ class SpeechDocument:
     assertion; the only generated premises are W1's active policy layers.
     """
 
-    def __init__(self, env, units, queries=(), *, pending_units=()):
+    def __init__(self, env, units, queries=(), *, reading_sets=()):
         if "speech-acts@0" not in env.profiles or "norms@0" not in env.profiles:
             raise VEError("UnsupportedProfile: speech-acts@0 requires norms@0")
         for profile in env.profiles:
@@ -124,7 +163,10 @@ class SpeechDocument:
         self.env = env
         self.scope = env.to_dict()["speech_acts"]
         self.units = tuple(units)
-        pending_units = set(pending_units)
+        self.query_records = tuple(queries)
+        self.reading_sets = tuple(reading_sets)
+        latest = latest_reading_sets(self.reading_sets)
+        self.pending_units = frozenset(u for u, r in latest.items() if r["status"] == "open")
         self.queries = {}
         self.commands = []
         self.questions = []
@@ -134,6 +176,7 @@ class SpeechDocument:
         self.meaning_ids = {}
         self.warnings = []
         ids = set()
+        self._effective = []
         for raw in self.units:
             if type(raw) is not dict or not {"id", "kind", "meaning", "support"} <= set(raw):
                 raise VEError("InvalidInput: speech unit")
@@ -141,9 +184,15 @@ class SpeechDocument:
             if type(uid) is not str or not _TOKEN.fullmatch(uid) or uid in ids:
                 raise VEError("InvalidInput: speech unit id")
             ids.add(uid)
+            if uid in latest:
+                raw = _reading_choice(raw, latest[uid])
+            self._effective.append(raw)
+            pending = uid in self.pending_units
             content = raw.get("content")
             kind = raw["kind"]
             bare_kind = kind if type(kind) is str else kind[-1] if type(kind) is list else None
+            if type(raw["meaning"]) is dict and "unformalised" in raw["meaning"] and content is not None:
+                raise VEError("unformalised unit cannot assert content")
             if type(content) is dict and "binding" in content:
                 if kind != "binding":
                     raise VEError("InvalidInput: binding content requires binding kind")
@@ -152,8 +201,7 @@ class SpeechDocument:
                 if bare_kind != "instruction":
                     raise VEError("InvalidInput: command content requires instruction kind")
                 self.commands.append(self._command(uid, content["command"], kind == "instruction"
-                                                   and raw["meaning"] == "specified"
-                                                   and uid not in pending_units))
+                                                   and raw["meaning"] == "specified" and not pending))
             elif type(content) is dict and "question" in content:
                 if bare_kind != "question":
                     raise VEError("InvalidInput: question content requires question kind")
@@ -161,12 +209,22 @@ class SpeechDocument:
             elif type(content) is dict and "norm" in content:
                 if bare_kind != "norm":
                     raise VEError("InvalidInput: norm content requires norm kind")
-                if kind == "norm" and raw["meaning"] == "specified":
-                    self.norms.append(NormDocument._decode(content))
-            elif kind == "asserted" and raw["meaning"] == "specified":
-                if type(content) is not dict or set(content) != {"ast"}:
+                # 1.5 and W2: an author norm unit is active unless its reading is pending.
+                norm = NormDocument._decode(content)
+                if kind == "norm" and not pending:
+                    self.norms.append(norm)
+            elif kind == "asserted":
+                # W2's fixed asserted premises: asserted content outside a pending
+                # reading set, or the author's signed singleton choice (1.5).
+                if content is None:
+                    if not any(r["unit"] == uid for r in self.reading_sets):
+                        raise VEError("asserted unit needs content or a reading set")
+                elif type(content) is not dict or set(content) != {"ast"}:
                     raise VEError("InvalidInput: asserted content")
-                self.asserted.append((uid, formula_from_data(env, content["ast"])))
+                else:
+                    formula = formula_from_data(env, content["ast"])
+                    if not pending:
+                        self.asserted.append((uid, formula))
             elif content is not None:
                 raise VEError("InvalidInput: misplaced speech content")
         self._check_bindings()
@@ -330,7 +388,7 @@ class SpeechDocument:
 
     def _check_wordings(self):
         from .speech_english import parse_speech, _sentence
-        by_id = {u["id"]: u for u in self.units}
+        by_id = {u["id"]: u for u in self._effective}
         for command in self.commands:
             source = by_id[command.unit].get("source")
             query = self.query_of(command)
@@ -512,4 +570,8 @@ def combine(first: SpeechDocument, second: SpeechDocument):
     ids = {u["id"] for u in first.units}
     if ids & {u["id"] for u in second.units}:
         raise VEError("DuplicateDeclaration: speech unit")
-    return SpeechDocument(first.env, (*first.units, *second.units))
+    # Everything that decides activeness and premises travels with the units:
+    # a command pending in either document stays dormant in the combination.
+    return SpeechDocument(first.env, (*first.units, *second.units),
+                          (*first.query_records, *second.query_records),
+                          reading_sets=(*first.reading_sets, *second.reading_sets))
