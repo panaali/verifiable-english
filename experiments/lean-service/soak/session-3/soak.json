@@ -1,0 +1,169 @@
+{
+  "machine": {
+    "cpu": "AMD EPYC 7B12",
+    "logical_cpus": 8,
+    "loadavg": [
+      4.2919921875,
+      4.46044921875,
+      4.97900390625
+    ],
+    "python": "3.14.7",
+    "commit": "9eaec60",
+    "loadavg_after": [
+      4.26123046875,
+      4.419921875,
+      4.931640625
+    ]
+  },
+  "seed": 20260929,
+  "requests": 20000,
+  "elapsed_s": 58.5,
+  "per_mode": {
+    "check-certificate": 3313,
+    "english": 3314,
+    "evaluate": 3358,
+    "norms": 3455,
+    "order": 3287,
+    "route": 3273
+  },
+  "pool_sizes": {
+    "evaluate": 167,
+    "check-certificate": 89,
+    "order": 67,
+    "route": 88,
+    "norms": 108,
+    "english": 5
+  },
+  "mismatches": 0,
+  "mismatch_examples": [],
+  "service_stats": {
+    "starts": 1,
+    "restarts": 0,
+    "recycles": 0,
+    "requests": 20000,
+    "retries": 0
+  },
+  "rss": [
+    {
+      "request": 1000,
+      "rss_bytes": 95195136
+    },
+    {
+      "request": 2000,
+      "rss_bytes": 95166464
+    },
+    {
+      "request": 3000,
+      "rss_bytes": 95195136
+    },
+    {
+      "request": 4000,
+      "rss_bytes": 95154176
+    },
+    {
+      "request": 5000,
+      "rss_bytes": 95191040
+    },
+    {
+      "request": 6000,
+      "rss_bytes": 95178752
+    },
+    {
+      "request": 7000,
+      "rss_bytes": 95199232
+    },
+    {
+      "request": 8000,
+      "rss_bytes": 95162368
+    },
+    {
+      "request": 9000,
+      "rss_bytes": 95191040
+    },
+    {
+      "request": 10000,
+      "rss_bytes": 95199232
+    },
+    {
+      "request": 11000,
+      "rss_bytes": 95178752
+    },
+    {
+      "request": 12000,
+      "rss_bytes": 95178752
+    },
+    {
+      "request": 13000,
+      "rss_bytes": 95154176
+    },
+    {
+      "request": 14000,
+      "rss_bytes": 95174656
+    },
+    {
+      "request": 15000,
+      "rss_bytes": 95203328
+    },
+    {
+      "request": 16000,
+      "rss_bytes": 100093952
+    },
+    {
+      "request": 17000,
+      "rss_bytes": 100098048
+    },
+    {
+      "request": 18000,
+      "rss_bytes": 100098048
+    },
+    {
+      "request": 19000,
+      "rss_bytes": 100098048
+    },
+    {
+      "request": 20000,
+      "rss_bytes": 100098048
+    }
+  ],
+  "rss_growth_from_1000": 0.0515,
+  "peak_rss_bytes": 100098048,
+  "latency_first_100": {
+    "n": 100,
+    "p50_ms": 1.705,
+    "p50_ci_ms": [
+      1.279,
+      2.047
+    ],
+    "p95_ms": 4.381,
+    "p95_ci_ms": [
+      3.56,
+      6.313
+    ],
+    "p99_ms": 6.418,
+    "p99_ci_ms": [
+      4.361,
+      9.142
+    ],
+    "max_ms": 9.142
+  },
+  "latency_after_100": {
+    "n": 19900,
+    "p50_ms": 2.244,
+    "p50_ci_ms": [
+      2.21,
+      2.283
+    ],
+    "p95_ms": 6.246,
+    "p95_ci_ms": [
+      6.138,
+      6.356
+    ],
+    "p99_ms": 10.529,
+    "p99_ci_ms": [
+      9.546,
+      12.525
+    ],
+    "max_ms": 73.772
+  },
+  "gate": "PASS"
+}
