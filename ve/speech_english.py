@@ -221,7 +221,7 @@ def legend(env):
     result = [f"This document is task {scope['task']}."]
     if "addressee" in scope:
         result.append(f"In this task, you are {scope['addressee']['constant']}.")
-    for phrase, constant in scope.get("definites", {}).items():
+    for phrase, constant in sorted(scope.get("definites", {}).items()):  # Lean's canonical order
         result.append(f"In this task, {phrase} is {constant}.")
     from .norm_english import default_sentence
     result.extend(default_sentence(env, p) for p, d in env.predicates.items() if d.regulated is not None)

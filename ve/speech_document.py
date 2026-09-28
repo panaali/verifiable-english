@@ -17,7 +17,7 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import SpeechDocument, latest_reading_sets
+from .speech_acts import SpeechDocument, effective_scope, latest_reading_sets
 from .wire import canonical_json
 
 _ALLOWED_META = {"format", "environment", "units", "open_terms", "reading_sets", "narrowings",
@@ -171,12 +171,6 @@ class SpeechSource:
                     raise VEError("unit fence must match its id")
                 if unit.get("surface") != "english":
                     raise VEError("speech fence needs English surface")
-                from .speech_english import parse_speech
-                parsed, parsed_kind = parse_speech(self.env, fences[uid].strip(),
-                                                   self.env.to_dict()["speech_acts"])
-                if parsed_kind != kind:
-                    raise VEError("fence kind disagrees with unit")
-                content = {"command" if kind == "instruction" else "question": parsed}
             self.units.append({**unit, "content": content,
                                **({"source": wording.strip()} if kind in ("instruction", "question") else {}),
                                **({"parent_id": parent} if parent is not None else {})})
@@ -191,6 +185,17 @@ class SpeechSource:
         self.reading_sets = sets
         self.narrowings = meta.get("narrowings", [])
         validate_narrowings(self.narrowings, sets, ids)
+        # 1.1: a fence is read under the effective scope, so a phrase or "you" an
+        # authored binding supplies reads as if the block declared it.
+        fenced = [u for u in self.units if type(u["content"]) is dict and "fence" in u["content"]]
+        if fenced:
+            from .speech_english import parse_speech
+            scope = effective_scope(self.env, [u for u in self.units if u not in fenced], sets)
+            for unit in fenced:
+                parsed, parsed_kind = parse_speech(self.env, fences[unit["id"]].strip(), scope)
+                if parsed_kind != unit["kind"]:
+                    raise VEError("fence kind disagrees with unit")
+                unit["content"] = {"command" if parsed_kind == "instruction" else "question": parsed}
         self.document = SpeechDocument(self.env, self.units, meta.get("queries", []), reading_sets=sets)
         latest = latest_reading_sets(sets)
         for unit in self.units:

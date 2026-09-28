@@ -90,8 +90,9 @@ def main(argv=None):
             source = load_speech_document(options.path)
             doc = source.document
             _emit({"status": "experimental", "document_id": source.document_id,
-                   "environment_id": source.env.environment_id,
-                   "legend": legend(source.env),
+                   # 1.1: the effective scope's environment, bindings included.
+                   "environment_id": doc.env.environment_id,
+                   "legend": legend(doc.env),
                    "rules": [rule.to_dict() for rule in doc.policy.rules],
                    "questions": [{"unit": q.unit, "mode": q.mode,
                                   "presupposition": None if q.mode == "reading"

@@ -457,6 +457,40 @@ def test_pending_bindings_supply_no_scope_entry(lean):
         assert run1({"id": "p", "kind": "speech-elaborate", "environment": env, "document": document})["error"] == error
 
 
+def test_cli_and_fences_read_the_effective_scope(lean, tmp_path):
+    # Regression: `python -m ve speech-acts` reported the embedded environment's id and legend, so
+    # alice- and bob-bound documents shared one reported id and neither legend named the addressee;
+    # fences were likewise parsed under the block alone, so a bound phrase could not be written.
+    env = F0(addressee=None)
+    env["vocabulary"]["constants"]["bob"] = {"sort": "user", "description": "bob"}
+    reported = {}
+    for who in ("alice", "bob"):
+        lines = [f"In this task, you are {who}.\n", "In this task, the button is check.\n", "Click the button.\n"]
+        positions = [0]
+        for line in lines:
+            positions.append(positions[-1] + len(line.encode()))
+        units = [{**unit("y", 0, "binding", {"binding": {"you": who}}), "span": positions[0:2]},
+                 {**unit("p", 0, "binding", {"binding": {"phrase": "the button", "constant": "check"}}),
+                  "span": positions[1:3]},
+                 {**unit("u1", 0, "instruction", {"fence": "u1"}), "span": positions[2:4], "surface": "english"}]
+        path = tmp_path / f"{who}.ve.md"
+        path.write_text("---\n" + json.dumps({"format": "ve-document@2", "environment": env, "units": units}) +
+                        "\n---\n" + "".join(lines) + "```ve u1\nClick the button.\n```\n")
+        source = load_speech_document(path)
+        inspected = subprocess.run([sys.executable, "-m", "ve", "speech-acts", str(path)],
+                                   capture_output=True, text=True, timeout=60)
+        assert inspected.returncode == 0, inspected.stdout + inspected.stderr
+        report = json.loads(inspected.stdout)
+        le = elaborate(env, {"units": [*units[:2], unit("u1", 0, "instruction", command("require", "click_required", ["check"])) | {"span": positions[2:4]}]})
+        assert report["environment_id"] == source.document.env.environment_id == le["environment_id"]
+        assert report["legend"].splitlines()[:len(le["legend"])] == le["legend"]
+        assert le["legend"][:3] == ["This document is task t1.", f"In this task, you are {who}.",
+                                    "In this task, the button is check."]
+        assert report["rules"][0]["norm"] == le["commands"][0]["demand"]
+        reported[who] = report["environment_id"]
+    assert reported["alice"] != reported["bob"]
+
+
 def test_every_certificate_line_carries_premise_status_and_vacuity(lean):
     # Regression: contradictory premises certified both polar answers in Python with no premise
     # status, and Lean's `follows` line omitted the status of Π_q.
