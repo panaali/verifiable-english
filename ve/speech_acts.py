@@ -81,17 +81,26 @@ def latest_reading_sets(sets):
 
     An `open` latest version keeps the unit pending (dormant, no premise); an
     `authored` one is the author's signed singleton choice.  Earlier versions
-    are history and change nothing, as W2's `active_reading_sets`.
+    are history and change nothing, as W2's `active_reading_sets`.  Only a
+    signed version is a choice: an authored version without the author's
+    signature token, or an open one carrying one, is rejected as by W2's
+    `validate_reading_sets`, never taken as the unit's meaning.
     """
+    from .admission import token
     latest = {}
     for item in sets:
         if (type(item) is not dict or type(item.get("unit")) is not str
                 or type(item.get("version")) is not int or item.get("status") not in ("open", "authored")):
             raise VEError("InvalidInput: reading sets on the speech-acts route need their unit, version and status")
+        if item["version"] < 1:
+            raise VEError("invalid or duplicate reading set version")
         if item["status"] == "authored" and (type(item.get("readings")) is not list or len(item["readings"]) != 1
                                              or type(item["readings"][0]) is not dict
-                                             or not {"kind", "content"} <= set(item["readings"][0])):
+                                             or not {"kind", "content"} <= set(item["readings"][0])
+                                             or not token(item.get("signature"))):
             raise VEError("authored reading needs one signed choice")
+        if item["status"] == "open" and "signature" in item:
+            raise VEError("open reading set cannot have an author signature")
         unit = item["unit"]
         if unit in latest and latest[unit]["version"] == item["version"]:
             raise VEError("invalid or duplicate reading set version")
@@ -229,6 +238,8 @@ class SpeechDocument:
                         self.asserted.append((uid, formula))
             elif content is not None:
                 raise VEError("InvalidInput: misplaced speech content")
+        if any(item["unit"] not in ids for item in self.reading_sets):
+            raise VEError("invalid reading set unit or status")
         self._check_bindings()
         # 1.1 and 3.5: a binding that supplies a scope entry supplies it to the
         # environment, so every identity (meaning ids, certificates) binds the

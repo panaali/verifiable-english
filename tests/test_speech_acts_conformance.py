@@ -332,6 +332,33 @@ def test_authored_singleton_choice_is_the_units_meaning(lean):
         assert run1({"id": "b", "kind": "speech-elaborate", "environment": env, "document": bad})["error"] == error
 
 
+def test_only_a_signed_version_is_a_choice(lean):
+    # Regression: an authored assertion without its `signature` became a premise in both cores,
+    # though W2's loader rejects it; open versions carrying a signature, version 0 and sets for
+    # no unit of the document were likewise accepted by the cores alone.
+    env = F0()
+    signed = reading_set("a", 1, "authored", content=U("reviewed", "atlas"))
+    assert agree(env, {"units": [unit("a", 0, "asserted")], "reading_sets": [signed]})[0].asserted
+    unsigned = {k: v for k, v in signed.items() if k != "signature"}
+    click = command("require", "click_required", ["check"])
+    for units, sets, error in [
+            ([unit("a", 0, "asserted")], [unsigned], "authored reading needs one signed choice"),
+            ([unit("a", 0, "asserted")], [{**signed, "signature": ""}], "authored reading needs one signed choice"),
+            ([unit("a", 0, "asserted")], [{**signed, "signature": 7}], "authored reading needs one signed choice"),
+            ([unit("u", 0, "instruction", click)], [{**reading_set("u", 1, "authored", "instruction", click),
+                                                    "signature": ["author"]}], "authored reading needs one signed choice"),
+            ([unit("u", 0, "instruction", click)], [{**reading_set("u", 1, "open", "instruction", click),
+                                                    "signature": "author"}],
+             "open reading set cannot have an author signature"),
+            ([unit("a", 0, "asserted")], [{**signed, "version": 0}], "invalid or duplicate reading set version"),
+            ([unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")})],
+             [reading_set("ghost", 1, "open", content=U("reviewed", "atlas"))], "invalid reading set unit or status")]:
+        document = {"units": units, "reading_sets": sets}
+        with pytest.raises(VEError, match=error):
+            core(env, document)
+        assert run1({"id": "s", "kind": "speech-elaborate", "environment": env, "document": document})["error"] == error
+
+
 def test_combine_keeps_pending_commands_dormant(lean):
     # Regression: combine() rebuilt the document without its reading sets or queries and
     # reactivated a pending command.

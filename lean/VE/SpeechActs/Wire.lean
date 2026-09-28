@@ -450,8 +450,16 @@ inductive ReadingState
 def readingSetsError : String :=
   "InvalidInput: reading sets on the speech-acts route need their unit, version and status"
 
+/-- The author's signature of an authored version: a W2 token. -/
+def signed (r : Json) : Bool :=
+  match r.getObjVal? "signature" with
+  | .ok (.str s) => VE.Route.Admission.token s
+  | _ => false
+
 /-- The W2 reading-set versions of a document (`ve/readings.py`: `unit`, `version`, `status`, and the one
-reading of an authored version), one entry per version. -/
+reading of an authored version), one entry per version. Only a signed version is a choice: an authored version
+without the author's signature token, or an open one carrying one, is rejected as by W2's
+`validate_reading_sets`. -/
 def readingStates (document : Json) : Except String (List (String × Nat × ReadingState)) := do
   match document.getObjVal? "reading_sets" with
   | .error _ => pure []
@@ -461,11 +469,15 @@ def readingStates (document : Json) : Except String (List (String × Nat × Read
       | .error _ => throw readingSetsError
     let states ← items.mapM fun r => do
       match r.getObjVal? "unit", (r.getObjValD "version").getNat?, r.getObjVal? "status" with
-      | .ok (.str u), .ok v, .ok (.str "open") => pure (u, v, ReadingState.pending)
+      | .ok (.str _), .ok 0, .ok (.str "open") | .ok (.str _), .ok 0, .ok (.str "authored") =>
+        throw "invalid or duplicate reading set version"
+      | .ok (.str u), .ok v, .ok (.str "open") =>
+        if (r.getObjVal? "signature").isOk then throw "open reading set cannot have an author signature"
+        pure (u, v, ReadingState.pending)
       | .ok (.str u), .ok v, .ok (.str "authored") =>
         match (r.getObjValD "readings").getArr? with
         | .ok #[c] =>
-          unless (c.getObjVal? "kind").isOk && (c.getObjVal? "content").isOk do
+          unless (c.getObjVal? "kind").isOk && (c.getObjVal? "content").isOk && signed r do
             throw "authored reading needs one signed choice"
           let content := match c.getObjValD "content" with
             | .null => none
@@ -574,6 +586,7 @@ def decodeDocument (environment document : Json) : Except String Decoded := do
   let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM (decodeUnitIn E states)
   unless units.length ≤ 10000 do throw "ResourceLimit: unit count"
   unless (units.map (·.id)).eraseDups.length == units.length do throw "duplicate unit id"
+  unless states.all (fun s => units.any (·.id == s.1)) do throw "invalid reading set unit or status"
   unless VE.Route.Admission.sortedSpans (units.map (fun u => ⟨u.id, u.start, u.stop, .asserted, none⟩)) do
     throw "unit spans must be sorted and non-overlapping"
   -- Authored bindings (1.1).
