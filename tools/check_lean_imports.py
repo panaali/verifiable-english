@@ -9,6 +9,8 @@ from layer_policy import ROOT, lean_layer
 
 LEDGER = ROOT / "tools/lean-layer-exceptions.json"
 IMPORT = re.compile(r"^\s*import\s+(.+)$", re.MULTILINE)
+QUOTED_IDENT = re.compile(r"«([^»]+)»")
+IMPORT_NAME = re.compile(r"(?:«[^»]*»|[^\s«»])+")
 
 
 def imports(source: str) -> list[str]:
@@ -57,7 +59,9 @@ def imports(source: str) -> list[str]:
         clean.append(char if not (line_comment or depth or quoted) else
                      "\n" if char == "\n" else " ")
         index += 1
-    return [name for group in IMPORT.findall("".join(clean)) for name in group.split()]
+    return [QUOTED_IDENT.sub(r"\1", name)
+            for group in IMPORT.findall("".join(clean))
+            for name in IMPORT_NAME.findall(group)]
 
 
 def main() -> int:
@@ -72,7 +76,9 @@ def main() -> int:
                 if imported.startswith("VE.") or imported in {"VE", "Iceberg"}:
                     unknown.add(f"{importer} -> {imported}")
                 continue  # Lean and Std library imports
-            if lean_layer(importer) is not None and lean_layer(importer) < lean_layer(imported):
+            importer_layer = lean_layer(importer)
+            imported_layer = lean_layer(imported)
+            if importer_layer is not None and imported_layer is not None and importer_layer < imported_layer:
                 edges.add(f"{importer} -> {imported}")
     expected = json.loads(LEDGER.read_text())
     for message in (f"unmapped Lean module: {x}" for x in unmapped):
