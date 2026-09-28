@@ -177,7 +177,9 @@ class SoftEnvironment(Environment):
         if len({frozenset(pair) for pair in ties}) != len(ties):
             raise DuplicateDeclaration('DuplicateDeclaration: tie')
         instructions = {}
-        for name, entry in vocab.get('predicates', {}).items():
+        # Lean's JSON objects enumerate keys canonically. Use the same order so
+        # simultaneous predicate faults have a stable first diagnostic.
+        for name, entry in sorted(vocab.get('predicates', {}).items()):
             if type(entry) is not dict:
                 continue
             if 'instruction_of' in entry:

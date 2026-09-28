@@ -136,8 +136,6 @@ def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment :
   let profiles ← match environment.getObjVal? "profiles" >>= strings with
     | .ok ps => pure ps
     | .error _ => throw (VE.Route.Gate.unsupported "profiles must be a sorted unique array")
-  unless decide (profiles.Pairwise (· < ·)) do
-    throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   unless profiles.contains softProfile do throw "UnsupportedProfile: soft-norms@0 is required"
   unless profiles.contains "norms@0" do throw "UnsupportedProfile: soft-norms@0 requires norms@0"
   let vocab ← environment.getObjVal? "vocabulary"
@@ -156,6 +154,8 @@ def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment :
     if reservedPredicate p then throw s!"InvalidInput: invalid soft name {p}"
     if containsDunder p && (e.getObjVal? "regulated").toBool then
       throw s!"InvalidInput: invalid soft name {p}"
+  unless decide (profiles.Pairwise (· < ·)) do
+    throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   let ne ← Norms.Wire.decodeNormsEnvironment (← stripSoft environment)
   pure ⟨ne, { soft with instructionOf := io }, profiles, environment⟩
 
@@ -164,7 +164,7 @@ def decodeSoftEnvironment (environment : Json) : Except String SoftEnvironment :
 def w1Keys : List String := ["name", "predicate", "sign", "guard", "unless", "over"]
 def softKeys : List String := ["mode", "rank", "alterable", "exception", "hard"]
 
-def decodeException (soft : SoftEnv) (name : String) (j : Json) : Except String Exception := do
+def decodeException (se : SoftEnvironment) (predicate name : String) (j : Json) : Except String Exception := do
   match j with
   | .obj _ => pure ()
   | _ => throw s!"InvalidInput: rule {name} needs an exception"
@@ -178,7 +178,7 @@ def decodeException (soft : SoftEnv) (name : String) (j : Json) : Except String 
     | .error _ | .ok .null => pure none
     | .ok (.str s) => pure (some s)
     | .ok _ => throw s!"InvalidInput: invalid decider for rule {name}"
-  if decidedBy.isNone && soft.exceptionDecider.isNone then
+  if decidedBy.isNone && se.soft.exceptionDecider.isNone then
     throw s!"MissingExceptionDecider: rule {name}"
   for d in decidedBy.toList do
     if d.isEmpty || d.utf8ByteSize > 64 then
@@ -186,7 +186,15 @@ def decodeException (soft : SoftEnv) (name : String) (j : Json) : Except String 
   let formulas (k : String) : Except String (List VE.Formula) := do
     match j.getObjVal? k with
     | .error _ => pure []
-    | .ok (.arr xs) => xs.toList.mapM (VE.Bridge.decodeFormula 64)
+    | .ok (.arr xs) => xs.toList.mapM fun value => do
+        let C ← VE.Bridge.decodeFormula 64 value
+        let context := ((se.ne.rv.environment.predicates predicate).getD []).reverse
+        typeDiagnostic se.ne.rv.environment context C
+        if let some q := (preds C).find? (fun q =>
+            (se.ne.regulated.map (·.name)).contains q ||
+            (se.ne.rv.definitions.map (·.name)).contains q || reservedPredicate q) then
+          throw s!"InvalidInput: exception condition of rule {name} mentions {q}"
+        pure C
     | .ok _ => throw s!"InvalidInput: exception {k} must be an array"
   let sufficient ← formulas "sufficient"
   let necessary ← formulas "necessary"
@@ -199,7 +207,8 @@ def decodeException (soft : SoftEnv) (name : String) (j : Json) : Except String 
 
 /-- One soft norm object; `mode` defaults to `strict`, so every `norms@0` object decodes
 with unchanged meaning. -/
-def decodeSoftNorm (soft : SoftEnv) (j : Json) : Except String SoftNode := do
+def decodeSoftNorm (se : SoftEnvironment) (j : Json) : Except String SoftNode := do
+  let soft := se.soft
   exactFields j ["norm"]
   let raw ← j.getObjVal? "norm"
   let obj ← fields raw
@@ -237,7 +246,9 @@ def decodeSoftNorm (soft : SoftEnv) (j : Json) : Except String SoftNode := do
     | .ok e => do
       if mode == .strict then
         throw s!"InvalidInput: rule {N.name} is strict and declares an exception"
-      some <$> decodeException soft N.name e
+      some <$> decodeException se N.pred N.name e
+  if mode == .default && exception.isNone then
+    throw s!"InvalidInput: rule {N.name} needs an exception"
   pure { N with mode, rank, alterable, exception, hard }
 
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
@@ -273,7 +284,7 @@ def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"
   if units.length > 256 then throw "ResourceLimit: rules"
-  let nodes ← units.mapM (decodeSoftNorm se.soft)
+  let nodes ← units.mapM (decodeSoftNorm se)
   let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], nodes⟩⟩
   match hv : validateSoft D with
   | .error e => throw e
