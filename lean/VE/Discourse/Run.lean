@@ -138,6 +138,37 @@ def runCase (j : Json) : Except String Json := do
   else if kind == "discourse-joint" then runJoint profiles environment rv id document
   else throw s!"UnsupportedProfile: case kind {kind} is not available on the discourse route"
 
+/-- A successful `admission` answer is exactly the encoding of a checked discourse admission of
+the case's own environment and document, under the environment's declared profiles and the
+base-pair vocabulary. -/
+def DiscourseAdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
+  ∃ profiles rv res, VE.Route.Gate.profilesOf environment = .ok profiles ∧ baseVocabulary environment = .ok rv ∧
+    admitDiscourse profiles environment rv document fuelBudget = .ok res ∧ encodeAdmission id res = .ok answer
+
+/-- The public entry point: a successful `admission` answer on the discourse path is the encoding
+of a checked discourse admission whose results satisfy the admission theorems. -/
+theorem discourse_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hd : usesDiscoursePath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      DiscourseAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [hd, Bool.not_true, Bool.false_eq_true, if_false] at h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨profiles, hp, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨rv, hrv, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨document, hdoc, h⟩ := VE.Order.ProfileGate.bind_ok h
+  simp only [beq_self_eq_true, if_true] at h
+  obtain ⟨res, hres, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have he' : j.getObjValD "environment" = environment := by simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by simp only [Json.getObjValD, hdoc]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, profiles, rv, res, hp, hrv, hres, h⟩
+
 def runCaseReported (j : Json) : Json :=
   if usesDiscoursePath j then
     match runCase j with

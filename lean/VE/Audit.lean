@@ -40,6 +40,7 @@ import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
 import VE.Discourse.Run
 import VE.Discourse.Theorems
+import VE.Discourse.English
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1127,3 +1128,7 @@ import VE.Discourse.Theorems
 #print axioms VE.Discourse.validity_never_premise
 #print axioms VE.Discourse.validity_self
 #print axioms VE.Discourse.validity_unknown_never_checked
+#print axioms VE.Discourse.Run.discourse_wire_acceptance
+#print axioms VE.Discourse.discourse_parseRender
+#print axioms VE.Discourse.discourse_renderInjective
+#print axioms VE.Discourse.presentation_expands
