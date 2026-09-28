@@ -1,21 +1,20 @@
 import VE.Discourse.WellFormed
-import VE.Route.Run
+import VE.Discourse.Loader
 
 /-! # The discourse wire form (docs/spec/discourse.md 3.1, 3.3, 3.5)
 
-A strict decoder for the `discourse` block of a `ve-document@2` document: unknown fields
-are rejected and optional fields are absent, never `null`. Mention spans arrive as prose
-byte ranges and are mapped to token ranges of their unit by the lexer (a named trust
-boundary); a byte range that does not start and end on token boundaries of its unit is
-`InvalidInput`. The Lean document object is W2's (`units`, `graph`, `lemmas`,
-`open_terms`, `reading_sets`, `narrowings`) plus `format`, `prose` and `discourse`.
+A strict decoder for the `discourse` block of a `ve-document@2` front matter, in the wire
+form of 3.1 that the Python loader reads: unknown fields are rejected and optional fields are
+absent, never `null`. A group's and a constraint's reading is named by its id in the set
+version and decodes to its `original_index` (1.5); an import's `bytes` names a sibling file,
+whose text the case supplies (`files`). Mention spans arrive as prose byte ranges and are
+mapped to token ranges of their unit by the lexer (a named trust boundary); a byte range that
+does not start and end on token boundaries of its unit is `InvalidInput`.
 
-Lean wire conventions that differ from the Python front matter (recorded in
-lean/DISCOURSE.md): a group's `reading` and a constraint's readings are `original_index`
-numbers (the Python loader maps reading ids to indexes); an import's stored document is the
-optional string `content` (the JSON text of a case `{"environment", "document"}`) instead of
-a sibling file name; a predicate target's `version` pin is checked by W3 and not carried
-into the Lean target. -/
+Beyond 3.1 the block may carry `validity` bindings, `self_truth` labels and the recorded
+reading choices `choices` (the Manifest fields of 9.1). A predicate target's `version` pin is
+carried as the mention's `pin` and reported; no environment declares definition versions, so
+it is not regenerated (lean/DISCOURSE.md). An empty block `{}` is the empty manifest. -/
 namespace VE.Discourse.Wire
 open Lean
 open VE.Bridge (stringField strings fields displayFields)
@@ -111,9 +110,16 @@ def decodeTarget (j : Json) : Except String Target := do
       | [a, b] => pure (some (a, b))
       | _ => throw "InvalidInput: pair"
     | none => pure none
-  pure { kind, name := ← optString j "name", version := if kind == .predicate then none else version,
+  let _ := version
+  pure { kind, name := ← optString j "name", version := none,
          members := ← optStrings j "members", pair, units := ← optStrings j "units",
          contentName := ← optString j "content_name" }
+
+/-- A target's recorded `version` pin. -/
+def decodePin (j : Json) : Except String (Option Nat) := do
+  match ← opt j "version" with
+  | some v => some <$> v.getNat?
+  | none => pure none
 
 /-- A mention with its prose byte span (mapped to tokens by `toTokenSpans`). -/
 def decodeMention (j : Json) : Except String Mention := do
@@ -126,7 +132,8 @@ def decodeMention (j : Json) : Except String Mention := do
     | none => pure none
   pure { id := ← stringField j "id", unit := ← stringField j "unit", span := ← decodeSpan (← j.getObjVal? "span"),
          form := ← decodeForm (← stringField j "form"), target := ← decodeTarget (← j.getObjVal? "target"),
-         restriction, reading, presuppositionUnit := ← optString j "presupposition_unit" }
+         restriction, reading, presuppositionUnit := ← optString j "presupposition_unit",
+         pin := ← decodePin (← j.getObjVal? "target") }
 
 def decodeRefers (j : Json) : Except String DocRefers := do
   match j with
@@ -145,53 +152,79 @@ def decodeDocName (j : Json) : Except String DocName := do
          author := ← optString j "author", supersedes := ← optStrings j "supersedes", scope := ← optString j "scope",
          sourceId := ← optString j "source_id", documentId := ← optString j "document_id" }
 
-def decodeImport (key : String) (j : Json) : Except String Import := do
-  displayFields j ["source_id", "document_id"] ["content"]
+def decodeImport (files : List (String × String)) (key : String) (j : Json) : Except String Import := do
+  displayFields j ["source_id", "document_id", "bytes"] []
+  let file ← stringField j "bytes"
   pure { key, sourceId := ← stringField j "source_id", documentId := ← stringField j "document_id",
-         bytes := (← optString j "content").map String.toUTF8 }
+         bytes := (VE.Bridge.lookup files file).map String.toUTF8 }
 
-def decodeTriple (j : Json) : Except String (String × Nat × Nat) := do
+/-- The `original_index` of reading `id` in the active set version `set@version` (1.5). -/
+def readingIndex (sets : List FrontSet) (set : String) (version : Nat) (id : String) : Except String Nat :=
+  match (sets.find? fun r => r.id == set && r.version == version).bind
+      (fun rs => (rs.readings.map Prod.fst).findIdx? (· == id)) with
+  | some i => .ok i
+  | none => .error s!"InvalidInput: reading {id} not in {set}@{version}"
+
+def decodeTriple (sets : List FrontSet) (j : Json) : Except String (String × Nat × Nat) := do
   match (← j.getArr?).toList with
-  | [.str s, v, i] => pure (s, ← v.getNat?, ← i.getNat?)
-  | _ => throw "InvalidInput: reading triple"
+  | [.str s, v, .str r] => do
+    let v ← v.getNat?
+    pure (s, v, ← readingIndex sets s v r)
+  | _ => throw "InvalidInput: discourse constraint reading"
 
-def decodeGroup (j : Json) : Except String Group := do
+def decodeGroup (sets : List FrontSet) (j : Json) : Except String Group := do
   displayFields j ["set", "version", "reading", "spans"] []
-  pure { set := ← stringField j "set", version := ← (← j.getObjVal? "version").getNat?,
-         reading := ← (← j.getObjVal? "reading").getNat?, spans := ← strings (← j.getObjVal? "spans") }
+  let set ← stringField j "set"
+  let version ← (← j.getObjVal? "version").getNat?
+  pure { set, version, reading := ← readingIndex sets set version (← stringField j "reading"),
+         spans := ← strings (← j.getObjVal? "spans") }
 
-def decodeConstraint (j : Json) : Except String Constraint := do
+def decodeConstraint (sets : List FrontSet) (j : Json) : Except String Constraint := do
   displayFields j ["kind", "a", "b"] []
   let kind ← match ← stringField j "kind" with
     | "requires" => pure ConstraintKind.requires
     | "excludes" => pure ConstraintKind.excludes
     | k => throw s!"InvalidInput: constraint kind {k}"
-  pure { kind, a := ← decodeTriple (← j.getObjVal? "a"), b := ← decodeTriple (← j.getObjVal? "b") }
+  pure { kind, a := ← decodeTriple sets (← j.getObjVal? "a"), b := ← decodeTriple sets (← j.getObjVal? "b") }
 
 def decodeValidity (j : Json) : Except String Validity := do
   displayFields j ["unit", "document", "holds"] []
   pure { unit := ← stringField j "unit", document := ← stringField j "document",
          holds := ← (← j.getObjVal? "holds").getBool? }
 
-/-- The `discourse` block, strictly. -/
-def decodeManifest (j : Json) : Except String Manifest := do
-  displayFields j ["version", "definitions_version", "document_sort", "anchors", "names", "mentions"]
-    ["content_names", "documents", "imports", "groups", "constraints", "validity", "self_truth", "choices"]
-  unless (← stringField j "version") == "ve.discourse@1" do throw "InvalidInput: discourse version"
+def decodeChoice (sets : List FrontSet) (j : Json) : Except String (String × Nat × Nat) := decodeTriple sets j
+
+/-- The document table and the imports: what the integrity checks of 4.1(10) read before
+anything else (no reading set is needed to decode them). -/
+def decodeTables (files : List (String × String)) (j : Json) : Except String (List DocName × List Import) := do
+  if j == Json.mkObj [] then return ([], [])
   let imports ← match ← opt j "imports" with
-    | some v => (← fields v).mapM fun (k, x) => decodeImport k x
+    | some v => (← fields v).mapM fun (k, x) => decodeImport files k x
     | none => pure []
-  pure { definitionsVersion := ← stringField j "definitions_version", documentSort := ← stringField j "document_sort",
+  pure (← (← optList j "documents").mapM decodeDocName, imports)
+
+/-- The `discourse` block, strictly; `{}` is the empty manifest. -/
+def decodeManifest (sets : List FrontSet) (files : List (String × String)) (envId : String) (j : Json) :
+    Except String Manifest := do
+  if j == Json.mkObj [] then
+    return ⟨envId, "", [], [], [], [], [], [], [], [], [], [], []⟩
+  displayFields j ["version", "anchors"]
+    ["definitions_version", "document_sort", "names", "mentions", "content_names", "documents", "imports",
+     "groups", "constraints", "validity", "self_truth", "choices"]
+  unless (← stringField j "version") == "ve.discourse@1" do throw "InvalidInput: discourse version"
+  let (documents, imports) ← decodeTables files j
+  pure { definitionsVersion := (← optString j "definitions_version").getD envId,
+         documentSort := (← optString j "document_sort").getD "",
          anchors := ← (← (← j.getObjVal? "anchors").getArr?).toList.mapM decodeAnchor,
-         names := ← (← (← j.getObjVal? "names").getArr?).toList.mapM decodeName,
+         names := ← (← optList j "names").mapM decodeName,
          contentNames := ← (← optList j "content_names").mapM decodeContentName,
-         mentions := ← (← (← j.getObjVal? "mentions").getArr?).toList.mapM decodeMention,
-         documents := ← (← optList j "documents").mapM decodeDocName,
-         imports, groups := ← (← optList j "groups").mapM decodeGroup,
-         constraints := ← (← optList j "constraints").mapM decodeConstraint,
+         mentions := ← (← optList j "mentions").mapM decodeMention,
+         documents, imports,
+         groups := ← (← optList j "groups").mapM (decodeGroup sets),
+         constraints := ← (← optList j "constraints").mapM (decodeConstraint sets),
          validity := ← (← optList j "validity").mapM decodeValidity,
          selfTruth := ← optStrings j "self_truth",
-         choices := ← (← optList j "choices").mapM decodeTriple }
+         choices := ← (← optList j "choices").mapM (decodeChoice sets) }
 
 /-! ## Units, tokens and spans -/
 
@@ -230,24 +263,7 @@ def toTokenSpans (src : Source) (D : VE.Route.Admission.Doc) (K : Manifest) : Ex
 
 def identityVersion (profiles : List String) : String := VE.Route.Wire.identityVersion profiles
 
-/-- `source_id`: the fingerprint of the prose bytes (profile-independent). -/
-def sourceId (prose : String) : String :=
-  VE.CertificateWire.sha256 (("ve-source-v0.2\n" ++ prose).toUTF8)
-
-/-- The `@2` document identity: the `@1` payload under the new domain tag; the discourse
-block is inside the metadata, so every manifest entry is identity-bound. -/
-def documentId2 (front : Json) (prose : String) (fences : List (String × String)) : Except String String :=
-  VE.CertificateWire.digest "ve-document@2\n" (Json.mkObj [("metadata", front), ("source", .str prose),
-    ("fences", Json.arr (fences.map fun (a, b) => Json.arr #[.str a, .str b]).toArray)])
-
-/-- The document object without its prose and removable weights. -/
-def frontMatter (j : Json) : Json :=
-  match j with
-  | .obj kvs => Json.mkObj (kvs.toList.filter fun (k, _) => k != "prose" && k != "weights")
-  | _ => j
-
-def prose (j : Json) : String := (j.getObjValD "prose").getStr?.toOption.getD ""
-
-def fences (_j : Json) : List (String × String) := []
+/-- The source of a loaded document (its prose). -/
+def prose (j : Json) : String := Loader.sourceOf j
 
 end VE.Discourse.Wire

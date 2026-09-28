@@ -6,18 +6,24 @@ The profile adapter: `ve.discourse@1` is outside the frozen profile registry, so
 validates the original envelope, then calls every frozen function on
 `(baseProfiles, baseEnvironment)`, the profile list and the environment JSON without it, as
 `Norms/Replay.lean` does for `norms@0`. A `ve-document@1` input is delegated unchanged to
-`VE.Route.Admission.admitDocument` when the profile is off, and is the profile-gate error when
-it is on.
+`VE.Route.Admission.admitDocument` when the profile is off (a loaded `@1` text through the
+admission object its front matter translates to), and is the profile-gate error when it is on.
 
-A `@2` document is admitted in this order: import and embedding integrity (4.1(10)), the
-nesting budget, the wrapper (3.5), the source, units and manifest under the base pair,
-`definitions_version`, the document sort, `wellFormed` (4.1(2)-(8), which validates every
-bound unit), the recorded bound content, the projection to W2 (each bound unit's elaborated
-formula in place of its content; a unit whose presupposition has no carrier stays pending
-and gets no content), the unchanged W2 admission on the base pair, the post-admission table
-checks (groups, carriers, labels), the composition gate (4.8) and the second phase: validity
-claims from the three outcomes of 4.7. Identities are computed under the base pair and the
-wrapper report binds the original profile list. -/
+A `@2` document is its loaded text (`Loader`): the front matter, the source, the fences and the
+sibling files. It is admitted in this order: the document table and the integrity of every
+imported and embedded document (4.1(10): stored bytes re-fingerprint to the pinned `source_id`,
+the declared pins agree with the import table, each stored document decodes and its recomputed
+`document_id` is the pinned one, the chain has no repeated source id and is within depth 4), the
+nesting budget, the wrapper (3.5), the front matter under the base pair, the manifest,
+`definitions_version`, the document sort, `wellFormed` (4.1(2)-(8), which validates every bound
+unit), the explicit statuses, the recorded bound content, the projection to W2 (each bound
+unit's elaborated formula in place of its content; a unit whose presupposition has no carrier
+stays pending and gets no content), the unchanged W2 admission on the base pair, the
+post-admission table checks (groups, carriers, labels), the composition gate (4.8) and the
+second phase: validity claims from the three outcomes of 4.7, each other document checked under
+its own environment and profiles. Identities are the Python loader's (`source_id`,
+`document_id`, the inner and wrapper report ids) under the base pair; the wrapper report binds
+the original profile list. -/
 namespace VE.Discourse
 open Lean
 open VE.Route.Admission (Doc DocUnit WireNode AssertedUnit parseLabel)
@@ -32,7 +38,11 @@ def baseProfiles (profiles : List String) : List String := profiles.filter (· !
 def baseEnvironment (environment : Json) : Json :=
   environment.setObjVal! "profiles" (toJson (baseProfiles ((VE.Route.Gate.profilesOf environment).toOption.getD [])))
 
-def formatOf (j : Json) : Option String := (j.getObjValD "format").getStr?.toOption
+/-- The document format: the `format` of a W2 admission object, else of a loaded front matter. -/
+def formatOf (j : Json) : Option String :=
+  match (j.getObjValD "format").getStr?.toOption with
+  | some f => some f
+  | none => ((Loader.metaOf j).getObjValD "format").getStr?.toOption
 
 /-- The original envelope: sorted, unique, both base and discourse profiles, the environment's
 `profiles` equal to the list, format `@2`; and the frozen gate on the base pair (FOL family). -/
@@ -50,12 +60,19 @@ def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except 
     | .ok e => req (e.family == .fol) (VE.Route.Gate.unsupported "discourse admission requires the FOL family")
     | .error e => .error e]
 
+/-- The route vocabulary of the base pair. -/
+def baseVocabulary (environment : Json) : Except String Wire.RouteVocabulary := do
+  let e ← VE.Route.Gate.decodeEnvelope (baseEnvironment environment)
+  VE.Route.Run.decodeRouteVocabulary e
+
 /-! ## The result -/
 
-/-- 4.7: the three outcomes of checking another document; rejection is a completed diagnostic. -/
+/-- 4.7: the three outcomes of checking another document. Rejection is a completed
+diagnostic; a resource limit, or a feature the Lean route does not implement, leaves the check
+incomplete (`unknown`), never a rejection. -/
 def outcomeOf' {α : Type} : Except String α → ImportOutcome
   | .ok _ => .admitted
-  | .error e => if e.startsWith "ResourceLimit" then .unknown e else .rejected e
+  | .error e => if e.startsWith "ResourceLimit" || e.startsWith "NotImplemented" then .unknown e else .rejected e
 
 structure Admitted where
   doc : DDoc
@@ -70,6 +87,10 @@ structure Admitted where
   validity : String → Option Verdict
   selfTruth : List String
   premiseUnits : List String
+  environmentId : String
+  innerReportId : String
+  boundIds : List (String × String)
+  references : Json
 
 def outcomeOf : Except String Admitted → ImportOutcome := outcomeOf'
 
@@ -82,91 +103,157 @@ def premiseUnitsOf (b : VE.Route.Admission.Admitted) : List String :=
 
 /-- A `@1` admission seen as a discourse result with an empty manifest. -/
 def lift1 (res : VE.Route.Admission.Admitted) : Admitted :=
-  { doc := ⟨res.rv.environment, res.doc, emptyManifest, "", fun _ => none⟩, base := res, projected := .null,
+  { doc := { E := res.rv.environment, base := res.doc, K := emptyManifest, sourceId := "", text := fun _ => none,
+             sets := [], status := [], prose := "", files := .null },
+    base := res, projected := .null,
     documentId := "", reportId := "", bound := fun _ => none, joint := .error "UnsupportedProfile: no discourse manifest",
     presuppositions := fun _ => none, pending := [], validity := fun _ => none, selfTruth := [],
-    premiseUnits := premiseUnitsOf res }
+    premiseUnits := premiseUnitsOf res, environmentId := "", innerReportId := "", boundIds := [],
+    references := Json.arr #[] }
 
-/-! ## Imports and embedded documents -/
+/-! ## Imported and embedded documents (4.1(10)) -/
 
-def parsedOf (b : ByteArray) : Json := ((VE.JsonInput.parse ((String.fromUTF8? b).getD "")).toOption).getD .null
-def envOf (b : ByteArray) : Json := (parsedOf b).getObjValD "environment"
-def jsonOf (b : ByteArray) : Json := (parsedOf b).getObjValD "document"
+/-- A stored or embedded document text, loaded with the importing document's sibling files. -/
+def storedPayload (files : Json) (b : ByteArray) : Except String Json := do
+  match String.fromUTF8? b with
+  | some t => pure (Loader.payload (← Loader.splitText t) files)
+  | none => throw "document is not UTF-8"
 
-def emptyRV : Wire.RouteVocabulary :=
-  { vocabulary := ⟨[], [], []⟩, literals := [], nodup := List.nodup_nil, definitions := [], chain := trivial }
+def envOfPayload (p : Json) : Json := (Loader.metaOf p).getObjValD "environment"
 
-def rvOf (b : ByteArray) : Wire.RouteVocabulary :=
-  let env := envOf b
-  let ps := (VE.Route.Gate.profilesOf env).toOption.getD []
-  (VE.Route.Wire.decodeVocabulary (baseProfiles ps) (env.getObjValD "vocabulary")).toOption.getD emptyRV
+/-- The source identity of stored bytes under their own base profiles (Python's `source_id`);
+bytes that do not split as a document are fingerprinted whole. -/
+def sourceIdOf (b : ByteArray) : String :=
+  match (String.fromUTF8? b).map Loader.splitText with
+  | some (.ok s) =>
+    let ps := (VE.Route.Gate.profilesOf (s.front.getObjValD "environment")).toOption.getD []
+    Loader.sourceId (baseProfiles ps) s.source
+  | _ => VE.CertificateWire.sha256 b
 
-/-- The source identity of a stored document: the fingerprint of its prose. -/
-def sourceIdOf (b : ByteArray) : String := Wire.sourceId (Wire.prose (jsonOf b))
+/-- A loaded document's own source identity. -/
+def ownSourceId (j : Json) : String :=
+  let ps := (VE.Route.Gate.profilesOf (envOfPayload j)).toOption.getD []
+  Loader.sourceId (baseProfiles ps) (Loader.sourceOf j)
 
-def importsOf (j : Json) : List Import :=
-  ((Wire.decodeManifest (j.getObjValD "discourse")).toOption.map Manifest.imports).getD []
+/-- The raw byte span of a unit of the front matter. -/
+def rawUnitSpan (j : Json) (u : String) : Option (Nat × Nat) :=
+  match (Loader.metaOf j).getObjValD "units" with
+  | .arr us => (us.toList.find? fun x => (x.getObjValD "id").getStr?.toOption == some u).bind fun x =>
+      (Loader.spanOf (x.getObjValD "span")).toOption
+  | _ => none
 
-/-- The byte slice of a unit of the prose. -/
-def unitBytes (prose : String) (x : DocUnit) : ByteArray := prose.toUTF8.extract x.start x.stop
+/-- The bytes of an embedded unit. -/
+def embeddedBytes (j : Json) (u : String) : Option ByteArray :=
+  (rawUnitSpan j u).map fun (a, b) => (Loader.sourceOf j).toUTF8.extract a b
 
-/-- The source ids reachable through the stored imports, to depth `n`. -/
-def importChain : Nat → List ByteArray → Option (List String)
+/-- The document table and imports of a loaded document (`([], [])` when they do not decode). -/
+def tablesOf (j : Json) : List DocName × List Import :=
+  (Wire.decodeTables (Loader.filesOf j) ((Loader.metaOf j).getObjValD "discourse")).toOption.getD ([], [])
+
+def importsOf (j : Json) : List Import := (tablesOf j).2
+
+/-- The stored documents a loaded document names: stored import bytes and embedded units. -/
+def storedOf (j : Json) (docs : List DocName) (imports : List Import) : List ByteArray :=
+  imports.filterMap Import.bytes ++ docs.filterMap fun d => match d.refers with
+    | .embedded u => embeddedBytes j u
+    | _ => none
+
+def childrenOf (files : Json) (b : ByteArray) : List ByteArray :=
+  match storedPayload files b with
+  | .ok p => storedOf p (tablesOf p).1 (tablesOf p).2
+  | .error _ => []
+
+/-- The source ids reachable through the stored chain, to depth `n` (`none`: deeper). -/
+def importChain (files : Json) : Nat → List ByteArray → Option (List String)
   | _, [] => some []
   | 0, _ :: _ => none
   | n + 1, b :: bs => do
-    let inner := (importsOf (jsonOf b)).filterMap Import.bytes
-    let rest ← importChain n inner
-    let more ← importChain (n + 1) bs |>.orElse fun _ => none
+    let rest ← importChain files n (childrenOf files b)
+    let more ← importChain files (n + 1) bs
     pure (sourceIdOf b :: rest ++ more)
 termination_by n bs => (n, bs.length)
 decreasing_by all_goals simp_wf <;> omega
 
-/-- The import graph of the stored chain: each document's source id names the source ids it
-imports (to depth `n`). -/
-def importNodesAt : Nat → List ByteArray → List VE.Route.DepNode
+/-- The name of the document declared over an import key. -/
+def importName (docs : List DocName) (key : String) : String :=
+  ((docs.find? fun d => d.refers == .imported key).map DocName.name).getD key
+
+/-- A stored document decodes (its text, envelope and discourse block) and carries the pinned
+identities. -/
+def storedOk (files : Json) (name : String) (b : ByteArray) (sid did : Option String) : Except String Unit := do
+  let fail := fun (e : String) => "InvalidInput: document " ++ name ++ ": " ++ e
+  let p ← (storedPayload files b).mapError fail
+  let env := envOfPayload p
+  let _ ← (VE.Route.Gate.profilesOf env).mapError fail
+  let _ ← (VE.Route.Gate.decodeEnvelope (baseEnvironment env)).mapError fail
+  let _ ← (Wire.decodeTables (Loader.filesOf p) ((Loader.metaOf p).getObjValD "discourse")).mapError fail
+  if let some s := sid then req (sourceIdOf b == s) ("StaleTarget: " ++ name)
+  let doc ← (Loader.documentId p).mapError fail
+  if let some d := did then req (doc == d) ("StaleTarget: " ++ name)
+
+/-- 4.1(10): stored bytes re-fingerprint to their pins, the declared pins agree with the
+import table, every stored and embedded document decodes with its pinned `document_id`, the
+chain has no repeated source id, and nesting is within the budget. -/
+def integrityOk (j : Json) (docs : List DocName) (imports : List Import) : Except String Unit :=
+  let files := j.getObjValD "files"
+  runAll [
+  fun _ => allOk imports fun imp => match imp.bytes with
+    | some b => req (sourceIdOf b == imp.sourceId) ("StaleTarget: " ++ importName docs imp.key)
+    | none => .ok (),
+  fun _ => match dupOf (imports.map Import.key) with
+    | some k => .error ("DuplicateDeclaration: import " ++ k)
+    | none => .ok (),
+  fun _ => allOk docs fun d => match d.refers with
+    | .imported k => match imports.find? (·.key == k) with
+      | some imp => req (d.sourceId == some imp.sourceId && d.documentId == some imp.documentId)
+          ("ManifestMismatch: documents." ++ d.name)
+      | none => .error ("UnknownDocument: " ++ d.name)
+    | _ => .ok (),
+  fun _ => allOk imports fun imp => match imp.bytes with
+    | some b => storedOk files (importName docs imp.key) b (some imp.sourceId) (some imp.documentId)
+    | none => .ok (),
+  fun _ => allOk docs fun d => match d.refers with
+    | .embedded u => match embeddedBytes j u with
+      | some b => storedOk files d.name b d.sourceId d.documentId
+      | none => .error ("UnknownDocument: " ++ d.name)
+    | _ => .ok (),
+  fun _ => match importChain files 4 (storedOf j docs imports) with
+    | none => .error "ResourceLimit: document nesting"
+    | some ids => match dupOf (ownSourceId j :: ids) with
+      | some i => .error ("ImportCycle: " ++ i)
+      | none => .ok ()]
+
+/-- The import graph of a document (its stored imports and embedded units): each source id
+names the source ids it embeds or imports, to depth 4. -/
+def importNodesAt (files : Json) : Nat → List ByteArray → List VE.Route.DepNode
   | 0, _ => []
   | n + 1, bs => bs.flatMap fun b =>
-      let K := importsOf (jsonOf b)
-      ⟨sourceIdOf b, K.map Import.sourceId⟩ :: importNodesAt n (K.filterMap Import.bytes)
+      ⟨sourceIdOf b, (childrenOf files b).map sourceIdOf⟩ :: importNodesAt files n (childrenOf files b)
 
 def dedupNodes : List VE.Route.DepNode → List VE.Route.DepNode
   | [] => []
   | n :: ns => if (ns.map VE.Route.DepNode.name).contains n.name then dedupNodes ns else n :: dedupNodes ns
 
-/-- The import graph of a document: its own node, then the stored chain. -/
+/-- The stored documents of a discourse document. -/
+def storedOfDoc (D : DDoc) : List ByteArray :=
+  D.K.imports.filterMap Import.bytes ++ D.K.documents.filterMap fun d => match d.refers with
+    | .embedded u => (unitOf D.base u).map fun x => D.prose.toUTF8.extract x.start x.stop
+    | _ => none
+
 def importNodes (D : DDoc) : List VE.Route.DepNode :=
-  dedupNodes (⟨D.sourceId, D.K.imports.map Import.sourceId⟩ :: importNodesAt 4 (D.K.imports.filterMap Import.bytes))
+  dedupNodes (⟨D.sourceId, (storedOfDoc D).map sourceIdOf⟩ :: importNodesAt D.files 4 (storedOfDoc D))
 
 /-- The nesting depth of the stored chain (5 means beyond the budget). -/
-def chainDepth : Nat → List ByteArray → Nat
+def chainDepth (files : Json) : Nat → List ByteArray → Nat
   | _, [] => 0
   | 0, _ :: _ => 5
-  | n + 1, bs => 1 + (bs.map fun b => chainDepth n ((importsOf (jsonOf b)).filterMap Import.bytes)).foldl max 0
+  | n + 1, bs => 1 + (bs.map fun b => chainDepth files n (childrenOf files b)).foldl max 0
 
-def depthOf (D : DDoc) : Nat := chainDepth 5 (D.K.imports.filterMap Import.bytes)
-
-/-- 4.1(10): stored bytes re-fingerprint to their pins, the chain has no repeated source id,
-and nesting is within the budget. -/
-def integrityOk (j : Json) (K : Manifest) : Except String Unit := runAll [
-  fun _ => allOk K.imports fun imp => match imp.bytes with
-    | some b => req (sourceIdOf b == imp.sourceId)
-        ("StaleTarget: " ++ ((K.documents.find? fun d => d.refers == .imported imp.key).map DocName.name).getD imp.key)
-    | none => .ok (),
-  fun _ => match dupOf (K.imports.map Import.key) with
-    | some k => .error ("DuplicateDeclaration: import " ++ k)
-    | none => .ok (),
-  fun _ => match importChain 4 (K.imports.filterMap Import.bytes) with
-    | none => .error "ResourceLimit: document nesting"
-    | some ids =>
-      let own := Wire.sourceId (Wire.prose j)
-      match dupOf (own :: ids) with
-      | some i => .error ("ImportCycle: " ++ i)
-      | none => .ok ()]
+def depthOf (D : DDoc) : Nat := chainDepth D.files 5 (storedOfDoc D)
 
 /-! ## The discourse admission -/
 
-/-- The graph nodes of a document object, decoded as W2 does. -/
+/-- The graph nodes of a W2 admission object, decoded as W2 does. -/
 def rawWires (rv : Wire.RouteVocabulary) (data : Bool) (j : Json) : List WireNode :=
   ((do
     let g ← j.getObjVal? "graph"
@@ -246,14 +333,23 @@ def jointGate (b : VE.Route.Admission.Admitted) : Except String (List Choice) �
 /-- The group a unit belongs to (a unit is in at most one group). -/
 def groupOf (D : DDoc) (u : String) : Option Group := D.K.groups.find? fun g => g.spans.contains u
 
-def groupStatus (D : DDoc) (g : Group) : String :=
-  match groupFormula D g with
-  | some _ => if ((D.base.readingSets.find? fun rs => rs.id == g.set && rs.version == g.version).map
-      (·.readings.length)) == some 1 then "CHECKED" else "OPEN"
-  | none => "UNFORMALISED"
+/-- A unit's W2 status as the loader computed it (3.2); a unit the loader did not see (a `@1`
+admission object) is CHECKED with content and LABELLED without. -/
+def loadedStatus (D : DDoc) (u : String) : String :=
+  match D.status.find? (·.1 == u) with
+  | some (_, s) => s
+  | none => if ((unitOf D.base u).bind DocUnit.content).isSome then "CHECKED" else "LABELLED"
+
+/-- W2's status of a unit: a group span has its owning set's status, which W2 places on the
+group's first span (1.5, 3.2). -/
+def unitStatus (D : DDoc) (u : String) : String :=
+  match groupOf D u with
+  | some g => loadedStatus D (g.spans.headD u)
+  | none => loadedStatus D u
 
 /-- Post-admission checks on the W2 result: group readings, fragments, labels. -/
-def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula) : Except String Unit :=
+def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Option VE.Formula)
+    (pending : List (String × String)) : Except String Unit :=
   runAll [
   fun _ => match dupOf (D.K.groups.flatMap Group.spans) with
     | some u => .error ("IndependentFragment: " ++ u)
@@ -265,7 +361,8 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
     fun _ => req (decide ((b.report.assumptions.filter fun l => setOfLabel l.label = some (g.set, g.version)).length ≤ 1))
       ("IndependentFragment: " ++ ((g.spans.head?).getD g.set)),
     fun _ => allOk g.spans fun u => req ((unitOf b.doc u).bind DocUnit.content == none && (bound u).isNone &&
-        !(premiseUnitsOf b).contains u && (b.report.assumptions.all fun l => l.label != "asserted" || unitOfLeaf b l != some u))
+        !(premiseUnitsOf b).contains u && !(pending.map Prod.fst).contains u &&
+        (b.report.assumptions.all fun l => l.label != "asserted" || unitOfLeaf b l != some u))
       ("IndependentFragment: " ++ u)],
   fun _ => allOk D.K.validity fun v => req (!(premiseUnitsOf b).contains v.unit && (bound v.unit).isNone)
     ("InvalidInput: validity unit " ++ v.unit),
@@ -292,7 +389,7 @@ def postOk (D : DDoc) (b : VE.Route.Admission.Admitted) (bound : String → Opti
   fun _ => req (decide (depthOf D ≤ 4)) "ResourceLimit: document nesting"]
 
 /-- The second phase: a validity claim's verdict from the outcome of checking its document. -/
-def verdictFor (D : DDoc) (prose : String) (check : ByteArray → ImportOutcome) (v : Validity) : Option Verdict :=
+def verdictFor (D : DDoc) (check : ByteArray → ImportOutcome) (v : Validity) : Option Verdict :=
   match D.K.documents.find? (·.name == v.document) with
   | some d => match d.refers with
     | .self => some (if v.holds then .checked else .refuted)
@@ -302,7 +399,7 @@ def verdictFor (D : DDoc) (prose : String) (check : ByteArray → ImportOutcome)
         | some b => some (verdictOf v.holds (check b))
       | none => none
     | .embedded u => match unitOf D.base u with
-      | some x => some (verdictOf v.holds (check (unitBytes prose x)))
+      | some x => some (verdictOf v.holds (check (D.prose.toUTF8.extract x.start x.stop)))
       | none => some (.unconfirmed "embedded bytes absent")
     | .part _ => none
   | none => none
@@ -317,36 +414,73 @@ def verdictText : Verdict → String
   | .refuted => "refuted"
   | .unconfirmed r => "unconfirmed (" ++ r ++ ")"
 
-/-- The `@2` admission at a positive nesting budget; `check` evaluates an embedded or
-imported document one level down. -/
-def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json)
-    (check : ByteArray → ImportOutcome) : Except String Admitted := do
+def locationForm (f : String) : Bool := f == "section_ref" || f == "navigation"
+
+/-- 7.1: one reference line per recorded mention, in manifest order, with the recorded target:
+`resolved` (elaborated and checked), `navigation` (a location binding) or `pending`. -/
+def referencesJson (front : Json) (pending : List (String × String)) : Json :=
+  let raw := match (front.getObjValD "discourse").getObjValD "mentions" with
+    | .arr ms => ms.toList
+    | _ => []
+  Json.arr (raw.map fun m =>
+    let id := (m.getObjValD "id").getStr?.toOption.getD ""
+    let form := (m.getObjValD "form").getStr?.toOption.getD ""
+    Json.mkObj [("mention", .str id), ("unit", m.getObjValD "unit"), ("form", .str form),
+      ("target", m.getObjValD "target"),
+      ("status", .str (if (pending.map Prod.snd).contains ("PresuppositionUnresolved: " ++ id) then "pending"
+        else if locationForm form then "navigation" else "resolved"))]).toArray
+
+/-- The prepared discourse document (the part of the admission before well-formedness): the
+wrapper, the front matter under the base pair, the manifest and the token spans. -/
+structure Prepared where
+  doc : DDoc
+  front : Loader.Front
+  environmentId : String
+
+def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
+    Except String Prepared := do
   wrapperOk profiles environment j
   let bp := baseProfiles profiles
   let be := baseEnvironment environment
   let data := bp.contains "data@0"
-  let prose ← VE.Bridge.stringField j "prose"
-  let K₀ ← Wire.decodeManifest (← j.getObjVal? "discourse")
-  let base₀ ← VE.Route.Admission.decodeDoc rv data j
+  let envId ← VE.Route.Wire.environmentId bp be
+  let front ← Loader.loadPayload rv bp envId j
+  let prose := Loader.sourceOf j
+  let K₀ ← Wire.decodeManifest front.sets (Loader.filesOf j) envId ((Loader.metaOf j).getObjValD "discourse")
+  let base₀ ← VE.Route.Admission.decodeDoc rv data front.w2
   let base := { base₀ with literals := rv.literals, flags := rv.flags }
-  req (base.units.all fun x => decide (x.stop ≤ prose.utf8ByteSize)) "InvalidInput: unit span outside the prose"
   let src : Wire.Source := ⟨prose, lex prose⟩
   let K ← Wire.toTokenSpans src base K₀
-  let D : DDoc := ⟨rv.environment, base, K, Wire.sourceId prose, src.text base⟩
-  let envId ← VE.Route.Wire.environmentId bp be
+  pure ⟨{ E := rv.environment, base, K, sourceId := Loader.sourceId bp prose, text := src.text base,
+          sets := front.sets, status := front.status, prose, files := j.getObjValD "files" }, front, envId⟩
+
+/-- The `@2` admission at a positive nesting budget; `check` evaluates an embedded or
+imported document one level down. -/
+def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json)
+    (check : ByteArray → ImportOutcome) : Except String Admitted := do
+  let P ← prepare profiles environment rv j
+  let D := P.doc
+  let front := P.front
+  let envId := P.environmentId
+  let K := D.K
+  let base := D.base
+  let bp := baseProfiles profiles
+  let be := baseEnvironment environment
+  let data := bp.contains "data@0"
   req (K.definitionsVersion == envId) ("StaleTarget: definitions@" ++ K.definitionsVersion)
   req (rv.vocabulary.constants.all fun (c, s) => s != K.documentSort || K.documents.any (·.name == c))
     ("InvalidInput: document sort " ++ K.documentSort ++ " has other constants")
   wellFormed D
+  Loader.explicitOk (D.status.map fun (u, _) => (u, unitStatus D u)) front.explicit
   let boundAll : String → Option VE.Formula := fun u =>
     if (boundUnits D).contains u then (validate D u).toOption else none
   allOk (boundUnits D) fun u => match (unitOf base u).bind DocUnit.content, boundAll u with
     | some c, some A => req (c == A) ("ManifestMismatch: bound." ++ u)
     | _, _ => .ok ()
   -- pending units, decided on the submitted graph before projection
-  let pre := pendingIn D (rawWires rv data j) base (((base.units.filter fun x =>
+  let pre := pendingIn D (rawWires rv data front.w2) base (((base.units.filter fun x =>
     decide (x.kind = .asserted) && x.content.isSome).map DocUnit.id))
-  let projected := project j (fun u => if (pre.map Prod.fst).contains u then none else boundAll u)
+  let projected := project front.w2 (fun u => if (pre.map Prod.fst).contains u then none else boundAll u)
     (fun u => (pre.map Prod.fst).contains u)
   let res ← VE.Route.Admission.admitDocument bp be rv projected
   let premises := premiseUnitsOf res
@@ -355,65 +489,99 @@ def admit2 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabul
   req (pending == pre) "InvalidInput: a presupposition carrier is itself pending"
   let bound : String → Option VE.Formula := fun u =>
     if (pending.map Prod.fst).contains u || (pre.map Prod.fst).contains u then none else boundAll u
-  postOk D res bound
+  postOk D res bound pending
   let joint := compatibleChoices K (activeSets D) 64
   jointGate res joint
   let validity : String → Option Verdict := fun u =>
-    (K.validity.find? (·.unit == u)).bind (verdictFor D (Wire.prose j) check)
-  let documentId ← Wire.documentId2 (Wire.frontMatter j) (Wire.prose j) (Wire.fences j)
+    (K.validity.find? (·.unit == u)).bind (verdictFor D check)
+  let documentId ← Loader.documentId j
   let innerReportId ← VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion bp}\n"
-    (Json.mkObj [("environment_id", .str envId), ("document", projected), ("report", reportJson res.report)])
-  let references := Json.arr (K.mentions.map fun m => Json.mkObj [("mention", .str m.id),
-    ("status", .str (if (pending.map Prod.snd).contains ("PresuppositionUnresolved: " ++ m.id) then "pending" else
-      if formulaForm m.form then "resolved" else "navigation"))]).toArray
+    (Json.mkObj [("environment_id", .str envId), ("document", .str documentId), ("report", reportJson res.report)])
   let validityJson := Json.arr (K.validity.map fun v => Json.mkObj [("unit", .str v.unit),
     ("verdict", .str ((validity v.unit).map verdictText |>.getD "none"))]).toArray
+  let references := referencesJson (Loader.metaOf j) pending
   let reportId ← VE.CertificateWire.digest "ve-discourse-report@1\n" (Json.mkObj [
     ("profiles", toJson profiles), ("environment_id", .str envId), ("document_id", .str documentId),
     ("report_id", .str innerReportId), ("references", references), ("validity", validityJson)])
+  let boundIds ← (boundUnits D).eraseDups.filterMapM fun u => match bound u with
+    | some A => do pure (some (u, ← VE.Route.Wire.meaningId bp envId (VE.Route.Wire.encodeFormula A)))
+    | none => pure none
   let presuppositions : String → Option PresuppositionCarrier := fun id =>
     ((presupMentions D).find? (·.id == id)).bind (carrierIn D res.wires res.doc premises)
   pure { doc := D, base := res, projected, documentId, reportId, bound, joint, presuppositions, pending,
-         validity, selfTruth := K.selfTruth, premiseUnits := premises }
+         validity, selfTruth := K.selfTruth, premiseUnits := premises, environmentId := envId, innerReportId,
+         boundIds, references }
 
-/-- One admission step: `@1` delegation, then (for `@2`) the manifest, integrity, the
+/-- A loaded `@1` text: its front matter's admission object, under its own (discourse-free)
+profiles. -/
+def admit1 (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
+    Except String VE.Route.Admission.Admitted := do
+  let envId ← VE.Route.Wire.environmentId profiles environment
+  let front ← Loader.loadPayload rv profiles envId j
+  Loader.explicitOk front.status front.explicit
+  VE.Route.Admission.admitDocument profiles environment rv front.w2
+
+/-- One admission step: `@1` delegation, then (for `@2`) the document table, integrity, the
 nesting budget (`none` is an exhausted budget) and `admit2`. -/
 def admitAt (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json)
     (check : Option (ByteArray → ImportOutcome)) : Except String Admitted :=
   if formatOf j == some "ve-document@1" || formatOf j == none then
     if profiles.contains discourseProfile then .error "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
+    else if Loader.isPayload j then (admit1 profiles environment rv j).map lift1
     else (VE.Route.Admission.admitDocument profiles environment rv j).map lift1
   else if formatOf j != some "ve-document@2" then .error "InvalidInput: unknown document format"
-  else match Wire.decodeManifest (j.getObjValD "discourse") with
+  else if !Loader.isPayload j then .error "InvalidInput: a ve-document@2 input is its document text"
+  else match Wire.decodeTables (Loader.filesOf j) ((Loader.metaOf j).getObjValD "discourse") with
     | .error e => .error e
-    | .ok K₀ => match integrityOk j K₀ with
+    | .ok (docs, imports) => match integrityOk j docs imports with
       | .error e => .error e
       | .ok _ => match check with
         | none => .error "ResourceLimit: document nesting"
         | some c => admit2 profiles environment rv j c
 
+/-- Checking a stored document with a given admission: under its own environment and profiles
+(never the importing document's). -/
+def outcomeWith (check : List String → Json → Wire.RouteVocabulary → Json → Except String Admitted)
+    (files : Json) (b : ByteArray) : ImportOutcome :=
+  match storedPayload files b with
+  | .error e => .unknown ("InvalidInput: " ++ e)
+  | .ok p =>
+    let env := envOfPayload p
+    match VE.Route.Gate.profilesOf env, baseVocabulary env with
+    | .ok ps, .ok rv => outcomeOf (check ps env rv p)
+    | .error e, _ => .rejected e
+    | _, .error e => .rejected e
+
 /-- The discourse admission with a nesting budget: the second phase checks other documents
-one level down. -/
+one level down, each under its own environment. -/
 def admitDiscourse (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
     Nat → Except String Admitted
   | 0 => admitAt profiles environment rv j none
-  | n + 1 => admitAt profiles environment rv j (some fun b =>
-      outcomeOf (admitDiscourse profiles (envOf b) (rvOf b) (jsonOf b) n))
+  | n + 1 => admitAt profiles environment rv j (some (outcomeWith
+      (fun ps env rv' p => admitDiscourse ps env rv' p n) (j.getObjValD "files")))
 
 /-- Checking a stored or embedded document one level down. -/
-def checkImport (profiles : List String) (b : ByteArray) (fuel : Nat) : ImportOutcome :=
-  outcomeOf (admitDiscourse profiles (envOf b) (rvOf b) (jsonOf b) fuel)
+def checkImport (files : Json) (b : ByteArray) (fuel : Nat) : ImportOutcome :=
+  outcomeWith (fun ps env rv p => admitDiscourse ps env rv p fuel) files b
 
+/-- 4.1(8), 4.8: the verdicts that depend on reading choices, UNKNOWN when the joint set's
+validation did not complete: every lemma's citation extension and the report's. -/
+def readingVerdicts (res : Admitted) : List (String × String) :=
+  match res.joint with
+  | .error e => if e.startsWith "ResourceLimit" then
+      (res.base.doc.lemmas.map fun L => ("citation " ++ L.name, "UNKNOWN (joint choices)")) ++
+      [("report " ++ res.base.report.root.name, "UNKNOWN (joint choices)")]
+    else []
+  | .ok _ => []
+
+/-- 3.2: a self-truth unit is LABELLED; a validity claim is CHECKED when its verdict is
+`checked`, LABELLED otherwise; a pending unit (4.5) is OPEN (no new status, 13.12); every other
+unit has W2's status (a group span its owning set's). -/
 def statusOf (res : Admitted) (u : String) : String :=
   if res.selfTruth.contains u then "LABELLED"
   else match res.validity u with
   | some .checked => "CHECKED"
   | some _ => "LABELLED"
-  | none => match groupOf res.doc u with
-    | some g => groupStatus res.doc g
-    | none => if (res.pending.map Prod.fst).contains u then "PENDING"
-      else match (unitOf res.base.doc u).bind DocUnit.content with
-        | some _ => "CHECKED"
-        | none => "LABELLED"
+  | none => if (res.pending.map Prod.fst).contains u then "OPEN" else unitStatus res.doc u
 
 end VE.Discourse

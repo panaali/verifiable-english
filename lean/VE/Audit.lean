@@ -1106,6 +1106,9 @@ import VE.Discourse.English
 #print axioms VE.Discourse.wf_bound
 #print axioms VE.Discourse.admission_projects
 #print axioms VE.Discourse.admit2_facts
+#print axioms VE.Discourse.prepare_facts
+#print axioms VE.Discourse.getObjValD_ok
+#print axioms VE.Discourse.not_payload_of_format
 #print axioms VE.Discourse.admitAt_cases
 #print axioms VE.Discourse.admit_cases
 #print axioms VE.Discourse.admit_facts2

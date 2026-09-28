@@ -1,10 +1,11 @@
 """Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 
-docs/spec/discourse.md section 10. Each case is a `ve-document@2` Lean document object
-(`format`, `prose`, W2 `units`/`graph`, `discourse`); mention spans are prose byte ranges
-computed here from the sentence text. The Lean validator regenerates every binding and
-reports the diagnostic texts of section 8 (spans in diagnostics are token ranges of the
-unit, lean/DISCOURSE.md).
+docs/spec/discourse.md section 10. Each case's document is a `ve-document@2` text, the bytes
+the Python loader reads: JSON front matter (units with their meaning and support, reading
+sets with ids, the 3.1 `discourse` block) and the source. Mention spans are source byte ranges
+computed here from the sentence text; sibling files an import names travel as the case's
+`files`. The Lean validator regenerates every binding and reports the diagnostic texts of
+section 8 (spans in diagnostics are token ranges of the unit, lean/DISCOURSE.md).
 """
 from __future__ import annotations
 
@@ -17,6 +18,11 @@ from pathlib import Path
 
 import pytest
 
+from ve.ast import formula_from_data
+from ve.document import load_document
+from ve.environment import Environment
+from ve.identity import meaning_id
+from ve.model import FiniteModel
 from ve.wire import digest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,11 +65,16 @@ def env(sig=None, constants=None, profiles=PROFILES):
             "spec_revision": "ve-v0.2-expand2-2026-09-25", "vocabulary": vocab(sig, constants)}
 
 
+def base_env(environment):
+    return Environment({**environment, "profiles": [p for p in environment["profiles"] if p != "ve.discourse@1"]})
+
+
 NAMES = [{"constant": "api", "display": "the API", "scope": "doc"},
          {"constant": "alice", "display": "Alice", "scope": "doc"},
          {"constant": "bob", "display": "Bob", "scope": "doc"}]
 
-
+OPEN_TERM = {"name": "t", "arguments": [], "decided_by": "reviewer", "necessary": [], "sufficient": [],
+             "factors": [], "precedents": [], "jurisdiction": "policy", "version": 1}
 OPEN_GRAPH = {"root": "n", "nodes": [{"name": "n", "ast": ["top"], "label": "open:t"}]}
 
 
@@ -71,24 +82,32 @@ def entity(c):
     return {"kind": "entity", "name": c}
 
 
-def document(sentences, mentions=(), names=NAMES, kinds=None, contents=None, graph=None, extra=None):
-    prose, units = "", []
+def unit_record(uid, span, kind, content):
+    meaning = ({"unformalised": kind[1]} if type(kind) is list and kind[0] == "unformalised" else "specified")
+    unit = {"id": uid, "span": span, "kind": kind, "meaning": meaning,
+            "support": "assumption" if content is not None else "none"}
+    if content is not None:
+        unit["content"] = {"ast": content}
+    return unit
+
+
+def document(sentences, mentions=(), names=NAMES, kinds=None, contents=None, graph=None, extra=None,
+             format="ve-document@2"):
+    """A document front matter; `_source` is the body. Units cover every source byte."""
+    source, units = "", []
     for i, s in enumerate(sentences):
-        if prose:
-            prose += " "
-        start = len(prose.encode())
-        prose += s
+        start = len(source.encode())
+        source += s + (" " if i + 1 < len(sentences) and not s.endswith("\n") else "")
         uid = f"u{i + 1}"
-        unit = {"id": uid, "span": [start, len(prose.encode())], "kind": (kinds or {}).get(uid, "asserted")}
-        if contents and uid in contents:
-            unit["content"] = contents[uid]
-        units.append(unit)
+        content = (contents or {}).get(uid)
+        kind = (kinds or {}).get(uid, "asserted" if content is not None else "exposition")
+        units.append(unit_record(uid, [start, len(source.encode())], kind, content))
     records = []
     for mid, uid, text, form, target, *more in mentions:
         options = dict(more[0]) if more else {}
         occurrence = options.pop("occurrence", 0)
         a0, b0 = units[int(uid[1:]) - 1]["span"]
-        segment = prose.encode()[a0:b0].decode()
+        segment = source.encode()[a0:b0].decode()
         index = -1
         for _ in range(occurrence + 1):
             index = segment.lower().find(text.lower(), index + 1)
@@ -96,28 +115,32 @@ def document(sentences, mentions=(), names=NAMES, kinds=None, contents=None, gra
         a = a0 + len(segment[:index].encode())
         records.append({"id": mid, "unit": uid, "span": [a, a + len(text.encode())], "form": form,
                         "target": target, **options})
-    block = {"version": "ve.discourse@1", "definitions_version": "pending", "document_sort": "document",
-             "anchors": [{"id": "doc", "kind": "document", "label": "Policy", "span": [0, len(prose.encode())]}],
-             "names": names, "mentions": records}
-    block.update(extra or {})
-    if graph is None:
-        graph = OPEN_GRAPH
-    return {"format": "ve-document@2", "prose": prose, "units": units, "graph": graph, "open_terms": ["t"],
-            "discourse": block}
+    front = {"format": format, "units": units, "graph": graph or OPEN_GRAPH, "open_terms": [OPEN_TERM],
+             "_source": source}
+    if format == "ve-document@2":
+        block = {"version": "ve.discourse@1", "document_sort": "document",
+                 "anchors": [{"id": "doc", "kind": "document", "label": "Policy", "span": [0, len(source.encode())]}],
+                 "names": names, "mentions": records}
+        block.update(extra or {})
+        front["discourse"] = block
+    return front
 
 
-def pin(case):
-    """Fill `definitions_version` with the environment id under the base pair."""
-    probe = copy.deepcopy(case)
-    probe["kind"] = "discourse-resolve"
-    row = run([probe])[0]
-    assert row["status"] == "ok", row
-    case["document"]["discourse"]["definitions_version"] = row["environment_id"]
-    return case
+def text(doc, environment=None):
+    front = {k: v for k, v in doc.items() if k != "_source"}
+    front["environment"] = environment or env()
+    return "---\n" + json.dumps(front) + "\n---\n" + doc["_source"]
+
+
+def case(kind, doc, environment=None, files=None):
+    c = {"id": kind, "kind": kind, "document": text(doc, environment)}
+    if files is not None:
+        c["files"] = files
+    return c
 
 
 def resolve(doc, environment=None):
-    row = run([{"id": "r", "kind": "discourse-resolve", "environment": environment or env(), "document": doc}])[0]
+    row = run([case("discourse-resolve", doc, environment)])[0]
     assert row["status"] == "ok", row
     return row
 
@@ -127,13 +150,15 @@ def unit_result(row, uid):
     return value["formula"] if value["status"] == "resolved" else value["error"]
 
 
-def admit_raw(doc, environment=None):
-    return run([{"id": "a", "kind": "admission", "environment": environment or env(), "document": doc}])[0]
+def admit(doc, environment=None, files=None):
+    return run([case("admission", doc, environment, files)])[0]
 
 
-def admit(doc, environment=None):
-    case = pin({"id": "a", "kind": "admission", "environment": environment or env(), "document": doc})
-    return run([case])[0]
+def python_ids(doc, environment, tmp_path, name="doc.ve.md"):
+    path = tmp_path / name
+    path.write_text(text(doc, environment))
+    loaded = load_document(path)
+    return loaded["source_id"], loaded["document_id"]
 
 
 def unary(p, c):
@@ -145,6 +170,34 @@ def unique(sort, restriction):
                              ["forall", sort, ["implies", restriction, ["eq", ["var", 0], ["var", 1]]]]]]
 
 
+def model(environment, true_atoms):
+    """One entity per sort; the listed unary atoms of `api` true, everything else false."""
+    E = base_env(environment)
+    data = {"complete": True, "domains": {s: [f"e_{s}"] for s in E.model_sorts},
+            "constants": {c: f"e_{d.sort}" for c, d in E.constants.items()},
+            "relations": {p: ([["e_service"]] if p in true_atoms else []) for p in E.predicates}}
+    return FiniteModel.from_dict(E, data).model_id, data
+
+
+def reading_set(environment, set_id, unit, readings, status="open"):
+    E = base_env(environment)
+    ids = [rid for rid, _ in readings]
+    models = {}
+    if len(readings) > 1:
+        mid, data = model(environment, {readings[0][1][1]})
+        models[mid] = data
+    item = {"id": set_id, "unit": unit, "version": 1, "status": status, "readings": [
+        {"id": rid, "kind": "asserted", "content": ast, "meaning_id": meaning_id(E, formula_from_data(E, ast)),
+         "admission": {"who": "author", "why": "fixture",
+                       "distinguishing_models": {o: next(iter(models)) for o in ids if o != rid}}}
+        for rid, ast in readings]}
+    if models:
+        item["models"] = models
+    if status == "authored":
+        item["signature"] = "author"
+    return item
+
+
 MANAGER = ["binary", "manager_of", ["var", 0], ["const", "alice"]]
 PERSON = {"reviewed": ["person"]}
 
@@ -153,13 +206,14 @@ PERSON = {"reviewed": ["person"]}
 
 def test_alpha_named_antecedent(lean):
     doc = document(["The API is reviewed.", "It is safe."], [("m1", "u2", "It", "pronoun", entity("api"))],
-                   contents={"u1": unary("reviewed", "api")},
+                   contents={"u1": unary("reviewed", "api"), "u2": unary("safe", "api")},
                    graph={"root": "n2", "nodes": [{"name": "n2", "ast": unary("safe", "api"), "unit": "u2"}]})
     row = resolve(doc)
     assert unit_result(row, "u2") == unary("safe", "api")
     assert {t["name"] for t in row["mentions"]["m1"]["accessible"]} == {"api", "alice", "bob"}
     result = admit(doc)
     assert result["status"] == "ok", result
+    assert result["admitted"] is True
     assert result["bound"] == {"u2": unary("safe", "api")}
     assert result["statuses"] == {"u1": "CHECKED", "u2": "CHECKED"}
     assert result["report"]["root"]["ast"] == unary("safe", "api")
@@ -183,7 +237,7 @@ def test_unrecorded_reference_is_a_slot(lean):
     plain = document(["The API is reviewed.", "It is deployed."], contents={"u1": unary("reviewed", "api")})
     result = admit(plain)
     assert result["status"] == "ok", result
-    assert result["statuses"]["u2"] != "CHECKED"
+    assert result["statuses"]["u2"] == "LABELLED"
 
 
 # (α′) Natural view versus manifest
@@ -261,6 +315,10 @@ def test_zeta_ordinal_pair(lean):
     bad = document(["Alice and Bob are reviewed.", "The former is ready."],
                    [("m1", "u2", "The former", "ordinal_pair", {**pair, "name": "api"})])
     assert admit(bad, env(PERSON))["error"] == "InvalidInput: mention m1 target"
+    # Astra B: a recorded pair with no coordination before it is not a candidate
+    uncoordinated = document(["Alice is reviewed.", "The latter is ready."],
+                             [("m1", "u2", "The latter", "ordinal_pair", {**pair, "name": "bob"})])
+    assert unit_result(resolve(uncoordinated, env(PERSON)), "u2") == "UnresolvedReference: m1"
 
 
 # (η) Possessive description, nested mentions
@@ -299,7 +357,7 @@ def test_eta_presupposition_carriers(lean):
     claim = ["forall", "person", ["implies", MANAGER, ["unary", "ready", ["var", 0]]]]
     graph = {"root": "claim", "nodes": [{"name": "claim", "ast": claim, "unit": "u2"}]}
     assumed = eta("presuppositional", extra_units=["Alice has exactly one manager."], presupposition_unit="u3",
-                  graph=graph, contents={"u3": unique("person", MANAGER)})
+                  graph=graph, contents={"u2": claim, "u3": unique("person", MANAGER)})
     result = admit(assumed, env(PERSON))
     assert result["status"] == "ok", result
     assert result["presuppositions"] == {"m2": "discourse:presupposition:m2: assumed (u3)"}
@@ -311,8 +369,10 @@ def test_eta_presupposition_carriers(lean):
     assert result["status"] == "ok", result
     assert result["pending"] == [["u2", "PresuppositionUnresolved: m2"]]
     assert result["bound"] == {}
-    assert result["statuses"]["u2"] == "PENDING"
+    # Fable B1: pending is not a status; the unit is OPEN (13.12)
+    assert result["statuses"]["u2"] == "OPEN"
     assert result["presuppositions"] == {"m2": "discourse:presupposition:m2: unresolved"}
+    assert [r["status"] for r in result["references"]] == ["pending", "resolved"]
 
 
 def test_eta_pending_content_is_never_a_premise(lean):
@@ -325,7 +385,7 @@ def test_eta_pending_content_is_never_a_premise(lean):
     result = admit(unused, env(PERSON))
     assert result["status"] == "ok", result
     assert result["pending"] == [["u2", "PresuppositionUnresolved: m2"]]
-    assert result["bound"] == {} and result["statuses"]["u2"] != "CHECKED"
+    assert result["bound"] == {} and result["statuses"]["u2"] == "OPEN"
 
 
 # (θ) Plural
@@ -345,7 +405,7 @@ def test_theta_plural(lean):
     assert unit_result(resolve(unlisted, env(PERSON)), "u3") == "UnresolvedReference: m1"
     collective = document(["Alice and Bob are reviewed.", "They are ready."],
                           [("m1", "u2", "They", "plural", target, {"reading": "collective"})])
-    assert admit_raw(collective, env(PERSON))["error"] == "InvalidInput: reading collective"
+    assert admit(collective, env(PERSON))["error"] == "InvalidInput: reading collective"
     single = document(["Alice and Bob are reviewed.", "They are ready."],
                       [("m1", "u2", "They", "plural", {"kind": "entity", "members": ["alice"]}, {"reading": "distributive"})])
     assert admit(single, env(PERSON))["error"] == "InvalidInput: mention m1 target"
@@ -353,23 +413,35 @@ def test_theta_plural(lean):
 
 # (μ) Same-witness fusion and the J5 negatives
 
-def fusion(content=None, extra_sets=(), reading=None, opening="A service is deployed."):
-    fused = ["exists", "service", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+FUSED = ["exists", "service", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+
+
+def fusion(content=None, extra_sets=(), reading=None, opening="A service is deployed.", status="open"):
     doc = document([opening, "It is reviewed."], contents=content,
-                   extra={"groups": [{"set": "rs1", "version": 1, "reading": 0, "spans": ["u1", "u2"]}]})
-    doc["reading_sets"] = [{"id": "rs1", "version": 1, "readings": [reading or fused]}, *extra_sets]
+                   extra={"groups": [{"set": "rs1", "version": 1, "reading": "same-witness", "spans": ["u1", "u2"]}]},
+                   kinds={"u1": "asserted"})
+    doc["reading_sets"] = [reading_set(env(), "rs1", "u1", [("same-witness", reading or FUSED)], status),
+                           *extra_sets]
     return doc
 
 
 def test_mu_group_single_assertion(lean):
     result = admit(fusion())
     assert result["status"] == "ok", result
-    assert result["statuses"]["u1"] == result["statuses"]["u2"] == "CHECKED"
+    # Fable B1: an open owning set is OPEN on every span (W2's rule); an authored one is CHECKED
+    assert result["statuses"]["u1"] == result["statuses"]["u2"] == "OPEN"
+    authored = admit(fusion(status="authored"))
+    assert authored["statuses"]["u1"] == authored["statuses"]["u2"] == "CHECKED"
     assert admit(fusion({"u2": ["exists", "service", ["unary", "reviewed", ["var", 0]]]}))["error"] == \
         "IndependentFragment: u2"
+    own_set = fusion(extra_sets=[reading_set(env(), "rs2", "u2", [("r", unary("reviewed", "api"))])])
+    assert admit(own_set)["error"] == "IndependentFragment: u2"
     split = ["and", ["exists", "service", ["unary", "deployed", ["var", 0]]],
              ["exists", "service", ["unary", "reviewed", ["var", 0]]]]
-    assert admit(fusion(reading=split))["error"] == "WitnessSplit: rs1@1:0"
+    assert admit(fusion(reading=split))["error"] == "WitnessSplit: rs1@1:same-witness"
+    fused_id = fusion()
+    fused_id["discourse"]["groups"][0]["reading"] = "fused"
+    assert admit(fused_id)["error"] == "InvalidInput: reading fused not in rs1@1"
 
 
 def test_mu_group_reading_is_regenerated(lean):
@@ -377,9 +449,10 @@ def test_mu_group_reading_is_regenerated(lean):
     def fused(p, q):
         return ["exists", "service", ["and", ["unary", p, ["var", 0]], ["unary", q, ["var", 0]]]]
     for reading in (fused("safe", "safe"), fused("reviewed", "deployed"), fused("deployed", "safe")):
-        assert admit(fusion(reading=reading))["error"] == "ManifestMismatch: groups.rs1@1:0", reading
+        assert admit(fusion(reading=reading))["error"] == "ManifestMismatch: groups.rs1@1:same-witness", reading
     universal = fusion(opening="Every service is deployed.")
-    assert admit(universal)["error"] == "InvalidInput: group rs1@1:0 spans are outside the supported fragment"
+    assert admit(universal)["error"] == \
+        "InvalidInput: group rs1@1:same-witness spans are outside the supported fragment"
 
 
 # (ν) Universal plus it
@@ -401,39 +474,41 @@ def test_xi_description(lean):
 # (ο) Correlated readings
 
 def joint_doc(constraints, sets=2, readings=2):
-    doc = document(["The API is reviewed."], contents={"u1": unary("reviewed", "api")},
-                   extra={"constraints": constraints})
-    doc["reading_sets"] = [{"id": f"rs{k}", "version": 1,
-                            "readings": [unary("safe", "api") if i == 0 else unary("deployed", "api")
-                                         for i in range(readings)]} for k in range(5, 5 + sets)]
+    doc = document(["The API is reviewed."] + ["The API is safe."] * sets,
+                   contents={"u1": unary("reviewed", "api")},
+                   kinds={f"u{k + 2}": "asserted" for k in range(sets)}, extra={"constraints": constraints})
+    choices = [("r0", unary("safe", "api")), ("r1", unary("deployed", "api"))][:readings]
+    doc["reading_sets"] = [reading_set(env(), f"rs{5 + k}", f"u{k + 2}", choices) for k in range(sets)]
     return doc
 
 
 def joint(doc):
-    row = run([{"id": "j", "kind": "discourse-joint", "environment": env(), "document": doc}])[0]
+    row = run([case("discourse-joint", doc)])[0]
     assert row["status"] == "ok", row
     return row
 
 
 def test_omicron_joint_set(lean):
-    correlated = [{"kind": "requires", "a": ["rs5", 1, 0], "b": ["rs6", 1, 0]},
-                  {"kind": "requires", "a": ["rs5", 1, 1], "b": ["rs6", 1, 1]}]
+    correlated = [{"kind": "requires", "a": ["rs5", 1, "r0"], "b": ["rs6", 1, "r0"]},
+                  {"kind": "requires", "a": ["rs5", 1, "r1"], "b": ["rs6", 1, "r1"]}]
     row = joint(joint_doc(correlated))
     assert row["verdict"] == "COMPLETE"
     assert row["choices"] == [[["rs5", 1, 0], ["rs6", 1, 0]], [["rs5", 1, 1], ["rs6", 1, 1]]]
-    excludes = [{"kind": "excludes", "a": ["rs5", 1, i], "b": ["rs6", 1, k]} for i in range(2) for k in range(2)]
+    excludes = [{"kind": "excludes", "a": ["rs5", 1, i], "b": ["rs6", 1, k]} for i in ("r0", "r1") for k in ("r0", "r1")]
     row = joint(joint_doc(excludes))
     assert row["verdict"] == "INVALID" and row["diagnostic"] == "InvalidCompatibility: rs5, rs6"
     row = joint(joint_doc([], sets=7))
     assert row["verdict"] == "UNKNOWN" and row["diagnostic"] == "ResourceLimit: joint choices"
     zero = joint(joint_doc([], sets=0))
     assert zero["choices"] == [[]] and zero["joint"] == ["top"]
+    unknown_id = joint_doc([{"kind": "requires", "a": ["rs5", 1, "pattern-z"], "b": ["rs6", 1, "r0"]}])
+    assert run([case("discourse-joint", unknown_id)])[0]["error"] == "InvalidInput: reading pattern-z not in rs5@1"
 
 
 # (λ) The composition gate at report level
 
 def test_lambda_report_extension(lean):
-    excluded = [{"kind": "excludes", "a": ["rs5", 1, i], "b": ["rs6", 1, 1]} for i in range(2)]
+    excluded = [{"kind": "excludes", "a": ["rs5", 1, i], "b": ["rs6", 1, "r1"]} for i in ("r0", "r1")]
     graph = {"root": "leaf", "nodes": [{"name": "leaf", "ast": unary("deployed", "api"), "label": "readings:rs6@1:1"}]}
     doc = joint_doc(excluded)
     doc["graph"] = graph
@@ -443,6 +518,9 @@ def test_lambda_report_extension(lean):
     result = admit(unknown)
     assert result["status"] == "ok", result
     assert result["joint"] == "ResourceLimit: joint choices"
+    # Fable B2: an unfinished joint set is UNKNOWN in the answer, never admitted
+    assert result["admitted"] == "UNKNOWN"
+    assert result["reading_verdicts"] == {"report leaf": "UNKNOWN (joint choices)"}
 
 
 # (π) Document names
@@ -450,7 +528,7 @@ def test_lambda_report_extension(lean):
 DOCS = {"documents": [{"name": "this_policy", "display": ["this document", "this policy"], "refers": "self", "version": 3},
                       {"name": "policy2", "display": ["policy 2"], "refers": {"import": "policy2"}, "version": 2,
                        "source_id": "x", "document_id": "y"}],
-        "imports": {"policy2": {"source_id": "x", "document_id": "y"}}}
+        "imports": {"policy2": {"source_id": "x", "document_id": "y", "bytes": "policy2.ve.md"}}}
 DOC_CONSTANTS = {"api": "service", "alice": "person", "bob": "person", "this_policy": "document", "policy2": "document"}
 
 
@@ -464,12 +542,13 @@ def test_pi_document_names(lean):
     assert admit(doc, other)["error"] == "InvalidInput: document sort document has other constants"
 
 
-# (ρ, τ, υ) Validity and the truth boundary
+# (ρ, σ, τ, υ) Validity and the truth boundary
 
-def validity_doc(sentence, document_name, holds, extra_docs=None):
+def validity_doc(sentence, document_name, holds, extra_docs=None, before=()):
     extra = copy.deepcopy(extra_docs or DOCS)
-    extra["validity"] = [{"unit": "u1", "document": document_name, "holds": holds}]
-    return document([sentence], kinds={"u1": "meta"}, extra=extra)
+    uid = f"u{len(before) + 1}"
+    extra["validity"] = [{"unit": uid, "document": document_name, "holds": holds}]
+    return document([*before, sentence], kinds={f"u{i + 1}": "meta" for i in range(len(before) + 1)}, extra=extra)
 
 
 def test_rho_validity_self(lean):
@@ -481,43 +560,94 @@ def test_rho_validity_self(lean):
     assert negative["validity"] == {"u1": "refuted"} and negative["statuses"]["u1"] == "LABELLED"
 
 
-def stored(sentence="The API is reviewed."):
-    inner = document([sentence], contents={"u1": unary("reviewed", "api")},
-                     graph={"root": "n", "nodes": [{"name": "n", "ast": unary("reviewed", "api"), "unit": "u1"}]})
-    case = pin({"id": "s", "kind": "admission", "environment": env(), "document": inner})
-    assert run([case])[0]["status"] == "ok"
-    inner = case["document"]
-    text = json.dumps({"environment": env(), "document": inner})
-    source_id = hashlib.sha256(("ve-source-v0.2\n" + inner["prose"]).encode()).hexdigest()
-    return text, source_id
+def stored_doc(sentence="The API is reviewed.", graph=None, format="ve-document@1", contents=None):
+    return document([sentence], contents=contents if contents is not None else {"u1": unary("reviewed", "api")},
+                    graph=graph or {"root": "n", "nodes": [{"name": "n", "ast": unary("reviewed", "api"), "unit": "u1"}]},
+                    format=format)
 
 
-def import_docs(content, source_id):
+def stored(tmp_path, doc=None, environment=None):
+    """A sibling document's text and its pins, computed by the Python loader."""
+    doc = doc or stored_doc()
+    environment = environment or (env(profiles=["relational-fol@0"]) if doc["format"] == "ve-document@1" else env())
+    source_id, document_id = python_ids(doc, environment, tmp_path, "stored.ve.md")
+    return text(doc, environment), source_id, document_id
+
+
+def import_docs(source_id, document_id):
     docs = copy.deepcopy(DOCS)
-    docs["documents"][1]["source_id"] = source_id
-    docs["imports"] = {"policy2": {"source_id": source_id, "document_id": "y",
-                                   **({"content": content} if content is not None else {})}}
+    docs["documents"][1].update({"source_id": source_id, "document_id": document_id})
+    docs["imports"] = {"policy2": {"source_id": source_id, "document_id": document_id, "bytes": "policy2.ve.md"}}
     return docs
 
 
-def test_tau_validity_import(lean):
-    text, source_id = stored()
-    checked = admit(validity_doc("Policy 2 is a valid VE document.", "policy2", True, import_docs(text, source_id)),
-                    env(constants=DOC_CONSTANTS))
+def claim(holds, docs, files, sentence=None):
+    sentence = sentence or ("Policy 2 is a valid VE document." if holds else "Policy 2 is not a valid VE document.")
+    return admit(validity_doc(sentence, "policy2", holds, docs), env(constants=DOC_CONSTANTS), files)
+
+
+def test_tau_validity_import(lean, tmp_path):
+    """Fable A2: an import is checked under its own environment, and a completed rejection is not
+    a resource limit; Astra A5: pins are enforced."""
+    body, source_id, document_id = stored(tmp_path)
+    files = {"policy2.ve.md": body}
+    docs = import_docs(source_id, document_id)
+    checked = claim(True, docs, files)
     assert checked["status"] == "ok", checked
-    assert checked["validity"] == {"u1": "checked"}
-    absent = admit(validity_doc("Policy 2 is a valid VE document.", "policy2", True, import_docs(None, source_id)),
-                   env(constants=DOC_CONSTANTS))
-    assert absent["validity"] == {"u1": "unconfirmed (import bytes absent)"}
-    stale = admit(validity_doc("Policy 2 is a valid VE document.", "policy2", True, import_docs(text, "0" * 64)),
-                  env(constants=DOC_CONSTANTS))
-    assert stale["error"] == "StaleTarget: policy2"
-    rejected_text = json.dumps({"environment": env(constants=DOC_CONSTANTS), "document": {"format": "ve-document@2"}})
-    bad_id = hashlib.sha256(b"ve-source-v0.2\n").hexdigest()
-    negative = admit(validity_doc("Policy 2 is not a valid VE document.", "policy2", False,
-                                  import_docs(rejected_text, bad_id)), env(constants=DOC_CONSTANTS))
-    assert negative["status"] == "ok", negative
-    assert negative["validity"] == {"u1": "checked"}
+    assert checked["validity"] == {"u1": "checked"} and checked["statuses"]["u1"] == "CHECKED"
+    assert claim(False, docs, files)["validity"] == {"u1": "refuted"}
+    absent = claim(True, docs, {})
+    assert absent["validity"] == {"u1": "unconfirmed (import bytes absent)"} and absent["statuses"]["u1"] == "LABELLED"
+    assert claim(True, import_docs("0" * 64, document_id), files)["error"] == "StaleTarget: policy2"
+    # Astra A5: the document id pin, and the declaration agreeing with the import table
+    assert claim(True, import_docs(source_id, "0" * 64), files)["error"] == "StaleTarget: policy2"
+    disagreeing = import_docs(source_id, document_id)
+    disagreeing["documents"][1]["document_id"] = "1" * 64
+    assert claim(True, disagreeing, files)["error"] == "ManifestMismatch: documents.policy2"
+    # a completed rejection (an asserted node on a unit without content)
+    rejected = stored_doc(contents={}, graph={"root": "n", "nodes": [{"name": "n", "ast": unary("reviewed", "api"),
+                                                                       "unit": "u1"}]})
+    rejected["units"][0]["kind"] = "exposition"
+    body, source_id, document_id = stored(tmp_path, rejected)
+    files, docs = {"policy2.ve.md": body}, import_docs(source_id, document_id)
+    assert claim(False, docs, files)["validity"] == {"u1": "checked"}
+    assert claim(True, docs, files)["validity"] == {"u1": "refuted"}
+    # a check that hits a resource limit is unconfirmed for either polarity
+    many = {"root": "n0", "nodes": [{"name": f"n{i}", "ast": ["top"], "label": "open:t"} for i in range(1001)]}
+    body, source_id, document_id = stored(tmp_path, stored_doc(graph=many, contents={}))
+    files, docs = {"policy2.ve.md": body}, import_docs(source_id, document_id)
+    for holds in (True, False):
+        assert claim(holds, docs, files)["validity"] == {"u1": "unconfirmed (ResourceLimit: graph node count)"}
+    # a sibling that does not decode is an error of the importing document (4.1(10)), not an outcome
+    bad = body.replace('"format"', '"extra": 1, "format"', 1)
+    assert claim(True, import_docs(hashlib.sha256(bad.encode()).hexdigest(), document_id), {"policy2.ve.md": bad})[
+        "error"] == "InvalidInput: document policy2: unknown document metadata"
+
+
+def test_tau_import_under_its_own_profiles(lean, tmp_path):
+    """Fable A2: a @2 import and a @1 import both check under their own declarations."""
+    body, source_id, document_id = stored(tmp_path, stored_doc(format="ve-document@2"))
+    assert claim(True, import_docs(source_id, document_id), {"policy2.ve.md": body})["validity"] == {"u1": "checked"}
+    body, source_id, document_id = stored(tmp_path, stored_doc(format="ve-document@1"))
+    assert claim(True, import_docs(source_id, document_id), {"policy2.ve.md": body})["validity"] == {"u1": "checked"}
+
+
+def test_sigma_validity_embedded(lean, tmp_path):
+    """Fable A2: an embedded unit's bytes are a document text, checked at depth 1."""
+    inner = stored_doc(sentence="The API is reviewed.\n")
+    inner_env = env(profiles=["relational-fol@0"])
+    embedded = text(inner, inner_env)
+    _, document_id = python_ids(inner, inner_env, tmp_path, "inner.ve.md")
+    docs = {"documents": [{"name": "above", "display": ["the above document"], "refers": {"embedded": "u1"},
+                           "version": 1, "document_id": document_id}]}
+    doc = validity_doc("The above document is a valid VE document.", "above", True, docs, before=[embedded])
+    constants = {"api": "service", "alice": "person", "bob": "person", "above": "document"}
+    result = admit(doc, env(constants=constants))
+    assert result["status"] == "ok", result
+    assert result["validity"] == {"u2": "checked"}
+    tampered = copy.deepcopy(doc)
+    tampered["_source"] = tampered["_source"].replace("The API is reviewed.", "The API is reviewes.")
+    assert admit(tampered, env(constants=constants))["error"] == "StaleTarget: above"
 
 
 def test_upsilon_self_truth(lean):
@@ -547,15 +677,20 @@ def test_validity_binding_is_regenerated_from_wording(lean):
 
 # (φ) Identity, tampering and the profile adapter
 
-def test_phi_tampering_and_identity(lean):
-    base = document(["The API is reviewed.", "It is safe."], [("m1", "u2", "It", "pronoun", entity("api"))],
+def phi_base():
+    return document(["The API is reviewed.", "It is safe."], [("m1", "u2", "It", "pronoun", entity("api"))],
+                    contents={"u2": unary("safe", "api")},
                     graph={"root": "n2", "nodes": [{"name": "n2", "ast": unary("safe", "api"), "unit": "u2"}]})
+
+
+def test_phi_tampering_and_identity(lean, tmp_path):
+    base = phi_base()
     tampered = copy.deepcopy(base)
-    tampered["units"][1]["content"] = unary("deployed", "api")
+    tampered["units"][1]["content"] = {"ast": unary("deployed", "api")}
     assert admit(tampered)["error"] == "ManifestMismatch: bound.u2"
-    stale = pin({"id": "s", "kind": "admission", "environment": env(), "document": copy.deepcopy(base)})
-    stale["document"]["discourse"]["definitions_version"] = "0" * 64
-    assert run([stale])[0]["error"] == "StaleTarget: definitions@" + "0" * 64
+    stale = copy.deepcopy(base)
+    stale["discourse"]["definitions_version"] = "0" * 64
+    assert admit(stale)["error"] == "StaleTarget: definitions@" + "0" * 64
     first = admit(copy.deepcopy(base))
     relabelled = copy.deepcopy(base)
     relabelled["discourse"]["anchors"][0]["label"] = "Renamed"
@@ -565,13 +700,21 @@ def test_phi_tampering_and_identity(lean):
     resolved = resolve(copy.deepcopy(base))
     ast = unary("safe", "api")
     meaning = digest("ve-meaning-v0.2:relational-fol@0\n", {"environment_id": resolved["environment_id"], "ast": ast})
-    assert resolved["units"]["u2"]["meaning_id"] == meaning
+    assert resolved["units"]["u2"]["meaning_id"] == meaning == first["meaning_ids"]["u2"]
     plain_env = env(profiles=["relational-fol@0"])
     plain_id = digest("ve-environment-v0.2:relational-fol@0\n", plain_env)
     assert resolved["environment_id"] == plain_id
+    moved = copy.deepcopy(base)
+    moved["weights"] = []
+    assert admit(moved)["document_id"] == first["document_id"]
+    # Fable B3: the identities are the Python loader's on the same bytes
+    same = stored_doc(format="ve-document@2")
+    source_id, document_id = python_ids(same, env(), tmp_path)
+    row = admit(same)
+    assert (row["source_id"], row["document_id"]) == (source_id, document_id)
 
 
-def test_phi_format1(lean):
+def test_phi_format1(lean, tmp_path):
     cases = json.loads((ROOT / "lean/VE/Route/examples/route-cases.json").read_text())
     admission = next(c for c in cases if c.get("kind") == "admission" and c["expected"].get("status") == "ok")
     delegated = {k: v for k, v in admission.items() if k != "expected"}
@@ -581,6 +724,9 @@ def test_phi_format1(lean):
     with_profile = copy.deepcopy(delegated)
     with_profile["environment"]["profiles"] = sorted(with_profile["environment"]["profiles"] + ["ve.discourse@1"])
     assert run([with_profile])[0]["error"] == "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
+    one = stored_doc()
+    assert admit(one, env(profiles=["relational-fol@0"]))["admitted"] is True
+    assert admit(one, env())["error"] == "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
 
 
 # (ι) Definition reference and (κ) anchors
@@ -597,8 +743,11 @@ def iota_doc():
 
 
 def test_iota_definition_reference(lean):
-    assert unit_result(resolve(iota_doc()), "u2") == ["forall", "service", ["implies", ["unary", "eligible", ["var", 0]],
-                                                                            ["unary", "reviewed", ["var", 0]]]]
+    row = resolve(iota_doc())
+    assert unit_result(row, "u2") == ["forall", "service", ["implies", ["unary", "eligible", ["var", 0]],
+                                                            ["unary", "reviewed", ["var", 0]]]]
+    # Fable B3: the recorded version pin is carried, not dropped
+    assert row["mentions"]["m1"]["pin"] == 2
     unexported = iota_doc()
     unexported["discourse"]["anchors"][1]["exports"] = []
     assert unit_result(resolve(unexported), "u2") == "UnresolvedReference: m1"

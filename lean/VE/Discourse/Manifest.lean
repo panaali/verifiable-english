@@ -72,6 +72,7 @@ structure Mention where
   restriction : Option VE.Formula
   reading : Option Reading
   presuppositionUnit : Option String
+  pin : Option Nat                    -- the target's recorded `version` pin (carried and reported)
   deriving DecidableEq, Repr
 
 /-- A slot of a derivation: a surface position and a form, never a target (4.3); a
@@ -134,14 +135,30 @@ structure Manifest where
   selfTruth : List String
   choices : List (String × Nat × Nat)
 
+/-- An active reading set of the document (the latest version per unit, `ve/readings.py`):
+its owning unit, status (`authored` or `open`) and readings as (reading id, content). W2's
+decoded document keeps only the all-assertion sets, without ids or status. -/
+structure FrontSet where
+  id : String
+  unit : String
+  version : Nat
+  status : String
+  readings : List (String × VE.Formula)
+  deriving DecidableEq, Repr
+
 /-- A `ve-document@2` document: the environment, W2's decoded document, the manifest,
-the source identity and the tokenised English text of each unit. -/
+the source identity and the tokenised English text of each unit; beside W2's document, the
+active reading sets and each unit's W2 status as the loader computed them. -/
 structure DDoc where
   E : VE.Environment
   base : Doc
   K : Manifest
   sourceId : String
   text : String → Option (List VE.English.Tok)
+  sets : List FrontSet
+  status : List (String × String)
+  prose : String                      -- the source (an embedded document is a unit's bytes of it)
+  files : Lean.Json                   -- the sibling files an import may name (4.1(10))
 
 /-- The unit record of a unit id. -/
 def unitOf (D : Doc) (u : String) : Option DocUnit := D.units.find? (fun x => x.id == u)
