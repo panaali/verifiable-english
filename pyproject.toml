@@ -24,6 +24,7 @@ dev = [
     "hypothesis>=6.140",
     "scikit-learn>=1.7",
     "scipy>=1.16",
+    "import-linter>=2.9,<3",
 ]
 
 [tool.hatch.build.targets.wheel]
