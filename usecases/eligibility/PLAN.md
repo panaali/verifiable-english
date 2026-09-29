@@ -421,7 +421,15 @@ for B15, B16 and B19, and restoring its old R6 changes them for B17 and B18.
 Its R5 always read a care stay's end date. After B20 to B23 and C25 to C27
 were added, it printed **69/69**. Making it ignore the end date changes the
 answers for B20 to B23, C25 and C27, and making the end bound strict changes
-C26.
+C26. For review finding C its R7 now needs the shared home and the
+partnership to cover the whole week (AR7). It also reads the couple from the
+housemate's record for both persons; before, it looked for `partner` on the
+applicant, so the housemate's own reg. 4(2)(a) never applied. That changed no
+key, because the housemate's R7 needs RB(P) and every reg. 3 paragraph that
+reads the housemate's entitlement needs ¬RB(P). After B24 to B30 were added,
+it printed **76/76**. Dropping the whole-week test on the home changes B24 and
+B25, on the partnership B26 and B27, making the first or last bound strict
+changes B28 or B29, and reading "throughout" into 3(3) changes B30.
 
 **Limits of this independence.**
 
@@ -490,6 +498,17 @@ and `["decimal", "gbp_penny", …]`):
   The first translation left this bound out and read no end date (eligibility
   recheck). Every profile field is now either carried by a fact or listed
   with a reason as unread (`home`, O7), and the builder rejects any other field.
+- **R7 (AR7):** for the shared home,
+  `home_throughout(r, o) ⇔ shares_home(r, o) ∧ (¬home_start_dated(r, o) ∨ date_no_later(home_from, 2026-09-21)) ∧ (¬home_ended(r, o) ∨ date_no_later(2026-09-27, home_until))`
+  (R7a), and the same for the partnership with `partner_of`,
+  `partnership_start_dated`, `partnership_ended`, `partner_from` and
+  `partner_until` (R7b). Then R7 is
+  `partners_throughout(r, o) ∧ lives_with(r, o) ∧ home_throughout(r, o) ∧ reached_pa(o) ∧ has_rb(o)`.
+  The four day constants belong to the household, not to a role, since
+  `cases.json` records the couple once, on the housemate. The first
+  translation used `partner_of` and `lives_with` alone, which hold on some
+  day of QW, so R7 lost "throughout" (review finding C). R14's 3(3) keeps
+  `partner_of ∧ lives_with`, since it says "in that week".
 - **R8:**
   - `inpatient(r) → shift_days(r_treatment_start, r_admitted, 1)`, the day
     after admission, by S3 reg. 2(5);
@@ -665,9 +684,15 @@ each.
 | M23: R6 also requiring the other person out of residential care (the first run's reading) | B17, B18 |
 | M24: R5 without the care end date (the reading before the recheck) | B20, B21, B22, B23, C25, C27 |
 | M25: R5 with the care end date strictly after QW₁ | C26 |
+| M26: R7 without the whole-week shared home | B24, B25 |
+| M27: R7 without the whole-week partnership | B26, B27 |
+| M28: R7 with the first days strictly before QW₀ | B28 |
+| M29: R7 with the last days strictly after QW₁ | B29 |
+| M30: R14 with "throughout" read into 3(3) | B30 |
 
-Kill rate = mutants killed / 25; 25/25 is expected. (M20 to M23 were added by
-the eligibility review and M24, M25 by the recheck; the first run had M1 to M19.)
+Kill rate = mutants killed / 30; 30/30 is expected. (M20 to M23 were added by
+the eligibility review, M24 and M25 by the recheck, and M26 to M30 for review
+finding C; the first run had M1 to M19.)
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:
