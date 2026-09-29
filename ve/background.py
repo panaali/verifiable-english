@@ -172,6 +172,10 @@ def background(env) -> tuple[Premise, ...]:
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
 
     def lean():
+        if env.language != "ve.core@0.2":
+            # The frozen v0 and v0.1 envelopes have no generated Background: their
+            # Lean certificate runners bind the case premises alone.
+            return ()
         row = run(route_mode(env), [case])[0]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable

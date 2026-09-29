@@ -446,6 +446,9 @@ def admit_document(environment, document) -> dict:
             "document": document}
 
     def lean():
+        # Envelope routing, not a verdict: the Lean route admits ve.core@0.2 only.
+        if env.language != LANGUAGE:
+            raise VEError("admission requires a ve.core@0.2 environment")
         row = run("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
