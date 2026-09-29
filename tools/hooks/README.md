@@ -1,16 +1,22 @@
 # Git hooks
 
-`pre-commit` runs fast checks on the **staged** content of a commit (the index,
-never the working tree). It runs no tests and no builds: the gate, fix loops and
-merge train still run the full checkers. A typical commit takes well under a
-second; `tests/test_precommit_hook.py` holds a 1,765-path, 18 MB staged change
-to under 10 s. Run `tools/hooks/pre-commit --timings` to see per-check times.
+`pre-commit` runs fast checks on the **staged** content of a commit. Everything
+comes from the index: file contents are read raw with `git cat-file` (no
+`.gitattributes`, diff drivers, filters or binary detection), and the policy
+code the checks reuse (`tools/layer_policy.py`, `tools/check_lean_imports.py`,
+`tools/check_rust_deps.py`, `lean/audit.py`) is the staged version, loaded from
+a temporary snapshot of the index together with the staged directory and `.py`
+layout that Python import resolution consults. The working tree is never read,
+so a verdict depends only on what the commit would record. It runs no tests and
+no builds. A typical commit takes well under a second;
+`tests/test_precommit_hook.py` holds a 1,765-path, 18 MB staged change to under
+10 s. Run `tools/hooks/pre-commit --timings` to see per-check times.
 
 | Check | What it rejects | Source of truth |
 | --- | --- | --- |
-| secrets | Added lines that look like private key blocks, AWS, GitHub, Anthropic, OpenAI, Google, Slack, Hugging Face or Stripe live credentials, or a quoted high-entropy `api_key`/`secret_key`/`client_secret`/`access_token`/`auth_token`/`password` value; any staged path under `.webapp-private/`; `.env` files (not `.env.example`/`.sample`/`.template`), `id_rsa`-style keys, `.p12`/`.pfx` files | patterns in `precommit.py` |
-| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean`; a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py`, the staged ledgers `tools/layer-exceptions.json` and `tools/lean-layer-exceptions.json` |
-| Lean forbidden tokens | In staged files under `lean/`: every whole word `lean/audit.py` forbids (`sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | `lean/audit.py` |
+| secrets | In every added or modified staged file, text or binary: a match for private key blocks, AWS, GitHub, Anthropic, OpenAI, Google, Slack, Hugging Face or Stripe live credentials, or a quoted high-entropy `api_key`/`secret_key`/`client_secret`/`access_token`/`auth_token`/`password` value, on a line that is not already a line of that path at `HEAD`; any staged path under `.webapp-private/`; `.env` files (not `.env.example`/`.sample`/`.template`), `id_rsa`-style keys, `.p12`/`.pfx` files | patterns in `precommit.py` |
+| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (whole files: an import's module may sit on a later line); a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
+| Lean forbidden tokens | In staged files under `lean/`: every whole word the staged `lean/audit.py` forbids (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | the staged `lean/audit.py` |
 | frozen files | A staged change to a file listed in `lean/VE/Route/frozen-sources.sha256` unless the staged inventory records the staged file's SHA-256; a deleted file that is still listed; a new `lean/VE/**/*.lean` module that is not listed; a changed `lean/Main.lean` that no longer matches `MAIN_BASE` in `lean/VE/Route/frozen.py`. A staged inventory or `frozen.py` re-checks every entry | `lean/VE/Route/frozen.py` rules |
 
 The hook checks only what a commit adds. Existing drift, such as stale ledger
@@ -30,7 +36,14 @@ instead where possible, as `tests/test_precommit_hook.py` does.
 - `git commit --no-verify` skips every hook silently.
 - `VE_SKIP_HOOKS=1 git commit ...` skips this hook and prints a warning.
 
-Either way, the gate still runs the full checks before a merge.
+Only part of what a bypass skips is checked again before a merge. The gate
+(`tools/gate.py`) runs `lean/audit.py`, which covers the Lean forbidden tokens,
+and the test suite, which runs `lean/VE/Route/frozen.py`. **Nothing downstream
+scans for secrets**, and the layer checkers (`tools/check_python_layers.py`,
+`tools/check_lean_imports.py`, `tools/check_rust_deps.py`) run only from
+`tools/select_tests.py`, not in the gate. After a bypass, run
+`tools/hooks/pre-commit` by hand once the commit's content is staged again (for
+example after `git reset --soft HEAD~1`), or run those checkers directly.
 
 ## Install
 

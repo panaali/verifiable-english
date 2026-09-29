@@ -1,16 +1,21 @@
 """Fast pre-commit checks over STAGED content only; see tools/hooks/README.md.
 
-Every check reads blobs from the index (GIT_INDEX_FILE is honoured), never the
-working tree, and no check runs tests or builds. The full checkers still run in
-the gate: this hook only rejects the cheap-to-detect mistakes early.
+Every check reads blobs from the index (GIT_INDEX_FILE is honoured) with
+`git cat-file`, which applies no attributes, filters or diff drivers; nothing
+reads the working tree. The policy code the checks reuse (tools/layer_policy.py,
+tools/check_lean_imports.py, tools/check_rust_deps.py, lean/audit.py) and the
+module layout it resolves imports against are the STAGED versions too, loaded
+from a snapshot of the index. No check runs tests or builds. The gate re-runs
+only the Lean audit and (through the tests) the frozen-source check; secrets and
+layer imports have no later check (see the README's bypass section).
 """
 from __future__ import annotations
 
 import ast
-import bisect
-import codecs
 import contextlib
+import functools
 import hashlib
+import importlib
 import importlib.util
 import io
 import json
@@ -22,29 +27,18 @@ import subprocess
 import sys
 import tempfile
 import time
-
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "tools"))
-
-from check_lean_imports import imports as lean_imports  # noqa: E402
-import check_rust_deps  # noqa: E402
-from layer_policy import lean_layer, python_exports, python_imports, python_layer  # noqa: E402
-
-
-def _load(name: str, path: Path):
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-audit = _load("ve_lean_audit", ROOT / "lean/audit.py")
+from types import SimpleNamespace
+from typing import NamedTuple
 
 PYTHON_LEDGER = "tools/layer-exceptions.json"
 LEAN_LEDGER = "tools/lean-layer-exceptions.json"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
 FROZEN_SCRIPT = "lean/VE/Route/frozen.py"
 MAIN = "lean/Main.lean"
+POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
+          "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py"}
+RUST_MANIFEST = re.compile(r"rust/(?:.+/)?Cargo\.toml")
+BLOB_MODES = {"100644", "100755", "120000"}
 ALLOW_SECRET = b"pragma: allowlist secret"
 
 ASSIGNED = rb"\b[\"']?\s*[:=]\s*[\"'](?=[a-z0-9/+_.-]*\d)(?=[a-z0-9/+_.-]*[a-z])[a-z0-9/+_.-]{24,}[\"']"
@@ -94,34 +88,42 @@ def git(*args: str, data: bytes | None = None) -> bytes:
     return result.stdout
 
 
-def unquote(path: bytes) -> str:
-    """Undo git's C-style path quoting."""
-    if path.startswith(b'"') and path.endswith(b'"'):
-        path = codecs.escape_decode(path[1:-1])[0]
-    return path.decode("utf-8", "replace")
+class Change(NamedTuple):
+    status: str
+    old_mode: str
+    mode: str
+    old_blob: str
+    blob: str
 
 
 class Index:
-    """Staged changes against HEAD, with blob access through one cat-file process."""
+    """Staged changes against HEAD, with blob access through one cat-file process.
 
-    def __init__(self) -> None:
+    `snapshot` is a scratch directory that receives the staged policy code and
+    module layout on first use of `policy()`.
+    """
+
+    def __init__(self, snapshot: Path) -> None:
         head = subprocess.run(["git", "rev-parse", "--verify", "-q", "HEAD^{commit}"],
                               capture_output=True, text=True, check=False).stdout.strip()
         self.base = head or git("hash-object", "-t", "tree", "--stdin", data=b"").decode().strip()
-        self.changed: dict[str, tuple[str, str, str]] = {}  # path -> (status, mode, blob)
+        self.changed: dict[str, Change] = {}
         fields = git("diff-index", "--cached", "-z", "--no-renames", "--ignore-submodules=all",
                      self.base).split(b"\0")
         for meta, path in zip(fields[0::2], fields[1::2]):
             if meta:
-                _, mode, _, blob, status = meta.decode().lstrip(":").split()
-                self.changed[path.decode("utf-8", "replace")] = (status[0], mode, blob)
-        self._blobs: dict[str, bytes | None] = {}
+                old_mode, mode, old_blob, blob, status = meta.decode().lstrip(":").split()
+                self.changed[path.decode("utf-8", "replace")] = Change(status[0], old_mode, mode,
+                                                                        old_blob, blob)
+        self.snapshot = snapshot
+        self._objects: dict[str, bytes | None] = {}
         self._listing: dict[str, str] | None = None
+        self._policy: SimpleNamespace | None = None
 
     def staged(self, predicate=lambda path: True) -> list[str]:
         """Added or modified regular files (no deletions, symlinks or gitlinks)."""
-        return sorted(path for path, (status, mode, _) in self.changed.items()
-                      if status != "D" and mode in {"100644", "100755"} and predicate(path))
+        return sorted(path for path, change in self.changed.items()
+                      if change.status != "D" and change.mode in {"100644", "100755"} and predicate(path))
 
     def listing(self) -> dict[str, str]:
         """Every index path with its blob id."""
@@ -133,89 +135,104 @@ class Index:
                     self._listing[path.decode("utf-8", "replace")] = meta.split()[1].decode()
         return self._listing
 
-    def read(self, names: list[str]) -> dict[str, bytes | None]:
-        """Read staged paths (`path`) or objects; one batch process for all misses."""
-        specs = {name: (self.changed[name][2] if name in self.changed else f":{name}")
-                 for name in names if name not in self._blobs}
-        if specs:
-            out = git("cat-file", "--batch", data="".join(f"{spec}\n" for spec in specs.values()).encode())
+    def objects(self, ids: list[str]) -> dict[str, bytes | None]:
+        """Raw object contents by id (no attributes or filters); one batch process for all misses."""
+        missing = list(dict.fromkeys(i for i in ids if i not in self._objects))
+        if missing:
+            out = git("cat-file", "--batch", data="".join(f"{i}\n" for i in missing).encode())
             offset = 0
-            for name in specs:
+            for object_id in missing:
                 end = out.index(b"\n", offset)
                 header = out[offset:end].split()
                 if header[-1] == b"missing":
-                    self._blobs[name] = None
+                    self._objects[object_id] = None
                     offset = end + 1
                     continue
                 size = int(header[2])
-                self._blobs[name] = out[end + 1:end + 1 + size]
+                self._objects[object_id] = out[end + 1:end + 1 + size]
                 offset = end + 2 + size
-        return {name: self._blobs[name] for name in names}
+        return {i: self._objects[i] for i in ids}
+
+    def read(self, names: list[str]) -> dict[str, bytes | None]:
+        """Staged contents by path; None for a path that is not in the index."""
+        ids = {name: (self.changed[name].blob if name in self.changed and self.changed[name].status != "D"
+                      else self.listing().get(name)) for name in names}
+        found = self.objects([i for i in ids.values() if i is not None])
+        return {name: None if i is None else found[i] for name, i in ids.items()}
 
     def text(self, name: str) -> str | None:
         blob = self.read([name])[name]
         return None if blob is None else blob.decode("utf-8", "replace")
 
+    def policy(self) -> SimpleNamespace:
+        """Load the staged policy modules from a snapshot of the index.
 
-def added_lines(index: Index) -> dict[str, list[tuple[int, str]]]:
-    """Map each staged text file to its added lines (1-based numbers in the new file)."""
-    patch = git("diff", "--cached", "-U0", "--no-color", "--no-ext-diff", "--no-textconv",
-                "--no-renames", "--ignore-submodules=all", "--src-prefix=a/", "--dst-prefix=b/",
-                index.base)
-    files: dict[str, list[tuple[int, bytes]]] = {}
-    current = None
-    old_left = new_left = 0
-    number = 0
-    hunk = re.compile(rb"^@@ -\d+(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
-    for line in patch.split(b"\n"):
-        if old_left > 0 or new_left > 0:
-            tag = line[:1]
-            if tag == b"+":
-                if current is not None:
-                    files[current].append((number, line[1:]))
-                number += 1
-                new_left -= 1
-            elif tag == b"-":
-                old_left -= 1
-            elif tag == b" ":
-                number += 1
-                old_left -= 1
-                new_left -= 1
-            continue  # "\ No newline at end of file" lines carry no content
-        if line.startswith(b"+++ "):
-            name = unquote(line[4:])
-            current = name[2:] if name.startswith("b/") else None
-            if current is not None:
-                files.setdefault(current, [])
-        elif (match := hunk.match(line)):
-            old_left = int(match[1]) if match[1] is not None else 1
-            number = int(match[2])
-            new_left = int(match[3]) if match[3] is not None else 1
-    return files
+        The snapshot holds the policy code, `ve/__init__.py`, every Rust manifest,
+        every staged directory and an empty stand-in for every other staged `.py`
+        path, so module resolution (`layer_policy.python_imports` tests file and
+        directory existence) sees the staged tree, never the working tree.
+        """
+        if self._policy is None:
+            listing = self.listing()
+            real = [*POLICY.values(), "ve/__init__.py",
+                    *(p for p in listing if RUST_MANIFEST.fullmatch(p))]
+            blobs = self.read(real)
+            for path, blob in blobs.items():
+                if blob is None and path in POLICY.values():
+                    raise RuntimeError(f"policy file {path} is missing from the index")
+            for folder in {PurePosixPath(p).parent for p in listing}:
+                (self.snapshot / folder).mkdir(parents=True, exist_ok=True)
+            for path in [p for p in listing if p.endswith(".py")] + real:
+                target = self.snapshot / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(blobs.get(path) or b"")
+            sys.dont_write_bytecode = True  # the snapshot is deleted on exit
+            sys.path.insert(0, str(self.snapshot / "tools"))
+            modules = {name: importlib.import_module(name) for name in POLICY if name != "audit"}
+            spec = importlib.util.spec_from_file_location("ve_lean_audit", self.snapshot / POLICY["audit"])
+            modules["audit"] = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(modules["audit"])
+            for name, module in modules.items():
+                if Path(module.__file__).resolve() != (self.snapshot / POLICY[name]).resolve():
+                    raise RuntimeError(f"{name} did not load from the staged snapshot")
+            self._policy = SimpleNamespace(**modules)
+        return self._policy
 
 
 def check_secrets(index: Index) -> list[str]:
+    """Scan the staged blob of every added or modified file for new secrets.
+
+    A match counts when a line it covers is not a line of the same path at HEAD
+    (so edits and moves of already-committed lines stay quiet), unless one of
+    those lines carries ALLOW_SECRET.
+    """
     errors = []
-    for path, (status, _, _) in sorted(index.changed.items()):
-        if status == "D":
+    paths = []
+    for path, change in sorted(index.changed.items()):
+        if change.status == "D" or change.mode not in BLOB_MODES:
             continue
+        paths.append(path)
         parts = PurePosixPath(path).parts
         if ".webapp-private" in parts:
             errors.append(f"{path}: files under .webapp-private/ must never be committed")
         elif PRIVATE_KEY_FILE.fullmatch(parts[-1]) and not PUBLIC_ENV_FILE.fullmatch(parts[-1]):
             errors.append(f"{path}: private key or environment file")
-    for path, lines in added_lines(index).items():
-        text = b"\n".join(line for _, line in lines)
-        starts = []
-        offset = 0
-        for _, line in lines:
-            starts.append(offset)
-            offset += len(line) + 1
-        for offset, kind, found in sorted(secrets_in(text)):
-            number, line = lines[bisect.bisect_right(starts, offset) - 1]
-            if ALLOW_SECRET not in line:
-                # Echo only a short prefix: hook output lands in terminals and agent transcripts.
-                errors.append(f"{path}:{number}: possible {kind} ({found[:4].decode(errors='replace')}...)")
+    for path, blob in index.read(paths).items():
+        hits = sorted(secrets_in(blob or b""))
+        if not hits:
+            continue
+        change = index.changed[path]
+        old = index.objects([change.old_blob])[change.old_blob] if change.old_mode in BLOB_MODES else None
+        old_lines = set((old or b"").split(b"\n"))
+        for offset, kind, found in hits:
+            start = blob.rfind(b"\n", 0, offset) + 1
+            end = blob.find(b"\n", offset + len(found))
+            covered = blob[start:len(blob) if end < 0 else end]
+            if ALLOW_SECRET in covered or set(covered.split(b"\n")) <= old_lines:
+                continue
+            number = blob.count(b"\n", 0, offset) + 1
+            # Echo only a short prefix: hook output lands in terminals and agent transcripts.
+            errors.append(f"{path}:{number}: possible {kind} ({found[:4].decode(errors='replace')}...)")
     return errors
 
 
@@ -230,29 +247,21 @@ def lean_module(path: str) -> str:
     return ".".join(PurePosixPath(path).with_suffix("").parts[1:])
 
 
-def module_layer(module: str) -> int | None:
+def module_layer(policy: SimpleNamespace, module: str) -> int | None:
     # Same mapping as tools/check_python_layers.py (which needs grimp for its full graph).
-    return 5 if module == "ve_experiments" or module.startswith("ve_experiments.") else python_layer(module)
+    if module == "ve_experiments" or module.startswith("ve_experiments."):
+        return 5
+    return policy.layer_policy.python_layer(module)
 
 
-def python_targets(item: tuple[str, bytes, dict[str, str]]) -> set[str] | SyntaxError:
-    path, source, exports = item
+def python_targets(resolve, exports: dict[str, str], root: Path,
+                   item: tuple[str, bytes]) -> set[str] | SyntaxError:
+    path, source = item
     module, package = python_module(path)
     try:
-        return python_imports(module, source.decode("utf-8", "replace"), exports, root=ROOT, package=package)
+        return resolve(module, source.decode("utf-8", "replace"), exports, root=root, package=package)
     except SyntaxError as error:
         return error
-
-
-def lean_targets(source: bytes) -> list[str]:
-    # Only the text through the last line mentioning `import` can hold an import
-    # command, and the checker scans left to right, so this prefix gives the same
-    # answer as the whole file at a fraction of the character-by-character cost.
-    last = source.rfind(b"import")
-    if last < 0:
-        return []
-    end = source.find(b"\n", last)
-    return lean_imports(source[:len(source) if end < 0 else end].decode("utf-8", "replace"))
 
 
 def mapped(func, items: list) -> list:
@@ -266,68 +275,68 @@ def mapped(func, items: list) -> list:
 
 def check_layers(index: Index) -> list[str]:
     errors = []
+    python = index.staged(lambda p: p.startswith("ve/") and p.endswith(".py"))
+    lean = index.staged(lambda p: p.startswith("lean/") and p.endswith(".lean")
+                        and ".lake" not in PurePosixPath(p).parts)
+    rust = [p for p in index.changed if RUST_MANIFEST.fullmatch(p)]
+    if not (python or lean or rust):
+        return []
+    policy = index.policy()
+    layers = policy.layer_policy
 
     def mappable(path: str, module: str, layer: int | None, kind: str) -> bool:
         # Modules already unmapped at HEAD are the full checker's (and the gate's)
         # business; the hook only rejects a commit that ADDS an unmapped module.
-        if layer is None and index.changed[path][0] == "A" and module != "ve":
+        if layer is None and index.changed[path].status == "A" and module != "ve":
             errors.append(f"{path}: unmapped {kind} module {module} (add it to tools/layer_policy.py)")
         return layer is not None
 
-    python = [p for p in index.staged(lambda p: p.startswith("ve/") and p.endswith(".py"))
-              if mappable(p, python_module(p)[0], module_layer(python_module(p)[0]), "Python")]
-    lean = [p for p in index.staged(lambda p: p.startswith("lean/") and p.endswith(".lean")
-                                    and ".lake" not in PurePosixPath(p).parts)
-            if mappable(p, lean_module(p), lean_layer(lean_module(p)), "Lean")]
-    rust = [p for p in index.changed if re.fullmatch(r"rust/(?:.+/)?Cargo\.toml", p)]
+    python = [p for p in python if mappable(p, python_module(p)[0],
+                                            module_layer(policy, python_module(p)[0]), "Python")]
+    lean = [p for p in lean if mappable(p, lean_module(p), layers.lean_layer(lean_module(p)), "Lean")]
     if python:
-        blobs = index.read([PYTHON_LEDGER, "ve/__init__.py", *python])
+        blobs = index.read([PYTHON_LEDGER, *python])
         ledger = json.loads(blobs[PYTHON_LEDGER] or b"{}")
-        with tempfile.TemporaryDirectory() as tmp:
-            (Path(tmp) / "ve").mkdir()
-            (Path(tmp) / "ve/__init__.py").write_bytes(blobs["ve/__init__.py"] or b"")
-            exports = python_exports(Path(tmp))
-        found = mapped(python_targets, [(path, blobs[path], exports) for path in python])
+        exports = layers.python_exports(index.snapshot)
+        targets = functools.partial(python_targets, layers.python_imports, exports, index.snapshot)
+        found = mapped(targets, [(path, blobs[path]) for path in python])
         for path, targets in zip(python, found):
             module = python_module(path)[0]
-            importer = module_layer(module)
+            importer = module_layer(policy, module)
             if isinstance(targets, SyntaxError):
                 errors.append(f"{path}:{targets.lineno}: cannot parse imports: {targets.msg}")
                 continue
             for target in sorted(targets):
                 edge = f"{module} -> {target}"
-                layer = module_layer(target)
+                layer = module_layer(policy, target)
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward import {edge} (layer {importer} -> {layer})")
     if lean:
         blobs = index.read([LEAN_LEDGER, *lean])
         ledger = json.loads(blobs[LEAN_LEDGER] or b"{}")
         local = {lean_module(p) for p in index.listing() if p.startswith("lean/") and p.endswith(".lean")}
-        for path, targets in zip(lean, mapped(lean_targets, [blobs[path] for path in lean])):
+        # The whole file is parsed: an import's module may sit on a later line.
+        sources = [blobs[path].decode("utf-8", "replace") for path in lean]
+        for path, targets in zip(lean, mapped(policy.check_lean_imports.imports, sources)):
             module = lean_module(path)
-            importer = lean_layer(module)
+            importer = layers.lean_layer(module)
             for target in targets:
                 if target not in local:
                     if target.startswith("VE.") or target in {"VE", "Iceberg"}:
                         errors.append(f"{path}: missing local Lean import {target}")
                     continue
                 edge = f"{module} -> {target}"
-                layer = lean_layer(target)
+                layer = layers.lean_layer(target)
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer})")
     if rust:
-        manifests = [p for p in index.listing() if re.fullmatch(r"rust/(?:.+/)?Cargo\.toml", p)]
-        with tempfile.TemporaryDirectory() as tmp:
-            git("checkout-index", f"--prefix={tmp}/", "--", *manifests)
-            check_rust_deps.WORKSPACE = Path(tmp) / "rust"
-            stderr = io.StringIO()
-            try:
-                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
-                    failed = check_rust_deps.main()
-            except (OSError, KeyError, ValueError) as error:
-                failed, stderr = 1, io.StringIO(f"cannot read the staged Rust workspace: {error}\n")
-            finally:
-                check_rust_deps.WORKSPACE = ROOT / "rust"
+        # The snapshot already holds every staged manifest under its rust/ workspace.
+        stderr = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+                failed = policy.check_rust_deps.main()
+        except (OSError, KeyError, ValueError) as error:
+            failed, stderr = 1, io.StringIO(f"cannot read the staged Rust workspace: {error}\n")
         if failed:
             errors.extend(f"rust: {line}" for line in stderr.getvalue().splitlines())
     return errors
@@ -336,6 +345,9 @@ def check_layers(index: Index) -> list[str]:
 def check_lean_tokens(index: Index) -> list[str]:
     errors = []
     paths = index.staged(lambda p: p.endswith(".lean") and ".lake" not in PurePosixPath(p).parts)
+    if not paths:
+        return []
+    audit = index.policy().audit
     for path, blob in index.read(paths).items():
         text = blob.decode("utf-8", "replace")
         if path.startswith("lean/"):
@@ -410,21 +422,22 @@ CHECKS = [("secrets", check_secrets), ("layer imports", check_layers),
 def main(argv: list[str]) -> int:
     started = time.perf_counter()
     os.chdir(git("rev-parse", "--show-toplevel").decode().strip())  # ls-files paths are cwd-relative
-    index = Index()
-    failed = False
-    for name, check in CHECKS:
-        begin = time.perf_counter()
-        try:
-            errors = check(index)
-        except Exception as error:  # a broken check must block, not pass silently
-            errors = [f"internal error: {type(error).__name__}: {error}"]
-        if "--timings" in argv:
-            print(f"pre-commit: {name}: {time.perf_counter() - begin:.3f} s", file=sys.stderr)
-        if errors:
-            failed = True
-            print(f"pre-commit: {name} check failed:", file=sys.stderr)
-            for error in errors:
-                print(f"  {error}", file=sys.stderr)
+    with tempfile.TemporaryDirectory(prefix="ve-precommit-") as snapshot:
+        index = Index(Path(snapshot))
+        failed = False
+        for name, check in CHECKS:
+            begin = time.perf_counter()
+            try:
+                errors = check(index)
+            except Exception as error:  # a broken check must block, not pass silently
+                errors = [f"internal error: {type(error).__name__}: {error}"]
+            if "--timings" in argv:
+                print(f"pre-commit: {name}: {time.perf_counter() - begin:.3f} s", file=sys.stderr)
+            if errors:
+                failed = True
+                print(f"pre-commit: {name} check failed:", file=sys.stderr)
+                for error in errors:
+                    print(f"  {error}", file=sys.stderr)
     if "--timings" in argv:
         print(f"pre-commit: total {time.perf_counter() - started:.3f} s "
               f"({len(index.changed)} staged paths)", file=sys.stderr)

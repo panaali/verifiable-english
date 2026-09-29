@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import time
 
@@ -71,6 +72,17 @@ class Staging:
 
     def run(self, *args: str, **env: str) -> subprocess.CompletedProcess:
         return subprocess.run([str(HOOK), *args], cwd=ROOT, env={**self.env, **env},
+                              capture_output=True, text=True, check=False)
+
+    def run_in(self, worktree: Path, *args: str) -> subprocess.CompletedProcess:
+        """Run a copy of the hook from another working tree over the same repository and index."""
+        hooks = worktree / "tools/hooks"
+        hooks.mkdir(parents=True, exist_ok=True)
+        for name in ("pre-commit", "precommit.py"):
+            shutil.copy2(HOOK.parent / name, hooks / name)
+        git_dir = self.git("rev-parse", "--absolute-git-dir").decode().strip()
+        return subprocess.run([str(hooks / "pre-commit"), *args], cwd=worktree,
+                              env={**self.env, "GIT_DIR": git_dir, "GIT_WORK_TREE": str(worktree)},
                               capture_output=True, text=True, check=False)
 
 
@@ -136,6 +148,89 @@ def test_secret_allowlist_pragma_and_webapp_private_path(staging):
     rejects(staging, "deploy/.env: private key or environment file")
 
 
+@pytest.mark.parametrize("setting", ["staged -diff", "configured binary", "NUL bytes"])
+def test_secret_scan_reads_raw_staged_blobs(staging, tmp_path, setting):
+    # Attributes, diff drivers and binary detection change what `git diff` shows,
+    # not what the commit stores; the scan must see the stored bytes.
+    secret = SECRETS["GitHub token"]()
+    env = {}
+    content = f"TOKEN = {secret!r}\n".encode()
+    if setting == "staged -diff":
+        staging.stage(".gitattributes", "*.py -diff\n")
+    elif setting == "configured binary":
+        (tmp_path / "attributes").write_text("* binary\n")
+        env = {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.attributesFile",
+               "GIT_CONFIG_VALUE_0": str(tmp_path / "attributes")}
+    else:
+        content = b"\0\x01binary header\0\n" + content
+    staging.stage("ve_experiments/planted.py", content)
+    result = staging.run(**env)
+    assert result.returncode == 1, result.stderr
+    line = 2 if setting == "NUL bytes" else 1
+    assert f"ve_experiments/planted.py:{line}: possible GitHub token" in result.stderr, result.stderr
+
+
+def test_secret_added_to_an_existing_file_is_located(staging):
+    head = staging.head("ve/errors.py")
+    secret = SECRETS["AWS access key id"]()
+    staging.stage("ve/errors.py", head + f"# {secret}\n".encode())
+    number = head.count(b"\n") + 1
+    rejects(staging, f"ve/errors.py:{number}: possible AWS access key id")
+    staging.stage("ve/errors.py", head + f"# {secret}  # pragma: allowlist secret\n".encode())
+    passes(staging)
+
+
+def test_verdicts_do_not_depend_on_the_working_tree(staging, tmp_path):
+    # A working tree with none of the repository's files and an attributes file
+    # that hides every diff must give exactly the verdicts of the real one.
+    elsewhere = tmp_path / "worktree"
+    elsewhere.mkdir()
+    (elsewhere / ".gitattributes").write_text("* -diff\n")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")
+    staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
+    staging.rehash("lean/VE/Syntax.lean")
+    clean = staging.run_in(elsewhere)
+    assert clean.returncode == 0, clean.stderr
+    staging.stage("docs/probe.md", SECRETS["GitHub token"]() + "\n")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import surface\n")
+    staging.stage("lean/VE/Core/Planted.lean", "import\n  VE.Surface\n")
+    staging.rehash("lean/VE/Core/Planted.lean")
+    here, there = staging.run(), staging.run_in(elsewhere)
+    assert here.returncode == there.returncode == 1
+    assert here.stderr == there.stderr
+    for message in ("docs/probe.md:1: possible GitHub token",
+                    "ve/ast.py: new outward import ve.ast -> ve.surface (layer 1 -> 3)",
+                    "new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)"):
+        assert message in here.stderr, here.stderr
+
+
+def test_python_imports_resolve_against_the_staged_tree(staging):
+    # Without its __init__.py, ve/surface is still importable as a namespace package.
+    staging.stage("ve/surface/__init__.py", None)
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import surface\n")
+    rejects(staging, "ve/ast.py: new outward import ve.ast -> ve.surface (layer 1 -> 3)")
+
+
+def test_staged_policy_code_is_the_policy(staging):
+    policy = staging.head("tools/layer_policy.py")
+    assert b'"ast environment errors' in policy
+    staging.stage("tools/layer_policy.py", policy.replace(b'"ast environment errors',
+                                                          b'"ast planted_module environment errors'))
+    staging.stage("ve/planted_module.py", "import ve.errors\n")
+    passes(staging)  # mapped by the staged policy, which the working tree lacks
+    staging.stage("ve/planted_module.py", "from ve import parser\n")
+    stderr = rejects(staging, "new outward import ve.planted_module -> ve.parser (layer 1 -> 3)")
+    assert "unmapped" not in stderr
+    audit = staging.head("lean/audit.py")
+    assert b"|native_decide|" in audit
+    staging.stage("lean/audit.py", audit.replace(b"|native_decide|", b"|native_decide|plantedword|"))
+    staging.stage("lean/VE/Core/Planted.lean", "-- plantedword\n")
+    staging.rehash("lean/VE/Core/Planted.lean")
+    rejects(staging, "lean/VE/Core/Planted.lean:1: forbidden Lean token 'plantedword'")
+    staging.stage("tools/layer_policy.py", None)
+    rejects(staging, "internal error: RuntimeError: policy file tools/layer_policy.py is missing from the index")
+
+
 def test_new_outward_python_import_is_rejected(staging):
     staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import parser\n")
     rejects(staging, "layer imports check failed",
@@ -156,6 +251,22 @@ def test_new_outward_lean_import_is_rejected(staging):
     staging.stage(path, "import VE.Core.Bridge\n-- import VE.Surface\n")
     staging.rehash(path)
     passes(staging)
+
+
+@pytest.mark.parametrize("header", [
+    "import\n  VE.Surface\n",  # the module on a later line
+    "import VE.Core.Bridge\nimport\n  VE.Surface\n\nnamespace VE\nend VE\n",
+    "prelude import VE.Core.Bridge import VE.Surface\n",
+    "module\n\npublic import VE.Surface\n",
+    "import«VE».Surface\n",
+    "import /- c -/ VE.Surface\n",
+], ids=["next-line", "next-line-after-imports", "prelude-one-line", "public", "quoted-no-space",
+        "comment"])
+def test_every_lean_import_form_is_checked(staging, header):
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, header)
+    staging.rehash(path)
+    rejects(staging, f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)")
 
 
 def test_outward_rust_dependency_is_rejected(staging):
@@ -214,6 +325,7 @@ def test_emergency_bypass_warns(staging):
     result = staging.run(VE_SKIP_HOOKS="1")
     assert result.returncode == 0
     assert "warning: VE_SKIP_HOOKS=1: pre-commit checks SKIPPED" in result.stderr
+    assert "the gate does NOT re-check secrets or layer imports" in result.stderr
 
 
 def test_large_staged_change_stays_under_ten_seconds(staging):
