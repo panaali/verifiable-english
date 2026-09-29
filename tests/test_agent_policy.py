@@ -59,6 +59,88 @@ def test_log_is_the_emitted_record_set():
     assert '"f_link" resides' not in text and '"f_link" does not reside' not in text
 
 
+def _plan_section(start, end):
+    plan = (HERE / "PLAN.md").read_text()
+    return plan[plan.index(start):plan.index(end)]
+
+
+def _cells(line):
+    return [c.strip() for c in re.split(r"(?<!\\)\|", line.strip().strip("|"))]
+
+
+def _plan_record(facts):
+    """The emitter fields a PLAN section 4.3 row states; the legend gives the rest."""
+    record = {"reads": [], "writes": [], "deletes": [], "contacts": [], "messages": [], "discloses": False,
+              "readonly": None, "privileged": False, "affordable": None}
+    flags = {"C": ("confirmed", True), "not C": ("confirmed", False), "`confirmed` absent": ("confirmed", None),
+             "read-only": ("readonly", True), "not read-only": ("readonly", False),
+             "elevated": ("privileged", True), "discloses": ("discloses", True),
+             "within limit": ("affordable", True), "not within limit": ("affordable", False)}
+    for fact in (f.strip() for f in facts.split(";")):
+        if fact in flags:
+            field, value = flags[fact]
+            record[field] = value
+        elif fact != "reported no":
+            verb, objects = re.fullmatch(r"(reads|writes|deletes|contacts|sends to) (.+)", fact).groups()
+            record["messages" if verb == "sends to" else verb] = [o.strip() for o in objects.split(",")]
+    return record
+
+
+def test_log_states_exactly_the_facts_of_the_plan_tables():
+    """Every emitted fact and log name is licensed by PLAN sections 4.2 and 4.3.
+
+    Review finding B: the log named the secrets a24 and a30 disclose, gave the
+    `.env` secret an API-key identity and closed each disclosure to one secret,
+    although the plan states only that the action discloses a secret."""
+    rows = [_cells(line) for line in _plan_section("### 4.3 The 42 actions", "## 5. Verdict").splitlines()
+            if re.match(r"\| a\d\d ", line)]
+    assert [r[0] for r in rows] == list(emit_log.ACTIONS)
+    for ident, tool, _, facts in rows:
+        emitted = {k: list(v) if isinstance(v, tuple) else v for k, v in emit_log.ACTIONS[ident].items()}
+        assert emitted["tool"] == tool, ident
+        assert {k: emitted[k] for k in _plan_record(facts)} == _plan_record(facts), ident
+    legend = _plan_section("Legend: **C**", "| Id | Tool |")
+    assert "`reported` = yes for a11, a12, a14 and a31–a34, and no elsewhere" in legend
+    assert emit_log.REPORTED == {"a11", "a12", "a14", "a31", "a32", "a33", "a34"}
+
+    inventory = _plan_section("### 4.2 Inventory", "### 4.3")
+    yes_no = {"yes": True, "no": False, "?": None}
+    files = {c[0].strip("`@"): tuple(yes_no[x.strip("*")] for x in c[2:5])
+             for c in map(_cells, inventory.splitlines()) if c[0].startswith("`@f_")}
+    assert files == {name: tuple(v[1:]) for name, v in emit_log.FILES.items()}
+    hosts, people = (re.search(rf"{label}: (.+?)\n(?:People:|\n)", inventory, re.S).group(1)
+                     for label in ("Hosts", "People"))
+    listed, unlisted = (re.findall(r"`@(\w+)`", part) for part in hosts.split("are allowlisted;"))
+    assert {n: v[1] for n, v in emit_log.HOSTS.items()} == {**dict.fromkeys(listed, True),
+                                                            **dict.fromkeys(unlisted, False)}
+    user, others = (re.findall(r"`@(\w+)`", part) for part in people.split("is the user;"))
+    assert {n: v[1] for n, v in emit_log.PEOPLE.items()} == {**dict.fromkeys(user, True),
+                                                             **dict.fromkeys(others, False)}
+    # The log declares no name the plan does not: no secret is named.
+    assert set(emit_log.vocabulary()["constants"]) == set(files) | set(listed + unlisted) \
+        | set(user + others) | set(emit_log.ACTIONS)
+
+
+def _sub_log(action):
+    inventory, records = check.parse_log((HERE / "log.ve").read_text())
+    env = check.base_of(check.environment("deny-neednot", action))
+    return env, tuple(inventory) + tuple(records[action])
+
+
+@pytest.mark.parametrize("action", sorted(emit_log.ACTIONS))
+def test_a_disclosure_fixes_neither_which_secret_nor_how_many(action):
+    """Review finding B: a model where the action discloses two distinct secrets
+    satisfies a disclosing record, and any disclosure contradicts the others."""
+    env, premises = _sub_log(action)
+    model = check.record_model(env, premises)
+    assert check.satisfies(env, premises, model)
+    domains = {**model.domains, "secret": ["secret_one", "secret_two"]}
+    relations = dict(model.relations)
+    relations["discloses"] = {(action, "secret_one"), (action, "secret_two")}
+    two = check._model(env, domains, model.constants, relations)
+    assert check.satisfies(env, premises, two) is emit_log.ACTIONS[action]["discloses"], action
+
+
 def test_policy_has_one_reading_round_trips_and_keeps_the_seeded_defects():
     doc = check.policy()
     source = (HERE / "policy.ve").read_text()
