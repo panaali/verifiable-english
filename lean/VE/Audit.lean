@@ -76,6 +76,7 @@ import VE.Risk.Words
 import VE.Risk.Record
 import VE.Risk.Piecewise
 import VE.Risk.Report
+import VE.Risk.Audit
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2013,3 +2014,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Risk.SignEq.neg
 #print axioms VE.Risk.SignEq.pos
 #print axioms VE.Risk.SignEq.refl
+#print axioms VE.Risk.logPrefix_idem
+#print axioms VE.Risk.snapshot_prefix
+#print axioms VE.Risk.verdict_ignores_outcomes
+#print axioms VE.Risk.snapshot_no_hindsight
