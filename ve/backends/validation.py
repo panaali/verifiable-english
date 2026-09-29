@@ -1,4 +1,5 @@
-"""Lean validation adapters for the `Environment` and `FiniteModel` constructors.
+"""Lean validation adapters for the `Environment` and `FiniteModel` constructors
+(and, through `decided`, for `definitions.compile_definitions`).
 
 Lean's `environment` and `model` service modes decide whether an environment or
 a model is valid and recompute its identity. The Python constructor stays the
@@ -31,7 +32,7 @@ _LIMIT = 1 << 14
 _LAYERED = frozenset({"soft-norms@0", "reports@0"})
 
 
-def _nary_definitions(profiles, predicates) -> bool:
+def nary_core_definitions(profiles, predicates) -> bool:
     """A core-family vocabulary with an n-ary defined predicate: Lean's core
     layer glue projects unary and binary predicates only (a recorded gap)."""
     if not {"closure@0", "nary@0"} <= set(profiles):
@@ -53,7 +54,7 @@ def environment_in_scope(data) -> bool:
     vocabulary = data.get("vocabulary")
     predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
     return not (_LAYERED & profiles) and not (
-        type(predicates) is dict and _nary_definitions(profiles, predicates.values()))
+        type(predicates) is dict and nary_core_definitions(profiles, predicates.values()))
 
 
 def model_in_scope(env) -> bool:
@@ -64,7 +65,7 @@ def model_in_scope(env) -> bool:
                 decl.defined is not None and len(decl.arguments) > 2 for decl in env.predicates.values())))
 
 
-def _key(*parts) -> tuple:
+def key(*parts) -> tuple:
     return tuple(hashlib.sha256(canonical_json(part)).hexdigest() for part in parts)
 
 
@@ -74,18 +75,22 @@ def _remember(key: tuple) -> None:
     _ACCEPTED[key] = True
 
 
-def _decided(decode: Callable[[], object], key: tuple | None, ask: Callable[[], dict],
+def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[], dict],
              identity: Callable[[object, dict], bool], what: str):
-    """Run the structural decoder, then apply Lean's verdict to its outcome."""
+    """Run the structural decoder, then apply Lean's verdict to its outcome.
+
+    `cache` keys Lean's acceptance (None: the input cannot be sent)."""
     try:
         built, error = decode(), None
     except VEError as exc:
         built, error = None, exc
-    if key is None:
+    if cache is None:
         # The input is not JSON on the restricted wire subset, so no checker
         # can read it; the wire check is Python's and is not a verdict.
-        raise error
-    if error is None and key in _ACCEPTED:
+        if error is not None:
+            raise error
+        raise CheckerUnavailable(f"CheckerUnavailable: {what} cannot be sent to the checker")
+    if error is None and cache in _ACCEPTED:
         return built
     try:
         row = ask()
@@ -96,7 +101,7 @@ def _decided(decode: Callable[[], object], key: tuple | None, ask: Callable[[], 
                                  f"rejects ({error.code}: {error.message})")
     if not identity(built, row):
         raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
-    _remember(key)
+    _remember(cache)
     return built
 
 
@@ -104,10 +109,10 @@ def validated_environment(env, data, decode: Callable[[], object]):
     """`decode()` builds `env` from `data`; Lean decides its validity."""
     from .lean_runner import run
     try:
-        key = _key("environment", data)
+        cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
-        key = None
-    return _decided(decode, key,
+        cache = None
+    return decided(decode, cache,
                     lambda: run("environment", [{"id": "environment", "environment": data}])[0],
                     lambda built, row: row.get("environment_id") == built.environment_id,
                     "an environment")
@@ -117,10 +122,10 @@ def validated_model(env, wire, decode: Callable[[], object]):
     """`decode()` builds a model of `env` from `wire`; Lean decides its validity."""
     from .lean_runner import run
     try:
-        key = _key("model", env.environment_id, wire)
+        cache = key("model", env.environment_id, wire)
     except (VEError, TypeError, ValueError, RecursionError):
-        key = None
-    return _decided(decode, key,
+        cache = None
+    return decided(decode, cache,
                     lambda: run("model", [{"id": "model", "environment": env.to_dict(), "model": wire}])[0],
                     lambda built, row: row.get("valid") is True and row.get("model_id") == built.model_id,
                     "a model")
