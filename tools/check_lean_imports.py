@@ -8,57 +8,49 @@ import sys
 from layer_policy import ROOT, lean_layer
 
 LEDGER = ROOT / "tools/lean-layer-exceptions.json"
-IMPORT = re.compile(r"^\s*import\s+(.+)$", re.MULTILINE)
+# Lean reads `import` as a keyword token anywhere in the header: after `prelude`
+# or a modifier on the same line (`public import`), with its module on a later
+# line, or directly before a «quoted» name. Only a preceding or following
+# identifier character (or a `.` before it) makes the word part of a name.
+IMPORT = re.compile(r"(?<![\w.'!?«»])import(?![\w'!?])\s*(.+)$", re.MULTILINE)
 QUOTED_IDENT = re.compile(r"«([^»]+)»")
 IMPORT_NAME = re.compile(r"(?:«[^»]*»|[^\s«»])+")
+OPENER = re.compile(r'--|/-|"')
+BLOCK = re.compile(r"/-|-/")
+STRING_END = re.compile(r'\\[\s\S]?|"')
+NOT_NEWLINE = re.compile(r"[^\n]")
 
 
 def imports(source: str) -> list[str]:
-    """Read import commands after erasing nested Lean comments and strings."""
+    """Read import commands after erasing nested Lean comments and strings.
+
+    Erased text becomes spaces (newlines kept); the scan jumps between comment
+    and string delimiters, so whole files are cheap to read.
+    """
     clean = []
     index = 0
-    depth = 0
-    line_comment = False
-    quoted = False
-    while index < len(source):
-        pair = source[index:index + 2]
-        char = source[index]
-        if line_comment:
-            if char == "\n":
-                line_comment = False
-        elif depth:
-            if pair == "/-":
-                depth += 1
-                index += 2
-                clean.extend("  ")
-                continue
-            if pair == "-/":
-                depth -= 1
-                index += 2
-                clean.extend("  ")
-                continue
-        elif quoted:
-            if char == "\\":
-                clean.extend("  " if index + 1 < len(source) else " ")
-                index += 2
-                continue
-            if char == '"':
-                quoted = False
-        elif pair == "--":
-            line_comment = True
-            index += 2
-            clean.extend("  ")
-            continue
-        elif pair == "/-":
-            depth = 1
-            index += 2
-            clean.extend("  ")
-            continue
-        elif char == '"':
-            quoted = True
-        clean.append(char if not (line_comment or depth or quoted) else
-                     "\n" if char == "\n" else " ")
-        index += 1
+    while (opener := OPENER.search(source, index)):
+        clean.append(source[index:opener.start()])
+        if opener[0] == "--":
+            end = source.find("\n", opener.start())
+            end = len(source) if end < 0 else end
+        elif opener[0] == "/-":
+            depth, end = 1, opener.end()
+            while depth and (mark := BLOCK.search(source, end)):
+                depth += 1 if mark[0] == "/-" else -1
+                end = mark.end()
+            end = end if not depth else len(source)
+        else:
+            end = opener.end()
+            while (mark := STRING_END.search(source, end)):
+                end = mark.end()
+                if mark[0] == '"':
+                    break
+            else:
+                end = len(source)
+        clean.append(NOT_NEWLINE.sub(" ", source[opener.start():end]))
+        index = end
+    clean.append(source[index:])
     return [QUOTED_IDENT.sub(r"\1", name)
             for group in IMPORT.findall("".join(clean))
             for name in IMPORT_NAME.findall(group)]

@@ -20,6 +20,7 @@ except ModuleNotFoundError:
     sys.modules["grimp"] = grimp
 import check_python_layers
 import check_rust_deps
+import layer_policy
 import select_tests
 
 from select_tests import select
@@ -180,6 +181,18 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertEqual(check_lean_imports.imports("import «VE».Route.Run\n"),
                          ["VE.Route.Run"])
 
+    def test_lean_import_forms_the_header_parser_accepts(self):
+        # Each form was checked against `lake env lean` on the pinned toolchain
+        # (`public import` needs -Dexperimental.module=true).
+        for source in ("import\n  VE.Surface\n", "import\r\n  VE.Surface\r\n",
+                       "prelude import VE.Syntax import VE.Surface\n",
+                       "module\n\npublic import VE.Surface\n", "import«VE».Surface\n",
+                       "import /- c -/ VE.Surface\n", "import -- c\n  VE.Surface\n"):
+            self.assertIn("VE.Surface", check_lean_imports.imports(source), source)
+        for source in ('def s := "import VE.Surface"\n', "def x := Foo.import\nimportant VE.Surface\n",
+                       '/- "unclosed -/\ndef s := "\\" import VE.Surface"\n'):
+            self.assertNotIn("VE.Surface", check_lean_imports.imports(source), source)
+
     def test_quoted_lean_local_import_is_checked(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -224,6 +237,16 @@ class LayerSelectionTests(unittest.TestCase):
                   redirect_stderr(error)):
                 self.assertEqual(check_lean_imports.main(), 1)
             self.assertIn("unmapped Lean module: Alien", error.getvalue())
+
+    def test_namespace_package_imports_resolve_to_the_package(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ve/surface").mkdir(parents=True)
+            (root / "ve/surface/registry.py").write_text("")  # no __init__.py
+            for source in ("from ve import surface\n", "import ve\nve.surface\n"):
+                self.assertIn("ve.surface", layer_policy.python_imports("ve.ast", source, {}, root=root))
+            self.assertNotIn("ve.absent", layer_policy.python_imports(
+                "ve.ast", "from ve import absent\n", {}, root=root))
 
     def test_experiment_import_forms_are_outer_layer(self):
         with TemporaryDirectory() as directory:
