@@ -1,0 +1,78 @@
+{
+  "u017": {
+    "default_does_not_entail_required_for_every_human_being": {
+      "certificate_replayed": false,
+      "status": "NotFound"
+    },
+    "default_entails_not_required_when_excepted": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "default_entails_required_unless_excepted": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "separating_condition": "a human being for whom the exception applies: strict says required, default says not required",
+    "strict_entails_required_for_every_human_being": {
+      "certificate_replayed": true,
+      "status": "Found"
+    }
+  },
+  "u052.entitlement_withheld_is_not_forced_by_the_ban": "separated from invocation_barred by vocabulary only: the two readings share no predicate, and relating 'invoke' to 'entitled' needs rights semantics that are not merged",
+  "u052.invocation_barred": {
+    "rule_dropped_completion_allow": {
+      "certificate_replayed": false,
+      "status": "NotFound"
+    },
+    "rule_kept_completion_allow": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "rule_kept_completion_deny": {
+      "certificate_replayed": true,
+      "status": "Found"
+    }
+  },
+  "u074": {
+    "rule_dropped_completion_allow": {
+      "certificate_replayed": false,
+      "status": "NotFound"
+    },
+    "rule_kept_completion_allow": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "rule_kept_completion_deny": {
+      "certificate_replayed": true,
+      "status": "Found"
+    }
+  },
+  "u112.exercise_prohibited": {
+    "rule_dropped_completion_allow": {
+      "certificate_replayed": false,
+      "status": "NotFound"
+    },
+    "rule_kept_completion_allow": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "rule_kept_completion_deny": {
+      "certificate_replayed": true,
+      "status": "Found"
+    }
+  },
+  "u114.interpretive_ban": {
+    "rule_dropped_completion_allow": {
+      "certificate_replayed": false,
+      "status": "NotFound"
+    },
+    "rule_kept_completion_allow": {
+      "certificate_replayed": true,
+      "status": "Found"
+    },
+    "rule_kept_completion_deny": {
+      "certificate_replayed": true,
+      "status": "Found"
+    }
+  }
+}
