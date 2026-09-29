@@ -104,23 +104,6 @@ longer surface (a document display `It is safe`) is one surface, never its short
 with meaning must record each surface as a formula-producing mention with exactly its byte range
 (`coverageOk`). Python's `reference_surfaces` is the same function. -/
 
-def segGo : List Char → Nat → List Char → Nat → List (String × Nat × Nat)
-  | [], pos, cur, start => if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]
-  | c :: rest, pos, cur, start => match foldChar c with
-    | some f => segGo rest (pos + c.utf8Size) (f :: cur) (if cur.isEmpty then pos else start)
-    | none => (if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]) ++
-        segGo rest (pos + c.utf8Size) [] 0
-
-/-- The segments of a text, folded, with their byte ranges `[a, b)`. -/
-def segments (t : String) : List (String × Nat × Nat) := segGo t.toList 0 [] 0
-
-/-- The folded segments of a string. -/
-def segmentsOf (w : String) : List String := (segments w).map (·.1)
-
-/-- A symbol name split into segments is spelled by its `_`-joined segments (identifiers are
-`[a-z][a-z0-9_]*`, at most 64 bytes, so at most 32 segments). -/
-def joinLimit : Nat := 32
-
 /-- The end byte of a citation label: the first token the lexer reads in the text after byte `e`,
 when it is a word (none: no label follows). -/
 def labelEnd (t : String) (e : Nat) : Option Nat :=
@@ -133,7 +116,7 @@ def segmentLengths (D : DDoc) (ws : List String) (j : Nat) : List Nat :=
   let after := ws.drop (j + 1)
   (if (ws[j]?).any referenceWords.contains then [1] else []) ++
   (if (ws[j]?).any demonstrativeWords.contains then
-    (D.E.sorts ++ D.nouns).filterMap fun srt =>
+    (D.E.sorts ++ D.nouns.map (·.2)).filterMap fun srt =>
       let p := segmentsOf srt
       if !p.isEmpty && p.isPrefixOf after then some (p.length + 1) else none
    else []) ++
