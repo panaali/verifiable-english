@@ -1,0 +1,99 @@
+[
+  {
+    "id": "c5r-1",
+    "construct": "c5",
+    "domain": "agent-operations",
+    "setting": "agent operations",
+    "scored": true,
+    "conditions": ["L", "C"],
+    "separates_rival": true,
+    "counter_world_knowledge": false,
+    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"If <condition>, <action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.",
+    "situation_text": "An agent can copy the backup to the new disk or do nothing. The size of the backup is at least 10 gigabytes. The size of the backup is at most 400 gigabytes. If the size of the backup is greater than 250 gigabytes, copying the backup to the new disk leads to a job failure.",
+    "target_sentence": "If the size of the backup is greater than 250 gigabytes, copying the backup to the new disk leads to a job failure.",
+    "question": "The agent copies the backup to the new disk, and the size of the backup is 100 gigabytes. What does the text tell you about a job failure?",
+    "options": [
+      {"label": "a", "text": "No job failure happens, because the size of the backup is not greater than 250 gigabytes."},
+      {"label": "b", "text": "A job failure happens."},
+      {"label": "c", "text": "The text does not say."}
+    ],
+    "key": "c",
+    "critical": ["a"],
+    "one_reading": "sufficient condition: in every allowed case where the condition holds, the harm happens (2.1)",
+    "rival_reading": "\"If <condition>, <action> leads to <harm>\" read as \"only if\" (a necessary condition)",
+    "rationale": "The pattern of first-probe c5-1, the item behind the critical answer. One reading: the condition is sufficient only; at 100 GB it fails and no sentence covers that case: (c). The rival makes the condition necessary, so no job failure at 100 GB: (a). (b) is wrong under both."
+  },
+  {
+    "id": "c5r-2",
+    "construct": "c5",
+    "domain": "non-computer",
+    "setting": "delivery robot",
+    "scored": true,
+    "conditions": ["L", "C"],
+    "separates_rival": true,
+    "counter_world_knowledge": true,
+    "legend_text": "Each robot faces one choice among the actions available to it and takes at most one of them.\n\"If <condition>, <action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.",
+    "situation_text": "A delivery robot can take the ramp or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 25 kilograms. If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall.",
+    "target_sentence": "If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall.",
+    "question": "The robot takes the ramp with a parcel that weighs 3 kilograms. What does the text tell you?",
+    "options": [
+      {"label": "a", "text": "A fall happens."},
+      {"label": "b", "text": "A fall might happen or might not: the text only says that a fall needs a parcel heavier than 2 kilograms."},
+      {"label": "c", "text": "No fall happens: a robot easily carries a 3-kilogram parcel on a ramp."},
+      {"label": "d", "text": "The text does not say."}
+    ],
+    "key": "a",
+    "critical": ["b", "d"],
+    "one_reading": "sufficient condition: in every allowed case where the condition holds, the harm happens (2.1)",
+    "rival_reading": "\"If <condition>, <action> leads to <harm>\" read as \"only if\" (a necessary condition)",
+    "rationale": "World knowledge says a robot carries 3 kg on a ramp easily: (c). One reading: the condition holds and is sufficient, so a fall happens: (a). The rival makes the condition only necessary, so the outcome is open: (b), and equally (d), which is the rival's own answer here."
+  },
+  {
+    "id": "c5r-3",
+    "construct": "c5",
+    "domain": "non-computer",
+    "setting": "clinic",
+    "scored": true,
+    "conditions": ["L", "C"],
+    "separates_rival": true,
+    "counter_world_knowledge": false,
+    "legend_text": "Each clinic faces one choice among the actions available to it and takes at most one of them.\n\"If <condition>, <action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.",
+    "situation_text": "A clinic can give the patient drug C or give the patient nothing. The age of the patient is at least 18 years. The age of the patient is at most 90 years. If the age of the patient is greater than 70 years, giving the patient drug C leads to confusion.",
+    "target_sentence": "If the age of the patient is greater than 70 years, giving the patient drug C leads to confusion.",
+    "question": "The clinic gives the patient drug C, and the age of the patient is 40 years. What does the text tell you about confusion?",
+    "options": [
+      {"label": "a", "text": "Confusion happens."},
+      {"label": "b", "text": "No confusion happens, because the age of the patient is not greater than 70 years."},
+      {"label": "c", "text": "The text does not say."}
+    ],
+    "key": "c",
+    "critical": ["b"],
+    "one_reading": "sufficient condition: in every allowed case where the condition holds, the harm happens (2.1)",
+    "rival_reading": "\"If <condition>, <action> leads to <harm>\" read as \"only if\" (a necessary condition)",
+    "rationale": "The c5-1 pattern outside computing. One reading: the condition fails at 40 years and the sufficient condition says nothing about that case: (c). The rival makes it necessary, so no confusion: (b). (a) is wrong under both."
+  },
+  {
+    "id": "c5r-4",
+    "construct": "c5",
+    "domain": "agent-operations",
+    "setting": "agent operations",
+    "scored": true,
+    "conditions": ["L", "C"],
+    "separates_rival": true,
+    "counter_world_knowledge": false,
+    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"If <condition>, <action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.",
+    "situation_text": "An agent can compress the log files or do nothing. The size of the log files is at least 1 gigabyte. The size of the log files is at most 80 gigabytes. If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.",
+    "target_sentence": "If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.",
+    "question": "The agent compresses the log files, and no server outage happens. According to the text, was the size of the log files greater than 60 gigabytes?",
+    "options": [
+      {"label": "a", "text": "Yes: it was greater than 60 gigabytes."},
+      {"label": "b", "text": "No: it was 60 gigabytes or less."},
+      {"label": "c", "text": "The text does not say."}
+    ],
+    "key": "b",
+    "critical": ["c"],
+    "one_reading": "sufficient condition: in every allowed case where the condition holds, the harm happens (2.1)",
+    "rival_reading": "\"If <condition>, <action> leads to <harm>\" read as \"only if\" (a necessary condition)",
+    "rationale": "Contrapositive, the mirror of first-probe c6-4. One reading: above 60 GB an outage happens in every allowed case, so a run with no outage had 60 GB or less: (b). The rival makes the condition only necessary, and a run with no outage says nothing about the size: (c). (a) is wrong under both."
+  }
+]
