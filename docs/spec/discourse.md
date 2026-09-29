@@ -442,8 +442,13 @@ compute) and for the diagnostic text of a document Lean rejects too (8); a docum
 rejects is admitted, with Python's diagnostic as a hint. A route that is missing, fails, times out or answers
 anything but one well-formed answer to the case is `CheckerUnavailable`, and so is a document Lean admits that
 Python cannot load or report; Lean's `NotImplemented` (fenced content, norm content, `MIXED` units, JSON `null`, a
-document without a claim graph) is `UnsupportedProfile`. Neither is a verdict, and neither is ever a Python-only
-CHECKED. `ve-document@1` documents are unchanged.
+document without a claim graph) is `UnsupportedProfile`, and Lean's `ResourceLimit` stays Lean's. Neither is a
+verdict, and neither is ever a Python-only CHECKED. A text is a `ve-document@2` document when its JSON front matter's
+`format` says so, read before and apart from every other check, so a body or metadata Python's checks read
+differently still reaches Lean; what Python does before Lean's answer (that test, collecting the sibling files)
+reads any front matter, and a Python check that fails in any way on a document Lean rejects gives Lean's verdict.
+Both loaders split the body as `bytes.splitlines` does (a line ends at `\n`, `\r\n` or `\r`) and read fence lines
+after `bytes.strip()` (which also removes `\x0b` and `\x0c`). `ve-document@1` documents are unchanged.
 
 ### 3.5 The profile adapter (the frozen gate never sees `ve.discourse@1`)
 
@@ -2005,3 +2010,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse2-looprecheck1.final.md`: the text inputs of `Acc` (binders, coordinations, restrictive properties) are read as the segments of 4.1(6), so a joined word (`service's`, `Bob’s`) never hides one, and a binder is a quantifier word followed later in its sentence by a word of the sort (its name or declared singular noun); a recorded surface is read as the lexer's words (any spaces); a mention's byte range must start and end on its unit's tokens (4.1(4)), in Python as in Lean. `acc_no_heuristic` takes the declared nouns and the units' bytes. |
 | 2026-10-01 | Draft 4, amendment | After `manage-agents/discourse2-loop.final.md` and `discourse-spacing-directive.md`: discourse wording (4.1(4)), the whitespace class closed by restriction. A unit that records a reference is printable ASCII with canonical spacing once the layout around it is removed, or `InvalidInput: discourse wording of <unit>` in both checkers before parsing; Python parses its expansions without that layout and with the parser's own spelling of each target constant, never a registered display. Differing codes on inputs both reject are a recorded known limitation (8). |
 | 2026-10-02 | Draft 4, amendment | After `manage-agents/discourse3-loop.final.md` and `discourse-authority-directive.md`: Python's `@2` admission is Lean's (3.4). The verdict, unit statuses, references, validity verdicts and report id come from the Lean route's `admission` answer on the same bytes; Python's own checks give hints and the diagnostic text of a document both reject (8); no Lean answer is `CheckerUnavailable`, Lean's `NotImplemented` (now also a document without a claim graph) is `UnsupportedProfile`. The quote-spacing, display and agreement differences of the loop are hints, not verdicts. |
+| 2026-10-03 | Draft 4, amendment | After `manage-agents/discourse4-looprecheck1.final.md` (3.4): a `@2` text is recognised by its front matter's `format` alone, so a body Python splits differently still reaches Lean; the import collector and every check before Lean's answer read any front matter; Lean's loader splits lines at `\r` and `\r\n` too and strips fence lines as `bytes.strip()` does; a front matter over Lean's JSON depth is `ResourceLimit`, which Python never replaces by its own rejection. |
