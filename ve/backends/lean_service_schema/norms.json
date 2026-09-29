@@ -10,6 +10,7 @@
         {"when": {"$ref": "#/$defs/kind/background"}, "then": {"$ref": "route.json#/$defs/background"}},
         {"when": {"$ref": "route.json#/$defs/kind/evaluate"}, "then": {"$ref": "route.json#/$defs/evaluate"}},
         {"when": {"$ref": "route.json#/$defs/kind/countermodel"}, "then": {"$ref": "route.json#/$defs/countermodel"}},
+        {"when": {"$ref": "route.json#/$defs/kind/certificate"}, "then": {"$ref": "route.json#/$defs/certificate"}},
         {"when": {"$ref": "#/$defs/kind/norms-elaborate"}, "then": {"$ref": "#/$defs/norms-elaborate"}},
         {"when": {"$ref": "#/$defs/kind/norms-certificate"}, "then": {"$ref": "#/$defs/norms-certificate"}},
         {"when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]},

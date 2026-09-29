@@ -50,6 +50,7 @@ ADAPTERS = {
     "countermodel_search_semantic_nonvacuity": "countermodel_search",
     "distinguishing_model": "distinguishing_model", "evaluate": "evaluate", "evaluate_trace": "evaluate",
     "dependency_order": "dependency_order", "label": "label", "typing": "typing",
+    "certificate_replay": "certificate_replay",
 }
 _routed: set[str] = set()
 _backend = "python"
