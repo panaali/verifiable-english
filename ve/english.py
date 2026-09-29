@@ -1179,6 +1179,8 @@ class EnglishParser:
             if getattr(self.env, 'risk', None) is not None:
                 if lowered.startswith('may lead to '):
                     self.error("Use 'might lead to': 'may' is permission.")
+                if lowered.startswith('risks '):
+                    self.error("Use 'might lead to' for possibility under the declared record.")
                 if lowered.startswith('does not lead to '):
                     self.error("Choose 'cannot lead to' or 'might not lead to'.")
                 if lowered.startswith('prevents '):
@@ -1567,8 +1569,13 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
         for pattern, message in (
             (r'\bdoes not lead to\b', "Choose 'cannot lead to' or 'might not lead to'."),
             (r'\bmay lead to\b', "Use 'might lead to': 'may' is permission."),
+            (r'\b(?:could lead to|is likely to lead to|increases the risk of)\b',
+             "Use 'might lead to' for possibility under the declared record."),
+            (r'\bcertainly leads to\b', "Use 'leads to' for certainty under the declared record."),
             (r'\bprevents\b', "Use 'might prevent' in a risk environment."),
             (r'\bis safer than\b', "Use 'has a less severe worst case than'."),
+            (r'\bevery action available to [^.]+ cannot lead to\b',
+             "Choose whether no available action might lead to the harm, or some available action cannot lead to it."),
         ):
             if re.search(pattern, source, re.I):
                 raise SyntaxError(message)

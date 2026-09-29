@@ -51,6 +51,8 @@ def parse_wording(text, env, *, actions=(), harms=(), classes=(), context="guard
         raise SyntaxError("Use 'has a less severe worst case than' for the declared severity order")
     if " leads to " in sentence and " if " in sentence:
         raise SyntaxError("Sufficient-condition wording is pending; use form sufficient in JSON")
+    if context == "record" and " might not lead to " in sentence:
+        raise SyntaxError("State a condition, or 'might lead to'; 'might not lead to' is computed")
     if type(actions) is not dict or type(harms) is not dict or type(classes) is not dict:
         raise SyntaxError("Risk wording names must be label-to-name maps")
     possibilities = []

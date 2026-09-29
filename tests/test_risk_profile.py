@@ -132,9 +132,10 @@ def test_frozen_wordings_and_pending_sufficient_form():
         "condition_text": "memory is at most 5"}
     assert parse("Running leads to outage exactly when memory exceeds 5.", "record")["form"] == "exact"
     for wording in ("Running may lead to outage.", "Running does not lead to outage.",
-                    "Running leads to outage if memory exceeds 5.", "Running prevents outage."):
+                    "Running leads to outage if memory exceeds 5.", "Running prevents outage.",
+                    "Running might not lead to outage."):
         with pytest.raises(VEError):
-            parse(wording)
+            parse(wording, "record" if "might not" in wording else "guard")
     for word in ("might", "cannot", "leads", "might-not", "class", "or-worse", "less-worst",
                  "necessary", "exact"):
         assert enabled(by_tag("risk-" + word), env)
@@ -164,6 +165,8 @@ def test_policy_english_uses_risk_readings():
         ("run prevents outage.", "Use 'might prevent'"),
         ("run may lead to outage.", "Use 'might lead to'"),
         ("wait is safer than run.", "less severe worst case"),
+        ("run certainly leads to outage.", "Use 'leads to'"),
+        ("run could lead to outage.", "Use 'might lead to'"),
     ):
         with pytest.raises(VEError, match=rewrite):
             parse_english_with_metadata(env, sentence)
