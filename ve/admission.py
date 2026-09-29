@@ -416,6 +416,11 @@ def admit_document(environment, document) -> dict:
 
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
+    from .softnorms import SoftEnvironment
+    if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
+            "soft-norms@0" in environment.get("profiles", [])):
+        from .soft_route import admit_soft_document
+        return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
     if env.unit_schema is not None:
         # W6: every statement is an annotated quantity, admitted before erasure.
