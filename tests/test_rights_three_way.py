@@ -17,6 +17,7 @@ def test_rights_three_way_fixtures():
 def test_rights_differential_on_one_thousand_generated_documents():
     result = differential(1000)
     assert result["accepted_by_both"] == 1000
+    assert result["loaded_as_documents"] == 1000
     assert result["rejected_by_both"] > 100
     assert result["rejections_with_the_same_text"] == result["rejected_by_both"]
     assert {"claim", "liberty", "immunity", "powerLiberty", "powerRecognition", "fan-out",
