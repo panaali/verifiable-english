@@ -1589,6 +1589,25 @@ def test_fence_never_replaces_the_source_sentence_in_the_choice_check(lean):
         "InvalidInput: choice kind"
 
 
+def test_fenced_and_inline_agree_without_a_choice(lean):
+    # The class behind speech-acts6 A2: no reading of a unit sees its fence where the inline form sees its span.
+    # Without a signed choice too, a fenced unit whose fence parses as the inline unit's content has the inline
+    # unit's outcome on every span, whatever its kind (a command or question span is re-read by the core).
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    fences = {"asserted": "Atlas is reviewed.\n", "instruction": "Click check.\n", "question": "Is atlas reviewed?\n"}
+    outcomes = set()
+    for span in ["Is atlas reviewed?\n", "Atlas is reviewed.\n", "Click check.\n", "Do not click check.\n",
+                 "Is beacon reviewed?\n"]:
+        for kind, content in _ORIGINALS.items():
+            inline = {**unit("u", 0, kind, content), "span": [0, len(span)]}
+            fenced = {**unit("u", 0, kind), "content": {"fence": "u"}, "surface": "english", "span": [0, len(span)]}
+            outcome = _source_outcome(env, span, [inline])
+            assert _source_outcome(env, span, [fenced], {"u": fences[kind]}) == outcome, (span, kind)
+            outcomes.add(outcome)
+    assert "ok" in outcomes and len(outcomes) > 2
+
+
 def test_source_wording_is_one_ascii_trim_whatever_the_original_kind(lean, tmp_path):
     # Regression (speech-acts6 B): source "Atlas is reviewed? " with a signed asserted choice passes both
     # cores (U+00A0 is an ordinary character, 3.2), and the source wrapper accepted it for original kind
