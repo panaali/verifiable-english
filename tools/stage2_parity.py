@@ -53,6 +53,7 @@ ADAPTERS = {
     "certificate_replay": "certificate_replay", "norms_elaborate": "norms_elaborate",
     "norms_conflict": "norms_conflict", "norms_certificate": "norms_certificate",
     "norms_admission": "norms_admission", "premise_status": "premise_status", "compare": "compare",
+    "environment_validation": "environment_validation", "model_validation": "model_validation",
 }
 _routed: set[str] = set()
 _backend = "python"
