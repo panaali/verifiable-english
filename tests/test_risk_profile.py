@@ -3,17 +3,32 @@ from copy import deepcopy
 
 import pytest
 
-from tests.test_alternatives_profile import source
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
+from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
+from ve.surface.registry import by_tag, enabled
+from ve.surface.risk import parse_wording
 
 
 def risk_source():
-    raw = source()
-    raw["profiles"].append("risk@0")
-    raw["profiles"].sort()
-    raw["vocabulary"]["constants"]["outage"] = {"sort": "harm", "description": "outage"}
+    raw = {"language": LANGUAGE, "spec_revision": SPEC_REVISION,
+           "profiles": ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"],
+           "vocabulary": {
+               "sorts": {name: {"description": name} for name in ("chooser", "action", "harm")},
+               "predicates": {
+                   "available": {"arguments": ["action", "chooser"], "description": "available",
+                                 "verbalisation": "{0} is available to {1}"},
+                   "leads_to": {"arguments": ["action", "harm"], "description": "leads",
+                                "verbalisation": "{0} leads to {1}"},
+                   "prevent_required": {"arguments": ["chooser", "harm"], "description": "prevent",
+                                        "regulated": {"role": "obligation", "default": "deny",
+                                                      "act": "{0} prevent {1}"}},
+               },
+               "constants": {"outage": {"sort": "harm", "description": "outage"}},
+           },
+           "alternatives": {"chooser": "chooser", "action": "action", "harm": "harm",
+                            "available": "available", "leads_to": "leads_to", "outcomes": "signed"}}
     raw["risk"] = {
         "severity": {"sort": "severity", "classes": ["severe", "minor"],
                      "more_severe": [["severe", "minor"]], "unranked": [], "decided_by": "team"},
@@ -62,3 +77,30 @@ def test_excludes_and_route_unavailable(monkeypatch, tmp_path):
     monkeypatch.delenv("VE_AUTHORITY")
     with pytest.raises(CheckerUnavailable, match="unavailable"):
         run_case(case, binary=tmp_path / "absent")
+
+
+def test_frozen_wordings_and_pending_sufficient_form():
+    env = Environment(risk_source())
+    actions = {"Running": "run", "Waiting": "wait"}
+    harms = {"outage": "outage"}
+    classes = {"severe": "severe"}
+    parse = lambda s, context="guard": parse_wording(
+        s, env, actions=actions, harms=harms, classes=classes, context=context)
+    assert parse("Running might lead to outage.")["form"] == "might"
+    assert parse("Running cannot lead to outage.")["form"] == "cannot"
+    assert parse("Running leads to outage.")["form"] == "leads"
+    assert parse("Running might not lead to outage.")["form"] == "might-not"
+    assert parse("outage is severe.")["form"] == "class"
+    assert parse("outage is severe or worse.")["form"] == "or-worse"
+    assert parse("Waiting has a less severe worst case than Running.")["form"] == "less-worst"
+    assert parse("Running cannot lead to outage unless memory is at most 5.", "record") == {
+        "form": "necessary", "action": "run", "harm": "outage",
+        "condition_text": "memory is at most 5"}
+    assert parse("Running leads to outage exactly when memory exceeds 5.", "record")["form"] == "exact"
+    for wording in ("Running may lead to outage.", "Running does not lead to outage.",
+                    "Running leads to outage if memory exceeds 5.", "Running prevents outage."):
+        with pytest.raises(VEError):
+            parse(wording)
+    for word in ("might", "cannot", "leads", "might-not", "class", "or-worse", "less-worst",
+                 "necessary", "exact"):
+        assert enabled(by_tag("risk-" + word), env)
