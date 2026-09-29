@@ -60,7 +60,13 @@
     "arguments": [
      "person"
     ],
-    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation throughout the qualifying week and from the care start date."
+    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation from the care start date, and to the care end date if the stay has one."
+   },
+   "care_ended": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's care stay has a last day, the care end date."
    },
    "inpatient": {
     "arguments": [
@@ -266,6 +272,12 @@
     "description": "The applicant's care start date.",
     "verbalisation": "the applicant's care start date"
    },
+   "applicant_care_until": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's care end date.",
+    "verbalisation": "the applicant's care end date"
+   },
    "applicant_admitted": {
     "sort": "$int",
     "unit": "day",
@@ -355,6 +367,12 @@
     "unit": "day",
     "description": "The housemate's care start date.",
     "verbalisation": "the housemate's care start date"
+   },
+   "housemate_care_until": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's care end date.",
+    "verbalisation": "the housemate's care end date"
    },
    "housemate_admitted": {
     "sort": "$int",

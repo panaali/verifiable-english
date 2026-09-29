@@ -474,7 +474,7 @@
    "rule": "R5b",
    "role": "applicant",
    "source": "S1 reg. 1(4)(a)",
-   "gloss": "The applicant is in residential care exactly when the applicant is in a care setting and the applicant's care days before the week are at least 84 days (12 weeks).",
+   "gloss": "The applicant is in residential care exactly when the applicant is in a care setting, the applicant's care days before the week are at least 84 days (12 weeks), and the applicant's care stay either has no end date or ends no earlier than 2026-09-27.",
    "formula": [
     "and",
     [
@@ -498,16 +498,45 @@
        ]
       ],
       [
-       "le",
+       "and",
        [
-        "decimal",
-        "elapsed_day",
-        "84"
+        "le",
+        [
+         "decimal",
+         "elapsed_day",
+         "84"
+        ],
+        [
+         "const",
+         "elapsed_day",
+         "applicant_care_before_week"
+        ]
        ],
        [
-        "const",
-        "elapsed_day",
-        "applicant_care_before_week"
+        "or",
+        [
+         "not",
+         [
+          "unary",
+          "care_ended",
+          [
+           "const",
+           "applicant"
+          ]
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "date",
+          "2026-09-27"
+         ],
+         [
+          "const",
+          "day",
+          "applicant_care_until"
+         ]
+        ]
        ]
       ]
      ]
@@ -525,16 +554,45 @@
        ]
       ],
       [
-       "le",
+       "and",
        [
-        "decimal",
-        "elapsed_day",
-        "84"
+        "le",
+        [
+         "decimal",
+         "elapsed_day",
+         "84"
+        ],
+        [
+         "const",
+         "elapsed_day",
+         "applicant_care_before_week"
+        ]
        ],
        [
-        "const",
-        "elapsed_day",
-        "applicant_care_before_week"
+        "or",
+        [
+         "not",
+         [
+          "unary",
+          "care_ended",
+          [
+           "const",
+           "applicant"
+          ]
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "date",
+          "2026-09-27"
+         ],
+         [
+          "const",
+          "day",
+          "applicant_care_until"
+         ]
+        ]
        ]
       ]
      ],
@@ -2217,7 +2275,7 @@
    "rule": "R5b",
    "role": "housemate",
    "source": "S1 reg. 1(4)(a)",
-   "gloss": "The housemate is in residential care exactly when the housemate is in a care setting and the housemate's care days before the week are at least 84 days (12 weeks).",
+   "gloss": "The housemate is in residential care exactly when the housemate is in a care setting, the housemate's care days before the week are at least 84 days (12 weeks), and the housemate's care stay either has no end date or ends no earlier than 2026-09-27.",
    "formula": [
     "and",
     [
@@ -2241,16 +2299,45 @@
        ]
       ],
       [
-       "le",
+       "and",
        [
-        "decimal",
-        "elapsed_day",
-        "84"
+        "le",
+        [
+         "decimal",
+         "elapsed_day",
+         "84"
+        ],
+        [
+         "const",
+         "elapsed_day",
+         "housemate_care_before_week"
+        ]
        ],
        [
-        "const",
-        "elapsed_day",
-        "housemate_care_before_week"
+        "or",
+        [
+         "not",
+         [
+          "unary",
+          "care_ended",
+          [
+           "const",
+           "housemate"
+          ]
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "date",
+          "2026-09-27"
+         ],
+         [
+          "const",
+          "day",
+          "housemate_care_until"
+         ]
+        ]
        ]
       ]
      ]
@@ -2268,16 +2355,45 @@
        ]
       ],
       [
-       "le",
+       "and",
        [
-        "decimal",
-        "elapsed_day",
-        "84"
+        "le",
+        [
+         "decimal",
+         "elapsed_day",
+         "84"
+        ],
+        [
+         "const",
+         "elapsed_day",
+         "housemate_care_before_week"
+        ]
        ],
        [
-        "const",
-        "elapsed_day",
-        "housemate_care_before_week"
+        "or",
+        [
+         "not",
+         [
+          "unary",
+          "care_ended",
+          [
+           "const",
+           "housemate"
+          ]
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "date",
+          "2026-09-27"
+         ],
+         [
+          "const",
+          "day",
+          "housemate_care_until"
+         ]
+        ]
        ]
       ]
      ],

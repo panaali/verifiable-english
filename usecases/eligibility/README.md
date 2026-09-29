@@ -8,15 +8,16 @@ of the W6a quantities and dates feature.
   (SI 2025/969, England and Wales), with the GOV.UK guide and two linked
   provisions. All four texts are pinned byte for byte with SHA-256 hashes in
   [PLAN.md](PLAN.md) section 1 and [`source/`](source/).
-- **Cases.** 62 applicant profiles in [`cases.json`](cases.json). Each has an
+- **Cases.** 69 applicant profiles in [`cases.json`](cases.json). Each has an
   answer key that was written by hand before VE was run on it. A separate
   program, [`reference.py`](reference.py), was written from the source text
-  and agrees with the key on all 62. Profiles B15 to B19 were added after the
-  first run, by the eligibility review (see "Review fixes" below).
+  and agrees with the key on all 69. Profiles B15 to B19 were added after the
+  first run, by the eligibility review, and B20 to B23 and C25 to C27 by the
+  eligibility recheck (see "Review fixes" below).
 - **Questions.** For each profile: Q1, is the applicant entitled? For an
   entitled applicant, also: Q2, how much? Q3, does HMRC take it back because
   income is over £35,000? Q4, how much does the applicant keep? That makes
-  206 scored questions (PLAN.md section 3).
+  231 scored questions (PLAN.md section 3).
 
 The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
@@ -24,33 +25,35 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
 | Route | Correct | Answered | Disagreements |
 |---|---|---|---|
-| Staged (the plan's fallback) | **206/206** questions, **62/62** profiles | 206/206 | none |
-| Single shot (the whole problem in one proof search) | 0/206 | 0/206 | none; every answer is OPEN |
+| Staged (the plan's fallback) | **231/231** questions, **69/69** profiles | 231/231 | none |
+| Single shot (the whole problem in one proof search) | 0/231 | 0/231 | none; every answer is OPEN |
 
 - **Staged route.** Every answer rests on proof certificates that Lean checked.
-  All 1,448 step certificates were accepted by the Lean `ve_quantity` checker.
-  All 206 answer documents were admitted by Lean.
+  All 1,608 step certificates were accepted by the Lean `ve_quantity` checker.
+  All 231 answer documents were admitted by Lean.
 - **Official answers.** On the 38 profiles whose answer the GOV.UK guide states
   directly, the staged route is correct on 131 of 131 questions.
-- **Unflagged profiles.** On the 53 profiles without a flag, it is correct on
-  173 of 173 questions.
+- **Unflagged profiles.** On the 60 profiles without a flag, it is correct on
+  198 of 198 questions.
 - **Flagged profiles.** Each of the 9 flagged profiles is also correct. This
   means VE followed the reading the key adopted (PLAN.md section 4.2). It does
   not settle which reading of the law is right.
 - **Disagreements.** There are none, so no disagreement needs a cause. No
-  existing key was changed after any VE run; the review only added profiles.
+  existing key was changed after any VE run; the review and the recheck only
+  added profiles.
 
 **Why this is not full independence.** One author wrote the key, the reference
 program and the VE translation, all from the same adopted readings. The 38
 guide-answered profiles are the part of the key that does not depend on this
 author's reading.
 
-**Does the case set catch translation errors?** Yes, for the 23 planned
+**Does the case set catch translation errors?** Yes, for the 25 planned
 mutants. Each mutant is a deliberate error in the translation, such as ">"
 written as "≥" or one benefit removed from the list. Every mutant changed the
-answer of the profile the plan named for it, so 23/23 were caught. The first
+answer of the profile the plan named for it, so 25/25 were caught. The first
 run had 19 mutants, and the case set missed two real errors that the review
-then found. Mutants M20 to M23 now reproduce those errors.
+then found, and a third that the recheck found. Mutants M20 to M25 now
+reproduce those errors.
 
 ## Review fixes
 
@@ -86,6 +89,29 @@ Each new key was written by hand from the regulations before VE was run on the
 profile. `reference.py` was corrected in the same way. A regression test puts
 back each old reading and checks that it changes exactly the profiles added
 for it.
+
+The eligibility recheck (verdict FIX) found a third error, this time in the
+translation alone. `reference.py` had it right.
+
+- **C. The end of a care stay (reg. 1(4)(a), rule R5).** Residential care
+  needs the person in the care home "throughout the qualifying week". The
+  translation never read the stay's end date (`care.until`). So a stay from
+  29 June to 26 September got a Lean-certified £100, where the regulation
+  gives £200. No profile had an end date, so no test could see this. R5 now
+  needs a stay with an end date to last until 27 September, the last day of
+  the week. Seven new profiles cover it:
+  - C25: the recheck's case; C27 ends before the week; both £200. C26 ends on
+    27 September and is still £100.
+  - B20 to B23 end a long stay on 24 September. Each shows one place where
+    residential care matters: reg. 4(3) with Pension Credit (B20, now YES),
+    the over-80 amount (B21, £300 not £150), a housemate's reg. 4(3) (B22,
+    £100 not £200), and "lives with" and so reg. 4(2)(a) (B23, now NO).
+
+  The underlying class of error is a profile field that no fact carries. The
+  translation and `reference.py` now reject any field they do not read. The
+  one exception is `home` on B08 and B09, which is listed as unread with its
+  reason. A test changes each field of each profile in turn and checks that
+  the facts change.
 
 ## What stayed OPEN and why
 
@@ -130,7 +156,7 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
 | age 80 reached | reg. 3 | CHECKED | the 80th birthday is a LABELLED bridge (O2 OPEN) |
 | R3 resident on a day of the week | reg. 2(b) | CHECKED | "ordinarily resident" is LABELLED as a fact (O3) |
 | R4 relevant benefit list | reg. 1(3) | CHECKED | all five benefits decide some profile |
-| R5 residential care, 12 weeks | reg. 1(4)(a) | CHECKED | "care home" is LABELLED as a fact |
+| R5 residential care, 12 weeks | reg. 1(4)(a) | CHECKED | "care home" is LABELLED as a fact; a stay's end date must be no earlier than the week's last day (recheck C) |
 | R6 lives with | reg. 1(4)(b) | CHECKED | "mutual home" is LABELLED as a fact; the care condition is on the subject only (review B) |
 | R7 partner paid a relevant benefit | reg. 4(2)(a) | CHECKED | "partner" is LABELLED as a fact |
 | R8 hospital over 52 weeks | reg. 4(2)(b), SI 2005/3360 reg. 2(5) | CHECKED | "free in-patient treatment" is LABELLED as a fact |
@@ -210,7 +236,7 @@ the statutory reading on each.
 | Path | Content |
 |---|---|
 | [`PLAN.md`](PLAN.md) | the plan, the adopted readings and the frozen key |
-| [`cases.json`](cases.json) | the 62 profiles and their keys |
+| [`cases.json`](cases.json) | the 69 profiles and their keys |
 | [`reference.py`](reference.py) | the independent reference program |
 | [`translation.py`](translation.py) | the VE translation: environment, rules, facts |
 | [`environment.json`](environment.json), [`rules.json`](rules.json) | the generated environment and rules |
