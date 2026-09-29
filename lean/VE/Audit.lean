@@ -69,6 +69,10 @@ import VE.EvaluationCounts
 import VE.Service.Protocol
 import VE.Risk.Cond
 import VE.Risk.Derive
+import VE.Risk.Background
+import VE.Risk.Decl
+import VE.Risk.Severity
+import VE.Risk.Words
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1805,3 +1809,43 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Risk.witnessE_sound
 #print axioms VE.Risk.Cond.eval_iff
 #print axioms VE.Risk.Rel.test_iff
+#print axioms VE.Risk.riskConflictFreeCheck_target
+#print axioms VE.Risk.sat_riskBackground
+#print axioms VE.Risk.risk_conflict_free
+#print axioms VE.Risk.alt_conflict_free_risk
+#print axioms VE.Risk.risk_followable_sound
+#print axioms VE.Risk.baseAdmissibleRisk_of_valid
+#print axioms VE.Risk.risk_dilemma_witness_sound
+#print axioms VE.Risk.riskSemanticCheck_of_wellFormed
+#print axioms VE.Risk.riskValid_of_wellFormed
+#print axioms VE.Risk.risk_wellFormed_alt
+#print axioms VE.Risk.severity_strict
+#print axioms VE.Risk.riskEnv_might
+#print axioms VE.Risk.riskEnv_class
+#print axioms VE.Risk.riskEnv_ms
+#print axioms VE.Risk.riskEnv_sev
+#print axioms VE.Risk.harm_mem
+#print axioms VE.Risk.action_mem
+#print axioms VE.Risk.chooser_mem
+#print axioms VE.Risk.orWorseF_wellFormed
+#print axioms VE.Risk.lessWorstF_wellFormed
+#print axioms VE.Risk.riskWordDef_some
+#print axioms VE.Risk.riskWordDef_length
+#print axioms VE.Risk.riskBody_wellFormed
+#print axioms VE.Risk.riskExtEnv_word
+#print axioms VE.Risk.sortOf_riskExtEnv
+#print axioms VE.Risk.term_denote_withRisk
+#print axioms VE.Risk.withRisk_relation_some
+#print axioms VE.Risk.risk_inline_faithful
+#print axioms VE.Risk.lessWorst_iff
+#print axioms VE.Risk.prem_mem
+#print axioms VE.Risk.class_functional_of
+#print axioms VE.Risk.sev_closed
+#print axioms VE.Risk.order_of
+#print axioms VE.Risk.lessWorst_strict
+#print axioms VE.Risk.mem_allBools
+#print axioms VE.Risk.exists_minimal
+#print axioms VE.Risk.profile_mem
+#print axioms VE.Risk.map_eq_pointwise
+#print axioms VE.Risk.lessWorst_cong
+#print axioms VE.Risk.precaution_has_maximal

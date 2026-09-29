@@ -16,3 +16,7 @@ import VE.Time.Wire
 import VE.Time.Document
 import VE.Risk.Cond
 import VE.Risk.Derive
+import VE.Risk.Background
+import VE.Risk.Decl
+import VE.Risk.Severity
+import VE.Risk.Words
