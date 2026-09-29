@@ -22,14 +22,14 @@ def rights_meaning_id(env, content):
                        {"environment_id": env.environment_id, "ast": content})
 
 
-def _right_situation(env, content, wire):
+def _right_situation(env, content, wire, unit_ids=()):
     """Evaluate a complete right reading on one checked finite base situation."""
     from itertools import product as tuples
     from .evaluate import _Evaluator
     from .model import FiniteModel
     from .rights import RightsDocument
 
-    rights = RightsDocument(env, [content])
+    rights = RightsDocument(env, [{"source_units": sorted(unit_ids)}, content])
     tree = rights.soft_document.elaborated
     base = tree.base_environment()
     model = FiniteModel.from_dict(base, wire)
@@ -113,7 +113,7 @@ def validate_reading_sets(env, values, unit_ids):
                 content = reading["content"]
                 if rights_enabled and type(content) is dict and set(content) == {"right"}:
                     from .rights import RightsDocument
-                    RightsDocument(env, [content])
+                    RightsDocument(env, [{"source_units": sorted(unit_ids)}, content])
                     content_id = rights_meaning_id(env, content)
                 elif env.unit_schema is not None:
                     from .units import quantity_meaning_id
@@ -148,7 +148,7 @@ def validate_reading_sets(env, values, unit_ids):
             if not right_set:
                 model_env, formula_of = _reading_evaluation(env)
             for name, data in models.items():
-                model_id = (_right_situation(env, right_contents[0], data)[0] if right_set else
+                model_id = (_right_situation(env, right_contents[0], data, unit_ids)[0] if right_set else
                             FiniteModel.from_dict(model_env, data).model_id)
                 if name != model_id:
                     raise VEError("distinguishing model id does not match model")
@@ -158,8 +158,8 @@ def validate_reading_sets(env, values, unit_ids):
                     if reading["content"] is None or other["content"] is None:
                         continue  # other-kind elaboration is pending; the checking route reports UNKNOWN
                     if right_set:
-                        first_id, a = _right_situation(env, reading["content"], models[model_id])
-                        second_id, b = _right_situation(env, other["content"], models[model_id])
+                        first_id, a = _right_situation(env, reading["content"], models[model_id], unit_ids)
+                        second_id, b = _right_situation(env, other["content"], models[model_id], unit_ids)
                         if first_id != model_id or second_id != model_id or a == b:
                             raise VEError("distinguishing model does not separate readings")
                     else:

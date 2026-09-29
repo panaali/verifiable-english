@@ -10,7 +10,9 @@ strictly (unknown fields rejected) and keeps the original complete environment f
 identity. The document is the array of unit contents of 3.2: `{"right": …}`,
 `{"right_lines": …}` (appended to its right's lines), `{"limitation": …}`, `{"bar": …}`
 and the norm units outside rights (`{"norm": …}`, with an optional `cites` beside
-`norm`). The frozen restricted JSON parser rejects `null`, so the optional fields
+`norm`), plus at most one `{"source_units": [ids]}`, the source unit ids every `cites`
+entry must name (`UnknownSymbol: unit <u>` otherwise; none declared means no citation is
+valid). The frozen restricted JSON parser rejects `null`, so the optional fields
 `holder_slot`, `recognition`, `decided_by` and a fan-out line's `predicate` are sent
 absent instead.
 
@@ -228,10 +230,17 @@ structure Units where
   outside : List SoftNode := []
   cites : List (String × List (String × List String)) := []
   order : List (String × SourceLine) := []
+  sourceUnits : Option (List String) := none
 
 def addUnit (se : SoftEnvironment) (acc : Units) (u : Json) : Except String Units := do
   let keys := (← fields u).map (·.1)
-  if keys == ["right"] then
+  if keys == ["source_units"] then
+    if acc.sourceUnits.isSome then throw "InvalidInput: duplicate source_units"
+    let ids ← match strings (u.getObjValD "source_units") with
+      | .ok ids => pure ids
+      | .error _ => throw "InvalidInput: source_units must list unit ids"
+    pure { acc with sourceUnits := some ids }
+  else if keys == ["right"] then
     let R ← decodeRight se (u.getObjValD "right")
     pure { acc with rs := acc.rs ++ [R], order := acc.order ++ R.lines.map (R.name, ·) }
   else if keys == ["right_lines"] then
@@ -278,7 +287,7 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let us ← units.foldlM (addUnit re.se) {}
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
-     re.block, us.rs, us.limits, us.bars, us.cites, some us.order⟩
+     re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩
   match hv : validateRights D with
   | .error e => throw e
   | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [hv], rfl, rfl, rfl⟩

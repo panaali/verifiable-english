@@ -50,7 +50,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 9711,
+    "total_lines": 9725,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -128,11 +128,11 @@
       {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
        "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
        "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Rights/Wire.lean", "lines": 689, "sha256": "a0a4fcdce9ed80b6b3ad967c9c54e121aeaabc1b956dff66e405ba3b40593fbc",
-       "ranges": [[1, 689]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
+      {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "736de0246f3164c162148fa2c068be1b106c9171dd6ee87c407422d3469960ac",
+       "ranges": [[1, 698]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
        "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Rights/Admission.lean", "lines": 449, "sha256": "9f113fa87fe222068e30c12eaa1bf2352dbadd9038020ada7e044096396c00f2",
-       "ranges": [[1, 449]], "declarations": ["splitUnit", "checkSourceCites", "validateCouplings", "decodeRightsDoc", "admitDocument"],
+      {"file": "lean/VE/Rights/Admission.lean", "lines": 454, "sha256": "82fa8cdea8c4580e16fff8db586af3840c7fdc5231e7bec2cb9909793f902971",
+       "ranges": [[1, 454]], "declarations": ["splitUnit", "checkSourceCites", "validateCouplings", "decodeRightsDoc", "admitDocument"],
        "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"}
     ],
     "other_json": {

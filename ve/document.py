@@ -266,9 +266,12 @@ def load_document(path: str | Path):
     formula_env = env
     if rights_enabled:
         from .rights import RightsDocument
-        rights_document = RightsDocument(env, [u["content"] for u, _ in _parts(units)
-                                               if type(u.get("content")) is dict and
-                                               u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")])
+        # Citations name source units (3.2): the rights source carries every unit id.
+        ids = [u.get("id") for u, _ in _parts(units) if type(u) is dict and type(u.get("id")) is str]
+        rights_document = RightsDocument(env, [{"source_units": ids}] + [
+            u["content"] for u, _ in _parts(units)
+            if type(u.get("content")) is dict and
+            u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")])
         soft_document = rights_document.soft_document
         formula_env = soft_document.extended_env
         open_names = (set(open_names) | formula_env.decision_names |
@@ -348,24 +351,6 @@ def load_document(path: str | Path):
                          **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
-    if rights_document is not None:
-        for unit in compiled:
-            content = unit["content"]
-            if type(content) is not dict:
-                continue
-            citations = []
-            if unit["kind"] in ("right", "right_lines"):
-                citations.extend(line.get("cites", {}) for line in content[unit["kind"]]["lines"])
-            elif unit["kind"] == "norm":
-                citations.append(content.get("cites", {}))
-            for cited in citations:
-                if type(cited) is not dict:
-                    raise VEError("InvalidInput: line citations")
-                for targets in cited.values():
-                    if (type(targets) is not list or not targets or
-                            any(type(target) is not str or target not in unit_ids
-                                for target in targets)):
-                        raise VEError("InvalidInput: citation target is not a source unit")
     reports = None
     if "reports@0" in env.profiles:
         from .reports import ReportsDocument
@@ -527,8 +512,9 @@ _RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar")
 
 
 def _rights_source_units(doc):
-    return [u["content"] for u in doc["units"]
-            if u["kind"] in (*_RIGHTS_KINDS, "norm") and type(u["content"]) is dict]
+    return [{"source_units": [u["id"] for u in doc["units"]]}] + [
+        u["content"] for u in doc["units"]
+        if u["kind"] in (*_RIGHTS_KINDS, "norm") and type(u["content"]) is dict]
 
 
 def _rights_report(doc):

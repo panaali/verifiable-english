@@ -109,9 +109,10 @@ def report_rights(environment, units, rights):
 
 def admit_rights_document(environment, document, rights):
     """Replay W2 admission on the independently regenerated rights source."""
-    source = [unit["content"] for unit in document["units"]
-              if unit.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")
-              and type(unit.get("content")) is dict]
+    source = [{"source_units": [unit["id"] for unit in document["units"]]}] + [
+        unit["content"] for unit in document["units"]
+        if unit.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")
+        and type(unit.get("content")) is dict]
     report_rights(environment, source, rights)
     case = {"id": "admission", "kind": "admission", "environment": environment.to_dict(),
             "document": document}

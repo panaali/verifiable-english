@@ -45,6 +45,7 @@ def mkRights (sorts : List String) (base : List (String × List String)) (regs :
   limits := limits
   bars := bars
   outsideCites := []
+  sourceUnits := ["u1", "u082"]
 
 def block : RightsEnv := ⟨["person"], ["state", "person"], [], []⟩
 
@@ -160,6 +161,11 @@ def gamma7 : RightsDoc :=
   ["UnlicensedLimitation: exception rule-7 of rule no-arbitrary-arrest on right r9"]
 -- the same rule citing the narrowing of the line: licensed, no finding
 #guard limitationScope { gamma7 with outsideCites := [("rule-7", [("narrows:no-arbitrary-arrest", ["u082"])])] } [] == []
+-- a citation to a unit the source does not have licenses nothing: the document is rejected
+#guard diag { gamma7 with outsideCites := [("rule-7", [("narrows:no-arbitrary-arrest", ["u9"])])] } ==
+  "UnknownSymbol: unit u9"
+#guard diag { gamma with rs := [⟨"r9", "person", .top, [{ arrestClaim with cites := [("unless:1", ["u9"])] }]⟩] } ==
+  "UnknownSymbol: unit u9"
 
 /-! ## (ρ) two limitations -/
 

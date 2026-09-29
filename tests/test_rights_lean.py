@@ -200,12 +200,18 @@ def test_scope_audit_adopter_exception(lean):
     rule7 = norm("rule-7", "arrest_permitted", True, guard=("unary", "journalist", ["var", 0]),
                  over=["no-arbitrary-arrest"])
     uncited = GAMMA + [{"norm": rule7}]
-    cited = GAMMA + [{"norm": rule7, "cites": {"narrows:no-arbitrary-arrest": ["u9"]}}]
+    cited = [{"source_units": ["u9"]}] + GAMMA + [{"norm": rule7, "cites": {"narrows:no-arbitrary-arrest": ["u9"]}}]
     rows = run(lean, [{"id": "u", "kind": "rights-scope", "environment": env(ARREST), "document": uncited},
-                      {"id": "c", "kind": "rights-scope", "environment": env(ARREST), "document": cited}])
+                      {"id": "c", "kind": "rights-scope", "environment": env(ARREST), "document": cited},
+                      # a citation to a unit the source does not have licenses nothing (4.1 step 3)
+                      {"id": "x", "kind": "rights-scope", "environment": env(ARREST), "document": cited[1:]},
+                      {"id": "y", "kind": "rights-scope", "environment": env(ARREST),
+                       "document": [{"source_units": ["u8"]}] + cited[1:]}])
     assert rows[0]["findings"] == ["UnlicensedLimitation: exception rule-7 of rule no-arbitrary-arrest on right r9"]
     assert rows[0]["licensed"] is False
     assert rows[1]["findings"] == [] and rows[1]["licensed"] is True
+    assert rows[2]["status"] == "error" and rows[2]["error"] == "UnknownSymbol: unit u9"
+    assert rows[3]["status"] == "error" and rows[3]["error"] == "UnknownSymbol: unit u9"
 
 
 PUBLISH = {"publish_about_required": obligation("deny", "publish_about_permitted", act="{0} publish about {1}",
@@ -231,7 +237,7 @@ def mu_document(liberty_cites=None, claim_cites=None, *, strict_liberty=False):
                  rank="dignity", guard=("binary", "attacks_honour", ["var", 1], ["var", 0]))
     return [right("r19", [line("liberty", liberty, cites={"exception": ["u1"], **(liberty_cites or {})})]),
             right("r12", [line("claim", claim, holder_slot=1, cites={"exception": ["u1"], **(claim_cites or {})})]),
-            limitation()]
+            limitation(), {"source_units": ["u1"]}]
 
 
 def test_mu_uncited_rank_is_unlicensed_and_cited_rank_is_a_collision(lean):
@@ -369,7 +375,7 @@ def test_rights_admission_rejects_nonexistent_citation_target(lean):
                     {"name": "leaf", "ast": ["top"], "label": "asserted", "unit": "u1"}]}}
     row = run(lean, [{"id": "c", "kind": "admission", "environment": env(ARREST),
                       "document": document}])[0]
-    assert row["error"] == "InvalidInput: citation target is not a source unit"
+    assert row["error"] == "UnknownSymbol: unit nonexistent-source-unit"
 
 
 def test_rights_admission_validates_coupled_reading_labels(lean):

@@ -7,11 +7,12 @@ the Art. 30 bar, line instances in instance order and the generated vocabulary
 
 A `RightsDoc` is a soft document (`soft`: the author's `E`, literals, soft block and the
 norm units outside rights) plus the rights block, the rights, the limitations and at
-most one bar. The `right_lines` units of 3.2 are already appended to their right's
-`lines` by the decoder, at the unit's own position, so `lines` is the right's complete
-line list in document order. `outsideCites` carries the `cites` of the norm units
-outside rights (rule name ↦ key ↦ cited units, 3.2), the only rights-relevant field
-those units have beyond their soft norm object.
+most one bar. The decoder appends the lines of a `right_lines` unit of 3.2 to their
+right's `lines` and records the source order in `sourceOrder`, where the unit's lines
+follow at the unit's own position (1.6), so instance order is document order.
+`outsideCites` carries the `cites` of the norm units outside rights (rule name ↦ key ↦
+cited units, 3.2), the only rights-relevant field those units have beyond their soft norm
+object; `sourceUnits` lists the source unit ids every citation must name.
 
 Nothing here refers to the elaboration: `correlate`, `limPremises` and
 `WellFormedRights` are in `Correlate.lean`. -/
@@ -120,6 +121,8 @@ structure RightsDoc where
   outsideCites : List (String × List (String × List String))
   /-- Source line order when decoded from wire units, including later right_lines. -/
   sourceOrder : Option (List (String × SourceLine)) := none
+  /-- The ids of the source units a `cites` entry may name (3.2, 4.1 step 3). -/
+  sourceUnits : List String := []
 
 /-! ## Generated names (1.6) -/
 

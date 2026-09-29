@@ -226,7 +226,7 @@ def test_document_rejects_citation_to_nonexistent_source_unit(tmp_path):
          "support": "none", "content": units[1]}]}
     path = tmp_path / "citation.ve.md"
     path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
-    with pytest.raises(VEError, match="citation target is not a source unit"):
+    with pytest.raises(VEError, match="UnknownSymbol: unit nonexistent-source-unit"):
         load_document(path)
     meta["units"][0]["content"]["right"]["lines"][0]["cites"]["exception"] = ["u2"]
     path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
@@ -272,6 +272,28 @@ def test_rights_coverage_counts_open_limitation_terms_and_findings(tmp_path):
     assert covered["residual"]["bar_terms"] == 1 and covered["soft_status"] == "OPEN"
     # with no liberty there is no aimed term to count
     assert check_document(rights_document_file(tmp_path, [right(), bar]))["coverage"]["residual"]["bar_terms"] == 0
+
+
+def test_citations_name_declared_source_units_on_lines_and_outside_norms():
+    raw = rights_env()
+    line = claim()
+    line["cites"] = {"guard": ["u057"]}
+    outside = {"norm": {"name": "may-protect", "predicate": "protect_permitted", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []},
+               "cites": {"narrows:protect": ["u082"]}}
+    source = [{"source_units": ["u057", "u082"]}, right([line]), outside]
+    rights = correlate(raw, source)
+    assert rights.instances[0]["cites"] == {"guard": ["u057"]}
+    assert [rule.core.name for rule in rights.soft_document.rules] == ["protect", "may-protect"]
+    # a citation to a unit the source does not have is rejected, never a licence
+    with pytest.raises(VEError, match="UnknownSymbol: unit u082"):
+        correlate(raw, [{"source_units": ["u057"]}, right([line]), outside])
+    with pytest.raises(VEError, match="UnknownSymbol: unit u057"):
+        correlate(raw, [right([line])])
+    with pytest.raises(VEError, match="InvalidInput: cites guard must list unit ids"):
+        correlate(raw, [{"source_units": []}, right([{**line, "cites": {"guard": []}}])])
+    from ve.rights_route import report_rights
+    assert report_rights(rights.env, source, rights)["unlicensed_limitations"] == []
 
 
 def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
