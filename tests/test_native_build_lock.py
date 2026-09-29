@@ -9,20 +9,48 @@ import time
 import pytest
 
 import conftest
+from subprocesses import HANG_TIMEOUT
 
 
-def _wait_for(path, timeout=10):
+# Every step below waits for an explicit event (a file or a lock), never for a
+# fixed interval: under load any interval can pass before the other side acts.
+# HANG_TIMEOUT only bounds a side that never acts at all.
+def _wait_for(path, timeout=HANG_TIMEOUT):
     deadline = time.monotonic() + timeout
     while not path.exists() and time.monotonic() < deadline:
         time.sleep(0.01)
     assert path.exists()
 
 
-def test_orphaned_builder_keeps_exclusive_lock(tmp_path):
+def _wait_code(path):
+    """Child code that blocks until `path` exists (or HANG_TIMEOUT passes)."""
+    return (f"deadline = time.monotonic() + {HANG_TIMEOUT}\n"
+            f"while not Path({str(path)!r}).exists() and time.monotonic() < deadline:\n"
+            "    time.sleep(0.01)\n")
+
+
+def _acquire(lock, timeout=HANG_TIMEOUT):
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(0.01)
+
+
+# The delays reproduce review findings: a parent scheduled 2 s late once saw an
+# orphaned builder that had already slept out its fixed 1.5 s and released.
+@pytest.mark.parametrize("parent_delay", [0, 2])
+def test_orphaned_builder_keeps_exclusive_lock(tmp_path, parent_delay):
     """A killed pytest owner must not expose artifacts while its builder writes."""
     lock_path = tmp_path / "build.lock"
     started = tmp_path / "started"
-    child_code = f"from pathlib import Path; import time; Path({str(started)!r}).touch(); time.sleep(1.5)"
+    release = tmp_path / "release"
+    child_code = ("from pathlib import Path; import time\n"
+                  f"Path({str(started)!r}).touch()\n" + _wait_code(release))
     owner_code = "\n".join((
         "import fcntl, sys",
         "from pathlib import Path",
@@ -36,53 +64,70 @@ def test_orphaned_builder_keeps_exclusive_lock(tmp_path):
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         _wait_for(started)
+        time.sleep(parent_delay)
         owner.kill()
-        owner.wait(timeout=5)
+        owner.wait(timeout=HANG_TIMEOUT)
         with lock_path.open("a+") as contender:
+            # The builder holds the lock until it is told to finish, however
+            # late this check runs.
             with pytest.raises(BlockingIOError):
                 fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            deadline = time.monotonic() + 5
-            while time.monotonic() < deadline:
-                try:
-                    fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                    break
-                except BlockingIOError:
-                    time.sleep(0.01)
-            else:
-                pytest.fail("orphaned builder did not release the lock")
+            release.touch()
+            _acquire(contender)
     finally:
+        release.touch()
         if owner.poll() is None:
             owner.kill()
-            owner.wait(timeout=5)
+            owner.wait(timeout=HANG_TIMEOUT)
 
 
-def test_timeout_stops_compiler_descendants(tmp_path):
+# A driver that starts 4 s late once outlived the old fixed 3 s timeout before
+# spawning its grandchild. The timeout now starts once the grandchild is up.
+@pytest.mark.parametrize("driver_delay", [0, 4])
+def test_timeout_stops_compiler_descendants(tmp_path, monkeypatch, driver_delay):
     """A timed out build cannot leave a grandchild writing after retry."""
     spawned = tmp_path / "spawned"
     ready = tmp_path / "grandchild-ready"
+    alive = tmp_path / "grandchild-alive"
     late = tmp_path / "late"
     release = tmp_path / "release"
-    grandchild = ("from pathlib import Path; import time; "
-                  f"release = Path({str(release)!r}); "
-                  f"Path({str(ready)!r}).touch(); "
-                  "\nwhile not release.exists(): time.sleep(0.01)\n"
-                  f"Path({str(late)!r}).touch()")
+    # The grandchild holds `alive` locked for as long as it runs.
+    grandchild = ("import fcntl, time\nfrom pathlib import Path\n"
+                  f"alive = Path({str(alive)!r}).open('a+')\n"
+                  "fcntl.flock(alive, fcntl.LOCK_EX)\n"
+                  f"Path({str(ready)!r}).touch()\n" + _wait_code(release) +
+                  f"Path({str(late)!r}).touch()\n")
     driver = "\n".join((
         "import subprocess, sys, time",
-        f"from pathlib import Path; Path({str(spawned)!r}).touch()",
+        "from pathlib import Path",
+        f"time.sleep({driver_delay})",
         f"subprocess.Popen([sys.executable, '-c', {grandchild!r}])",
-        "time.sleep(5)",
+        _wait_code(ready),
+        f"Path({str(spawned)!r}).touch()",
+        f"time.sleep({HANG_TIMEOUT})",
     ))
-    with (tmp_path / "build.lock").open("a+") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
-        with pytest.raises(TimeoutError):
-            conftest._run_build([sys.executable, "-c", driver], None, None, lock,
-                timeout=3)
-    assert spawned.exists()
-    assert ready.exists()
-    release.touch()
-    time.sleep(0.2)
-    assert not late.exists()
+    communicate = subprocess.Popen.communicate
+
+    def communicate_once_spawned(process, *args, **kwargs):
+        # Start the build's timeout only when the driver's descendants exist.
+        _wait_for(spawned)
+        return communicate(process, *args, **kwargs)
+
+    monkeypatch.setattr(subprocess.Popen, "communicate", communicate_once_spawned)
+    try:
+        with (tmp_path / "build.lock").open("a+") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            with pytest.raises(TimeoutError):
+                conftest._run_build([sys.executable, "-c", driver], None, None, lock,
+                    timeout=1)
+        assert ready.exists()
+        # _run_build returns only after the whole group has stopped, so the
+        # grandchild's lock is already free; no interval decides this.
+        with alive.open("a+") as check:
+            fcntl.flock(check, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        assert not late.exists()
+    finally:
+        release.touch()
 
 
 def test_other_invocation_cannot_rebuild_while_tests_read(tmp_path):
@@ -102,7 +147,7 @@ def test_other_invocation_cannot_rebuild_while_tests_read(tmp_path):
         "        sys.exit(0)",
         "    sys.exit(1)",
     ))
-    result = subprocess.run([sys.executable, "-c", contender_code], timeout=5)
+    result = subprocess.run([sys.executable, "-c", contender_code], timeout=HANG_TIMEOUT)
     assert result.returncode == 0
 
 
