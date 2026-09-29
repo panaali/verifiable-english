@@ -88,81 +88,97 @@ pair and `such`. -/
 def referenceWords : List String :=
   ["it", "she", "he", "her", "him", "his", "its", "their", "they", "them", "former", "latter", "such"]
 
-/-- A reference surface at token `i`: a reference word, a demonstrative before a sort noun,
-`the` before a unary noun (a definite description), a citation `by <clause|section|...>`, or a
-document name. The grammar need not derive the sentence: an unplaced reference word is still
-a slot to account for. -/
-def referenceAt (D : DDoc) (s : List Tok) (i : Nat) : Bool :=
-  wordIn s i referenceWords ||
-  (wordIn s i demonstrativeWords && (wordAt s (i + 1)).any (sortWord D.E)) ||
-  (isW s i "the" && (wordAt s (i + 1)).any (unaryPred D.E)) ||
-  (isW s i "by" && wordIn s (i + 1) citeWords) ||
-  D.K.documents.any fun d => d.display.any fun x =>
-    let w := lexWords x
-    !w.isEmpty && w.isPrefixOf (s.drop i)
+/-! ### Slot discovery (docs/spec/discourse.md 4.1(6))
 
-/-! ### Segments: slot discovery below the lexer
+Every reference surface of a unit's own text is a slot to account for, whether or not the grammar
+places it. Discovery reads the unit's bytes alone (a unit boundary always ends a segment) as its
+segments, the maximal runs of characters with a fold (`foldChar`: ASCII letters and digits, `İ`,
+`ı`, `ſ`, the Kelvin sign), folded, with their byte ranges, so a reference word joined to anything
+else (`It's`, `It-is`, `It_`, `Itʼs`, `İt`) is still found. At each segment the surfaces starting
+there are: a reference word; `this|that` before the segments of a sort's name or of its declared
+singular noun (`DDoc.nouns`); `the` before `former|latter`
+or before segments whose `_`-join is a unary predicate; a document display's segments; and, after
+`by`, a citation word through the end of the label the lexer reads after it. Scanning left to
+right, the longest surface starting at a segment is taken and the scan resumes after it, so a
+longer surface (a document display `It is safe`) is one surface, never its shorter parts. A unit
+with meaning must record each surface as a formula-producing mention with exactly its byte range
+(`coverageOk`). Python's `reference_surfaces` is the same function. -/
 
-The lexer keeps every character but spaces, punctuation and `.` inside a word, so `it's`, `it’s`,
-`it-is`, `it_` and `itʼs` are single words that `referenceAt` never matches. Slot discovery also
-reads a sentence as its segments, the maximal runs of ASCII letters and digits of its words, and
-finds the same surfaces on them: a reference word joined to anything else is still a slot to
-account for (fail closed). Python's `reference_surfaces` reads the same segments. -/
+def segGo : List Char → Nat → List Char → Nat → List (String × Nat × Nat)
+  | [], pos, cur, start => if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]
+  | c :: rest, pos, cur, start => match foldChar c with
+    | some f => segGo rest (pos + c.utf8Size) (f :: cur) (if cur.isEmpty then pos else start)
+    | none => (if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]) ++
+        segGo rest (pos + c.utf8Size) [] 0
 
-def segGo : List Char → List Char → List String
-  | [], cur => if cur.isEmpty then [] else [String.mk cur.reverse]
-  | c :: rest, cur =>
-    if c.isAlphanum then segGo rest (c.toLower :: cur)
-    else if cur.isEmpty then segGo rest []
-    else String.mk cur.reverse :: segGo rest []
+/-- The segments of a text, folded, with their byte ranges `[a, b)`. -/
+def segments (t : String) : List (String × Nat × Nat) := segGo t.toList 0 [] 0
 
-/-- The segments of a string: its maximal runs of ASCII letters and digits, lowercased. -/
-def segmentsOf (w : String) : List String := segGo w.toList []
-
-/-- The segments of a sentence, each with the index of the token it lies in. -/
-def segWords (s : List Tok) : List (String × Nat) :=
-  (List.range s.length).flatMap fun i => match (s[i]? : Option Tok) with
-    | some (.word w) => (segmentsOf w).map (·, i)
-    | _ => []
+/-- The folded segments of a string. -/
+def segmentsOf (w : String) : List String := (segments w).map (·.1)
 
 /-- A symbol name split into segments is spelled by its `_`-joined segments (identifiers are
 `[a-z][a-z0-9_]*`, at most 64 bytes, so at most 32 segments). -/
 def joinLimit : Nat := 32
 
-/-- The lengths, in segments, of the reference surfaces starting at segment `j`: a reference
-word; `this|that` before a sort name's segments; `the` before segments whose `_`-join is a unary
-predicate; `by` before a citation word; a document display's segments. -/
+/-- The end byte of a citation label: the first token the lexer reads in the text after byte `e`,
+when it is a word (none: no label follows). -/
+def labelEnd (t : String) (e : Nat) : Option Nat :=
+  match lex (sliceText t e t.utf8ByteSize) with
+  | (w, _, b) :: _ => if w.toList.head?.any wordChar then some (e + b) else none
+  | [] => none
+
+/-- The lengths, in segments, of the surfaces starting at segment `j` that end on a segment. -/
 def segmentLengths (D : DDoc) (ws : List String) (j : Nat) : List Nat :=
   let after := ws.drop (j + 1)
   (if (ws[j]?).any referenceWords.contains then [1] else []) ++
   (if (ws[j]?).any demonstrativeWords.contains then
-    D.E.sorts.filterMap fun srt =>
+    (D.E.sorts ++ D.nouns).filterMap fun srt =>
       let p := segmentsOf srt
       if !p.isEmpty && p.isPrefixOf after then some (p.length + 1) else none
    else []) ++
   (if ws[j]? == some "the" then
+    (if (after.head?).any ordinalWords.contains then [2] else []) ++
     (List.range (min after.length joinLimit)).filterMap fun k =>
       if unaryPred D.E ("_".intercalate (after.take (k + 1))) then some (k + 2) else none
    else []) ++
-  (if ws[j]? == some "by" && (ws[j + 1]?).any citeWords.contains then [2] else []) ++
   D.K.documents.flatMap fun d => d.display.filterMap fun x =>
     let p := segmentsOf x
     if !p.isEmpty && p.isPrefixOf (ws.drop j) then some p.length else none
 
-/-- The segment surfaces of a sentence as token ranges `[first token, last token + 1)`. -/
-def segmentSurfaces (D : DDoc) (s : List Tok) : List (Nat × Nat) :=
-  let sw := segWords s
-  let ws := sw.map (·.1)
-  (List.range ws.length).flatMap fun j => (segmentLengths D ws j).map fun n =>
-    (((sw[j]?).map (·.2)).getD 0, ((sw[j + n - 1]?).map (·.2 + 1)).getD s.length)
+/-- The end bytes of the surfaces starting at segment `j` of a text with segments `sg`. -/
+def surfaceEnds (D : DDoc) (t : String) (sg : List (String × Nat × Nat)) (j : Nat) : List Nat :=
+  let ws := sg.map (·.1)
+  (segmentLengths D ws j).filterMap (fun n => (sg[j + n - 1]?).map (·.2.2)) ++
+  (if (ws[j]?).any citeWords.contains && j != 0 && ws[j - 1]? == some "by" then
+    match sg[j]? with
+    | some (_, _, e) => [(labelEnd t e).getD e]
+    | none => []
+   else [])
 
-/-- Every reference surface of a sentence as a token range: the words `referenceAt` matches and
-the segment surfaces. -/
-def surfaceRanges (D : DDoc) (s : List Tok) : List (Nat × Nat) :=
-  ((List.range s.length).filter (referenceAt D s)).map (fun i => (i, i + 1)) ++ segmentSurfaces D s
+/-- The first segment at or after `j` that starts at or after byte `e`. -/
+def resumeAt (sg : List (String × Nat × Nat)) (e j : Nat) : Nat :=
+  j + ((sg.drop j).takeWhile (·.2.1 < e)).length
 
-/-- The first reference surface of a sentence. -/
-def referenceIndex (D : DDoc) (s : List Tok) : Option Nat := ((surfaceRanges D s).map (·.1)).min?
+/-- The longest-first scan from segment `j` (the fuel bounds the segments left). -/
+def scanFrom (D : DDoc) (t : String) (sg : List (String × Nat × Nat)) : Nat → Nat → List (Nat × Nat)
+  | 0, _ => []
+  | fuel + 1, j => match sg[j]? with
+    | none => []
+    | some (_, a, _) => match (surfaceEnds D t sg j).max? with
+      | some e => (a, e) :: scanFrom D t sg fuel (resumeAt sg e (j + 1))
+      | none => scanFrom D t sg fuel (j + 1)
+
+/-- The reference surfaces of a text, as byte ranges of it, in order. -/
+def textSurfaces (D : DDoc) (t : String) : List (Nat × Nat) :=
+  let sg := segments t
+  scanFrom D t sg sg.length 0
+
+/-- The reference surfaces of unit `u`, as prose byte ranges: discovered in the unit's own text. -/
+def discovered (D : DDoc) (u : String) : List (Nat × Nat) :=
+  match unitOf D.base u with
+  | some x => (textSurfaces D (sliceText D.prose x.start x.stop)).map fun r => (x.start + r.1, x.start + r.2)
+  | none => []
 
 /-- The slot forms an `NP.slot` may carry. -/
 def simpleForm (f : Form) : Bool :=

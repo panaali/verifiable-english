@@ -15,7 +15,7 @@ choice, and sorts play no part (they act only through the type check of 4.3).
 Words. The Lean model reads the declared vocabulary by name: a sort's noun is the sort
 name, a unary predicate's adjective or noun is its name, a binary predicate `p_of` has
 the relational noun `p` and a binary predicate is also a transitive verb under its own
-name. The lexer lowercases every word, so displays and texts compare case-insensitively. -/
+name. The lexer folds every word (`foldChar`), so displays and texts compare case-insensitively. -/
 namespace VE.Discourse
 open VE.English (Tok)
 open VE.Route.Admission (DocUnit Kind)
@@ -34,11 +34,25 @@ def spaceChar (c : Char) : Bool :=
 
 def wordChar (c : Char) : Bool := !spaceChar c && !punctChar c && c != '.'
 
+/-- The case fold of a character onto a lowercase ASCII letter or digit (`none`: it is neither):
+ASCII letters and digits, and the four characters Python's case-insensitive matching equates
+with ASCII letters, `İ` and `ı` (i), `ſ` (s) and the Kelvin sign (k). Words and segments are
+read through it, in Lean and Python alike (docs/spec/discourse.md 4.1(6)). -/
+def foldChar (c : Char) : Option Char :=
+  if c.isAlphanum then some c.toLower
+  else if c.val == 0x130 || c.val == 0x131 then some 'i'
+  else if c.val == 0x17F then some 's'
+  else if c.val == 0x212A then some 'k'
+  else none
+
+/-- A word with every character that has a fold folded (so `İt` and `ſuch` read `it` and `such`). -/
+def foldWord (w : String) : String := w.map fun c => (foldChar c).getD c
+
 def charsBytes (cs : List Char) : Nat := cs.foldl (fun n c => n + c.utf8Size) 0
 
 /-- Flush the current word (reversed characters, start byte). -/
 def flush (cur : List Char) (start : Nat) : List (String × Nat × Nat) :=
-  if cur.isEmpty then [] else [((String.mk cur.reverse).toLower, start, start + charsBytes cur)]
+  if cur.isEmpty then [] else [(foldWord (String.mk cur.reverse), start, start + charsBytes cur)]
 
 /-- Tokens with byte ranges `[a, b)` relative to the text: maximal word runs (a `.` between
 two alphanumerics stays inside a word, as in `2.1`), single punctuation tokens. -/
@@ -56,6 +70,15 @@ def lexGo : List Char → Nat → List Char → Nat → List (String × Nat × N
 def lex (s : String) : List (String × Nat × Nat) := lexGo s.toList 0 [] 0
 
 def lexWords (s : String) : List Tok := (lex s).map fun x => .word x.1
+
+/-- The bytes `[a, b)` of a text (unit spans are whole UTF-8 characters, `Loader.cutsCharacter`). -/
+def sliceText (t : String) (a b : Nat) : String := (String.fromUTF8? (t.toUTF8.extract a b)).getD ""
+
+/-- The tokens of the text of one unit, `[a, b)` of the prose, with prose byte ranges: every unit
+is lexed on its own, so no token joins text across a unit boundary (`Api is reviewed.It is safe.`
+as two units is `api is reviewed .` and `it is safe .`). -/
+def unitTokens (prose : String) (a b : Nat) : List (String × Nat × Nat) :=
+  (lex (sliceText prose a b)).map fun t => (t.1, a + t.2.1, a + t.2.2)
 
 /-! ## Target shapes -/
 

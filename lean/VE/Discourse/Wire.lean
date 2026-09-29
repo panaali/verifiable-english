@@ -8,8 +8,9 @@ form of 3.1 that the Python loader reads: unknown fields are rejected and option
 absent, never `null`. A group's and a constraint's reading is named by its id in the set
 version and decodes to its `original_index` (1.5); an import's `bytes` names a sibling file,
 whose text the case supplies (`files`). Mention spans arrive as prose byte ranges and are
-mapped to token ranges of their unit by the lexer (a named trust boundary); a byte range that
-does not start and end on token boundaries of its unit is `InvalidInput`.
+mapped to token ranges of their unit by the lexer (a named trust boundary), which reads each unit's
+own bytes; a byte range that does not start and end on token boundaries of its unit is
+`InvalidInput`. The byte range is kept (`Mention.bytes`): slot discovery compares it exactly.
 
 Beyond 3.1 the block may carry `validity` bindings, `self_truth` labels and the recorded
 reading choices `choices` (the Manifest fields of 9.1). A target's `version` pin is carried as
@@ -131,7 +132,8 @@ def decodeMention (j : Json) : Except String Mention := do
   let reading ← match ← optString j "reading" with
     | some r => some <$> decodeReading r
     | none => pure none
-  pure { id := ← stringField j "id", unit := ← stringField j "unit", span := ← decodeSpan (← j.getObjVal? "span"),
+  let span ← decodeSpan (← j.getObjVal? "span")
+  pure { id := ← stringField j "id", unit := ← stringField j "unit", span, bytes := span,
          form := ← decodeForm (← stringField j "form"), target := ← decodeTarget (← j.getObjVal? "target"),
          restriction, reading, presuppositionUnit := ← optString j "presupposition_unit",
          pin := ← decodePin (← j.getObjVal? "target") }
@@ -229,10 +231,6 @@ def decodeManifest (sets : List FrontSet) (files : List (String × String)) (env
 
 /-! ## Units, tokens and spans -/
 
-/-- The tokens of the prose whose byte range lies in `[a, b)`. -/
-def tokensIn (toks : List (String × Nat × Nat)) (a b : Nat) : List (String × Nat × Nat) :=
-  toks.filter fun t => a ≤ t.2.1 && t.2.2 ≤ b
-
 /-- Map a mention's prose byte range to the token range of its unit. -/
 def tokenSpan (unitToks : List (String × Nat × Nat)) (m : Mention) : Except String (Nat × Nat) :=
   let starts := unitToks.zipIdx.filter fun (t, _) => t.2.1 == m.span.1
@@ -241,13 +239,12 @@ def tokenSpan (unitToks : List (String × Nat × Nat)) (m : Mention) : Except St
   | [(_, i)], [(_, j)] => if i ≤ j then .ok (i, j + 1) else .error s!"InvalidInput: mention {m.id} span"
   | _, _ => .error s!"InvalidInput: mention {m.id} span"
 
-/-- The prose, its tokens and the per-unit token lists. -/
+/-- The prose; each unit's tokens are read from its own bytes (`unitTokens`). -/
 structure Source where
   prose : String
-  toks : List (String × Nat × Nat)
 
 def Source.unitToks (src : Source) (D : VE.Route.Admission.Doc) (u : String) : Option (List (String × Nat × Nat)) :=
-  (unitOf D u).map fun x => tokensIn src.toks x.start x.stop
+  (unitOf D u).map fun x => unitTokens src.prose x.start x.stop
 
 def Source.text (src : Source) (D : VE.Route.Admission.Doc) (u : String) : Option (List Tok) :=
   (src.unitToks D u).map (List.map fun t => .word t.1)

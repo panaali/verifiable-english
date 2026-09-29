@@ -73,6 +73,7 @@ structure Mention where
   reading : Option Reading
   presuppositionUnit : Option String
   pin : Option Nat                    -- the target's recorded `version` pin (checked by `pinOk`)
+  bytes : Nat × Nat := span           -- the prose byte range as recorded (slot discovery compares it)
   deriving DecidableEq, Repr
 
 /-- A slot of a derivation: a surface position and a form, never a target (4.3); a
@@ -159,6 +160,7 @@ structure DDoc where
   status : List (String × String)
   prose : String                      -- the source (an embedded document is a unit's bytes of it)
   files : Lean.Json                   -- the sibling files an import may name (4.1(10))
+  nouns : List String := []           -- the sorts' declared singular nouns (slot discovery reads them)
 
 /-- The unit record of a unit id. -/
 def unitOf (D : Doc) (u : String) : Option DocUnit := D.units.find? (fun x => x.id == u)
