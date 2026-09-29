@@ -49,6 +49,29 @@ def test_budgeted_order_evaluation_matches_python(monkeypatch):
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("formula,budget,trace_budget", [
+    (Top(), 1, 1), (Top(), 0, 1),
+    (And(Top(), Bottom()), 3, 3), (Or(Top(), Bottom()), 2, 2),
+    (Implies(Bottom(), Top()), 2, 2),
+    (Forall("item", Eq(Var(0), Const("x"))), 3, 3),
+    (Forall("item", Eq(Var(0), Const("x"))), 3, 1),
+])
+def test_traced_order_evaluation_matches_python(monkeypatch, formula, budget, trace_budget):
+    from tests.probe_matrix import model_wire, raw_environment
+    from ve.ast import Le, Num
+    env = Environment(raw_environment(("order@0",)))
+    model = FiniteModel.from_dict(env, model_wire(env))
+    cases = (formula, Le(Num(0), Num(1)))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = [evaluate(env, f, model, trace=True, max_evaluations=budget,
+                         max_trace_nodes=trace_budget).to_dict() for f in cases]
+    for authority in ("rust-experimental", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        assert [evaluate(env, f, model, trace=True, max_evaluations=budget,
+                         max_trace_nodes=trace_budget).to_dict() for f in cases] == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 @pytest.mark.parametrize("semantic", [False, True])
 def test_nonvacuity_search_matches_python(monkeypatch, semantic):
     from tests.probe_matrix import raw_environment

@@ -355,6 +355,107 @@ fn eval(f: &Value, model: &Model, ctx: &[Cell], work: &mut u64, limit: u64) -> R
         _ => unreachable!(),
     })
 }
+
+fn py_cell(v: &Cell) -> String {
+    match v {
+        Cell::Object(s) => format!("'{s}'"),
+        Cell::Integer(n) => n.to_string(),
+    }
+}
+
+fn trace_node(kind: &str, value: bool, bindings: &[(String, String)], detail: String,
+              children: Vec<Value>) -> Value {
+    let bindings = bindings.iter().enumerate().map(|(index, (sort, local_id))|
+        json!({"debruijn_index":index,"sort":sort,"local_id":local_id})).collect::<Vec<_>>();
+    json!({"kind":kind,"value":value,"bindings":bindings,"detail":detail,"children":children})
+}
+
+fn traced_eval(f: &Value, model: &Model, ctx: &[Cell], bindings: &[(String, String)],
+               work: &mut u64, limit: u64) -> Result<(bool, Value)> {
+    if *work >= limit {
+        return error("ResourceLimit", "evaluation budget");
+    }
+    *work += 1;
+    let (kind, a) = tag(f)?;
+    let (value, label, detail, children) = match kind {
+        "top" => (true, "top", String::new(), vec![]),
+        "bottom" => (false, "bottom", String::new(), vec![]),
+        "unary" | "binary" => {
+            let row = a[2..].iter().map(|t| eval_term(t, model, ctx)).collect::<Vec<_>>();
+            let value = model.relations[a[1].as_str().unwrap()].contains(&row);
+            let cells = row.iter().map(py_cell).collect::<Vec<_>>();
+            let tuple = if cells.len() == 1 { format!("({},)", cells[0]) }
+                        else { format!("({})", cells.join(", ")) };
+            (value, kind, format!("{}{tuple}", a[1].as_str().unwrap()), vec![])
+        }
+        "eq" => {
+            let left = eval_term(&a[1], model, ctx);
+            let right = eval_term(&a[2], model, ctx);
+            (left == right, "equality",
+             format!("{} equals {}", cell_value(&left).as_str().unwrap(),
+                     cell_value(&right).as_str().unwrap()), vec![])
+        }
+        "lt" | "le" => {
+            let Cell::Integer(left) = eval_term(&a[1], model, ctx) else { unreachable!() };
+            let Cell::Integer(right) = eval_term(&a[2], model, ctx) else { unreachable!() };
+            (if kind == "lt" { left < right } else { left <= right }, "comparison",
+             format!("{left} {} {right}", if kind == "lt" { "<" } else { "<=" }), vec![])
+        }
+        "not" => {
+            let (child_value, child) = traced_eval(&a[1], model, ctx, bindings, work, limit)?;
+            (!child_value, "not", String::new(), vec![child])
+        }
+        "and" | "or" | "implies" => {
+            let (left, first) = traced_eval(&a[1], model, ctx, bindings, work, limit)?;
+            if kind == "and" && !left {
+                (false, kind, "right branch not needed".into(), vec![first])
+            } else if kind == "or" && left {
+                (true, kind, "right branch not needed".into(), vec![first])
+            } else if kind == "implies" && !left {
+                (true, kind, "vacuously true: antecedent is false".into(), vec![first])
+            } else {
+                let (right, second) = traced_eval(&a[2], model, ctx, bindings, work, limit)?;
+                (if kind == "and" { left && right } else { right }, kind, String::new(),
+                 vec![first, second])
+            }
+        }
+        "forall" | "exists" => {
+            let universal = kind == "forall";
+            let sort = a[1].as_str().unwrap();
+            let domain = &model.domains[sort];
+            if domain.is_empty() {
+                (universal, kind, if universal { "vacuously true: domain is empty" }
+                    else { "false: domain is empty" }.into(), vec![])
+            } else {
+                let mut children = Vec::new();
+                let mut decisive = None;
+                for entity in domain {
+                    let mut next_ctx = vec![Cell::Object(entity.clone())];
+                    next_ctx.extend_from_slice(ctx);
+                    let mut next_bindings = vec![(sort.to_owned(), entity.clone())];
+                    next_bindings.extend_from_slice(bindings);
+                    let (child_value, child) = traced_eval(&a[2], model, &next_ctx,
+                        &next_bindings, work, limit)?;
+                    children.push(child);
+                    if child_value != universal {
+                        decisive = Some(entity);
+                        break;
+                    }
+                }
+                let value = decisive.is_none() == universal;
+                let detail = match decisive {
+                    Some(entity) if universal => format!("counterexample {entity}"),
+                    Some(entity) => format!("witness {entity}"),
+                    None if universal => "all entities checked".into(),
+                    None => "no witness".into(),
+                };
+                (value, kind, detail, children)
+            }
+        }
+        _ => unreachable!(),
+    };
+    Ok((value, trace_node(label, value, bindings, detail, children)))
+}
 fn print_term(t: &Value, names: &[String]) -> String {
     let (kind, a) = tag(t).expect("checked term");
     match kind {
@@ -673,10 +774,26 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if !env.order() {
         return error("UnsupportedProfile", "order profile required");
     }
-    if v.get("kind") == Some(&json!("evaluate-budgeted")) {
-        if v.get("trace") == Some(&json!(true)) {
-            return error("UnsupportedProfile", "Rust order traces are not implemented");
+    if v.get("kind") == Some(&json!("check")) {
+        let ast = v.get("ast").ok_or_else(|| Error::new("InvalidInput", "ast missing"))?;
+        let items = array(ast)?;
+        let formulas = if items.first().is_some_and(Value::is_string) {
+            vec![ast]
+        } else {
+            items.iter().collect::<Vec<_>>()
+        };
+        if formulas.is_empty() {
+            return error("SyntaxError", "empty document");
         }
+        let mut nodes = 0;
+        for formula in formulas {
+            formula_check(&env, formula, &[], 1, &mut nodes)?;
+        }
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":"ok","well_typed":true}));
+    }
+    if v.get("kind") == Some(&json!("evaluate-budgeted")) {
+        let trace = v.get("trace") == Some(&json!(true));
         let formulas = array(v.get("ast").ok_or_else(|| Error::new("InvalidInput", "ast missing"))?)?;
         if formulas.is_empty() {
             return error("SyntaxError", "empty document");
@@ -691,6 +808,39 @@ pub fn order_case(v: &Value) -> Result<Value> {
             .unwrap_or(crate::MAX_EVALUATIONS);
         if maximum > crate::MAX_EVALUATIONS {
             return error("ResourceLimit", "evaluation budget exceeds v0 limit");
+        }
+        if trace {
+            let trace_budget = v.get("max_trace_nodes").and_then(Value::as_u64).unwrap_or(10_000);
+            let limit = maximum.min(trace_budget);
+            let mut work = 0;
+            let mut children = Vec::new();
+            let mut status = "Satisfied";
+            let mut value = Some(true);
+            let mut detail = "all statements satisfied".to_owned();
+            for (index, formula) in formulas.iter().enumerate() {
+                match traced_eval(formula, &model, &[], &[], &mut work, limit) {
+                    Ok((true, child)) => children.push(child),
+                    Ok((false, child)) => {
+                        children.push(child);
+                        status = "Violated";
+                        value = Some(false);
+                        detail = format!("statement {} violated", index + 1);
+                        break;
+                    }
+                    Err(e) if e.code == "ResourceLimit" => {
+                        status = "ResourceLimit";
+                        value = None;
+                        detail = if trace_budget < maximum { "trace-node budget exhausted" }
+                            else { "formula-node evaluation budget exhausted" }.to_owned();
+                        break;
+                    }
+                    Err(e) => return Err(e),
+                }
+            }
+            let explanation = json!({"kind":if value.is_some() { "document" } else { "resource_limit" },
+                "value":value,"bindings":[],"detail":detail,"children":children});
+            return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+                "status":status,"value":value,"evaluations":work,"explanation":explanation}));
         }
         let mut work = 0;
         let mut value = true;

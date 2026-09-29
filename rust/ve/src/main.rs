@@ -85,6 +85,22 @@ fn case(v: &Value) -> Result<Value> {
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
     }
+    if v.get("kind").and_then(Value::as_str) == Some("check") {
+        let env = Environment::from_value(field(v, "environment")?)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let ast = field(v, "ast")?;
+        let items = ast.as_array().ok_or_else(|| Error::new("SyntaxError", "AST must be an array"))?;
+        let document = if items.first().is_some_and(Value::is_string) {
+            json!([ast])
+        } else {
+            ast.clone()
+        };
+        Document::from_value(&env, &document)?;
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":"ok","well_typed":true}));
+    }
     if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
         let env = Environment::from_value(field(v, "environment")?)?;
         if env.order() {
