@@ -14,3 +14,5 @@ import VE.SoftNorms.Run
 import VE.English.Run
 import VE.Time.Wire
 import VE.Time.Document
+import VE.Rights.Examples
+import VE.Rights.Run
