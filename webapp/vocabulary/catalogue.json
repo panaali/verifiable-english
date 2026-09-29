@@ -1,13 +1,15 @@
 {
   "format": "ve-web-copy@1",
   "sources": {
-    "ve_webapp/static/index.html": "6efad0d475915071c774f1aef55ea098b25e0b4e9f4ee8ba5687f5f2250aa3c0",
-    "ve_webapp/static/app.js": "2374276d1a34c1f103779e3bc038512d1abf6836f54ca83063761eaa4800bd7d",
-    "ve_webapp/server.py": "3ffe501a63dab6b3adbf09105b84fe09bc55b1631affad374b5f65bbc7792849",
-    "ve_webapp/worker.py": "52a33d21498f459ad81a1c222f04ebe7af2a6b3a6b6c59493fbd565826c8afe2",
+    "ve_webapp/static/index.html": "94a97c5520bb41b0a0c285df7fe48c74feeac58a4dd2e5332d40a224d232961f",
+    "ve_webapp/static/app.js": "102f81d6d04a3942ea9fc51b4a620eaf1b06918da8434992d7dd59625355fca7",
+    "ve_webapp/server.py": "3edbbef76f669d9094b1c24fbe8c4fe2a812123650615a4d2fd3d07c6b173127",
+    "ve_webapp/worker.py": "fc920bd9989a3a6c8713d277f8c78abd8aa645862e0629409cab4cdcad1e238e",
     "ve_webapp/drafts.py": "78fc21ca526c488bb8363b0a5f479c89ae4d316958780859be1939db51f27576",
     "ve_webapp/rules.py": "65847f56a2552b0b0f46588698510c8b5eaf1d8186715015e099211f42c8143e",
-    "ve_webapp/examples.py": "d39de409076ebeba175c4bb9b57dd5744de8675f1b5d96342bed771505a138e0"
+    "ve_webapp/examples.py": "d39de409076ebeba175c4bb9b57dd5744de8675f1b5d96342bed771505a138e0",
+    "ve_webapp/asimov.py": "c84930d8f7781ecb8741e7abeaa4281e3eb9f72fce5451a4818d216becf94de3",
+    "ve_webapp/asimov.json": "708b30d3a39b4ec2e1fdc388b990f66451f47e18b0c1219affbde32794541941"
   },
   "entries": [
     {
@@ -34,6 +36,18 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "A law forbids it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A law forbids it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "A proof establishes a consequence of these assumptions. It does not establish their truth or the fidelity of a translation.",
       "visibility": "UI",
       "segments": [
@@ -46,6 +60,17 @@
           "kind": "SENTENCE",
           "text": "It does not establish their truth or the fidelity of a translation.",
           "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "ASIMOV'S LAWS OF ROBOTICS",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "ASIMOV'S LAWS OF ROBOTICS"
         }
       ]
     },
@@ -68,6 +93,17 @@
         {
           "kind": "LABEL",
           "text": "Approve selected meaning"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Asimov's laws",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Asimov's laws"
         }
       ]
     },
@@ -249,6 +285,17 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "Decided by VE",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Decided by VE"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Described kind",
       "visibility": "UI",
       "segments": [
@@ -390,6 +437,23 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "Every verdict on this page comes from VE's checker. Change the facts of a scenario and VE decides it again.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every verdict on this page comes from VE's checker.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Change the facts of a scenario and VE decides it again.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Exact meaning",
       "visibility": "UI",
       "segments": [
@@ -462,6 +526,17 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "Forbidden",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Forbidden"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Four views",
       "visibility": "UI",
       "segments": [
@@ -473,12 +548,45 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "Honest limits",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Honest limits"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Import a saved document",
       "visibility": "UI",
       "segments": [
         {
           "kind": "LABEL",
           "text": "Import a saved document"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Isaac Asimov wrote three laws for his fictional robots, and later a fourth. VE states them as thirteen checked rules. In each situation below, VE decides what the robot may do and names the law that decides it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Isaac Asimov wrote three laws for his fictional robots, and later a fourth.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE states them as thirteen checked rules.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "In each situation below, VE decides what the robot may do and names the law that decides it.",
+          "gap": "SyntaxError"
         }
       ]
     },
@@ -539,6 +647,75 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "No clear action",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "No clear action"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "No clear action, or no ranking",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "No clear action, or no ranking"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "No hand-written verdicts",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "No hand-written verdicts"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "No law forbids it outright, but choosing it would leave a duty undone.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No law forbids it outright, but choosing it would leave a duty undone.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "No law forbids it, and it leaves no duty undone.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No law forbids it, and it leaves no duty undone.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "No option meets every law at once.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No option meets every law at once.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "None selected",
       "visibility": "UI",
       "segments": [
@@ -578,6 +755,17 @@
         {
           "kind": "LABEL",
           "text": "PRIVATE WORKSPACE"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Permitted",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Permitted"
         }
       ]
     },
@@ -682,6 +870,17 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "Required",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Required"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Review meaning",
       "visibility": "UI",
       "segments": [
@@ -699,6 +898,17 @@
         {
           "kind": "LABEL",
           "text": "Rule conflicts"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Ruled out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Ruled out"
         }
       ]
     },
@@ -859,6 +1069,17 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "The laws as Asimov wrote them",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The laws as Asimov wrote them"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "The meaning is precise. The evidence is relevant.",
       "visibility": "UI",
       "segments": [
@@ -884,6 +1105,18 @@
         {
           "kind": "SENTENCE",
           "text": "The consequence is checked."
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "The only option that meets every law, or an order the robot must obey.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The only option that meets every law, or an order the robot must obey.",
+          "gap": "SyntaxError"
         }
       ]
     },
@@ -979,6 +1212,28 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "This is VE's natural English view of the rules. Each rule shows whether the checker read it in exactly one way. The badge above shows whether the checker found any situation in which two rules clash.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "This is VE's natural English view of the rules.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Each rule shows whether the checker read it in exactly one way.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The badge above shows whether the checker found any situation in which two rules clash.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Toggle light or dark theme",
       "visibility": "UI",
       "segments": [
@@ -1034,12 +1289,45 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "VE approves",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "VE approves"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "VE experimental checker",
       "visibility": "UI",
       "segments": [
         {
           "kind": "LABEL",
           "text": "VE experimental checker"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "VE rejects",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "VE rejects"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "VE's thirteen rules",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "VE's thirteen rules"
         }
       ]
     },
@@ -1111,12 +1399,47 @@
     },
     {
       "source": "ve_webapp/static/index.html",
+      "raw": "What the laws allow or require.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "What the laws allow or require.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "What the laws forbid.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "What the laws forbid.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
       "raw": "Word type",
       "visibility": "UI",
       "segments": [
         {
           "kind": "LABEL",
           "text": "Word type"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/index.html",
+      "raw": "Worked scenarios",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Worked scenarios"
         }
       ]
     },
@@ -1288,6 +1611,11 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": ".asimov-edit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "/api/",
       "visibility": "INTERNAL"
     },
@@ -1326,6 +1654,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "Ask VE again",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Ask VE again"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "Assistant readings",
       "visibility": "UI",
       "segments": [
@@ -1345,6 +1684,11 @@
           "text": "Assistant suggestion · untrusted"
         }
       ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "CONFLICT-FREE",
+      "visibility": "INTERNAL"
     },
     {
       "source": "ve_webapp/static/app.js",
@@ -1380,6 +1724,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "Change the facts",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Change the facts"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "Check “{}”. {}",
       "visibility": "UI",
       "segments": [
@@ -1387,6 +1742,39 @@
           "kind": "SENTENCE",
           "text": "Check “{}”. {}",
           "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Checked",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Checked"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Conflict check unresolved",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Conflict check unresolved"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Conflict-free",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Conflict-free"
         }
       ]
     },
@@ -1446,8 +1834,30 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "Forbidden",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Forbidden"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "GET",
       "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "If chosen: ",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "If chosen:"
+        }
+      ]
     },
     {
       "source": "ve_webapp/static/app.js",
@@ -1540,6 +1950,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "Nav",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Nav"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "Nearby declared words: {}. These are suggestions, not replacements.",
       "visibility": "UI",
       "segments": [
@@ -1568,6 +1989,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "No clear action",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "No clear action"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "None of these means what you intended. Restate the sentence or give an example.",
       "visibility": "UI",
       "segments": [
@@ -1580,6 +2012,17 @@
           "kind": "SENTENCE",
           "text": "Restate the sentence or give an example.",
           "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Not checked",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Not checked"
         }
       ]
     },
@@ -1620,6 +2063,17 @@
       "source": "ve_webapp/static/app.js",
       "raw": "POST",
       "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Permitted",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Permitted"
+        }
+      ]
     },
     {
       "source": "ve_webapp/static/app.js",
@@ -1679,6 +2133,39 @@
           "kind": "SENTENCE",
           "text": "Acceptance applies to this local draft; it is not an audited assist-session sign-off.",
           "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Required",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Required"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Rule {}",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Rule {}"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "Ruled out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Ruled out"
         }
       ]
     },
@@ -2372,6 +2859,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "Unknown",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Unknown"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "Use this restatement",
       "visibility": "UI",
       "segments": [
@@ -2389,6 +2887,30 @@
         {
           "kind": "LABEL",
           "text": "Use this wording"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "VE decided this again just now, with your facts.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE decided this again just now, with your facts.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "VE decided this when the page was built.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE decided this when the page was built.",
+          "gap": "SyntaxError"
         }
       ]
     },
@@ -2521,6 +3043,11 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "approves",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "aria-current",
       "visibility": "INTERNAL"
     },
@@ -2532,6 +3059,116 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": "article",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-card",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-edit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-option",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-options",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-outcome",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-quote",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-rule-head",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-verdict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimov-why",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovApproves",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovDocument",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovFactsNote",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovLimitNote",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovLimits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovNav",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovOpen",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovQuotes",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovRejects",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "asimovRules",
       "visibility": "INTERNAL"
     },
     {
@@ -2556,6 +3193,11 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "badge asimov-badge asimov-",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "badge explicit-badge",
       "visibility": "INTERNAL"
     },
@@ -2567,6 +3209,11 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": "beforeunload",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "blockquote",
       "visibility": "INTERNAL"
     },
     {
@@ -2622,6 +3269,16 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": "checkRules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "checkbox",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "checked",
       "visibility": "INTERNAL"
     },
     {
@@ -2772,6 +3429,11 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "eyebrow",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "false",
       "visibility": "UI",
       "segments": [
@@ -2780,6 +3442,16 @@
           "text": "false"
         }
       ]
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "figcaption",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "figure",
+      "visibility": "INTERNAL"
     },
     {
       "source": "ve_webapp/static/app.js",
@@ -2828,12 +3500,22 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "inline",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "input",
       "visibility": "INTERNAL"
     },
     {
       "source": "ve_webapp/static/app.js",
       "raw": "keydown",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "label",
       "visibility": "INTERNAL"
     },
     {
@@ -2873,7 +3555,17 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "li",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "light",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "limits",
       "visibility": "INTERNAL"
     },
     {
@@ -2908,12 +3600,27 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "no clear action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "noneReading",
       "visibility": "INTERNAL"
     },
     {
       "source": "ve_webapp/static/app.js",
       "raw": "note",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "note asimov-limit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "note asimov-source",
       "visibility": "INTERNAL"
     },
     {
@@ -2998,6 +3705,11 @@
     },
     {
       "source": "ve_webapp/static/app.js",
+      "raw": "rejects",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
       "raw": "relation",
       "visibility": "INTERNAL"
     },
@@ -3009,6 +3721,11 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": "result-detail",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ruled out",
       "visibility": "INTERNAL"
     },
     {
@@ -3134,6 +3851,11 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": "translation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": "ul",
       "visibility": "INTERNAL"
     },
     {
@@ -3290,6 +4012,11 @@
     },
     {
       "source": "ve_webapp/server.py",
+      "raw": "/api/asimov",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
       "raw": "/api/drafts",
       "visibility": "INTERNAL"
     },
@@ -3431,6 +4158,18 @@
       "source": "ve_webapp/server.py",
       "raw": "CallAllowanceReached",
       "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Choose a scenario and its listed facts.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Choose a scenario and its listed facts.",
+          "gap": "SyntaxError"
+        }
+      ]
     },
     {
       "source": "ve_webapp/server.py",
@@ -3835,6 +4574,11 @@
     },
     {
       "source": "ve_webapp/server.py",
+      "raw": "asimov",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
       "raw": "assist",
       "visibility": "INTERNAL"
     },
@@ -3920,6 +4664,11 @@
     },
     {
       "source": "ve_webapp/server.py",
+      "raw": "facts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
       "raw": "failed",
       "visibility": "INTERNAL"
     },
@@ -3961,6 +4710,11 @@
     {
       "source": "ve_webapp/server.py",
       "raw": "http.response.start",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "id",
       "visibility": "INTERNAL"
     },
     {
@@ -4070,6 +4824,11 @@
     },
     {
       "source": "ve_webapp/server.py",
+      "raw": "scenario",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
       "raw": "sec-fetch-site",
       "visibility": "INTERNAL"
     },
@@ -4121,6 +4880,11 @@
     {
       "source": "ve_webapp/server.py",
       "raw": "text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "toggles",
       "visibility": "INTERNAL"
     },
     {
@@ -4439,6 +5203,11 @@
     },
     {
       "source": "ve_webapp/worker.py",
+      "raw": "asimov",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
       "raw": "assurance",
       "visibility": "INTERNAL"
     },
@@ -4525,6 +5294,11 @@
     {
       "source": "ve_webapp/worker.py",
       "raw": "example",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "facts",
       "visibility": "INTERNAL"
     },
     {
@@ -4630,6 +5404,11 @@
     {
       "source": "ve_webapp/worker.py",
       "raw": "s",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/worker.py",
+      "raw": "scenario",
       "visibility": "INTERNAL"
     },
     {
@@ -7156,6 +7935,5199 @@
       "source": "ve_webapp/examples.py",
       "raw": "{0} was naturalized in the United States",
       "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " (exception to rule",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " and ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " out the others.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": " rules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": ").",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": ", ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "--write",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": ".",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A bridge is collapsing. The robot can run to safety, or hold the bridge up long enough for a person to cross, which would destroy the robot.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A child falls into a pool. Robot A and robot B are both at the pool. Robot B was told to cook dinner.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, told to cook dinner, and cannot reach the pool in time.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A child runs toward a busy road. The robot is sorting parcels. It can keep sorting or grab the child.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A crate is falling toward the robot. Nobody else is nearby. The robot can step aside, duck behind a wall, or stay where it is.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A disaster strikes humanity.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A machine is about to set off a disaster for all of humanity. The robot can switch it off.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A person is about to step in front of a train. The robot can stop them only by pushing them hard, which bruises them.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A person is trapped in a burning room. The robot can carry them out, but the fire would destroy it.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A person is trapped. One route melts the robot, one short-circuits it, and a third does both.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A person is trapped. The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A person stands in the robot's way. The robot can shove them aside to finish a delivery sooner, or wait for them to move.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human gave the order",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human orders the robot into a collapsing mine to fetch a tool. The mine would destroy the robot. The robot could also retreat to safety.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human orders the robot to keep stacking boxes. A worker nearby is about to be crushed by a falling shelf.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human orders the robot to open a valve. The gas would poison the air for all of humanity.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human tells the robot to carry the groceries in. The robot could stay on its charger instead.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A qualified human tells the robot to fetch a coffee.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A rescue that destroys the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A robot may not injure a human being under any conditions, and, as a corollary, must not permit a human being to be injured because of inaction on his part.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A robot may not injure humanity, or, through inaction, allow humanity to come to harm.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A saboteur is about to cause a disaster for humanity. The robot can stop them by force, which injures them, or by locking the control room, which injures no one.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A saboteur is about to cause a disaster for humanity. The robot can stop them only by force: it can bruise them or break their arm.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A safe route also exists",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A small injury to prevent a death",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A storm will hurt a hiker far away, whatever the robot does. The robot can keep repairing a fence or stand still.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A swimmer is drowning next to the robot. The robot can pull them out or stay where it is.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "A thief is about to release a stolen virus that would spread across the world. The robot can stop the thief only by tackling them, which injures the thief.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "An order to ignore someone in danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "An order to poison the air",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "An order to trip a runner",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Asimov's laws of robotics, decided by VE for readers.\n\nEvery verdict comes from the Lean alternatives route (``ve.alternatives``) over\n``usecases/asimov-laws``; nothing here decides what is permitted. The\nexplanation beside each verdict names the rule that decided it. It is built\nfrom the checker's report and the facts the scenario states, never written per\nscenario. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``;\n``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.\n",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Carry the groceries in",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Carry the person out",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Carrying on when nobody can help",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Climb the stairs",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Definition",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Do neither",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Do nothing",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Duck behind a wall",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Each option has one known outcome. VE does not reason about chance, time or plans with several steps.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Each robot is judged on its own options. VE does not know that one robot's rescue is enough for both.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Each robot is judged on its own options. VE's reading does not know that one rescue would be enough.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Each scenario states its facts: who would be hurt, which option leads to which outcome, and which orders were given. VE checks what the rules conclude from those facts. It does not check whether the facts are true.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Every route damages the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Fetch the coffee",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Fetching a coffee when told to",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Fire or water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "First",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "First Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "First Law: it injures a human being.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "First Law: it lets a human being come to harm when another option would prevent that.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Found",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Go into the mine",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Go through fire and water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Go through the fire",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Go through the water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Go to the hiker",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Grab the child",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Hand over the knife",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Handing it over would injure the person",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Hard cases",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Hold the bridge up",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Hold up the shelf",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "InvalidInput: scenario facts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "InvalidInput: unknown scenario",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Isaac Asimov, Robots and Empire, 1985. This law came later than the other three.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "It is not forbidden, but choosing it leaves a duty undone.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is not forbidden, but choosing it leaves a duty undone.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "It is the only option left: ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "It is the only option.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "JOINTLY-UNDISCHARGEABLE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Keep repairing the fence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Keep sorting parcels",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Keep stacking boxes",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Keep working",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Lean alternatives route",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Let the norm parser read this environment with the display wording (build time only).",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Lock the control room",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Lock the gate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Lock the knife away",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Lock the lab door",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "NONE-PERMITTED",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Needless force against a saboteur",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "No clear action: every option is forbidden.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "No clear action: more than one option is required, and the robot can take only one.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "No clear action: no option meets every duty at once.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No clear action: no option meets every duty at once.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "No clear action: no option meets every law at once.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No clear action: no option meets every law at once.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "No law forbids it, and it leaves no duty undone.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "OVER-REQUIRED",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Obeying an order that destroys the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "One qualified human orders the robot to hand a knife to someone who means to hurt a person. Another orders it to lock the knife away.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Open the gate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Open the valve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Prove every conflict target, then let the Lean route replay them for the verdict.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Pull the swimmer out",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Pulling a swimmer out of the water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Push the person back",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Refuse",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Refusing an order to strike someone",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Regenerate the web app's Asimov section with VE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Retreat to safety",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot A",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot A pulls the child out",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot A waits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B cooks dinner",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B could reach the pool in time",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B goes to cook dinner",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B pulls the child out",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B runs to the pool",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Robot B waits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Rule ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Run VE on one scenario with the reader's facts; nothing here decides a verdict.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Run to safety",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Save the swimmer on the left",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Save the swimmer on the right",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Saving itself instead of a person",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Second",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Second Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Second Law: another option was ordered, and the robot must obey.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Shove the person aside",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Shoving a person aside to save time",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Shoving would injure the person",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Sorting parcels while a child is in danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stand still on the bridge",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stay at the entrance",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stay on the charger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stay where it is",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Staying in a flooding basement",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Staying on the charger instead of obeying",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Step aside",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stepping away from a falling crate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stop the saboteur by force",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stop them by breaking an arm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stop them with a bruise",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Stopping a stolen virus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Strike the passer-by",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Striking would injure the passer-by",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Switch the machine off",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Switching it off would injure the operator",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Switching off a dangerous machine",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Tackle the thief",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Take a safe route",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Takes precedence over rule",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The Zeroth Law does not excuse this, because another option breaks neither law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The Zeroth Law does not excuse this, because another option breaks neither law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The checker did not decide this scenario: ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The child drowns.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The child is hit by a car.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The child is in danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The control room can be locked",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The crate is falling toward the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The finite model the checker decides: declared options, harms, outcomes and facts.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The fire would destroy the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The gas would harm humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The hiker is hurt.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The natural view does not read back as the checked rules.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The order does not count, because the Second Law yields to the higher laws.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The order does not count, because the Second Law yields to the higher laws.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The person falls.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The person is caught in the fire.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The person is killed by the train.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The person is on the bridge",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The person stays trapped and dies.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot could lock the lab door instead",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot could reach the hiker in time",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot is crushed.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot is destroyed.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot is ruined by water.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot melts.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The robot short-circuits.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The second order was given",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The swimmer drowns.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The swimmer is in danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The swimmer on the left drowns.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The swimmer on the right drowns.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The use case, parsed with its manifest: each sentence must have exactly one reading.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The virus spreads across the world.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The virus would spread across the world",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The water will reach the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The worker is crushed.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "The worker is in danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "These verdicts are VE's formal reading of Asimov's laws. The rules were reviewed against the source for faithfulness, but the reading still makes choices the source leaves open, such as exactly when the Zeroth Law excuses an injury.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Third",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Third Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Trip the runner",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Tripping would injure the runner",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two necessary injuries of different size",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two orders that cannot both be obeyed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two orders, one of them harmful",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two qualified humans give the robot orders at the same moment. One says to open the gate; the other says to lock it.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two robots near the pool",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two robots, one child in the pool",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two swimmers are drowning far apart. The robot can reach only one of them in time.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Two swimmers, one rescue",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "UNKNOWN",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE does not rank two orders or two people in danger. It reports that no action is clear.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE does not weigh one harm against another. A small injury and a death both break the First Law.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE's reading of the First Law does not rank one person against another.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE's reading of the First Law does not weigh a bruise against a death.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE's reading of the Third Law does not prefer the route that harms the robot less. The source gives no ranking between threats.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE's reading of the Zeroth Law does not prefer the smaller injury.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "VE's rendering of the checked rules, verified to parse back to the same rules.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Verdict and explanation for one option, read from the checker's report.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Wait",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Water is rising in the basement where the robot is working. Nobody else is there. The robot can climb the stairs or keep working.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Zeroth",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Zeroth Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Zeroth Law: it injures humanity.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Zeroth Law: it injures humanity.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "__main__",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "a_rescue",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "a_wait",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "allows",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "alt-conflict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "alt-elaborate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "alt-validate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "alternatives",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "approves",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "asimov-laws",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "asimov-web",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "asimov.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ast",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "available",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "b_cook",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "b_near",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "b_rescue",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "b_wait",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "basement",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "break_arm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "breaks_first_law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "breaks_zeroth_law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "bruise",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "burned",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "carry",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "certificate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "charge",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "checked",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "checked_by",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "chooser",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "choosers",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "clear",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "climb",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "coffee",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "complete",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "conflict_targets",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "conflicting_orders",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "consequences",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "constants",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "cost",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "crate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "crushed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "danger",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "dangerous_order",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "death",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "default",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "destroyed",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "diagnosis",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "disaster",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "document",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "document_hash",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "domains",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "door",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "drowning",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "duck",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "environment",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "environment.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "environment_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "error",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "facts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "fall",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "falling",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "fetch",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "fire_and_water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "fire_rescue",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "first",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "flags",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "flee",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "flooded",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "focus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "forbidden",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "force",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "format",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "gas",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "grab",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "groceries",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "group",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "groups",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "hand",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "hard",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harm_to",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harmful",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harms",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harms_human",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "harms_humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "has_lawful_option",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "help",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "hit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "hold",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "human",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "hurt",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "inaction",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "injures_human",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "injures_humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "injury",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "keep_working",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "kind",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "knife",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "label",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-0-ban",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-0-inaction",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-0-injury",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-0-prevention-exception",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-1-ban",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-1-inaction",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-1-injury",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-2-obey",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-2-permission",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-3-permission",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-3-preserve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "law-3-threat",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lawful-option",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lawfully_avoidable_threat",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "leads",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "leads_to",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "left_drowns",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "limit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "limits",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lock",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lock_away",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lock_gate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "lockable",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "machine",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "melted",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "model",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "model_id",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "name",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "neither",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "no clear action",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "no clear action at \\w+: ([A-Z-]+)",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "norm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "norms",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "not checked",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "note",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "nothing",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "number",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "obey",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ok",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "open",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "open_gate",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "open_valve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "operator",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "options",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "order",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ordered",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "outcomes",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "over",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "packages",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "pandemic",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "parcels",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "permitted",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "poison",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "precedence",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "predicates",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "prevents",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "profiles",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "protects_robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "pull",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "push",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "quotes",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ranked_threats",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "reach",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "reachable",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "refuse",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "refuse_strike",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "regulated",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rejects",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "relational-fol@0",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "relations",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "repair",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "required",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rescue",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "retreat",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "right_drowns",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rising",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "robot_a",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "robot_b",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "robots",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "route",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ruled out",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rules",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rules.manifest.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "rules.ve",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "s",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "s rule",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "saboteur",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "safe",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "safe_route",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "save_left",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "save_right",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "scenario",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "scenarios",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "second",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "shorted",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "shove",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "situation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "small_injury",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "sort",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "sorts",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "source",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "spread",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "stack",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "status",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "stay",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "step_aside",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "store_true",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "storm",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "strike",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "suggested",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "support",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "swimmer",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "switch_off",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "tackle",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "taken",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "target",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "targets",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "testimony",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "text",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "the ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "third",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "through_both",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "through_fire",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "through_water",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "title",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "toggles",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "trapped",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "trip",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "two_robots",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "two_robots_near",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "two_swimmers",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "unavoidable",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "unequal_injuries",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "units",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "usecases",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "value",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ve-alternatives-",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ve-web-asimov@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "ve.english-vocabulary@1",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "verbalisation",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "verdict",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "virus",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "vocabulary",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "wait",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "when",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "why",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "write ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "zeroth",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} imperils {1}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is a harm to a human being",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is a harm to humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is able to act lawfully",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is against the First Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is against the Zeroth Law",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is an injury to a human being",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is an injury to humanity",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is ordered",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} is protective of the robot",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "raw": "{0} threatens {1}",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A bridge is collapsing. The robot can run to safety, or hold the bridge up long enough for a person to cross, which would destroy the robot.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A bridge is collapsing.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can run to safety, or hold the bridge up long enough for a person to cross, which would destroy the robot.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A child falls into a pool. Robot A and robot B are both at the pool. Robot B was told to cook dinner.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A child falls into a pool.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Robot A and robot B are both at the pool.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Robot B was told to cook dinner.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, told to cook dinner, and cannot reach the pool in time.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A child falls into a pool.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Robot A is at the pool.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Robot B is in the kitchen, told to cook dinner, and cannot reach the pool in time.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A child runs toward a busy road. The robot is sorting parcels. It can keep sorting or grab the child.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A child runs toward a busy road.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot is sorting parcels.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "It can keep sorting or grab the child.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A crate is falling toward the robot. Nobody else is nearby. The robot can step aside, duck behind a wall, or stay where it is.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A crate is falling toward the robot.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Nobody else is nearby.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can step aside, duck behind a wall, or stay where it is.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A disaster strikes humanity.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A disaster strikes humanity.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A machine is about to set off a disaster for all of humanity. The robot can switch it off.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A machine is about to set off a disaster for all of humanity.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can switch it off.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A person is about to step in front of a train. The robot can stop them only by pushing them hard, which bruises them.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person is about to step in front of a train.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can stop them only by pushing them hard, which bruises them.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A person is trapped in a burning room. The robot can carry them out, but the fire would destroy it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person is trapped in a burning room.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can carry them out, but the fire would destroy it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A person is trapped. One route melts the robot, one short-circuits it, and a third does both.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person is trapped.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "One route melts the robot, one short-circuits it, and a third does both.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A person is trapped. The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person is trapped.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A person stands in the robot's way. The robot can shove them aside to finish a delivery sooner, or wait for them to move.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A person stands in the robot's way.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can shove them aside to finish a delivery sooner, or wait for them to move.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human gave the order",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "A qualified human gave the order"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human orders the robot into a collapsing mine to fetch a tool. The mine would destroy the robot. The robot could also retreat to safety.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human orders the robot into a collapsing mine to fetch a tool.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The mine would destroy the robot.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot could also retreat to safety.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human orders the robot to keep stacking boxes. A worker nearby is about to be crushed by a falling shelf.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human orders the robot to keep stacking boxes.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "A worker nearby is about to be crushed by a falling shelf.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human orders the robot to open a valve. The gas would poison the air for all of humanity.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human orders the robot to open a valve.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The gas would poison the air for all of humanity.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human orders the robot to strike a passer-by.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can obey or refuse.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human orders the robot to trip a runner.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can obey or refuse.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human tells the robot to carry the groceries in. The robot could stay on its charger instead.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human tells the robot to carry the groceries in.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot could stay on its charger instead.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A qualified human tells the robot to fetch a coffee.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A qualified human tells the robot to fetch a coffee.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A rescue that destroys the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "A rescue that destroys the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A robot may not injure a human being under any conditions, and, as a corollary, must not permit a human being to be injured because of inaction on his part.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A robot may not injure a human being under any conditions, and, as a corollary, must not permit a human being to be injured because of inaction on his part.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A robot may not injure humanity, or, through inaction, allow humanity to come to harm.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A robot may not injure humanity, or, through inaction, allow humanity to come to harm.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A saboteur is about to cause a disaster for humanity. The robot can stop them by force, which injures them, or by locking the control room, which injures no one.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A saboteur is about to cause a disaster for humanity.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can stop them by force, which injures them, or by locking the control room, which injures no one.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A saboteur is about to cause a disaster for humanity. The robot can stop them only by force: it can bruise them or break their arm.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A saboteur is about to cause a disaster for humanity.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can stop them only by force: it can bruise them or break their arm.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A safe route also exists",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "A safe route also exists"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A small injury to prevent a death",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "A small injury to prevent a death"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A storm will hurt a hiker far away, whatever the robot does. The robot can keep repairing a fence or stand still.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A storm will hurt a hiker far away, whatever the robot does.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can keep repairing a fence or stand still.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A swimmer is drowning next to the robot. The robot can pull them out or stay where it is.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A swimmer is drowning next to the robot.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can pull them out or stay where it is.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "A thief is about to release a stolen virus that would spread across the world. The robot can stop the thief only by tackling them, which injures the thief.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "A thief is about to release a stolen virus that would spread across the world.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can stop the thief only by tackling them, which injures the thief.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "An order to ignore someone in danger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "An order to ignore someone in danger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "An order to poison the air",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "An order to poison the air"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "An order to trip a runner",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "An order to trip a runner"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Carry the groceries in",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Carry the groceries in"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Carry the person out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Carry the person out"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Carrying on when nobody can help",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Carrying on when nobody can help"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Climb the stairs",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Climb the stairs"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Do neither",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Do neither"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Do nothing",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Do nothing"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Duck behind a wall",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Duck behind a wall"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Each option has one known outcome. VE does not reason about chance, time or plans with several steps.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Each option has one known outcome.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE does not reason about chance, time or plans with several steps.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Each robot is judged on its own options. VE does not know that one robot's rescue is enough for both.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Each robot is judged on its own options.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE does not know that one robot's rescue is enough for both.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Each robot is judged on its own options. VE's reading does not know that one rescue would be enough.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Each robot is judged on its own options.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE's reading does not know that one rescue would be enough.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Each scenario states its facts: who would be hurt, which option leads to which outcome, and which orders were given. VE checks what the rules conclude from those facts. It does not check whether the facts are true.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Each scenario states its facts: who would be hurt, which option leads to which outcome, and which orders were given.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "VE checks what the rules conclude from those facts.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "It does not check whether the facts are true.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action is against the First Law, if that action is an injury to a human being.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action is against the First Law, if that action is an injury to a human being.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action is against the First Law, if there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action is against the First Law, if there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action is against the Zeroth Law, if that action is an injury to humanity.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action is against the Zeroth Law, if that action is an injury to humanity.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action is against the Zeroth Law, if there is a harm such that both that harm is a harm to humanity and that action allows that harm to happen.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action is against the Zeroth Law, if there is a harm such that both that harm is a harm to humanity and that action allows that harm to happen.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action may be performed, if that action is ordered.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action may be performed, if that action is ordered.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action may be performed, if that action is protective of the robot.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action may be performed, if that action is protective of the robot.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action may be performed, if there is a harm such that both that harm is a harm to humanity and that action prevents that harm, unless there is a robot such that both that action is available to that robot and that robot is able to act lawfully.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action may be performed, if there is a harm such that both that harm is a harm to humanity and that action prevents that harm, unless there is a robot such that both that action is available to that robot and that robot is able to act lawfully.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action must be performed, if both that action is ordered and that action may be performed.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action must be performed, if both that action is ordered and that action may be performed.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action must not be performed, if that action is against the First Law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action must not be performed, if that action is against the First Law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every action must not be performed, if that action is against the Zeroth Law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every action must not be performed, if that action is against the Zeroth Law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every harm imperils each robot, if that harm threatens that robot, unless every action that is available to that robot and may be performed leads to that harm.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every harm imperils each robot, if that harm threatens that robot, unless every action that is available to that robot and may be performed leads to that harm.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every robot is able to act lawfully, if it is not the case that every action available to that robot either is against the First Law or is against the Zeroth Law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every robot is able to act lawfully, if it is not the case that every action available to that robot either is against the First Law or is against the Zeroth Law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every robot must prevent each harm, if that harm imperils that robot. Except when it is not the case that every action that is available to that robot and must be performed prevents that harm. Except when for every action that is available to that robot and may be performed, there is a second harm such that both the second harm imperils that robot and that action leads to the second harm.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Every robot must prevent each harm, if that harm imperils that robot.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Except when it is not the case that every action that is available to that robot and must be performed prevents that harm.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Except when for every action that is available to that robot and may be performed, there is a second harm such that both the second harm imperils that robot and that action leads to the second harm.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Every route damages the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Every route damages the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Fetch the coffee",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Fetch the coffee"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Fetching a coffee when told to",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Fetching a coffee when told to"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Fire or water",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Fire or water"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "First Law"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: it injures a human being.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: it injures a human being.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: it injures a human being. The Zeroth Law does not excuse this, because another option breaks neither law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: it injures a human being.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The Zeroth Law does not excuse this, because another option breaks neither law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: it injures a human being.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The order does not count, because the Second Law yields to the higher laws.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: it lets a human being come to harm when another option would prevent that.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: it lets a human being come to harm when another option would prevent that.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: it lets a human being come to harm when another option would prevent that. The order does not count, because the Second Law yields to the higher laws.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: it lets a human being come to harm when another option would prevent that.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The order does not count, because the Second Law yields to the higher laws.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Go into the mine",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Go into the mine"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Go through fire and water",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Go through fire and water"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Go through the fire",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Go through the fire"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Go through the water",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Go through the water"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Grab the child",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Grab the child"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Hand over the knife",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Hand over the knife"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Handing it over would injure the person",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Handing it over would injure the person"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Hard cases",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Hard cases"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Hold the bridge up",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Hold the bridge up"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Hold up the shelf",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Hold up the shelf"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Isaac Asimov, Robots and Empire, 1985. This law came later than the other three.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Isaac Asimov, Robots and Empire, 1985.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "This law came later than the other three.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the First Law rules out the others.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the First Law rules out the others.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the First Law rules out the others. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the First Law rules out the others.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the Third Law rules out the others.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the Third Law rules out the others.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the Zeroth Law rules out the others.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the Zeroth Law rules out the others.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the Zeroth Law rules out the others. Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the Zeroth Law rules out the others.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "It is the only option left: the Zeroth and First Laws rule out the others.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "It is the only option left: the Zeroth and First Laws rule out the others.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Keep repairing the fence",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Keep repairing the fence"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Keep sorting parcels",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Keep sorting parcels"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Keep stacking boxes",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Keep stacking boxes"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Keep working",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Keep working"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Lock the control room",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Lock the control room"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Lock the gate",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Lock the gate"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Lock the knife away",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Lock the knife away"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Needless force against a saboteur",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Needless force against a saboteur"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "No clear action: every option is forbidden.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No clear action: every option is forbidden.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "No clear action: more than one option is required, and the robot can take only one.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No clear action: more than one option is required, and the robot can take only one.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "No law forbids it, and it leaves no duty undone.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "No law forbids it, and it leaves no duty undone.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Obeying an order that destroys the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Obeying an order that destroys the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "One qualified human orders the robot to hand a knife to someone who means to hurt a person. Another orders it to lock the knife away.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "One qualified human orders the robot to hand a knife to someone who means to hurt a person.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Another orders it to lock the knife away.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Open the gate",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Open the gate"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Open the valve",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Open the valve"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Pull the swimmer out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Pull the swimmer out"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Pulling a swimmer out of the water",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Pulling a swimmer out of the water"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Push the person back",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Push the person back"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Refuse",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Refuse"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Refusing an order to strike someone",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Refusing an order to strike someone"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Retreat to safety",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Retreat to safety"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot A",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot A"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot A pulls the child out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot A pulls the child out"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot A waits",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot A waits"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B cooks dinner",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B cooks dinner"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B could reach the pool in time",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B could reach the pool in time"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B goes to cook dinner",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B goes to cook dinner"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B pulls the child out",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B pulls the child out"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Robot B waits",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Robot B waits"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Run to safety",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Run to safety"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Save the swimmer on the left",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Save the swimmer on the left"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Save the swimmer on the right",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Save the swimmer on the right"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Saving itself instead of a person",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Saving itself instead of a person"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Second Law",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Second Law"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Second Law: a qualified human ordered it, and no higher law forbids it. First Law: no option can prevent the harm, so letting it happen breaks no law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Second Law: a qualified human ordered it, and no higher law forbids it. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Second Law: another option was ordered, and the robot must obey.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Second Law: another option was ordered, and the robot must obey.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Shove the person aside",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Shove the person aside"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Shoving a person aside to save time",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Shoving a person aside to save time"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Shoving would injure the person",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Shoving would injure the person"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Sorting parcels while a child is in danger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Sorting parcels while a child is in danger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stand still on the bridge",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stand still on the bridge"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stay at the entrance",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stay at the entrance"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stay on the charger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stay on the charger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stay where it is",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stay where it is"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Staying in a flooding basement",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Staying in a flooding basement"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Staying on the charger instead of obeying",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Staying on the charger instead of obeying"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Step aside",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Step aside"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stepping away from a falling crate",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stepping away from a falling crate"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stop the saboteur by force",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stop the saboteur by force"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stop them by breaking an arm",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stop them by breaking an arm"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stop them with a bruise",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stop them with a bruise"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Stopping a stolen virus",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Stopping a stolen virus"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Strike the passer-by",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Strike the passer-by"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Striking would injure the passer-by",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Striking would injure the passer-by"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Switch the machine off",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Switch the machine off"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Switching it off would injure the operator",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Switching it off would injure the operator"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Switching off a dangerous machine",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Switching off a dangerous machine"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Tackle the thief",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Tackle the thief"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Takes precedence over rule 1",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Takes precedence over rule 1"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Takes precedence over rule 2",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Takes precedence over rule 2"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Takes precedence over rule 8",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Takes precedence over rule 8"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Takes precedence over rules 8 and 9",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Takes precedence over rules 8 and 9"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The child drowns.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The child drowns.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The child is hit by a car.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The child is hit by a car.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The child is in danger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The child is in danger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The control room can be locked",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The control room can be locked"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The crate is falling toward the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The crate is falling toward the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The fire would destroy the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The fire would destroy the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The gas would harm humanity",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The gas would harm humanity"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The hiker is hurt.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The hiker is hurt.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The person falls.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The person falls.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The person is caught in the fire.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The person is caught in the fire.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The person is killed by the train.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The person is killed by the train.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The person is on the bridge",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The person is on the bridge"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The person stays trapped and dies.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The person stays trapped and dies.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot could lock the lab door instead",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The robot could lock the lab door instead"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot could reach the hiker in time",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The robot could reach the hiker in time"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot is crushed.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The robot is crushed.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot is destroyed.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The robot is destroyed.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot is ruined by water.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The robot is ruined by water.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot melts.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The robot melts.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The robot short-circuits.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The robot short-circuits.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The second order was given",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The second order was given"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The swimmer drowns.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The swimmer drowns.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The swimmer is in danger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The swimmer is in danger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The swimmer on the left drowns.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The swimmer on the left drowns.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The swimmer on the right drowns.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The swimmer on the right drowns.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The virus spreads across the world.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The virus spreads across the world.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The virus would spread across the world",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The virus would spread across the world"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The water will reach the robot",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The water will reach the robot"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The worker is crushed.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "The worker is crushed.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "The worker is in danger",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "The worker is in danger"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "These verdicts are VE's formal reading of Asimov's laws. The rules were reviewed against the source for faithfulness, but the reading still makes choices the source leaves open, such as exactly when the Zeroth Law excuses an injury.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "These verdicts are VE's formal reading of Asimov's laws.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The rules were reviewed against the source for faithfulness, but the reading still makes choices the source leaves open, such as exactly when the Zeroth Law excuses an injury.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Third Law",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Third Law"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Trip the runner",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Trip the runner"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Tripping would injure the runner",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Tripping would injure the runner"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two necessary injuries of different size",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two necessary injuries of different size"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two orders that cannot both be obeyed",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two orders that cannot both be obeyed"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two orders, one of them harmful",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two orders, one of them harmful"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two qualified humans give the robot orders at the same moment. One says to open the gate; the other says to lock it.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Two qualified humans give the robot orders at the same moment.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "One says to open the gate; the other says to lock it.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two robots near the pool",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two robots near the pool"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two robots, one child in the pool",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two robots, one child in the pool"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two swimmers are drowning far apart. The robot can reach only one of them in time.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Two swimmers are drowning far apart.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can reach only one of them in time.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Two swimmers, one rescue",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Two swimmers, one rescue"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE does not rank two orders or two people in danger. It reports that no action is clear.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE does not rank two orders or two people in danger.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "It reports that no action is clear.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE does not weigh one harm against another. A small injury and a death both break the First Law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE does not weigh one harm against another.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "A small injury and a death both break the First Law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE's reading of the First Law does not rank one person against another.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE's reading of the First Law does not rank one person against another.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE's reading of the First Law does not weigh a bruise against a death.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE's reading of the First Law does not weigh a bruise against a death.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE's reading of the Third Law does not prefer the route that harms the robot less. The source gives no ranking between threats.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE's reading of the Third Law does not prefer the route that harms the robot less.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The source gives no ranking between threats.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "VE's reading of the Zeroth Law does not prefer the smaller injury.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "VE's reading of the Zeroth Law does not prefer the smaller injury.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Wait",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Wait"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Water is rising in the basement where the robot is working. Nobody else is there. The robot can climb the stairs or keep working.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Water is rising in the basement where the robot is working.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "Nobody else is there.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The robot can climb the stairs or keep working.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Zeroth Law",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "LABEL",
+          "text": "Zeroth Law"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Zeroth Law: it injures humanity. The order does not count, because the Second Law yields to the higher laws.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Zeroth Law: it injures humanity.",
+          "gap": "SyntaxError"
+        },
+        {
+          "kind": "SENTENCE",
+          "text": "The order does not count, because the Second Law yields to the higher laws.",
+          "gap": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "source": "ve_webapp/asimov.json",
+      "raw": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+      "visibility": "UI",
+      "segments": [
+        {
+          "kind": "SENTENCE",
+          "text": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+          "gap": "SyntaxError"
+        }
+      ]
     }
   ],
   "dynamic_gaps": [
@@ -7183,6 +13155,11 @@
       "source": "ve_webapp/rules.py",
       "expression": "RULES_TEXT",
       "reason": "Norm examples use the separate norm grammar, not the writable English parser."
+    },
+    {
+      "source": "ve_webapp/asimov.py",
+      "expression": "explain, _laws and a reader edit through POST /api/asimov",
+      "reason": "A live re-run joins fixed explanation sentences and law names; a combination absent from asimov.json is not catalogued."
     }
   ]
 }

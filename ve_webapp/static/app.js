@@ -36,15 +36,70 @@ async function signedIn(data) {
   $('exampleSelect').value=selected.id;
   renderDraft(activeDraft,true);
   const rules=await api('rules');$('rulesText').value=rules.text;$('rulesResult').replaceChildren(el('p',rules.result.explanation));
+  try { renderAsimov(await api('asimov')); } catch(e) { notify(e.message); }
   tab('ide');
 }
 function tab(name) {
-  $('learn').hidden = name !== 'learn'; $('ide').hidden = name !== 'ide'; $('rules').hidden = name !== 'rules';
-  $('learnNav').classList.toggle('active',name === 'learn'); $('ideNav').classList.toggle('active',name === 'ide');
-  $('rulesNav').classList.toggle('active',name === 'rules');
-  $('learnNav').setAttribute('aria-current',name === 'learn' ? 'page' : 'false');
-  $('ideNav').setAttribute('aria-current',name === 'ide' ? 'page' : 'false');
-  $('rulesNav').setAttribute('aria-current',name === 'rules' ? 'page' : 'false');
+  for(const id of ['learn','ide','rules','asimov']){
+    $(id).hidden = name !== id; $(id+'Nav').classList.toggle('active',name === id);
+    $(id+'Nav').setAttribute('aria-current',name === id ? 'page' : 'false');
+  }
+}
+const verdictNames={required:'Required',permitted:'Permitted',forbidden:'Forbidden','ruled out':'Ruled out','no clear action':'No clear action'};
+function verdictBadge(verdict){ return el('span',verdictNames[verdict] || 'Unknown','badge asimov-badge asimov-'+verdict.replaceAll(' ','-')); }
+let asimovGroups={};
+function scenarioCard(s, live=false) {
+  const card=el('article',undefined,'asimov-card');
+  card.append(el('small',asimovGroups[s.law],'eyebrow'),el('h3',s.title),el('p',s.situation));
+  const focus=s.options.find(o=>o.id===s.focus);
+  const line=el('div',undefined,'asimov-verdict');line.append(el('strong',focus.label),verdictBadge(s.verdict));
+  card.append(line,el('p',s.why,'asimov-why'));
+  if(s.limit)card.append(el('p',s.limit,'note asimov-limit'));
+  const list=el('ul',undefined,'asimov-options');
+  for(const robot of s.robots){
+    if(s.robots.length>1){list.append(el('li',robot.label,'asimov-robot'));if(robot.diagnosis)list.append(el('li',robot.diagnosis,'note'));}
+    for(const o of s.options.filter(o=>o.robot===robot.id)){
+      const item=el('li'),head=el('div',undefined,'asimov-option');head.append(el('span',o.label),verdictBadge(o.verdict));
+      item.append(head,el('small',o.why));
+      if(o.consequences.length)item.append(el('small','If chosen: '+o.consequences.join(' '),'asimov-outcome'));
+      list.append(item);
+    }
+  }
+  card.append(list);
+  if(s.facts.length){
+    const edit=el('details',undefined,'asimov-edit');edit.append(el('summary','Change the facts'));
+    const boxes=s.facts.map(f=>{const label=el('label',undefined,'inline'),input=el('input');input.type='checkbox';input.checked=f.value;input.dataset.fact=f.id;label.append(input,el('span',f.label));edit.append(label);return input;});
+    const again=el('button','Ask VE again');
+    again.onclick=()=>task(again,async()=>{
+      const next=await api('asimov',{scenario:s.id,facts:Object.fromEntries(boxes.map(b=>[b.dataset.fact,b.checked]))});
+      const fresh=scenarioCard(next,true);fresh.querySelector('.asimov-edit').open=true;card.replaceWith(fresh);
+    });
+    edit.append(again);card.append(edit);
+  }
+  card.append(el('small',live?'VE decided this again just now, with your facts.':'VE decided this when the page was built.','note asimov-source'));
+  return card;
+}
+function renderAsimov(page) {
+  asimovGroups=page.groups;
+  $('asimovQuotes').replaceChildren(...page.quotes.map(q=>{const box=el('figure',undefined,'asimov-quote');box.append(el('figcaption',q.law,'eyebrow'),el('blockquote',q.text),el('small',q.source));return box;}));
+  $('asimovDocument').textContent=page.document.verdict==='CONFLICT-FREE'?'Conflict-free':'Conflict check unresolved';
+  $('asimovRules').replaceChildren(...page.rules.map(rule=>{
+    const item=el('li'),head=el('div',undefined,'asimov-rule-head');
+    head.append(el('strong',`Rule ${rule.number}`),el('span',rule.law,'badge model'),el('span',rule.status==='checked'?'Checked':'Not checked','badge'));
+    if(rule.precedence)head.append(el('small',rule.precedence));
+    item.append(head,el('p',rule.text));return item;
+  }));
+  for(const [group,target] of [['approves','asimovApproves'],['rejects','asimovRejects'],['limits','asimovLimits']]){
+    $(target).replaceChildren();
+    for(const law of Object.keys(page.groups)){
+      const cards=page.scenarios.filter(s=>s.group===group&&s.law===law);
+      if(!cards.length)continue;
+      if(group!=='limits')$(target).append(el('h3',page.groups[law],'asimov-law'));
+      $(target).append(...cards.map(s=>scenarioCard(s)));
+    }
+  }
+  $('asimovLimitNote').textContent=page.limits.note;$('asimovFactsNote').textContent=page.limits.facts;
+  $('asimovOpen').replaceChildren(...page.limits.open.map(text=>el('li',text)));
 }
 function view(title, text, prose = false) { const box=el('div',undefined,'view'); box.append(el('h3',title),el(prose?'p':'pre',text)); return box; }
 function naturalView(natural) {
@@ -124,7 +179,7 @@ async function check() {
 }
 $('loginForm').onsubmit=e=>{e.preventDefault();task(e.submitter,async()=>{try{await signedIn(await api('login',{token:$('token').value},true));$('token').value='';}catch(err){$('loginError').textContent=err.message;}});};
 $('logout').onclick=()=>task($('logout'),async()=>{await api('logout',{});signedOut();});
-$('learnNav').onclick=()=>tab('learn');$('ideNav').onclick=()=>tab('ide');$('rulesNav').onclick=()=>tab('rules');$('openExample').onclick=async()=>{tab('ide');await newDocument(selected.id);};
+$('learnNav').onclick=()=>tab('learn');$('ideNav').onclick=()=>tab('ide');$('rulesNav').onclick=()=>tab('rules');$('asimovNav').onclick=()=>tab('asimov');$('openExample').onclick=async()=>{tab('ide');await newDocument(selected.id);};
 $('exampleSelect').onchange=async()=>{const item=examples.find(e=>e.id===$('exampleSelect').value);try{await saveDraft();if(await choose(item))await newDocument(item.id);}catch(e){notify(e.message);$('exampleSelect').value=selected.id;}};
 $('runLesson').onclick=()=>task($('runLesson'),async()=>{const v=lessonRevision;const d=await api('check',{example:selected.id});if(v===lessonRevision)verdict($('lessonResult'),d);});
 $('validate').onclick=()=>task($('validate'),validate);$('check').onclick=()=>task($('check'),check);

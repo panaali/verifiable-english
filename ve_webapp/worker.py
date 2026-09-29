@@ -60,6 +60,9 @@ def _comparison_summary(env, comparison):
 
 
 def run(action, data, config=None, proposer=None):
+    if action == "asimov":
+        from .asimov import decide
+        return decide(data["scenario"], data["facts"])
     ex = BY_ID[data["example"]]
     env = ve.Environment(data.get("environment") or ex["environment"])
     if action == "propose":

@@ -18,6 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from ve.errors import VEError
 from .examples import EXAMPLES, BY_ID
 from .drafts import DraftStore, StaleDraft
+from .asimov import BY_ID as ASIMOV, OUTPUT as ASIMOV_PAGE
 from .models import ASSIST_MODELS, DEFAULT_ASSIST_MODEL
 from .rules import check_rules, RULES_TEXT
 
@@ -93,7 +94,7 @@ async def worker(action, data, settings):
         env=env, start_new_session=True)
     try:
         raw, _ = await asyncio.wait_for(process.communicate(json.dumps(payload).encode()),
-                                       timeout=50 if action == "propose" else 8)
+                                       timeout={"propose": 50, "asimov": 40}.get(action, 8))
         if process.returncode or len(raw) > 2_000_000:
             raise HTTPException(503, "The operation is not complete.")
         return json.loads(raw)
@@ -155,6 +156,8 @@ def create_app(settings, runner=worker):
     quota = Quota(settings)
     drafts = DraftStore(settings.state, settings.token)
     busy = asyncio.Lock()
+    # Built by `python -m ve_webapp.asimov --write`; tests re-run VE against it.
+    asimov_page = json.loads(ASIMOV_PAGE.read_text())
 
     def session(request):
         sid = request.cookies.get("ve_session", "")
@@ -353,6 +356,27 @@ def create_app(settings, runner=worker):
             return check_rules(body['text'])
         except (ValueError, VEError, SyntaxError) as exc:
             raise HTTPException(422, str(exc)) from exc
+
+    @app.get('/api/asimov')
+    async def asimov_section(request: Request):
+        session(request)
+        return JSONResponse(asimov_page)
+
+    @app.post('/api/asimov')
+    async def asimov_rerun(request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        spec = ASIMOV.get(body.get('scenario')) if type(body.get('scenario')) is str else None
+        facts = body.get('facts')
+        if (set(body) != {'scenario', 'facts'} or spec is None or type(facts) is not dict
+                or set(facts) - {t['id'] for t in spec['toggles']}
+                or any(type(v) is not bool for v in facts.values())):
+            raise HTTPException(400, 'Choose a scenario and its listed facts.')
+        if busy.locked():
+            raise HTTPException(429, 'Another operation is running. Try again shortly.')
+        async with busy:
+            result = await runner('asimov', {'scenario': spec['id'], 'facts': facts}, settings)
+        return JSONResponse(result, 422 if 'error' in result else 200)
 
     @app.post("/api/{action}")
     async def operate(action: str, request: Request):

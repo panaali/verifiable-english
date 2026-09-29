@@ -13,7 +13,7 @@ import re
 
 from ve.environment import Environment
 from ve.english import parse_english
-from webapp.vocabulary.inventory import ROOT, HTML, JS, SOURCES, inventory
+from webapp.vocabulary.inventory import ROOT, HTML, JS, ASIMOV, SOURCES, inventory
 from ve_webapp.examples import EXAMPLES
 
 
@@ -34,13 +34,22 @@ def raised_messages(path: Path) -> set[str]:
     return result
 
 
+def asimov_module_copy() -> set[str]:
+    """Explanation sentences and notes that a live re-run can show."""
+    from ve_webapp import asimov
+    constants = {value for name, value in vars(asimov).items()
+                 if name.isupper() and isinstance(value, str) and name not in ('CASE', 'OUTPUT')}
+    return (constants | set(asimov.NO_CLEAR.values()) | set(asimov.OPEN_LIMITS)
+            | set(asimov.GROUPS.values()))
+
+
 def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
     # All DOM text and accessible attributes in the served page are included.
     result = {HTML: raw[HTML]}
     # Browser literals with a capital initial are copy unless explicitly known
     # protocol/control tokens. Dynamic status fields are listed separately.
     internal_js = {'Content-Type', 'X-VE-CSRF', 'GET', 'POST', 'Enter', 'Invalid request',
-                   'String', 'Data', 'JSON'}
+                   'String', 'Data', 'JSON', 'CONFLICT-FREE'}
     result[JS] = {s for s in raw[JS] if s and (s[0].isupper() or s[0] in '✓↗?“')
                   and s not in internal_js}
     result[JS] |= {s for s in raw[JS] if s.startswith('{} ·') or s.startswith('“{}”')}
@@ -62,6 +71,11 @@ def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
     rules = 've_webapp/rules.py'
     result[rules] = {s for s in raw[rules] if s.startswith(('For an urgent act,',
         'The checked rules', 'The check ran', 'Rule 1.'))}
+    # The Asimov section shows the built data, catalogued as served. Its module
+    # adds the explanation sentences and notes that a live re-run can show.
+    result[ASIMOV] = raw[ASIMOV]
+    module = 've_webapp/asimov.py'
+    result[module] = (raw[module] & asimov_module_copy()) - raw[ASIMOV]
     examples = 've_webapp/examples.py'
     result[examples] = set()
     for example in EXAMPLES:
@@ -123,6 +137,9 @@ def main() -> None:
                    'reason': 'Generated world prose uses undeclared names, counts and truth wording.'},
                   {'source': 've_webapp/rules.py', 'expression': 'RULES_TEXT',
                    'reason': 'Norm examples use the separate norm grammar, not the writable English parser.'},
+                  {'source': 've_webapp/asimov.py', 'expression': 'explain, _laws and a reader edit through POST /api/asimov',
+                   'reason': 'A live re-run joins fixed explanation sentences and law names; '
+                             'a combination absent from asimov.json is not catalogued.'},
               ]}
     path = ROOT / 'webapp/vocabulary/catalogue.json'
     path.write_text(json.dumps(output, indent=2, ensure_ascii=False) + '\n')

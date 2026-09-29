@@ -7,8 +7,11 @@ its aliases include VE/app, desk/workspace, claim/conclusion and
 countermodel/world. These files are a vocabulary for app copy, separate from
 the editable vocabulary in a user's document.
 
-`catalogue.json` inventories the served HTML, browser JavaScript literals and
-Python literals that can reach the page. Every visible entry is a SENTENCE or
+`catalogue.json` inventories the served HTML, browser JavaScript literals,
+Python literals that can reach the page, and every reader string of the
+VE-built Asimov section (`ve_webapp/asimov.json`; the explanation sentences a
+live re-run can add are catalogued from `ve_webapp/asimov.py`). Rebuild
+`asimov.json` before regenerating the catalogue. Every visible entry is a SENTENCE or
 LABEL. A sentence marked `gap` failed the writable English parser's complete
 all-derivations check. `dynamic_gaps` records text whose runtime value cannot
 be checked as a fixed sentence. INTERNAL entries make the source inventory

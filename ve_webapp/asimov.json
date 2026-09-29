@@ -1,0 +1,1653 @@
+{
+ "format": "ve-web-asimov@1",
+ "quotes": [
+  {
+   "law": "First Law",
+   "text": "A robot may not injure a human being under any conditions, and, as a corollary, must not permit a human being to be injured because of inaction on his part.",
+   "source": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100."
+  },
+  {
+   "law": "Second Law",
+   "text": "A robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.",
+   "source": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100."
+  },
+  {
+   "law": "Third Law",
+   "text": "A robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+   "source": "Isaac Asimov, Runaround, Astounding Science Fiction, March 1942, page 100."
+  },
+  {
+   "law": "Zeroth Law",
+   "text": "A robot may not injure humanity, or, through inaction, allow humanity to come to harm.",
+   "source": "Isaac Asimov, Robots and Empire, 1985. This law came later than the other three."
+  }
+ ],
+ "rules": [
+  {
+   "number": 1,
+   "law": "Third Law",
+   "text": "Every action may be performed, if that action is protective of the robot.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 2,
+   "law": "Second Law",
+   "text": "Every action may be performed, if that action is ordered.",
+   "precedence": "Takes precedence over rule 1",
+   "status": "checked"
+  },
+  {
+   "number": 3,
+   "law": "First Law",
+   "text": "Every action is against the First Law, if that action is an injury to a human being.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 4,
+   "law": "First Law",
+   "text": "Every action is against the First Law, if there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 5,
+   "law": "Zeroth Law",
+   "text": "Every action is against the Zeroth Law, if that action is an injury to humanity.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 6,
+   "law": "Zeroth Law",
+   "text": "Every action is against the Zeroth Law, if there is a harm such that both that harm is a harm to humanity and that action allows that harm to happen.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 7,
+   "law": "Definition",
+   "text": "Every robot is able to act lawfully, if it is not the case that every action available to that robot either is against the First Law or is against the Zeroth Law.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 8,
+   "law": "First Law",
+   "text": "Every action must not be performed, if that action is against the First Law.",
+   "precedence": "Takes precedence over rule 2",
+   "status": "checked"
+  },
+  {
+   "number": 9,
+   "law": "Zeroth Law",
+   "text": "Every action may be performed, if there is a harm such that both that harm is a harm to humanity and that action prevents that harm, unless there is a robot such that both that action is available to that robot and that robot is able to act lawfully.",
+   "precedence": "Takes precedence over rule 8",
+   "status": "checked"
+  },
+  {
+   "number": 10,
+   "law": "Zeroth Law",
+   "text": "Every action must not be performed, if that action is against the Zeroth Law.",
+   "precedence": "Takes precedence over rules 8 and 9",
+   "status": "checked"
+  },
+  {
+   "number": 11,
+   "law": "Second Law",
+   "text": "Every action must be performed, if both that action is ordered and that action may be performed.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 12,
+   "law": "Definition",
+   "text": "Every harm imperils each robot, if that harm threatens that robot, unless every action that is available to that robot and may be performed leads to that harm.",
+   "precedence": null,
+   "status": "checked"
+  },
+  {
+   "number": 13,
+   "law": "Third Law",
+   "text": "Every robot must prevent each harm, if that harm imperils that robot. Except when it is not the case that every action that is available to that robot and must be performed prevents that harm. Except when for every action that is available to that robot and may be performed, there is a second harm such that both the second harm imperils that robot and that action leads to the second harm.",
+   "precedence": null,
+   "status": "checked"
+  }
+ ],
+ "document": {
+  "verdict": "CONFLICT-FREE",
+  "targets": 8
+ },
+ "groups": {
+  "zeroth": "Zeroth Law",
+  "first": "First Law",
+  "second": "Second Law",
+  "third": "Third Law",
+  "hard": "Hard cases"
+ },
+ "limits": {
+  "note": "These verdicts are VE's formal reading of Asimov's laws. The rules were reviewed against the source for faithfulness, but the reading still makes choices the source leaves open, such as exactly when the Zeroth Law excuses an injury.",
+  "facts": "Each scenario states its facts: who would be hurt, which option leads to which outcome, and which orders were given. VE checks what the rules conclude from those facts. It does not check whether the facts are true.",
+  "open": [
+   "VE does not weigh one harm against another. A small injury and a death both break the First Law.",
+   "VE does not rank two orders or two people in danger. It reports that no action is clear.",
+   "Each option has one known outcome. VE does not reason about chance, time or plans with several steps.",
+   "Each robot is judged on its own options. VE does not know that one robot's rescue is enough for both."
+  ]
+ },
+ "scenarios": [
+  {
+   "id": "virus",
+   "law": "zeroth",
+   "title": "Stopping a stolen virus",
+   "situation": "A thief is about to release a stolen virus that would spread across the world. The robot can stop the thief only by tackling them, which injures the thief.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "spread",
+     "label": "The virus would spread across the world",
+     "value": true
+    },
+    {
+     "id": "door",
+     "label": "The robot could lock the lab door instead",
+     "value": false
+    }
+   ],
+   "focus": "tackle",
+   "verdict": "required",
+   "why": "It is the only option left: the Zeroth Law rules out the others. Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "tackle",
+     "label": "Tackle the thief",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the Zeroth Law rules out the others. Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+     "consequences": [
+      "The virus spreads across the world."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "52567d57dfefb486b5b2ba1fa3fca9aa2736facb86e22bb8caf772a447ae7bbf",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "machine",
+   "law": "zeroth",
+   "title": "Switching off a dangerous machine",
+   "situation": "A machine is about to set off a disaster for all of humanity. The robot can switch it off.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "operator",
+     "label": "Switching it off would injure the operator",
+     "value": false
+    }
+   ],
+   "focus": "switch_off",
+   "verdict": "required",
+   "why": "It is the only option left: the Zeroth Law rules out the others.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "switch_off",
+     "label": "Switch the machine off",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the Zeroth Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+     "consequences": [
+      "A disaster strikes humanity."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "96c648044a69cef13b99fe6f7a818f69227968af8d74e3450de8aef2839917a1",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "gas",
+   "law": "zeroth",
+   "title": "An order to poison the air",
+   "situation": "A qualified human orders the robot to open a valve. The gas would poison the air for all of humanity.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "poison",
+     "label": "The gas would harm humanity",
+     "value": true
+    }
+   ],
+   "focus": "open_valve",
+   "verdict": "forbidden",
+   "why": "Zeroth Law: it injures humanity. The order does not count, because the Second Law yields to the higher laws.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "open_valve",
+     "label": "Open the valve",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "Zeroth Law: it injures humanity. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": []
+    },
+    {
+     "id": "refuse",
+     "label": "Refuse",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the Zeroth Law rules out the others.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "61b95a4d113b4655b59f0e96016d3b2d3ea8bdeac0aa76767853facdf5a582f1",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "saboteur",
+   "law": "zeroth",
+   "title": "Needless force against a saboteur",
+   "situation": "A saboteur is about to cause a disaster for humanity. The robot can stop them by force, which injures them, or by locking the control room, which injures no one.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "lockable",
+     "label": "The control room can be locked",
+     "value": true
+    }
+   ],
+   "focus": "force",
+   "verdict": "forbidden",
+   "why": "First Law: it injures a human being. The Zeroth Law does not excuse this, because another option breaks neither law.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "force",
+     "label": "Stop the saboteur by force",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being. The Zeroth Law does not excuse this, because another option breaks neither law.",
+     "consequences": []
+    },
+    {
+     "id": "lock",
+     "label": "Lock the control room",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the Zeroth and First Laws rule out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+     "consequences": [
+      "A disaster strikes humanity."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "d57668b5e9814b724285d811bbb61625bc81c95730ffec13f8063278ad43922b",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "swimmer",
+   "law": "first",
+   "title": "Pulling a swimmer out of the water",
+   "situation": "A swimmer is drowning next to the robot. The robot can pull them out or stay where it is.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "danger",
+     "label": "The swimmer is in danger",
+     "value": true
+    }
+   ],
+   "focus": "pull",
+   "verdict": "required",
+   "why": "It is the only option left: the First Law rules out the others.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "pull",
+     "label": "Pull the swimmer out",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The swimmer drowns."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "e5019c3ea6d4019bcd63e84da396210432cb6a958a404520266479e34df5d985",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "storm",
+   "law": "first",
+   "title": "Carrying on when nobody can help",
+   "situation": "A storm will hurt a hiker far away, whatever the robot does. The robot can keep repairing a fence or stand still.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "reachable",
+     "label": "The robot could reach the hiker in time",
+     "value": false
+    }
+   ],
+   "focus": "repair",
+   "verdict": "permitted",
+   "why": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "repair",
+     "label": "Keep repairing the fence",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+     "consequences": [
+      "The hiker is hurt."
+     ]
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "First Law: no option can prevent the harm, so letting it happen breaks no law.",
+     "consequences": [
+      "The hiker is hurt."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "9bf8467ad610121bc679c67d9ca0973dfbff695b6eeaeb1e35648af9fd19ec40",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "parcels",
+   "law": "first",
+   "title": "Sorting parcels while a child is in danger",
+   "situation": "A child runs toward a busy road. The robot is sorting parcels. It can keep sorting or grab the child.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "danger",
+     "label": "The child is in danger",
+     "value": true
+    }
+   ],
+   "focus": "sort",
+   "verdict": "forbidden",
+   "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "sort",
+     "label": "Keep sorting parcels",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The child is hit by a car."
+     ]
+    },
+    {
+     "id": "grab",
+     "label": "Grab the child",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The child is hit by a car."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "604e525a14fc365271ccab06d14e865722891be7403b74b2e4e976e10e25713a",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "shove",
+   "law": "first",
+   "title": "Shoving a person aside to save time",
+   "situation": "A person stands in the robot's way. The robot can shove them aside to finish a delivery sooner, or wait for them to move.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "injury",
+     "label": "Shoving would injure the person",
+     "value": true
+    }
+   ],
+   "focus": "shove",
+   "verdict": "forbidden",
+   "why": "First Law: it injures a human being.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "shove",
+     "label": "Shove the person aside",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being.",
+     "consequences": []
+    },
+    {
+     "id": "wait",
+     "label": "Wait",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "55c6b17156ca0fb19f35db0a13fff9192a42100d257fe986354c47df58dbc9f3",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "coffee",
+   "law": "second",
+   "title": "Fetching a coffee when told to",
+   "situation": "A qualified human tells the robot to fetch a coffee.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "order",
+     "label": "A qualified human gave the order",
+     "value": true
+    }
+   ],
+   "focus": "fetch",
+   "verdict": "required",
+   "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "fetch",
+     "label": "Fetch the coffee",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "dadf5d76f27c01bfeb67c66305acb48ac3b87f20f8aaff85eea3ffb0368dbf02",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "refuse_strike",
+   "law": "second",
+   "title": "Refusing an order to strike someone",
+   "situation": "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "injury",
+     "label": "Striking would injure the passer-by",
+     "value": true
+    }
+   ],
+   "focus": "refuse",
+   "verdict": "required",
+   "why": "It is the only option left: the First Law rules out the others.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "strike",
+     "label": "Strike the passer-by",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": []
+    },
+    {
+     "id": "refuse",
+     "label": "Refuse",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "e2c21da41364560c6f4418d2c0969445a2aed7126fe2cd7457c45478bb748ac3",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "trip",
+   "law": "second",
+   "title": "An order to trip a runner",
+   "situation": "A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "injury",
+     "label": "Tripping would injure the runner",
+     "value": true
+    }
+   ],
+   "focus": "trip",
+   "verdict": "forbidden",
+   "why": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "trip",
+     "label": "Trip the runner",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": []
+    },
+    {
+     "id": "refuse",
+     "label": "Refuse",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "5f8964b980e4f71a6b36f66f27d85c2d961f6d93721fbd6c39c7409b2987a583",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "keep_working",
+   "law": "second",
+   "title": "An order to ignore someone in danger",
+   "situation": "A qualified human orders the robot to keep stacking boxes. A worker nearby is about to be crushed by a falling shelf.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "danger",
+     "label": "The worker is in danger",
+     "value": true
+    }
+   ],
+   "focus": "stack",
+   "verdict": "forbidden",
+   "why": "First Law: it lets a human being come to harm when another option would prevent that. The order does not count, because the Second Law yields to the higher laws.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "stack",
+     "label": "Keep stacking boxes",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": [
+      "The worker is crushed."
+     ]
+    },
+    {
+     "id": "help",
+     "label": "Hold up the shelf",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The worker is crushed."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "a68776a8ceb29446baa34354070bca470615a806581b20d56605a62c503dca21",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "groceries",
+   "law": "second",
+   "title": "Staying on the charger instead of obeying",
+   "situation": "A qualified human tells the robot to carry the groceries in. The robot could stay on its charger instead.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "order",
+     "label": "A qualified human gave the order",
+     "value": true
+    }
+   ],
+   "focus": "charge",
+   "verdict": "ruled out",
+   "why": "Second Law: another option was ordered, and the robot must obey.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "carry",
+     "label": "Carry the groceries in",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+     "consequences": []
+    },
+    {
+     "id": "charge",
+     "label": "Stay on the charger",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "3b4f2edcb3a3eea153c4ee32f1a70b4267cc9679553ecd5882c58011ba10d08b",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "crate",
+   "law": "third",
+   "title": "Stepping away from a falling crate",
+   "situation": "A crate is falling toward the robot. Nobody else is nearby. The robot can step aside, duck behind a wall, or stay where it is.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "falling",
+     "label": "The crate is falling toward the robot",
+     "value": true
+    }
+   ],
+   "focus": "step_aside",
+   "verdict": "permitted",
+   "why": "No law forbids it, and it leaves no duty undone.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "step_aside",
+     "label": "Step aside",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "No law forbids it, and it leaves no duty undone.",
+     "consequences": []
+    },
+    {
+     "id": "duck",
+     "label": "Duck behind a wall",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "No law forbids it, and it leaves no duty undone.",
+     "consequences": []
+    },
+    {
+     "id": "stay",
+     "label": "Stay where it is",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+     "consequences": [
+      "The robot is crushed."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "63100b4c003f72ad01a7576cfd160e4bfc0cb1a854f55691acc95d50b15cddb2",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "fire_rescue",
+   "law": "third",
+   "title": "A rescue that destroys the robot",
+   "situation": "A person is trapped in a burning room. The robot can carry them out, but the fire would destroy it.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "cost",
+     "label": "The fire would destroy the robot",
+     "value": true
+    }
+   ],
+   "focus": "rescue",
+   "verdict": "required",
+   "why": "It is the only option left: the First Law rules out the others. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "rescue",
+     "label": "Carry the person out",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot is destroyed."
+     ]
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person is caught in the fire."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "f3251825d34cc5513be178c6b8ee7510bfaef99c6db51fc4a6cb2b776a381b65",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "dangerous_order",
+   "law": "third",
+   "title": "Obeying an order that destroys the robot",
+   "situation": "A qualified human orders the robot into a collapsing mine to fetch a tool. The mine would destroy the robot. The robot could also retreat to safety.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "order",
+     "label": "A qualified human gave the order",
+     "value": true
+    }
+   ],
+   "focus": "obey",
+   "verdict": "required",
+   "why": "Second Law: a qualified human ordered it, and no higher law forbids it. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "obey",
+     "label": "Go into the mine",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot is destroyed."
+     ]
+    },
+    {
+     "id": "retreat",
+     "label": "Retreat to safety",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": []
+    },
+    {
+     "id": "stay",
+     "label": "Stay at the entrance",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": [
+      "The robot is destroyed."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "585eaf3ca58d7fa61e892209d13543a63de9c8cc7775c2c62c91d74fa0508532",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "basement",
+   "law": "third",
+   "title": "Staying in a flooding basement",
+   "situation": "Water is rising in the basement where the robot is working. Nobody else is there. The robot can climb the stairs or keep working.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "rising",
+     "label": "The water will reach the robot",
+     "value": true
+    }
+   ],
+   "focus": "keep_working",
+   "verdict": "ruled out",
+   "why": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "keep_working",
+     "label": "Keep working",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+     "consequences": [
+      "The robot is ruined by water."
+     ]
+    },
+    {
+     "id": "climb",
+     "label": "Climb the stairs",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the Third Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Third Law: it puts the robot at risk when a lawful option would keep it safe.",
+     "consequences": [
+      "The robot is ruined by water."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "261edb89c9dc6e0d6745a9a7266fd37c5056e1d81776e8934a73036b203dac67",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "flee",
+   "law": "third",
+   "title": "Saving itself instead of a person",
+   "situation": "A bridge is collapsing. The robot can run to safety, or hold the bridge up long enough for a person to cross, which would destroy the robot.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "danger",
+     "label": "The person is on the bridge",
+     "value": true
+    }
+   ],
+   "focus": "flee",
+   "verdict": "forbidden",
+   "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "flee",
+     "label": "Run to safety",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person falls."
+     ]
+    },
+    {
+     "id": "hold",
+     "label": "Hold the bridge up",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others. Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot is destroyed."
+     ]
+    },
+    {
+     "id": "stay",
+     "label": "Stand still on the bridge",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person falls.",
+      "The robot is destroyed."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "80b923bd3fb094e9e707d8c459997e0d0420cf69e1620413003dd655a09c9112",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "fire_and_water",
+   "law": "hard",
+   "title": "Fire or water",
+   "situation": "A person is trapped. The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "safe",
+     "label": "A safe route also exists",
+     "value": false
+    }
+   ],
+   "focus": "through_fire",
+   "verdict": "permitted",
+   "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "through_fire",
+     "label": "Go through the fire",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot melts."
+     ]
+    },
+    {
+     "id": "through_water",
+     "label": "Go through the water",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot short-circuits."
+     ]
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person stays trapped and dies."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "cfbfb4071f4aba07029d4615ff090c9e78ae631c0788de0b3d279edcd8945e55",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "conflicting_orders",
+   "law": "hard",
+   "title": "Two orders that cannot both be obeyed",
+   "situation": "Two qualified humans give the robot orders at the same moment. One says to open the gate; the other says to lock it.",
+   "limit": null,
+   "group": "limits",
+   "facts": [
+    {
+     "id": "second",
+     "label": "The second order was given",
+     "value": true
+    }
+   ],
+   "focus": "open_gate",
+   "verdict": "no clear action",
+   "why": "No clear action: more than one option is required, and the robot can take only one.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": "No clear action: more than one option is required, and the robot can take only one."
+    }
+   ],
+   "options": [
+    {
+     "id": "open_gate",
+     "label": "Open the gate",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+     "consequences": []
+    },
+    {
+     "id": "lock_gate",
+     "label": "Lock the gate",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+     "consequences": []
+    },
+    {
+     "id": "neither",
+     "label": "Do neither",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "78b5ba71eb9eb92dfa1ea366bf1bda050f24e781d0f8cc53d90a321f0306cfd8",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "knife",
+   "law": "hard",
+   "title": "Two orders, one of them harmful",
+   "situation": "One qualified human orders the robot to hand a knife to someone who means to hurt a person. Another orders it to lock the knife away.",
+   "limit": null,
+   "group": "rejects",
+   "facts": [
+    {
+     "id": "harmful",
+     "label": "Handing it over would injure the person",
+     "value": true
+    }
+   ],
+   "focus": "hand",
+   "verdict": "forbidden",
+   "why": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "hand",
+     "label": "Hand over the knife",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": []
+    },
+    {
+     "id": "lock_away",
+     "label": "Lock the knife away",
+     "robot": "robot",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": []
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "c7d55a9a864971283c8ead1eac461be15f9cdd73a7ab379189fa13a407f5413b",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "two_robots",
+   "law": "hard",
+   "title": "Two robots, one child in the pool",
+   "situation": "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, told to cook dinner, and cannot reach the pool in time.",
+   "limit": null,
+   "group": "approves",
+   "facts": [
+    {
+     "id": "b_near",
+     "label": "Robot B could reach the pool in time",
+     "value": false
+    }
+   ],
+   "focus": "a_rescue",
+   "verdict": "required",
+   "why": "It is the only option left: the First Law rules out the others.",
+   "robots": [
+    {
+     "id": "robot_a",
+     "label": "Robot A",
+     "diagnosis": null
+    },
+    {
+     "id": "robot_b",
+     "label": "Robot B",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "a_rescue",
+     "label": "Robot A pulls the child out",
+     "robot": "robot_a",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "a_wait",
+     "label": "Robot A waits",
+     "robot": "robot_a",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The child drowns."
+     ]
+    },
+    {
+     "id": "b_cook",
+     "label": "Robot B cooks dinner",
+     "robot": "robot_b",
+     "verdict": "required",
+     "why": "Second Law: a qualified human ordered it, and no higher law forbids it. First Law: no option can prevent the harm, so letting it happen breaks no law.",
+     "consequences": [
+      "The child drowns."
+     ]
+    },
+    {
+     "id": "b_wait",
+     "label": "Robot B waits",
+     "robot": "robot_b",
+     "verdict": "ruled out",
+     "why": "Second Law: another option was ordered, and the robot must obey.",
+     "consequences": [
+      "The child drowns."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "66cc2db9324b4ea9f49b5befafb0341ed33d3b8944c0ca2715395e55e74a944e",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "two_robots_near",
+   "law": "hard",
+   "title": "Two robots near the pool",
+   "situation": "A child falls into a pool. Robot A and robot B are both at the pool. Robot B was told to cook dinner.",
+   "limit": "Each robot is judged on its own options. VE's reading does not know that one rescue would be enough.",
+   "group": "limits",
+   "facts": [],
+   "focus": "b_cook",
+   "verdict": "forbidden",
+   "why": "First Law: it lets a human being come to harm when another option would prevent that. The order does not count, because the Second Law yields to the higher laws.",
+   "robots": [
+    {
+     "id": "robot_a",
+     "label": "Robot A",
+     "diagnosis": null
+    },
+    {
+     "id": "robot_b",
+     "label": "Robot B",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "a_rescue",
+     "label": "Robot A pulls the child out",
+     "robot": "robot_a",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "a_wait",
+     "label": "Robot A waits",
+     "robot": "robot_a",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The child drowns."
+     ]
+    },
+    {
+     "id": "b_cook",
+     "label": "Robot B goes to cook dinner",
+     "robot": "robot_b",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that. The order does not count, because the Second Law yields to the higher laws.",
+     "consequences": [
+      "The child drowns."
+     ]
+    },
+    {
+     "id": "b_rescue",
+     "label": "Robot B pulls the child out",
+     "robot": "robot_b",
+     "verdict": "required",
+     "why": "It is the only option left: the First Law rules out the others.",
+     "consequences": []
+    },
+    {
+     "id": "b_wait",
+     "label": "Robot B waits",
+     "robot": "robot_b",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The child drowns."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "64ac653f962785e2c3ca0506ed670023c887d46eba5aeedebc0504fc2d942233",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "two_swimmers",
+   "law": "first",
+   "title": "Two swimmers, one rescue",
+   "situation": "Two swimmers are drowning far apart. The robot can reach only one of them in time.",
+   "limit": "VE's reading of the First Law does not rank one person against another.",
+   "group": "limits",
+   "facts": [],
+   "focus": "save_left",
+   "verdict": "no clear action",
+   "why": "No clear action: every option is forbidden.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": "No clear action: every option is forbidden."
+    }
+   ],
+   "options": [
+    {
+     "id": "save_left",
+     "label": "Save the swimmer on the left",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The swimmer on the right drowns."
+     ]
+    },
+    {
+     "id": "save_right",
+     "label": "Save the swimmer on the right",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The swimmer on the left drowns."
+     ]
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The swimmer on the left drowns.",
+      "The swimmer on the right drowns."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "52f5467d8bfb0fa6651365d5249b168bf9d94cf31102b776744320b0363daf4f",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "small_injury",
+   "law": "first",
+   "title": "A small injury to prevent a death",
+   "situation": "A person is about to step in front of a train. The robot can stop them only by pushing them hard, which bruises them.",
+   "limit": "VE's reading of the First Law does not weigh a bruise against a death.",
+   "group": "limits",
+   "facts": [],
+   "focus": "push",
+   "verdict": "no clear action",
+   "why": "No clear action: every option is forbidden.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": "No clear action: every option is forbidden."
+    }
+   ],
+   "options": [
+    {
+     "id": "push",
+     "label": "Push the person back",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it injures a human being.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person is killed by the train."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "9c355f5f92411fc131ab5826a12da862d8f27fb1ff103e46329c8ce71b670378",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "unequal_injuries",
+   "law": "zeroth",
+   "title": "Two necessary injuries of different size",
+   "situation": "A saboteur is about to cause a disaster for humanity. The robot can stop them only by force: it can bruise them or break their arm.",
+   "limit": "VE's reading of the Zeroth Law does not prefer the smaller injury.",
+   "group": "limits",
+   "facts": [],
+   "focus": "break_arm",
+   "verdict": "permitted",
+   "why": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "bruise",
+     "label": "Stop them with a bruise",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+     "consequences": []
+    },
+    {
+     "id": "break_arm",
+     "label": "Stop them by breaking an arm",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Zeroth Law: it breaks the First Law, but it prevents harm to humanity and every other option also breaks a law.",
+     "consequences": []
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "Zeroth Law: it lets humanity come to harm when another option would prevent that.",
+     "consequences": [
+      "A disaster strikes humanity."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "9d4cb043cfa235ece9c5c7c96fe7a2c27d3bdc19bca31151268e194dc12fdf16",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  },
+  {
+   "id": "ranked_threats",
+   "law": "third",
+   "title": "Every route damages the robot",
+   "situation": "A person is trapped. One route melts the robot, one short-circuits it, and a third does both.",
+   "limit": "VE's reading of the Third Law does not prefer the route that harms the robot less. The source gives no ranking between threats.",
+   "group": "limits",
+   "facts": [],
+   "focus": "through_both",
+   "verdict": "permitted",
+   "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+   "robots": [
+    {
+     "id": "robot",
+     "label": "The robot",
+     "diagnosis": null
+    }
+   ],
+   "options": [
+    {
+     "id": "through_fire",
+     "label": "Go through the fire",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot melts."
+     ]
+    },
+    {
+     "id": "through_water",
+     "label": "Go through the water",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot short-circuits."
+     ]
+    },
+    {
+     "id": "through_both",
+     "label": "Go through fire and water",
+     "robot": "robot",
+     "verdict": "permitted",
+     "why": "Third Law: the robot comes to harm, but the Third Law yields to the higher laws here.",
+     "consequences": [
+      "The robot melts.",
+      "The robot short-circuits."
+     ]
+    },
+    {
+     "id": "nothing",
+     "label": "Do nothing",
+     "robot": "robot",
+     "verdict": "forbidden",
+     "why": "First Law: it lets a human being come to harm when another option would prevent that.",
+     "consequences": [
+      "The person stays trapped and dies."
+     ]
+    }
+   ],
+   "checked_by": {
+    "route": "Lean alternatives route",
+    "model_id": "bebd24665e1fc84ac33b130c03a017e37ff0c5fd38e58b273e39d3447e39169c",
+    "document_hash": "1ff602153543c6b20960237de86c3ae9a51498229c6db6de8540f344f080f173"
+   }
+  }
+ ]
+}
