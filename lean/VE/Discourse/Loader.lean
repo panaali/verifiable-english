@@ -32,19 +32,45 @@ structure Split where
   source : String
   fences : List (String × String)
 
-/-- Lines with their line breaks (`bytes.splitlines(keepends=True)` on `\n`). -/
-def linesOf (s : String) : List String :=
-  match (s.splitOn "\n").reverse with
-  | [] => []
-  | last :: rest => (rest.reverse.map (· ++ "\n")) ++ (if last.isEmpty then [] else [last])
+/-- The line breaks of `bytes.splitlines`: `\n`, `\r\n` and a lone `\r`. -/
+def linesAcc : List Char → List Char → List String → List String
+  | [], [], acc => acc.reverse
+  | [], cur, acc => (String.mk cur.reverse :: acc).reverse
+  | '\r' :: '\n' :: rest, cur, acc => linesAcc rest [] (String.mk ('\n' :: '\r' :: cur).reverse :: acc)
+  | '\r' :: rest, cur, acc => linesAcc rest [] (String.mk ('\r' :: cur).reverse :: acc)
+  | '\n' :: rest, cur, acc => linesAcc rest [] (String.mk ('\n' :: cur).reverse :: acc)
+  | c :: rest, cur, acc => linesAcc rest (c :: cur) acc
+
+/-- Lines with their line breaks (`bytes.splitlines(keepends=True)`: a line ends at `\n`,
+`\r\n` or `\r`). -/
+def linesOf (s : String) : List String := linesAcc s.toList [] []
+
+/-- The whitespace `bytes.strip()` removes: ASCII space, `\t`, `\n`, `\r`, `\x0b` and `\x0c`
+(`String.trim` keeps the last two). -/
+def byteSpace (c : Char) : Bool :=
+  c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\x0b' || c == '\x0c'
+
+/-- `bytes.strip()`. -/
+def byteStrip (s : String) : String :=
+  String.mk (((s.toList.dropWhile byteSpace).reverse.dropWhile byteSpace).reverse)
+
+/-- discourse4 looprecheck1 A: a lone `\r` ends a line, so `Note.\r```ve u0\rIt is safe.` opens a
+fence (then unclosed) in both loaders, never a prose unit Lean alone reads. -/
+theorem linesOf_carriage_return :
+    linesOf "Note.\r```ve u0\rIt is safe.\r\nx\n" = ["Note.\r", "```ve u0\r", "It is safe.\r\n", "x\n"] := by
+  decide
+
+/-- A fence line is read after `bytes.strip()`, which removes `\x0b` and `\x0c` too. -/
+theorem byteStrip_vertical_space : byteStrip "\x0c```\x0b\r\n" = "```" ∧ byteStrip " u0\x0c\n" = "u0" := by
+  decide
 
 /-- `_body`: the lines outside ```` ```ve <id> ```` fences are the source. -/
 def bodyOf : List String → Except String (String × List (String × String))
   | [] => .ok ("", [])
   | l :: ls =>
     if l.startsWith "```ve " then
-      let uid := (l.drop 6).trim
-      match ls.findIdx? (fun x => x.trim == "```") with
+      let uid := byteStrip (l.drop 6)
+      match ls.findIdx? (fun x => byteStrip x == "```") with
       | none => .error "unclosed VE fence"
       | some k => do
         let (src, fs) ← bodyOf (ls.drop (k + 1))
@@ -70,7 +96,10 @@ def splitText (t : String) : Except String Split := do
   | front :: rest@(_ :: _) =>
     let fm ← match VE.JsonInput.parse front with
       | .ok m => pure m
-      | .error e => throw (if e.startsWith "ResourceLimit" then e else "invalid JSON front matter")
+      -- the parser's errors carry their offset (`offset n: ResourceLimit: JSON depth ...`)
+      | .error e => throw (if e.startsWith "ResourceLimit" then e
+          else if (e.splitOn "ResourceLimit: JSON depth").length > 1 then "ResourceLimit: JSON depth exceeds 256"
+          else "invalid JSON front matter")
     let keys ← match fm with
       | .obj kvs => pure (kvs.toList.map Prod.fst)
       | _ => throw "unsupported document format"
