@@ -52,6 +52,92 @@ def rust_not_limit(got):
     assert got["status"] == "error" and got["error"]["code"] != "ResourceLimit", got
 
 
+# --- 1. Definition premises -----------------------------------------------------
+
+def defined(definitions):
+    """definitions: name -> (arguments, body)."""
+    predicates = {"p": {"arguments": ["s"], "description": "p"}}
+    for name, (args, body) in definitions.items():
+        predicates[name] = {"arguments": list(args), "description": name,
+                            "defined": {"arguments": list(args), "body": body}}
+    return envelope({"sorts": {"s": {"description": "items"}}, "constants": {},
+                     "predicates": predicates}, ("definitions@0", "relational-fol@0"))
+
+
+def definition_outcome(env, data):
+    """Python's exception (None when accepted), Lean's and Rust's results for ⊤."""
+    try:
+        FiniteModel.from_dict(Environment(env), data)
+        python = None
+    except VEError as exc:
+        python = exc
+    case = {"id": "d", "environment": env, "model": data, "ast": [["top"]]}
+    [got] = lean([{**case, "kind": "evaluate"}])
+    [other] = rust([case])
+    return python, got, other
+
+
+def assert_limited(env, data=None):
+    python, got, other = definition_outcome(env, data or model(["a"], p=[]))
+    assert isinstance(python, ResourceLimit), python
+    lean_limit(got)
+    rust_limit(other)
+
+
+def assert_accepted(env, data=None):
+    python, got, other = definition_outcome(env, data or model(["a"], p=[]))
+    assert python is None, python
+    assert got["status"] == "ok" and got["values"] == [True], got
+    assert other["status"] == "ok", other
+
+
+def test_reviewer_premise_node_reproducer_three_ways():
+    """Body F₁₂ (8,191 nodes): the premise has 16,390 nodes."""
+    assert_limited(defined({"d": (["s"], doubling(12))}))
+
+
+def test_reviewer_premise_depth_reproducer_three_ways():
+    assert_limited(defined({"d": (["s"], nest(62))}))
+
+
+@pytest.mark.parametrize("args", [["s"], ["s", "s"]])
+def test_premise_node_boundary_three_ways(args):
+    """Premise nodes: one binder per argument, ∧, two →, two heads (1 + arity
+    nodes each) and the body twice."""
+    fixed = len(args) + 3 + 2 * (1 + len(args))
+    largest = (10_000 - fixed) // 2
+    assert_accepted(defined({"d": (args, sized(largest))}))
+    assert_limited(defined({"d": (args, sized(largest + 1))}))
+
+
+@pytest.mark.parametrize("args", [["s"], ["s", "s"]])
+def test_premise_depth_boundary_three_ways(args):
+    """The body sits under the binders, ∧ and →; a leaf is one level."""
+    largest = 64 - len(args) - 2 - 1
+    assert_accepted(defined({"d": (args, nest(largest))}))
+    assert_limited(defined({"d": (args, nest(largest + 1))}))
+
+
+def test_premise_limit_is_checked_in_dependency_order_three_ways():
+    """Python checks each body, then its premise, one definition at a time: an
+    oversized premise below an ill-typed body is the limit, and an ill-typed
+    body below an oversized premise is the typing error."""
+    big = doubling(12)
+    bad = ["and", ["unary", "a", VAR0], ["unary", "p", ["var", 7]]]
+    assert_limited(defined({"a": (["s"], big), "b": (["s"], bad)}))
+    python, got, other = definition_outcome(
+        defined({"a": (["s"], ["unary", "p", ["var", 7]]), "b": (["s"], ["and", ["unary", "a", VAR0], big])}),
+        model(["a"], p=[]))
+    assert python is not None and not isinstance(python, ResourceLimit), python
+    not_limit(got)
+    rust_not_limit(other)
+
+
+def test_body_limits_precede_its_typing_three_ways():
+    """A body is decoded, within its own limits, before it is typed."""
+    assert_limited(defined({"d": (["s"], ["and", ["unary", "p", ["var", 5]], doubling(13)])}))
+
+
 # --- 2. Python's aggregate count covers Reach bodies ----------------------------
 
 def closure_env(profiles):

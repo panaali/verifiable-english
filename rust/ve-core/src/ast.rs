@@ -322,6 +322,7 @@ impl Checker<'_> {
 /// A definition body: one decoded formula, checked in the argument context
 /// (index 0 is the last argument) over an environment below the definition.
 pub(crate) fn decode_formula(v: &Value) -> Result<Formula> {
+    ast_limit([v])?;
     AstDecoder { nodes: 0 }.formula(v, 1)
 }
 pub(crate) fn check_in_context(env: &Environment, f: &Formula, context: &[String]) -> Result<()> {

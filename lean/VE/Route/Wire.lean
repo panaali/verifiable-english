@@ -56,9 +56,11 @@ def RouteVocabulary.baseModelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocab
     predicates := rv.modelVocabulary.predicates.filter
       (fun p => !(VE.Definitions.names rv.definitions).contains p.1) }
 
-/-- A definition body: a v0 formula. Reachability bodies are not yet admitted
-by the Lean definitions layer. -/
-def decodeBody (j : Json) : Except String VE.Formula :=
+/-- A definition body: a v0 formula within the AST limits of one decoded
+formula (Python decodes each body with its own decoder). Reachability bodies
+are not yet admitted by the Lean definitions layer. -/
+def decodeBody (j : Json) : Except String VE.Formula := do
+  AstLimit.check [j]
   match VE.Bridge.decodeFormula 64 j with
   | .ok a => .ok a
   | .error e => match VE.Closure.Bridge.decodeFormula 64 j with
@@ -135,10 +137,8 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
     pure ((p, ss), flag)
   let ps := psAndFlags.map Prod.fst
   let flags := psAndFlags.filterMap Prod.snd
-  let entries ← predicates.filterMapM fun (p, entry) => do
-    match entry.getObjVal? "defined" with
-    | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
-    | .error _ => pure none
+  for (_, entry) in predicates do
+    if let .ok payload := entry.getObjVal? "defined" then exactFields payload ["arguments", "body"]
   let cs ← constants.mapM fun (c, entry) => do
     if isLiteralEntry entry then literalEntry entry
     else
@@ -151,6 +151,12 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
   let result : VE.Bridge.Vocabulary := ⟨sortNames, ps, cs⟩
   unless result.namesValid do throw "invalid declaration names"
+  -- Bodies are decoded last, each within its own AST limits, as Python's
+  -- `compile_definitions` runs after the rest of the environment is checked.
+  let entries ← predicates.filterMapM fun (p, entry) => do
+    match entry.getObjVal? "defined" with
+    | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
+    | .error _ => pure none
   if h : literals.Nodup then
     match hd : VE.Definitions.elaborate result.environment entries with
     | .ok ds => pure ⟨result, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
