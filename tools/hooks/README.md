@@ -37,6 +37,22 @@ The hook checks only what a commit adds. Existing drift, such as stale ledger
 entries, `.importlinter` sync or modules that were unmapped before this commit,
 is left to the full checkers.
 
+Known drift on `ve-integration` as of 390dabe5 (merged here; the full checkers
+already fail on it, and fixing it is a layer-policy decision, not the hook's):
+
+- `tools/check_lean_imports.py` reports the unmapped `AlternativesMain`,
+  `QuantityMain`, `ReportsMain`, `RightsMain`, `SoftNormsMain` and
+  `SpeechActsMain`, and the unledgered edge `VE.Rights.Wire -> VE.SoftNorms.Run`
+  (layer 2 -> 4). Because the hook checks a staged Lean file's whole header, any
+  commit that touches `lean/VE/Rights/Wire.lean` is rejected until that edge is
+  either removed or reviewed into `tools/lean-layer-exceptions.json`.
+- `tools/check_python_layers.py` reports 14 unmapped modules (`ve.alternatives`,
+  `ve.assurance`, `ve.quantity_admission`, `ve.report_english`, `ve.reports`,
+  `ve.reports_route`, `ve.rights`, `ve.rights_route`, `ve.soft_route`,
+  `ve.softnorms`, `ve.speech_acts`, `ve.speech_document`, `ve.speech_english`,
+  `ve.units`). The hook skips layer checks on them until they are mapped in
+  `tools/layer_policy.py`, so outward imports added to them go unnoticed.
+
 To update the frozen inventory after an intended edit, rehash the file from
 `lean/` (`sha256sum VE/Path/File.lean`), replace its line in
 `VE/Route/frozen-sources.sha256`, stage both, and run `python3 VE/Route/frozen.py`.
