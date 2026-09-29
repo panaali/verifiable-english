@@ -174,7 +174,7 @@ def surfaceOk (D : DDoc) (s : List Tok) (m : Slot) : Bool :=
   decide (j ≤ s.length) && match m.form with
   | .pronoun => j == i + 1 && wordIn s i pronounWords
   | .plural => j == i + 1 && isW s i "they"
-  | .demonstrative => j == i + 2 && wordIn s i demonstrativeWords && (wordAt s (i + 1)).any (sortWord D.E)
+  | .demonstrative => j == i + 2 && wordIn s i demonstrativeWords && (wordAt s (i + 1)).any (sortNoun D)
   | .ordinalPair => j == i + 2 && isW s i "the" && wordIn s (i + 1) ordinalWords
   | .documentName => decide (i < j) && D.K.documents.any fun d => d.display.any fun x =>
       (s.drop i).take (j - i) == lexWords x

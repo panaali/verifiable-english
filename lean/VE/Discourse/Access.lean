@@ -188,6 +188,9 @@ def wordAt (ts : List Tok) (i : Nat) : Option String :=
 
 def sortWord (E : VE.Environment) (w : String) : Bool := E.sorts.contains w
 
+/-- A word of a sort, as the lexer reads it: a sort's name or a declared singular noun, folded. -/
+def sortNoun (D : DDoc) (w : String) : Bool := sortWord D.E w || D.nouns.any fun n => foldWord n.2 == w
+
 def unaryPred (E : VE.Environment) (p : String) : Bool :=
   match E.predicates p with
   | some [_] => true

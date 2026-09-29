@@ -251,26 +251,10 @@ def _sort_phrases(env, sort):
     return [p for p in ([w for _, _, w in _segments(word)] for word in words) if p]
 
 
-def _words(env):
-    """The sort and unary-predicate words a reference surface may use: their symbol names
-    (the Lean route's reading of the same bytes) and the English nouns of the sorts."""
-    from .english import EnglishVocabulary
-    try:
-        nouns = EnglishVocabulary(env).sorts
-    except VEError:
-        nouns = {}
-    sorts = {}
-    for name in env.sorts:
-        sorts[name.lower()] = name
-        noun = nouns.get(name)
-        if type(noun) is str and re.fullmatch(r"[A-Za-z]+", noun):
-            sorts[noun.lower()] = name
-    unary = {name.lower() for name, decl in env.predicates.items() if len(decl.arguments) == 1}
-    return sorts, unary
-
-
-def _word_pattern(words):
-    return "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True)) or r"(?!)"
+def _sort_noun(env, word):
+    """A lexer word that is a sort's name or a declared singular noun, folded (the Lean `sortNoun`)."""
+    return word in env.sorts or any(d.verbalisation and _fold_text(d.verbalisation.singular) == word
+                                    for d in env.sorts.values())
 
 
 _FOLD = {"\u0130": "i", "\u0131": "i", "\u017f": "s", "\u212a": "k"}
@@ -321,6 +305,45 @@ def _label_end(text, end):
             break
         j += 1
     return j if j > i else None
+
+
+def _lex(text):
+    """The discourse lexer (a named trust boundary, the Lean `lex`): words are the maximal runs of
+    characters that are not a space (`str.isspace`), `,;:!?()"` or a `.`, folded, and a `.` between
+    two ASCII letters or digits stays inside a word (`2.1`); each other character is a punctuation
+    token. Tokens are (token, start, end) with character offsets."""
+    tokens, start = [], None
+
+    def flush(end):
+        if start is not None:
+            tokens.append((_fold_text(text[start:end]), start, end))
+
+    for i, c in enumerate(text):
+        inner = (c == "." and start is not None and text[i - 1].isascii() and text[i - 1].isalnum()
+                 and i + 1 < len(text) and text[i + 1].isascii() and text[i + 1].isalnum())
+        if inner or not (c.isspace() or c in _PUNCT or c == "."):
+            start = i if start is None else start
+            continue
+        flush(i)
+        start = None
+        if not c.isspace():
+            tokens.append((c, i, i + 1))
+    flush(len(text))
+    return tokens
+
+
+def _unit_tokens(doc, unit):
+    """The tokens of a unit's own bytes, with prose byte ranges (the Lean `unitTokens`)."""
+    start = unit["span"][0]
+    text = unit["source"]
+    return [(w, start + len(text[:a].encode("utf-8")), start + len(text[:b].encode("utf-8")))
+            for w, a, b in _lex(text)]
+
+
+def _mention_words(doc, units, mention):
+    """The words of a mention: the tokens of its unit in its byte range."""
+    a, b = mention["span"]
+    return [w for w, x, y in _unit_tokens(doc, units[mention["unit"]]) if a <= x and y <= b]
 
 
 def _segment_lengths(words, j, sorts, unary, displays):
@@ -432,17 +455,17 @@ def _coordinations(doc, unit, position, names):
 
 # Resolution ----------------------------------------------------------------
 
-def _surface_fits(doc, mention):
-    """A recorded pronoun, demonstrative or ordinal pair covers exactly its surface: a pronoun,
-    `this|that <sort word>`, `the former|latter` (otherwise it is no slot: MentionNotSlot)."""
-    surface = _fold_text(doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8", "replace").strip())
-    sorts, _ = _words(doc["environment"])
+def _surface_fits(doc, units, mention):
+    """A recorded pronoun, demonstrative or ordinal pair covers exactly its surface, read as the
+    lexer's words of its byte range (the Lean `surfaceOk`): a pronoun; `this|that` and a sort's
+    name or singular noun; `the` and `former|latter` (otherwise it is no slot: MentionNotSlot)."""
+    words = _mention_words(doc, units, mention)
     form = mention["form"]
     if form == "pronoun":
-        return surface in _PRONOUNS
+        return len(words) == 1 and words[0] in _PRONOUNS
     if form == "demonstrative":
-        return re.fullmatch(r"(?:this|that)\s+(?:" + _word_pattern(sorts) + ")", surface) is not None
-    return surface in {"the former", "the latter"}
+        return len(words) == 2 and words[0] in ("this", "that") and _sort_noun(doc["environment"], words[1])
+    return len(words) == 2 and words[0] == "the" and words[1] in ("former", "latter")
 
 
 def _accessible(doc, unit, mention, names, anchors):
@@ -451,8 +474,8 @@ def _accessible(doc, unit, mention, names, anchors):
     form = mention["form"]
     env = doc["environment"]
     if form == "ordinal_pair":
-        surface = doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8").lower().split()
-        index = {"former": 0, "latter": 1}.get(surface[-1] if surface else "")
+        words = _mention_words(doc, {unit["id"]: unit}, mention)
+        index = {"former": 0, "latter": 1}.get(words[-1] if words else "")
         if index is None:
             return []
         scoped = [n for n in names if _inside(anchors[n["scope"]]["span"], unit["span"])]
@@ -1062,7 +1085,7 @@ def validate_discourse(doc):
             raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
                           f"is not implemented in Python ({unit['id']})")
         for m in producing:
-            if not _surface_fits(doc, m):
+            if not _surface_fits(doc, units, m):
                 raise VEError(f"MentionNotSlot: {m['id']}")
         entity = [m for m in producing if m["target"]["kind"] == "entity"]
         if len(entity) != len(producing):

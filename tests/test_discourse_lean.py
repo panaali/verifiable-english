@@ -1395,3 +1395,29 @@ def test_coordinations_are_read_as_segments(lean, tmp_path):
     for opening in ["Alice's and Bob's managers are ready.", "Alice and Bobby are ready."]:
         doc = document([opening, "The former is ready."], former, names=PY_NAMES, contents=ready)
         assert agree(doc, tmp_path) == "UnresolvedReference: m1", opening
+
+
+def test_mention_surfaces_are_read_by_the_lexer(lean, tmp_path):
+    """B (discourse.py:429): `The\\u00a0former` (or two spaces) is the ordinal surface in Lean, whose
+    lexer separates words at every `str.isspace` character; Python required one literal space and
+    reported `MentionNotSlot`. Python now reads a recorded surface as the lexer's words too."""
+    ready = {"u2": unary("ready", "alice")}
+    for space in [" ", "  ", "\t", *UNICODE_SPACES]:
+        doc = document(["Alice and Bob are ready.", f"The{space}former is ready."],
+                       [("m1", "u2", f"The{space}former", "ordinal_pair", PAIR)], names=PY_NAMES, contents=ready)
+        assert agree(doc, tmp_path) == "admitted", hex(ord(space[-1]))
+        doc = document(["Api is reviewed.", f"This{space}service is safe."],
+                       [("m1", "u2", f"This{space}service", "demonstrative", entity("api"))], names=PY_NAMES,
+                       contents=SAFE_U2)
+        assert agree(doc, tmp_path) == "admitted", hex(ord(space[-1]))
+    # a demonstrative before the sort's declared noun is a slot in both (slot discovery reads it)
+    doc = document(["Api is reviewed.", "This system is safe."],
+                   [("m1", "u2", "This system", "demonstrative", entity("api"))], names=PY_NAMES, contents=SAFE_U2)
+    assert agree(doc, tmp_path, noun_env()) == "admitted"
+    # a surface that is not the form's words is no slot in either
+    for text, form, target in [("The", "ordinal_pair", PAIR), ("This", "demonstrative", entity("api"))]:
+        sentence = "The former is ready." if form == "ordinal_pair" else "This service is safe."
+        opening = "Alice and Bob are ready." if form == "ordinal_pair" else "Api is reviewed."
+        contents = ready if form == "ordinal_pair" else SAFE_U2
+        doc = document([opening, sentence], [("m1", "u2", text, form, target)], names=PY_NAMES, contents=contents)
+        assert agree(doc, tmp_path).startswith("UnrecordedSlot: u2: ["), text
