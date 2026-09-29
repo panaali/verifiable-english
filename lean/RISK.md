@@ -6,7 +6,8 @@ section 7 gives schemata, every theorem of 7.2 in plain words, the `ve_risk_rout
 `lean/audit.py` audits every theorem: no `sorry`, only `propext`, `Classical.choice` and `Quot.sound`. No frozen
 P0 file and no `lean/VE/Norms/*`, `lean/VE/Alternatives/*`, `lean/VE/Route/*` or `lean/VE/Time/*` source changed
 (`python3 VE/Route/frozen.py`); `VE.lean`, `VE/Audit.lean`, the frozen-source manifest and `lakefile.toml` gained
-imports, audit entries, manifest entries and the `ve_risk_route` target (root `RiskMain.lean`) only.
+imports, audit entries, manifest entries, the `ve_risk_route` target (root `RiskMain.lean`) and the test-only
+`ve_risk_eval` target (root `RiskEvalMain.lean`, the differential harness of 8.3; not part of the route) only.
 
 ## Files
 
@@ -41,9 +42,10 @@ imports, audit entries, manifest entries and the `ve_risk_route` target (root `R
 * **`possibleE`/`certainE`** are the first and second components of one evaluator `endsE` on `nnf c`; `endsE`
   swaps and negates at a `not`, which never occurs on `nnf c`, so no mutual block is needed (mutual blocks break
   the audit scanner).
-* **`witnessE` for `=`** moves the quantities of the form in the order of the normal form (first occurrence in
-  the condition), not in the record's quantity order: the proof then needs no permutation argument. The witness
-  is canonical either way and the fixtures only fix `<` and `≤` witnesses.
+* **`witnessE` for `=`** moves the quantities in the record's quantity order, as 4.3 states: `recordOrder` is a
+  stable sort of the form's terms by their position in the box (whose entries follow the record's quantities),
+  and `recordOrder_perm` and `capacity_perm` carry `eqWit_sound` over. (Before review B5 it used the form's order,
+  so `b + a = 3` gave (0, 3) where the spec gives (3, 0).)
 * **Records.** `Decision` has two helper fields: `chooserLabel`, and `issues` (a problem found while decoding a
   cited entry's content, with the validation step that reports it: an unknown quantity at V1, a value off the grid
   at V3 or V4, a statement form at V6, a tag mismatch or an off-grid literal in a condition at V7), so the
@@ -65,6 +67,18 @@ imports, audit entries, manifest entries and the `ve_risk_route` target (root `R
   back exactly the regenerated lists. `entity` of 7.1 is `entityIn R d x` (the constant table depends on both).
 * **Candidates** are deduplicated (`dedup`); the current value is included, so a scanned value always has a
   candidate strictly between it and the current value.
+* **Diagnostic texts of 4.1.** Where 4.1(5)'s parenthesis (`InvalidInput: risk.<field>`) and 6's row
+  `UnknownSymbol: risk.<field> <name>` ("an undeclared class, harm, kind or tag in the block") could both apply, the
+  more specific row of 6 is used: an undeclared class in `harm_classes`, an undeclared kind in
+  `required_alternatives` (per row, `when` first), an undeclared quantity-kind tag and an undeclared estimator kind
+  are `UnknownSymbol: risk.<field> <name>`; malformed forms stay `InvalidInput`. The reserved `dimensionless` tag
+  is a declared tag. A class declared unranked against itself is `RiskUnrankedAgainstOrder: <c>, <c>` (a class is
+  ranked against itself). Quantity kinds are identifiers (1.1). Python's environment check follows the same
+  decoder and check in the same order (`ve/risk.py`); `tests/test_risk_diagnostics.py` compares the two.
+* **Fallback texts outside 6.** Four texts guard states the earlier checks exclude and are not in 6:
+  `InvalidInput: risk block is not well-formed` (`validateRisk`), `InvalidInput: risk decision model` (V10),
+  `InvalidInput: a risk premise fails on the decision model` (V11) and `InvalidInput: risk decision record is not
+  valid` (`validateView`). No fixture reaches them.
 * **The audit.** Q1 on a record that is admitted but invalid is `notReplayable` with the validation diagnostic
   (4.10 names only admission failures). Q2 decodes every live estimate of the record's quantities in the prefix
   (not superseded before the decision) and compares Q1 verdicts.
@@ -140,18 +154,42 @@ between candidates.
 | Kind | Extra input | Output |
 |---|---|---|
 | `risk-elaborate` | none | `environment_id`, `document_hash`, `e_risk`, `legend`, `risk_premises`, `unranked_severities`, `inlined`, `alternatives`, `base_premises`, `followable`, `unmapped_obligations`, and W1's regenerated outputs |
-| `risk-decision` | `decision` (the decision entry), `entries` (the supplied entries) | a diagnostic (with the witness case of `S ∧ ¬N` for `SufficientOutsideNecessary` and `RiskInconsistent`); or `verdict: CONFLICT` with the target and tuple; or `tables` (with witnesses), `statuses` (with firing rules and `by_default`), `worst_cases`, `margins`, `record_invalid`, `record_conflict`, `lines` (`unexamined_possible`, `assumed_ruled_out`, `point_estimates`, `default_decided`), `clear`, `conditional_on`, `decision_record_id`, `text` |
+| `risk-decision` | `decision` (the decision entry), `entries` (the supplied entries) | a diagnostic (with the witness case of `S ∧ ¬N` for `SufficientOutsideNecessary` and `RiskInconsistent`); or `verdict: CONFLICT` with the target and tuple; or `tables` (with witnesses), `statuses` (with firing rules and `by_default`), `worst_cases`, `margins`, `record_invalid`, `record_conflict`, `lines` (`unexamined_possible`, `assumed_ruled_out`, `point_estimates`, `default_decided`, `dilemmas`), `legend` (the condition lines of 2.4 the record's forms need, c5's with "(wording pending)"), `clear`, `conditional_on`, `decision_record_id`, `text` |
 | `risk-conflict` | `packages`, or `witness` (`model`, `target`, `tuple`) | CONFLICT-FREE / CONFLICT / UNKNOWN |
 | `risk-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `chooser`) | FOLLOWABLE / DILEMMA / UNKNOWN / `not computed` |
-| `risk-audit` | `log`, `decision` (`{"id", "seq"}`), optional `alternative` (else the `taken` entry) | `q1`, `q2`, `procedure`, `q3`, `not_concluded` |
+| `risk-audit` | `log`, `decision` (`{"id", "seq"}`), optional `alternative` (else the `taken` entry) | `q1` (`NO CLEAR ACTION AT DECISION TIME: <alt diagnosis>; <alternative> was <status>.`, or the conflict with "not evaluated"), `q2`, `procedure`, `q3`, `not_concluded` |
 | `risk-certificate` | `premises`, `conclusion`, `certificate` over `backgroundAlt ++ riskPremises ++ layer premises ++ premises` | `valid`, `conditional_on` |
 | `admission` | W2 `document` with units and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
 
 Cases without the profile, the block or a `risk-*` kind are delegated to `VE.Alternatives.Run`.
 
-Tests: `tests/test_risk_lean_route.py` (51 cases, fixtures built by `conformance/risk.py`) runs the executable on
-k1 to k12, k15 to k18, k20 to k22, k24 to k28, k30, k32 to k35, k38 to k40, the audit (k13, k14, k15, k32), the
-environment checks (k9a, k26, stage B fields, the profile gate) and W2 admission.
+## Tests (after the Astra and Fable reviews of the integration)
+
+| File | What it checks |
+|---|---|
+| `tests/test_risk_lean_route.py` | the route on k1 to k18, k20 to k22, k24 to k28, k30, k32 to k35, k38 to k40, the audit (k13 to k15, k32), the environment checks and W2 admission; the record-order `=` witness (B5); NO CLEAR ACTION with alt's diagnosis and the status (B4), and at a conflict; the unexamined count of the condition line; Q3's ruling-out source |
+| `tests/test_risk_fixtures.py` | k20 (document: CONFLICT-FREE, CONFLICT and DILEMMA witnesses, certificates replayed), k22(b), k23 (identity without the block; 300 random P2-only records; 300 random P2-only structures with unclassified harms), k27(c), k29, k30 (document), k31, k36, k37 |
+| `tests/test_risk_every_diagnostic.py` | 8.3: every routable row of 6 on a hand-written input (84 cases), and `unranked_severities` as a warning |
+| `tests/test_risk_differential.py` | 8.3: 10,000 random separable, unit-coefficient conditions decided by Lean (`ve_risk_eval`), Rust and enumeration; witnesses checked; non-separable and non-unit conditions rejected by Lean and Rust with one text |
+| `tests/test_risk_margins.py` | 8.3: margins, record-invalid and conflict scans against the route on every grid value within 5 of each endpoint, 200 random records |
+| `tests/test_risk_generated_policies.py` | 8.3: 1,000 generated policies; `risk-elaborate` through Python's dispatch equals Lean's; Python certificates replay in Lean; tampered packages rejected |
+| `tests/test_risk_integration.py` | three-way cells (k1, k2), V8 sameness after normalisation (A2), 300 random records Lean against Rust |
+| `tests/test_risk_diagnostics.py` | Python's environment check against Lean on 57 single faults, 5 accepted variants and 309 pairs of faults |
+| `tests/test_risk_profile.py` | the frozen W6 text (A1), identity, the profile gate, dispatch-only record handling (A3) |
+| `tests/test_risk_english.py` | k19 (B3): one reading and the canonical rendering per wording, every 2.3 rejection in documents and rule guards, the scoped rewrites, rule 2 in alt's binder form, P3 rejected, c5 pending |
+| `tests/test_risk_rust.py` | Rust's evaluator against enumeration on small boxes |
+
+Not covered by a test: kC1 is a stage C fixture (recorded, not a stage A acceptance fixture; stage C fields are
+rejected, `tests/test_risk_every_diagnostic.py`). Alt's 8.3 suites are not repeated on environments carrying the
+block. In k19, 2.5's compact spelling of rule 2 ("… such that that action is available to that agent and another
+action …") is not a registered derivation of the Python surface and is rejected; the registered binder form
+("… such that both of the following hold: first clause: …; second clause: …") has one derivation and 2.5's guard.
+The English surface refuses unit-carrying risk environments (the W6 core-checking gate), so agent-ops' English is
+checked on its unit-free form. The section 6 rewrites of `RiskSettingTwice`, `RiskTwoSources` and
+`RiskConditionShared` are IDE text; the route gives the diagnostic only. Python's environment check and Lean agree
+on single faults of both blocks and on every pair of risk-block faults; with one fault in alt's block checks (not its shape) and one in
+the risk block's shape, Python reports alt's first (it checks the alt block whole), while Lean decodes the risk block
+before alt's semantic checks. Alt's own Python-only `AlternativesReserved: wording for <p>` is unchanged (6).
 
 ## Status, deviations and what is not claimed
 
