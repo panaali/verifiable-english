@@ -127,3 +127,116 @@ def test_node_count_is_the_checkers_count(profiles):
         checker = _Checker(env)
         checker.formula(formula)
         assert _node_count(formula) == checker.nodes, data
+
+
+# --- 3. Node limits before typing ----------------------------------------------
+
+def families():
+    base = {"sorts": {"s": {"description": "items"}}, "constants": {},
+            "predicates": {"p": {"arguments": ["s"], "description": "p"}}}
+    nary = {**base, "predicates": {**base["predicates"],
+                                   "r": {"arguments": ["s", "s", "s"], "description": "r"}}}
+    return {"fol": envelope(base, ("relational-fol@0",)),
+            "data": envelope(base, ("data@0", "relational-fol@0")),
+            "closure": envelope(base, ("closure@0", "relational-fol@0")),
+            "nary": envelope(nary, ("closure@0", "nary@0", "relational-fol@0")),
+            "order": envelope(base, ("order@0", "relational-fol@0"))}
+
+
+def python_document(env, formulas):
+    """Python's wire reading: one shared decoder, then typing (conformance fixtures
+    decode premises and conclusion as one document)."""
+    try:
+        document_from_data(Environment(env), formulas)
+    except VEError as exc:
+        return exc
+    return None
+
+
+def route_model(env):
+    domains = {"s": ["a"]}
+    relations = {name: [] for name in env["vocabulary"]["predicates"]}
+    return {"complete": True, "domains": domains, "constants": {}, "relations": relations}
+
+
+# Ill-typed (or unsupported) formulas that come first in preorder.
+FIRST = {"unbound": UNBOUND, "unknown": ["unary", "nope", ["var", 0]],
+         "binder": ["forall", "nope", ["top"]], "string": ["forall", "$string", ["top"]],
+         "comparison": ["lt", ["num", "1"], ["num", "2"]]}
+
+
+@pytest.mark.parametrize("family", ["fol", "data", "closure", "nary", "order"])
+@pytest.mark.parametrize("first", sorted(FIRST))
+def test_node_limit_precedes_typing_in_documents_three_ways(family, first):
+    env = families()[family]
+    document = [["and", FIRST[first], doubling(13)]]
+    assert isinstance(python_document(env, document), ResourceLimit)
+    case = {"id": "e", "environment": env, "model": route_model(env), "ast": document}
+    [got] = lean([{**case, "kind": "evaluate"}])
+    lean_limit(got, "AST node count")
+    [other] = rust([case])
+    rust_limit(other)
+
+
+@pytest.mark.parametrize("family", ["fol", "data", "closure", "nary", "order"])
+def test_aggregate_limit_precedes_typing_in_countermodels_three_ways(family):
+    """An ill-typed first premise; F₁₂ as a premise and as the conclusion."""
+    env = families()[family]
+    premises, conclusion = [UNBOUND, doubling(12)], doubling(12)
+    assert isinstance(python_document(env, [*premises, conclusion]), ResourceLimit)
+    case = {"id": "m", "environment": env, "model": route_model(env), "premises": premises,
+            "conclusion": conclusion}
+    [got] = lean([{**case, "kind": "countermodel"}])
+    lean_limit(got, "AST node count")
+    [other] = rust([{**case, "kind": "countermodel"} if family == "order" else case])
+    rust_limit(other)
+    if family != "order":
+        [cert] = lean([{**case, "kind": "certificate", "certificate": {}}])
+        lean_limit(cert, "AST node count")
+
+
+@pytest.mark.parametrize("family", ["fol", "closure", "nary", "order"])
+def test_limit_and_syntax_errors_keep_preorder_three_ways(family):
+    """A malformed node reached before the limit is the syntax error; one
+    reached after it is the limit."""
+    env = families()[family]
+    after = [["and", doubling(13), ["bad"]]]
+    before = [["and", ["bad"], doubling(13)]]
+    assert isinstance(python_document(env, after), ResourceLimit)
+    python = python_document(env, before)
+    assert python is not None and not isinstance(python, ResourceLimit), python
+    for document, limited in ((after, True), (before, False)):
+        case = {"id": "e", "environment": env, "model": route_model(env), "ast": document}
+        [got] = lean([{**case, "kind": "evaluate"}])
+        [other] = rust([case])
+        if limited:
+            lean_limit(got, "AST node count")
+            rust_limit(other)
+        else:
+            not_limit(got)
+            rust_not_limit(other)
+
+
+def test_depth_limit_precedes_typing_three_ways():
+    env = families()["fol"]
+    document = [["and", UNBOUND, nest(70)]]
+    assert isinstance(python_document(env, document), ResourceLimit)
+    case = {"id": "e", "environment": env, "model": route_model(env), "ast": document}
+    [got] = lean([{**case, "kind": "evaluate"}])
+    lean_limit(got)
+    [other] = rust([case])
+    rust_limit(other)
+
+
+@pytest.mark.parametrize("formula", [["and", UNBOUND, doubling(13)], doubling(14)])
+def test_admission_claims_have_their_own_limits(formula):
+    """Each claim is decoded within its own limits before it is typed; Lean did
+    not count claims at all, so a well-typed 32,767-node claim was accepted."""
+    from ve.admission import admit_document
+    env = families()["fol"]
+    document = {"units": [], "open_terms": ["t"],
+                "graph": {"root": "root", "nodes": [{"name": "root", "ast": formula, "label": "open:t"}]}}
+    with pytest.raises(ResourceLimit):
+        admit_document(Environment(env), document)
+    [got] = lean([{"id": "a", "kind": "admission", "environment": env, "document": document}])
+    lean_limit(got)

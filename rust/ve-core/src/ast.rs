@@ -141,6 +141,7 @@ impl Document {
         let a = data
             .as_array()
             .ok_or_else(|| Error::new("SyntaxError", "document must be an array"))?;
+        ast_limit(a)?;
         let mut decoder = AstDecoder { nodes: 0 };
         let formulas = a
             .iter()
@@ -332,6 +333,100 @@ pub(crate) fn has_reach(f: &Formula) -> bool {
         Formula::Not(a) | Formula::Forall(_, a) | Formula::Exists(_, a) => has_reach(a),
         Formula::And(a, b) | Formula::Or(a, b) | Formula::Implies(a, b) => has_reach(a) || has_reach(b),
         _ => false,
+    }
+}
+/// Why the static-limit walk ended early: a limit, or a node Python's decoder
+/// rejects for its shape (left to the family's own decoder to report).
+enum Halt {
+    Limit(&'static str),
+    Stop,
+}
+/// The static AST limits in Python's `_Decoder` order: formula and term nodes
+/// are counted in preorder, across the formulas one shared decoder reads (a
+/// document, or premises then conclusion), and a limit is reported before a
+/// node's shape is examined or anything is typed (Lean `AstLimit.check`). The
+/// order route types while it counts, so it runs this first too.
+pub(crate) fn ast_limit<'a>(formulas: impl IntoIterator<Item = &'a Value>) -> Result<()> {
+    let mut nodes = 0;
+    for f in formulas {
+        match limit_walk(f, false, 1, &mut nodes) {
+            Ok(()) => {}
+            Err(Halt::Stop) => return Ok(()),
+            Err(Halt::Limit(message)) => return error("ResourceLimit", message),
+        }
+    }
+    Ok(())
+}
+fn limit_decimal(v: &Value) -> std::result::Result<(), Halt> {
+    let s = v.as_str().ok_or(Halt::Stop)?;
+    if s.chars().count() > 40 {
+        return Err(Halt::Limit("Integer literal exceeds 40 characters"));
+    }
+    let digits = s.strip_prefix('-').unwrap_or(s);
+    let canonical = !digits.is_empty()
+        && digits.bytes().all(|b| b.is_ascii_digit())
+        && (digits == "0" || !digits.starts_with('0'))
+        && s != "-0";
+    if canonical { Ok(()) } else { Err(Halt::Stop) }
+}
+fn limit_walk(v: &Value, term: bool, depth: usize, nodes: &mut usize) -> std::result::Result<(), Halt> {
+    *nodes += 1;
+    if *nodes > MAX_NODES {
+        return Err(Halt::Limit("AST exceeds 10,000 nodes"));
+    }
+    if depth > MAX_DEPTH {
+        return Err(Halt::Limit("AST exceeds 64 nesting levels"));
+    }
+    let a = v
+        .as_array()
+        .filter(|a| a.first().is_some_and(Value::is_string))
+        .ok_or(Halt::Stop)?;
+    match (term, a[0].as_str().unwrap(), a.len()) {
+        (true, "var", 2) => a[1].as_u64().filter(|n| *n <= MAX_INDEX).map(|_| ()).ok_or(Halt::Stop),
+        (true, "const", 2) => Ok(()),
+        (true, "num", 2) => limit_decimal(&a[1]),
+        (true, "add", 3) => {
+            limit_walk(&a[1], true, depth + 1, nodes)?;
+            limit_walk(&a[2], true, depth + 1, nodes)
+        }
+        (true, "scale", 3) => {
+            limit_decimal(&a[1])?;
+            limit_walk(&a[2], true, depth + 1, nodes)
+        }
+        (false, "top" | "bottom", 1) => Ok(()),
+        (false, "unary", 3) => limit_walk(&a[2], true, 1, nodes),
+        (false, "binary", 4) => {
+            limit_walk(&a[2], true, 1, nodes)?;
+            limit_walk(&a[3], true, 1, nodes)
+        }
+        (false, "eq" | "lt" | "le", 3) => {
+            limit_walk(&a[1], true, 1, nodes)?;
+            limit_walk(&a[2], true, 1, nodes)
+        }
+        (false, "atom", 3) => {
+            let terms = a[2]
+                .as_array()
+                .filter(|t| (3..=6).contains(&t.len()))
+                .ok_or(Halt::Stop)?;
+            terms.iter().try_for_each(|t| limit_walk(t, true, 1, nodes))
+        }
+        (false, "reach", 5) => {
+            let edge = a[2].as_array().ok_or(Halt::Stop)?;
+            match (edge.first().and_then(Value::as_str), edge.len()) {
+                (Some("named"), 2) => {}
+                (Some("body"), 3) => limit_walk(&edge[2], false, depth + 1, nodes)?,
+                _ => return Err(Halt::Stop),
+            }
+            limit_walk(&a[3], true, 1, nodes)?;
+            limit_walk(&a[4], true, 1, nodes)
+        }
+        (false, "not", 2) => limit_walk(&a[1], false, depth + 1, nodes),
+        (false, "and" | "or" | "implies", 3) => {
+            limit_walk(&a[1], false, depth + 1, nodes)?;
+            limit_walk(&a[2], false, depth + 1, nodes)
+        }
+        (false, "forall" | "exists", 3) => limit_walk(&a[2], false, depth + 1, nodes),
+        _ => Err(Halt::Stop),
     }
 }
 struct AstDecoder {
