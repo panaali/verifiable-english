@@ -471,7 +471,20 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
    has that sort (1.6); imports pin `source_id` and `document_id`; an `embedded` unit exists and has kind `meta`.
 4. Every mention names a unit and its byte range starts and ends on tokens the lexer (6) reads from that unit's
    own bytes (`InvalidInput: mention <m> names an unknown unit`, `InvalidInput: mention <m> span`), checked for
-   every mention before the rest of the block; mention spans within one unit are disjoint or properly nested
+   every mention before the rest of the block. **Discourse wording.** With its span, the unit of every recorded
+   reference (a formula-producing mention: every form but `section_ref` and `navigation`) must have discourse
+   wording: once the layout characters around it (ASCII space, tab, newline, return) are removed, the text is
+   printable ASCII (U+0020 to U+007E) with canonical spacing, one ASCII space between words, none before
+   `.,;:!?)` and none after `(`; so no tab, newline, Unicode space, control or non-ASCII character (a folded
+   `İ`, `ı`, `ſ`, a curly quote, an accented letter) lies inside a sentence. Anything else is `InvalidInput:
+   discourse wording of <unit>` in both checkers (the Lean `canonicalWording` in `toTokenSpans`, Python's
+   `_canonical_wording` in `_token_spans`), before any sentence is parsed, for pronouns, demonstratives and
+   ordinals alike. The expansions of such a unit are then discourse wording too: Python parses the unit's
+   sentences alone (without the layout around them) with each recorded reference replaced by the English
+   parser's own spelling of the target constant (`api`, `"web_api"`), never by its registered display, which
+   names the constant only in the reviewed presentation (Lean never parses a display). A unit that records no
+   reference keeps its own wording (slot discovery and `Acc` read it as segments, 6). Mention spans within one
+   unit are disjoint or properly nested
    (`InvalidInput: mentions <a>, <b> overlap`); every target exists (`UnresolvedReference` when the manifest
    records none, `DanglingAnchor`, `UnknownDocument`, `UnknownRule`, W3's `Citation is absent, cyclic, or not
    earlier in the bundle`); a `plural` target lists at least two distinct members, an `ordinal_pair` target's
@@ -513,8 +526,9 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
    `,;:!?()"` are single punctuation tokens, and so is `.` unless it lies between two ASCII letters or digits.
    A recorded mention's surface is read as the lexer's words of its byte range (the Lean `surfaceOk`, Python's
    `_surface_fits`): a pronoun is one pronoun word, a demonstrative `this|that` and one word that is a sort's name
-   or declared singular noun, an ordinal pair `the` and `former|latter`, whatever spaces separate them
-   (`The former`, `The\u00a0former` and `The  former` alike).
+   or declared singular noun, an ordinal pair `the` and `former|latter`. A recorded surface separated by
+   anything but one ASCII space (`The\u00a0former`, `The  former`) is not discourse wording (4) and never
+   reaches this reading.
 7. Groups and constraints are well-formed (1.5): listed units carry no content and no reading set other than the
    owning set (`IndependentFragment`), the group's reading regenerates per group (`groupFormula`), the
    `same-witness` content shares its witness (`WitnessSplit`), constraints name active readings by
@@ -909,6 +923,7 @@ old-boundary comparisons and certificate/audit provenance are retained. No new m
 | `ImportCycle: <source ids>` / `ResourceLimit: document nesting` | 4.1(10); nesting inside a validity check is `unconfirmed` (4.7), not an error | error / UNKNOWN |
 | `ResourceLimit: mentions` / `anchors` / `joint choices` / `resolution` | limits (11); the last two are UNKNOWN for dependent verdicts (including the extension checks of 4.8) | error / UNKNOWN |
 | `InvalidInput: document sort <s> has other constants` / `restriction of <mention> mentions <q>` / `null in discourse block` / `mentions <a>, <b> overlap` / `reading <value>` / `reading <id> not in <set>@<version>` | field consistency (1.4, 1.5, 3.1); a recorded `collective` reading is the decode-time `reading collective` | error |
+| `InvalidInput: discourse wording of <unit>` | a unit recording a reference is not printable ASCII with canonical spacing (4.1(4)); checked with the mention spans, before parsing | error |
 | `UnsupportedProfile: ve.discourse@1 requires ve-document@2` | profile gate (3.5); the frozen gate's own `UnsupportedProfile` texts for the base list are unchanged | error |
 | `ValidityRefuted: <unit>` | a validity claim's polarity disagrees with a completed outcome (4.7) | warning |
 | `SelfTruth: <unit>` | a self-truth sentence recognised and labelled (4.7) | label |
@@ -919,6 +934,16 @@ elaboration), groups and constraints, the joint set, the dependency DAG, embedde
 identity, cycle, depth), limits, then W3 and W2 on the projected document, then the citation and report extension
 checks; validity claims are evaluated after admission (4.7). English diagnostics carry the span and the
 plain-language expectation as today. Existing P0, W1, W2 and W3 diagnostics are unchanged.
+
+**Known limitation (P1 wire-contract codegen).** The two checkers agree on whether a document is admitted and
+on the report of an admitted one; on an input both reject they may name different diagnostics, because Python's
+checks are a port of Lean's and not generated from one wire contract. The recorded cases: a unit in discourse
+wording outside both grammars (`It is safe (v2.1).` with `It` recorded) is `InvalidInput: unit <u> is outside
+the supported discourse fragment` in Lean and `IllTypedTarget: <mention>: <target>` in Python (its recorded
+expansion does not parse); an unknown mention form is Lean's decode-time `InvalidInput: form <f>` and Python's
+`InvalidInput: mention <m>`. Generating both checkers' diagnostics from one contract (P1) closes this. (A form
+Python does not elaborate is Python's `UnsupportedProfile`, an abstention rather than a verdict: Python never
+admits such a unit.)
 
 ## 9. Lean (sequence 3): definitions and the exact statements to prove
 
@@ -1961,3 +1986,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-09-28 | Draft 4 | The second verification pass applied (`manage-agents/discourse-p3ver2.final.md`, FAIL, two defects). F8: coincidence of the candidate and competing-quantifier sets is a sufficient condition for natural-view agreement, not a necessary one (4.2; α′ adds the case where both reject with two versus three candidates; 13.17; the plan's "only where" removed). 4.5: a binary restriction's other argument is a resolved entity; it is the nested slot's target only where the description contains a nested mention (η), and a contextual description without one ("the owner" as `owns(x, api)`) carries the constant in the manifest's `restriction`. Spec only. |
 | 2026-09-29 | Draft 4, amendment | Slot discovery stated as one function of each unit's own bytes (4.1(6)), after the discourse loop's final findings (`manage-agents/discourse-loop.final.md`, `discourse-slots-directive.md`): per-unit tokens, the four-character case fold, segments, longest-first surfaces and exact byte coverage, checked for every unit before any is resolved; `UnrecordedSlot` prints prose bytes in both checkers. |
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse2-looprecheck1.final.md`: the text inputs of `Acc` (binders, coordinations, restrictive properties) are read as the segments of 4.1(6), so a joined word (`service's`, `Bob’s`) never hides one, and a binder is a quantifier word followed later in its sentence by a word of the sort (its name or declared singular noun); a recorded surface is read as the lexer's words (any spaces); a mention's byte range must start and end on its unit's tokens (4.1(4)), in Python as in Lean. `acc_no_heuristic` takes the declared nouns and the units' bytes. |
+| 2026-10-01 | Draft 4, amendment | After `manage-agents/discourse2-loop.final.md` and `discourse-spacing-directive.md`: discourse wording (4.1(4)), the whitespace class closed by restriction. A unit that records a reference is printable ASCII with canonical spacing once the layout around it is removed, or `InvalidInput: discourse wording of <unit>` in both checkers before parsing; Python parses its expansions without that layout and with the parser's own spelling of each target constant, never a registered display. Differing codes on inputs both reject are a recorded known limitation (8). |
