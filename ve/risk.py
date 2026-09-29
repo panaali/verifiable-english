@@ -81,6 +81,15 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
     for name in (*sorts, *predicates, *constants):
         if name.startswith("risk__") or name in seen:
             raise VEError(f"RiskReserved: {name}")
+    reserved_wordings = {
+        "{0} might lead to {1}", "{0} cannot lead to {1}",
+        "{0} might not lead to {1}", "{0} is {1}",
+        "{0} is {1} or worse", "{0} has a less severe worst case than {1}",
+    }
+    for name, declaration in predicates.items():
+        if (declaration.verbalisation in reserved_wordings
+                or declaration.negative_verbalisation in reserved_wordings):
+            raise VEError(f"RiskReserved: wording for {name}")
     edges = severity["more_severe"]
     unranked = severity["unranked"]
     if type(edges) is not list or type(unranked) is not list:
