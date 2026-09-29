@@ -5,6 +5,7 @@ Every other kind requires complete choice enumeration or stays UNKNOWN.
 """
 from __future__ import annotations
 
+from collections import Counter
 from itertools import product
 
 from .assurance import semantic_entry
@@ -282,14 +283,36 @@ def validate_narrowings(values, reading_sets, unit_ids):
     return ids
 
 
+def undetermined_units(sets, couplings=()):
+    """The units whose sets still hold more than one candidate consistent with
+    one value per coupled component (6.2): candidates agreeing on every coupled
+    axis of their set are chosen independently, so they stay open."""
+    axes = {}
+    for item in couplings:
+        for reference in item["sets"]:
+            axes.setdefault(reference["set"], set()).add(item["axis"])
+    units = []
+    for reading_set in sets:
+        keys = sorted(axes.get(reading_set["id"], ()))
+        groups = Counter(tuple(reading.get("labels", {}).get(axis) for axis in keys)
+                         for reading in reading_set["readings"])
+        if max(groups.values(), default=0) > 1:
+            units.append(reading_set.get("unit", reading_set["id"]))
+    return units
+
+
 def plan_choices(sets, *, limit=64, couplings=()):
     """Return a sound checking route; no verdict is inferred by this planner."""
     if not sets:
         return {"route": "single", "choices": [{}]}
     if couplings:
         choices, over = coupled_choices(sets, couplings, limit=limit)
+        if not choices:
+            # 6.2: a family of couplings (after any narrowing) that admits no
+            # complete choice is an error, never a vacuous verdict over zero choices.
+            raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(item["id"] for item in couplings)))
         return ({"route": "UNKNOWN", "budget": {"max_choices": limit},
-                 "choice_count": len(choices)} if over else
+                 "choice_count": len(choices), "units": undetermined_units(sets, couplings)} if over else
                 {"route": "enumerate", "choices": choices,
                  "conditional_on": [f"coupling:{item['id']}" for item in couplings]})
     if all(all(r["kind"] == "asserted" and r["content"] is not None for r in s["readings"])
@@ -301,7 +324,8 @@ def plan_choices(sets, *, limit=64, couplings=()):
     for s in sets:
         count *= len(s["readings"])
         if count > limit:
-            return {"route": "UNKNOWN", "budget": {"max_choices": limit}, "choice_count": count}
+            return {"route": "UNKNOWN", "budget": {"max_choices": limit}, "choice_count": count,
+                    "units": undetermined_units(sets)}
     return {"route": "enumerate", "choices": [dict(zip((s["id"] for s in sets), c))
              for c in product(*(range(len(s["readings"])) for s in sets))]}
 
@@ -322,7 +346,8 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
 
     plan = plan_choices(sets, couplings=couplings)
     if plan["route"] == "UNKNOWN":
-        return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"]}
+        return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"],
+                "units": plan["units"]}
     if plan["route"] == "enumerate" and any(
             r["kind"] != "asserted" or r["content"] is None
             for s in sets for r in s["readings"]):
@@ -361,17 +386,32 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
                       for s in sets]
             certificate = prove(premises)
             model_id = None if certificate is not None else witness(premises)
-            outcomes.append({"choice": labels,
-                             **({"certificate": certificate} if certificate is not None else
-                                {"model_id": model_id} if model_id is not None else
-                                {"status": "UNKNOWN"})})
+            row = {"choice": labels,
+                   **({"certificate": certificate} if certificate is not None else
+                      {"model_id": model_id} if model_id is not None else
+                      {"status": "UNKNOWN"})}
+            if certificate is not None:
+                # 5.3: every positive choice carries its premise-set line, so an
+                # inconsistent choice is reported vacuous rather than as support.
+                row["premises"] = premise_status(
+                    env, premises, max_proof_steps=max_steps, max_domain_size=max_domain_size,
+                    max_models=max_models, max_evaluations=max_evaluations)
+                row["vacuous"] = (True if row["premises"]["status"] == "INCONSISTENT" else
+                                  False if row["premises"]["status"] == "model" else None)
+            outcomes.append(row)
         positive = [row for row in outcomes if "certificate" in row]
         negative = [row for row in outcomes if "model_id" in row]
+        if not outcomes:
+            raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(item["id"] for item in couplings)))
         verdict = ("SOME" if positive and negative else
                    "ALL" if len(positive) == len(outcomes) else
                    "NONE" if len(negative) == len(outcomes) else "UNKNOWN")
+        vacuous = [row["vacuous"] for row in positive]
         return {"verdict": verdict, "route": "coupled-choices", "choices": outcomes,
-                "conditional_on": plan["conditional_on"]}
+                "conditional_on": plan["conditional_on"],
+                **({"vacuous": (True if True in vacuous else
+                                False if all(v is False for v in vacuous) else None)}
+                   if positive else {})}
 
     disjunctions = []
     for rs in formulas:
@@ -398,7 +438,8 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     for rs in formulas:
         count *= len(rs)
     if count > 64:
-        return {"verdict": "UNKNOWN", "route": "assertion-choices", "budget": {"max_choices": 64}}
+        return {"verdict": "UNKNOWN", "route": "assertion-choices", "budget": {"max_choices": 64},
+                "units": undetermined_units(sets)}
     positive = negative = None
     for choice in product(*(range(len(rs)) for rs in formulas)):
         premises = [*fixed_formulas, *(formulas[i][j] for i, j in enumerate(choice))]
