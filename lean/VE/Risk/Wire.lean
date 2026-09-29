@@ -147,6 +147,8 @@ def decodeRiskBlock (raw : Json) : Except String RiskEnv := do
   let quantityKinds ← match raw.getObjVal? "quantity_kinds" with
     | .ok j => objStrings "quantity_kinds" j
     | .error _ => pure []
+  for (k, _) in quantityKinds do
+    unless identifierOk k do throw (err "quantity_kinds")
   let requiredEstimators ← match raw.getObjVal? "required_estimators" with
     | .error _ => pure []
     | .ok (.arr xs) => xs.toList.mapM fun x => do

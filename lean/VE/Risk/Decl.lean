@@ -229,26 +229,29 @@ def checkRiskBlock (R : RiskDoc) : Except String Unit := do
   | .error e => throw e
   | .ok _ => pure ()
   for (a, b) in s.unranked do
-    if (closure R).contains (a, b) || (closure R).contains (b, a) then throw s!"RiskUnrankedAgainstOrder: {a}, {b}"
+    -- a class is ranked against itself, so `[c, c]` declares nothing unranked
+    if a == b || (closure R).contains (a, b) || (closure R).contains (b, a) then
+      throw s!"RiskUnrankedAgainstOrder: {a}, {b}"
   let mut hs : List String := []
   for (h, c) in R.risk.harmClasses do
     unless R.E.constants h == some R.alt.harm do throw s!"UnknownSymbol: risk.harm_classes {h}"
-    unless s.classes.contains c do throw s!"UnknownSymbol: risk.severity {c}"
+    unless s.classes.contains c do throw s!"UnknownSymbol: risk.harm_classes {c}"
     if hs.contains h then throw s!"HarmTwoClasses: {h}"
     hs := hs ++ [h]
   for h in harmConstantsOfE R do
     unless hs.contains h do throw s!"HarmUnclassified: {h}"
   for c in R.risk.alwaysPossible do
     unless s.classes.contains c do throw s!"UnknownSymbol: risk.always_possible {c}"
-  for (_, ks) in R.risk.requiredAlternatives do
-    for k in ks do
-      unless (R.risk.alternativeKinds.map Prod.fst).contains k do throw "InvalidInput: risk.required_alternatives"
-  for (w, _) in R.risk.requiredAlternatives do
-    unless (R.risk.alternativeKinds.map Prod.fst).contains w do throw "InvalidInput: risk.required_alternatives"
+  -- An undeclared kind or tag named in the block is `UnknownSymbol: risk.<field> <name>` (6).
+  for (w, ks) in R.risk.requiredAlternatives do
+    for k in w :: ks do
+      unless (R.risk.alternativeKinds.map Prod.fst).contains k do
+        throw s!"UnknownSymbol: risk.required_alternatives {k}"
   for (_, t) in R.risk.quantityKinds do
-    unless (R.units.map Prod.fst).contains t do throw s!"UnknownSymbol: unit {t}"
+    unless t == "dimensionless" || (R.units.map Prod.fst).contains t do
+      throw s!"UnknownSymbol: risk.quantity_kinds {t}"
   for (k, _) in R.risk.requiredEstimators do
-    unless (R.risk.quantityKinds.map Prod.fst).contains k do throw "InvalidInput: risk.required_estimators"
+    unless (R.risk.quantityKinds.map Prod.fst).contains k do throw s!"UnknownSymbol: risk.required_estimators {k}"
   unless R.alt.outcomes == .signed do throw "RiskOutcomes: risk@0 requires outcomes signed"
 
 /-- The number of AST nodes a formula may have after inlining. -/

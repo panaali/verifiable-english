@@ -1,7 +1,12 @@
 """Untrusted risk@0 declaration checks and Lean route transport.
 
-The block check gives early shape diagnostics. It does not decide a policy or
-regenerate decision tables; the risk route must redo both from raw JSON.
+The block check mirrors the Lean decoder: `decode_block` is
+`VE.Risk.Wire.decodeRiskBlock` and `check_block` is `VE.Risk.checkRiskBlock`,
+in the same order and with the same texts (risk.md 4.1, 6), so a standalone
+`Environment` and the route reject an environment alike. It does not decide a
+policy or regenerate decision tables. Records, logs and every case are sent to
+Lean unchanged: their diagnostics come from the route (risk.md 6, "Python only
+dispatches").
 """
 from __future__ import annotations
 
@@ -9,258 +14,212 @@ import os
 from pathlib import Path
 
 from .environment import valid_identifier
-from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol, VEError
 from .wire import canonical_json
 
-_STAGE_LATER = frozenset({"chance_tag", "bands", "costs", "additive_loss"})
-_REQUIRED = frozenset({"severity", "harm_classes", "unexamined"})
-_OPTIONAL = frozenset({"always_possible", "combination", "alternative_kinds",
-                       "required_alternatives", "quantity_kinds", "required_estimators",
-                       "use_all_recorded"})
+_STAGE_LATER = ("chance_tag", "bands", "costs", "additive_loss")
+_FIELDS = ("severity", "harm_classes", "unexamined", "always_possible", "combination", "alternative_kinds",
+           "required_alternatives", "quantity_kinds", "required_estimators", "use_all_recorded")
+_REQUIRED = ("severity", "harm_classes", "unexamined")
+_PROFILE_WORDS = ("avoidable", "unavoidable", "allows", "prevents")
 _KINDS = frozenset({"risk-elaborate", "risk-decision", "risk-conflict",
                     "risk-followable", "risk-audit", "risk-certificate", "admission"})
 _BINARY = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route"
 
 
-def _identifier(value, path):
-    if not valid_identifier(value) or "__" in value:
-        raise VEError(f"InvalidInput: risk.{path}")
+def _err(field):
+    return VEError(f"InvalidInput: risk.{field}")
+
+
+def _str(value, field):
+    if type(value) is not str:
+        raise _err(field)
     return value
 
 
-def _short_text(value, path):
-    if type(value) is not str or not value or len(value.encode("utf-8")) > 64:
-        raise VEError(f"InvalidInput: risk.{path}")
+def _strings(value, field):
+    if type(value) is not list or any(type(x) is not str for x in value):
+        raise _err(field)
     return value
 
 
-def _pair(value, path):
-    if type(value) is not list or len(value) != 2 or any(type(x) is not str for x in value):
-        raise VEError(f"InvalidInput: risk.{path}")
-    return value
+def _pairs(value, field):
+    if type(value) is not list:
+        raise _err(field)
+    for row in value:
+        if len(_strings(row, field)) != 2:
+            raise _err(field)
+    return [tuple(row) for row in value]
 
 
-def validate_block(raw, sorts, predicates, constants, alt, units):
-    """Validate the stage A block's declaration shape and return its identity bytes."""
+def _object_strings(value, field):
+    if type(value) is not dict:
+        raise _err(field)
+    return [(key, _str(value[key], field)) for key in sorted(value)]
+
+
+def _identifier(value):
+    return valid_identifier(value) and "__" not in value
+
+
+def _short(value):
+    return 0 < len(value.encode("utf-8")) <= 64
+
+
+def decode_block(raw):
+    """`decodeRiskBlock`: shape only, in the Lean decoder's order."""
     if type(raw) is not dict:
-        raise VEError("InvalidInput: risk.block")
+        raise _err("block")
     for key in sorted(raw):
         if key in _STAGE_LATER:
             raise VEError(f"InvalidInput: risk.{key} (stage B or C not enabled)")
-        if key not in _REQUIRED | _OPTIONAL:
-            raise VEError(f"InvalidInput: risk.{key}")
-    for key in sorted(_REQUIRED - raw.keys()):
-        raise VEError(f"InvalidInput: risk.{key}")
-    if alt["outcomes"] != "signed":
-        raise VEError("RiskOutcomes: risk@0 requires outcomes signed")
+        if key not in _FIELDS:
+            raise _err(key)
+    for key in _REQUIRED:
+        if key not in raw:
+            raise _err(key)
     severity = raw["severity"]
     if type(severity) is not dict or set(severity) != {"sort", "classes", "more_severe", "unranked", "decided_by"}:
-        raise VEError("InvalidInput: risk.severity")
-    sort = _identifier(severity["sort"], "severity.sort")
-    if sort in sorts:
-        raise VEError(f"RiskSeverityNotFresh: {sort}")
-    if sort in {"avoidable", "unavoidable", "allows", "prevents"}:
-        raise VEError(f"RiskReserved: {sort}")
-    _short_text(severity["decided_by"], "severity.decided_by")
-    classes = severity["classes"]
-    if type(classes) is not list:
-        raise VEError("InvalidInput: risk.severity.classes")
-    if not 1 <= len(classes) <= 16:
-        raise ResourceLimit("risk classes")
-    seen = set()
-    for name in classes:
-        _identifier(name, "severity.classes")
-        if name in seen:
-            raise DuplicateDeclaration(f"risk class {name}")
-        seen.add(name)
-    if sort in seen:
-        raise VEError(f"RiskReserved: {sort}")
-    for name in ("avoidable", "unavoidable", "allows", "prevents"):
-        if name in seen:
-            raise VEError(f"RiskReserved: {name}")
-    for name in (*sorts, *predicates, *constants):
-        if name.startswith("risk__") or name in seen:
-            raise VEError(f"RiskReserved: {name}")
-    reserved_wordings = {
-        "{0} might lead to {1}", "{0} cannot lead to {1}",
-        "{0} might not lead to {1}", "{0} is {1}",
-        "{0} is {1} or worse", "{0} has a less severe worst case than {1}",
-    }
-    for name, declaration in predicates.items():
-        if (declaration.verbalisation in reserved_wordings
-                or declaration.negative_verbalisation in reserved_wordings):
-            raise VEError(f"RiskReserved: wording for {name}")
-    edges = severity["more_severe"]
-    unranked = severity["unranked"]
-    if type(edges) is not list or type(unranked) is not list:
-        raise VEError("InvalidInput: risk.severity order")
-    graph = {name: set() for name in classes}
-    for relation, rows in (("more_severe", edges), ("unranked", unranked)):
-        for row in rows:
-            left, right = _pair(row, f"severity.{relation}")
-            for name in (left, right):
-                if name not in seen:
-                    raise UnknownSymbol(f"risk.severity {name}")
-            if left == right:
-                raise VEError(f"RiskUnrankedAgainstOrder: {left}, {right}" if relation == "unranked"
-                              else f"DependencyCycle: {left}")
-            if relation == "more_severe":
-                graph[left].add(right)
-    closure = {name: set() for name in classes}
-    for root in classes:
-        pending = list(graph[root])
-        while pending:
-            node = pending.pop()
-            if node in closure[root]:
-                continue
-            closure[root].add(node)
-            pending.extend(graph[node])
-    cyclic = sorted(name for name in classes if name in closure[name])
-    if cyclic:
-        raise VEError("DependencyCycle: " + ", ".join(cyclic))
-    for left, right in unranked:
-        if right in closure[left] or left in closure[right]:
-            raise VEError(f"RiskUnrankedAgainstOrder: {left}, {right}")
-    harms = {name for name, decl in constants.items() if decl.sort == alt["harm"]}
-    rows = raw["harm_classes"]
-    if type(rows) is not list:
-        raise VEError("InvalidInput: risk.harm_classes")
-    classified = set()
-    for row in rows:
-        harm, klass = _pair(row, "harm_classes")
-        if harm not in harms:
-            raise UnknownSymbol(f"risk.harm_classes {harm}")
-        if klass not in seen:
-            raise UnknownSymbol(f"risk.harm_classes {klass}")
-        if harm in classified:
-            raise VEError(f"HarmTwoClasses: {harm}")
-        classified.add(harm)
-    if harms - classified:
-        raise VEError(f"HarmUnclassified: {sorted(harms - classified)[0]}")
+        raise _err("severity")
+    sort = _str(severity["sort"], "severity")
+    classes = _strings(severity["classes"], "severity")
+    if not all(_identifier(name) for name in (sort, *classes)):
+        raise _err("severity")
+    _pairs(severity["more_severe"], "severity")
+    _pairs(severity["unranked"], "severity")
+    if not _short(_str(severity["decided_by"], "severity")):
+        raise _err("severity")
+    _pairs(raw["harm_classes"], "harm_classes")
     unexamined = raw["unexamined"]
     if unexamined != "possible":
         if (type(unexamined) is not dict or set(unexamined) != {"ruled_out_by"}
-                or not isinstance(unexamined["ruled_out_by"], str)):
-            raise VEError("InvalidInput: risk.unexamined")
-        _short_text(unexamined["ruled_out_by"], "unexamined")
-    always = raw.get("always_possible", [])
-    if type(always) is not list:
-        raise VEError("InvalidInput: risk.always_possible")
-    for klass in always:
-        if type(klass) is not str or klass not in seen:
-            raise UnknownSymbol(f"risk.always_possible {klass}")
+                or type(unexamined["ruled_out_by"]) is not str
+                or unexamined["ruled_out_by"] != "chooser" and not _short(unexamined["ruled_out_by"])):
+            raise _err("unexamined")
+    if "always_possible" in raw:
+        _strings(raw["always_possible"], "always_possible")
     if "combination" in raw and raw["combination"] not in ("latest", "hull", "intersection"):
-        raise VEError("InvalidInput: risk.combination")
-    for field in ("alternative_kinds", "quantity_kinds"):
-        mapping = raw.get(field, {})
-        if type(mapping) is not dict:
-            raise VEError(f"InvalidInput: risk.{field}")
-        for name, value in mapping.items():
-            _identifier(name, field)
-            if field == "alternative_kinds":
-                _short_text(value, field)
-            elif type(value) is not str or units is None or value not in units and value != "dimensionless":
-                raise UnknownSymbol(f"risk.{field} {value}")
-    requirements = raw.get("required_alternatives", [])
-    if type(requirements) is not list:
-        raise VEError("InvalidInput: risk.required_alternatives")
-    for row in requirements:
-        if type(row) is not dict or set(row) != {"when", "require"} or type(row["require"]) is not list:
-            raise VEError("InvalidInput: risk.required_alternatives")
-        for name in (row["when"], *row["require"]):
-            if type(name) is not str or name not in raw.get("alternative_kinds", {}):
-                raise UnknownSymbol(f"risk.required_alternatives {name}")
-    requirements = raw.get("required_estimators", [])
-    if type(requirements) is not list:
-        raise VEError("InvalidInput: risk.required_estimators")
-    for row in requirements:
-        if type(row) is not dict or set(row) != {"quantity_kind", "estimators"} or type(row["estimators"]) is not list:
-            raise VEError("InvalidInput: risk.required_estimators")
-        if type(row["quantity_kind"]) is not str or row["quantity_kind"] not in raw.get("quantity_kinds", {}):
+        raise _err("combination")
+    for name, value in _object_strings(raw.get("alternative_kinds", {}), "alternative_kinds"):
+        if not _identifier(name) or not _short(value):
+            raise _err("alternative_kinds")
+    rows = raw.get("required_alternatives", [])
+    if type(rows) is not list:
+        raise _err("required_alternatives")
+    for row in rows:
+        if type(row) is not dict or set(row) != {"when", "require"}:
+            raise _err("required_alternatives")
+        _str(row["when"], "required_alternatives")
+        _strings(row["require"], "required_alternatives")
+    for name, _ in _object_strings(raw.get("quantity_kinds", {}), "quantity_kinds"):
+        if not _identifier(name):
+            raise _err("quantity_kinds")
+    rows = raw.get("required_estimators", [])
+    if type(rows) is not list:
+        raise _err("required_estimators")
+    for row in rows:
+        if type(row) is not dict or set(row) != {"quantity_kind", "estimators"}:
+            raise _err("required_estimators")
+        _str(row["quantity_kind"], "required_estimators")
+        _strings(row["estimators"], "required_estimators")
+    if "use_all_recorded" in raw and type(raw["use_all_recorded"]) is not bool:
+        raise _err("use_all_recorded")
+    return raw
+
+
+def check_alt_reserved(raw):
+    """Alt's `checkBlock` on `E_risk`: a profile word may not be the severity sort or a class."""
+    names = {raw["severity"]["sort"], *raw["severity"]["classes"]}
+    for word in _PROFILE_WORDS:
+        if word in names:
+            raise VEError(f"AlternativesReserved: {word}")
+
+
+def check_block(raw, sorts, predicates, constants, alt, units):
+    """`checkRiskBlock`: clauses 2 to 6 of risk.md 4.1 with the texts of 6."""
+    from .background import dependency_order
+    severity = raw["severity"]
+    sort, classes = severity["sort"], severity["classes"]
+    edges = [tuple(row) for row in severity["more_severe"]]
+    unranked = [tuple(row) for row in severity["unranked"]]
+    if sort in sorts:
+        raise VEError(f"RiskSeverityNotFresh: {sort}")
+    for name in (*sorted(sorts), *sorted(predicates), *sorted(constants)):
+        if name.startswith("risk__") or name in classes:
+            raise VEError(f"RiskReserved: {name}")
+    if not 1 <= len(classes) <= 16:
+        raise ResourceLimit("risk classes")
+    seen = []
+    for name in classes:
+        if name in seen:
+            raise DuplicateDeclaration(f"risk class {name}")
+        seen.append(name)
+    for pair in edges + unranked:
+        for name in pair:
+            if name not in classes:
+                raise UnknownSymbol(f"risk.severity {name}")
+    dependency_order({name: {b for a, b in edges if a == name} for name in classes})
+    closure = {name: set() for name in classes}
+    for root in classes:
+        pending = [b for a, b in edges if a == root]
+        while pending:
+            node = pending.pop()
+            if node not in closure[root]:
+                closure[root].add(node)
+                pending.extend(b for a, b in edges if a == node)
+    for left, right in unranked:
+        # A class is ranked against itself: "c harms and c harms are not ranked" is no declaration.
+        if left == right or right in closure[left] or left in closure[right]:
+            raise VEError(f"RiskUnrankedAgainstOrder: {left}, {right}")
+    classified = []
+    for harm, klass in raw["harm_classes"]:
+        declaration = constants.get(harm)
+        if declaration is None or declaration.sort != alt["harm"]:
+            raise UnknownSymbol(f"risk.harm_classes {harm}")
+        if klass not in classes:
+            raise UnknownSymbol(f"risk.harm_classes {klass}")
+        if harm in classified:
+            raise VEError(f"HarmTwoClasses: {harm}")
+        classified.append(harm)
+    for harm in sorted(constants):
+        if constants[harm].sort == alt["harm"] and harm not in classified:
+            raise VEError(f"HarmUnclassified: {harm}")
+    for klass in raw.get("always_possible", []):
+        if klass not in classes:
+            raise UnknownSymbol(f"risk.always_possible {klass}")
+    kinds = raw.get("alternative_kinds", {})
+    for row in raw.get("required_alternatives", []):
+        for kind in (row["when"], *row["require"]):
+            if kind not in kinds:
+                raise UnknownSymbol(f"risk.required_alternatives {kind}")
+    quantity_kinds = raw.get("quantity_kinds", {})
+    for _, tag in sorted(quantity_kinds.items()):
+        if tag != "dimensionless" and (units is None or tag not in units):
+            raise UnknownSymbol(f"risk.quantity_kinds {tag}")
+    for row in raw.get("required_estimators", []):
+        if row["quantity_kind"] not in quantity_kinds:
             raise UnknownSymbol(f"risk.required_estimators {row['quantity_kind']}")
-        for name in row["estimators"]:
-            _short_text(name, "required_estimators")
-    if type(raw.get("use_all_recorded", False)) is not bool:
-        raise VEError("InvalidInput: risk.use_all_recorded")
+    if alt["outcomes"] != "signed":
+        raise VEError("RiskOutcomes: risk@0 requires outcomes signed")
+
+
+def validate_block(raw, sorts, predicates, constants, alt, units):
+    """Validate the stage A block's declarations and return its identity bytes."""
+    decode_block(raw)
+    check_alt_reserved(raw)
+    check_block(raw, sorts, predicates, constants, alt, units)
     return canonical_json(raw)
 
 
-def _shape_case(case):
-    """Catch malformed envelopes early; Lean repeats admission from raw JSON."""
-    kind = case["kind"]
-    if kind == "risk-decision":
-        if type(case.get("decision")) is not dict or type(case.get("entries")) is not list:
-            raise VEError("InvalidInput: risk-decision.entries")
-        entry = case["decision"]
-        if entry.get("kind") != "decision" or type(entry.get("content")) is not dict:
-            raise VEError("InvalidInput: risk-decision.decision")
-        record = entry["content"]
-        if record.get("format") != "ve-risk-decision@0":
-            raise VEError("InvalidInput: risk-decision.format")
-        for name in ("id", "chooser", "chooser_label", "policy", "alternatives",
-                     "quantities", "cites", "facts"):
-            if name not in record:
-                raise VEError(f"InvalidInput: risk-decision.{name}")
-        if set(record) != {"format", "id", "chooser", "chooser_label", "policy", "alternatives",
-                           "quantities", "cites", "facts"}:
-            raise VEError("InvalidInput: risk-decision.fields")
-        for name in ("id", "chooser", "chooser_label"):
-            if type(record[name]) is not str or not record[name]:
-                raise VEError(f"InvalidInput: risk-decision.{name}")
-        policy = record["policy"]
-        if type(policy) is not dict or set(policy) != {"environment_id", "document_hash"} or any(
-                type(value) is not str for value in policy.values()):
-            raise VEError("InvalidInput: risk-decision.policy")
-        for field, mandatory, optional in (
-            ("alternatives", {"name", "label"}, {"kind", "inaction"}),
-            ("quantities", {"name", "label", "tag"}, {"kind"}),
-            ("cites", {"id", "seq", "hash"}, set()),
-            ("facts", {"predicate", "args", "entry"}, set()),
-        ):
-            rows = record[field]
-            if type(rows) is not list:
-                raise VEError(f"InvalidInput: risk-decision.{field}")
-            for row in rows:
-                if type(row) is not dict or not mandatory <= row.keys() or row.keys() - mandatory - optional:
-                    raise VEError(f"InvalidInput: risk-decision.{field}")
-                for key, value in row.items():
-                    expected = (bool if key == "inaction" else int if key == "seq" else
-                                list if key == "args" else str)
-                    if type(value) is not expected or expected is str and not value:
-                        raise VEError(f"InvalidInput: risk-decision.{field}.{key}")
-                if field == "facts" and any(type(arg) is not str for arg in row["args"]):
-                    raise VEError("InvalidInput: risk-decision.facts.args")
-        for supplied in (entry, *case["entries"]):
-            if type(supplied) is not dict or type(supplied.get("kind")) is not str:
-                raise VEError("InvalidInput: risk-decision.entry")
-            if supplied["kind"] not in {"estimate", "setting", "condition", "statement",
-                                    "supersession", "instruction", "decision", "taken", "outcome"}:
-                raise VEError("InvalidInput: risk-decision.kind")
-            if supplied["kind"] == "estimate" and ("seq" not in supplied or "day" not in supplied):
-                raise VEError(f"EstimateProvenance: {supplied.get('id', '?')} recorded")
-            for key in ("seq", "day", "id", "kind", "content", "prev", "hash"):
-                if key not in supplied:
-                    raise VEError(f"InvalidInput: risk-decision.{key}")
-            if (type(supplied["seq"]) is not int or supplied["seq"] < 0
-                    or any(type(supplied[key]) is not str for key in ("day", "id", "prev", "hash"))
-                    or type(supplied["content"]) is not dict):
-                raise VEError("InvalidInput: risk-decision.entry")
-    elif kind == "risk-audit":
-        log = case.get("log")
-        if type(log) is not dict or log.get("format") != "ve-risk-log@0" or type(log.get("entries")) is not list:
-            raise VEError("InvalidInput: risk-log.entries")
-
-
 def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> dict:
-    """Send a raw case to Lean; an unavailable route is never a verdict."""
+    """Send a raw case to Lean unchanged; an unavailable route is never a verdict.
+
+    Python decodes nothing of the environment, record or log first, so every
+    diagnostic, including its order, is the route's (risk.md 6, 7.3).
+    """
     if (type(case) is not dict or type(case.get("kind")) is not str
             or case["kind"] not in _KINDS or type(case.get("environment")) is not dict):
         raise VEError("InvalidInput: risk route case")
-    from .environment import Environment
-    env = Environment(case["environment"])
-    if "risk@0" not in env.profiles:
-        raise UnsupportedProfile("risk@0 is required")
-    _shape_case(case)
     if os.environ.get("VE_AUTHORITY") == "python":
         raise CheckerUnavailable("risk@0 requires the Lean checker")
     executable = _BINARY if binary is None else Path(binary)
