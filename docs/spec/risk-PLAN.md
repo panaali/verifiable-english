@@ -14,8 +14,8 @@
 > 2026-09-29 (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`). Item 1's statement spec is
 > [risk.md](risk.md) draft 3. It applies its stage A statement review (`manage-agents/debates/risk-spec/`, FIX,
 > CONVERGED after round 3; risk.md 12.1) and the two findings of the bounded re-check that followed
-> (`manage-agents/risk-p3ver1.final.md`, FAIL; risk.md 12.2). The next gate is a bounded re-check of the passages and
-> fixtures risk.md 12.2 lists (item 1, section 12).
+> (`manage-agents/risk-p3ver1.final.md`, FAIL; risk.md 12.2). The bounded re-check of the passages and fixtures
+> risk.md 12.2 lists (`manage-agents/risk-p3ver2.final.md`) returned PASS; items 2 and 3 followed (`lean/RISK.md`).
 
 ## 0. Problem and stance
 
@@ -1096,7 +1096,7 @@ Neither is in the source.
 | # | Item | Gate / trigger | Notes |
 |---|---|---|---|
 | 0 | Astra + Fable review of this plan | done 2026-09-29: REVISE, converged; draft 2 applies it (15) | No further plan round |
-| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k40 (k33–k39 from its statement review, k40 from the re-check) with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29. Its statement review (`manage-agents/debates/risk-spec/`) returned FIX, converged; draft 2 applies it (risk.md 12.1). The bounded re-check of draft 2 (`manage-agents/risk-p3ver1.final.md`) returned FAIL with two findings; draft 3 applies them (risk.md 12.2). Next: a bounded re-check of the passages and fixtures risk.md 12.2 lists | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecked completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and validation of perturbed records in margins (7.4). It kept the certified check for Q-margin-proof (risk.md 11.11) |
+| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k40 (k33–k39 from its statement review, k40 from the re-check) with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29. Its statement review (`manage-agents/debates/risk-spec/`) returned FIX, converged; draft 2 applies it (risk.md 12.1). The bounded re-check of draft 2 (`manage-agents/risk-p3ver1.final.md`) returned FAIL with two findings; draft 3 applies them (risk.md 12.2). Its bounded re-check (`manage-agents/risk-p3ver2.final.md`) returned PASS | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecked completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and validation of perturbed records in margins (7.4). It kept the certified check for Q-margin-proof (risk.md 11.11) |
 | 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review. Ran 2026-09-29: c5 pending wording, c10 legend-dependent, `leads to` stays | Proxy readers, labelled "human readability unmeasured"; does not replace item 8. The reviewers' c5 replacement, "If `<condition>`, `<action>` leads to `<harm>`.", is probed once with new sealed items |
 | 2 | Lean `lean/VE/Risk/*`, `ve_risk_route`, `lean/RISK.md`, ROADMAP trust-cost line | after 1's review | Lean-only semantics |
 | 3 | Python surface (`ve/surface/risk.py`), block shape check, dispatch, gap lines; Rust untrusted evaluator; differential (200 random records, including separable-condition generators) | parallel with 2 | Surface fixtures (k19) before acceptance |

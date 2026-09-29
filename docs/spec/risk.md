@@ -7,8 +7,8 @@
 > unmeasured). The stage A statement review of draft 1 (plan 12, item 1; `manage-agents/debates/risk-spec/`) returned
 > FIX, CONVERGED after round 3. Draft 2 applied every correction, mapped item by item in 12.1. The bounded re-check of
 > draft 2 (`manage-agents/risk-p3ver1.final.md`, cited `p3ver1`) returned FAIL with two findings, and draft 3 applies
-> both (12.2). The next gate is a bounded re-check of the passages and fixtures 12.2 lists, which precedes items 2
-> and 3. Sections 4 to 7 are the statements under review. Section 8 gives the fixtures with their definitions (8.1)
+> both (12.2). The bounded re-check of the passages and fixtures 12.2 lists (`manage-agents/risk-p3ver2.final.md`)
+> returned PASS, and items 2 and 3 followed (`lean/RISK.md`). Sections 4 to 7 are the reviewed statements. Section 8 gives the fixtures with their definitions (8.1)
 > separated from their expected results (8.2), so that each reviewer derives the expectations from sections 4 to 6
 > before reading them. Section 11 lists every point where this draft chose between readings of the plan. Theorem
 > statements and fixtures are implementation obligations, not claims of completed proofs or tests. Inputs:
