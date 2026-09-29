@@ -484,6 +484,20 @@ def test_fan_out_generates_one_rule_per_bearer_sort():
     assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
 
 
+def test_at_most_eight_couplings():
+    sets = [{"id": name, "version": 1, "unit": name, "status": "open",
+             "readings": [{"id": f"{name}-{value}", "labels": {"force": value}}
+                          for value in ("strict", "default")]}
+            for name in ("a", "b")]
+    couplings = [{"id": f"c{i}", "axis": "force",
+                  "sets": [{"set": name, "version": 1} for name in ("a", "b")],
+                  "by": "translator", "reason_spans": ["preamble"]} for i in range(9)]
+    env = RightsEnvironment(rights_env())
+    with pytest.raises(VEError, match="ResourceLimit: couplings"):
+        validate_couplings(env, couplings, sets, {"a", "b", "preamble"})
+    validate_couplings(env, couplings[:8], sets, {"a", "b", "preamble"})
+
+
 def test_joint_couplings_reject_empty_complete_choice_space():
     sets = [{"id": "a", "version": 1, "unit": "a", "readings": [
         {"labels": {"force": "strict", "polarity": "positive"}},

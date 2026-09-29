@@ -195,6 +195,9 @@ def validate_couplings(env, couplings, sets, unit_ids):
         raise VEError("invalid couplings")
     if couplings and "rights@0" not in env.profiles:
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+    if len(couplings) > 8:
+        # 11: at most eight couplings, as on the Lean rights route.
+        raise VEError("ResourceLimit: couplings")
     active = {(s["id"], s["version"]): s for s in active_reading_sets(sets)}
     ids = set()
     for item in couplings:
