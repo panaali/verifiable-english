@@ -2,7 +2,7 @@
   "format": "ve-web-copy@1",
   "sources": {
     "ve_webapp/static/index.html": "94a97c5520bb41b0a0c285df7fe48c74feeac58a4dd2e5332d40a224d232961f",
-    "ve_webapp/static/app.js": "102f81d6d04a3942ea9fc51b4a620eaf1b06918da8434992d7dd59625355fca7",
+    "ve_webapp/static/app.js": "180c56de61b93a957f89d0108698ddbe99c6873244d721b7cc70f2f5e9ee3bc1",
     "ve_webapp/server.py": "3edbbef76f669d9094b1c24fbe8c4fe2a812123650615a4d2fd3d07c6b173127",
     "ve_webapp/worker.py": "fc920bd9989a3a6c8713d277f8c78abd8aa645862e0629409cab4cdcad1e238e",
     "ve_webapp/drafts.py": "78fc21ca526c488bb8363b0a5f479c89ae4d316958780859be1939db51f27576",
@@ -1612,6 +1612,11 @@
     {
       "source": "ve_webapp/static/app.js",
       "raw": ".asimov-edit",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/static/app.js",
+      "raw": ".asimov-edit button",
       "visibility": "INTERNAL"
     },
     {

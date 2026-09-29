@@ -1,6 +1,8 @@
 """The web app's Asimov section: every verdict shown is VE's, re-run here."""
 import json
+from pathlib import Path
 import re
+import subprocess
 
 import pytest
 from fastapi.testclient import TestClient
@@ -143,12 +145,54 @@ def test_reader_edit_reruns_ve_through_the_worker(tmp_path):
         assert client.post('/api/asimov', json={'scenario': 'swimmer', 'facts': {}}).status_code == 403
 
 
-def test_every_fact_combination_decides(shipped):
-    """Each reader edit reaches a checker verdict; none needs a hand-written fallback."""
+@pytest.fixture(scope='module')
+def flipped():
+    """VE's answer, through the worker, to every single-fact edit a reader can make."""
+    edits = []
     for spec in asimov.SCENARIOS:
         for toggle in spec['toggles']:
-            facts = {toggle['id']: not toggle['default']}
-            result = run('asimov', {'scenario': spec['id'], 'facts': facts})
-            assert result['verdict'] in {'required', 'permitted', 'forbidden', 'ruled out',
-                                         'no clear action'}
-            assert all(option['why'] for option in result['options'])
+            facts = asimov.resolve_facts(spec, {toggle['id']: not toggle['default']})
+            edits.append({'scenario': spec['id'], 'facts': facts,
+                          'result': run('asimov', {'scenario': spec['id'], 'facts': facts})})
+    return edits
+
+
+def test_every_fact_combination_decides(flipped):
+    """Each reader edit reaches a checker verdict; none needs a hand-written fallback."""
+    assert len(flipped) == sum(len(spec['toggles']) for spec in asimov.SCENARIOS) > 20
+    for edit in flipped:
+        result = edit['result']
+        assert result['verdict'] in {'required', 'permitted', 'forbidden', 'ruled out',
+                                     'no clear action'}
+        assert all(option['why'] for option in result['options'])
+        # The group the page files the card under follows from VE's verdict.
+        spec = asimov.BY_ID[edit['scenario']]
+        assert result['group'] == ('limits' if spec['limit'] or result['verdict'] == 'no clear action'
+                                   else 'approves' if result['verdict'] in ('required', 'permitted')
+                                   else 'rejects'), edit['scenario']
+
+
+def test_reruns_that_change_the_verdict_change_the_group():
+    """Review reproducers: the returned group is VE's, and differs from the built one."""
+    shipped = {s['id']: s for s in json.loads(asimov.OUTPUT.read_text())['scenarios']}
+    trip = asimov.decide('trip', {'injury': False})
+    assert (shipped['trip']['group'], trip['verdict'], trip['group']) == ('rejects', 'required', 'approves')
+    virus = asimov.decide('virus', {'door': True})
+    assert (shipped['virus']['group'], virus['verdict'], virus['group']) == ('approves', 'forbidden', 'rejects')
+
+
+def test_page_files_each_rerun_card_under_the_returned_group(tmp_path, shipped, flipped):
+    """Runs the shipped app.js: after every reader edit the card moves to VE's group and law."""
+    reproducers = [('trip', {'injury': False}), ('virus', {'door': True})]
+    first = [edit for name, facts in reproducers for edit in flipped
+             if edit['scenario'] == name and all(edit['facts'][k] == v for k, v in facts.items())]
+    assert len(first) == 2
+    data = tmp_path / 'asimov-dom.json'
+    data.write_text(json.dumps({'page': shipped, 'reruns': first + flipped}))
+    process = subprocess.run(['node', str(Path(__file__).with_name('asimov_dom.cjs')), str(data)],
+                             capture_output=True, text=True, check=False)
+    assert process.returncode == 0, process.stderr
+    moved = json.loads(process.stdout)['moved']
+    assert moved[:2] == ['trip', 'virus']
+    assert len(set(moved)) > 5
+

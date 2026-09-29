@@ -47,7 +47,19 @@ function tab(name) {
 }
 const verdictNames={required:'Required',permitted:'Permitted',forbidden:'Forbidden','ruled out':'Ruled out','no clear action':'No clear action'};
 function verdictBadge(verdict){ return el('span',verdictNames[verdict] || 'Unknown','badge asimov-badge asimov-'+verdict.replaceAll(' ','-')); }
-let asimovGroups={};
+let asimovGroups={},asimovScenarios=[];const asimovCards=new Map();
+// Cards sit in the section and under the law VE returned; a re-run places its card again.
+function layoutAsimov() {
+  for(const [group,target] of [['approves','asimovApproves'],['rejects','asimovRejects'],['limits','asimovLimits']]){
+    $(target).replaceChildren();
+    for(const law of Object.keys(asimovGroups)){
+      const cards=asimovScenarios.filter(s=>s.group===group&&s.law===law);
+      if(!cards.length)continue;
+      if(group!=='limits')$(target).append(el('h3',asimovGroups[law],'asimov-law'));
+      $(target).append(...cards.map(s=>asimovCards.get(s.id)));
+    }
+  }
+}
 function scenarioCard(s, live=false) {
   const card=el('article',undefined,'asimov-card');
   card.append(el('small',asimovGroups[s.law],'eyebrow'),el('h3',s.title),el('p',s.situation));
@@ -72,7 +84,9 @@ function scenarioCard(s, live=false) {
     const again=el('button','Ask VE again');
     again.onclick=()=>task(again,async()=>{
       const next=await api('asimov',{scenario:s.id,facts:Object.fromEntries(boxes.map(b=>[b.dataset.fact,b.checked]))});
-      const fresh=scenarioCard(next,true);fresh.querySelector('.asimov-edit').open=true;card.replaceWith(fresh);
+      const fresh=scenarioCard(next,true);fresh.querySelector('.asimov-edit').open=true;
+      asimovScenarios=asimovScenarios.map(x=>x.id===next.id?next:x);asimovCards.set(next.id,fresh);
+      layoutAsimov();fresh.querySelector('.asimov-edit button').focus();
     });
     edit.append(again);card.append(edit);
   }
@@ -89,15 +103,9 @@ function renderAsimov(page) {
     if(rule.precedence)head.append(el('small',rule.precedence));
     item.append(head,el('p',rule.text));return item;
   }));
-  for(const [group,target] of [['approves','asimovApproves'],['rejects','asimovRejects'],['limits','asimovLimits']]){
-    $(target).replaceChildren();
-    for(const law of Object.keys(page.groups)){
-      const cards=page.scenarios.filter(s=>s.group===group&&s.law===law);
-      if(!cards.length)continue;
-      if(group!=='limits')$(target).append(el('h3',page.groups[law],'asimov-law'));
-      $(target).append(...cards.map(s=>scenarioCard(s)));
-    }
-  }
+  asimovScenarios=page.scenarios;asimovCards.clear();
+  for(const s of asimovScenarios)asimovCards.set(s.id,scenarioCard(s));
+  layoutAsimov();
   $('asimovLimitNote').textContent=page.limits.note;$('asimovFactsNote').textContent=page.limits.facts;
   $('asimovOpen').replaceChildren(...page.limits.open.map(text=>el('li',text)));
 }
