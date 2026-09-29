@@ -227,18 +227,21 @@ structure Units where
   bars : List Bar := []
   outside : List SoftNode := []
   cites : List (String × List (String × List String)) := []
+  order : List (String × SourceLine) := []
 
 def addUnit (se : SoftEnvironment) (acc : Units) (u : Json) : Except String Units := do
   let keys := (← fields u).map (·.1)
   if keys == ["right"] then
-    pure { acc with rs := acc.rs ++ [← decodeRight se (u.getObjValD "right")] }
+    let R ← decodeRight se (u.getObjValD "right")
+    pure { acc with rs := acc.rs ++ [R], order := acc.order ++ R.lines.map (R.name, ·) }
   else if keys == ["right_lines"] then
     let j := u.getObjValD "right_lines"
     VE.Bridge.displayFields j ["right", "lines"] []
     let r ← stringField j "right"
     unless acc.rs.any (·.name == r) do throw s!"UnknownRight: {r}"
     let ls ← decodeLines se j
-    pure { acc with rs := acc.rs.map (fun R => if R.name == r then { R with lines := R.lines ++ ls } else R) }
+    let rs := acc.rs.map (fun R => if R.name == r then { R with lines := R.lines ++ ls } else R)
+    pure { acc with rs := rs, order := acc.order ++ ls.map (r, ·) }
   else if keys == ["limitation"] then
     pure { acc with limits := acc.limits ++ [← decodeLimitation (u.getObjValD "limitation")] }
   else if keys == ["bar"] then
@@ -275,7 +278,7 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let us ← units.foldlM (addUnit re.se) {}
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
-     re.block, us.rs, us.limits, us.bars, us.cites⟩
+     re.block, us.rs, us.limits, us.bars, us.cites, some us.order⟩
   match hv : validateRights D with
   | .error e => throw e
   | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [hv], rfl, rfl, rfl⟩
