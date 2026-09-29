@@ -466,13 +466,12 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
 
 
 def _base_model(document, env, model):
-    """The witness model over the base environment, validated as Python validates it."""
-    from .background import validate_background
+    """The witness model over the base environment. Decoding validates it,
+    Background included, under the selected authority (FiniteModel.from_dict)."""
     from .model import FiniteModel
     model = FiniteModel.from_dict(env, model) if type(model) is dict else model
     if model.environment_id != env.environment_id:
         raise VEError("InvalidModel: witness environment does not match base environment")
-    validate_background(env, model)
     return model
 
 
