@@ -1,0 +1,663 @@
+{
+  "source": {
+    "path": "source/udhr.md",
+    "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
+    "bytes": 10916,
+    "fetch_date_utc": "2026-09-27"
+  },
+  "baseline": "ve-green-w6a",
+  "previous_run": "/home/seyran/code/manage-agents/pilots/udhr/run-20260928T1800Z",
+  "previous_baseline": "ve-green-layers",
+  "old_unit_count": 116,
+  "old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "UNFORMALISED": 81
+  },
+  "old_to_new_units": {
+    "u001": [
+      "u001"
+    ],
+    "u002": [
+      "u002"
+    ],
+    "u003": [
+      "u003"
+    ],
+    "u004": [
+      "u004"
+    ],
+    "u005": [
+      "u005"
+    ],
+    "u006": [
+      "u006"
+    ],
+    "u007": [
+      "u007"
+    ],
+    "u008a": [
+      "u008a"
+    ],
+    "u008b": [
+      "u008b"
+    ],
+    "u009": [
+      "u009"
+    ],
+    "u010": [
+      "u010"
+    ],
+    "u011": [
+      "u011"
+    ],
+    "u012": [
+      "u012"
+    ],
+    "u013a": [
+      "u013a"
+    ],
+    "u013b": [
+      "u013ba",
+      "u013bb"
+    ],
+    "u014": [
+      "u014"
+    ],
+    "u015": [
+      "u015"
+    ],
+    "u016": [
+      "u016"
+    ],
+    "u017": [
+      "u017"
+    ],
+    "u018": [
+      "u018"
+    ],
+    "u019": [
+      "u019"
+    ],
+    "u020": [
+      "u020"
+    ],
+    "u021": [
+      "u021"
+    ],
+    "u022": [
+      "u022"
+    ],
+    "u023": [
+      "u023"
+    ],
+    "u024": [
+      "u024"
+    ],
+    "u025": [
+      "u025"
+    ],
+    "u026": [
+      "u026"
+    ],
+    "u027": [
+      "u027"
+    ],
+    "u028": [
+      "u028"
+    ],
+    "u029": [
+      "u029"
+    ],
+    "u030": [
+      "u030"
+    ],
+    "u031": [
+      "u031"
+    ],
+    "u032": [
+      "u032"
+    ],
+    "u033": [
+      "u033a",
+      "u033b"
+    ],
+    "u034": [
+      "u034"
+    ],
+    "u035": [
+      "u035"
+    ],
+    "u036": [
+      "u036"
+    ],
+    "u037": [
+      "u037"
+    ],
+    "u038": [
+      "u038"
+    ],
+    "u039": [
+      "u039"
+    ],
+    "u040": [
+      "u040"
+    ],
+    "u041": [
+      "u041"
+    ],
+    "u042": [
+      "u042"
+    ],
+    "u043": [
+      "u043"
+    ],
+    "u044": [
+      "u044"
+    ],
+    "u045": [
+      "u045a",
+      "u045b"
+    ],
+    "u046": [
+      "u046"
+    ],
+    "u047": [
+      "u047"
+    ],
+    "u048": [
+      "u048"
+    ],
+    "u049": [
+      "u049"
+    ],
+    "u050": [
+      "u050"
+    ],
+    "u051": [
+      "u051"
+    ],
+    "u052": [
+      "u052"
+    ],
+    "u053": [
+      "u053"
+    ],
+    "u054": [
+      "u054"
+    ],
+    "u055": [
+      "u055"
+    ],
+    "u056": [
+      "u056"
+    ],
+    "u057": [
+      "u057"
+    ],
+    "u058": [
+      "u058"
+    ],
+    "u059": [
+      "u059"
+    ],
+    "u060": [
+      "u060"
+    ],
+    "u061": [
+      "u061"
+    ],
+    "u062": [
+      "u062"
+    ],
+    "u063": [
+      "u063"
+    ],
+    "u064": [
+      "u064"
+    ],
+    "u065": [
+      "u065"
+    ],
+    "u066": [
+      "u066"
+    ],
+    "u067": [
+      "u067"
+    ],
+    "u068": [
+      "u068"
+    ],
+    "u069": [
+      "u069"
+    ],
+    "u070": [
+      "u070"
+    ],
+    "u071": [
+      "u071a",
+      "u071b"
+    ],
+    "u072": [
+      "u072"
+    ],
+    "u073": [
+      "u073"
+    ],
+    "u074": [
+      "u074"
+    ],
+    "u075": [
+      "u075"
+    ],
+    "u076": [
+      "u076"
+    ],
+    "u077": [
+      "u077"
+    ],
+    "u078": [
+      "u078"
+    ],
+    "u079": [
+      "u079a",
+      "u079b"
+    ],
+    "u080": [
+      "u080"
+    ],
+    "u081": [
+      "u081"
+    ],
+    "u082": [
+      "u082"
+    ],
+    "u083": [
+      "u083"
+    ],
+    "u084": [
+      "u084a",
+      "u084b",
+      "u084c",
+      "u084d"
+    ],
+    "u085": [
+      "u085"
+    ],
+    "u086": [
+      "u086"
+    ],
+    "u087": [
+      "u087"
+    ],
+    "u088": [
+      "u088"
+    ],
+    "u089": [
+      "u089"
+    ],
+    "u090": [
+      "u090"
+    ],
+    "u091": [
+      "u091"
+    ],
+    "u092": [
+      "u092"
+    ],
+    "u093": [
+      "u093"
+    ],
+    "u094": [
+      "u094"
+    ],
+    "u095": [
+      "u095"
+    ],
+    "u096": [
+      "u096"
+    ],
+    "u097": [
+      "u097"
+    ],
+    "u098": [
+      "u098"
+    ],
+    "u099": [
+      "u099a",
+      "u099b"
+    ],
+    "u100": [
+      "u100a",
+      "u100b"
+    ],
+    "u101": [
+      "u101"
+    ],
+    "u102": [
+      "u102"
+    ],
+    "u103": [
+      "u103"
+    ],
+    "u104": [
+      "u104"
+    ],
+    "u105": [
+      "u105a",
+      "u105b",
+      "u105c"
+    ],
+    "u106": [
+      "u106"
+    ],
+    "u107": [
+      "u107"
+    ],
+    "u108": [
+      "u108"
+    ],
+    "u109": [
+      "u109"
+    ],
+    "u110": [
+      "u110"
+    ],
+    "u111": [
+      "u111a",
+      "u111b"
+    ],
+    "u112": [
+      "u112"
+    ],
+    "u113": [
+      "u113"
+    ],
+    "u114": [
+      "u114"
+    ]
+  },
+  "unit_scale": "sentence or clause; coordinated regulated acts split; headings separate",
+  "bytes_accounted": 10916,
+  "bytes_accounted_percent": 100,
+  "unit_count": 129,
+  "unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "UNFORMALISED": 94
+  },
+  "bytes_by_status": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "UNFORMALISED": 10324
+  },
+  "claimed_covered_bytes": 592,
+  "claimed_covered_percent": 5.42,
+  "tool_open_bytes_not_claimed": 593,
+  "status_note": "The document tool calls null-content reading inventories OPEN; the manifest keeps them UNFORMALISED because no candidate has checked content.",
+  "audit_verified_covered_bytes": 303,
+  "audit_verified_covered_percent": 2.78,
+  "audit_verified_substantive_bytes": 57,
+  "audit_rejected_units": [
+    "u017",
+    "u052",
+    "u112",
+    "u114"
+  ],
+  "newly_covered_units": [],
+  "open_terms": [
+    {
+      "name": "equal_before_law",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "equal legal standing",
+        "equal legal protection",
+        "scope of comparators"
+      ]
+    },
+    {
+      "name": "inherent_dignity",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of dignity",
+        "scope of inherence"
+      ]
+    },
+    {
+      "name": "inalienable_rights",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which rights",
+        "conditions on transfer or loss"
+      ]
+    },
+    {
+      "name": "essential",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "essential for which end",
+        "degree of necessity"
+      ]
+    },
+    {
+      "name": "greatest_importance",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "comparison class",
+        "measure of importance"
+      ]
+    },
+    {
+      "name": "natural_group_unit",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of natural",
+        "meaning of fundamental",
+        "what counts as family"
+      ]
+    },
+    {
+      "name": "arbitrary",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "legality",
+        "reasonableness",
+        "procedural safeguards"
+      ]
+    },
+    {
+      "name": "fair",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "procedural fairness",
+        "public access",
+        "independence"
+      ]
+    },
+    {
+      "name": "adequate",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "health needs",
+        "living conditions",
+        "resources"
+      ]
+    },
+    {
+      "name": "just",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "fairness criteria",
+        "comparison group"
+      ]
+    },
+    {
+      "name": "reasonable",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "hours",
+        "work setting",
+        "health and rest"
+      ]
+    },
+    {
+      "name": "genuine",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "authenticity of election or prosecution",
+        "procedural evidence"
+      ]
+    },
+    {
+      "name": "spirit_of_brotherhood",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "reciprocal conduct",
+        "meaning of brotherhood"
+      ]
+    },
+    {
+      "name": "justice",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of justice in the Preamble",
+        "scope of the claimed foundation"
+      ]
+    }
+  ],
+  "reading_sets": [
+    {
+      "id": "rs_u017",
+      "unit": "u017",
+      "status": "unelaborated",
+      "candidates": [
+        "strict",
+        "default"
+      ],
+      "formula_elaborated": false,
+      "semantic_separation_verified": false
+    },
+    {
+      "id": "rs_u052",
+      "unit": "u052",
+      "status": "unelaborated",
+      "candidates": [
+        "invocation_barred",
+        "right_inapplicable"
+      ],
+      "formula_elaborated": false,
+      "semantic_separation_verified": false
+    },
+    {
+      "id": "rs_u112",
+      "unit": "u112",
+      "status": "unelaborated",
+      "candidates": [
+        "exercise_restricted"
+      ],
+      "formula_elaborated": false,
+      "semantic_separation_verified": false
+    },
+    {
+      "id": "rs_u114",
+      "unit": "u114",
+      "status": "unelaborated",
+      "candidates": [
+        "interpretive_bar"
+      ],
+      "formula_elaborated": false,
+      "semantic_separation_verified": false
+    }
+  ],
+  "missing_feature_tally": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 82,
+    "other:evaluative_open_claim": 2,
+    "other:metaphorical_endowment": 1,
+    "time": 1
+  },
+  "unresolved_reading_feature_tally": {
+    "defaults": 1,
+    "norms": 4,
+    "other:exception_scope": 1
+  },
+  "check_verdicts": {
+    "document_load": "PASS",
+    "byte_partition": "PASS",
+    "document_check": "PASS",
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "non-assertion reading elaboration pending"
+    },
+    "reading_plan_route": "enumerate",
+    "formal_norm_units": 1,
+    "render": "PASS",
+    "ve_natural": "document norm renderer used; full natural view does not round-trip W1 norm blocks",
+    "reading_models": "No semantic separation claimed for null-content candidates."
+  },
+  "document_id": "1da2cb97e18f21227d44599538494b019bda1c2a174d7e01484820568a1d446a",
+  "source_id": "d5aec9555272e03e1949af3d5d4141c6e5c5c32d576dbac54c16cc5c06330dc6",
+  "coverage_tool": {
+    "source_bytes": 10916,
+    "accounted_bytes": 10916,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "meta": 535,
+      "unformalised": 1957,
+      "attributed": 801,
+      "norm": 7623
+    },
+    "bytes_by_status": {
+      "LABELLED": 535,
+      "UNFORMALISED": 9731,
+      "OPEN": 593,
+      "CHECKED": 57
+    },
+    "unformalised_reasons": {
+      "causation": 2,
+      "attribution": 4,
+      "modality_belief": 2,
+      "other_evaluative_open_claim": 2,
+      "norms": 82,
+      "time": 1,
+      "other_metaphorical_endowment": 1
+    },
+    "residual": {
+      "open_terms": 14,
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 4
+    },
+    "residual_total": 18
+  }
+}
