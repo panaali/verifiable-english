@@ -441,6 +441,11 @@ def admit_document(environment, document) -> dict:
 
     if authority_for("admission") == "python":
         return _admit_document_python(environment, document)
+    from .softnorms import SoftEnvironment
+    if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
+            "soft-norms@0" in environment.get("profiles", [])):
+        # The soft route is Lean's (soft_route.admit_soft_document runs it).
+        return _admit_document_python(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
             "document": document}
@@ -449,6 +454,13 @@ def admit_document(environment, document) -> dict:
         # Envelope routing, not a verdict: the Lean route admits ve.core@0.2 only.
         if env.language != LANGUAGE:
             raise VEError("admission requires a ve.core@0.2 environment")
+        if env.alternatives is not None:
+            # The alternatives route is Lean's (Lean-only operation); the Python
+            # entry only transports the case to it.
+            return _admit_document_python(env, document)
+        if env.unit_schema is not None:
+            raise CheckerUnavailable("CheckerUnavailable: Lean adapter for W6 quantity admission "
+                                     "is not available")
         row = run("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and

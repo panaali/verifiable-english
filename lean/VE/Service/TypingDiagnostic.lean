@@ -45,6 +45,14 @@ abbrev Check := Except String
 
 def fail {α : Type} (code message : String) : Check α := .error s!"{code}: {message}"
 
+/-- Python `repr` of a JSON value the Python decoder accepts as a name. -/
+def pyValue : Json → String
+  | .str s => pyRepr s
+  | .bool true => "True"
+  | .bool false => "False"
+  | .null => "None"
+  | j => j.compress
+
 def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
   | 0, _ => fail "TypeMismatch" "Expected a variable or constant term"
   | fuel + 1, j => do
@@ -63,7 +71,7 @@ def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
       match VE.Bridge.lookup sig.constants name with
       | some sort => pure sort
       | none => fail "UnknownSymbol" s!"Unknown constant {pyRepr name}"
-    | [.str "const", _] => fail "UnknownSymbol" "Unknown constant"
+    | [.str "const", other] => fail "UnknownSymbol" s!"Unknown constant {pyValue other}"
     | .str tag :: rest =>
       if tag == "num" || tag == "add" || tag == "scale" then do
         unless sig.profiles.contains "order@0" do
@@ -76,8 +84,9 @@ def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
       else fail "TypeMismatch" "Expected a variable or constant term"
     | _ => fail "TypeMismatch" "Expected a variable or constant term"
 
-/-- Walk a formula in `_Checker.formula` order. `none` in the error channel is
-not used: an unrecognised construct ends the walk without a diagnostic. -/
+/-- Walk a formula in `_Checker.formula` order. The error channel carries the
+first diagnostic; `false` is an unrecognised construct, which ends the walk
+without one. -/
 def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
   | 0, _ => pure false
   | fuel + 1, j => do
@@ -85,73 +94,84 @@ def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
       | .ok items => pure items.toList
       | .error _ => return false
     let t := term sig ctx 64
-    match items with
-    | [.str "top"] | [.str "bottom"] => pure true
-    | .str tag :: .str p :: rest =>
-      if tag == "unary" || tag == "binary" || tag == "atom" then do
-        let some signature := VE.Bridge.lookup sig.predicates p
-          | fail "UnknownSymbol" s!"Unknown predicate {pyRepr p}"
-        let terms ← if tag == "atom" then match rest with
-            | [ts] => match ts.getArr? with
-              | .ok ts => pure ts.toList
-              | .error _ => return false
-            | _ => return false
-          else pure rest
-        if tag == "atom" && (!sig.profiles.contains "nary@0" || terms.length < 3 || terms.length > 6) then
-          fail "UnsupportedProfile" "Atom requires nary@0 and arity from three to six"
-        if signature.length != terms.length then
-          fail "TypeMismatch" s!"Predicate {pyRepr p} has arity {signature.length}, not {terms.length}"
-        let actual ← terms.mapM t
-        if actual != signature then
-          fail "TypeMismatch" s!"Predicate {pyRepr p} expects {pyTuple signature}, received {pyTuple actual}"
-        pure true
-      else if tag == "reach" then do
-        unless sig.profiles.contains "closure@0" do fail "UnsupportedProfile" "Reach requires closure@0"
-        unless p == "plus" || p == "star" do fail "TypeMismatch" "Reach kind must be plus or star"
-        let [edge, left, right] := rest | return false
-        let edgeSort : Check (Option String) := match edge.getArr?.toOption.map Array.toList with
-          | some [.str "named", .str relation] =>
-            match VE.Bridge.lookup sig.predicates relation with
-            | none => fail "UnknownSymbol" s!"Unknown closure relation {pyRepr relation}"
-            | some [a, b] => if a == b then pure (some a)
-                else fail "TypeMismatch" "Named closure requires a homogeneous binary relation"
-            | some _ => fail "TypeMismatch" "Named closure requires a homogeneous binary relation"
-          | some [.str "body", .str sort, body] => do
-            unless sig.sorts.contains sort do fail "UnknownSymbol" s!"Unknown closure sort {pyRepr sort}"
-            if ← formula sig (sort :: sort :: ctx) fuel body then pure (some sort) else pure none
-          | _ => pure none
-        let some sort ← edgeSort | return false
-        if (← t left) != sort then
-          fail "TypeMismatch" "Closure endpoints must have the edge sort in the outer context"
-        if (← t right) != sort then
-          fail "TypeMismatch" "Closure endpoints must have the edge sort in the outer context"
-        pure true
-      else if tag == "forall" || tag == "exists" then do
-        unless sig.sorts.contains p do
-          if p == "$string" && sig.profiles.contains "data@0" then
-            fail "UnsupportedProfile" "$string quantification requires data stage 2"
-          fail "UnknownSymbol" s!"Unknown binder sort {pyRepr p}"
-        let [body] := rest | return false
-        formula sig (p :: ctx) fuel body
-      else pure false
-    | [.str "not", body] => formula sig ctx fuel body
-    | [.str tag, left, right] =>
-      if tag == "and" || tag == "or" || tag == "implies" then do
-        unless ← formula sig ctx fuel left do return false
-        formula sig ctx fuel right
-      else if tag == "lt" || tag == "le" then do
-        unless sig.profiles.contains "order@0" do fail "UnsupportedProfile" "Comparisons require order@0"
-        if (← t left) != intSort then fail "TypeMismatch" "Comparisons require integer terms"
-        if (← t right) != intSort then fail "TypeMismatch" "Comparisons require integer terms"
-        pure true
-      else if tag == "eq" then do
-        let a ← t left
-        let b ← t right
-        if a != b then
-          fail "TypeMismatch" s!"Equality requires one sort, received {pyRepr a} and {pyRepr b}"
-        pure true
-      else pure false
-    | _ => pure false
+    let .str tag :: args := items | return false
+    if tag == "top" || tag == "bottom" then return args.isEmpty
+    if tag == "unary" || tag == "binary" || tag == "atom" then
+      let p :: rest := args | return false
+      let some signature := (match p with
+          | .str name => VE.Bridge.lookup sig.predicates name
+          | _ => none)
+        | fail "UnknownSymbol" s!"Unknown predicate {pyValue p}"
+      let terms ← if tag == "atom" then match rest with
+          | [ts] => match ts.getArr? with
+            | .ok ts => pure ts.toList
+            | .error _ => return false
+          | _ => return false
+        else pure rest
+      if tag == "atom" && (!sig.profiles.contains "nary@0" || terms.length < 3 || terms.length > 6) then
+        fail "UnsupportedProfile" "Atom requires nary@0 and arity from three to six"
+      let name := pyValue p
+      if signature.length != terms.length then
+        fail "TypeMismatch" s!"Predicate {name} has arity {signature.length}, not {terms.length}"
+      let actual ← terms.mapM t
+      if actual != signature then
+        fail "TypeMismatch" s!"Predicate {name} expects {pyTuple signature}, received {pyTuple actual}"
+      return true
+    if tag == "reach" then
+      let [kind, edge, left, right] := args | return false
+      unless sig.profiles.contains "closure@0" do fail "UnsupportedProfile" "Reach requires closure@0"
+      unless kind == .str "plus" || kind == .str "star" do
+        fail "TypeMismatch" "Reach kind must be plus or star"
+      let edgeSort : Check (Option String) := match edge.getArr?.toOption.map Array.toList with
+        | some [.str "named", relation] =>
+          match (match relation with
+              | .str name => VE.Bridge.lookup sig.predicates name
+              | _ => none) with
+          | none => fail "UnknownSymbol" s!"Unknown closure relation {pyValue relation}"
+          | some [a, b] => if a == b then pure (some a)
+              else fail "TypeMismatch" "Named closure requires a homogeneous binary relation"
+          | some _ => fail "TypeMismatch" "Named closure requires a homogeneous binary relation"
+        | some [.str "body", sort, body] => do
+          let .str s := sort | fail "UnknownSymbol" s!"Unknown closure sort {pyValue sort}"
+          unless sig.sorts.contains s do fail "UnknownSymbol" s!"Unknown closure sort {pyRepr s}"
+          if ← formula sig (s :: s :: ctx) fuel body then pure (some s) else pure none
+        | _ => pure none
+      let some sort ← edgeSort | return false
+      if (← t left) != sort then
+        fail "TypeMismatch" "Closure endpoints must have the edge sort in the outer context"
+      if (← t right) != sort then
+        fail "TypeMismatch" "Closure endpoints must have the edge sort in the outer context"
+      return true
+    if tag == "forall" || tag == "exists" then
+      let [sort, body] := args | return false
+      let known := match sort with
+        | .str s => sig.sorts.contains s
+        | _ => false
+      unless known do
+        if sort == .str "$string" && sig.profiles.contains "data@0" then
+          fail "UnsupportedProfile" "$string quantification requires data stage 2"
+        fail "UnknownSymbol" s!"Unknown binder sort {pyValue sort}"
+      let .str s := sort | return false
+      return ← formula sig (s :: ctx) fuel body
+    if tag == "not" then
+      let [body] := args | return false
+      return ← formula sig ctx fuel body
+    let [left, right] := args | return false
+    if tag == "and" || tag == "or" || tag == "implies" then
+      unless ← formula sig ctx fuel left do return false
+      return ← formula sig ctx fuel right
+    if tag == "lt" || tag == "le" then
+      unless sig.profiles.contains "order@0" do fail "UnsupportedProfile" "Comparisons require order@0"
+      if (← t left) != intSort then fail "TypeMismatch" "Comparisons require integer terms"
+      if (← t right) != intSort then fail "TypeMismatch" "Comparisons require integer terms"
+      return true
+    if tag == "eq" then
+      let a ← t left
+      let b ← t right
+      if a != b then
+        fail "TypeMismatch" s!"Equality requires one sort, received {pyRepr a} and {pyRepr b}"
+      return true
+    return false
 
 /-- The Python diagnostic for the first ill-typed formula of `asts`, if the
 walk finds one. -/

@@ -183,7 +183,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     from .ast import _to_data
     from .backends.dispatch import execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.lean_runner import evaluation_case, lean_mode, run as lean_run
+    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
     from .backends.rust_jsonl import run as rust_run
 
     case = {"id": "countermodel", "environment": env.to_dict(),
@@ -215,7 +215,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
         result = rust()
         if result.status == "ResourceLimit":
             return result
-        request = {**case, "kind": "countermodel"}
+        request = {**case, "kind": "countermodel", "environment": route_environment(env)}
         row = lean_run(lean_mode(env), [request])[0]
         if row["refutes"] != result.valid:
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
@@ -644,7 +644,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     """Search with a bounded Rust enumerator and Lean-checked witnesses."""
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import evaluation_case, lean_mode, run as lean_run
+    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run
     from .profiles import require_checker
@@ -704,7 +704,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                     env, nonvacuous_for, model, max_evaluations,
                     semantic=semantic_nonvacuity)[0]:
                 raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
-            request = {**case, "kind": "countermodel", "model": model.to_dict()}
+            request = {**case, "kind": "countermodel", "model": model.to_dict(),
+                       "environment": route_environment(env)}
             checked = lean_run(lean_mode(env), [request])[0]
             if checked.get("refutes") is not True:
                 raise CheckerUnavailable("CheckerUnavailable: Lean rejected Rust search witness")
@@ -816,7 +817,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     """Find a bounded distinguishing witness with Rust; verify it in Lean."""
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import evaluation_case, lean_mode, run as lean_run
+    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run
     from .profiles import require_checker
