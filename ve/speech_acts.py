@@ -54,6 +54,7 @@ def validate_scope(raw, sorts, constants, predicates):
                 "every", "there", "exists", "believes", "must", "eventually"}:
             raise block
         normalized[key] = constant
+    check_templates(predicates)
     if addressee is not None:
         sort, constant = addressee["sort"], addressee["constant"]
         if sort not in sorts:
@@ -69,6 +70,35 @@ def validate_scope(raw, sorts, constants, predicates):
     if normalized:  # canonical as Lean's `encodeScope`: an empty map is absent
         result["definites"] = normalized
     return result
+
+
+ATTACHED_SLOT = "InvalidInput: speech template slot must stand apart"
+_SLOT = re.compile(r"\{[0-9]+\}")
+
+
+def _attached(c):
+    """A character that joins a slot to its word: not ASCII whitespace, and a `{`, `}` or no `_WORD_BREAK`."""
+    return c not in _SURFACE_SPACES and (c in "{}" or c not in _WORD_BREAK)
+
+
+def check_templates(predicates):
+    """3.1: every slot of an act or verbalisation template stands apart from its words, as Lean's `checkTemplates`.
+
+    A slot `{n}` begins the template or follows ASCII whitespace or a word break
+    (`_WORD_BREAK`, but not a brace), and ends it or precedes one, so "{0} click
+    {1}" and "{0} is ({1})" pass and "{0} click{1}", "click-{1}", "click'{1}" and
+    "pre{1}post" are `ATTACHED_SLOT`: a filled slot never makes a new word.
+    Acts are W1's normalised phrases; verbalisations are read as declared.
+    """
+    for decl in predicates.values():
+        templates = (decl.verbalisation, decl.negative_verbalisation,
+                     decl.regulated.act if decl.regulated is not None else None)
+        for template in templates:
+            for slot in _SLOT.finditer(template or ""):
+                start, end = slot.span()
+                if ((start > 0 and _attached(template[start - 1]))
+                        or (end < len(template) and _attached(template[end]))):
+                    raise VEError(ATTACHED_SLOT)
 
 
 # The frozen P0 wire form the Lean route decodes (`VE.Bridge.decodeFormula`): the

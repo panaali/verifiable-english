@@ -325,7 +325,15 @@ undeclared addressee is the block error in both checkers; resolution then checks
 the count of definites and their constants, in that order. The block is part of the canonical environment bytes, so `environment_id` changes when any of it
 changes and is unchanged for every existing environment (none has the block). Its canonical encoding is `task`, then
 `addressee` and `definites` when present, the definites sorted by phrase; an empty `definites` map is encoded as absent. The `regulated` declarations are W1's
-(norms.md 3.1) and unchanged. The sort `query` and one constant per query id are ordinary declarations when the document
+(norms.md 3.1) and unchanged. Under `speech-acts@0` every slot `{n}` of an act phrase (W1's normalised one) and of a
+predicate's `verbalisation` and `negative_verbalisation` **stands apart from its words**: it begins the template or
+follows ASCII whitespace or an ASCII punctuation character other than `'`, `-`, `_`, `{` and `}`, and it ends the
+template or precedes one (Python's `check_templates`, Lean's `checkTemplates`). "{0} click {1}", "{0}  click\t{1}"
+(normalised by W1) and "{0} clicked ({1})" pass; "{0} click{1}", "{0} click-{1}", "{0} click'{1}", "{0} pre{1}post",
+"{0}{1} clicked", "{0} clicked {1}9" and "{0} clicked" with U+00A0 before a slot (a non-ASCII character continues a
+word) are `InvalidInput: speech template slot must stand apart` when the environment is loaded, after the block's
+structure and phrase checks and before resolution, in both checkers. A filled slot therefore never makes a new word
+("Clickcheck."), and a command's wording begins with its act's verb as a whole word (3.2). The sort `query` and one constant per query id are ordinary declarations when the document
 uses proof tasks.
 
 ### 3.2 Unit contents (W2 units of kinds `instruction`, `question`, `binding`)
@@ -839,6 +847,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 |---|---|---|
 | `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route (1.6) | error |
 | `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3), including a reading question whose `{"open": [...]}` meaning or open-term declaration differs from the derived form (4.6) | error |
+| `InvalidInput: speech template slot must stand apart` | environment load: a slot of an act phrase or a (negative) verbalisation touches a letter, digit, `'`, `-`, `_`, brace or non-ASCII character (3.1) | error |
 | `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, command argument (a query constant included) or question sort (3.2) | error |
 | `TypeMismatch: command args for <u>` / `TypeMismatch: addressee` | a command argument of the wrong sort or number; the addressee's sort is not the act's slot 0 | error |
 | `InvalidInput: query` / `InvalidInput: duplicate query` | a query record whose `id`, `premises` or `target` is not of its shape; a repeated query id (3.2) | error |
@@ -1717,6 +1726,7 @@ statements of section 8 are unchanged.
 | A, interrogative act verbs: with the W1 act "{0} do {1}" (likewise "question", "will", "how", ...), the parser read "Do check." as a command, but both classifiers took its first word for a question, so both cores accepted a question choice on it and rejected the instruction choice | 3.2: a final `?` decides first, then a declared act's verb outranks an interrogative first word, in both cores. |
 | A, slot-first acts: with the W1 act "{0} {1} click", the parser read "Check click." as a command, but no classifier has a slot's fillers, so both cores accepted an asserted choice on it and rejected the instruction choice | 3.2: an imperative begins with its act's verb; an act whose first word after `{0}` is a slot has none, classifies no wording and is read as no command by the parser. |
 | B, parser case and trimming: the parser upper-cased a command's first letter with Unicode case mapping ("Do not ßcheck." forbade the act "{0} sscheck") and Unicode-stripped a which-question's alternatives | 3.2: the parser's command match folds only `A`-`Z` on both sides and alternatives are trimmed of ASCII whitespace only. |
+| A, attached slots: with the acts "{0} click{1}" (likewise "click-{1}", "click'{1}", "pre{1}post"), W1 accepted the act and the parser read "Clickcheck." as an instruction, but both classifiers read it as a declarative, so both cores and both source forms accepted an asserted choice on it and rejected the instruction choice | 3.1 (orchestrator restriction): under `speech-acts@0` every slot of an act or verbalisation template stands apart from its words, `InvalidInput: speech template slot must stand apart` at environment load in both checkers. |
 
 ## Change log
 
