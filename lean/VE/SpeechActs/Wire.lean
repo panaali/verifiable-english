@@ -155,6 +155,47 @@ def checkPhrases (ne : VE.Norms.Wire.NormsEnvironment) (sc : Scope) : Except Str
     if v.constants.any (·.1 == p) || v.sorts.contains p || VE.Norms.Wire.actReserved.contains p.toLower then
       throw invalidBlock
 
+/-- The six ASCII whitespace characters of Python's `string.whitespace`, the only whitespace a wording has (3.2). -/
+def asciiSpace (c : Char) : Bool :=
+  c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\x0b' || c == '\x0c'
+
+/-- What may follow an act's verb in its wording, as Python's `_WORD_BREAK`: a word break ("Click check."), the end
+of a unary command ("Click.") or its condition ("Click, if ..."). An act word's own `'` and `-`, a name's `_`, a digit
+and every non-ASCII character continue the word. -/
+def wordBreak (c : Char) : Bool :=
+  " !\"#$%&()*+,./:;<=>?@[\\]^`{|}~".contains c
+
+def attachedSlot : String := "InvalidInput: speech template slot must stand apart"
+
+/-- A character that joins a slot to its word, as Python's `_attached`: not ASCII whitespace, and a brace or no
+`wordBreak`. -/
+def attached (c : Char) : Bool := !asciiSpace c && (c == '{' || c == '}' || !wordBreak c)
+
+/-- Every slot `{n}` of `cs` (after the character `prev`) stands apart: no `attached` character on either side. Slots
+are found left to right without overlap, as Python's `re.finditer`; `fuel` bounds the scan. -/
+def slotsApart : Nat → Char → List Char → Bool
+  | 0, _, _ => true
+  | _ + 1, _, [] => true
+  | n + 1, prev, '{' :: rest =>
+    let digits := rest.takeWhile Char.isDigit
+    match rest.drop digits.length with
+    | '}' :: after =>
+      if digits.isEmpty then slotsApart n '{' rest
+      else !attached prev && (after.head?.all (!attached ·)) && slotsApart n '}' after
+    | _ => slotsApart n '{' rest
+  | n + 1, _, c :: rest => slotsApart n c rest
+
+/-- 3.1: every slot of an act or verbalisation template stands apart from its words (Python's `check_templates`),
+so a filled slot never makes a new word: "{0} click {1}" passes, "{0} click{1}", "click-{1}", "click'{1}" and
+"pre{1}post" are `attachedSlot`. Acts are W1's normalised phrases; verbalisations are read as declared. -/
+def checkTemplates (preds : List (String × Json)) (regulated : List Regulated) : Except String Unit := do
+  let verbalisations := preds.flatMap fun (_, e) => ["verbalisation", "negative_verbalisation"].filterMap fun k =>
+    match e.getObjVal? k with
+    | .ok (.str t) => some t
+    | _ => none
+  for t in verbalisations ++ regulated.filterMap (·.act) do
+    unless slotsApart (t.length + 1) ' ' t.toList do throw attachedSlot
+
 def decodeSpeechEnvironmentFull (environment : Json) : Except String SpeechEnvironment := do
   let profiles ← profilesField environment
   profileGate profiles
@@ -166,6 +207,7 @@ def decodeSpeechEnvironmentFull (environment : Json) : Except String SpeechEnvir
   let stripped ← stripSpeech environment
   let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped
   checkPhrases ne sc
+  checkTemplates preds ne.regulated
   pure ⟨ne, sc, profiles, environment, canonical⟩
 
 /-- 8.5's signature: the complete environment, the scope and the validated regulated declarations. -/
@@ -218,6 +260,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     obtain ⟨blk, hblk, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨sc', hsc', hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨b, hb, hf⟩ := VE.Order.ProfileGate.bind_ok hf
+    obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
@@ -552,14 +595,7 @@ def chosenMeaning (j : Json) (content : Option Json) : Json :=
 ASCII only. The six ASCII whitespace characters of Python's `string.whitespace` separate words (runs collapse to
 one space, none leads or trails) and only `A`-`Z` fold (`Char.toLower`); every other character is a letter. -/
 def surfaceWords (s : String) : String :=
-  " ".intercalate ((s.split (fun c => c == ' ' || c == '\t' || c == '\n' || c == '\r' ||
-    c == '\x0b' || c == '\x0c')).filter (· ≠ "")) |>.map Char.toLower
-
-/-- What may follow an act's verb in its wording, as Python's `_WORD_BREAK`: a word break ("Click check."), the end
-of a unary command ("Click.") or its condition ("Click, if ..."). An act word's own `'` and `-`, a name's `_`, a digit
-and every non-ASCII character continue the word. -/
-def wordBreak (c : Char) : Bool :=
-  " !\"#$%&()*+,./:;<=>?@[\\]^`{|}~".contains c
+  " ".intercalate ((s.split asciiSpace).filter (· ≠ "")) |>.map Char.toLower
 
 /-- `text` begins with the whole word `word`: at its end or a `wordBreak`, as Python's `_starts_with_word`. -/
 def startsWithWord (text word : String) : Bool :=

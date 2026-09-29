@@ -1646,6 +1646,58 @@ def test_source_wording_is_one_ascii_trim_whatever_the_original_kind(lean, tmp_p
         assert _source_outcome(env, span, [base], sets=[reading_set("u", 1, "authored", *_CHOICES[0])]) == "ok"
 
 
+ATTACHED = "InvalidInput: speech template slot must stand apart"
+
+
+def _env_outcomes(tmp_path, name, env):
+    """An environment's outcome in Python, in Lean, and in the inline and fenced source wrapper."""
+    document, case = _choice_case(env, "Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")})
+    return [_outcome(lambda: Environment(env)), _outcome(lambda: core(env, document)), _lean_outcome(run1(case)),
+            *_both_forms(tmp_path, name, env, "Atlas is reviewed.", "asserted", {"ast": U("reviewed", "atlas")})]
+
+
+def test_attached_template_slots_are_rejected_at_environment_load(lean, tmp_path):
+    # Regression (speech-acts6 loop A): with `click_required`/`click_permitted` acts "{0} click{1}", W1 accepted
+    # the act, the parser read "Clickcheck." as an instruction and both classifiers read it as a declarative, so both
+    # cores and both source forms accepted an asserted choice on it and rejected the instruction choice.
+    # "{0} click-{1}", "{0} click'{1}" and "{0} pre{1}post" reproduced too.  Under the speech profile every slot of an
+    # act or verbalisation template stands apart from its words (3.1), one diagnostic in every checker.
+    for i, act in enumerate(["{0} click{1}", "{0} click-{1}", "{0} click'{1}", "{0} pre{1}post", "{0} click {1}x"]):
+        env = _act_env(act)
+        assert _env_outcomes(tmp_path, f"act-{i}", env) == [ATTACHED] * 5, act
+    for wording, kind, content in [("Clickcheck.", "asserted", {"ast": U("reviewed", "atlas")}),
+                                   ("Clickcheck.", "instruction", command("require", "click_required", ["check"]))]:
+        env = _act_env("{0} click{1}")
+        document, case = _choice_case(env, wording, kind, content)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == ATTACHED
+        assert _both_forms(tmp_path, f"clickcheck-{kind}", env, wording, kind, content) == [ATTACHED] * 2
+    # Verbalisations and negative verbalisations: a letter, `'`, `-`, `_`, a digit, a brace or a non-ASCII
+    # character (U+00A0 included) next to a slot joins it to a word.
+    for i, (field, name, template) in enumerate([
+            ("verbalisation", "reviewed", "{0}is reviewed"), ("verbalisation", "done_click", "{0} clicked{1}"),
+            ("verbalisation", "done_click", "{0} clicked {1}'s"), ("verbalisation", "done_click", "{0} clicked {1}"),
+            ("verbalisation", "done_click", "{0}{1} clicked"), ("verbalisation", "reviewed", "{{0} is reviewed"),
+            ("verbalisation", "reviewed", "é{0} is reviewed"), ("verbalisation", "done_click", "{0} clicked {1}_"),
+            ("verbalisation", "done_click", "{0} clicked {1}9"), ("verbalisation", "reviewed", "{x}{0} is reviewed"),
+            ("negative_verbalisation", "done_click", "{0} did not click-{1}")]):
+        env = F0()
+        env["vocabulary"]["predicates"][name][field] = template
+        assert _env_outcomes(tmp_path, f"verb-{i}", env) == [ATTACHED] * 5, template
+    # Whitespace, the template's ends and a word break other than a brace keep a slot apart; W1 normalises an act.
+    for i, (field, name, template) in enumerate([
+            ("verbalisation", "reviewed", "{0} is reviewed"), ("verbalisation", "done_click", "{0} clicked ({1})"),
+            ("verbalisation", "done_click", "{0}: clicked {1}."), ("verbalisation", "done_click", "{0}\tclicked\n{1}"),
+            ("negative_verbalisation", "done_click", "{0} did not click {1}")]):
+        env = F0()
+        env["vocabulary"]["predicates"][name][field] = template
+        assert _env_outcomes(tmp_path, f"apart-{i}", env)[:3] == ["ok"] * 3, template
+    assert _env_outcomes(tmp_path, "act-normalised", _act_env("{0}  click\t{1}"))[:3] == ["ok"] * 3
+    # The template check follows the block's structure checks in both checkers.
+    env = _act_env("{0} click{1}")
+    env["speech_acts"]["extra"] = 1
+    assert _env_outcomes(tmp_path, "block-first", env)[:3] == ["InvalidInput: speech_acts block"] * 3
+
+
 def test_answer_metadata_types_and_unit_meaning_id(lean):
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
