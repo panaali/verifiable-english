@@ -7,16 +7,16 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 | Measure | Result |
 |---|---|
-| Strict, every scored question of a profile correct | 62/62 |
-| Q1 | 62/62 |
-| Q2 | 48/48 |
-| Q3 | 48/48 |
-| Q4 | 48/48 |
-| Total | 206/206 |
-| Answered (certified) | 206/206 |
-| Precision (correct / answered) | 206/206 |
-| unflagged profiles: strict | 53/53 |
-| unflagged profiles: questions | 173/173 |
+| Strict, every scored question of a profile correct | 69/69 |
+| Q1 | 69/69 |
+| Q2 | 54/54 |
+| Q3 | 54/54 |
+| Q4 | 54/54 |
+| Total | 231/231 |
+| Answered (certified) | 231/231 |
+| Precision (correct / answered) | 231/231 |
+| unflagged profiles: strict | 60/60 |
+| unflagged profiles: questions | 198/198 |
 | guide profiles: strict | 38/38 |
 | guide profiles: questions | 131/131 |
 
@@ -40,24 +40,24 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 ## Single shot (all rules and facts in one problem)
 
-Q1 answered on 0 of 62 profiles; Q2 to Q4 therefore OPEN everywhere.
+Q1 answered on 0 of 69 profiles; Q2 to Q4 therefore OPEN everywhere.
 Every search stopped with status `NotFound`:
 
 | Search | Status | Steps | Searches |
 |---|---|---|---|
 | bottom | NotFound | 124 | 39 |
-| bottom | NotFound | 125 to 999 | 23 |
+| bottom | NotFound | 125 to 999 | 30 |
 | entitled | NotFound | 124 | 39 |
-| entitled | NotFound | 125 to 999 | 23 |
-| not_entitled | NotFound | 125 to 999 | 62 |
+| entitled | NotFound | 125 to 999 | 30 |
+| not_entitled | NotFound | 125 to 999 | 69 |
 
 ## Evidence
 
-- Step certificates produced: 1448; accepted by Lean `ve_quantity`: 1448.
-- Answer documents (`documents@1`): 206; admitted by Lean: 206.
-- Non-vacuity: 4528 of 4528 premise evaluations are true in the reference fixture models (Lean evaluation).
+- Step certificates produced: 1608; accepted by Lean `ve_quantity`: 1608.
+- Answer documents (`documents@1`): 231; admitted by Lean: 231.
+- Non-vacuity: 5150 of 5150 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 390 distinct, 3952 requested.
+- Proof searches: 400 distinct, 4404 requested.
 
 ## Probes (PLAN section 8, stage 0)
 
@@ -70,34 +70,36 @@ Every search stopped with status `NotFound`:
 
 ## Mutants
 
-Killed: 23/23.
+Killed: 25/25.
 
 | Mutant | Change | Must change | Changed | Killed |
 |---|---|---|---|---|
 | M1 | R8 '> 364' as '>= 364' | C14 | C14 | yes |
 | M2 | R8 counting the admission day | C14 | C14 | yes |
-| M3 | R5 '>= 84' as '> 84' | C10 | C10 | yes |
+| M3 | R5 '>= 84' as '> 84' | C10 | C10, C26 | yes |
 | M4 | R16 '> 35,000' as '>= 35,000' | D01 | D01 | yes |
 | M5 | R2 'no later than' as 'before' | C01 | C01 | yes |
 | M6 | R15 age 80 strict | C04 | C04, C06, C08 | yes |
-| M7 | R7 without 'partner' | B02 | B02 | yes |
+| M7 | R7 without 'partner' | B02 | B02, B22 | yes |
 | M8 | R7 without the partner's pensionable age | B03 | B03 | yes |
 | M9 | R9 without 'under a sentence' | B06 | B06 | yes |
 | M10 | R11 'before' for 'on or before' | C20 | C20 | yes |
 | M11 | R12 'before' 31 March | C22 | C22 | yes |
 | M12 | R3 'every day' for 'any day' | C17, C19 | B15, B16, B19, C17, C19 | yes |
-| M13 | R16 counting the partner's income | D05 | 47 profiles | yes |
+| M13 | R16 counting the partner's income | D05 | 53 profiles | yes |
 | M14 | R14 without 3(3) | A08 | A08, B14, C08 | yes |
 | M15 | R4 without income support | B11 | B11 | yes |
 | M16 | R4 without income-based JSA | B12 | B12 | yes |
-| M17 | R4 without state pension credit | B01, B04 | A07, A08, A09, B01, B04, B18, C08, C09 | yes |
+| M17 | R4 without state pension credit | B01, B04 | 9 profiles | yes |
 | M18 | R4 without income-related ESA | B13 | B13 | yes |
 | M19 | R4 without universal credit | B14 | B14 | yes |
 | M20 | R11 without the order of AR6 | B15, B16, B19 | B15, B16, B19 | yes |
 | M21 | R11 without the QW0 bound of AR6 | B16 | B16 | yes |
 | M22 | R11 without the E&W-start bound of AR6 | B19 | B19 | yes |
 | M23 | R6 with the other person also out of residential care | B17, B18 | B17, B18 | yes |
+| M24 | R5 without the care end date | B20, B21, B22, B23, C25, C27 | B20, B21, B22, B23, C25, C27 | yes |
+| M25 | R5 with the care end date strictly after the week | C26 | C26 | yes |
 
 ## English
 
-69 of 127 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+74 of 138 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).

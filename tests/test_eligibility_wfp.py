@@ -317,7 +317,7 @@ def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
             cases.append({"id": f"{pid}/{question}", "kind": "document", "environment": raw,
                           "document": staged.document(target)})
     got = run.lean(cases)
-    assert len(got) == 206
+    assert len(got) == 231
     assert all(r["status"] == "ok" and r["assurance"] == "lean-admitted" for r in got), \
         [r for r in got if r.get("status") != "ok"][:3]
 
@@ -349,18 +349,18 @@ def test_single_shot_stops_at_the_tableau_depth_cap():
 def test_recorded_summary():
     results = recorded()
     s = results["summary"]
-    assert s["strict"] == 62 and s["total"] == "206/206" and s["answered"] == 206
-    assert s["per_question"] == {"Q1": "62/62", "Q2": "48/48", "Q3": "48/48", "Q4": "48/48"}
+    assert s["strict"] == 69 and s["total"] == "231/231" and s["answered"] == 231
+    assert s["per_question"] == {"Q1": "69/69", "Q2": "54/54", "Q3": "54/54", "Q4": "54/54"}
     assert s["disagreements"] == [] and s["open"] == []
-    assert s["single_shot"] == {"answered": 0, "profiles": 62}
-    assert s["mutants_killed"] == "23/23"
+    assert s["single_shot"] == {"answered": 0, "profiles": 69}
+    assert s["mutants_killed"] == "25/25"
     lean = s["lean"]
     assert lean["certificates"] == lean["certificates_accepted"] > 0
-    assert lean["documents"] == lean["documents_admitted"] == 206
+    assert lean["documents"] == lean["documents_admitted"] == 231
     assert lean["model_premises"] == lean["model_premises_true"] > 0
     assert results["b1_certified"] is True
     assert results["environment_id"] == Environment(T.environment()).environment_id
     readme = (HERE / "README.md").read_text(encoding="utf-8")
-    assert "206/206" in readme and "62/62" in readme
+    assert "231/231" in readme and "69/69" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})
