@@ -447,6 +447,11 @@ verdict, and neither is ever a Python-only CHECKED. A text is a `ve-document@2` 
 `format` says so, read before and apart from every other check, so a body or metadata Python's checks read
 differently still reaches Lean; what Python does before Lean's answer (that test, collecting the sibling files)
 reads any front matter, and a Python check that fails in any way on a document Lean rejects gives Lean's verdict.
+What Python sends Lean is UTF-8 JSON, and what it cannot carry never admits: an import name that is no UTF-8 text
+(a lone surrogate escape, which Python's JSON reader lets through and Lean's rejects) names no file, nor does a
+name too long for the file system; a named file that is no UTF-8 text is left out of the case, so Lean still
+diagnoses the document, but Lean's admission, which read that file as absent, is `InvalidInput`; a document that
+is no UTF-8 text is `InvalidInput`; and a Python diagnostic that is no UTF-8 text gives way to Lean's.
 Both loaders split the body as `bytes.splitlines` does (a line ends at `\n`, `\r\n` or `\r`) and read fence lines
 after `bytes.strip()` (which also removes `\x0b` and `\x0c`). `ve-document@1` documents are unchanged.
 
