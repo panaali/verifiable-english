@@ -20,6 +20,9 @@ from .lean_service import CheckerUnavailable
 T = TypeVar("T")
 _AUTHORITIES = frozenset({"python", "shadow", "lean", "rust-experimental"})
 _log_lock = threading.Lock()
+# Callables told (op, authority) on every dispatched call; the Gate 2 parity
+# tool uses them to tell adapter-routed cells from Python-only ones.
+observers: list[Callable[[str, str], None]] = []
 
 
 def authority_for(op: str) -> str:
@@ -121,6 +124,8 @@ def execute(op: str, payload: dict, python: Callable[[], T], *,
     type.  No class-A result may be inferred from the Python result in `lean`.
     """
     authority = authority_for(op)
+    for observe in observers:
+        observe(op, authority)
     if authority == "python":
         return python()
     if authority == "lean":
