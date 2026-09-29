@@ -1,5 +1,6 @@
 import VE.Norms.SmallModel
-import VE.Route.Run
+import VE.Route.Gate
+import VE.Route.Wire
 
 /-! The norms-route decoder (docs/spec/norms.md 3.1, 3.2 and 11.4 steps 1-3),
 for the regeneration cases of the `ve_norms_route` executable.

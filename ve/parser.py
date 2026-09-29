@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import re
 from typing import Any
 
+from .assurance import semantic_entry
 from . import ast
 from .errors import (ResourceLimit, ShadowedVariable, Span, SyntaxError, VEError,
                      UnboundVariable, UnknownSymbol)
@@ -346,6 +347,7 @@ class _Parser:
         return ast.Document(tuple(formulas))
 
 
+@semantic_entry("parse")
 def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
     if isinstance(source, bytes):
         if len(source) > MAX_SOURCE_BYTES:
@@ -379,15 +381,18 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
     return ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names)))
 
 
+@semantic_entry("parse")
 def parse(env: Any, source: str | bytes) -> ast.Document:
     return parse_with_metadata(env, source).document
 
 
+@semantic_entry("parse")
 def canonicalize(env: Any, source: str | bytes) -> str:
     from .printer import print_document
     return print_document(env, parse(env, source))
 
 
+@semantic_entry("parse")
 def is_canonical(env: Any, source: str | bytes) -> bool:
     try:
         text = source.decode("ascii") if isinstance(source, bytes) else source

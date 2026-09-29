@@ -22,6 +22,21 @@ def zeta_env():
     return raw
 
 
+def test_quoted_soft_norm_is_checked_without_becoming_a_layer(tmp_path):
+    raw = env()
+    quoted = should("quoted", "x_required", True)
+    meta = {"format": "ve-document@1", "environment": raw,
+            "units": [{"id": "u", "span": [0, 2],
+                       "kind": ["attributed", "assistant", "says", "norm"],
+                       "meaning": "specified", "support": "none", "content": quoted}]}
+    path = tmp_path / "quote.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\nA\n")
+    checked = check_document(path)
+    assert checked["soft"]["decision_predicates"] == []
+    assert checked["premises"]["status"] == "model"
+    assert "attributed to assistant" in render_document(path)
+
+
 def fixtures():
     return [
         ("alpha-high", env(ranks(["a", "b"], "holistic")),

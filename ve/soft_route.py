@@ -1,39 +1,19 @@
 """Python entry point for the proved soft-norm admission route."""
 from __future__ import annotations
 
-import json
 from pathlib import Path
-import subprocess
 
 from .ast import _Checker, _to_data, formula_to_data
 from .background import background
 from .errors import VEError
 from .softnorms import SoftEnvironment, SoftNormDocument, check_soft_source
+from .backends.lean import run_soft_case
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_soft_norms_route"
 
 
 def _run(case):
-    try:
-        completed = subprocess.run(
-            [str(LEAN_ROUTE), "-"], input=json.dumps([case], ensure_ascii=False),
-            text=True, capture_output=True, timeout=120, check=False)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise VEError(f"soft route unavailable: {exc}") from exc
-    try:
-        rows = json.loads(completed.stdout)
-        if type(rows) is not list or len(rows) != 1 or type(rows[0]) is not dict:
-            raise ValueError("invalid result shape")
-    except ValueError as exc:
-        raise VEError(f"soft route returned invalid JSON: {completed.stderr.strip()}") from exc
-    row = rows[0]
-    if row.get("status") == "error":
-        error = VEError(row.get("error", "soft route rejected input"))
-        error.code = row.get("code", error.code)
-        raise error
-    if completed.returncode != 0 or row.get("status") != "ok":
-        raise VEError(f"soft route failed: {completed.stderr.strip()}")
-    return row
+    return run_soft_case(LEAN_ROUTE, case)
 
 
 def elaborate_soft_document(soft_document: SoftNormDocument):
