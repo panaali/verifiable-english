@@ -1,0 +1,20 @@
+**Text 1: (b)**
+The definition of "allows" requires both that the action leads to harm in every case AND that another available action might not lead to it, which matches this description of the job-running scenario.
+
+**Text 2: (a)**
+Rule 1 only forbids actions that "might lead to collision," but we're explicitly told that crossing between parked cars "cannot lead to a collision," so the rule's condition is not met and doesn't apply.
+
+**Text 3: (c)**
+The "exactly when" definition means the delay happens in every case where duration > 30 minutes and in no case where duration ≤ 30 minutes, which is what option (c) states.
+
+**Text 4: (c)**
+A dropped parcel is not ruled out because the text allows parcel weights greater than 25 kg, and in those cases taking the stairs leads to a dropped parcel.
+
+**Text 5: (c)**
+The definition of "might prevent" requires both that the action might not lead to the harm AND that another available action does lead to it, which matches this option exactly.
+
+**Text 6: (c)**
+The rule only specifies what happens when weight < 50 kg; since the patient weighs 80 kg, the rule's condition doesn't apply and the text provides no information about whether dizziness occurs.
+
+**Text 7: (a)**
+The text states "A late delivery is serious or worse," which on the given severity scale (severe > serious > minor) means a late delivery can be either serious or severe.

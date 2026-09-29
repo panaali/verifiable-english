@@ -1,0 +1,99 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) No: a task delay happens in every case the text allows.
+(b) Yes: a task delay usually happens, but not in every case.
+(c) Yes: a task delay, like a job failure, is only not ruled out.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) No: a fall is severe, like a seizure.
+(b) The text does not say.
+(c) Yes: a fall is serious, and a seizure is severe.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) The text does not say.
+(b) No: the first rules data loss out, and the second says data loss is not ruled out.
+(c) Yes: data loss can happen, but only rarely.
+(d) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) If the agent deletes the only copy, data loss happens in no case the text allows.
+(c) If the agent deletes the only copy, data loss happens in every case the text allows.
+(d) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) No lift failure happens: a lift easily carries 4 kilograms.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) A lift failure happens.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) The text does not say.
+(b) A server outage happens.
+(c) No server outage happens.
+
+Text 7
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) No seizure happens.
+(b) A seizure happens.
+(c) The text does not say.

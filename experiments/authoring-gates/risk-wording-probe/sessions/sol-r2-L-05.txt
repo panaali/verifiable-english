@@ -1,0 +1,108 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) In at least one case the text allows, the agent does nothing and no data loss happens.
+(b) The text does not say.
+(c) In no case the text allows does doing nothing lead to data loss.
+(d) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) If the agent deletes the only copy, data loss happens in no case the text allows.
+(b) The text does not say.
+(c) If the agent deletes the only copy, data loss happens in every case the text allows.
+(d) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+
+Text 3
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) A rash is not ruled out; drowsiness happens in every case the text allows.
+(b) The text does not say.
+(c) A rash is possible; drowsiness is what usually happens.
+(d) There is no difference: neither is ruled out, and neither is certain.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+(b) The text does not say.
+(c) No: the first rules data loss out, and the second says data loss is not ruled out.
+(d) Yes: data loss can happen, but only rarely.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+A robot prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. Taking the ramp might lead to a fall. Taking the ramp might not lead to a fall.
+Rule 1. Every robot must prevent a fall.
+
+According to the text, does the robot fulfil Rule 1 if it takes the ramp?
+(a) No: the text does not rule out a fall when the robot takes the ramp.
+(b) Yes: in at least one case the text allows, taking the ramp avoids a fall.
+(c) The text does not say.
+
+Text 6
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> might prevent <harm>" means the action might not lead to the harm, and another action available to the same chooser leads to it.
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) Giving the vaccine avoids a fever in at least one case the text allows.
+(b) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+(c) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(d) The text does not say.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage if the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) The text does not say.
+(b) No server outage happens, because the peak memory of the job is not greater than 8 gigabytes.
+(c) A server outage happens.

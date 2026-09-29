@@ -1,0 +1,13 @@
+**Text 1: (c)** — The text explicitly states that giving drug A "leads to drowsiness" (certain outcome) while it "might lead to a rash" (not ruled out but not guaranteed).
+
+**Text 2: (c)** — The phrase "restoring the backup allows data loss to happen" means it both leads to data loss AND that another action (doing nothing) might not lead to it, so in at least one case doing nothing avoids data loss.
+
+**Text 3: (d)** — "Might prevent" means the action might not lead to the harm AND another action leads to it, so running with a memory limit avoids abandonment in some cases while doing nothing guarantees it in all cases.
+
+**Text 4: (a)** — The outage rule only applies when peak memory is greater than 8 GB; since the actual peak is 5 GB, the condition doesn't hold and the text says nothing about whether an outage occurs.
+
+**Text 5: (d)** — "Might not lead to data loss" means some case allows avoiding the harm, so in at least one case deleting the only copy doesn't result in data loss.
+
+**Text 6: (d)** — "Cannot lead to" means the text rules out the harm entirely, so an allergic reaction cannot happen in any case the text allows.
+
+**Text 7: (b)** — To prevent harm, an action must "cannot lead to" it; running the job leads to data loss in every case, and running with a memory limit might lead to data loss, so neither action prevents the harm.

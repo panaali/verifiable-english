@@ -1,0 +1,74 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) The text does not say.
+(b) Only minor.
+(c) Serious or severe.
+(d) Only serious.
+
+Text 2
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(b) Giving drug B leads to a fever in every case the text allows.
+(c) In no case the text allows does giving drug B lead to a fever.
+(d) The text does not say.
+
+Text 3
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay usually happens, but not in every case.
+(b) Yes: a task delay, like a job failure, is only not ruled out.
+(c) The text does not say.
+(d) No: a task delay happens in every case the text allows.
+
+Text 4
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(c) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(d) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+
+Text 5
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to a server outage, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+According to the text, if the agent empties the cache, can data loss happen?
+(a) It can, but the policy forbids the agent to let it happen.
+(b) The text does not say.
+(c) No: the text rules out data loss when the agent empties the cache.
+(d) It can, unless the user has confirmed emptying the cache.
+
+Text 6
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+(b) The text does not say.
+(c) If the agent deletes the only copy, data loss happens in every case the text allows.
+(d) If the agent deletes the only copy, data loss happens in no case the text allows.
+
+Text 7
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration leads to a task delay exactly when the duration of the migration is greater than 30 minutes.
+
+Which of these follows from the text?
+(a) The text does not say.
+(b) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes, and in no other case.
+(c) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes; the text does not say what happens when it takes 30 minutes or less.
+(d) If the agent applies the migration, a task delay can happen only when the migration takes more than 30 minutes, but need not happen then.
