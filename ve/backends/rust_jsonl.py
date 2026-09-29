@@ -20,6 +20,19 @@ MAX_LINE_BYTES = 16 * 1024 * 1024
 _RUN = subprocess.run
 
 
+def soft_case(env) -> dict:
+    """The case field carrying a validated soft document's Background slot.
+
+    Soft premises are not environment data (Python keeps them on the extended
+    environment); Rust validates every model against them as Python does.
+    """
+    premises = getattr(env, "soft_premises", ())
+    if not premises:
+        return {}
+    from ..ast import _to_data
+    return {"soft_premises": [_to_data(formula) for _, formula in premises]}
+
+
 def run(case: dict, *, executable: str | os.PathLike | None = None,
         timeout: float = 5.0, expected_sha256: str | None = None) -> dict:
     """Run one case and return its checked record, or a classified error.

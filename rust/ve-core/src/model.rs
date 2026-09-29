@@ -240,6 +240,15 @@ impl FiniteModel {
                     "required relation {required} exceeds permission {permitted} (profile)"));
             }
         }
+        for premise in &env.soft_premises {
+            let mut ev = Evaluator::new(&model, MAX_EVALUATIONS);
+            let value = ev.formula(premise, &mut Vec::new()).map_err(|_| {
+                Error::new("ResourceLimit", "Soft background evaluation budget exhausted")
+            })?;
+            if !value {
+                return error("InvalidModel", "a soft premise is false (soft)");
+            }
+        }
         let Self {
             domains,
             constants,
