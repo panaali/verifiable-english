@@ -316,6 +316,9 @@ class NormDocument:
             name: decl for name, decl in data["vocabulary"]["predicates"].items()
             if "regulated" not in decl}
         data["profiles"] = [p for p in data["profiles"] if p != "norms@0"]
+        if "speech-acts@0" in data["profiles"]:
+            data["profiles"].remove("speech-acts@0")
+            data.pop("speech_acts", None)
         return Environment(data)
 
 
