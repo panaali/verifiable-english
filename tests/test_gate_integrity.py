@@ -122,6 +122,36 @@ def test_terminated_gate_cannot_leave_old_pass_record(tmp_path):
     assert json.loads(output.read_text())["status"] == "failed"
 
 
+@pytest.mark.parametrize("interruption", [KeyboardInterrupt, TypeError, AttributeError])
+def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption):
+    output = tmp_path / "record.json"
+    output.write_text('{"status":"passed"}')
+    policy = tmp_path / "policy.json"
+    policy.write_text(json.dumps({"version": 1}))
+    collection = tmp_path / "collection.json"
+    collection.write_text(json.dumps(["tests/a.py::test_a"]))
+    monkeypatch.setattr(gate, "POLICY", policy)
+    monkeypatch.setattr(gate, "COLLECTION", collection)
+    monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
+
+    def fake_command(args, *, env, stage, cwd=None):
+        if stage == "commit":
+            return "unchanged"
+        if stage == "worktree status":
+            return ""
+        if stage == "Lean build":
+            raise interruption("interrupted")
+        return ""
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    with pytest.raises(interruption):
+        gate.main()
+    record = json.loads(output.read_text())
+    assert record["status"] == "failed"
+    assert record["stages"] == ["toolchains"]
+
+
 @pytest.mark.parametrize("change_head,change_worktree", [(False, False), (True, False),
                                                          (False, True)])
 def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
