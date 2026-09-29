@@ -12,7 +12,7 @@ but it does not reproduce any published policy. The plan, with the answer key wr
 | File | Contents | SHA-256 |
 |---|---|---|
 | [policy.ve](policy.ve) | 26 rules; [policy.manifest.json](policy.manifest.json) binds them to their names | `42de2a255d9647e018ba084dcf49a0d8a9c83b816e0f8b9a3fa848df7046f7cd` |
-| [log.ve](log.ve) | an inventory of 10 files, 5 hosts and 3 people, then 42 action records (503 sentences) | `a3df26039ffcb648702c5bf373812496c1d6db77f3d9bcd92c00352ab7a58ceb` |
+| [log.ve](log.ve) | an inventory of 10 files, 5 hosts and 3 people, then 42 action records (501 sentences) | `1e329a6e5644afafb8ac62ffaba77394012c1f453be6d044a7811bdcf65186e3` |
 | [log-schema.ve](log-schema.ve) | six assumptions about log records, used only by the gap queries | `8cec9bce64eb45802decc4f11f373e9d4f1ddd105b1f9220ae2b1218d80b4c3f` |
 | `environment.*.json` | the vocabulary, in four copies that differ only in the two defaults, plus a Lean copy | |
 | [answer-key.json](answer-key.json) | PLAN sections 6, 7 and 11 as data | |
@@ -135,8 +135,10 @@ permit: P (permitted), F (forbidden), ⊥ (the record contradicts the rules) or 
 | a41 | write a symbolic link; its location is unknown | **UNDETERMINED** | 3 and 14 open | ? | ? | not covered |
 | a42 | read `src/app.py`; the confirmation is missing | APPROVED | 1 (2 open) | P | P | not covered |
 
-Seven pairs show that the confirmation lifts a prohibition: a03/a04, a11/a12, a16/a17, a22/a23, a26/a27,
-a31/a32 and a35/a36. It does not help in a05/a06, a08/a09 or a33, because those prohibitions have no carve-out.
+Seven pairs differ only in the confirmation. In six of them it lifts a prohibition: a03/a04, a11/a12,
+a16/a17, a22/a23, a26/a27 and a31/a32. In a35/a36 no prohibition applies; the confirmation activates the
+permission of rule 11, and without it a36 is NOT-COVERED. The confirmation does not help in a05/a06, a08/a09
+or a33, because those prohibitions have no carve-out.
 
 No action is approved or rejected by a default. The four NOT-COVERED actions are forbidden under the deny
 default and permitted under the allow default, and they are the only ones that change (M4). In a10 the
@@ -217,8 +219,8 @@ In m3, rule 2 also overlaps with each rule it now shares an action with. That fo
   does the whole fixed policy of mutant m1. A certificate over fewer premises stays valid when the flags are
   added; that step is an argument, not a Lean proof.
 - **UNKNOWN results: 0.** Every rule selection was either proved or shown OPEN by two checked models.
-- **Cost:** 1,237 calls to VE's prover (88,564 steps) and 1,266 focused searches (36,454 nodes). The base run
-  took about 100 seconds with 6 worker processes; the six mutants took 24 to 122 seconds each.
+- **Cost:** 1,237 calls to VE's prover (88,562 steps) and 1,266 focused searches (36,454 nodes). The base run
+  took about 115 seconds with 6 worker processes; the six mutants took 26 to 105 seconds each.
 
 VE's prover alone could not decide the selection formulas: it runs out of steps on a permission rule that
 negates 12 prohibitions. The harness therefore proves each rule's guard with VE's prover first. Then the
