@@ -1160,6 +1160,7 @@
   "tests/test_fol_names.py::test_named_fol_rejects_shadowing_but_allows_sibling_reuse",
   "tests/test_fol_names.py::test_named_fol_validates_variable_references_before_resolution",
   "tests/test_gate.py::test_exact_parameterized_skip_and_live_deselection_are_accounted_for",
+  "tests/test_gate_integrity.py::test_cargo_ignores_home_cache_and_manifest_configs",
   "tests/test_gate_integrity.py::test_gate_environment_discards_test_and_cargo_overrides",
   "tests/test_gate_integrity.py::test_gate_environment_uses_real_repository_and_recorder",
   "tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-baseline]",

@@ -112,6 +112,33 @@ def test_gate_environment_uses_real_repository_and_recorder(tmp_path, monkeypatc
     assert not marker.exists()
 
 
+def test_cargo_ignores_home_cache_and_manifest_configs(tmp_path, monkeypatch):
+    rustup_home = Path.home() / ".rustup"
+    source = tmp_path / "source"
+    crate = source / "rust"
+    (crate / "src").mkdir(parents=True)
+    (crate / "src/main.rs").write_text("fn main() {}\n")
+    (crate / "Cargo.toml").write_text('[package]\nname = "gate-config-probe"\nversion = "0.1.0"\nedition = "2021"\n')
+    poisoned_home = tmp_path / "home"
+    for directory in (source / ".cargo-home", poisoned_home / ".cargo", crate / ".cargo"):
+        directory.mkdir(parents=True)
+        (directory / "config.toml").write_text("invalid = [\n")
+    monkeypatch.setattr(gate, "ROOT", source)
+    monkeypatch.setenv("HOME", str(poisoned_home))
+    env = gate.gate_environment()
+    env["RUSTUP_HOME"] = str(rustup_home)
+    env["RUSTUP_TOOLCHAIN"] = "stable"
+    with gate.isolated_cargo(env) as (cargo_env, cwd):
+        assert cwd.is_relative_to(Path("/tmp"))
+        assert not cwd.is_relative_to(source)
+        assert cargo_env["CARGO_HOME"] != str(source / ".cargo-home")
+        assert not (Path(cargo_env["CARGO_HOME"]) / "config.toml").exists()
+        run = subprocess.run(["cargo", "metadata", "--offline", "--no-deps",
+                              "--format-version", "1", "--manifest-path", str(crate / "Cargo.toml")],
+                             cwd=cwd, env=cargo_env, capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
@@ -241,6 +268,8 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     cargo = [row for row in seen if row[2] in ("Rust build", "native Rust tests")]
     assert len(cargo) == 2
     assert all("--target-dir" in row[0] and target in row[0] for row in cargo)
+    assert all(row[1]["CARGO_HOME"] != str(tmp_path / ".cargo-home") for row in cargo)
+    assert all(row[1]["CARGO_NET_OFFLINE"] == "true" for row in cargo)
     pytest_env = next(row[1] for row in seen if row[2] == "Python suite")
     assert pytest_env["VE_RUST_BINARY"] == str(rust_binary)
     assert [row[2] for row in seen].count("commit") == 2
