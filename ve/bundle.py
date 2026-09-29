@@ -135,10 +135,11 @@ def check_bundle(data, *, lean_executable=None):
 
     if authority_for("bundle") in ("python", "rust-experimental") or not _lean_bundle_scope(data):
         return python()
-    return execute("bundle", {"kind": "bundle"}, python, lean=lambda: _check_bundle_lean(data, python))
+    return execute("bundle", {"kind": "bundle"}, python,
+                   lean=lambda: _explicit_lean(_check_bundle_lean(data), data, lean_executable))
 
 
-def _check_bundle_lean(data, python):
+def _check_bundle_lean(data):
     from .backends.lean_runner import run
     from .backends.validation import decided, key
     _bundle_container(data)
@@ -148,7 +149,7 @@ def _check_bundle_lean(data, python):
         cache = key("bundle", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return decided(python, cache, lambda: run("route", [case])[0],
+    return decided(lambda: _check_bundle_python(data), cache, lambda: run("route", [case])[0],
                    lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
                    "a bundle")
 
@@ -239,15 +240,23 @@ def _check_bundle_python(data, *, lean_executable=None):
                         "reading_choices": inherited_choices, "transitive_leaves": leaves,
                         "english": _english(env, [names_by_id[c] for c in item["cites"]], conclusion)})
         names_by_id[mid] = item["name"]
-    lean_checked = False
-    lean_outcome = "not_requested" if lean_executable is None else "not_applicable"
-    if lean_executable is not None and data["lemmas"]:
-        row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"], document)
-        lean_checked = (row.get("status") == "ok" and
-                        row.get("lemmas") == [report["meaning_id"] for report in reports])
-        if not lean_checked:
+    report = {"status": "Checked", "environment_id": env.environment_id,
+              "bundle_id": digest("ve-bundle-v0\n", data), "lemmas": reports,
+              "lean_checked": False, "lean_outcome": "not_requested"}
+    return _explicit_lean(report, data, lean_executable)
+
+
+def _explicit_lean(report, data, lean_executable):
+    """The caller's optional second check by the one-shot Lean runner."""
+    if lean_executable is None:
+        return report
+    report = {**report, "lean_outcome": "not_applicable"}
+    if data["lemmas"]:
+        document = data.get("document", {"reading_sets": []})
+        row = lean_bundle_verdict(lean_executable, Environment(data["environment"]).to_dict(),
+                                  data["lemmas"], document)
+        if not (row.get("status") == "ok" and
+                row.get("lemmas") == [lemma["meaning_id"] for lemma in report["lemmas"]]):
             raise VEError("Lean did not accept every lemma certificate")
-        lean_outcome = "accepted"
-    return {"status": "Checked", "environment_id": env.environment_id,
-            "bundle_id": digest("ve-bundle-v0\n", data), "lemmas": reports,
-            "lean_checked": lean_checked, "lean_outcome": lean_outcome}
+        report = {**report, "lean_checked": True, "lean_outcome": "accepted"}
+    return report
