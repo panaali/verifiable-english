@@ -357,3 +357,17 @@ def test_soft_declarations_and_registry_have_single_canonical_readings():
     assert dispatch("Outranking in this document is strict.",
                     environment({"permitted": permission()})) is None
     assert by_tag("soft-should").profiles == ("soft-norms@0",)
+
+
+def test_rights_incident_prefix_reuses_one_reading_soft_grammar():
+    from tests.test_rights import claim, rights_env
+    from ve.rights import RightsEnvironment
+    from ve.surface.rights import parse_line, render_line
+
+    env = RightsEnvironment(rights_env())
+    source = render_line(env, "life", "claim", claim()["norm"])
+    assert parse_line(env, source, name="protect")["norm"] == claim()["norm"]
+    with pytest.raises(Exception, match="expected Claim, Liberty or Immunity"):
+        parse_line(env, source.replace("Claim of right", "Rule", 1), name="protect")
+    with pytest.raises(Exception, match="Norm consequence has no single declared reading"):
+        parse_line(env, source.replace("must protect", "should generally protect"), name="protect")

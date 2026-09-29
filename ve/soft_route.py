@@ -73,8 +73,10 @@ def check_regenerated(soft_document: SoftNormDocument, elaborated):
                  if item.get("generator") == "soft"]
     if py_soft != lean_soft:
         raise VEError("soft route regeneration mismatch: soft background")
+    # The soft route checks the correlated soft document. Rights limitation
+    # premises are checked by the rights route over the same base vocabulary.
     py_background = [(premise.generator, formula_to_data(env, premise.formula, _generated=True))
-                     for premise in background(env)]
+                     for premise in background(env) if premise.generator != "rights"]
     if py_background != [(item["generator"], item["ast"]) for item in elaborated["background"]]:
         raise VEError("soft route regeneration mismatch: background")
     if list(soft_document.warnings) != elaborated["warnings"]:

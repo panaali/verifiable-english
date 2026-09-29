@@ -14,6 +14,13 @@ from .errors import UnsupportedProfile, VEError
 from .identity import meaning_id
 
 
+def rights_meaning_id(env, content):
+    """Bind one rights candidate to its source environment and exact AST."""
+    from .softnorms import soft_digest
+    return soft_digest(f"ve-meaning-{env.identity_version}\n",
+                       {"environment_id": env.environment_id, "ast": content})
+
+
 def validate_reading_sets(env, values, unit_ids):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
@@ -44,21 +51,36 @@ def validate_reading_sets(env, values, unit_ids):
             raise VEError("open reading set cannot have an author signature")
         ids = set()
         model_ids = set()
+        rights_enabled = "rights@0" in env.profiles
         for reading in readings:
-            if type(reading) is not dict or set(reading) != {"id", "kind", "meaning_id", "content", "admission"}:
+            required_reading = {"id", "kind", "meaning_id", "content", "admission"}
+            if (type(reading) is not dict or not required_reading <= set(reading) or
+                    set(reading) - required_reading - ({"labels"} if rights_enabled else set())):
                 raise VEError("invalid reading")
+            if "labels" in reading:
+                labels = reading["labels"]
+                if (type(labels) is not dict or any(not token(axis) or not token(value)
+                                                    for axis, value in labels.items())):
+                    raise VEError("invalid rights candidate labels")
             if not token(reading["id"]) or reading["id"] in ids:
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
-            _check_kind(reading["kind"])
+            if not (rights_enabled and reading["kind"] in
+                    ("right", "right_lines", "limitation", "bar")):
+                _check_kind(reading["kind"])
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
             if reading["content"] is not None:
-                if env.unit_schema is not None:
+                content = reading["content"]
+                if rights_enabled and type(content) is dict and set(content) == {"right"}:
+                    from .rights import RightsDocument
+                    RightsDocument(env, [content])
+                    content_id = rights_meaning_id(env, content)
+                elif env.unit_schema is not None:
                     from .units import quantity_meaning_id
-                    content_id = quantity_meaning_id(env, reading["content"])
+                    content_id = quantity_meaning_id(env, content)
                 else:
-                    content_id = meaning_id(env, formula_from_data(env, reading["content"]))
+                    content_id = meaning_id(env, formula_from_data(env, content))
                 if content_id != reading["meaning_id"]:
                     raise VEError("reading meaning id does not match content")
             admission = reading["admission"]
@@ -116,6 +138,74 @@ def active_reading_sets(sets):
     return [r for r in sets if latest[r["unit"]] is r]
 
 
+def validate_couplings(env, couplings, sets, unit_ids):
+    if type(couplings) is not list:
+        raise VEError("invalid couplings")
+    if couplings and "rights@0" not in env.profiles:
+        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+    active = {(s["id"], s["version"]): s for s in active_reading_sets(sets)}
+    ids = set()
+    for item in couplings:
+        if (type(item) is not dict or set(item) !=
+                {"id", "axis", "sets", "by", "reason_spans"} or
+                not token(item["id"]) or item["id"] in ids or
+                not token(item["axis"]) or not token(item["by"]) or
+                type(item["reason_spans"]) is not list or not item["reason_spans"] or
+                not set(item["reason_spans"]) <= unit_ids or
+                type(item["sets"]) is not list or len(item["sets"]) < 2):
+            raise VEError("invalid coupling")
+        ids.add(item["id"])
+        seen = set()
+        for reference in item["sets"]:
+            if (type(reference) is not dict or set(reference) != {"set", "version"} or
+                    (reference["set"], reference["version"]) not in active or
+                    reference["set"] in seen):
+                raise VEError("invalid coupling set")
+            seen.add(reference["set"])
+            target = active[(reference["set"], reference["version"])]
+            if any(item["axis"] not in reading.get("labels", {}) for reading in target["readings"]):
+                raise VEError(f"CouplingLabelMissing: {item['id']}, {reference['set']}")
+        values = [set(reading["labels"][item["axis"]] for reading in
+                      active[(ref["set"], ref["version"])]["readings"])
+                  for ref in item["sets"]]
+        if not set.intersection(*values):
+            raise VEError(f"CouplingLabelMissing: {item['id']}, {item['sets'][0]['set']}")
+    if couplings and not coupled_choices(active_reading_sets(sets), couplings, limit=1)[0]:
+        raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(ids)))
+    return ids
+
+
+def coupled_choices(sets, couplings, *, limit=64):
+    """Enumerate only compatible complete choices, stopping past the budget."""
+    constraints = []
+    for item in couplings:
+        constraints.append((item["axis"], tuple(ref["set"] for ref in item["sets"])))
+    choices = []
+    selected = {}
+    def visit(index):
+        if len(choices) > limit:
+            return
+        if index == len(sets):
+            choices.append(dict(selected))
+            return
+        current = sets[index]
+        for number, reading in enumerate(current["readings"]):
+            label_map = reading.get("labels", {})
+            if any(current["id"] in members and any(
+                    selected[other][1].get("labels", {}).get(axis) != label_map.get(axis)
+                    for other in members if other in selected)
+                   for axis, members in constraints):
+                continue
+            selected[current["id"]] = (number, reading)
+            visit(index + 1)
+            selected.pop(current["id"])
+            if len(choices) > limit:
+                return
+    visit(0)
+    return ([{name: pair[0] for name, pair in choice.items()} for choice in choices],
+            len(choices) > limit)
+
+
 def validate_narrowings(values, reading_sets, unit_ids):
     if type(values) is not list:
         raise VEError("narrowings must be a list")
@@ -141,10 +231,16 @@ def validate_narrowings(values, reading_sets, unit_ids):
     return ids
 
 
-def plan_choices(sets, *, limit=64):
+def plan_choices(sets, *, limit=64, couplings=()):
     """Return a sound checking route; no verdict is inferred by this planner."""
     if not sets:
         return {"route": "single", "choices": [{}]}
+    if couplings:
+        choices, over = coupled_choices(sets, couplings, limit=limit)
+        return ({"route": "UNKNOWN", "budget": {"max_choices": limit},
+                 "choice_count": len(choices)} if over else
+                {"route": "enumerate", "choices": choices,
+                 "conditional_on": [f"coupling:{item['id']}" for item in couplings]})
     if all(all(r["kind"] == "asserted" and r["content"] is not None for r in s["readings"])
            for s in sets):
         return {"route": "assertion-disjunction", "choices": None,
@@ -161,7 +257,7 @@ def plan_choices(sets, *, limit=64):
 
 @semantic_entry("readings")
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
-                   max_models=10_000, max_evaluations=100_000, fixed=()):
+                   max_models=10_000, max_evaluations=100_000, fixed=(), couplings=()):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
 
     Every positive proof is replayed by the certificate checker, and every
@@ -173,10 +269,12 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     from .search import check_countermodel, find_countermodel
     from .vacuity import premise_status
 
-    plan = plan_choices(sets)
+    plan = plan_choices(sets, couplings=couplings)
     if plan["route"] == "UNKNOWN":
         return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"]}
-    if plan["route"] == "enumerate":
+    if plan["route"] == "enumerate" and any(
+            r["kind"] != "asserted" or r["content"] is None
+            for s in sets for r in s["readings"]):
         return {"verdict": "UNKNOWN", "route": "enumerate", "choice_count": len(plan["choices"]),
                 "reason": "non-assertion elaborator is not yet available"}
     if env.unit_schema is not None:
@@ -202,6 +300,27 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         checked = check_countermodel(env, premises, conclusion, found.model,
                                      max_evaluations=max_evaluations)
         return found.model.model_id if checked.valid else None
+
+    if couplings:
+        outcomes = []
+        for choice in plan["choices"]:
+            premises = [*fixed_formulas, *(formulas[i][choice[s["id"]]]
+                                            for i, s in enumerate(sets))]
+            labels = [f"readings:{s['id']}@{s['version']}:{s['readings'][choice[s['id']]].get('original_index', choice[s['id']])}"
+                      for s in sets]
+            certificate = prove(premises)
+            model_id = None if certificate is not None else witness(premises)
+            outcomes.append({"choice": labels,
+                             **({"certificate": certificate} if certificate is not None else
+                                {"model_id": model_id} if model_id is not None else
+                                {"status": "UNKNOWN"})})
+        positive = [row for row in outcomes if "certificate" in row]
+        negative = [row for row in outcomes if "model_id" in row]
+        verdict = ("SOME" if positive and negative else
+                   "ALL" if len(positive) == len(outcomes) else
+                   "NONE" if len(negative) == len(outcomes) else "UNKNOWN")
+        return {"verdict": verdict, "route": "coupled-choices", "choices": outcomes,
+                "conditional_on": plan["conditional_on"]}
 
     disjunctions = []
     for rs in formulas:
