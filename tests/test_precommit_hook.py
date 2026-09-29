@@ -1,0 +1,239 @@
+"""tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
+
+Every test stages content into a private index (GIT_INDEX_FILE) and object
+directory (GIT_OBJECT_DIRECTORY, with the repository's objects as alternates),
+so neither the worktree, its real index nor the shared object store changes.
+Secret examples are assembled at run time so this file never contains one.
+"""
+from __future__ import annotations
+
+import hashlib
+import os
+from pathlib import Path
+import subprocess
+import time
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+HOOK = ROOT / "tools/hooks/pre-commit"
+INVENTORY = "lean/VE/Route/frozen-sources.sha256"
+
+
+class Staging:
+    def __init__(self, tmp: Path) -> None:
+        objects = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-path", "objects"],
+                                 cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+        (tmp / "objects").mkdir()
+        self.env = {**os.environ, "GIT_INDEX_FILE": str(tmp / "index"),
+                    "GIT_OBJECT_DIRECTORY": str(tmp / "objects"),
+                    "GIT_ALTERNATE_OBJECT_DIRECTORIES": objects}
+        self.env.pop("VE_SKIP_HOOKS", None)
+        self.tmp = tmp
+        self.git("read-tree", "HEAD")
+
+    def git(self, *args: str, data: bytes | None = None) -> bytes:
+        return subprocess.run(["git", *args], cwd=ROOT, env=self.env, input=data,
+                              capture_output=True, check=True).stdout
+
+    def head(self, path: str) -> bytes:
+        return self.git("cat-file", "blob", f"HEAD:{path}")
+
+    def stage(self, path: str, content: bytes | str | None) -> None:
+        if content is None:
+            self.git("update-index", "--force-remove", "--", path)
+            return
+        data = content.encode() if isinstance(content, str) else content
+        blob = self.git("hash-object", "-w", "--stdin", data=data).decode().strip()
+        self.git("update-index", "--add", "--cacheinfo", f"100644,{blob},{path}")
+
+    def stage_many(self, files: dict[str, bytes]) -> None:
+        """Stage many files with two git processes."""
+        folder = self.tmp / "many"
+        paths = []
+        for number, data in enumerate(files.values()):
+            paths.append(folder / str(number))
+            paths[-1].parent.mkdir(exist_ok=True)
+            paths[-1].write_bytes(data)
+        blobs = self.git("hash-object", "-w", "--stdin-paths",
+                         data="".join(f"{p}\n" for p in paths).encode()).decode().split()
+        self.git("update-index", "--add", "--index-info",
+                 data="".join(f"100644 {blob}\t{path}\n" for blob, path in zip(blobs, files)).encode())
+
+    def rehash(self, *paths: str) -> None:
+        """Update the frozen inventory in the index, as the repository's rules require."""
+        lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines()
+        recorded = dict(reversed(line.split(maxsplit=1)) for line in lines)
+        for path in paths:
+            recorded[path.removeprefix("lean/")] = hashlib.sha256(
+                self.git("cat-file", "blob", f":{path}")).hexdigest()
+        self.stage(INVENTORY, "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
+
+    def run(self, *args: str, **env: str) -> subprocess.CompletedProcess:
+        return subprocess.run([str(HOOK), *args], cwd=ROOT, env={**self.env, **env},
+                              capture_output=True, text=True, check=False)
+
+
+@pytest.fixture
+def staging(tmp_path: Path) -> Staging:
+    return Staging(tmp_path)
+
+
+def rejects(staging: Staging, *messages: str) -> str:
+    result = staging.run()
+    assert result.returncode == 1, result.stderr
+    for message in messages:
+        assert message in result.stderr, result.stderr
+    return result.stderr
+
+
+def passes(staging: Staging) -> None:
+    result = staging.run()
+    assert result.returncode == 0, result.stderr
+
+
+def test_clean_commit_passes(staging):
+    staging.stage("ve/errors.py", staging.head("ve/errors.py") + b"\n# A harmless comment.\n")
+    staging.stage("docs/precommit-probe.md", "# Probe\n\nA token of thanks; the password is in the vault.\n")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")  # ledgered edge
+    staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
+    staging.rehash("lean/VE/Syntax.lean")
+    staging.stage("tools/hooks/unused.txt", None)  # removing an absent path is a no-op
+    passes(staging)
+
+
+def test_nothing_staged_passes(staging):
+    passes(staging)
+
+
+SECRETS = {
+    "AWS access key id": lambda: "AKIA" + "Q7" * 8,
+    "GitHub token": lambda: "ghp_" + "a1B2" * 9,
+    "Anthropic API key": lambda: "sk-" + "ant-api03-" + "x9" * 20,
+    "OpenAI API key": lambda: "sk-" + "proj-" + "Zq8" * 12,
+    "Slack token": lambda: "xox" + "b-1234567890-abcdefghij",
+    "private key block": lambda: "-----BEGIN " + "OPENSSH PRIVATE KEY-----",
+    "credential assignment": lambda: 'api_key = "' + "k3yV4lue" * 4 + '"',
+}
+
+
+@pytest.mark.parametrize("kind", SECRETS)
+def test_secret_in_added_line_is_rejected_without_echoing_it(staging, kind):
+    secret = SECRETS[kind]()
+    staging.stage("ve_experiments/planted.py", f'"""Doc."""\n\nVALUE = {secret!r}\n')
+    stderr = rejects(staging, "secrets check failed", f"ve_experiments/planted.py:3: possible {kind}")
+    assert secret not in stderr and secret[4:] not in stderr
+
+
+def test_secret_allowlist_pragma_and_webapp_private_path(staging):
+    secret = SECRETS["AWS access key id"]()
+    staging.stage("docs/probe.md", f"Example: {secret}  <!-- pragma: allowlist secret -->\n")
+    passes(staging)
+    staging.stage("ve_experiments/.webapp-private/session.json", "{}\n")
+    rejects(staging, "ve_experiments/.webapp-private/session.json: files under .webapp-private/")
+    staging.stage("ve_experiments/.webapp-private/session.json", None)
+    staging.stage("deploy/.env", "MODE=dev\n")
+    rejects(staging, "deploy/.env: private key or environment file")
+
+
+def test_new_outward_python_import_is_rejected(staging):
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import parser\n")
+    rejects(staging, "layer imports check failed",
+            "ve/ast.py: new outward import ve.ast -> ve.parser (layer 1 -> 3)")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py"))
+    staging.stage("ve/planted_module.py", "import ve.ast\n")
+    rejects(staging, "unmapped Python module ve.planted_module")
+
+
+def test_new_outward_lean_import_is_rejected(staging):
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, "import VE.Core.Bridge\nimport VE.Surface\n\nnamespace VE\nend VE\n")
+    staging.rehash(path)
+    rejects(staging, f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)")
+    staging.stage(path, "import VE.Core.Missing\n")
+    staging.rehash(path)
+    rejects(staging, f"{path}: missing local Lean import VE.Core.Missing")
+    staging.stage(path, "import VE.Core.Bridge\n-- import VE.Surface\n")
+    staging.rehash(path)
+    passes(staging)
+
+
+def test_outward_rust_dependency_is_rejected(staging):
+    manifest = staging.head("rust/ve-core/Cargo.toml") + b've = { path = "../ve" }\n'
+    staging.stage("rust/ve-core/Cargo.toml", manifest)
+    rejects(staging, "rust: outward crate dependency: ve-core -> ve")
+
+
+@pytest.mark.parametrize("line, token", [
+    ("theorem planted : 1 = 1 := by sorry", "sorry"),
+    ("theorem planted : 1 = 1 := by admit", "admit"),
+    ("axiom planted : False", "axiom"),
+    ("-- a comment still may not say sorry", "sorry"),  # lean/audit.py scans comments too
+], ids=["sorry", "admit", "axiom", "comment"])
+def test_lean_forbidden_tokens_are_rejected(staging, line, token):
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, f"namespace VE\n\n{line}\n\nend VE\n")
+    staging.rehash(path)
+    rejects(staging, "Lean forbidden tokens check failed", f"{path}:3: forbidden Lean token '{token}'")
+
+
+def test_lean_tokens_outside_lean_ignore_comments_only(staging):
+    path = "experiments/obfuscated-arguments/Feasibility.lean"
+    original = staging.head(path)
+    staging.stage(path, original + b"\n-- no sorry here, only prose\n")
+    passes(staging)
+    staging.stage(path, original + b"\naxiom planted : False\n")
+    rejects(staging, f"{path}:", "forbidden Lean token 'axiom'")
+
+
+def test_frozen_file_change_requires_an_inventory_update(staging):
+    path = "lean/VE/Syntax.lean"
+    staging.stage(path, staging.head(path) + b"\n-- Unreviewed edit.\n")
+    rejects(staging, "frozen files check failed",
+            f"{path}: frozen file changed without an inventory update")
+    staging.rehash(path)
+    passes(staging)
+    staging.stage(path, None)
+    rejects(staging, f"{path}: frozen file deleted but still listed")
+
+
+def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
+    staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
+    rejects(staging, "lean/VE/Core/Planted.lean: unlisted trusted module")
+    staging.stage("lean/VE/Core/Planted.lean", None)
+    first, rest = staging.head(INVENTORY).split(b"\n", 1)
+    staging.stage(INVENTORY, b"0" * 64 + first[64:] + b"\n" + rest)  # a wrong rehash
+    rejects(staging, f"lean/{first[66:].decode()}: frozen file changed without an inventory update")
+    staging.stage(INVENTORY, staging.head(INVENTORY))
+    staging.stage("lean/Main.lean", staging.head("lean/Main.lean") + b"\n-- edit\n")
+    rejects(staging, "lean/Main.lean: existing subcommands changed")
+
+
+def test_emergency_bypass_warns(staging):
+    staging.stage("docs/probe.md", SECRETS["GitHub token"]() + "\n")
+    result = staging.run(VE_SKIP_HOOKS="1")
+    assert result.returncode == 0
+    assert "warning: VE_SKIP_HOOKS=1: pre-commit checks SKIPPED" in result.stderr
+
+
+def test_large_staged_change_stays_under_ten_seconds(staging):
+    files = {}
+    tracked = staging.git("ls-files", "-z", "--", "ve", "lean/VE").decode().split("\0")
+    python = [p for p in tracked if p.endswith(".py")]
+    lean = [p for p in tracked if p.endswith(".lean")]
+    for path in python:
+        files[path] = staging.head(path) + b"\n# Timing probe.\n"
+    for path in lean:
+        files[path] = staging.head(path) + b"\n-- Timing probe.\n"
+    line = b"The applicant qualifies when every listed condition holds on the reference date.\n"
+    for number in range(1500):
+        files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
+    staging.stage_many(files)
+    staging.rehash(*lean)
+    started = time.perf_counter()
+    result = staging.run("--timings")
+    elapsed = time.perf_counter() - started
+    assert result.returncode == 0, result.stderr
+    assert elapsed < 10, result.stderr
+    print(f"\n{len(files) + 1} staged paths, {sum(map(len, files.values())) / 1e6:.1f} MB: "
+          f"{elapsed:.2f} s\n{result.stderr}")
