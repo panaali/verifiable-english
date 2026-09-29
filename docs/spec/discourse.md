@@ -469,7 +469,9 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
 3. Names bind declared constants to unique display strings per scope (1.3); content names bind display strings to
    existing units per scope; every document name is a declared constant of `document_sort` and no other constant
    has that sort (1.6); imports pin `source_id` and `document_id`; an `embedded` unit exists and has kind `meta`.
-4. Every mention lies inside its unit's span; mention spans within one unit are disjoint or properly nested
+4. Every mention names a unit and its byte range starts and ends on tokens the lexer (6) reads from that unit's
+   own bytes (`InvalidInput: mention <m> names an unknown unit`, `InvalidInput: mention <m> span`), checked for
+   every mention before the rest of the block; mention spans within one unit are disjoint or properly nested
    (`InvalidInput: mentions <a>, <b> overlap`); every target exists (`UnresolvedReference` when the manifest
    records none, `DanglingAnchor`, `UnknownDocument`, `UnknownRule`, W3's `Citation is absent, cyclic, or not
    earlier in the bundle`); a `plural` target lists at least two distinct members, an `ordinal_pair` target's
@@ -509,6 +511,10 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
 
    The lexer (a named trust boundary): words are separated at every character `str.isspace` reads as a space;
    `,;:!?()"` are single punctuation tokens, and so is `.` unless it lies between two ASCII letters or digits.
+   A recorded mention's surface is read as the lexer's words of its byte range (the Lean `surfaceOk`, Python's
+   `_surface_fits`): a pronoun is one pronoun word, a demonstrative `this|that` and one word that is a sort's name
+   or declared singular noun, an ordinal pair `the` and `former|latter`, whatever spaces separate them
+   (`The former`, `The\u00a0former` and `The  former` alike).
 7. Groups and constraints are well-formed (1.5): listed units carry no content and no reading set other than the
    owning set (`IndependentFragment`), the group's reading regenerates per group (`groupFormula`), the
    `same-witness` content shares its witness (`WitnessSplit`), constraints name active readings by
@@ -542,10 +548,13 @@ entity, constant c        c is registered (1.3) with scope σ and m.unit lies in
                           AND, for a pronoun or bare demonstrative, no competing quantified mention: no existential or
                           universal binder of c's sort occurs in an earlier sentence of the innermost anchor
                           containing m, nor earlier in m's own sentence (natural-view rule, scoped by anchor and
-                          sort; these binders are an explicit input of Acc, listed below)
+                          sort; these binders are an explicit input of Acc, listed below). Read as segments (4.1(6)):
+                          a quantifier word `every|a|an|some` followed, later in the same sentence, by the segments of
+                          a word of c's sort (its name or declared `verbalisation.singular`), whatever lies between,
+                          so `A service's owner`, `A service’s owner` and `A big red service` each bind a service
 entity, list [c₁ … cₙ]     form plural; n ≥ 2, the cᵢ distinct, each cᵢ accessible as a constant above (form plural)
-entity, pair (c₁, c₂), k  form ordinal_pair; the coordination "c₁ and c₂" (two registered display forms joined by
-                          `and`) occurs in an earlier sentence of the innermost anchor containing m or earlier in
+entity, pair (c₁, c₂), k  form ordinal_pair; the coordination "c₁ and c₂" (the segments of two registered display
+                          forms joined by the segment `and`, so `Alice and Bob's manager` coordinates) occurs in an earlier sentence of the innermost anchor containing m or earlier in
                           m's own sentence, both cᵢ accessible as constants; the candidate is member k (the former:
                           1, the latter: 2); two such coordinations are two candidates
 entity, binder:i          only inside the sentence or rule that introduces binder i, in a position the binder scopes
@@ -553,7 +562,8 @@ entity, binder:i          only inside the sentence or rule that introduces binde
                           negation, disjunction, a conditional, quotation or an attitude
 predicate p               p declared in E at definitions_version; for definition_ref, p is in the named anchor's
                           `exports` (1.2); for such, p is a declared unary predicate applied, as a restrictive
-                          modifier of the same noun, in an earlier sentence of the innermost anchor containing m or
+                          modifier of the same noun (a quantifier word, the predicate's `_`-joined segments, then a
+                          word of a sort, all as segments), in an earlier sentence of the innermost anchor containing m or
                           earlier in m's own sentence (the explicitly bound property; its argument sort is the
                           candidate's sort); two such properties are two candidates
 unit / anchor             the ids exist; forward references allowed after indexing; a content name lists the units
@@ -1041,10 +1051,12 @@ def innermostAnchor (D : DDoc) (unit : String) : Option Anchor
 def registered (D : DDoc) (c : String) : Option Name
 def within (D : DDoc) (unit anchor : String) : Bool
 def sortOf (E : VE.Environment) (c : String) : Option String := E.constants c
-def earlierBinders (D : DDoc) (m : Slot) : List String        -- sorts of the binders of earlier sentences of the innermost anchor and earlier in m's sentence: an input of Acc
+def scopeSegments (D : DDoc) (m : Slot) : List (List String)  -- the segments of earlier sentences of the innermost anchor and of m's sentence before m
+def bindsSort (D : DDoc) (ws : List String) (s : String) : Bool -- a quantifier word followed later in ws by a word of s
 def earlierPairs (D : DDoc) (m : Slot) : List (String × String) -- the coordinations "c₁ and c₂" of those sentences: an input of Acc
 def earlierProperties (D : DDoc) (m : Slot) : List (String × String) -- (predicate, noun sort) applied restrictively in those sentences: an input of Acc
-def competingQuantifier (D : DDoc) (m : Slot) (sort : String) : Bool := sort ∈ earlierBinders D m
+def competingQuantifier (D : DDoc) (m : Slot) (sort : String) : Bool :=  -- a binder of the sort in those sentences: an input of Acc
+  (scopeSegments D m).any fun ws => bindsSort D ws sort
 def binderScopes (D : DDoc) (m : Slot) (i : Nat) : Bool                   -- binder i of m's own sentence scopes over m's slot
 def candidateSort (D : DDoc) (m : Slot) (t : Target) : Option (List String) -- 1.4: the sort(s) of an entity candidate; a predicate's argument sort for such
 def formFits (f : Form) (k : TargetKind) : Bool
@@ -1191,9 +1203,11 @@ theorem accessible_iff (D : DDoc) (m : Slot) (t : Target) : t ∈ accessible D m
 theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     (hK : D.K.names = D₂.K.names ∧ D.K.contentNames = D₂.K.contentNames ∧ D.K.anchors = D₂.K.anchors ∧
           D.K.documents = D₂.K.documents ∧ D.K.definitionsVersion = D₂.K.definitionsVersion ∧ D.E = D₂.E)
+    (hN : D.nouns = D₂.nouns)
     (ha : innermostAnchor D m.unit = innermostAnchor D₂ m.unit)
     (ht : ∀ a u, innermostAnchor D m.unit = some a → within D u a.id = true → D.text u = D₂.text u)
-    (hb : D.base.units.map DocUnit.id = D₂.base.units.map DocUnit.id) :
+    (hp : ∀ a u, innermostAnchor D m.unit = some a → within D u a.id = true → unitString D u = unitString D₂ u)
+    (hb : unitKeys D = unitKeys D₂ ∧ lemmaNames D = lemmaNames D₂) :
   Acc D m t ↔ Acc D₂ m t
 
 /-- Neither the recorded targets nor the reading choices are inputs of Acc (no pruning). -/
@@ -1946,3 +1960,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-09-28 | Draft 3 | The first verification pass of draft 2 applied (`manage-agents/discourse-p3ver1.final.md`, FAIL). F1: η declares `reviewed : person` (the default `reviewed : service` made "Alice is reviewed" ill-typed) and registers `api` and `alice` only, so that `Her` has one type-checking candidate. A2/F2: a nested mention is a slot of the unit's derivation, not a non-slot binding: 1.4 states that both the `possessive` and the enclosing `definite` are slots, the inner substituted first and the recorded `restriction` compared with the regenerated one (`ManifestMismatch: mentions.<m>.restriction`); `slots(d)`, `recordedSlots` and `elaborateD` fix the order (enclosing before nested; innermost substituted first); 4.1(6) and η state the slot correspondence over nested mentions too. F8: the natural-view agreement condition is the coincidence of the candidate sets and of the competing-quantifier sets (4.2), not a shared sort; α′ adds the one-sort counterexample (a registered, unmentioned second `service` constant) and the earlier-anchor binder case; 9.8, the section 10 closing paragraph and 13.17 say the same. A6: `compatible_no_sets` takes `0 < n` (`productSize [] = 1`, so `compatible_budget` applies at `n = 0`); the `compatibleChoices` comment and 4.8 say so. Spec only. |
 | 2026-09-28 | Draft 4 | The second verification pass applied (`manage-agents/discourse-p3ver2.final.md`, FAIL, two defects). F8: coincidence of the candidate and competing-quantifier sets is a sufficient condition for natural-view agreement, not a necessary one (4.2; α′ adds the case where both reject with two versus three candidates; 13.17; the plan's "only where" removed). 4.5: a binary restriction's other argument is a resolved entity; it is the nested slot's target only where the description contains a nested mention (η), and a contextual description without one ("the owner" as `owns(x, api)`) carries the constant in the manifest's `restriction`. Spec only. |
 | 2026-09-29 | Draft 4, amendment | Slot discovery stated as one function of each unit's own bytes (4.1(6)), after the discourse loop's final findings (`manage-agents/discourse-loop.final.md`, `discourse-slots-directive.md`): per-unit tokens, the four-character case fold, segments, longest-first surfaces and exact byte coverage, checked for every unit before any is resolved; `UnrecordedSlot` prints prose bytes in both checkers. |
+| 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse2-looprecheck1.final.md`: the text inputs of `Acc` (binders, coordinations, restrictive properties) are read as the segments of 4.1(6), so a joined word (`service's`, `Bob’s`) never hides one, and a binder is a quantifier word followed later in its sentence by a word of the sort (its name or declared singular noun); a recorded surface is read as the lexer's words (any spaces); a mention's byte range must start and end on its unit's tokens (4.1(4)), in Python as in Lean. `acc_no_heuristic` takes the declared nouns and the units' bytes. |

@@ -35,7 +35,8 @@ verdict on the formulas Python admitted, over α and every sub-case of α′).
 
 **Accessibility and resolution (9.2).** `accessible_iff`: the executable list and the relation agree.
 `acc_no_heuristic`: two documents that agree on the registrations, content names, anchors, documents,
-definitions version, environment, unit table, lemma names, innermost anchor and the texts inside it agree on
+definitions version, environment and its sorts' nouns, unit table, lemma names, innermost anchor and the texts
+(tokens and bytes) inside it agree on
 `Acc`. `acc_ignores_manifest_choices`: recorded targets and reading choices are not inputs of `Acc`.
 `no_witness_escape`, `name_scope`, `kind_fit`, `mem_derivs` (the all-derivations gate). `validate_sound`:
 whatever the validator returns is the unique accepted resolution. `validate_slots_recorded`.
@@ -83,6 +84,14 @@ surface (`discourseSourceSurface`).
   mention with exactly their byte range (`Mention.bytes`); overlapping or containing one is not enough. The lexer
   also reads each unit alone and folds its words, so `İt` is the pronoun `it` and `ſome` a competing quantifier,
   as in Python. Fail closed: a non-ASCII letter splits segments, so a word such as `Itália` has the surface `it`.
+- **`Acc` reads the same segments** (4.2): the competing binders (`bindsSort`: a quantifier word followed later in
+  the sentence by a word of the sort, its name or declared singular noun), the coordinations of an ordinal or
+  plural and the restrictive properties of `such` are read from the segments of the earlier sentences of the
+  innermost anchor and of the slot's sentence before it (`scopeSegments`), so `A service's owner` and
+  `A service’s owner` bind a service and `Alice and Bob's manager` coordinates, in Lean as in Python. A recorded
+  surface is read as the lexer's words (`surfaceOk`; `The\u00a0former` is the ordinal), and a mention's byte range
+  that does not start and end on its unit's tokens is `InvalidInput: mention <m> span` in both checkers, before
+  any other check of the block.
   A bound unit's content and every reading of its active set must be its elaboration
   (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
   therefore not admitted by the route (fail closed).
