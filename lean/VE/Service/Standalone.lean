@@ -1,5 +1,6 @@
 import VE.Norms.Plain
 import VE.Core.Wire
+import VE.Core.Layers
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
 
@@ -21,6 +22,9 @@ Identities are computed over the submitted JSON. -/
 structure Validated where
   envelope : VE.Route.Gate.Envelope
   decodable : Json
+  /-- On the core family with `definitions@0` or `data@0` layer fields: the
+  environment with those fields, from which `Core.Layers` decodes them. -/
+  layers : Option Json := none
 
 def validateFamily (e : VE.Route.Gate.Envelope) (environment : Json) : Except String Unit :=
   match e.family with
@@ -41,7 +45,7 @@ def stripPredicates (e : VE.Route.Gate.Envelope) (environment : Json) (names : L
   let stripped ← predicates.mapM fun (p, entry) => do
     pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (fun f => !names.contains f.1)))
   let vocabulary := e.vocabulary.setObjVal! "predicates" (Json.mkObj stripped)
-  pure ⟨{ e with vocabulary }, environment.setObjVal! "vocabulary" vocabulary⟩
+  pure { envelope := { e with vocabulary }, decodable := environment.setObjVal! "vocabulary" vocabulary }
 
 /-- A `reports@0` environment as its FOL family reads it for typing: the
 profile, the `reports` block and constant verbalisations removed (the route
@@ -105,7 +109,7 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
   let environment ← if typing then typingReduced environment else pure environment
   let e ← VE.Route.Gate.decodeEnvelope environment
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
-  let mut v : Validated := ⟨e, environment⟩
+  let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     -- Check the regulated extension, then strip it: the family decoders see
@@ -114,6 +118,13 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     v ← stripPredicates v.envelope v.decodable ["regulated"]
   if typing && e.family == .closureNary then
     v ← stripPredicates v.envelope v.decodable ["defined", "functional", "total"]
+  else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
+    -- The core decoder has neither layer: they are validated over the FOL
+    -- projection by the FOL route's decoders, as the core route does.
+    let _ ← VE.Core.Layers.decodeLayers e.profiles v.decodable
+    let layered := v.decodable
+    v ← stripPredicates v.envelope v.decodable VE.Core.Layers.layerFields
+    v := { v with layers := some layered }
   validateFamily v.envelope v.decodable
   pure v
 
@@ -141,7 +152,8 @@ def rowLE : List String → List Json → List Json → Bool
     if ordering == .eq then rowLE sorts xs ys else ordering == .lt
   | _, _, _ => true
 
-/-- Domain order is semantic and is retained. The model decoder checks row
+/-- Python's model identity normalisation (`ve/model.py` `_normalized`): each
+domain's entities and each relation's rows sorted. The model decoder checks
 uniqueness and types before this normalisation is used for identity. -/
 def normalizedModel (environment j : Json) : Except String Json := do
   let relations ← VE.Bridge.fields (← j.getObjVal? "relations")
@@ -155,7 +167,12 @@ def normalizedModel (environment j : Json) : Except String Json := do
     pure (name, Json.arr ((array.toList.mergeSort (fun a b =>
       rowLE sorts (a.getArr?.toOption.getD #[]).toList
         (b.getArr?.toOption.getD #[]).toList)).toArray))
-  pure (j.setObjVal! "relations" (Json.mkObj sorted))
+  let domains ← VE.Bridge.fields (← j.getObjVal? "domains")
+  let domains ← domains.mapM fun (name, values) => do
+    let array ← values.getArr?
+    pure (name, Json.arr ((array.toList.mergeSort (fun a b =>
+      decide ((a.getStr?.toOption.getD "") ≤ (b.getStr?.toOption.getD "")))).toArray))
+  pure ((j.setObjVal! "relations" (Json.mkObj sorted)).setObjVal! "domains" (Json.mkObj domains))
 
 def modelCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
@@ -166,8 +183,21 @@ def modelCase (j : Json) : Except String Json := do
   match e.family with
   | .closureNary =>
     let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
-    let _ ← VE.Core.Wire.decodeModel v model
-    pure ()
+    match checked.layers with
+    | none =>
+      let _ ← VE.Core.Wire.decodeModel v model
+      pure ()
+    | some layered =>
+      -- As `Core.Layers.run`: the FOL projection of the model with its flags
+      -- checked and defined tables computed, then the core model with them.
+      let rv ← VE.Core.Layers.decodeLayers e.profiles layered
+      let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
+      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
+      let tables := (VE.Definitions.names rv.definitions).map fun p =>
+        (p, VE.Core.Layers.tableJson (M.relations p))
+      let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
+      let _ ← VE.Core.Wire.decodeModel v (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))
+      pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
     let _ ← VE.Route.Wire.decodeOrderModel v model
@@ -176,6 +206,11 @@ def modelCase (j : Json) : Except String Json := do
     let v ← VE.Route.Run.decodeRouteVocabulary e
     let _ ← VE.Route.Wire.decodeDataModel v model
     pure ()
+  -- The norms profile generator last, as Python's `validate_background` orders
+  -- it: each required relation within its permission (`Plain.profileOk`).
+  let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
+  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+    VE.Norms.Plain.profileOk ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩ model
   let environmentId ← VE.Route.Wire.environmentId e.profiles environment
   let modelId ← VE.CertificateWire.digest
     s!"ve-model-{VE.Route.Wire.identityVersion e.profiles}\n"
