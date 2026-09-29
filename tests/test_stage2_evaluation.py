@@ -364,3 +364,33 @@ def test_order_countermodel_check_matches_python(monkeypatch, budget):
     expected = check_countermodel(*args, max_evaluations=budget)
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert check_countermodel(*args, max_evaluations=budget) == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("layers", [("definitions@0",), ("data@0",), ("data@0", "definitions@0")])
+def test_core_family_layers_match_python(monkeypatch, layers):
+    """Definitions and data flags on closure@0 + nary@0 through the Lean core route."""
+    from tests.probe_matrix import model_wire, raw_environment
+    from ve.errors import InvalidModel
+    env = Environment(raw_environment(("closure@0", "nary@0", *layers)))
+    data = model_wire(env)
+    model = FiniteModel.from_dict(env, data)
+    formula = (Unary("derived", Const("x")) if "definitions@0" in layers
+               else Binary("edge", Const("x"), Const("x")))
+    results = {}
+    for authority in ("python", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        results[authority] = (
+            [(p.generator, p.formula) for p in background(env)],
+            evaluate(env, formula, model, trace=False).to_dict(),
+            check_countermodel(env, (formula,), Bottom(), model),
+            find_countermodel(env, (), formula, max_domain_size=2, max_models=50).to_dict())
+    assert results["lean"] == results["python"]
+    if "data@0" in layers:
+        from ve.ast import formula_to_data
+        from ve.backends.lean_runner import run
+        bad = {**data, "relations": {**data["relations"], "edge": [["i", "i"], ["i", "j"]]}}
+        with pytest.raises(InvalidModel) as caught:
+            run("route", [{"id": "bad", "kind": "evaluate", "environment": env.to_dict(),
+                           "model": bad, "ast": [formula_to_data(env, formula)]}])
+        assert caught.value.generator == "flags"
