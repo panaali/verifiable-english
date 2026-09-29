@@ -190,6 +190,50 @@ def _shape_case(case):
                      "quantities", "cites", "facts"):
             if name not in record:
                 raise VEError(f"InvalidInput: risk-decision.{name}")
+        if set(record) != {"format", "id", "chooser", "chooser_label", "policy", "alternatives",
+                           "quantities", "cites", "facts"}:
+            raise VEError("InvalidInput: risk-decision.fields")
+        for name in ("id", "chooser", "chooser_label"):
+            if type(record[name]) is not str or not record[name]:
+                raise VEError(f"InvalidInput: risk-decision.{name}")
+        policy = record["policy"]
+        if type(policy) is not dict or set(policy) != {"environment_id", "document_hash"} or any(
+                type(value) is not str for value in policy.values()):
+            raise VEError("InvalidInput: risk-decision.policy")
+        for field, mandatory, optional in (
+            ("alternatives", {"name", "label"}, {"kind", "inaction"}),
+            ("quantities", {"name", "label", "tag"}, {"kind"}),
+            ("cites", {"id", "seq", "hash"}, set()),
+            ("facts", {"predicate", "args", "entry"}, set()),
+        ):
+            rows = record[field]
+            if type(rows) is not list:
+                raise VEError(f"InvalidInput: risk-decision.{field}")
+            for row in rows:
+                if type(row) is not dict or not mandatory <= row.keys() or row.keys() - mandatory - optional:
+                    raise VEError(f"InvalidInput: risk-decision.{field}")
+                for key, value in row.items():
+                    expected = (bool if key == "inaction" else int if key == "seq" else
+                                list if key == "args" else str)
+                    if type(value) is not expected or expected is str and not value:
+                        raise VEError(f"InvalidInput: risk-decision.{field}.{key}")
+                if field == "facts" and any(type(arg) is not str for arg in row["args"]):
+                    raise VEError("InvalidInput: risk-decision.facts.args")
+        for supplied in (entry, *case["entries"]):
+            if type(supplied) is not dict or type(supplied.get("kind")) is not str:
+                raise VEError("InvalidInput: risk-decision.entry")
+            if supplied["kind"] not in {"estimate", "setting", "condition", "statement",
+                                    "supersession", "instruction", "decision", "taken", "outcome"}:
+                raise VEError("InvalidInput: risk-decision.kind")
+            if supplied["kind"] == "estimate" and ("seq" not in supplied or "day" not in supplied):
+                raise VEError(f"EstimateProvenance: {supplied.get('id', '?')} recorded")
+            for key in ("seq", "day", "id", "kind", "content", "prev", "hash"):
+                if key not in supplied:
+                    raise VEError(f"InvalidInput: risk-decision.{key}")
+            if (type(supplied["seq"]) is not int or supplied["seq"] < 0
+                    or any(type(supplied[key]) is not str for key in ("day", "id", "prev", "hash"))
+                    or type(supplied["content"]) is not dict):
+                raise VEError("InvalidInput: risk-decision.entry")
     elif kind == "risk-audit":
         log = case.get("log")
         if type(log) is not dict or log.get("format") != "ve-risk-log@0" or type(log.get("entries")) is not list:
