@@ -82,6 +82,25 @@ def labelValues (sets : List Json) (ref : String × Nat) (axis : String) : List 
         (l.getObjValD axis).getStr?.toOption)
     | _ => []
 
+/-- The active version of a set is its latest one, as on the Python route. -/
+def activeVersion (sets : List Json) (name : String) : Option Nat :=
+  (sets.filterMap (fun s =>
+    if s.getObjValD "id" == .str name then (s.getObjValD "version").getNat?.toOption
+    else none)).max?
+
+/-- Whether one reading per coupled set can be chosen so that every coupling agrees on its
+axis (6.2): a joint search over complete choices, not one axis at a time. Each set's readings
+are first reduced to their distinct values on the coupled axes. -/
+def jointlySatisfiable (constraints : List (String × List String)) :
+    List (String × List Json) → List (String × Json) → Bool
+  | [], _ => true
+  | (name, labels) :: rest, chosen =>
+    labels.any (fun lab =>
+      constraints.all (fun (axis, members) => !members.contains name ||
+        chosen.all (fun (other, previous) => !members.contains other ||
+          previous.getObjValD axis == lab.getObjValD axis)) &&
+      jointlySatisfiable constraints rest ((name, lab) :: chosen))
+
 def validateCouplings (document : Json) : Except String (List String) := do
   let units := (← (← document.getObjVal? "units").getArr?).toList
   let unitIds ← units.mapM (fun u => VE.Bridge.stringField u "id")
@@ -112,6 +131,7 @@ def validateCouplings (document : Json) : Except String (List String) := do
       let some s := sets.find? (fun s => s.getObjValD "id" == .str ref.1 &&
           (s.getObjValD "version").getNat?.toOption == some ref.2)
         | throw "invalid coupling set"
+      unless activeVersion sets ref.1 == some ref.2 do throw "invalid coupling set"
       let readings := match s.getObjValD "readings" with
         | .arr xs => xs.toList
         | _ => []
@@ -121,28 +141,24 @@ def validateCouplings (document : Json) : Except String (List String) := do
     let common := labelValues sets refs.head! axis
     unless common.any (fun v => refs.all (fun ref => (labelValues sets ref axis).contains v)) do
       throw s!"CouplingLabelMissing: {id}, {refs.head!.1}"
-  -- Couplings on one axis that overlap share a single label value.
-  for c in couplings do
-    let axis := (c.getObjValD "axis").getStr?.toOption.getD ""
-    let mut members := (← (c.getObjValD "sets").getArr?).toList.filterMap
-      (fun r => (r.getObjValD "set").getStr?.toOption)
-    for _ in [:couplings.length] do
-      for other in couplings do
-        if other.getObjValD "axis" == .str axis then
-          let os := match other.getObjValD "sets" with
-            | .arr xs => xs.toList.filterMap (fun r => (r.getObjValD "set").getStr?.toOption)
-            | _ => []
-          if os.any members.contains then members := (members ++ os).eraseDups
-    let refs := sets.filterMap (fun s =>
-      let name := (s.getObjValD "id").getStr?.toOption.getD ""
-      if members.contains name then
-        (s.getObjValD "version").getNat?.toOption.map (name, ·)
-      else none)
-    let common := match refs.head? with
-      | some ref => labelValues sets ref axis
+  -- The couplings together must admit a complete choice (6.2).
+  let constraints := couplings.map (fun c =>
+    ((c.getObjValD "axis").getStr?.toOption.getD "",
+     match c.getObjValD "sets" with
+     | .arr xs => xs.toList.filterMap (fun r => (r.getObjValD "set").getStr?.toOption)
+     | _ => []))
+  let axes := (constraints.map (·.1)).eraseDups
+  let names := (constraints.flatMap (·.2)).eraseDups
+  let vars := names.map (fun name =>
+    let labels := match sets.find? (fun s => s.getObjValD "id" == .str name &&
+        (s.getObjValD "version").getNat?.toOption == activeVersion sets name) with
+      | some s => match s.getObjValD "labels" with
+        | .arr ls => ls.toList
+        | _ => []
       | none => []
-    unless common.any (fun v => refs.all (fun ref => (labelValues sets ref axis).contains v)) do
-      throw s!"CouplingUnsatisfiable: {String.intercalate ", " ids}"
+    (name, (labels.map (fun l => Json.mkObj (axes.map (fun a => (a, l.getObjValD a))))).eraseDups))
+  unless jointlySatisfiable constraints vars [] do
+    throw s!"CouplingUnsatisfiable: {String.intercalate ", " (VE.Route.sortStrings ids)}"
   return ids
 
 def selectedValue (document : Json) (report : VE.Graph.Report) (set : String)

@@ -410,6 +410,60 @@ def test_rights_admission_validates_coupled_reading_labels(lean):
     assert rows[2]["error"] == "ResourceLimit: couplings"
 
 
+def test_rights_admission_couplings_need_one_complete_choice_as_in_python(lean):
+    # Each axis alone is satisfiable, but no single choice of a's and b's readings agrees on
+    # both: 6.2 rejects at admission on both routes, with the ids sorted.
+    from ve.errors import VEError
+    from ve.readings import validate_couplings
+    from ve.rights import RightsEnvironment
+    from tests.test_rights import rights_env
+    raw = env(ARREST)
+    source = [right("r9", [line("claim", norm("no-arbitrary-arrest", "arrest_permitted", False))])]
+    elaborated = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": raw,
+                             "document": source}])[0]
+    premise = elaborated["premises"][0]
+    labels = {"a": [{"force": "strict", "polarity": "positive"},
+                    {"force": "default", "polarity": "negative"}],
+              "b": [{"force": "strict", "polarity": "negative"},
+                    {"force": "default", "polarity": "positive"}]}
+
+    def document(axes, sets=labels, versions=(("a", 1), ("b", 1)), refs=1):
+        couplings = [{"id": f"z-{axis}", "axis": axis,
+                      "sets": [{"set": name, "version": refs} for name in ("a", "b")],
+                      "by": "translator", "reason_spans": ["u1"]} for axis in axes]
+        return {"units": [{"id": "u1", "span": [0, 1], "kind": "right", "content": source[0]}],
+                "graph": {"root": "leaf", "nodes": [
+                    {"name": "leaf", "ast": premise["ast"], "label": premise["label"]}]},
+                "reading_sets": [{"id": name, "version": version,
+                                  "readings": [["top"], ["bottom"]], "labels": sets[name]}
+                                 for name, version in versions],
+                "couplings": couplings}
+
+    def python(doc):
+        sets = [{"id": s["id"], "version": s["version"], "unit": s["id"],
+                 "readings": [{"labels": lab} for lab in s["labels"]]}
+                for s in doc["reading_sets"]]
+        try:
+            validate_couplings(RightsEnvironment(rights_env()), doc["couplings"], sets, {"u1", "a", "b"})
+        except VEError as error:
+            return str(error)
+        return None
+
+    agreed = {**labels, "b": [{"force": "strict", "polarity": "positive"},
+                              {"force": "default", "polarity": "negative"}]}
+    cases = [document(("polarity", "force")), document(("force",)), document(("polarity",)),
+             document(("force", "polarity"), agreed),
+             document(("force",), versions=(("a", 1), ("a", 2), ("b", 1)))]
+    rows = run(lean, [{"id": str(i), "kind": "admission", "environment": raw, "document": doc}
+                      for i, doc in enumerate(cases)])
+    assert rows[0]["error"] == python(cases[0]) == "CouplingUnsatisfiable: z-force, z-polarity"
+    assert rows[1]["admitted"] is True and python(cases[1]) is None
+    assert rows[2]["admitted"] is True and python(cases[2]) is None
+    assert rows[3]["admitted"] is True and python(cases[3]) is None
+    # a coupling may name only the latest version of a set
+    assert rows[4]["error"] == python(cases[4]) == "invalid coupling set"
+
+
 def test_soft_cases_delegate_unchanged(lean):
     raw = env(DEPRIVE, profiles=("norms@0", "soft-norms@0"))
     del raw["vocabulary"]["rights"]
