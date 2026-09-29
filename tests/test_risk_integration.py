@@ -79,6 +79,56 @@ def test_spec_cell_three_way(fixture, peak, free, form, expected):
     assert lean_cell == (rust_cell["might"], rust_cell["leads"]) == expected
 
 
+@pytest.mark.parametrize("sufficient,necessary,expected", [
+    # Review A2: S and N are the same condition after normalisation (4.4 V8): 8 and 8.0 lower
+    # to one grid value, so V8 does not build S ∧ ¬N and the record is valid in both.
+    (["lt", dec("gb", "8"), q("peak_memory")], ["lt", dec("gb", "8.0"), q("peak_memory")], (True, False)),
+    (["lt", ["add", "gb", dec("gb", "8"), ["scale", "gb", "0", q("free_memory")]], q("peak_memory")],
+     ["lt", dec("gb", "8"), q("peak_memory")], (True, False)),
+    # a different coefficient order is a different condition in Lean: S ∧ ¬N then shares peak
+    (["lt", ["add", "gb", q("peak_memory"), q("free_memory")], dec("gb", "20")],
+     ["lt", ["add", "gb", q("free_memory"), q("peak_memory")], dec("gb", "20")], "RiskConditionShared"),
+])
+def test_same_condition_after_normalisation_three_way(sufficient, necessary, expected):
+    env = cell_env()
+    policy = run_case({"id": "p", "kind": "risk-elaborate", "environment": env, "document": {"norms": []}})
+    log = Log()
+    log.add(1, "E1", "estimate", estimate("peak_memory", "6", "12", "profiler", "statistical"))
+    log.add(2, "E2", "estimate", estimate("free_memory", "8", "10", "monitor", "observation"))
+    log.add(3, "S", "condition", condition("act", "server_outage", "sufficient", sufficient))
+    log.add(4, "N", "condition", condition("act", "server_outage", "necessary", necessary))
+    alternatives = [{"name": "act", "label": "acting"},
+                    {"name": "nothing", "label": "doing nothing", "inaction": True}]
+    quantities = [{"name": name, "label": name, "tag": "gb"} for name in ("peak_memory", "free_memory")]
+    decision = log.add(5, "DX", "decision", record(
+        "x", "the_agent", "the agent", (policy["environment_id"], policy["document_hash"]),
+        alternatives, quantities, log.cite("E1", "E2", "S", "N")))
+    lean = run_case({"id": "v8", "kind": "risk-decision", "environment": env, "document": {"norms": []},
+                     "decision": decision, "entries": log.entries[:-1]})
+    prepared = {"id": "v8", "kind": "risk-cells",
+                "ranges": {"peak_memory": {"tag": "gb", "lo": "6", "hi": "12"},
+                           "free_memory": {"tag": "gb", "lo": "8", "hi": "10"}},
+                "scales": {"gb": "1"},
+                "record": {"alternatives": ["act", "nothing"], "harms": ["server_outage"],
+                           "classes": {"server_outage": "serious"}, "always_possible": [],
+                           "unexamined": "possible",
+                           "cells": [{"action": "act", "harm": "server_outage",
+                                      "sufficient": sufficient, "necessary": necessary}]}}
+    completed = subprocess.run([str(RUST), "conformance"], input=json.dumps([prepared]),
+                               text=True, capture_output=True, timeout=60)
+    rust = json.loads(completed.stdout)[0]
+    if isinstance(expected, str):
+        assert lean["status"] == "error" and lean["error"].startswith(expected), lean
+        assert rust["status"] == "error", rust
+        assert f'{rust["error"]["code"]}: {rust["error"]["message"]}' == lean["error"]
+        return
+    assert lean["status"] == "ok", lean
+    cell = ("act", "server_outage")
+    lean_cell = (cell in {(r["alternative"], r["harm"]) for r in lean["tables"]["might"]},
+                 cell in {(r["alternative"], r["harm"]) for r in lean["tables"]["leads"]})
+    assert lean_cell == (rust["tables"][0]["might"], rust["tables"][0]["leads"]) == expected
+
+
 def test_w2_admission_through_python_route_binds_regenerated_risk_leaf():
     env = cell_env()
     source = {"id": "policy", "kind": "risk-elaborate", "environment": env,
