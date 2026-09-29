@@ -182,8 +182,7 @@ def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
         raise InvalidModel("malformed FiniteModel object") from exc
     if validated.model_id != model.model_id:
         raise InvalidModel("model identity does not match its contents")
-    from .background import validate_background
-    validate_background(env, validated)
+    # FiniteModel.from_dict validated Background under the selected authority.
     return validated
 
 

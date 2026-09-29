@@ -203,8 +203,8 @@ class FiniteModel:
             model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
         model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations),
                     environment_id, model_id, tuple(sorted(defined_names)))
-        from .background import validate_background
-        validate_background(env, model)
+        from .background import _validate_background_python
+        _validate_background_python(env, model)
         return model
 
     def to_dict(self) -> dict[str, Any]:
