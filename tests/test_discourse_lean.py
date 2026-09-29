@@ -353,7 +353,7 @@ def test_eta_nested_mentions(lean):
     assert unit_result(resolve(eta(target="api"), env(PERSON)), "u2") == "IllTypedTarget: m1: api"
     ready_service = env({"reviewed": ["person"], "ready": ["service"]})
     assert unit_result(resolve(eta(), ready_service), "u2") == "IllTypedTarget: m2: binder:0"
-    assert unit_result(resolve(eta(omit_possessive=True), env(PERSON)), "u2") == "UnrecordedSlot: u2: [0, 1)"
+    assert unit_result(resolve(eta(omit_possessive=True), env(PERSON)), "u2") == "UnrecordedSlot: u2: [19, 22)"
 
 
 def test_eta_presupposition_carriers(lean):
@@ -1253,3 +1253,81 @@ def test_unicode_case_variants_are_folded(lean, tmp_path):
     lean_error, python_error = slot_outcomes(["Іt is safe."], tmp_path, safe)  # Cyrillic І
     assert lean_error is None and isinstance(python_error, dict)
 
+
+# The differential property (slots directive 3): generated documents, Lean admits iff Python
+# admits, with the same report, and otherwise the same diagnostic text. Python abstains
+# (`UnsupportedProfile`) on the forms it does not elaborate (a document name in a unit with meaning).
+
+PAIR = {"kind": "entity", "name": "alice", "pair": ["alice", "bob"]}
+DIFF_SENTENCES = [
+    ("Api is reviewed.", unary("reviewed", "api"), []),
+    ("It is safe.", unary("safe", "api"), [("It", "pronoun", entity("api"))]),
+    ("It is deployed.", unary("deployed", "api"), [("It", "pronoun", entity("api"))]),
+    ("This service is safe.", unary("safe", "api"), [("This service", "demonstrative", entity("api")),
+                                                      ("This", "pronoun", entity("api"))]),
+    ("Alice is ready.", unary("ready", "alice"), []),
+    ("She is ready.", unary("ready", "alice"), [("She", "pronoun", entity("alice"))]),
+    ("Alice and Bob are ready.", ["and", unary("ready", "alice"), unary("ready", "bob")], []),
+    ("The former is ready.", unary("ready", "alice"), [("The former", "ordinal_pair", PAIR),
+                                                       ("former", "ordinal_pair", PAIR)]),
+    ("A service is deployed.", ["exists", "service", ["unary", "deployed", ["var", 0]]], []),
+    ("İt is safe.", unary("safe", "api"), [("İt", "pronoun", entity("api"))]),
+]
+DIFF_DISPLAYS = ["It is safe", "this document", "Api is reviewed", "she"]
+DIFF_SEPARATORS = ["", " ", "\n", " "]
+
+
+def diff_document(rng):
+    """A random document: two to four sentences, a random separator after each (a unit boundary
+    with no space after the full stop included), random contents, a random subset of the candidate
+    mentions (the display surfaces among them) and random displays for the document itself."""
+    picks = [rng.choice(DIFF_SENTENCES) for _ in range(rng.randint(2, 4))]
+    displays = rng.sample(DIFF_DISPLAYS, rng.randint(0, 2))
+    sep = rng.choice(DIFF_SEPARATORS)
+    contents = {f"u{i + 1}": ast for i, (_, ast, _) in enumerate(picks) if rng.random() < 0.75}
+    mentions = []
+    for i, (sentence, _, candidates) in enumerate(picks):
+        found = [(text, form, target) for text, form, target in candidates]
+        found += [(d, "document_name", {"kind": "document", "name": "this_policy"}) for d in displays
+                  if d.lower() in sentence.lower()]
+        chosen = [c for c in found if rng.random() < 0.6]
+        for text, form, target in chosen[:1]:  # recorded mentions of one unit never overlap
+            mentions.append((f"m{len(mentions) + 1}", f"u{i + 1}", text, form, target))
+    extra = {"documents": [{"name": "this_policy", "display": displays or ["this document"], "refers": "self",
+                            "version": 1}]}
+    return document([p[0] for p in picks], mentions, names=PY_NAMES, contents=contents, extra=extra, sep=sep)
+
+
+def diff_cases():
+    """The two loop reproducers first, then generated documents."""
+    contents = {"u1": unary("reviewed", "api"), "u2": unary("safe", "api")}
+    other = {"documents": [{**SELF["documents"][0], "display": ["this document"]}]}
+    yield document(["Api is reviewed.", "It is safe."], names=PY_NAMES, contents=contents, sep="", extra=other)
+    yield document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents={"u1": unary("safe", "api")}, extra=SELF)
+    rng = __import__("random").Random(20260929)
+    for _ in range(300):
+        yield diff_document(rng)
+
+
+def test_lean_and_python_discover_the_same_slots(lean, tmp_path):
+    environment = env(constants=SELF_CONSTANTS)
+    docs = list(diff_cases())
+    rows = run([case("admission", doc, environment) for doc in docs])
+    compared = admitted = 0
+    for doc, row in zip(docs, rows):
+        python = python_outcome(doc, tmp_path, environment)
+        where = (doc["_source"], doc["discourse"]["mentions"], doc["discourse"]["documents"][0]["display"],
+                 sorted(u["id"] for u in doc["units"] if "content" in u))
+        if isinstance(python, str) and python.startswith("UnsupportedProfile"):
+            continue
+        compared += 1
+        if isinstance(python, dict):
+            admitted += 1
+            assert row.get("status") == "ok", (where, row.get("error"))
+            assert (row["report_id"], row["references"]) == (python["report_id"], python["references"]), where
+        else:
+            assert row.get("error") == python, (where, row.get("error"), python)
+    assert rows[0]["error"] == "UnrecordedSlot: u2: [16, 18)"
+    assert rows[1]["error"] == "UnrecordedSlot: u1: [0, 10)"
+    assert compared > 200 and 20 < admitted < compared, (compared, admitted)

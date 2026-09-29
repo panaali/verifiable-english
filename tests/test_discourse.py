@@ -438,14 +438,16 @@ def test_empty_block_keeps_w2_reading_labels(tmp_path):
 
 
 def test_python_reports_only_what_it_checked(tmp_path):
-    """Fable B5: `resolved` only for elaborated mentions; forms Python does not elaborate are
-    recorded, and rejected on content units as UnsupportedProfile (not MentionNotSlot or a
-    resource limit); a location binding beside a pronoun is no resource limit."""
+    """Fable B5: `resolved` only for elaborated mentions; a form Python does not elaborate is
+    UnsupportedProfile (not MentionNotSlot or a resource limit), on a unit with content and on
+    one without (Lean validates every unit with a recorded formula-producing mention, so Python
+    never passes one unchecked: slots directive, differential property); a location binding
+    beside a pronoun is no resource limit."""
     plural = {"kind": "entity", "members": ["api", "alice"]}
     source, units = _units(["Api and Alice are reviewed.", "They are ready."])
     front = _front(source, units, [dict(_mention(source, "m1", "u2", "They", "plural", plural), reading="distributive")])
-    doc = load_document(_write(tmp_path, front, source))
-    assert doc["discourse"]["references"][0]["status"] == "recorded"
+    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented"):
+        load_document(_write(tmp_path, front, source))
     units[1]["kind"], units[1]["support"] = "asserted", "assumption"
     units[1]["content"] = {"ast": ["unary", "ready", ["const", "alice"]]}
     with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented"):

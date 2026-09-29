@@ -1039,21 +1039,19 @@ def validate_discourse(doc):
         meaning = has_meaning(unit)
         if not producing or unit["id"] in grouped:
             continue
+        # every unit with a recorded formula-producing mention is validated, with meaning or
+        # without (the Lean `boundUnits`): one Python cannot elaborate is never passed unchecked
         unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
         if unsupported:
-            if meaning:
-                raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
-                              f"is not implemented in Python ({unit['id']})")
-            continue
+            raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
+                          f"is not implemented in Python ({unit['id']})")
         for m in producing:
             if not _surface_fits(doc, m):
                 raise VEError(f"MentionNotSlot: {m['id']}")
         entity = [m for m in producing if m["target"]["kind"] == "entity"]
         if len(entity) != len(producing):
-            if meaning:
-                raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
-                              f"is not implemented in Python ({unit['id']})")
-            continue
+            raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
+                          f"is not implemented in Python ({unit['id']})")
         presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names, anchors,
                                      readings)
         for m in producing:
