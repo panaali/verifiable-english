@@ -12,9 +12,10 @@
 > review of draft 1 (PLAN-EXPAND2 rule 10; `manage-agents/debates/design-risk/`) converged on REVISE. Draft 2
 > applies it, mapped item by item in section 15. There is no further plan round. The wording probe (2.6) ran on
 > 2026-09-29 (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`). Item 1's statement spec is
-> [risk.md](risk.md) draft 2, which applies its stage A statement review (`manage-agents/debates/risk-spec/`, FIX,
-> CONVERGED after round 3; risk.md 12). The next gate is a bounded re-check of the edited passages and fixtures
-> (item 1, section 12).
+> [risk.md](risk.md) draft 3. It applies its stage A statement review (`manage-agents/debates/risk-spec/`, FIX,
+> CONVERGED after round 3; risk.md 12.1) and the two findings of the bounded re-check that followed
+> (`manage-agents/risk-p3ver1.final.md`, FAIL; risk.md 12.2). The next gate is a bounded re-check of the passages and
+> fixtures risk.md 12.2 lists (item 1, section 12).
 
 ## 0. Problem and stance
 
@@ -702,8 +703,9 @@ the estimate non-point.
   endpoint is never read as altered evidence. The limit on candidates per endpoint is checked once, on the original
   record, and not at each value tried: otherwise the candidate count could cross the limit between two values that
   are not candidates (risk.md 4.9, k36). The report keeps three results apart: a **status change**, **record invalid
-  at X** (with the diagnostic) and **conflict at X**, the last two each found by its own scan. An invalid or
-  conflicting record is never reported as a status change (fixture k27).
+  at X** (with the diagnostic) and **conflict at X**, the last two each found by its own scan. Either may come first
+  in one direction (fixtures k38 and k40). An invalid or conflicting record is never reported as a status change
+  (fixture k27).
 - **Candidates.** Admission outcomes and statuses are piecewise constant in one endpoint, with breakpoints only at the
   comparison thresholds involving it. The values tried are each threshold and its grid neighbours on both sides,
   because a strict comparison changes one grid step from its threshold. In decision 17, "the memory limit is greater
@@ -1094,7 +1096,7 @@ Neither is in the source.
 | # | Item | Gate / trigger | Notes |
 |---|---|---|---|
 | 0 | Astra + Fable review of this plan | done 2026-09-29: REVISE, converged; draft 2 applies it (15) | No further plan round |
-| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k39 (k33–k39 from its statement review) with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29. Its statement review (`manage-agents/debates/risk-spec/`) returned FIX, converged; draft 2 applies it (risk.md 12). Next: a bounded re-check of the edited passages and fixtures | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecked completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and validation of perturbed records in margins (7.4). It kept the certified check for Q-margin-proof (risk.md 11.11) |
+| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k40 (k33–k39 from its statement review, k40 from the re-check) with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29. Its statement review (`manage-agents/debates/risk-spec/`) returned FIX, converged; draft 2 applies it (risk.md 12.1). The bounded re-check of draft 2 (`manage-agents/risk-p3ver1.final.md`) returned FAIL with two findings; draft 3 applies them (risk.md 12.2). Next: a bounded re-check of the passages and fixtures risk.md 12.2 lists | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecked completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and validation of perturbed records in margins (7.4). It kept the certified check for Q-margin-proof (risk.md 11.11) |
 | 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review. Ran 2026-09-29: c5 pending wording, c10 legend-dependent, `leads to` stays | Proxy readers, labelled "human readability unmeasured"; does not replace item 8. The reviewers' c5 replacement, "If `<condition>`, `<action>` leads to `<harm>`.", is probed once with new sealed items |
 | 2 | Lean `lean/VE/Risk/*`, `ve_risk_route`, `lean/RISK.md`, ROADMAP trust-cost line | after 1's review | Lean-only semantics |
 | 3 | Python surface (`ve/surface/risk.py`), block shape check, dispatch, gap lines; Rust untrusted evaluator; differential (200 random records, including separable-condition generators) | parallel with 2 | Surface fixtures (k19) before acceptance |
@@ -1142,11 +1144,12 @@ Fixtures for items 1–4 (definitions and expected results; the spec separates t
 | k32 | No hindsight with the action fixed: two logs identical up to decision 17; (a) the same `taken` entry and different outcomes; (b) log 1 takes the memory-limited run, log 2 takes running the job | (a) Q1 and Q2 identical, Q3 differs. (b) Q1 differs (PERMITTED / FORBIDDEN AT DECISION TIME) because the queried alternative differs; for either fixed queried alternative both logs give the same verdict |
 | k33 | Added by item 1's review: a quantity set twice, or set and estimated | `RiskSettingTwice`, before the box |
 | k34 | Added by item 1's review: `q − q − 1 = 0` over `q` from 0 through 1 | The collected form `−1 = 0`, never possible; the reason atoms hold normal forms |
-| k35 | Added by item 1's review: policy constants of the action and chooser sorts; a mistyped fact | An action constant is interpreted by the alternative of its name, else `RiskConstant`; a chooser constant is a chooser with no action; a record-local name equal to a constant is `RiskConstant`; the mistyped fact is `RiskFact` |
+| k35 | Added by item 1's review: policy constants of the action and chooser sorts; a mistyped fact | An action constant is interpreted by the alternative of its name, else `RiskConstant`; a chooser constant is a chooser with no action; a record-local name equal to a constant or to another record-local name is `RiskConstant`; the mistyped fact is `RiskFact`. The decision model's constant table also maps the chooser's and each alternative's name to its element, so every signed row resolves (alt's `rowsTypedB`) |
 | k36 | Added by item 1's review: 88 conditions whose candidate count for one endpoint crosses 256 between two values of another endpoint that are not candidates | The limit is checked once on the original record, so `outcomeAt` is equal at both values |
 | k37 | Added by item 1's review: the two scope rewrites of `every action available to … cannot lead to …` on decision 17 | They differ: for data loss both hold, for a server outage only "not every" holds |
 | k38 | Added by item 1's review: one endpoint direction with a conflict before an invalid value | Both are reported, each by its own scan |
 | k39 | Added by item 1's review: a cited estimate withdrawn before the decision, supplied or not; a withdrawal after it | `WithdrawnEntry` when supplied, and NOT REPLAYABLE in the audit; accepted, conditional on the supplied entries, when not supplied; a later withdrawal affects neither |
+| k40 | Added by item 1's re-check: one endpoint direction with an invalid value before a conflict. A policy assertion unit fails at one value and holds again at the next, where two rules conflict | Both are reported, each by its own scan: the invalid value (the failing assertion unit, named by its label) and the conflict beyond it |
 
 Stage B and C fixtures are written when those stages trigger. Anticipated: band admission; chance against
 possibility; vacuous chance; A2's stage C row with its 90% margin; coherence failure reported by EL. One is fixed now
@@ -1257,3 +1260,4 @@ Details settled while applying these edits, not debated:
 | 2026-09-29 | Draft 2 | Applies the converged Astra + Fable debate (REVISE), mapped in section 15: risk paraphrases of the `alternatives@0` words, `might prevent` and the `excludes` body; completed cases with defaults and source rules; `≠` and the ±1 hypothesis; a fresh severity sort and conservativity by model expansion; policy-fixed harm constants with a functional, non-total `class` and the relational `lessWorst`; margins with full re-admission, grid neighbours and "changes at"; EL qualifications, conservative box bounds and additive loss; chance wording; a separate PROCEDURE BREACH line; supersession at decision time; no-hindsight with the queried alternative fixed; document-level UNKNOWN; the wording probe protocol (2.6); fixtures k24–k32 and kC1. Plan only. |
 | 2026-09-29 | Draft 2, status | Status line and items 1 and 1a synchronised with the probe results and risk.md draft 1. No design change; the converged debate edits are those of draft 2 (section 15). |
 | 2026-09-29 | Draft 2, sync with risk.md draft 2 | Synchronised with the converged statement review of risk.md (`manage-agents/debates/risk-spec/`, FIX; risk.md 12): supersession judged on the supplied entries alone and on the log prefix in the audit, with `WithdrawnEntry` (5.3, 6.2, 6.3, 9.3); margins validate perturbed records without re-admitting them, the candidate limit is checked once on the original record, and Q-margin-proof is decided for the certified check (7.4, 8.1, 9.2, 13); the trust split and ROADMAP line match risk.md 9 (8.2); risk.md 7 supersedes the schemata of 8.3; k25's `point_estimates` line and fixtures k33–k39; the c5 replacement for its re-probe (item 1a). No design change beyond the review's. |
+| 2026-09-29 | Draft 2, sync with risk.md draft 3 | Synchronised with the two findings of the bounded re-check (`manage-agents/risk-p3ver1.final.md`, FAIL; risk.md 12.2): fixture k40, an invalid value before a conflict in one direction (7.4, 12); the decision model's constant table maps record-local names, so signed rows resolve (k35). Status line and item 1 updated. No design change beyond the findings'. |
