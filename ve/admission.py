@@ -103,7 +103,7 @@ def validate_label(s) -> str:
 
 
 # Kinds are kept in their wire form (a string or a tagged list); decoding only validates.
-def _check_kind(data, depth=16):
+def _check_kind(data, depth=16, *, reports=False):
     if depth == 0:
         raise ResourceLimit("ResourceLimit: kind depth exceeds 16")
     if type(data) is str:
@@ -113,18 +113,18 @@ def _check_kind(data, depth=16):
     if type(data) is not list:
         raise VEError("invalid kind")
     if len(data) == 4 and data[0] == "attributed" and type(data[1]) is str and type(data[2]) is str:
-        if not (token(data[1]) and data[2] in ACTS):
+        if not (token(data[1]) and data[2] in (ACTS + ("wants",) if reports else ACTS)):
             raise VEError("invalid attributed kind")
-        _check_kind(data[3], depth - 1)
+        _check_kind(data[3], depth - 1, reports=reports)
     elif len(data) == 3 and data[0] == "hedged" and type(data[1]) is str:
         if data[1] not in MODALITIES:
             raise VEError("invalid hedged kind")
-        _check_kind(data[2], depth - 1)
+        _check_kind(data[2], depth - 1, reports=reports)
     elif len(data) == 4 and data[0] == "causal" and type(data[1]) is str:
         if data[1] not in RELATIONS:
             raise VEError("invalid causal kind")
-        _check_kind(data[2], depth - 1)
-        _check_kind(data[3], depth - 1)
+        _check_kind(data[2], depth - 1, reports=reports)
+        _check_kind(data[3], depth - 1, reports=reports)
     elif len(data) == 2 and data[0] == "unformalised" and type(data[1]) is str:
         if not token(data[1]):
             raise VEError("invalid unformalised reason")

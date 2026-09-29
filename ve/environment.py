@@ -27,6 +27,7 @@ INT_SORT = "$int"
 STRING_SORT = "$string"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually no".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
+_ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
 
 def valid_identifier(name) -> bool:
@@ -152,6 +153,7 @@ def _regulated(raw, args, name):
 class ConstantDecl:
     sort: str
     description: str | None
+    verbalisation: str | None = None
 
 
 def _alternatives_block(raw, sorts, predicates, constants):
@@ -271,19 +273,20 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    reports: object
     alternatives: bytes | None
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
-    def __init__(self, data):
+    def __init__(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
         route = language == profile_registry.LANGUAGE
+        fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
         has_alternatives = route and type(data) is dict and "alternatives" in data
-        require_fields(data, {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
-                       | ({"alternatives"} if has_alternatives else set()))
+        require_fields(data, fields | ({"alternatives"} if has_alternatives else set()))
         order = False
         if route:
             family = profile_registry.checker_family(data["profiles"])
@@ -301,7 +304,11 @@ class Environment:
         elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
             raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
-        require_fields(vocab, {"sorts", "predicates", "constants"}, path="/vocabulary")
+        if route and "reports@0" in data["profiles"] and type(vocab) is dict and "reports" not in vocab:
+            raise UnsupportedProfile("reports@0 needs a reports block")
+        require_fields(vocab, {"sorts", "predicates", "constants"} |
+                       ({"reports"} if route and "reports@0" in data["profiles"] else set()),
+                       path="/vocabulary")
         for kind in ("sorts", "predicates", "constants"):
             if type(vocab[kind]) is not dict:
                 raise VEError(f"{kind} must be an object")
@@ -411,14 +418,37 @@ class Environment:
             linked.add(reg.permission)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
-            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set())
+                           | ({"verbalisation"} if route and "reports@0" in data["profiles"]
+                              and "verbalisation" in entry else set()),
                            path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"])
-                                           if "description" in entry else None)
+                                           if "description" in entry else None,
+                                           _verbalisation(entry["verbalisation"])
+                                           if "verbalisation" in entry else None)
+        reports = None
+        if route and "reports@0" in data["profiles"]:
+            raw_reports = vocab["reports"]
+            require_fields(raw_reports, {"holders", "evidence"}, path="/vocabulary/reports")
+            holders, evidence = raw_reports["holders"], raw_reports["evidence"]
+            if (type(holders) is not list or not 1 <= len(holders) <= 8
+                    or len(set(holders)) != len(holders) or any(h not in sorts for h in holders)):
+                raise UnknownSymbol("holder sort")
+            if type(evidence) is not str or evidence not in sorts:
+                raise UnknownSymbol("evidence sort")
+            if any(c.get("sort") in holders and type(c.get("verbalisation")) is str and
+                   # ASCII case folding only, as Lean's String.toLower: no
+                   # Unicode fold may reach the reserved words by another path.
+                   c["verbalisation"].translate(_ASCII_LOWER) == "the stated assessment"
+                   for c in vocab["constants"].values()):
+                raise VEError("InvalidInput: holder verbalisation reserved")
+            if not _generated_reports and any(name.startswith("reports__") for name in predicates):
+                raise VEError("InvalidInput: author predicate begins with reports__")
+            reports = {"holders": tuple(holders), "evidence": evidence}
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         alternatives = None
@@ -444,6 +474,7 @@ class Environment:
                              ("constants", MappingProxyType(constants)),
                              ("alternatives", alternatives)):
             object.__setattr__(self, field, value)
+        object.__setattr__(self, "reports", reports)
         # All identity-bearing declarations are now immutable. Model search
         # constructs many candidates against this same environment.
         object.__setattr__(self, "_environment_id",
@@ -491,9 +522,13 @@ class Environment:
                 **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
-                               "constants": {k: {"sort": v.sort, **({"description": v.description}
-                                                                      if v.description is not None else {})}
-                                             for k, v in self.constants.items()}}}
+                "constants": {k: {"sort": v.sort, **({"description": v.description}
+                                                                      if v.description is not None else {}),
+                                   **({"verbalisation": v.verbalisation}
+                                      if v.verbalisation is not None else {})}
+                                             for k, v in self.constants.items()},
+                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
+                   if self.reports is not None else {})}}
 
     @property
     def closure(self):

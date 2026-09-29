@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_alternatives_route", "ve_service", "ve_english_run", "ve_response_decode"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_reports_route", "ve_alternatives_route", "ve_service", "ve_english_run", "ve_response_decode"]
 
 [[lean_lib]]
 name = "VE"
@@ -12,6 +12,10 @@ root = "Main"
 [[lean_exe]]
 name = "ve_norms_route"
 root = "NormsMain"
+
+[[lean_exe]]
+name = "ve_reports_route"
+root = "ReportsMain"
 
 [[lean_exe]]
 name = "ve_alternatives_route"
