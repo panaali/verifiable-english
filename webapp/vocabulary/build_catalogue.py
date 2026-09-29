@@ -35,12 +35,12 @@ def raised_messages(path: Path) -> set[str]:
 
 
 def asimov_module_copy() -> set[str]:
-    """Explanation sentences and notes that a live re-run can show."""
+    """Explanation sentences, notes and scenario text (under any facts) a live re-run can show."""
     from ve_webapp import asimov
     constants = {value for name, value in vars(asimov).items()
                  if name.isupper() and isinstance(value, str) and name not in ('CASE', 'OUTPUT')}
     return (constants | set(asimov.NO_CLEAR.values()) | set(asimov.OPEN_LIMITS)
-            | set(asimov.GROUPS.values()))
+            | set(asimov.GROUPS.values()) | asimov.reader_copy())
 
 
 def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
@@ -72,10 +72,13 @@ def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
     result[rules] = {s for s in raw[rules] if s.startswith(('For an urgent act,',
         'The checked rules', 'The check ran', 'Rule 1.'))}
     # The Asimov section shows the built data, catalogued as served. Its module
-    # adds the explanation sentences and notes that a live re-run can show.
+    # adds the explanation sentences, notes and scenario text under other facts that a
+    # live re-run can show, unless the built data already shows each of its sentences.
     result[ASIMOV] = raw[ASIMOV]
     module = 've_webapp/asimov.py'
-    result[module] = (raw[module] & asimov_module_copy()) - raw[ASIMOV]
+    built = {part for value in raw[ASIMOV] for part in segments(value)}
+    result[module] = {value for value in raw[module] & asimov_module_copy()
+                      if not set(segments(value)) <= built}
     examples = 've_webapp/examples.py'
     result[examples] = set()
     for example in EXAMPLES:
@@ -139,7 +142,8 @@ def main() -> None:
                    'reason': 'Norm examples use the separate norm grammar, not the writable English parser.'},
                   {'source': 've_webapp/asimov.py', 'expression': 'explain, _laws and a reader edit through POST /api/asimov',
                    'reason': 'A live re-run joins fixed explanation sentences and law names; '
-                             'a combination absent from asimov.json is not catalogued.'},
+                             'a combination absent from asimov.json is not catalogued. Each '
+                             'scenario sentence under any facts is catalogued on its own.'},
               ]}
     path = ROOT / 'webapp/vocabulary/catalogue.json'
     path.write_text(json.dumps(output, indent=2, ensure_ascii=False) + '\n')

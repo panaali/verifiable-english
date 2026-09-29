@@ -1,4 +1,5 @@
 """The web app's Asimov section: every verdict shown is VE's, re-run here."""
+import itertools
 import json
 from pathlib import Path
 import re
@@ -196,3 +197,52 @@ def test_page_files_each_rerun_card_under_the_returned_group(tmp_path, shipped, 
     assert moved[:2] == ['trip', 'virus']
     assert len(set(moved)) > 5
 
+
+def test_descriptions_state_the_current_facts(flipped):
+    """No fact edit can leave a title or situation that contradicts the checked facts."""
+    for spec in asimov.SCENARIOS:
+        parts = [spec['title'], *spec['situation']]
+        conditional = [part for part in parts if not isinstance(part, str)]
+        fixed = [part for part in parts if isinstance(part, str)]
+        for part in conditional:
+            assert part['yes'] != part['no'] and part['yes'] not in part['no'] and part['no'] not in part['yes']
+            assert not any(v in text for v in (part['yes'], part['no']) for text in fixed), spec['id']
+        ids = [t['id'] for t in spec['toggles']]
+        for values in itertools.product((True, False), repeat=len(ids)):
+            facts = dict(zip(ids, values))
+            text = ' '.join(asimov.describe(spec, facts))
+            for part in conditional:
+                shown, hidden = (part['yes'], part['no']) if facts[part['fact']] else (part['no'], part['yes'])
+                assert shown in text and hidden not in text, (spec['id'], facts)
+        for toggle in spec['toggles']:
+            on = asimov.describe(spec, {**asimov.resolve_facts(spec), toggle['id']: True})
+            off = asimov.describe(spec, {**asimov.resolve_facts(spec), toggle['id']: False})
+            assert on[1] != off[1], (spec['id'], toggle['id'])
+    for edit in flipped:
+        spec = asimov.BY_ID[edit['scenario']]
+        assert (edit['result']['title'], edit['result']['situation']) == asimov.describe(spec, edit['facts'])
+        assert {f['id']: f['value'] for f in edit['result']['facts']} == edit['facts']
+
+
+def test_review_description_reproducers():
+    virus = asimov.decide('virus', {'door': True})
+    assert 'only' not in virus['situation'] and 'locking the lab door' in virus['situation']
+    storm = asimov.decide('storm', {'reachable': True})
+    assert 'whatever the robot does' not in storm['situation'] + storm['title']
+    assert 'nobody can help' not in storm['title']
+    assert 'can reach the hiker in time' in storm['situation']
+
+
+def test_a_listed_fact_must_be_stated_in_the_situation():
+    toggles = [asimov.toggle('danger', 'The swimmer is in danger')]
+    with pytest.raises(ValueError):
+        asimov.scenario('x', 'first', 'A title', 'A swimmer is drowning.', [], [], [], 'x',
+                        toggles=toggles)
+    with pytest.raises(ValueError):
+        asimov.scenario('x', 'first', asimov.fact('other', 'A', 'B'),
+                        [asimov.fact('danger', 'A swimmer is drowning.', 'A swimmer is safe.')],
+                        [], [], [], 'x', toggles=toggles)
+    with pytest.raises(ValueError):
+        asimov.scenario('x', 'first', 'A title',
+                        [asimov.fact('danger', 'A swimmer is drowning.', 'A swimmer is safe.')],
+                        [], [], [], 'x', toggles=toggles, limit='A fixed note.')

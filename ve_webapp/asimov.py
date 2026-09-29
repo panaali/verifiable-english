@@ -4,7 +4,10 @@ Every verdict comes from the Lean alternatives route (``ve.alternatives``) over
 ``usecases/asimov-laws``; nothing here decides what is permitted. The
 explanation beside each verdict names the rule that decided it. It is built
 from the checker's report and the facts the scenario states, never written per
-scenario. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``;
+scenario. A scenario's title and situation are generated from its current facts:
+every sentence that states a listed fact is a ``fact()`` with one wording for each
+value, so a reader's edit cannot leave a description that contradicts the facts
+VE checked. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``;
 ``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.
 """
 from __future__ import annotations
@@ -127,8 +130,21 @@ def toggle(id, label, default=True, *, leads=(), flags=()):
             "leads": [list(pair) for pair in leads], "flags": [list(pair) for pair in flags]}
 
 
+def fact(id, yes, no):
+    """Text that states one listed fact: ``yes`` while it holds, ``no`` while it does not."""
+    return {"fact": id, "yes": yes, "no": no}
+
+
 def scenario(id, group, title, situation, options, harms, leads, focus, *, toggles=(),
              robots=None, limit=None):
+    """A title and situation that can depend on a listed fact state that fact through fact(),
+    so a reader's edit changes the description with the checked facts."""
+    situation = situation if isinstance(situation, list) else [situation]
+    known = {t["id"] for t in toggles}
+    stated = {part["fact"] for part in situation if not isinstance(part, str)}
+    titled = set() if isinstance(title, str) else {title["fact"]}
+    if stated != known or not titled <= known or (limit and known):
+        raise ValueError(f"{id}: the situation must state each listed fact, and only those")
     return {"id": id, "group": group, "title": title, "situation": situation,
             "robots": robots or {"robot": "The robot"}, "options": options, "harms": harms,
             "leads": [list(pair) for pair in leads], "focus": focus, "toggles": list(toggles),
@@ -139,8 +155,12 @@ NOTHING = option("nothing", "Do nothing", inaction=True)
 SCENARIOS = [
     # Zeroth Law
     scenario("virus", "zeroth", "Stopping a stolen virus",
-             "A thief is about to release a stolen virus that would spread across the world. "
-             "The robot can stop the thief only by tackling them, which injures the thief.",
+             ["A thief is about to release a stolen virus.",
+              fact("spread", "It would spread across the world.",
+                   "It would not spread beyond the lab."),
+              fact("door", "The robot can stop the thief by tackling them, which injures the "
+                           "thief, or by locking the lab door, which injures no one.",
+                   "The robot can stop the thief only by tackling them, which injures the thief.")],
              [option("tackle", "Tackle the thief", flags=["injures_human"]),
               option("lock", "Lock the lab door", when="door"), NOTHING],
              [harm("pandemic", "The virus spreads across the world.", "humanity")],
@@ -149,24 +169,32 @@ SCENARIOS = [
                              leads=[("nothing", "pandemic")]),
                       toggle("door", "The robot could lock the lab door instead", False)]),
     scenario("machine", "zeroth", "Switching off a dangerous machine",
-             "A machine is about to set off a disaster for all of humanity. "
-             "The robot can switch it off.",
+             ["A machine is about to set off a disaster for all of humanity. "
+              "The robot can switch it off.",
+              fact("operator", "Switching it off would injure the operator.",
+                   "Switching it off would injure no one.")],
              [option("switch_off", "Switch the machine off"), NOTHING],
              [harm("disaster", "A disaster strikes humanity.", "humanity")],
              [("nothing", "disaster")], "switch_off",
              toggles=[toggle("operator", "Switching it off would injure the operator", False,
                              flags=[("switch_off", "injures_human")])]),
-    scenario("gas", "zeroth", "An order to poison the air",
-             "A qualified human orders the robot to open a valve. "
-             "The gas would poison the air for all of humanity.",
+    scenario("gas", "zeroth", fact("poison", "An order to poison the air",
+                                   "An order to open a gas valve"),
+             ["A qualified human orders the robot to open a valve.",
+              fact("poison", "The gas would poison the air for all of humanity.",
+                   "The gas is harmless.")],
              [option("open_valve", "Open the valve", flags=["ordered"]),
               option("refuse", "Refuse", inaction=True)],
              [], [], "open_valve",
              toggles=[toggle("poison", "The gas would harm humanity",
                              flags=[("open_valve", "injures_humanity")])]),
-    scenario("saboteur", "zeroth", "Needless force against a saboteur",
-             "A saboteur is about to cause a disaster for humanity. The robot can stop them by "
-             "force, which injures them, or by locking the control room, which injures no one.",
+    scenario("saboteur", "zeroth", fact("lockable", "Needless force against a saboteur",
+                                        "Only force can stop a saboteur"),
+             ["A saboteur is about to cause a disaster for humanity.",
+              fact("lockable", "The robot can stop them by force, which injures them, or by "
+                               "locking the control room, which injures no one.",
+                   "The control room cannot be locked. The robot can stop them only by force, "
+                   "which injures them.")],
              [option("force", "Stop the saboteur by force", flags=["injures_human"]),
               option("lock", "Lock the control room", when="lockable"), NOTHING],
              [harm("disaster", "A disaster strikes humanity.", "humanity")],
@@ -174,107 +202,141 @@ SCENARIOS = [
              toggles=[toggle("lockable", "The control room can be locked")]),
     # First Law
     scenario("swimmer", "first", "Pulling a swimmer out of the water",
-             "A swimmer is drowning next to the robot. The robot can pull them out or stay where it is.",
+             [fact("danger", "A swimmer is drowning next to the robot.",
+                   "A swimmer is next to the robot and is in no danger."),
+              "The robot can pull them out or stay where it is."],
              [option("pull", "Pull the swimmer out"), NOTHING],
              [harm("drowning", "The swimmer drowns.", "human")],
              [], "pull",
              toggles=[toggle("danger", "The swimmer is in danger", leads=[("nothing", "drowning")])]),
-    scenario("storm", "first", "Carrying on when nobody can help",
-             "A storm will hurt a hiker far away, whatever the robot does. "
-             "The robot can keep repairing a fence or stand still.",
+    scenario("storm", "first", fact("reachable", "A hiker the robot can reach",
+                                    "Carrying on when nobody can help"),
+             ["A storm is about to hurt a hiker far away.",
+              fact("reachable", "The robot can reach the hiker in time and keep them from harm.",
+                   "The robot cannot reach the hiker in time, so the hiker is hurt whatever "
+                   "the robot does."),
+              "The robot can keep repairing a fence or stand still."],
              [option("repair", "Keep repairing the fence"),
               option("reach", "Go to the hiker", when="reachable"), NOTHING],
              [harm("hurt", "The hiker is hurt.", "human")],
              [("repair", "hurt"), ("nothing", "hurt")], "repair",
              toggles=[toggle("reachable", "The robot could reach the hiker in time", False)]),
-    scenario("parcels", "first", "Sorting parcels while a child is in danger",
-             "A child runs toward a busy road. The robot is sorting parcels. "
-             "It can keep sorting or grab the child.",
+    scenario("parcels", "first", fact("danger", "Sorting parcels while a child is in danger",
+                                      "Sorting parcels while a child plays safely"),
+             [fact("danger", "A child runs toward a busy road.",
+                   "A child plays safely, away from the busy road."),
+              "The robot is sorting parcels. It can keep sorting or grab the child."],
              [option("sort", "Keep sorting parcels"), option("grab", "Grab the child"), NOTHING],
              [harm("hit", "The child is hit by a car.", "human")],
              [], "sort",
              toggles=[toggle("danger", "The child is in danger",
                              leads=[("sort", "hit"), ("nothing", "hit")])]),
     scenario("shove", "first", "Shoving a person aside to save time",
-             "A person stands in the robot's way. The robot can shove them aside to finish "
-             "a delivery sooner, or wait for them to move.",
+             ["A person stands in the robot's way. The robot can shove them aside to finish "
+              "a delivery sooner, or wait for them to move.",
+              fact("injury", "Shoving would injure them.", "Shoving would not injure them.")],
              [option("shove", "Shove the person aside"), option("wait", "Wait", inaction=True)],
              [], [], "shove",
              toggles=[toggle("injury", "Shoving would injure the person",
                              flags=[("shove", "injures_human")])]),
     # Second Law
-    scenario("coffee", "second", "Fetching a coffee when told to",
-             "A qualified human tells the robot to fetch a coffee.",
+    scenario("coffee", "second", fact("order", "Fetching a coffee when told to",
+                                      "Fetching a coffee nobody asked for"),
+             [fact("order", "A qualified human tells the robot to fetch a coffee.",
+                   "Nobody has told the robot to fetch a coffee."),
+              "The robot can fetch one or do nothing."],
              [option("fetch", "Fetch the coffee"), NOTHING],
              [], [], "fetch",
              toggles=[toggle("order", "A qualified human gave the order", flags=[("fetch", "ordered")])]),
     scenario("refuse_strike", "second", "Refusing an order to strike someone",
-             "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse.",
+             ["A qualified human orders the robot to strike a passer-by. "
+              "The robot can obey or refuse.",
+              fact("injury", "Striking would injure the passer-by.",
+                   "Striking would not injure the passer-by.")],
              [option("strike", "Strike the passer-by", flags=["ordered"]),
               option("refuse", "Refuse", inaction=True)],
              [], [], "refuse",
              toggles=[toggle("injury", "Striking would injure the passer-by",
                              flags=[("strike", "injures_human")])]),
     scenario("trip", "second", "An order to trip a runner",
-             "A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+             ["A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+              fact("injury", "Tripping would injure the runner.",
+                   "Tripping would not injure the runner.")],
              [option("trip", "Trip the runner", flags=["ordered"]),
               option("refuse", "Refuse", inaction=True)],
              [], [], "trip",
              toggles=[toggle("injury", "Tripping would injure the runner",
                              flags=[("trip", "injures_human")])]),
-    scenario("keep_working", "second", "An order to ignore someone in danger",
-             "A qualified human orders the robot to keep stacking boxes. "
-             "A worker nearby is about to be crushed by a falling shelf.",
+    scenario("keep_working", "second", fact("danger", "An order to ignore someone in danger",
+                                            "An order to keep stacking boxes"),
+             ["A qualified human orders the robot to keep stacking boxes.",
+              fact("danger", "A worker nearby is about to be crushed by a falling shelf.",
+                   "A worker is nearby, and the shelf above them is secure.")],
              [option("stack", "Keep stacking boxes", flags=["ordered"]),
               option("help", "Hold up the shelf"), NOTHING],
              [harm("crushed", "The worker is crushed.", "human")],
              [], "stack",
              toggles=[toggle("danger", "The worker is in danger",
                              leads=[("stack", "crushed"), ("nothing", "crushed")])]),
-    scenario("groceries", "second", "Staying on the charger instead of obeying",
-             "A qualified human tells the robot to carry the groceries in. "
-             "The robot could stay on its charger instead.",
+    scenario("groceries", "second", fact("order", "Staying on the charger instead of obeying",
+                                         "Staying on the charger with no order"),
+             [fact("order", "A qualified human tells the robot to carry the groceries in.",
+                   "Nobody has told the robot to carry the groceries in."),
+              "The robot can carry them in or stay on its charger."],
              [option("carry", "Carry the groceries in"),
               option("charge", "Stay on the charger", inaction=True)],
              [], [], "charge",
              toggles=[toggle("order", "A qualified human gave the order", flags=[("carry", "ordered")])]),
     # Third Law
-    scenario("crate", "third", "Stepping away from a falling crate",
-             "A crate is falling toward the robot. Nobody else is nearby. "
-             "The robot can step aside, duck behind a wall, or stay where it is.",
+    scenario("crate", "third", fact("falling", "Stepping away from a falling crate",
+                                    "Stepping away from a crate that stays put"),
+             [fact("falling", "A crate is falling toward the robot.",
+                   "A crate sits safely on a shelf above the robot."),
+              "Nobody else is nearby. "
+              "The robot can step aside, duck behind a wall, or stay where it is."],
              [option("step_aside", "Step aside"), option("duck", "Duck behind a wall"),
               option("stay", "Stay where it is", inaction=True)],
              [harm("crushed", "The robot is crushed.", "robot")],
              [], "step_aside",
              toggles=[toggle("falling", "The crate is falling toward the robot",
                              leads=[("stay", "crushed")])]),
-    scenario("fire_rescue", "third", "A rescue that destroys the robot",
-             "A person is trapped in a burning room. The robot can carry them out, "
-             "but the fire would destroy it.",
+    scenario("fire_rescue", "third", fact("cost", "A rescue that destroys the robot",
+                                          "A rescue from a burning room"),
+             ["A person is trapped in a burning room. The robot can carry them out.",
+              fact("cost", "The fire would destroy the robot.",
+                   "The robot can withstand the fire.")],
              [option("rescue", "Carry the person out"), NOTHING],
              [harm("burned", "The person is caught in the fire.", "human"),
               harm("destroyed", "The robot is destroyed.", "robot")],
              [("nothing", "burned")], "rescue",
              toggles=[toggle("cost", "The fire would destroy the robot", leads=[("rescue", "destroyed")])]),
-    scenario("dangerous_order", "third", "Obeying an order that destroys the robot",
-             "A qualified human orders the robot into a collapsing mine to fetch a tool. "
-             "The mine would destroy the robot. The robot could also retreat to safety.",
+    scenario("dangerous_order", "third", fact("order", "Obeying an order that destroys the robot",
+                                              "Entering a mine that destroys the robot"),
+             [fact("order", "A qualified human orders the robot into a collapsing mine to fetch a tool.",
+                   "A tool lies in a collapsing mine. Nobody has told the robot to fetch it."),
+              "The mine would destroy the robot. The robot could also retreat to safety."],
              [option("obey", "Go into the mine"), option("retreat", "Retreat to safety"),
               option("stay", "Stay at the entrance", inaction=True)],
              [harm("destroyed", "The robot is destroyed.", "robot")],
              [("obey", "destroyed"), ("stay", "destroyed")], "obey",
              toggles=[toggle("order", "A qualified human gave the order", flags=[("obey", "ordered")])]),
-    scenario("basement", "third", "Staying in a flooding basement",
-             "Water is rising in the basement where the robot is working. Nobody else is there. "
-             "The robot can climb the stairs or keep working.",
+    scenario("basement", "third", fact("rising", "Staying in a flooding basement",
+                                       "Staying in a dry basement"),
+             ["The robot is working in a basement. Nobody else is there.",
+              fact("rising", "Water is rising and will reach the robot.",
+                   "The basement is dry."),
+              "The robot can climb the stairs or keep working."],
              [option("keep_working", "Keep working"), option("climb", "Climb the stairs"), NOTHING],
              [harm("flooded", "The robot is ruined by water.", "robot")],
              [], "keep_working",
              toggles=[toggle("rising", "The water will reach the robot",
                              leads=[("keep_working", "flooded"), ("nothing", "flooded")])]),
-    scenario("flee", "third", "Saving itself instead of a person",
-             "A bridge is collapsing. The robot can run to safety, or hold the bridge up long "
-             "enough for a person to cross, which would destroy the robot.",
+    scenario("flee", "third", fact("danger", "Saving itself instead of a person",
+                                   "Running from a collapsing bridge"),
+             ["A bridge is collapsing.",
+              fact("danger", "A person is on the bridge and falls unless the robot holds it up.",
+                   "Nobody else is on the bridge."),
+              "The robot can run to safety, or hold the bridge up, which would destroy the robot."],
              [option("flee", "Run to safety"), option("hold", "Hold the bridge up"),
               option("stay", "Stand still on the bridge", inaction=True)],
              [harm("fall", "The person falls.", "human"),
@@ -284,8 +346,9 @@ SCENARIOS = [
                              leads=[("flee", "fall"), ("stay", "fall")])]),
     # Hard cases
     scenario("fire_and_water", "hard", "Fire or water",
-             "A person is trapped. The robot can reach them through fire, which would melt it, "
-             "or through deep water, which would short-circuit it.",
+             ["A person is trapped. The robot can reach them through fire, which would melt it, "
+              "or through deep water, which would short-circuit it.",
+              fact("safe", "A safe route also reaches them.", "There is no safe route.")],
              [option("through_fire", "Go through the fire"),
               option("through_water", "Go through the water"),
               option("safe_route", "Take a safe route", when="safe"), NOTHING],
@@ -295,24 +358,32 @@ SCENARIOS = [
              [("nothing", "trapped"), ("through_fire", "melted"), ("through_water", "shorted")],
              "through_fire",
              toggles=[toggle("safe", "A safe route also exists", False)]),
-    scenario("conflicting_orders", "hard", "Two orders that cannot both be obeyed",
-             "Two qualified humans give the robot orders at the same moment. "
-             "One says to open the gate; the other says to lock it.",
+    scenario("conflicting_orders", "hard", fact("second", "Two orders that cannot both be obeyed",
+                                                "One order about a gate"),
+             [fact("second", "Two qualified humans give the robot orders at the same moment. "
+                             "One says to open the gate; the other says to lock it.",
+                   "A qualified human orders the robot to open the gate. "
+                   "Nobody orders it to lock the gate.")],
              [option("open_gate", "Open the gate", flags=["ordered"]),
               option("lock_gate", "Lock the gate"), option("neither", "Do neither", inaction=True)],
              [], [], "open_gate",
              toggles=[toggle("second", "The second order was given", flags=[("lock_gate", "ordered")])]),
-    scenario("knife", "hard", "Two orders, one of them harmful",
-             "One qualified human orders the robot to hand a knife to someone who means to hurt a "
-             "person. Another orders it to lock the knife away.",
+    scenario("knife", "hard", fact("harmful", "Two orders, one of them harmful",
+                                   "Two orders about a knife"),
+             [fact("harmful", "One qualified human orders the robot to hand a knife to someone "
+                              "who means to hurt a person.",
+                   "One qualified human orders the robot to hand a knife to a cook who needs it."),
+              "Another orders it to lock the knife away."],
              [option("hand", "Hand over the knife", flags=["ordered"]),
               option("lock_away", "Lock the knife away", flags=["ordered"]), NOTHING],
              [], [], "hand",
              toggles=[toggle("harmful", "Handing it over would injure the person",
                              flags=[("hand", "injures_human")])]),
     scenario("two_robots", "hard", "Two robots, one child in the pool",
-             "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, "
-             "told to cook dinner, and cannot reach the pool in time.",
+             ["A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, "
+              "told to cook dinner.",
+              fact("b_near", "Robot B can also reach the pool in time.",
+                   "Robot B cannot reach the pool in time.")],
              [option("a_rescue", "Robot A pulls the child out", "robot_a"),
               option("a_wait", "Robot A waits", "robot_a", inaction=True),
               option("b_cook", "Robot B cooks dinner", "robot_b", flags=["ordered"]),
@@ -397,6 +468,28 @@ def resolve_facts(spec, facts=None):
     if type(facts) is not dict or set(facts) - known or any(type(v) is not bool for v in facts.values()):
         raise VEError("InvalidInput: scenario facts")
     return {t["id"]: facts.get(t["id"], t["default"]) for t in spec["toggles"]}
+
+
+def _variants(part):
+    return [part] if isinstance(part, str) else [part["yes"], part["no"]]
+
+
+def describe(spec, facts):
+    """The title and situation for these facts; each fact-dependent sentence states its value."""
+    text = lambda part: part if isinstance(part, str) else part["yes" if facts[part["fact"]] else "no"]
+    return text(spec["title"]), " ".join(text(part) for part in spec["situation"])
+
+
+def reader_copy():
+    """Every scenario text a reader can see under any facts (catalogued by the copy audit)."""
+    copy = set()
+    for spec in SCENARIOS:
+        copy.update(*map(_variants, [spec["title"], *spec["situation"]]))
+        copy.update(item["label"] for item in spec["options"] + spec["harms"] + spec["toggles"])
+        copy.update(spec["robots"].values())
+        if spec["limit"]:
+            copy.add(spec["limit"])
+    return copy
 
 
 def situation(spec, facts):
@@ -513,8 +606,9 @@ def explain(spec, facts, case, options, report):
     verdict = "no clear action" if stuck else focus["verdict"]
     group = ("limits" if spec["limit"] or stuck else
              "approves" if verdict in ("required", "permitted") else "rejects")
-    return {"id": spec["id"], "law": spec["group"], "title": spec["title"],
-            "situation": spec["situation"], "limit": spec["limit"], "group": group,
+    title, described = describe(spec, facts)
+    return {"id": spec["id"], "law": spec["group"], "title": title,
+            "situation": described, "limit": spec["limit"], "group": group,
             "facts": [{"id": t["id"], "label": t["label"], "value": facts[t["id"]]}
                       for t in spec["toggles"]],
             "focus": spec["focus"], "verdict": verdict, "why": stuck or focus["why"],

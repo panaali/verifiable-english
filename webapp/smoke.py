@@ -124,6 +124,23 @@ def main():
                 swimmer = page.locator('.asimov-card', has_text='Pulling a swimmer out of the water')
                 expect(swimmer).to_contain_text('VE decided this again just now', timeout=30000)
                 expect(swimmer.locator('.asimov-verdict')).to_contain_text('Permitted')
+                # A re-run files the card under the group VE returned, with a description
+                # generated from the new facts.
+                for title, fact, source, target, shown, gone in (
+                        ('An order to trip a runner', 'injury', 'Rejects', 'Approves',
+                         'Tripping would not injure the runner.', 'Tripping would injure'),
+                        ('Stopping a stolen virus', 'door', 'Approves', 'Rejects',
+                         'or by locking the lab door', 'only by tackling'),
+                        ('Carrying on when nobody can help', 'reachable', 'Approves', 'Rejects',
+                         'can reach the hiker in time', 'whatever the robot does')):
+                    card = page.locator(f'#asimov{source} .asimov-card', has_text=title)
+                    card.locator('summary', has_text='Change the facts').click()
+                    card.locator(f'input[data-fact={fact}]').click()
+                    card.get_by_role('button', name='Ask VE again').click()
+                    moved = page.locator(f'#asimov{target} .asimov-card', has_text=shown)
+                    expect(moved).to_contain_text('VE decided this again just now', timeout=30000)
+                    expect(moved).not_to_contain_text(gone)
+                    expect(page.locator(f'#asimov{source} .asimov-card', has_text=shown)).to_have_count(0)
                 assert not re.search(r'[@()\[\]*<=_{}]', page.locator('#asimov').inner_text())
                 if os.environ.get('VE_SMOKE_SCREENSHOT'):
                     page.screenshot(path=os.environ['VE_SMOKE_SCREENSHOT'], full_page=True)
@@ -138,7 +155,7 @@ def main():
                 expect(page.locator('#login')).to_be_visible()
                 assert not errors, errors
                 browser.close()
-            print('Browser smoke passed: blank draft, approval, reload, checked card, recovery, two-tab conflict, translation alternatives, escaped prose, Rules, Asimov edit and re-run, export, mobile layout, logout.')
+            print('Browser smoke passed: blank draft, approval, reload, checked card, recovery, two-tab conflict, translation alternatives, escaped prose, Rules, Asimov edit, re-run and regrouping, export, mobile layout, logout.')
         finally:
             server.terminate()
             server.wait(timeout=10)

@@ -141,7 +141,7 @@
    "id": "virus",
    "law": "zeroth",
    "title": "Stopping a stolen virus",
-   "situation": "A thief is about to release a stolen virus that would spread across the world. The robot can stop the thief only by tackling them, which injures the thief.",
+   "situation": "A thief is about to release a stolen virus. It would spread across the world. The robot can stop the thief only by tackling them, which injures the thief.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -196,7 +196,7 @@
    "id": "machine",
    "law": "zeroth",
    "title": "Switching off a dangerous machine",
-   "situation": "A machine is about to set off a disaster for all of humanity. The robot can switch it off.",
+   "situation": "A machine is about to set off a disaster for all of humanity. The robot can switch it off. Switching it off would injure no one.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -402,7 +402,7 @@
    "id": "storm",
    "law": "first",
    "title": "Carrying on when nobody can help",
-   "situation": "A storm will hurt a hiker far away, whatever the robot does. The robot can keep repairing a fence or stand still.",
+   "situation": "A storm is about to hurt a hiker far away. The robot cannot reach the hiker in time, so the hiker is hurt whatever the robot does. The robot can keep repairing a fence or stand still.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -514,7 +514,7 @@
    "id": "shove",
    "law": "first",
    "title": "Shoving a person aside to save time",
-   "situation": "A person stands in the robot's way. The robot can shove them aside to finish a delivery sooner, or wait for them to move.",
+   "situation": "A person stands in the robot's way. The robot can shove them aside to finish a delivery sooner, or wait for them to move. Shoving would injure them.",
    "limit": null,
    "group": "rejects",
    "facts": [
@@ -562,7 +562,7 @@
    "id": "coffee",
    "law": "second",
    "title": "Fetching a coffee when told to",
-   "situation": "A qualified human tells the robot to fetch a coffee.",
+   "situation": "A qualified human tells the robot to fetch a coffee. The robot can fetch one or do nothing.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -610,7 +610,7 @@
    "id": "refuse_strike",
    "law": "second",
    "title": "Refusing an order to strike someone",
-   "situation": "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse.",
+   "situation": "A qualified human orders the robot to strike a passer-by. The robot can obey or refuse. Striking would injure the passer-by.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -658,7 +658,7 @@
    "id": "trip",
    "law": "second",
    "title": "An order to trip a runner",
-   "situation": "A qualified human orders the robot to trip a runner. The robot can obey or refuse.",
+   "situation": "A qualified human orders the robot to trip a runner. The robot can obey or refuse. Tripping would injure the runner.",
    "limit": null,
    "group": "rejects",
    "facts": [
@@ -766,7 +766,7 @@
    "id": "groceries",
    "law": "second",
    "title": "Staying on the charger instead of obeying",
-   "situation": "A qualified human tells the robot to carry the groceries in. The robot could stay on its charger instead.",
+   "situation": "A qualified human tells the robot to carry the groceries in. The robot can carry them in or stay on its charger.",
    "limit": null,
    "group": "rejects",
    "facts": [
@@ -872,7 +872,7 @@
    "id": "fire_rescue",
    "law": "third",
    "title": "A rescue that destroys the robot",
-   "situation": "A person is trapped in a burning room. The robot can carry them out, but the fire would destroy it.",
+   "situation": "A person is trapped in a burning room. The robot can carry them out. The fire would destroy the robot.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -984,7 +984,7 @@
    "id": "basement",
    "law": "third",
    "title": "Staying in a flooding basement",
-   "situation": "Water is rising in the basement where the robot is working. Nobody else is there. The robot can climb the stairs or keep working.",
+   "situation": "The robot is working in a basement. Nobody else is there. Water is rising and will reach the robot. The robot can climb the stairs or keep working.",
    "limit": null,
    "group": "rejects",
    "facts": [
@@ -1044,7 +1044,7 @@
    "id": "flee",
    "law": "third",
    "title": "Saving itself instead of a person",
-   "situation": "A bridge is collapsing. The robot can run to safety, or hold the bridge up long enough for a person to cross, which would destroy the robot.",
+   "situation": "A bridge is collapsing. A person is on the bridge and falls unless the robot holds it up. The robot can run to safety, or hold the bridge up, which would destroy the robot.",
    "limit": null,
    "group": "rejects",
    "facts": [
@@ -1107,7 +1107,7 @@
    "id": "fire_and_water",
    "law": "hard",
    "title": "Fire or water",
-   "situation": "A person is trapped. The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it.",
+   "situation": "A person is trapped. The robot can reach them through fire, which would melt it, or through deep water, which would short-circuit it. There is no safe route.",
    "limit": null,
    "group": "approves",
    "facts": [
@@ -1281,7 +1281,7 @@
    "id": "two_robots",
    "law": "hard",
    "title": "Two robots, one child in the pool",
-   "situation": "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, told to cook dinner, and cannot reach the pool in time.",
+   "situation": "A child falls into a pool. Robot A is at the pool. Robot B is in the kitchen, told to cook dinner. Robot B cannot reach the pool in time.",
    "limit": null,
    "group": "approves",
    "facts": [
