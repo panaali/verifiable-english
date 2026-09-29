@@ -16,7 +16,8 @@ import VE.Rights.Admission
   `Background_base″`) and optionally `holder` / `bearer` → `rights_of`, `duties_of`: the
   selecting line instances with their tuples.
 * `rights-scope`: `certificates` (scope target `<rule>:<mechanism>` ↦ package) → `findings`
-  and, per mechanism, its licence (`Wire.rights_wire_scope_sound`).
+  and, per mechanism, its licence and the certification target `∀x̄. cond_n° → limpack_N`
+  (`conclusion`) a package must prove (`Wire.rights_wire_scope_sound`).
 * `rights-conflict`: `packages` (target ↦ package over `Background_base″`) → `CONFLICT-FREE`
   with `conditional_on`, or `UNKNOWN` (`Wire.rights_wire_conflict_sound`); or `witness` →
   `CONFLICT`, classified (`Wire.rights_wire_conflict_witness_sound`).
@@ -101,7 +102,7 @@ def narrowingsJson (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate)
   Json.arr ((linesOf D).map (fun RN => Json.mkObj [("right", .str RN.1), ("rule", .str RN.2.node.name),
     ("in_scope", .bool (D.limits.any (fun L => inScope D L RN.1 RN.2))),
     ("mechanisms", Json.arr ((narrowings D RN.2).map (fun n => Json.mkObj ([("mechanism", .str (mechText n)),
-      ("target", .str (scopeTargetName RN.2 n))] ++
+      ("target", .str (scopeTargetName RN.2 n)), ("conclusion", enc (certTarget D RN.2 n))] ++
       match licence D RN.2 n with
       | some l => [("licence", .str l)]
       | none => if certified D certs RN.2 n then [("licence", .str "certified")] else [("licence", .null)]))).toArray)])).toArray

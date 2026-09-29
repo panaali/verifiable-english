@@ -36,9 +36,11 @@ def expected_environment_prime(rights):
     return _wire(prime)
 
 
-def report_rights(environment, units, rights):
-    """Return the checked five-question rows available without submitted certificates."""
-    elaborated = run_rights_case(environment, units, "rights-elaborate")
+def check_rights_regenerated(rights, elaborated):
+    """Fail closed unless the Lean route's regeneration of the same source is the
+    Python correlation: the generated keys, E″′ byte for byte, every line
+    instance with its node, Lim_D, the bar nodes and the soft route's layer,
+    order, background and targets on T″′. Returns the soft elaboration."""
     soft = elaborate_soft_document(rights.soft_document)
     expected_generated = (
         [{"name": v, "kind": "lim", "limitation": k[0], "act": k[1]}
@@ -88,10 +90,19 @@ def report_rights(environment, units, rights):
                      if rule.core.name.startswith("rights-bar-")]
     if elaborated["bars"] != expected_bars:
         raise VEError("rights route regeneration mismatch: bars")
+    if elaborated["rights_background"] != [{"generator": "rights", **item} for item in expected_limitations]:
+        raise VEError("rights route regeneration mismatch: rights background")
     for field in ("order", "premises", "derived", "colliding_pairs", "conflict_targets",
                   "warnings", "decisions", "background"):
         if elaborated[field] != soft[field]:
             raise VEError(f"rights route regeneration mismatch: {field}")
+    return soft
+
+
+def report_rights(environment, units, rights):
+    """Return the checked five-question rows available without submitted certificates."""
+    elaborated = run_rights_case(environment, units, "rights-elaborate")
+    check_rights_regenerated(rights, elaborated)
     scope = run_rights_case(environment, units, "rights-scope", certificates={})
     bar = run_rights_case(environment, units, "rights-bar", certificates={})
     conflict = run_rights_case(environment, units, "rights-conflict", packages={})

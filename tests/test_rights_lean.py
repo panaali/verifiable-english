@@ -122,7 +122,7 @@ def test_gamma_generated_names_and_packed_limitation(lean):
     assert [x["label"] for x in row["limitations"]] == [
         "rights:limitation:l29:arrest_permitted:necessary:determined_by_law",
         "rights:limitation:l29:arrest_permitted:necessary:solely_for_permitted_purpose"]
-    assert row["narrowings"][0]["mechanisms"] == [
+    assert [{k: m[k] for k in ("mechanism", "target", "licence")} for m in row["narrowings"][0]["mechanisms"]] == [
         {"mechanism": "limitation", "target": "no-arbitrary-arrest:limitation", "licence": "limitation"}]
     predicates = row["environment_prime"]["vocabulary"]["predicates"]
     assert predicates["rights__lim__1"]["arguments"] == ["state", "person"]
@@ -254,12 +254,14 @@ def test_mu_uncited_rank_is_unlicensed_and_cited_rank_is_a_collision(lean):
     assert rows[1]["findings"] == [] and rows[2]["findings"] == []
     dominated = next(x for x in rows[2]["narrowings"] if x["rule"] == "may-publish")
     assert {"mechanism": "dominatedBy no-attack", "target": "may-publish:dominatedBy no-attack",
-            "licence": "collision"} in dominated["mechanisms"]
+            "licence": "collision"} in [{k: m[k] for k in ("mechanism", "target", "licence")}
+                                        for m in dominated["mechanisms"]]
     # another right's strict liberty blocks the default claim: a collision, no finding
     assert rows[3]["findings"] == []
     blocked = next(x for x in rows[3]["narrowings"] if x["rule"] == "no-attack")
     assert {"mechanism": "blockedBy may-publish", "target": "no-attack:blockedBy may-publish",
-            "licence": "collision"} in blocked["mechanisms"]
+            "licence": "collision"} in [{k: m[k] for k in ("mechanism", "target", "licence")}
+                                        for m in blocked["mechanisms"]]
 
 
 def test_bar_rule_and_query_readings(lean):
@@ -503,3 +505,104 @@ def test_conflict_free_conditional_on_a_limitation_premise(lean):
     row = run(lean, [{"id": "w", "kind": "rights-conflict", "environment": environment_json,
                       "document": document, "witness": witness}])[0]
     assert row["status"] == "error" and row["error"].startswith("InvalidModel(rights background)")
+
+
+def test_tau_certified_carve_out_licence(lean):
+    # fixture tau: right 9's claim under limitation 29 with a declared sufficient condition; the
+    # uncited carve-out U_1 = diplomat(p) and cond(l29, diplomatic_immunity, arrest)(s, p) is licensed
+    # by a certificate for (own_N and U_1)° -> limpack_N over Background_base″, through Lim_D alone
+    predicates = {**ARREST, "diplomat": base("person")}
+    l29 = limitation(conditions=[condition("determined_by_law"), condition("solely_for_permitted_purpose"),
+                                 condition("diplomatic_immunity", "sufficient")])
+    carve = ["and", ["unary", "diplomat", ["var", 0]], ["binary", "rights__cond__2", ["var", 1], ["var", 0]]]
+    claim = line("claim", norm("no-arbitrary-arrest", "arrest_permitted", False, guard=ARBITRARY,
+                               unless=[carve]))
+    document = [right("r9", [claim]), l29]
+    environment_json = env(predicates)
+    row = elaborate(lean, environment_json, document)
+    assert row["generated"][2] == {"name": "rights__cond__2", "kind": "cond", "limitation": "l29",
+                                   "act": "arrest_permitted", "condition": "diplomatic_immunity"}
+    assert "rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity" in [
+        x["label"] for x in row["limitations"]]
+    uncited = run(lean, [{"id": "s", "kind": "rights-scope", "environment": environment_json,
+                          "document": document, "certificates": {}}])[0]
+    assert uncited["findings"] == [
+        "UnlicensedLimitation: carve-out 1 of rule no-arbitrary-arrest on right r9"]
+    mechanism = next(m for m in uncited["narrowings"][0]["mechanisms"] if m["mechanism"] == "carve-out 1")
+    profiles = environment_json["profiles"]
+    env_id = digest(f"ve-environment-{identity(profiles)}\n", environment_json)
+    doc_hash = digest(f"ve-rights-{identity(profiles)}\n",
+                      {"environment_id": env_id, "document": [canonical_unit(u) for u in document]})
+    base_env = base_prime(row)
+    premises = [formula_from_data(base_env, b["ast"]) for b in row["background"] if b["generator"] == "soft"]
+    premises += [formula_from_data(base_env, b["ast"]) for b in row["rights_background"]]
+
+    def package(conclusion):
+        found = prove_entailment(base_env, premises, formula_from_data(base_env, conclusion))
+        assert found.status == "Found"
+        return {"environment_id": env_id, "document_hash": doc_hash, "target": mechanism["target"],
+                "certificate": found.certificate}
+
+    certified = run(lean, [{"id": "c", "kind": "rights-scope", "environment": environment_json,
+                            "document": document,
+                            "certificates": {mechanism["target"]: package(mechanism["conclusion"])}}])[0]
+    assert certified["findings"] == [] and certified["licensed"] is True
+    licensed = next(m for m in certified["narrowings"][0]["mechanisms"] if m["mechanism"] == "carve-out 1")
+    assert licensed["licence"] == "certified"
+    # a certificate for another formula is not the target: the finding stands
+    other = ["forall", "state", ["forall", "person", ["implies",
+             ["and", ARBITRARY, ["and", ["unary", "diplomat", ["var", 0]],
+                                 ["binary", "rights__cond__2", ["var", 1], ["var", 0]]]],
+             ["binary", "rights__lim__1", ["var", 1], ["var", 0]]]]]
+    wrong = run(lean, [{"id": "w", "kind": "rights-scope", "environment": environment_json,
+                        "document": document, "certificates": {mechanism["target"]: package(other)}}])[0]
+    assert wrong["findings"] == uncited["findings"]
+    # situation B: condition and limitation false is base-admissible; the line is silent by its own guard
+    people = {"state": ["texas"], "person": ["ann"]}
+    situation = model(people, {"arbitrary_arrest": [], "journalist": [], "diplomat": [["ann"]],
+                               "rights__lim__1": [], "rights__cond__1": [], "rights__cond__2": [],
+                               "rights__cond__3": []})
+    rows = run(lean, [{"id": "b", "kind": "rights-projections", "environment": environment_json,
+                       "document": document, "model": situation}])
+    assert rows[0]["status"] == "ok" and rows[0]["duties_of"] == []
+
+
+def test_psi_bar_across_the_dual_pair_and_sigma_same_effect(lean):
+    raw = env(PUBLISH, sorts=("person",), rights=ONE)
+    liberty = right("r19", [line("liberty", norm("may-publish", "publish_about_permitted", True))])
+    claim = right("r12", [line("claim", norm("should-publish", "publish_about_required", True, mode="default",
+                                             exception=EXCEPTION), holder_slot=1, cites={"exception": ["u1"]})])
+    bar = {"bar": {"name": "b30", "reading": "rule"}}
+    psi = [{"source_units": ["u1"]}, liberty, claim, limitation(), bar]
+    people = {"person": ["ann", "bob"]}
+    aimed = model(people, {"attacks_honour": [], "rights__bar__1": [["ann", "bob"]], "rights__lim__1": [],
+                           "soft__excepted__should_publish": []})
+    rows = run(lean, [{"id": "s", "kind": "rights-scope", "environment": raw, "document": psi},
+                      {"id": "p", "kind": "rights-projections", "environment": raw, "document": psi,
+                       "model": aimed, "bearer": "ann"}])
+    # the default claim on the dual obligation is reached by the bar: one mechanism `bar`, no finding
+    claim_row = next(x for x in rows[0]["narrowings"] if x["rule"] == "should-publish")
+    assert [(m["mechanism"], m["licence"]) for m in claim_row["mechanisms"]] == [
+        ("limitation", "limitation"), ("exception", "cited"), ("bar", "bar")]
+    assert rows[0]["findings"] == []
+    # where the act is aimed at destruction the claim does not select: Ann owes Bob nothing
+    owed = [x["tuple"] for x in rows[1]["duties_of"] if x["rule"] == "should-publish"]
+    assert ["ann", "bob"] not in owed and ["ann", "ann"] in owed
+    # sigma: a strict outside rule of the default liberty's own effect delivers it; the opposite
+    # effect outside rights is unlicensed unless it cites the narrowing
+    default_liberty = right("r19", [line("liberty", norm("may-publish", "publish_about_permitted", True,
+                                                         mode="default", exception=EXCEPTION),
+                                         cites={"exception": ["u1"]})])
+    rule4 = norm("rule-4", "publish_about_permitted", True)
+    rule5 = norm("rule-5", "publish_about_permitted", False)
+    same, opposite, cited = (
+        [{"source_units": ["u1"]}, default_liberty, limitation(), {"norm": rule4}],
+        [{"source_units": ["u1"]}, default_liberty, limitation(), {"norm": rule5}],
+        [{"source_units": ["u1"]}, default_liberty, limitation(),
+         {"norm": rule5, "cites": {"narrows:may-publish": ["u1"]}}])
+    rows = run(lean, [{"id": str(i), "kind": "rights-scope", "environment": raw, "document": d}
+                      for i, d in enumerate((same, opposite, cited))])
+    delivered = next(m for m in rows[0]["narrowings"][0]["mechanisms"] if m["mechanism"] == "blockedBy rule-4")
+    assert delivered["licence"] == "effect delivered by strict rule rule-4" and rows[0]["findings"] == []
+    assert rows[1]["findings"] == ["UnlicensedLimitation: blockedBy rule-5 of rule may-publish on right r19"]
+    assert rows[2]["findings"] == []
