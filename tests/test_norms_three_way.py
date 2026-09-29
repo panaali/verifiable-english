@@ -7,7 +7,9 @@ by Python and Lean, while Rust independently evaluates the generated formulas.
 from __future__ import annotations
 
 import json
+import os
 import random
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -26,18 +28,38 @@ from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
-RUST = ROOT / "rust/target/release/ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
 
 
 @pytest.fixture(scope="module")
 def lean_executable():
-    assert LEAN.exists()
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
+        return LEAN
+    if not LEAN.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("lake is required for the W1 wire gate")
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
+                               text=True, timeout=600)
+        assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
 
 @pytest.fixture(scope="module")
 def rust_executable():
-    assert RUST.exists()
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert RUST.is_file(), f"gate Rust build missing: {RUST}"
+        return RUST
+    cargo = shutil.which("cargo")
+    if cargo is None:
+        pytest.skip("cargo is required for the W1 wire gate")
+    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
+           "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
+                            "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)
+    assert built.returncode == 0, built.stdout + built.stderr
     return RUST
 
 

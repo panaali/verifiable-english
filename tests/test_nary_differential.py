@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import os
 import random
+import shutil
 from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
@@ -48,14 +50,34 @@ def invoke(binary, command, cases, *, errors=False):
 @pytest.fixture(scope="module")
 def lean_binary():
     binary = ROOT / "lean/.lake/build/bin/ve_conformance"
-    assert binary.exists()
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        assert binary.is_file(), f"gate Lean build missing: {binary}"
+        return binary
+    if not binary.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("Lean is unavailable")
+        result = subprocess.run([lake, "build", "ve_conformance"], cwd=ROOT / "lean",
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        assert result.returncode == 0, result.stdout + result.stderr
     return binary
 
 
 @pytest.fixture(scope="module")
 def rust_binary():
-    binary = ROOT / "rust/target/debug/ve"
-    assert binary.exists()
+    binary = (Path(os.environ["VE_RUST_BINARY"]) if os.environ.get("VE_RUST_PREBUILT")
+              else ROOT / "rust/target/debug/ve")
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
+    if not binary.exists():
+        cargo = shutil.which("cargo")
+        if cargo is None:
+            pytest.skip("Rust is unavailable")
+        env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home")}
+        result = subprocess.run([cargo, "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
+                                env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        assert result.returncode == 0, result.stdout + result.stderr
     return binary
 
 
