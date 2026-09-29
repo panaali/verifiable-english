@@ -227,6 +227,8 @@ MUTANTS = {
     "M15": "R4 without income support", "M16": "R4 without income-based JSA",
     "M17": "R4 without state pension credit", "M18": "R4 without income-related ESA",
     "M19": "R4 without universal credit",
+    "M20": "R11 without the order of AR6", "M21": "R11 without the QW0 bound of AR6",
+    "M22": "R11 without the E&W-start bound of AR6", "M23": "R6 with the other person also out of residential care",
 }
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
@@ -259,9 +261,11 @@ def role_rules(r, mutant=None):
                  else ["le", days(84), num(r, "care_before_week")])
     rules.append(rule("R5b", "S1 reg. 1(4)(a)", f"The {r} is in residential care exactly when the {r} is in a care setting and the {r}'s care days before the week are at least 84 days (12 weeks).",
                       Iff(U("in_residential_care", r), And(U("in_care_setting", r), care_days)), r))
-    rules.append(rule("R6", "S1 reg. 1(4)(b)", f"The {r} lives with the {o} exactly when they share a mutual home and neither is in residential care.",
-                      Iff(B("lives_with", r, o), And(B("shares_home", r, o), Not(U("in_residential_care", r)),
-                                                    Not(U("in_residential_care", o)))), r))
+    lives = [B("shares_home", r, o), Not(U("in_residential_care", r))]  # the condition is on r only
+    if mutant == "M23":
+        lives.append(Not(U("in_residential_care", o)))
+    rules.append(rule("R6", "S1 reg. 1(4)(b)", f"The {r} lives with the {o} exactly when they share a mutual home and the {r} is not in residential care.",
+                      Iff(B("lives_with", r, o), And(*lives)), r))
     partner_body = [B("partner_of", r, o), B("lives_with", r, o), U("reached_pa", o), U("has_rb", o)]
     if mutant == "M7":
         partner_body.pop(0)
@@ -288,10 +292,16 @@ def role_rules(r, mutant=None):
                       Iff(U("excluded_custody", r), And(*custody)), r))
     rules.append(rule("R10", "S1 reg. 4(3)", f"Regulation 4(3) applies to the {r} exactly when the {r} is in residential care and is paid a relevant benefit for the week.",
                       Iff(U("excluded_care_benefit", r), And(U("in_residential_care", r), U("has_rb", r))), r))
-    rules.append(rule("R11", "S1 reg. 4(4)", f"Regulation 4(4) applies to the {r} exactly when the {r} is resident in England or Wales on a day of the week and became ordinarily resident in Scotland or Northern Ireland no later than {QW1}.",
-                      Iff(U("excluded_moved", r), And(U("resident_in_week", r), U("moved_to_scotland_or_ni", r),
-                                                      ["date_before" if mutant == "M10" else "date_no_later",
-                                                       num(r, "scot_ni_from"), day(QW1)])), r))
+    # AR6: the move comes on or after the first day of the week of E&W residence,
+    # which is the later of the residence start and QW0.
+    moved = [U("resident_in_week", r), U("moved_to_scotland_or_ni", r)]
+    if mutant not in ("M20", "M22"):
+        moved.append(["date_no_later", num(r, "ew_from"), num(r, "scot_ni_from")])
+    if mutant not in ("M20", "M21"):
+        moved.append(["date_no_later", day(QW0), num(r, "scot_ni_from")])
+    moved.append(["date_before" if mutant == "M10" else "date_no_later", num(r, "scot_ni_from"), day(QW1)])
+    rules.append(rule("R11", "S1 reg. 4(4), reading AR6", f"Regulation 4(4) applies to the {r} exactly when the {r} is resident in England or Wales on a day of the week and, no earlier than the {r}'s first day of that residence and no earlier than {QW0}, became ordinarily resident in Scotland or Northern Ireland no later than {QW1}.",
+                      Iff(U("excluded_moved", r), And(*moved)), r))
     rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1)", f"Regulation 4(5) applies to the {r} exactly when the {r} is not paid without a claim and made no claim on or before {CLAIM_DEADLINE}.",
                       Iff(U("excluded_no_claim", r), And(Not(U("paid_without_claim", r)),
                                                          Not(And(U("claimed", r), ["date_before" if mutant == "M11" else "date_no_later",
