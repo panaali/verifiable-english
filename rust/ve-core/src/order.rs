@@ -28,7 +28,7 @@ fn decimal(v: &Value) -> Result<BigInt> {
     let s = v
         .as_str()
         .ok_or_else(|| Error::new("SyntaxError", "integer must be a string"))?;
-    if s.len() > 40 {
+    if s.chars().count() > 40 {
         return error("ResourceLimit", "integer literal length");
     }
     if s.is_empty()
@@ -200,6 +200,7 @@ impl Model {
         {
             return error("InvalidModel", "model declarations differ");
         }
+        crate::model::model_limits(ds, rs)?;
         let mut domains = BTreeMap::new();
         for (s, raw) in ds {
             let mut vals = Vec::new();
@@ -871,6 +872,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
         let conclusion = v
             .get("conclusion")
             .ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
+        crate::ast::ast_limit(premises.iter().chain([conclusion]))?;
         let mut nodes = 0;
         for premise in premises {
             formula_check(&env, premise, &[], 1, &mut nodes)?;
@@ -927,6 +929,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if formulas.is_empty() {
         return error("SyntaxError", "empty document");
     }
+    crate::ast::ast_limit(formulas)?;
     let mut nodes = 0;
     for f in formulas {
         formula_check(&env, f, &[], 1, &mut nodes)?;

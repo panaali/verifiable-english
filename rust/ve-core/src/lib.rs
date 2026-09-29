@@ -9,6 +9,7 @@ mod order;
 mod route;
 mod search;
 mod surface;
+mod units;
 mod wire;
 
 pub use ast::{Document, Edge, Formula, ReachKind, Term};
@@ -27,6 +28,7 @@ pub use search::{
 };
 use serde::Serialize;
 pub use surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
+pub use units::quantity_case;
 pub use wire::{canonical_json, digest, loads_json};
 
 pub const MAX_PACKAGE_BYTES: usize = 16 * 1024 * 1024;

@@ -1,11 +1,13 @@
 """Domain-separated artifact bindings; identities never certify truth."""
 import hashlib
 
+from .assurance import semantic_entry
 from .ast import Document, document_to_data, formula_to_data
 from .errors import SyntaxError
 from .wire import digest
 
 
+@semantic_entry("identity")
 def source_id(source: str | bytes, env=None) -> str:
     try:
         raw = source.encode("utf-8") if isinstance(source, str) else source
@@ -16,7 +18,9 @@ def source_id(source: str | bytes, env=None) -> str:
         raise SyntaxError("Source is not valid Unicode") from exc
 
 
+@semantic_entry("identity")
 def meaning_id(env, document_or_formula, *, _generated=False) -> str:
     ast = (document_to_data(env, document_or_formula) if type(document_or_formula) is Document
            else formula_to_data(env, document_or_formula, _generated=_generated))
-    return digest(f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": ast})
+    return digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": ast})

@@ -20,7 +20,8 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
-                                      LeanServicePool, MODES, executable_sha256)
+                                      LeanServicePool, MODES, case_digest, case_texts,
+                                      executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
 from ve.errors import ResourceLimit, VEError
 
@@ -80,7 +81,10 @@ def test_response_schemas_follow_lean_sources():
     kind = common["kind"]["anyOf"][1]["x-tagged"]
     rendered = re.findall(r'Json.arr #\[\.str "(\w+)"', (ROOT / "lean" / admission).read_text())
     assert set(kind) == set(rendered)
-    handshake = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]
+    envelope = json.loads((SCHEMAS / "envelope.json").read_text())
+    request_error = protocol.split("def requestError", 1)[1].split("\n\n", 1)[0]
+    assert set(re.findall(r'\("(\w+)",', request_error)) == set(envelope["$defs"]["error"]["required"])
+    handshake = envelope["handshake"]["properties"]
     assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
     limits = {k: v["minimum"] for k, v in handshake["limits"]["properties"].items()}
     assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
@@ -90,12 +94,41 @@ def test_response_schemas_follow_lean_sources():
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
     assert set(re.findall(r'\.str "([^"]+)"', terms)) == set(common["fol_term"]["x-tagged"])
-    assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common["fol_formula"]["x-tagged"])
+    for name in ("fol_formula", "generated_formula"):
+        assert set(re.findall(r'\.str "([^"]+)"', formulas)) == set(common[name]["x-tagged"])
     order = (ROOT / "lean/VE/Order/Wire.lean").read_text()
     order_terms = order.split("def decodeTerm :", 1)[1].split("def decodeFormula :", 1)[0]
     order_formulas = order.split("def decodeFormula :", 1)[1].split("def termNodes", 1)[0]
     assert set(re.findall(r'\[\.str "(\w+)"', order_terms)) == set(common["order_term"]["x-tagged"])
     assert set(re.findall(r'\[\.str "(\w+)"', order_formulas)) == set(common["order_formula"]["x-tagged"])
+
+
+def _random_value(rng, depth=0):
+    options = [lambda: 1, lambda: 'a\\"b,]}\\\\' * rng.randrange(3), lambda: "é,[{ü"]
+    if depth < 4:
+        options += [lambda: [_random_value(rng, depth + 1) for _ in range(rng.randrange(3))],
+                    lambda: {f'k{i},"[': _random_value(rng, depth + 1) for i in range(rng.randrange(3))}]
+    return rng.choice(options)()
+
+
+def test_client_case_digests_are_the_services(service_executable):
+    """`case_texts` mirrors `VE.JsonInput.caseTexts` and the service digests each case
+    in one byte pass (`VE.Service.caseDigests`): on random batches with escaped quotes,
+    backslashes, delimiters inside strings, non-ASCII text and JSON whitespace between
+    cases, the client's digests are the service's (a mismatch would fail closed)."""
+    import random
+    rng = random.Random(20260928)
+    with LeanService(service_executable) as service:
+        for _ in range(60):
+            cases = [{"id": str(k), "x": _random_value(rng)} for k in range(rng.randrange(1, 6))]
+            texts = [json.dumps(c, ensure_ascii=False, separators=(",", rng.choice([":", " : "])))
+                     for c in cases]
+            text = rng.choice(["", " ", "\t"]) + "[" + rng.choice(["", " "]) + \
+                rng.choice([",", " ,\t", "\r, "]).join(texts) + rng.choice(["", "\r"]) + "] "
+            assert case_texts(text) == texts
+            _, response = service.exchange("evaluate", text, len(cases))
+            assert [b["digest"] for b in response["results"]] == [case_digest(t) for t in texts]
+        assert service.stats["retries"] == 0
 
 
 def test_handshake(service_executable):
@@ -107,7 +140,14 @@ def test_handshake(service_executable):
         assert len(service.build) == 64
 
 
+def results(response):
+    """The runner results of a response, without their bindings."""
+    return [bound["result"] for bound in response["results"]]
+
+
 def test_results_are_the_one_shot_bytes(service_executable):
+    """Result i is the one-shot runner's bytes for case i, bound to its position and to
+    the SHA-256 of the case's text as sent."""
     cases = CASES[:40]
     text = json.dumps(cases)
     one_shot = subprocess.run([str(BIN / "ve_conformance")], input=text.encode(),
@@ -115,9 +155,26 @@ def test_results_are_the_one_shot_bytes(service_executable):
     with LeanService(service_executable) as service:
         raw, response = service.exchange("evaluate", text, len(cases))
     assert response["status"] == "ok"
+    rows = case_texts(one_shot.stdout.decode())
+    digests = [case_digest(t) for t in case_texts(text)]
+    bound = ",".join(f'{{"digest":"{d}","index":{i},"result":{row}}}'
+                     for i, (d, row) in enumerate(zip(digests, rows, strict=True)))
     start = raw.index(b'"results":') + len(b'"results":')
-    assert raw[start:].startswith(one_shot.stdout.strip())
-    assert raw[start + len(one_shot.stdout.strip()):] == b',"status":"ok"}'
+    assert raw[start:] == ("[" + bound + '],"status":"ok"}').encode()
+
+
+def test_results_are_bound_to_the_case_texts_as_sent(service_executable):
+    """The digest is over each case's text as the client sent it, whitespace trimmed, so
+    two spellings of one case have different digests and equal results."""
+    text = ' [ {"id":"a","ast":[]} ,\t{ "ast" : [], "id":"a"}\r,{"id":"a","ast":[]}]'
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("evaluate", text, 3)
+        assert service.stats["retries"] == 0
+    texts = ['{"id":"a","ast":[]}', '{ "ast" : [], "id":"a"}', '{"id":"a","ast":[]}']
+    assert case_texts(text) == texts
+    assert [b["index"] for b in response["results"]] == [0, 1, 2]
+    assert [b["digest"] for b in response["results"]] == [case_digest(t) for t in texts]
+    assert results(response)[0] == results(response)[1] == results(response)[2]
 
 
 def test_protocol_errors_answer_one_line_and_continue(service_executable):
@@ -133,6 +190,7 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
         b'{"id":"f","mode":"evaluate","cases":[{"id":1,}]}',
         b'{"id":"g","mode":"evaluate","budget":{"cases":1},"cases":[{},{}]}',
         b'{"id":"h","mode":"evaluate","budget":{"bytes":3},"cases":[{},{}]}',
+        b'{"id":"j","mode":"evaluate","budget":{"steps":3},"cases":[{}, {"id":2}]}',
         b"",
         b'{"id":"i","mode":"evaluate","cases":[' + good[:40],
         b"{" + b" " * (16 * 1024 * 1024 + 8) + b"}",
@@ -140,11 +198,23 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
     ]
     rows, _ = raw_session(service_executable, b"\n".join(lines) + b"\n")
     ids = [row["id"] for row in rows]
-    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", None, None, "ok"]
+    assert ids == [None, None, "a", "b", "c", "d", "e", "f", "g", "h", "j", None, None, "ok"]
     assert all(row["status"] == "error" for row in rows[:-1])
     assert rows[8]["error"] == "ResourceLimit: batch has 2 cases; budget is 1"
     assert rows[9]["error"].startswith("ResourceLimit: cases are 7 bytes")
-    assert rows[11]["error"].startswith("ResourceLimit: request line exceeds")
+    assert rows[10]["error"] == "unknown budget field steps"
+    assert rows[12]["error"].startswith("ResourceLimit: request line exceeds")
+    # A decoded request's error is bound like a response: its mode and the digests of its
+    # case texts as split (null when the cases text does not split into cases). Only a line
+    # whose envelope does not decode gets the unbound error, which answers no request.
+    bound = {"c": None, "f": [case_digest('{"id":1,}')], "g": [case_digest("{}")] * 2,
+             "h": [case_digest("{}")] * 2, "j": [case_digest("{}"), case_digest('{"id":2}')]}
+    for row in rows[:-1]:
+        if row["id"] in bound:
+            assert set(row) == {"id", "status", "mode", "digests", "error"}
+            assert row["mode"] == "evaluate" and row["digests"] == bound[row["id"]]
+        else:
+            assert set(row) == {"id", "status", "error"}
     assert rows[-1]["status"] == "ok" and rows[-1]["counts"] == {"cases": 1, "errors": 0,
                                                                  "bytes": len(json.dumps(CASES[:1]))}
 
@@ -159,7 +229,8 @@ def test_budget_rejection_is_deterministic_and_keeps_the_process(service_executa
         pid = service.pid
         _, response = service.exchange("evaluate", json.dumps(CASES[:3]), 3,
                                        budget={"cases": 2, "bytes": 1 << 20})
-        assert response == {"id": response["id"], "status": "error",
+        assert response == {"id": response["id"], "status": "error", "mode": "evaluate",
+                            "digests": [case_digest(t) for t in case_texts(json.dumps(CASES[:3]))],
                             "error": "ResourceLimit: batch has 3 cases; budget is 2"}
         assert service.run("evaluate", CASES[:5]) == service.run("evaluate", CASES[:5])
         assert service.pid == pid and service.stats["restarts"] == 0
@@ -185,7 +256,7 @@ def test_english_accepts_one_shot_json(service_executable, suffix):
     assert proc.returncode == 0, proc.stderr
     with LeanService(service_executable) as service:
         _, response = service.exchange("english", "[" + raw_case + "]", 1)
-    assert response["results"] == [json.loads(proc.stdout)]
+    assert results(response) == [json.loads(proc.stdout)]
 
 
 @pytest.mark.parametrize("number,place", [
@@ -214,7 +285,7 @@ def test_english_consumed_number_keeps_one_shot_decoding(service_executable, num
         _, response = service.exchange("english", "[" + raw + "]", 1)
     expected = (json.loads(one_shot.stdout) if one_shot.returncode == 0 else
                 {"status": "error", "error": one_shot.stderr.decode().strip()})
-    assert response["results"] == [expected]
+    assert results(response) == [expected]
 
 
 def test_english_ignored_large_integer_matches_one_shot(service_executable):
@@ -230,7 +301,7 @@ def test_english_ignored_large_integer_matches_one_shot(service_executable):
     with LeanService(service_executable) as service:
         _, response = service.exchange("english", "[" + raw + "]", 1)
         assert service.stats["retries"] == 0
-    assert response["results"] == [json.loads(one_shot.stdout)]
+    assert results(response) == [json.loads(one_shot.stdout)]
 
 
 @pytest.mark.parametrize("mode,case", [
@@ -332,9 +403,30 @@ def test_pool_serves_concurrent_callers(service_executable):
 # Supervisor faults, driven by a scripted stand-in for the service.
 
 FAKE = r'''
-import json, os, sys, time
+import hashlib, json, os, sys, time
 behaviour, marker = sys.argv[1], sys.argv[2]
-hello = {"service": "ve-lean@1", "protocol": 1,
+
+
+def bind(rows, line):
+    """Result i bound to case i as the service binds it: position and SHA-256 of the case text."""
+    body = line.split(',"cases":', 1)[1].rstrip()[:-1].strip()
+    texts = [json.dumps(c, ensure_ascii=False, separators=(",", ":")) for c in json.loads(body)]
+    return [{"index": i, "digest": hashlib.sha256(texts[i].encode()).hexdigest() if i < len(texts) else "0" * 64,
+             "result": row} for i, row in enumerate(rows)]
+
+
+def placeholders(value, line):
+    """{"$digest": k} is the digest of case k."""
+    if isinstance(value, dict) and set(value) == {"$digest"}:
+        return bind([None] * (value["$digest"] + 1), line)[value["$digest"]]["digest"]
+    if isinstance(value, dict):
+        return {k: placeholders(v, line) for k, v in value.items()}
+    if isinstance(value, list):
+        return [placeholders(v, line) for v in value]
+    return value
+
+
+hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
                    "environment", "model", "check", "identity"],
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
@@ -345,7 +437,7 @@ if behaviour == "null-modes":
 if behaviour == "small-limits":
     hello["limits"]["max_cases"] = 1
 if behaviour == "bad-protocol":
-    hello["protocol"] = 2
+    hello["protocol"] = 1
 if behaviour == "startup-eof":
     open(marker, "a").write("s")
     sys.exit(3)
@@ -369,16 +461,16 @@ for line in sys.stdin:
     if behaviour == "short":
         print(json.dumps({"id": request["id"], "status": "ok", "results": []}), flush=True); continue
     if behaviour == "wrong-mode":
-        print(json.dumps({"id": request["id"], "status": "ok", "mode": "order", "results": [True],
+        print(json.dumps({"id": request["id"], "status": "ok", "mode": "order", "results": bind([True], line),
                           "counts": {"cases": 1, "bytes": len(json.dumps(request["cases"])), "errors": 0}}), flush=True); continue
     if behaviour == "missing-error":
         print(json.dumps({"id": request["id"], "status": "error"}), flush=True); continue
     if behaviour == "boolean-result":
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                          "results": [True], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+                          "results": bind([True], line), "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
     if behaviour == "empty-result":
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                          "results": [{"status": "ok"}], "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
+                          "results": bind([{"status": "ok"}], line), "counts": {"cases": 1, "bytes": 4, "errors": 0}}), flush=True); continue
     if behaviour == "duplicate-response":
         print('{"id":' + json.dumps(request["id"]) + ',"id":' + json.dumps(request["id"]) +
               ',"status":"error","error":"forged"}', flush=True); continue
@@ -388,6 +480,10 @@ for line in sys.stdin:
               '"counts":{"cases":1,"bytes":4,"errors":0}}', flush=True); continue
     if behaviour == "scripted":
         answer = json.load(open(marker))
+        if answer.pop("__bound__", False):
+            answer = placeholders(answer, line)
+        elif isinstance(answer.get("results"), list):
+            answer["results"] = bind(answer["results"], line)
         if answer.get("id") == "__nonce__":
             answer["id"] = request["id"]
         if isinstance(answer.get("counts"), dict) and answer["counts"].get("bytes") == "__bytes__":
@@ -404,7 +500,7 @@ for line in sys.stdin:
             if behaviour == "string-valid": row["valid"] = "false"
             if behaviour == "wrong-case-id": row["id"] = "other"
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                          "results": [row], "counts": {"cases": 1,
+                          "results": bind([row], line), "counts": {"cases": 1,
                           "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                           "errors": 0}}), flush=True); continue
     malformed = {
@@ -422,11 +518,11 @@ for line in sys.stdin:
     }
     if behaviour in malformed:
         print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                          "results": [malformed[behaviour]], "counts": {"cases": 1,
+                          "results": bind([malformed[behaviour]], line), "counts": {"cases": 1,
                           "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                           "errors": 0}}), flush=True); continue
     if behaviour in ("english-order-atom", "english-checked-no-render", "english-deep-formula",
-                     "background-boolean-premise"):
+                     "english-deep-parse", "background-boolean-premise"):
         if behaviour == "background-boolean-premise":
             row = {"id": request["cases"][0]["id"], "status": "ok",
                    "background": [["eq", ["var", 0], ["var", 0]]],
@@ -440,17 +536,19 @@ for line in sys.stdin:
         prefix = json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"]})[:-1]
         counts = json.dumps({"cases": 1, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))),
                              "errors": 0})
-        if behaviour == "english-deep-formula":
-            deep = '["not",' * 1200 + '["top"]' + ']' * 1200
+        if behaviour in ("english-deep-formula", "english-deep-parse"):
+            leaf = '["top"]' if behaviour == "english-deep-parse" else '["nope"]'
+            deep = '["not",' * 5000 + leaf + ']' * 5000
             result = '{"admissible":true,"covers":true,"results":[{"parsed":[' + deep + \
                      '],"checked":false,"rendered":null,"roundtrip":false}]}'
         else:
             result = json.dumps(row, separators=(",", ":"))
-        print(prefix + ',"results":[' + result + '],"counts":' + counts + '}', flush=True)
+        binding = json.dumps(bind([None], line)[0], separators=(",", ":"))[:-len('null}')]
+        print(prefix + ',"results":[' + binding + result + '}],"counts":' + counts + '}', flush=True)
         continue
     print(json.dumps({"id": request["id"], "status": "ok", "mode": request["mode"],
-                      "results": [{"id": case.get("id"), "status": "ok", "values": [True],
-                                   "value": True, "canonical": ""} for case in request["cases"]],
+                      "results": bind([{"id": case.get("id"), "status": "ok", "values": [True],
+                                        "value": True, "canonical": ""} for case in request["cases"]], line),
                       "counts": {"cases": n, "bytes": len(json.dumps(request["cases"], separators=(",", ":"))), "errors": 0}}), flush=True)
 '''
 
@@ -506,7 +604,6 @@ def test_one_retry_recovers_a_hung_batch(tmp_path):
     ("english-bad-formula", "english", {"cases": [{}]}),
     ("english-negative-label", "english", {"cases": [{}]}),
     ("english-order-atom", "english", {"cases": [{}]}),
-    ("english-checked-no-render", "english", {"cases": [{}]}),
     ("english-deep-formula", "english", {"cases": [{}]}),
     ("background-boolean-premise", "route", {"id": "c", "kind": "background"}),
     ("background-boolean-premise", "norms", {"id": "c", "kind": "background"}),
@@ -518,6 +615,146 @@ def test_malformed_mode_result_retries_and_fails_closed(tmp_path, behaviour, mod
     assert service.stats["starts"] == 2 and service.stats["retries"] == 1
     assert service.pid is None
     service.close()
+
+
+def test_client_does_not_recheck_binding_preserving_content(tmp_path):
+    """Threat model (docs/spec/lean-service.md): a checked English item without a rendering
+    keeps every binding, so the client accepts it; that the runner never emits one is the
+    service's, tested by the Lean invariants (tests/test_lean_service_schema.py)."""
+    with LeanService(fake(tmp_path, "english-checked-no-render"), allow_unlisted_build=True) as service:
+        [row] = service.run("english", [{"cases": [{}]}])
+        assert service.stats["retries"] == 0
+    assert row["results"][0]["checked"] and row["results"][0]["rendered"] is None
+
+
+_BOUND_CASES = [{"id": "a", "ast": [["top"]]}, {"id": "b", "ast": [["bottom"]]}, {"id": "a", "ast": [["top"]]}]
+
+
+def _row(case, value):
+    return {"id": case["id"], "status": "ok", "values": [value], "value": value, "canonical": ""}
+
+
+def _bound(index, case_index, value=None):
+    case = _BOUND_CASES[case_index]
+    return {"index": index, "digest": {"$digest": case_index},
+            "result": _row(case, case_index != 1 if value is None else value)}
+
+
+@pytest.mark.parametrize("fault,results", [
+    ("omitted", [_bound(0, 0), _bound(1, 1)]),
+    ("reordered", [_bound(0, 1), _bound(1, 0), _bound(2, 2)]),
+    ("reordered-positions", [_bound(1, 1), _bound(0, 0), _bound(2, 2)]),
+    ("duplicated", [_bound(0, 0), _bound(1, 1), _bound(2, 2), _bound(2, 2)]),
+    ("duplicate-in-place", [_bound(0, 0), _bound(1, 0), _bound(2, 2)]),
+    ("substituted", [_bound(0, 0), {**_bound(1, 1), "digest": {"$digest": 0}}, _bound(2, 2)]),
+    ("foreign-digest", [_bound(0, 0), {**_bound(1, 1), "digest": "0" * 64}, _bound(2, 2)]),
+    ("wrong-index", [_bound(0, 0), {**_bound(1, 1), "index": 2}, _bound(2, 2)]),
+    ("unbound", [_row(_BOUND_CASES[0], True), _row(_BOUND_CASES[1], False), _row(_BOUND_CASES[2], True)]),
+    ("missing-digest", [_bound(0, 0), {k: v for k, v in _bound(1, 1).items() if k != "digest"}, _bound(2, 2)]),
+    ("extra-binding-field", [_bound(0, 0), {**_bound(1, 1), "case": 1}, _bound(2, 2)]),
+])
+def test_results_not_bound_to_their_cases_fail_closed(tmp_path, fault, results):
+    """Directive 3: an omitted, reordered, duplicated or substituted result is rejected by
+    binding (position and case digest), not by semantic re-checking; after one retry the
+    batch is CheckerUnavailable. Cases 0 and 2 are equal, so only positions tell them apart,
+    and a result reordered with its id still breaks the binding."""
+    answer = {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": "evaluate", "results": results,
+              "counts": {"cases": 3, "bytes": "__bytes__", "errors": 0}}
+    marker = tmp_path / "marker"
+    good = {**answer, "results": [_bound(0, 0), _bound(1, 1), _bound(2, 2)]}
+    marker.write_text(json.dumps(good))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        assert service.run("evaluate", _BOUND_CASES) == [_row(_BOUND_CASES[0], True),
+                                                        _row(_BOUND_CASES[1], False),
+                                                        _row(_BOUND_CASES[2], True)]
+        assert service.stats["retries"] == 0
+        marker.write_text(json.dumps(answer))
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            service.run("evaluate", _BOUND_CASES)
+        assert service.stats["retries"] == 1
+
+
+def _request_error(**change):
+    """A request error for `_BOUND_CASES`, bound as the service binds it, with `change`."""
+    answer = {"__bound__": True, "id": "__nonce__", "status": "error", "mode": "evaluate",
+              "digests": [{"$digest": 0}, {"$digest": 1}, {"$digest": 2}],
+              "error": "ResourceLimit: batch has 3 cases; budget is 2"}
+    for key, value in change.items():
+        if value is _DROP:
+            del answer[key]
+        else:
+            answer[key] = value
+    return answer
+
+
+_DROP = object()
+
+
+@pytest.mark.parametrize("message,raised", [("ResourceLimit: batch has 3 cases; budget is 2", ResourceLimit),
+                                            ("unknown budget field steps", VEError)])
+def test_bound_request_error_is_deterministic(tmp_path, message, raised):
+    (tmp_path / "marker").write_text(json.dumps(_request_error(error=message)))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        pid = service.pid
+        with pytest.raises(raised) as caught:
+            service.run("evaluate", _BOUND_CASES)
+        assert not isinstance(caught.value, CheckerUnavailable) and str(caught.value) == message
+        assert service.stats["retries"] == 0 and service.stats["restarts"] == 0 and service.pid == pid
+
+
+@pytest.mark.parametrize("fault,change", [
+    ("unbound", {"mode": _DROP, "digests": _DROP}),
+    ("unbound-case-error", {"mode": _DROP, "digests": _DROP, "error": "JSON: invalid batch"}),
+    ("missing-mode", {"mode": _DROP}),
+    ("missing-digests", {"digests": _DROP}),
+    ("wrong-mode", {"mode": "order"}),
+    ("null-digests", {"digests": None}),
+    ("empty-digests", {"digests": []}),
+    ("short-digests", {"digests": [{"$digest": 0}, {"$digest": 1}]}),
+    ("extra-digest", {"digests": [{"$digest": 0}, {"$digest": 1}, {"$digest": 2}, {"$digest": 2}]}),
+    ("reordered-digests", {"digests": [{"$digest": 1}, {"$digest": 0}, {"$digest": 2}]}),
+    ("substituted-digest", {"digests": [{"$digest": 0}, {"$digest": 0}, {"$digest": 2}]}),
+    ("foreign-digest", {"digests": [{"$digest": 0}, "0" * 64, {"$digest": 2}]}),
+    ("digests-as-string", {"digests": "*"}),
+    ("extra-field", {"results": []}),
+])
+def test_request_errors_without_their_binding_fail_closed(tmp_path, fault, change):
+    """mig1d recheck: a nonce-matching error raised ResourceLimit with zero retries, so an
+    error could answer a request it was not computed for. A request error must echo the
+    request's mode and the digest of every case as sent; without that binding it is a
+    protocol fault, retried once and then CheckerUnavailable, never ResourceLimit."""
+    (tmp_path / "marker").write_text(json.dumps(_request_error(**change)))
+    service = LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True)
+    try:
+        with pytest.raises(CheckerUnavailable, match="malformed response") as caught:
+            service.run("evaluate", _BOUND_CASES)
+        assert not isinstance(caught.value, ResourceLimit)
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1 and service.pid is None
+    finally:
+        service.close()
+
+
+def test_request_error_for_an_unsplit_batch_is_bound_to_null_digests(service_executable):
+    """A cases text that does not split into cases has no case digests: the service binds
+    its error to `null`, which is what the client expects for that request."""
+    with LeanService(service_executable) as service:
+        _, response = service.exchange("evaluate", "{}", 0, budget={"cases": 1})
+        assert service.stats["retries"] == 0
+    assert response["digests"] is None and response["mode"] == "evaluate"
+    assert response["error"] == "request field cases must be an array"
+
+
+def test_generated_parse_of_any_depth_is_accepted(tmp_path):
+    """Generated formulas are not bounded by the decoders' 64 (an English parse nests one
+    negation per prefix): a valid parse of depth 5001 is checked without recursion and
+    accepted with no retry, while the same parse with a bad leaf fails closed above."""
+    with LeanService(fake(tmp_path, "english-deep-parse"), allow_unlisted_build=True) as service:
+        [row] = service.run("english", [{"cases": [{}]}])
+        assert service.stats["retries"] == 0
+    parsed = row["results"][0]["parsed"][0]
+    for _ in range(5000):
+        parsed = parsed[1]
+    assert parsed == ["top"]
 
 
 def _scripted_response_rejected(tmp_path, mode, case, row):
@@ -625,7 +862,8 @@ _SCHEMA_SEEDS = {
           suppress_health_check=[HealthCheck.function_scoped_fixture])
 @given(mode=st.sampled_from(MODES), mutation=st.sampled_from(
     ("wrong-mode", "wrong-nonce", "wrong-status", "wrong-count", "missing-row-field",
-     "extra-row-field", "wrong-row-type", "wrong-error-shape")))
+     "extra-row-field", "wrong-row-type", "wrong-error-shape", "wrong-digest", "wrong-index",
+     "unbound-row")))
 def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation):
     case, row = _SCHEMA_SEEDS[mode]
     answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row.copy()],
@@ -649,6 +887,13 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "identity_id" if mode == "identity" else
                  "meaning_id" if mode == "check" else "values")
         answer["results"][0][field] = "true"
+    elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
+        bound = {"index": 0, "digest": {"$digest": 0}, "result": row.copy()}
+        if mutation == "wrong-digest":
+            bound["digest"] = "f" * 64
+        elif mutation == "wrong-index":
+            bound["index"] = 1
+        answer = {**answer, "__bound__": True, "results": [row.copy() if mutation == "unbound-row" else bound]}
     else:
         answer = {"id": "__nonce__", "status": "error", "error": {"message": "bad"}}
     executable = fake(tmp_path, "scripted")

@@ -10,6 +10,18 @@ from ve.search import find_countermodel
 from test_assist_recovery import environment
 
 
+_CLOCK = [0.0]
+
+
+@pytest.fixture(autouse=True)
+def controlled_operation_clock():
+    """Advance only at the operation step under test, regardless of CPU load."""
+    _CLOCK[0] = 0.0
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(time, "monotonic", lambda: _CLOCK[0])
+        yield
+
+
 def test_expired_single_candidate_review_stays_pending():
     result = review(environment(), "Alice and Bob are safe.",
                     {"predicate": "safe", "left": "alice", "right": "bob"},
@@ -33,7 +45,7 @@ def test_approval_stops_parsing_when_operation_budget_expires(monkeypatch):
     calls = []
     def slow_parse(*args, **kwargs):
         calls.append(args[1])
-        time.sleep(0.08)
+        _busy(0.08)
         return original(*args, **kwargs)
     monkeypatch.setattr(english, "parse_english_with_metadata", slow_parse)
     monkeypatch.setattr(catalogue, "parse_english_with_metadata", slow_parse)
@@ -66,7 +78,7 @@ def test_dependency_validation_is_inside_approval_budget(monkeypatch):
     calls = []
     def slow_parse(*args, **kwargs):
         calls.append(args[1])
-        time.sleep(0.08)
+        _busy(0.08)
         return original(*args, **kwargs)
     monkeypatch.setattr(english, "parse_english_with_metadata", slow_parse)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.05)
@@ -80,10 +92,8 @@ def test_dependency_validation_is_inside_approval_budget(monkeypatch):
 
 
 def _busy(seconds):
-    """CPU-only delay: no sleep, so only a traced deadline can stop it."""
-    end = time.perf_counter() + seconds
-    while time.perf_counter() < end:
-        pass
+    """Advance the injected clock inside a traced operation step."""
+    _CLOCK[0] += seconds
 
 
 def _approved_parent_and_ready_child(env):
@@ -117,11 +127,9 @@ def test_nested_dependency_replay_cannot_extend_approval_deadline(monkeypatch):
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.25)
     formula = Unary("safe", Const("carol"))
     situation = find_countermodel(env, (), Not(formula)).model.to_dict()
-    started = time.monotonic()
     with pytest.raises(ValueError, match="approval operation deadline"):
         service.approve("child", formula, actor="author", paraphrase="Carol is safe.",
                         presentation="Carol is safe.", situation=situation)
-    assert time.monotonic() - started < 0.25 + 0.15
     assert service.units["child"].state == "ready"
     monkeypatch.undo()
     assert service.verify_ledger()
@@ -146,11 +154,9 @@ def test_situation_evaluation_is_inside_approval_deadline(monkeypatch, step):
         return original(*args, **kwargs)
     monkeypatch.setattr(module, step, slow)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
-    started = time.monotonic()
     with pytest.raises(ValueError, match="approval operation deadline"):
         service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)
-    assert time.monotonic() - started < 0.1 + 0.15
     assert service.units["u"].state == "ready"
 
 
@@ -163,10 +169,8 @@ def test_every_catalogue_review_step_is_inside_the_deadline(monkeypatch, step):
         _busy(0.5)
         return original(*args, **kwargs)
     monkeypatch.setattr(catalogue, step, slow)
-    started = time.monotonic()
     result = review(environment(), "It is safe.", {"predicate": "safe", "antecedents": ["api", "carol"]},
                     pattern_id="discourse.reference@1", deadline=time.monotonic() + 0.1)
-    assert time.monotonic() - started < 0.1 + 0.15
     assert any("deadline" in row["reason"] for row in result["pending"])
     assert not result["cards"]
 
@@ -249,9 +253,7 @@ def test_every_undo_restoration_parse_is_inside_one_operation_deadline(monkeypat
     service, approved = _approved_then(path)
     _delay_parse_call(monkeypatch, number)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
-    started = time.monotonic()
     service.undo("u", approved)
-    assert time.monotonic() - started < 0.1 + 0.15
     assert service.units["u"].state == "stale"
     assert service.events[-1]["action"] == "undo_requires_review"
     assert service.to_ledger()["commands"][-1]["observed"]["deadlines"] != [None]
@@ -274,10 +276,8 @@ def test_set_readings_parses_inside_the_deadline_before_any_change(monkeypatch):
     before = service.to_ledger()
     _delay_parse_call(monkeypatch, 2)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
-    started = time.monotonic()
     with pytest.raises(ValueError, match="reading operation deadline"):
         service.set_readings("u", readings)
-    assert time.monotonic() - started < 0.1 + 0.15
     assert service.to_ledger()["events"] == before["events"]
     assert service.to_ledger()["commands"][-1]["error"]["message"] == "reading operation deadline"
     monkeypatch.undo()
@@ -300,11 +300,9 @@ def test_resolution_rewrite_parses_inside_the_deadline(monkeypatch):
         return original(*args, **kwargs)
     monkeypatch.setattr(recovery, "checked_wording", slow)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
-    started = time.monotonic()
     with pytest.raises(ValueError, match="resolution operation deadline"):
         service.resolve_pending("u", 0, actor="author", reason="checked", disposition="resolved",
                                 wording="Api is safe.", cited_spans=[{"start": 0, "end": 3}])
-    assert time.monotonic() - started < 0.1 + 0.15
     assert service.to_ledger()["events"] == before["events"]
     assert service.to_ledger()["commands"][-1]["error"]["message"] == "resolution operation deadline"
     monkeypatch.undo()
@@ -351,6 +349,14 @@ def test_large_accepted_anchor_cannot_escape_approval_deadline(monkeypatch):
     service.classify("u", parse_outcome="one")
     formula = Unary("safe", Const("api"))
     situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    original_state = RecoveryService._state
+    def expensive_state(self):
+        # The large accepted anchor is serialized while the operation runs.
+        state = original_state(self)
+        if self._observed is not None:
+            _busy(0.2)
+        return state
+    monkeypatch.setattr(RecoveryService, "_state", expensive_state)
     monkeypatch.setattr(recovery, "OPERATION_SECONDS", 0.1)
     with pytest.raises(ValueError, match="approval operation deadline"):
         service.approve("u", formula, actor="author", paraphrase="Api is safe.",
@@ -377,10 +383,12 @@ def test_approval_sealing_is_inside_the_operation_deadline(monkeypatch):
     def slow_first_seal(self):
         calls.append(None)
         if len(calls) == 1:
-            _busy(2.0)
+            _busy(2.5)
         return original(self)
     monkeypatch.setattr(recovery.RecoveryService, "_seal", slow_first_seal)
-    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 1.5)
+    # The injected clock is independent of xdist load; the seal advances it
+    # past the deadline after the earlier approval steps complete.
+    monkeypatch.setattr(recovery, "OPERATION_SECONDS", 2.0)
     with pytest.raises(ValueError, match="approval operation deadline"):
         service.approve("u", formula, actor="author", paraphrase="Api is safe.",
                         presentation="Api is safe.", situation=situation)

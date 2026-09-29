@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from typing import NamedTuple
 
+from .assurance import semantic_entry
 from .ast import Or, formula_from_data, formula_to_data
 from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment
@@ -85,6 +86,7 @@ def _parse_raw(s: str) -> Label | None:
     return None
 
 
+@semantic_entry("label")
 def parse_label(s) -> Label | None:
     """Only canonical label strings parse: the label renders back to the input."""
     if type(s) is not str:
@@ -99,6 +101,7 @@ def _validate_label_python(s) -> str:
     return s
 
 
+@semantic_entry("label")
 def validate_label(s) -> str:
     """Check the public label grammar through the selected authority."""
     from .backends.dispatch import authority_for, execute
@@ -122,7 +125,7 @@ def validate_label(s) -> str:
 
 
 # Kinds are kept in their wire form (a string or a tagged list); decoding only validates.
-def _check_kind(data, depth=16):
+def _check_kind(data, depth=16, *, reports=False):
     if depth == 0:
         raise ResourceLimit("ResourceLimit: kind depth exceeds 16")
     if type(data) is str:
@@ -132,18 +135,18 @@ def _check_kind(data, depth=16):
     if type(data) is not list:
         raise VEError("invalid kind")
     if len(data) == 4 and data[0] == "attributed" and type(data[1]) is str and type(data[2]) is str:
-        if not (token(data[1]) and data[2] in ACTS):
+        if not (token(data[1]) and data[2] in (ACTS + ("wants",) if reports else ACTS)):
             raise VEError("invalid attributed kind")
-        _check_kind(data[3], depth - 1)
+        _check_kind(data[3], depth - 1, reports=reports)
     elif len(data) == 3 and data[0] == "hedged" and type(data[1]) is str:
         if data[1] not in MODALITIES:
             raise VEError("invalid hedged kind")
-        _check_kind(data[2], depth - 1)
+        _check_kind(data[2], depth - 1, reports=reports)
     elif len(data) == 4 and data[0] == "causal" and type(data[1]) is str:
         if data[1] not in RELATIONS:
             raise VEError("invalid causal kind")
-        _check_kind(data[2], depth - 1)
-        _check_kind(data[3], depth - 1)
+        _check_kind(data[2], depth - 1, reports=reports)
+        _check_kind(data[3], depth - 1, reports=reports)
     elif len(data) == 2 and data[0] == "unformalised" and type(data[1]) is str:
         if not token(data[1]):
             raise VEError("invalid unformalised reason")
@@ -429,6 +432,7 @@ def _claim_json(env, claim):
             **({} if label == "asserted" else {"label": label})}
 
 
+@semantic_entry("admission")
 def admit_document(environment, document) -> dict:
     """Admit a document under the selected checker authority."""
     from .backends.dispatch import authority_for, execute
@@ -461,7 +465,23 @@ def _admit_document_python(environment, document) -> dict:
 
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
+    from .softnorms import SoftEnvironment
+    if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
+            "soft-norms@0" in environment.get("profiles", [])):
+        from .soft_route import admit_soft_document
+        return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
+    if env.unit_schema is not None:
+        # W6: every statement is an annotated quantity, admitted before erasure.
+        from .quantity_admission import admit_quantity_document
+        return admit_quantity_document(env, document)
+    if env.alternatives is not None:
+        from .alternatives import run_case
+        result = run_case({"id": "admission", "kind": "admission",
+                           "environment": env.to_dict(), "document": document})
+        if result.get("status") != "ok":
+            raise AdmissionError(result.get("error", "alternatives admission failed"))
+        return {key: value for key, value in result.items() if key not in ("id", "status")}
     # The norms route takes every input with a norm construct (11.4): a
     # regulated declaration or norm content, as Lean `usesNormsPath` does.
     if ("norms@0" in env.profiles and

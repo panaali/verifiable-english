@@ -4,7 +4,25 @@ An English-like language for human-inspectable, machine-checkable claims in AI o
 
 **Stage:** experimental Python v0 core, argument layer, constrained grammars, and Lean reference proofs implemented; full verification and oversight experiments are pending.
 
-Run `uv sync`, then `uv run python -m pytest`. The package requires Python 3.12 or later.
+Run the complete offline verification gate with `python3 tools/gate.py`.
+Every stage runs in an environment built from scratch, not inherited: `PATH` holds
+only the pinned Lean and Rust toolchain `bin` directories (under the account's
+`~/.elan/toolchains` and `~/.rustup/toolchains`), `uv` and `/usr/bin:/bin`; home,
+caches and temporary files are fresh directories owned by that run. The allowed
+variables are listed in `ALLOWED_ENVIRONMENT` in `tools/gate.py`, and the exact
+environment of each stage is recorded in the result.
+It checks the pinned Lean and Rust versions, syncs the locked Python environment
+(refusing any ancestor `pyproject.toml` that declares a uv workspace, which would
+substitute its own lock and `.venv`, and checking that Python runs from the
+checkout's `.venv`), builds both native backends once, runs the Lean source audit, `cargo test`, and
+the full non-live pytest suite, then writes `gate-result.json` with the commit SHA, tool versions, counts,
+every skip and every failure. It exits nonzero for missing backends, unlisted skips,
+missing test IDs, a dirty or changing worktree, or failed stages. Expected test
+IDs are pinned in `tools/gate-collection.json`; regenerate that file after
+intentional test changes by collecting with `tools.gate_pytest`. Optional backend
+and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
+use `--output PATH` to retain a particular gate record. The package requires
+Python 3.12 or later.
 For a worked inventory, run:
 
 ```sh

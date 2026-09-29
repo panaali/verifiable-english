@@ -65,6 +65,9 @@ def test_nary_route_regenerates_literal_background(lean_binary):
 @pytest.fixture(scope="module")
 def lean_binary():
     binary = ROOT / "lean/.lake/build/bin/ve_conformance"
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        assert binary.is_file(), f"gate Lean build missing: {binary}"
+        return binary
     if not binary.exists():
         lake = shutil.which("lake")
         if lake is None:
@@ -77,7 +80,11 @@ def lean_binary():
 
 @pytest.fixture(scope="module")
 def rust_binary():
-    binary = ROOT / "rust/target/debug/ve"
+    binary = (Path(os.environ["VE_RUST_BINARY"]) if os.environ.get("VE_RUST_PREBUILT")
+              else ROOT / "rust/target/debug/ve")
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
     if not binary.exists():
         cargo = shutil.which("cargo")
         if cargo is None:

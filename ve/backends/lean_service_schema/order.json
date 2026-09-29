@@ -15,12 +15,12 @@
       "evaluate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "evaluate"}}},
       "countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
       "certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "certificate"}}}},
-    "surface": {"$comment": "Order.Surface.parse accepts only a nonempty document.",
+    "surface": {"$comment": "runCase re-decodes each parsed formula with Wire.decodeFormula 64, so the generated formulas are within order_formula. That Order.Surface.parse accepts only a nonempty document is the service's.",
       "type": "object", "required": ["id", "status", "ast"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "ast": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/order_formula"}}}},
+        "ast": {"type": "array", "items": {"$ref": "common.json#/$defs/order_formula"}}}},
     "evaluate": {"type": "object", "required": ["id", "status", "values"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},

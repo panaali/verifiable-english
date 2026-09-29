@@ -10,8 +10,8 @@ order countermodels but does not search for them.
 from __future__ import annotations
 
 import json
-from copy import deepcopy
 import os
+from copy import deepcopy
 import re
 import shutil
 from subprocesses import HANG_TIMEOUT
@@ -205,6 +205,10 @@ def lean_executable():
 
 @pytest.fixture(scope="module")
 def rust_executable():
+    if os.environ.get("VE_RUST_PREBUILT"):
+        binary = Path(os.environ["VE_RUST_BINARY"])
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
     cargo = shutil.which("cargo")
     if not cargo:
         pytest.skip("cargo is not available")

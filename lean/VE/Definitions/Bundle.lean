@@ -140,6 +140,8 @@ def checkLemma (E : VE.Environment) (bg : List Leaf) (sets : List Admission.Read
   Gate.require (!known.any (·.meaningId == L.meaningId)) "Lemma meaning ID is stale or duplicated"
   let checked := bg.map Prod.snd ++ (L.premises.map Prod.snd ++ cited)
   bind checked L.conclusion L.certificate
+  Gate.require (decide (VE.Route.Steps.fol L.certificate.trace ≤ VE.Route.Steps.maxSteps))
+    s!"Lemma {L.name} certificate failed"
   Gate.require (VE.Tableau.checkCertificate E checked L.conclusion L.certificate)
     s!"Lemma {L.name} certificate failed"
   pure ⟨L.meaningId, L.conclusion, derived, leaves⟩
@@ -151,6 +153,23 @@ def checkAll (E : VE.Environment) (bg : List Leaf) (sets : List Admission.Readin
   | known, L :: Ls => do
     let k ← checkLemma E bg sets bind known L
     checkAll E bg sets bind (known ++ [k]) Ls
+
+open VE.Order.ProfileGate in
+/-- An accepted bundle reports one known lemma per submitted lemma: the route's
+`checked` and `lemmas` counts equal the submitted count, which the Python
+backend requires of every `ok` row (the manifest's `counts`). -/
+theorem checkAll_length (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
+    ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
+    checkAll E bg sets bind known Ls = .ok res → res.length = known.length + Ls.length
+  | known, [], res, h => by
+    simp only [checkAll, Except.ok.injEq] at h
+    subst h; simp
+  | known, L :: Ls, res, h => by
+    unfold checkAll at h
+    obtain ⟨k, _, h⟩ := bind_ok h
+    rw [checkAll_length E bg sets bind (known ++ [k]) Ls res h]
+    simp; omega
 
 /-! ## Citation soundness -/
 
@@ -235,6 +254,7 @@ theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good 
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hcert, h⟩ := bind_ok h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
@@ -284,6 +304,7 @@ theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf) (sets : List Ad
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   cases h
   simp only [ReadingCompatible, hd]
   rfl
@@ -299,6 +320,7 @@ theorem checkLemma_binding (E : VE.Environment) (bg : List Leaf) (sets : List Ad
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
