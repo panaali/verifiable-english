@@ -157,7 +157,7 @@ class ConstantDecl:
     unit: str | None = None
     verbalisation: str | None = None
 
-def _alternatives_block(raw, sorts, predicates, constants):
+def _alternatives_block(raw, sorts, predicates, constants, *, risk_enabled=False):
     """Check declarations only; Lean owns inlining, validity and followability."""
     mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
     optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
@@ -260,6 +260,9 @@ def _alternatives_block(raw, sorts, predicates, constants):
         if body == "avoids":
             if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
                 raise VEError(f"FulfilmentSort: {name}")
+        elif body == "excludes" and risk_enabled:
+            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
+                raise VEError(f"FulfilmentSort: {name}")
         elif type(body) is not list:
             raise VEError("InvalidInput: alternatives.fulfilments")
     return canonical_json(raw)
@@ -278,6 +281,7 @@ class Environment:
     units: object
     reports: object
     alternatives: bytes | None
+    risk: bytes | None
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
@@ -292,7 +296,9 @@ class Environment:
             raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
         fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
         has_alternatives = route and type(data) is dict and "alternatives" in data
+        has_risk = route and type(data) is dict and "risk" in data
         require_fields(data, fields | ({"alternatives"} if has_alternatives else set())
+                       | ({"risk"} if has_risk else set())
                        | ({"unit_schema", "units"} if extended else set()))
         order = False
         if route:
@@ -488,9 +494,17 @@ class Environment:
             raise ResourceLimit("At most 64 declared $string literals")
         alternatives = None
         if route and "alternatives@0" in data["profiles"]:
-            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants)
+            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants,
+                                               risk_enabled="risk@0" in data["profiles"])
         elif has_alternatives:
             raise UnsupportedProfile("alternatives block requires alternatives@0")
+        risk = None
+        if route and "risk@0" in data["profiles"]:
+            from .risk import validate_block
+            risk = validate_block(data.get("risk"), sorts, predicates, constants,
+                                  loads_json(alternatives), units)
+        elif has_risk:
+            raise UnsupportedProfile("risk block requires risk@0")
         profile_predicates = {}
         if alternatives is not None:
             block = loads_json(alternatives)
@@ -510,6 +524,7 @@ class Environment:
                              ("units", MappingProxyType(units) if extended else None),
                              ("alternatives", alternatives)):
             object.__setattr__(self, field, value)
+        object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
         if extended:
             from .units import validate_extension
@@ -566,6 +581,7 @@ class Environment:
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
+                **({"risk": loads_json(self.risk)} if self.risk is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}
