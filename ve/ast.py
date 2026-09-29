@@ -315,6 +315,13 @@ class _Checker:
             raise TypeMismatch("Unknown formula constructor")
 
 
+def _typing_in_scope(env) -> bool:
+    """Whether the backend typing adapter takes `env`. W6 quantity environments
+    (`unit_schema`) are typed by the quantity route at admission; Lean's `check`
+    mode does not take them, so their standalone typing stays Python's."""
+    return getattr(env, "unit_schema", None) is None
+
+
 # Lean's accepted typing verdicts, keyed by the environment identity (a digest
 # of the canonical environment) and the canonical AST. Only Lean's answers are
 # kept; a rejection is never cached.
@@ -326,7 +333,7 @@ _LEAN_TYPED_LIMIT = 1 << 16
 def check_formula(env: Environment, formula: Formula) -> Formula:
     """Check a closed formula. Open formulas are never accepted as claims."""
     from .backends.dispatch import authority_for, execute
-    if authority_for("typing") == "python":
+    if authority_for("typing") == "python" or not _typing_in_scope(env):
         _Checker(env).formula(formula)
         return formula
     from .backends.lean_runner import run
@@ -362,7 +369,7 @@ def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")
     from .backends.dispatch import authority_for, execute
-    if authority_for("typing") == "python":
+    if authority_for("typing") == "python" or not _typing_in_scope(env):
         checker = _Checker(env)
         for formula in document.formulas:
             checker.formula(formula)
