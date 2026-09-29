@@ -147,7 +147,7 @@ def test_other_invocation_cannot_rebuild_while_tests_read(tmp_path):
         "        sys.exit(0)",
         "    sys.exit(1)",
     ))
-    result = subprocess.run([sys.executable, "-c", contender_code], timeout=5)
+    result = subprocess.run([sys.executable, "-c", contender_code], timeout=HANG_TIMEOUT)
     assert result.returncode == 0
 
 
