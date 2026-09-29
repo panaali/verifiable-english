@@ -112,6 +112,21 @@ def main():
                 page.locator('[data-example="news"]').click()
                 expect(page.locator('#lessonViews .explicit-badge').first).to_be_visible()
                 assert not re.search(r'[@()\[\]*<=]', page.locator('#lessonViews .natural-view').inner_text())
+                page.locator('#asimovNav').click()
+                expect(page.locator('#asimov')).to_be_visible()
+                expect(page.locator('#asimovRules li')).to_have_count(13)
+                expect(page.locator('#asimovDocument')).to_have_text('Conflict-free')
+                swimmer = page.locator('.asimov-card', has_text='Pulling a swimmer out of the water')
+                expect(swimmer.locator('.asimov-verdict')).to_contain_text('Required')
+                swimmer.locator('summary', has_text='Change the facts').click()
+                swimmer.locator('input[type=checkbox]').uncheck()
+                swimmer.get_by_role('button', name='Ask VE again').click()
+                swimmer = page.locator('.asimov-card', has_text='Pulling a swimmer out of the water')
+                expect(swimmer).to_contain_text('VE decided this again just now', timeout=30000)
+                expect(swimmer.locator('.asimov-verdict')).to_contain_text('Permitted')
+                assert not re.search(r'[@()\[\]*<=_{}]', page.locator('#asimov').inner_text())
+                if os.environ.get('VE_SMOKE_SCREENSHOT'):
+                    page.screenshot(path=os.environ['VE_SMOKE_SCREENSHOT'], full_page=True)
                 page.locator('#ideNav').click()
                 with page.expect_download() as download:
                     page.locator('#export').click()
@@ -123,7 +138,7 @@ def main():
                 expect(page.locator('#login')).to_be_visible()
                 assert not errors, errors
                 browser.close()
-            print('Browser smoke passed: blank draft, approval, reload, checked card, recovery, two-tab conflict, translation alternatives, escaped prose, Rules, export, mobile layout, logout.')
+            print('Browser smoke passed: blank draft, approval, reload, checked card, recovery, two-tab conflict, translation alternatives, escaped prose, Rules, Asimov edit and re-run, export, mobile layout, logout.')
         finally:
             server.terminate()
             server.wait(timeout=10)
