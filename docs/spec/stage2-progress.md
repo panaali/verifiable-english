@@ -2,77 +2,113 @@
 
 This checkpoint follows [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md), revision 3. Stage 0 and Stage 1 are merged on `mig/stage2`, and `main` was merged in at `3aab6626` (Lean service protocol 2, soft norms, units/time, attribution, causation, alternatives, the assurance manifest and the release gate). The Stage 0 `python.json` behaviour baseline remains the oracle. `VE_AUTHORITY` still defaults to `python`.
 
+## Decisions recorded
+
+- **DRI decision (orchestrator, 2026-09-29): the search-refusal change is accepted.** Gate 2 checklist item 1b listed one test change that is not wording: under a backend authority, a search witness that the Lean countermodel check refuses returns `CheckerUnavailable` (`tests/test_assurance_manifest.py`). This follows the fail-closed assurance rule: a refused witness is a generator/check disagreement, never a verdict. The same rule now governs every adapter added in this checkpoint (below).
+
 ## Gate 2 measurement
 
-`tools/stage2_parity.py --authority lean` reruns every Stage 0 probe (9,384 cells plus the graph, boundary and feature probes). Inputs are built by the retained Python and each probed call runs under the backend authority. It compares the result with the frozen baseline and with today's Python. The current report is [stage2-parity.md](stage2-parity.md). Cells fall into these classes:
+`tools/stage2_parity.py --authority lean` reruns every Stage 0 probe (9,384 cells plus the graph, boundary and feature probes). Inputs are built by the retained Python and each probed call runs under the backend authority. The named graph probes now run on the backend too, and the tool records the operations each one routes. It compares the result with the frozen baseline and with today's Python. The current report is [stage2-parity.md](stage2-parity.md). Cells fall into these classes:
 
 | Class | Cells | Meaning |
 |---|---:|---|
 | regression | 0 | S→R/U/X, a changed S verdict status, or a changed R/U code |
 | different | 0 | same cell and code, different record |
 | baseline drift | 115 | differs from the baseline exactly as today's Python does (main added `lean_outcome` to bundle records) |
-| same, adapter | 3,220 | identical; the operation's own adapter ran on the backend |
-| same, constituents | 2,612 | identical; only constituent adapters (Background, typing, evaluation, search) ran on the backend, and the operation's verdict is still Python's |
-| same, python | 3,437 | identical; no adapter was dispatched |
+| same, adapter | 5,112 | identical; the operation's own adapter ran on the backend (3,220 at the previous checkpoint) |
+| same, constituents | 1,782 | identical; only constituent adapters ran on the backend |
+| same, python | 2,375 | identical; no adapter was dispatched |
 
-Every named graph, boundary and feature probe is also `same` or `baseline drift`; none is `different`. The regression diff is empty over the whole matrix. Over the Stage 2 sessions the count fell from 2,150 to 16, and then to 0. The last three classes were closed as follows:
+All 11 named graph probes are `same, adapter`, and every named boundary and feature probe is `same` or `baseline drift`. None is `different`.
 
-- **Norms admission with `data@0` flags (16 regressions).** `Norms.Wire.decodeSource` takes a `flags` switch, and only document admission sets it. Admission's `background:flags` leaves are W2's, regenerated from the decoded flags (`Route.Admission`). `norms_wire_report_consequence` already takes the flag premises as its own hypothesis (`hflags`), so no theorem changed. The other norms cases (`norms-elaborate`, `norms-certificate`, `norms-conflict`) keep the gate: their regenerated Background and the conflict small-model argument are stated over `backgroundBase` (literals only). `VE/Norms/SmallModel.lean` assumes there are no `functional`/`total` flags, so the base theory is ground. It restricts a witness to a finite substructure, and that restriction does not preserve a `total` (∀∃) flag. No probe cell regresses there, because those operations have no adapter yet. They must be closed before their adapters are added (see the checklist).
-- **Norms admission `UnsupportedProfile` wording (80 cells).** `Norms.Admission.envelopeGate` checks `norms@0` and the FOL family before the document, with Python's diagnostics ("norm document admission is FOL-only"). This is aligned wording, not documented wording.
-- **Typing budget wording (named probes `MAX_NODES` and `MAX_DEPTH`).** The Lean typing diagnostic walk (`VE/Service/TypingDiagnostic.lean`) keeps `_Checker`'s node counter, shared across a document's formulas, and its formula and term depths. A budget rejection therefore gets Python's code and message at the node where Python meets it. The adapter strips the `ResourceLimit:` prefix only from `_Checker`'s three budget messages (`ve/backends/diagnostics.py`), because Python raises all other `ResourceLimit` messages with the prefix.
+The 4,157 cells that are not `same, adapter` split into two groups:
 
-Building the budget test exposed one verdict difference outside the probe matrix, and it is fixed. On the order, closure and closure+nary families, Lean's standalone typing accepted a 10,001-node formula that Python rejects. The single-formula decoders of those families check depth only. `Standalone.decodeTyped` now runs `Route.AstLimit.check`, Python's decoder-order limit walk, on every family first. `tests/test_stage2_standalone.py::test_lean_typing_budget_diagnostics_match_python` covers all five envelope kinds.
+- **1,769 cells never reach the operation.** The probe itself refuses the cell before calling it: for example "norms@0 required", "definitions@0 required", or an order environment with definitions, which is rejected when it is constructed. No adapter can cover these.
+- **2,388 cells reach the operation without its own adapter deciding.** By family: order 1,589 of all non-adapter cells, closure 965, core 928 and FOL 675 (both groups included). They are:
+  - operations whose Lean checker is FOL-only and that are not dispatched on the other families: argument graph, bundle, readings, and norms elaborate, certificate and conflict;
+  - bundles over norms environments, because the route bundle case refuses `regulated`;
+  - parse and canonicalisation over `definitions@0` environments, whose surface sugar (`no`, `every … that is`, `iff`, `define`) is in no Lean surface parser;
+  - rejection cells that a constituent adapter decides before the operation dispatches: for example a conclusion that the typing adapter rejects, or a model whose stale identity the container check rejects.
 
-An empty diff is not backend coverage. The 2,612 `same, constituents` and 3,437 `same, python` cells still take their verdict from Python.
+For information only, `--authority rust-experimental` gives 2,609 regressions and 805 `different` cells, up from 2,497 and 690. That authority sends only evaluation and search to Rust, and now more operations dispatch, so more of them are `CheckerUnavailable` there. It is not a Gate 2 authority.
 
-For information only, `--authority rust-experimental` gives 2,497 regressions. This is by design: that authority sends only evaluation and search to Rust, and every other operation is `CheckerUnavailable`. It also gives 690 `different` cells, where Rust's `UnknownSymbol` wording in search and distinguishing differs. That authority is not part of Gate 2.
+## Adapters added in this checkpoint
 
-## Status by plan item
+Every class-A operation of the plan's section 2.3 now dispatches its own adapter. Where the Lean interface does not cover an input, the adapter routes it to the retained Python statically (listed per row). This is a recorded scope gap, not a fallback after a failure.
 
-| Plan item | Status | Done in this checkpoint | Remaining |
+| Operation (dispatch name) | Lean interface | Scope routed to the backend | Not yet on the backend |
 |---|---|---|---|
-| 2a Python adapters | Partial | Own adapters on the backend: typing, Background, dependency order, label, certificate replay (every family, including regulated, core-with-layers, reports and soft environments; Python's one-step-per-node budget applied to Lean's verdict; an invalid trace over the budget is `CheckerUnavailable`), admission (route, norms, soft and alternatives routes, W6 quantity through `ve_quantity` with a manifest binding and probe), evaluation, countermodel check, both searches. Search witnesses are published only through `countermodel.check`, as the assurance manifest requires. The adapters cover legacy v0/v0.1 envelopes and `reports@0`, `soft-norms@0` and `alternatives@0` environments. Typing rejections carry Python's codes and messages (`VE/Service/TypingDiagnostic.lean`). | No adapter yet for bundle, the norms operations, readings, argument graphs, compare, premise status, definitions elaboration, parse and canonicalize. `formula_from_data`/`formula_to_data` still type in Python. Also outstanding: operation batching, record provenance (`authority`, `assurance`, `covered_operations`, `trusted`), and complete fault injection. The service adapters are not yet declared in the assurance manifest, whose bindings and call sites describe the one-shot runners. |
-| 2b Lean glue modes | Partial | The `check` mode covers legacy envelopes, core-family definitions and flags, norms, reports, soft and alternatives environments. It binds identities to the submitted environment. | `parse`, `normalize`, `graph` and `readings` modes, and `route/evaluate` with source. Environment and model modes are not yet wired into the Python constructors. |
-| 2c Lean coverage closure | Closed on the probe matrix (empty regression diff) | `VE/Norms/Plain.lean`: regulated environments on every family (Background with profile premises, the profile model check, evaluate, countermodel). `VE/Core/Layers.lean`: definitions and data flags on closure+nary (Background, evaluate, countermodel, label). The norms tree now takes W3 definitions, so norms admission with definitions passes. The route refuses core-family admission as Python does. Norms document admission with `data@0` flags, with Python's envelope diagnostics. | Norms with data flags outside admission (elaborate, certificate, conflict), including a small-model argument that holds with `total` flags. Certificates on the order family with profile pairs. Closure bundles. |
-| 2d readings checker | Open | — | `Route/Readings.lean` with its three soundness theorems |
-| 2e Rust extensions | Mostly done | Order-family search, distinguishing models and full countermodel-check records, streaming Python's order candidates. The relational model stream now follows Python's exact order (domain sizes by total, relation subsets by size with permission and flag filters, then denotations); this removed every search count difference. `soft-norms@0` envelopes are accepted, with the soft document's premises as a model-validity filter. | Rust parse diagnostics with codes and spans |
+| norms elaborate, certificate, conflict (`norms_elaborate`, `norms_certificate`, `norms_conflict`) | `ve_norms_route` cases, with data flags (`VE/Norms/Flagged.lean`) | FOL-family plain norm documents, with definitions and flags | closure, core and order families; soft, reports, alternatives and quantity environments |
+| norms admission (`norms_admission`) | norms route `admission` | every `norms@0` envelope (Lean's envelope gate gives Python's FOL-only diagnostic) | none |
+| premise status, compare (`premise_status`, `compare`) | the constituents pinned to the backend (`dispatch.composed`) | all | none (compare is trusted, narrowed, as the plan decides) |
+| typing of `formula_from_data`/`formula_to_data` (`typing`) | `check` mode | all non-generated formulas | W6 quantity environments; generated Background premises keep a structural re-check |
+| environment, model and Background validation (`environment_validation`, `model_validation`) | `environment` and `model` modes | ve.core@0.2 envelopes | statement layers and legacy envelopes (their routes validate them); core-family n-ary definitions; search candidates without an identity |
+| definitions elaboration (`definitions_elaboration`) | route `background` | as model validation | as model validation |
+| bundle (`bundle`) | route `bundle` (`bundle_sound`) | FOL family without norm declarations or statement layers | closure, core and order families; norms environments |
+| parse and canonicalise (`parse`) | new `parse` mode over the family surface parsers | ve.core@0.2 without `definitions@0` | `definitions@0` sugar; statement layers |
+| argument graph (`graph`) | new `graph` mode (`VE/Service/Graph.lean`) | FOL family (norms included) and the v0 envelope | closure, core and order families; ve.core@0.1 |
+| readings (`readings`) | new readings checker (`VE/Service/Readings.lean`) | FOL family (norms included) | closure, core and order families |
+
+Rules every adapter follows:
+
+- **Lean decides, Python names.** Where Python's code is also the structural decoder (environment, model, definitions, bundle, parse), both run. If Lean accepts, the Python container is returned only if its identity is the one Lean recomputed. If both reject, Python's diagnostic names the rejection. If only Lean rejects, Lean's diagnostic is raised. If Lean accepts what Python's decoder rejects, the call is `CheckerUnavailable`. Python's rejection is never the verdict (`ve/backends/validation.py`).
+- **Generators stay untrusted.** Python's provers, model searches, conflict-witness search and readings search only propose evidence. Lean checks it; a proposal Lean refuses is `CheckerUnavailable`, and an exhausted generator is `UNKNOWN`, which asserts nothing.
+- **Composing operations pin their constituents.** Premise status, compare, argument checking and readings run every constituent replay and model check on the backend, whatever the per-operation overrides.
+
+## Lean changes
+
+- `VE/Norms/Flagged.lean` (new): data flags on norms elaborate, certificate and conflict. Flag premises come first in Background, as Python orders its generators. A conflict case with flags or definitions is checked over Python's base environment and base Background, against Python's conflict formulas, which keep defined atoms. Before this change, Lean answered UNKNOWN for every Python certificate over a document with definitions. Theorems: `norms_flagged_acceptance`, `norms_flagged_conflict_sound`, `norms_flagged_witness_sound`.
+  - **Design risk closed.** The small-model restriction (`conflict_smallModel`) keeps universal premises but not the ∀∃ premise of a `total` flag. So the elaboration's `fragment` flag is false under a `total` flag. CONFLICT-FREE still needs certificates (binding decision 9.4), so no verdict depended on it.
+- `VE/Service/Standalone.lean`:
+  - environment and model modes now validate core-family definitions and flags (through `Core.Layers`), refuse n-ary core definitions as deferred, apply the norms profile check, reserve Python's `no`, and compute identities over canonical act phrases;
+  - model identity now sorts domains as Python does;
+  - new `parse` case;
+  - `folBackground` regenerates Python's Background, norms profile premises included.
+- `VE/Service/Graph.lean` (new): the `graph` mode. It recomputes claim and edge identities and certificate bindings. Background premises are explicit assumption leaves heading every deduction's premises, so the unchanged `VE.Graph.checkTableau` covers composition with Background. Theorems: `graph_sound`, `graph_entails`, `graph_unfolds`.
+- `VE/Service/Readings.lean` (new): the readings checker. It rebuilds the premise lists (Background, fixed premises, per-set right-nested disjunctions or chosen readings) and checks the certificate or the admissible model. It carries the plan's three theorems, `readings_all_sound`, `readings_none_sound` and `readings_some_sound`, which the manifest moves from planned to proved. The plan named `Route/Readings.lean`; that file keeps its `readings_all_iff` lemma.
+- `VE/Service/Protocol.lean`: new modes `parse`, `graph` and `readings`, each pinned by an `rfl` dispatch theorem.
 
 ## Verification
 
-On the final code of this checkpoint:
+On the final code of this checkpoint (`VE_NATIVE_PREBUILT=1`, 16 file chunks at `-n 3`, four per call, then the three slow files):
 
-- **Default authority (`VE_AUTHORITY` unset):** the full suite passes, 3,769 passed and 6 skipped. It ran as one parallel run (`-n 8 --dist loadfile`) plus `test_english_mixed_merge_smoke` run alone, which passed in 640 s. Setting `VE_AUTHORITY=python` explicitly fails 93 alternatives and Asimov tests with `CheckerUnavailable: alternatives@0 requires the Lean checker`. This is by design: alternatives is a Lean-only operation, and an explicit Python authority never runs Lean.
-- **`VE_AUTHORITY=lean`:** the full suite passes, 3,769 passed and 6 skipped. It ran as three parallel chunks plus `test_english_mixed_merge_smoke` run alone, which passed in 649 s, the first completed run under this authority. The Hypothesis property test `test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget` takes 306 s under Lean and 84 s under Python. That is Gate 4 latency data, not a failure.
-- `tools/stage2_parity.py --authority lean`: 0 regressions and 0 different cells over 9,384 cells, and no differing named probe ([stage2-parity.md](stage2-parity.md)).
-- `lake build` passes. `lean/VE/Route/frozen.py` passes with the four edited modules re-hashed. `lean/checkers.lock` pins the rebuilt `ve_service`.
-- `python lean/audit.py` audits 188 source files and 1,623 named theorems, with only `propext`, `Classical.choice` and `Quot.sound`. There is no `sorry`. No theorem statement changed in this checkpoint.
-- Rust did not change in this checkpoint. `cargo test -p ve-core --locked` last passed at `87669fea` and was not rerun.
-- New tests in this checkpoint:
-  - `tests/test_stage2_evaluation.py::test_lean_norms_admission_with_data_flags_matches_python`: a norm layer leaf with a `background:flags` leaf, a rejected mislabelled flag leaf, and the closure envelope's FOL-only diagnostic, all identical under both authorities;
-  - `tests/test_stage2_standalone.py::test_lean_typing_budget_diagnostics_match_python`: node and depth budgets, arithmetic term depth, typing-before-budget and budget-before-typing order, and a document's shared node counter, on five envelope kinds.
-- Earlier tests cover:
-  - typing diagnostics on nine envelopes and on legacy envelopes;
-  - order search, distinguishing and countermodel checks against Python;
-  - core-family layers;
-  - the model-order budget sweep;
-  - certificate replay on eight envelopes (valid, over-budget and stale certificates).
+- **`VE_AUTHORITY=lean`:** 3,973 passed and 6 skipped, 0 failures. `test_english_mixed_merge_smoke` exceeds the 10-minute tool limit, so its work ran as five parallel slices of `english_mixed.mixed(1)` (configuration offsets 0–4, 4–8, 8–11, 11–14 and 14–18). Every slice has 0 row failures, 5,825 texts in total, and the slices together cover all 15 registered node types. Each partial slice also reports the expected slicing artifacts ("registered construct has no exercising configuration" for constructs whose configurations fall in another slice).
+- **Default authority (`VE_AUTHORITY` unset):** 3,973 passed and 6 skipped, and the same five merge-smoke slices with the same results. An explicit `VE_AUTHORITY=python` run was not repeated in this checkpoint; at the previous one it failed the alternatives tests by design (alternatives is Lean-only).
+- **Parity:** `tools/stage2_parity.py --authority lean` gives 0 regressions and 0 `different` cells over 9,384 cells and every named probe.
+- **Lean:**
+  - `lake build` passes;
+  - `lean/VE/Route/frozen.py` passes, re-hashed, with the three new modules listed;
+  - `lean/checkers.lock` pins the rebuilt `ve_service`;
+  - `python lean/audit.py` audits 191 source files and 1,646 named theorems, with only `propext`, `Classical.choice` and `Quot.sound`, and no `sorry`. No existing theorem statement changed.
+- **Rust:** unchanged, so `cargo test` was not rerun.
+- **New tests:**
+  - `test_stage2_norms.py`: norms operations with flags and definitions; the witness flag check; a refused witness.
+  - `test_stage2_validation.py`: every profile combination's environment and model; the decision rule; caches; identity sorting; definitions.
+  - `test_stage2_bundle.py`, `test_stage2_parse.py`, `test_stage2_graph.py` and `test_stage2_readings.py`: each adapter against Python, Lean's identity and binding re-checks, and refusal or disagreement as `CheckerUnavailable`.
+  - `test_stage2_faults.py`: fault injection per adapter.
+  - `test_inventory_lint.py`.
+  - Additions to `test_stage2_dispatch.py`: the pin and the composing adapters.
 
-## Trusted composition points added
+## Trusted composition points
 
 - **Soft premises.** In the Lean Background adapter, soft premises come from a validated soft document and are not environment data. They are composed after Lean's base Background. Lean regenerates them in the soft route, and `soft_route.check_regenerated` compares them there.
 - **Legacy Background.** Legacy v0/v0.1 envelopes have an empty Background: their Lean certificate runners bind case premises alone.
 - **Reports and soft vocabularies.** `reports@0` and soft vocabularies are reduced before route cases whose answers carry no environment identity. The reports reduction is the vocabulary the Lean attribution decoder hands the route decoder.
-
 - **Soft certificate premises.** Certificate cases on soft environments carry the soft document's premises, and the Lean norms route appends them after the profile premises. This is the same composition point as soft Background.
+- **Displays.** These texts are Python display built over checked values:
+  - the CONFLICT record's `situation` (the rules Python selects at the checked tuple);
+  - the bundle report's leaves, reading choices and English;
+  - the readings labels;
+  - the argument record's per-edge diagnostics and package-wide status (trusted, narrowed, as the plan decides).
+- **Source to AST in the graph mode.** A claim's source is bound through its `source_id`. Its parse is the parse adapter's; the graph mode checks the claim's AST.
 
 ## Test changes
 
-- `tests/test_assurance_manifest.py`: the refusal half of the search test expects `CheckerUnavailable` under a backend authority. A backend search returns one witness, and a refused witness is a generator/check disagreement. Python's generator still keeps searching.
-- `tests/test_replay_conservativity.py`: under a backend authority, an invalid-certificate row accepts Lean's detail wording. Verdict, status and steps must still match exactly.
-- `tests/test_stage2_dispatch.py`: the fault injection patches the Rust client's runner.
-- `tests/test_assurance_manifest.py` allows `ve/backends/rust_jsonl.py` to start processes.
-
-No existing test changed in this checkpoint. The assurance manifest re-pins `lean/VE/Norms/Wire.lean` (the decoder range now ends at line 313) and `lean/VE/Norms/Admission.lean`, and it records that `envelopeGate` only rejects, through the pinned `Gate.decodeEnvelope`.
+- Earlier checkpoints:
+  - `tests/test_assurance_manifest.py`: the search-refusal change, now accepted (see Decisions), and allowing `ve/backends/rust_jsonl.py` to start processes;
+  - `tests/test_replay_conservativity.py`: Lean's invalid-replay wording;
+  - `tests/test_stage2_dispatch.py`: the fault injection patches the Rust client's runner.
+- This checkpoint changed no existing assertion. `tests/test_lean_service.py`'s scripted service handshake and its per-mode schema seeds gained the three new modes (`parse`, `graph`, `readings`), as the protocol requires.
 
 ## Gate 2 checklist: not passed
 
@@ -80,23 +116,28 @@ Each criterion from the plan's Gate 2 paragraph, in order:
 
 | # | Criterion | Status | Evidence or gap |
 |---|---|---|---|
-| 1 | The full suite passes under `VE_AUTHORITY=lean` | **Met** | 3,769 passed, 6 skipped, including `test_english_mixed_merge_smoke` (649 s) |
-| 1a | … for every class-A operation | **Not met** | No own adapter yet for bundle, the norms operations (elaborate, certificate, conflict, norms admission through `admit_norm_document`), readings, argument graphs, compare, premise status, definitions elaboration, environment and model validation, parse and canonicalize, or `formula_from_data`/`formula_to_data` typing. Under Lean, these still return Python's verdict. |
-| 1b | Fixture changes limited to `checker_build`, `record_id` and documented message wording | **Partly met** | Four scoped test changes (listed above). The replay-wording change is documented wording. The search-refusal change (`CheckerUnavailable` when a backend witness is refused) is a behaviour change that needs the lead's review. |
-| 2 | The full Stage 0 baseline and public API agree under the section-5 projection | **Met as measured** | 0 regressions and 0 different cells over 9,384 cells and every named probe. The 115 `baseline drift` cells are main's `lean_outcome` bundle field, which today's Python shares. Only 3,220 cells run the operation's own adapter (see 1a). |
-| 3 | Matrix Lean/Rust column: no S→R, S→U or code change (empty regression diff) | **Met under `VE_AUTHORITY=lean`** | Same report. `rust-experimental` is not a Gate 2 authority (see above). |
-| 4 | Adapter fault-injection tests | **Partly met** | `tests/test_stage2_dispatch.py` covers authority override and rejection, no fallback, shadow logging of an unavailable checker, and malformed Rust responses. Missing: per-adapter injection of missing or mismatched binaries, crashes and timeouts for every Lean adapter. |
-| 5 | The inventory lint passes (no retained module imports a class-A body) | **Not met** | Not written. `.importlinter` checks layering only. |
-| 6 | The `graph` mode is merged | **Not met** | `check_argument` composes in Python. The graph probes are `same, python`. |
-| 7 | The readings checker is merged, or its exclusion from `covered_operations` is recorded | **Not met** | `Route/Readings.lean` does not exist, and no exclusion is recorded. |
+| 1 | The full suite passes under `VE_AUTHORITY=lean` | **Met** | 3,973 passed, 6 skipped. The merge smoke's work passes in five slices (it exceeds the tool's 10-minute limit as one test). |
+| 1a | … for every class-A operation | **Partly met** | Every class-A operation dispatches its own adapter, and 5,112 cells run it. Outside each adapter's recorded scope (table above), 2,388 reachable cells still take Python's verdict or a constituent-only path. The largest gaps are the closure, core and order families for graph, bundle, readings and the norms operations, and `definitions@0` parsing. |
+| 1b | Fixture changes limited to `checker_build`, `record_id` and documented message wording | **Met** | The one non-wording change (search refusal as `CheckerUnavailable`) is accepted by the DRI decision above. This checkpoint changed no existing assertion. |
+| 2 | The full Stage 0 baseline and public API agree under the section-5 projection | **Met as measured** | 0 regressions and 0 different cells over 9,384 cells and every named probe. The 115 `baseline drift` cells are main's `lean_outcome` bundle field, which today's Python shares. |
+| 3 | Matrix Lean/Rust column: no S→R, S→U or code change (empty regression diff) | **Met under `VE_AUTHORITY=lean`** | Same report. `rust-experimental` is not a Gate 2 authority. |
+| 4 | Adapter fault-injection tests | **Met** | `tests/test_stage2_faults.py`: each of the 23 dispatched operations with a missing Lean service, an unlisted build, a crash and a hang, and the four Rust-backed operations with a missing, unlisted, crashing and timed-out Rust checker. All give `CheckerUnavailable`, never a `VEError`, and the Python path is never dispatched in the backend's place. `tests/test_stage2_dispatch.py` keeps the dispatch-level cases. |
+| 5 | The inventory lint passes (no retained module imports a class-A body) | **Met** | `tools/inventory_lint.py`: 0 violations and 9 recorded exceptions, each with its reason (untrusted generators, surface decoders typing open formulas, structural re-typing of generated premises). `tests/test_inventory_lint.py` keeps it at zero. Building it removed two redundant Python Background validations (`evaluate._validate_model` and the norms witness decoder) and turned `validate_background` into an adapter. |
+| 6 | The `graph` mode is merged | **Met** | `VE/Service/Graph.lean` and the `graph` adapter. All 11 graph probes compose through it. Closure, core and order packages are not composed by Lean yet (see 1a). |
+| 7 | The readings checker is merged, or its exclusion from `covered_operations` is recorded | **Met** | `VE/Service/Readings.lean` with `readings_all_sound`, `readings_none_sound` and `readings_some_sound`, and the `readings` adapter. It covers FOL-family environments; readings on other families are not dispatched (see 1a). |
 
 Stage 2 obligations outside the Gate 2 paragraph that are also open:
 
+- **Coverage closure (2c) for the remaining families:**
+  - graph, readings and bundles on the closure, core and order families (their Lean checkers are FOL-only);
+  - norms elaborate, certificate and conflict on those families;
+  - bundles over norms environments;
+  - the `definitions@0` surface in the Lean parsers;
+  - n-ary definitions on the core family;
+  - order-family certificates with profile pairs (still `CheckerUnavailable`).
+- **Record wording and provenance.** The plan's documented wording change for composed argument records ("Lean graph report checked" instead of "Python replay checked") is not applied: records are unchanged for parity. The `authority`, `assurance`, `covered_operations` and `trusted` record fields are not added yet.
 - **Batching:** one request per operation for `premise_status`, `check_readings`, `check_argument` and `check_step`.
-- **Provenance fields:** `authority`, `assurance`, `covered_operations` and `trusted` on records.
 - **Rust parse diagnostics:** codes and spans.
-- **Assurance manifest:** declare the Lean service adapters.
-- **Norms data flags outside admission:** needed before the norms-operation adapters. The Background must carry flags, and the conflict small-model argument must survive `total` flags.
-- **Order-family certificates with profile pairs:** still `CheckerUnavailable`.
+- **Assurance manifest:** the new Lean modules are pinned decoders, and the readings and graph theorems are mapped. The manifest's bindings still describe the one-shot runners, not the service adapters.
 
-Suggested order for the next session: the norms-operation adapters (with norms flags outside admission), then the `graph` mode and the argument-graph adapter, then the readings decision, then the inventory lint and fault injection.
+Suggested order for the next session: the closure, core and order families for graph, readings and bundle (Lean checkers over those formula types), then the norms operations on those families, then the `definitions@0` surface in the Lean parser, then record provenance and the documented argument wording.
