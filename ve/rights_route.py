@@ -3,8 +3,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .ast import _Checker, _to_data, formula_to_data
 from .backends.lean import run_soft_case
 from .errors import VEError
+from .soft_route import elaborate_soft_document
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_rights_route"
 
@@ -27,15 +29,70 @@ def run_rights_case(environment, units, kind, **extra):
 def report_rights(environment, units, rights):
     """Return the checked five-question rows available without submitted certificates."""
     elaborated = run_rights_case(environment, units, "rights-elaborate")
-    expected = (set(rights.limitation_names.values()) |
-                set(rights.condition_names.values()) |
-                (set(rights.bar_names.values()) if rights.bar is not None else set()))
-    actual = {item["name"] for item in elaborated["generated"]}
-    if actual != expected:
+    soft = elaborate_soft_document(rights.soft_document)
+    expected_generated = (
+        [{"name": v, "kind": "lim", "limitation": k[0], "act": k[1]}
+         for k, v in rights.limitation_names.items()] +
+        [{"name": v, "kind": "cond", "limitation": k[0], "act": k[1], "condition": k[2]}
+         for k, v in rights.condition_names.items()] +
+        [{"name": v, "kind": "aimed", "predicate": k}
+         for k, v in rights.bar_names.items()])
+    if elaborated["generated"] != expected_generated:
         raise VEError("rights route regeneration mismatch: generated predicates")
-    labels = [item["label"] for item in elaborated["limitations"]]
-    if labels != [label for label, _ in rights.limitation_premises]:
+    source = rights.env.to_dict()
+    lean_env = elaborated["environment_prime"]
+    py_env = rights.soft_document.extended_env.to_dict()
+    if (lean_env.get("profiles") != source["profiles"] or
+            any(lean_env["vocabulary"][key] != source["vocabulary"][key]
+                for key in ("rights", "sorts", "constants")) or
+            set(lean_env["vocabulary"]["predicates"]) !=
+            set(py_env["vocabulary"]["predicates"])):
+        raise VEError("rights route regeneration mismatch: environment")
+    generated_names = {item["name"] for item in expected_generated}
+    for name, declaration in py_env["vocabulary"]["predicates"].items():
+        actual = lean_env["vocabulary"]["predicates"][name]
+        if (actual["arguments"] != declaration["arguments"] if name in generated_names
+                else actual != declaration):
+            raise VEError("rights route regeneration mismatch: environment")
+
+    def node(rule):
+        core = rule.core
+        sorts = rights.environment.predicates[core.predicate].arguments
+
+        def open_data(formula):
+            _Checker(rights.environment, generated=True).formula(formula, tuple(reversed(sorts)))
+            return _to_data(formula)
+
+        return {"name": core.name, "predicate": core.predicate, "sign": core.sign,
+                "mode": rule.mode, "guard": open_data(core.guard),
+                "unless": [open_data(f) for f in core.unless],
+                "over": list(core.over), "hard": rule.hard}
+
+    expected_lines = []
+    for instance, rule in zip(rights.instances, rights.soft_document.rules, strict=False):
+        row = {"right": instance["right"], "kind": instance["source_kind"],
+               "instance": instance["kind"], "rule": rule.core.name,
+               "predicate": rule.core.predicate, "holder_slot": instance["holder_slot"],
+               "node": node(rule)}
+        if instance["bearer"] is not None:
+            row.update(bearer=instance["bearer"],
+                       source_line=instance["source_line"]["norm"]["name"])
+        expected_lines.append(row)
+    if elaborated["lines"] != expected_lines:
+        raise VEError("rights route regeneration mismatch: lines")
+    expected_limitations = [{"label": label,
+                             "ast": formula_to_data(rights.environment, formula, _generated=True)}
+                            for label, formula in rights.limitation_premises]
+    if elaborated["limitations"] != expected_limitations:
         raise VEError("rights route regeneration mismatch: limitation premises")
+    expected_bars = [node(rule) for rule in rights.soft_document.rules
+                     if rule.core.name.startswith("rights-bar-")]
+    if elaborated["bars"] != expected_bars:
+        raise VEError("rights route regeneration mismatch: bars")
+    for field in ("order", "premises", "derived", "colliding_pairs", "conflict_targets",
+                  "warnings", "decisions", "background"):
+        if elaborated[field] != soft[field]:
+            raise VEError(f"rights route regeneration mismatch: {field}")
     scope = run_rights_case(environment, units, "rights-scope", certificates={})
     bar = run_rights_case(environment, units, "rights-bar", certificates={})
     conflict = run_rights_case(environment, units, "rights-conflict", packages={})

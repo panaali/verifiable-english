@@ -118,6 +118,8 @@ structure RightsDoc where
   bars : List Bar
   /-- The `cites` of the norm units outside rights, by rule name. -/
   outsideCites : List (String × List (String × List String))
+  /-- Source line order when decoded from wire units, including later right_lines. -/
+  sourceOrder : Option (List (String × SourceLine)) := none
 
 /-! ## Generated names (1.6) -/
 
@@ -169,7 +171,7 @@ def linesAux : List (String × SourceLine) → Nat → List (String × Line)
 
 /-- `(right, source line)` in document order. -/
 def sourceLines (D : RightsDoc) : List (String × SourceLine) :=
-  D.rs.flatMap (fun R => R.lines.map (R.name, ·))
+  D.sourceOrder.getD (D.rs.flatMap (fun R => R.lines.map (R.name, ·)))
 
 /-- `(right name, line instance)` in instance order (1.6). -/
 def linesOf (D : RightsDoc) : List (String × Line) := linesAux (sourceLines D) 0

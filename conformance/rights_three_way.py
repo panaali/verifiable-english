@@ -91,6 +91,13 @@ def run():
         if rights.bar is not None:
             generated |= set(rights.bar_names.values())
         assert {item["name"] for item in lean["generated"]} == generated, name
+        lean_predicates = lean["environment_prime"]["vocabulary"]["predicates"]
+        python_predicates = rights.soft_document.extended_env.to_dict()["vocabulary"]["predicates"]
+        assert set(lean_predicates) == set(python_predicates), (name, "environment names")
+        for predicate, declaration in python_predicates.items():
+            assert (lean_predicates[predicate]["arguments"] == declaration["arguments"]
+                    if predicate in generated else lean_predicates[predicate] == declaration), (
+                        name, "environment declaration", predicate)
         assert [(item["right"], item["rule"], item["predicate"]) for item in lean["lines"]] == [
             (item["right"], item["rule"].core.name, item["rule"].core.predicate)
             for item in rights.instances], name
