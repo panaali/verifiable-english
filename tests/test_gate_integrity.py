@@ -1,6 +1,7 @@
 """Regressions for verification-gate accounting, isolation, and run identity."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -199,7 +200,7 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
 def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, monkeypatch):
     target = "x86_64-unknown-linux-gnu"
     root = tmp_path / "root"
-    for name in ("lean/lean-toolchain", "rust-toolchain.toml", "uv.lock"):
+    for name in ("lean/lean-toolchain", "rust-toolchain.toml", "uv.lock", "rust/Cargo.lock"):
         (root / name).parent.mkdir(parents=True, exist_ok=True)
         (root / name).write_bytes((gate.ROOT / name).read_bytes())
     for binary in [root / "rust/target" / target / "release/ve",
@@ -257,6 +258,7 @@ def test_cargo_ignores_home_cache_and_manifest_configs(tmp_path, monkeypatch):
     (crate / "src").mkdir(parents=True)
     (crate / "src/main.rs").write_text("fn main() {}\n")
     (crate / "Cargo.toml").write_text('[package]\nname = "gate-config-probe"\nversion = "0.1.0"\nedition = "2021"\n')
+    (crate / "Cargo.lock").write_text('version = 4\n\n[[package]]\nname = "gate-config-probe"\nversion = "0.1.0"\n')
     poisoned_home = tmp_path / "home"
     for directory in (source / ".cargo-home", poisoned_home / ".cargo", crate / ".cargo"):
         directory.mkdir(parents=True)
@@ -265,10 +267,9 @@ def test_cargo_ignores_home_cache_and_manifest_configs(tmp_path, monkeypatch):
     monkeypatch.setattr(gate, "ROOT", source)
     monkeypatch.setenv("HOME", str(poisoned_home))
     monkeypatch.setenv("CARGO_HOME", str(poisoned_home / ".cargo"))
-    env = gate.gate_environment(tmp_path / "scratch")
-    pin = tomllib.loads((real_root / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
-    rust = gate.rust_toolchain(gate.account_home(), pin, env)
-    env["PATH"] = f"{rust / 'bin'}:{env['PATH']}"
+    monkeypatch.setattr(gate, "ROOT", real_root)
+    env = rust_environment(tmp_path / "scratch")
+    monkeypatch.setattr(gate, "ROOT", source)
     with gate.isolated_cargo(env) as (cargo_env, cwd):
         assert not cwd.is_relative_to(source)
         assert cargo_env["CARGO_HOME"] != str(source / ".cargo-home")
@@ -277,6 +278,64 @@ def test_cargo_ignores_home_cache_and_manifest_configs(tmp_path, monkeypatch):
                               "--format-version", "1", "--manifest-path", str(crate / "Cargo.toml")],
                              cwd=cwd, env=cargo_env, capture_output=True, text=True)
     assert run.returncode == 0, run.stderr
+
+
+def rust_environment(scratch):
+    env = gate.gate_environment(scratch)
+    pin = tomllib.loads((gate.ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
+    rust = gate.rust_toolchain(gate.account_home(), pin, env)
+    env["PATH"] = f"{rust / 'bin'}:{env['PATH']}"
+    return env
+
+
+@pytest.mark.parametrize("location", [".cargo/config.toml", ".cargo/config", "scratch/.cargo/config.toml",
+                                      "scratch/cargo-home/config.toml"])
+def test_gate_refuses_cargo_config_in_any_ancestor(tmp_path, location):
+    # A world-writable ancestor such as /tmp can hold a config whose runner
+    # prints a passing cargo test summary without running any test.
+    env = rust_environment(tmp_path / "scratch")
+    config = tmp_path / location
+    config.parent.mkdir(parents=True, exist_ok=True)
+    config.write_text('[target."cfg(all())"]\nrunner = "echo test result: ok. 9 passed; 0 failed; 0 ignored;"\n'
+                      "invalid = [\n")
+    workdir = tmp_path / "scratch/cargo"
+    workdir.mkdir()
+    read = subprocess.run(["cargo", "metadata", "--offline", "--no-deps", "--format-version", "1",
+                           "--manifest-path", str(gate.ROOT / "rust/Cargo.toml")],
+                          cwd=workdir, env=env, capture_output=True, text=True)
+    assert read.returncode != 0 and str(config) in read.stderr, read.stderr
+    workdir.rmdir()
+    with pytest.raises(RuntimeError, match="ambient configuration"):
+        with gate.isolated_cargo(env):
+            pass
+    config.unlink()
+    workdir.rmdir()
+    with gate.isolated_cargo(env) as (cargo_env, cwd):
+        assert cwd == workdir and cargo_env["CARGO_NET_OFFLINE"] == "true"
+
+
+def test_cargo_registry_seed_takes_only_locked_archives(tmp_path, monkeypatch):
+    good, stale = b"locked crate", b"edited crate"
+    index = "index.crates.io-0000000000000000"
+    registry = tmp_path / "root/.cargo-home/registry"
+    for name, data in (("good-1.0.0.crate", good), ("bad-1.0.0.crate", stale)):
+        (registry / "cache" / index).mkdir(parents=True, exist_ok=True)
+        (registry / "cache" / index / name).write_bytes(data)
+    (registry / "src" / index / "good-1.0.0").mkdir(parents=True)
+    (registry / "src" / index / "good-1.0.0/lib.rs").write_text("edited source")
+    (registry / "index" / index).mkdir(parents=True)
+    (registry / "index" / index / "config.json").write_text("{}")
+    (tmp_path / "root/rust").mkdir()
+    checksum = hashlib.sha256(good).hexdigest()
+    (tmp_path / "root/rust/Cargo.lock").write_text(
+        f'version = 4\n\n[[package]]\nname = "good"\nversion = "1.0.0"\nchecksum = "{checksum}"\n')
+    monkeypatch.setattr(gate, "ROOT", tmp_path / "root")
+    home = tmp_path / "cargo-home"
+    gate.seed_registry(home)
+    assert (home / "registry/cache" / index / "good-1.0.0.crate").read_bytes() == good
+    assert not (home / "registry/cache" / index / "bad-1.0.0.crate").exists()
+    assert not (home / "registry/src").exists()
+    assert (home / "registry/index" / index / "config.json").is_file()
 
 
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
@@ -363,6 +422,7 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     rust_binary = tmp_path / "rust/target" / target / "release/ve"
     rust_binary.parent.mkdir(parents=True)
     rust_binary.write_text("binary")
+    (tmp_path / "rust/Cargo.lock").write_text("version = 4\n")
     for name in gate.LEAN_BINARIES:
         binary = tmp_path / "lean/.lake/build/bin" / name
         binary.parent.mkdir(parents=True, exist_ok=True)

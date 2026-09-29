@@ -262,17 +262,43 @@ def record_environment(result: dict, stage: str, env: dict[str, str]) -> dict[st
     return env
 
 
+def cargo_configs(workdir: Path, cargo_home: Path) -> list[Path]:
+    # Cargo reads .cargo/config and .cargo/config.toml in its current directory
+    # and every ancestor, including world-writable ones such as /tmp, then
+    # config and config.toml in CARGO_HOME.
+    directory = workdir.resolve()
+    found = [path for parent in (directory, *directory.parents)
+             for path in sorted((parent / ".cargo").glob("config*"))]
+    return found + sorted(cargo_home.glob("config*"))
+
+
+def seed_registry(cargo_home: Path) -> None:
+    # Copy the local registry index and only those downloaded .crate archives
+    # whose SHA-256 is pinned in Cargo.lock, so the locked build stays offline.
+    # Never copy unpacked sources: Cargo trusts an existing src/ tree as is.
+    registry = ROOT / ".cargo-home/registry"
+    lock = tomllib.loads((ROOT / "rust/Cargo.lock").read_text())
+    locked = {package["checksum"] for package in lock.get("package", []) if "checksum" in package}
+    if (registry / "index").is_dir():
+        shutil.copytree(registry / "index", cargo_home / "registry/index")
+    for archive in sorted(registry.glob("cache/*/*.crate")):
+        if hashlib.sha256(archive.read_bytes()).hexdigest() in locked:
+            target = cargo_home / "registry/cache" / archive.parent.name / archive.name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(archive, target)
+
+
 @contextmanager
 def isolated_cargo(env: dict[str, str]):
-    # Cargo discovers config from its current directory's ancestors and from
-    # CARGO_HOME. Keep both outside the checkout and the user's home. Copy the
-    # existing registry cache so the locked build remains offline.
+    # Cargo runs in the scratch directory, outside the checkout and any home,
+    # with the fresh CARGO_HOME from gate_environment.
     workdir = scratch_of(env) / "cargo"
     workdir.mkdir()
     cargo_home = Path(env["CARGO_HOME"])
-    registry = ROOT / ".cargo-home/registry"
-    if registry.is_dir():
-        shutil.copytree(registry, cargo_home / "registry")
+    configs = cargo_configs(workdir, cargo_home)
+    if configs:
+        raise RuntimeError(f"Cargo would read ambient configuration: {[str(p) for p in configs]}")
+    seed_registry(cargo_home)
     yield {**env, "CARGO_NET_OFFLINE": "true"}, workdir
 
 
