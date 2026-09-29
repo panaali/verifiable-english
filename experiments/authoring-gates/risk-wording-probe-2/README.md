@@ -1,7 +1,10 @@
-# Risk wording probe 2: the c5 replacement (items; not sealed)
+# Risk wording probe 2: the c5 replacement (sealed)
 
-The single re-probe of `docs/spec/risk-PLAN.md` 2.6 rule 4 for construct c5. **Status: draft items. Not checked, not
-sealed, not run.** The first probe (`../risk-wording-probe/`) is sealed and is not touched.
+The single re-probe of `docs/spec/risk-PLAN.md` 2.6 rule 4 for construct c5. **Status: sealed.** The second plan
+reviewer checked every key and critical option (`manage-agents/risk-probe2-check.final.md`: "DROP: none"; wording
+accepted), so all four items are kept. `MANIFEST.sha256` lists every sealed file with its SHA-256; nothing it lists is
+edited after sealing. An item found defective afterwards is reported in `RESULTS.md` with its reason, and c5 is
+scored with and without it. The first probe (`../risk-wording-probe/`) is sealed and is not touched.
 
 ## Why
 
@@ -98,11 +101,32 @@ Nothing about scoring changes. The first probe's rules, scorer and reader set ar
   documents. Each item is answered in each condition by two independent sessions per family. Every result is
   labelled "proxy; human readability unmeasured".
 
-## Before any run (not done here)
+## Sealing
 
-1. The other plan reviewer checks that each key follows from the one reading and each critical option from the
-   rival. Items they reject are dropped before sealing.
-2. Sealing commits the items, prompt, seed, reader list, sessions and a SHA-256 manifest to this directory, as in
-   the first probe. Under the rule of at most one item per construct per session, four items of one construct give
-   one item per session: 4 items × 2 conditions × 2 families × 2 replicates = 32 sessions and 32 answers (16 in L,
-   16 in C).
+1. The other plan reviewer checked that each key follows from the one reading and each critical option from the
+   rival (`manage-agents/risk-probe2-check.final.md`). It dropped no item.
+2. `seal.py` (the first probe's script with only `DROP` changed, here empty) wrote the files below with a fresh
+   random seed recorded in `sessions.json`, then `MANIFEST.sha256`. Under the rule of at most one item per construct
+   per session, four items of one construct give one item per session: 4 items × 2 conditions × 2 families × 2
+   replicates = 32 sessions and 32 answers (16 in L, 16 in C). The other 2.6 session constraints (never c3a with
+   c3b, never c12 with a `prevents` control, never both conditions) hold trivially and are still checked by
+   `seal.py`.
+
+| File | What it is |
+|---|---|
+| `items.json` | the 4 scored c5 items, unchanged by sealing |
+| `prompt.txt` | the fixed reader instruction (2.6 Readers), and nothing else; identical to the first probe's |
+| `readers.json` | the reader list: family, model and the exact invocation |
+| `sessions.json` | the seed, the dropped ids (none), and for every session its family, replicate, condition and item, with the shown-letter to sealed-label map of the item's shuffled options |
+| `sessions/<session>.txt` | the exact text each reader session receives |
+| `seal.py` | the script that wrote the files above (run once) |
+| `score.py` | the mechanical scorer (the first probe's parser; decisions for c5 only); it writes `scored.json` and `RESULTS.md` |
+
+Session ids are `<family>-r<replicate>-<L|C>-<nn>`; readers never see ids, constructs or keys. In L the text starts
+with a `Legend:` block of the item's legend lines; in C the block is absent and the text is otherwise identical.
+
+## After sealing (not in the manifest)
+
+`run.py` (the first probe's runner, unchanged) sends each session to its reader in a fresh empty temporary directory
+outside the repository and saves the raw output under `runs/<session>/`; `scored.json` and `RESULTS.md` are generated
+by `score.py`. Every result is labelled "proxy; human readability unmeasured".
