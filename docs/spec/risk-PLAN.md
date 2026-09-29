@@ -10,8 +10,9 @@
 > items "unspecified default" and "limits contract" (`manage-agents/ARCH-ROADMAP.md`). Theorem statements are
 > obligations, not proofs. Every open question is marked **OPEN** and collected in section 13. The Astra + Fable
 > review of draft 1 (PLAN-EXPAND2 rule 10; `manage-agents/debates/design-risk/`) converged on REVISE. Draft 2
-> applies it, mapped item by item in section 15. There is no further plan round: the next gates are the wording
-> probe (2.6) and the stage A statement review (item 1, section 12).
+> applies it, mapped item by item in section 15. There is no further plan round. The wording probe (2.6) ran on
+> 2026-09-29 (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`), and item 1's statement spec is
+> [risk.md](risk.md) draft 1; the next gate is its stage A statement review (item 1, section 12).
 
 ## 0. Problem and stance
 
@@ -1074,8 +1075,8 @@ Neither is in the source.
 | # | Item | Gate / trigger | Notes |
 |---|---|---|---|
 | 0 | Astra + Fable review of this plan | done 2026-09-29: REVISE, converged; draft 2 applies it (15) | No further plan round |
-| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k32 with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2 | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecks completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and admission of perturbed records in margins (7.4); it decides Q-margin-proof |
-| 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review | Proxy readers, labelled "human readability unmeasured"; does not replace item 8 |
+| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k32 with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29; it proposes the certified check for Q-margin-proof (risk.md 11.11) | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecks completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and admission of perturbed records in margins (7.4); it decides Q-margin-proof |
+| 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review. Ran 2026-09-29: c5 pending wording, c10 legend-dependent, `leads to` stays | Proxy readers, labelled "human readability unmeasured"; does not replace item 8. The reviewers owe c5's replacement, probed once with new sealed items |
 | 2 | Lean `lean/VE/Risk/*`, `ve_risk_route`, `lean/RISK.md`, ROADMAP trust-cost line | after 1's review | Lean-only semantics |
 | 3 | Python surface (`ve/surface/risk.py`), block shape check, dispatch, gap lines; Rust untrusted evaluator; differential (200 random records, including separable-condition generators) | parallel with 2 | Surface fixtures (k19) before acceptance |
 | 4 | Use case `usecases/agent-oom/` (policy, decisions 17 and 18, the log, audit) and Asimov A1 and A2 as reading sets beside the merged rules | after 2 and 3 | Every narrowing attributed |
@@ -1227,3 +1228,4 @@ Details settled while applying these edits, not debated:
 |---|---|---|
 | 2026-09-29 | Draft 1 | Initial plan: two-layer design (estimate layer regenerating Boolean facts; unchanged rule layer); possibility as consistency with declared estimates and conditions; the separable endpoint fragment; stages A/B/C with triggers; severity order and the worst-case word; rule patterns P1–P7 and `precaution_has_maximal`; provenance, audit log and no-hindsight rule; report, gaps and status margins; Lean statement schemata; OOM, Asimov A1 and A2 worked examples; fixtures k1–k23; open questions. Plan only. |
 | 2026-09-29 | Draft 2 | Applies the converged Astra + Fable debate (REVISE), mapped in section 15: risk paraphrases of the `alternatives@0` words, `might prevent` and the `excludes` body; completed cases with defaults and source rules; `≠` and the ±1 hypothesis; a fresh severity sort and conservativity by model expansion; policy-fixed harm constants with a functional, non-total `class` and the relational `lessWorst`; margins with full re-admission, grid neighbours and "changes at"; EL qualifications, conservative box bounds and additive loss; chance wording; a separate PROCEDURE BREACH line; supersession at decision time; no-hindsight with the queried alternative fixed; document-level UNKNOWN; the wording probe protocol (2.6); fixtures k24–k32 and kC1. Plan only. |
+| 2026-09-29 | Draft 2, status | Status line and items 1 and 1a synchronised with the probe results and risk.md draft 1. No design change; the converged debate edits are those of draft 2 (section 15). |
