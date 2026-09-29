@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import pwd
 import re
 import shutil
 import subprocess
@@ -29,6 +30,32 @@ REQUIRED_FAMILIES = (
     "test_lean_certificates.py", "test_closure_certificates.py",
     "test_grammar_backends.py",
 )
+# Every stage runs with an environment built from nothing but these names.
+# Toolchains are located under the account's home directory from the password
+# database, never from HOME, PATH, ELAN_HOME, RUSTUP_HOME or any other
+# inherited variable, and are put on PATH as their own bin directories so that
+# no elan or rustup proxy can select a different version.
+SYSTEM_PATH = ("/usr/bin", "/bin")
+UV_LOCATIONS = (".local/bin/uv", ".cargo/bin/uv", "/usr/local/bin/uv", "/usr/bin/uv")
+ALLOWED_ENVIRONMENT = (
+    "PATH",                             # pinned Rust and Lean bin dirs, uv, SYSTEM_PATH
+    "HOME", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME",  # fresh, in scratch
+    "TMPDIR",                           # fresh, in scratch
+    "LANG", "LC_ALL",                   # C.UTF-8
+    "GIT_CONFIG_NOSYSTEM",              # 1: no /etc/gitconfig
+    "UV_CACHE_DIR",                     # fresh, in scratch
+    "UV_NO_CONFIG",                     # 1: no uv.toml from the user, system or ancestors
+    "LAKE_CACHE_DIR",                   # fresh, in scratch
+    "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
+    "PYTHONNOUSERSITE",                 # 1
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD",   # 1
+)
+# Added only for the stage that needs them.
+STAGE_ENVIRONMENT = {
+    "cargo": ("CARGO_NET_OFFLINE",),
+    "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_LEAN_PREBUILT",
+               "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
+}
 
 
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
@@ -44,38 +71,77 @@ def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: st
     return done.stdout.strip()
 
 
-def version(executable: str, args: list[str], *, env: dict[str, str]) -> str:
+def version(result: dict, executable: str, args: list[str], *, env: dict[str, str],
+            directory: Path, cwd: Path = ROOT) -> str:
+    # The checked binary must be the one every later stage resolves from PATH.
     path = shutil.which(executable, path=env["PATH"])
     if path is None:
         raise RuntimeError(f"required backend missing: {executable}")
-    return command([path, *args], env=env, stage=f"{executable} version").splitlines()[0]
+    if Path(path).parent != directory:
+        raise RuntimeError(f"{executable} resolves to {path}, not the pinned {directory}")
+    result["toolchains"].setdefault("paths", {})[executable] = path
+    return command([path, *args], cwd=cwd, env=env,
+                   stage=f"{executable} version").splitlines()[0]
+
+
+def account_home() -> Path:
+    # From the password database: HOME is ambient and the gate replaces it.
+    return Path(pwd.getpwuid(os.getuid()).pw_dir)
+
+
+def lean_toolchain(home: Path) -> Path:
+    # elan stores leanprover/lean4:v4.24.0 as toolchains/leanprover--lean4---v4.24.0.
+    # Using that directory directly bypasses elan's default, override and
+    # ELAN_TOOLCHAIN resolution, which can differ between directories.
+    spec = (ROOT / "lean/lean-toolchain").read_text().strip()
+    directory = home / ".elan/toolchains" / spec.replace(":", "---").replace("/", "--")
+    if not (directory / "bin/lake").is_file():
+        raise RuntimeError(f"pinned Lean toolchain {spec} is not installed at {directory}")
+    return directory
+
+
+def rust_toolchain(home: Path, pin: str, env: dict[str, str]) -> Path:
+    # A stable toolchain can satisfy the exact pin without downloading another
+    # copy. Its bin directory is used directly, so no rustup proxy can install
+    # or switch versions during a gate.
+    toolchains = home / ".rustup/toolchains"
+    for directory in [*sorted(toolchains.glob(f"{pin}-*")), *sorted(toolchains.glob("stable-*"))]:
+        rustc = directory / "bin/rustc"
+        if not rustc.is_file():
+            continue
+        probe = subprocess.run([str(rustc), "--version"], env=env, text=True, capture_output=True)
+        if probe.returncode == 0 and probe.stdout.startswith(f"rustc {pin} "):
+            return directory
+    raise RuntimeError(f"required Rust toolchain {pin} is not installed")
 
 
 def check_toolchains(result: dict, env: dict[str, str]) -> None:
+    home = account_home()
     lean_pin = (ROOT / "lean/lean-toolchain").read_text().strip().split(":v")[-1]
     rust_pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
     result["toolchains"]["lean_pin"] = lean_pin
     result["toolchains"]["rust_pin"] = rust_pin
     result["toolchains"]["uv_lock_sha256"] = hashlib.sha256(
         (ROOT / "uv.lock").read_bytes()).hexdigest()
-    result["toolchains"]["uv"] = version("uv", ["--version"], env=env)
-    result["toolchains"]["lake"] = version("lake", ["--version"], env=env)
-    result["toolchains"]["lean"] = version("lean", ["--version"], env=env)
+    lean_bin = lean_toolchain(home) / "bin"
+    rust_dir = rust_toolchain(home, rust_pin, env)
+    env["PATH"] = os.pathsep.join([str(lean_bin), str(rust_dir / "bin"), env["PATH"]])
+    result["toolchains"]["uv"] = version(result, "uv", ["--version"], env=env,
+                                         directory=scratch_of(env) / "bin")
+    # Lake builds in lean/, so check the versions there too.
+    for name in ("lake", "lean"):
+        result["toolchains"][name] = version(result, name, ["--version"], env=env,
+                                             directory=lean_bin, cwd=ROOT / "lean")
     if f"version {lean_pin}" not in result["toolchains"]["lean"]:
         raise RuntimeError(f"Lean version differs from lean/lean-toolchain ({lean_pin})")
-    # A stable toolchain can satisfy the exact pin without downloading another
-    # copy. Never let rustup silently install or switch versions during a gate.
-    for candidate in (rust_pin, "stable"):
-        probe = subprocess.run(["rustup", "run", candidate, "rustc", "--version"],
-                               env=env, text=True, capture_output=True)
-        if probe.returncode == 0 and probe.stdout.startswith(f"rustc {rust_pin} "):
-            env["RUSTUP_TOOLCHAIN"] = candidate
-            break
-    else:
-        raise RuntimeError(f"required Rust toolchain {rust_pin} is not installed")
-    result["toolchains"]["rust_toolchain"] = env["RUSTUP_TOOLCHAIN"]
-    result["toolchains"]["rustc"] = version("rustc", ["--version"], env=env)
-    result["toolchains"]["cargo"] = version("cargo", ["--version"], env=env)
+    if f"Lean version {lean_pin}" not in result["toolchains"]["lake"]:
+        raise RuntimeError(f"Lake's Lean differs from lean/lean-toolchain ({lean_pin})")
+    result["toolchains"]["rust_toolchain"] = rust_dir.name
+    for name in ("rustc", "cargo"):
+        result["toolchains"][name] = version(result, name, ["--version"], env=env,
+                                             directory=rust_dir / "bin")
+    if not result["toolchains"]["rustc"].startswith(f"rustc {rust_pin} "):
+        raise RuntimeError(f"rustc version differs from rust-toolchain.toml ({rust_pin})")
     if not result["toolchains"]["cargo"].startswith(f"cargo {rust_pin} "):
         raise RuntimeError(f"Cargo version differs from rust-toolchain.toml ({rust_pin})")
 
@@ -150,23 +216,49 @@ def write_result(path: Path, result: dict) -> None:
 
 
 def source_identity(env: dict[str, str]) -> tuple[str, bool]:
-    sha = command(["git", "rev-parse", "HEAD"], env=env, stage="commit")
-    dirty = bool(command(["git", "status", "--porcelain", "--untracked-files=all"],
+    sha = command(["git", "rev-parse", "HEAD"], cwd=ROOT, env=env, stage="commit")
+    dirty = bool(command(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT,
                          env=env, stage="worktree status"))
     return sha, dirty
 
 
-def gate_environment() -> dict[str, str]:
-    # Build and discovery tools must not inherit ambient overrides of their
-    # executable, repository, import path, or configuration.
-    env = {key: value for key, value in os.environ.items()
-           if not key.startswith(("PYTEST_", "CARGO_", "PYTHON", "RUST", "GIT_",
-                                  "UV_", "VE_"))}
-    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"]
-    env["UV_CACHE_DIR"] = str(ROOT / ".cache/uv")
-    env["CARGO_HOME"] = str(ROOT / ".cargo-home")
-    env["PYTHONNOUSERSITE"] = "1"
-    env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+def gate_environment(scratch: Path) -> dict[str, str]:
+    # Nothing is inherited from the caller: build and discovery tools read
+    # overrides of their executable, compiler, linker, cache, repository,
+    # import path and configuration from variables too numerous to deny.
+    # Home, caches and temporary files live in the gate-owned scratch directory.
+    home = scratch / "home"
+    directories = {"HOME": home, "XDG_CACHE_HOME": home / ".cache",
+                   "XDG_CONFIG_HOME": home / ".config", "XDG_DATA_HOME": home / ".local/share",
+                   "TMPDIR": scratch / "tmp", "UV_CACHE_DIR": scratch / "uv-cache",
+                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home"}
+    for directory in directories.values():
+        directory.mkdir(parents=True, exist_ok=True)
+    # Only uv is exposed from outside the toolchains and the system directories.
+    tools = scratch / "bin"
+    tools.mkdir(exist_ok=True)
+    account = account_home()
+    for location in UV_LOCATIONS:
+        uv = account / location
+        if uv.is_file() and os.access(uv, os.X_OK):
+            (tools / "uv").symlink_to(uv.resolve())
+            break
+    env = {name: str(directory) for name, directory in directories.items()}
+    env.update(PATH=os.pathsep.join([str(tools), *SYSTEM_PATH]), LANG="C.UTF-8",
+               LC_ALL="C.UTF-8", GIT_CONFIG_NOSYSTEM="1", UV_NO_CONFIG="1",
+               PYTHONNOUSERSITE="1", PYTEST_DISABLE_PLUGIN_AUTOLOAD="1")
+    return env
+
+
+def scratch_of(env: dict[str, str]) -> Path:
+    return Path(env["HOME"]).parent
+
+
+def record_environment(result: dict, stage: str, env: dict[str, str]) -> dict[str, str]:
+    extra = set(env) - set(ALLOWED_ENVIRONMENT) - set(STAGE_ENVIRONMENT.get(stage, ()))
+    if extra:
+        raise RuntimeError(f"{stage} environment has unlisted variables: {sorted(extra)}")
+    result["environment"][stage] = env
     return env
 
 
@@ -175,15 +267,13 @@ def isolated_cargo(env: dict[str, str]):
     # Cargo discovers config from its current directory's ancestors and from
     # CARGO_HOME. Keep both outside the checkout and the user's home. Copy the
     # existing registry cache so the locked build remains offline.
-    with tempfile.TemporaryDirectory(prefix="ve-gate-cargo-", dir="/tmp") as directory:
-        workdir = Path(directory)
-        cargo_home = workdir / "cargo-home"
-        cargo_home.mkdir()
-        registry = ROOT / ".cargo-home/registry"
-        if registry.is_dir():
-            shutil.copytree(registry, cargo_home / "registry")
-        cargo_env = {**env, "CARGO_HOME": str(cargo_home), "CARGO_NET_OFFLINE": "true"}
-        yield cargo_env, workdir
+    workdir = scratch_of(env) / "cargo"
+    workdir.mkdir()
+    cargo_home = Path(env["CARGO_HOME"])
+    registry = ROOT / ".cargo-home/registry"
+    if registry.is_dir():
+        shutil.copytree(registry, cargo_home / "registry")
+    yield {**env, "CARGO_NET_OFFLINE": "true"}, workdir
 
 
 def main() -> int:
@@ -191,117 +281,119 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
     args = parser.parse_args()
     output = args.output.resolve()
-    env = gate_environment()
     result = {"schema_version": 1, "commit_sha": "", "dirty": False,
-              "toolchains": {}, "stages": [], "counts": {}, "skips": [], "failures": [],
-              "status": "failed"}
+              "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
+              "failures": [], "status": "failed"}
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
     started_clean = False
     completed = False
-    try:
-        result["commit_sha"], result["dirty"] = source_identity(env)
-        if result["dirty"]:
-            raise RuntimeError("worktree is dirty at gate start")
-        started_clean = True
-        policy = json.loads(POLICY.read_text())
-        if policy["version"] != 1:
-            raise RuntimeError("unsupported optional-test policy version")
-        expected = json.loads(COLLECTION.read_text())
-        if not isinstance(expected, list) or not expected or not all(isinstance(x, str) for x in expected):
-            raise RuntimeError("invalid test collection baseline")
-        check_toolchains(result, env)
-        command(["uv", "sync", "--locked", "--group", "dev"], env=env, stage="frozen Python lock")
-        result["toolchains"]["python"] = command(
-            ["uv", "run", "--frozen", "--no-sync", "python", "--version"],
-            env=env, stage="Python version")
-        result["stages"].append("toolchains")
+    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir="/tmp") as directory:
+        scratch = Path(directory)
+        try:
+            env = record_environment(result, "base", gate_environment(scratch))
+            result["commit_sha"], result["dirty"] = source_identity(env)
+            if result["dirty"]:
+                raise RuntimeError("worktree is dirty at gate start")
+            started_clean = True
+            policy = json.loads(POLICY.read_text())
+            if policy["version"] != 1:
+                raise RuntimeError("unsupported optional-test policy version")
+            expected = json.loads(COLLECTION.read_text())
+            if not isinstance(expected, list) or not expected or not all(isinstance(x, str) for x in expected):
+                raise RuntimeError("invalid test collection baseline")
+            check_toolchains(result, env)
+            command(["uv", "sync", "--locked", "--group", "dev"], env=env, stage="frozen Python lock")
+            result["toolchains"]["python"] = command(
+                ["uv", "run", "--frozen", "--no-sync", "python", "--version"],
+                env=env, stage="Python version")
+            result["stages"].append("toolchains")
 
-        command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
-        for name in LEAN_BINARIES:
-            binary = ROOT / "lean/.lake/build/bin" / name
-            if not binary.is_file() or not os.access(binary, os.X_OK):
-                raise RuntimeError(f"Lean build did not produce {binary}")
-        result["stages"].append("lean_build")
+            command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
+            for name in LEAN_BINARIES:
+                binary = ROOT / "lean/.lake/build/bin" / name
+                if not binary.is_file() or not os.access(binary, os.X_OK):
+                    raise RuntimeError(f"Lean build did not produce {binary}")
+            result["stages"].append("lean_build")
 
-        command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
-                env=env, stage="Lean audit")
-        result["stages"].append("lean_audit")
+            command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
+                    env=env, stage="Lean audit")
+            result["stages"].append("lean_audit")
 
-        host = command(["rustc", "-vV"], env=env, stage="Rust host")
-        match = re.search(r"^host: (\S+)$", host, re.MULTILINE)
-        if not match:
-            raise RuntimeError("rustc did not report a host target")
-        target = match.group(1)
-        target_dir = ROOT / "rust/target"
-        cargo_options = ["--target-dir", str(target_dir), "--target", target]
+            host = command(["rustc", "-vV"], env=env, stage="Rust host")
+            match = re.search(r"^host: (\S+)$", host, re.MULTILINE)
+            if not match:
+                raise RuntimeError("rustc did not report a host target")
+            target = match.group(1)
+            target_dir = ROOT / "rust/target"
+            cargo_options = ["--target-dir", str(target_dir), "--target", target]
 
-        with isolated_cargo(env) as (cargo_env, cargo_cwd):
-            command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
-                     str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
-                    stage="Rust build")
-            rust_binary = target_dir / target / "release/ve"
-            if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
-                raise RuntimeError(f"Rust build did not produce {rust_binary}")
-            result["stages"].append("rust_build")
+            with isolated_cargo(env) as (cargo_env, cargo_cwd):
+                record_environment(result, "cargo", cargo_env)
+                command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
+                         str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
+                        stage="Rust build")
+                rust_binary = target_dir / target / "release/ve"
+                if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
+                    raise RuntimeError(f"Rust build did not produce {rust_binary}")
+                result["stages"].append("rust_build")
 
-            rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
-                                  "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                                 cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
-            summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
-                                   r"(\d+) ignored;", rust_tests)
-            if not summaries:
-                raise RuntimeError("cargo test produced no parseable test result")
-            result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
-            result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
-            if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
-                raise RuntimeError("native Rust tests absent or ignored")
-            result["stages"].append("cargo_test")
+                rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
+                                      "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                                     cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
+                summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
+                                       r"(\d+) ignored;", rust_tests)
+                if not summaries:
+                    raise RuntimeError("cargo test produced no parseable test result")
+                result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
+                result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
+                if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
+                    raise RuntimeError("native Rust tests absent or ignored")
+                result["stages"].append("cargo_test")
 
-        with tempfile.TemporaryDirectory(prefix="ve-gate-") as directory:
-            events_file = Path(directory) / "pytest.json"
-            env["VE_GATE_PYTEST_RESULT"] = str(events_file)
-            env["VE_GATE_PYTEST_PROGRESS"] = str(Path(directory) / "current-test.txt")
-            env["VE_LEAN_PREBUILT"] = "1"
-            env["VE_RUST_PREBUILT"] = "1"
-            env["VE_RUST_BINARY"] = str(rust_binary)
+            events_file = scratch / "pytest.json"
+            pytest_env = record_environment(result, "pytest", {
+                **env, "VE_GATE_PYTEST_RESULT": str(events_file),
+                "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
+                "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
+                "VE_RUST_BINARY": str(rust_binary)})
             try:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
                          "-q", "-p", "hypothesis.extra.pytestplugin",
                          "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=env, stage="Python suite")
+                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
             interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
-        result["stages"].append("pytest")
-        completed = True
-    except (OSError, ValueError, KeyError, RuntimeError) as exc:
-        result["failures"].append({"stage": "gate", "reason": str(exc)})
-    finally:
-        if started_clean:
-            try:
-                ending_sha, ending_dirty = source_identity(env)
-                result["dirty"] = ending_dirty
-                if ending_sha != result["commit_sha"] or ending_dirty:
-                    result["failures"].append({"stage": "source identity",
-                                               "reason": "HEAD or worktree changed during gate"})
-            except (OSError, RuntimeError) as exc:
-                result["failures"].append({"stage": "source identity", "reason": str(exc)})
-        if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
-            result["status"] = "passed"
-        write_result(output, result)
-        print(f"[gate] {result['status']}: {output}; "
-              f"{result['counts'].get('passed', 0)} passed, "
-              f"{result['counts'].get('skipped', 0)} skipped, "
-              f"{len(result['failures'])} failures", flush=True)
-        for skip in result["skips"]:
-            print(f"[gate] skip {'allowed' if skip['allowed'] else 'FAILED'}: "
-                  f"{skip['nodeid']}: {skip['reason']}", flush=True)
-        for failure in result["failures"]:
-            print(f"[gate] FAILURE: {failure['stage']}: "
-                  f"{failure.get('nodeid', '')} {failure['reason']}", file=sys.stderr, flush=True)
+            result["stages"].append("pytest")
+            completed = True
+        except (OSError, ValueError, KeyError, RuntimeError) as exc:
+            result["failures"].append({"stage": "gate", "reason": str(exc)})
+        finally:
+            if started_clean:
+                try:
+                    ending_sha, ending_dirty = source_identity(env)
+                    result["dirty"] = ending_dirty
+                    if ending_sha != result["commit_sha"] or ending_dirty:
+                        result["failures"].append({"stage": "source identity",
+                                                   "reason": "HEAD or worktree changed during gate"})
+                except (OSError, RuntimeError) as exc:
+                    result["failures"].append({"stage": "source identity", "reason": str(exc)})
+            if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
+                result["status"] = "passed"
+            write_result(output, result)
+            print(f"[gate] {result['status']}: {output}; "
+                  f"{result['counts'].get('passed', 0)} passed, "
+                  f"{result['counts'].get('skipped', 0)} skipped, "
+                  f"{len(result['failures'])} failures", flush=True)
+            for skip in result["skips"]:
+                print(f"[gate] skip {'allowed' if skip['allowed'] else 'FAILED'}: "
+                      f"{skip['nodeid']}: {skip['reason']}", flush=True)
+            for failure in result["failures"]:
+                print(f"[gate] FAILURE: {failure['stage']}: "
+                      f"{failure.get('nodeid', '')} {failure['reason']}", file=sys.stderr, flush=True)
     return 0 if result["status"] == "passed" else 1
 
 
