@@ -3,7 +3,8 @@ Print, one JSON line per file argument, the modules the pinned toolchain's
 own header parser (`Lean.Parser.parseHeader`) reads as imports, and whether it
 reported an error. `tests/test_lean_import_reader.py` runs it with
 `lean --run tools/lean_header_imports.lean FILE...` as the oracle for
-`tools/check_lean_imports.imports`.
+`tools/check_lean_imports.imports`: every header that reader accepts must read
+here, without error, as the same modules.
 -/
 import Lean
 
