@@ -28,7 +28,7 @@ fn decimal(v: &Value) -> Result<BigInt> {
     let s = v
         .as_str()
         .ok_or_else(|| Error::new("SyntaxError", "integer must be a string"))?;
-    if s.len() > 40 {
+    if s.chars().count() > 40 {
         return error("ResourceLimit", "integer literal length");
     }
     if s.is_empty()
