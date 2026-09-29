@@ -30,7 +30,7 @@ in `sources.md`.
 
 | Idea borrowed | Public source |
 |---|---|
-| allow / ask / deny tool rules, deny taking precedence, per-path file rules, `.env`-style credential denies | Claude Code permission settings, <https://docs.anthropic.com/en/docs/claude-code/iam> |
+| allow / ask / deny tool rules, deny taking precedence, per-path file rules, `.env`-style credential denies | Claude Code permissions, <https://code.claude.com/docs/en/permissions> (plan review finding C: the earlier `…/claude-code/iam` URL now serves authentication documentation) |
 | writes confined to the workspace, network off unless approved, approval to escalate | OpenAI Codex CLI sandbox and approval modes, <https://github.com/openai/codex> (`docs/sandbox.md`; commit SHA pinned at step 0) |
 | human approval for high-impact actions (spending, sending, deleting) and least privilege | OWASP Top 10 for LLM Applications 2025, LLM06 Excessive Agency, <https://genai.owasp.org/llmrisk/llm062025-excessive-agency/> |
 | forbid overrides permit; default deny is a *choice* of the language | Cedar, <https://docs.cedarpolicy.com/> (already the reference of `docs/spec/norms.md` §8) |
@@ -190,7 +190,10 @@ absence to open-world falsity" without an explicit rule. Each record therefore s
 - Inventory, emitted once at the head of `log.ve`: every file, host and person attribute, in both polarities.
 
 A record that omits a field it needs is **UNDETERMINED**, never defaulted. Actions a40 and a41 do this on purpose,
-and a42 omits a field its verdict does not need.
+and a42 omits a field its verdict does not need. So **39** records (a01–a39) are complete, and a40, a41 and a42
+are not. The finite-model differential (M8) runs on the 39 complete records only. It excludes a42 too: its two
+completions select `{1}` (not confirmed) or `{1, 2}` (confirmed), while entailment gives `{1}` with rule 2 in U,
+so no single completion can stand for it.
 
 ### 4.2 Inventory
 
@@ -367,10 +370,35 @@ That flip is the forced-default finding for the obligation.
 | Part | Features (on main unless noted) | Expected result |
 |---|---|---|
 | A. Authoring and well-formedness | `norms@0` English rule blocks with multi-rule exception lists and `unless` carve-outs (`ve/norm_english.py`); regulated declarations; `data@0` functional + total `tool` with `$string` literals (the cedar-attributes pattern); existential guards; the unique-reading parser; identity manifest (the Asimov pattern) | every rule CHECKED with one reading. Risk: `data@0 × norms@0` in one environment, and literal constants in norm guards. Step 0 probes both; if either fails, `tool` becomes 11 unary base predicates plus explicit disjointness, which the conflict check can then no longer see (recorded as a deviation) |
-| B. Policy-level checks | `check_conflict` (certificate or witness); `NormDocument.selection`; tableau prover and countermodel search for the pair, shadow, dead-guard and gap queries; `overlap_witnesses`; vacuity report; Lean `norms-route` replay of the document conflict witness; P0 route replay of the pair, shadow and gap certificates | as section 7. The per-pair, shadow and gap queries are **harness** queries built from public selection formulas. The checker reports one conflict witness per predicate, not the conflicting rule pairs |
-| C. Per-action verdicts | per-action sub-logs; the prover over base facts with record closure sentences; `prove_norm_entailment` in the four environments; finite-model differential using `selected_rules` on a model built mechanically from each complete record | as section 6; the finite-model path is used for complete records only (40 of 42) and must agree |
+| B. Policy-level checks | `check_conflict` (certificate or witness); `NormDocument.selection`; tableau prover and countermodel search for the pair, shadow, dead-guard and gap queries; `overlap_witnesses`; vacuity report; Lean `norms-route` replay of the document conflict results on the flag-free environment described below; P0 route replay of the pair, shadow and gap certificates (the P0 route accepts data flags) | as section 7. The per-pair, shadow and gap queries are **harness** queries built from public selection formulas. The checker reports one conflict witness per predicate, not the conflicting rule pairs |
+| C. Per-action verdicts | per-action sub-logs; the prover over base facts with record closure sentences; `prove_norm_entailment` in the four environments; finite-model differential using `selected_rules` on a model built mechanically from each complete record | as section 6; the finite-model path is used for complete records only (39 of 42: a01–a39) and must agree |
 | D. Obligation | obligation role without a dual; breach computed by the harness (a W3 definition `breach := required ∧ ¬reported` is optional) | as section 6 |
 | E. Optional variant | replace `inside_workspace` by directory containment via `closure@0` `rtc[parent]`, as in the Cedar adapter's `in` | the same verdicts; skipped if `closure@0 × data@0 × norms@0` or its English is unavailable |
+
+**Lean replay with the `tool` flags (plan review, finding A).** The Lean `norms-route` rejects every environment
+with data flags: `decodeSource` in `lean/VE/Norms/Wire.lean` throws "UnsupportedProfile: norms route with data
+flags is not implemented", and `tool` is declared functional and total. The fallback is fixed now:
+
+- The Lean `norms-route` cases run on `environment.lean.json`. It is `environment.deny-neednot.json` with the
+  `functional` and `total` fields removed from `tool` and nothing else changed: the same 11 literals, rules and
+  defaults. It has its own environment id, so the conflict packages are regenerated for it.
+- Changed assumption: Lean's `Background_base` then lacks the functional and total axioms for `tool`. The
+  pairwise distinctness of the literals stays.
+- Guarantee for a conflict witness: Lean checks that the regenerated target is true at the tuple in the
+  witness model. The target formula does not mention the flags. Python's `validate_background` checks that the
+  same model satisfies the flag axioms. So a CONFLICT in the flagged environment rests on Lean and Python
+  together, and the README says so.
+- Guarantee for a CONFLICT-FREE certificate: Lean replays it over the flag-free background. It stays valid for
+  the flagged environment, because adding premises keeps every entailment. The README states this monotonicity
+  step as an argument; Lean does not prove it.
+- A certificate that needs the flag axioms cannot be replayed on the flag-free environment. Such a result is
+  labelled Python-only evidence. The `report_required` certificate and mutant m1's `permitted` certificate are
+  expected not to need the flags.
+- The completed outcomes (section 5) use the norm layers with the flags, so the `norms-certificate` kind cannot
+  replay them. They are Python evidence. The P0 route also replays each one with the Python-elaborated layer
+  formulas passed as ordinary premises. That checks the inference in Lean, but not the elaboration.
+- Base-level certificates (per-action selection, pair, shadow, gap) go to the P0 `certificate` kind, which
+  accepts data flags, so they need no fallback.
 
 Expected to stay **OPEN**:
 
@@ -397,7 +425,7 @@ No translation-fidelity metric applies (section 0).
 | M5 | policy findings vs section 7: conflict pairs, never-deciding rules, dead guards, gap tools, required overlaps | {(3,14)}, {12}, ∅, 5 tools (+ the unnamed-tool case or OPEN), 6 required overlap pairs present |
 | M6 | seeded defects found | 4/4 (D1 via a10 and pair (3,14); D2 via a27 and the send_email/post_message gaps; D3 via a36 and the get_secret gap; D4 via rule 12 never deciding) |
 | M7 | mutant detection (section 11) | 6/6 with the stated verdict changes |
-| M8 | differential agreement: finite-model `selected_rules` vs entailment (40 complete records); an independent Python reference (`reference_policy.py`, no `ve` import, written from section 3.3 only) vs the harness (42) | 40/40, 42/42 |
+| M8 | differential agreement: finite-model `selected_rules` vs entailment (39 complete records, a01–a39); an independent Python reference (`reference_policy.py`, no `ve` import, written from section 3.3 only) vs the harness (42) | 39/39, 42/42 |
 | M9 | evidence: certificates replayed by Python and by Lean, witnesses validated in Python, Lean and Rust, each counted; UNKNOWN (budget) outcomes counted and named | reported; any UNKNOWN is a failure of M1/M5 unless explained in section 12 |
 | M10 | cost: rules, log sentences, harness wall time, prover calls | reported |
 
@@ -417,7 +445,7 @@ No translation-fidelity metric applies (section 0).
 | Id | Mutation | Expected change |
 |---|---|---|
 | m1 | add rule 3 to rule 14's exception list (the fix for D1) | `permitted` becomes CONFLICT-FREE (certificate); a10 becomes REJECTED {14}; no conflicting pairs |
-| m2 | add "Every action may be performed, if both that action is confirmed by the user and there is a person such that both that action sends a message to that person and that person is not the user." (the fix for D2) | a27 becomes APPROVED; the send_email and post_message gaps close |
+| m2 | add a new permission rule, called M below, as the last rule: "Every action may be performed, if both that action is confirmed by the user and there is a person such that both that action sends a message to that person and that person is not the user." (the fix for D2). Also add M to the exception lists of **all 12 negative rules 13–24**: 12 new precedence edges, 155 in all, and rule 14 still omits rule 3. Without those edges, a confirmed message to a non-user that discloses a secret would select both M and rule 23, a new conflict | a27 becomes APPROVED {M}. a29 stays APPROVED, and its deciding set becomes {9, M}. No other verdict or deciding set changes. The send_email and post_message gaps close. The opposite-sign pairs become 13 × 12 = 156, and only (3, 14) stays satisfiable, so the document stays CONFLICT because of D1. M decides a27 and a29, so the never-deciding rules stay {12}. A new same-sign overlap (9, M) appears, shown by a29 |
 | m3 | shorten rule 2's guard to "that action is confirmed by the user" (the exception-does-not-inherit trap) | only one verdict changes: a27 becomes APPROVED {2}. Rule 2 joins the deciding set of a12, a17, a19, a23, a29, a31 and a35. The send_email and post_message gaps close for the wrong reason; the get_secret, schedule_task and spawn_agent gaps stay (their witnesses are unconfirmed) |
 | m4 | delete the closure sentence for `reads` from a01's record | a01 becomes UNDETERMINED, U = {1, 13, 24}: an unknown further file could be outside the workspace or a credential file, so neither 13 nor 24 is ruled out, and rule 1's selection (which needs them silent) is no longer provable |
 | m5 | remove rule 12 from rule 24's exception list | a06 becomes CONFLICT (12 vs 24); pair (12, 24) becomes satisfiable; rule 12 no longer never-deciding |
@@ -425,8 +453,19 @@ No translation-fidelity metric applies (section 0).
 
 ## 12. Deviations (after running VE; empty at plan time)
 
-None yet. Each future entry gives the section and cell, the old value, the new value and the reason. A wording
-change to a rule must keep the paraphrase in 3.3.
+Each entry gives the section and cell, the old value, the new value and the reason. A wording change to a rule
+must keep the paraphrase in 3.3.
+
+**Plan review fixes, applied before any VE run** (`agent-policy-planreview.final.md`, verdict FIX). The review
+confirmed all 42 base verdicts, deciding-rule sets, default outcomes and totals, so sections 6 and 7 are unchanged.
+
+- Finding A (section 8): the Lean `norms-route` rejects data flags. The flag-free fallback and its guarantees are
+  now written out after the table in section 8.
+- Finding B (section 11, m2): the new permission now overrides nothing and is overridden by all 12 negative
+  rules. Its expected changes now list a29's deciding set, the pair count and the new overlap.
+- Finding B (sections 4.1, 8 and 9, M8): 39 records are complete, not 40. a42 is excluded from the finite-model
+  differential; M8 now expects 39/39.
+- Finding C (section 1): the Claude Code source URL is corrected. Step 0 pins the pages in `sources.md`.
 
 ## 13. Implementation steps and files (for the implementation round, not this commit)
 
