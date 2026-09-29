@@ -39,9 +39,34 @@
 > role and on each path residential care feeds: R6, R7, R10 and the amounts.
 > Mutants M24 and M25 drop the end date or make its bound strict (section 8).
 > Their keys were written by hand from S1 before VE was run on them.
+>
+> **Review finding C applied** (`eligibility-review.final.md`, left open by
+> the first fix round). R7 dropped "throughout the qualifying week":
+> `partner_of` had no time, and `shares_home` said only "in the qualifying
+> week". The undated profiles now say explicitly that the home and the
+> partnership last the whole week (AR5), and a housemate may give their first
+> and last days. R7 needs both to cover every day of QW (new reading AR7).
+> No existing profile gives such a day, so all 69 keys stand. Profiles B24 to
+> B30 start or end the shared home or the partnership inside QW, or on its
+> first or last day, and B30 shows that reg. 3(3)'s "in that week" is not
+> "throughout" (section 5). Mutants M26 to M30 drop each duration, make its
+> bounds strict, or read "throughout" into 3(3) (section 8). Their keys were
+> written by hand from S1 before VE was run on them.
+>
+> **R7 recheck applied** (`eligibility-r7-looprecheck1.final.md`, verdict
+> FIX). Reg. 3(3) needs P to be "the partner of and living with" the person
+> aged 80 "in that week", which is one day of QW on which both hold. R14 read
+> a partnership on some day and a shared home on some day, so a partnership
+> that ended before the shared home began still gave £300. New reading AR8
+> asks for a common day. No existing profile dates both periods, so all 76
+> keys stand. Profiles B31 to B34 date both: the partnership ends before the
+> home begins (B31, the recheck's example), the home ends before the
+> partnership begins (B32), or the two share only one day (B33, B34). Mutants M31
+> and M32 drop the common day or make its bounds strict (section 8). Their
+> keys were written by hand from S1 before VE was run on them.
 
 This use case measures VE's **accuracy**, not only its coverage. VE checks a
-published benefit rule on 69 applicant profiles, and its answers are compared
+published benefit rule on 80 applicant profiles, and its answers are compared
 with an answer key worked out beforehand from the source. It is also the first
 real-document test of the merged W6a quantities and dates feature
 ([units-schema.md](../../docs/spec/units-schema.md),
@@ -123,17 +148,19 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 54 entitled and 15 not-entitled cases. **Scoring
+The profiles contain 63 entitled and 17 not-entitled cases. **Scoring
 definition** (used everywhere in this plan and in the results):
 
 - Q1 is scored on every profile.
 - Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
   not-entitled profile they are **not applicable**, and neither the key nor VE
   gives them an answer. VE's NO on Q1 is scored as Q1 only.
-- That gives 69 + 54 + 54 + 54 = **231 scored questions**. The same 231 are
+- That gives 80 + 63 + 63 + 63 = **269 scored questions**. The same 269 are
   the denominator for accuracy, coverage and precision. (Before the
   eligibility review added B15 to B19, it was 57 + 44 × 3 = 189; before the
-  recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206.)
+  recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206; before B24 to
+  B30 were added for review finding C, 69 + 54 × 3 = 231; before the R7
+  recheck added B31 to B34, 76 + 59 × 3 = 253.)
 
 A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
 If VE answers NO or OPEN there, it gives no amount, and those three questions
@@ -158,14 +185,14 @@ qualifying week.
 | R4 | S1 reg. 1(3) "relevant benefit" | The closed list: income support, income-based JSA, state pension credit, income-related ESA and universal credit. State Pension and Attendance Allowance are not on it. |
 | R5 | S1 reg. 1(4)(a) | x is **in residential care** when x resides in a care home (or independent hospital, or Polish resettlement accommodation) throughout QW and for at least 12 weeks (84 days) ending immediately before QW. Care must have begun no later than 2026-06-29, and a stay with a last day must not end before QW₁ (2026-09-27). |
 | R6 | S1 reg. 1(4)(b) | x **lives with** y when they share accommodation as their mutual home and **x** is not in residential care. The condition is on x only; y may be in residential care. So R6 is not symmetric. |
-| R7 | S1 reg. 4(2)(a) | Excluded: throughout QW, x is a partner of and living with y, where y has reached pensionable age and RB(y). |
+| R7 | S1 reg. 4(2)(a) | Excluded: **throughout** QW, x is a partner of and living with y, where y has reached pensionable age and RB(y). "Throughout" covers both the partnership and the shared home: each must hold on every day of QW (AR7), so it began no later than QW₀ and its last day is no earlier than QW₁. The partner's age and benefit are fixed by their own words ("in or before", "in respect of" QW). Reg. 3(3) says only "in that week", so R14 needs a partner and a shared home on a common day of QW (AR8), not throughout. |
 | R8 | S1 reg. 4(2)(b) and S3 reg. 2(5) | Excluded: throughout QW, x receives free in-patient treatment, and has done so for **more than 52 weeks** (more than 364 days) ending immediately before QW. A treatment period begins the day **after** admission and ends on the day of leaving. So "throughout QW" means admission ≤ 2026-09-20 and discharge ≥ 2026-09-27, and "more than 52 weeks" means admission ≤ 2025-09-20. |
 | R9 | S1 reg. 4(2)(c) | Excluded: throughout QW, x is detained in custody **under a sentence** imposed by a court. |
 | R10 | S1 reg. 4(3) | Excluded: x is in residential care (R5) and RB(x). |
 | R11 | S1 reg. 4(4) | Excluded: x is resident in England or Wales on a day d of QW, and **afterwards** becomes ordinarily resident in Scotland or Northern Ireland: d ≤ the first day of that residence ≤ QW₁ (AR6). With d the earliest such day, this is: R3, and max(start of E&W residence, QW₀) ≤ start of Scotland/NI residence ≤ QW₁. |
 | R12 | S1 reg. 4(5)–(6), reg. 5(1) | Excluded: x made no claim on or before 2027-03-31, and was not paid without a claim. |
 | R13 | S1 regs. 2 and 4(1) | **entitled(x)** ⇔ R2 ∧ R3 ∧ none of R7–R12. |
-| R14 | S1 reg. 3(1)–(3), P not 80 by QW₁ | £100 if ¬RB(P) and (P lives with an entitled person, or P is in residential care) [3(2)]. Otherwise £300 if RB(P) and P is the partner of, and lives with, someone who has reached 80 by QW₁ [3(3)]. Otherwise £200 [3(1)]. |
+| R14 | S1 reg. 3(1)–(3), P not 80 by QW₁ | £100 if ¬RB(P) and (P lives with an entitled person, or P is in residential care) [3(2)]. Otherwise £300 if RB(P) and, on a common day of QW (AR8), P is the partner of, and lives with, someone who has reached 80 by QW₁ [3(3)]. Otherwise £200 [3(1)]. |
 | R15 | S1 reg. 3(4)–(6), P 80 by QW₁ | £150 if ¬RB(P) and (P lives with an entitled person who has reached 80, or P is in residential care) [3(6)]. Otherwise £200 if ¬RB(P) and P lives with an entitled person who has not reached 80 [3(5), "subject to paragraph (6)"]. Otherwise £300 [3(4)]. |
 | R16 | S2 §7 "If your income is over £35,000" | Recovered ⇔ entitled(P) and P's total income > £35,000.00; a partner's income does not count. Kept = amount − recovered amount, where the recovered amount is the whole payment or £0.00. |
 
@@ -193,7 +220,14 @@ qualifying week.
   In B03, universal credit is recorded as paid to the partner only. The
   joint-UC question stays OPEN (O3).
 - **AR5: household extent.** A housemate listed in a profile shares P's home
-  during QW. P lives with no one else.
+  on at least one day of QW. P lives with no one else. Unless the profile says
+  otherwise, the shared home, and a partnership marked `partner`, began
+  before QW and continue after it. A housemate may carry `shared_home` and
+  `partnership` records, each with an optional first day (`from`) and last day
+  (`until`); each period must include a day of QW. `partnership` is the
+  relationship (marriage, civil partnership, or living together as if
+  married); the household side of "couple" is `shared_home`. This clause was
+  made explicit, and the records added, for review finding C.
 - **AR6: order in reg. 4(4)** (added by the eligibility review). "Having been
   ordinarily resident in England or Wales on any day falling within the
   qualifying week, P becomes ordinarily resident in Scotland or Northern
@@ -204,6 +238,29 @@ qualifying week.
   during QW) follow from the text. B16 is flagged `ambiguous-source`: it is resident in Scotland from
   before QW while still resident in England on its first two days. The
   unordered reading, which ignores "having been", would exclude all three.
+- **AR7: day granularity of "throughout the qualifying week" for a partner
+  and a shared home (R7)** (added for review finding C). A partnership or a
+  shared home lasts throughout QW when its first day is no later than QW₀ and
+  its last day no earlier than QW₁. A first or last day inside QW counts as a
+  day of the partnership or the home, as the last day of a care stay does in
+  R5 (C26). B28 (married and moved in on QW₀) and B29 (separated after QW₁,
+  the last day) are flagged `ambiguous-source`: a reading that needs the whole
+  of each day would give YES £100 for both.
+- **AR8: one day for "in that week, P is the partner of and living with"
+  (R14, reg. 3(3))** (added by the R7 recheck). Both must hold on the same
+  day of QW: some day of QW lies in the partnership and in the shared home.
+  With each period including a day of QW (AR5), that holds exactly when the
+  partnership begins no later than the last day of the shared home and the
+  shared home begins no later than the last day of the partnership. An
+  undated start lies before QW and an undated end after it (AR5), and a first
+  or last day counts, as in AR7. So a partnership that ends before the shared
+  home begins (B31), or the reverse (B32), is not 3(3). B33 and B34 share
+  only one day, the last day of one period and the first of the other, and
+  are flagged `ambiguous-source`: a reading that needs the whole of that day
+  would give £200. The partner's age is fixed by its own words ("in or before that
+  week"), and the other paragraphs of reg. 3 ask "in that week" of one period
+  only (the shared home, with a person whose entitlement is for the week), so
+  AR8 concerns 3(3) alone.
 
 ### 4.3 Bridges (facts derived outside VE, with their derivation)
 
@@ -294,6 +351,17 @@ because £20,000.00 is not over £35,000.00.
 | B21 | b. 1944, care home 2025-01-10 to 2026-09-24, no RB | YES | £300 | NO | £300 | not R5 (as B20); P 80, alone → not 3(6) or 3(5) → 3(4). Ignoring the end: £150 | SI |
 | B22 | b. 1955, no RB; lives with sister b. 1957 in a care home 2025-01-10 to 2026-09-24, Pension Credit | YES | £100 | NO | £100 | sister not R5 → R10 no; R7 needs a partner → sister entitled; P ¬RB lives with entitled → 3(2). Ignoring the end: sister R10 → £200 | SI |
 | B23 | b. 1955, care home 2025-01-10 to 2026-09-24, no RB; lives with partner b. 1957 who gets Pension Credit | NO | — | — | — | P not R5 → P lives with partner (R6) → R7. Ignoring the end: P in residential care → no R7 → YES £100 | SI |
+| B24 | b. 1957; partner b. 1955 gets Pension Credit, moved into P's home 2026-09-23 | YES | £100 | NO | £100 | not living with the partner on 21 and 22 September → not throughout QW → R7 no; partner: R7 needs RB(P) → entitled; P under 80, ¬RB, lives with entitled in that week → 3(2). Ignoring "throughout": NO | SI |
+| B25 | as B01, but their last day in the shared home is 2026-09-24 | YES | £100 | NO | £100 | shared home ends before QW₁ → not throughout → R7 no; → 3(2) as B24. Ignoring "throughout": NO | SI |
+| B26 | as B01, but they became a couple on 2026-09-23 (shared the home before) | YES | £100 | NO | £100 | not partners on 21 and 22 September → R7 no; living with entitled partner in that week → 3(2). Ignoring "throughout": NO | SI |
+| B27 | as B01, but their last day as a couple is 2026-09-24 (still share the home) | YES | £100 | NO | £100 | partnership ends before QW₁ → R7 no; still lives with an entitled person → 3(2). Ignoring "throughout": NO | SI |
+| B28 | as B01, but married and moved in together on 2026-09-21 | NO | — | — | — | AR7: first day = QW₀ counts → partner and living with throughout QW → R7 (flag `ambiguous-source`; whole-day reading: YES £100) | SI |
+| B29 | as B01, but they separate: last day as a couple and in the shared home 2026-09-27 | NO | — | — | — | AR7: last day = QW₁ counts → throughout → R7 (flag `ambiguous-source`; whole-day reading: YES £100) | SI |
+| B30 | b. 1955 Pension Credit claimant; partner b. 1944, no RB, moved in 2026-09-23 | YES | £300 | NO | £300 | partner ¬RB → R7 no; RB(P), and "in that week" P is the partner of and living with a person aged 80 → 3(3). "Throughout" read into 3(3): £200 | SI |
+| B31 | as B30, but their last day as a couple is 2026-09-22 | YES | £200 | NO | £200 | partners on 21 and 22 September, sharing the home from 23 September: no day of QW on which P is the partner of and living with the person aged 80 (AR8) → not 3(3) → 3(1). Partnership and home on separate days: £300 | SI |
+| B32 | b. 1955 Pension Credit claimant; shares a home with a person b. 1944, no RB, until 2026-09-22; they become a couple on 2026-09-23 | YES | £200 | NO | £200 | the home ends before the partnership begins → no common day (AR8) → not 3(3) → 3(1). Partnership and home on separate days: £300 | SI |
+| B33 | as B30, but 2026-09-23 is also their last day as a couple | YES | £300 | NO | £300 | AR8: 23 September is in both periods (a first or last day counts, AR7) → 3(3) (flag `ambiguous-source`; whole-day reading: £200) | SI |
+| B34 | as B32, but the shared home's last day is 2026-09-23, the day they become a couple | YES | £300 | NO | £300 | AR8: 23 September is in both periods → 3(3) (flag `ambiguous-source`; whole-day reading: £200) | SI |
 | C01 | alone, b. 1960-06-27 | YES | £200 | NO | £200 | PA date 2026-09-27 = QW₁ → R2 holds | guide |
 | C02 | alone, b. 1960-06-28 | NO | — | — | — | PA date 2026-09-28 > QW₁ | guide |
 | C03 | alone, b. 1960-02-29 | YES | £200 | NO | £200 | PA 2026-02-28 or 2026-03-01; both ≤ QW₁ | guide |
@@ -330,14 +398,15 @@ because £20,000.00 is not over £35,000.00.
 
 **Summary.**
 
-- **Profiles.** There are 69: 13 in group A (S2 amount-table rows), 23 in group
+- **Profiles.** There are 80: 13 in group A (S2 amount-table rows), 34 in group
   B (exclusions and combinations), 27 in group C (date boundaries, each with
   both sides) and 6 in group D (the income threshold with one penny either
   side).
-- **Basis.** 38 are `guide` cases, 25 are `SI` cases and 6 are `SI≠guide`
+- **Basis.** 38 are `guide` cases, 36 are `SI` cases and 6 are `SI≠guide`
   cases.
-- **Flags.** 9 profiles carry a flag in `cases.json`, so 60 are unflagged.
-  4 are flagged `ambiguous-source` (B10, B16, C11, C24); C11 is also `SI≠guide`.
+- **Flags.** 13 profiles carry a flag in `cases.json`, so 67 are unflagged.
+  8 are flagged `ambiguous-source` (B10, B16, B28, B29, B33, B34, C11, C24); C11 is also
+  `SI≠guide`.
 - **Benefit list.** Each of the five relevant benefits decides the answer of
   at least one profile: income support B11, income-based JSA B12, state
   pension credit B01 and B04, income-related ESA B13, universal credit B14.
@@ -358,10 +427,27 @@ because £20,000.00 is not over £35,000.00.
   on each path it feeds: R10 (B20), 3(6) (B21), the housemate's R10 and so
   3(2) (B22), and R6 and so R7 (B23). Ignoring the end date changes the key of
   every one except C26.
-- **Size.** The brief asked for about 40 profiles. The extra 29 come from
+- **Finding C profiles.** B24 to B30 were added for review finding C. Each
+  is B01's household (the partner of a Pension Credit claimant, excluded by
+  R7) with one period moved into QW: the shared home starts (B24) or ends
+  (B25) inside QW, or the partnership does (B26, B27). Each is YES £100, and
+  NO if "throughout" is ignored. B28 and B29 put both first days on QW₀, or
+  both last days on QW₁, and stay NO under AR7; each bound decides one of
+  them. B30 is A08 with the partner moving in during QW: reg. 3(3) says "in
+  that week", so it is still £300.
+- **R7 recheck profiles.** B31 to B34 were added by the R7 recheck. Each is
+  B30 with both periods dated, so that the partnership and the shared home
+  each include a day of QW: they share no day (B31, the recheck's example;
+  B32, the other order) or one day (B33, B34, in the same two orders).
+  Reading 3(3) as a partner on some day and a shared home on some day
+  changes B31 and B32; each bound of AR8 decides one pair: the start of the
+  home against the end of the partnership decides B31 and B33, and the start
+  of the partnership against the end of the home decides B32 and B34.
+- **Size.** The brief asked for about 40 profiles. The extra 40 come from
   covering both sides of every date boundary, every benefit on the list, the
-  two readings the review corrected, and the care end date the recheck found
-  unread.
+  two readings the review corrected, the care end date the recheck found
+  unread, the whole-week household of review finding C, and the common day
+  of 3(3) that the R7 recheck found.
 
 **Independent check of the key.** [`reference.py`](reference.py) is a
 stdlib-only reading written from S1–S4. It imports nothing from `ve` and was
@@ -378,7 +464,20 @@ for B15, B16 and B19, and restoring its old R6 changes them for B17 and B18.
 Its R5 always read a care stay's end date. After B20 to B23 and C25 to C27
 were added, it printed **69/69**. Making it ignore the end date changes the
 answers for B20 to B23, C25 and C27, and making the end bound strict changes
-C26.
+C26. For review finding C its R7 now needs the shared home and the
+partnership to cover the whole week (AR7). It also reads the couple from the
+housemate's record for both persons; before, it looked for `partner` on the
+applicant, so the housemate's own reg. 4(2)(a) never applied. That changed no
+key, because the housemate's R7 needs RB(P) and every reg. 3 paragraph that
+reads the housemate's entitlement needs ¬RB(P). After B24 to B30 were added,
+it printed **76/76**. Dropping the whole-week test on the home changes B24 and
+B25, on the partnership B26 and B27, making the first or last bound strict
+changes B28 or B29, and reading "throughout" into 3(3) changes B30. The R7
+recheck found that its 3(3), like the translation's, asked for a partner on
+some day and a shared home on some day. It now asks for a day of QW in both
+(AR8). After B31 to B34 were added, it printed **80/80**. Restoring the old
+3(3) changes B31 and B32, and requiring more than the one shared day changes
+B33 and B34 (reading "throughout" into 3(3) now changes B30, B33 and B34).
 
 **Limits of this independence.**
 
@@ -447,6 +546,24 @@ and `["decimal", "gbp_penny", …]`):
   The first translation left this bound out and read no end date (eligibility
   recheck). Every profile field is now either carried by a fact or listed
   with a reason as unread (`home`, O7), and the builder rejects any other field.
+- **R7 (AR7):** for the shared home,
+  `home_throughout(r, o) ⇔ shares_home(r, o) ∧ (¬home_start_dated(r, o) ∨ date_no_later(home_from, 2026-09-21)) ∧ (¬home_ended(r, o) ∨ date_no_later(2026-09-27, home_until))`
+  (R7a), and the same for the partnership with `partner_of`,
+  `partnership_start_dated`, `partnership_ended`, `partner_from` and
+  `partner_until` (R7b). Then R7 is
+  `partners_throughout(r, o) ∧ lives_with(r, o) ∧ home_throughout(r, o) ∧ reached_pa(o) ∧ has_rb(o)`.
+  The four day constants belong to the household, not to a role, since
+  `cases.json` records the couple once, on the housemate. The first
+  translation used `partner_of` and `lives_with` alone, which hold on some
+  day of QW, so R7 lost "throughout" (review finding C). R14's 3(3) says
+  "in that week", not "throughout".
+- **R14a (AR8):** 3(3) asks for one day of QW in both periods,
+  `partner_at_home(applicant, housemate) ⇔ partner_of ∧ shares_home ∧ (¬home_start_dated ∨ ¬partnership_ended ∨ date_no_later(home_from, partner_until)) ∧ (¬partnership_start_dated ∨ ¬home_ended ∨ date_no_later(partner_from, home_until))`,
+  and R14.3 uses `partner_at_home ∧ lives_with ∧ reached_80(housemate)`.
+  Each period includes a day of QW (AR5, checked by the builder), so the two
+  cross bounds are exactly interval intersection with QW. Before the R7
+  recheck, R14.3 used `partner_of ∧ lives_with`, which hold on some day each,
+  so a partnership that ended before the shared home began still gave £300.
 - **R8:**
   - `inpatient(r) → shift_days(r_treatment_start, r_admitted, 1)`, the day
     after admission, by S3 reg. 2(5);
@@ -622,9 +739,17 @@ each.
 | M23: R6 also requiring the other person out of residential care (the first run's reading) | B17, B18 |
 | M24: R5 without the care end date (the reading before the recheck) | B20, B21, B22, B23, C25, C27 |
 | M25: R5 with the care end date strictly after QW₁ | C26 |
+| M26: R7 without the whole-week shared home | B24, B25 |
+| M27: R7 without the whole-week partnership | B26, B27 |
+| M28: R7 with the first days strictly before QW₀ | B28 |
+| M29: R7 with the last days strictly after QW₁ | B29 |
+| M30: R14 with "throughout" read into 3(3) | B30 |
+| M31: R14 without the common day of AR8 (the reading before the R7 recheck) | B31, B32 |
+| M32: R14 with the bounds of AR8 strict | B33, B34 |
 
-Kill rate = mutants killed / 25; 25/25 is expected. (M20 to M23 were added by
-the eligibility review and M24, M25 by the recheck; the first run had M1 to M19.)
+Kill rate = mutants killed / 32; 32/32 is expected. (M20 to M23 were added by
+the eligibility review, M24 and M25 by the recheck, M26 to M30 for review
+finding C, and M31 and M32 by the R7 recheck; the first run had M1 to M19.)
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:
@@ -639,14 +764,14 @@ No model calls.
 ## 9. Metrics to report (`RESULTS.md`)
 
 - **Accuracy.**
-  - Strict, per profile: every scored question correct, x/69. OPEN counts as
+  - Strict, per profile: every scored question correct, x/80. OPEN counts as
     wrong.
-  - Per question (section 3): Q1 x/69; Q2 x/54; Q3 x/54; Q4 x/54; total
-    x/231.
-  - The same figures on the 60 unflagged profiles, on the 38 `guide`
+  - Per question (section 3): Q1 x/80; Q2 x/63; Q3 x/63; Q4 x/63; total
+    x/269.
+  - The same figures on the 67 unflagged profiles, on the 38 `guide`
     profiles (official answers), and for each flagged profile individually.
 - **Coverage.** Scored questions answered (certified YES/NO/amount) out of
-  231, and precision = correct / answered, over the same 231.
+  269, and precision = correct / answered, over the same 269.
 - **Evidence.** Certificates produced, and certificates replayed by Lean
   (must equal the number produced). Also profiles whose premises are
   consistent, and non-vacuity models accepted by Lean.
@@ -666,7 +791,7 @@ No model calls.
 | Path | Content |
 |---|---|
 | `PLAN.md` | this plan and the frozen key |
-| `cases.json` | the 69 profiles with their `key` (same as section 5) |
+| `cases.json` | the 80 profiles with their `key` (same as section 5) |
 | `reference.py` | the independent reference reading and key check |
 | `source/` | the pinned raw files, extracted text, and `extract_text.py` |
 

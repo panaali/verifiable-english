@@ -31,6 +31,34 @@
     ],
     "description": "The two persons share accommodation as their mutual home in the qualifying week (S1 reg. 1(4)(b), taken as a fact)."
    },
+   "home_start_dated": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' mutual home began on the household's home start date; otherwise it began before the qualifying week (AR5)."
+   },
+   "home_ended": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' mutual home has a last day, the household's home end date; otherwise it continues after the qualifying week (AR5)."
+   },
+   "partnership_start_dated": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons became partners on the household's partnership start date; otherwise before the qualifying week (AR5)."
+   },
+   "partnership_ended": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' partnership has a last day, the household's partnership end date; otherwise it continues after the qualifying week (AR5)."
+   },
    "paid_for_week": {
     "arguments": [
      "person",
@@ -134,6 +162,27 @@
      "person"
     ],
     "description": "R6: the first person lives with the second (S1 reg. 1(4)(b))."
+   },
+   "home_throughout": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R7a: the two persons share their mutual home on every day of the qualifying week (AR7)."
+   },
+   "partners_throughout": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."
+   },
+   "partner_at_home": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8)."
    },
    "excluded_partner_benefit": {
     "arguments": [
@@ -427,6 +476,30 @@
     "unit": "gbp_penny",
     "description": "The housemate's total income.",
     "verbalisation": "the housemate's total income"
+   },
+   "home_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The household's home start date.",
+    "verbalisation": "the household's home start date"
+   },
+   "home_until": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The household's home end date.",
+    "verbalisation": "the household's home end date"
+   },
+   "partner_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The household's partnership start date.",
+    "verbalisation": "the household's partnership start date"
+   },
+   "partner_until": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The household's partnership end date.",
+    "verbalisation": "the household's partnership end date"
    },
    "amount": {
     "sort": "$int",

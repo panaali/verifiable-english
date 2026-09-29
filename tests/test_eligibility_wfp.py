@@ -32,9 +32,11 @@ from ve.units import _core_problem, elaborate_quantity, erased_environment  # no
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
-KEY_DIGEST = "a994884704126935b51fb63178e6516922ef738981e24e0c3eafdcc2ff89e8b6"
+KEY_DIGEST = "9478ec92e92075c9526dbf1085c1bbb3fd18c2d6f4d5727438b404c286b116ef"
 REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibility review
 RECHECK_PROFILES = {"B20", "B21", "B22", "B23", "C25", "C26", "C27"}  # added by the eligibility recheck
+FINDING_C_PROFILES = {"B24", "B25", "B26", "B27", "B28", "B29", "B30"}  # review finding C, R7 "throughout"
+R7_RECHECK_PROFILES = {"B31", "B32", "B33", "B34"}  # R7 recheck, reg. 3(3) on a common day (AR8)
 
 
 def _digest(keys):
@@ -52,10 +54,16 @@ def recorded():
 def test_key_is_frozen():
     keys = [[c["id"], c["key"]] for c in keyed_cases()["cases"]]
     assert _digest(keys) == KEY_DIGEST
-    assert len(keys) == 69 and sum(k["entitled"] for _, k in keys) == 54
-    # The recheck added B20 to B23 and C25 to C27 only; the other 62 keep the review's pin,
-    # and the review added B15 to B19 only, so the first 57 keep the first run's pin.
-    before_recheck = [k for k in keys if k[0] not in RECHECK_PROFILES]
+    assert len(keys) == 80 and sum(k["entitled"] for _, k in keys) == 63
+    # The R7 recheck added B31 to B34 only; the other 76 keep finding C's pin.
+    before_r7 = [k for k in keys if k[0] not in R7_RECHECK_PROFILES]
+    assert _digest(before_r7) == "2397c7f792e3e29364d5a4cab46a036cef694bcb8a1dddf75460dac7dec37fec"
+    # Finding C added B24 to B30 only; the other 69 keep the recheck's pin. The recheck
+    # added B20 to B23 and C25 to C27 only; the other 62 keep the review's pin, and the
+    # review added B15 to B19 only, so the first 57 keep the first run's pin.
+    before_c = [k for k in before_r7 if k[0] not in FINDING_C_PROFILES]
+    assert _digest(before_c) == "a994884704126935b51fb63178e6516922ef738981e24e0c3eafdcc2ff89e8b6"
+    before_recheck = [k for k in before_c if k[0] not in RECHECK_PROFILES]
     assert _digest(before_recheck) == "fd00bc1c3d03989750dc411c4a7b916372bc2e41a6ca49c744e28e78099ba857"
     before = [k for k in before_recheck if k[0] not in REVIEW_PROFILES]
     assert _digest(before) == "90626e32dda2b34a96a87a0399e6fa6b69bf057614346b07649f050f9cb66197"
@@ -75,7 +83,38 @@ def test_plan_table_matches_cases_json():
                     if key["entitled"] else ["NO", "—", "—", "—"])
         q1, q2, q3, q4 = rows[case["id"]]
         assert [q1, money(q2), q3, money(q4)] == expected, case["id"]
-    assert len(rows) == 69
+    assert len(rows) == 80
+
+
+def test_plan_and_readme_counts_match_cases_json():
+    """Eligibility R7 recheck: PLAN.md section 3 still said 54 entitled and 15
+    not-entitled after B24 to B30 were added (59 and 17). The class: a count in the
+    prose that no test derives from cases.json. Each stated count is checked here."""
+    cases = keyed_cases()["cases"]
+    n, entitled = len(cases), sum(c["key"]["entitled"] for c in cases)
+    plan = " ".join((HERE / "PLAN.md").read_text(encoding="utf-8").split())
+    readme = " ".join((HERE / "README.md").read_text(encoding="utf-8").split())
+    stated = lambda pattern, text=plan: [int(x) for x in re.search(pattern, text).groups()]
+    assert stated(r"The profiles contain (\d+) entitled and (\d+) not-entitled cases") == [entitled, n - entitled]
+    assert stated(r"That gives (\d+) \+ (\d+) \+ (\d+) \+ (\d+) = \*\*(\d+) scored questions\*\*") == \
+        [n, entitled, entitled, entitled, n + 3 * entitled]
+    groups = [sum(c["id"][0] == g for c in cases) for g in "ABCD"]
+    assert stated(r"There are (\d+): (\d+) in group A .*?, (\d+) in group B .*?, (\d+) in group C .*? and (\d+) in group D") \
+        == [n, *groups]
+    flagged = sum(bool(c.get("flags")) for c in cases)
+    assert stated(r"(\d+) profiles carry a flag in `cases.json`, so (\d+) are unflagged") == [flagged, n - flagged]
+    basis = {}
+    for line in (HERE / "PLAN.md").read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 6 and re.fullmatch(r"[A-D][0-9]{2}", cells[0]):
+            basis[cells[-1].split()[0]] = basis.get(cells[-1].split()[0], 0) + 1  # B01: "guide (...)"
+    assert stated(r"(\d+) are `guide` cases, (\d+) are `SI` cases and (\d+) are `SI≠guide` cases") == \
+        [basis.get("guide", 0), basis.get("SI", 0), basis.get("SI≠guide", 0)]
+    assert stated(r"published benefit rule on (\d+) applicant profiles") == [n]
+    assert stated(r"Kill rate = mutants killed / (\d+); (\d+)/(\d+) is expected") == [len(T.MUTANTS)] * 3
+    assert stated(r"\*\*Cases\.\*\* (\d+) applicant profiles", readme) == [n]
+    assert stated(r"agrees with the key on all (\d+)\.", readme) == [n]
+    assert stated(r"That makes (\d+) scored questions", readme) == [n + 3 * entitled]
 
 
 def test_independent_reference_agrees_with_the_key():
@@ -118,6 +157,54 @@ def _care_end_strict(p):
     return _care_without_end(p) and (until is None or until > reference.QW_END)
 
 
+def _partner_benefit(home=True, partnership=True, covers=reference.throughout):
+    """Reg. 4(2)(a) with the whole-week test on the home or the partnership dropped, or
+    with another test of a period covering the week."""
+    def excluded(p, other, household):
+        return (other is not None and household["partner"]
+                and (not partnership or covers(household["partnership"]))
+                and reference.lives_with(p, other) and (not home or covers(household["shared_home"]))
+                and reference.reached_pensionable_age(other) and reference.relevant_benefit(other))
+    return excluded
+
+
+def _strict(first=False, last=False):
+    """A period covers the week only if it began before QW0 (first) or ended after QW1 (last)."""
+    def covers(period):
+        period = period or {}
+        start, end = period.get("from"), period.get("until")
+        return ((start is None or (start < reference.QW_START if first else start <= reference.QW_START))
+                and (end is None or (end > reference.QW_END if last else end >= reference.QW_END)))
+    return covers
+
+
+_amount = reference.amount
+
+
+def _amount_throughout_3_3(p, other):
+    """Reg. 3(3) read as "throughout the qualifying week" instead of "in that week"."""
+    got = _amount(p, other)
+    if got == Decimal("300.00") and other is not None and not reference.reached_80(p) and not (
+            reference.throughout(other["shared_home"]) and reference.throughout(other["partnership"])):
+        return Decimal("200.00")
+    return got
+
+
+def _partner_on_some_day(other):
+    """The reading before the R7 recheck: reg. 3(3) with a partnership on some day of
+    QW and a shared home on some day, not necessarily the same one."""
+    return other is not None and other["partner"]
+
+
+def _one_day_not_enough(*periods):
+    """AR8 with strict bounds: a day that is the last of one period and the first of
+    the other would not count as shared."""
+    periods = [period or {} for period in periods]
+    first = max([reference.QW_START] + [x["from"] for x in periods if x.get("from") is not None])
+    last = min([reference.QW_END] + [x["until"] for x in periods if x.get("until") is not None])
+    return first < last
+
+
 @pytest.mark.parametrize("name, old, profiles", [
     ("excluded_move", _unordered_move, {"B15", "B16", "B19"}),
     ("excluded_move", _move_without_week_bound, {"B16"}),
@@ -125,12 +212,22 @@ def _care_end_strict(p):
     ("lives_with", _both_out_of_care, {"B17", "B18"}),
     ("in_residential_care", _care_without_end, {"B20", "B21", "B22", "B23", "C25", "C27"}),
     ("in_residential_care", _care_end_strict, {"C26"}),
+    ("excluded_partner_benefit", _partner_benefit(home=False), {"B24", "B25"}),
+    ("excluded_partner_benefit", _partner_benefit(partnership=False), {"B26", "B27"}),
+    ("excluded_partner_benefit", _partner_benefit(home=False, partnership=False), {"B24", "B25", "B26", "B27"}),
+    ("excluded_partner_benefit", _partner_benefit(covers=_strict(first=True)), {"B28"}),
+    ("excluded_partner_benefit", _partner_benefit(covers=_strict(last=True)), {"B29"}),
+    ("amount", _amount_throughout_3_3, {"B30", "B33", "B34"}),
+    ("partner_at_home", _partner_on_some_day, {"B31", "B32"}),
+    ("common_day", _one_day_not_enough, {"B33", "B34"}),
 ])
 def test_review_profiles_decide_the_corrected_readings(name, old, profiles, monkeypatch):
-    """Eligibility review findings A (R11 order, AR6) and B (R6 condition on the subject
-    only), and the recheck's care end date (R5 "throughout the qualifying week"): each
-    old or partial reading changes exactly the profiles added for it, and no earlier
-    profile, which is why the earlier runs missed them."""
+    """Eligibility review findings A (R11 order, AR6), B (R6 condition on the subject
+    only) and C (R7 "throughout the qualifying week", AR7, and 3(3) "in that week"), the
+    recheck's care end date (R5 "throughout the qualifying week") and the R7 recheck's
+    common day of 3(3) (AR8): each old or partial reading changes exactly the profiles
+    added for it, and no earlier profile, which is why the earlier runs missed them.
+    (Reading "throughout" into 3(3) also changes B33 and B34, which share one day.)"""
     monkeypatch.setattr(reference, name, old)
     data = keyed_cases()
     changed = {c["id"] for c in data["cases"] if reference.answer(c, data["defaults"]) != c["key"]}
@@ -196,11 +293,14 @@ def test_every_profile_field_reaches_a_fact():
                 changed = json.loads(json.dumps(p))
                 if len(path) == 1:
                     changed[path[0]] = _perturbed(p[path[0]])
+                    if path == ("partner",) and not changed["partner"]:
+                        changed.pop("partnership", None)  # partnership dates need a partner
                 else:
                     changed[path[0]][path[1]] = _perturbed(p[path[0]][path[1]])
                 assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
                 checked.add(path)
     assert ("care", "until") in checked and ("claim", "claimed_on") in checked and ("partner",) in checked
+    assert {(name, end) for name in T.PERIODS for end in ("from", "until")} <= checked
 
 
 @pytest.mark.parametrize("role, change", [
@@ -210,19 +310,24 @@ def test_every_profile_field_reaches_a_fact():
     ("applicant", {"benefits": ["pension-credit"]}),
     ("applicant", {"hospital": {"admitted": "2025-01-10", "discharged": "2026-10-01", "ward": "7"}}),
     ("housemate", {"moved_in": "2026-09-22"}),
+    ("applicant", {"shared_home": {"from": "2026-09-23"}}),  # the household is recorded on the housemate
+    ("housemate", {"shared_home": {"since": "2026-09-23"}}),
+    ("housemate", {"partnership": {"from": "2026-09-23"}}),  # partnership dates without a partner
+    ("housemate", {"shared_home": {"from": "2026-09-28"}}),  # AR5: no day of the week
+    ("housemate", {"shared_home": {"until": "2026-09-20"}}),
+    ("housemate", {"shared_home": {"from": "2026-09-25", "until": "2026-09-23"}}),
 ])
 def test_an_unread_profile_field_is_rejected(role, change):
     """The same class from the other side: a field or benefit name that no fact would
     carry is an error in the translation and in the independent reference, not a
-    silent default."""
+    silent default. So is a household period that includes no day of the week (AR5)."""
     data = T.load_cases()
     case = {"id": "X", "applicant": {"birth": "1955-03-14"}, "housemate": {"birth": "1957-11-02", "partner": False}}
     case[role] = {**case[role], **change}
     with pytest.raises(ValueError):
         T.profile_facts(case, data["defaults"])
-    if "partner" not in change:  # the reference reads `partner` on either person
-        with pytest.raises(ValueError):
-            reference.answer(case, data["defaults"])
+    with pytest.raises(ValueError):
+        reference.answer(case, data["defaults"])
 
 
 def test_generated_files_match_the_translation():
@@ -276,6 +381,144 @@ def test_recheck_examples_get_the_source_answer(staged_runs):
         assert T.key(T.U("care_ended", role)) in T.key(r5["formula"])
 
 
+def test_finding_c_examples_get_the_source_answer(staged_runs):
+    """Review finding C: R7 dropped "throughout the qualifying week". A shared home or a
+    partnership that starts or ends inside QW no longer excludes (B24 to B27); one that
+    starts on QW0 or ends on QW1 still does (AR7, B28, B29). Reg. 3(3) says "in that week",
+    so a partner aged 80 who moves in during QW still gives 300.00 (B30)."""
+    answer = lambda amount: {"Q1": "YES", "Q2": amount, "Q3": "NO", "Q4": amount}
+    no = {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}
+    expected = {"B24": answer("100.00"), "B25": answer("100.00"), "B26": answer("100.00"),
+                "B27": answer("100.00"), "B28": no, "B29": no, "B30": answer("300.00")}
+    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    for role in T.ROLES:
+        o = T.OTHER[role]
+        by_id = {r["rule"]: r for r in T.rules() if r["role"] == role}
+        r7 = T.key(by_id["R7"]["formula"])
+        assert T.key(T.B("partners_throughout", role, o)) in r7 and T.key(T.B("home_throughout", role, o)) in r7
+        assert T.key(T.B("partner_of", role, o)) not in r7
+        for rid, (started, ended, start, end) in zip(("R7a", "R7b"), T.PERIODS.values()):
+            text = T.key(by_id[rid]["formula"])
+            assert T.key(["date_no_later", T.household(start), T.day(T.QW0)]) in text
+            assert T.key(["date_no_later", T.day(T.QW1), T.household(end)]) in text
+            assert T.key(T.B(started, role, o)) in text and T.key(T.B(ended, role, o)) in text
+    r14_3 = T.key(next(r for r in T.rules() if r["id"] == "R14.3")["formula"])
+    assert "throughout" not in r14_3 and T.key(T.B("partner_at_home", "applicant", "housemate")) in r14_3
+
+
+def test_r7_recheck_examples_get_the_source_answer(staged_runs):
+    """R7 recheck: B30 with the partnership ending on 2026-09-22 (B31) was a
+    Lean-admitted 300.00, since R14 read the partnership and the shared home on any
+    days of QW. Reg. 3(3) asks for both on one day (AR8): no common day gives 3(1),
+    200.00, in either order (B31, B32); one shared day, the last of one period and the
+    first of the other, still counts (B33, B34)."""
+    answer = lambda amount: {"Q1": "YES", "Q2": amount, "Q3": "NO", "Q4": amount}
+    expected = {"B30": answer("300.00"), "B31": answer("200.00"), "B32": answer("200.00"),
+                "B33": answer("300.00"), "B34": answer("300.00")}
+    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    a, h = "applicant", "housemate"
+    rules = {r["id"]: r for r in T.rules()}
+    r14a, r14_3 = T.key(rules["R14a"]["formula"]), T.key(rules["R14.3"]["formula"])
+    assert T.key(T.B("partner_of", a, h)) not in r14_3 and T.key(T.B("lives_with", a, h)) in r14_3
+    assert rules["R14a"]["defines"] == [T.key(T.B("partner_at_home", a, h))]
+    for start, end, started, ended in (("home_from", "partner_until", "home_start_dated", "partnership_ended"),
+                                       ("partner_from", "home_until", "partnership_start_dated", "home_ended")):
+        assert T.key(["date_no_later", T.household(start), T.household(end)]) in r14a
+        assert T.key(T.B(started, a, h)) in r14a and T.key(T.B(ended, a, h)) in r14a
+
+
+def _python_lean_rust(cases_and_expected):
+    """Evaluate each (id, quantity, model, expected) in Python, Lean and Rust; all three
+    must agree with each other and with the expected value."""
+    raw = T.environment()
+    env = Environment(raw)
+    target = erased_environment(env)
+    rows, cases = [], []
+    for cid, quantity, model_data, expected in cases_and_expected:
+        model = FiniteModel.from_dict(target, model_data)
+        _, core = elaborate_quantity(env, quantity)
+        python = evaluate(target, ast.formula_from_data(target, core), model, trace=False).value
+        rows.append((cid, python, expected))
+        cases.append({"id": cid, "environment": raw, "quantity": quantity, "model": model_data})
+    lean_values = [r.get("value") for r in run.lean(cases)]
+    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=600,
+                             input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
+    rust_values = [r.get("value") for r in json.loads(process.stdout)]
+    assert [(cid, p) for cid, p, _ in rows] == [(cid, e) for cid, _, e in rows]
+    assert lean_values == rust_values == [p for _, p, _ in rows]
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+def test_whole_week_household_rules_evaluate_alike_in_python_lean_and_rust():
+    """R7a, R7b and R7, and the mutants M26 to M29 that drop or tighten "throughout", in
+    the reference fixture models of B24 to B29 and of an undated couple (B01). The rules
+    are true in every model; each mutant is false in the model of the profile it misreads."""
+    data = keyed_cases()
+    by_id = {c["id"]: c for c in data["cases"]}
+    wrong = {"M26": ({"B24", "B25"}, {"R7"}), "M27": ({"B26", "B27"}, {"R7"}),
+             "M28": ({"B28"}, {"R7a", "R7b"}), "M29": ({"B29"}, {"R7a", "R7b"})}
+    items = []
+    for pid in ("B01", "B24", "B25", "B26", "B27", "B28", "B29"):
+        model = run.fixture_model(by_id[pid], data["defaults"])
+        for mutant in (None, *wrong):
+            for rule in T.role_rules("applicant", mutant):
+                if rule["rule"] in ("R7a", "R7b", "R7"):
+                    misread = mutant is not None and pid in wrong[mutant][0] and rule["rule"] in wrong[mutant][1]
+                    items.append((f"{pid}/{mutant}/{rule['id']}", T.q(rule["formula"]), model, not misread))
+    _python_lean_rust(items)
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+def test_common_day_rules_evaluate_alike_in_python_lean_and_rust():
+    """R14a and R14.3, and the mutants M31 (no common day) and M32 (strict bounds), in
+    the reference fixture models of B30 to B34, A08 and B01. The rules are true in every
+    model; M31's R14.3 is false where the periods share no day (the 300.00 the recheck
+    found), and M32's R14a is false where they share one."""
+    data = keyed_cases()
+    by_id = {c["id"]: c for c in data["cases"]}
+    wrong = {"M31": ({"B31", "B32"}, "R14.3"), "M32": ({"B33", "B34"}, "R14a")}
+    items = []
+    for pid in ("A08", "B01", "B30", "B31", "B32", "B33", "B34"):
+        model = run.fixture_model(by_id[pid], data["defaults"])
+        for mutant in (None, *wrong):
+            for rule in T.amount_rules(mutant):
+                if rule["rule"] in ("R14a", "R14.3"):
+                    misread = mutant is not None and pid in wrong[mutant][0] and rule["rule"] == wrong[mutant][1]
+                    items.append((f"{pid}/{mutant}/{rule['id']}", T.q(rule["formula"]), model, not misread))
+    _python_lean_rust(items)
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+def test_common_day_is_interval_intersection_for_every_dated_household():
+    """The class of the R7 recheck: R14a states the common day of two periods by two
+    pairwise bounds, which equals interval intersection only because each period
+    includes a day of QW (AR5). Over every household whose partnership and shared home
+    take their first and last days from a grid around QW (or none), R14a's condition
+    must equal the reference's intersection of the partnership, the home and QW, in
+    Python, Lean and Rust."""
+    data = keyed_cases()
+    starts, ends = (None, "2026-09-21", "2026-09-23", "2026-09-24"), (None, "2026-09-22", "2026-09-23", "2026-09-27")
+    periods = [{k: v for k, v in (("from", f), ("until", u)) if v is not None}
+               for f in starts for u in ends if f is None or u is None or f <= u]
+    [r14a] = [r for r in T.amount_rules() if r["rule"] == "R14a"]
+    condition = r14a["formula"][1][2]  # the right side of the biconditional
+    items, seen = [], set()
+    for partnership in periods:
+        for home in periods:
+            case = {"id": "X", "applicant": {"birth": "1955-03-14", "benefits": ["state_pension", "pension_credit"]},
+                    "housemate": {"birth": "1944-05-02", "partner": True,
+                                  **({"partnership": partnership} if partnership else {}),
+                                  **({"shared_home": home} if home else {})}}
+            model = run.fixture_model(case, data["defaults"])
+            parsed = reference.person(case["housemate"], data["defaults"], "housemate")
+            expected = reference.common_day(parsed["partnership"], parsed["shared_home"])
+            seen.add(expected)
+            cid = f"{partnership}/{home}"
+            items += [(cid + "/condition", T.q(condition), model, expected), (cid + "/R14a", T.q(r14a["formula"]), model, True)]
+    assert seen == {True, False} and len(items) == 2 * 13 * 13
+    _python_lean_rust(items)
+
+
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
 def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
     """R5b and its mutants M24 (end date ignored) and M25 (end bound strict), evaluated
@@ -317,7 +560,7 @@ def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
             cases.append({"id": f"{pid}/{question}", "kind": "document", "environment": raw,
                           "document": staged.document(target)})
     got = run.lean(cases)
-    assert len(got) == 231
+    assert len(got) == 269
     assert all(r["status"] == "ok" and r["assurance"] == "lean-admitted" for r in got), \
         [r for r in got if r.get("status") != "ok"][:3]
 
@@ -349,18 +592,18 @@ def test_single_shot_stops_at_the_tableau_depth_cap():
 def test_recorded_summary():
     results = recorded()
     s = results["summary"]
-    assert s["strict"] == 69 and s["total"] == "231/231" and s["answered"] == 231
-    assert s["per_question"] == {"Q1": "69/69", "Q2": "54/54", "Q3": "54/54", "Q4": "54/54"}
+    assert s["strict"] == 80 and s["total"] == "269/269" and s["answered"] == 269
+    assert s["per_question"] == {"Q1": "80/80", "Q2": "63/63", "Q3": "63/63", "Q4": "63/63"}
     assert s["disagreements"] == [] and s["open"] == []
-    assert s["single_shot"] == {"answered": 0, "profiles": 69}
-    assert s["mutants_killed"] == "25/25"
+    assert s["single_shot"] == {"answered": 0, "profiles": 80}
+    assert s["mutants_killed"] == "32/32"
     lean = s["lean"]
     assert lean["certificates"] == lean["certificates_accepted"] > 0
-    assert lean["documents"] == lean["documents_admitted"] == 231
+    assert lean["documents"] == lean["documents_admitted"] == 269
     assert lean["model_premises"] == lean["model_premises_true"] > 0
     assert results["b1_certified"] is True
     assert results["environment_id"] == Environment(T.environment()).environment_id
     readme = (HERE / "README.md").read_text(encoding="utf-8")
-    assert "231/231" in readme and "69/69" in readme
+    assert "269/269" in readme and "80/80" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})
