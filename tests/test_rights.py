@@ -200,6 +200,27 @@ def test_reporting_rejects_swapped_lean_lines_even_when_names_match(monkeypatch)
         rights_route.report_rights(rights.env, units, rights)
 
 
+def test_document_graph_admits_exact_regenerated_rights_layer(tmp_path):
+    from ve.rights_route import run_rights_case
+    raw = rights_env()
+    unit = right()
+    rights = correlate(raw, [unit])
+    row = run_rights_case(rights.env, [unit], "rights-elaborate")
+    premise = next(p for p in row["premises"]
+                   if p["label"] == "layer:norms:protect_required")
+    source = "Right.\n"
+    meta = {"format": "ve-document@1", "environment": raw,
+            "units": [{"id": "u1", "span": [0, len(source)], "kind": "right",
+                       "meaning": "specified", "support": "none", "content": unit}],
+            "graph": {"root": "leaf", "nodes": [
+                {"name": "leaf", "ast": premise["ast"], "label": premise["label"]}]}}
+    path = tmp_path / "admission.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    assert result["admission"]["report"]["assumptions"][0]["label"] == premise["label"]
+
+
 def test_couplings_keep_only_shared_axis_choices():
     sets = [{"id": name, "version": 1, "unit": name, "status": "open",
              "readings": [{"id": f"{name}-{value}", "labels": {"force": value}}
