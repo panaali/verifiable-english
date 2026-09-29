@@ -175,9 +175,16 @@ Matched wire choices (the Lean executable's choices where the spec leaves bytes 
   document checker.
 * Tested: `Examples.lean` (build-time `#guard`: well-formedness, exact diagnostic texts,
   generated names, `Lim_D` labels, outcomes on finite base models through `selects″°` and
-  `O_p°`, the audit with an uncited and a cited adopter exception); `tests/test_rights_lean.py`
-  drives the executable, including an end-to-end CONFLICT-FREE replay whose certificate
-  (Python's unchanged prover over the Lean-regenerated `E″′_base`) needs a `Lim_D` premise.
+  `O_p°`, the audit with an uncited and a cited adopter exception, μ's collisions under an
+  uncited and a cited rank, ψ's bar across the dual pair, σ's same- and opposite-effect
+  blocking, κ's default and strict force, citations to undeclared units);
+  `tests/test_rights_lean.py` drives the executable, including an end-to-end CONFLICT-FREE
+  replay whose certificate (Python's unchanged prover over the Lean-regenerated `E″′_base`)
+  needs a `Lim_D` premise and fixture τ's certified carve-out licence;
+  `conformance/rights_three_way.py` compares the Python correlation, this route and the soft
+  route on every fixture shape of spec 10 (θ as the `flattenTop` identity over the soft
+  conformance trees) and `conformance/rights_differential.py` on 1,000 generated documents
+  plus the faulty sources both routes reject with the same text.
   `WellFormedRights` is not kernel-decidable on concrete documents (the frozen soft validator
   uses `mergeSort`/`startsWith`), so the examples are compiled evaluations, not kernel proofs.
 * Not claimed, as in the spec (9.5): completeness of the conflict check or the classification
