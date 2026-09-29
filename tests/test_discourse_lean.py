@@ -1598,11 +1598,38 @@ def test_unparseable_recorded_reference_wording(lean, tmp_path):
     assert python == "IllTypedTarget: m1: api"
 
 
+def test_expansions_never_read_a_display(lean, tmp_path):
+    """The expansion half of the same class: Python expanded a recorded reference into its target's
+    registered display and parsed that, so a display its parser does not read back (`the API`,
+    `API`, `Ápi`, a doubled space) made Python `IllTypedTarget` where Lean, which never parses a
+    display, was CHECKED. Python now parses the expansion with the parser's own spelling of the
+    constant and keeps the display for the reviewed presentation only."""
+    safe = {"u1": unary("safe", "api")}
+    for display in ["the API", "API", "Ápi", "Api  x", "Api ", "api\u00a0v2", "The  API"]:
+        names = [{"constant": "api", "display": display, "scope": "doc"}, *NAMES[1:]]
+        doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=names, contents=safe)
+        assert agree(doc, tmp_path) == "admitted", display
+        assert python_outcome(doc, tmp_path)["reviewed_presentations"]["u1"] == display + " is safe."
+    # an ill-typed target is still ill-typed in both, whatever its display
+    for display in ["Alice", "the owner"]:
+        names = [NAMES[0], {"constant": "alice", "display": display, "scope": "doc"}, NAMES[2]]
+        doc = document(["Api is reviewed.", "It is safe."], [("m1", "u2", "It", "pronoun", entity("alice"))],
+                       names=names, contents=SAFE_U2)
+        assert agree(doc, tmp_path) == "IllTypedTarget: m1: alice", display
+    # a constant the parser spells quoted (`web_api`) expands and resolves in both
+    environment = env(constants={"web_api": "service", "alice": "person", "bob": "person"})
+    names = [{"constant": "web_api", "display": "the web API", "scope": "doc"}, *NAMES[1:]]
+    doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("web_api"))], names=names,
+                   contents={"u1": unary("safe", "web_api")})
+    assert agree(doc, tmp_path, environment) == "admitted"
+
+
 # The differential property over the class: generated documents whose recorded units carry random
-# spacing, punctuation spacing, layout and folded or non-ASCII characters.
+# spacing, punctuation spacing, layout and folded or non-ASCII characters, with random displays.
 
 WORDING_SPACES = [" "] * 8 + ["  ", "\t", "\n", "\u00a0", "\u2003", "\u3000", " \t"]
 WORDING_BEFORE = [""] * 8 + [" ", "\t", "\u00a0", "\n"]
+WORDING_DISPLAYS = ["Api", "the API", "API", "Ápi", "Api  x"]
 
 
 def wording_document(rng):
@@ -1610,10 +1637,11 @@ def wording_document(rng):
     s, p = rng.choice(WORDING_SPACES), rng.choice(WORDING_BEFORE)
     if rng.random() < 0.2:
         later = later.replace("{s}is{s}", "{s}i" + rng.choice(["ſ", "s", "é"]) + "{s}", 1)
+    names = [{"constant": "api", "display": rng.choice(WORDING_DISPLAYS), "scope": "doc"}, *NAMES[1:]]
     sep = rng.choice([" ", "\n", "\n\n", "", "\t"])
     lead = rng.choice(["", "", " ", "\n"])
     doc = document([opening, lead + later.format(s=s, p=p)], [("m1", "u2", surface.format(s=s), form, target)],
-                   names=PY_NAMES, contents={"u2": content} if rng.random() < 0.85 else {}, sep=sep)
+                   names=names, contents={"u2": content} if rng.random() < 0.85 else {}, sep=sep)
     return doc
 
 
@@ -1624,7 +1652,7 @@ def test_lean_and_python_agree_on_discourse_wording(lean, tmp_path):
     outcomes = {}
     for doc, row in zip(docs, rows):
         python = python_outcome(doc, tmp_path)
-        where = (doc["_source"], doc["discourse"]["mentions"])
+        where = (doc["_source"], doc["discourse"]["mentions"], doc["discourse"]["names"][0]["display"])
         if isinstance(python, dict):
             assert row.get("status") == "ok", (where, row.get("error"))
             assert (row["report_id"], row["references"]) == (python["report_id"], python["references"]), where

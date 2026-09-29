@@ -532,22 +532,27 @@ def _accessible(doc, unit, mention, names, anchors):
     return result
 
 
-def _expanded(doc, unit, choices):
-    """The unit's text with each mention replaced by an explicit name: its one typed parse. The
-    layout around the unit's sentences is not part of them (4.1(4)): the parser reads them alone."""
+def _expanded(doc, unit, choices, displays, spellings):
+    """The unit's text with each mention replaced by an explicit name, and its one typed parse.
+    The presentation names each constant by its registered display; the parser reads the constant
+    by the parser's own spelling of it, so a display the parser does not read back (`the API`)
+    never decides the parse. The layout around the unit's sentences is not part of them (4.1(4)):
+    the parser reads them alone."""
     from .english import parse_english
     start, end = unit["span"]
-    raw, cursor = b"", start
-    for mention, display in sorted(choices, key=lambda x: x[0]["span"][0]):
-        raw += doc["source"][cursor:mention["span"][0]] + display.encode("utf-8")
+    shown, read, cursor = b"", b"", start
+    for mention, constant in sorted(choices, key=lambda x: x[0]["span"][0]):
+        gap = doc["source"][cursor:mention["span"][0]]
+        shown += gap + displays[constant].encode("utf-8")
+        read += gap + spellings[constant].encode("utf-8")
         cursor = mention["span"][1]
-    raw += doc["source"][cursor:end]
+    shown += doc["source"][cursor:end]
+    read += doc["source"][cursor:end]
     try:
-        expanded = raw.decode("utf-8")
-        parsed = parse_english(doc["environment"], expanded.strip(_LAYOUT))
+        parsed = parse_english(doc["environment"], read.decode("utf-8").strip(_LAYOUT))
         if len(parsed.formulas) != 1:
             return None
-        return expanded, formula_to_data(doc["environment"], parsed.formulas[0])
+        return shown.decode("utf-8"), formula_to_data(doc["environment"], parsed.formulas[0])
     except (VEError, UnicodeError):
         return None
 
@@ -565,18 +570,19 @@ def _resolve_unit(doc, unit, rows, names, anchors, readings=()):
     accessible assignment is a competitor, a typed expansion is the only filter (4.3). The
     unit's recorded meaning, its content and every reading of its active set, must be the
     expansion's formula."""
+    from .english import EnglishVocabulary
     displays = {n["constant"]: n["display"] for n in names}
+    spellings = EnglishVocabulary(doc["environment"]).constants
     candidates = [_accessible(doc, unit, m, names, anchors) for m in rows]
     typed = []
     for combo in product(*candidates):
-        expansion = _expanded(doc, unit, [(m, displays[c]) for m, (_, c) in zip(rows, combo)])
+        expansion = _expanded(doc, unit, [(m, c) for m, (_, c) in zip(rows, combo)], displays, spellings)
         if expansion is not None:
             typed.append((combo, expansion))
     recorded = [m["target"] for m in rows]
     accessible = [next((t for t, _ in cands if _same_target(r, t)), None) for r, cands in zip(recorded, candidates)]
     if all(a is not None for a in accessible):
-        combo = [(m, displays[a["name"]]) for m, a in zip(rows, accessible)]
-        own = _expanded(doc, unit, combo)
+        own = _expanded(doc, unit, [(m, a["name"]) for m, a in zip(rows, accessible)], displays, spellings)
         if own is None:
             m = rows[0]
             raise VEError(f"IllTypedTarget: {m['id']}: {m['target'].get('name')}")
