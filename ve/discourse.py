@@ -22,6 +22,7 @@ from Lean the result is `CheckerUnavailable`, never a Python-only verdict.
 from __future__ import annotations
 
 import collections
+import errno
 import hashlib
 from itertools import product
 import json
@@ -855,21 +856,37 @@ def _stored_block(meta, name):
         raise VEError(f"InvalidInput: document {name}: {exc}") from exc
 
 
+def _is_text(value):
+    """Whether a string decoded from JSON is UTF-8 text: Python's JSON reader lets an unpaired
+    surrogate escape (`"\\udcff"`) through as a lone surrogate, which Lean's restricted reader
+    rejects and which no UTF-8 JSON can carry."""
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
 def _import_names(meta):
-    """The sibling file names a front matter's import pins give (`bytes`), for any front matter."""
+    """The sibling file names a front matter's import pins give (`bytes`), for any front matter.
+    A name that is no UTF-8 text is none: Lean never reads the front matter that holds it."""
     block = meta.get("discourse")
     imports = block.get("imports") if type(block) is dict else None
     if type(imports) is not dict:
         return []
-    return [pin["bytes"] for pin in imports.values() if type(pin) is dict and type(pin.get("bytes")) is str]
+    return [pin["bytes"] for pin in imports.values()
+            if type(pin) is dict and type(pin.get("bytes")) is str and _is_text(pin["bytes"])]
 
 
 def _sibling(directory, name):
-    """The bytes of a named sibling file, or None when there is no such file."""
+    """The bytes of a named sibling file, or None when there is no such file (as for a name no
+    file can have: one too long for the file system)."""
     path = directory / name
     try:
         return path.read_bytes() if path.is_file() else None
     except OSError as exc:
+        if exc.errno == errno.ENAMETOOLONG:
+            return None
         raise CheckerUnavailable(f"CheckerUnavailable: import file {name} cannot be read ({exc})") from None
 
 
@@ -1252,13 +1269,14 @@ def is_discourse_text(raw):
 
 def import_files(raw, directory):
     """The sibling files the stored chain of a document text names, by the name its import pins
-    give (`bytes`), as the texts the Lean route receives as the case's `files`: the imports of the
-    document, of each stored document and of each embedded unit, to the nesting budget. Any front
-    matter is read, however malformed (its rejection is Lean's), and breadth first, so a file is
-    read at its least depth. A named file Python cannot read, or that is no UTF-8 text, cannot
-    reach Lean: `CheckerUnavailable`."""
+    give (`bytes`), as the texts the Lean route receives as the case's `files`, and the names of
+    those that are no UTF-8 text: the imports of the document, of each stored document and of
+    each embedded unit, to the nesting budget. Any front matter is read, however malformed (its
+    rejection is Lean's), and breadth first, so a file is read at its least depth. A file that is
+    no UTF-8 text cannot reach Lean (its `files` are JSON strings) and names no further file; a
+    named file Python cannot read is `CheckerUnavailable`."""
     from .document import _split
-    files, done, queue = {}, set(), collections.deque([(raw, 0)])
+    files, binary, done, queue = {}, [], set(), collections.deque([(raw, 0)])
     while queue:
         text, depth = queue.popleft()
         if depth > _MAX_NESTING or text in done:
@@ -1269,7 +1287,7 @@ def import_files(raw, directory):
         except VEError:
             continue
         for name in _import_names(meta):
-            if name in files:
+            if name in files or name in binary:
                 continue
             data = _sibling(directory, name)
             if data is None:
@@ -1277,27 +1295,30 @@ def import_files(raw, directory):
             try:
                 files[name] = data.decode("utf-8")
             except UnicodeError:
-                raise CheckerUnavailable(f"CheckerUnavailable: import file {name} is not UTF-8 text, "
-                                         f"which the Lean discourse route cannot receive") from None
+                binary.append(name)
+                continue
             queue.append((data, depth + 1))
         queue.extend((child, depth + 1) for child in _embedded(meta, source))
-    return files
+    return files, binary
 
 
 def lean_admission(raw, directory):
     """Lean's admission of a `ve-document@2` text (`ve_discourse_route`, kind `admission`), with the
     sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
     Anything else (no executable, a crash, a timeout, output that is not one answer to this case)
-    is `CheckerUnavailable`, never a verdict; there is no fallback to Python."""
+    is `CheckerUnavailable`, never a verdict; there is no fallback to Python. What no UTF-8 JSON
+    can carry never admits: a text that is no UTF-8 text is `InvalidInput` (Lean reads a document
+    as a string), and a named file that is none is left out of the case, so Lean still diagnoses
+    the document, but Lean's admission, which read that file as absent, is `InvalidInput`."""
     executable = route_executable()
     if not executable.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route {executable} is not built")
     try:
         text = raw.decode("utf-8")
     except UnicodeError:
-        raise CheckerUnavailable("CheckerUnavailable: the document is not UTF-8 text, "
-                                 "which the Lean discourse route cannot receive") from None
-    case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": import_files(raw, directory)}
+        raise VEError("InvalidInput: the document is not UTF-8 text") from None
+    files, binary = import_files(raw, directory)
+    case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
     try:
         proc = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
                               capture_output=True, timeout=_ROUTE_TIMEOUT, check=False)
@@ -1318,6 +1339,8 @@ def lean_admission(raw, directory):
         detail = proc.stderr.decode("utf-8", "replace").strip()[-300:]
         raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case"
                                  + (f" ({detail})" if detail else ""))
+    if status == "ok" and binary:
+        raise VEError(f"InvalidInput: import file {binary[0]} is not UTF-8 text")
     return row
 
 
@@ -1336,13 +1359,16 @@ def rejection(lean, python_error):
     a verdict: `UnsupportedProfile`; nor is its `ResourceLimit`, which stays Lean's whatever
     Python reads. Otherwise both reject, and Python's diagnostic is kept when Python rejects too (a
     different code is the known limitation of 8); Python's own abstention (`UnsupportedProfile`),
-    resource limit or admission gives Lean's diagnostic."""
+    resource limit or admission gives Lean's diagnostic, and so does a Python diagnostic that is no
+    UTF-8 text (it quotes a lone surrogate Python's JSON reader let through, which no report can
+    carry)."""
     message = lean["error"]
     if message.startswith("NotImplemented"):
         return UnsupportedProfile(f"UnsupportedProfile: the Lean discourse route abstains ({message})")
     if message.startswith("ResourceLimit"):
         return _error_of(message)
-    if python_error is not None and not str(python_error).startswith(("UnsupportedProfile", "ResourceLimit")):
+    if (python_error is not None and _is_text(str(python_error))
+            and not str(python_error).startswith(("UnsupportedProfile", "ResourceLimit"))):
         return python_error
     return _error_of(message)
 

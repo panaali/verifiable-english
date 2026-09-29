@@ -10,8 +10,10 @@ section 8 (spans in diagnostics are token ranges of the unit, lean/DISCOURSE.md)
 from __future__ import annotations
 
 import copy
+import errno
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -1978,20 +1980,145 @@ def test_import_collection_reads_every_file_lean_reads(tmp_path):
     (tmp_path / "x.md").write_text(stored_text([("z", "z.md")]))
     (tmp_path / "z.md").write_text(stored_text([]))
     top = stored_text([("b", "b.md"), ("a", "a1.md")]).encode()
-    assert set(import_files(top, tmp_path)) == {*chain, "b.md", "x.md", "z.md"}
+    assert set(import_files(top, tmp_path)[0]) == {*chain, "b.md", "x.md", "z.md"}
     # an embedded unit whose span runs past the source is its bytes to the end, as in Lean; the
     # second unit with the same id is never read
     inner = stored_text([("z", "z.md")])
     (tmp_path / "z.md").write_text(stored_text([]))
     top = stored_text([], body=inner, units=[{"id": "e", "span": [0, 10 ** 9]}, {"id": "e", "span": [0, 0]}],
                       documents=[{"refers": {"embedded": "e"}}]).encode()
-    assert set(import_files(top, tmp_path)) == {"z.md"}
+    assert set(import_files(top, tmp_path)[0]) == {"z.md"}
     first_empty = stored_text([], body=inner, units=[{"id": "e", "span": [5, 2]}, {"id": "e", "span": [0, 10 ** 9]}],
                               documents=[{"refers": {"embedded": "e"}}]).encode()
-    assert import_files(first_empty, tmp_path) == {}
+    assert import_files(first_empty, tmp_path) == ({}, [])
     # any front matter: no exception, whatever the shapes
     for units, documents in [(7, [{"refers": {"embedded": "e"}}]), ([{"id": []}], 7), ([7], [7]),
                              ([{"id": "e", "span": [-1, 3]}], [{"refers": {"embedded": "e"}}]),
                              ([{"id": "e", "span": [True, 3]}], [{"refers": {"embedded": ["e"]}}])]:
         front = {"format": "ve-document@2", "units": units, "discourse": {"documents": documents, "imports": [7]}}
-        assert import_files(("---\n" + json.dumps(front) + "\n---\nText.").encode(), tmp_path) == {}
+        assert import_files(("---\n" + json.dumps(front) + "\n---\nText.").encode(), tmp_path) == ({}, [])
+
+
+# discourse-encoding: nothing Python collects or sends for Lean fails to encode, and what no UTF-8
+# JSON can carry never admits.
+
+def encoding_verdicts(raw, tmp_path):
+    """Lean's admission on a document text's bytes with the files Python collects for it (None when
+    the text is no UTF-8 text), and the Python API's outcome, which must be a result or a VEError
+    whose message is UTF-8 text, never another exception nor `CheckerUnavailable`."""
+    from ve.discourse import import_files
+    path = tmp_path / "doc.ve.md"
+    path.write_bytes(raw)
+    try:
+        document_text = raw.decode("utf-8")
+    except UnicodeError:
+        row = None
+    else:
+        row = run([{"id": "admission", "kind": "admission", "document": document_text,
+                    "files": import_files(raw, tmp_path)[0]}])[0]
+    try:
+        python = check_document(path)
+    except VEError as exc:
+        python = str(exc)
+        python.encode("utf-8")
+        assert not python.startswith("CheckerUnavailable"), python
+    return (None if row is None else "admitted" if row["status"] == "ok" else row["error"]), python
+
+
+def encoding_base():
+    return document(["Api is reviewed.", "It is safe."], [IT_API], names=PY_NAMES,
+                    contents={"u1": unary("reviewed", "api"), **SAFE_U2})
+
+
+def with_pin(doc, name, key="k"):
+    doc = copy.deepcopy(doc)
+    doc["discourse"]["imports"] = {key: {"bytes": name, "source_id": "x", "document_id": "y"}}
+    return doc
+
+
+def test_unencodable_import_name_reaches_lean(lean, tmp_path):
+    """B (discourse.py:1302): an import pin whose `bytes` is JSON `"\\udcff"` beside a sibling file
+    named by the raw byte 0xff (`hello`) was collected (Python's JSON reader lets the lone surrogate
+    through, and the file system maps it to the byte), and `json.dumps(...).encode()` raised
+    `UnicodeEncodeError` before Lean was asked. Lean rejects the front matter (`invalid JSON front
+    matter`): a name that is no UTF-8 text is now no import, and the document reaches Lean."""
+    from ve.discourse import import_files
+    (tmp_path / "\udcff").write_bytes(b"hello")
+    raw = text(with_pin(encoding_base(), "\udcff")).encode()
+    assert b'"\\udcff"' in raw
+    assert import_files(raw, tmp_path) == ({}, [])
+    assert encoding_verdicts(raw, tmp_path) == ("invalid JSON front matter",) * 2
+
+
+def test_unencodable_names_and_files_agree_with_lean(lean, tmp_path, monkeypatch):
+    """A generator of names and files no UTF-8 JSON can carry: lone surrogates (high and low, alone
+    and inside a name) in every front matter string and key Python reads before or beside Lean,
+    raw bytes 0x80-0xff as sibling file names, files and documents that are no UTF-8 text, and a
+    name too long for the file system. Python raises no exception of its own, never answers
+    `CheckerUnavailable`, and gives Lean's verdict, with a diagnostic that is UTF-8 text; what Lean
+    cannot receive never admits."""
+    base = encoding_base()
+    lean_verdict, python = encoding_verdicts(text(base).encode(), tmp_path)
+    assert lean_verdict == "admitted" and isinstance(python, dict), python
+    for byte in range(0x80, 0x100, 0x11):
+        (tmp_path / os.fsdecode(bytes([byte]))).write_bytes(b"hello")
+        (tmp_path / os.fsdecode(b"s" + bytes([byte]) + b".md")).write_text(text(base))
+    lone = [chr(c) for c in range(0xDC80, 0xDD00, 0x11)] + ["\ud800", "\udbff", "\udfff"]
+    lone += ["s" + chr(0xDC00 + c) + ".md" for c in range(0x80, 0x100, 0x11)]
+
+    def put(doc, where, value):
+        doc = copy.deepcopy(doc)
+        if where == "pin":
+            return with_pin(doc, value)
+        if where == "pin key":
+            return with_pin(doc, "missing.md", key=value)
+        if where == "unit id":
+            doc["units"][0]["id"] = value
+        elif where == "name":
+            doc["discourse"]["names"][0]["display"] = value
+        elif where == "mention":
+            doc["discourse"]["mentions"][0]["id"] = value
+        elif where == "embedded":
+            doc["discourse"]["documents"] = [{"refers": {"embedded": value}}]
+        elif where == "unit kind":
+            doc["units"][0]["kind"] = value
+        elif where == "block key":
+            doc["discourse"][value] = 1
+        elif where == "key":
+            doc[value] = 1
+        return doc
+
+    # a Python diagnostic quoting the lone surrogate (`unknown kind \udcff`) gives way to Lean's
+    for where in ["pin", "pin key", "unit id", "unit kind", "name", "mention", "embedded", "block key", "key"]:
+        for value in lone:
+            lean_verdict, python = encoding_verdicts(text(put(base, where, value)).encode(), tmp_path)
+            assert lean_verdict == "invalid JSON front matter" and isinstance(python, str), (where, value, python)
+    # a stored document holding a lone surrogate is Lean's to diagnose, and its pins name no file
+    (tmp_path / "stored.md").write_text(text(with_pin(base, "\udcff")))
+    lean_verdict, python = encoding_verdicts(text(with_pin(base, "stored.md")).encode(), tmp_path)
+    assert lean_verdict != "admitted" and isinstance(python, str), python
+    # a valid UTF-8 name that is no ASCII, and one too long for the file system: as in Lean
+    (tmp_path / "é.md").write_bytes(b"hello")
+    for name in ["é.md", "x" * 300, "x/" + "y" * 300]:
+        lean_verdict, python = encoding_verdicts(text(with_pin(base, name)).encode(), tmp_path)
+        assert (lean_verdict == "admitted") == isinstance(python, dict), (name, lean_verdict, python)
+    assert encoding_verdicts(text(with_pin(base, "x" * 300)).encode(), tmp_path)[0] == "admitted"
+    # Python 3.12's `Path.is_file` raises ENAMETOOLONG on such a name (3.14's answers False): no file
+    from ve.discourse import _sibling
+
+    def too_long(self):
+        raise OSError(errno.ENAMETOOLONG, "File name too long")
+    with monkeypatch.context() as patched:
+        patched.setattr(Path, "is_file", too_long)
+        assert _sibling(tmp_path, "x" * 300) is None
+    # a named file that is no UTF-8 text: Lean still diagnoses the document without it, but its
+    # admission, which read the file as absent, is `InvalidInput`
+    (tmp_path / "bin.md").write_bytes(b"---\n{\"format\": \"ve-document@2\"}\n---\n\xff\xfe")
+    assert encoding_verdicts(text(with_pin(base, "bin.md")).encode(), tmp_path) == (
+        "admitted", "InvalidInput: import file bin.md is not UTF-8 text")
+    broken = with_pin(base, "bin.md")
+    broken["units"] = 7
+    assert encoding_verdicts(text(broken).encode(), tmp_path) == ("document needs units",) * 2
+    # a document that is no UTF-8 text cannot reach Lean, and is no document
+    for raw in [text(base).encode() + b"\xff", text(base).encode().replace(b"Api is", b"\xc3(pi is")]:
+        assert encoding_verdicts(raw, tmp_path) == (None, "InvalidInput: the document is not UTF-8 text")
