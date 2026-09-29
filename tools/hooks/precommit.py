@@ -315,7 +315,7 @@ def check_layers(index: Index) -> list[str]:
         blobs = index.read([LEAN_LEDGER, *lean])
         ledger = json.loads(blobs[LEAN_LEDGER] or b"{}")
         local = {lean_module(p) for p in index.listing() if p.startswith("lean/") and p.endswith(".lean")}
-        # The whole file is parsed: an import's module may sit on a later line.
+        # The reader parses the header as Lean does, however many lines it spans.
         sources = [blobs[path].decode("utf-8", "replace") for path in lean]
         for path, targets in zip(lean, mapped(policy.check_lean_imports.imports, sources)):
             module = lean_module(path)
