@@ -13,11 +13,12 @@ def test_exact_parameterized_skip_and_live_deselection_are_accounted_for():
     assert not permitted(admission.replace("admission", "labels"),
                          "Skipped: admission is outside Rust scope", policy["optional_tests"])
     selected = [f"tests/{name}::test_covered" for name in REQUIRED_FAMILIES] + [admission]
-    events = {"collected": selected + [live], "deselected": [live],
+    events = {"collected": selected + [live], "selected": selected,
+              "deselected": [live], "collection_reports": [],
               "tests": {node: {"outcome": "passed"} for node in selected[:-1]} |
                        {admission: {"outcome": "skipped", "reason": "Skipped: admission is outside Rust scope"}}}
     result = {"counts": {}, "skips": [], "failures": []}
-    interpret_pytest(result, events, policy)
+    interpret_pytest(result, events, policy, events["collected"])
     assert not result["failures"]
     assert result["counts"]["selected"] == len(selected)
     assert result["counts"]["deselected"] == 1
