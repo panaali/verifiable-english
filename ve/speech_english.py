@@ -118,7 +118,7 @@ def _body(env, alternative, rest, warnings=None):
 
 
 def _alternatives(text):
-    names = [s.strip() for s in re.split(r", | and ", text)]
+    names = [wording_text(s) for s in re.split(r", | and ", text)]
     if not 2 <= len(names) <= 16 or any(not name for name in names):
         raise VEError("OpenDomainWhich: name two to sixteen alternatives")
     return names
@@ -142,9 +142,7 @@ def _command_candidates(env, scope):
             names.append(choices)
         for bindings in product(*names):
             display = [None, *(label for label, _ in bindings)]
-            phrase = reg.act[4:].format(*display).strip()
-            if phrase:
-                phrase = phrase[0].upper() + phrase[1:]
+            phrase = reg.act[4:].format(*display)
             yield phrase, predicate, tuple(value for _, value in bindings), reg.role
 
 
@@ -218,7 +216,6 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
         forbidden = plain.startswith("Do not ")
         if forbidden:
             plain = plain[len("Do not "):]
-            plain = plain[:1].upper() + plain[1:]
         matches = []
         wrong_role = []
         for phrase, predicate, args, role in _command_candidates(env, scope):

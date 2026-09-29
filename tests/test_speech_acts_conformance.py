@@ -1528,6 +1528,27 @@ def test_slot_first_act_reads_no_command_in_either_route(lean, tmp_path):
     assert parse_speech(E, "Click check.", E.speech_acts)[1] == "instruction"
 
 
+def test_speech_parser_folds_and_trims_ascii_only():
+    # Regression (speech-acts6 B, the class): the parser upper-cased a command's first letter with Unicode case
+    # mapping, so "Do not ßcheck." read as "Do not SScheck." and forbade the act "{0} sscheck", and it
+    # Unicode-stripped the alternatives of a which-question, reading "atlas and \u00a0beacon" as beacon.  The
+    # parser folds only A-Z and trims only ASCII whitespace (3.2), so no reader sees another sentence.
+    env = _act_env("{0} sscheck", unary=True)
+    E = Environment(env)
+    assert parse_speech(E, "Do not sscheck.", E.speech_acts)[0]["force"] == "forbid"
+    assert parse_speech(E, "Do not SSCHECK.", E.speech_acts)[0]["force"] == "forbid"
+    for wording in ["Do not ßcheck.", "ßcheck.", "Do not \u017fscheck."]:
+        with pytest.raises(VEError):
+            parse_speech(E, wording, E.speech_acts)
+    E = Environment(_act_env("{0} click {1}"))
+    for alternatives in ["atlas and  beacon", "atlas,  beacon", "atlas and beacon\t"]:
+        content, kind = parse_speech(E, f"Which one of {alternatives} is reviewed?", E.speech_acts)
+        assert (kind, content["domain"]) == ("question", ["atlas", "beacon"]), alternatives
+    for alternatives in ["atlas and \u00a0beacon", "atlas\u00a0, beacon", "atlas, beacon\u2003"]:
+        with pytest.raises(VEError, match="UnknownAlternative"):
+            parse_speech(E, f"Which one of {alternatives} is reviewed?", E.speech_acts)
+
+
 def _source_outcome(env, span, units, fences=None, sets=()):
     meta = {"format": "ve-document@2", "environment": env, "units": units, "reading_sets": list(sets)}
     return _outcome(lambda: SpeechSource(meta, span.encode(), fences or {}))
