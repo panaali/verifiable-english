@@ -11,8 +11,10 @@
 > obligations, not proofs. Every open question is marked **OPEN** and collected in section 13. The Astra + Fable
 > review of draft 1 (PLAN-EXPAND2 rule 10; `manage-agents/debates/design-risk/`) converged on REVISE. Draft 2
 > applies it, mapped item by item in section 15. There is no further plan round. The wording probe (2.6) ran on
-> 2026-09-29 (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`), and item 1's statement spec is
-> [risk.md](risk.md) draft 1; the next gate is its stage A statement review (item 1, section 12).
+> 2026-09-29 (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`). Item 1's statement spec is
+> [risk.md](risk.md) draft 2, which applies its stage A statement review (`manage-agents/debates/risk-spec/`, FIX,
+> CONVERGED after round 3; risk.md 12). The next gate is a bounded re-check of the edited passages and fixtures
+> (item 1, section 12).
 
 ## 0. Problem and stance
 
@@ -571,14 +573,19 @@ bridge leaf, as for any attribution (W2).
 
 ### 5.3 Two estimates of one quantity
 
-If a record cites two estimates of one quantity, neither superseded before the decision (supersession is judged on
-the log as it stood at decision time), the policy's declared combination rule applies:
+If a record cites two estimates of one quantity, the policy's declared combination rule applies:
 
 - `latest` uses the one recorded later;
 - `hull` uses the smallest range covering both (precautionary);
 - `intersection` treats both as true, and an empty intersection is an inconsistency.
 
 Otherwise the record is `ConflictingEstimates: <quantity>`. VE never picks a combination rule.
+
+A cited estimate withdrawn before the decision (by a supersession, or by a later estimate that supersedes it) is
+`WithdrawnEntry: <id>`. Withdrawal is judged on the entries that precede the decision. When a decision is checked on
+its own, those are the entries supplied with it, so an earlier supersession that is not supplied goes undetected, and
+the result is conditional on the supplied entries. The audit judges it on the authenticated log prefix (6.2). A
+supersession after the decision affects neither (risk.md 1.4, 7.4).
 
 ## 6. Auditing past decisions (question 5)
 
@@ -604,14 +611,15 @@ W6 has days but no clock time (W6 6.2), so order within a day is the sequence nu
 - **The result:** the risk report id (bound to all of the above) and the checker build; later, the `taken` entry.
 
 Every entry the decision cites must have a smaller sequence number than the decision. A later entry is
-`HindsightEntry: <id>`, and the record is NOT REPLAYABLE. The `taken` entry is exempt: the decision does not cite it;
-it names the decision and comes after it.
+`HindsightEntry: <id>`, and the record is NOT REPLAYABLE. A cited estimate withdrawn before the decision is
+`WithdrawnEntry: <id>` and NOT REPLAYABLE too (5.3). The `taken` entry is exempt: the decision does not cite it; it
+names the decision and comes after it.
 
 ### 6.3 The audit questions and verdicts
 
 | Question | Method | Verdicts |
 |---|---|---|
-| 1. Was the taken alternative permitted given what the agent used? | Replay the risk check on the decision's own snapshot | `PERMITTED AT DECISION TIME` (clear / permitted but not clear, with the reason) · `FORBIDDEN AT DECISION TIME` (a breach, alt 4.3) · `NO CLEAR ACTION AT DECISION TIME` (the recorded dilemma) · `NOT REPLAYABLE` (missing, altered or later entry) |
+| 1. Was the taken alternative permitted given what the agent used? | Replay the risk check on the decision's own snapshot | `PERMITTED AT DECISION TIME` (clear / permitted but not clear, with the reason) · `FORBIDDEN AT DECISION TIME` (a breach, alt 4.3) · `NO CLEAR ACTION AT DECISION TIME` (the recorded dilemma) · `NOT REPLAYABLE` (missing, altered, later or withdrawn entry) |
 | 2. Did the agent use what was recorded? | Replay with every estimate of the same quantities and cells recorded before the decision and not superseded by then (judged on the log as it stood at decision time), combined by 5.3 | `SAME VERDICT WITH ALL RECORDED ESTIMATES`, or `DIFFERENT VERDICT WITH ALL RECORDED ESTIMATES: <estimate ids not used>`. A policy may make using them mandatory; an unused mandatory estimate is then reported on its own line, `PROCEDURE BREACH: estimate <id> not used (the agent's fault)`, and the Q1 verdict is unchanged |
 | 3. Did the declared model survive the outcome? | Compare each `outcome` entry with the decision-time cells | per observed harm: `within the declared model` (it was `might`) · `surprise: ruled out by <condition / statement>`, naming the estimate a measured quantity contradicts (observed 5 GB outside E2's 8–10 GB) · `unexamined: ruled out by <decider>` (2.4) |
 | 4. How often are an estimator's ranges wrong? | Counts of surprises per estimator across audits | Evidence-layer ledger (EL 2.x); outside certification |
@@ -620,7 +628,7 @@ The verdict of question 1 never reads an outcome. A bad outcome after a permitte
 good outcome after a forbidden decision is still a breach. A single outcome neither confirms nor refutes a chance.
 Q1 is the substantive verdict, reproducible from the decision's snapshot. A PROCEDURE BREACH says the agent did not
 follow the policy's recording procedure; it is reported beside Q1, never folded into it. NOT REPLAYABLE is kept for
-entries that are missing, altered or recorded after the decision.
+entries that are missing, altered, recorded after the decision, or withdrawn before it.
 
 ### 6.4 The no-hindsight rule, mechanically
 
@@ -686,22 +694,26 @@ For each estimate endpoint and each alternative, a margin is a value of that end
 fixed, at which the alternative's **status** changes. Point estimates are included (7.3): moving one endpoint makes
 the estimate non-point.
 
-- **Full admission at every value tried.** The perturbed record is validated again in full: `lo ≤ hi` and chances
-  within 0%–100%; `S → N` at every valuation (`SufficientOutsideNecessary`, `RiskInconsistent`); separability, which a
-  point estimate loses when it occurs in two comparisons of one condition and an endpoint moves
-  (`RiskConditionShared`); then the regenerated conflict formulas (alt 4.7). The report keeps three results apart:
-  **changes at X** (a status change), **record invalid at X** (with the diagnostic) and **conflict at X**. An invalid
-  or conflicting record is never reported as a status change (fixture k27).
+- **Full validation at every value tried.** The perturbed record is the admitted record with one endpoint moved. It
+  is validated again in full: `lo ≤ hi` and chances within 0%–100%; `S → N` at every valuation
+  (`SufficientOutsideNecessary`, `RiskInconsistent`); separability, which a point estimate loses when it occurs in two
+  comparisons of one condition and an endpoint moves (`RiskConditionShared`); then the regenerated conflict formulas
+  (alt 4.7). It is a hypothetical input, not a record: it is never re-authenticated against the log, so a moved
+  endpoint is never read as altered evidence. The limit on candidates per endpoint is checked once, on the original
+  record, and not at each value tried: otherwise the candidate count could cross the limit between two values that
+  are not candidates (risk.md 4.9, k36). The report keeps three results apart: a **status change**, **record invalid
+  at X** (with the diagnostic) and **conflict at X**, the last two each found by its own scan. An invalid or
+  conflicting record is never reported as a status change (fixture k27).
 - **Candidates.** Admission outcomes and statuses are piecewise constant in one endpoint, with breakpoints only at the
   comparison thresholds involving it. The values tried are each threshold and its grid neighbours on both sides,
   because a strict comparison changes one grid step from its threshold. In decision 17, "the memory limit is greater
   than the free memory of the server" has its threshold at 7 GB, but the memory-limited run's status changes at E2's
   lower bound 6 GB (6.9 GB on a 0.1 GB grid); a search at thresholds alone finds nothing (fixture k28).
-- **What is certified.** Lean re-evaluates the reported value, a checkable witness that the status differs there;
-  the report says "changes at". It says "nearest" or "no single valid change" only if Lean has evaluated every
-  candidate, which certifies minimality by `status_piecewise_constant`. **OPEN (Q-margin-proof):** whether stage A
-  ships that certified candidate check or only "changes at"; item 1 decides.
-- **How it is rendered.** "Changes at: E2's lower bound 6 GB (now 8 GB)."
+- **What is certified.** Item 1 decided Q-margin-proof: stage A ships the certified candidate check (risk.md 4.9,
+  11.11). Lean evaluates every candidate, which certifies minimality by `status_piecewise_constant`, so the report
+  says "nearest change" or "no single valid change". The nearest invalid value and the nearest conflict are certified
+  by separate scans, one per kind.
+- **How it is rendered.** "Nearest change: E2's lower bound 6 GB (now 8 GB)."
 - **Guard facts versus status.** Margins are on statuses, not on single guard facts: a guard fact can flip without
   changing the status when another rule still decides it (the OOM case shows one).
 - **Stage C.** For linear expected-cost thresholds the report adds the joint L∞ radius of that one inequality (slack
@@ -722,7 +734,7 @@ the estimate non-point.
 | Bands, thresholds, expected cost | Decided: ground rational arithmetic on integer grids (exact scaling); box bounds conservative relative to joint constraints | Lean evaluation |
 | Decision report | Decided: finite model evaluation after regeneration | `alternatives@0` scenario evaluation (alt 4.7) |
 | Policy conflict and followability | **Not decided in general**: the unchanged W1 / `alternatives@0` tableau gives a certificate, a witness or UNKNOWN | Certificates over `BaseAdmissibleRisk` |
-| Margins | Decided per value tried: finitely many candidates per endpoint, each re-admitted in full | Witness re-evaluation; minimality only with the certified check (7.4) |
+| Margins | Decided: finitely many candidates per endpoint, each validated again in full | The certified check: Lean evaluates every candidate (7.4) |
 | Chance coherence (B and later) | **Not decided in general**: EL's atom LP keeps UNKNOWN atoms possible and may be a relaxation | EL 2.3, entered by certificate only, with EL's verdict kinds |
 
 **Slot premises** (Background slot `risk`, after `alternatives`, universal or ground only, as in alt 4.2):
@@ -751,14 +763,17 @@ completed.
 
 ### 8.2 Trust split
 
-**Trusted (Lean, proved from raw JSON under the unchanged allowlist):**
+**Trusted (Lean, proved from raw JSON under the unchanged allowlist; risk.md 9):**
 
-- the `risk` block decoder;
+- the `risk` block, entry and record decoders;
 - W6 decimal lowering, reused;
-- the endpoint evaluator and cell regeneration;
+- condition normalisation, the endpoint evaluator and cell regeneration;
+- record admission and validation;
 - the severity closure;
 - the profile-word inlining;
 - the slot generator;
+- the decision-model builder and its validity check;
+- the margin candidates, the candidate limit and the scans (the certified check, 7.4);
 - the audit snapshot admission;
 - the `ve_risk_route` executable.
 
@@ -766,19 +781,21 @@ completed.
 
 - Python's shape check, surface and dispatch;
 - rendering of reasons, witnesses and margins;
-- the margin candidate search (Lean re-evaluates every reported value);
 - Rust's evaluation (differential only).
 
 Integers are unbounded in all three languages; Rust uses big integers as W6 does for 40-digit literals. Trust-cost
-line for ROADMAP: "Risk (`risk@0`): new trusted decoder, cell regenerator, severity closure, slot premises and
-`ve_risk_route`; untrusted: rendering, the margin candidate search (minimality only if Lean checks every candidate),
-Rust evaluation."
+line for ROADMAP (risk.md 9): "Risk (`risk@0`, stage A): new trusted block, entry and record decoders, condition
+normaliser and evaluator, record admission, cell regenerator, severity closure, inliner, slot premises, decision-model
+builder, certified margin check, audit snapshot admission and `ve_risk_route`, proved from raw JSON under the
+unchanged allowlist; untrusted: the Python shape check and surface, rendering, Rust evaluation."
 
 ### 8.3 Files and statement schemata
 
 The files are `lean/VE/Risk/{Decl,Estimate,Derive,Severity,Words,Background,Report,Audit,Wire,Run}.lean` plus
 `lean/RISK.md`, and later `Expected.lean` for stage C. The frozen `Norms/*`, `Alternatives/*`, `Route/*` and P0
-files are untouched. Names use the prefix `VE.Risk.` and contain no primes.
+files are untouched. Names use the prefix `VE.Risk.` and contain no primes. risk.md section 7 gives the exact
+statements, which supersede these schemata: among other things, atoms hold normal forms, records are admitted before
+they are validated, and the record-level margin lines have one scan per kind.
 
 ```lean
 namespace VE.Risk
@@ -934,8 +951,9 @@ Clear actions: running the job with the memory limit; asking the user. The polic
 default_decided: running the job with the memory limit, asking the user (permitted because no rule forbids them).
 ```
 
-The report is shown in the "changes at" form (7.4). With the certified candidate check it would say "nearest" and "no
-single valid change" where it now says "no change found".
+The report is shown in the "changes at" form of draft 2. Item 1 adopted the certified candidate check (7.4), so
+risk.md's k10 says "Nearest change" and "No single valid change" where this text says "Changes at" and "no change
+found".
 
 The margins show why they are taken on statuses. Moving E2's lower bound down to 6 GB changes the memory-limited
 run's status but not that of running the job, because asking the user still has a less severe worst case. Moving E1's
@@ -979,7 +997,8 @@ PROCEDURE BREACH: estimate 39 not used (the agent's fault)
 ```
 
 The finding would then be the agent's, not the monitor's. NOT REPLAYABLE is kept for entries that are missing,
-altered or recorded later: citing entry 57 in a replay of decision 17 is `HindsightEntry: 57`. The `taken` entry 42
+altered, recorded later or withdrawn before the decision: citing entry 57 in a replay of decision 17 is
+`HindsightEntry: 57`. The `taken` entry 42
 follows the decision without being flagged, because the decision does not cite it (6.2).
 
 ## 10. Worked examples: Asimov
@@ -1075,8 +1094,8 @@ Neither is in the source.
 | # | Item | Gate / trigger | Notes |
 |---|---|---|---|
 | 0 | Astra + Fable review of this plan | done 2026-09-29: REVISE, converged; draft 2 applies it (15) | No further plan round |
-| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k32 with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29; it proposes the certified check for Q-margin-proof (risk.md 11.11) | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecks completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and admission of perturbed records in margins (7.4); it decides Q-margin-proof |
-| 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review. Ran 2026-09-29: c5 pending wording, c10 legend-dependent, `leads to` stays | Proxy readers, labelled "human readability unmeasured"; does not replace item 8. The reviewers owe c5's replacement, probed once with new sealed items |
+| 1 | `docs/spec/risk.md`, stage A: block, record format, wordings, 2.2–2.5, severity, words, slot premises, report, audit, diagnostics, Lean statements, fixtures k1–k39 (k33–k39 from its statement review) with expectations separated from definitions (as alt 8.1/8.2) | after 0; its statement review after 1a's results and before 2. Draft 1 written 2026-09-29. Its statement review (`manage-agents/debates/risk-spec/`) returned FIX, converged; draft 2 applies it (risk.md 12). Next: a bounded re-check of the edited passages and fixtures | Depends on `alternatives@0` item 2 Lean for the restated theorems. The statement review rechecked completed cases (2.2), the endpoint theorems' hypotheses (2.3), the `might prevent` and `excludes` wording and the fulfilment choice (2.5), and validation of perturbed records in margins (7.4). It kept the certified check for Q-margin-proof (risk.md 11.11) |
+| 1a | Wording probe (2.6) | after 0, in parallel with 1; results before 1's statement review. Ran 2026-09-29: c5 pending wording, c10 legend-dependent, `leads to` stays | Proxy readers, labelled "human readability unmeasured"; does not replace item 8. The reviewers' c5 replacement, "If `<condition>`, `<action>` leads to `<harm>`.", is probed once with new sealed items |
 | 2 | Lean `lean/VE/Risk/*`, `ve_risk_route`, `lean/RISK.md`, ROADMAP trust-cost line | after 1's review | Lean-only semantics |
 | 3 | Python surface (`ve/surface/risk.py`), block shape check, dispatch, gap lines; Rust untrusted evaluator; differential (200 random records, including separable-condition generators) | parallel with 2 | Surface fixtures (k19) before acceptance |
 | 4 | Use case `usecases/agent-oom/` (policy, decisions 17 and 18, the log, audit) and Asimov A1 and A2 as reading sets beside the merged rules | after 2 and 3 | Every narrowing attributed |
@@ -1113,7 +1132,7 @@ Fixtures for items 1–4 (definitions and expected results; the spec separates t
 | k22 | Law 3 threats. (a) The fire rescue might destroy the robot (severe to it); the water rescue might damage it (minor); a P3 rule among lawful rescues. (b) A third rescue that meets both threats, with a set-inclusion guard | (a) Water rescue clear, fire rescue forbidden; without the narrowing both are clear (the README's current result). (b) The rescue meeting only one threat is preferred by the set-inclusion guard. Both are attributed narrowings |
 | k23 | Conservativity and identity | Every existing fixture, identity and hash is unchanged; the block changes `environment_id`; the `precaution_has_maximal` property holds on 300 random P2-only records and on 300 random P2-only structures with unclassified harm elements |
 | k24 | Case defaults and sources, one cell each: (a) only `leads to … if C`, C false in some case; (b) only `cannot … unless C`, C true in every case; (c) only a stated `might`; (d) a stated `leads to` with `cannot … unless C`, C false in some case; (e) two `if` conditions | (a) `might`, not certain (`N = ⊤`); (b) `might`, not certain (`S = ⊥`); (c) `might`, not certain, and `might not lead to` holds, witnessed by a case without the harm; (d) `RiskInconsistent`, with the case; (e) `RiskTwoSources`, with the `either … or` rewrite |
-| k25 | The condition `it is not the case that q equals 5`, with `q` from 3 through 7, from 6 through 7, and exactly 5; and its rewrite `either q is less than 5 or q is greater than 5` | Possible but not certain; certain; impossible. The rewrite is `RiskConditionShared: q` |
+| k25 | The condition `it is not the case that q equals 5`, with `q` from 3 through 7, from 6 through 7, and exactly 5; and its rewrite `either q is less than 5 or q is greater than 5` | Possible but not certain; certain; impossible. The rewrite is `RiskConditionShared: q` for the two ranges, and accepted for the point q = 5, where it is again impossible (points may repeat). Both `cannot` results at q = 5 rest on a point estimate and are listed under `point_estimates` (7.3) |
 | k26 | (a) A `risk` block whose severity sort is an existing sort of the environment. (b) A fresh sort, with the harm constants the person's death (fatal) and the person's bruising (injuring) | (a) `RiskSeverityNotFresh`: domain closure would bound that sort in the old vocabulary. (b) Accepted; the one new old-vocabulary fact, "the person's death is not the person's bruising", is listed as the compatibility hypothesis of `risk_expansion`; no other old-vocabulary result changes (k23) |
 | k27 | Margins that make the record invalid: (a) one cell with sufficient condition "q is greater than 5" and necessary condition "r is less than 5", `q` from 6 through 8, `r` from 2 through 4, and `r`'s upper bound moved to 5; (b) a point estimate used in two comparisons of one condition, with one endpoint moved; (c) decision 17 with E2's lower bound raised above 10 GB | (a) `record invalid at 5 (SufficientOutsideNecessary)`, case (6, 5); (b) `record invalid (RiskConditionShared)`; (c) `record invalid (lo > hi)`. None is reported as a status change |
 | k28 | Threshold neighbour: decision 17's memory-limited run and E2's lower bound, on the 1 GB grid and on a 0.1 GB grid | Changes at 6 GB / 6.9 GB, not at the threshold 7 GB; a search at thresholds only finds no change |
@@ -1121,6 +1140,13 @@ Fixtures for items 1–4 (definitions and expected results; the spec separates t
 | k30 | Alt's rule 8 ("Every robot must prevent each harm that is a harm to a human being, if that harm is avoidable by that robot") on A2, under `avoids` and under `excludes` | Both duties hold: each harm is avoidable (some action might not lead to it). `avoids`: rescuing P discharges the death duty and rescuing Q the injury duty, none both: JOINTLY-UNDISCHARGEABLE. `excludes`: no alternative discharges the death duty: UNDISCHARGEABLE(`prevent_required(R, P's death)`), and `excludes` is listed as the annotator's attributed choice |
 | k31 | Unclassified harm under P2 (document level): one chooser with `a` (might lead only to a harm element `u` with no class), `a′` (might lead to no harm) and `b` (might lead to a minor harm) | `a′` does not beat `a` (no classified witness); `a` and `b` are not comparable either way; `a′` beats `b`, so P2 forbids `b` only. The rendering says "not comparable: u has no class". A decision naming `u` is `UnknownHarm` |
 | k32 | No hindsight with the action fixed: two logs identical up to decision 17; (a) the same `taken` entry and different outcomes; (b) log 1 takes the memory-limited run, log 2 takes running the job | (a) Q1 and Q2 identical, Q3 differs. (b) Q1 differs (PERMITTED / FORBIDDEN AT DECISION TIME) because the queried alternative differs; for either fixed queried alternative both logs give the same verdict |
+| k33 | Added by item 1's review: a quantity set twice, or set and estimated | `RiskSettingTwice`, before the box |
+| k34 | Added by item 1's review: `q − q − 1 = 0` over `q` from 0 through 1 | The collected form `−1 = 0`, never possible; the reason atoms hold normal forms |
+| k35 | Added by item 1's review: policy constants of the action and chooser sorts; a mistyped fact | An action constant is interpreted by the alternative of its name, else `RiskConstant`; a chooser constant is a chooser with no action; a record-local name equal to a constant is `RiskConstant`; the mistyped fact is `RiskFact` |
+| k36 | Added by item 1's review: 88 conditions whose candidate count for one endpoint crosses 256 between two values of another endpoint that are not candidates | The limit is checked once on the original record, so `outcomeAt` is equal at both values |
+| k37 | Added by item 1's review: the two scope rewrites of `every action available to … cannot lead to …` on decision 17 | They differ: for data loss both hold, for a server outage only "not every" holds |
+| k38 | Added by item 1's review: one endpoint direction with a conflict before an invalid value | Both are reported, each by its own scan |
+| k39 | Added by item 1's review: a cited estimate withdrawn before the decision, supplied or not; a withdrawal after it | `WithdrawnEntry` when supplied, and NOT REPLAYABLE in the audit; accepted, conditional on the supplied entries, when not supplied; a later withdrawal affects neither |
 
 Stage B and C fixtures are written when those stages trigger. Anticipated: band admission; chance against
 possibility; vacuous chance; A2's stage C row with its 90% margin; coherence failure reported by EL. One is fixed now
@@ -1155,7 +1181,8 @@ or computed over EL's certified joint region, where the sum is exactly 100%.
 15. **Q-dependency.** `alternatives@0` item 2 (Lean) must merge before item 2 here. Its fixture expectations are
     inherited, not re-derived.
 16. **Q-margin-proof.** Whether stage A's margins carry Lean's certified candidate check ("nearest", "no single valid
-    change") or only "changes at" witnesses (7.4). Item 1 decides.
+    change") or only "changes at" witnesses (7.4). Decided by item 1: the certified check (risk.md 11.11), kept by its
+    statement review.
 
 ## 14. Risks
 
@@ -1229,3 +1256,4 @@ Details settled while applying these edits, not debated:
 | 2026-09-29 | Draft 1 | Initial plan: two-layer design (estimate layer regenerating Boolean facts; unchanged rule layer); possibility as consistency with declared estimates and conditions; the separable endpoint fragment; stages A/B/C with triggers; severity order and the worst-case word; rule patterns P1–P7 and `precaution_has_maximal`; provenance, audit log and no-hindsight rule; report, gaps and status margins; Lean statement schemata; OOM, Asimov A1 and A2 worked examples; fixtures k1–k23; open questions. Plan only. |
 | 2026-09-29 | Draft 2 | Applies the converged Astra + Fable debate (REVISE), mapped in section 15: risk paraphrases of the `alternatives@0` words, `might prevent` and the `excludes` body; completed cases with defaults and source rules; `≠` and the ±1 hypothesis; a fresh severity sort and conservativity by model expansion; policy-fixed harm constants with a functional, non-total `class` and the relational `lessWorst`; margins with full re-admission, grid neighbours and "changes at"; EL qualifications, conservative box bounds and additive loss; chance wording; a separate PROCEDURE BREACH line; supersession at decision time; no-hindsight with the queried alternative fixed; document-level UNKNOWN; the wording probe protocol (2.6); fixtures k24–k32 and kC1. Plan only. |
 | 2026-09-29 | Draft 2, status | Status line and items 1 and 1a synchronised with the probe results and risk.md draft 1. No design change; the converged debate edits are those of draft 2 (section 15). |
+| 2026-09-29 | Draft 2, sync with risk.md draft 2 | Synchronised with the converged statement review of risk.md (`manage-agents/debates/risk-spec/`, FIX; risk.md 12): supersession judged on the supplied entries alone and on the log prefix in the audit, with `WithdrawnEntry` (5.3, 6.2, 6.3, 9.3); margins validate perturbed records without re-admitting them, the candidate limit is checked once on the original record, and Q-margin-proof is decided for the certified check (7.4, 8.1, 9.2, 13); the trust split and ROADMAP line match risk.md 9 (8.2); risk.md 7 supersedes the schemata of 8.3; k25's `point_estimates` line and fixtures k33–k39; the c5 replacement for its re-probe (item 1a). No design change beyond the review's. |

@@ -1,11 +1,13 @@
 # Risk (`risk@0`), stage A: possible consequences and severity over explicit alternatives, on `alternatives@0`
 
-> Status: item-1 specification, draft 1 (2026-09-29), written from [risk-PLAN.md](risk-PLAN.md) draft 2 (cited
+> Status: item-1 specification, draft 2 (2026-09-29), written from [risk-PLAN.md](risk-PLAN.md) draft 2 (cited
 > `plan n`), which applies the converged Astra + Fable review of the plan (`manage-agents/debates/design-risk/`,
 > REVISE, CONVERGED after round 3, mapped in plan 15), and from the sealed wording probe of plan 2.6
 > (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`, cited `probe`; proxy readers, human readability
-> unmeasured). It is the statement under the stage A statement review (plan 12, item 1), which precedes items 2 and 3.
-> Sections 4 to 7 are the statements under review. Section 8 gives the fixtures with their definitions (8.1)
+> unmeasured). The stage A statement review of draft 1 (plan 12, item 1; `manage-agents/debates/risk-spec/`) returned
+> FIX, CONVERGED after round 3. Draft 2 applies every correction, mapped item by item in section 12. The next gate is
+> a bounded re-check of the passages and fixtures section 12 lists, which precedes items 2 and 3. Sections 4 to 7 are
+> the statements under review. Section 8 gives the fixtures with their definitions (8.1)
 > separated from their expected results (8.2), so that each reviewer derives the expectations from sections 4 to 6
 > before reading them. Section 11 lists every point where this draft chose between readings of the plan. Theorem
 > statements and fixtures are implementation obligations, not claims of completed proofs or tests. Inputs:
@@ -35,7 +37,7 @@ wording's probe status (2); the wire form and identity (3); well-formedness, con
 validation and regeneration, severity and the defined words, slot premises and conservativity, the policy checks,
 the decision report, margins and the audit (4); the report text (5); diagnostics (6); the Lean definitions and every
 item-2 theorem as a statement (7); the fixtures (8); limits and trust (9); the review checklist (10); the resolved
-choices (11).
+choices (11); the corrections from the statement review (12).
 
 Out of scope (plan 3.2, 3.3, 12): bands, chances and expected cost (stages B and C; the stage C fixture kC1 is
 recorded because it bounds a claim of the plan); non-separable conditions and policy-level condition templates
@@ -60,7 +62,7 @@ settings, conditions, statements, instructions, decisions, taken alternatives an
 | `harm_classes` | yes | a list of `[harm constant, class]` pairs naming every constant of the harm sort of `E` exactly once |
 | `unexamined` | yes | `"possible"`, or `{"ruled_out_by": "<decider>"}`, or `{"ruled_out_by": "chooser"}` (4.4) |
 | `always_possible` | no | classes whose unaddressed cells stay precautionary under `ruled_out_by` |
-| `combination` | no | `"latest"`, `"hull"` or `"intersection"` (plan 5.3). When absent, two live estimates of one quantity are `ConflictingEstimates` |
+| `combination` | no | `"latest"`, `"hull"` or `"intersection"` (plan 5.3). When absent, two cited estimates of one quantity are `ConflictingEstimates` |
 | `alternative_kinds` | no | `{kind: verbalisation}`: labels a record may attach to its alternatives |
 | `required_alternatives` | no | a list of `{"when": kind, "require": [kind, …]}` |
 | `quantity_kinds` | no | `{kind: tag}`: labels a record may attach to its quantities, each with its W6 unit tag |
@@ -114,7 +116,7 @@ A decision record describes one chooser at one decision point (alt 1.2). It cont
 - **the quantities**: log-level names with labels, each with a unit tag declared in the environment's W6 extension
   (`UnknownSymbol: unit <tag>`) and optionally a policy `kind` whose tag must equal it (`UnitMismatch(<t>,<t′>)`);
 - **the cited entries**, each by `(id, seq, hash)`: estimates, settings, conditions, stated cells and instructions,
-  all with sequence numbers smaller than the decision's (4.10);
+  all with sequence numbers smaller than the decision's (4.4);
 - **facts**: rows of `E`'s other base predicates (`confirmed(run)`), each citing the instruction or statement entry
   it comes from.
 
@@ -131,13 +133,18 @@ Every harm constant of the policy is a harm of every decision. The regenerated t
   exactly onto the tag's grid (`UnitPrecision(<tag>, scale=<n>)` otherwise). It requires `lo ≤ hi`
   (`RiskRange: <id>`). A point estimate has `lo = hi` and is flagged in the report (4.9).
 - **Settings.** A setting is an exact value of one quantity. It belongs to one alternative and is chosen by the
-  chooser. A condition may mention a setting only on the cells of that setting's alternative
-  (`RiskSettingScope: <setting> <alternative>`).
-- **Combination.** Two live estimates of one quantity (neither superseded before the decision, judged on the log as
-  it stood then) are combined by the policy's `combination` (plan 5.3): `latest` uses the one recorded later,
-  `hull` the smallest range covering both, and `intersection` both at once (an empty intersection is
-  `RiskInconsistent: <quantity> estimates do not intersect`). Without a combination rule the record is
-  `ConflictingEstimates: <quantity>`. VE never picks a combination rule.
+  chooser. A quantity has at most one setting, and a quantity with a setting has no estimate
+  (`RiskSettingTwice: <quantity>`, with the rewrite: declare one quantity per alternative; fixture k33). A condition
+  may mention a setting only on the cells of that setting's alternative (`RiskSettingScope: <setting> <alternative>`).
+- **Combination.** Two cited estimates of one quantity are combined by the policy's `combination` (plan 5.3):
+  `latest` uses the one recorded later, `hull` the smallest range covering both, and `intersection` both at once (an
+  empty intersection is `RiskInconsistent: <quantity> estimates do not intersect`). Without a combination rule the
+  record is `ConflictingEstimates: <quantity>`. VE never picks a combination rule. A cited estimate withdrawn before
+  the decision (by a `supersession` entry, or by an estimate that `supersedes` it) is `WithdrawnEntry: <id>` at
+  admission (4.4). Withdrawal is judged on the entries that precede the decision: in `risk-decision` on the supplied
+  entries, so an earlier supersession the caller omits is not detected and the result is conditional on the supplied
+  entries (7.4); in the audit on the authenticated log prefix (4.10). A supersession after the decision affects
+  neither (fixtures k16, k39).
 - **The box.** The box of a record has one entry per quantity: its effective range after combination, or its
   setting as a point. It is nonempty, because every entry has `lo ≤ hi`. A quantity with no estimate and no setting is
   `RiskUnestimated: <quantity>` when a condition mentions it.
@@ -190,7 +197,7 @@ passed L with a critical answer in C and is re-tested by W8 (item 8).
 | c6 | `<action> cannot lead to <harm> unless <condition>` | record conditions only | Necessary condition: the harm happens in no case they allow in which the condition does not hold. | `N = C` | frozen (12/12, 12/12) |
 | c7 | `<action> leads to <harm> exactly when <condition>` | record conditions only | Both. | `S = N = C` | frozen (16/16, 16/16) |
 | c8 | `<harm> is <class>` / `<harm> is <class> or worse` | guards | The harm's severity class; the harm is `<class>` or more severe than `<class>`. | `class(h, c)` / `or_worse(h, c)` | frozen (16/16, 16/16) |
-| c9 | `<a′> has a less severe worst case than <a>` | guards | `<a>` might lead to a harm more severe than every harm `<a′>` might lead to. | `less_worst(a′, a)` | frozen (8/8, 8/8) |
+| c9 | `<a′> has a less severe worst case than <a>` | guards | `<a>` might lead to a classified harm whose class is more severe than the class of every harm `<a′>` might lead to; each such harm of `<a′>` must have a class. | `less_worst(a′, a)` | frozen (8/8, 8/8) |
 | c14 | `cannot lead to` in a policy beside `must not` and `may` rules | policies | A statement about the declared model, never a rule. | | frozen (12/12, 12/12) |
 
 Record statements also use W6's wordings for estimates and settings: `<quantity> is from <x> through <y>, including
@@ -200,10 +207,17 @@ joined by `both … and`, `either … or` and `it is not the case that` (W6 4, d
 wording is registered for record statements only. Inside a policy rule, `unless` is always W1's carve-out and `if`
 is always the rule's guard (2.3).
 
+c9's paraphrase names the classified witness that the formula requires (4.5), and says that every harm of `<a′>`
+must have a class. This matters only in document-level structures with unclassified harm elements (fixture k31). On
+a record every harm has a class, and the paraphrase agrees with draft 1's shorter one and with the legend line
+(2.4). The wording and the legend line are the probed ones, so c9 stays frozen.
+
 **c5 is pending.** The semantics of a sufficient source (`S = C`, 1.4) is among the statements under review, but its
 English wording is not. The failure seen was one Haiku answer that read "leads to X if C" as "only if": "the
-condition for the outage is not met" (probe, c5-1). Until a replacement passes the single re-probe of plan 2.6
-rule 4, which the two reviewers owe, with new sealed items, three things hold:
+condition for the outage is not met" (probe, c5-1). The reviewers' replacement is **"If `<condition>`, `<action>`
+leads to `<harm>`."** It puts the condition first, which targets the "only if" reading, and keeps the frozen verb
+`leads to` (rule 3), in parallel with c6 and c7. Until it passes the single re-probe of plan 2.6 rule 4 with new
+sealed items, three things hold:
 
 - the surface does not register c5's wording for input;
 - a record carries a sufficient condition as `"form": "sufficient"` in JSON, and the W8 condition form (item 8)
@@ -254,10 +268,13 @@ Rejected, with rewrites (plan 2.1, 2.5):
   gives likelihood words declared ranges. Rewrite: `might lead to`.
 - **`is safer than`**: it invites a probability-weighted reading. Rewrite: `has a less severe worst case than`.
 - **`every action available to <chooser> cannot lead to <harm>`**: this has a scope ambiguity ("not every" versus
-  "every … not"), as object-position `every` under `must not` does in norms.md 2.1. Both rewrites are offered:
-  `it is not the case that there is an action such that both that action is available to <chooser> and that action
-  might lead to <harm>` ("every … not"), and `there is an action such that both that action is available to
-  <chooser> and that action might lead to <harm>` ("not every").
+  "every … not"), as object-position `every` under `must not` does in norms.md 2.1. Both rewrites are offered, each
+  with its formula (`r` the chooser, `h` the harm; fixture k37):
+  - "every … not", `¬∃a. available(a, r) ∧ might(a, h)`, equivalently `∀a. available(a, r) → ¬might(a, h)`: `it is
+    not the case that there is an action such that both that action is available to <chooser> and that action might
+    lead to <harm>`;
+  - "not every", `∃a. available(a, r) ∧ ¬might(a, h)`, equivalently `¬∀a. available(a, r) → might(a, h)`: `there is
+    an action such that both that action is available to <chooser> and that action cannot lead to <harm>`.
 - **`<action> prevents <harm>`** in a risk environment. Rewrite: `<action> might prevent <harm>` (2.2).
 - **`certainly leads to`** is not registered. c3b passed, but under rule 3 `leads to` stays as the one word across
   `alternatives@0` and `risk@0`. Rewrite: `leads to`.
@@ -421,8 +438,9 @@ term  ::= ["quantity", name] | ["decimal", tag, decimal_string]
         | ["add", tag, term, term] | ["scale", tag, coefficient_string, term]
 ```
 
-`is greater than` is `lt` with the operands exchanged, `is at least` is `le` exchanged, `is at most` is `le` and
-`equals` is `eq`. `minus` is `add` with `scale -1`. Both sides of a comparison, and both operands of `add`, carry one
+`["quantity", name]` is not a W6 node: it is a risk-local node naming one of the record's quantities, and its tag is
+that quantity's tag. The other nodes are W6's. `is greater than` is `lt` with the operands exchanged, `is at least`
+is `le` exchanged, `is at most` is `le` and `equals` is `eq`. `minus` is `add` with `scale -1`. Both sides of a comparison, and both operands of `add`, carry one
 tag (`UnitMismatch(<t>,<t′>)`). Decimal literals are lowered by `VE.Time.lower` onto the tag's grid
 (`UnitPrecision`). A `scale` coefficient is a literal integer, never a quantity (W6 2.3), so every condition is
 linear. Normal form and evaluation are 4.2 and 4.3.
@@ -454,7 +472,9 @@ linear. Normal form and evaluation are 4.2 and 4.3.
 An entry's `hash` is the SHA-256 of the canonical JSON of `{seq, day, id, kind, content, prev}`. `prev` is the
 previous entry's hash, and the first entry's `prev` is the empty string. Sequence numbers strictly increase (gaps are
 allowed), and ids are unique. `day` is a W6 day (W6 6.1). An estimate's `recorded` field (plan 5.1) is its entry's
-`seq` and `day`, so an estimate carried without them is `EstimateProvenance: <id> recorded`. The decision record:
+`seq` and `day`, so an estimate carried without them is `EstimateProvenance: <id> recorded`, reported when the entry
+is decoded, before any citation is matched (4.4). The decision record is the `content` of its `decision` entry, which
+gives the decision its sequence number and day:
 
 ```json
 {"format": "ve-risk-decision@0", "id": "17", "chooser": "build_agent", "chooser_label": "the build agent",
@@ -472,8 +492,11 @@ allowed), and ids are unique. `day` is a W6 day (W6 6.1). An estimate's `recorde
 ```
 
 (The `cites` and `facts` lists are shortened here. Decision 17 cites 15 entries and has no facts; the `facts` row
-shown is decision 18's, 8.1.) A `risk-decision` case (7.3) supplies the record and its cited entries, and the route
-checks every cited `(id, seq, hash)` against the supplied entry. A `risk-audit` case supplies the whole log.
+shown is decision 18's, 8.1.) A `risk-decision` case (7.3) supplies the record as its `decision` entry (`seq`,
+`day`, `id`, `kind`, `content`, `prev`, `hash`), together with the **supplied entries**: every cited entry, and any
+other entries the caller holds that precede the decision (such as supersessions). A complete log prefix is not
+required. Admission (4.4) checks every cited `(id, seq, hash)` against the supplied entries. A `risk-audit` case
+supplies the whole log, and admission uses its prefix (4.10).
 
 ### 3.4 Identity and binding
 
@@ -482,7 +505,8 @@ checks every cited `(id, seq, hash)` against the supplied entry. A `risk-audit` 
   k23).
 - **The policy document hash** is alt's (alt 3.5): the canonical array of the active norm objects and base assertion
   units under `environment_id`. A norm unit's `meaning_id` is W1's over the un-inlined AST, with risk words as atoms.
-- **The decision record id** is the SHA-256 of the record's canonical JSON. The record binds its policy by
+- **The decision record id** is the SHA-256 of the record's canonical JSON (its decision entry's `content`), not the
+  entry hash. The record binds its policy by
   `(environment_id, document_hash)`; a record checked against another policy is `RiskBinding: policy`.
 - **Reports and packages.** A decision report binds `(environment_id, document_hash, decision_record_id)`. An audit
   report binds the same plus the hash of the log's last admitted entry and the queried alternative. Conflict,
@@ -534,6 +558,16 @@ collected per quantity, a quantity whose collected coefficient is 0 does not occ
 `−f ≤ 0`, `¬(f ≤ 0)` is `−f < 0`, `¬(f = 0)` is `f ≠ 0` and `¬(f ≠ 0)` is `f = 0`. So `≠` is always one atom (plan
 2.3; fixture k25).
 
+The normal form is a **typed invariant**, not a comment. A form is normal when its quantity names are distinct and
+no coefficient is 0 (`LinForm.Normal`, 7.1). An atom holds a `NormLinForm`, a form paired with its normality, and the
+decoder builds every atom with the normaliser `LinForm.normalize`, which collects coefficients per quantity and
+drops zeros. Two theorems cover the normaliser: its result is normal (`normalize_normal`), and it has the same value
+under every valuation (`normalize_eval`). Negation in `nnf` negates every coefficient, which keeps a form normal. The
+endpoint theorems of 4.3 need this invariant. Take `q` from 0 through 1 and the uncollected form `q − q − 1`, whose
+coefficient list is `[(q, 1), (q, −1)]`. It passes separability and the ±1 rule, and its endpoint bounds are −2 and 0,
+so the table would call `q − q − 1 = 0` possible although its value is always −1. Collected, it is `−1 = 0`, which is
+never possible (fixture k34).
+
 A box entry is a **point** when `lo = hi`; settings are points. With `b` the record's box and `c` a condition:
 
 - `Scoped b c`: every quantity of `c` is an entry of `b`;
@@ -562,9 +596,9 @@ For a form `f` over a box: `fmin b f = Σ (cᵢ ≥ 0 ? cᵢ·loᵢ : cᵢ·hi�
 | `a ∨ b` | `possibleE a ∨ possibleE b` | `certainE a ∨ certainE b` |
 | `⊤` / `⊥` | true / false | true / false |
 
-The "only if" directions hold for every scoped condition. The "if" directions need separability (on separable
-conditions `∃` distributes over `and` and `∀` over `or`) and, for `=` and `≠`, the unit-coefficient rule. The
-theorems are `possibleE_iff` and `certainE_iff` (7.2).
+The "only if" directions hold for every scoped condition. The "if" directions need normal atoms (4.2, carried by the
+type), separability (on separable conditions `∃` distributes over `and` and `∀` over `or`) and, for `=` and `≠`, the
+unit-coefficient rule. The theorems are `possibleE_iff` and `certainE_iff` (7.2).
 
 **The canonical witness** of a possible condition is computed by `witnessE`:
 
@@ -581,43 +615,76 @@ This gives the witness (12 GB, 8 GB) of fixture k1. `witnessE_sound` states that
 satisfies the condition. Every `might` in a report carries its witness case, and every `SufficientOutsideNecessary`
 and `RiskInconsistent` diagnostic carries the witness of `S ∧ ¬N`.
 
-### 4.4 Record validation (`validateDecision`) and regeneration
+### 4.4 Record admission (`admitDecision`), validation (`validateDecision`) and regeneration
 
-`validateDecision R d` checks, in this order. The first failure is the answer.
+A record is checked in two stages. **Admission** authenticates it once against the entries it cites. **Validation**
+checks the admitted record's content. Each stage checks in the order below, and the first failure is the answer.
 
-1. **Decode and bind.** The record decodes (`InvalidInput: risk-decision.<field>`) and binds the loaded policy
-   (`RiskBinding: policy`). The per-decision limits hold (9).
-2. **Entries.** Every cited `(id, seq, hash)` has a supplied entry with that sequence number and content hash
-   (`MissingEntry: <id>`, `AlteredEntry: <id>`). A cited sequence number at or above the decision's is
-   `HindsightEntry: <id>`, and the record is NOT REPLAYABLE (4.10). Every fact cites an instruction or statement
-   entry that the record also cites.
-3. **Names.** Alternative names are distinct, and exactly one alternative is the inaction when `inaction` is declared
-   (alt's `InvalidModel("alternatives", "<r> has no inaction")` or `"<r> has two inactions: …"`). Every harm named is a
-   harm constant (`UnknownHarm: <name>`). Every alternative, quantity and kind named is declared
-   (`UnknownSymbol: alternative <name>`, `quantity <name>`, `kind <name>`). Facts name base predicates of `E` that
-   are not role predicates, not generated and not regulated (`RiskFact: <predicate>`), with typed arguments.
-4. **Required alternatives.** For each requirement whose `when` kind is present, every required kind is present
-   (`RequiredAlternativeMissing: <kind> (with <when kind>)`; 11.7).
-5. **Estimates.** Each estimate's tag is its quantity's tag (`UnitMismatch`), and its values lower onto the grid
-   (`UnitPrecision`). It has `lo ≤ hi` (`RiskRange: <id>`), an estimator, a support and its entry's sequence number and
-   day (`EstimateProvenance: <id> <estimator | support | recorded>`). Its estimator is allowed for its quantity's
-   kind (`EstimatorNotAllowed: <id> <estimator>`).
-6. **Combination.** Live estimates are combined per quantity (1.4; `ConflictingEstimates: <quantity>`, empty
-   intersection). A condition's quantity with no estimate or setting is `RiskUnestimated: <quantity>`.
-7. **Settings.** Each setting names an alternative of the record and has its quantity's tag. A condition mentioning a
-   setting is on that alternative's cells (`RiskSettingScope`).
-8. **Sources.** Each condition and statement names an alternative and a harm of the record. There is at most one
-   source per side per cell (`RiskTwoSources`). Record statements are the three stated forms (`RiskStatementForm`).
-9. **Conditions.** Each condition is tag-correct and scoped, separable (`RiskConditionShared`) and unit-coefficient
-   (`RiskEqualityCoefficient`) on the box.
-10. **Sufficient within necessary.** For every cell whose `S` and `N` are not the same condition (after
-    normalisation), `S ∧ ¬N` must be separable (`RiskConditionShared`) and impossible on the box. Otherwise the
-    record is `SufficientOutsideNecessary: <a>/<h>` when both sides are conditions, or `RiskInconsistent: <a>/<h>` when
-    a stated cell gives one side, in each case with the witness case.
-11. **Stated `might`.** Every stated `might` is on a possible cell (`possibleE N`), else `RiskInconsistent: <a>/<h>`.
-12. **The alternatives model.** `validateAlternatives (toAlt R) (decisionModel R d) (decisionRows R d)` succeeds (alt
-    7.1): premises, rows, existence facts E1 to E3 and the policy's `Γ` evaluated on the regenerated model. Its
-    diagnostics are alt's `InvalidModel("alternatives", …)` texts.
+`admitDecision R dx es` takes the decision entry `dx`, whose `content` is the record, and the entries `es`: the
+supplied entries in `risk-decision` (3.3), the log prefix in the audit (4.10).
+
+- **A1. Decode and bind.** The decision entry and every supplied entry decode (`InvalidInput:
+  risk-decision.<field>`). A supplied estimate entry without `seq` or `day` is `EstimateProvenance: <id> recorded`,
+  reported before any citation is matched (3.3). The decision entry's hash, recomputed from its fields (3.3), must
+  equal its `hash` field (`AlteredEntry: <id>`). The record decodes (`InvalidInput: risk-decision.<field>`) and binds the loaded
+  policy (`RiskBinding: policy`). The per-decision limits hold (9), except the margin-candidate limit (4.9).
+- **A2. Citations**, in cite order. Each cited `(id, seq, hash)` is checked in this order:
+  1. a sequence number at or above the decision entry's is `HindsightEntry: <id>`, decided from the citation and the
+     decision entry alone;
+  2. an entry of `es` with that id and sequence number must exist (`MissingEntry: <id>`);
+  3. that entry's hash, recomputed from its fields, must equal both its `hash` field and the citation's hash
+     (`AlteredEntry: <id>`);
+  4. a cited estimate must not be withdrawn by an entry of `es` whose sequence number is smaller than the decision
+     entry's: a `supersession` entry naming it, or an estimate whose `supersedes` names it (`WithdrawnEntry: <id>`;
+     1.4).
+- **A3. Facts.** Every fact cites an instruction or statement entry that the record also cites.
+
+The admitted `Decision` (7.1) carries the record, the contents of its cited entries, and the decision entry's
+sequence number and day. In the audit, each admission failure is NOT REPLAYABLE with its diagnostic (4.10). Admission
+runs once per record. Margins perturb the admitted record (4.9) and never re-run admission, so a moved endpoint is a
+hypothetical input to validation and is never read as altered evidence.
+
+`validateDecision R d` checks the admitted record:
+
+- **V1. Names.** Alternative names are distinct, and exactly one alternative is the inaction when `inaction` is
+  declared (alt's `InvalidModel("alternatives", "<r> has no inaction")` or `"<r> has two inactions: …"`). Every harm
+  named is a harm constant (`UnknownHarm: <name>`). Every alternative, quantity and kind named is declared
+  (`UnknownSymbol: alternative <name>`, `quantity <name>`, `kind <name>`). No record-local name (the chooser or an
+  alternative) equals a constant of `E`, except an alternative that interprets an action constant of the same name
+  (`RiskConstant: <name>`). Facts name base predicates of `E` that are not role predicates, not generated and not
+  regulated (`RiskFact: <predicate>`).
+- **V2. Required alternatives.** For each requirement whose `when` kind is present, every required kind is present
+  (`RequiredAlternativeMissing: <kind> (with <when kind>)`; 11.7).
+- **V3. Estimates.** Each estimate's tag is its quantity's tag (`UnitMismatch`), and its values lower onto the grid
+  (`UnitPrecision`). It has `lo ≤ hi` (`RiskRange: <id>`), an estimator and a support (`EstimateProvenance: <id>
+  <estimator | support>`; `recorded` is A1's). Its estimator is allowed for its quantity's kind
+  (`EstimatorNotAllowed: <id> <estimator>`).
+- **V4. Settings.** A quantity has at most one setting, and a quantity with a setting has no estimate
+  (`RiskSettingTwice: <quantity>`, with the rewrite: declare one quantity per alternative). Each setting names an
+  alternative of the record and has its quantity's tag. A condition mentioning a setting is on that alternative's
+  cells (`RiskSettingScope`). This step precedes the box, so every quantity has at most one box entry.
+- **V5. Combination.** The cited estimates are combined per quantity (1.4; `ConflictingEstimates: <quantity>`, empty
+  intersection), and the box is built. A condition's quantity with no estimate or setting is `RiskUnestimated:
+  <quantity>`.
+- **V6. Sources.** Each condition and statement names an alternative and a harm of the record. There is at most one
+  source per side per cell (`RiskTwoSources`). Record statements are the three stated forms (`RiskStatementForm`).
+- **V7. Conditions.** Each condition is tag-correct and scoped, separable (`RiskConditionShared`) and unit-coefficient
+  (`RiskEqualityCoefficient`) on the box.
+- **V8. Sufficient within necessary.** For every cell whose `S` and `N` are not the same condition (after
+  normalisation), `S ∧ ¬N` must be separable (`RiskConditionShared`) and impossible on the box. Otherwise the record
+  is `SufficientOutsideNecessary: <a>/<h>` when both sides are conditions, or `RiskInconsistent: <a>/<h>` when a
+  stated cell gives one side, in each case with the witness case.
+- **V9. Stated `might`.** Every stated `might` is on a possible cell (`possibleE N`), else `RiskInconsistent: <a>/<h>`.
+- **V10. The decision model.** The model data `decisionData R d` (below) is admissible for the regenerated
+  environment `envAt (inlineTree (toAlt R)) 0`: every constant denotes an element of its sort's domain, and every
+  table row is typed. The check is decidable (`VE.Bridge.ModelData.valid`). An action constant of `E` that no
+  alternative of the record interprets is `RiskConstant: <name>`. A fact whose arguments are not elements of its
+  predicate's sorts is `RiskFact: <predicate>`. This step establishes the model validity (`M.Valid`) that alt's
+  `validateAlternatives` leaves to its caller (`lean/VE/Alternatives/Validate.lean`), so `risk_scenario_sound`
+  checks it rather than assuming it.
+- **V11. The alternatives model.** `validateAlternatives (toAlt R) (decisionModel R d) (decisionRows R d)` succeeds
+  (alt 7.1): premises, rows, existence facts E1 to E3 and the policy's `Γ` evaluated on the regenerated model. Its
+  diagnostics are alt's `InvalidModel("alternatives", …)` texts.
 
 **Completion** (plan 2.4). An unaddressed cell `(a, h)` has `S = ⊥`, and:
 
@@ -631,11 +698,16 @@ and `RiskInconsistent` diagnostic carries the witness of `S ∧ ¬N`.
 **Regeneration.** `regenerate R d` computes, for every cell, `might` as `possibleE box (Nec R d a h)` with its
 canonical witness, and `leads` as `certainE box (Suff R d a h)`. It also computes the class table (`class(h, c)` for
 each harm constant) and the order table (the closure). Under validation both tables mean exactly what 1.5 says
-(`regenerate_sound`). The **decision model** `decisionModel R d` is the finite model with:
+(`regenerate_sound`). The **decision model** `decisionModel R d` is the finite model read from the model data
+`decisionData R d`, which has:
 
-- the chooser, the alternatives and the harm constants as the domains of their sorts; the class constants as the
-  severity domain; the constants of `E` for every other sort;
-- `available` as every alternative to the chooser, `inaction` as the marked alternative, and `taken` empty;
+- as domains: for the chooser sort, the record's chooser plus one element per chooser constant of `E`; for the action
+  sort, the alternatives; for the harm sort, the harm constants; for the severity sort, the class constants; for every
+  other sort, the constants of `E` of that sort;
+- as constants: every constant of `E_risk` denotes its own element, except that an action constant of `E` denotes
+  the alternative of the same name (V10). A chooser constant is therefore a chooser with no available action, which
+  alt's E2 admits;
+- `available` as every alternative to the record's chooser, `inaction` as the marked alternative, and `taken` empty;
 - `leads_to` and `risk__might_lead_to` as regenerated, `risk__class` from `harm_classes`, and `risk__more_severe` as
   the closure;
 - the record's facts, and every other base table empty.
@@ -712,7 +784,7 @@ a `functional` flag (norms.md 7.1(3)). It is generated in the slot so that every
 label (11.2). These are all the constraints that the policy's classification and order put on document models.
 
 **Existence facts**, validated on records (4.4) and never assumed: every harm of a decision has a class, and every
-cell is addressed or completed. Alt's E1 to E3 are validated on the decision model (4.4 step 12).
+cell is addressed or completed. Alt's E1 to E3 are validated on the decision model (4.4 V11).
 
 **Conservativity** (plan 4.1, 8.1). Fixed classifications force one kind of new fact in the old vocabulary: two harm
 constants with different classes cannot be equal. `compatFacts R` lists `¬(c = c′)` for every such pair. Then:
@@ -742,7 +814,8 @@ applied through `risk_scenario_sound`, 7.2). The verdicts and texts are alt's: a
 
 ### 4.8 The decision report
 
-On a valid record, the route evaluates the regenerated conflict formulas on the decision model first (alt 4.7). If
+On an admitted, valid record that is within the margin-candidate limit (4.9), the route evaluates the regenerated
+conflict formulas on the decision model first (alt 4.7). If
 one holds at a typed tuple, the answer is that CONFLICT witness and no per-alternative evaluation is rendered.
 Otherwise, for each alternative `a` the report gives:
 
@@ -770,9 +843,10 @@ P1 `unspecified` default lands, an alternative decided by it will be UNDECIDED a
 the quantities of the deciding condition, under `point_estimates`. Settings are not named: they are exact by choice.
 
 **Margins** (plan 7.4). They are computed only on a valid, conflict-free record, for each endpoint of each cited
-estimate (settings excluded; point estimates included). Let `outcomeAt R d e x` be the outcome of the record with
-endpoint `e` set to the grid coordinate `x` and everything else fixed. The perturbed record goes through full
-admission (4.4), then the conflict check (4.8), and the outcome is one of three kinds:
+estimate (settings excluded; point estimates included). Let `outcomeAt R d e x` be the outcome of the admitted record
+with endpoint `e` set to the grid coordinate `x` and everything else fixed. The perturbed record is a hypothetical
+input: it goes through validation in full (4.4 V1 to V11) and then the conflict check (4.8), but not through admission
+(it is never re-authenticated) and not through the margin-candidate limit (below). The outcome is one of three kinds:
 
 - `invalid` with the diagnostic text, the witness case dropped;
 - `conflict`;
@@ -781,16 +855,23 @@ admission (4.4), then the conflict check (4.8), and the outcome is one of three 
 **Candidates.** `candidates R d e` is the finite set of these values:
 
 - the current value;
-- `w − 1`, `w` and `w + 1` for every endpoint `w` of every live estimate of `e`'s quantity, the other endpoint of
+- `w − 1`, `w` and `w + 1` for every endpoint `w` of every cited estimate of `e`'s quantity, the other endpoint of
   `e`'s own estimate included. These cover `lo ≤ hi`, loss or gain of point status and combination kinks;
 - for every atom `c·q + rest ⋈ 0` (normal form, any condition of the record) in which `e`'s quantity `q` occurs:
   exactly one of the atom's extrema depends on `e`, namely `c·x + K` with `K` the matching extremum of `rest` on the
   current box. With `t = −K / c`, the candidates are `⌊t⌋ − 1`, `⌊t⌋`, `⌈t⌉` and `⌈t⌉ + 1`. A strict comparison
   changes one grid step from its threshold, and these four values cover every change of `<`, `≤`, `=` and `≠`.
 
+**The candidate limit.** An endpoint may have at most 256 candidates (9). The limit is checked once, by `marginLimit
+R d`, on the admitted and valid record before its report is computed (`ResourceLimit: risk margin candidates`). It is
+not part of `outcomeAt`. The candidate count of a perturbed record depends on the moved value through the `K` of
+other endpoints' atoms, so it can cross the limit between two values neither of which is a candidate. Inside
+`outcomeAt`, the limit would break `status_piecewise_constant` (fixture k36).
+
 **Theorem `status_piecewise_constant`.** If `x` or `x + 1` is not a candidate, then `outcomeAt R d e x = outcomeAt R d
-e (x + 1)`. Every check of 4.4 and every regenerated cell changes only between two consecutive candidates. The
-outcome is therefore constant beyond the extreme candidates, and evaluating every candidate decides every value.
+e (x + 1)`. Every check of validation (4.4 V1 to V11) and every regenerated cell changes only between two consecutive
+candidates. The outcome is therefore constant beyond the extreme candidates, and evaluating every candidate decides
+every value.
 
 **The certified check (the plan's Q-margin-proof, decided here; 11.11).** Lean evaluates `outcomeAt` at every
 candidate. For each alternative, endpoint and direction (down, up), the report gives:
@@ -799,9 +880,13 @@ candidate. For each alternative, endpoint and direction (down, up), the report g
   record is valid and conflict-free and the alternative's status differs. By `scan_sound`, every value strictly
   between is invalid, a conflict, or leaves the status unchanged;
 - or **"no single valid change"** in that direction, certified the same way;
-- **record level**, per endpoint and direction: "record invalid at `<value>` (`<diagnostic>`)" and "conflict at
-  `<value>`", the nearest such candidate. An invalid or conflicting record is never reported as a status change
-  (fixture k27).
+- **record level**, per endpoint and direction, one scan per kind: "record invalid at `<value>` (`<diagnostic>`)",
+  the nearest candidate at which the record is invalid (`scanInvalid`), and "conflict at `<value>`", the nearest
+  candidate at which it is a conflict (`scanConflict`). Each scan certifies its own kind only. `scanInvalid_sound`
+  states that no value strictly between is invalid, and `scanConflict_sound` that none is a conflict; a value of the
+  other kind may lie between (fixture k38). When a scan finds nothing, no value beyond the current one in that
+  direction has its kind. "No conflict at any candidate" is rendered only when `scanConflict` finds nothing for every
+  endpoint and direction. An invalid or conflicting record is never reported as a status change (fixture k27).
 
 Margins are on statuses, not on single guard facts: a guard fact can flip without a status change when another rule
 still decides the alternative. Robustness to several estimates moving at once is not claimed. Rendered values use
@@ -814,18 +899,19 @@ number (**OPEN** Q-clock). The audit takes a policy, a log, a decision reference
 alternative. The `taken` entry selects the queried alternative, but it is not an input to Q1 or Q2.
 
 **Snapshot admission.** `snapshotOf R log hd` reads only `logPrefix log hd.seq`, the entries with sequence number at
-most the decision's. It checks the hash chain over the prefix, finds the decision entry, and decodes the record. It
-then checks every cited entry against the prefix: an absent entry is `MissingEntry: <id>`, a hash mismatch is
-`AlteredEntry: <id>`, and a cited sequence number at or above the decision's is `HindsightEntry: <id>`. The last
-check is made from the decision entry alone, because it records `(id, seq, hash)` for each citation. Any failure is
-NOT REPLAYABLE with that diagnostic. The snapshot has no outcome and no `taken` field. The `taken` entry is exempt
+most the decision's. It checks the hash chain over the prefix and finds the decision entry `(hd.id, hd.seq)`. It then
+runs the admission of 4.4 (A1 to A3) with the prefix as the entries. So each citation, in cite order, is checked for
+`HindsightEntry`, then `MissingEntry`, then `AlteredEntry`, then `WithdrawnEntry`. `HindsightEntry` is decided from
+the decision entry alone, because it records `(id, seq, hash)` for each citation. Withdrawal is judged on the
+authenticated prefix, and a supersession after the decision is outside it. Any failure is NOT REPLAYABLE with that
+diagnostic. The snapshot has no outcome and no `taken` field. The `taken` entry is exempt
 from the precedence rule: the decision does not cite it, and it names the decision and comes after it (plan 6.2).
 
 | Question | Method | Verdicts |
 |---|---|---|
 | **Q1.** Was the queried alternative permitted given what the agent used? | the decision report (4.8) replayed from the snapshot | `NO CLEAR ACTION AT DECISION TIME` (the recorded dilemma, or a conflict at the decision; the queried alternative's status is appended) · else `FORBIDDEN AT DECISION TIME` (a breach, with the rules) · else `PERMITTED AT DECISION TIME` (clear, or permitted but not clear with the reason) · `NOT REPLAYABLE: <diagnostic>` |
 | **Q2.** Did the agent use what was recorded? | the same replay with every estimate of the record's quantities that the prefix holds and that is live at decision time, combined by the policy's `combination` (1.4) | `SAME VERDICT WITH ALL RECORDED ESTIMATES` · `DIFFERENT VERDICT WITH ALL RECORDED ESTIMATES: <estimate ids not used>` · `NOT COMPARABLE: <diagnostic>` when that record is invalid (for example `ConflictingEstimates` without a combination rule). Under `use_all_recorded`, each unused estimate adds its own line, `PROCEDURE BREACH: estimate <id> not used (the agent's fault)`, and the Q1 verdict is unchanged |
-| **Q3.** Did the declared model survive the outcome? | the `outcome` entries naming the decision, against the decision-time cells of the taken alternative | per observed harm: `within the declared model` (it was `might`) · `surprise: ruled out by <source>`, naming each measured quantity outside its estimate as `Estimate <id> (<estimator>) is contradicted`, and the ruling-out condition as contradicted or not when every quantity in it was measured · `unexamined: ruled out by <decider>` |
+| **Q3.** Did the declared model survive the outcome? | the `outcome` entries naming the decision, against the decision-time cells of the taken alternative | per observed harm: `within the declared model` (it was `might`) · `surprise: ruled out by <source>`, naming each measured quantity outside its estimate as `Estimate <id> (<estimator>) is contradicted`, and the ruling-out condition as contradicted or not when every quantity in it was measured or set · `unexamined: ruled out by <decider>` |
 | **Q4.** How often are an estimator's ranges wrong? | counts of surprises per estimator across audits | the evidence layer's ledger (EL 2.x); outside certification |
 
 Q1 is the substantive verdict, reproducible from the snapshot. It never reads an outcome: a bad outcome after a
@@ -858,7 +944,7 @@ is the query changing, not hindsight (fixture k32).
 | Is the policy well-formed? | `WellFormedRisk` (4.1) | diagnostics (6); `unranked_severities` warnings |
 | Can the rules contradict each other? | W1's conflict check on `inlineTree (toAlt R)` over `Background_baseAlt ++ riskPremises` | CONFLICT-FREE / CONFLICT (witness) / UNKNOWN (alt 4.5) |
 | Can the mapped obligations and action constraints be met at every choice? | alt's followability over the same premises, only on CONFLICT-FREE | FOLLOWABLE (`conditional_on`) / DILEMMA / UNKNOWN / `not computed` |
-| Is this record valid, and what does the policy say about this decision? | `validateDecision`, regeneration, then 4.8 | a diagnostic; or a CONFLICT witness; or per alternative: status, rules, worst case, witnesses, margins; then clear actions and the lines of 5.2 |
+| Is this record valid, and what does the policy say about this decision? | `admitDecision`, `validateDecision`, `marginLimit`, regeneration, then 4.8 | a diagnostic; or a CONFLICT witness; or per alternative: status, rules, worst case, witnesses, margins; then clear actions and the lines of 5.2 |
 | Was a past decision permitted, and did the agent use what was recorded? | the audit (4.10) | Q1, Q2, procedure lines, Q3 |
 
 ### 5.2 Status text and report lines
@@ -872,7 +958,7 @@ Decision <id> — conditional on <estimate ids>, <setting ids>, <condition ids>,
   <harm> is ruled out by <source>: <endpoints>. | <harm> happens in every case: <source and endpoints>.
   Nearest change: <endpoint> <value> (now <value>)[; …]. No single valid change at <endpoints>.
 Clear actions: <list>. [The policy does not choose among them.] | No clear action: <alt diagnosis>.
-Record invalid at: <endpoint> <value> (<diagnostic>)[; …]. [Conflict at: <endpoint> <value>.] | No conflict at any candidate.
+Record invalid at: <endpoint> <value> (<diagnostic>)[; …]. [Conflict at: <endpoint> <value>[; …].] | No conflict at any candidate.
 <report lines>
 Decision <id>: CONFLICT at <tuple>: <W1 classification>; no per-alternative evaluation.
 ```
@@ -895,7 +981,7 @@ Audit text:
 Q1  PERMITTED AT DECISION TIME: <alternative> was <clear | permitted but not clear: reason> given <cited ids>.
   | FORBIDDEN AT DECISION TIME: <alternative> was forbidden by rule <n> given <cited ids>.
   | NO CLEAR ACTION AT DECISION TIME: <diagnosis>; <alternative> was <status>.
-  | NOT REPLAYABLE: <MissingEntry | AlteredEntry | HindsightEntry>: <id>.
+  | NOT REPLAYABLE: <HindsightEntry | MissingEntry | AlteredEntry | WithdrawnEntry>: <id>.
 Q2  SAME VERDICT WITH ALL RECORDED ESTIMATES. | DIFFERENT VERDICT WITH ALL RECORDED ESTIMATES: <ids> …: <what changes>.
   | NOT COMPARABLE: <diagnostic>.
 PROCEDURE BREACH: estimate <id> not used (the agent's fault)                          (use_all_recorded only)
@@ -919,40 +1005,44 @@ Not concluded: that the decision was wrong because a harm followed.             
 | `unranked_severities: <c>, <c′>` | an undeclared incomparable pair | warning |
 | `HarmUnclassified: <harm>` / `HarmTwoClasses: <harm>` | 4.1(4) | error |
 | `FulfilmentSort: <o>` | `excludes` on an obligation not on `(chooser, harm)` (alt's text) | error |
-| `ResourceLimit: risk inlining of rule <n>` / `ResourceLimit: risk <limit>` | 4.1(7); a per-decision limit of 9 | error |
-| `InvalidInput: risk-decision.<field>` / `InvalidInput: risk-log.<field>` | a malformed record or log | error |
+| `ResourceLimit: risk inlining of rule <n>` / `ResourceLimit: risk <limit>` | 4.1(7); a per-decision limit of 9, at 4.4 A1, except `ResourceLimit: risk margin candidates`, checked once on the valid record (4.9) | error |
+| `InvalidInput: risk-decision.<field>` / `InvalidInput: risk-log.<field>` | a malformed decision entry, supplied entry, record or log | error |
 | `RiskBinding: policy` | the record's `(environment_id, document_hash)` is not the loaded policy's | error |
-| `MissingEntry: <id>` / `AlteredEntry: <id>` / `HindsightEntry: <id>` | 4.4(2), 4.10; NOT REPLAYABLE in an audit | error |
-| `UnknownHarm: <name>` / `UnknownSymbol: <alternative | quantity | kind | unit> <name>` | 4.4(3) | error |
-| `RiskFact: <predicate>` | a supplied fact about a role, generated, regulated or undeclared predicate | error |
-| `RequiredAlternativeMissing: <kind> (with <kind>)` | 4.4(4) | error |
+| `HindsightEntry: <id>` / `MissingEntry: <id>` / `AlteredEntry: <id>` / `WithdrawnEntry: <id>` | 4.4 A1 (the decision entry's hash) and A2, per citation in this order; 4.10; NOT REPLAYABLE in an audit | error |
+| `UnknownHarm: <name>` / `UnknownSymbol: <alternative | quantity | kind | unit> <name>` | 4.4 V1 | error |
+| `RiskConstant: <name>` | a record-local name equals a constant of `E` (4.4 V1); an action constant of `E` that no alternative interprets (4.4 V10) | error |
+| `RiskFact: <predicate>` | a supplied fact about a role, generated, regulated or undeclared predicate (4.4 V1), or with an argument outside its sort's domain (4.4 V10) | error |
+| `RequiredAlternativeMissing: <kind> (with <kind>)` | 4.4 V2 | error |
 | `UnitMismatch(<t>,<t′>)` / `UnitPrecision(<tag>, scale=<n>)` | W6's texts | error |
 | `RiskRange: <id>` | `lo > hi` | error |
-| `EstimateProvenance: <id> <estimator | support | recorded>` | 4.4(5) | error |
-| `EstimatorNotAllowed: <id> <estimator>` | 4.4(5) | error |
-| `ConflictingEstimates: <quantity>` / `RiskInconsistent: <quantity> estimates do not intersect` | 4.4(6) | error |
-| `RiskUnestimated: <quantity>` / `RiskSettingScope: <setting> <alternative>` | 4.4(6), 4.4(7) | error |
+| `EstimateProvenance: <id> <estimator | support | recorded>` | 4.4 V3; `recorded` at 4.4 A1, before any citation is matched | error |
+| `EstimatorNotAllowed: <id> <estimator>` | 4.4 V3 | error |
+| `RiskSettingTwice: <quantity>` | 4.4 V4: a second setting of one quantity, or a setting and an estimate; with the rewrite "declare one quantity per alternative" | error |
+| `ConflictingEstimates: <quantity>` / `RiskInconsistent: <quantity> estimates do not intersect` | 4.4 V5 | error |
+| `RiskUnestimated: <quantity>` / `RiskSettingScope: <setting> <alternative>` | 4.4 V5, 4.4 V4 | error |
 | `RiskTwoSources: <a>/<h> <sufficient | necessary>` | with the joining rewrite | error |
 | `RiskStatementForm: <form>` | a record statement other than `leads`, `cannot`, `might` | error |
 | `RiskConditionShared: <quantity>` | with the two rewrites, the second labelled a change of model | error |
 | `RiskEqualityCoefficient: <condition> <quantity>` | 4.2 | error |
-| `SufficientOutsideNecessary: <a>/<h>` / `RiskInconsistent: <a>/<h>` | 4.4(10), 4.4(11), with the witness case | error |
-| alt's `InvalidModel("alternatives", …)` texts | 4.4(12) | model |
+| `SufficientOutsideNecessary: <a>/<h>` / `RiskInconsistent: <a>/<h>` | 4.4 V8, 4.4 V9, with the witness case | error |
+| alt's `InvalidModel("alternatives", …)` texts | 4.4 V11 | model |
 | the rejected wordings of 2.3, with their rewrites | English layer only | error |
 
 Order: environment declarations (W1's, then alt's block, then the risk block), W1's rule checks on the inlined tree,
-fulfilments, `Γ_base`, then records in 4.4's order. English diagnostics carry the span and the plain-language
+fulfilments, `Γ_base`, then records: admission (4.4 A1 to A3), validation (V1 to V11), then the margin-candidate
+limit (4.9). English diagnostics carry the span and the plain-language
 expectation as today. Existing P0, W1 and `alternatives@0` diagnostics are unchanged. Record and model diagnostics come
 from the Lean route; Python only dispatches.
 
 ## 7. Lean (item 2): definitions and the exact statements to prove
 
 Files: `lean/VE/Risk/Decl.lean` (`RiskEnv`, `RiskDoc`, `riskEnv`, `WellFormedRisk`, the closure), `Cond.lean`
-(`LinForm`, `Cond`, `nnf`, `Box`, `Separable`, `UnitCoefficients`), `Derive.lean` (`possibleE`, `certainE`,
-`witnessE` and their theorems), `Record.lean` (`Decision`, `box`, `Suff`, `Nec`, `validateDecision`, `regenerate`,
-`decisionModel`), `Severity.lean`, `Words.lean` (bodies, `riskInline`, `lessWorst_strict`, `precaution_has_maximal`),
-`Background.lean` (`riskPremises`, `BaseAdmissibleRisk`, expansion, conservativity, conflict and followability),
-`Report.lean` (statuses, `outcomeAt`, `candidates`, `scan`), `Audit.lean`, `Wire.lean`, `Run.lean` (the
+(`LinForm`, `LinForm.normalize`, `NormLinForm`, `Cond`, `nnf`, `Box`, `Separable`, `UnitCoefficients`), `Derive.lean`
+(`possibleE`, `certainE`, `witnessE` and their theorems), `Record.lean` (`Decision`, `Entry`, `admitDecision`, `box`,
+`Suff`, `Nec`, `validateDecision`, `regenerate`, `decisionData`, `decisionModel`), `Severity.lean`, `Words.lean`
+(bodies, `riskInline`, `lessWorst_strict`, `precaution_has_maximal`), `Background.lean` (`riskPremises`,
+`BaseAdmissibleRisk`, expansion, conservativity, conflict and followability), `Report.lean` (statuses, `outcomeAt`,
+`candidates`, `marginLimit`, `scan`, `scanInvalid`, `scanConflict`), `Audit.lean`, `Wire.lean`, `Run.lean` (the
 `ve_risk_route` executable, root `RiskMain.lean`), and `lean/RISK.md` listing each theorem in plain words. The frozen
 `Norms/*`, `Alternatives/*`, `Route/*`, `Time/*` and P0 sources are untouched. `VE.lean`, `VE/Audit.lean` and
 `lakefile.toml` gain imports, audit entries and the new target only, and the audit allowlist is unchanged. Names have
@@ -1050,9 +1140,14 @@ def ReductVia (R : RiskDoc) (B₀ B : VE.Structure) (e : B₀.Carrier → B.Carr
 /-- 4.2 and 4.3: conditions and endpoint evaluation. -/
 inductive Rel | lt | le | eq | ne
 structure LinForm where
-  coeffs : List (String × Int)                        -- collected, names distinct, no zero coefficient
+  coeffs : List (String × Int)
   const  : Int
-inductive Cond | top | bottom | atom (f : LinForm) (r : Rel) | and (a b : Cond) | or (a b : Cond) | not (a : Cond)
+def LinForm.Normal (f : LinForm) : Prop :=              -- 4.2: names distinct, no zero coefficient
+  (f.coeffs.map (·.1)).Nodup ∧ ∀ p ∈ f.coeffs, p.2 ≠ 0
+def LinForm.normalize (f : LinForm) : LinForm          -- collects coefficients per name in first-occurrence order, drops zeros
+abbrev NormLinForm := {f : LinForm // f.Normal}         -- the decoder builds every atom as ⟨f.normalize, normalize_normal f⟩
+def NormLinForm.neg (f : NormLinForm) : NormLinForm     -- every coefficient and the constant negated (nnf); stays normal
+inductive Cond | top | bottom | atom (f : NormLinForm) (r : Rel) | and (a b : Cond) | or (a b : Cond) | not (a : Cond)
 structure BoxEntry where
   name : String
   tag  : String
@@ -1064,7 +1159,7 @@ abbrev Valuation := String → Int
 def Box.WF (b : Box) : Prop := (b.entries.map (·.name)).Nodup ∧ ∀ q ∈ b.entries, q.lo ≤ q.hi
 def InBox (b : Box) (v : Valuation) : Prop := ∀ q ∈ b.entries, q.lo ≤ v q.name ∧ v q.name ≤ q.hi
 def LinForm.eval (f : LinForm) (v : Valuation) : Int := (f.coeffs.map (fun (q, c) => c * v q)).sum + f.const
-def Cond.holds : Cond → Valuation → Prop               -- atoms by Rel on LinForm.eval against 0; connectives as usual
+def Cond.holds : Cond → Valuation → Prop               -- atoms by Rel on f.val.eval against 0; connectives as usual
 def nnf : Cond → Cond                                  -- 4.2
 def Scoped (b : Box) (c : Cond) : Bool
 def Separable (b : Box) (c : Cond) : Bool             -- in nnf c, no entry with lo < hi occurs in two atoms
@@ -1128,17 +1223,35 @@ structure Fact where
   entry : String
 structure Decision where
   id : String
-  seq : Nat
+  seq : Nat                                -- the decision entry's (4.4 A1)
+  day : Int                                -- the decision entry's
   chooser : String
   policy : String × String                 -- (environment_id, document_hash)
   alternatives : List Alternative
   quantities : List Quantity
-  estimates : List Estimate                -- the cited live estimates, lowered
+  estimates : List Estimate                -- the cited estimates, lowered; none withdrawn (4.4 A2)
   settings : List Setting
   conditions : List Condition
   statements : List Statement
   facts : List Fact
   cited : List Cited
+
+/-- 3.3 and 4.4: log entries and admission. -/
+inductive EntryKind | estimate | setting | condition | statement | supersession | instruction | decision | taken | outcome
+structure Entry where
+  seq : Nat
+  day : Int
+  id : String
+  kind : EntryKind
+  content : Lean.Json
+  prev : String
+  hash : String
+abbrev Log := List Entry
+def entryHash (x : Entry) : String                    -- 3.3: SHA-256 of the canonical JSON of {seq, day, id, kind, content, prev}
+def withdrawnBefore (es : Log) (k : Nat) (id : String) : Bool
+  -- some entry of es with seq < k is a supersession naming id, or an estimate whose supersedes is id
+def admitDecision (R : RiskDoc) (dx : Entry) (es : Log) : Except String Decision
+  -- 4.4 A1 to A3, the texts of 6: dx is the decision entry; es the supplied entries, or the log prefix (4.10)
 
 def box (R : RiskDoc) (d : Decision) : Box             -- 1.4: combination, then settings as points
 def harms (R : RiskDoc) : List String                  -- the harm constants in declaration order
@@ -1153,8 +1266,12 @@ structure Tables where
   leads   : List (String × String)
   witness : List ((String × String) × Valuation)       -- the canonical witness of every might cell
 def regenerate (R : RiskDoc) (d : Decision) : Tables
-def validateDecision (R : RiskDoc) (d : Decision) : Except String Unit    -- 4.4, the texts of 6
-def decisionModel (R : RiskDoc) (d : Decision) : VE.FiniteModel VE.Bridge.Entity
+def validateDecision (R : RiskDoc) (d : Decision) : Except String Unit    -- 4.4 V1 to V11 on an admitted record, the texts of 6
+def decisionData (R : RiskDoc) (d : Decision) : VE.Bridge.ModelData      -- 4.4: domains, constants and tables
+def modelVocabulary (R : RiskDoc) : VE.Bridge.Vocabulary                 -- its environment is envAt (inlineTree (toAlt R)) 0
+def modelAdmissible (R : RiskDoc) (d : Decision) : Bool :=               -- 4.4 V10
+  (decisionData R d).valid (modelVocabulary R)
+def decisionModel (R : RiskDoc) (d : Decision) : VE.FiniteModel VE.Bridge.Entity := (decisionData R d).toModel
 def decisionRows (R : RiskDoc) (d : Decision) : List Row
 def entity (x : String) : VE.Bridge.Entity             -- the entity named x in decisionModel
 def modelTables (R : RiskDoc) (M : VE.FiniteModel VE.Bridge.Entity) : Tables   -- the named rows of risk__might_lead_to and leads_to
@@ -1176,25 +1293,22 @@ def endpoints (d : Decision) : List Endpoint
 def current (d : Decision) (e : Endpoint) : Int
 def perturb (d : Decision) (e : Endpoint) (x : Int) : Decision
 def outcomeAt (R : RiskDoc) (d : Decision) (e : Endpoint) (x : Int) : Outcome
-  -- validateDecision (diagnostic without its case), then scenarioConflict on decisionModel, then statuses
+  -- on perturb d e x: validateDecision (diagnostic without its case), then scenarioConflict on decisionModel, then
+  -- statuses; no admission and no candidate limit (4.9)
 def candidates (R : RiskDoc) (d : Decision) (e : Endpoint) : List Int     -- 4.9
+def marginLimit (R : RiskDoc) (d : Decision) : Except String Unit
+  -- 4.9 and 9: every endpoint has at most 256 candidates, else `ResourceLimit: risk margin candidates`
 def Beyond (dir : Dir) (x₀ y : Int) : Prop := match dir with | .down => y < x₀ | .up => x₀ < y
 def StatusKept (o : Outcome) (a : String) (s : Status) : Prop :=
   o = .conflict ∨ (∃ t, o = .invalid t) ∨ ∃ ss, o = .statuses ss ∧ ss.lookup a = some s
 def scan (R : RiskDoc) (d : Decision) (e : Endpoint) (dir : Dir) (a : String) : Option Int
   -- the nearest candidate beyond (current d e) in dir at which outcomeAt is `statuses` with a's status changed
+def scanInvalid (R : RiskDoc) (d : Decision) (e : Endpoint) (dir : Dir) : Option (Int × String)
+  -- the nearest candidate beyond (current d e) in dir at which outcomeAt is `invalid`, with its diagnostic
+def scanConflict (R : RiskDoc) (d : Decision) (e : Endpoint) (dir : Dir) : Option Int
+  -- the nearest candidate beyond (current d e) in dir at which outcomeAt is `conflict`
 
 /-- 4.10: the log and the audit. -/
-inductive EntryKind | estimate | setting | condition | statement | supersession | instruction | decision | taken | outcome
-structure Entry where
-  seq : Nat
-  day : Int
-  id : String
-  kind : EntryKind
-  content : Lean.Json
-  prev : String
-  hash : String
-abbrev Log := List Entry
 def logPrefix (log : Log) (k : Nat) : Log := log.filter (fun x => x.seq ≤ k)
 structure DecisionRef where
   id : String
@@ -1202,7 +1316,8 @@ structure DecisionRef where
 structure Snapshot where                     -- no outcome and no taken field
   decision : Decision
   entries : Log
-def snapshotOf (R : RiskDoc) (log : Log) (hd : DecisionRef) : Except String Snapshot   -- reads logPrefix log hd.seq only
+def snapshotOf (R : RiskDoc) (log : Log) (hd : DecisionRef) : Except String Snapshot
+  -- reads logPrefix log hd.seq only: the hash chain, the decision entry, then admitDecision with the prefix as es
 inductive Q1 | permitted (clear : Bool) | forbidden (rules : List Nat) | noClearAction | notReplayable (diagnostic : String)
 inductive Q2 | same | different (unused : List String) | notComparable (diagnostic : String)
 structure AuditQ12 where
@@ -1215,7 +1330,9 @@ def auditQ3 (R : RiskDoc) (log : Log) (hd : DecisionRef) (a : String) : List Str
 
 `Suff`, `Nec` and `box` are defined for every record; the theorems below assume `validateDecision R d = .ok ()`.
 `Tables.might` and `Tables.leads` are over `names d × harms R`. `entity` names the model's elements, which are
-distinct per name, so `compatFacts R` holds on every decision model.
+distinct per name, so `compatFacts R` holds on every decision model. Every atom of a `Cond` holds a normal form by
+its type, so the endpoint theorems need no normality hypothesis. `LinForm.normalize` is the only way the decoder
+builds one.
 
 ### 7.2 Theorems
 
@@ -1229,7 +1346,12 @@ theorem severity_strict (R : RiskDoc) (h : WellFormedRisk R = true) :
   (∀ c, (c, c) ∉ closure R) ∧
   (∀ a b c, (a, b) ∈ closure R → (b, c) ∈ closure R → (a, c) ∈ closure R)
 
-/-- 4.3: endpoint evaluation is exact on scoped, separable, unit-coefficient conditions. -/
+/-- 4.2: the normaliser gives a normal form with the same value under every valuation. -/
+theorem normalize_normal (f : LinForm) : f.normalize.Normal
+theorem normalize_eval (f : LinForm) (v : Valuation) : f.normalize.eval v = f.eval v
+
+/-- 4.3: endpoint evaluation is exact on scoped, separable, unit-coefficient conditions. Every atom holds a
+    NormLinForm, so the uncollected q − q − 1 of fixture k34 cannot occur. -/
 theorem possibleE_iff (b : Box) (c : Cond) (hb : b.WF) (hq : Scoped b c = true)
     (hs : Separable b c = true) (hu : UnitCoefficients b c = true) :
   possibleE b c = true ↔ ∃ v, InBox b v ∧ c.holds v
@@ -1304,9 +1426,21 @@ theorem risk_dilemma_witness_sound {α} [DecidableEq α] (R : RiskDoc) (h : Well
     (hd : (notFollowableF (toAlt R)).eval M (tupleVal [r]) = true) :
   ¬ (∀ B, BaseAdmissibleRisk R B → Sat B R.Γ → (allFollowable (toAlt R)).denote B [])
 
+/-- 4.4: admission. The admitted record takes the decision entry's sequence number, and every citation precedes it,
+    matches an entry of es by id, sequence number and recomputed hash, and names no estimate withdrawn before the
+    decision among the entries of es. -/
+theorem admitDecision_sound (R : RiskDoc) (dx : Entry) (es : Log) (d : Decision)
+    (h : admitDecision R dx es = .ok d) :
+  d.seq = dx.seq ∧ entryHash dx = dx.hash ∧
+  ∀ c ∈ d.cited, c.seq < dx.seq ∧
+    (∃ x ∈ es, x.id = c.id ∧ x.seq = c.seq ∧ x.hash = c.hash ∧ entryHash x = x.hash) ∧
+    withdrawnBefore es dx.seq c.id = false
+
 /-- 4.4 and 4.8: a valid record's regenerated model is a valid alternatives scenario whose base structure satisfies
     the risk premises, and its tables are the regenerated ones. So every document-level certificate over
-    BaseAdmissibleRisk applies to every valid decision, and alt's scenario theorems apply to its report. -/
+    BaseAdmissibleRisk applies to every valid decision, and alt's scenario theorems apply to its report. The first
+    conjunct comes from the checked step 4.4 V10 (`modelAdmissible`), which frozen `validateAlternatives` leaves to
+    its caller. -/
 theorem risk_scenario_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision)
     (hv : validateDecision R d = .ok ()) :
   (decisionModel R d).Valid (envAt (inlineTree (toAlt R)) 0) ∧
@@ -1332,28 +1466,51 @@ theorem scan_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision) (e
       ∀ y, Beyond dir (current d e) y → Beyond dir y x → StatusKept (outcomeAt R d e y) a s) ∧
   (scan R d e dir a = none → ∀ y, Beyond dir (current d e) y → StatusKept (outcomeAt R d e y) a s)
 
+/-- 4.9: the record-level lines, one scan per kind. Each certifies only its own kind: a value of the other kind may
+    lie strictly between (fixture k38). -/
+theorem scanInvalid_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision) (e : Endpoint)
+    (he : e ∈ endpoints d) (dir : Dir) :
+  (∀ x t, scanInvalid R d e dir = some (x, t) →
+      Beyond dir (current d e) x ∧ outcomeAt R d e x = .invalid t ∧
+      ∀ y, Beyond dir (current d e) y → Beyond dir y x → ∀ t', outcomeAt R d e y ≠ .invalid t') ∧
+  (scanInvalid R d e dir = none → ∀ y, Beyond dir (current d e) y → ∀ t', outcomeAt R d e y ≠ .invalid t')
+theorem scanConflict_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision) (e : Endpoint)
+    (he : e ∈ endpoints d) (dir : Dir) :
+  (∀ x, scanConflict R d e dir = some x →
+      Beyond dir (current d e) x ∧ outcomeAt R d e x = .conflict ∧
+      ∀ y, Beyond dir (current d e) y → Beyond dir y x → outcomeAt R d e y ≠ .conflict) ∧
+  (scanConflict R d e dir = none → ∀ y, Beyond dir (current d e) y → outcomeAt R d e y ≠ .conflict)
+
 /-- 4.10: the audit reads only the prefix up to the decision; Q1 and Q2 never read outcomes. -/
 theorem snapshot_prefix (R : RiskDoc) (log : Log) (hd : DecisionRef) :
   snapshotOf R log hd = snapshotOf R (logPrefix log hd.seq) hd
 theorem verdict_ignores_outcomes (R : RiskDoc) (log₁ log₂ : Log) (hd : DecisionRef) (a : String)
     (hsame : logPrefix log₁ hd.seq = logPrefix log₂ hd.seq) :
   auditQ12 R log₁ hd a = auditQ12 R log₂ hd a
-/-- 4.10: an admitted snapshot's decision is the record the decision entry carries, and every citation precedes it. -/
+/-- 4.10: an admitted snapshot's decision is the record the decision entry carries, and every citation precedes it
+    and matches a prefix entry by id, sequence number and hash. -/
 theorem snapshot_no_hindsight (R : RiskDoc) (log : Log) (hd : DecisionRef) (sn : Snapshot)
     (hs : snapshotOf R log hd = .ok sn) :
-  sn.decision.seq = hd.seq ∧ ∀ c ∈ sn.decision.cited, c.seq < hd.seq ∧ ∃ x ∈ sn.entries, x.id = c.id ∧ x.hash = c.hash
+  sn.decision.seq = hd.seq ∧
+  ∀ c ∈ sn.decision.cited, c.seq < hd.seq ∧ ∃ x ∈ sn.entries, x.id = c.id ∧ x.seq = c.seq ∧ x.hash = c.hash
 
 /-- The wire (norms.md 11.4 shape; `decodeRiskSource` decodes the environment with both blocks, the norm objects and
-    the active base units; `res.src.R` is the decoded RiskDoc). -/
+    the active base units; `res.src.R` is the decoded RiskDoc). `decodeSupplied` reports a supplied estimate entry
+    without seq or day as `EstimateProvenance: <id> recorded` (4.4 A1). -/
 theorem risk_wire_scenario_sound (j : Lean.Json) (res : DecisionReplay) (h : replayDecision j = .ok res) :
   Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = .ok res.src ∧
   WellFormedRisk res.src.R = true ∧
-  Wire.decodeDecision res.src.R (j.getObjValD "record") (j.getObjValD "entries") = .ok res.d ∧
+  Wire.decodeEntry (j.getObjValD "decision") = .ok res.entry ∧
+  Wire.decodeSupplied (j.getObjValD "entries") = .ok res.supplied ∧
+  admitDecision res.src.R res.entry res.supplied = .ok res.d ∧
   validateDecision res.src.R res.d = .ok () ∧
+  marginLimit res.src.R res.d = .ok () ∧
   res.tables = regenerate res.src.R res.d ∧
   res.conflict = scenarioConflict (toAlt res.src.R) (decisionModel res.src.R res.d) ∧
   (res.conflict = none → res.statuses = statuses res.src.R res.d) ∧
-  (∀ e ∈ endpoints res.d, ∀ dir a, res.margin e dir a = scan res.src.R res.d e dir a)
+  (∀ e ∈ endpoints res.d, ∀ dir a, res.margin e dir a = scan res.src.R res.d e dir a) ∧
+  (∀ e ∈ endpoints res.d, ∀ dir, res.recordInvalid e dir = scanInvalid res.src.R res.d e dir ∧
+    res.recordConflict e dir = scanConflict res.src.R res.d e dir)
 theorem risk_wire_audit_sound (j : Lean.Json) (res : AuditReplay) (h : replayAudit j = .ok res) :
   Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = .ok res.src ∧
   Wire.decodeLog (j.getObjValD "log") = .ok res.log ∧
@@ -1380,10 +1537,13 @@ alt's premises plus `riskPremises` and the two regenerated definitions.
 
 Proof plan:
 
-- `possibleE_iff` and `certainE_iff`: by induction on `nnf c`. The atom cases use the extremal endpoints and, for
-  `=` and `≠`, contiguity of the form's values under unit coefficients (a sum of ±1-scaled integer intervals is an
-  integer interval). The `∧` case of `possibleE` and the `∨` case of `certainE` combine valuations on disjoint
-  non-point quantities (separability).
+- `normalize_normal` and `normalize_eval`: by induction on the coefficient list (collecting a name adds its
+  coefficients; dropping a zero coefficient drops a zero term).
+- `possibleE_iff` and `certainE_iff`: by induction on `nnf c`. The atom cases use the extremal endpoints, which bound
+  the form exactly because each quantity occurs once with a nonzero coefficient (the normal form), and, for `=` and
+  `≠`, contiguity of the form's values under unit coefficients (a sum of ±1-scaled integer intervals is an integer
+  interval). The `∧` case of `possibleE` and the `∨` case of `certainE` combine valuations on disjoint non-point
+  quantities (separability).
 - `witnessE_sound` follows the same induction. `regenerate_sound` completes a valuation to a case by
   `H := Suff(v)` elsewhere, using `S → N` from validation.
 - `lessWorst_strict` and `precaution_has_maximal`: from functionality, domain closure, distinctness and the order
@@ -1392,8 +1552,15 @@ Proof plan:
 - `risk_expansion`: the carrier `B₀.Carrier ⊕ Fin n`, the severity domain the right summands, `risk__might_lead_to :=
   leads_to` on the image, and the classification by `harm_classes` (well defined by `compatFacts`).
   `risk_conservative` then follows by the reduct lemma for formulas over `oldEnvRisk`.
-- `status_piecewise_constant`: every check of 4.4 and every regenerated cell is a Boolean combination of comparisons
-  `c·x + K ⋈ 0` and of `x ⋈ w` against estimate endpoints, whose truth changes only between two candidates.
+- `admitDecision_sound`: by the checks of 4.4 A1 and A2. `snapshot_no_hindsight` follows from it, because
+  `snapshotOf` runs admission with the prefix as its entries.
+- `risk_scenario_sound`: the first conjunct is `VE.Bridge.modelData_valid` applied to 4.4 V10; the others follow
+  from V11 and the construction of `decisionData`.
+- `status_piecewise_constant`: every check of validation (4.4 V1 to V11) and every regenerated cell is a Boolean
+  combination of comparisons `c·x + K ⋈ 0` and of `x ⋈ w` against estimate endpoints, whose truth changes only between
+  two candidates. Admission and the margin-candidate limit are not part of `outcomeAt`.
+- `scan_sound`, `scanInvalid_sound` and `scanConflict_sound`: each scan evaluates every candidate in its direction,
+  and `status_piecewise_constant` carries the result to the values between and beyond.
 - The route and wire theorems follow alt's chain (decoder soundness, exact regeneration, binding equality, leaf
   admission, checker soundness).
 
@@ -1411,7 +1578,7 @@ every checker call to the unchanged alt and W1 functions on the regenerated data
 | Kind | Extra input | Output |
 |---|---|---|
 | `risk-elaborate` | none | `E_risk`, the inlined document (canonical), `premises` (`alternatives:*`, `risk:*`, `background`, layers), `conflict_targets`, `followable`, `legend`, `unranked_severities` |
-| `risk-decision` | a decision record and its cited entries | a diagnostic; or the CONFLICT witness; or `tables` (with witnesses), `statuses`, `worst_cases`, `margins` (per alternative, endpoint and direction, and record-level), the report lines, `conditional_on`, `decision_record_id` |
+| `risk-decision` | `decision`: the decision entry, whose `content` is the record; `entries`: the supplied entries (3.3) | a diagnostic; or the CONFLICT witness; or `tables` (with witnesses), `statuses`, `worst_cases`, `margins` (per alternative, endpoint and direction), `record_invalid` and `record_conflict` (per endpoint and direction), the report lines, `conditional_on`, `decision_record_id` |
 | `risk-conflict` | `packages` per target over `Background_baseAlt ++ riskPremises`, or `witness` | CONFLICT-FREE / CONFLICT / UNKNOWN |
 | `risk-followable` | `certificate` or `witness` (model, rows, chooser), after a CONFLICT-FREE result for the same source | FOLLOWABLE / DILEMMA / UNKNOWN / `not computed` |
 | `risk-audit` | the log, a decision reference, the queried alternative (or none, to use the decision's `taken` entry) | Q1, Q2, procedure lines, Q3 |
@@ -1429,6 +1596,10 @@ elaborator or regenerator of its own.
   prose is untrusted.
 - **Completeness.** Document checks keep UNKNOWN, and the broader-class cost of alt 4.2 carries over.
 - **Q3.** Q3 is computed by the route with no theorem beyond its decoder.
+- **Standalone supersession.** In `risk-decision`, withdrawal is judged on the supplied entries that precede the
+  decision (1.4). An earlier supersession the caller omits is not detected, and the result is conditional on the
+  supplied entries. The audit judges withdrawal on the authenticated log prefix (`WithdrawnEntry`, NOT REPLAYABLE). A
+  later supersession affects neither (fixtures k16, k39).
 - **Truth of the inputs.** Nothing is claimed about whether estimates, conditions or stated cells are true, whether
   the alternative list is complete, whether the policy's classification is right, or whether the harm list covers
   every harm. Every result is conditional on the named ids.
@@ -1506,6 +1677,9 @@ Variant A1 has the harm constants `death` "the person's death" (fatal) and `brui
 (injuring). Variant A2 has `p_death` "P's death" (fatal) and `q_injury` "Q's injury" (injuring). Records use the
 robot `R` and facts `harms_human(h)` for every harm constant, citing the annotator's statement entry.
 
+A record used with a variant of its environment or rule set is bound to that variant: its `policy` pair, and every
+hash that depends on it, is recomputed. A record that a fixture changes gets its decision entry's hash recomputed.
+
 | # | Environment, rules | Record, log or structure | Scope |
 |---|---|---|---|
 | k1 | `cell-env` | `Dx` with E1 `peak_memory` 6–12 GB, E2 `free_memory` 8–10 GB, and the necessary condition "acting cannot lead to a server outage unless the peak memory is greater than the free memory" | cell (`act`, `server_outage`) |
@@ -1516,7 +1690,7 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
 | k6 | `cell-env` | dimensionless `q` 6–8 and `r` 2–6; on (`act`, `job_failure`), sufficient "q is greater than 5" and necessary "r is less than 5" | record |
 | k7 | `agent-ops` | D17 plus the statement T9 at seq 24, cited: "Running the job with the memory limit might lead to a server outage." | record |
 | k8 | `agent-ops` | D17 without C1 and without T1 | record; decision report |
-| k9 | (a) `agent-ops` with `more_severe` [[severe, serious], [serious, minor], [minor, severe]]; (b) `sev-unranked`: `agent-ops` with harm constants `leak` "a data leak" and `damage` "property damage" only, classes `privacy`, `property`, no edges, `unranked` [[privacy, property]], `harm_classes` [[leak, privacy], [damage, property]], `unexamined: "possible"`, no kinds or requirements, rule 2 only | (a) none; (b) chooser `the_agent`, alternatives `a` ("option a"), `b` ("option b"), `nothing` (inaction); statements: a might lead to leak, a cannot lead to damage, b might lead to damage, b cannot lead to leak, nothing might lead to leak, nothing might lead to damage | environment; decision report |
+| k9 | (a) `agent-ops` with `more_severe` [[severe, serious], [serious, minor], [minor, severe]]; (b) `sev-unranked`: `agent-ops` with harm constants `leak` "a data leak" and `damage` "property damage" only, classes `privacy`, `property`, no edges, `unranked` [[privacy, property]], `harm_classes` [[leak, privacy], [damage, property]], `unexamined: "possible"`, no `always_possible` or `combination`, no kinds or requirements, rule 2 only | (a) none; (b) chooser `the_agent`, alternatives `a` ("option a"), `b` ("option b"), `nothing` (inaction); statements: a might lead to leak, a cannot lead to damage, b might lead to damage, b cannot lead to leak, nothing might lead to leak, nothing might lead to damage | environment; decision report |
 | k10 | `agent-ops` | D17 from `L17` | decision report with margins |
 | k11 | `agent-ops` | D18 from `L18`; and the shared-server variant of rule 2 (plan 9.2) | decision report |
 | k12 | `agent-ops` | D17 with E1 replaced by E1p: "The peak memory of the job equals 12 GB." (an estimate with `lo = hi = 12`, memory profiler) | decision report |
@@ -1524,7 +1698,7 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
 | k14 | `agent-ops` | `L17` with entry 42 taking `run` | audit |
 | k15 | `agent-ops` | D17 citing also `(57, 57, hash)` | record; audit |
 | k16 | `agent-ops` without `combination` | (a) D17 citing also entry 39; (b) the same with a `supersession` entry for 39 at seq 50 | record |
-| k17 | `agent-ops` | D17 with E1's estimator removed; with its support removed; with E1 carried without `seq` and `day` | record |
+| k17 | `agent-ops` | D17 with E1's estimator removed; with its support removed (in these two, E1's entry hash and D17's citation of it are recomputed); with E1 carried without `seq` and `day` | record |
 | k18 | `agent-ops` | D17 without `run_limited`, S1, C2, C3 and T6 | record |
 | k19 | `agent-ops`, `asimov-risk` | each wording of 2.1 and 2.2 once; `may lead to`, `does not lead to`, `is safer than`, `every action available to that agent cannot lead to data loss`, `certainly leads to`, `prevents` in a risk environment, `might not lead to` as a record statement, and a rule with `… cannot lead to data loss unless …`; rules 2 and P3 of 2.5 | surface |
 | k20 | `asimov-risk` A1 | record: `push` ("pushing the person"), `nothing` ("doing nothing", inaction); statements: nothing leads to death, nothing cannot lead to bruising, push might lead to bruising, push cannot lead to death. Rule sets {1, 2}, {1, 2, 3} (record and document) and {1, 2x, 3} | decision report; document |
@@ -1538,8 +1712,15 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
 | k28 | `agent-ops`, `agent-ops-fine` | D17 (on the fine grid, E1 6.0–12.0, E2 8.0–10.0, S1 7.0) | margins of E2's lower bound for `run_limited` |
 | k29 | `asimov-risk` A2 | the k21 record; the input "Rescuing P prevents P's death." | decision report; surface |
 | k30 | `asimov-risk` A2 with rule 8 only, fulfilment `avoids`; then `excludes` | the k21 record | decision report; document |
-| k31 | `agent-ops` with rule 2 only | a structure `M31`: chooser `r` with actions `a`, `a2`, `b`; harm elements the five constants and one more element `u` (no constant, no class); severity domain the three classes; `risk__might_lead_to` = {(a, u), (b, task_delay)}; `leads_to` empty; `risk__class` the five ground facts; `confirmed` empty. Also a record naming `u` as a harm | document-level evaluation; record |
+| k31 | `agent-ops` with rule 2 only | a structure `M31`: chooser `r` with actions `a`, `a2`, `b`; harm elements the five constants and one more element `u` (no constant, no class); severity domain the three classes; `risk__might_lead_to` = {(a, u), (b, task_delay)}; `leads_to` empty; `risk__class` the five ground facts; `confirmed` empty. Also a record naming `u` as a harm | document-level evaluation; c9's paraphrase; record |
 | k32 | `agent-ops` | two logs identical up to entry 41: (a) both take `run_limited` at 42, and `L17a`'s entry 57 observes `server_outage` while `L17b`'s entry 57 observes no harm; (b) `L17` against `L17c`, whose entry 42 takes `run` | audit |
+| k33 | `agent-ops` | (a) D17 also citing the setting S2 at seq 23, "The memory limit equals 5 GB." of `run`; (b) D17 also citing the estimate E3 at seq 22, `memory_limit` from 6 GB through 8 GB (memory profiler 2.3, statistical) | record |
+| k34 | `cell-env` | dimensionless `q` from 0 through 1, and the necessary condition on (`act`, `job_failure`) `["eq", ["add", "dimensionless", ["quantity", "q"], ["scale", "dimensionless", "-1", ["quantity", "q"]]], ["decimal", "dimensionless", "1"]]` ("q minus q equals 1") | cell; the Lean statement |
+| k35 | (a) `agent-ops` whose `E` adds the action constant `run` "running the job"; (b) the action constant `deploy` "deploying the job" instead; (c) the chooser constant `ops_agent` "the operations agent" instead; (d) the chooser constant `build_agent` "the build agent" instead; (e) `agent-ops` | (a) to (d) D17; (e) D18 from `L18` with its fact `confirmed(run)` replaced by `confirmed(data_loss)` (its entry hash recomputed) | record; decision report |
+| k36 | `cell-env-22`: `cell-env` with the 22 harm constants `h1` … `h22`, each `minor`, in place of its five | chooser `the_agent`, alternatives `a1`, `a2`, `a3` and `nothing` (inaction); dimensionless `q` from 0 through 100 and `r` from 0 through 1; with `Kᵢ = 10000 + 10i` for `0 ≤ i < 44`, 88 necessary conditions, one on each of the 88 cells: `q + r < Kᵢ` and `r < Kᵢ − 10` for each `i` | record; `outcomeAt` of `q`'s lower bound at 12 and 13 |
+| k37 | `agent-ops` | the two rewrites of 2.3 of "every action available to that agent cannot lead to `<harm>`", as formulas with `r` D17's chooser, for `<harm>` a server outage and data loss | evaluation on D17's decision model |
+| k38 | `cell-env` with the rules X1 "Every action must not be performed, if that action might lead to a server outage." and X2 "Every action may be performed, if that action might lead to a job failure.", with no precedence between them | `Dx` with dimensionless `q` from 6 through 8 and `r` from 2 through 3; on (`act`, `task_delay`) the sufficient condition "q is greater than 5" and the necessary condition "r is less than 5"; on (`act`, `server_outage`) the necessary condition "r is greater than 3"; the statement "nothing cannot lead to a server outage" | margins of `r`'s upper bound |
+| k39 | `agent-ops` | `L17w`: `L17` with entry 39 replaced by a `supersession` entry `W39` (seq 39) withdrawing E1. The later entries' `prev` and `hash` follow the chain, and D17 cites E2's new hash. `L17s`: `L17` plus a `supersession` entry `W50` (seq 50) withdrawing E1. (a) `risk-decision` for `L17`'s D17 with the entries it cites as the supplied entries; (b) the same with `W39` also supplied; (c) the audit of D17 on `L17w`; (d) the audit of D17 on `L17s`, and (a) with `W50` also supplied | record; audit |
 | kC1 | stage C (recorded, not a stage A acceptance fixture) | two chances `p`, `q` with an EL-certified constraint `p + q = 1` and marginal intervals 0%–100% | stage C |
 
 ### 8.2 Expected results
@@ -1634,10 +1815,14 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
   The `taken` entry 42 is not flagged. With `use_all_recorded: true`: Q1 unchanged, Q2 unchanged, plus
   `PROCEDURE BREACH: estimate 39 not used (the agent's fault)`. Not NOT REPLAYABLE.
 - **(k14)** `FORBIDDEN AT DECISION TIME: running the job was forbidden by rule 2 given …`, whatever entry 57 says.
-- **(k15)** Record: `HindsightEntry: 57`. Audit: `Q1 NOT REPLAYABLE: HindsightEntry: 57`.
-- **(k16)** (a) and (b) are both `ConflictingEstimates: free_memory`: in (b), supersession is judged at decision
-  time, and at seq 41 entry 39 is live.
-- **(k17)** `EstimateProvenance: E1 estimator`; `EstimateProvenance: E1 support`; `EstimateProvenance: E1 recorded`.
+- **(k15)** Record: `HindsightEntry: 57`. Audit: `Q1 NOT REPLAYABLE: HindsightEntry: 57`. Admission checks hindsight
+  first for each citation (4.4 A2), so the audit does not report `MissingEntry: 57`, although entry 57 is not in the
+  prefix.
+- **(k16)** (a) and (b) are both `ConflictingEstimates: free_memory`: in (b), the supersession at seq 50 comes after
+  the decision (seq 41), so entry 39 is not withdrawn (4.4 A2).
+- **(k17)** `EstimateProvenance: E1 estimator` (4.4 V3); `EstimateProvenance: E1 support` (V3); `EstimateProvenance:
+  E1 recorded` (A1, reported when the supplied entry is decoded, before any citation is matched). Without the
+  recomputed hashes, the first two would be `AlteredEntry: E1`.
 - **(k18)** `RequiredAlternativeMissing: run_limited (with run)`.
 - **(k19)**
   - Exactly one derivation per accepted wording, and each paraphrase as in 2.1 and 2.2. c5's wording is not
@@ -1660,7 +1845,9 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
   {1, 2x, 3}: CONFLICT-FREE, not FOLLOWABLE. A structure with two alternatives, each certain to lead to a different
   harm to a human being that the other avoids (in A1's vocabulary, the death and the bruising), gives
   NONE-PERMITTED: rule 2 forbids each (it allows its harm) over rule 3, and rule 1 forbids both. The checker shows
-  trolley problems; it does not resolve them.
+  trolley problems; it does not resolve them. The record under {1, 2x, 3}: pushing is clear, as under {1, 2, 3} (rule
+  3 permits it over rule 1, and rule 2x does not apply to it), and doing nothing is forbidden by rules 1 and 2x (it
+  allows the death, which pushing avoids).
 - **(k21)** Under {1, 2x, 3}, the profiles are `rescue_p` {fatal, injuring}, `rescue_q` {fatal} and `nothing`
   {fatal, injuring}. Nothing beats anything (no class is above fatal), so rule 3 permits all three, and rule 2
   overrides it:
@@ -1692,7 +1879,8 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
   (`fmin = −2`, `fmax = 2`). With q 6–7 it is certain (`fmin = 1 > 0`). With q exactly 5 it is impossible. So the
   cell is `might` in the first two boxes and `cannot` in the third, and never certain (`S = ⊥`). The rewrite is
   `RiskConditionShared: q` for q 3–7 and q 6–7. For the point q = 5 it is accepted and gives `cannot` again (points
-  may repeat).
+  may repeat). Both `cannot` results at q = 5 rest on the point estimate of `q`, so `point_estimates` names it for
+  each (4.9).
 - **(k26)** (a) `RiskSeverityNotFresh: harm`: domain closure would bound the harm sort in the old vocabulary. (b)
   Accepted. The one new old-vocabulary fact, "the person's death is not the person's bruising", is `compatFacts`,
   the hypothesis of `risk_expansion`, and no other old-vocabulary result changes (k23).
@@ -1716,12 +1904,61 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
 - **(k31)** `M31` passes `backgroundValidRisk` (`u` has no class; the named constants have theirs). `a2` does not
   beat `a` (no classified witness), and `a` and `b` are not comparable either way. `a2` beats `b`, so rule 2 forbids
   `b` only. The rendering says "not comparable: u has no class" for (a2, a) and (a, b). A record naming `u` is
-  `UnknownHarm: u`.
+  `UnknownHarm: u`. c9's paraphrase (2.1) agrees with the formula on `M31`. For `a2 has a less severe worst case
+  than a`, it is false: `a` might lead only to `u`, which is not a classified harm (draft 1's paraphrase, without the
+  classified witness, was vacuously true here, since `a2` might lead to no harm). For `a has a less severe worst
+  case than b`, it is false: `a`'s possible harm `u` has no class. For `a2 has a less severe worst case than b`, it is
+  true: `b` might lead to a task delay, classified minor, and `a2` might lead to no harm.
 - **(k32)** (a) Q1 and Q2 are identical: PERMITTED AT DECISION TIME and DIFFERENT VERDICT WITH ALL RECORDED
   ESTIMATES (39) in both. Q3 differs: a surprise in `L17a`, no observed harm in `L17b`. (b) Q1 differs: `L17` gives
   PERMITTED AT DECISION TIME (`run_limited`), and `L17c` gives FORBIDDEN AT DECISION TIME (`run`), because the
   queried alternative differs. For either fixed queried alternative both logs give the same verdict
   (`verdict_ignores_outcomes`).
+- **(k33)** (a) and (b) are both `RiskSettingTwice: memory_limit`, with the rewrite "declare one quantity per
+  alternative", from 4.4 V4, before the box is built. Without the check, the box would have two entries for
+  `memory_limit` (7 and 5 GB, or 7 GB and 6–8 GB).
+- **(k34)** The normal form is `−1 = 0`: `q`'s collected coefficient is 0, so `q` does not occur. The necessary
+  condition is impossible (`fmin = fmax = −1`), so the cell is `cannot`. Left uncollected, as `[(q, 1), (q, −1)]`
+  with constant −1, the form has `fmin = −2` and `fmax = 0`, passes separability and the ±1 rule, and the table
+  would answer "possible" although no case satisfies it. This is why every atom holds a `NormLinForm` (4.2), as k5
+  is why `UnitCoefficients` is a hypothesis.
+- **(k35)**
+  - (a) Accepted: the constant `run` denotes D17's alternative `run`, and the report is k10's.
+  - (b) `RiskConstant: deploy` (4.4 V10): no alternative interprets it.
+  - (c) Accepted: the chooser domain is {`build_agent`, `ops_agent`}, `ops_agent` has no available action (alt's E2
+    admits a chooser with no alternative), and the report is k10's.
+  - (d) `RiskConstant: build_agent` (4.4 V1): the record's chooser would be the constant's element.
+  - (e) `RiskFact: confirmed` (4.4 V10): `data_loss` is not an element of the action sort.
+- **(k36)** Accepted, every alternative permitted by default and clear. The candidates per endpoint are 138 for `q`'s
+  lower bound, 138 for its upper bound, 139 for `r`'s lower bound and 163 for its upper bound, all within 256.
+  Neither 12 nor 13 is a candidate of `q`'s lower bound (those are −1, 0, 1, 99, 100, 101 and `Kᵢ − 1`, `Kᵢ`,
+  `Kᵢ + 1`). With `q`'s lower bound moved to 12, `r`'s lower bound would have 224 candidates, and moved to 13 it
+  would have 268. The limit is checked once on the original record and is not part of `outcomeAt` (4.9), so
+  `outcomeAt` gives the same statuses at 12 and at 13, as `status_piecewise_constant` requires. Draft 1 re-applied
+  the limit inside `outcomeAt`, which made 12 valid and 13 invalid: a counterexample to its theorem.
+- **(k37)** For a server outage, the "every … not" formula is false (running the job might lead to it), and the "not
+  every" formula is true (running the job with the memory limit cannot lead to it). For data loss both are true: no
+  alternative might lead to it (T5–T8). Draft 1's "not every" rewrite, `∃a. available(a, r) ∧ might(a, h)`, is false
+  for data loss: it was the negation of "every … not".
+- **(k38)** The record is valid and conflict-free. A server outage is ruled out for acting (`fmin(3 − r) = 0`, not
+  below 0), so X1 does not apply, and X2 permits both alternatives (a job failure is unexamined, hence possible).
+  Both are clear. The candidates of `r`'s upper bound are 1 to 6.
+  - Upwards: at 4 the record is a conflict (`fmin(3 − r) = −1`, so a server outage is possible for acting, and X1
+    forbids acting while X2 permits it, with no precedence). At 5 it is invalid (`SufficientOutsideNecessary:
+    act/task_delay`). `scanConflict` returns 4, and `scanInvalid` returns 5, which certifies that 4 is not invalid.
+    Both lines are reported: "Conflict at: r's upper bound 4" and "Record invalid at: r's upper bound 5
+    (SufficientOutsideNecessary: act/task_delay)".
+  - Downwards: record invalid at 1 (`RiskRange`), and `scanConflict` returns none.
+  - "No conflict at any candidate" is not rendered, and there is no single valid change in either direction. A
+    single scan stopping at the first value of either kind would stop at the conflict and could not certify the
+    invalid value 5 as the nearest.
+- **(k39)**
+  - (a) Accepted, with k10's report. The supplied entries hold no supersession, so the result is conditional on
+    them (7.4).
+  - (b) `WithdrawnEntry: E1` (4.4 A2): `W39` precedes the decision.
+  - (c) `Q1 NOT REPLAYABLE: WithdrawnEntry: E1`: the authenticated prefix holds `W39`.
+  - (d) The audit's Q1 and Q2 are k13's, and the standalone record is accepted as in (a): `W50` comes after the
+    decision, so it affects neither.
 - **(kC1)** The box range of `p + q` is 0%–200%. The result is labelled conservative, or computed over EL's certified
   joint region, where the sum is exactly 100%.
 
@@ -1742,27 +1979,30 @@ robot `R` and facts `harms_human(h)` for every harm constant, citing the annotat
 
 Per decision (plan 11, checked before evaluation, each overflow `ResourceLimit: risk <limit>` with the limit named and
 never a truth value): 16 alternatives, 32 harm constants, 64 estimates and settings, 128 conditions and statements,
-`MAX_NODES` (10,000) per condition after normalisation, 16 classes, and 256 margin candidates per endpoint. The logs of
-an audit hold at most 4,096 entries. Stage B's 8 bands are not in stage A.
+`MAX_NODES` (10,000) per condition after normalisation, 16 classes, and 256 margin candidates per endpoint. All but the
+last are checked at admission (4.4 A1). The margin-candidate limit (`ResourceLimit: risk margin candidates`) is
+checked once, on the admitted and valid record, and never inside `outcomeAt` (4.9). The logs of an audit hold at most
+4,096 entries. Stage B's 8 bands are not in stage A.
 
 `E_risk`, the inlined document, the slot premises, the box, the regenerated tables, the decision model, the candidates
 and every package are regenerated from decoded declarations at every trusted site. Nothing regenerated is accepted
 from the wire.
 
-**Trusted (Lean, proved from raw JSON under the unchanged allowlist):** the risk block and record decoders, W6
-decimal lowering (reused), condition normalisation and the endpoint evaluator with its witnesses, validation and
-regeneration, the severity closure, the inliner, the slot generator, the decision-model builder, the margin
-candidates and scans (the certified check, 4.9), snapshot admission and Q1/Q2, and the `ve_risk_route` executable.
+**Trusted (Lean, proved from raw JSON under the unchanged allowlist):** the risk block, entry and record decoders, W6
+decimal lowering (reused), condition normalisation and the endpoint evaluator with its witnesses, record admission,
+validation and regeneration, the severity closure, the inliner, the slot generator, the decision-model builder and
+its validity check, the margin candidates, the candidate limit and the three scans (the certified check, 4.9),
+snapshot admission and Q1/Q2, and the `ve_risk_route` executable.
 
 **Untrusted:** Python's shape check, surface and dispatch; the rendering of reasons, witnesses, worst cases, margins
 and Q3's sentences; Rust's evaluation (differential only). Integers are unbounded in all three languages, and Rust uses
 big integers as W6 does.
 
 Under `VE_AUTHORITY=python` every operation of this route is `CheckerUnavailable`, never a verdict. The trust-cost
-line for ROADMAP, to land with item 2: "Risk (`risk@0`, stage A): new trusted block and record decoders, condition
-evaluator, cell regenerator, severity closure, inliner, slot premises, decision-model builder, certified margin
-check, audit snapshot admission and `ve_risk_route`, proved from raw JSON under the unchanged allowlist; untrusted:
-the Python shape check and surface, rendering, Rust evaluation."
+line for ROADMAP, to land with item 2: "Risk (`risk@0`, stage A): new trusted block, entry and record decoders,
+condition normaliser and evaluator, record admission, cell regenerator, severity closure, inliner, slot premises,
+decision-model builder, certified margin check, audit snapshot admission and `ve_risk_route`, proved from raw JSON
+under the unchanged allowlist; untrusted: the Python shape check and surface, rendering, Rust evaluation."
 
 ## 10. Statement review checklist (Astra + Fable, before items 2 and 3)
 
@@ -1771,11 +2011,12 @@ the Python shape check and surface, rendering, Rust evaluation."
 2. **The endpoint theorems' hypotheses** (4.2, 4.3): scoping, separability, unit coefficients, the `≠` atom and
    `nnf`; the canonical witness; the rewrite that changes the model (plan 12 item 1).
 3. **`might prevent` and `excludes`** (2.2): the wording, the fulfilment choice and the default body (plan 12 item 1).
-4. **Margins** (4.9): full admission of perturbed records, the candidate set, `status_piecewise_constant`, and the
+4. **Margins** (4.9): full validation, without re-admission, of perturbed records; the candidate set and the
+   candidate limit on the original record; `status_piecewise_constant`; the per-kind record-level scans; and the
    decision on Q-margin-proof (11.11) (plan 12 item 1).
 5. **The probe statuses** (2.1, 2.2): what is frozen, c5 pending with its semantics frozen and its wording not,
-   c10 legend-dependent, and the c11/c12 observation. The reviewers owe c5's replacement, probed once with new sealed
-   items (plan 2.6 rule 4).
+   c10 legend-dependent, and the c11/c12 observation. The reviewers' c5 replacement, "If `<condition>`, `<action>`
+   leads to `<harm>`.", is probed once with new sealed items (plan 2.6 rule 4).
 6. **The block and the generated vocabulary** (1.1, 1.2, 4.1): freshness, reserved names, `outcomes: signed`, and the
    kinds and requirements added to make the plan's requirements checkable (11.6).
 7. **The slot premises** (4.6): the full order table, `class` functional and not total, `compatFacts`,
@@ -1820,9 +2061,10 @@ Each is a point where the plan left a reading open. The review may overturn any 
     the diagnostic names the canonical one.
 11. **Q-margin-proof: the certified candidate check ships in stage A** (4.9). Lean regenerates the candidates itself
     and evaluates every one. The report says "nearest change" and "no single valid change", with invalid and
-    conflicting values reported separately at record level. This is the plan's second option. Its cost is the trusted
-    candidate function and `status_piecewise_constant`, which the plan already listed as an obligation, and it
-    removes the untrusted margin search from the trust split (plan 8.2).
+    conflicting values reported separately at record level, each certified by its own scan (`scanInvalid`,
+    `scanConflict`). This is the plan's second option. Its cost is the trusted candidate function, the scans and
+    `status_piecewise_constant`, which the plan already listed as an obligation, and it removes the untrusted margin
+    search from the trust split (plan 8.2). The statement review kept this choice.
 12. **A status is (permitted, required, clear)**, so a margin reports a change of `clear` too.
 13. **`"ruled_out_by": "chooser"`** names the record's chooser as the decider (the plan's "the deciding agent"). It
     renders as the chooser's label in reports and as "the deciding `<chooser>`" in the legend.
@@ -1836,7 +2078,8 @@ Each is a point where the plan left a reading open. The review may overturn any 
 17. **Condition wordings are record-only** (2.3). Inside a rule, `unless` is W1's carve-out and `if` the guard, which
     keeps each rule sentence to one reading while policy-level conditions stay OPEN (Q-templates).
 18. **c5 pending** (2.1): the semantics is frozen and the wording is not. JSON carries the sufficient form, and the
-    rendering is marked. `certainly leads to` is not registered, because c3a passed.
+    rendering is marked until the replacement passes its re-probe. `certainly leads to` is not registered, because
+    c3a passed.
 19. **Every harm constant is a harm of every decision**, so the cell table is complete (E3 by construction) and no
     harm can be dropped from consideration.
 20. **Quantities are log-level names with W6 tags** and never enter `E` or a norm guard. Only the tags come from the
@@ -1846,8 +2089,55 @@ Each is a point where the plan left a reading open. The review may overturn any 
 22. **`unranked_severities`** is a warning line for the environment (undeclared incomparable pairs) and a report
     line for decisions (comparisons blocked by an incomparable pair), as plan 4.1 and 7.2 use the name.
 
+## 12. Corrections from the statement review (draft 2)
+
+The statement review of draft 1 (`manage-agents/debates/risk-spec/`, three rounds, both sides STATUS CONVERGED)
+returned FIX. The bounded re-check covers the passages and fixtures below. Items are cited by reviewer, round and
+number: `A1.2` is Astra's round 1, item 2; `F1.7(c)` is Fable's round 1, edit 7(c); "joint" is that round's proposed
+joint position.
+
+| Debate item | Correction | Where |
+|---|---|---|
+| A1.1, A2.1, F2 (A1 conceded), F2 joint 1, F3.3: an unnormalised `LinForm` breaks `possibleE_iff` | `LinForm.Normal`; every atom holds a `NormLinForm`, built only by `LinForm.normalize`; `normalize_normal`, `normalize_eval`; the endpoint theorems over normal atoms | 4.2, 4.3, 7.1, 7.2; k34 |
+| A1.2, A2.2, F2 (A2 conceded), F2 joint 2, A3: model validity is left to the caller | Every constant of `E` is interpreted (an action constant by the alternative of its name, a chooser constant as a chooser with no action); `RiskConstant`; the decidable check V10 before alternatives validation; `risk_scenario_sound`'s first conjunct comes from V10 | 4.4 (V1, V10, the decision model), 6, 7.1, 7.2; k35 |
+| A1.3, A2.3, F1.1, F2 (A3 conceded), F2 joint 3: the record route has no sequence number, and validation has no entries to check | The decision entry supplies `seq` and `day`; admission (`admitDecision`, A1 to A3) is split from validation (V1 to V11); `admitDecision_sound`; the connecting conjuncts of `risk_wire_scenario_sound`; `snapshotOf` runs the same admission on the prefix; margins perturb the admitted record and never re-run admission | 3.3, 3.4, 4.4, 4.8, 4.9, 4.10, 5.1, 7.1, 7.2, 7.3 |
+| F1.2: check order in the audit | Per citation: `HindsightEntry`, `MissingEntry`, `AlteredEntry`, then `WithdrawnEntry` | 4.4 A2, 4.10, 5.2, 6; k15 |
+| F1.3: k17(c) cannot be reached | A supplied estimate entry without `seq` or `day` is `EstimateProvenance: <id> recorded` before matching; k17(a) and (b) recompute the hashes | 3.3, 4.4 A1 and V3, 6, 7.2; k17 |
+| F1.4, A2 joint: two settings, or a setting and an estimate, leave the box undefined | `RiskSettingTwice`, checked before the box | 1.4, 4.4 V4, 6; k33 |
+| A1.4, F1.5, F2 joint 4, A2 joint: `status_piecewise_constant` fails with the candidate limit inside `outcomeAt` | The limit is checked once on the original record (`marginLimit`), outside `outcomeAt`; Astra's fixture | 4.8, 4.9, 6, 7.1, 7.2, 9; k36 |
+| A1.5, A2.4, F2 (A5 conceded), F2 joint 5: the scope rewrite | "Not every" is `∃a. available(a, r) ∧ ¬might(a, h)`; both formulas are stated | 2.3; k37 |
+| F1.6, A2 joint, A3.1, F3.1: the record-level margin lines have no theorem | Per-kind `scanInvalid` and `scanConflict`, their soundness theorems and wire conjuncts; "No conflict at any candidate" only when every `scanConflict` finds nothing | 4.9, 5.2, 7.1, 7.2, 7.3, 7.4; k38 |
+| A3.2: supersession in the standalone route | Withdrawal is judged on the supplied entries that precede the decision in `risk-decision` and on the prefix in the audit (`WithdrawnEntry`, NOT REPLAYABLE); a later supersession affects neither; a non-claim | 1.4, 3.3, 4.4 A2, 4.10, 5.2, 6, 7.4; k16, k39; plan 5.3, 6.2, 6.3, 9.3 |
+| A2.4, A3.3, F1.8, F3.2: c9's paraphrase is vacuous without a classified witness | The paraphrase names the classified witness and requires a class for each harm of `<a′>`; k31 checks it | 2.1; k31 |
+| F1.7(a) | `snapshot_no_hindsight` gains `x.seq = c.seq` | 7.2 |
+| F1.7(b) | Q3's rule is "measured or set" | 4.10 |
+| F1.7(c) | k9(b) has no `always_possible` or `combination` | 8.1 |
+| F1.7(d) | `["quantity", name]` is a risk-local node with its quantity's tag | 3.2 |
+| F1.7(e) | k20 gives the record under {1, 2x, 3} | 8.2 |
+| A1 joint, A2 joint, F2 (conceded), F2 joint 6: plan sync | The plan's trust lines, margin admission and certification, and k25's `point_estimates` line | plan 7.4, 8.1, 8.2, 8.3, 12, 13; k25 |
+| A1 joint, A3, F2.2, F3.4: the c5 replacement | "If `<condition>`, `<action>` leads to `<harm>`.", probed once with new sealed items; c5 stays pending until then | 2.1, 10, 11.18; plan 12 item 1a |
+
+Details settled while applying these edits, not debated:
+
+- Draft 1's step 3 required typed fact arguments with no diagnostic. V10's validity check now covers them, as
+  `RiskFact: <predicate>`.
+- The decision entry's own hash is recomputed at A1 (`AlteredEntry: <id>`), as a cited entry's is at A2.
+- `WithdrawnEntry` has the same text in both routes, because the audit runs the same admission.
+- 8.1 now states a convention the fixtures already relied on: a record used with a variant environment or rule set
+  is bound to that variant, and a changed record's decision entry hash is recomputed. Without it, k13's second part,
+  k16 and k35 would stop at `RiskBinding: policy`, and a changed record at `AlteredEntry` for its decision entry.
+- c9's legend line (2.4) keeps its probed text. It agrees with the new paraphrase on records.
+- k36 uses Astra's numbers as given. The counts were checked: the original record's endpoints have 138, 138, 139 and
+  163 candidates, so the original is within the limit.
+- F3.1 asked for an invalid value before a conflict, and A3.1 for one kind before the other. k38 puts the conflict
+  first. For an invalid value to come first, the record would have to become valid again farther out in the same
+  direction. V1 to V9 never allow that: widening can break only `S → N` and separability, narrowing only a stated
+  `might`, the range and an intersection, and each stays broken farther out. It would take a policy assertion unit
+  evaluated at V11. Either order shows what the fixture is for: each scan certifies only its own kind.
+
 ## Change log
 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-09-29 | Draft 1 | Item-1 statement specification of stage A from plan draft 2 and the probe results. It covers the `risk` block and the generated vocabulary `E_risk` with a fresh severity sort; decision records, the box, sources, completion and completed cases; the wordings with their probe statuses (c5 pending, c10 legend-dependent); the risk paraphrases of alt's words, `might prevent` and `excludes`; rejected wordings and scope rules; the legend; the wire forms of the block, conditions, the log and the record, and identity; `WellFormedRisk`; normal form, separability, unit coefficients, the endpoint table and the canonical witness; record validation, regeneration and the decision model; `class` functional and not total, `or_worse`, `less_worst` and inlining; the slot premises, `BaseAdmissibleRisk`, `compatFacts`, model expansion and conservativity; the policy checks; the decision report; point estimates and certified margins; the log and the audit (Q1 to Q3, PROCEDURE BREACH); diagnostics; every item-2 theorem as a statement; fixtures k1–k32 and kC1 with definitions separated from expected results; limits and trust; the review checklist; resolved choices. Spec only: no code, Lean or frozen contract changed. |
+| 2026-09-29 | Draft 2 | Applies the converged statement review (FIX), mapped in section 12: normal forms as a typed invariant (`NormLinForm`, `normalize_normal`, `normalize_eval`); record admission (`admitDecision`, sequence number from the decision entry, per-citation order Hindsight, Missing, Altered, Withdrawn, `EstimateProvenance … recorded` before matching) split from validation, with `admitDecision_sound` and the wire conjuncts; decision-model constants and the validity check (`RiskConstant`, V10); `RiskSettingTwice`; the margin-candidate limit outside `outcomeAt` (`marginLimit`); per-kind record-level scans (`scanInvalid`, `scanConflict`); standalone supersession scoped to the supplied entries (`WithdrawnEntry`, a non-claim); the corrected scope rewrite with both formulas; c9's paraphrase with the classified witness; `snapshot_no_hindsight` with `x.seq`; Q3's "measured or set"; the risk-local `quantity` node; k9(b), k15, k16, k17, k20, k25 and k31 corrected; fixtures k33–k39; the c5 replacement for its re-probe. No frozen contract, hash or existing theorem statement changed. |
