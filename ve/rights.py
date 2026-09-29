@@ -343,6 +343,13 @@ class RightsDocument:
                 if any(type(parent) is str and parent.startswith("rights-")
                        for parent in raw.get("over", ())):
                     raise VEError("InvalidInput: authored precedence cites a generated rule")
+                if fan_map is not None:
+                    # A fan-out line keeps its author name as its source key (1.6): it is
+                    # an author rule name, reserved prefix and uniqueness included.
+                    _name(raw.get("name"))
+                    if raw["name"] in names:
+                        raise DuplicateDeclaration(f"rule {raw['name']}")
+                    names.add(raw["name"])
                 sources = ([(bearer, fan_map.get(bearer)) for bearer in sorted(self.env.bearers)]
                            if fan_map is not None else [(None, raw.get("predicate"))])
                 for bearer, predicate in sources:

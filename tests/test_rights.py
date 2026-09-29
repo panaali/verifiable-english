@@ -502,6 +502,24 @@ def test_right_readings_need_a_checked_separating_situation():
         validate_reading_sets(env, [reading_set], {"u"})
 
 
+def test_fan_out_source_name_is_an_author_rule_name():
+    # found by the differential: Python renamed fan-out instances without checking the source
+    # line's own name, which Lean rejects when reserved or duplicated (1.6)
+    raw = rights_env()
+    raw["vocabulary"]["rights"]["bearers"] = ["state", "person"]
+    raw["vocabulary"]["predicates"]["person_protect_permitted"] = permission(
+        "allow", act="{0} protect {1}", args=("person", "person"))
+    fan = {"kind": "claim", "cites": {}, "holder_slot": 1,
+           "fan_out": {"state": "protect_permitted", "person": "person_protect_permitted"},
+           "norm": {"name": "rights-x", "predicate": None, "sign": False,
+                    "guard": ["top"], "unless": [], "over": []}}
+    with pytest.raises(VEError, match="name rights-x begins with rights-"):
+        correlate(raw, [right([fan])])
+    fan["norm"]["name"] = "protect"
+    with pytest.raises(VEError, match="rule protect"):
+        correlate(raw, [right([claim("protect"), fan])])
+
+
 def test_fan_out_generates_one_rule_per_bearer_sort():
     raw = rights_env()
     raw["vocabulary"]["rights"]["bearers"] = ["state", "person"]

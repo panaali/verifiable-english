@@ -6,7 +6,7 @@ from pathlib import Path
 from .ast import _Checker, _to_data, formula_to_data
 from .backends.lean import run_soft_case
 from .errors import VEError
-from .soft_route import elaborate_soft_document
+from .soft_route import check_regenerated, elaborate_soft_document
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_rights_route"
 
@@ -36,12 +36,15 @@ def expected_environment_prime(rights):
     return _wire(prime)
 
 
-def check_rights_regenerated(rights, elaborated):
+def check_rights_regenerated(rights, elaborated, soft_row=None):
     """Fail closed unless the Lean route's regeneration of the same source is the
     Python correlation: the generated keys, E″′ byte for byte, every line
     instance with its node, Lim_D, the bar nodes and the soft route's layer,
-    order, background and targets on T″′. Returns the soft elaboration."""
-    soft = elaborate_soft_document(rights.soft_document)
+    order, background and targets on T″′. `soft_row`, when given, is the Lean
+    soft route's row for the correlated document (else it is run here); returns
+    the checked soft elaboration."""
+    soft = (elaborate_soft_document(rights.soft_document) if soft_row is None
+            else check_regenerated(rights.soft_document, soft_row))
     expected_generated = (
         [{"name": v, "kind": "lim", "limitation": k[0], "act": k[1]}
          for k, v in rights.limitation_names.items()] +
