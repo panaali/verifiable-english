@@ -13,12 +13,11 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-import subprocess
-import time
 
 import pytest
 
 from conformance.p0 import envelope
+from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
 from ve.errors import ResourceLimit
@@ -26,19 +25,19 @@ from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
+QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 pytestmark = pytest.mark.skipif(not (LEAN.exists() and RUST.exists()),
                                 reason="build ve_conformance (lake build) and the Rust release binary")
-WALL = 30  # seconds for one batch of limit-busting cases, per backend
+# CPU seconds for one batch of limit-busting cases, per backend (tests/subprocesses.py:
+# CPU time, unlike elapsed time, does not grow with machine load).
+CPU = 30
 
 
 def run(command, cases):
-    start = time.monotonic()
-    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True,
-                               timeout=WALL * 4)
-    elapsed = time.monotonic() - start
-    assert completed.returncode in (0, 1), completed.stderr[:500]
-    assert elapsed < WALL, (command[0], elapsed)
+    completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
+    assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
+    assert cpu < CPU, (command[0], cpu)
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
     return results
@@ -340,7 +339,7 @@ def test_largest_tables_reach_the_budget_quickly_three_ways():
 
 
 def test_largest_tables_on_the_quantity_route_three_ways():
-    from tests.test_units_lean_w6a import lean as lean_quantity, quantity
+    from tests.test_units_lean_w6a import quantity
     from tests.test_w6a_review_regressions import raw_environment
     from ve.units import quantity_countermodel
     raw = raw_environment({}, sorts={"s": {"description": "s"}},
@@ -353,9 +352,7 @@ def test_largest_tables_on_the_quantity_route_three_ways():
     with pytest.raises(ResourceLimit, match="MAX_EVALUATIONS"):
         quantity_countermodel(Environment(raw), [], conclusion, data)
     case = {"environment": raw, "premises": [], "conclusion": conclusion, "model": data}
-    start = time.monotonic()
-    [got] = lean_quantity([{"id": "q", "kind": "countermodel", **case}])
-    assert time.monotonic() - start < WALL
+    [got] = run([str(QUANTITY), "-"], [{"id": "q", "kind": "countermodel", **case}])
     lean_limit(got, "MAX_EVALUATIONS")
     [other] = rust([{"id": "q", "kind": "quantity", "mode": "countermodel", **case}])
     rust_limit(other)
