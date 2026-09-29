@@ -193,7 +193,7 @@ def test_verdicts_do_not_depend_on_the_working_tree(staging, tmp_path):
     assert clean.returncode == 0, clean.stderr
     staging.stage("docs/probe.md", SECRETS["GitHub token"]() + "\n")
     staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import surface\n")
-    staging.stage("lean/VE/Core/Planted.lean", "import\n  VE.Surface\n")
+    staging.stage("lean/VE/Core/Planted.lean", "-- c\nimport VE.Surface\n")
     staging.rehash("lean/VE/Core/Planted.lean")
     here, there = staging.run(), staging.run_in(elsewhere)
     assert here.returncode == there.returncode == 1
@@ -253,23 +253,73 @@ def test_new_outward_lean_import_is_rejected(staging):
     passes(staging)
 
 
-@pytest.mark.parametrize("header", [
-    "import\n  VE.Surface\n",  # the module on a later line
-    "import VE.Core.Bridge\nimport\n  VE.Surface\n\nnamespace VE\nend VE\n",
-    "prelude import VE.Core.Bridge import VE.Surface\n",
-    "module\n\npublic import VE.Surface\n",
-    "import«VE».Surface\n",
-    "import /- c -/ VE.Surface\n",
-    "import VE.Core.Bridge import«VE».Surface\n",
-    "import VE.Core.Bridge import «VE».Surface\n",
-    "import VE.Core.Bridge/- c -/import VE.Surface\n",
-], ids=["next-line", "next-line-after-imports", "prelude-one-line", "public", "quoted-no-space",
-        "comment", "successive-quoted", "successive-quoted-spaced", "successive-after-comment"])
-def test_every_lean_import_form_is_checked(staging, header):
+@pytest.mark.parametrize("header, line, reason", [
+    # precommit-loop.final.md B: Lean reads VE.Surface after the comment `/-/-/`.
+    ("/-/-/import VE.Surface\n", 1, "`/-` inside a block comment"),
+    ("import VE.Core.Bridge /-/-/import VE.Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("-- c\n/-/-/\nimport VE.Surface\n", 2, "`/-` inside a block comment"),
+    ("/- a -/ import VE.Surface\n", 1, "text after the closing `-/` of a block comment"),
+    ("/- outer /- inner -/ -/\nimport VE.Surface\n", 1, "`/-` inside a block comment"),
+    ("import VE.Core.Bridge\nimport\n  VE.Surface\n\nnamespace VE\nend VE\n", 2, "not a plain `import A.B.C` line"),
+    ("prelude import VE.Core.Bridge import VE.Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("module\n\npublic import VE.Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("import«VE».Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("import /- c -/ VE.Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("import VE.Core.Bridge import «VE».Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("import VE.Core.Bridge/- c -/import VE.Surface\n", 1, "not a plain `import A.B.C` line"),
+    ("\timport VE.Surface\n", 1, "character '\\t' at the start of a header line"),
+], ids=["stacked", "stacked-after-import", "stacked-own-line", "after-comment", "nested", "next-line",
+        "prelude-one-line", "public", "quoted-no-space", "comment-inside", "successive-quoted",
+        "successive-after-comment", "tab"])
+def test_lean_header_outside_the_plain_layout_is_rejected(staging, header, line, reason):
     path = "lean/VE/Core/Planted.lean"
     staging.stage(path, header)
     staging.rehash(path)
-    rejects(staging, f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)")
+    rejects(staging, f"{path}: Lean header line {line}: {reason}; write the header in the plain layout")
+
+
+def test_plain_lean_header_is_confirmed_by_the_pinned_lean(staging):
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, "/- A planted module. -/\n-- imports:\nimport VE.Core.Bridge\n\nimport VE.Surface\n")
+    staging.rehash(path)
+    result = staging.run("--timings")
+    assert result.returncode == 1
+    assert f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)" in result.stderr
+    assert f"{path}: Lean header" not in result.stderr
+    assert "lean --deps confirmed or refuted 1 of 1 staged Lean headers" in result.stderr, result.stderr
+
+
+def test_lean_deps_disagreement_is_rejected(staging):
+    # A staged reader that misreads a plain import: the pinned Lean refutes it.
+    reader = staging.head("tools/check_lean_imports.py")
+    assert b"found.append(match[1])" in reader
+    staging.stage("tools/check_lean_imports.py",
+                  reader.replace(b"found.append(match[1])", b'found.append(match[1].replace("Surface", "Syntax"))'))
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, "import VE.Surface\n")
+    staging.rehash(path)
+    stderr = rejects(staging, f"{path}: Lean header: the pinned Lean reads imports ['VE.Surface'], "
+                              f"not ['VE.Syntax']; write the header in the plain layout")
+    assert "VE.Core.Planted -> VE.Syntax" not in stderr
+
+
+def test_lean_headers_without_the_pinned_toolchain(staging, tmp_path):
+    # Without elan or lean on PATH the plain-layout grammar alone decides.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    for tool in ("python3", "git", "dirname"):
+        (bin_dir / tool).symlink_to(shutil.which(tool))
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, "import VE.Core.Bridge\n")
+    staging.rehash(path)
+    result = staging.run("--timings", PATH=str(bin_dir))
+    assert result.returncode == 0, result.stderr
+    assert "lean --deps: pinned toolchain unavailable; plain-layout grammar only" in result.stderr
+    staging.stage(path, "/-/-/import VE.Surface\n")
+    staging.rehash(path)
+    result = staging.run(PATH=str(bin_dir))
+    assert result.returncode == 1
+    assert f"{path}: Lean header line 1: `/-` inside a block comment" in result.stderr, result.stderr
 
 
 @pytest.mark.parametrize("source", [

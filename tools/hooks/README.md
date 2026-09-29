@@ -15,9 +15,23 @@ no builds. A typical commit takes well under a second;
 | Check | What it rejects | Source of truth |
 | --- | --- | --- |
 | secrets | In every added or modified staged file, text or binary: a match for private key blocks, AWS, GitHub, Anthropic, OpenAI, Google, Slack, Hugging Face or Stripe live credentials, or a quoted high-entropy `api_key`/`secret_key`/`client_secret`/`access_token`/`auth_token`/`password` value, on a line that is not already a line of that path at `HEAD`; any staged path under `.webapp-private/`; `.env` files (not `.env.example`/`.sample`/`.template`), `id_rsa`-style keys, `.p12`/`.pfx` files | patterns in `precommit.py` |
-| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (Python: the whole file; Lean: the header exactly as the pinned toolchain's header parser reads it, however many lines or commands per line it spans, and nothing after it); a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
+| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (Python: the whole file; Lean: the header, which must be in the plain layout below); a staged `lean/**/*.lean` header outside the plain layout, or one the pinned toolchain's `lean --deps` reads differently; a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
 | Lean forbidden tokens | In staged files under `lean/`: every whole word the staged `lean/audit.py` forbids (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | the staged `lean/audit.py` |
 | frozen files | A staged change to a file listed in `lean/VE/Route/frozen-sources.sha256` unless the staged inventory records the staged file's SHA-256; a deleted file that is still listed; a new `lean/VE/**/*.lean` module that is not listed; a changed `lean/Main.lean` that no longer matches `MAIN_BASE` in `lean/VE/Route/frozen.py`. A staged inventory or `frozen.py` re-checks every entry | `lean/VE/Route/frozen.py` rules |
+
+A Lean header is in the plain layout when it is one `import A.B.C` per line at
+column 0 (ASCII name parts, nothing else on the line), with only blank lines,
+full-line `--` comments and `/- ... -/` block comments between the imports; a
+block comment may not contain `/-` and nothing may follow its closing `-/` on
+that line. The header ends at the first other line (a declaration, a `/--` or
+`/-!` doc comment, ...). Any other layout Lean might read differently, such as
+`/-/-/import X`, `import A import B`, `import X -- c`, `prelude`, `module`,
+`public import` or `«»` names, is rejected rather than interpreted. When the
+toolchain pinned by the staged `lean/lean-toolchain` is installed (elan is
+asked; nothing is ever downloaded), `lean --deps` must also read the same
+imports; it gets 3 s in total, and headers it has not reached by then rely on
+the grammar alone. `tools/check_lean_imports.py` applies the same rules to the
+whole tree.
 
 The hook checks only what a commit adds. Existing drift, such as stale ledger
 entries, `.importlinter` sync or modules that were unmapped before this commit,
@@ -69,4 +83,5 @@ Uninstall with `git config --unset core.hooksPath` (add `--worktree` for the
 trial install). Setting `core.hooksPath` hides hooks in `.git/hooks/`; there are
 none apart from Git's samples today.
 
-The hook needs `python3` (3.11 or later, standard library only) and `git` on `PATH`.
+The hook needs `python3` (3.11 or later, standard library only) and `git` on
+`PATH`; `elan` (or the pinned `lean`) on `PATH` adds the `lean --deps` check.
