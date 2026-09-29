@@ -48,6 +48,7 @@ _PRONOUNS = ("it", "she", "he", "her", "him")
 _QUANTIFIERS = ("every", "a", "an", "some")
 _CITE_WORDS = ("clause", "section", "article", "lemma")
 _MAX_NESTING = 4
+_JOIN_LIMIT = 32  # identifiers are at most 64 bytes, so a split name has at most 32 segments
 
 
 def base_environment(meta):
@@ -264,10 +265,42 @@ def _word_pattern(words):
     return "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True)) or r"(?!)"
 
 
+def _segments(text):
+    """The segments of a text: its maximal runs of ASCII letters and digits, lowercased, with
+    their character offsets (the Lean `segmentsOf`/`segWords`)."""
+    return [(m.start(), m.end(), m.group().lower()) for m in re.finditer(r"[A-Za-z0-9]+", text)]
+
+
+def _segment_lengths(words, j, sorts, unary, displays):
+    """The lengths, in segments, of the reference surfaces starting at segment `j` (the Lean
+    `segmentLengths`): a reference word; `this|that` before a sort word's segments; `the` before
+    segments whose `_`-join is a unary predicate; `by` before a citation word; a display's segments."""
+    after = words[j + 1:]
+    lengths = []
+    if words[j] in _REFERENCE_WORDS:
+        lengths.append(1)
+    if words[j] in ("this", "that"):
+        for sort in sorts:
+            phrase = [w for _, _, w in _segments(sort)]
+            if phrase and after[:len(phrase)] == phrase:
+                lengths.append(len(phrase) + 1)
+    if words[j] == "the":
+        lengths.extend(k + 2 for k in range(min(len(after), _JOIN_LIMIT)) if "_".join(after[:k + 1]) in unary)
+    if words[j] == "by" and after[:1] and after[0] in _CITE_WORDS:
+        lengths.append(2)
+    for display in displays:
+        phrase = [w for _, _, w in _segments(display)]
+        if phrase and words[j:j + len(phrase)] == phrase:
+            lengths.append(len(phrase))
+    return lengths
+
+
 def reference_surfaces(doc, text, displays=()):
     """Every reference surface of a text as (start, end) character offsets: a reference word,
     a demonstrative before a sort word, `the` before a unary predicate word, a citation
-    `by <clause|section|...>`, or a document name (3.4; the Lean route's `referenceAt`)."""
+    `by <clause|section|...>`, or a document name (3.4; the Lean route's `referenceAt`).
+    Surfaces are also found on the text's segments, so a reference word joined to anything
+    else (`It's`, `It_`, `Itʼs`, `It-is`) is still found (the Lean `segmentSurfaces`)."""
     sorts, unary = _words(doc["environment"])
     patterns = [r"\b(?:" + "|".join(_REFERENCE_WORDS) + r")\b",
                 r"\b(?:this|that)\s+(?:" + _word_pattern(sorts) + r")\b",
@@ -278,6 +311,11 @@ def reference_surfaces(doc, text, displays=()):
     for pattern in patterns:
         for match in re.finditer(pattern, text, re.I):
             found.add((match.start(), match.end()))
+    segments = _segments(text)
+    words = [w for _, _, w in segments]
+    for j in range(len(segments)):
+        for n in _segment_lengths(words, j, sorts, unary, displays):
+            found.add((segments[j][0], segments[j + n - 1][1]))
     return sorted(found)
 
 

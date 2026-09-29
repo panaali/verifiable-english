@@ -1091,3 +1091,40 @@ def test_unicode_spaces_separate_words(lean, tmp_path):
     assert unit_result(resolve(beta), "u3") == "UnresolvedReference: m1"
     assert admit(beta)["error"] == "UnresolvedReference: m1"
     assert not isinstance(python_outcome(beta, tmp_path), dict)
+
+
+# characters a word may carry that are not ASCII letters or digits: apostrophes, hyphens, the
+# underscore, the modifier letter apostrophe, a non-breaking hyphen, a combining mark, a
+# non-ASCII letter, a zero-width space and a word joiner
+JOINERS = ["'", "’", "-", "_", "ʼ", "‑", "́", "é", "​", "⁠"]
+
+
+def test_joined_reference_words_are_slots(lean, tmp_path):
+    """looprecheck2 A (Access.lean:28, Grammar.lean:95) and B (discourse.py:272): a reference
+    word joined to anything else inside a word is still a slot. With a submitted formula and no
+    mention, each unit is `UnrecordedSlot` in both implementations (Lean prints token ranges,
+    Python byte ranges)."""
+    safe = {"u1": unary("safe", "api")}
+    for sentence in ["It's safe.", "It’s safe.", "He's safe.", "They're safe.", "It-is safe.",
+                     "It_ is safe.", "Itʼs safe."]:
+        lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+        assert lean_error == "UnrecordedSlot: u1: [0, 1)", sentence
+        width = 4 if sentence.startswith("They") else 2
+        assert python_error == f"UnrecordedSlot: u1: [0, {width})", (sentence, python_error)
+    lean_error, python_error = slot_outcomes(["Api is safe; it's deployed."], tmp_path, safe)
+    assert lean_error == "UnrecordedSlot: u1: [4, 5)"
+    assert python_error == "UnrecordedSlot: u1: [13, 15)"
+    # the class: every joiner on either side of every reference word, and every other surface
+    for word in ("it", "she", "he", "her", "him", "his", "its", "their", "they", "them", "former", "latter", "such"):
+        for joiner in JOINERS:
+            for sentence in [f"{word.capitalize()}{joiner}x is safe.", f"Api is x{joiner}{word} safe."]:
+                lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+                assert lean_error.startswith("UnrecordedSlot: u1: ["), (sentence, lean_error)
+                assert python_error.startswith("UnrecordedSlot: u1: ["), (sentence, python_error)
+    for sentence in ["This-service is safe.", "By-clause 3, api is safe.", "The-safe is safe.", "Api is the_safe."]:
+        lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+        assert lean_error.startswith("UnrecordedSlot: u1: ["), (sentence, lean_error)
+        assert python_error.startswith("UnrecordedSlot: u1: ["), (sentence, python_error)
+    # a word that merely begins with a reference word's letters is not one
+    lean_error, python_error = slot_outcomes(["Itself is safe."], tmp_path, safe)
+    assert lean_error is None and isinstance(python_error, dict), (lean_error, python_error)

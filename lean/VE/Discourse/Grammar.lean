@@ -101,8 +101,68 @@ def referenceAt (D : DDoc) (s : List Tok) (i : Nat) : Bool :=
     let w := lexWords x
     !w.isEmpty && w.isPrefixOf (s.drop i)
 
+/-! ### Segments: slot discovery below the lexer
+
+The lexer keeps every character but spaces, punctuation and `.` inside a word, so `it's`, `it’s`,
+`it-is`, `it_` and `itʼs` are single words that `referenceAt` never matches. Slot discovery also
+reads a sentence as its segments, the maximal runs of ASCII letters and digits of its words, and
+finds the same surfaces on them: a reference word joined to anything else is still a slot to
+account for (fail closed). Python's `reference_surfaces` reads the same segments. -/
+
+def segGo : List Char → List Char → List String
+  | [], cur => if cur.isEmpty then [] else [String.mk cur.reverse]
+  | c :: rest, cur =>
+    if c.isAlphanum then segGo rest (c.toLower :: cur)
+    else if cur.isEmpty then segGo rest []
+    else String.mk cur.reverse :: segGo rest []
+
+/-- The segments of a string: its maximal runs of ASCII letters and digits, lowercased. -/
+def segmentsOf (w : String) : List String := segGo w.toList []
+
+/-- The segments of a sentence, each with the index of the token it lies in. -/
+def segWords (s : List Tok) : List (String × Nat) :=
+  (List.range s.length).flatMap fun i => match (s[i]? : Option Tok) with
+    | some (.word w) => (segmentsOf w).map (·, i)
+    | _ => []
+
+/-- A symbol name split into segments is spelled by its `_`-joined segments (identifiers are
+`[a-z][a-z0-9_]*`, at most 64 bytes, so at most 32 segments). -/
+def joinLimit : Nat := 32
+
+/-- The lengths, in segments, of the reference surfaces starting at segment `j`: a reference
+word; `this|that` before a sort name's segments; `the` before segments whose `_`-join is a unary
+predicate; `by` before a citation word; a document display's segments. -/
+def segmentLengths (D : DDoc) (ws : List String) (j : Nat) : List Nat :=
+  let after := ws.drop (j + 1)
+  (if (ws[j]?).any referenceWords.contains then [1] else []) ++
+  (if (ws[j]?).any demonstrativeWords.contains then
+    D.E.sorts.filterMap fun srt =>
+      let p := segmentsOf srt
+      if !p.isEmpty && p.isPrefixOf after then some (p.length + 1) else none
+   else []) ++
+  (if ws[j]? == some "the" then
+    (List.range (min after.length joinLimit)).filterMap fun k =>
+      if unaryPred D.E ("_".intercalate (after.take (k + 1))) then some (k + 2) else none
+   else []) ++
+  (if ws[j]? == some "by" && (ws[j + 1]?).any citeWords.contains then [2] else []) ++
+  D.K.documents.flatMap fun d => d.display.filterMap fun x =>
+    let p := segmentsOf x
+    if !p.isEmpty && p.isPrefixOf (ws.drop j) then some p.length else none
+
+/-- The segment surfaces of a sentence as token ranges `[first token, last token + 1)`. -/
+def segmentSurfaces (D : DDoc) (s : List Tok) : List (Nat × Nat) :=
+  let sw := segWords s
+  let ws := sw.map (·.1)
+  (List.range ws.length).flatMap fun j => (segmentLengths D ws j).map fun n =>
+    (((sw[j]?).map (·.2)).getD 0, ((sw[j + n - 1]?).map (·.2 + 1)).getD s.length)
+
+/-- Every reference surface of a sentence as a token range: the words `referenceAt` matches and
+the segment surfaces. -/
+def surfaceRanges (D : DDoc) (s : List Tok) : List (Nat × Nat) :=
+  ((List.range s.length).filter (referenceAt D s)).map (fun i => (i, i + 1)) ++ segmentSurfaces D s
+
 /-- The first reference surface of a sentence. -/
-def referenceIndex (D : DDoc) (s : List Tok) : Option Nat := (List.range s.length).find? (referenceAt D s)
+def referenceIndex (D : DDoc) (s : List Tok) : Option Nat := ((surfaceRanges D s).map (·.1)).min?
 
 /-- The slot forms an `NP.slot` may carry. -/
 def simpleForm (f : Form) : Bool :=
