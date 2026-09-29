@@ -10,7 +10,7 @@ from ve.soft_route import elaborate_soft_document
 from ve.softnorms import SoftEnvironment
 from ve.background import background
 from ve.model import FiniteModel
-from ve.surface.rights import parse_line, render_line
+from ve.surface.rights import parse_line, render_line, render_unit
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
 from ve.readings import plan_choices, rights_meaning_id, validate_couplings, validate_reading_sets
@@ -113,6 +113,91 @@ def test_rule_bar_elaborates_over_right_liberty():
     assert [r.core.name for r in doc.soft_document.rules] == ["may-act", "rights-bar-1"]
     assert doc.soft_document.rules[-1].core.over == ("may-act",)
     assert elaborate_soft_document(doc.soft_document)["status"] == "ok"
+
+
+def test_liberty_without_bar_does_not_declare_aimed_vocabulary():
+    liberty = {"kind": "liberty", "holder_slot": None, "cites": {},
+               "norm": {"name": "may-act", "predicate": "person_may_act", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    doc = correlate(rights_env(), [right([liberty])])
+    assert doc.bar_names == {}
+    assert not any(name.startswith("rights__bar__") for name in doc.environment.predicates)
+
+
+def test_document_rejects_citation_to_nonexistent_source_unit(tmp_path):
+    source = "Right.\nLimitation.\n"
+    line = claim()
+    line["norm"].update(mode="default", exception={"decided_by": "unstated",
+                         "sufficient": [], "necessary": [], "factors": []})
+    line["cites"] = {"exception": ["nonexistent-source-unit"]}
+    units = [right([line]), {"limitation": {
+        "name": "l29", "scope": "all", "kinds": ["claim"], "decided_by": "unstated",
+        "conditions": [], "factors": []}}]
+    meta = {"format": "ve-document@1", "environment": rights_env(), "units": [
+        {"id": "u1", "span": [0, 7], "kind": "right", "meaning": "specified",
+         "support": "none", "content": units[0]},
+        {"id": "u2", "span": [7, len(source)], "kind": "limitation", "meaning": "specified",
+         "support": "none", "content": units[1]}]}
+    path = tmp_path / "citation.ve.md"
+    path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
+    with pytest.raises(VEError, match="citation target is not a source unit"):
+        load_document(path)
+    meta["units"][0]["content"]["right"]["lines"][0]["cites"]["exception"] = ["u2"]
+    path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
+    doc = load_document(path)
+    assert doc["units"][0]["status"] == "OPEN"
+    assert doc["units"][1]["status"] == "OPEN"
+    assert doc["rights_document"].instances[0]["cites"]["exception"] == ["u2"]
+    meta["units"][0]["content"]["right"]["lines"][0]["cites"] = {}
+    path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
+    result = check_document(path)
+    assert result["coverage"]["bytes_by_status"] == {"OPEN": len(source)}
+    assert any("exception" in finding for finding in
+               result["rights"]["report"]["unlicensed_limitations"])
+
+
+def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["adult"] = {"arguments": ["person"],
+                                                   "description": "adult"}
+    line = claim()
+    line["norm"].update(mode="default", exception={"decided_by": "unstated",
+                         "sufficient": [], "necessary": [], "factors": []},
+                        guard=["binary", "rights__cond__1", ["var", 1], ["var", 0]])
+    units = [right([line], guard=["unary", "adult", ["var", 0]]),
+             {"limitation": {"name": "l29", "scope": "all", "kinds": ["claim"],
+                             "decided_by": "unstated", "conditions": [
+                                 {"name": "law", "role": "necessary", "decided_by": None,
+                                  "verbalisation": "determined by law"}], "factors": []}}]
+    document = correlate(raw, units)
+    text = render_unit(document, units[0])
+    assert "should protect" in text
+    assert "must protect" not in text
+    assert "adult" in text and "rights__cond__1" in text and "rights__lim__1" in text
+    assert "claim lines" in render_unit(document, units[1])
+
+
+def test_reporting_rejects_swapped_lean_lines_even_when_names_match(monkeypatch):
+    from ve import rights_route
+    raw = rights_env()
+    first = right([claim("first")])
+    second_line = claim("second")
+    second_line["norm"]["guard"] = ["not", ["top"]]
+    later = {"right_lines": {"right": "life", "lines": [second_line]}}
+    units = [first, later]
+    rights = correlate(raw, units)
+    original = rights_route.run_rights_case
+
+    def swapped(environment, source, kind, **extra):
+        row = original(environment, source, kind, **extra)
+        if kind == "rights-elaborate":
+            row["lines"][0]["node"], row["lines"][1]["node"] = (
+                row["lines"][1]["node"], row["lines"][0]["node"])
+        return row
+
+    monkeypatch.setattr(rights_route, "run_rights_case", swapped)
+    with pytest.raises(VEError, match="regeneration mismatch: lines"):
+        rights_route.report_rights(rights.env, units, rights)
 
 
 def test_couplings_keep_only_shared_axis_choices():

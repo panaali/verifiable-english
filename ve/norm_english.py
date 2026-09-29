@@ -130,16 +130,19 @@ def default_sentence(env, predicate):
 def render_rule_sentence(rule, env, words=None):
     """Render the content of one rule, including quoted rules outside a layer."""
     words = _words(env) if words is None else words
-    consequence, scope = _consequence(rule, env, words)
+    core = getattr(rule, "core", rule)
+    consequence, scope = (_soft_consequence(rule, env, words)
+                          if getattr(rule, "mode", "strict") == "default" else
+                          _consequence(core, env, words))
     sentence = consequence
-    if not isinstance(rule.guard, ast.Top):
-        sentence += ", if " + _guard_text(rule.guard, env, words, scope)
-    if len(rule.unless) == 1:
-        sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
+    if not isinstance(core.guard, ast.Top):
+        sentence += ", if " + _guard_text(core.guard, env, words, scope)
+    if len(core.unless) == 1:
+        sentence += ", unless " + _guard_text(core.unless[0], env, words, scope)
     sentence += "."
-    if len(rule.unless) > 1:
+    if len(core.unless) > 1:
         sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
-                                   for u in rule.unless)
+                                   for u in core.unless)
     return sentence
 
 
@@ -346,16 +349,17 @@ _SOFT_HEADER = re.compile(r"Rule ([1-9][0-9]*)(?: \(([^()]*)\))?\. (.*)\Z", re.S
 
 
 def _soft_consequence(rule, env, words):
-    strict, scope = _consequence(rule, env, words)
-    reg = env.predicates[rule.predicate].regulated
+    core = getattr(rule, "core", rule)
+    strict, scope = _consequence(core, env, words)
+    reg = env.predicates[core.predicate].regulated
     if getattr(rule, "mode", "strict") != "default":
         return strict, scope
     if reg.role == "plain":
         raise SyntaxError("A default rule needs a declared obligation or permission act")
-    modal = ("should" if rule.sign else "generally need not") if reg.role == "obligation" else (
-        "generally may" if rule.sign else "should not")
-    strict_modal = ("must" if rule.sign else "need not") if reg.role == "obligation" else (
-        "may" if rule.sign else "must not")
+    modal = ("should" if core.sign else "generally need not") if reg.role == "obligation" else (
+        "generally may" if core.sign else "should not")
+    strict_modal = ("must" if core.sign else "need not") if reg.role == "obligation" else (
+        "may" if core.sign else "must not")
     return strict.replace(" " + strict_modal + " ", " " + modal + " ", 1), scope
 
 

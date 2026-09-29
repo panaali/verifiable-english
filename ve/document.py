@@ -345,6 +345,24 @@ def load_document(path: str | Path):
                          **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
+    if rights_document is not None:
+        for unit in compiled:
+            content = unit["content"]
+            if type(content) is not dict:
+                continue
+            citations = []
+            if unit["kind"] in ("right", "right_lines"):
+                citations.extend(line.get("cites", {}) for line in content[unit["kind"]]["lines"])
+            elif unit["kind"] == "norm":
+                citations.append(content.get("cites", {}))
+            for cited in citations:
+                if type(cited) is not dict:
+                    raise VEError("InvalidInput: line citations")
+                for targets in cited.values():
+                    if (type(targets) is not list or not targets or
+                            any(type(target) is not str or target not in unit_ids
+                                for target in targets)):
+                        raise VEError("InvalidInput: citation target is not a source unit")
     reports = None
     if "reports@0" in env.profiles:
         from .reports import ReportsDocument
@@ -381,6 +399,39 @@ def load_document(path: str | Path):
         unit["status"] = ("CHECKED" if reading_set["status"] == "authored"
                           and all(c["kind"] == "asserted" and c["content"] is not None
                                   for c in reading_set["readings"]) else "OPEN")
+    if rights_document is not None:
+        rights = rights_document
+        from .search import _used_predicates
+
+        def open_rule(rule):
+            return (rule.mode == "default" or bool(rule.alterable) or
+                    bool(_used_predicates(rule.core.guard) & open_names) or
+                    any(_used_predicates(f) & open_names for f in rule.core.unless))
+
+        for unit in compiled:
+            if unit["status"] != "CHECKED" or unit["kind"] not in (
+                    "right", "right_lines", "limitation", "bar", "norm"):
+                continue
+            content = unit["content"]
+            if type(content) is not dict:
+                continue
+            kind = unit["kind"]
+            if kind in ("limitation", "bar"):
+                unit["status"] = "OPEN"
+            elif kind == "norm":
+                from .softnorms import decode_rule
+                if open_rule(decode_rule(rights.environment, content)):
+                    unit["status"] = "OPEN"
+            else:
+                body = content[kind]
+                name = body["name"] if kind == "right" else body["right"]
+                active_lines = [i for i in rights.instances if i["right"] == name and
+                                any(i["source_line"] is line for line in body["lines"])]
+                if any(open_rule(i["rule"]) or
+                       any(rights._in_scope(limit, i) for limit in rights.limitations) or
+                       (rights.bar is not None and i["kind"] in ("liberty", "powerLiberty"))
+                       for i in active_lines):
+                    unit["status"] = "OPEN"
     for unit in compiled:
         if unit.pop("explicit_status") not in (None, unit["status"]):
             raise VEError("unit status contradicts content, meaning, or active reading set")
