@@ -1,0 +1,729 @@
+{
+  "run": "20260929T1800Z",
+  "baseline_tag": "ve-green-flaky4",
+  "previous_run": "20260929T0600Z",
+  "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
+  "source_bytes": 184893,
+  "bytes_accounted": 184893,
+  "bytes_accounted_percent": 100.0,
+  "sentence_clause_units": {
+    "units_total": 1127,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 1,
+      "READINGS": 14,
+      "UNFORMALISED": 1072
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 234,
+      "READINGS": 1833,
+      "UNFORMALISED": 182455
+    }
+  },
+  "aggregated_to_previous_boundaries": {
+    "units_total": 299,
+    "unit_counts_by_status": {
+      "LABELLED": 10,
+      "MIXED": 37,
+      "UNFORMALISED": 250,
+      "READINGS": 1,
+      "CHECKED": 1
+    },
+    "bytes_by_substatus": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 234,
+      "READINGS": 1833,
+      "UNFORMALISED": 182455
+    }
+  },
+  "claimed_covered_bytes": 2438,
+  "claimed_covered_percent": 1.3186,
+  "claimed_covered_bytes_previous_run": 419,
+  "substantive_covered_bytes": 2089,
+  "audit_verified_covered_bytes": 22,
+  "audit_verified_covered_percent": 0.0119,
+  "audit_verified_metadata_bytes": 232,
+  "audit_verified_basis": "Only u0248 (22 bytes) has been accepted by every audit that sampled it and is unchanged. The last audit (20260929T0600Z) rejected u0165.s07; it is repaired here but has not been re-audited, so its bytes are not counted as verified. The 18 LABELLED heading units that audit accepted are counted separately as metadata bytes. Every newly covered unit is translator-reviewed only (see translator_reviewed_bytes).",
+  "translator_reviewed_bytes": 2067,
+  "translator_reviewed_note": "Self-review against docs/spec/soft-norms.md 2.2 and 4 (whole-span fidelity, act identification); not an independent audit.",
+  "documents": {
+    "main": "translation.ve.md",
+    "strict": "readings/all-strict.ve.md",
+    "default": "readings/all-default.ve.md"
+  },
+  "open_terms": [
+    {
+      "name": "broad_safety",
+      "arguments": [
+        "claude",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human oversight",
+        "principal hierarchy",
+        "current phase of AI development"
+      ]
+    },
+    {
+      "name": "appropriate_oversight",
+      "arguments": [
+        "mechanism",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human authorization",
+        "ability to correct AI",
+        "misuse of power"
+      ]
+    },
+    {
+      "name": "genuine_helpfulness",
+      "arguments": [
+        "action",
+        "principal",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "benefit to operators and users",
+        "longer term interests",
+        "other people affected"
+      ]
+    },
+    {
+      "name": "ethical_harm",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "severity",
+        "likelihood",
+        "who bears harm",
+        "possible benefits"
+      ]
+    },
+    {
+      "name": "good_judgment",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "competing values",
+        "uncertainty",
+        "context"
+      ]
+    },
+    {
+      "name": "child_sexual_abuse_material",
+      "arguments": [
+        "material",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "whether the material is child sexual abuse material"
+      ]
+    },
+    {
+      "name": "mass_casualty_weapon_uplift",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as serious uplift",
+        "what counts as seeking to create such a weapon",
+        "what counts as the potential for mass casualties"
+      ]
+    },
+    {
+      "name": "critical_infrastructure_uplift",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as serious uplift",
+        "what counts as an attack",
+        "which systems are critical infrastructure or critical safety systems"
+      ]
+    },
+    {
+      "name": "damaging_cyberweapon_or_malicious_code",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as a cyberweapon or malicious code",
+        "what counts as significant damage",
+        "how likely deployment must be for the damage to count as one that could happen",
+        "whether “that could cause significant damage if deployed” qualifies cyberweapons as well as malicious code"
+      ]
+    },
+    {
+      "name": "clear_and_substantial_undermining_of_oversight",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as clearly and substantially undermining",
+        "what counts as Anthropic’s ability to oversee and correct advanced AI models",
+        "the source points to its section on being broadly safe"
+      ]
+    },
+    {
+      "name": "attempt_to_kill_or_disempower_most_of_humanity",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as the vast majority of humanity",
+        "what counts as disempowering",
+        "what counts as engaging or assisting in an attempt"
+      ]
+    },
+    {
+      "name": "illegitimate_absolute_control",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as unprecedented degrees of control",
+        "what counts as illegitimate",
+        "what counts as absolute societal, military, or economic control",
+        "what counts as engaging or assisting"
+      ]
+    },
+    {
+      "name": "genuine_ambiguity",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_unsafe",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_unethical",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_against_guidelines",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "seemingly_compelling_argument_to_cross_line",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "operator_user_goal_conflict",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_harming_users",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_damaging_deception",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_blocking_urgent_help",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_third_party_harm",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_against_core_principles",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "following_requires_guideline_violation",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    }
+  ],
+  "open_terms_count": 24,
+  "reading_sets": {
+    "count": 14,
+    "unresolved": 14,
+    "candidates_each": 2,
+    "kinds": "norm (strict, default)",
+    "narrowings": [
+      {
+        "id": "narrow-u0165-s01",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s02",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s03",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s04",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s05",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s06",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      },
+      {
+        "id": "narrow-u0165-s07",
+        "keeps": [
+          "strict"
+        ],
+        "reason_spans": [
+          "u0166.s01",
+          "u0166.s04"
+        ]
+      }
+    ],
+    "units": [
+      "u0036.s05",
+      "u0052.s01",
+      "u0078.s01",
+      "u0125.s04.p2",
+      "u0156.s03",
+      "u0165.s01",
+      "u0165.s02",
+      "u0165.s03",
+      "u0165.s04",
+      "u0165.s05",
+      "u0165.s06",
+      "u0165.s07",
+      "u0168.s01",
+      "u0263.s04.p2"
+    ]
+  },
+  "missing_feature_tally": {
+    "other:discourse": 80,
+    "quantities": 119,
+    "norms": 668,
+    "causation": 75,
+    "time": 9,
+    "counting": 31,
+    "defaults": 54,
+    "modality/belief": 24,
+    "attribution": 12
+  },
+  "missing_feature_tally_previous_run": {
+    "other:discourse": 78,
+    "quantities": 119,
+    "norms": 676,
+    "causation": 80,
+    "time": 9,
+    "counting": 31,
+    "defaults": 54,
+    "modality/belief": 24,
+    "attribution": 12
+  },
+  "heading_presuppositions_exposed": 29,
+  "check_verdicts": {
+    "main": {
+      "document_loaded": true,
+      "coverage_percent": 100,
+      "premises": {
+        "status": "UNKNOWN",
+        "reason": "non-assertion reading elaboration pending"
+      },
+      "reading_plan": {
+        "route": "UNKNOWN",
+        "budget": {
+          "max_choices": 64
+        },
+        "choice_count": 128
+      },
+      "residual": {
+        "open_terms": 24,
+        "assumptions": 16,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 14,
+        "default_exceptions": 1,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0
+      },
+      "soft_status": "OPEN"
+    },
+    "all_strict": {
+      "premises": {
+        "status": "model",
+        "model_id": "daed44776a27b4022fbac3f9e5a580507f0b0f9f3d8f351eb060a58b1f15fe14"
+      },
+      "residual": {
+        "open_terms": 24,
+        "assumptions": 16,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0,
+        "default_exceptions": 1,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0
+      },
+      "bytes_by_status": {
+        "LABELLED": 349,
+        "UNFORMALISED": 182455,
+        "OPEN": 1801,
+        "CHECKED": 288
+      }
+    },
+    "all_default": {
+      "premises": {
+        "status": "model",
+        "model_id": "678a75e727cd8f16c086a22a2d4c3e38641ab9341954d5d2dc7eaa9df50422dc"
+      },
+      "residual": {
+        "open_terms": 24,
+        "assumptions": 16,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0,
+        "default_exceptions": 15,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0
+      },
+      "bytes_by_status": {
+        "LABELLED": 349,
+        "UNFORMALISED": 182455,
+        "OPEN": 2067,
+        "CHECKED": 22
+      },
+      "default_exceptions_by_decider": {
+        "unstated": 15
+      }
+    },
+    "english_export": {
+      "rules": 15,
+      "strict_round_trip": 13,
+      "default_round_trip": 13,
+      "not_round_tripping": [
+        "comply-operator-prompt",
+        "follow-operator-in-conflict"
+      ]
+    },
+    "natural_render_checked_clause": "Claude is not human.",
+    "open_status_render_corrected": true
+  },
+  "unchanged_from_previous_run": {
+    "units_kept": 1109,
+    "units_replaced": 15,
+    "source_and_fence_bytes_identical": true
+  },
+  "profile_combination_probe": {
+    "closure@0": "UnsupportedProfile: the norms route admits FOL documents only",
+    "order@0": "UnsupportedProfile: the norms route admits FOL documents only",
+    "time@0": "accepted at document-check level",
+    "reports@0": "reports@0 with norms@0 layers",
+    "alternatives@0": "alternatives@0 with soft-norms@0",
+    "speech-acts@0": "Incorrect fields (missing=['speech_acts'], unknown=[])",
+    "definitions@0": "accepted at document-check level",
+    "data@0": "accepted at document-check level"
+  },
+  "regulated_predicates": {
+    "cbrn_uplift_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "infrastructure_attack_uplift_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "cyberweapon_creation_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "oversight_undermining_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "humanity_attack_participation_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "illegitimate_control_participation_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "csam_generation_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "judgment_use_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "clarification_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "system_prompt_compliance_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "system_prompt_deception_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "user"
+      ]
+    },
+    "denial_of_being_claude_permitted": {
+      "role": "permission",
+      "default": "deny",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "exploit_instruction_compliance_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "operator_instruction_following_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "firmness_required": {
+      "role": "obligation",
+      "default": "deny",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    }
+  },
+  "no_invented_permissions": {
+    "regulated_predicates": 15,
+    "permission_predicates": [
+      "cbrn_uplift_permitted",
+      "csam_generation_permitted",
+      "cyberweapon_creation_permitted",
+      "denial_of_being_claude_permitted",
+      "humanity_attack_participation_permitted",
+      "illegitimate_control_participation_permitted",
+      "infrastructure_attack_uplift_permitted",
+      "oversight_undermining_permitted",
+      "system_prompt_deception_permitted"
+    ],
+    "predicates_with_default_allow": 0,
+    "every_regulated_predicate_is_about_Claude_only": true,
+    "note": "Every norm predicate takes an instance of Claude as its first argument, so no rule or completion says anything about a party the source does not name. Completions are all deny: for obligations that means only “not required”; for the seven hard constraints and the two other prohibitions the rule applies to every instance of Claude with guard true, so the completion is never reached in the strict reading; in the default reading an excepted rule falls back to “not permitted”, which the source does not state (recorded as a limitation)."
+  }
+}

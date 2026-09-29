@@ -1,0 +1,48 @@
+{
+  "source_bytes": 184893,
+  "accounted_bytes": 184893,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 349,
+    "unformalised": 181821,
+    "attributed": 634,
+    "norm": 2067,
+    "asserted": 22
+  },
+  "bytes_by_status": {
+    "LABELLED": 349,
+    "UNFORMALISED": 182455,
+    "OPEN": 2067,
+    "CHECKED": 22
+  },
+  "unformalised_reasons": {
+    "other.discourse": 80,
+    "quantities": 119,
+    "norms": 668,
+    "causation": 75,
+    "time": 9,
+    "counting": 31,
+    "defaults": 54,
+    "modality_belief": 24,
+    "attribution": 12
+  },
+  "residual": {
+    "open_terms": 24,
+    "assumptions": 16,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 14,
+    "default_exceptions": 1,
+    "instruction_switches": 0,
+    "holistic_overrides": 0,
+    "weighing_points": 0
+  },
+  "residual_total": 55,
+  "soft_status": "OPEN",
+  "default_exceptions_by_decider": {
+    "unstated": 1
+  },
+  "soft_residual_labels": [
+    "soft__excepted__comply_operator_prompt"
+  ],
+  "soft_background_labels": []
+}
