@@ -172,7 +172,9 @@ def background(env) -> tuple[Premise, ...]:
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
 
     def lean():
-        row = run("route", [case])[0]
+        # The route decoder rejects `regulated`; the norms route strips and checks it.
+        regulated = any(d.regulated is not None for d in env.predicates.values())
+        row = run("norms" if regulated else "route", [case])[0]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")

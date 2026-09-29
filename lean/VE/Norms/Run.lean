@@ -24,6 +24,9 @@ import VE.Route.Run
 * `admission`: a W2 FOL `document` containing norm units → a checked report,
   source-bound report id and unit kinds; the answer is exactly
   `encodeAdmitted` of the checked admission (`Run.norms_wire_acceptance`).
+* `background` on an environment with `regulated` declarations → the
+  regenerated Background with generators (flags, definitions, literals,
+  profile), as the route answers it for other environments.
 * Any case without a norm construct (no `regulated` field, no `norms`, not a
   `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
@@ -145,6 +148,15 @@ def runCase (j : Json) : Except String Json := do
       match Replay.firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
+  if kind == "background" && usesNormsPath j then
+    -- Python's generator order: flags, definitions, literals, then the
+    -- profile premise of each declared pair (sorted by obligation).
+    let ne ← Wire.decodeNormsEnvironment (← j.getObjVal? "environment")
+    unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
+      throw "defined declarations require the definitions@0 profile"
+    let T : Tree := ⟨ne.regulated, [], []⟩
+    return VE.Route.Wire.runBackground id (VE.Route.Wire.fullBackground ne.rv ++
+      (pairPremises T).map (·, "profile"))
   if usesNormsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norms route"
   VE.Route.Run.runCase j

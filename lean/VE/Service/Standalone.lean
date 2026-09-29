@@ -7,25 +7,72 @@ decoders used by the route; successful model answers require a checked model. -/
 namespace VE.Service.Standalone
 open Lean
 
-def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+/-- The `regulated` extension checked as `Norms.Wire.decodeNormsEnvironment`
+checks it, on any family: Python validates it in the environment constructor,
+whichever checker family the envelope selects. -/
+def checkRegulated (predicates : List (String × Json)) : Except String Unit := do
+  let regs ← predicates.filterMapM fun (p, entry) => do
+    match entry.getObjVal? "regulated" with
+    | .error _ => pure none
+    | .ok raw =>
+      if (entry.getObjVal? "defined").isOk then
+        throw s!"RegulatedDefinedPredicate: {p}"
+      if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
+        throw s!"RegulatedFlag: {p}"
+      let args ← VE.Bridge.strings (← entry.getObjVal? "arguments")
+      some <$> VE.Norms.Wire.decodeRegulated p args raw
+  if regs.length > 64 then throw "ResourceLimit: regulated predicates"
+  VE.Norms.actChecks regs
+
+/-- A gated envelope and the environment JSON its family decoders read: the
+submitted one, with any `regulated` extension removed after it is checked.
+Identities are computed over the submitted JSON. -/
+structure Validated where
+  envelope : VE.Route.Gate.Envelope
+  decodable : Json
+
+def validateFamily (e : VE.Route.Gate.Envelope) (environment : Json) : Except String Unit :=
+  match e.family with
+  | .closureNary => do
+    let _ ← VE.Core.Bridge.decodeEnvironment environment
+    pure ()
+  | .order => do
+    let _ ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
+    pure ()
+  | .fol | .closure => do
+    let _ ← VE.Route.Run.decodeRouteVocabulary e
+    pure ()
+
+/-- Remove the named fields from every predicate entry. -/
+def stripPredicates (e : VE.Route.Gate.Envelope) (environment : Json) (names : List String) :
+    Except String Validated := do
+  let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
+  let stripped ← predicates.mapM fun (p, entry) => do
+    pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (fun f => !names.contains f.1)))
+  let vocabulary := e.vocabulary.setObjVal! "predicates" (Json.mkObj stripped)
+  pure ⟨{ e with vocabulary }, environment.setObjVal! "vocabulary" vocabulary⟩
+
+/-- With `typing`, the core family's decoder, which has no `defined` or data
+flag fields, reads each predicate by its argument sorts alone: typing does not
+depend on those fields, which Python has already validated. Validation and
+model modes do not use this relaxation. -/
+def validated (environment : Json) (typing : Bool := false) : Except String Validated := do
   let e ← VE.Route.Gate.decodeEnvelope environment
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
+  let mut v : Validated := ⟨e, environment⟩
   if e.profiles.contains "norms@0" &&
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    -- The norms decoder strips and then checks the regulated extension.
-    let _ ← VE.Norms.Wire.decodeNormsEnvironment environment
-    pure e
-  else
-    match e.family with
-    | .closureNary =>
-      let _ ← VE.Core.Bridge.decodeEnvironment environment
-      pure e
-    | .order =>
-      let _ ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-      pure e
-    | .fol | .closure =>
-      let _ ← VE.Route.Run.decodeRouteVocabulary e
-      pure e
+    -- Check the regulated extension, then strip it: the family decoders see
+    -- regulated predicates as ordinary ones.
+    checkRegulated predicates
+    v ← stripPredicates v.envelope v.decodable ["regulated"]
+  if typing && e.family == .closureNary then
+    v ← stripPredicates v.envelope v.decodable ["defined", "functional", "total"]
+  validateFamily v.envelope v.decodable
+  pure v
+
+def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope :=
+  (·.envelope) <$> validated environment
 
 def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
@@ -68,10 +115,11 @@ def modelCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let model ← j.getObjVal? "model"
-  let e ← validatedEnvironment environment
+  let checked ← validated environment
+  let e := checked.envelope
   match e.family with
   | .closureNary =>
-    let v ← VE.Core.Bridge.decodeEnvironment environment
+    let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
     let _ ← VE.Core.Wire.decodeModel v model
     pure ()
   | .order =>
@@ -96,7 +144,8 @@ def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let ast ← j.getObjVal? "ast"
-  let e ← validatedEnvironment environment
+  let checked ← validated environment (typing := true)
+  let e := checked.envelope
   let items ← ast.getArr?
   let formula := match items[0]? with
     | some (.str _) => true
@@ -119,7 +168,7 @@ def checkCase (j : Json) : Except String Json := do
       let _ ← VE.Closure.Bridge.decodeFormulas rv.environment ast
       pure ()
   | .closureNary =>
-    let v ← VE.Core.Bridge.decodeEnvironment environment
+    let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
     if formula then
       let a ← VE.Core.Bridge.decodeFormula 64 ast
       VE.Core.Bridge.checkFormula v.environment a "formula"
