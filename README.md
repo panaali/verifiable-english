@@ -6,11 +6,13 @@ An English-like language for human-inspectable, machine-checkable claims in AI o
 
 Run the complete offline verification gate with `PATH="$HOME/.elan/bin:$PATH" python3 tools/gate.py`.
 It checks the pinned Lean and Rust versions, syncs the locked Python environment,
-builds both native backends once, runs `cargo test` and the full non-live pytest
-suite, then writes `gate-result.json` with the commit SHA, tool versions, counts,
+builds both native backends once, runs the Lean source audit, `cargo test`, and
+the full non-live pytest suite, then writes `gate-result.json` with the commit SHA, tool versions, counts,
 every skip and every failure. It exits nonzero for missing backends, unlisted skips,
-missing test families, or failed stages. Optional backend and fixture skips are
-listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
+missing test IDs, a dirty or changing worktree, or failed stages. Expected test
+IDs are pinned in `tools/gate-collection.json`; regenerate that file after
+intentional test changes by collecting with `tools.gate_pytest`. Optional backend
+and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
 use `--output PATH` to retain a particular gate record. The package requires
 Python 3.12 or later.
 For a worked inventory, run:

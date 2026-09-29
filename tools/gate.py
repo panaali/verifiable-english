@@ -17,6 +17,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "tools/gate-optional.json"
+COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route")
 REQUIRED_FAMILIES = (
     "test_conformance.py", "test_lean_conformance.py", "test_rust_conformance.py",
@@ -82,16 +83,34 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
                and entry["reason"] in reason for entry in entries)
 
 
-def interpret_pytest(result: dict, events: dict, policy: dict) -> None:
+def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str]) -> None:
     tests = events["tests"]
-    deselected = set(events["deselected"])
-    selected = [node for node in events["collected"] if node not in deselected]
-    result["counts"].update(collected=len(set(selected) | deselected),
+    collected = events["collected"]
+    selected = events["selected"]
+    deselected = events["deselected"]
+    result["counts"].update(collected=len(collected),
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
                             failed=sum(row["outcome"] == "failed" for row in tests.values()),
-                            deselected=len(events["deselected"]))
+                            deselected=len(deselected))
+    if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
+        result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
+    missing = sorted(set(expected) - set(collected))
+    unexpected = sorted(set(collected) - set(expected))
+    if missing or unexpected:
+        result["failures"].append({"stage": "coverage",
+                                   "reason": f"collection differs from baseline: {len(missing)} missing, "
+                                             f"{len(unexpected)} unexpected; missing={missing[:10]}, "
+                                             f"unexpected={unexpected[:10]}"})
+    if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
+        result["failures"].append({"stage": "coverage",
+                                   "reason": "tests removed from final collection without a deselection report"})
+    if set(tests) - set(selected):
+        result["failures"].append({"stage": "coverage",
+                                   "reason": "result for test outside final collection"})
+    for report in events["collection_reports"]:
+        result["failures"].append({"stage": "collection", **report})
     for family in REQUIRED_FAMILIES:
         if not any(node.startswith(f"tests/{family}::") for node in selected):
             result["failures"].append({"stage": "coverage", "reason": f"required family not collected: {family}"})
@@ -127,23 +146,49 @@ def write_result(path: Path, result: dict) -> None:
     temporary.replace(path)
 
 
+def source_identity(env: dict[str, str]) -> tuple[str, bool]:
+    sha = command(["git", "rev-parse", "HEAD"], env=env, stage="commit")
+    dirty = bool(command(["git", "status", "--porcelain", "--untracked-files=all"],
+                         env=env, stage="worktree status"))
+    return sha, dirty
+
+
+def gate_environment() -> dict[str, str]:
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith(("PYTEST_", "CARGO_")) and key not in
+           {"RUSTFLAGS", "RUSTDOCFLAGS", "VE_LEAN_PREBUILT", "VE_RUST_PREBUILT",
+            "VE_RUST_BINARY", "VE_W5_RUST_BIN", "VE_GATE_PYTEST_RESULT",
+            "VE_GATE_PYTEST_PROGRESS"}}
+    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"]
+    env["UV_CACHE_DIR"] = str(ROOT / ".cache/uv")
+    env["CARGO_HOME"] = str(ROOT / ".cargo-home")
+    env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+    return env
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
     args = parser.parse_args()
     output = args.output.resolve()
-    env = {**os.environ, "PATH": str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"],
-           "UV_CACHE_DIR": str(ROOT / ".cache/uv")}
+    env = gate_environment()
     result = {"schema_version": 1, "commit_sha": "", "dirty": False,
               "toolchains": {}, "stages": [], "counts": {}, "skips": [], "failures": [],
               "status": "failed"}
+    # A killed process must never leave the previous run's passing record intact.
+    write_result(output, result)
+    started_clean = False
     try:
-        result["commit_sha"] = command(["git", "rev-parse", "HEAD"], env=env, stage="commit")
-        result["dirty"] = bool(command(["git", "status", "--porcelain", "--untracked-files=no"],
-                                        env=env, stage="worktree status"))
+        result["commit_sha"], result["dirty"] = source_identity(env)
+        if result["dirty"]:
+            raise RuntimeError("worktree is dirty at gate start")
+        started_clean = True
         policy = json.loads(POLICY.read_text())
         if policy["version"] != 1:
             raise RuntimeError("unsupported optional-test policy version")
+        expected = json.loads(COLLECTION.read_text())
+        if not isinstance(expected, list) or not expected or not all(isinstance(x, str) for x in expected):
+            raise RuntimeError("invalid test collection baseline")
         check_toolchains(result, env)
         command(["uv", "sync", "--locked", "--group", "dev"], env=env, stage="frozen Python lock")
         result["toolchains"]["python"] = command(
@@ -158,14 +203,26 @@ def main() -> int:
                 raise RuntimeError(f"Lean build did not produce {binary}")
         result["stages"].append("lean_build")
 
-        command(["cargo", "build", "--locked", "--release", "--manifest-path",
+        command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
+                env=env, stage="Lean audit")
+        result["stages"].append("lean_audit")
+
+        host = command(["rustc", "-vV"], env=env, stage="Rust host")
+        match = re.search(r"^host: (\S+)$", host, re.MULTILINE)
+        if not match:
+            raise RuntimeError("rustc did not report a host target")
+        target = match.group(1)
+        target_dir = ROOT / "rust/target"
+        cargo_options = ["--target-dir", str(target_dir), "--target", target]
+
+        command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
                  str(ROOT / "rust/Cargo.toml")], env=env, stage="Rust build")
-        rust_binary = ROOT / "rust/target/release/ve"
+        rust_binary = target_dir / target / "release/ve"
         if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
             raise RuntimeError(f"Rust build did not produce {rust_binary}")
         result["stages"].append("rust_build")
 
-        rust_tests = command(["cargo", "test", "--locked", "--release", "--workspace",
+        rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
                               "--manifest-path", str(ROOT / "rust/Cargo.toml")],
                              env=env, stage="native Rust tests")
         summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
@@ -184,20 +241,32 @@ def main() -> int:
             env["VE_GATE_PYTEST_PROGRESS"] = str(Path(directory) / "current-test.txt")
             env["VE_LEAN_PREBUILT"] = "1"
             env["VE_RUST_PREBUILT"] = "1"
+            env["VE_RUST_BINARY"] = str(rust_binary)
             try:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "tools.gate_pytest"], env=env, stage="Python suite")
+                         "-q", "-p", "hypothesis.extra.pytestplugin",
+                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
+                         "-m", "not live", "tests"], env=env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            interpret_pytest(result, json.loads(events_file.read_text()), policy)
+            interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
         result["stages"].append("pytest")
-        if not result["failures"]:
-            result["status"] = "passed"
     except (OSError, ValueError, KeyError, RuntimeError) as exc:
         result["failures"].append({"stage": "gate", "reason": str(exc)})
     finally:
+        if started_clean:
+            try:
+                ending_sha, ending_dirty = source_identity(env)
+                result["dirty"] = ending_dirty
+                if ending_sha != result["commit_sha"] or ending_dirty:
+                    result["failures"].append({"stage": "source identity",
+                                               "reason": "HEAD or worktree changed during gate"})
+            except (OSError, RuntimeError) as exc:
+                result["failures"].append({"stage": "source identity", "reason": str(exc)})
+        if not result["failures"]:
+            result["status"] = "passed"
         write_result(output, result)
         print(f"[gate] {result['status']}: {output}; "
               f"{result['counts'].get('passed', 0)} passed, "
