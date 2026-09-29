@@ -107,6 +107,20 @@ def test_unrecorded_and_wrong_surface_slots_fail(tmp_path):
         load_document(_write(tmp_path, front, named))
 
 
+@pytest.mark.parametrize("word", ["It's", "It’s", "It_", "Itʼs", "It-is", "It is"])
+def test_joined_reference_word_is_a_slot(tmp_path, word):
+    """looprecheck2 B (discourse.py:272): a reference word joined to anything but an ASCII letter
+    or digit is found, so an unrecorded one is never unchecked meaning (the Lean segments)."""
+    source, front = _sample(tmp_path)
+    source = source.replace(b"It is", word.encode() + b" is")
+    cut = source.index(b"It")
+    front["units"][1]["span"][1] = len(source)
+    front["discourse"]["anchors"][0]["span"] = [0, len(source)]
+    front["discourse"]["mentions"] = []
+    with pytest.raises(VEError, match=rf"UnrecordedSlot: u2: \[{cut}, {cut + 2}\)"):
+        load_document(_write(tmp_path, front, source))
+
+
 def test_rejects_partial_overlap_and_stale_version(tmp_path):
     source, front = _sample(tmp_path)
     cut = source.index(b"It")
