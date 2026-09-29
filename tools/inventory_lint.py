@@ -50,8 +50,7 @@ BODIES: dict[str, set[str]] = {
     "ve.vacuity": {"_premise_status"},
     "ve.equivalence": {"_compare"},
     "ve.argument": {"_check_argument_python", "_check_edge", "_lean_deductions"},
-    # No adapter: readings are excluded from covered_operations (recorded).
-    "ve.readings": {"check_readings"},
+    "ve.readings": {"_check_readings_python"},
 }
 
 # Reviewed uses of a body by retained code: (consumer module, consumer
@@ -74,9 +73,6 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         SURFACE + " (soft norms are a Lean-only route; soft_route.check_regenerated compares Lean's regeneration)",
     ("ve.softnorms", "_rule_references", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.softnorms", "_within_limits", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
-    ("ve.document", "main", "ve.readings", "check_readings"):
-        "readings are excluded from covered_operations until the Lean readings checker lands "
-        "(SEMANTICS-MIGRATION-PLAN.md section 1.2; docs/spec/stage2-progress.md); the record stays experimental",
 }
 
 
