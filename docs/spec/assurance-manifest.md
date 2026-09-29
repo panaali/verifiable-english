@@ -141,7 +141,7 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `88fd082b9693…` |
 | `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `b4604ca7788a…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
-| `lean/VE/Norms/Wire.lean` | 306 | 281 | 25–305 | `911a3ac27e31…` |
+| `lean/VE/Norms/Wire.lean` | 308 | 283 | 25–307 | `4af70fb4b49f…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
 | `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
@@ -159,7 +159,7 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| **total** | | **8,575** | | |
+| **total** | | **8,577** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

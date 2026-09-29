@@ -11,7 +11,11 @@ and under the selected authority, and compared with the frozen Python baseline
 * ``different``: same cell and status, different complete output;
 * ``baseline drift``: the backend differs from the baseline exactly as today's
   Python does (a Python change after Stage 0, such as a new record field);
-* ``same, routed``: identical, and at least one adapter ran on the backend;
+* ``same, adapter``: identical, and the operation's own adapter ran on the
+  backend (its verdict came from the backend path);
+* ``same, constituents``: identical, but only constituent adapters ran (for
+  example Background or typing inside a certificate replay whose verdict is
+  still Python's);
 * ``same, python``: identical, but no adapter was dispatched, so Python alone
   answered and the cell says nothing about backend coverage.
 
@@ -35,7 +39,18 @@ from ve.backends import dispatch  # noqa: E402
 from ve.errors import CheckerUnavailable  # noqa: E402
 
 REPORT = ROOT / "docs/spec/stage2-parity.md"
-CLASSES = ("regression", "different", "baseline drift", "same, routed", "same, python")
+CLASSES = ("regression", "different", "baseline drift", "same, adapter", "same, constituents",
+           "same, python")
+# The dispatch operation of each probed public operation's own adapter.
+ADAPTERS = {
+    "admission": "admission", "background": "background", "countermodel_check": "countermodel_check",
+    "countermodel_search": "countermodel_search", "countermodel_search_min_domain": "countermodel_search",
+    "countermodel_search_nonempty": "countermodel_search",
+    "countermodel_search_nonvacuous": "countermodel_search",
+    "countermodel_search_semantic_nonvacuity": "countermodel_search",
+    "distinguishing_model": "distinguishing_model", "evaluate": "evaluate", "evaluate_trace": "evaluate",
+    "dependency_order": "dependency_order", "label": "label", "typing": "typing",
+}
 _routed: set[str] = set()
 _backend = "python"
 _python_outcome = probe.outcome
@@ -67,9 +82,11 @@ def _projected(row):
     return (row["cell"], row["status"], probe.baseline_projection(row["output"]))
 
 
-def _classify(old, new, now=None) -> str:
+def _classify(old, new, now=None, own=None) -> str:
     if _projected(old) == _projected(new):
-        return "same, routed" if new.get("routed") else "same, python"
+        if own is not None and own in new.get("routed", ()):
+            return "same, adapter"
+        return "same, constituents" if new.get("routed") else "same, python"
     if now is not None and _projected(now) == _projected(new):
         return "baseline drift"
     if old["cell"] != new["cell"] or old["status"] != new["status"]:
@@ -90,7 +107,7 @@ def compare(baseline: dict, now: dict, current: dict, only: str | None = None) -
         raise SystemExit(f"probe keys changed: {sorted(set(old_rows) ^ set(new_rows))[:5]}")
     for key, old in old_rows.items():
         new = new_rows[key]
-        klass = _classify(old, new, now_rows[key])
+        klass = _classify(old, new, now_rows[key], ADAPTERS.get(key[2]))
         cells.append({"key": list(key), "class": klass, "routed": new.get("routed", []),
                       "python": [old["cell"], old["status"]], "backend": [new["cell"], new["status"]],
                       **({"outputs": [probe.baseline_projection(old["output"]),
@@ -126,9 +143,11 @@ def render(result: dict) -> str:
              "`conformance/baseline-2026-09/python.json` under the baseline projection. "
              "`regression` is an S cell that became R, U or X (`CheckerUnavailable`) or changed its verdict status, or an R/U cell whose code "
              "changed; `different` keeps the cell and status but changes the complete record; `baseline drift` "
-             "differs from the baseline exactly as today's Python does; `same, routed` is identical with at least "
-             "one adapter executed on the backend; `same, python` is identical because no adapter was dispatched, "
-             "so it is not backend coverage.", "",
+             "differs from the baseline exactly as today's Python does; `same, adapter` is identical with the "
+             "operation's own adapter executed on the backend; `same, constituents` is identical with only "
+             "constituent adapters (Background, typing, evaluation) on the backend while the operation's verdict "
+             "is still Python's; `same, python` is identical because no adapter was dispatched. Only "
+             "`same, adapter` is backend coverage of the operation.", "",
              f"Totals over {len(result['cells'])} cells: " +
              ", ".join(f"{name} {totals[name]}" for name in CLASSES) + ".", "",
              "| Operation | " + " | ".join(CLASSES) + " |", "|---|" + "---:|" * len(CLASSES)]
