@@ -1025,9 +1025,21 @@ def render_document(path):
                 else:
                     description = (f"Rule {rule['name']} is a strict rule on {rule['predicate']} with sign "
                                    f"{'positive' if rule['sign'] else 'negative'}.")
-                    if rule.get("alterable"):
+                    if rule.get("alterable") or rule.get("rank"):
                         from .surface.softnorms import rule_paraphrase
-                        description += " " + rule_paraphrase(rule["name"], "strict", alterable=rule["alterable"])
+                        description += " " + rule_paraphrase(rule["name"], "strict",
+                                                             alterable=rule.get("alterable", ()),
+                                                             rank=rule.get("rank"))
+                # The rule itself (guard and carve-outs), then every field the lines
+                # above leave out: precedence, exception conditions, factors, citations.
+                from .norm_english import render_rule_sentence
+                from .softnorms import decode_rule
+                from .surface.rights import citation_notes, rule_notes
+                text_env = doc["soft_document"].env
+                decoded = decode_rule(text_env, {"norm": rule})
+                description = " ".join((description, render_rule_sentence(decoded, text_env),
+                                        *rule_notes(decoded, text_env, switches=False),
+                                        *citation_notes(content.get("cites"))))
                 return (description if kind == "norm" else
                         f"{description} The source presents this as {kind_description(kind)}.")
             from .norms import NormDocument
@@ -1060,7 +1072,17 @@ def render_document(path):
                          else "This sentence could mean:")
             for index, candidate in enumerate(reading_set["readings"]):
                 lead = "One reading is" if index == 0 else "Another reading is"
+                # A coupled axis's label says which reading a coupling chooses together (6.2).
+                labels = candidate.get("labels") or {}
+                if labels:
+                    lead += " (" + ", ".join(f"{axis} {value}" for axis, value in sorted(labels.items())) + ")"
                 lines.append(f"{lead}: {kind_wording(candidate['kind'], candidate['content'])}")
+    sets = {r["id"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    for coupling in doc["meta"].get("couplings", []):
+        units = [sets[ref["set"]]["unit"] for ref in coupling["sets"]]
+        lines.append(f"Reading units {', '.join(units[:-1])} and {units[-1]} with the same "
+                     f"{coupling['axis']}, because {', '.join(coupling['reason_spans'])} "
+                     f"(coupling {coupling['id']} by {coupling['by']}).")
     return "\n".join(lines) + "\n"
 
 
