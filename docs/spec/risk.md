@@ -1,13 +1,14 @@
 # Risk (`risk@0`), stage A: possible consequences and severity over explicit alternatives, on `alternatives@0`
 
-> Status: item-1 specification, draft 2 (2026-09-29), written from [risk-PLAN.md](risk-PLAN.md) draft 2 (cited
+> Status: item-1 specification, draft 3 (2026-09-29), written from [risk-PLAN.md](risk-PLAN.md) draft 2 (cited
 > `plan n`), which applies the converged Astra + Fable review of the plan (`manage-agents/debates/design-risk/`,
 > REVISE, CONVERGED after round 3, mapped in plan 15), and from the sealed wording probe of plan 2.6
 > (`experiments/authoring-gates/risk-wording-probe/RESULTS.md`, cited `probe`; proxy readers, human readability
 > unmeasured). The stage A statement review of draft 1 (plan 12, item 1; `manage-agents/debates/risk-spec/`) returned
-> FIX, CONVERGED after round 3. Draft 2 applies every correction, mapped item by item in section 12. The next gate is
-> a bounded re-check of the passages and fixtures section 12 lists, which precedes items 2 and 3. Sections 4 to 7 are
-> the statements under review. Section 8 gives the fixtures with their definitions (8.1)
+> FIX, CONVERGED after round 3. Draft 2 applied every correction, mapped item by item in 12.1. The bounded re-check of
+> draft 2 (`manage-agents/risk-p3ver1.final.md`, cited `p3ver1`) returned FAIL with two findings, and draft 3 applies
+> both (12.2). The next gate is a bounded re-check of the passages and fixtures 12.2 lists, which precedes items 2
+> and 3. Sections 4 to 7 are the statements under review. Section 8 gives the fixtures with their definitions (8.1)
 > separated from their expected results (8.2), so that each reviewer derives the expectations from sections 4 to 6
 > before reading them. Section 11 lists every point where this draft chose between readings of the plan. Theorem
 > statements and fixtures are implementation obligations, not claims of completed proofs or tests. Inputs:
@@ -37,7 +38,7 @@ wording's probe status (2); the wire form and identity (3); well-formedness, con
 validation and regeneration, severity and the defined words, slot premises and conservativity, the policy checks,
 the decision report, margins and the audit (4); the report text (5); diagnostics (6); the Lean definitions and every
 item-2 theorem as a statement (7); the fixtures (8); limits and trust (9); the review checklist (10); the resolved
-choices (11); the corrections from the statement review (12).
+choices (11); the corrections from the statement review and from its re-check (12).
 
 Out of scope (plan 3.2, 3.3, 12): bands, chances and expected cost (stages B and C; the stage C fixture kC1 is
 recorded because it bounds a claim of the plan); non-separable conditions and policy-level condition templates
@@ -650,9 +651,10 @@ hypothetical input to validation and is never read as altered evidence.
   declared (alt's `InvalidModel("alternatives", "<r> has no inaction")` or `"<r> has two inactions: …"`). Every harm
   named is a harm constant (`UnknownHarm: <name>`). Every alternative, quantity and kind named is declared
   (`UnknownSymbol: alternative <name>`, `quantity <name>`, `kind <name>`). No record-local name (the chooser or an
-  alternative) equals a constant of `E`, except an alternative that interprets an action constant of the same name
-  (`RiskConstant: <name>`). Facts name base predicates of `E` that are not role predicates, not generated and not
-  regulated (`RiskFact: <predicate>`).
+  alternative) equals a constant of `E_risk` (a constant of `E` or a class name) or another record-local name, except
+  an alternative that interprets an action constant of the same name (`RiskConstant: <name>`). This makes the constant
+  table of the decision model (below) a function. Facts name base predicates of `E` that are not role predicates, not
+  generated and not regulated (`RiskFact: <predicate>`).
 - **V2. Required alternatives.** For each requirement whose `when` kind is present, every required kind is present
   (`RequiredAlternativeMissing: <kind> (with <when kind>)`; 11.7).
 - **V3. Estimates.** Each estimate's tag is its quantity's tag (`UnitMismatch`), and its values lower onto the grid
@@ -678,13 +680,14 @@ hypothetical input to validation and is never read as altered evidence.
 - **V10. The decision model.** The model data `decisionData R d` (below) is admissible for the regenerated
   environment `envAt (inlineTree (toAlt R)) 0`: every constant denotes an element of its sort's domain, and every
   table row is typed. The check is decidable (`VE.Bridge.ModelData.valid`). An action constant of `E` that no
-  alternative of the record interprets is `RiskConstant: <name>`. A fact whose arguments are not elements of its
-  predicate's sorts is `RiskFact: <predicate>`. This step establishes the model validity (`M.Valid`) that alt's
-  `validateAlternatives` leaves to its caller (`lean/VE/Alternatives/Validate.lean`), so `risk_scenario_sound`
-  checks it rather than assuming it.
+  alternative of the record interprets is `RiskConstant: <name>`. A fact with an argument that names no entry of the
+  constant table, or whose element is not in its predicate's sort, is `RiskFact: <predicate>`. This step establishes
+  the model validity (`M.Valid`) that alt's `validateAlternatives` leaves to its caller
+  (`lean/VE/Alternatives/Validate.lean`), so `risk_scenario_sound` checks it rather than assuming it.
 - **V11. The alternatives model.** `validateAlternatives (toAlt R) (decisionModel R d) (decisionRows R d)` succeeds
   (alt 7.1): premises, rows, existence facts E1 to E3 and the policy's `Γ` evaluated on the regenerated model. Its
-  diagnostics are alt's `InvalidModel("alternatives", …)` texts.
+  diagnostics are alt's `InvalidModel("alternatives", …)` texts. A failing base assertion unit is named by its label,
+  `InvalidModel("alternatives", "premise <label> fails")`, as in alt's route (`validateAlternativesWith`).
 
 **Completion** (plan 2.4). An unaddressed cell `(a, h)` has `S = ⊥`, and:
 
@@ -704,16 +707,26 @@ each harm constant) and the order table (the closure). Under validation both tab
 - as domains: for the chooser sort, the record's chooser plus one element per chooser constant of `E`; for the action
   sort, the alternatives; for the harm sort, the harm constants; for the severity sort, the class constants; for every
   other sort, the constants of `E` of that sort;
-- as constants: every constant of `E_risk` denotes its own element, except that an action constant of `E` denotes
-  the alternative of the same name (V10). A chooser constant is therefore a chooser with no available action, which
-  alt's E2 admits;
+- as the constant table, which maps names to elements:
+  - every constant of `E_risk` denotes its own element, except that an action constant of `E` denotes the
+    alternative of the same name (V10). A chooser constant is therefore a chooser with no available action, which
+    alt's E2 admits;
+  - every record-local name has an entry as well: the chooser's name denotes the record's chooser, and each
+    alternative's name denotes that alternative. An alternative that interprets an action constant shares the
+    constant's entry. These entries are not constants of the vocabulary, so `ModelData.valid` (V10) does not check
+    them. They are required all the same, because frozen `rowsTypedB` (`lean/VE/Alternatives/Validate.lean`, inside
+    V11's `validateAlternatives`) resolves each signed row's `action` and `harm` through `M.constants`. Fact
+    arguments and the elements a report names (`entity`) are resolved through the same table. By V1 no two entries
+    share a name;
 - `available` as every alternative to the record's chooser, `inaction` as the marked alternative, and `taken` empty;
 - `leads_to` and `risk__might_lead_to` as regenerated, `risk__class` from `harm_classes`, and `risk__more_severe` as
   the closure;
 - the record's facts, and every other base table empty.
 
-Its signed rows `decisionRows R d` are one row per cell, whose support is `calculation` for a condition, the stated
-cell's support, or `assumption` for a completed cell.
+Its signed rows `decisionRows R d` are one row per cell `(a, h)`. The row's `action` is the alternative's name `a`,
+its `harm` is the harm constant's name `h`, and both resolve through the constant table. Its `leadsTo` is the
+regenerated `leads`. Its support is `calculation` for a condition, the stated cell's support, or `assumption` for a
+completed cell.
 
 ### 4.5 Severity, `class`, the defined words and inlining
 
@@ -884,7 +897,8 @@ candidate. For each alternative, endpoint and direction (down, up), the report g
   the nearest candidate at which the record is invalid (`scanInvalid`), and "conflict at `<value>`", the nearest
   candidate at which it is a conflict (`scanConflict`). Each scan certifies its own kind only. `scanInvalid_sound`
   states that no value strictly between is invalid, and `scanConflict_sound` that none is a conflict; a value of the
-  other kind may lie between (fixture k38). When a scan finds nothing, no value beyond the current one in that
+  other kind may lie between, in either order (fixture k38: a conflict before an invalid value; fixture k40: an
+  invalid value before a conflict). When a scan finds nothing, no value beyond the current one in that
   direction has its kind. "No conflict at any candidate" is rendered only when `scanConflict` finds nothing for every
   endpoint and direction. An invalid or conflicting record is never reported as a status change (fixture k27).
 
@@ -1010,8 +1024,8 @@ Not concluded: that the decision was wrong because a harm followed.             
 | `RiskBinding: policy` | the record's `(environment_id, document_hash)` is not the loaded policy's | error |
 | `HindsightEntry: <id>` / `MissingEntry: <id>` / `AlteredEntry: <id>` / `WithdrawnEntry: <id>` | 4.4 A1 (the decision entry's hash) and A2, per citation in this order; 4.10; NOT REPLAYABLE in an audit | error |
 | `UnknownHarm: <name>` / `UnknownSymbol: <alternative | quantity | kind | unit> <name>` | 4.4 V1 | error |
-| `RiskConstant: <name>` | a record-local name equals a constant of `E` (4.4 V1); an action constant of `E` that no alternative interprets (4.4 V10) | error |
-| `RiskFact: <predicate>` | a supplied fact about a role, generated, regulated or undeclared predicate (4.4 V1), or with an argument outside its sort's domain (4.4 V10) | error |
+| `RiskConstant: <name>` | a record-local name equals a constant of `E_risk` or another record-local name (4.4 V1); an action constant of `E` that no alternative interprets (4.4 V10) | error |
+| `RiskFact: <predicate>` | a supplied fact about a role, generated, regulated or undeclared predicate (4.4 V1), or with an argument that names no entry of the constant table or an element outside its sort's domain (4.4 V10) | error |
 | `RequiredAlternativeMissing: <kind> (with <kind>)` | 4.4 V2 | error |
 | `UnitMismatch(<t>,<t′>)` / `UnitPrecision(<tag>, scale=<n>)` | W6's texts | error |
 | `RiskRange: <id>` | `lo > hi` | error |
@@ -1267,13 +1281,14 @@ structure Tables where
   witness : List ((String × String) × Valuation)       -- the canonical witness of every might cell
 def regenerate (R : RiskDoc) (d : Decision) : Tables
 def validateDecision (R : RiskDoc) (d : Decision) : Except String Unit    -- 4.4 V1 to V11 on an admitted record, the texts of 6
-def decisionData (R : RiskDoc) (d : Decision) : VE.Bridge.ModelData      -- 4.4: domains, constants and tables
+def decisionData (R : RiskDoc) (d : Decision) : VE.Bridge.ModelData
+  -- 4.4: domains; the constant table (every constant of E_risk, and every record-local name); tables
 def modelVocabulary (R : RiskDoc) : VE.Bridge.Vocabulary                 -- its environment is envAt (inlineTree (toAlt R)) 0
 def modelAdmissible (R : RiskDoc) (d : Decision) : Bool :=               -- 4.4 V10
   (decisionData R d).valid (modelVocabulary R)
 def decisionModel (R : RiskDoc) (d : Decision) : VE.FiniteModel VE.Bridge.Entity := (decisionData R d).toModel
-def decisionRows (R : RiskDoc) (d : Decision) : List Row
-def entity (x : String) : VE.Bridge.Entity             -- the entity named x in decisionModel
+def decisionRows (R : RiskDoc) (d : Decision) : List Row   -- one per cell, named by the alternative and the harm constant
+def entity (x : String) : VE.Bridge.Entity             -- the entity named x in decisionModel (its constant-table entry)
 def modelTables (R : RiskDoc) (M : VE.FiniteModel VE.Bridge.Entity) : Tables   -- the named rows of risk__might_lead_to and leads_to
 
 /-- 4.8 and 4.9: statuses and margins. -/
@@ -1467,7 +1482,7 @@ theorem scan_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision) (e
   (scan R d e dir a = none → ∀ y, Beyond dir (current d e) y → StatusKept (outcomeAt R d e y) a s)
 
 /-- 4.9: the record-level lines, one scan per kind. Each certifies only its own kind: a value of the other kind may
-    lie strictly between (fixture k38). -/
+    lie strictly between (fixtures k38 and k40). -/
 theorem scanInvalid_sound (R : RiskDoc) (h : WellFormedRisk R = true) (d : Decision) (e : Endpoint)
     (he : e ∈ endpoints d) (dir : Dir) :
   (∀ x t, scanInvalid R d e dir = some (x, t) →
@@ -1555,7 +1570,7 @@ Proof plan:
 - `admitDecision_sound`: by the checks of 4.4 A1 and A2. `snapshot_no_hindsight` follows from it, because
   `snapshotOf` runs admission with the prefix as its entries.
 - `risk_scenario_sound`: the first conjunct is `VE.Bridge.modelData_valid` applied to 4.4 V10; the others follow
-  from V11 and the construction of `decisionData`.
+  from V11 and the construction of `decisionData`, whose constant table resolves every signed row (4.4).
 - `status_piecewise_constant`: every check of validation (4.4 V1 to V11) and every regenerated cell is a Boolean
   combination of comparisons `c·x + K ⋈ 0` and of `x ⋈ w` against estimate endpoints, whose truth changes only between
   two candidates. Admission and the margin-candidate limit are not part of `outcomeAt`.
@@ -1721,6 +1736,7 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
 | k37 | `agent-ops` | the two rewrites of 2.3 of "every action available to that agent cannot lead to `<harm>`", as formulas with `r` D17's chooser, for `<harm>` a server outage and data loss | evaluation on D17's decision model |
 | k38 | `cell-env` with the rules X1 "Every action must not be performed, if that action might lead to a server outage." and X2 "Every action may be performed, if that action might lead to a job failure.", with no precedence between them | `Dx` with dimensionless `q` from 6 through 8 and `r` from 2 through 3; on (`act`, `task_delay`) the sufficient condition "q is greater than 5" and the necessary condition "r is less than 5"; on (`act`, `server_outage`) the necessary condition "r is greater than 3"; the statement "nothing cannot lead to a server outage" | margins of `r`'s upper bound |
 | k39 | `agent-ops` | `L17w`: `L17` with entry 39 replaced by a `supersession` entry `W39` (seq 39) withdrawing E1. The later entries' `prev` and `hash` follow the chain, and D17 cites E2's new hash. `L17s`: `L17` plus a `supersession` entry `W50` (seq 50) withdrawing E1. (a) `risk-decision` for `L17`'s D17 with the entries it cites as the supplied entries; (b) the same with `W39` also supplied; (c) the audit of D17 on `L17w`; (d) the audit of D17 on `L17s`, and (a) with `W50` also supplied | record; audit |
+| k40 | `cell-env` with k38's rules X1 and X2, with no precedence between them, and the base assertion unit labelled `G`, in strict text: `∀a. risk__might_lead_to(a, server_outage) → risk__might_lead_to(a, job_failure)` ("every action that might lead to a server outage might lead to a job failure") | `Dx` with dimensionless `r` from 2 through 3; on (`act`, `server_outage`) the necessary condition "r is greater than 3"; on (`act`, `job_failure`) the necessary condition "r is greater than 4"; the statement "nothing cannot lead to a server outage" | margins of `r`'s upper bound |
 | kC1 | stage C (recorded, not a stage A acceptance fixture) | two chances `p`, `q` with an EL-certified constraint `p + q = 1` and marginal intervals 0%–100% | stage C |
 
 ### 8.2 Expected results
@@ -1923,6 +1939,11 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
   would answer "possible" although no case satisfies it. This is why every atom holds a `NormLinForm` (4.2), as k5
   is why `UnitCoefficients` is a hypothesis.
 - **(k35)**
+  - The decision model's constant table (4.4) has, besides the constants of `E_risk`, one entry per record-local name:
+    `build_agent` denotes the record's chooser, and `run`, `run_limited`, `ask` and `nothing` denote their
+    alternatives. In (a), `run`'s entry is also the constant's. D17's 20 signed rows (four alternatives, five harms)
+    resolve through it, so `rowsTypedB` passes at 4.4 V11 in (a), (c) and k10. Without the record-local entries,
+    every row of an alternative that is not a policy constant would be untyped, and V11 would reject the record.
   - (a) Accepted: the constant `run` denotes D17's alternative `run`, and the report is k10's.
   - (b) `RiskConstant: deploy` (4.4 V10): no alternative interprets it.
   - (c) Accepted: the chooser domain is {`build_agent`, `ops_agent`}, `ops_agent` has no available action (alt's E2
@@ -1959,6 +1980,23 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
   - (c) `Q1 NOT REPLAYABLE: WithdrawnEntry: E1`: the authenticated prefix holds `W39`.
   - (d) The audit's Q1 and Q2 are k13's, and the standalone record is accepted as in (a): `W50` comes after the
     decision, so it affects neither.
+- **(k40)** The record is valid and conflict-free. Both of `act`'s addressed cells are ruled out (`fmin(3 − r) = 0`
+  and `fmin(4 − r) = 1`, neither below 0), and a server outage is ruled out for `nothing` by its statement, so `G`
+  holds. X1 does not apply. X2 permits `nothing` (its job failure is unexamined, hence possible), and `act` is
+  permitted by default. Both are clear. The candidates of `r`'s upper bound are 1 to 5: 1 to 4 from the estimate's
+  endpoints, and 2 to 5 from the thresholds 3 and 4.
+  - Upwards: at 4 a server outage becomes possible for acting (`fmin(3 − r) = −1`), while a job failure stays ruled
+    out (`fmin(4 − r) = 0`). So `G` fails on the decision model, and the record is invalid at 4.4 V11
+    (`InvalidModel("alternatives", "premise G fails")`). At 5 a job failure is possible too (`fmin(4 − r) = −1`), so
+    `G` holds again and the record is valid. It is a conflict, however: X1 forbids acting and X2 permits it, with no
+    precedence. It stays a conflict beyond 5. `scanInvalid` returns 4, and `scanConflict` returns 5, which certifies
+    that 4 is not a conflict. Both lines are reported: "Record invalid at: r's upper bound 4", with that diagnostic,
+    and "Conflict at: r's upper bound 5".
+  - Downwards: 2 changes nothing, the record is invalid at 1 (`RiskRange`), and `scanConflict` returns none.
+  - "No conflict at any candidate" is not rendered, and there is no single valid change in either direction. A
+    single scan stopping at the first value of either kind would stop at the invalid value 4 and could not certify
+    the conflict at 5 as the nearest. This is the order k38 cannot show: the record becomes valid again farther out
+    only because the assertion unit `G` is evaluated at V11 (12.1, last item).
 - **(kC1)** The box range of `p + q` is 0%–200%. The result is labelled conservative, or computed over EL's certified
   joint region, where the sum is exactly 100%.
 
@@ -2089,12 +2127,14 @@ Each is a point where the plan left a reading open. The review may overturn any 
 22. **`unranked_severities`** is a warning line for the environment (undeclared incomparable pairs) and a report
     line for decisions (comparisons blocked by an incomparable pair), as plan 4.1 and 7.2 use the name.
 
-## 12. Corrections from the statement review (draft 2)
+## 12. Corrections from the statement review (draft 2) and its re-check (draft 3)
+
+### 12.1 The statement review (draft 2)
 
 The statement review of draft 1 (`manage-agents/debates/risk-spec/`, three rounds, both sides STATUS CONVERGED)
-returned FIX. The bounded re-check covers the passages and fixtures below. Items are cited by reviewer, round and
-number: `A1.2` is Astra's round 1, item 2; `F1.7(c)` is Fable's round 1, edit 7(c); "joint" is that round's proposed
-joint position.
+returned FIX. The bounded re-check (12.2) covered the passages and fixtures below. Items are cited by reviewer, round
+and number: `A1.2` is Astra's round 1, item 2; `F1.7(c)` is Fable's round 1, edit 7(c); "joint" is that round's
+proposed joint position.
 
 | Debate item | Correction | Where |
 |---|---|---|
@@ -2130,10 +2170,30 @@ Details settled while applying these edits, not debated:
 - k36 uses Astra's numbers as given. The counts were checked: the original record's endpoints have 138, 138, 139 and
   163 candidates, so the original is within the limit.
 - F3.1 asked for an invalid value before a conflict, and A3.1 for one kind before the other. k38 puts the conflict
-  first. For an invalid value to come first, the record would have to become valid again farther out in the same
-  direction. V1 to V9 never allow that: widening can break only `S → N` and separability, narrowing only a stated
-  `might`, the range and an intersection, and each stays broken farther out. It would take a policy assertion unit
-  evaluated at V11. Either order shows what the fixture is for: each scan certifies only its own kind.
+  first. For an invalid value to come first, the record must become valid again farther out in the same direction.
+  V1 to V9 never allow that: widening can break only `S → N` and separability, narrowing only a stated `might`, the
+  range and an intersection, and each stays broken farther out. It takes a policy assertion unit evaluated at V11.
+  Draft 2 therefore gave only k38's order. The re-check required F3.1's order as well, and draft 3 adds it as k40
+  (12.2).
+
+### 12.2 The re-check p3ver1 (draft 3)
+
+The bounded re-check of draft 2 (`manage-agents/risk-p3ver1.final.md`) returned FAIL with two findings. It found that
+the other edits track the requested corrections. Draft 3 applies both findings and changes nothing else.
+
+| Finding | Correction | Where |
+|---|---|---|
+| p3ver1.1: F3.1's fixture, an invalid value before a later conflict in one direction, is missing; k38 has the other order | k40: a policy assertion unit `G` fails at 4 and holds again at 5, where rules X1 and X2 conflict. `scanInvalid` returns 4 and `scanConflict` returns 5, and both lines are reported. V11 names a failing unit by its label, so k40's diagnostic is determinate | 4.4 V11, 4.9, 7.2 (`scanInvalid_sound` docstring), 8.1, 8.2; k40; 12.1 (last item); plan 7.4, 12 |
+| p3ver1.2: the decision model has no constant-table entries for record-local names, although frozen `rowsTypedB` resolves every signed row through `M.constants`, so V11 and the fixtures would fail for D17's alternatives | The constant table also maps the chooser's name to the record's chooser and each alternative's name to that alternative (sharing an interpreted action constant's entry). Rows name the alternative and the harm constant. V1 keeps the table a function: no record-local name equals a constant of `E_risk` (a class name included) or another record-local name (`RiskConstant`). A fact argument that names no entry is `RiskFact` (V10) | 4.4 (V1, V10, the decision model, `decisionRows`), 6, 7.1, 7.2 (proof plan); k35; plan 12 |
+
+Details settled while applying these edits, not debated:
+
+- A record-local name equal to a class name, or a chooser named like one of its alternatives, would give the
+  constant table two entries for one name. Draft 2's V1 compared record-local names with the constants of `E` only.
+  V1 now also compares them with the class names and with each other, and reuses `RiskConstant`.
+- k40's diagnostic uses alt's labelled text, `premise <label> fails`, which alt's route produces with
+  `validateAlternativesWith`. `validateAlternatives_labels` shows that the labels do not change success, so
+  `risk_scenario_sound` is unchanged.
 
 ## Change log
 
@@ -2141,3 +2201,4 @@ Details settled while applying these edits, not debated:
 |---|---|---|
 | 2026-09-29 | Draft 1 | Item-1 statement specification of stage A from plan draft 2 and the probe results. It covers the `risk` block and the generated vocabulary `E_risk` with a fresh severity sort; decision records, the box, sources, completion and completed cases; the wordings with their probe statuses (c5 pending, c10 legend-dependent); the risk paraphrases of alt's words, `might prevent` and `excludes`; rejected wordings and scope rules; the legend; the wire forms of the block, conditions, the log and the record, and identity; `WellFormedRisk`; normal form, separability, unit coefficients, the endpoint table and the canonical witness; record validation, regeneration and the decision model; `class` functional and not total, `or_worse`, `less_worst` and inlining; the slot premises, `BaseAdmissibleRisk`, `compatFacts`, model expansion and conservativity; the policy checks; the decision report; point estimates and certified margins; the log and the audit (Q1 to Q3, PROCEDURE BREACH); diagnostics; every item-2 theorem as a statement; fixtures k1–k32 and kC1 with definitions separated from expected results; limits and trust; the review checklist; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-29 | Draft 2 | Applies the converged statement review (FIX), mapped in section 12: normal forms as a typed invariant (`NormLinForm`, `normalize_normal`, `normalize_eval`); record admission (`admitDecision`, sequence number from the decision entry, per-citation order Hindsight, Missing, Altered, Withdrawn, `EstimateProvenance … recorded` before matching) split from validation, with `admitDecision_sound` and the wire conjuncts; decision-model constants and the validity check (`RiskConstant`, V10); `RiskSettingTwice`; the margin-candidate limit outside `outcomeAt` (`marginLimit`); per-kind record-level scans (`scanInvalid`, `scanConflict`); standalone supersession scoped to the supplied entries (`WithdrawnEntry`, a non-claim); the corrected scope rewrite with both formulas; c9's paraphrase with the classified witness; `snapshot_no_hindsight` with `x.seq`; Q3's "measured or set"; the risk-local `quantity` node; k9(b), k15, k16, k17, k20, k25 and k31 corrected; fixtures k33–k39; the c5 replacement for its re-probe. No frozen contract, hash or existing theorem statement changed. |
+| 2026-09-29 | Draft 3 | Applies the two findings of the bounded re-check p3ver1 (FAIL), mapped in 12.2. First, fixture k40: an invalid value (a policy assertion unit that fails, then holds again) before a later conflict in one direction, with V11 naming a failing unit by its label. Second, the decision model's constant table gains entries for the chooser's and the alternatives' names, and signed rows resolve through them; V1 extends `RiskConstant` to class names and to clashes between record-local names; `RiskFact` covers an argument that names no entry; k35 states the table. No other design change; no frozen contract, hash or existing theorem statement changed. |
