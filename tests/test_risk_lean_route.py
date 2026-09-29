@@ -771,3 +771,69 @@ def test_w2_admission_risk_word_in_a_unit():
     res = one({"id": "w", "kind": "admission", "environment": env, "document": document})
     assert res["status"] == "ok" and res["admitted"] is True, res
     assert res["report"]["root"]["ast"] == atom
+
+
+# ---------------------------------------------------------------------------- review regressions
+
+@pytest.mark.parametrize("order, expected", [(("a", "b"), {"a": "3", "b": "0"}), (("b", "a"), {"a": "0", "b": "3"})])
+def test_eq_witness_steps_in_the_record_order(cell, order, expected):
+    """Review B5 (risk.md 4.3): the `=` witness moves quantities in the record's quantity order,
+    not the form's: `b + a = 3` on a, b in 0..3 gives (a 3, b 0) when the record lists a first."""
+    cond = ["eq", ["add", "dimensionless", q("b"), q("a")], dec("dimensionless", "3")]
+    res = cell_run(cell, dimless(*order), [
+        ("Ea", "estimate", estimate("a", "0", "3", "est", "assumption")),
+        ("Eb", "estimate", estimate("b", "0", "3", "est", "assumption")),
+        ("C", "condition", condition("act", "job_failure", "necessary", cond))])
+    assert res["status"] == "ok", res
+    assert witness(res, "act", "job_failure") == expected
+
+
+def asimov_audit(rules, alternative):
+    env = asimov_risk(A1)
+    norms = [asimov_rules()[r] for r in rules]
+    policy = policy_of(env, norms)
+    log = Log()
+    for seq, (a, h, stated) in enumerate(A1_STATEMENTS, start=1):
+        log.add(seq, f"T{seq}", "statement", statement(a, h, stated, author="the Asimov case annotator"))
+    facts = [{"predicate": "harms_human", "args": [h], "entry": "T1"} for h in A1]
+    dx = log.add(100, "DX", "decision", record("x", "r1", "the robot", policy, A1_ALTS,
+                                               [], log.cite(*[f"T{i}" for i in range(1, 5)]), facts))
+    log.add(101, "TK", "taken", {"decision": "DX", "alternative": alternative})
+    res = one({"id": "a", "kind": "risk-audit", "environment": env, "document": {"norms": norms},
+               "log": log.json(), "decision": {"id": "DX", "seq": 100}})
+    return res, decide(env, norms, log, dx, supplied=log.entries[:4])
+
+
+@pytest.mark.parametrize("taken, status", [("push", "forbidden by rule 1"), ("nothing", "forbidden by rules 1, 2")])
+def test_no_clear_action_names_the_diagnosis_and_the_status(taken, status):
+    """Review B4 (4.10, 5.2): NO CLEAR ACTION carries alt's diagnosis and the queried alternative's status."""
+    res, report = asimov_audit(["1", "2"], taken)
+    assert res["status"] == "ok", res
+    diagnosis = "NONE-PERMITTED: every available action is forbidden"
+    assert res["q1"] == f"NO CLEAR ACTION AT DECISION TIME: {diagnosis}; {taken} was {status}."
+    assert report["lines"]["dilemmas"] == [diagnosis]
+    assert report["text"].endswith(f"No clear action: {diagnosis}.")
+
+
+def test_no_clear_action_at_a_conflict_says_there_is_no_evaluation():
+    env = cell_env()
+    policy = policy_of(env, X_RULES)
+    log = Log()
+    log.add(1, "Er", "estimate", estimate("r", "2", "4", "est", "assumption"))
+    log.add(2, "Co", "condition", condition("act", "server_outage", "necessary", gt(q("r"), dec("dimensionless", "3"))))
+    log.add(3, "T", "statement", statement("nothing", "server_outage", "cannot"))
+    dx_record(log, policy, dimless("r"), ["Er", "Co", "T"])
+    log.add(101, "TK", "taken", {"decision": "DX", "alternative": "act"})
+    res = one({"id": "a", "kind": "risk-audit", "environment": env, "document": {"norms": X_RULES},
+               "log": log.json(), "decision": {"id": "DX", "seq": 100}})
+    assert res["q1"].startswith("NO CLEAR ACTION AT DECISION TIME: CONFLICT at (act) on "), res
+    assert res["q1"].endswith("; act was not evaluated, because the rules conflict."), res
+
+
+def test_conditional_on_counts_unexamined_cells(cell):
+    """Review C5 (5.2): the condition line names the unexamined cells counted as possible."""
+    res = cell_run(cell, dimless("q"), [("E", "estimate", estimate("q", "0", "1", "est", "assumption"))])
+    assert res["status"] == "ok", res
+    n = len(res["lines"]["unexamined_possible"])
+    assert n == 10
+    assert res["text"].startswith(f"Decision x — conditional on E and {n} unexamined cells counted as possible. ")

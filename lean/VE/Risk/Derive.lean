@@ -394,8 +394,34 @@ theorem unitForm_terms {b : Box} {f : LinForm} (h : unitForm b f = true) :
   · exact Or.inr (Or.inl h)
   · exact Or.inr (Or.inr h)
 
-/-- The `=` witness: from the minimising endpoints, `−fmin` unit steps. -/
-def eqWit (b : Box) (f : LinForm) : Valuation := stepEq b f.coeffs (minVal b f) (-(fmin b f))
+/-- The position of a quantity among the box's entries, which follow the record's quantity order;
+a name outside the box comes after every entry. -/
+def boxIndex (b : Box) (q : String) : Nat := b.entries.findIdx (·.name == q)
+
+/-- 4.3: the terms of `f` in the record's quantity order (a stable sort, so ties keep the form's order). -/
+def recordOrder (b : Box) (f : LinForm) : List (String × Int) :=
+  f.coeffs.mergeSort (fun p q => decide (boxIndex b p.1 ≤ boxIndex b q.1))
+
+theorem recordOrder_perm (b : Box) (f : LinForm) : (recordOrder b f).Perm f.coeffs :=
+  List.mergeSort_perm _ _
+
+theorem capacity_perm (b : Box) {l₁ l₂ : List (String × Int)} (h : l₁.Perm l₂) :
+    capacity b l₁ = capacity b l₂ := by
+  induction h with
+  | nil => rfl
+  | cons x _ ih =>
+    obtain ⟨q, c⟩ := x
+    simp only [capacity, ih]
+  | swap x y l =>
+    obtain ⟨q, c⟩ := x
+    obtain ⟨q', c'⟩ := y
+    simp only [capacity]
+    omega
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- The `=` witness (4.3): from the minimising endpoints, `−fmin` unit steps, moving the quantities in
+the record's quantity order. -/
+def eqWit (b : Box) (f : LinForm) : Valuation := stepEq b (recordOrder b f) (minVal b f) (-(fmin b f))
 
 theorem minVal_start (b : Box) {f : LinForm} (hf : f.Normal) :
     ∀ p ∈ f.coeffs, minVal b f p.1 = if 0 ≤ p.2 then b.lo p.1 else b.hi p.1 := by
@@ -406,14 +432,17 @@ theorem minVal_start (b : Box) {f : LinForm} (hf : f.Normal) :
 the box and the form is 0 there. -/
 theorem eqWit_sound {b : Box} (hb : b.WF) {f : LinForm} (hf : f.Normal) (hu : unitForm b f = true)
     (h1 : fmin b f ≤ 0) (h2 : 0 ≤ fmax b f) : InBox b (eqWit b f) ∧ f.eval (eqWit b f) = 0 := by
-  obtain ⟨e1, e2, e3⟩ := stepEq_eval b hb f hf f.coeffs (minVal b f) (-(fmin b f)) hf.1 (fun _ h => h)
-    (minVal_start b hf) (by omega)
+  have hperm := recordOrder_perm b f
+  obtain ⟨e1, e2, e3⟩ := stepEq_eval b hb f hf (recordOrder b f) (minVal b f) (-(fmin b f))
+    ((hperm.map _).nodup_iff.mpr hf.1) (fun p h => hperm.mem_iff.mp h)
+    (fun p h => minVal_start b hf p (hperm.mem_iff.mp h)) (by omega)
   have hcap := capacity_eq b f.coeffs (unitForm_terms hu)
+  rw [← capacity_perm b hperm] at hcap
   refine ⟨fun e he => ?_, ?_⟩
   · have hfind := find_of_mem hb.1 he
     have hlo : b.lo e.name = e.lo := by simp [Box.lo, hfind]
     have hhi : b.hi e.name = e.hi := by simp [Box.hi, hfind]
-    by_cases hn : e.name ∈ f.coeffs.map (·.1)
+    by_cases hn : e.name ∈ (recordOrder b f).map (·.1)
     · obtain ⟨p, hp, hpe⟩ := List.mem_map.mp hn
       have := e3 p hp
       rw [hpe, hlo, hhi] at this

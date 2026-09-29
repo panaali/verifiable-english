@@ -160,12 +160,12 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| `lean/VE/Risk/Wire.lean` | 383 | 383 | 1–383 | `5c2b2da0aa9c…` |
-| `lean/VE/Risk/Record.lean` | 1263 | 1263 | 1–1263 | `c7730476ebab…` |
+| `lean/VE/Risk/Wire.lean` | 385 | 385 | 1–385 | `805ffa8d04c4…` |
+| `lean/VE/Risk/Record.lean` | 1266 | 1266 | 1–1266 | `9b9aa82f9a8d…` |
 | `lean/VE/Risk/Audit.lean` | 186 | 186 | 1–186 | `00a2fac1c2ce…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
-| `lean/VE/Risk/Run.lean` | 608 | 608 | 1–608 | `a317fe5b12bc…` |
-| **total** | | **12,134** | | |
+| `lean/VE/Risk/Run.lean` | 644 | 644 | 1–644 | `783fd4784506…` |
+| **total** | | **12,175** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

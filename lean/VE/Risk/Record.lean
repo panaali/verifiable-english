@@ -353,7 +353,7 @@ def elabCond (R : RiskDoc) (qs : List Quantity) : Nat → Json → Elab Cond
       let (ta, fa) ← elabTerm R qs n a
       let (tb, fb) ← elabTerm R qs n b
       unless ta == tb do throw (7, s!"UnitMismatch({ta},{tb})")
-      pure (.atom (NormLinForm.mk' (fa.sub fb)) rel)
+      pure (.atom (NormLinForm.ofForm (fa.sub fb)) rel)
     | _ => throw malformed
 
 def Cond.nodes : Cond → Nat
@@ -915,7 +915,10 @@ def checkConditions (v : View) : Except String Unit := do
   let d := v.strip
   issueAt d 7
   for (c, o) in d.conditions.zip v.obs.conds do
-    unless o.inScope do throw s!"RiskUnestimated: {c.id}"
+    -- 6: `RiskUnestimated: <quantity>` names the quantity with no box entry (V5 reports it first)
+    unless o.inScope do
+      throw s!"RiskUnestimated: {(c.cond.atomNames.find? fun q =>
+        !((settingOf d q).isSome || !(estimatesOf d q).isEmpty)).getD c.id}"
     if let some q := o.shared then throw s!"RiskConditionShared: {q}"
     if let some q := o.unitBad then throw s!"RiskEqualityCoefficient: {c.id} {q}"
 
