@@ -41,6 +41,92 @@ def right(lines=None, guard=None):
                       "lines": [claim()] if lines is None else lines}}
 
 
+def rights_document_file(tmp_path, contents, *, meanings=None, statuses=None, env=None):
+    source = "".join(f"Unit {index}.\n" for index in range(len(contents)))
+    units = []
+    start = 0
+    for index, content in enumerate(contents):
+        end = start + len(f"Unit {index}.\n")
+        units.append({"id": f"u{index}", "span": [start, end], "kind": next(iter(content)),
+                      "meaning": (meanings or {}).get(index, "specified"), "support": "none",
+                      "content": content,
+                      **({"status": statuses[index]} if statuses and index in statuses else {})})
+        start = end
+    path = tmp_path / "rights.ve.md"
+    path.write_text("---\n" + json.dumps({"format": "ve-document@1",
+                                          "environment": env or rights_env(),
+                                          "units": units}) + "\n---\n" + source)
+    return path
+
+
+def life_limitation():
+    return {"limitation": {"name": "l29", "scope": ["life"], "kinds": ["claim"],
+                           "decided_by": "unstated", "conditions": [
+                               {"name": "law", "role": "necessary", "decided_by": None,
+                                "verbalisation": "determined by law"}], "factors": []}}
+
+
+def test_generated_condition_opens_unscoped_right_and_accepts_open_meaning(tmp_path):
+    health = right([claim("health-protect")])
+    health["right"]["name"] = "health"
+    health["right"]["lines"][0]["norm"]["guard"] = [
+        "binary", "rights__cond__1", ["var", 1], ["var", 0]]
+    contents = [right(), health, life_limitation()]
+    path = rights_document_file(tmp_path, contents)
+    doc = load_document(path)
+    assert [u["status"] for u in doc["units"]] == ["OPEN", "OPEN", "OPEN"]
+    path = rights_document_file(tmp_path, contents,
+                                meanings={1: {"open": ["rights__cond__1"]}},
+                                statuses={1: "OPEN"})
+    assert load_document(path)["units"][1]["status"] == "OPEN"
+    path = rights_document_file(tmp_path, contents,
+                                meanings={1: {"open": ["rights__cond__2"]}})
+    with pytest.raises(VEError, match="invalid meaning status"):
+        load_document(path)
+
+
+@pytest.mark.parametrize("generated", ["rights__lim__1", "rights__cond__1"])
+def test_generated_limitation_names_open_outside_norms(tmp_path, generated):
+    outside = {"norm": {"name": "outside", "predicate": "protect_required", "sign": True,
+                        "guard": ["binary", generated, ["var", 1], ["var", 0]],
+                        "unless": [], "over": []}}
+    path = rights_document_file(tmp_path, [right(), life_limitation(), outside],
+                                statuses={2: "OPEN"})
+    assert load_document(path)["units"][2]["status"] == "OPEN"
+
+
+def test_generated_bar_name_opens_outside_norm(tmp_path):
+    liberty = {"kind": "liberty", "holder_slot": None, "cites": {},
+               "norm": {"name": "may-act", "predicate": "person_may_act", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    bar = {"bar": {"name": "b30", "reading": "rule", "decided_by": "unstated"}}
+    outside = {"norm": {"name": "outside", "predicate": "person_may_act", "sign": True,
+                        "guard": ["unary", "rights__bar__1", ["var", 0]],
+                        "unless": [], "over": []}}
+    path = rights_document_file(tmp_path, [right([liberty]), bar, outside],
+                                meanings={2: {"open": ["rights__bar__1"]}},
+                                statuses={2: "OPEN"})
+    assert [u["status"] for u in load_document(path)["units"]] == ["OPEN", "OPEN", "OPEN"]
+
+
+def test_holder_guard_opens_correlated_incident(tmp_path):
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["eligibility"] = {
+        "arguments": ["person"], "description": "eligibility"}
+    guarded = right(guard=["unary", "eligibility", ["var", 0]])
+    # A declared open term in the right's guard was absent from the source line.
+    # Keep the declaration in document metadata, as required by the W2 contract.
+    path = rights_document_file(tmp_path, [guarded], env=raw)
+    meta, source = path.read_text().split("\n---\n", 1)
+    metadata = json.loads(meta.removeprefix("---\n"))
+    metadata["open_terms"] = [{"name": "eligibility", "arguments": ["person"],
+                                "decided_by": "author", "necessary": [], "sufficient": [],
+                                "factors": [], "precedents": [], "jurisdiction": "general",
+                                "version": 1}]
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    assert load_document(path)["units"][0]["status"] == "OPEN"
+
+
 def test_profile_and_identity_bound_rights_block():
     raw = rights_env()
     env = RightsEnvironment(raw)

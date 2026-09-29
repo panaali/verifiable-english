@@ -271,7 +271,10 @@ def load_document(path: str | Path):
                                                u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")])
         soft_document = rights_document.soft_document
         formula_env = soft_document.extended_env
-        open_names = set(open_names) | formula_env.decision_names
+        open_names = (set(open_names) | formula_env.decision_names |
+                      set(rights_document.limitation_names.values()) |
+                      set(rights_document.condition_names.values()) |
+                      set(rights_document.bar_names.values()))
     elif soft_enabled:
         from .softnorms import SoftNormDocument
         soft_document = SoftNormDocument(env, _soft_contents(units))
@@ -403,6 +406,11 @@ def load_document(path: str | Path):
         rights = rights_document
         from .search import _used_predicates
 
+        # Correlation keeps the incident order and appends outside rules after
+        # them. Inspect the resulting guards and carve-outs, not source lines.
+        correlated = {id(instance): rule for instance, rule in
+                      zip(rights.instances, rights.soft_document.rules)}
+
         def open_rule(rule):
             return (rule.mode == "default" or bool(rule.alterable) or
                     bool(_used_predicates(rule.core.guard) & open_names) or
@@ -427,7 +435,7 @@ def load_document(path: str | Path):
                 name = body["name"] if kind == "right" else body["right"]
                 active_lines = [i for i in rights.instances if i["right"] == name and
                                 any(i["source_line"] is line for line in body["lines"])]
-                if any(open_rule(i["rule"]) or
+                if any(open_rule(correlated[id(i)]) or
                        any(rights._in_scope(limit, i) for limit in rights.limitations) or
                        (rights.bar is not None and i["kind"] in ("liberty", "powerLiberty"))
                        for i in active_lines):
