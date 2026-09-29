@@ -159,9 +159,9 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| `lean/VE/Rights/Wire.lean` | 665 | 665 | 1–665 | `c4d9f6302546…` |
+| `lean/VE/Rights/Wire.lean` | 689 | 689 | 1–689 | `a0a4fcdce9ed…` |
 | `lean/VE/Rights/Admission.lean` | 449 | 449 | 1–449 | `9f113fa87fe2…` |
-| **total** | | **9,687** | | |
+| **total** | | **9,711** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

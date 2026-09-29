@@ -155,8 +155,8 @@ class RightsDocument:
         if not isinstance(env, RightsEnvironment):
             raise UnsupportedProfile("rights@0 is required")
         self.env = env
-        if type(units) is not list or len(units) > 256:
-            raise ResourceLimit("rights")
+        if type(units) is not list or len(units) > 1024:
+            raise ResourceLimit("units")
         rights = {}
         entries = []
         limitations = []
@@ -225,6 +225,11 @@ class RightsDocument:
                 outside.append(unit)
             else:
                 raise VEError(f"InvalidInput: rights unit {kind}")
+        # 11: the same limits as the Lean rights route.
+        if len(rights) > 128:
+            raise ResourceLimit("rights")
+        if len(limitations) > 16:
+            raise ResourceLimit("limitations")
         for name, right in rights.items():
             if not right["count"]:
                 raise VEError(f"RightWithoutIncident: {name}")
@@ -346,6 +351,8 @@ class RightsDocument:
             if (set(limit) != {"name", "scope", "kinds", "decided_by", "conditions", "factors"}
                     or type(limit["conditions"]) is not list or type(limit["factors"]) is not list):
                 raise VEError("InvalidInput: limitation")
+            if len(limit["conditions"]) > 8:
+                raise ResourceLimit("conditions")
             scope = limit["scope"]
             kinds = limit["kinds"]
             if scope != "all":
@@ -405,11 +412,14 @@ class RightsDocument:
                               if instance["kind"] in ("liberty", "powerLiberty")})
         bar_names = ({p: f"rights__bar__{i}" for i, p in enumerate(permissions, 1)}
                      if self.bar is not None else {})
+        # 2.1: one fixed wording per generated predicate, by the limitation's display
+        # number (document order) and the act phrase; the Lean route emits the same bytes.
+        display = {item["name"]: number for number, item in enumerate(self.limitations, 1)}
         for (name, act), generated in lim_names.items():
             limit = next(item for item in self.limitations if item["name"] == name)
             args = list(self.env.predicates[act].arguments)
             predicates[generated] = {"arguments": args, "description": f"limitation {name} of {act}",
-                                     "verbalisation": f"limitation {name} holds where " +
+                                     "verbalisation": f"limitation {display[name]} holds where " +
                                      self.env.predicates[act].regulated.act}
             for condition in limit["conditions"]:
                 generated_condition = cond_names[(name, act, condition["name"])]
@@ -435,9 +445,10 @@ class RightsDocument:
                 guard = And(guard, _instantiate(holder_guard, (term,)))
             covering = [lim_names[(limit["name"], self._act(core.predicate))]
                         for limit in self.limitations if self._in_scope(limit, instance)]
-            unless = core.unless + ((_or(_atom(name, arity) for name in covering),) if covering else ())
-            if len(core.unless) > 6 and covering:
+            # 4.1 step 5: six author carve-outs on every right line, covered or not.
+            if len(core.unless) > 6:
                 raise ResourceLimit(f"carve-outs of rule {core.name}")
+            unless = core.unless + ((_or(_atom(name, arity) for name in covering),) if covering else ())
             rules.append(replace(rule, core=replace(core, guard=guard, unless=unless)))
         for unit in self.outside:
             raw = unit["norm"]
