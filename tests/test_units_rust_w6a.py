@@ -1,5 +1,6 @@
 """Python/Rust regeneration parity for the admitted W6a ground family."""
 import json
+import os
 from datetime import date, timedelta
 from pathlib import Path
 import subprocess
@@ -15,7 +16,7 @@ from ve.units import elaborate_quantity, erased_environment, quantity_meaning_id
 from ve.surface.count import at_least
 
 ROOT = Path(__file__).resolve().parents[1]
-RUST = ROOT / "rust" / "target" / "release" / "ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
 pytestmark = pytest.mark.skipif(not RUST.exists(), reason="build Rust release runner first")
 
