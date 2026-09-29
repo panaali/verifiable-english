@@ -75,7 +75,13 @@ surface (`discourseSourceSurface`).
   are its meaning) whose text has a derivation with a slot or an unplaced reference word (a pronoun, possessive,
   `they`, `former`/`latter`, `such`, a demonstrative before a sort, `the` before a unary noun, a citation, a
   document name) is validated, so an unrecorded reference is `UnrecordedSlot`, never unchecked content or an
-  unchecked reading. A bound unit's content and every reading of its active set must be its elaboration
+  unchecked reading. Words are separated at every character Python's `str.isspace` reads as a space (a no-break
+  space included), and the surfaces are also found on the sentence's segments, the maximal runs of ASCII letters
+  and digits, so a reference word joined to anything else (`It's`, `It’s`, `They're`, `It-is`, `It_`, `Itʼs`) is
+  still a slot; Python's `reference_surfaces` reads the same segments. A validated unit with meaning must also
+  record every surface: one that no recorded formula-producing mention overlaps (a registered spelling `He-api`
+  over `he`, a section label `its`) is `UnrecordedSlot` (`coveredOk`; Python requires containment). Fail closed:
+  a non-ASCII letter splits segments, so a word such as `Itália` has the surface `it`. A bound unit's content and every reading of its active set must be its elaboration
   (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
   therefore not admitted by the route (fail closed).
 - **Group readings are regenerated** from the spans' English (`a|an|some [ADJ] SORT is P.` then `PRONOUN is Q.`)
@@ -122,13 +128,14 @@ need renewed statement approval (the approved statement is false or unprovable a
    definite description's own entity, `binder:0`.
 8. **Readings of definites** come from the recorded mention (a fixed input).
 9. **`elaborate_no_new_symbols`** states `DeclaredSymbol D.E q` (the environment has no symbol list).
-10. **The wire.** The route reads the 3.1 wire from the document text: reading ids decode to `original_index`, an
+10. **(renewal) The wire and fixture ι.** The route reads the 3.1 wire from the document text: reading ids decode to `original_index`, an
     import's `bytes` names a sibling file whose text the case supplies (`files`), and a target's `version` pin is
     carried as the mention's `pin`, reported, and checked (`pinOk`, in Python too): only a `definition_ref` to a
     predicate may carry one (`InvalidInput: mention <m> target` otherwise), and it must equal the regenerated
     definition version (`StaleTarget: <mention>: <target>@<version>`). No environment the admission accepts declares
     a W3 definition version (W2 defers definitions; `definitionVersion` is `none`), so every pin is stale and fixture
-    ι's pinned reference is rejected rather than admitted unchecked; an unpinned `definition_ref` resolves. Beyond 3.1 the
+    ι's pinned reference is `StaleTarget: m1: eligible@2` where the fixture (10) expects CHECKED at version 2, rather
+    than admitted with an unchecked pin; an unpinned `definition_ref` resolves (CHECKED). Beyond 3.1 the
     block may carry `validity`, `self_truth` and `choices` (the Manifest fields of 9.1); Python reports them as
     `UnsupportedProfile`.
 11. **The loader.** JSON `null` (which the restricted parser does not read), fenced English or strict content, norm
@@ -192,6 +199,7 @@ is the proved Lean statement.
 |---|---|---|---|
 | 5 | `ill_typed_target`, 9.2: the error starts with `IllTypedTarget: <m>` for **every** slot `m` | η with `Her` → `api`: both slots recorded and accessible, one diagnostic `IllTypedTarget: m1: api` (R1) | `ill_typed_target` (a recorded mention of the unit, the misfitting slot) and `ill_typed_target_single` |
 | 6 | 4.2: every list of accessible constants is a `plural` candidate | θ: `[alice, bob]` and `[bob, alice]` both type-check, so "They are ready." is ambiguous, contradicting the fixture's expected resolution | 4.2 amended: candidates are the earlier coordinations, in order (as ordinal pairs); `AliasEq` is equality |
+| 10 | fixture ι (10): m1 → `predicate eligible` version 2, `∀x:service (eligible(x) → reviewed(x))` CHECKED | `sec2` exports `eligible`, its definition unit lies in `sec2`, m1 pins 2, and the result is `StaleTarget: m1: eligible@2`: no environment W2 admits declares a definition version (`definitionVersion` is `none`), so no pin can be confirmed (R7) | ι amended: a pinned `definition_ref` is `StaleTarget` until W3 definition versions reach the admitted environment; the CHECKED case is the unpinned reference |
 | 12 | `validity_import`, 9.6: an import is checked under the importing document's profiles | a valid `@1` import is `UnsupportedProfile` under the importer's `ve.discourse@1` profiles, refuting a true claim (R2) | `validity_import` over `checkImport files b fuel` / `outcomeWith` (the import's own environment and profiles) |
 | 12 | `validity_self`, 9.6: always `checked`/`refuted` | an admission answering `admitted: UNKNOWN` would certify its own validity (R3, `test_unknown_admission_is_an_unknown_outcome`) | `validity_self` under `jointUnknown res.joint = none`, `validity_self_unknown`, `outcome_unknown_of_joint` |
 | 13 | `validity_independent`, 9.6: the W2 result equals the one of `stripValidityJson j` | υ: a self-truth wording bound as a validity claim is `InvalidInput`; the stripped document is admitted (R4) | `validity_stripped` and the relational `validity_independent` |
@@ -201,7 +209,7 @@ is the proved Lean statement.
 ## Not done
 
 - **Unverifiable readings fail closed:** an open set of candidate readings for an unresolved reference (2.4) and a
-  pinned `definition_ref` (no environment declares definition versions) are rejected, not admitted.
+  pinned `definition_ref` (no environment declares definition versions; renewal item 10) are rejected, not admitted.
 - **Fixtures not covered by tests:** parts of κ (renumbering, `DependencyCycle`), λ lemma-level citations over W3
   bundles, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it needs a certificate), and
   the 1,000-manifest Python/Lean differential. `discourse-joint` reports the joint set and the disjunction, not
