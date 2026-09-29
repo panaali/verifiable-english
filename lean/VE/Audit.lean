@@ -40,6 +40,32 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.Attribution.Content
+import VE.Attribution.Elaborate
+import VE.Attribution.Facts
+import VE.Attribution.Semantics
+import VE.Attribution.Conservative
+import VE.Attribution.Structure
+import VE.Attribution.Assess
+import VE.Attribution.Bridge
+import VE.Attribution.Route
+import VE.Attribution.Scoped
+import VE.Attribution.Admission
+import VE.Attribution.Run
+import VE.Attribution.Status
+import VE.Attribution.Wire
+import VE.Alternatives.Background
+import VE.Alternatives.Decl
+import VE.Alternatives.Examples
+import VE.Alternatives.Followable
+import VE.Alternatives.Inline
+import VE.Alternatives.Replay
+import VE.Alternatives.Route
+import VE.Alternatives.Run
+import VE.Alternatives.Validate
+import VE.Alternatives.Wire
+import VE.EvaluationCounts
+import VE.Service.Protocol
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -828,6 +854,13 @@ import VE.Norms.Run
 #print axioms VE.Definitions.Bundle.backgroundLeaves_hold
 #print axioms VE.Definitions.Bundle.bundle_sound
 #print axioms VE.Definitions.Bundle.checkAll_sound
+#print axioms VE.Definitions.Bundle.checkAll_length
+#print axioms VE.EvaluationCounts.mapM_length
+#print axioms VE.EvaluationCounts.legacy_decodeDocument_length
+#print axioms VE.EvaluationCounts.closure_decodeFormulas_length
+#print axioms VE.EvaluationCounts.core_decodeFormulas_length
+#print axioms VE.EvaluationCounts.order_decodeFormulas_length
+#print axioms VE.EvaluationCounts.route_decodeFormulas_length
 #print axioms VE.Definitions.Bundle.checkAll_reading
 #print axioms VE.Definitions.Bundle.checkAll_binding
 #print axioms VE.Definitions.Bundle.checkLemma_sound
@@ -1148,3 +1181,332 @@ import VE.Norms.Run
 #print axioms VE.Route.Closure.warshallH_preserves
 #print axioms VE.Route.Closure.warshallH_sound
 #print axioms VE.Route.Closure.warshallRun_eq
+
+#print axioms VE.Reports.Content.isStatement_iff
+#print axioms VE.Reports.Content.mem_nodes_self
+#print axioms VE.Reports.env_ext
+#print axioms VE.Reports.envReports_extends
+#print axioms VE.Reports.names_fresh
+#print axioms VE.Reports.names_injective_on_keys
+#print axioms VE.Reports.hide_envReports
+#print axioms VE.Reports.premises_signed
+#print axioms VE.Reports.signedAtom_wellFormed
+#print axioms VE.Reports.premises_wellFormed
+#print axioms VE.Reports.length_filterMap_of_isSome
+#print axioms VE.Reports.premises_all
+#print axioms VE.Reports.length_filterMap_two
+#print axioms VE.Reports.keys_finite
+#print axioms VE.Reports.content_depth_bounded
+#print axioms VE.Reports.mem_digestTable_content
+#print axioms VE.Reports.mem_digestTable_complement
+#print axioms VE.Reports.no_collision
+#print axioms VE.Reports.no_collision_complement
+#print axioms VE.Reports.interp_rel
+#print axioms VE.Reports.interp_rel_report
+#print axioms VE.Reports.interp_rel_assess
+#print axioms VE.Reports.interp_rel_old
+#print axioms VE.Reports.interp_admissible
+#print axioms VE.Reports.denote_atom
+#print axioms VE.Reports.sat_report_iff
+#print axioms VE.Reports.sat_assess_iff
+#print axioms VE.Reports.unit_denote_iff
+#print axioms VE.Reports.unit_premise_some
+#print axioms VE.Reports.sat_premises_iff
+#print axioms VE.Reports.reports_elaboration_faithful
+#print axioms VE.Reports.restrictJ_admissible
+#print axioms VE.Reports.gen_rel_domain
+#print axioms VE.Reports.gen_rel_domain_assess
+#print axioms VE.Reports.reports_elaboration_faithful_out
+#print axioms VE.Reports.struct_eq_of_rel
+#print axioms VE.Reports.forget_interp
+#print axioms VE.Reports.restrict_interp
+#print axioms VE.Reports.interp_restrict
+#print axioms VE.Reports.interp_restrict_eq
+#print axioms VE.Reports.old_formula_invariant
+#print axioms VE.Reports.finite_witness_decodes
+#print axioms VE.Reports.wf_of
+#print axioms VE.Reports.Content.nodes_trans
+#print axioms VE.Reports.mem_allNodes
+#print axioms VE.Reports.top_mem_allNodes
+#print axioms VE.Reports.occurs_sub
+#print axioms VE.Reports.body_mem_report
+#print axioms VE.Reports.body_mem_assessment
+#print axioms VE.Reports.operand_mem_negated
+#print axioms VE.Reports.nodeOk_of_occurs
+#print axioms VE.Reports.mem_keys
+#print axioms VE.Reports.mem_akeys
+#print axioms VE.Reports.report_key_mem
+#print axioms VE.Reports.assess_key_mem
+#print axioms VE.Reports.inj_of_nodup_map
+#print axioms VE.Reports.reportName_mem
+#print axioms VE.Reports.assessName_mem
+#print axioms VE.Reports.reportName_inj
+#print axioms VE.Reports.assessName_inj
+#print axioms VE.Reports.reportName_ne_assessName
+#print axioms VE.Reports.findEq
+#print axioms VE.Reports.keyOf_eq_inl
+#print axioms VE.Reports.keyOf_eq_inr
+#print axioms VE.Reports.keyOf_eq_none
+#print axioms VE.Reports.keyOf_reportName
+#print axioms VE.Reports.keyOf_assessName
+#print axioms VE.Reports.fresh_pred
+#print axioms VE.Reports.not_mem_names_of_pred
+#print axioms VE.Reports.envReports_pred_old
+#print axioms VE.Reports.envReports_pred_report
+#print axioms VE.Reports.envReports_pred_assess
+#print axioms VE.Reports.envReports_pred_of_old
+#print axioms VE.Reports.envReports_pred_names
+#print axioms VE.Reports.holderSort_const
+#print axioms VE.Reports.recordOf_mem
+#print axioms VE.Reports.recordOf_context
+#print axioms VE.Reports.contextOf_mem
+#print axioms VE.Reports.const_exists
+#print axioms VE.Reports.unit_shape
+#print axioms VE.Reports.mem_premises
+#print axioms VE.Reports.unitPremise_mem
+
+#print axioms VE.Reports.CJson.o_inj
+#print axioms VE.Reports.mem_dedup
+#print axioms VE.Reports.length_dedup
+#print axioms VE.Reports.reports_gate_sound
+
+#print axioms VE.Reports.neqRow_eq_some
+#print axioms VE.Reports.mem_neqs
+#print axioms VE.Reports.neqs_sat_of_sat
+#print axioms VE.Reports.neqs_denote_congr
+#print axioms VE.Reports.uniform_neqs
+#print axioms VE.Reports.positive_uniform
+#print axioms VE.Reports.neqs_wellFormed
+#print axioms VE.Reports.positive_expandable
+#print axioms VE.Reports.assertedJ_top
+#print axioms VE.Reports.assertedA_top
+#print axioms VE.Reports.assertedJ_premise
+#print axioms VE.Reports.assertedA_premise
+#print axioms VE.Reports.mkSource_intended
+#print axioms VE.Reports.source_over_any_structure
+#print axioms VE.Reports.source_over_any_structure_iff
+#print axioms VE.Reports.unreported_key_free
+#print axioms VE.Reports.expansion_exists
+#print axioms VE.Reports.expansion_exists_iff
+#print axioms VE.Reports.forget_denote
+#print axioms VE.Reports.admissible_envReports_of_old
+#print axioms VE.Reports.reports_old_language_conservative
+#print axioms VE.Reports.expandBy_old
+#print axioms VE.Reports.reports_no_leak
+#print axioms VE.Reports.reports_no_leak_uniform
+#print axioms VE.Reports.occurs_formula_wellFormed
+#print axioms VE.Reports.attitude_not_factive
+#print axioms VE.Reports.no_closure_under_consequence
+#print axioms VE.Reports.nested_independent
+#print axioms VE.Reports.premise_entailed
+#print axioms VE.Reports.nested_positive_entailed
+#print axioms VE.Reports.nested_positive_refuted
+#print axioms VE.Reports.nested_negated_entailed
+#print axioms VE.Reports.nested_negated_refuted
+#print axioms VE.Reports.holder_atom_free
+#print axioms VE.Reports.optField_inj
+#print axioms VE.Reports.complementObject_inj
+#print axioms VE.Reports.canonicalObject_formula_inj
+#print axioms VE.Reports.not_ne_self
+#print axioms VE.Reports.negation_scopes_distinct
+#print axioms VE.Reports.tense_keys_distinct
+#print axioms VE.Reports.content_structural
+#print axioms VE.Reports.literal_paraphrase_distinct
+#print axioms VE.Reports.all_truth_combinations
+#print axioms VE.Reports.all_truth_combinations_assess
+
+#print axioms VE.Reports.unitOf_eq
+#print axioms VE.Reports.assessment_open_term
+#print axioms VE.Reports.assessment_not_factive
+#print axioms VE.Reports.may_probably_independent
+#print axioms VE.Reports.probably_not_scopes_distinct
+#print axioms VE.Reports.parentAt_root
+#print axioms VE.Reports.envAt_root
+#print axioms VE.Reports.kindOf_quoted
+#print axioms VE.Reports.holder_rule_root
+#print axioms VE.Reports.unit_of_bridgeFormula
+#print axioms VE.Reports.bridge_root_is_legacy
+#print axioms VE.Reports.parseNested_not_root
+#print axioms VE.Reports.bridge_root_parse_frozen
+#print axioms VE.Reports.bridge_nested_label_new
+#print axioms VE.Reports.bridge_formula_exact
+#print axioms VE.Reports.bridge_kind_rejected
+#print axioms VE.Reports.bridge_nested_needs_record
+#print axioms VE.Reports.bridge_assessment_any_agent
+#print axioms VE.Reports.bridge_payload_not_belief
+#print axioms VE.Reports.bridge_through_negation
+#print axioms VE.Reports.reportsRoute_premises
+#print axioms VE.Reports.entails_congr_mem
+#print axioms VE.Reports.literals_wellFormed
+#print axioms VE.Reports.reports_route_acceptance
+#print axioms VE.Reports.reports_route_acceptance_base
+#print axioms VE.Reports.reports_route_acceptance_base_positive
+#print axioms VE.Reports.reports_route_countermodel
+#print axioms VE.Reports.scoped_consequence_sound
+#print axioms VE.Reports.scoped_witness_sound
+#print axioms VE.Reports.scoped_free_canonicalObject
+#print axioms VE.Reports.scoped_free_contentId
+#print axioms VE.Reports.scoped_free_complementId
+#print axioms VE.Reports.scoped_free_keys
+#print axioms VE.Reports.scoped_free_akeys
+#print axioms VE.Reports.scoped_free_elab
+#print axioms VE.Reports.scoped_not_premise
+#print axioms VE.Reports.def_premise_shape
+#print axioms VE.Reports.scoped_background_local
+#print axioms VE.Reports.quoted_inconsistency_local
+
+#print axioms VE.Reports.isReportStatement_spec
+#print axioms VE.Reports.isAssessStatement_spec
+#print axioms VE.Reports.enterScope_author
+#print axioms VE.Reports.scopeAux_author
+#print axioms VE.Reports.authorPath_env
+#print axioms VE.Reports.bridgeLeafB_sound
+#print axioms VE.Reports.leafB_sound
+#print axioms VE.Reports.nodeB_sound
+#print axioms VE.Reports.admitNodes_ok
+#print axioms VE.Reports.checkOuter_ok
+#print axioms VE.Reports.reports_admission_sound
+#print axioms VE.Reports.reports_labels_decoded
+#print axioms VE.Reports.Run.runAdmission_sound
+#print axioms VE.Reports.Run.lookup_append
+#print axioms VE.Reports.Run.reportsModel_constants
+#print axioms VE.Reports.Run.reportsModel_predicates
+#print axioms VE.Reports.Run.valid_congr
+#print axioms VE.Reports.Run.decodeReportsModel_valid
+#print axioms VE.Reports.Run.reports_countermodel_decoded
+#print axioms VE.Reports.Run.runCountermodel_sound
+#print axioms VE.Reports.Run.scopedCertified_sound
+#print axioms VE.Reports.Run.reports_wire_acceptance
+#print axioms VE.Reports.meet_rank_left
+#print axioms VE.Reports.meet_rank_right
+#print axioms VE.Reports.foldl_meet_rank_init
+#print axioms VE.Reports.foldl_meet_rank_le
+#print axioms VE.Reports.foldStatus_le
+#print axioms VE.Reports.rank_checked
+#print axioms VE.Reports.foldStatus_checked
+#print axioms VE.Reports.unitStatus_le
+#print axioms VE.Reports.documentStatus_le
+-- alternatives@0 (lean/ALTERNATIVES.md)
+#print axioms VE.Alternatives.E_available
+#print axioms VE.Alternatives.E_leadsTo
+#print axioms VE.Alternatives.Replay.alternatives_wire_acceptance
+#print axioms VE.Alternatives.Replay.alternatives_wire_conflict_sound
+#print axioms VE.Alternatives.Replay.alternatives_wire_dilemma_sound
+#print axioms VE.Alternatives.Replay.alternatives_wire_followable_sound
+#print axioms VE.Alternatives.Replay.sourceOf_ok
+#print axioms VE.Alternatives.Admission.report_consequence
+#print axioms VE.Alternatives.Run.runAdmission_sound
+#print axioms VE.Alternatives.Run.alternatives_wire_acceptance
+#print axioms VE.Alternatives.Replay.validate_sound_decoded
+#print axioms VE.Alternatives.Examples.invalidMa_not_valid
+#print axioms VE.Alternatives.allowsF_denote
+#print axioms VE.Alternatives.allowsF_wellFormed
+#print axioms VE.Alternatives.altChain_hc
+#print axioms VE.Alternatives.altConflictFreeCheck_target
+#print axioms VE.Alternatives.altPremises_wellFormed
+#print axioms VE.Alternatives.altRouteChain_premises
+#print axioms VE.Alternatives.altRouteChain_restrict
+#print axioms VE.Alternatives.altSemanticCheck_of_wellFormed
+#print axioms VE.Alternatives.altValid_of_wellFormed
+#print axioms VE.Alternatives.alt_conflictFree_prefix
+#print axioms VE.Alternatives.alt_conflict_free
+#print axioms VE.Alternatives.alt_conflict_witness_sound
+#print axioms VE.Alternatives.alt_layer_expands
+#print axioms VE.Alternatives.alt_prefix_satisfaction
+#print axioms VE.Alternatives.alt_restrict_admissible
+#print axioms VE.Alternatives.alt_route_acceptance
+#print axioms VE.Alternatives.alt_route_backgroundComplete
+#print axioms VE.Alternatives.alt_route_backgroundSound
+#print axioms VE.Alternatives.alt_route_countermodel
+#print axioms VE.Alternatives.alt_route_intended
+#print axioms VE.Alternatives.alternative_monotone
+#print axioms VE.Alternatives.alternatives_conservative
+#print axioms VE.Alternatives.alternatives_wellFormed
+#print axioms VE.Alternatives.availF_denote
+#print axioms VE.Alternatives.avail_typed
+#print axioms VE.Alternatives.available_ne_leadsTo
+#print axioms VE.Alternatives.available_not_layer
+#print axioms VE.Alternatives.avoidableF_denote
+#print axioms VE.Alternatives.avoidableF_wellFormed
+#print axioms VE.Alternatives.baseAdmissibleAlt_of_valid
+#print axioms VE.Alternatives.base_available
+#print axioms VE.Alternatives.base_inaction
+#print axioms VE.Alternatives.base_leadsTo
+#print axioms VE.Alternatives.base_proximate
+#print axioms VE.Alternatives.base_taken
+#print axioms VE.Alternatives.binary_withDefinitions
+#print axioms VE.Alternatives.body_wellFormed
+#print axioms VE.Alternatives.clear_denote
+#print axioms VE.Alternatives.clear_denote_of
+#print axioms VE.Alternatives.denote_forget_preds
+#print axioms VE.Alternatives.dilemma_expansion
+#print axioms VE.Alternatives.dilemma_witness_sound
+#print axioms VE.Alternatives.e1B_sound
+#print axioms VE.Alternatives.e2B_sound
+#print axioms VE.Alternatives.e3B_sound
+#print axioms VE.Alternatives.emptied_sub
+#print axioms VE.Alternatives.expansion_meanings
+#print axioms VE.Alternatives.expansion_relation_typed
+#print axioms VE.Alternatives.extEnv_predicates_none
+#print axioms VE.Alternatives.extEnv_predicates_some
+#print axioms VE.Alternatives.findReg_some
+#print axioms VE.Alternatives.followable_denote
+#print axioms VE.Alternatives.followable_denote_of
+#print axioms VE.Alternatives.followable_eval_iff_denote
+#print axioms VE.Alternatives.followable_sound
+#print axioms VE.Alternatives.fulfilF_denote
+#print axioms VE.Alternatives.hide_some
+#print axioms VE.Alternatives.inlineTree_E
+#print axioms VE.Alternatives.inlineTree_shape
+#print axioms VE.Alternatives.inline_base
+#print axioms VE.Alternatives.inline_faithful
+#print axioms VE.Alternatives.inline_wellFormed
+#print axioms VE.Alternatives.inst_var0_denote
+#print axioms VE.Alternatives.leadsTo_not_layer
+#print axioms VE.Alternatives.literals_preds
+#print axioms VE.Alternatives.mem_availOf
+#print axioms VE.Alternatives.mem_ownersOf
+#print axioms VE.Alternatives.oBase_relation
+#print axioms VE.Alternatives.oBase_wellFormed
+#print axioms VE.Alternatives.oldEnv_preds
+#print axioms VE.Alternatives.oneOf_denote
+#print axioms VE.Alternatives.oneOf_wellFormed
+#print axioms VE.Alternatives.ownPremise_denote
+#print axioms VE.Alternatives.ownPremise_wellFormed
+#print axioms VE.Alternatives.owner_unique
+#print axioms VE.Alternatives.performedF_denote
+#print axioms VE.Alternatives.prefixAdmissibleAlt_zero
+#print axioms VE.Alternatives.preventsF_denote
+#print axioms VE.Alternatives.preventsF_wellFormed
+#print axioms VE.Alternatives.profileDef_isSome
+#print axioms VE.Alternatives.profileDef_length
+#print axioms VE.Alternatives.profileDef_some
+#print axioms VE.Alternatives.relation_typed
+#print axioms VE.Alternatives.restrict_available
+#print axioms VE.Alternatives.rowDenotes_true
+#print axioms VE.Alternatives.rowsB_sound
+#print axioms VE.Alternatives.sat_altPremises_restrict
+#print axioms VE.Alternatives.sat_backgroundBaseAlt
+#print axioms VE.Alternatives.scenarioConflict_sound
+#print axioms VE.Alternatives.sortOf_extEnv
+#print axioms VE.Alternatives.term_denote_withDefinitions
+#print axioms VE.Alternatives.tupleTyped_withDefinitions
+#print axioms VE.Alternatives.tuples_typed
+#print axioms VE.Alternatives.unavoidableF_denote
+#print axioms VE.Alternatives.unavoidableF_wellFormed
+#print axioms VE.Alternatives.validateAlternativesWith_ok
+#print axioms VE.Alternatives.validateAlternatives_labels
+#print axioms VE.Alternatives.validate_sound
+#print axioms VE.Alternatives.wf_preds
+#print axioms VE.Alternatives.withDefinitions_relation_some
+#print axioms VE.Service.runMode_evaluate
+#print axioms VE.Service.runMode_checkCertificate
+#print axioms VE.Service.runMode_order
+#print axioms VE.Service.runMode_route
+#print axioms VE.Service.runMode_norms
+#print axioms VE.Service.runMode_english
+#print axioms VE.Service.caseResult_ok
+#print axioms VE.Service.runRequest_ok
+#print axioms VE.Service.results_eq
+#print axioms VE.Service.boundResults_eq
+#print axioms VE.Service.respond_decoded

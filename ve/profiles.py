@@ -17,6 +17,7 @@ class ProfileRecord:
 
 
 REGISTRY = (
+    ProfileRecord("alternatives@0", "alternatives", "statement", "inherited"),
     ProfileRecord("closure@0", "", "checker", "closure"),
     ProfileRecord("data@0", "data", "statement", "inherited"),
     ProfileRecord("definitions@0", "definitions", "statement", "inherited"),
@@ -25,6 +26,7 @@ REGISTRY = (
     ProfileRecord("norms@0", "norms", "statement", "inherited"),
     ProfileRecord("order@0", "", "checker", "order"),
     ProfileRecord(BASE, "", "checker", "fol"),
+    ProfileRecord("reports@0", "reports", "statement", "inherited"),
     ProfileRecord("time@0", "time", "statement", "inherited"),
 )
 BY_NAME = {record.name: record for record in REGISTRY}
@@ -36,11 +38,23 @@ def checker_family(profiles):
         raise UnsupportedProfile("profiles must be a sorted unique array")
     if profiles != sorted(set(profiles)):
         raise UnsupportedProfile("profiles must be sorted and unique")
+    if "alternatives@0" in profiles:
+        if "norms@0" not in profiles:
+            raise UnsupportedProfile("alternatives@0 requires norms@0")
+        if "soft-norms@0" in profiles:
+            raise UnsupportedProfile("alternatives@0 with soft-norms@0")
     for profile in profiles:
         if profile not in BY_NAME:
             raise UnsupportedProfile(f"Unsupported profile {profile}")
     if BASE not in profiles:
         raise UnsupportedProfile(f"Missing profile {BASE}")
+    if "reports@0" in profiles:
+        for other in ("norms@0", "definitions@0", "data@0"):
+            if other in profiles:
+                raise UnsupportedProfile(f"reports@0 with {other} layers")
+        for other in ("closure@0", "nary@0", "order@0"):
+            if other in profiles:
+                raise UnsupportedProfile(f"reports@0 requires the fol checker, not {other}")
     checker = [p for p in profiles if p in {"closure@0", "nary@0", "order@0"}]
     if "order@0" in checker and len(checker) > 1:
         pair = next(p for p in checker if p != "order@0")

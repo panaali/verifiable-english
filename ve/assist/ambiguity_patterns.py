@@ -19,7 +19,7 @@ from ..background import validate_background
 from ..errors import VEError
 from ..evaluate import evaluate
 from ..identity import meaning_id
-from ..english import parse_english_with_metadata, render_english
+from ..english import parse_english_with_metadata, render_english, sentence_parse_cache
 from ..search import find_distinguishing_model
 
 CATALOGUE_VERSION = "ve.ambiguity-patterns@1"
@@ -244,6 +244,13 @@ def review(env, source: str, bindings: Mapping, *, pattern_id: str,
     Every step, including wording parses and model replay, runs inside the
     operation budget; an expired budget leaves the remaining work pending.
     """
+    with sentence_parse_cache():
+        return _review_uncached(env, source, bindings, pattern_id=pattern_id,
+                                cursor=cursor, deadline=deadline)
+
+
+def _review_uncached(env, source: str, bindings: Mapping, *, pattern_id: str,
+                     cursor: int = 0, deadline: "float | Budget | None" = None) -> dict:
     budget = _budget(deadline)
     expired = {"reason": "operation deadline (8 seconds)"}
     result = {"catalogue_version": CATALOGUE_VERSION, "pattern_id": pattern_id,

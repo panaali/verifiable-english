@@ -519,8 +519,8 @@ structure Admitted where
   report : Report
   kinds : List Json
 
-def decodeDoc (rv : Wire.RouteVocabulary) (data : Bool) (j : Json) : Except String Doc := do
-  let E := rv.environment
+def decodeDoc (rv : Wire.RouteVocabulary) (data : Bool) (j : Json)
+    (E : VE.Environment := rv.environment) : Except String Doc := do
   let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM (decodeUnit E data)
   require (units.length ≤ 10000) "ResourceLimit: unit count"
   require ((units.map DocUnit.id).eraseDups.length == units.length) "duplicate unit id"

@@ -70,6 +70,21 @@ fn case(v: &Value) -> Result<Value> {
     if v.get("kind") == Some(&json!("quantity")) {
         return quantity_case(v);
     }
+    if v.get("family") == Some(&json!("elaborated-document")) {
+        if v.get("profile") != Some(&json!("reports@0"))
+            || v.get("untrusted") != Some(&json!(true))
+            || v.get("envelope").is_none()
+            || v.get("conclusion").is_none() {
+            return Err(Error::new("InvalidInput", "reports search needs an untrusted elaboration, envelope and conclusion"));
+        }
+        let mut plain = v.clone();
+        let object = plain.as_object_mut().ok_or_else(|| Error::new("InvalidInput", "reports search object"))?;
+        for key in ["family", "profile", "untrusted", "envelope"] { object.remove(key); }
+        let mut result = case(&plain)?;
+        result["untrusted"] = json!(true);
+        result["envelope"] = v["envelope"].clone();
+        return Ok(result);
+    }
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
     }
@@ -152,6 +167,61 @@ fn case(v: &Value) -> Result<Value> {
         out["model_id"] = json!(model.model_id());
     }
     Ok(out)
+}
+
+#[cfg(test)]
+mod reports_tests {
+    use super::*;
+
+    #[test]
+    fn untrusted_reports_search_keeps_envelope_and_finds_nonfactive_witness() {
+        let env = json!({
+            "language":"ve.core@0.2",
+            "profiles":["documents@1","relational-fol@0","reports@0"],
+            "spec_revision":"ve-v0.2-expand2-2026-09-25",
+            "vocabulary":{
+                "reports":{"holders":["person","text"],"evidence":"evidence"},
+                "sorts":{"person":{"description":"person"},"text":{"description":"text"},
+                         "evidence":{"description":"evidence"}},
+                "predicates":{"safe":{"arguments":["person"],"description":"safe"},
+                              "reports__says__1":{"arguments":["text"],"description":"report"}},
+                "constants":{"article":{"sort":"text","description":"article"},
+                             "alice":{"sort":"person","description":"Alice"}}
+            }
+        });
+        let input = json!({"family":"elaborated-document","profile":"reports@0",
+                           "untrusted":true,"envelope":{"document_id":"bound"},
+                           "environment":env,
+                           "premises":[["unary","reports__says__1",["const","article"]]],
+                           "conclusion":["unary","safe",["const","alice"]]});
+        let result = case(&input).unwrap();
+        assert_eq!(result["status"], "Found");
+        assert_eq!(result["untrusted"], true);
+        assert_eq!(result["envelope"], input["envelope"]);
+        assert_eq!(result["model"]["relations"]["safe"], json!([]));
+        let mut unmarked = input.clone();
+        unmarked["untrusted"] = json!(false);
+        assert!(case(&unmarked).is_err());
+    }
+
+    #[test]
+    fn reports_holder_verbalisation_reserved_in_any_ascii_case() {
+        for (words, reserved) in [("the stated assessment", true), ("The Stated Assessment", true),
+                                  ("the stated assessments", false)] {
+            let env = json!({
+                "language":"ve.core@0.2",
+                "profiles":["relational-fol@0","reports@0"],
+                "spec_revision":"ve-v0.2-expand2-2026-09-25",
+                "vocabulary":{
+                    "reports":{"holders":["text"],"evidence":"evidence"},
+                    "sorts":{"text":{"description":"text"},"evidence":{"description":"evidence"}},
+                    "predicates":{},
+                    "constants":{"article":{"sort":"text","description":"article","verbalisation":words}}
+                }
+            });
+            assert_eq!(ve_core::Environment::from_value(&env).is_err(), reserved, "{words}");
+        }
+    }
 }
 fn case_record(v: &Value) -> Value {
     match case(v) {
