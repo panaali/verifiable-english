@@ -84,9 +84,17 @@ imports, audit entries, manifest entries, the `ve_risk_route` target (root `Risk
   (not superseded before the decision) and compares Q1 verdicts.
 * **The wire.** A case is `{"id", "kind", "environment", "document", ...}` with `document = {"norms",
   "units"?}`. `$string` literals, definitions and data flags are rejected on this route (as alt rejects the last
-  two). The outer package binding is `(environment_id, document_hash, target)` with alt's document hash over the
+  two), and Python's `Environment` rejects them on a risk environment with the same texts. The W6 extension is
+  decoded with every rule Python applies to it, in Python's order: `unit_schema` and `units` together or not at
+  all (first), the checker family (`the risk norms route admits FOL documents only`), W6's profile tuple, the unit
+  records (the frozen `decodeUnit` and `displayInjective`), slot and constant units, then after the vocabulary no
+  tag or `dimensionless` named like a sort, no `$string` literal and W6's constant spellings (`checkExtension`,
+  Python's `validate_extension`, which Python now runs at this point on a risk environment). `riskNormsView`
+  removes the extension's vocabulary annotations with it: every constant's `verbalisation` (a display field
+  Python admits on any route environment, checked as Python's `_verbalisation`), and on an extended environment
+  every `argument_units` and constant `unit`. The outer package binding is `(environment_id, document_hash, target)` with alt's document hash over the
   complete risk environment; the inner certificate binds `riskBaseEnvironmentJson`: the base environment with the
-  blocks, the W6 extension, the regulated predicates and the `alternatives@0`, `risk@0`, `norms@0` profiles
+  blocks, the W6 extension and its annotations, the regulated predicates and the `alternatives@0`, `risk@0`, `norms@0` profiles
   removed, and the severity sort, the class constants and the three generated predicates added. A Python prover
   must bind the same JSON.
 
@@ -175,6 +183,7 @@ Cases without the profile, the block or a `risk-*` kind are delegated to `VE.Alt
 | `tests/test_risk_generated_policies.py` | 8.3: 1,000 generated policies; `risk-elaborate` through Python's dispatch equals Lean's; Python certificates replay in Lean; tampered packages rejected |
 | `tests/test_risk_integration.py` | three-way cells (k1, k2), V8 sameness after normalisation (A2), 300 random records Lean against Rust |
 | `tests/test_risk_diagnostics.py` | Python's environment check against Lean on 57 single faults, 5 accepted variants and 309 pairs of faults |
+| `tests/test_risk_w6_extension.py` | the W6 extension (looprecheck1 B1): 65 faults of every W6 rule and the route gates around it, singly and paired with block faults, one text from Python and Lean; 8 accepted variants elaborated with Python's identity; the base binding without the annotations; six W6 texts equal in Python, Lean's `ve_quantity` and Rust |
 | `tests/test_risk_profile.py` | the frozen W6 text (A1), identity, the profile gate, dispatch-only record handling (A3) |
 | `tests/test_risk_english.py` | k19 (B3): one reading and the canonical rendering per wording, every 2.3 rejection in documents and rule guards, the scoped rewrites, rule 2 in alt's binder form, P3 rejected, c5 pending |
 | `tests/test_risk_rust.py` | Rust's evaluator against enumeration on small boxes |
@@ -190,6 +199,9 @@ checked on its unit-free form. The section 6 rewrites of `RiskSettingTwice`, `Ri
 on single faults of both blocks and on every pair of risk-block faults; with one fault in alt's block checks (not its shape) and one in
 the risk block's shape, Python reports alt's first (it checks the alt block whole), while Lean decodes the risk block
 before alt's semantic checks. Alt's own Python-only `AlternativesReserved: wording for <p>` is unchanged (6).
+They also agree, text included, on every W6 extension fault. A fault of the vocabulary decoders W1 and alt share
+is rejected by both, each with its own generic text. Examples: a constant of sort `$int` or of an undeclared sort,
+and an `argument_units` or `unit` field on an environment without the extension.
 
 ## Status, deviations and what is not claimed
 
