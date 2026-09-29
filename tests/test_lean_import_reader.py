@@ -212,6 +212,17 @@ def lean_command():
     return command
 
 
+def test_pinned_lean_is_the_toolchain_binary_not_a_proxy(lean_command):
+    # A timeout must kill `lean` itself; killing elan's proxy could leave it holding the pipes.
+    assert len(lean_command) == 1
+    elan = shutil.which("elan")
+    if elan is not None:
+        assert Path(lean_command[0]).resolve() != Path(elan).resolve()
+    version = (ROOT / "lean/lean-toolchain").read_text().strip().rpartition(":v")[2]
+    assert f"(version {version}," in subprocess.run([*lean_command, "--version"], capture_output=True,
+                                                    text=True, check=True).stdout
+
+
 def test_pinned_lean_never_installs_a_toolchain():
     started = time.monotonic()
     assert pinned_lean("leanprover/lean4:v0.0.1-not-installed") is None
