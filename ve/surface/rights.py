@@ -1,6 +1,7 @@
 """Rights incident English, reusing the audited soft rule grammar."""
 from __future__ import annotations
 
+import json
 import re
 
 from ..errors import VEError
@@ -87,6 +88,55 @@ def _displayed(rule):
                                       unless=tuple(_plain(u) for u in core.unless)))
 
 
+def _citation(key):
+    """What a `cites` key licenses (3.3, the 4.5 licensing table), in words."""
+    if key == "guard":
+        return "the distinction in its guard"
+    if key == "exception":
+        return "its exception"
+    if key == "rank":
+        return "its rank"
+    kind, _, target = key.partition(":")
+    return {"unless": f"its carve-out {target}", "alterable": f"the switch of {target}",
+            "over": f"its precedence over rule {target}",
+            "narrows": f"its effect on line {target}"}.get(kind, key)
+
+
+def citation_notes(cites):
+    """One sentence per `cites` entry: the units cited and what they license."""
+    return [("It cites unit " if len(targets) == 1 else "It cites units ") +
+            _series(targets) + f" for {_citation(key)}."
+            for key, targets in (cites or {}).items()]
+
+
+def rule_notes(rule, env, *, switches=True):
+    """The fields of a soft rule its one-sentence rendering leaves out, one sentence
+    each: precedence, switches and rank (`switches`), and the exception's conditions
+    and factors. Two rules differing in any of them render differently."""
+    from ..ast import _Decoder
+    from ..norm_english import _guard_text, _soft_consequence, _words
+    words = _words(env)
+    _, scope = _soft_consequence(rule, env, words)
+    notes = []
+    if rule.core.over:
+        notes.append(("It is an exception to rule " if len(rule.core.over) == 1 else
+                      "It is an exception to rules ") + _series(rule.core.over) + ".")
+    if switches and rule.alterable:
+        notes.append(_series(rule.alterable) + " may turn it off for this situation.")
+    if switches and rule.rank:
+        notes.append(f"It serves {rule.rank} where default rules collide." if rule.mode == "default" else
+                     f"It records rank {rule.rank}, but a strict rule is never weighed.")
+    exception = rule.exception or {}
+    for role, qualifier in (("sufficient", "when"), ("necessary", "only when")):
+        for condition in exception.get(role, ()):
+            notes.append(f"Its exception applies {qualifier} " +
+                         _guard_text(_Decoder().decode(condition), env, words, scope) + ".")
+    if exception.get("factors"):
+        notes.append("Its exception takes account of " +
+                     _series(json.dumps(f, ensure_ascii=False) for f in exception["factors"]) + ".")
+    return notes
+
+
 def _line(document, right, line):
     """Every instance of a line as it elaborates: the holder guard at the holder
     slot and the packed limitation carve-out are part of the rendered rule."""
@@ -102,7 +152,9 @@ def _line(document, right, line):
             sentence += (f" This is a default line; {decider} decides its exception."
                          if decider != "unstated" else
                          " This is a default line; the source names no exception decider.")
-        explanations.append(sentence)
+        explanations.append(" ".join((sentence, *rule_notes(rule, document.environment))))
+    if explanations:
+        explanations.extend(citation_notes(line.get("cites")))
     if instance_kinds := {i["kind"] for i in document.instances if i["source_line"] is line}:
         if instance_kinds & {"powerLiberty", "powerRecognition"}:
             explanations.append("Recognition required; later effects not modelled.")

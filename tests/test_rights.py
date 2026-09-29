@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pytest
 import json
+from copy import deepcopy
 
 from tests.test_norms import environment, obligation, permission
 from ve.document import check_document, load_document, render_document
@@ -345,6 +346,122 @@ def test_document_loads_an_outside_norm_carrying_narrowing_citations(tmp_path):
         load_document(path)
     with pytest.raises(VEError, match="InvalidInput: expected norm object"):
         load_document(rights_document_file(tmp_path, [outside], env=rights_env_without_profile()))
+
+
+def _soft_rights_env():
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["adult"] = {"arguments": ["person"], "description": "adult"}
+    raw["vocabulary"]["soft"] = {"parties": ["user"], "ranks": ["high", "low"],
+                                 "outranks": [["high", "low"]], "outranking": {"mode": "strict"}}
+    return raw
+
+
+def _default_claim(name="protect"):
+    line = claim(name)
+    line["norm"].update(mode="default", exception={"decided_by": "unstated", "sufficient": [],
+                                                    "necessary": [], "factors": []})
+    return line
+
+
+def _mutations(norm, *, default):
+    """One semantic field changed at a time on a rule body."""
+    adult = ["unary", "adult", ["var", 0]]
+    yield "guard", {**norm, "guard": adult}
+    yield "unless", {**norm, "unless": [adult]}
+    yield "alterable", {**norm, "alterable": ["user"]}
+    yield "rank", {**norm, "rank": "high"}
+    if default:
+        for role in ("necessary", "sufficient"):
+            yield role, {**norm, "exception": {**norm["exception"], role: [["bottom"]]}}
+            yield role + " adult", {**norm, "exception": {**norm["exception"], role: [adult]}}
+        yield "factors", {**norm, "exception": {**norm["exception"], "factors": ["public order"]}}
+        yield "decided_by", {**norm, "exception": {**norm["exception"], "decided_by": "a court"}}
+
+
+def test_document_english_changes_with_every_semantic_field_of_a_rule(tmp_path):
+    # Rendering must not lose meaning: switches, ranks, precedence, exception conditions
+    # and factors, and citations each change the English of a rights line and of a norm unit.
+    raw = _soft_rights_env()
+
+    def rendered(contents):
+        return render_document(rights_document_file(tmp_path, contents, env=raw))
+
+    for base in (claim(), _default_claim()):
+        default = "mode" in base["norm"]
+        outside = {"norm": {**base["norm"], "name": "outside"}}
+        before = rendered([right([base]), outside])
+        seen = {before}
+        for field, norm in _mutations(base["norm"], default=default):
+            line = rendered([right([{**base, "norm": norm}]), outside])
+            unit = rendered([right([base]), {"norm": {**norm, "name": "outside"}}])
+            assert line != before, f"right line {field}"
+            assert unit != before, f"norm unit {field}"
+            assert line not in seen and unit not in seen, field
+            seen |= {line, unit}
+        cited = rendered([right([{**base, "cites": {"exception" if default else "guard": ["u1"]}}]),
+                          outside])
+        assert cited != before and "It cites unit u1 for" in cited
+        narrowing = rendered([right([base]), {**outside, "cites": {"narrows:protect": ["u0"]}}])
+        assert narrowing != before and "It cites unit u0 for its effect on line protect." in narrowing
+    # precedence: an outside rule over a right line, and a right line over an outside rule
+    over = {"norm": {"name": "outside", "predicate": "protect_required", "sign": False,
+                     "guard": ["top"], "unless": [], "over": []}}
+    plain = rendered([right([claim()]), over])
+    excepted = rendered([right([claim()]), {"norm": {**over["norm"], "over": ["protect"]}}])
+    assert excepted != plain and "It is an exception to rule protect." in excepted
+    line = claim()
+    line["norm"]["over"] = ["outside"]
+    assert "It is an exception to rule outside." in rendered([right([line]), over])
+
+
+def test_document_english_distinguishes_the_finding_pairs(tmp_path):
+    raw = _soft_rights_env()
+    line = _default_claim()
+    switched = deepcopy(line)
+    switched["norm"]["alterable"] = ["user"]
+    necessary = deepcopy(line)
+    necessary["norm"]["exception"]["necessary"] = [["bottom"]]
+    texts = [render_document(rights_document_file(tmp_path, [right([body])], env=raw))
+             for body in (line, switched, necessary)]
+    assert len(set(texts)) == 3
+    assert "user may turn it off for this situation." in texts[1]
+    assert "Its exception applies only when" in texts[2]
+
+
+def test_document_english_shows_candidate_labels_and_couplings(tmp_path):
+    from ve.model import FiniteModel
+    raw = rights_env()
+    model = {"domains": {"state": ["s"], "person": ["p"]}, "complete": True, "constants": {},
+             "relations": {"protect_required": [], "protect_permitted": [], "person_may_act": []}}
+    mid = FiniteModel.from_dict(RightsEnvironment(raw), model).model_id
+
+    def reading_set(name, unit):
+        return {"id": name, "unit": unit, "version": 1, "status": "open", "models": {mid: model},
+                "readings": [{"id": f"{name}-{force}", "kind": "right", "meaning_id": "pending",
+                              "content": None, "labels": {"force": force},
+                              "admission": {"who": "reviewer", "why": "shall",
+                                            "distinguishing_models": {f"{name}-{other}": mid}}}
+                             for force, other in (("strict", "default"), ("default", "strict"))]}
+
+    path = rights_document_file(tmp_path, [right(), right()])
+    meta, source = path.read_text().split("\n---\n", 1)
+    metadata = json.loads(meta.removeprefix("---\n"))
+    del metadata["units"][1]["content"]
+    metadata["reading_sets"] = [reading_set("a", "u0"), reading_set("b", "u1")]
+
+    def rendered(couplings):
+        path.write_text("---\n" + json.dumps({**metadata, "couplings": couplings}) + "\n---\n" + source)
+        return render_document(path)
+
+    uncoupled = rendered([])
+    assert "One reading is (force strict):" in uncoupled
+    assert "Another reading is (force default):" in uncoupled
+    coupled = rendered([{"id": "same-force", "axis": "force",
+                         "sets": [{"set": "a", "version": 1}, {"set": "b", "version": 1}],
+                         "by": "translator", "reason_spans": ["u0"]}])
+    assert coupled != uncoupled
+    assert ("Reading units u0 and u1 with the same force, because u0 "
+            "(coupling same-force by translator).") in coupled
 
 
 def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
