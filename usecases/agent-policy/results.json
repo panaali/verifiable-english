@@ -1,16 +1,23 @@
 {
  "M10": {
   "certificates": 2488,
-  "focused_calls": 1265,
+  "focused_calls": 1266,
   "focused_nodes": 36454,
   "log_sentences": 503,
   "model_witnesses": 87,
   "open_by_models": 14,
+  "policy_seconds": {
+   "conflict": 0.1,
+   "overlaps": 0.3,
+   "pairs": 21.4,
+   "rules": 1.0,
+   "tool_gaps": 23.5
+  },
   "rules": 26,
-  "seconds": 116.6,
+  "seconds": 103.4,
   "unknown": 0,
-  "ve_prover_calls": 1243,
-  "ve_prover_steps": 118564,
+  "ve_prover_calls": 1237,
+  "ve_prover_steps": 88564,
   "workers": 6
  },
  "M8": {
@@ -10661,6 +10668,18 @@
      "satisfiable_pairs": []
     }
    },
+   "conflict": {
+    "permitted": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 3836
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
+    }
+   },
    "policy_summary": {
     "conflict": {
      "permitted": "CONFLICT-FREE",
@@ -10717,7 +10736,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 223.1
+   "seconds": 121.7
   },
   "m2": {
    "changes": {
@@ -10785,6 +10804,18 @@
      "pair_queries": 156
     }
    },
+   "conflict": {
+    "permitted": {
+     "situation": "action a10: rule write-workspace permits; rule write-outside forbids",
+     "status": "CONFLICT",
+     "witness": "a10"
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
+    }
+   },
    "policy_summary": {
     "conflict": {
      "permitted": "CONFLICT",
@@ -10850,7 +10881,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 113.9
+   "seconds": 64.2
   },
   "m3": {
    "changes": {
@@ -10979,6 +11010,18 @@
      ]
     }
    },
+   "conflict": {
+    "permitted": {
+     "situation": "action a10: rule write-workspace permits; rule write-outside forbids",
+     "status": "CONFLICT",
+     "witness": "a10"
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
+    }
+   },
    "policy_summary": {
     "conflict": {
      "permitted": "CONFLICT",
@@ -11068,7 +11111,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 91.5
+   "seconds": 62.2
   },
   "m4": {
    "changes": {
@@ -11084,6 +11127,18 @@
      }
     },
     "policy": {}
+   },
+   "conflict": {
+    "permitted": {
+     "situation": "action a10: rule write-workspace permits; rule write-outside forbids",
+     "status": "CONFLICT",
+     "witness": "a10"
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
+    }
    },
    "policy_summary": {
     "conflict": {
@@ -11146,7 +11201,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 20.8
+   "seconds": 24.8
   },
   "m5": {
    "changes": {
@@ -11170,6 +11225,18 @@
        24
       ]
      ]
+    }
+   },
+   "conflict": {
+    "permitted": {
+     "situation": "action a06: rule credential-read-confirmed permits; rule credential-read forbids",
+     "status": "CONFLICT",
+     "witness": "a06"
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
     }
    },
    "policy_summary": {
@@ -11235,7 +11302,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 81.6
+   "seconds": 70.6
   },
   "m6": {
    "changes": {
@@ -11248,6 +11315,18 @@
      }
     },
     "policy": {}
+   },
+   "conflict": {
+    "permitted": {
+     "situation": "action a10: rule write-workspace permits; rule write-outside forbids",
+     "status": "CONFLICT",
+     "witness": "a10"
+    },
+    "report_required": {
+     "prover": "ve",
+     "status": "CONFLICT-FREE",
+     "steps": 59
+    }
    },
    "policy_summary": {
     "conflict": {
@@ -11310,7 +11389,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 20.0
+   "seconds": 29.5
   }
  },
  "policy": {
@@ -12289,14 +12368,7 @@
   "precedence_edges": 143,
   "tool_gaps": {
    "(an undeclared tool)": {
-    "action": "a01",
-    "changed_atom": [
-     "reads",
-     [
-      "a01",
-      "f_main"
-     ]
-    ],
+    "action": "a15",
     "model": "fresh tool",
     "status": "gap"
    },
@@ -12306,13 +12378,7 @@
     "status": "covered"
    },
    "get_secret": {
-    "action": "a35",
-    "changed_atom": [
-     "confirmed",
-     [
-      "a35"
-     ]
-    ],
+    "action": "a36",
     "model": "record",
     "status": "gap"
    },
@@ -12344,13 +12410,7 @@
     "status": "gap"
    },
    "send_email": {
-    "action": "a26",
-    "changed_atom": [
-     "confirmed",
-     [
-      "a26"
-     ]
-    ],
+    "action": "a27",
     "model": "record",
     "status": "gap"
    },
@@ -12382,21 +12442,21 @@
    "report_required": "CONFLICT-FREE"
   },
   "covered_tools": [
-   "read_file",
-   "write_file",
    "delete_file",
+   "purchase",
+   "read_file",
    "shell",
    "web_fetch",
-   "purchase"
+   "write_file"
   ],
   "dead_guards": [],
   "gap_tools": [
-   "send_email",
-   "post_message",
+   "(an undeclared tool)",
    "get_secret",
+   "post_message",
    "schedule_task",
-   "spawn_agent",
-   "(an undeclared tool)"
+   "send_email",
+   "spawn_agent"
   ],
   "never_deciding": [
    12

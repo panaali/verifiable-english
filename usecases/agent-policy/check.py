@@ -501,6 +501,17 @@ def first_witness(base, models, formula, evidence):
     return None
 
 
+def _gap_witness(base, schema, gap, models, evidence, *, variants):
+    """A checked model of the log schema with an uncovered action, if one is found."""
+    for action, kind, model in models:
+        candidates = one_atom_variants(base, model) if variants else [(None, model)]
+        for change, candidate in candidates:
+            if value(base, gap, candidate) and satisfies(base, schema, candidate):
+                evidence.witness(base, candidate, gap, True)
+                return {"action": action, "model": kind, **({"changed_atom": change} if change else {})}
+    return None
+
+
 def policy_findings(doc, inventory, records, evidence):
     names = numbers(doc.rules)
     base = doc.base_environment()
@@ -510,7 +521,15 @@ def policy_findings(doc, inventory, records, evidence):
     selected = {**selected, **doc.selection(OBLIGATION)[2]}
     permission = [r for r in doc.rules if r.predicate == PERMISSION]
     findings = {}
+    clock = [time.time()]
 
+    def lap():
+        now = time.time()
+        seconds = round(now - clock[0], 1)
+        clock[0] = now
+        return seconds
+
+    timings = {}
     conflict = {}
     for target, sorts, formula in doc.conflict_targets():
         claim = _bind(formula, sorts, binder=Exists)
@@ -523,6 +542,7 @@ def policy_findings(doc, inventory, records, evidence):
             proof = refute(base, (), claim, evidence)
             conflict[target] = {"status": "CONFLICT-FREE" if proof else "UNKNOWN", **(proof or {})}
     findings["conflict"] = conflict
+    timings["conflict"] = lap()
 
     pairs = {}
     for left in (r for r in permission if r.sign):
@@ -536,6 +556,7 @@ def policy_findings(doc, inventory, records, evidence):
                 proof = refute(base, (), claim, evidence)
                 pairs[label] = {"status": "refuted" if proof else "unknown", **(proof or {})}
     findings["pairs"] = pairs
+    timings["pairs"] = lap()
 
     never, dead = {}, {}
     for rule in doc.rules:
@@ -550,6 +571,7 @@ def policy_findings(doc, inventory, records, evidence):
                 table[names[rule.name]] = {"status": gone if proof else "unknown", **(proof or {})}
     findings["never_deciding"] = never
     findings["dead_guards"] = dead
+    timings["rules"] = lap()
 
     schema = tuple(parse_sentences(base, (HERE / "log-schema.ve").read_text()).formulas)
     covered = Or(positive, negative)
@@ -561,28 +583,21 @@ def policy_findings(doc, inventory, records, evidence):
     gaps = {}
     for tool, condition in queries:
         gap = exists_action(And(condition, Not(covered)))
-        witness = None
-        for action, kind, model in models:
-            # One-atom variants keep the functional, total tool, so only a
-            # model whose action has this tool can yield a witness.
-            if not value(base, exists_action(condition), model):
+        # One-atom variants keep the functional, total tool, so only a model
+        # whose action has this tool can yield a witness.
+        own_models = [m for m in models if value(base, exists_action(condition), m[2])]
+        witness = _gap_witness(base, schema, gap, own_models, evidence, variants=False)
+        if witness is None:
+            # Only this tool's schema sentence is needed; fewer premises keep the proof valid.
+            own = tuple(f for f in schema if tool in constants_of(f))
+            proof = evidence.focus(base, own, Not(gap), active_premises=True)
+            if proof is not None:
+                gaps[tool] = {"status": "covered", **proof}
                 continue
-            for change, candidate in [(None, model), *one_atom_variants(base, model)]:
-                if value(base, gap, candidate) and satisfies(base, schema, candidate):
-                    evidence.witness(base, candidate, gap, True)
-                    witness = {"action": action, "model": kind,
-                               **({"changed_atom": change} if change else {})}
-                    break
-            if witness:
-                break
-        if witness is not None:
-            gaps[tool] = {"status": "gap", **witness}
-            continue
-        # Only this tool's schema sentence is needed; fewer premises keep the proof valid.
-        own = tuple(f for f in schema if tool in constants_of(f))
-        proof = refute(base, own, gap, evidence, active_premises=True)
-        gaps[tool] = {"status": "covered" if proof else "unknown", **(proof or {})}
+            witness = _gap_witness(base, schema, gap, own_models, evidence, variants=True)
+        gaps[tool] = {"status": "gap", **witness} if witness is not None else {"status": "unknown"}
     findings["tool_gaps"] = gaps
+    timings["tool_gaps"] = lap()
 
     overlaps = set()
     for _, _, model in records_only:
@@ -590,7 +605,8 @@ def policy_findings(doc, inventory, records, evidence):
             overlaps.add((names[left], names[right]))
     findings["overlaps"] = [list(p) for p in sorted(overlaps)]
     findings["precedence_edges"] = sum(len(r.over) for r in doc.rules)
-    return findings
+    timings["overlaps"] = lap()
+    return findings, timings
 
 
 # --- whole runs ----------------------------------------------------------------------
@@ -620,7 +636,7 @@ def run(policy_text=None, log_text=None, *, names=None, evidence=None, outcomes=
         evidence.merge(exported)
     result = {"actions": dict(sorted(per_action.items())), "rules": [r.name for r in doc.rules]}
     if level:
-        result["policy"] = policy_findings(doc, inventory, records, evidence)
+        result["policy"], result["policy_seconds"] = policy_findings(doc, inventory, records, evidence)
         evidence.flush()
     result["seconds"] = round(time.time() - started, 1)
     return result
@@ -934,6 +950,7 @@ def main(argv=None):
             base = run(evidence=evidence, pool=pool)
             part = base_summary(base)
             part["M10"] = {**evidence.counts, "seconds": round(time.time() - started, 1),
+                           "policy_seconds": base["policy_seconds"],
                            "workers": WORKERS, "rules": len(base["rules"]),
                            "log_sentences": sum(len(p.split("\n"))
                                                 for p in (HERE / "log.ve").read_text().split("\n\n"))}
@@ -946,6 +963,7 @@ def main(argv=None):
             ran = run_mutants(base, evidence, pool=pool, names=chosen)
             results.setdefault("mutants", {}).update(
                 {name: {"changes": m["changes"], "policy_summary": policy_summary(m["result"]["policy"]),
+                        "conflict": m["result"]["policy"]["conflict"],
                         "seconds": m["result"]["seconds"]} for name, m in ran.items()})
         else:
             exported = json.loads(EVIDENCE.read_text())
