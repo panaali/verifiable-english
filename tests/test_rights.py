@@ -160,6 +160,29 @@ def test_claim_is_one_soft_rule_and_limitation_is_one_pack():
         FiniteModel.from_dict(extended, model)
 
 
+def test_phi_null_recognition_is_the_absent_field():
+    # fixture phi: an alters entry with recognition null could not be built at all, since
+    # canonical JSON has no null; it is the absent field, as on the Lean wire
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["deprive_permitted"] = permission(
+        "allow", act="{0} deprive {1} of nationality", args=("state", "person"))
+    raw["vocabulary"]["predicates"]["has_nationality"] = {"arguments": ["person"], "description": "n"}
+    raw["vocabulary"]["rights"]["alters"] = {"deprive_permitted": {
+        "holder_slot": 1, "status": "has_nationality", "recognition": None}}
+    absent = json.loads(json.dumps(raw))
+    del absent["vocabulary"]["rights"]["alters"]["deprive_permitted"]["recognition"]
+    assert RightsEnvironment(raw).environment_id == RightsEnvironment(absent).environment_id
+    immunity = {"kind": "immunity", "cites": {},
+                "norm": {"name": "no-deprive", "predicate": "deprive_permitted", "sign": False,
+                         "guard": ["top"], "unless": [], "over": []}}
+    assert correlate(raw, [right([immunity])]).instances[0]["holder_slot"] == 1
+    power = {"kind": "power", "cites": {},
+             "liberty": {**immunity["norm"], "name": "may-deprive", "sign": True},
+             "recognition": {**immunity["norm"], "name": "recognise", "sign": True}}
+    with pytest.raises(VEError, match="IncidentShape"):
+        correlate(raw, [right([power])])
+
+
 def test_right_requires_incident_and_claim_shape():
     with pytest.raises(VEError, match="RightWithoutIncident: life"):
         correlate(rights_env(), [right([])])
@@ -184,7 +207,7 @@ def test_document_check_uses_correlated_soft_route(tmp_path):
     assert report["distinction"][0]["independent"] is True
     assert report["bar"] == []
     assert result["soft"]["soft_document_hash"]
-    assert "Claim of right life" in render_document(path)
+    assert "Claim of right 1. Every state must protect each person." in render_document(path)
     assert load_document(path)["units"][0]["meaning_id"]
 
 
@@ -313,8 +336,18 @@ def test_rights_english_preserves_default_holder_guard_and_generated_conditions(
     text = render_unit(document, units[0])
     assert "should protect" in text
     assert "must protect" not in text
-    assert "adult" in text and "rights__cond__1" in text and "rights__lim__1" in text
-    assert "claim lines" in render_unit(document, units[1])
+    # the holder guard is in the header and in every line; generated predicates are worded,
+    # never printed by name (2.1)
+    assert "Every line of this right applies only where that person is adult." in text
+    assert ("Claim of right 1. Every state should protect each person, if both determined by law "
+            "where that state protects that person and that person is adult, unless limitation 1 "
+            "holds where that state protects that person.") in text
+    assert "rights__" not in text
+    limitation = render_unit(document, units[1])
+    assert limitation == (
+        "Limitation 1 (on the claims of every right). A right in this document is limited in a "
+        "situation only where limitation 1 holds. Limitation 1 holds only where determined by law. "
+        "The source names no decider of limitation 1.")
 
 
 def test_python_applies_the_lean_carve_out_and_count_limits():
@@ -608,6 +641,45 @@ def test_power_splits_into_liberty_and_recognition():
 def test_rights_soft_regeneration_conformance():
     from conformance.rights import run
     assert run(8) == 8
+
+
+def test_rights_english_uses_display_numbers_scopes_kinds_deciders_and_shadows():
+    raw = rights_env()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["marry_permitted"] = permission("allow", act="{0} marry", args=("person",))
+    predicates["recognise_required"] = obligation(
+        "deny", None, act="{0} recognise {1}", args=("state", "person"))
+    predicates["married"] = {"arguments": ["person"], "description": "married"}
+    raw["vocabulary"]["rights"]["alters"] = {
+        "marry_permitted": {"holder_slot": 0, "status": "married",
+                            "recognition": "recognise_required"}}
+    power = {"kind": "power", "cites": {},
+             "liberty": {"name": "may-marry", "predicate": "marry_permitted", "sign": True,
+                         "guard": ["top"], "unless": [], "over": []},
+             "recognition": {"name": "recognise-marriage", "predicate": "recognise_required",
+                             "sign": True, "guard": ["top"], "unless": [], "over": []}}
+    marriage = {"right": {"name": "r16", "holder": "person", "guard": ["top"], "lines": [power]}}
+    limitation = {"limitation": {"name": "l29b", "scope": ["life", "r16"], "kinds": ["claim", "power"],
+                                 "decided_by": "the courts", "conditions": [
+                                     {"name": "purpose", "role": "sufficient", "decided_by": "a tribunal",
+                                      "verbalisation": "the exercise defeats the purpose"}],
+                                 "factors": ["public order", "morality"]}}
+    units = [right(), marriage, limitation,
+             {"bar": {"name": "b30", "reading": "query", "decided_by": "the courts"}}]
+    document = correlate(raw, units)
+    assert render_unit(document, marriage).startswith(
+        "Right 2. Every person has the right described by its incident lines")
+    assert "Power of right 2. Every person may marry, unless limitation 1 holds where that person marries." in (
+        render_unit(document, marriage))
+    assert render_unit(document, marriage).endswith("Recognition required; later effects not modelled.")
+    assert render_unit(document, limitation) == (
+        "Limitation 1 (on the claims and powers of rights 1 and 2). A right in this document is limited "
+        "in a situation only where limitation 1 holds. Limitation 1 holds where the exercise defeats the "
+        "purpose. Limitation 1 takes account of public order and morality. Limitation 1 is decided by the "
+        "courts. Whether the exercise defeats the purpose is decided by a tribunal.")
+    assert render_unit(document, units[3]) == (
+        "Whether any right in this document permits an act aimed at the destruction of a right is "
+        "checked, not ruled. Whether an act is so aimed is decided by the courts.")
 
 
 def test_incident_english_has_one_soft_rule_reading():

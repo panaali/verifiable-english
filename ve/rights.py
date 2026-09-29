@@ -51,6 +51,11 @@ class RightsEnvironment(SoftEnvironment):
         rights = raw.get("vocabulary", {}).pop("rights", None)
         if type(rights) is not dict or set(rights) != {"holders", "bearers", "protected", "alters"}:
             raise VEError("InvalidInput: rights block")
+        for entry in (rights["alters"].values() if type(rights["alters"]) is dict else ()):
+            if type(entry) is dict and "recognition" in entry and entry["recognition"] is None:
+                # 3.1's null recognition is the absent key: canonical JSON has no null,
+                # and the Lean wire sends the field absent.
+                del entry["recognition"]
         for predicate in raw["vocabulary"].get("predicates", ()):
             if predicate.startswith("rights__"):
                 raise VEError(f"InvalidInput: author predicate {predicate} begins with rights__")
@@ -76,7 +81,8 @@ class RightsEnvironment(SoftEnvironment):
             raise VEError("InvalidInput: alters")
         for act, entry in alters.items():
             declaration = self.predicates.get(act)
-            if (type(entry) is not dict or set(entry) != {"holder_slot", "status", "recognition"}
+            if (type(entry) is not dict or not {"holder_slot", "status"} <= set(entry)
+                    or set(entry) - {"holder_slot", "status", "recognition"}
                     or declaration is None or declaration.regulated is None
                     or declaration.regulated.role != "permission"):
                 raise VEError(f"InvalidInput: alters {act}")
@@ -85,10 +91,10 @@ class RightsEnvironment(SoftEnvironment):
                 raise VEError(f"InvalidInput: alters {act}")
             holder = declaration.arguments[slot]
             status = self.predicates.get(entry["status"])
-            recognition = self.predicates.get(entry["recognition"]) if entry["recognition"] else None
+            recognition = self.predicates.get(entry["recognition"]) if entry.get("recognition") else None
             if (holder not in holders or status is None or status.regulated is not None
                     or status.defined is not None or holder not in status.arguments
-                    or (entry["recognition"] is not None and
+                    or ("recognition" in entry and
                         (recognition is None or recognition.regulated is None
                          or recognition.regulated.role != "obligation"
                          or recognition.arguments[0] not in bearers
@@ -99,6 +105,24 @@ class RightsEnvironment(SoftEnvironment):
         result = super().to_dict()
         result["vocabulary"]["rights"] = deepcopy(self.rights)
         return result
+
+
+def conjugated(act):
+    """The act phrase with its verb in the third person singular, for the
+    generated wordings' "where that state arrests that person" (2.1)."""
+    if not act.startswith("{0} "):
+        return act
+    verb, _, rest = act[4:].partition(" ")
+    irregular = {"be": "is", "have": "has", "do": "does", "go": "goes"}
+    if verb in irregular:
+        verb = irregular[verb]
+    elif verb.endswith(("s", "x", "z", "ch", "sh", "o")):
+        verb += "es"
+    elif verb.endswith("y") and len(verb) > 1 and verb[-2] not in "aeiou":
+        verb = verb[:-1] + "ies"
+    else:
+        verb += "s"
+    return "{0} " + verb + (" " + rest if rest else "")
 
 
 def _atom(name, arity):
@@ -339,12 +363,12 @@ class RightsDocument:
                     _line_shape(self.env, right, instance_kind, rule, slot)
                     if instance_kind == "powerLiberty":
                         alter = self.env.rights["alters"].get(predicate)
-                        if alter is None or alter["holder_slot"] != 0 or alter["recognition"] is None:
+                        if alter is None or alter["holder_slot"] != 0 or alter.get("recognition") is None:
                             raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
                     if instance_kind == "powerRecognition":
                         liberty = line["liberty"]["predicate"]
                         alter = self.env.rights["alters"].get(liberty)
-                        if alter is None or predicate != alter["recognition"]:
+                        if alter is None or predicate != alter.get("recognition"):
                             raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
                     if bearer is not None:
                         example = next((self.env.predicates[p] for p in fan_map.values() if p in self.env.predicates), None)
@@ -460,6 +484,21 @@ class RightsDocument:
                                      "description": "act aimed at destruction of a right",
                                      "verbalisation": decl.regulated.act + " aimed at the destruction of a right"}
         env = SoftEnvironment(source, generated=True)
+        # 2.1: the one English wording of each generated predicate, with the act
+        # phrase conjugated for the "where" clause the declared template stands for.
+        wordings = {}
+        for (name, act), generated in lim_names.items():
+            wordings[generated] = (f"limitation {display[name]} holds where " +
+                                   conjugated(self.env.predicates[act].regulated.act))
+        for (name, act, condition_name), generated in cond_names.items():
+            limit = next(item for item in self.limitations if item["name"] == name)
+            condition = next(item for item in limit["conditions"] if item["name"] == condition_name)
+            wordings[generated] = (condition["verbalisation"] + " where " +
+                                   conjugated(self.env.predicates[act].regulated.act))
+        for predicate, generated in bar_names.items():
+            wordings[generated] = (conjugated(self.env.predicates[predicate].regulated.act) +
+                                   " aimed at the destruction of a right")
+        object.__setattr__(env, "rights_wordings", wordings)
         rules = []
         for instance in self.instances:
             rule = instance["rule"]
@@ -511,6 +550,8 @@ class RightsDocument:
         self.limitation_premises = tuple(premises)
         object.__setattr__(self.soft_document.extended_env, "rights_premises",
                            self.limitation_premises)
+        object.__setattr__(self.soft_document.extended_env, "rights_wordings", wordings)
+        self.wordings = wordings
 
 
 def correlate(environment, units):
