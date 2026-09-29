@@ -6,7 +6,9 @@ statement's nodes, the premises-plus-conclusion aggregate), deep binder stacks
 and large domains (the domain limit, and full domains under nested binders),
 across the quantity runner and every route family, with both reproducers from
 the W6a loop review. Python, Lean and Rust must each report `ResourceLimit`,
-and each backend must finish its batch within a wall-time bound.
+and the work each spends is bounded by measures that do not grow with machine
+load: Python's own evaluation units, and the CPU seconds of each Lean and Rust
+batch (neither reports its units).
 """
 from __future__ import annotations
 
@@ -14,15 +16,16 @@ import json
 import os
 from pathlib import Path
 import random
-import subprocess
-import time
 
 import pytest
 
 from conformance.p0 import envelope
+from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
 from ve.errors import ResourceLimit
+from ve.evaluate import _Evaluator
+from ve.limits import MAX_EVALUATIONS
 from ve.search import check_countermodel
 from ve.units import elaborate_quantity, erased_environment, quantity_countermodel
 
@@ -33,7 +36,10 @@ RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "rel
 pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)
-WALL = 60  # seconds per backend per batch
+CPU = 60  # CPU seconds per backend per batch; each batch spends under 10 alone
+# Every generated case stops at its first exhausted budget: at most MAX_EVALUATIONS
+# charged units and the one refused charge that reports the limit.
+CASE_UNITS = MAX_EVALUATIONS + 1
 
 
 def doubling(n):
@@ -236,33 +242,84 @@ def generate(seed):
     return cases
 
 
+class Overrun(BaseException):
+    """Python charged past a budget; a BaseException, so no handler in `ve` absorbs it."""
+
+
+def meter_python(monkeypatch):
+    """Count the evaluation units Python charges (`_Evaluator.tick`, the only gate
+    of the budget), per case, and stop at the first charge past a budget: an
+    evaluator whose own check was skipped or widened, or a case that goes on
+    charging after its budget is spent, fails here instead of running on."""
+    units = [0]
+    charge = _Evaluator.tick
+
+    def tick(self):
+        units[0] += 1
+        if self.work > MAX_EVALUATIONS or units[0] > CASE_UNITS:
+            raise Overrun(f"{units[0]} units charged, evaluator at {self.work}")
+        charge(self)
+    monkeypatch.setattr(_Evaluator, "tick", tick)
+    return units
+
+
 def run(command, cases):
-    start = time.monotonic()
-    completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True,
-                               timeout=WALL * 4)
-    elapsed = time.monotonic() - start
-    assert completed.returncode in (0, 1), completed.stderr[:500]
+    completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
+    assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
+    assert cpu < CPU, (command[0], cpu)
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
-    return results, elapsed
+    return results
 
 
 @pytest.mark.parametrize("seed", SEEDS)
-def test_every_backend_reports_resource_limit_in_bounded_time(seed):
+def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch):
     cases = generate(seed)
     assert len({c[0] for c in cases}) == len(cases)
-    start = time.monotonic()
-    python = {name: verdict() for name, verdict, _, _, _ in cases}
-    assert time.monotonic() - start < WALL * 2
+    units = meter_python(monkeypatch)
+    python = {}
+    for name, verdict, _, _, _ in cases:
+        units[0] = 0
+        try:
+            python[name] = verdict()
+        except Overrun as exc:
+            pytest.fail(f"{name}: Python evaluation ran past its budget: {exc}")
     assert all(python.values()), [n for n, v in python.items() if not v]
-    quantity, q_time = run([str(QUANTITY), "-"], [c[3] for c in cases if c[2] == "quantity"])
-    route, r_time = run([str(ROUTE), "route", "-"], [c[3] for c in cases if c[2] == "route"])
-    assert q_time < WALL and r_time < WALL, (q_time, r_time)
+    quantity = run([str(QUANTITY), "-"], [c[3] for c in cases if c[2] == "quantity"])
+    route = run([str(ROUTE), "route", "-"], [c[3] for c in cases if c[2] == "route"])
     for got in quantity + route:
         assert got["status"] == "error" and got["error"].startswith("ResourceLimit"), got
-    rust, rust_time = run([str(RUST), "conformance"], [c[4] for c in cases])
-    assert rust_time < WALL, rust_time
+    rust = run([str(RUST), "conformance"], [c[4] for c in cases])
     for got in rust:
         limited = (got.get("status") == "error" and got["error"]["code"] == "ResourceLimit") or \
             got.get("status") == "ResourceLimit"
         assert limited, got
+
+
+# --- The Python meter keeps the regression power of the old wall-clock bound ---
+
+@pytest.mark.parametrize("prefix", ["q-binders-cm-", "r-binders-", "reproducer-2-"])
+def test_python_meter_stops_an_evaluator_that_skips_its_budget(prefix, monkeypatch):
+    """An evaluator whose budget check is skipped would answer after 2^k units
+    (2^30 for the defined table); the meter stops it one charge past the budget,
+    and the case fails whatever the machine load."""
+    def unchecked(self):
+        self.work += 1
+    monkeypatch.setattr(_Evaluator, "tick", unchecked)
+    units = meter_python(monkeypatch)
+    verdict = next(c[1] for c in generate(0) if c[0].startswith(prefix))
+    with pytest.raises(Overrun):
+        verdict()
+    assert units[0] == MAX_EVALUATIONS + 2
+
+
+def test_python_meter_stops_a_case_that_charges_past_its_first_budget(monkeypatch):
+    """A case that starts a second budget after the first is spent (a retry, or a
+    budget per statement instead of per case) is stopped at its first new charge."""
+    units = meter_python(monkeypatch)
+    verdict = next(c[1] for c in generate(0) if c[0].startswith("r-full-domain-"))
+    assert verdict()
+    assert units[0] == CASE_UNITS
+    with pytest.raises(Overrun):
+        verdict()
+    assert units[0] == CASE_UNITS + 1
