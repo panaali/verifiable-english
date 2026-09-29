@@ -7,8 +7,9 @@ Usage (repository root, after `cd lean && lake build`):
 
 Every corpus is cut into the client's request chunks (at most 256 cases or 4 MiB).
 Each chunk goes once to the one-shot executable as a JSON array and once to the
-service as one request with the same cases text; the service's `results` array must
-equal the one-shot stdout byte for byte. A chunk the one-shot runner rejects as a
+service as one request with the same cases text; result `i` of the service must be
+row `i` of the one-shot stdout byte for byte, bound to position `i` and to the SHA-256
+of case `i`'s text (`VE.Service.bound`). A chunk the one-shot runner rejects as a
 whole (exit 2, message on stderr) must be a service line error with the same message.
 The English runner takes one object per process; each one is one service case, and
 its one-shot failure (exit 2) must be the service's error record with that message.
@@ -32,7 +33,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.lean_service_common import MODES, machine  # noqa: E402
-from ve.backends.lean_service import LeanService  # noqa: E402
+from ve.backends.lean_service import LeanService, case_digest, case_texts  # noqa: E402
 
 COMMAND = {mode: command for mode, command in MODES.values()}
 FIXTURES = ROOT / "conformance"
@@ -210,6 +211,17 @@ def results_text(raw: bytes) -> bytes:
     return raw[start:-len(suffix)]
 
 
+def bound_text(cases_text: str, rows_text: bytes) -> bytes:
+    """The service's results for a one-shot output: row i byte for byte, bound to its
+    position and to the digest of case i's text (`VE.Service.bound`)."""
+    rows = case_texts(rows_text.decode())
+    digests = [case_digest(text) for text in case_texts(cases_text)]
+    if rows is None or len(rows) != len(digests):
+        return b""
+    return ("[" + ",".join(f'{{"digest":"{d}","index":{i},"result":{row}}}'
+                           for i, (d, row) in enumerate(zip(digests, rows))) + "]").encode()
+
+
 def compare_batch(service, mode, cases):
     stats = {"cases": len(cases), "requests": 0, "identical": 0, "mismatches": [], "exit_codes": {},
              "one_shot_s": 0.0, "service_s": 0.0}
@@ -226,7 +238,7 @@ def compare_batch(service, mode, cases):
         if proc.returncode == 2:
             ok = response.get("status") == "error" and response.get("error") == proc.stderr.decode().strip()
         else:
-            ok = response.get("status") == "ok" and results_text(raw) == proc.stdout.strip()
+            ok = response.get("status") == "ok" and results_text(raw) == bound_text(text, proc.stdout.strip())
         if ok:
             stats["identical"] += n
         else:
@@ -257,7 +269,7 @@ def compare_english(service, payloads):
         raw, response = service.exchange("english", text, n, timeout=600)
         stats["service_s"] += time.perf_counter() - started
         body = results_text(raw) if response.get("status") == "ok" else b""
-        rows = response.get("results") or [None] * n
+        rows = [bound["result"] for bound in response.get("results") or []] or [None] * n
         for (code, stdout, stderr), row in zip(expected[offset:offset + n], rows):
             if code == 0:
                 ok = stdout in body and json.loads(stdout) == row
@@ -286,7 +298,7 @@ def compare_english_raw(service, payloads):
         raw, response = service.exchange("english", "[" + payload + "]", 1, timeout=600)
         stats["service_s"] += time.perf_counter() - started
         stats["requests"] += 1
-        row = response.get("results", [None])[0]
+        row = (response.get("results") or [{"result": None}])[0]["result"]
         if proc.returncode == 0:
             ok = response["status"] == "ok" and proc.stdout.strip() in results_text(raw) and row == json.loads(proc.stdout)
         else:

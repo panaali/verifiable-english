@@ -14,6 +14,12 @@ the one-shot result before timing. Batch rows time the plan's section-4 batch ga
 on one process and on `LeanServicePool(2)` (the IDE footprint), which answers a batch's
 requests in parallel; the gate applies to the pool.
 
+Contention: for every persistent call the tool also reads `/proc/<pid>/schedstat` of the
+service process and `/proc/thread-self/schedstat` of the client thread, outside the timed
+region, and reports the service's on-CPU time and the time both spent runnable but
+waiting for a CPU (runqueue wait). Runqueue wait is the part of a latency that another
+load on the host adds, so its size tells how far a contended run is from a quiet one.
+
 Cold start is spawn to handshake. The client's build check (SHA-256 of the executable,
 once per client process and cached by file identity) is timed and reported separately,
 before the cold starts, so that it is not folded into the first cold-start sample.
@@ -37,6 +43,19 @@ BATCHES = {"W3/definitions": 2048, "W3/bundle": 256, "W1/conflict-check": 256,
            "certificate/tableau-large": 8}
 GATES = {"W3/definitions": 1.0, "W3/bundle": 0.25, "W1/conflict-check": 0.5,
          "certificate/tableau-large": 0.3}
+
+
+def schedstat(path: str) -> tuple[int, int] | None:
+    """(on-CPU ns, runqueue wait ns) of a task, or None where schedstat is unavailable."""
+    try:
+        run, wait, _ = Path(path).read_text().split()
+        return int(run), int(wait)
+    except (OSError, ValueError):
+        return None
+
+
+def tasks(service) -> tuple:
+    return schedstat(f"/proc/{service.pid}/schedstat"), schedstat("/proc/thread-self/schedstat")
 
 
 def main(argv=None):
@@ -85,7 +104,7 @@ def main(argv=None):
             mode = MODES[impl][0]
             reference = one_shot_results(impl, payload)
             assert service.run(mode, [case]) == reference, name
-            persistent, oneshot = [], []
+            persistent, oneshot, cpu, wait = [], [], [], []
             for i in range(max(args.samples, args.one_shot_samples)):
                 if i < args.one_shot_samples:
                     started = time.perf_counter()
@@ -93,11 +112,17 @@ def main(argv=None):
                     oneshot.append(time.perf_counter() - started)
                     assert code in (0, 1) and out, name
                 if i < args.samples:
+                    before = tasks(service)
                     started = time.perf_counter()
                     service.run(mode, [case])
                     persistent.append(time.perf_counter() - started)
+                    after = tasks(service)
+                    if None not in before + after:
+                        cpu.append((after[0][0] - before[0][0]) / 1e9)
+                        wait.append((after[0][1] - before[0][1] + after[1][1] - before[1][1]) / 1e9)
             row = {"workload": name, "mode": mode, "input_bytes": len(payload),
-                   "persistent": summary(persistent), "one_shot": summary(oneshot)}
+                   "persistent": summary(persistent), "one_shot": summary(oneshot),
+                   "service_cpu": summary(cpu) if cpu else None, "runqueue_wait": summary(wait) if wait else None}
             row["speedup_p50"] = round(row["one_shot"]["p50_ms"] / row["persistent"]["p50_ms"], 1)
             data["calls"].append(row)
             print(f"{name:28} {mode:18} persistent p50 {row['persistent']['p50_ms']:8.3f} "
@@ -154,12 +179,19 @@ def report(data):
              f"p95 {c['p95_ms']} ms {c['p95_ci_ms']}, max {c['max_ms']} ms.", "",
              "First 100 service requests are timed separately before workload sampling: "
              f"{data['warmup_first_100'] or 'no workloads'}.", "",
-             "| Workload | Mode | Persistent p50 ms | Persistent p95 ms | Persistent p99 ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |",
-             "|---|---|---:|---:|---:|---:|---:|---:|"]
+             "Service CPU is the service process's on-CPU time per call; runqueue wait is the time the "
+             "service process and the client thread were runnable but waiting for a CPU during the call "
+             "(`/proc/.../schedstat`), the share of the latency that other load on the host adds.", "",
+             "| Workload | Mode | Persistent p50 ms | Persistent p95 ms | Persistent p99 ms | Service CPU p50 / p95 ms | Runqueue wait p50 / p95 / max ms | One-shot p50 ms | One-shot p95 ms | p50 speedup |",
+             "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for r in data["calls"]:
         p, o = r["persistent"], r["one_shot"]
+        c, w = r.get("service_cpu"), r.get("runqueue_wait")
+        cpu = f"{c['p50_ms']} / {c['p95_ms']}" if c else "n/a"
+        wait = f"{w['p50_ms']} / {w['p95_ms']} / {w['max_ms']}" if w else "n/a"
         lines.append(f"| {r['workload']} | {r['mode']} | {p['p50_ms']} {p['p50_ci_ms']} | {p['p95_ms']} "
-                     f"{p['p95_ci_ms']} | {p['p99_ms']} {p['p99_ci_ms']} | {o['p50_ms']} | {o['p95_ms']} | {r['speedup_p50']}x |")
+                     f"{p['p95_ci_ms']} | {p['p99_ms']} {p['p99_ci_ms']} | {cpu} | {wait} | {o['p50_ms']} | "
+                     f"{o['p95_ms']} | {r['speedup_p50']}x |")
     lines += ["", "Batches (section 4 gates; the client splits at 256 cases per request, and the pool into "
               "at least one request per process):", "",
               "| Workload | Cases | Gate s | Pool of 2 median s | Pool of 2 p95 s | One process median s | One process p95 s | One-shot median s |",

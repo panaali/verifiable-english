@@ -16,10 +16,7 @@
         "values": {"$ref": "common.json#/$defs/values"},
         "value": {"type": "boolean"},
         "canonical": {"type": "string"}},
-      "$comment": "value is the conjunction of values.",
-      "if": {"properties": {"values": {"contains": {"const": false}}}},
-      "then": {"properties": {"value": {"const": false}}},
-      "else": {"properties": {"value": {"const": true}}}},
+      "$comment": "That value is the conjunction of values is the service's."},
     "countermodel": {"type": "object", "required": ["id", "status", "refutes"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},

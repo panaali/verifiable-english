@@ -10,16 +10,25 @@ Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
   restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up.
+  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  like a response, to the nonce, the mode and every case digest; one without that
+  binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
   whose id is not the request's nonce or that the response schemas reject, a handshake
   from an unexpected build) kills the process. The batch is retried once on a fresh process, since requests are stateless;
   a second failure raises `CheckerUnavailable`, which is never a verdict and never
   `ResourceLimit`. There is no fallback to Python.
 
-Every response line is checked against `lean_service_schema/` (`service_schema.py`),
-the single description of response shapes, including request links such as one
-result per requested lemma and the request's unit kinds.
+Threat model (docs/spec/lean-service.md): the Lean service is the semantic authority,
+covered by Lean proofs and parity tests; this client does not re-derive semantic
+content. It guarantees binding and integrity: every response line, request errors
+included, must echo the request nonce and mode, a request error every case digest, and
+result `i` must carry position `i`, the SHA-256 of the text
+of case `i` as sent (`case_digests`) and the identity fields the runners echo from the
+case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
+Every field must also be well formed (`lean_service_schema/`, compiled by
+`service_schema.py`). Content that preserves binding, such as the targets inside one
+norms result, is the service's responsibility and is not checked here.
 
 Supervision: an address-space limit on the process, a per-batch timeout (5 s
 interactive, 60 s for batch callers), recycling after a number of requests or above
@@ -34,6 +43,7 @@ from decimal import Decimal
 import os
 from pathlib import Path
 import queue
+import re
 import secrets
 import selectors
 import subprocess
@@ -41,7 +51,7 @@ import tempfile
 import threading
 import time
 
-from ..errors import ResourceLimit, VEError
+from ..errors import CheckerUnavailable, ResourceLimit, VEError
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -60,11 +70,6 @@ MAX_REQUESTS = 10_000
 MAX_RESPONSE_BYTES = 1 << 30
 # Room for the request envelope around the cases text within one line.
 ENVELOPE_BYTES = 1024
-
-
-class CheckerUnavailable(VEError):
-    """The checker could not answer: operational, never a verdict or `ResourceLimit`."""
-    code = "CheckerUnavailable"
 
 
 class _Failure(Exception):
@@ -95,6 +100,71 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+_JSON_WHITESPACE = " \t\r\n"
+_DELIMITERS = re.compile(r'[\[\]{}",\\]')
+
+
+def case_texts(cases_text: str) -> list[str] | None:
+    """The case texts of a JSON array text, split and trimmed as the service splits them
+    (`VE.JsonInput.caseTexts`, then `String.trim`); `None` if it is not an array."""
+    text = cases_text.strip(_JSON_WHITESPACE)
+    if not (text.startswith("[") and text.endswith("]")):
+        return None
+    body = text[1:-1]
+    if not body.strip(_JSON_WHITESPACE):
+        return []
+    cases, start, depth, quoted, escaped_at = [], 0, 0, False, -1
+    for match in _DELIMITERS.finditer(body):  # every other character leaves the state unchanged
+        i, c = match.start(), match.group()
+        if quoted:
+            if escaped_at == i - 1:
+                escaped_at = -1
+            elif c == "\\":
+                escaped_at = i
+            elif c == '"':
+                quoted = False
+        elif c == '"':
+            quoted = True
+        elif c in "[{":
+            depth += 1
+        elif c in "]}":
+            if depth == 0:
+                return None
+            depth -= 1
+        elif c == "," and depth == 0:
+            cases.append(body[start:i].strip(_JSON_WHITESPACE))
+            start = i + 1
+    if quoted or depth:
+        return None
+    cases.append(body[start:].strip(_JSON_WHITESPACE))
+    return cases
+
+
+def case_digest(text: str) -> str:
+    """The binding identity of a case (`VE.Service.caseDigest`): SHA-256 of its text."""
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def request_context(nonce: str, mode: str, cases_text: str, count: int,
+                    texts: list[str] | None = None) -> dict:
+    """What a response to the request is checked against (`lean_service_schema/envelope.json`):
+    `{"id", "mode", "cases", "digests", "bytes"}`. A request error is bound to the digests
+    of the case texts as split, whether or not they decode (`null` if the text does not
+    split); results also need the decoded cases, one per case (`null` otherwise, so that
+    only a request error can answer the request)."""
+    try:
+        cases = json.loads(cases_text, parse_int=_json_integer)
+    except (ValueError, RecursionError):
+        cases = None
+    if texts is None:
+        texts = case_texts(cases_text)
+    digests = None if texts is None else [case_digest(text) for text in texts]
+    if not isinstance(cases, list) or len(cases) != count or digests is None or len(digests) != count:
+        cases = None
+    return {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
+            "bytes": len(cases_text.strip().encode())}
 
 
 _hashes: dict[tuple, str] = {}
@@ -338,7 +408,7 @@ class LeanService:
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float,
-                   nonce: str, line: bytes) -> tuple[bytes, dict]:
+                   nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
         deadline = time.monotonic() + timeout
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
@@ -352,14 +422,7 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         try:
-            cases = json.loads(cases_text, parse_int=_json_integer)
-        except (ValueError, RecursionError):
-            cases = None
-        if not isinstance(cases, list) or len(cases) != count:
-            cases = None  # only a line error can answer it
-        request = {"id": nonce, "mode": mode, "cases": cases, "bytes": len(cases_text.strip().encode())}
-        try:
-            check_response(mode, response, request)
+            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts))
         except Invalid as exc:
             raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response
@@ -375,12 +438,15 @@ class LeanService:
                 self._recycle = True
 
     def exchange(self, mode: str, cases_text: str, count: int, *, timeout: float | None = None,
-                 budget: dict | None = None) -> tuple[bytes, dict]:
+                 budget: dict | None = None, texts: list[str] | None = None) -> tuple[bytes, dict]:
         """Send one request whose `cases` is `cases_text` (a JSON array of `count` cases).
+        `texts`, when the caller has them, are the case texts `cases_text` joins without
+        whitespace (`case_texts(cases_text)`, which is then not recomputed).
 
-        Returns the raw response line and its decoding. A line error from the service is
-        returned as is (`status: error`); operational failures are retried once, then
-        raise `CheckerUnavailable`.
+        Returns the raw response line and its decoding, whose results are still bound
+        (`{"digest", "index", "result"}`). A request error from the service, bound to the
+        nonce, mode and case digests, is returned as is (`status: error`); operational
+        failures, unbound errors included, are retried once, then raise `CheckerUnavailable`.
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
@@ -396,7 +462,7 @@ class LeanService:
                     raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
-                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line)
+                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts)
                 except _Failure as failure:
                     self._failed_attempt(failure, attempt)
                     attempt += 1
@@ -437,13 +503,13 @@ class LeanService:
         size = len(cases_text.encode())
         budget = {"cases": self.batch_cases,
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
-        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget)
+        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
             message = str(response.get("error", ""))
             if message.startswith("ResourceLimit"):
                 raise ResourceLimit(message)
             raise VEError(message)
-        return response["results"]
+        return [bound["result"] for bound in response["results"]]
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         """The runner results for `cases`, in order. Batches above the adapter caps (256

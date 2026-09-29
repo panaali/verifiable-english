@@ -4,11 +4,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
                   Num, Add, Scale, Lt, Le)
 from .model import FiniteModel
-from .errors import InvalidModel, ResourceLimit, VEError
+from .errors import CheckerUnavailable, InvalidModel, ResourceLimit, VEError
 from .limits import MAX_EVALUATIONS
 
 
@@ -210,9 +211,12 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)
 
 
+@semantic_entry("evaluate")
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
     """Evaluate under the selected authority while keeping the public schema."""
+    if getattr(env, "alternatives", None) is not None:
+        raise CheckerUnavailable("alternatives@0 requires the Lean checker")
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
     if max_evaluations > MAX_EVALUATIONS:
@@ -230,7 +234,6 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     model = _validate_model(env, model)
     from .ast import _to_data
     from .backends.dispatch import execute
-    from .backends.lean_service import CheckerUnavailable
     from .backends.lean_runner import run as lean_run
     from .backends.rust_jsonl import run as rust_run
 

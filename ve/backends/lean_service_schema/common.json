@@ -1,20 +1,20 @@
 {
   "$id": "common.json",
-  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Dialect: README.md in this directory.",
+  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory.",
   "$defs": {
     "text": {"type": "string", "minLength": 1},
     "nat": {"type": "integer", "minimum": 0},
     "booleans": {"type": "array", "items": {"type": "boolean"}},
     "strings": {"type": "array", "items": {"type": "string"}},
-    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest).", "type": "string", "pattern": "[0-9a-f]{64}"},
+    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest, Service.Protocol.caseDigest).", "type": "string", "pattern": "[0-9a-f]{64}"},
     "token": {"$comment": "Route.Admission.token: nonempty, at most 64 bytes, [A-Za-z0-9_.-].", "type": "string", "pattern": "[A-Za-z0-9_.-]{1,64}"},
     "integer_text": {"$comment": "Order.Wire.decodeInt: canonical decimal, at most maxNumeralChars = 40 characters.", "type": "string", "maxLength": 40, "pattern": "0|-?[1-9][0-9]*"},
-    "values": {"$comment": "Evaluation values: one per requested formula; every runner rejects an empty document.", "type": "array", "items": {"type": "boolean"}, "minItems": 1, "x-length": "/ast"},
+    "values": {"$comment": "Evaluation values: one per requested formula (binding to the request's ast).", "type": "array", "items": {"type": "boolean"}, "x-length": "/ast"},
 
     "fol_term": {"$comment": "Bridge.decodeTerm.", "x-tagged": {
       "var": [{"$ref": "#/$defs/nat"}],
       "const": [{"type": "string"}]}},
-    "fol_formula": {"$comment": "Bridge.decodeFormula 64.", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
+    "fol_formula": {"$comment": "Bridge.decodeFormula 64: a formula the runner decoded from the request (a claim).", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
       "top": [],
       "bottom": [],
       "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
@@ -26,7 +26,20 @@
       "implies": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
       "forall": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
       "exists": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}]}},
-    "fol_formulas": {"type": "array", "items": {"$ref": "#/$defs/fol_formula"}},
+    "generated_formula": {"$comment": "Route.Wire.encodeFormula of a formula the runner generated (Background, norms premises and conflict targets, English parses): Bridge.decodeFormula's grammar at any depth. The decoder's 64 bounds the inputs, not these: a definition premise wraps a body of depth 64 in two binders and a biconditional (68), an English parse nests one negation per 'it is not the case that', and a norms elaboration nests every rule, carve-out and lower layer.",
+      "x-tagged": {
+      "top": [],
+      "bottom": [],
+      "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
+      "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+      "not": [{"$ref": "#/$defs/generated_formula"}],
+      "and": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "or": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "implies": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+      "forall": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}],
+      "exists": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}]}},
+    "generated_formulas": {"type": "array", "items": {"$ref": "#/$defs/generated_formula"}},
 
     "order_term": {"$comment": "Order.Wire.decodeTerm 64.", "x-fuel": {"counter": "order_term", "limit": 64}, "x-tagged": {
       "var": [{"$ref": "#/$defs/nat"}],
@@ -71,9 +84,8 @@
       "properties": {
         "name": {"type": "string"},
         "ast": {"$ref": "#/$defs/fol_formula"},
-        "label": {"type": "string", "not": {"const": "asserted"}}},
-      "x-member": {"of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"]}},
-    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: kinds are the request's unit kinds (decodeKind_render).",
+        "label": {"type": "string", "not": {"const": "asserted"}}}},
+    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: the root is the request's root and kinds are the request's unit kinds (decodeKind_render). That the assumptions are the root's unfolding is the service's (tests/test_lean_service_schema.py, Lean invariants).",
       "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds"], "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
@@ -82,10 +94,7 @@
         "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
           "properties": {
             "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}},
-            "assumptions": {"$comment": "Leaves of the request's graph: nodes without a deduction (admit_report_sound); order and multiplicity are kept.",
-              "type": "array", "items": {"$ref": "#/$defs/claim", "x-member": {
-                "of": "/document/graph/nodes/*", "keys": ["name", "ast", "label"],
-                "where": {"not": {"anyOf": [{"required": ["premises"]}, {"required": ["certificate"]}]}}}}}}},
+            "assumptions": {"type": "array", "items": {"$ref": "#/$defs/claim"}}}},
         "report_id": {"$ref": "#/$defs/hex64"},
         "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
 

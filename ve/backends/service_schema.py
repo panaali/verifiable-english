@@ -1,10 +1,14 @@
 """Compiled validators for the Lean service response schemas.
 
 `lean_service_schema/*.json` is the only description of response shapes; this module
-compiles it (dialect: `lean_service_schema/README.md`) into closures. A validator is
-`check(value, ctx, fuel)` and raises `Invalid` on the first violation. Recursion is
-bounded by the schemas' `x-fuel` limits (at most 64 formula and 64 term levels), and
-arbitrary JSON (echoed ids, `const`) is compared without recursion.
+compiles it (dialect: `lean_service_schema/README.md`) into closures. The schemas
+describe binding to the request and well-formedness only; the service is the semantic
+authority (docs/spec/lean-service.md, threat model), so nothing here re-derives what
+the runners compute. A validator is
+`check(value, ctx, fuel)` and raises `Invalid` on the first violation. Tagged grammars
+(formulas and terms) are checked with an explicit stack, so a generated formula of any
+depth is checked without recursion; `x-fuel` limits the formulas the Lean decoders read
+to 64 levels. Arbitrary JSON (echoed ids, `const`) is compared without recursion.
 """
 from __future__ import annotations
 
@@ -12,6 +16,7 @@ from decimal import Decimal
 import json
 from pathlib import Path
 import re
+import reprlib
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
@@ -94,11 +99,12 @@ def _resolve(root: object, pointer: str) -> object:
 
 
 class Context:
-    """The request data a value is checked against: a case (rows) or the request (envelope)."""
-    __slots__ = ("value", "index", "rows")
+    """The request data a value is checked against: a case (rows) or the request
+    (envelope); for a result, also its position, the mode's row and its case digest."""
+    __slots__ = ("value", "index", "rows", "digest")
 
-    def __init__(self, value: object, index: int | None = None, rows=None):
-        self.value, self.index, self.rows = value, index, rows
+    def __init__(self, value: object, index: int | None = None, rows=None, digest: str | None = None):
+        self.value, self.index, self.rows, self.digest = value, index, rows, digest
 
 
 def _fail(message: str):
@@ -138,6 +144,8 @@ class Compiler:
         unknown = set(schema) - _KEYWORDS
         if unknown:
             raise SchemaError(f"unsupported keywords {sorted(unknown)} in {base}")
+        if _is_grammar(schema):
+            return _Grammar(self, schema, base)
         checks = []
         for keyword in _ORDER:
             if keyword in schema:
@@ -341,19 +349,7 @@ class Compiler:
     # Extensions (lean_service_schema/README.md)
 
     def _x_tagged(self, table, schema, base):
-        compiled = {tag: [self.compile(sub, base) for sub in slots] for tag, slots in table.items()}
-
-        def check(value, ctx, fuel):
-            if not isinstance(value, list) or not value or not isinstance(value[0], str):
-                _fail(f"expected a tagged array, got {_short(value)}")
-            slots = compiled.get(value[0])
-            if slots is None:
-                _fail(f"unknown tag {_short(value[0])}")
-            if len(value) != len(slots) + 1:
-                _fail(f"{value[0]} takes {len(slots)} arguments")
-            for element, sub in zip(value[1:], slots):
-                sub(element, ctx, fuel)
-        return check
+        return _Grammar(self, {"x-tagged": table}, base)
 
     def _x_fuel(self, rule, schema, base):
         return None  # applied by `compile` around every other keyword
@@ -392,29 +388,6 @@ class Compiler:
                 _fail("is not the result's position")
         return check
 
-    def _x_member(self, rule, schema, base):
-        pointer, keys = rule["of"], tuple(rule["keys"])
-        where = self.compile(rule.get("where", True), base)
-
-        def project(x):
-            return {k: x[k] for k in keys if k in x} if isinstance(x, dict) else _MISSING
-
-        def check(value, ctx, fuel):
-            elements = _resolve(ctx.value, pointer)
-            mine = project(value)
-            if (not isinstance(elements, list) or mine is _MISSING
-                    or not any(same_json(mine, project(x)) and _valid(where, x, ctx, {})
-                               for x in elements if isinstance(x, dict))):
-                _fail(f"is not one of the request's {pointer}")
-        return check
-
-    def _x_dependency_order(self, pointer, schema, base):
-        def check(value, ctx, fuel):
-            nodes = _resolve(ctx.value, pointer)
-            if not _verify_order(nodes, value):
-                _fail(f"is not a dependency order of the request's {pointer}")
-        return check
-
     def _x_zip(self, rule, schema, base):
         pointer, sub = rule["of"], self.compile(rule["items"], base)
 
@@ -444,40 +417,6 @@ class Compiler:
             _fail("no result is possible for this request")
         return check
 
-    def _x_same(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if a is _MISSING or b is _MISSING or not same_json(a, b):
-                    _fail(f"{p} differs from {q}")
-        return check
-
-    def _x_same_length(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if not isinstance(a, list) or not isinstance(b, list) or len(a) != len(b):
-                    _fail(f"{p} and {q} differ in length")
-        return check
-
-    def _x_in(self, pairs, schema, base):
-        def check(value, ctx, fuel):
-            for p, q in pairs:
-                a, b = _resolve(value, p), _resolve(value, q)
-                if a is _MISSING or not isinstance(b, list) or not any(same_json(a, x) for x in b):
-                    _fail(f"{p} is not in {q}")
-        return check
-
-    def _x_capture(self, rule, schema, base):
-        compiled = re.compile(rule["pattern"], re.DOTALL)
-
-        def check(value, ctx, fuel):
-            source, target = _resolve(value, rule["source"]), _resolve(value, rule["target"])
-            match = compiled.match(source) if isinstance(source, str) else None
-            if match is None or target is _MISSING or not same_json(target, match.group(1)):
-                _fail(f"{rule['target']} is not captured from {rule['source']}")
-        return check
-
     def _x_count_where(self, rule, schema, base):
         where = self.compile(rule["where"], base)
 
@@ -488,25 +427,38 @@ class Compiler:
                 _fail(f"{rule['equals']} does not count {rule['array']}")
         return check
 
-    def _x_rows(self, flag, schema, base):
+    def _x_rows(self, bound, schema, base):
+        sub = self.compile(bound, base)
+
         def check(value, ctx, fuel):
-            cases = _resolve(ctx.value, "/cases")
-            if not isinstance(value, list) or not isinstance(cases, list) or len(value) != len(cases):
+            cases, digests = _resolve(ctx.value, "/cases"), _resolve(ctx.value, "/digests")
+            if (not isinstance(value, list) or not isinstance(cases, list) or not isinstance(digests, list)
+                    or not len(value) == len(cases) == len(digests)):
                 _fail("one result per case")
-            row = ctx.rows
-            for index, (result, case) in enumerate(zip(value, cases)):
+            for index, (result, case, digest) in enumerate(zip(value, cases, digests)):
                 try:
-                    row(result, Context(case, index), {})
+                    sub(result, Context(case, index, ctx.rows, digest), {})
                 except Invalid as exc:
                     raise Invalid(f"result {index}: {exc}") from None
+        return check
+
+    def _x_digest(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            if not isinstance(value, str) or value != ctx.digest:
+                _fail("is not the digest of the result's case")
+        return check
+
+    def _x_row(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            ctx.rows(value, Context(ctx.value, ctx.index), {})
         return check
 
 
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-index", "x-member", "x-dependency-order", "x-zip", "x-case", "x-select", "x-same",
-          "x-same-length", "x-in", "x-capture", "x-count-where", "x-rows")
+          "x-count", "x-index", "x-digest", "x-zip", "x-case", "x-select", "x-count-where", "x-rows",
+          "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
 
@@ -518,31 +470,64 @@ def _valid(check, value, ctx, fuel) -> bool:
         return False
 
 
+_SHORT = reprlib.Repr(maxlevel=3, maxlist=4, maxdict=4, maxstring=40, maxother=40)
+
+
 def _short(value: object) -> str:
-    text = repr(value)
+    """A bounded rendering: `reprlib` stops at depth 3, so a deep value never recurses."""
+    text = _SHORT.repr(value)
     return text if len(text) <= 60 else text[:57] + "..."
 
 
-def _verify_order(nodes: object, order: object) -> bool:
-    """Route.Wire.decodeNodes, then Route.dependencyOrder's success conditions: unique
-    names and `verifyOrder` (a permutation with every dependency strictly earlier)."""
-    if not isinstance(nodes, list) or len(nodes) > 256 or not isinstance(order, list):
-        return False
-    names, mentions = [], []
-    for node in nodes:
-        if (not isinstance(node, dict) or set(node) != {"name", "mentions"}
-                or not isinstance(node["name"], str) or not isinstance(node["mentions"], list)
-                or not all(isinstance(m, str) for m in node["mentions"])):
-            return False
-        names.append(node["name"])
-        mentions.append(node["mentions"])
-    if len(set(names)) != len(names) or not all(isinstance(x, str) for x in order):
-        return False
-    if len(set(order)) != len(order) or set(order) != set(names):
-        return False
-    position = {name: i for i, name in enumerate(order)}
-    return all(position[m] < position[name]
-               for name, ms in zip(names, mentions) for m in ms if m in position)
+_GRAMMAR_KEYS = frozenset({"x-tagged", "x-fuel", "$comment"})
+
+
+def _is_grammar(schema: object) -> bool:
+    """A tagged grammar: `x-tagged`, optionally with `x-fuel`, and nothing else."""
+    return isinstance(schema, dict) and "x-tagged" in schema and set(schema) <= _GRAMMAR_KEYS
+
+
+class _Grammar:
+    """A tagged grammar checked with an explicit stack. An argument whose schema is a
+    `$ref` to a grammar is pushed rather than called, so a formula of any depth is
+    checked without Python recursion; `x-fuel` counts the entries as before."""
+
+    def __init__(self, compiler: Compiler, schema: dict, base: str):
+        rule = schema.get("x-fuel")
+        self.counter = None if rule is None else compiler.counters.setdefault(rule["counter"], len(compiler.counters))
+        self.limit = None if rule is None else rule["limit"]
+        self.table = {tag: [self._slot(compiler, sub, base) for sub in slots]
+                      for tag, slots in schema["x-tagged"].items()}
+
+    @staticmethod
+    def _slot(compiler: Compiler, sub: object, base: str):
+        if isinstance(sub, dict) and set(sub) - {"$comment"} == {"$ref"}:
+            name, _, pointer = sub["$ref"].partition("#")
+            if _is_grammar(_resolve(compiler.documents.get(name or base, {}), pointer)):
+                return compiler.ref(base, sub["$ref"])  # a cell: its grammar is pushed
+        return compiler.compile(sub, base)
+
+    def __call__(self, value, ctx, fuel):
+        pending = [(self, value, fuel)]
+        while pending:
+            grammar, value, fuel = pending.pop()
+            if grammar.counter is not None:
+                used = fuel.get(grammar.counter, 0) + 1
+                if used > grammar.limit:
+                    _fail(f"nesting exceeds the Lean decoder fuel {grammar.limit}")
+                fuel = {**fuel, grammar.counter: used}
+            if not isinstance(value, list) or not value or not isinstance(value[0], str):
+                _fail(f"expected a tagged array, got {_short(value)}")
+            slots = grammar.table.get(value[0])
+            if slots is None:
+                _fail(f"unknown tag {_short(value[0])}")
+            if len(value) != len(slots) + 1:
+                _fail(f"{value[0]} takes {len(slots)} arguments")
+            for element, slot in zip(value[1:], slots):
+                if isinstance(slot, list):
+                    pending.append((slot[0], element, fuel))
+                else:
+                    slot(element, ctx, fuel)
 
 
 _compiler = Compiler()
@@ -563,5 +548,5 @@ def check_row(mode: str, row: object, case: object, index: int) -> None:
 
 def check_response(mode: str, response: object, request: dict) -> None:
     """Raise `Invalid` unless `response` is a possible response line for `request`
-    (`{"id", "mode", "cases", "bytes"}`)."""
+    (`{"id", "mode", "cases", "digests", "bytes"}`)."""
     RESPONSE[0](response, Context(request, rows=ROWS[mode][0]), {})

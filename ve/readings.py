@@ -7,9 +7,10 @@ from __future__ import annotations
 
 from itertools import product
 
+from .assurance import semantic_entry
 from .admission import _check_kind, token
 from .ast import formula_from_data
-from .errors import VEError
+from .errors import UnsupportedProfile, VEError
 from .identity import meaning_id
 
 
@@ -53,8 +54,12 @@ def validate_reading_sets(env, values, unit_ids):
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
             if reading["content"] is not None:
-                formula = formula_from_data(env, reading["content"])
-                if meaning_id(env, formula) != reading["meaning_id"]:
+                if env.unit_schema is not None:
+                    from .units import quantity_meaning_id
+                    content_id = quantity_meaning_id(env, reading["content"])
+                else:
+                    content_id = meaning_id(env, formula_from_data(env, reading["content"]))
+                if content_id != reading["meaning_id"]:
                     raise VEError("reading meaning id does not match content")
             admission = reading["admission"]
             if (type(admission) is not dict or set(admission) != {"who", "why", "distinguishing_models"}
@@ -72,8 +77,11 @@ def validate_reading_sets(env, values, unit_ids):
         if model_ids:
             from .evaluate import evaluate
             from .model import FiniteModel
+            # Quantity readings are evaluated through their regenerated cores
+            # on the erased target; tables are never read with tags dropped first.
+            model_env, formula_of = _reading_evaluation(env)
             for name, data in models.items():
-                model = FiniteModel.from_dict(env, data)
+                model = FiniteModel.from_dict(model_env, data)
                 if name != model.model_id:
                     raise VEError("distinguishing model id does not match model")
             for reading in readings:
@@ -81,14 +89,21 @@ def validate_reading_sets(env, values, unit_ids):
                     other = next(r for r in readings if r["id"] == other_id)
                     if reading["content"] is None or other["content"] is None:
                         continue  # other-kind elaboration is pending; the checking route reports UNKNOWN
-                    model = FiniteModel.from_dict(env, models[model_id])
-                    a = evaluate(env, formula_from_data(env, reading["content"]), model, trace=False)
-                    b = evaluate(env, formula_from_data(env, other["content"]), model, trace=False)
+                    model = FiniteModel.from_dict(model_env, models[model_id])
+                    a = evaluate(model_env, formula_of(reading["content"]), model, trace=False)
+                    b = evaluate(model_env, formula_of(other["content"]), model, trace=False)
                     if a.value is None or b.value is None or a.value == b.value:
                         raise VEError("distinguishing model does not separate readings")
         if "rejected_history" in item and type(item["rejected_history"]) is not list:
             raise VEError("invalid rejected reading history")
     return seen
+
+
+def _reading_evaluation(env):
+    if env.unit_schema is None:
+        return env, lambda content: formula_from_data(env, content)
+    from .units import core_formula, erased_environment
+    return erased_environment(env), lambda content: core_formula(env, content)[1]
 
 
 def active_reading_sets(sets):
@@ -144,6 +159,7 @@ def plan_choices(sets, *, limit=64):
              for c in product(*(range(len(s["readings"])) for s in sets))]}
 
 
+@semantic_entry("readings")
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
                    max_models=10_000, max_evaluations=100_000, fixed=()):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
@@ -163,6 +179,9 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     if plan["route"] == "enumerate":
         return {"verdict": "UNKNOWN", "route": "enumerate", "choice_count": len(plan["choices"]),
                 "reason": "non-assertion elaborator is not yet available"}
+    if env.unit_schema is not None:
+        raise UnsupportedProfile("reading queries over quantity statements are not certified; "
+                                 "admit the claim graph on the quantity document route")
     conclusion = formula_from_data(env, conclusion_ast)
     fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
     formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]] for s in sets]
