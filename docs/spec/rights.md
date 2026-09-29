@@ -972,7 +972,10 @@ def narrowings (D : RightsDoc) (N : Line) : List Narrowing           -- syntacti
 def condF (D : RightsDoc) (N : Line) : Narrowing → VE.Formula        -- cond_n of the table (blockedBy M: selects_M on T″′)
 def NarrowsAt (D) (S) (ρ) (N : Line) : Narrowing → Prop              -- the mechanism is active at ρ (a full structure)
 def cited (D : RightsDoc) (N : Line) : Narrowing → Bool
-def rightCollision (D : RightsDoc) (N : Line) : Narrowing → Bool     -- blockedBy/dominatedBy a right-derived line of the opposite effect
+def rightCollision (D : RightsDoc) (N : Line) : Narrowing → Bool     -- blockedBy a right-derived strict line of the opposite effect, or
+                                                                     -- dominatedBy a right-derived line of the opposite effect under a
+                                                                     -- cited ranking (cites["rank"]; 4.5 table, 13.6); an uncited rank is
+                                                                     -- no collision
 def sameEffectStrict (D : RightsDoc) (N : Line) (M : String) : Bool  -- N default; M ≠ bar_m a strict node of T″ on N's predicate with N's sign
 def inScope (D : RightsDoc) (L : Limitation) (R : String) (N : Line) : Bool   -- R ∈ scope(L) ∧ N.kind ∈ kinds(L), the source kind
 def licensed (D) (certs : List (Option VE.Tableau.Certificate)) (N : Line) : Narrowing → Bool

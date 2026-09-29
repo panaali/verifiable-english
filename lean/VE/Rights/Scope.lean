@@ -78,11 +78,19 @@ def cited (D : RightsDoc) (N : Line) : Narrowing → Bool
   | .dominatedBy M => hasKey N.source.cites "rank" || citesNarrows D M N
   | .bar => true
 
-/-- Blocked or dominated by a right-derived line of the opposite effect. -/
+/-- A collision (4.5, 13.6): blocked by a right-derived strict line of the opposite effect, or
+dominated by a right-derived line of the opposite effect under a cited ranking (`cites["rank"]`
+on either line). A rank between two rights' lines is the author's resolution, so an uncited one
+is not a collision and its dominance stays an `UnlicensedLimitation` (fixture μ). -/
 def rightCollision (D : RightsDoc) (N : Line) : Narrowing → Bool
-  | .blockedBy M | .dominatedBy M =>
+  | .blockedBy M =>
     match nodeNamed D M with
     | some M' => (lineNodes D).contains M' && Incompatible (correlate D) M' (nodeOf D N)
+    | none => false
+  | .dominatedBy M =>
+    match nodeNamed D M with
+    | some M' => (lineNodes D).contains M' && Incompatible (correlate D) M' (nodeOf D N) &&
+        (hasKey N.source.cites "rank" || hasKey (citesOf D M) "rank")
     | none => false
   | _ => false
 
@@ -216,7 +224,7 @@ theorem mem_narrowings_blockedBy (hd : N.node.mode = .default) {M : SoftNode} (h
 
 theorem mem_narrowings_dominatedBy (hd : N.node.mode = .default) {M : SoftNode} (hM : M ∈ directNodes D)
     (hMd : M.mode = .default) (hi : Incompatible (correlate D) M (nodeOf D N) = true)
-    (hc : Comparable (correlate D) M (nodeOf D N) = true) :
+    (hc : dominable (correlate D) M (nodeOf D N) = true) :
     Narrowing.dominatedBy M.name ∈ narrowings D N := by
   simp only [narrowings, List.mem_append, hd, if_true]
   refine Or.inl (Or.inr (List.mem_map.mpr ⟨M, List.mem_filter.mpr ⟨hM, ?_⟩, rfl⟩))
@@ -292,11 +300,15 @@ theorem narrowings_complete_of_valid (hown : (ownGuard D N).denote S ρ) (hns : 
       simp only [rankFuel, EffD] at hna
       by_cases hel : EligibleD (correlate D) S ρ (nodeOf D N)
       · have hdom := Classical.byContradiction fun h => hna ⟨hel, h⟩
-        obtain ⟨M, hM, hi, hMd, hc, hbody⟩ := hdom
+        obtain ⟨M, hM, hi, hMd, _, hbody⟩ := hdom
         have hMdir : M ∈ directNodes D := by
           rcases (mem_correlate_nodes D M).mp hM with h | h
           · exact h
           · rw [bar_mode D h] at hMd; cases hMd
+        have hc : dominable (correlate D) M (nodeOf D N) = true := by
+          rcases hbody with ⟨h1, _⟩ | ⟨h1, h2, _⟩
+          · simp [dominable, h1]
+          · simp [dominable, h1, h2]
         exact ⟨.dominatedBy M.name, mem_narrowings_dominatedBy D N hm hMdir hMd hi hc, M,
           nodeNamed_self hv hMdir, hbody⟩
       · unfold EligibleD at hel

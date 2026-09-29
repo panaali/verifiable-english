@@ -170,6 +170,12 @@ def domOneF (C : SoftDoc) (eff : SoftNode → VE.Formula) (M N : SoftNode) : VE.
         .and (VE.SoftNorms.eligibleF C M) (VE.SoftNorms.outweighsF C (act C N) (rk M) (rk N))
        else .bottom)
 
+/-- `M` can dominate `X` (the two disjuncts of `domOneF`): `M` outranks `X`, or, under holistic
+outranking, `X` outranks `M` and may be outweighed. A lower-ranked `M` under strict outranking
+never dominates, so it is no mechanism of `X`. -/
+def dominable (C : SoftDoc) (M X : SoftNode) : Bool :=
+  higher C M X || (decide (C.soft.outranking = .holistic) && higher C X M)
+
 /-- Every way the line can fail to select where its own guard holds (4.5): author carve-outs,
 exceptions (direct children, each covering its subtree), the packed limitation, the soft
 exception, switches, blocking strict rules, dominating ranked rules and the bar. `exception
@@ -187,7 +193,7 @@ def narrowings (D : RightsDoc) (N : Line) : List Narrowing :=
     ((directNodes D).filter (fun M => M.mode == .strict && blocksOn C X M)).map (fun M => .blockedBy M.name)
    else []) ++
   (if N.node.mode = .default then
-    ((directNodes D).filter (fun M => M.mode == .default && Incompatible C M X && Comparable C M X)).map
+    ((directNodes D).filter (fun M => M.mode == .default && Incompatible C M X && dominable C M X)).map
       (fun M => .dominatedBy M.name)
    else []) ++
   (if ruleReading D && (barReach D N).isSome then [.bar] else [])

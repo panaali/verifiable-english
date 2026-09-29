@@ -11,10 +11,13 @@ and build-time regression checks on them (`#guard`: the build fails if one is fa
 * Outcomes on finite base models: a line's selection is read off `selectsR D N°` and the
   completed outcome off `O_p°` of `T″′`, evaluated by `Formula.eval` (on a base-admissible
   structure these are the selection and outcome at the canonical expansion, `circ_canon`).
-* The audit `limitationScope` on γ with an adopter's exception, uncited and cited.
+* The audit `limitationScope` on γ with an adopter's exception, uncited and cited; on μ's
+  collisions (strict blocking by another right's line, dominance under an uncited and a cited
+  ranking); on ψ's bar across the dual pair; on σ's same-effect and opposite-effect blocking;
+  on κ's default and strict force.
 
 Arity is at most two in the Lean formula language, so the ternary `nary@0` fixtures (μ, ψ)
-are represented only by their binary shapes. -/
+are represented by their binary shapes on `publish_about(person, person)` below. -/
 namespace VE.Rights.Examples
 open VE.Norms (Regulated Node tupleVal)
 open VE.Norms.Checks (envOf perm oblig)
@@ -53,6 +56,11 @@ def diag (D : RightsDoc) : String :=
 
 /-- The instance named `n`. -/
 def lineNamed (D : RightsDoc) (n : String) : Option Line := ((linesOf D).map (·.2)).find? (·.node.name == n)
+
+def noLine : Line := ⟨"", line .claim (strictNode "" "" false), .claim, .claim, strictNode "" "" false, none⟩
+
+/-- The instance named `n` (a placeholder when absent, which no check below expects). -/
+def lineAt (D : RightsDoc) (n : String) : Line := (lineNamed D n).getD noLine
 
 /-- `selects″_N°` of the instance named `n` at a tuple of a finite base model. -/
 def selectsAt (D : RightsDoc) (n : String) (M : VE.FiniteModel String) (vs : List String) : Bool :=
@@ -266,5 +274,126 @@ def phi (slot : Nat) : RightsDoc :=
 
 #guard diag (phi 1) == "ok"
 #guard diag (phi 0) == "InvalidInput: alters deprive_of_nationality_permitted"
+
+/-! ## (μ) collisions, binary shape
+
+`publish_about(person, person)` stands for μ's ternary act: the liberty of right 19 has the
+holder at the subject slot 0, the claim of right 12 at the object slot 1. Both lines are in scope
+of limitation 29 so the audit ranges over them; each default line cites its exception. -/
+
+def publishRegs : List Regulated :=
+  [oblig "publish_about_required" ["person", "person"] false (some "publish_about_permitted") "{0} publish about {1}",
+   perm "publish_about_permitted" ["person", "person"] true "{0} publish about {1}"]
+
+def ranked : SoftEnv :=
+  { noSoft with ranks := ["dignity", "expression"], outranks := [("dignity", "expression")],
+                below := VE.SoftNorms.closureOf ["dignity", "expression"] [("dignity", "expression")] }
+
+def citedLine (kind : Kind) (n : SoftNode) (slot : Option Nat) (cites : List (String × List String)) : SourceLine :=
+  ⟨kind, some n, none, none, [], slot, cites⟩
+
+def exceptionCite : List (String × List String) := [("exception", ["u1"])]
+
+def mu (liberty claim : SoftNode) (libertyCites claimCites : List (String × List String)) (bars : List Bar := []) :
+    RightsDoc :=
+  let d := mkRights ["person"] [("attacks_honour", ["person", "person"])] publishRegs [] ⟨["person"], ["person"], [], []⟩
+    [⟨"r19", "person", .top, [citedLine .liberty liberty none libertyCites]⟩,
+     ⟨"r12", "person", .top, [citedLine .claim claim (some 1) claimCites]⟩] [l29] bars
+  { d with soft := { d.soft with soft := ranked } }
+
+def mayPublish : SoftNode := { defaultNode "may-publish" "publish_about_permitted" true with rank := some "expression" }
+def noAttack : SoftNode :=
+  { defaultNode "no-attack" "publish_about_permitted" false (.binary "attacks_honour" (.var 1) (.var 0)) with
+    rank := some "dignity" }
+
+#guard diag (mu mayPublish noAttack exceptionCite exceptionCite) == "ok"
+-- both default and ranked: the liberty of right 19 is dominated by the claim of right 12
+#guard (narrowings (mu mayPublish noAttack exceptionCite exceptionCite)
+    (lineAt (mu mayPublish noAttack exceptionCite exceptionCite) "may-publish")).contains (.dominatedBy "no-attack")
+-- an uncited rank is no collision: the dominance is a finding (fixture μ, 13.6)
+#guard (limitationScope (mu mayPublish noAttack exceptionCite exceptionCite) []).map (·.text) ==
+  ["UnlicensedLimitation: dominatedBy no-attack of rule may-publish on right r19"]
+-- the rank cited on the dominated line, or on the dominating line: a collision resolved by a cited ranking
+#guard limitationScope (mu mayPublish noAttack (exceptionCite ++ [("rank", ["u1"])]) exceptionCite) [] == []
+#guard limitationScope (mu mayPublish noAttack exceptionCite (exceptionCite ++ [("rank", ["u1"])])) [] == []
+#guard rightCollision (mu mayPublish noAttack exceptionCite (exceptionCite ++ [("rank", ["u1"])]))
+  (lineAt (mu mayPublish noAttack exceptionCite exceptionCite) "may-publish") (.dominatedBy "no-attack")
+#guard !rightCollision (mu mayPublish noAttack exceptionCite exceptionCite)
+  (lineAt (mu mayPublish noAttack exceptionCite exceptionCite) "may-publish") (.dominatedBy "no-attack")
+-- the strict liberty blocks the default claim: another right's strict line collides, no finding
+def strictPublish : SoftNode := strictNode "may-publish" "publish_about_permitted" true
+#guard diag (mu strictPublish noAttack [] exceptionCite) == "ok"
+#guard limitationScope (mu strictPublish noAttack [] exceptionCite) [] == []
+#guard rightCollision (mu strictPublish noAttack [] exceptionCite)
+  (lineAt (mu strictPublish noAttack [] exceptionCite) "no-attack") (.blockedBy "may-publish")
+
+/-! ## (ψ) the bar across the dual pair, binary shape
+
+A default positive claim of right 12 on the dual obligation `publish_about_required` (holder at
+the object slot 1) under the rule reading of the bar, with the strict liberty of right 19 making
+`publish_about_permitted` right-derived. -/
+
+def shouldPublish : SoftNode := defaultNode "should-publish" "publish_about_required" true
+def barRule : Bar := ⟨"b30", .rule, some "unstated"⟩
+
+def psi (claim : SoftNode) (withLiberty : Bool := true) : RightsDoc :=
+  let d := mu strictPublish claim [] exceptionCite [barRule]
+  if withLiberty then d else { d with rs := d.rs.filter (·.name != "r19") }
+
+def psiLine (D : RightsDoc) (n : String) : Line := lineAt D n
+
+def aimedPsi : VE.FiniteModel String := model [("rights__bar__1", [["Ann", "Bob"]])]
+
+#guard diag (psi shouldPublish) == "ok"
+#guard barReach (psi shouldPublish) (psiLine (psi shouldPublish) "should-publish") == some "publish_about_permitted"
+#guard (narrowings (psi shouldPublish) (psiLine (psi shouldPublish) "should-publish")).contains .bar
+-- the claim is blocked across the pair where the act is aimed at destruction; nothing is unlicensed
+#guard limitationScope (psi shouldPublish) [] == []
+#guard !selectsAt (psi shouldPublish) "should-publish" aimedPsi ["Ann", "Bob"]
+#guard !outcomeAt (psi shouldPublish) "publish_about_required" aimedPsi ["Ann", "Bob"]
+#guard !outcomeAt (psi shouldPublish) "publish_about_permitted" aimedPsi ["Ann", "Bob"]
+#guard selectsAt (psi shouldPublish) "should-publish" (model []) ["Ann", "Bob"]
+-- the same claim as strict `must publish`: not blocked, no bar reach, it selects (the pair conflict of 4.7)
+#guard barReach (psi (strictNode "should-publish" "publish_about_required" true))
+  (psiLine (psi (strictNode "should-publish" "publish_about_required" true)) "should-publish") == none
+#guard selectsAt (psi (strictNode "should-publish" "publish_about_required" true)) "should-publish" aimedPsi ["Ann", "Bob"]
+-- without the liberty of right 19 the permission is not right-derived: no bar reach, the claim selects
+#guard diag (psi shouldPublish false) == "ok"
+#guard barReach (psi shouldPublish false) (psiLine (psi shouldPublish false) "should-publish") == none
+#guard selectsAt (psi shouldPublish false) "should-publish" (model []) ["Ann", "Bob"]
+
+/-! ## (σ) same-effect strict blocking and (κ) force under limitation 29 -/
+
+def sigma (outside : List SoftNode) (cites : List (String × List (String × List String)) := []) : RightsDoc :=
+  let d := mkRights ["person", "idea"] [("journalist", ["person"])] impartRegs outside ⟨["person"], ["person"], [], []⟩
+    [⟨"r19", "person", .top, [citedLine .liberty (defaultNode "may-impart" "impart_permitted" true) none exceptionCite]⟩]
+    [l29] []
+  { d with outsideCites := cites }
+
+def rule4 (sign : Bool) : SoftNode := strictNode "rule-4" "impart_permitted" sign (.unary "journalist" (.var 1))
+
+#guard diag (sigma [rule4 true]) == "ok"
+-- a strict rule of the line's own effect: listed, licensed by construction, no finding
+#guard (narrowings (sigma [rule4 true]) (psiLine (sigma [rule4 true]) "may-impart")).contains (.blockedBy "rule-4")
+#guard sameEffectStrict (sigma [rule4 true]) (psiLine (sigma [rule4 true]) "may-impart") "rule-4"
+#guard limitationScope (sigma [rule4 true]) [] == []
+-- the opposite effect outside rights: unlicensed unless the rule cites the narrowing
+#guard (limitationScope (sigma [rule4 false]) []).map (·.text) ==
+  ["UnlicensedLimitation: blockedBy rule-4 of rule may-impart on right r19"]
+#guard limitationScope (sigma [rule4 false] [("rule-4", [("narrows:may-impart", ["u1"])])]) [] == []
+
+def securityRegs : List Regulated :=
+  [oblig "secure_required" ["state", "person"] false (some "secure_permitted") "{0} secure social security for {1}",
+   perm "secure_permitted" ["state", "person"] true "{0} secure social security for {1}"]
+
+def kappa (n : SoftNode) (cites : List (String × List String)) : RightsDoc :=
+  mkRights ["state", "person"] [] securityRegs [] block [⟨"r25", "person", .top, [citedLine .claim n none cites]⟩] [l29] []
+
+-- the default choice: its exception is uncited, a finding; the strict choice has no exception
+#guard (limitationScope (kappa (defaultNode "secure" "secure_required" true) []) []).map (·.text) ==
+  ["UnlicensedLimitation: exception of rule secure on right r25"]
+#guard limitationScope (kappa (strictNode "secure" "secure_required" true) []) [] == []
+-- Art. 22: the exception cites its source clause, licensed
+#guard limitationScope (kappa (defaultNode "secure" "secure_required" true) exceptionCite) [] == []
 
 end VE.Rights.Examples
