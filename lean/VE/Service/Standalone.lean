@@ -99,6 +99,16 @@ def typingReduced (environment : Json) : Except String Json := do
       ((Json.mkObj fields).setObjVal! "predicates" (Json.mkObj predicates))
   pure env
 
+/-- The environment identity, over the environment as Python stores it
+(`Environment.to_dict`): regulated act phrases in canonical form, as the norms
+route binds them (`Norms.Wire.canonicalEnvironmentJson`). -/
+def environmentIdOf (profiles : List String) (environment : Json) : Except String String := do
+  VE.Route.Wire.environmentId profiles (← VE.Norms.Wire.canonicalEnvironmentJson environment)
+
+/-- Python's `RESERVED` words the frozen surface list (`Surface.reserved`,
+which every family decoder checks) lacks: `no`, a definitions keyword. -/
+def pythonReserved : List String := ["no"]
+
 /-- With `typing`, the core family's decoder, which has no `defined` or data
 flag fields, reads each predicate by its argument sorts alone, and a `reports@0`
 environment is read without its statement-layer profiles (`typingReduced`): typing
@@ -108,6 +118,9 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
   -- Typing only: other modes keep the gate's refusal of these statement profiles.
   let environment ← if typing then typingReduced environment else pure environment
   let e ← VE.Route.Gate.decodeEnvelope environment
+  for kind in ["sorts", "predicates", "constants"] do
+    for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
+      if pythonReserved.contains name then throw s!"invalid or reserved declaration: {name}"
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
   let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
@@ -120,7 +133,12 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     v ← stripPredicates v.envelope v.decodable ["defined", "functional", "total"]
   else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
     -- The core decoder has neither layer: they are validated over the FOL
-    -- projection by the FOL route's decoders, as the core route does.
+    -- projection by the FOL route's decoders, as the core route does. An n-ary
+    -- defined predicate is outside the projection, so nothing here would check
+    -- its body or compute its table.
+    if (VE.Core.Layers.predicatesOf v.decodable).any (fun (_, entry) =>
+        (entry.getObjVal? "defined").isOk && VE.Core.Layers.arity entry > 2) then
+      throw (VE.Route.Gate.unsupported "n-ary definitions on the core family are deferred")
     let _ ← VE.Core.Layers.decodeLayers e.profiles v.decodable
     let layered := v.decodable
     v ← stripPredicates v.envelope v.decodable VE.Core.Layers.layerFields
@@ -135,7 +153,7 @@ def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let e ← validatedEnvironment environment
-  let environmentId ← VE.Route.Wire.environmentId e.profiles environment
+  let environmentId ← environmentIdOf e.profiles environment
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
     ("profiles", toJson e.profiles), ("family", .str e.family.name)])
 
@@ -211,7 +229,7 @@ def modelCase (j : Json) : Except String Json := do
   let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
   if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     VE.Norms.Plain.profileOk ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩ model
-  let environmentId ← VE.Route.Wire.environmentId e.profiles environment
+  let environmentId ← environmentIdOf e.profiles environment
   let modelId ← VE.CertificateWire.digest
     s!"ve-model-{VE.Route.Wire.identityVersion e.profiles}\n"
     (Json.mkObj [("environment_id", .str environmentId),
@@ -321,7 +339,7 @@ def checkCase (j : Json) : Except String Json := do
       (if formula then [ast] else items.toList)).getD message)
   -- Identities bind the submitted environment and profiles.
   let profiles ← VE.Route.Gate.profilesOf environment
-  let envId ← VE.Route.Wire.environmentId profiles environment
+  let envId ← environmentIdOf profiles environment
   let meaningId ← VE.Route.Wire.meaningId profiles envId ast
   pure (VE.Route.Wire.ok id [("well_typed", .bool true), ("meaning_id", .str meaningId)])
 
@@ -341,7 +359,7 @@ def identityCase (j : Json) : Except String Json := do
     else if kind == "meaning" then do
       let environment ← j.getObjVal? "environment"
       let e ← validatedEnvironment environment
-      let environmentId ← VE.Route.Wire.environmentId e.profiles environment
+      let environmentId ← environmentIdOf e.profiles environment
       VE.Route.Wire.meaningId e.profiles environmentId (← j.getObjVal? "ast")
     else if kind == "model" then do
       let row ← modelCase j

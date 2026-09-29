@@ -31,6 +31,15 @@ _LIMIT = 1 << 14
 _LAYERED = frozenset({"soft-norms@0", "reports@0"})
 
 
+def _nary_definitions(profiles, predicates) -> bool:
+    """A core-family vocabulary with an n-ary defined predicate: Lean's core
+    layer glue projects unary and binary predicates only (a recorded gap)."""
+    if not {"closure@0", "nary@0"} <= set(profiles):
+        return False
+    return any(type(entry) is dict and "defined" in entry and type(entry.get("arguments")) is list
+               and len(entry["arguments"]) > 2 for entry in predicates)
+
+
 def environment_in_scope(data) -> bool:
     """Whether Lean's `environment` mode validates this environment input."""
     if type(data) is not dict or data.get("language") != "ve.core@0.2":
@@ -38,13 +47,21 @@ def environment_in_scope(data) -> bool:
     if {"unit_schema", "units", "alternatives"} & set(data):
         return False
     profiles = data.get("profiles")
-    return type(profiles) is list and not _LAYERED & {p for p in profiles if type(p) is str}
+    if type(profiles) is not list:
+        return True
+    profiles = {p for p in profiles if type(p) is str}
+    vocabulary = data.get("vocabulary")
+    predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
+    return not (_LAYERED & profiles) and not (
+        type(predicates) is dict and _nary_definitions(profiles, predicates.values()))
 
 
 def model_in_scope(env) -> bool:
     """Whether Lean's `model` mode validates models over `env`."""
     return (env.language == "ve.core@0.2" and env.unit_schema is None and env.alternatives is None
-            and not _LAYERED & set(env.profiles))
+            and not _LAYERED & set(env.profiles)
+            and not ({"closure@0", "nary@0"} <= set(env.profiles) and any(
+                decl.defined is not None and len(decl.arguments) > 2 for decl in env.predicates.values())))
 
 
 def _key(*parts) -> tuple:
