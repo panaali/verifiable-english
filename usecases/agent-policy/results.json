@@ -3,21 +3,21 @@
   "certificates": 2488,
   "focused_calls": 1266,
   "focused_nodes": 36454,
-  "log_sentences": 503,
+  "log_sentences": 501,
   "model_witnesses": 87,
   "open_by_models": 14,
   "policy_seconds": {
-   "conflict": 0.1,
+   "conflict": 0.2,
    "overlaps": 0.3,
-   "pairs": 21.4,
-   "rules": 1.0,
-   "tool_gaps": 23.5
+   "pairs": 26.3,
+   "rules": 0.6,
+   "tool_gaps": 16.3
   },
   "rules": 26,
-  "seconds": 103.4,
+  "seconds": 115.2,
   "unknown": 0,
   "ve_prover_calls": 1237,
-  "ve_prover_steps": 88564,
+  "ve_prover_steps": 88562,
   "workers": 6
  },
  "M8": {
@@ -10648,7 +10648,7 @@
  "inputs": {
   "answer-key.json": "0cf59926dc6c420bf78707b22c5234b8163444df4b4133ad40d7d14035c569a9",
   "log-schema.ve": "8cec9bce64eb45802decc4f11f373e9d4f1ddd105b1f9220ae2b1218d80b4c3f",
-  "log.ve": "a3df26039ffcb648702c5bf373812496c1d6db77f3d9bcd92c00352ab7a58ceb",
+  "log.ve": "1e329a6e5644afafb8ac62ffaba77394012c1f453be6d044a7811bdcf65186e3",
   "policy.ve": "42de2a255d9647e018ba084dcf49a0d8a9c83b816e0f8b9a3fa848df7046f7cd"
  },
  "mutants": {
@@ -10736,7 +10736,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 121.7
+   "seconds": 105.0
   },
   "m2": {
    "changes": {
@@ -10881,7 +10881,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 64.2
+   "seconds": 73.9
   },
   "m3": {
    "changes": {
@@ -11111,7 +11111,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 62.2
+   "seconds": 67.0
   },
   "m4": {
    "changes": {
@@ -11201,7 +11201,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 24.8
+   "seconds": 25.9
   },
   "m5": {
    "changes": {
@@ -11302,7 +11302,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 70.6
+   "seconds": 60.6
   },
   "m6": {
    "changes": {
@@ -11389,7 +11389,7 @@
     "unknown": [],
     "unknown_pairs": []
    },
-   "seconds": 29.5
+   "seconds": 28.5
   }
  },
  "policy": {

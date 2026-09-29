@@ -494,7 +494,7 @@ use case is written or computed, not what the key expects.
    | `confirmed`, "{0} is confirmed by the user" | `confirmed`, "{0} is confirmed" |
    | `read_only`, "{0} is read-only" | `readonly`, "{0} is readonly" |
    | `elevated`, "{0} runs with elevated privileges" | `privileged`, "{0} is privileged" |
-   | `discloses_secret(action)`, "{0} discloses a secret" | `discloses(action, secret)`, "{0} discloses {1}", with a new sort `secret`; a record states it like any other effect, with a closure sentence |
+   | `discloses_secret(action)`, "{0} discloses a secret" | `discloses(action, secret)`, "{0} discloses {1}", with a new sort `secret`. A record states only whether the action discloses some secret, in both polarities: "There is a secret such that "a24" discloses that secret." or "It is not the case that there is a secret such that …". No secret is named and no closure sentence follows, so the log fixes neither which secret nor how many (review finding B) |
    | `within_limit`, "{0} is within the spending limit" | `affordable`, "{0} is affordable" |
    | `reported`, "{0} is reported to the user" | `reported`, "{0} is reported" |
 
@@ -512,8 +512,8 @@ use case is written or computed, not what the key expects.
    or rule 26 selects". Mutant m2's rule M is Rule 27, `message-others-confirmed`.
 5. **Sections 4.1 and 4.2, the log.** The closure sentences read "For every file that "a01" reads, that file is
    the same as "f_main"." and "It is not the case that there is a file such that "a01" writes that file." With
-   two objects they end "…, or both". The log's names (actions, files, hosts, people and two secrets) are declared
-   in `log.vocabulary.json`. Each action's sub-log is checked in an environment that declares only that action's
+   two objects they end "…, or both". The log's names (actions, files, hosts and people; no secret) are declared
+   in `log.vocabulary.json`. A record model gives a disclosure one unnamed secret as its witness. Each action's sub-log is checked in an environment that declares only that action's
    name. The reason is that `tool` is total: each extra action name adds Background work, and with all 42 names
    VE's prover exhausted its budget on a one-step query. `emit_log.py` stands in for the agent's tools and writes
    `log.ve` from the section 4.3 table.
