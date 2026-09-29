@@ -70,11 +70,13 @@ def validate_reading_sets(env, values, unit_ids):
         required = {"id", "unit", "version", "status", "readings"}
         if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history", "models"}:
             raise VEError("invalid reading set")
+        if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1:
+            raise VEError("invalid or duplicate reading set version")
         key = (item["id"], item["version"])
-        if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1 or key in seen:
+        if key in seen:
             raise VEError("invalid or duplicate reading set version")
         seen.add(key)
-        if item["unit"] not in unit_ids or item["status"] not in ("authored", "open"):
+        if type(item["unit"]) is not str or item["unit"] not in unit_ids or item["status"] not in ("authored", "open"):
             raise VEError("invalid reading set unit or status")
         if (item["id"] in owners and owners[item["id"]] != item["unit"]
                 or item["unit"] in units and units[item["unit"]] != item["id"]):
@@ -271,6 +273,9 @@ def validate_narrowings(values, reading_sets, unit_ids):
         if not token(item["id"]) or item["id"] in ids or not token(item["by"]):
             raise VEError("invalid narrowing id or author")
         ids.add(item["id"])
+        # The cited version is a set id and a version number (not a Boolean) before it is looked up.
+        if not token(item["set"]) or type(item["version"]) is not int or item["version"] < 1:
+            raise VEError("invalid narrowing")
         ref = (item["set"], item["version"])
         if ref not in {(r["id"], r["version"]) for r in reading_sets}:
             raise VEError("narrowing cites unknown reading set version")

@@ -20,12 +20,14 @@ import pytest
 from ve.ast import formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
+from ve.profiles import UnsupportedProfile, checker_family
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_rights_route"
 SOFT = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
+SPEECH = ROOT / "lean/.lake/build/bin/ve_speech_acts_route"
 BLOCK = {"holders": ["person"], "bearers": ["state", "person"]}
 
 
@@ -660,3 +662,15 @@ def test_psi_bar_across_the_dual_pair_and_sigma_same_effect(lean):
     assert delivered["licence"] == "effect delivered by strict rule rule-4" and rows[0]["findings"] == []
     assert rows[1]["findings"] == ["UnlicensedLimitation: blockedBy rule-5 of rule may-publish on right r19"]
     assert rows[2]["findings"] == []
+
+
+def test_rights_and_speech_acts_do_not_combine(lean):
+    # speech-acts@0 excludes soft-norms@0, which rights@0 requires (docs/INTEGRATION-GAPS.md)
+    both = env(ARREST, profiles=("norms@0", "rights@0", "soft-norms@0", "speech-acts@0"))
+    with pytest.raises(UnsupportedProfile, match="speech-acts@0 with rights@0"):
+        checker_family(both["profiles"])
+    cases = [{"id": "r", "kind": "rights-elaborate", "environment": both, "document": GAMMA},
+             {"id": "s", "kind": "speech-elaborate", "environment": both, "document": {"units": []}}]
+    for executable in (lean, SPEECH):
+        for row in run(executable, cases):
+            assert row["status"] == "error" and row["error"].startswith("UnsupportedProfile:"), row

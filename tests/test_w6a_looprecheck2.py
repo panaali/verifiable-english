@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from itertools import permutations
 import json
+import os
 import subprocess
 
 import pytest
@@ -148,7 +149,7 @@ def test_defined_table_budget_is_order_independent_three_ways():
         [got] = run([str(CONFORMANCE), "route", "-"], [{**case, "kind": "evaluate"}])
         assert got["status"] == "error" and "Definition model evaluation budget" in got["error"], \
             (domain, got)
-        [other] = run([str(ROOT / "rust" / "target" / "release" / "ve"), "conformance"], [case])
+        [other] = run([os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")), "conformance"], [case])
         assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
 
 

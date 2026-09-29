@@ -324,6 +324,10 @@ def test_lean_reports_match_the_source_reading_on_sampled_models():
 
 @pytest.fixture(scope="module")
 def rust_binary():
+    if os.environ.get("VE_RUST_PREBUILT"):
+        binary = Path(os.environ["VE_RUST_BINARY"])
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is unavailable")
