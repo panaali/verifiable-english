@@ -22,7 +22,8 @@ import VE.Rights.Wire
   `CONFLICT`, classified (`Wire.rights_wire_conflict_witness_sound`).
 * `rights-bar`: rule reading → per right-derived permission predicate: the barred right
   lines, the blocked default rules (on `m` or `require` on its dual) and the strict rules
-  whose selection there is a composition conflict (4.7); query reading → per predicate the
+  that are composition candidates (4.7); without an overlap witness no conflict is asserted.
+  Query reading → per predicate the
   target `∀x̄. aimed_m(x̄) → ¬m(x̄)` and, when a certificate is supplied, whether it is entailed.
 * `rights-certificate`: `premises`, `conclusion`, `certificate` bound to
   `background″ ++ layer premises ++ premises` over `E″′` → `valid`, `conditional_on`
@@ -186,7 +187,7 @@ def openLabels (D : RightsDoc) : List String :=
 def barResult (src : RightsSource) (environment document certs : Json) : List (String × Json) :=
   let D := src.D
   let C := correlate D
-  let rows := (barPreds D).map (fun m =>
+  let rows := (if D.bars.isEmpty then [] else barPreds D).map (fun m =>
     if ruleReading D then
       let barred := ((lineNodes D).filter (fun X => X.pred == m && X.sign)).map (·.name)
       let blocked := (C.T.nodes.filter (fun X => X.mode == .default &&
@@ -195,7 +196,8 @@ def barResult (src : RightsSource) (environment document certs : Json) : List (S
         ((X.pred == m && X.sign) || (X.sign && VE.SoftNorms.dualPerm C X.pred == some m)))).map (·.name) ++
         ((lineNodes D).filter (fun X => X.mode == .strict && X.sign && VE.SoftNorms.dualPerm C X.pred == some m)).map (·.name)
       Json.mkObj [("predicate", .str m), ("aimed", .str (aimedName (barIndex D m))), ("reading", .str "rule"),
-        ("barred", toJson barred), ("blocked_defaults", toJson blocked), ("composition_conflicts", toJson composition)]
+        ("barred", toJson barred), ("blocked_defaults", toJson blocked),
+        ("composition_candidates", toJson composition), ("composition_conflicts", toJson ([] : List String))]
     else
       let target := bindAll (VE.SoftNorms.sortsOf D.soft m) (.implies (aimedF D m) (.not (atom m (VE.SoftNorms.sortsOf D.soft m))))
       let entailed : Option Bool := match certs.getObjVal? m with
