@@ -40,6 +40,12 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Run
+import VE.SpeechActs.Tree
+import VE.SpeechActs.Demand
+import VE.SpeechActs.Answer
+import VE.SpeechActs.Consequence
+import VE.SpeechActs.Wire
+import VE.SpeechActs.Run
 import VE.SoftNorms.Run
 import VE.Attribution.Content
 import VE.Attribution.Elaborate
@@ -982,6 +988,94 @@ import VE.Service.Protocol
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Route.readings_all_iff
+#print axioms VE.SpeechActs.semanticSpeech_of_wellFormed
+#print axioms VE.SpeechActs.validSpeech_of_wellFormed
+#print axioms VE.SpeechActs.conj_denote
+#print axioms VE.SpeechActs.conj_wellFormed
+#print axioms VE.SpeechActs.preds_conj
+#print axioms VE.SpeechActs.preds_eqsFrom
+#print axioms VE.SpeechActs.constsOf_cons
+#print axioms VE.SpeechActs.constsOf_length
+#print axioms VE.SpeechActs.eqsFrom_denote
+#print axioms VE.SpeechActs.denote_agree
+#print axioms VE.SpeechActs.denote_closed
+#print axioms VE.SpeechActs.wellFormed_append
+#print axioms VE.SpeechActs.eqsFrom_wellFormed
+#print axioms VE.SpeechActs.constsTyped_length
+#print axioms VE.SpeechActs.regOf_spec
+#print axioms VE.SpeechActs.command_facts
+#print axioms VE.SpeechActs.addresseeConst_eq
+#print axioms VE.SpeechActs.actSorts_eq
+#print axioms VE.SpeechActs.policy_nodes
+#print axioms VE.SpeechActs.policy_E
+#print axioms VE.SpeechActs.policy_regulated
+#print axioms VE.SpeechActs.eqGuard_denote
+#print axioms VE.SpeechActs.policy_wellFormed
+#print axioms VE.SpeechActs.demand_shape
+#print axioms VE.SpeechActs.demand_polarity
+#print axioms VE.SpeechActs.typed_length
+#print axioms VE.SpeechActs.demand_applies
+#print axioms VE.SpeechActs.demand_mem
+#print axioms VE.SpeechActs.demand_children
+#print axioms VE.SpeechActs.demand_decides
+#print axioms VE.SpeechActs.command_symbol
+#print axioms VE.SpeechActs.elab_at
+#print axioms VE.SpeechActs.demand_consequence
+#print axioms VE.SpeechActs.demand_conflict_local
+#print axioms VE.SpeechActs.demand_conflict
+#print axioms VE.SpeechActs.scope_single
+#print axioms VE.SpeechActs.mem_sublistsOf
+#print axioms VE.SpeechActs.sublist_ext
+#print axioms VE.SpeechActs.mem_pairsOf
+#print axioms VE.SpeechActs.correct_mem_tokens
+#print axioms VE.SpeechActs.tokens_correct
+#print axioms VE.SpeechActs.correct_polar
+#print axioms VE.SpeechActs.correct_one
+#print axioms VE.SpeechActs.presupposition_one
+#print axioms VE.SpeechActs.not_contains_iff
+#print axioms VE.SpeechActs.allAnswer_denote
+#print axioms VE.SpeechActs.which_nodup
+#print axioms VE.SpeechActs.answers_polar
+#print axioms VE.SpeechActs.answers_one
+#print axioms VE.SpeechActs.answersAt_all_iff
+#print axioms VE.SpeechActs.answers_all
+#print axioms VE.SpeechActs.answers_all_empty
+#print axioms VE.SpeechActs.answers_presupposition
+#print axioms VE.SpeechActs.support_sound
+#print axioms VE.SpeechActs.support_conditional_sound
+#print axioms VE.SpeechActs.support_exclusive
+#print axioms VE.SpeechActs.support_exclusive_one
+#print axioms VE.SpeechActs.model_answers
+#print axioms VE.SpeechActs.model_presupposition_failed
+#print axioms VE.SpeechActs.countermodel_not_negative
+#print axioms VE.SpeechActs.liftStructure_term
+#print axioms VE.SpeechActs.liftStructure_denote
+#print axioms VE.SpeechActs.liftStructure_admissible
+#print axioms VE.SpeechActs.entails_lower
+#print axioms VE.SpeechActs.follows_sound
+#print axioms VE.SpeechActs.gap_sound
+#print axioms VE.SpeechActs.follows_gap_exclusive
+#print axioms VE.SpeechActs.query_target_separate
+#print axioms VE.SpeechActs.premises_core
+#print axioms VE.SpeechActs.questions_no_premises
+#print axioms VE.SpeechActs.dormant_invariance
+#print axioms VE.SpeechActs.speech_route_acceptance
+#print axioms VE.SpeechActs.answer_bridge_sound
+#print axioms VE.SpeechActs.combine_scope
+#print axioms VE.SpeechActs.two_task_separation
+#print axioms VE.SpeechActs.policy_rules
+#print axioms VE.SpeechActs.Wire.getObjVal_insert
+#print axioms VE.SpeechActs.Wire.canonical_scope
+#print axioms VE.SpeechActs.Wire.scope_in_identity
+#print axioms VE.SpeechActs.Run.valid_transfer
+#print axioms VE.SpeechActs.Run.En_predicates
+#print axioms VE.SpeechActs.Run.premiseStatus_sound
+#print axioms VE.SpeechActs.Run.speech_wire_answer_sound
+#print axioms VE.SpeechActs.Run.speech_wire_consequence_sound
+#print axioms VE.SpeechActs.Run.speech_wire_conflict_witness_sound
+#print axioms VE.SpeechActs.Wire.decoded_active_commands
+#print axioms VE.SpeechActs.Wire.decoded_premises
+#print axioms VE.SpeechActs.Run.speech_wire_conflict_free_sound
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula
