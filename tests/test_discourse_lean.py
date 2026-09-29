@@ -1128,3 +1128,28 @@ def test_joined_reference_words_are_slots(lean, tmp_path):
     # a word that merely begins with a reference word's letters is not one
     lean_error, python_error = slot_outcomes(["Itself is safe."], tmp_path, safe)
     assert lean_error is None and isinstance(python_error, dict), (lean_error, python_error)
+
+
+def test_every_reference_surface_is_recorded(lean, tmp_path):
+    """looprecheck2 A, the same class inside an accepted derivation: a registered spelling that
+    joins a reference word (`He-api`) derives without a slot, yet its `he` is a reference surface
+    no mention records, so the unit is `UnrecordedSlot` in both implementations. A section label
+    spelled as a reference word is one too (Python does not elaborate definition references)."""
+    names = [{"constant": "api", "display": "He-api", "scope": "doc"}, *NAMES[1:]]
+    lean_error, python_error = slot_outcomes(["He-api is safe."], tmp_path, {"u1": unary("safe", "api")}, names)
+    assert lean_error == "UnrecordedSlot: u1: [0, 1)"
+    assert python_error == "UnrecordedSlot: u1: [0, 2)"
+    plain = [{"constant": "api", "display": "Web-api", "scope": "doc"}, *NAMES[1:]]
+    lean_error, python_error = slot_outcomes(["Web-api is safe."], tmp_path, {"u1": unary("safe", "api")}, plain)
+    assert lean_error is None and isinstance(python_error, dict), (lean_error, python_error)
+    def section(label):
+        doc = document(["Eligible services are reviewed services.",
+                        f"Every eligible service is reviewed, where eligible has the meaning defined in section {label}."],
+                       [("m1", "u2", "eligible", "definition_ref", {"kind": "predicate", "name": "eligible"})],
+                       kinds={"u1": "definition"}, contents={"u2": [
+                           "forall", "service", ["implies", ["unary", "eligible", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]})
+        doc["discourse"]["anchors"].append({"id": "sec2", "kind": "section", "parent": "doc", "label": label,
+                                            "span": [0, doc["units"][1]["span"][1]], "exports": ["eligible"]})
+        return admit(doc)
+    assert section("2")["statuses"]["u2"] == "CHECKED"
+    assert section("its")["error"] == "UnrecordedSlot: u2: [14, 15)"
