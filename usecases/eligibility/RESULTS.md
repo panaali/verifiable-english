@@ -7,16 +7,16 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 | Measure | Result |
 |---|---|
-| Strict, every scored question of a profile correct | 69/69 |
-| Q1 | 69/69 |
-| Q2 | 54/54 |
-| Q3 | 54/54 |
-| Q4 | 54/54 |
-| Total | 231/231 |
-| Answered (certified) | 231/231 |
-| Precision (correct / answered) | 231/231 |
-| unflagged profiles: strict | 60/60 |
-| unflagged profiles: questions | 198/198 |
+| Strict, every scored question of a profile correct | 80/80 |
+| Q1 | 80/80 |
+| Q2 | 63/63 |
+| Q3 | 63/63 |
+| Q4 | 63/63 |
+| Total | 269/269 |
+| Answered (certified) | 269/269 |
+| Precision (correct / answered) | 269/269 |
+| unflagged profiles: strict | 67/67 |
+| unflagged profiles: questions | 226/226 |
 | guide profiles: strict | 38/38 |
 | guide profiles: questions | 131/131 |
 
@@ -28,6 +28,10 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 | B09 | scope | NO | NO | yes |
 | B10 | ambiguous-source | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | B16 | ambiguous-source | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
+| B28 | ambiguous-source | NO | NO | yes |
+| B29 | ambiguous-source | NO | NO | yes |
+| B33 | ambiguous-source | YES 300.00 NO 300.00 | YES 300.00 NO 300.00 | yes |
+| B34 | ambiguous-source | YES 300.00 NO 300.00 | YES 300.00 NO 300.00 | yes |
 | C11 | ambiguous-source, guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | C12 | guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | C14 | guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
@@ -40,24 +44,24 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 ## Single shot (all rules and facts in one problem)
 
-Q1 answered on 0 of 69 profiles; Q2 to Q4 therefore OPEN everywhere.
+Q1 answered on 0 of 80 profiles; Q2 to Q4 therefore OPEN everywhere.
 Every search stopped with status `NotFound`:
 
 | Search | Status | Steps | Searches |
 |---|---|---|---|
-| bottom | NotFound | 124 | 39 |
-| bottom | NotFound | 125 to 999 | 30 |
-| entitled | NotFound | 124 | 39 |
-| entitled | NotFound | 125 to 999 | 30 |
-| not_entitled | NotFound | 125 to 999 | 69 |
+| bottom | NotFound | 124 | 45 |
+| bottom | NotFound | 125 to 999 | 35 |
+| entitled | NotFound | 124 | 45 |
+| entitled | NotFound | 125 to 999 | 35 |
+| not_entitled | NotFound | 125 to 999 | 80 |
 
 ## Evidence
 
-- Step certificates produced: 1608; accepted by Lean `ve_quantity`: 1608.
-- Answer documents (`documents@1`): 231; admitted by Lean: 231.
-- Non-vacuity: 5150 of 5150 premise evaluations are true in the reference fixture models (Lean evaluation).
+- Step certificates produced: 2352; accepted by Lean `ve_quantity`: 2352.
+- Answer documents (`documents@1`): 269; admitted by Lean: 269.
+- Non-vacuity: 6777 of 6777 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 400 distinct, 4404 requested.
+- Proof searches: 512 distinct, 5910 requested.
 
 ## Probes (PLAN section 8, stage 0)
 
@@ -66,11 +70,11 @@ Every search stopped with status `NotFound`:
 - **P3**, expected facts parse uniquely and round-trip; the conditional is rejected: `{"conditional": "rejected: No W6 reading in any grammar", "facts": [{"parsed": true, "rendered": "The applicant's pensionable-age date is no later than 2018-12-05.", "round_trip": true, "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."}, {"parsed": true, "rendered": "The applicant's total income equals GBP 35000.01.", "round_trip": true, "sentence": "The applicant's total income equals £35000.01."}, {"parsed": true, "rendered": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week.", "round_trip": true, "sentence": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."}]}`
 - **P4**, expected both rejected (separator outside the surface; UnitPrecision): `{"results": {"The applicant's total income equals £35,000.00.": "rejected: No W6 quantity reading", "The applicant's total income equals £35000.001.": "rejected: UnitPrecision(gbp_penny, scale=100)"}}`
 - **P5**, expected admitted: `{"elapsed_days": "admitted", "shift_days": "admitted"}`
-- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 535}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q4": true}}}`
+- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 275}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q4": true}}}`
 
 ## Mutants
 
-Killed: 25/25.
+Killed: 32/32.
 
 | Mutant | Change | Must change | Changed | Killed |
 |---|---|---|---|---|
@@ -80,17 +84,17 @@ Killed: 25/25.
 | M4 | R16 '> 35,000' as '>= 35,000' | D01 | D01 | yes |
 | M5 | R2 'no later than' as 'before' | C01 | C01 | yes |
 | M6 | R15 age 80 strict | C04 | C04, C06, C08 | yes |
-| M7 | R7 without 'partner' | B02 | B02, B22 | yes |
+| M7 | R7 without 'partner' | B02 | B02, B22, B26, B27 | yes |
 | M8 | R7 without the partner's pensionable age | B03 | B03 | yes |
 | M9 | R9 without 'under a sentence' | B06 | B06 | yes |
 | M10 | R11 'before' for 'on or before' | C20 | C20 | yes |
 | M11 | R12 'before' 31 March | C22 | C22 | yes |
 | M12 | R3 'every day' for 'any day' | C17, C19 | B15, B16, B19, C17, C19 | yes |
-| M13 | R16 counting the partner's income | D05 | 53 profiles | yes |
-| M14 | R14 without 3(3) | A08 | A08, B14, C08 | yes |
+| M13 | R16 counting the partner's income | D05 | 62 profiles | yes |
+| M14 | R14 without 3(3) | A08 | A08, B14, B30, B33, B34, C08 | yes |
 | M15 | R4 without income support | B11 | B11 | yes |
 | M16 | R4 without income-based JSA | B12 | B12 | yes |
-| M17 | R4 without state pension credit | B01, B04 | 9 profiles | yes |
+| M17 | R4 without state pension credit | B01, B04 | 16 profiles | yes |
 | M18 | R4 without income-related ESA | B13 | B13 | yes |
 | M19 | R4 without universal credit | B14 | B14 | yes |
 | M20 | R11 without the order of AR6 | B15, B16, B19 | B15, B16, B19 | yes |
@@ -99,7 +103,14 @@ Killed: 25/25.
 | M23 | R6 with the other person also out of residential care | B17, B18 | B17, B18 | yes |
 | M24 | R5 without the care end date | B20, B21, B22, B23, C25, C27 | B20, B21, B22, B23, C25, C27 | yes |
 | M25 | R5 with the care end date strictly after the week | C26 | C26 | yes |
+| M26 | R7 without the whole-week shared home | B24, B25 | B24, B25 | yes |
+| M27 | R7 without the whole-week partnership | B26, B27 | B26, B27 | yes |
+| M28 | R7 with the first days strictly before the week | B28 | B28 | yes |
+| M29 | R7 with the last days strictly after the week | B29 | B29 | yes |
+| M30 | R14 with 'throughout' read into 3(3) | B30 | B30, B33, B34 | yes |
+| M31 | R14 without the common day of AR8 | B31, B32 | B31, B32 | yes |
+| M32 | R14 with the bounds of AR8 strict | B33, B34 | B33, B34 | yes |
 
 ## English
 
-74 of 138 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+86 of 166 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).

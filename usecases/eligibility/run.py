@@ -42,6 +42,8 @@ from ve.units import _core_problem, elaborate_quantity, prove_quantity  # noqa: 
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 STEP_CONSTANTS = ("amount", "recovered_amount", "kept")
 LEVEL1 = ("reached_pa", "reached_80", "resident_in_week", "has_rb", "in_residential_care")
+PAIRS = ("lives_with", "home_throughout", "partners_throughout")  # binary derived atoms, role to other
+APPLICANT_PAIRS = ("partner_at_home",)  # binary derived atoms of reg. 3, applicant to housemate only
 EXCLUSIONS = ("excluded_partner_benefit", "excluded_hospital", "excluded_custody",
               "excluded_care_benefit", "excluded_moved", "excluded_no_claim")
 
@@ -200,7 +202,10 @@ class Staged:
             for p in LEVEL1:
                 self.atom(T.U(p, r), f"{p}.{r}")
         for r in T.ROLES:
-            self.atom(T.B("lives_with", r, T.OTHER[r]), f"lives_with.{r}")
+            for p in PAIRS:
+                self.atom(T.B(p, r, T.OTHER[r]), f"{p}.{r}")
+        for p in APPLICANT_PAIRS:
+            self.atom(T.B(p, "applicant", "housemate"), f"{p}.applicant")
         for r in T.ROLES:
             for p in EXCLUSIONS + ("excluded", "entitled"):
                 self.atom(T.U(p, r), f"{p}.{r}")
@@ -301,13 +306,17 @@ def fixture_model(case_with_key, defaults):
     absent = {"birth": "1970-08-19", "ew_from": None, "benefits": [], "income": "0.00"}
     p = R.person(case_with_key["applicant"], defaults)
     present = case_with_key["housemate"] is not None
-    h = R.person(case_with_key["housemate"] if present else absent, defaults)
+    h = R.person(case_with_key["housemate"] if present else absent, defaults, "housemate")
     people = {"applicant": p, "housemate": h}
     others = {"applicant": h if present else None, "housemate": p if present else None}
     relations = {name: [] for name in {**T.FACT_PREDICATES, **T.DERIVED_PREDICATES}}
     constants = {"applicant": "applicant", "housemate": "housemate", **{b: b for b in T.BENEFITS}}
     epoch = date(1970, 1, 1)
     dnum = lambda d: str((d - epoch).days)
+    for name, (_, _, start, end) in T.PERIODS.items():  # the household's dates, on the housemate
+        period = (present and h[name]) or {}
+        for field, constant in (("from", start), ("until", end)):
+            constants[constant] = dnum(period[field]) if period.get(field) else "0"
     for r, x in people.items():
         o, other = T.OTHER[r], others[r]
         pa = T.PENSIONABLE_AGE[x["birth"].isoformat()]
@@ -342,11 +351,17 @@ def fixture_model(case_with_key, defaults):
                  "paid_without_claim": x["claim"]["automatic"]}
         lives = R.lives_with(x, other)
         partners = present and h["partner"]  # cases.json records the couple on the housemate
+        pairs = {"shares_home": present, "partner_of": partners, "lives_with": lives,
+                 "home_throughout": present and R.throughout(h["shared_home"]),
+                 "partners_throughout": partners and R.throughout(h["partnership"]),
+                 "partner_at_home": R.partner_at_home(h if present else None)}
+        for name, (started, ended, _, _) in T.PERIODS.items():
+            period = (present and h[name]) or {}
+            pairs[started], pairs[ended] = bool(period.get("from")), bool(period.get("until"))
         derived = {"reached_pa": R.reached_pensionable_age(x), "reached_80": R.reached_80(x),
                    "resident_in_week": R.resident_in_qw(x), "has_rb": R.relevant_benefit(x),
                    "in_residential_care": R.in_residential_care(x),
-                   "excluded_partner_benefit": bool(other and partners and lives
-                                                    and R.reached_pensionable_age(other) and R.relevant_benefit(other)),
+                   "excluded_partner_benefit": R.excluded_partner_benefit(x, other, h),
                    "excluded_hospital": R.excluded_hospital(x), "excluded_custody": R.excluded_custody(x),
                    "excluded_care_benefit": R.in_residential_care(x) and R.relevant_benefit(x),
                    "excluded_moved": R.excluded_move(x), "excluded_no_claim": R.excluded_no_claim(x)}
@@ -358,12 +373,9 @@ def fixture_model(case_with_key, defaults):
         for b in T.BENEFITS:
             if b in x["benefits"]:
                 relations["paid_for_week"].append([r, b])
-        if present:
-            relations["shares_home"].append([r, o])
-            if h["partner"]:
-                relations["partner_of"].append([r, o])
-            if lives:
-                relations["lives_with"].append([r, o])
+        for name, value in pairs.items():
+            if value:
+                relations[name].append([r, o])
     got = R.answer(case_with_key, defaults)
     if got["entitled"]:
         amount = Decimal(got["amount"])
@@ -598,7 +610,9 @@ MUTANT_TARGETS = {"M1": ["C14"], "M2": ["C14"], "M3": ["C10"], "M4": ["D01"], "M
                   "M12": ["C17", "C19"], "M13": ["D05"], "M14": ["A08"], "M15": ["B11"], "M16": ["B12"],
                   "M17": ["B01", "B04"], "M18": ["B13"], "M19": ["B14"], "M20": ["B15", "B16", "B19"],
                   "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"],
-                  "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"]}
+                  "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"],
+                  "M26": ["B24", "B25"], "M27": ["B26", "B27"], "M28": ["B28"], "M29": ["B29"], "M30": ["B30"],
+                  "M31": ["B31", "B32"], "M32": ["B33", "B34"]}
 
 
 def mutation_check(cases, profiles, workers):
