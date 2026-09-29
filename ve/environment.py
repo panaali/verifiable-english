@@ -467,11 +467,21 @@ class Environment:
                 from .units import validate_tag
                 if sort != INT_SORT:
                     raise VEError(f"Unit on non-integer constant {name}")
+                if type(entry["unit"]) is not str:
+                    raise VEError("String expected")
                 validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None,
                                            entry.get("unit") if has_unit else None,
                                            _verbalisation(entry["verbalisation"]) if has_words else None)
+        if route and "risk@0" in data["profiles"]:
+            # The Lean risk route's checks after the vocabulary, at its point and in its order
+            # (VE.Risk.Wire.decodeRiskSource): W6's route conditions, then what the route refuses.
+            if extended:
+                from .units import validate_extension
+                validate_extension(data["profiles"], units, sorts, constants)
+            from .risk import check_route_declarations
+            check_route_declarations(predicates, constants)
         speech_acts = None
         if route and "speech-acts@0" in data["profiles"]:
             from .speech_acts import validate_scope
@@ -558,9 +568,10 @@ class Environment:
             object.__setattr__(self, field, value)
         object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
-        if extended:
+        if extended and risk is None:  # a risk environment was checked after its vocabulary
             from .units import validate_extension
             validate_extension(self.profiles, units, sorts, constants)
+        if extended:
             # Rust and Lean digest the submitted environment; Python digests
             # to_dict(). Any spelling that does not survive the round trip would
             # give the same input two identities, so it is rejected.

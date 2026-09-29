@@ -50,7 +50,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 12186,
+    "total_lines": 12288,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, the speech-act decoder, and the risk decoders are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -131,9 +131,9 @@
       {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
        "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
        "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Wire.lean", "lines": 385, "sha256": "805ffa8d04c459393b3a285096dcf211b8067eb1cb846ae38db49fbac4d5de40",
-       "ranges": [[1, 385]],
-       "declarations": ["profileGate", "riskNormsView", "decodeUnits", "decodeRiskBlock", "decodeRiskSource", "decodeEntry", "decodeSupplied", "decodeLog"],
+      {"file": "lean/VE/Risk/Wire.lean", "lines": 487, "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
+       "ranges": [[1, 487]],
+       "declarations": ["profileGate", "riskNormsView", "extended", "decodeUnits", "checkVocabularyUnits", "checkExtension", "decodeRiskBlock", "decodeRiskSource", "decodeEntry", "decodeSupplied", "decodeLog"],
        "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/Risk/Record.lean", "lines": 1266, "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
        "ranges": [[1, 1266]], "declarations": ["decodeRecord", "elabTerm", "elabCond", "decodeItem", "admitDecision"],
