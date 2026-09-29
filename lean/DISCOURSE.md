@@ -24,7 +24,7 @@ verdict on the formulas Python admitted, over α and every sub-case of α′).
 | `Resolve.lean` | `Accepted`, `validate`, `Supported`, the culprit slot of an ill-typed elaboration |
 | `WellFormed.lean` | `wellFormed` (4.1 in order), `WellFormedDiscourse`, the typing judgment `TreeTyped`, `Intended`, `symbolsOf` |
 | `Descriptions.lean`, `Fusion.lean`, `Joint.lean`, `Documents.lean` | 4.5, 4.6, 4.8, 4.7 logic |
-| `Wire.lean` | strict decoder of the 3.1 `discourse` block, byte-to-token spans |
+| `Wire.lean` | strict decoder of the 3.1 `discourse` block, byte-to-token spans, discourse wording |
 | `Admission.lean` | the profile adapter, integrity of stored documents, `admitCore`, `admitDiscourse`, `checkImport`, `statusOf` |
 | `Theorems.lean` | the admission theorems of 9.3, 9.4, 9.6 |
 | `English.lean` | 9.5: presentation, round trip, and the source surface's derivation obligations |
@@ -89,12 +89,18 @@ surface (`discourseSourceSurface`).
   plural and the restrictive properties of `such` are read from the segments of the earlier sentences of the
   innermost anchor and of the slot's sentence before it (`scopeSegments`), so `A service's owner` and
   `A service’s owner` bind a service and `Alice and Bob's manager` coordinates, in Lean as in Python. A recorded
-  surface is read as the lexer's words (`surfaceOk`; `The\u00a0former` is the ordinal), and a mention's byte range
+  surface is read as the lexer's words (`surfaceOk`), and a mention's byte range
   that does not start and end on its unit's tokens is `InvalidInput: mention <m> span` in both checkers, before
   any other check of the block.
   A bound unit's content and every reading of its active set must be its elaboration
   (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
   therefore not admitted by the route (fail closed).
+- **Discourse wording** (4.1(4)): with its span, the unit of every formula-producing mention must be printable
+  ASCII with canonical spacing once the layout around it is removed (`canonicalWording` in `toTokenSpans`: one
+  space between words, none before `.,;:!?)`, none after `(`); otherwise `InvalidInput: discourse wording of
+  <unit>`, Python's text, before any sentence is parsed. So `It is safe .`, `The\u00a0former`, a tab or newline
+  inside a sentence and `İt` in a recorded unit reject alike in both checkers; Python parses the expansions
+  without the surrounding layout and with the parser's spelling of each constant, never a display.
 - **Group readings are regenerated** from the spans' English (`a|an|some [ADJ] SORT is P.` then `PRONOUN is Q.`)
   and compared with the recorded reading (`ManifestMismatch: groups.<set>@<version>:<reading>`); other span shapes
   fail closed. A group span carrying another reading set is `IndependentFragment`.
