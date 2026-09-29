@@ -7,6 +7,7 @@ import VE.Norms.Run
 import VE.Service.EnglishRun
 import VE.Service.Standalone
 import VE.Service.Graph
+import VE.Service.Readings
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -42,7 +43,7 @@ def maxCases : Nat := 4096
 
 inductive Mode where
   | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
-  | parse | graph
+  | parse | graph | readings
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -58,9 +59,10 @@ def Mode.name : Mode → String
   | .identity => "identity"
   | .parse => "parse"
   | .graph => "graph"
+  | .readings => "readings"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .environment, .model, .check, .identity, .parse, .graph]
+  .environment, .model, .check, .identity, .parse, .graph, .readings]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -89,6 +91,7 @@ def runMode : Mode → Json → Json
   | .identity, j => Standalone.reported Standalone.identityCase j
   | .parse, j => Standalone.reported Standalone.parseCase j
   | .graph, j => Standalone.reported Graph.graphCase j
+  | .readings, j => Standalone.reported Readings.readingsCase j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -478,6 +481,8 @@ theorem runMode_parse (j : Json) :
     runMode .parse j = Standalone.reported Standalone.parseCase j := rfl
 theorem runMode_graph (j : Json) :
     runMode .graph j = Standalone.reported Graph.graphCase j := rfl
+theorem runMode_readings (j : Json) :
+    runMode .readings j = Standalone.reported Readings.readingsCase j := rfl
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 
