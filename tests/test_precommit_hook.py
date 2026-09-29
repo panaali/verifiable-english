@@ -260,13 +260,29 @@ def test_new_outward_lean_import_is_rejected(staging):
     "module\n\npublic import VE.Surface\n",
     "import«VE».Surface\n",
     "import /- c -/ VE.Surface\n",
+    "import VE.Core.Bridge import«VE».Surface\n",
+    "import VE.Core.Bridge import «VE».Surface\n",
+    "import VE.Core.Bridge/- c -/import VE.Surface\n",
 ], ids=["next-line", "next-line-after-imports", "prelude-one-line", "public", "quoted-no-space",
-        "comment"])
+        "comment", "successive-quoted", "successive-quoted-spaced", "successive-after-comment"])
 def test_every_lean_import_form_is_checked(staging, header):
     path = "lean/VE/Core/Planted.lean"
     staging.stage(path, header)
     staging.rehash(path)
     rejects(staging, f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)")
+
+
+@pytest.mark.parametrize("source", [
+    "import VE.Core.Bridge\n\ndef «an import VE.Surface» := 1\n",
+    "def «an import VE.Surface» := 1\n",
+    "import VE.Core.Bridge\n\nnamespace «import VE.Surface»\nend «import VE.Surface»\n",
+    "import VE.Core.Bridge\n\n/-- `import VE.Surface` -/\ndef x := 1\n",
+], ids=["quoted-name", "quoted-name-no-header", "quoted-namespace", "doc-comment"])
+def test_import_text_after_the_header_is_not_an_import(staging, source):
+    path = "lean/VE/Core/Planted.lean"
+    staging.stage(path, source)
+    staging.rehash(path)
+    passes(staging)
 
 
 def test_outward_rust_dependency_is_rejected(staging):
