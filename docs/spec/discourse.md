@@ -433,6 +433,18 @@ formula differs from the regenerated elaboration, is `ManifestMismatch: <field>`
 regression evidence; the trust path is Lean (`ve_discourse_route`, 9.7). Decoding, hashing and display remain named
 trust boundaries.
 
+**Python's admission is Lean's.** Python never adds or removes an admission on its own: loading or checking a
+`ve-document@2` document sends its bytes, with the sibling files its imports name, to the Lean route's `admission`
+kind, and the document's verdict, every unit's status, the references, the validity verdicts and the report id are
+that answer (`ve/discourse.py` `validate_discourse`). Python's own port of the validator (`python_discourse`, its
+English parser included) is used only for editor hints (`discourse_hints`, the reviewed presentations it can
+compute) and for the diagnostic text of a document Lean rejects too (8); a document Lean admits and Python's port
+rejects is admitted, with Python's diagnostic as a hint. A route that is missing, fails, times out or answers
+anything but one well-formed answer to the case is `CheckerUnavailable`, and so is a document Lean admits that
+Python cannot load or report; Lean's `NotImplemented` (fenced content, norm content, `MIXED` units, JSON `null`, a
+document without a claim graph) is `UnsupportedProfile`. Neither is a verdict, and neither is ever a Python-only
+CHECKED. `ve-document@1` documents are unchanged.
+
 ### 3.5 The profile adapter (the frozen gate never sees `ve.discourse@1`)
 
 The frozen envelope decoder and classifier (`VE.Route.Gate.decodeEnvelope`, `classify`) reject any profile outside
@@ -936,14 +948,19 @@ checks; validity claims are evaluated after admission (4.7). English diagnostics
 plain-language expectation as today. Existing P0, W1, W2 and W3 diagnostics are unchanged.
 
 **Known limitation (P1 wire-contract codegen).** The two checkers agree on whether a document is admitted and
-on the report of an admitted one; on an input both reject they may name different diagnostics, because Python's
-checks are a port of Lean's and not generated from one wire contract. The recorded cases: a unit in discourse
+on the report of an admitted one by construction (Python's verdict is Lean's, 3.4); on an input both reject Python
+reports its own diagnostic, which may differ from Lean's, because Python's checks are a port of Lean's and not
+generated from one wire contract. When Python's port admits or abstains where Lean rejects, the diagnostic is
+Lean's. The recorded cases: a unit in discourse
 wording outside both grammars (`It is safe (v2.1).` with `It` recorded) is `InvalidInput: unit <u> is outside
 the supported discourse fragment` in Lean and `IllTypedTarget: <mention>: <target>` in Python (its recorded
 expansion does not parse); an unknown mention form is Lean's decode-time `InvalidInput: form <f>` and Python's
-`InvalidInput: mention <m>`. Generating both checkers' diagnostics from one contract (P1) closes this. (A form
-Python does not elaborate is Python's `UnsupportedProfile`, an abstention rather than a verdict: Python never
-admits such a unit.)
+`InvalidInput: mention <m>`; a same-witness group whose opening names the sort by the word only one parser reads
+(Python's English parser reads a declared noun, the Lean grammar the sort's name) is `InvalidInput: group <g> spans
+are outside the supported fragment` in Python and `ManifestMismatch: groups.<g>` in Lean. Generating both checkers'
+diagnostics from one contract (P1) closes this. The opposite differences are not diagnostics but hints: Python's
+parser rejecting what Lean admits (`She owns"web_api".`, `She owns the API.` with `the API` a registered display,
+`It are safe.`) leaves the admission Lean's, with Python's `IllTypedTarget` in `discourse_hints`.
 
 ## 9. Lean (sequence 3): definitions and the exact statements to prove
 
@@ -1987,3 +2004,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-09-29 | Draft 4, amendment | Slot discovery stated as one function of each unit's own bytes (4.1(6)), after the discourse loop's final findings (`manage-agents/discourse-loop.final.md`, `discourse-slots-directive.md`): per-unit tokens, the four-character case fold, segments, longest-first surfaces and exact byte coverage, checked for every unit before any is resolved; `UnrecordedSlot` prints prose bytes in both checkers. |
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse2-looprecheck1.final.md`: the text inputs of `Acc` (binders, coordinations, restrictive properties) are read as the segments of 4.1(6), so a joined word (`service's`, `Bob’s`) never hides one, and a binder is a quantifier word followed later in its sentence by a word of the sort (its name or declared singular noun); a recorded surface is read as the lexer's words (any spaces); a mention's byte range must start and end on its unit's tokens (4.1(4)), in Python as in Lean. `acc_no_heuristic` takes the declared nouns and the units' bytes. |
 | 2026-10-01 | Draft 4, amendment | After `manage-agents/discourse2-loop.final.md` and `discourse-spacing-directive.md`: discourse wording (4.1(4)), the whitespace class closed by restriction. A unit that records a reference is printable ASCII with canonical spacing once the layout around it is removed, or `InvalidInput: discourse wording of <unit>` in both checkers before parsing; Python parses its expansions without that layout and with the parser's own spelling of each target constant, never a registered display. Differing codes on inputs both reject are a recorded known limitation (8). |
+| 2026-10-02 | Draft 4, amendment | After `manage-agents/discourse3-loop.final.md` and `discourse-authority-directive.md`: Python's `@2` admission is Lean's (3.4). The verdict, unit statuses, references, validity verdicts and report id come from the Lean route's `admission` answer on the same bytes; Python's own checks give hints and the diagnostic text of a document both reject (8); no Lean answer is `CheckerUnavailable`, Lean's `NotImplemented` (now also a document without a claim graph) is `UnsupportedProfile`. The quote-spacing, display and agreement differences of the loop are hints, not verdicts. |
