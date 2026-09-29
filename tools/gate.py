@@ -19,6 +19,8 @@ ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route")
+REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
+                   "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
     "test_conformance.py", "test_lean_conformance.py", "test_rust_conformance.py",
     "test_p0_three_way.py", "test_norms_three_way.py", "test_nary_differential.py",
@@ -178,6 +180,7 @@ def main() -> int:
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
     started_clean = False
+    completed = False
     try:
         result["commit_sha"], result["dirty"] = source_identity(env)
         if result["dirty"]:
@@ -253,6 +256,7 @@ def main() -> int:
                 raise RuntimeError("pytest did not write its result events")
             interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
         result["stages"].append("pytest")
+        completed = True
     except (OSError, ValueError, KeyError, RuntimeError) as exc:
         result["failures"].append({"stage": "gate", "reason": str(exc)})
     finally:
@@ -265,7 +269,7 @@ def main() -> int:
                                                "reason": "HEAD or worktree changed during gate"})
             except (OSError, RuntimeError) as exc:
                 result["failures"].append({"stage": "source identity", "reason": str(exc)})
-        if not result["failures"]:
+        if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
             result["status"] = "passed"
         write_result(output, result)
         print(f"[gate] {result['status']}: {output}; "
