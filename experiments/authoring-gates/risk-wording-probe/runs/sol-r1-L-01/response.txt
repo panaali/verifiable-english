@@ -1,0 +1,7 @@
+1. **(a)** A task delay happens in every allowed case when the agent runs the job with a memory limit.
+2. **(b)** A fall could be serious or severe, so it is not necessarily less severe than a severe seizure.
+3. **(b)** “Cannot lead” rules data loss out, while “might lead” says it is not ruled out.
+4. **(d)** “Might not lead” means at least one allowed case has deletion without data loss.
+5. **(c)** Four kilograms is greater than three, so taking the lift leads to a failure.
+6. **(c)** Five gigabytes is not greater than eight, so the “exactly when” rule excludes an outage.
+7. **(a)** Thirty-eight degrees does not meet the condition required for a seizure.

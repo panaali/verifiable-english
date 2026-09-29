@@ -1,0 +1,22 @@
+# Answers
+
+**Text 1: (d)** A lift failure happens.
+Since the rule explicitly states "Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms," and the parcel weighs 4 kg (which exceeds 3 kg), the condition is met and a lift failure occurs.
+
+**Text 2: (d)** Only drug B.
+The text states "Giving drug B cannot lead to nausea," which definitively rules out nausea with drug B, whereas drug A's risk of nausea depends on dose levels and is not ruled out.
+
+**Text 3: (d)** A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+The sentence is a factual claim about what is possible (a statement about reality), not a rule, and it establishes that data loss cannot occur from emptying the cache.
+
+**Text 4: (b)** A fall happens in every case the text allows.
+The text states "Taking the lift leads to a fall," and since the robot takes the lift, a fall necessarily occurs according to the text's logic.
+
+**Text 5: (b)** In at least one case the text allows, the clinic gives drug B and no fever happens.
+Since the text states that fever is avoidable by the clinic, and both nothing and drug A lead to fever, drug B must allow the clinic to avoid fever in at least one scenario.
+
+**Text 6: (b)** The text does not say.
+The text only states that nothing "might" prevent a fever (introducing possibility, not certainty) and provides no information about what the vaccine does, so no definitive conclusion can be drawn beyond this possibility.
+
+**Text 7: (a)** Serious or severe.
+The text states "A server outage is serious or worse," and "worse" than serious means the next higher severity level, which is severe—so outages can be either serious or severe.
