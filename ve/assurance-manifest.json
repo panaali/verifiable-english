@@ -165,6 +165,7 @@
       "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
+      "lean/RiskEvalMain.lean": "test-only differential harness ve_risk_eval (risk.md 8.3): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem imports it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path"
     }
