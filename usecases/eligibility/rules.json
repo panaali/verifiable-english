@@ -557,7 +557,7 @@
    "rule": "R6",
    "role": "applicant",
    "source": "S1 reg. 1(4)(b)",
-   "gloss": "The applicant lives with the housemate exactly when they share a mutual home and neither is in residential care.",
+   "gloss": "The applicant lives with the housemate exactly when they share a mutual home and the applicant is not in residential care.",
    "formula": [
     "and",
     [
@@ -589,27 +589,13 @@
        ]
       ],
       [
-       "and",
+       "not",
        [
-        "not",
+        "unary",
+        "in_residential_care",
         [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "applicant"
-         ]
-        ]
-       ],
-       [
-        "not",
-        [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "housemate"
-         ]
+         "const",
+         "applicant"
         ]
        ]
       ]
@@ -632,27 +618,13 @@
        ]
       ],
       [
-       "and",
+       "not",
        [
-        "not",
+        "unary",
+        "in_residential_care",
         [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "applicant"
-         ]
-        ]
-       ],
-       [
-        "not",
-        [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "housemate"
-         ]
+         "const",
+         "applicant"
         ]
        ]
       ]
@@ -1234,8 +1206,8 @@
    "id": "R11.applicant",
    "rule": "R11",
    "role": "applicant",
-   "source": "S1 reg. 4(4)",
-   "gloss": "Regulation 4(4) applies to the applicant exactly when the applicant is resident in England or Wales on a day of the week and became ordinarily resident in Scotland or Northern Ireland no later than 2026-09-27.",
+   "source": "S1 reg. 4(4), reading AR6",
+   "gloss": "Regulation 4(4) applies to the applicant exactly when the applicant is resident in England or Wales on a day of the week and, no earlier than the applicant's first day of that residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or Northern Ireland no later than 2026-09-27.",
    "formula": [
     "and",
     [
@@ -1269,15 +1241,46 @@
         ]
        ],
        [
-        "date_no_later",
+        "and",
         [
-         "const",
-         "day",
-         "applicant_scot_ni_from"
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "applicant_ew_from"
+         ],
+         [
+          "const",
+          "day",
+          "applicant_scot_ni_from"
+         ]
         ],
         [
-         "date",
-         "2026-09-27"
+         "and",
+         [
+          "date_no_later",
+          [
+           "date",
+           "2026-09-21"
+          ],
+          [
+           "const",
+           "day",
+           "applicant_scot_ni_from"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "applicant_scot_ni_from"
+          ],
+          [
+           "date",
+           "2026-09-27"
+          ]
+         ]
         ]
        ]
       ]
@@ -1306,15 +1309,46 @@
         ]
        ],
        [
-        "date_no_later",
+        "and",
         [
-         "const",
-         "day",
-         "applicant_scot_ni_from"
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "applicant_ew_from"
+         ],
+         [
+          "const",
+          "day",
+          "applicant_scot_ni_from"
+         ]
         ],
         [
-         "date",
-         "2026-09-27"
+         "and",
+         [
+          "date_no_later",
+          [
+           "date",
+           "2026-09-21"
+          ],
+          [
+           "const",
+           "day",
+           "applicant_scot_ni_from"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "applicant_scot_ni_from"
+          ],
+          [
+           "date",
+           "2026-09-27"
+          ]
+         ]
         ]
        ]
       ]
@@ -2266,7 +2300,7 @@
    "rule": "R6",
    "role": "housemate",
    "source": "S1 reg. 1(4)(b)",
-   "gloss": "The housemate lives with the applicant exactly when they share a mutual home and neither is in residential care.",
+   "gloss": "The housemate lives with the applicant exactly when they share a mutual home and the housemate is not in residential care.",
    "formula": [
     "and",
     [
@@ -2298,27 +2332,13 @@
        ]
       ],
       [
-       "and",
+       "not",
        [
-        "not",
+        "unary",
+        "in_residential_care",
         [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "housemate"
-         ]
-        ]
-       ],
-       [
-        "not",
-        [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "applicant"
-         ]
+         "const",
+         "housemate"
         ]
        ]
       ]
@@ -2341,27 +2361,13 @@
        ]
       ],
       [
-       "and",
+       "not",
        [
-        "not",
+        "unary",
+        "in_residential_care",
         [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "housemate"
-         ]
-        ]
-       ],
-       [
-        "not",
-        [
-         "unary",
-         "in_residential_care",
-         [
-          "const",
-          "applicant"
-         ]
+         "const",
+         "housemate"
         ]
        ]
       ]
@@ -2943,8 +2949,8 @@
    "id": "R11.housemate",
    "rule": "R11",
    "role": "housemate",
-   "source": "S1 reg. 4(4)",
-   "gloss": "Regulation 4(4) applies to the housemate exactly when the housemate is resident in England or Wales on a day of the week and became ordinarily resident in Scotland or Northern Ireland no later than 2026-09-27.",
+   "source": "S1 reg. 4(4), reading AR6",
+   "gloss": "Regulation 4(4) applies to the housemate exactly when the housemate is resident in England or Wales on a day of the week and, no earlier than the housemate's first day of that residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or Northern Ireland no later than 2026-09-27.",
    "formula": [
     "and",
     [
@@ -2978,15 +2984,46 @@
         ]
        ],
        [
-        "date_no_later",
+        "and",
         [
-         "const",
-         "day",
-         "housemate_scot_ni_from"
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "housemate_ew_from"
+         ],
+         [
+          "const",
+          "day",
+          "housemate_scot_ni_from"
+         ]
         ],
         [
-         "date",
-         "2026-09-27"
+         "and",
+         [
+          "date_no_later",
+          [
+           "date",
+           "2026-09-21"
+          ],
+          [
+           "const",
+           "day",
+           "housemate_scot_ni_from"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "housemate_scot_ni_from"
+          ],
+          [
+           "date",
+           "2026-09-27"
+          ]
+         ]
         ]
        ]
       ]
@@ -3015,15 +3052,46 @@
         ]
        ],
        [
-        "date_no_later",
+        "and",
         [
-         "const",
-         "day",
-         "housemate_scot_ni_from"
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "housemate_ew_from"
+         ],
+         [
+          "const",
+          "day",
+          "housemate_scot_ni_from"
+         ]
         ],
         [
-         "date",
-         "2026-09-27"
+         "and",
+         [
+          "date_no_later",
+          [
+           "date",
+           "2026-09-21"
+          ],
+          [
+           "const",
+           "day",
+           "housemate_scot_ni_from"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "housemate_scot_ni_from"
+          ],
+          [
+           "date",
+           "2026-09-27"
+          ]
+         ]
         ]
        ]
       ]
