@@ -8,11 +8,12 @@ from .ast import _Checker, _Decoder, _to_data
 from .english import parse_english
 from .environment import RESERVED
 from .errors import VEError
-from .speech_acts import act_verb, ascii_fold, wording_text
+from .speech_acts import act_verb, ascii_fold, ascii_wording, wording_text
 
 
 def _formula(env, sentence):
-    parsed = parse_english(env, sentence)
+    # An embedded formula is ASCII (3.2): P0's English never sees a character it would normalise.
+    parsed = parse_english(env, ascii_wording(sentence))
     if len(parsed.formulas) != 1:
         raise VEError("Speech wording requires one sentence")
     return parsed.formulas[0]
@@ -92,7 +93,7 @@ def _copular(env, name, rest, warnings=None):
 
 
 def _sentence(env, source, warnings=None):
-    match = re.fullmatch(r"([A-Za-z][A-Za-z0-9_]*) (is .+)\.", source)
+    match = re.fullmatch(r"([A-Za-z][A-Za-z0-9_]*) (is .+)\.", ascii_wording(source))
     if match:
         try:
             return _copular(env, _name(env, match[1]), match[2], warnings)

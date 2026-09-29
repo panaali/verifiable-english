@@ -591,6 +591,12 @@ def chosenMeaning (j : Json) (content : Option Json) : Json :=
   | some (Json.str "reading"), Json.str i => Json.mkObj [("open", Json.arr #[Json.str ("intended-reading." ++ i)])]
   | _, _ => Json.str "specified"
 
+def nonAsciiWording : String := "InvalidInput: non-ASCII speech wording"
+
+/-- 3.2: a speech-act wording (a sentence, a fence, an embedded formula) is ASCII only, as Python's
+`ascii_wording`. -/
+def asciiWording (s : String) : Bool := s.all (·.toNat < 128)
+
 /-- The one normalisation of a wording and an act phrase for `surfaceKind` (3.2), as Python's `surface_words`:
 ASCII only. The six ASCII whitespace characters of Python's `string.whitespace` separate words (runs collapse to
 one space, none leads or trails) and only `A`-`Z` fold (`Char.toLower`); every other character is a letter. -/
@@ -654,6 +660,9 @@ def chosenUnit (j : Json) (kind : Json) (content : Option Json) : Except String 
 def decodeUnitIn (E : VE.Environment) (regulated : List VE.Norms.Regulated)
     (states : List (String × Nat × ReadingState)) (j : Json) :
     Except String SpeechUnitInfo := do
+  -- 3.2: a wording is ASCII, rejected before it is classified (Python's `ascii_wording`).
+  if let .ok (.str source) := j.getObjVal? "source" then
+    unless asciiWording source do throw nonAsciiWording
   let id := match j.getObjValD "id" with
     | .str i => i
     | _ => ""

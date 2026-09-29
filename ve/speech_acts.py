@@ -273,14 +273,28 @@ def surface_words(text):
     return " ".join(w for w in _SURFACE_SPACE.split(text) if w).translate(_SURFACE_FOLD)
 
 
+NON_ASCII_WORDING = "InvalidInput: non-ASCII speech wording"
+
+
+def ascii_wording(text):
+    """3.2: a speech-act wording is ASCII only, as Lean's `asciiWording`; any other character is `NON_ASCII_WORDING`.
+
+    Checked before a wording is classified or read, so no reader (the surface
+    kind, the speech parser, P0's English for an embedded formula) sees a
+    character another reader would normalise differently.
+    """
+    if not text.isascii():
+        raise VEError(NON_ASCII_WORDING)
+    return text
+
+
 def wording_text(text):
-    """A unit's wording without leading or trailing ASCII whitespace, the only whitespace `surface_words` knows.
+    """A unit's ASCII wording (`ascii_wording`) without leading or trailing ASCII whitespace.
 
     Every reader of a wording (the source wrapper's span and fence, the speech
-    parser) trims with this, so no path sees a different sentence: Unicode
-    whitespace such as U+00A0 is part of the wording, never stripped.
+    parser) trims with this, so no path sees a different sentence.
     """
-    return text.strip(_SURFACE_SPACES)
+    return ascii_wording(text).strip(_SURFACE_SPACES)
 
 
 def ascii_fold(text):
@@ -314,7 +328,7 @@ def surface_kind(env, wording):
     """
     if type(wording) is not str:
         raise VEError("InvalidInput: speech wording")
-    text = surface_words(wording)
+    text = surface_words(ascii_wording(wording))
     if text.endswith("?"):
         return "question"
     if text.startswith(("in this task, ", "this document is task ")):
@@ -526,6 +540,8 @@ class SpeechDocument:
             if type(uid) is not str or not _TOKEN.fullmatch(uid) or uid in ids:
                 raise VEError("InvalidInput: speech unit id")
             ids.add(uid)
+            if type(raw.get("source")) is str:  # 3.2, as Lean's `decodeUnitIn`, before any reading
+                ascii_wording(raw["source"])
             if uid in latest:
                 # A present `source`, `null` included, is the wording (Lean's `decodeUnitIn`).
                 if (latest[uid]["status"] == "authored" and "source" in raw
