@@ -344,7 +344,7 @@ def legend (src : RiskSource) : List String :=
   (match R.risk.unexamined with
    | .possible => ["An unexamined outcome counts as possible."]
    | _ => match R.risk.alwaysPossible with
-     | [] => [s!"{decider} rules out unexamined outcomes."]
+     | [] => [s!"{decider.capitalize} rules out unexamined outcomes."]
      | cs => [s!"An unexamined {" or ".intercalate cs} outcome counts as possible; {decider} rules out other unexamined outcomes."]) ++
   (match chainOrder R with
    | some order => [s!"Severity, from most to least severe: {", ".intercalate order}. Severity is set by {R.risk.severity.decidedBy}."]

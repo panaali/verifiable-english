@@ -180,7 +180,7 @@ theorem normalize_eval (f : LinForm) (v : Valuation) : f.normalize.eval v = f.ev
 
 abbrev NormLinForm := {f : LinForm // f.Normal}
 
-def NormLinForm.mk' (f : LinForm) : NormLinForm := ⟨f.normalize, normalize_normal f⟩
+def NormLinForm.ofForm (f : LinForm) : NormLinForm := ⟨f.normalize, normalize_normal f⟩
 
 /-- Every coefficient and the constant negated (`nnf`); stays normal. -/
 def LinForm.neg (f : LinForm) : LinForm := ⟨f.coeffs.map (fun (q, c) => (q, -c)), -f.const⟩

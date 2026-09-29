@@ -327,6 +327,31 @@ def statusText (s : Status) : String :=
   (if s.required then "required" else if s.permitted then "permitted" else "forbidden") ++
     (if s.clear then "; clear" else "; not clear")
 
+/-- Alt's diagnosis (4.6) for the record's chooser on the decision model (untrusted text, 7.4). -/
+def diagnosisOf (R : RiskDoc) (d : Decision) : String :=
+  let r : VE.Bridge.Entity := (R.alt.chooser, d.chooser)
+  VE.Alternatives.Run.diagnosisText r (VE.Alternatives.diagnose (toAlt R) (decisionModel R d) r)
+
+/-- The status of `a` in a Q1 line (5.2): permitted but not clear, required but not clear, or forbidden with
+the deciding rules. -/
+def auditStatusText (R : RiskDoc) (d : Decision) (a : String) : String :=
+  match (statuses R d).lookup a with
+  | some s =>
+    if s.permitted then (if s.required then "required but not clear" else "permitted but not clear")
+    else match decidingRules R d a with
+      | [] => "forbidden (by default)"
+      | [n] => s!"forbidden by rule {n}"
+      | ns => s!"forbidden by rules {", ".intercalate (ns.map toString)}"
+  | none => "not an alternative of the decision"
+
+/-- 4.10, 5.2: `NO CLEAR ACTION AT DECISION TIME: <diagnosis>; <alternative> was <status>.` A conflict at the
+decision has no per-alternative evaluation (4.8), and the line says so. -/
+def noClearActionText (R : RiskDoc) (d : Decision) (a : String) : String :=
+  match VE.Alternatives.scenarioConflict (toAlt R) (decisionModel R d) with
+  | some (t, vs) =>
+    s!"CONFLICT at ({", ".intercalate (vs.map (·.2))}) on {t.1}; {a} was not evaluated, because the rules conflict"
+  | none => s!"{diagnosisOf R d}; {a} was {auditStatusText R d a}"
+
 def decisionRecordId (dx : Entry) : String :=
   match VE.CertificateWire.canonical 257 dx.content with
   | .ok text => VE.CertificateWire.sha256 text.toUTF8
@@ -393,28 +418,39 @@ def runDecision (id : String) (j : Json) : Except String Json := do
     let defaultDecided := (d.alternatives.filter fun a => (firingRules R d a.name).isEmpty).map (·.name)
     let clear := (res.statuses.filter (·.2.clear)).map (·.1)
     let conditional := d.cited.map (·.id)
+    let dilemmas := if clear.isEmpty then [diagnosisOf R d] else []
     let lines := Json.mkObj [
       ("unexamined_possible", toJson (unexaminedPossible.map fun (a, h) => s!"{a}/{h}")),
       ("assumed_ruled_out", Json.mkObj [("decider", .str decider),
         ("cells", toJson (ruledOut.map fun (a, h) => s!"{a}/{h}"))]),
-      ("point_estimates", toJson points), ("default_decided", toJson defaultDecided)]
+      ("point_estimates", toJson points), ("default_decided", toJson defaultDecided),
+      ("dilemmas", toJson dilemmas)]
     let statusLines := res.statuses.map fun (a, s) => s!"{a}: {statusText s}"
-    let text := s!"Decision {d.id} — conditional on {", ".intercalate conditional}" ++
-      (if ruledOut.isEmpty then "" else s!" and {decider}'s ruled-out cells ({ruledOut.length} listed)") ++ ". " ++
+    -- 5.2: the ruled-out cells and the unexamined cells counted as possible are both part of the condition
+    let extras := (if ruledOut.isEmpty then [] else [s!"{decider}'s ruled-out cells ({ruledOut.length} listed)"]) ++
+      (if unexaminedPossible.isEmpty then []
+       else [s!"{unexaminedPossible.length} unexamined cells counted as possible"])
+    let conditionalText := match extras with
+      | [] => ", ".intercalate conditional
+      | [x] => s!"{", ".intercalate conditional} and {x}"
+      | xs => s!"{", ".intercalate (conditional ++ xs.dropLast)} and {xs.getLastD ""}"
+    let text := s!"Decision {d.id} — conditional on {conditionalText}. " ++
       "; ".intercalate statusLines ++ ". " ++
       (match clear with
-       | [] => "No clear action."
+       | [] => s!"No clear action: {diagnosisOf R d}."
        | [a] => s!"Clear actions: {a}."
        | cs => s!"Clear actions: {"; ".intercalate cs}. The policy does not choose among them.")
     return ok id (base ++ [("tables", tablesJ), ("statuses", statusesJ), ("worst_cases", worstJ),
       ("margins", marginsJ), ("record_invalid", invalidJ), ("record_conflict", conflictJ), ("lines", lines),
       ("clear", toJson clear), ("conditional_on", toJson conditional), ("text", .str text)])
 
-def q1Text (d : Option Decision) (a : String) : Q1 → String
+def q1Text (R : RiskDoc) (d : Option Decision) (a : String) : Q1 → String
   | .permitted true => s!"PERMITTED AT DECISION TIME: {a} was clear given {cites d}."
   | .permitted false => s!"PERMITTED AT DECISION TIME: {a} was permitted but not clear given {cites d}."
   | .forbidden rules => s!"FORBIDDEN AT DECISION TIME: {a} was forbidden by rule {", ".intercalate (rules.map toString)} given {cites d}."
-  | .noClearAction => s!"NO CLEAR ACTION AT DECISION TIME: {a}."
+  | .noClearAction => match d with
+    | some d => s!"NO CLEAR ACTION AT DECISION TIME: {noClearActionText R d a}."
+    | none => s!"NO CLEAR ACTION AT DECISION TIME: {a}."
   | .notReplayable t => s!"NOT REPLAYABLE: {t}"
 where cites (d : Option Decision) : String := match d with
   | some d => ", ".intercalate (d.cited.map (·.id))
@@ -432,7 +468,7 @@ def runAudit (id : String) (j : Json) : Except String Json := do
   let q3 := auditQ3 R res.log res.decision res.alternative
   let surprise := q3.any (fun l => (l.splitOn "surprise").length > 1)
   return ok id [("alternative", .str res.alternative),
-    ("q1", .str (q1Text (sn.map (·.decision)) res.alternative res.q12.q1)),
+    ("q1", .str (q1Text R (sn.map (·.decision)) res.alternative res.q12.q1)),
     ("q2", .str (q2Text res.q12.q2)), ("procedure", toJson res.q12.procedure), ("q3", toJson q3),
     ("not_concluded", toJson (if surprise then ["Not concluded: that the decision was wrong because a harm followed."] else []))]
 

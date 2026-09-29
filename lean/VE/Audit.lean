@@ -1884,6 +1884,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Risk.stepEq_eval
 #print axioms VE.Risk.capacity_eq
 #print axioms VE.Risk.unitForm_terms
+#print axioms VE.Risk.recordOrder_perm
+#print axioms VE.Risk.capacity_perm
 #print axioms VE.Risk.minVal_start
 #print axioms VE.Risk.eqWit_sound
 #print axioms VE.Risk.termSum_congr
