@@ -7,16 +7,16 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 | Measure | Result |
 |---|---|
-| Strict, every scored question of a profile correct | 57/57 |
-| Q1 | 57/57 |
-| Q2 | 44/44 |
-| Q3 | 44/44 |
-| Q4 | 44/44 |
-| Total | 189/189 |
-| Answered (certified) | 189/189 |
-| Precision (correct / answered) | 189/189 |
-| unflagged profiles: strict | 49/49 |
-| unflagged profiles: questions | 160/160 |
+| Strict, every scored question of a profile correct | 62/62 |
+| Q1 | 62/62 |
+| Q2 | 48/48 |
+| Q3 | 48/48 |
+| Q4 | 48/48 |
+| Total | 206/206 |
+| Answered (certified) | 206/206 |
+| Precision (correct / answered) | 206/206 |
+| unflagged profiles: strict | 53/53 |
+| unflagged profiles: questions | 173/173 |
 | guide profiles: strict | 38/38 |
 | guide profiles: questions | 131/131 |
 
@@ -27,6 +27,7 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 | B06 | guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | B09 | scope | NO | NO | yes |
 | B10 | ambiguous-source | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
+| B16 | ambiguous-source | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | C11 | ambiguous-source, guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | C12 | guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
 | C14 | guide-divergence | YES 200.00 NO 200.00 | YES 200.00 NO 200.00 | yes |
@@ -39,24 +40,24 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 ## Single shot (all rules and facts in one problem)
 
-Q1 answered on 0 of 57 profiles; Q2 to Q4 therefore OPEN everywhere.
+Q1 answered on 0 of 62 profiles; Q2 to Q4 therefore OPEN everywhere.
 Every search stopped with status `NotFound`:
 
 | Search | Status | Steps | Searches |
 |---|---|---|---|
-| bottom | NotFound | 124 | 36 |
-| bottom | NotFound | 125 to 999 | 21 |
-| entitled | NotFound | 124 | 36 |
-| entitled | NotFound | 125 to 999 | 21 |
-| not_entitled | NotFound | 125 to 999 | 57 |
+| bottom | NotFound | 124 | 39 |
+| bottom | NotFound | 125 to 999 | 23 |
+| entitled | NotFound | 124 | 39 |
+| entitled | NotFound | 125 to 999 | 23 |
+| not_entitled | NotFound | 125 to 999 | 62 |
 
 ## Evidence
 
-- Step certificates produced: 1328; accepted by Lean `ve_quantity`: 1328.
-- Answer documents (`documents@1`): 189; admitted by Lean: 189.
-- Non-vacuity: 4154 of 4154 premise evaluations are true in the reference fixture models (Lean evaluation).
+- Step certificates produced: 1448; accepted by Lean `ve_quantity`: 1448.
+- Answer documents (`documents@1`): 206; admitted by Lean: 206.
+- Non-vacuity: 4528 of 4528 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 364 distinct, 3632 requested.
+- Proof searches: 390 distinct, 3952 requested.
 
 ## Probes (PLAN section 8, stage 0)
 
@@ -69,7 +70,7 @@ Every search stopped with status `NotFound`:
 
 ## Mutants
 
-Killed: 19/19.
+Killed: 23/23.
 
 | Mutant | Change | Must change | Changed | Killed |
 |---|---|---|---|---|
@@ -84,15 +85,19 @@ Killed: 19/19.
 | M9 | R9 without 'under a sentence' | B06 | B06 | yes |
 | M10 | R11 'before' for 'on or before' | C20 | C20 | yes |
 | M11 | R12 'before' 31 March | C22 | C22 | yes |
-| M12 | R3 'every day' for 'any day' | C17, C19 | C17, C19 | yes |
-| M13 | R16 counting the partner's income | D05 | 43 profiles | yes |
+| M12 | R3 'every day' for 'any day' | C17, C19 | B15, B16, B19, C17, C19 | yes |
+| M13 | R16 counting the partner's income | D05 | 47 profiles | yes |
 | M14 | R14 without 3(3) | A08 | A08, B14, C08 | yes |
 | M15 | R4 without income support | B11 | B11 | yes |
 | M16 | R4 without income-based JSA | B12 | B12 | yes |
-| M17 | R4 without state pension credit | B01, B04 | A07, A08, A09, B01, B04, C08, C09 | yes |
+| M17 | R4 without state pension credit | B01, B04 | A07, A08, A09, B01, B04, B18, C08, C09 | yes |
 | M18 | R4 without income-related ESA | B13 | B13 | yes |
 | M19 | R4 without universal credit | B14 | B14 | yes |
+| M20 | R11 without the order of AR6 | B15, B16, B19 | B15, B16, B19 | yes |
+| M21 | R11 without the QW0 bound of AR6 | B16 | B16 | yes |
+| M22 | R11 without the E&W-start bound of AR6 | B19 | B19 | yes |
+| M23 | R6 with the other person also out of residential care | B17, B18 | B17, B18 | yes |
 
 ## English
 
-62 of 119 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+69 of 127 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
