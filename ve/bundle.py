@@ -96,6 +96,26 @@ def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> 
                             mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
 
 
+def _lean_bundle_scope(data) -> bool:
+    """Whether Lean's route bundle case (`VE.Definitions.Bundle`) takes `data`:
+    FOL-family ve.core@0.2 environments without norm declarations or statement
+    layers. Bundles on the closure, core and order families and over norms
+    environments are not on the route yet (a recorded gap)."""
+    environment = data.get("environment") if type(data) is dict else None
+    if type(environment) is not dict or environment.get("language") != "ve.core@0.2":
+        return False
+    if {"unit_schema", "units", "alternatives"} & set(environment):
+        return False
+    profiles = environment.get("profiles")
+    if type(profiles) is not list or {"closure@0", "nary@0", "order@0", "soft-norms@0",
+                                      "reports@0"} & {p for p in profiles if type(p) is str}:
+        return False
+    vocabulary = environment.get("vocabulary")
+    predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
+    return type(predicates) is dict and not any(
+        type(entry) is dict and "regulated" in entry for entry in predicates.values())
+
+
 @semantic_entry("bundle.check")
 def check_bundle(data, *, lean_executable=None):
     """Replay a lemma bundle; with `lean_executable`, Lean must also accept it.
@@ -103,13 +123,48 @@ def check_bundle(data, *, lean_executable=None):
     `lean_outcome` is `accepted`, `not_requested`, or `not_applicable` (no
     lemmas). A Lean rejection raises `VEError`; Lean giving no answer raises
     `CheckerUnavailable`, which is operational and never a verdict.
+
+    Under a backend authority the bundle's acceptance is Lean's route bundle
+    verdict (`bundle_sound`); the report (leaves, reading choices, English) is
+    built by the Python walk, which also names a rejection both make.
     """
+    from .backends.dispatch import authority_for, execute
+
+    def python():
+        return _check_bundle_python(data, lean_executable=lean_executable)
+
+    if authority_for("bundle") in ("python", "rust-experimental") or not _lean_bundle_scope(data):
+        return python()
+    return execute("bundle", {"kind": "bundle"}, python, lean=lambda: _check_bundle_lean(data, python))
+
+
+def _check_bundle_lean(data, python):
+    from .backends.lean_runner import run
+    from .backends.validation import decided, key
+    _bundle_container(data)
+    case = {"id": "bundle", "kind": "bundle", "environment": data["environment"],
+            "lemmas": data.get("lemmas"), **({"document": data["document"]} if "document" in data else {})}
+    try:
+        cache = key("bundle", data)
+    except (VEError, TypeError, ValueError, RecursionError):
+        cache = None
+    return decided(python, cache, lambda: run("route", [case])[0],
+                   lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
+                   "a bundle")
+
+
+def _bundle_container(data) -> None:
+    """The bundle file format: fields, version and lemma array (structural)."""
     require_fields(data, {"version", "environment", "lemmas"} |
                    ({"document"} if type(data) is dict and "document" in data else set()))
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
         raise VEError("Unsupported lemma bundle version or lemmas array")
     if len(data["lemmas"]) > 256:
         raise ResourceLimit("Lemma bundle exceeds 256 lemmas")
+
+
+def _check_bundle_python(data, *, lean_executable=None):
+    _bundle_container(data)
     env = Environment(data["environment"])
     document = data.get("document", {"reading_sets": []})
     require_fields(document, {"reading_sets"})
