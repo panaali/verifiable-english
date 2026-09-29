@@ -32,8 +32,12 @@ SPACES = frozenset(map(chr, (9, 10, 11, 12, 13, 28, 29, 30, 31, 32, 0x85, 0xA0, 
 _AMOUNT_CHARS = frozenset("-.0123456789")
 POINTS_SUFFIX = " percentage points"
 W6_PROFILES = (("order@0", "relational-fol@0", "time@0"),
-               ("documents@1", "order@0", "relational-fol@0", "time@0"),
-               ("alternatives@0", "norms@0", "relational-fol@0", "risk@0"))
+               ("documents@1", "order@0", "relational-fol@0", "time@0"))
+# risk@0 carries the unit extension on its own route (risk.md 1, 3.1); the
+# frozen quantity-route tuples and their diagnostic above are unchanged.
+RISK_UNIT_PROFILES = (("alternatives@0", "norms@0", "relational-fol@0", "risk@0"),)
+W6_PROFILE_TEXT = ("ve-units@1 requires exactly order@0, relational-fol@0 and time@0, "
+                   "optionally with documents@1")
 NUMBERS2 = "$int quantification requires the missing numbers2 route"
 
 
@@ -194,8 +198,8 @@ def validate_slot_units(raw, args, units):
 
 def validate_extension(profiles, units, sorts, constants):
     """Route-level W6 environment conditions, after the vocabulary is decoded."""
-    if tuple(profiles) not in W6_PROFILES:
-        raise UnsupportedProfile("ve-units@1 requires the quantity route or risk@0")
+    if tuple(profiles) not in W6_PROFILES + RISK_UNIT_PROFILES:
+        raise UnsupportedProfile(W6_PROFILE_TEXT)
     for tag in (DIMENSIONLESS, *units):
         if tag in sorts:
             raise VEError(f"Unit tag {tag} collides with a declared sort")

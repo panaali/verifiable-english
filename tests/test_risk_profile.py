@@ -1,5 +1,6 @@
 """Risk declaration identity, gates, and fail-closed dispatch."""
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 
@@ -56,6 +57,33 @@ def test_risk_block_with_w6_quantity_kind_round_trips():
     raw["risk"]["quantity_kinds"] = {"memory": "gb"}
     env = Environment(raw)
     assert env.to_dict() == raw
+
+
+W6_FROZEN = ("UnsupportedProfile: ve-units@1 requires exactly order@0, relational-fol@0 and time@0, "
+             "optionally with documents@1")
+
+
+@pytest.mark.parametrize("profiles", [
+    ["relational-fol@0"], ["order@0", "relational-fol@0"], ["relational-fol@0", "time@0"],
+    ["documents@1", "relational-fol@0", "time@0"],
+])
+def test_w6_profile_diagnostic_is_unchanged_without_risk(profiles):
+    """Review A1/B2: risk@0 adds a profile tuple only; the shared W6 text stays frozen."""
+    raw = {"language": LANGUAGE, "profiles": profiles, "spec_revision": SPEC_REVISION,
+           "vocabulary": {"sorts": {"item": {"description": "an item"}}, "constants": {},
+                          "predicates": {"p": {"arguments": ["item"], "description": "p"}}},
+           "unit_schema": "ve-units@1", "units": {}}
+    with pytest.raises(VEError) as caught:
+        Environment(raw)
+    assert f"{type(caught.value).__name__}: {caught.value}" == W6_FROZEN
+    root = Path(__file__).resolve().parents[1]
+    text = W6_FROZEN.removeprefix("UnsupportedProfile: ")
+    assert f'"UnsupportedProfile: {text}"' in (root / "lean/VE/Time/Wire.lean").read_text()
+    assert f'"{text}"' in (root / "rust/ve-core/src/units.rs").read_text()
+    from ve.units import validate_extension
+    with pytest.raises(VEError) as caught:
+        validate_extension(profiles, {}, {}, {})
+    assert f"{type(caught.value).__name__}: {caught.value}" == W6_FROZEN
 
 
 def test_risk_quantity_environment_rejects_order_checker():

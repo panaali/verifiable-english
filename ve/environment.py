@@ -309,9 +309,9 @@ class Environment:
                 raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
             order = family == "order"
             if extended:
-                from .units import W6_PROFILES
-                if tuple(data["profiles"]) not in W6_PROFILES:
-                    raise UnsupportedProfile("ve-units@1 requires the quantity route or risk@0")
+                from .units import RISK_UNIT_PROFILES, W6_PROFILE_TEXT, W6_PROFILES
+                if tuple(data["profiles"]) not in W6_PROFILES + RISK_UNIT_PROFILES:
+                    raise UnsupportedProfile(W6_PROFILE_TEXT)
         elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
