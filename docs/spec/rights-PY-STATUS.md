@@ -1,13 +1,21 @@
-# Rights Python implementation status
+# Rights integration status
 
-This branch implements a Python subset of [rights.md](rights.md) without changing the W1 or soft-norms contracts. The generated soft tree is replayed by the existing Lean soft route; there is no Lean rights route on this branch.
+The Python profile and Lean rights route are merged on `rights/integrate`. Rights
+correlation is checked against the soft Lean route, and the document report
+replays the independent rights Lean route. The original soft-norms Lean sources
+remain the merged `soft/build` versions.
 
-| Plan item | Implemented | Remaining |
+| Area | Implemented | Remaining |
 |---|---|---|
-| 2, profile | Identity-bound `rights@0` environment block; incident shapes, fan-out, power split, limitations, bar; generated `E″`, soft `T″`, and `Lim_D`; rights background model validation; document check of the correlated soft tree | Rights-specific graph admission and certificates; full citation and limitation-scope audit; generated predicates in authored guards |
-| 3, English | Strict and default claim, liberty, and immunity incident sentences reuse the P0-audited soft rule parser; read-only wordings for right, limitation and bar units | Full W7 inverse grammar for right headers, `includes`, limitations, bar, coupling, fan-out and passive rewrite; complete surface registrations |
-| 5, coverage | Axis, limitation, bar, power-shadow, narrowing and coupling counts; compatible coupled-choice enumeration and `conditional_on` for checked assertion choices | Verified separating situations for right-block candidates; per-certificate limitation premises used; full licensing and non-discrimination findings |
+| Profile and W2 | Identity-bound rights block; incident shapes, fan-out, power, limitations, bar, generated vocabulary and premises; labelled couplings; checked finite separating situations for complete standalone right readings; authored guards may name generated limitation and condition predicates | Rights-path graph admission and certificate theorem; per-choice elaboration with other rights units and limitations; graph leaves for rights and coupling labels |
+| English | Strict and default incident sentences reuse the soft grammar; readable right, limitation and bar unit wording | Inverse grammar for complete right headers, includes, limitations, bar, fan-out, coupling and passive rewrite |
+| Reports | Lean-replayed scope licensing, distinction hits, bar rows and conflict status in document checks; coverage counts; right-route certificate replay reports `conditional_on` when supplied | Document-level certificate submission and per-certificate limitation usage; automatic conflict and scope certificate search; full example-situation narratives |
+| Conformance | Ten fixture shapes compare Python correlation, Lean rights elaboration and Lean soft elaboration; Lean build-time fixture guards and end-to-end certificate replay | Ternary μ and ψ (Lean's current formula language is binary); exhaustive acceptance fixtures and per-choice W2 verdicts |
 
-The document check rejects a rights graph rather than admitting it without the rights route. Multi-candidate right readings with unverified separating models are rejected. These boundaries keep an unsupported certificate from appearing checked.
+The rights route rejects W2 graph admission explicitly. Document checks do not
+present such a graph as admitted. A right reading set is reported as pending
+per-choice elaboration if its candidates would change the rights tree. These
+boundaries keep unchecked certificates and readings out of a checked verdict.
 
-Reproduce the implemented conformance checks with `uv run --offline python conformance/rights.py` after `lake build` in `lean/`.
+Run `python conformance/rights_three_way.py` after `lake build` to regenerate
+`conformance/rights-three-way-report.json`.
