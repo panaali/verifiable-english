@@ -21,6 +21,44 @@ def rights_meaning_id(env, content):
                        {"environment_id": env.environment_id, "ast": content})
 
 
+def _right_situation(env, content, wire):
+    """Evaluate a complete right reading on one checked finite base situation."""
+    from itertools import product as tuples
+    from .evaluate import _Evaluator
+    from .model import FiniteModel
+    from .rights import RightsDocument
+
+    rights = RightsDocument(env, [content])
+    tree = rights.soft_document.elaborated
+    base = tree.base_environment()
+    model = FiniteModel.from_dict(base, wire)
+    evaluator = _Evaluator(base, model, 1_000_000, trace=False)
+    for _label, premise in (*rights.soft_document.extended_env.soft_premises,
+                            *rights.limitation_premises):
+        if not evaluator.formula(premise, ())[0]:
+            raise VEError("distinguishing model violates a generated premise")
+    outcomes = []
+    for predicate, decl in sorted(tree.env.predicates.items()):
+        if decl.regulated is None:
+            continue
+        for values in tuples(*(model.domains[s] for s in decl.arguments)):
+            bindings = tuple(zip(reversed(decl.arguments), reversed(values)))
+            value, _ = evaluator.formula(tree.outcome(predicate, base=True), bindings)
+            outcomes.append((predicate, values, value))
+    selected = []
+    for instance in rights.instances:
+        rule = instance["rule"].core
+        decl = tree.env.predicates[rule.predicate]
+        formula = tree.selection(rule.predicate)[2][rule.name]
+        expanded = tree._expand(formula, rule.predicate)
+        for values in tuples(*(model.domains[s] for s in decl.arguments)):
+            bindings = tuple(zip(reversed(decl.arguments), reversed(values)))
+            value, _ = evaluator.formula(expanded, bindings)
+            if value:
+                selected.append((instance["kind"], rule.predicate, values))
+    return model.model_id, (tuple(outcomes), tuple(sorted(selected)))
+
+
 def validate_reading_sets(env, values, unit_ids):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
@@ -99,23 +137,36 @@ def validate_reading_sets(env, values, unit_ids):
         if model_ids:
             from .evaluate import evaluate
             from .model import FiniteModel
+            right_contents = [r["content"] for r in readings
+                              if type(r["content"]) is dict and set(r["content"]) == {"right"}]
+            right_set = rights_enabled and len(right_contents) == len(readings)
             # Quantity readings are evaluated through their regenerated cores
             # on the erased target; tables are never read with tags dropped first.
-            model_env, formula_of = _reading_evaluation(env)
+            if not right_set and right_contents:
+                raise VEError("UnsupportedProfile: mixed rights distinguishing situations")
+            if not right_set:
+                model_env, formula_of = _reading_evaluation(env)
             for name, data in models.items():
-                model = FiniteModel.from_dict(model_env, data)
-                if name != model.model_id:
+                model_id = (_right_situation(env, right_contents[0], data)[0] if right_set else
+                            FiniteModel.from_dict(model_env, data).model_id)
+                if name != model_id:
                     raise VEError("distinguishing model id does not match model")
             for reading in readings:
                 for other_id, model_id in reading["admission"]["distinguishing_models"].items():
                     other = next(r for r in readings if r["id"] == other_id)
                     if reading["content"] is None or other["content"] is None:
                         continue  # other-kind elaboration is pending; the checking route reports UNKNOWN
-                    model = FiniteModel.from_dict(model_env, models[model_id])
-                    a = evaluate(model_env, formula_of(reading["content"]), model, trace=False)
-                    b = evaluate(model_env, formula_of(other["content"]), model, trace=False)
-                    if a.value is None or b.value is None or a.value == b.value:
-                        raise VEError("distinguishing model does not separate readings")
+                    if right_set:
+                        first_id, a = _right_situation(env, reading["content"], models[model_id])
+                        second_id, b = _right_situation(env, other["content"], models[model_id])
+                        if first_id != model_id or second_id != model_id or a == b:
+                            raise VEError("distinguishing model does not separate readings")
+                    else:
+                        model = FiniteModel.from_dict(model_env, models[model_id])
+                        a = evaluate(model_env, formula_of(reading["content"]), model, trace=False)
+                        b = evaluate(model_env, formula_of(other["content"]), model, trace=False)
+                        if a.value is None or b.value is None or a.value == b.value:
+                            raise VEError("distinguishing model does not separate readings")
         if "rejected_history" in item and type(item["rejected_history"]) is not list:
             raise VEError("invalid rejected reading history")
     return seen

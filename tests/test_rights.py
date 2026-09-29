@@ -13,7 +13,7 @@ from ve.model import FiniteModel
 from ve.surface.rights import parse_line, render_line
 from ve.errors import VEError
 from ve.rights import RightsEnvironment, correlate
-from ve.readings import plan_choices, validate_couplings
+from ve.readings import plan_choices, rights_meaning_id, validate_couplings, validate_reading_sets
 
 
 def rights_env():
@@ -92,6 +92,11 @@ def test_document_check_uses_correlated_soft_route(tmp_path):
     path.write_text("---\n" + json.dumps(meta) + "\n---\n" + source)
     result = check_document(path)
     assert result["rights"]["environment_id"]
+    report = result["rights"]["report"]
+    assert report["conflict"]["verdict"] in ("UNKNOWN", "CONFLICT-FREE")
+    assert report["unlicensed_limitations"] == []
+    assert report["distinction"][0]["independent"] is True
+    assert report["bar"] == []
     assert result["soft"]["soft_document_hash"]
     assert "Claim of right life" in render_document(path)
     assert load_document(path)["units"][0]["meaning_id"]
@@ -130,6 +135,33 @@ def test_couplings_keep_only_shared_axis_choices():
     with pytest.raises(VEError, match="CouplingLabelMissing"):
         validate_couplings(RightsEnvironment(rights_env()), couplings, sets,
                            {"a", "b", "preamble"})
+
+
+def test_right_readings_need_a_checked_separating_situation():
+    from ve.readings import _right_situation
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["q"] = {"arguments": ["state", "person"], "description": "q"}
+    env = RightsEnvironment(raw)
+    positive = right()
+    positive["right"]["lines"][0]["norm"]["guard"] = ["binary", "q", ["var", 1], ["var", 0]]
+    negative = right()
+    negative["right"]["lines"][0]["norm"]["guard"] = ["not", positive["right"]["lines"][0]["norm"]["guard"]]
+    situation = {"complete": True, "domains": {"state": ["s"], "person": ["p"]},
+                 "constants": {}, "relations": {"q": [["s", "p"]]}}
+    model_id = _right_situation(env, positive, situation)[0]
+    choices = [positive, negative]
+    readings = [{"id": str(i), "kind": "right", "content": content,
+                 "meaning_id": rights_meaning_id(env, content),
+                 "admission": {"who": "translator", "why": "the source leaves the guard open",
+                               "distinguishing_models": {str(1 - i): model_id}}}
+                for i, content in enumerate(choices)]
+    reading_set = {"id": "r", "unit": "u", "version": 1, "status": "open",
+                   "readings": readings, "models": {model_id: situation}}
+    validate_reading_sets(env, [reading_set], {"u"})
+    reading_set["readings"][1]["content"] = positive
+    reading_set["readings"][1]["meaning_id"] = rights_meaning_id(env, positive)
+    with pytest.raises(VEError, match="does not separate"):
+        validate_reading_sets(env, [reading_set], {"u"})
 
 
 def test_fan_out_generates_one_rule_per_bearer_sort():

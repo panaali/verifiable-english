@@ -780,6 +780,20 @@ def _check_document(path):
                                       "condition": condition}
                                      for (limit, act, condition), generated in rights.condition_names.items()],
             "limitation_background_labels": [label for label, _ in rights.limitation_premises]}
+        from .rights_route import report_rights
+        source_units = [u["content"] for u in doc["units"]
+                        if u["kind"] in ("right", "right_lines", "limitation", "bar", "norm")
+                        and type(u["content"]) is dict]
+        if any(c["kind"] in ("right", "right_lines", "limitation", "bar")
+               for reading_set in active for c in reading_set["readings"]):
+            result["rights"]["report_status"] = "UNKNOWN: per-choice rights elaboration pending"
+        else:
+            report = report_rights(doc["environment"], source_units, rights)
+            result["rights"]["report"] = report
+            result["coverage"]["rights_report"] = {
+                "unlicensed_limitations": report["unlicensed_limitations"],
+                "distinction_hits": report["distinction_hits"],
+                "limitation_premises_used": report["limitation_premises_used"]}
     if "graph" in doc["meta"]:
         if doc["rights_document"] is not None:
             raise VEError("UnsupportedProfile: rights graph admission requires a rights route")
