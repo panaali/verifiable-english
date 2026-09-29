@@ -49,8 +49,8 @@ BODIES: dict[str, set[str]] = {
     "ve.parser": {"_parse_python"},
     "ve.vacuity": {"_premise_status"},
     "ve.equivalence": {"_compare"},
-    # No adapter yet: the public entry point is the body.
-    "ve.argument": {"check_argument", "_check_edge", "_lean_deductions"},
+    "ve.argument": {"_check_argument_python", "_check_edge", "_lean_deductions"},
+    # No adapter: readings are excluded from covered_operations (recorded).
     "ve.readings": {"check_readings"},
 }
 

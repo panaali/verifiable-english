@@ -5,18 +5,9 @@ import ast
 
 from tools import inventory_lint as lint
 
-# Retained consumers of check_argument, the class-A body that the graph mode's
-# adapter replaces; nothing else may import a class-A body.
-AWAITING_GRAPH_ADAPTER = {
-    ("ve.argument_fixtures:<module>", "ve.argument:check_argument"),
-    ("ve.assist.session:AssistSession._do_status", "ve.argument:check_argument"),
-    ("ve.english:parse_english_argument", "ve.argument:check_argument"),
-}
-
-
-def test_only_the_graph_adapter_is_outstanding():
+def test_no_retained_code_imports_a_class_a_body():
     found, excepted = lint.violations()
-    assert {(row["consumer"], row["provider"]) for row in found} == AWAITING_GRAPH_ADAPTER
+    assert found == []
     assert all(row["reason"] for row in excepted)
 
 

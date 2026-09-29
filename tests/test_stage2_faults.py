@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 import ve.ast
+from ve import ArgumentGraph, Claim, check_argument
 from ve.admission import admit_document, validate_label
 from ve.ast import Bottom, Const, Not, Top, Unary
 from ve.background import background, dependency_order
@@ -65,6 +66,7 @@ def inputs():
              "conclusion": ["top"], "meaning_id": meaning_id(env, Top()), "reading_choices": {},
              "transitive_leaves": [{"label": "open:assumption", "ast": ["top"]}],
              "certificate": prove_entailment(env, (Top(),), Top()).certificate}
+    graph = ArgumentGraph(env, (Claim.create(env, "root", "true.\n"),), (), "root")
     return {
         "typing": lambda: ve.ast.check_formula(env, atom),
         "background": lambda: background(norms),
@@ -90,6 +92,7 @@ def inputs():
         "bundle": lambda: check_bundle({"version": "ve-bundle@0", "environment": env.to_dict(),
                                         "lemmas": [lemma]}),
         "parse": lambda: parse(env, "x is base.\n"),
+        "graph": lambda: check_argument(graph, search=False).require_available(),
     }
 
 
@@ -102,7 +105,7 @@ LEAN = (
     "evaluate", "countermodel_check", "countermodel_search", "distinguishing_model",
     "norms_elaborate", "norms_certificate", "norms_conflict", "norms_admission", "premise_status",
     "compare", "environment_validation", "model_validation", "definitions_elaboration", "bundle",
-    "parse")
+    "parse", "graph")
 
 
 @pytest.fixture(scope="module")

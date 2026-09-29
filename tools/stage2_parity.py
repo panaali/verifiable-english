@@ -55,7 +55,7 @@ ADAPTERS = {
     "norms_admission": "norms_admission", "premise_status": "premise_status", "compare": "compare",
     "environment_validation": "environment_validation", "model_validation": "model_validation",
     "definitions_elaboration": "definitions_elaboration", "bundle": "bundle",
-    "parse_accept": "parse", "canonicalize": "parse",
+    "parse_accept": "parse", "canonicalize": "parse", "argument_graph": "graph",
 }
 _routed: set[str] = set()
 _backend = "python"
@@ -124,10 +124,13 @@ def compare(baseline: dict, now: dict, current: dict, only: str | None = None) -
         for name, old in baseline[section].items():
             new, same_now = current[section][name], now[section][name]
             if section == "graph_probes":
-                # check_argument is called directly, not through `outcome`; no adapter routes it yet.
-                old, new, same_now = ({"cell": "S", "status": "", "output": row}
+                # check_argument is called directly, not through `outcome`; its
+                # routing is recorded on the row by `_graph_baselines`.
+                routed = new.get("routed", [])
+                old, new, same_now = ({"cell": "S", "status": "", "output": {
+                    key: value for key, value in row.items() if key != "routed"}, "routed": routed}
                                       for row in (old, new, same_now))
-                klass, routed = _classify(old, new, same_now), []
+                klass = _classify(old, new, same_now, "graph")
             elif section == "budget_boundaries":
                 sides = [side for side in old if isinstance(old[side], dict)]
                 klass = _worst([_classify(old[s], new[s], same_now[s]) for s in sides])
@@ -171,6 +174,33 @@ def render(result: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+_graph_baselines = probe.graph_baselines
+
+
+def _backend_graph_baselines():
+    """The graph probes with every check_argument call on the backend; each
+    row records the operations the call routed."""
+    original, calls = probe.check_argument, []
+
+    def routed_call(*args, **kwargs):
+        _routed.clear()
+        os.environ["VE_AUTHORITY"] = _backend
+        try:
+            return original(*args, **kwargs)
+        finally:
+            os.environ["VE_AUTHORITY"] = "python"
+            calls.append(sorted(_routed))
+
+    probe.check_argument = routed_call
+    try:
+        rows = _graph_baselines()
+    finally:
+        probe.check_argument = original
+    if len(calls) != len(rows):
+        raise SystemExit("graph probes and check_argument calls do not correspond")
+    return {name: {**row, "routed": routed} for (name, row), routed in zip(rows.items(), calls)}
+
+
 def _generate(authority: str) -> dict:
     # Probe inputs (environments, models, source text, proofs to replay) are
     # built by the retained Python; only each probed call runs on `authority`.
@@ -190,6 +220,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     dispatch.observers.append(_observe)
     probe.outcome = _outcome
+    probe.graph_baselines = _backend_graph_baselines
     if args.show:
         probe.OPERATIONS = tuple(op for op in probe.OPERATIONS if op == args.show)
         probe.graph_baselines = probe.boundary_baselines = probe.feature_baselines = dict
