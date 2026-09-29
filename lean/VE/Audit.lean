@@ -39,6 +39,7 @@ import VE.Norms.SmallModel
 import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
+import VE.Norms.Flagged
 import VE.Norms.Run
 import VE.SoftNorms.Run
 import VE.Attribution.Content
@@ -797,6 +798,15 @@ import VE.Service.Protocol
 #print axioms VE.Norms.Replay.norms_wire_conflict_witness_sound
 #print axioms VE.Norms.Replay.target_refutes
 #print axioms VE.Norms.Replay.norms_wire_acceptance
+#print axioms VE.Norms.Flagged.replayEntailment_source
+#print axioms VE.Norms.Flagged.norms_flagged_acceptance
+#print axioms VE.Norms.Flagged.conflictFreeCheck_target
+#print axioms VE.Norms.Flagged.conflictFreeCheck_sound
+#print axioms VE.Norms.Flagged.replayConflict_source
+#print axioms VE.Norms.Flagged.conflictFree_plain
+#print axioms VE.Norms.Flagged.conflictFree_flagged
+#print axioms VE.Norms.Flagged.norms_flagged_conflict_sound
+#print axioms VE.Norms.Flagged.norms_flagged_witness_sound
 #print axioms VE.Norms.Admission.admitNodes_ok
 #print axioms VE.Norms.Admission.mapM_ok_mem
 #print axioms VE.Norms.Admission.forM_ok

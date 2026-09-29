@@ -1,4 +1,5 @@
 import VE.Norms.Admission
+import VE.Norms.Flagged
 import VE.Norms.Plain
 import VE.Route.Run
 
@@ -22,6 +23,9 @@ import VE.Route.Run
   `valid`; the certificate binds the complete environment, the regenerated
   `Background ++ layer premises` followed by `premises`, and the conclusion
   (`Replay.norms_wire_acceptance`).
+* The three `norms-*` kinds accept `data@0` flags, whose regenerated premises
+  come first in Background; a conflict case with flags or definitions checks
+  over Python's base environment and base Background (`Flagged`).
 * `admission`: a W2 FOL `document` containing norm units → a checked report,
   source-bound report id and unit kinds; the answer is exactly
   `encodeAdmitted` of the checked admission (`Run.norms_wire_acceptance`).
@@ -132,22 +136,23 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← Wire.decodeSource environment (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (Wire.regenerated src.D)
+    let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
+    return VE.Route.Wire.ok id (Flagged.regenerated src)
   if kind == "norms-certificate" then
-    let r ← Replay.replayEntailment j
-    return VE.Route.Wire.ok id [("valid", .bool r.valid),
-      ("background", toJson (background r.src.D).length), ("layers", toJson (elaborate r.src.D.T).length)]
+    let r ← Flagged.replayEntailment j
+    return VE.Route.Wire.ok id [("valid", .bool (Flagged.valid r)),
+      ("background", toJson (Flagged.flagPremises r.src ++ background r.src.D).length),
+      ("layers", toJson (elaborate r.src.D.T).length)]
   if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
-    let ⟨src, w⟩ ← Replay.replayWitness j
+    let ⟨src, w⟩ ← Flagged.replayWitness j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
       ("target", .str w.target.1), ("targets", toJson ((targets src.D).map (·.1)))]
   if kind == "norms-conflict" then
-    let res ← Replay.replayConflict j
+    let res ← Flagged.replayConflict j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
       ("targets", toJson ((targets res.src.D).map (·.1)))] ++
-      match Replay.firstFailure res with
+      match Flagged.firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
   if Plain.isPlainKind kind && (usesNormsPath j || Plain.layered (j.getObjValD "environment"))
