@@ -11,6 +11,7 @@ each case's formula limits before it decodes the model.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import time
@@ -25,7 +26,7 @@ from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
-RUST = ROOT / "rust" / "target" / "release" / "ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 pytestmark = pytest.mark.skipif(not (LEAN.exists() and RUST.exists()),
                                 reason="build ve_conformance (lake build) and the Rust release binary")
 WALL = 30  # seconds for one batch of limit-busting cases, per backend

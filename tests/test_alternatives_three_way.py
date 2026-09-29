@@ -32,6 +32,10 @@ LEAN = ROOT / "lean/.lake/build/bin/ve_alternatives_route"
 def rust_binary():
     if not LEAN.is_file():
         pytest.skip("build ve_alternatives_route with lake build")
+    if os.environ.get("VE_RUST_PREBUILT"):
+        binary = Path(os.environ["VE_RUST_BINARY"])
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is unavailable")

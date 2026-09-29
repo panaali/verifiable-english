@@ -1,5 +1,6 @@
 """Baseline route rejects integer-quantifier W6b syntax before evidence."""
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -10,7 +11,7 @@ from ve.errors import UnsupportedProfile
 from ve.units import elaborate_quantity
 
 ROOT = Path(__file__).resolve().parents[1]
-RUST = ROOT / "rust" / "target" / "release" / "ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
 
 
