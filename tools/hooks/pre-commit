@@ -1,0 +1,9 @@
+#!/bin/sh
+# VE pre-commit hook: fast checks on STAGED content only (secrets, layer
+# import contracts, Lean forbidden tokens, frozen-file guard). No tests.
+# Install and bypass: see tools/hooks/README.md.
+if [ "${VE_SKIP_HOOKS:-}" = 1 ]; then
+    echo "warning: VE_SKIP_HOOKS=1: pre-commit checks SKIPPED; the gate will still run them in full." >&2
+    exit 0
+fi
+exec python3 "$(dirname "$0")/precommit.py" "$@"
