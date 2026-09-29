@@ -87,7 +87,7 @@ fn quantity_limits(cores: &[&Value]) -> Result<()> {
     Ok(())
 }
 fn int(s: &str) -> Result<BigInt> {
-    if s.len() > 40 {
+    if s.chars().count() > 40 {
         return error("ResourceLimit", "integer literal exceeds 40 characters");
     }
     let digits = s.strip_prefix('-').unwrap_or(s);
