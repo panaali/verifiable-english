@@ -6,7 +6,7 @@ interprets a condition or decides a risk cell.
 """
 from __future__ import annotations
 
-from ..errors import SyntaxError, UnsupportedProfile
+from ..errors import SyntaxError, UnsupportedProfile, VEError
 from ..wire import loads_json
 from .registry import SurfaceRecord, register
 
@@ -160,4 +160,44 @@ def legend_lines(env, *, used_words=(), condition_forms=()):
     for requirement in risk.get("required_estimators", []):
         for estimator in requirement["estimators"]:
             lines.append(f"Only estimates of {requirement['quantity_kind']} by {estimator} are accepted.")
+    return tuple(lines)
+
+
+def gap_lines(gaps):
+    """Render Lean's structured decision gaps without inferring any new facts.
+
+    The caller supplies only the gap categories of risk.md 5.2. In particular,
+    a default decision is not presented as a risk classification, and a point
+    estimate is flagged without asserting that the estimate is accurate.
+    """
+    fields = ("unexamined_possible", "assumed_ruled_out", "unranked_severities",
+              "point_estimates", "default_decided", "dilemmas")
+    if type(gaps) is not dict or set(gaps) - set(fields) or any(
+            type(rows) is not list for rows in gaps.values()):
+        raise VEError("InvalidInput: risk report gaps")
+    def row(mapping, keys, path):
+        if (type(mapping) is not dict or set(mapping) != keys
+                or any(type(value) is not str or not value for value in mapping.values())):
+            raise VEError(f"InvalidInput: risk.{path}")
+    lines = []
+    for cell in gaps.get("unexamined_possible", []):
+        row(cell, {"action", "harm"}, "unexamined_possible")
+        lines.append(f"Unexamined possible: {cell['action']} might lead to {cell['harm']}.")
+    for cell in gaps.get("assumed_ruled_out", []):
+        row(cell, {"action", "harm", "decider"}, "assumed_ruled_out")
+        lines.append(f"Assumed ruled out by {cell['decider']}: {cell['action']} cannot lead to {cell['harm']}.")
+    for pair in gaps.get("unranked_severities", []):
+        row(pair, {"left", "right"}, "unranked_severities")
+        lines.append(f"Unranked severities: {pair['left']} and {pair['right']} are not ranked.")
+    for estimate in gaps.get("point_estimates", []):
+        row(estimate, {"id", "result"}, "point_estimates")
+        lines.append(f"Point estimate {estimate['id']}: {estimate['result']}.")
+    for action in gaps.get("default_decided", []):
+        if type(action) is not str:
+            raise VEError("InvalidInput: risk.default_decided")
+        lines.append(f"Default decided: {action}.")
+    for diagnosis in gaps.get("dilemmas", []):
+        if type(diagnosis) is not str:
+            raise VEError("InvalidInput: risk.dilemmas")
+        lines.append(f"Dilemma: {diagnosis}.")
     return tuple(lines)

@@ -9,7 +9,7 @@ from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
 from ve.surface.registry import by_tag, enabled
-from ve.surface.risk import legend_lines, parse_wording
+from ve.surface.risk import gap_lines, legend_lines, parse_wording
 
 
 def risk_source():
@@ -178,3 +178,22 @@ def test_legend_tracks_declared_order_and_pending_condition():
     assert any(line == "outage is severe." for line in lines)
     assert any("(wording pending)" in line for line in lines)
     assert any("might not lead to the harm" in line for line in lines)
+
+
+def test_gap_renderer_keeps_distinct_report_categories():
+    lines = gap_lines({
+        "unexamined_possible": [{"action": "run", "harm": "outage"}],
+        "assumed_ruled_out": [{"action": "wait", "harm": "outage", "decider": "team"}],
+        "unranked_severities": [{"left": "serious", "right": "minor"}],
+        "point_estimates": [{"id": "E1", "result": "run cannot lead to outage"}],
+        "default_decided": ["wait"],
+        "dilemmas": ["no clear action"],
+    })
+    assert lines == (
+        "Unexamined possible: run might lead to outage.",
+        "Assumed ruled out by team: wait cannot lead to outage.",
+        "Unranked severities: serious and minor are not ranked.",
+        "Point estimate E1: run cannot lead to outage.",
+        "Default decided: wait.",
+        "Dilemma: no clear action.",
+    )
