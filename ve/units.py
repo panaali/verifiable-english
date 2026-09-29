@@ -33,8 +33,7 @@ _AMOUNT_CHARS = frozenset("-.0123456789")
 POINTS_SUFFIX = " percentage points"
 W6_PROFILES = (("order@0", "relational-fol@0", "time@0"),
                ("documents@1", "order@0", "relational-fol@0", "time@0"),
-               ("alternatives@0", "norms@0", "relational-fol@0", "risk@0"),
-               ("alternatives@0", "norms@0", "order@0", "relational-fol@0", "risk@0", "time@0"))
+               ("alternatives@0", "norms@0", "relational-fol@0", "risk@0"))
 NUMBERS2 = "$int quantification requires the missing numbers2 route"
 
 
