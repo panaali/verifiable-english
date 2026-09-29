@@ -304,3 +304,63 @@ def test_nary_search_matches_stage0_probe(monkeypatch):
     expected = operation("countermodel_search", "positive", env, model)().to_dict()
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert operation("countermodel_search", "positive", env, model)().to_dict() == expected
+
+
+def _order_search_env():
+    from ve.profiles import SPEC_REVISION
+    return Environment({"language": "ve.core@0.2", "profiles": ["order@0", "relational-fol@0"],
+                        "spec_revision": SPEC_REVISION, "vocabulary": {
+        "sorts": {"item": {"description": "item"}},
+        "predicates": {"base": {"arguments": ["item"], "description": "base"},
+                       "score": {"arguments": ["item", "$int"], "description": "score"}},
+        "constants": {"x": {"sort": "item", "description": "x"},
+                      "n": {"sort": "$int", "description": "n"}}}})
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("premises,conclusion,options", [
+    ((), "bottom", {}),
+    (("le n 2",), "score", {}),
+    (("le n 2",), "score", {"max_models": 3}),
+    (("score",), "lt", {"max_domain_size": 2, "min_domain_size": 1}),
+    (("forall",), "bottom", {"nonempty_domains": True, "nonvacuous_for": "forall"}),
+    (("forall",), "bottom", {"nonvacuous_for": "forall", "semantic_nonvacuity": True,
+                             "max_models": 20}),
+    (("le n 2",), "score", {"max_evaluations": 3}),
+])
+def test_order_search_matches_python(monkeypatch, premises, conclusion, options):
+    """Rust order search streams Python's candidate models with its counters."""
+    from ve.ast import Le, Lt, Num
+    env = _order_search_env()
+    formulas = {"bottom": Bottom(), "le n 2": Le(Const("n"), Num(2)),
+                "score": Binary("score", Const("x"), Const("n")),
+                "lt": Lt(Const("n"), Num(-1)),
+                "forall": Forall("item", Implies(Unary("base", Var(0)),
+                                                 Binary("score", Var(0), Num(1))))}
+    options = {k: formulas[v] if k == "nonvacuous_for" else v for k, v in options.items()}
+    args = (env, tuple(formulas[p] for p in premises), formulas[conclusion])
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = find_countermodel(*args, **options).to_dict()
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert find_countermodel(*args, **options).to_dict() == expected
+    a, b = (formulas[premises[0]] if premises else Top()), formulas[conclusion]
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = find_distinguishing_model(env, a, b, **options).to_dict()
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert find_distinguishing_model(env, a, b, **options).to_dict() == expected
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("budget", [0, 1, 2, 1000])
+def test_order_countermodel_check_matches_python(monkeypatch, budget):
+    from ve.ast import Le, Num
+    env = _order_search_env()
+    model = FiniteModel.from_dict(env, {"complete": True, "domains": {"item": ["i"]},
+                                        "constants": {"x": "i", "n": "2"},
+                                        "relations": {"base": [["i"]], "score": [["i", "3"]]}})
+    args = (env, (Le(Const("n"), Num(2)), Unary("base", Const("x"))),
+            Binary("score", Const("x"), Const("n")), model)
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = check_countermodel(*args, max_evaluations=budget)
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert check_countermodel(*args, max_evaluations=budget) == expected

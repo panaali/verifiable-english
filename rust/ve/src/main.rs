@@ -139,6 +139,9 @@ fn case(v: &Value) -> Result<Value> {
     }
     if v.get("kind").and_then(Value::as_str) == Some("distinguishing-model") {
         let env = Environment::from_value(field(v, "environment")?)?;
+        if env.order() {
+            return order_case(v);
+        }
         let doc = Document::from_value(&env, &json!([field(v, "a")?, field(v, "b")?]))?;
         let bounds = SearchBounds {
             max_domain_size: usize::try_from(number(v, "max_domain_size", 2)?)

@@ -318,6 +318,10 @@ def _domain_sizes(minima: list[int], maximum: int) -> Iterator[tuple[int, ...]]:
 
 
 ORDER_SEARCH_MAGNITUDE = 3
+# ResourceLimit details a Rust search reports exactly as Python does; other
+# Rust details are reclassified from the counters.
+_RUST_DETAILS = frozenset({"search relation atom space exceeds runtime limit",
+                           "evaluation budget exhausted", "model-attempt budget exhausted"})
 
 
 def _int_terms(formulas, int_constants) -> tuple[list[Any], set[int]]:
@@ -715,7 +719,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                       if nonvacuous_for is not None else
                       "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
-        elif row.get("detail") == "search relation atom space exceeds runtime limit":
+        elif row.get("detail") in _RUST_DETAILS:
             detail = row["detail"]
         elif row["models_checked"] >= max_models:
             detail = "model-attempt budget exhausted"
@@ -884,7 +888,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
             detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                       if nonvacuous_for is not None else
                       "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
-        elif row.get("detail") == "search relation atom space exceeds runtime limit":
+        elif row.get("detail") in _RUST_DETAILS:
             detail = row["detail"]
         elif row["models_checked"] >= max_models:
             detail = "model-attempt budget exhausted"
