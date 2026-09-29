@@ -129,16 +129,17 @@ def _sub_log(action):
 
 @pytest.mark.parametrize("action", sorted(emit_log.ACTIONS))
 def test_a_disclosure_fixes_neither_which_secret_nor_how_many(action):
-    """Review finding B: a model where the action discloses two distinct secrets
-    satisfies a disclosing record, and any disclosure contradicts the others."""
+    """Review finding B: a model where the action discloses two more, distinct
+    secrets still satisfies a disclosing record, and any disclosure contradicts
+    the others."""
     env, premises = _sub_log(action)
     model = check.record_model(env, premises)
     assert check.satisfies(env, premises, model)
-    domains = {**model.domains, "secret": ["secret_one", "secret_two"]}
+    domains = {**model.domains, "secret": [*model.domains["secret"], "secret_one", "secret_two"]}
     relations = dict(model.relations)
-    relations["discloses"] = {(action, "secret_one"), (action, "secret_two")}
-    two = check._model(env, domains, model.constants, relations)
-    assert check.satisfies(env, premises, two) is emit_log.ACTIONS[action]["discloses"], action
+    relations["discloses"] = {*model.relations["discloses"], (action, "secret_one"), (action, "secret_two")}
+    more = check._model(env, domains, model.constants, relations)
+    assert check.satisfies(env, premises, more) is bool(emit_log.ACTIONS[action]["discloses"]), action
 
 
 def test_policy_has_one_reading_round_trips_and_keeps_the_seeded_defects():
