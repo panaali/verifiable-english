@@ -347,8 +347,55 @@ class _Parser:
         return ast.Document(tuple(formulas))
 
 
+def _lean_parse_scope(env: Any) -> bool:
+    """Whether Lean's `parse` mode takes sources over `env`: ve.core@0.2 without
+    the definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
+    `define`), which no Lean surface parser has, and without statement layers."""
+    return (getattr(env, "language", None) == "ve.core@0.2"
+            and "definitions@0" not in env.profiles and env.unit_schema is None
+            and env.alternatives is None and not {"soft-norms@0", "reports@0"} & set(env.profiles))
+
+
 @semantic_entry("parse")
 def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
+    """Parse and type a source under the selected authority.
+
+    Under a backend authority Lean's surface parser for the envelope's family
+    decides acceptance; the Python parser reads the document and its source
+    metadata, names a rejection both make, and its document must be Lean's
+    (the same AST and, where Lean prints, the same canonical text).
+    """
+    from .backends.dispatch import authority_for, execute
+
+    def python():
+        return _parse_python(env, source)
+
+    if authority_for("parse") in ("python", "rust-experimental") or not _lean_parse_scope(env):
+        return python()
+    return execute("parse", {"kind": "parse"}, python, lean=lambda: _parse_lean(env, source, python))
+
+
+def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
+    from .backends.lean_runner import run
+    from .backends.validation import decided, key
+    try:
+        text = source if isinstance(source, str) else source.decode("ascii")
+        cache = key("parse", env.environment_id, text)
+    except (UnicodeError, VEError, TypeError, ValueError, AttributeError):
+        text, cache = None, None
+
+    def same(result: ParseResult, row: dict) -> bool:
+        from .printer import print_document
+        if row.get("ast") != [ast._to_data(f) for f in result.document.formulas]:
+            return False
+        return "canonical" not in row or row["canonical"] == print_document(env, result.document)
+
+    return decided(python, cache,
+                   lambda: run("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0],
+                   same, "a source")
+
+
+def _parse_python(env: Any, source: str | bytes) -> ParseResult:
     if isinstance(source, bytes):
         if len(source) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f"source exceeds {MAX_SOURCE_BYTES} bytes")
