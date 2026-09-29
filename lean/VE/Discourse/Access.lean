@@ -48,6 +48,22 @@ def foldChar (c : Char) : Option Char :=
 /-- A word with every character that has a fold folded (so `İt` and `ſuch` read `it` and `such`). -/
 def foldWord (w : String) : String := w.map fun c => (foldChar c).getD c
 
+def segGo : List Char → Nat → List Char → Nat → List (String × Nat × Nat)
+  | [], pos, cur, start => if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]
+  | c :: rest, pos, cur, start => match foldChar c with
+    | some f => segGo rest (pos + c.utf8Size) (f :: cur) (if cur.isEmpty then pos else start)
+    | none => (if cur.isEmpty then [] else [(String.mk cur.reverse, start, pos)]) ++
+        segGo rest (pos + c.utf8Size) [] 0
+
+/-- The segments of a text (docs/spec/discourse.md 4.1(6)): its maximal runs of characters with a
+fold, folded, with their byte ranges `[a, b)`; every other character separates segments. Slot
+discovery and the text inputs of `Acc` (binders, restrictive properties, coordinations) read them,
+so a word joined to anything else (`service's`, `service’s`, `Bob's`) is still read. -/
+def segments (t : String) : List (String × Nat × Nat) := segGo t.toList 0 [] 0
+
+/-- The folded segments of a string. -/
+def segmentsOf (w : String) : List String := (segments w).map (·.1)
+
 def charsBytes (cs : List Char) : Nat := cs.foldl (fun n c => n + c.utf8Size) 0
 
 /-- Flush the current word (reversed characters, start byte). -/
@@ -149,10 +165,21 @@ def ownText (D : DDoc) (m : Slot) : List Tok :=
   | none => []
   | some _ => (D.text m.unit).getD []
 
-/-- The token lists `Acc` reads: every earlier sentence of the innermost anchor, then the
+/-- The text of a unit: its bytes of the prose. -/
+def unitString (D : DDoc) (u : String) : Option String :=
+  (unitOf D.base u).map fun x => sliceText D.prose x.start x.stop
+
+/-- The slot's own sentence before the slot: its unit's bytes before the slot's first token (read
+only inside an anchor). -/
+def ownPrefix (D : DDoc) (m : Slot) : String :=
+  match innermostAnchor D m.unit, unitString D m.unit with
+  | some _, some t => sliceText t 0 ((((lex t)[m.span.1]?).map (·.2.1)).getD t.utf8ByteSize)
+  | _, _ => ""
+
+/-- The segment lists `Acc` reads: every earlier sentence of the innermost anchor, then the
 slot's own sentence up to the slot. -/
-def scopeTexts (D : DDoc) (m : Slot) : List (List Tok) :=
-  (earlierUnits D m).map (fun v => (D.text v).getD []) ++ [(ownText D m).take m.span.1]
+def scopeSegments (D : DDoc) (m : Slot) : List (List String) :=
+  (earlierUnits D m).map (fun v => ((unitString D v).map segmentsOf).getD []) ++ [segmentsOf (ownPrefix D m)]
 
 def wordAt (ts : List Tok) (i : Nat) : Option String :=
   match ts[i]? with
@@ -173,49 +200,57 @@ def binaryPred (E : VE.Environment) (p : String) : Bool :=
 
 def quantifierWords : List String := ["every", "a", "an", "some"]
 
-/-- A quantified mention at position `i`: `every|a|an|some [modifier] <sort>`. -/
-def binderAt (E : VE.Environment) (ts : List Tok) (i : Nat) : Option String :=
-  match wordAt ts i with
-  | some q =>
-    if quantifierWords.contains q then
-      match wordAt ts (i + 1) with
-      | some w =>
-        if sortWord E w then some w
-        else match wordAt ts (i + 2) with
-          | some w' => if sortWord E w' then some w' else none
-          | none => none
-      | none => none
-    else none
-  | none => none
+/-- A symbol name split into segments is spelled by its `_`-joined segments (identifiers are
+`[a-z][a-z0-9_]*`, at most 64 bytes, so at most 32 segments). -/
+def joinLimit : Nat := 32
 
-def bindersIn (E : VE.Environment) (ts : List Tok) : List String :=
-  (List.range ts.length).filterMap (binderAt E ts)
+/-- `a` occurs contiguously in `b`. -/
+def infixS (a b : List String) : Bool := (List.range (b.length + 1)).any fun i => a.isPrefixOf (b.drop i)
 
-/-- Sorts of the binders of the earlier sentences of the innermost anchor and earlier in the
-slot's own sentence: an input of `Acc`. -/
-def earlierBinders (D : DDoc) (m : Slot) : List String := (scopeTexts D m).flatMap (bindersIn D.E)
+/-- The words of sort `s` as segments: its name and its declared singular nouns. -/
+def sortPhrases (D : DDoc) (s : String) : List (List String) :=
+  ((s :: (D.nouns.filter (·.1 == s)).map (·.2)).map segmentsOf).filter (!·.isEmpty)
 
+/-- A binder of sort `s` in the segments `ws`: a quantifier word followed, later in the same text,
+by a word of `s`, whatever lies between (`A big red service`, `A service's owner`). -/
+def bindsSort (D : DDoc) (ws : List String) (s : String) : Bool :=
+  (List.range ws.length).any fun j => (ws[j]?).any quantifierWords.contains &&
+    (sortPhrases D s).any fun p => infixS p (ws.drop (j + 1))
+
+/-- The registered spellings of a name, as the lexer's words (the grammar reads names by them). -/
 def spellings (n : Name) : List (List Tok) := (n.display :: n.aliases).map lexWords
 
-/-- The coordinations "c₁ and c₂" of those sentences: an input of `Acc`. -/
+/-- The registered spellings of a name, as segments. -/
+def spellingSegments (n : Name) : List (List String) :=
+  ((n.display :: n.aliases).map segmentsOf).filter (!·.isEmpty)
+
+/-- The coordinations "c₁ and c₂" of those sentences, read as segments: an input of `Acc`. -/
 def earlierPairs (D : DDoc) (m : Slot) : List (String × String) :=
   D.K.names.flatMap fun n₁ => D.K.names.flatMap fun n₂ =>
-    if (scopeTexts D m).any (fun ts => (spellings n₁).any fun a => (spellings n₂).any fun b =>
-        VE.English.infixB (a ++ [.word "and"] ++ b) ts)
+    if (scopeSegments D m).any (fun ws => (spellingSegments n₁).any fun a => (spellingSegments n₂).any fun b =>
+        infixS (a ++ ["and"] ++ b) ws)
     then [(n₁.constant, n₂.constant)] else []
 
-/-- A restrictive property at position `i`: `every|a|an|some <adjective> <sort>`. -/
-def propertyAt (E : VE.Environment) (ts : List Tok) (i : Nat) : Option (String × String) :=
-  match wordAt ts i, wordAt ts (i + 1), wordAt ts (i + 2) with
-  | some q, some p, some s =>
-    if quantifierWords.contains q && unaryPred E p && sortWord E s then some (p, s) else none
-  | _, _, _ => none
+/-- The restrictive properties at segment `j`: a quantifier word, the segments of a unary
+predicate (`_`-joined) and a word of a sort, as (predicate, sort). -/
+def propertiesAt (D : DDoc) (ws : List String) (j : Nat) : List (String × String) :=
+  if (ws[j]?).any quantifierWords.contains then
+    let after := ws.drop (j + 1)
+    (List.range (min after.length joinLimit)).flatMap fun k =>
+      let p := "_".intercalate (after.take (k + 1))
+      if unaryPred D.E p then D.E.sorts.filter (fun s => (sortPhrases D s).any (·.isPrefixOf (after.drop (k + 1))))
+        |>.map (p, ·)
+      else []
+  else []
 
 /-- (predicate, noun sort) applied restrictively in those sentences: an input of `Acc`. -/
 def earlierProperties (D : DDoc) (m : Slot) : List (String × String) :=
-  (scopeTexts D m).flatMap fun ts => (List.range ts.length).filterMap (propertyAt D.E ts)
+  (scopeSegments D m).flatMap fun ws => (List.range ws.length).flatMap (propertiesAt D ws)
 
-def competingQuantifier (D : DDoc) (m : Slot) (sort : String) : Bool := (earlierBinders D m).contains sort
+/-- A binder of the sort in the earlier sentences of the innermost anchor or earlier in the slot's
+own sentence: an input of `Acc`. -/
+def competingQuantifier (D : DDoc) (m : Slot) (sort : String) : Bool :=
+  (scopeSegments D m).any fun ws => bindsSort D ws sort
 
 /-- Binder `i` of the slot's own sentence scopes over the slot: the one binder a definite
 description introduces is its own described entity, `binder:0`. -/
@@ -555,14 +590,16 @@ theorem innermost_within {D : DDoc} {u : String} {a : Anchor} (h : innermostAnch
   · exact (List.mem_filter.mp h).2
 
 /-- No heuristic: accessibility depends only on registrations, content names, anchors,
-declarations, the unit table and lemma names, the slot's unit, span and form, own-sentence
-binders, and the binders, coordinations and restrictive properties of the earlier sentences
-of the innermost anchor (4.2). -/
+declarations (with the sorts' declared nouns), the unit table and lemma names, the slot's unit,
+span and form, own-sentence binders, and the binders, coordinations and restrictive properties of
+the earlier sentences of the innermost anchor (4.2), read from those sentences' tokens and bytes. -/
 theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     (hK : D.K.names = D₂.K.names ∧ D.K.contentNames = D₂.K.contentNames ∧ D.K.anchors = D₂.K.anchors ∧
           D.K.documents = D₂.K.documents ∧ D.K.definitionsVersion = D₂.K.definitionsVersion ∧ D.E = D₂.E)
+    (hN : D.nouns = D₂.nouns)
     (ha : innermostAnchor D m.unit = innermostAnchor D₂ m.unit)
     (ht : ∀ a u, innermostAnchor D m.unit = some a → within D u a.id = true → D.text u = D₂.text u)
+    (hp : ∀ a u, innermostAnchor D m.unit = some a → within D u a.id = true → unitString D u = unitString D₂ u)
     (hb : unitKeys D = unitKeys D₂ ∧ lemmaNames D = lemmaNames D₂) :
     Acc D m t ↔ Acc D₂ m t := by
   obtain ⟨hn, hc, han, hd, _, hE⟩ := hK
@@ -582,15 +619,21 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     cases hx : innermostAnchor D m.unit with
     | none => rfl
     | some a => simp only [ht a m.unit hx (innermost_within hx)]
+  have hpre : ownPrefix D m = ownPrefix D₂ m := by
+    unfold ownPrefix
+    rw [← hi]
+    cases hx : innermostAnchor D m.unit with
+    | none => rfl
+    | some a => simp only [hp a m.unit hx (innermost_within hx)]
   have heu : earlierUnits D m = earlierUnits D₂ m := by
     unfold earlierUnits
     rw [← hi]
     cases innermostAnchor D m.unit with
     | none => rfl
     | some a => simp only [unitIdsBefore, hu, hw]
-  have hs : scopeTexts D m = scopeTexts D₂ m := by
-    unfold scopeTexts
-    rw [← heu, hown]
+  have hs : scopeSegments D m = scopeSegments D₂ m := by
+    unfold scopeSegments
+    rw [← heu, hpre]
     congr 1
     apply List.map_congr_left
     intro v hv
@@ -599,16 +642,18 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     | none => rw [hx] at hv; cases hv
     | some a =>
       rw [hx] at hv
-      rw [ht a v hx (List.mem_filter.mp hv).2]
-  have hbind : earlierBinders D m = earlierBinders D₂ m := by simp only [earlierBinders, hs, hE]
+      rw [hp a v hx (List.mem_filter.mp hv).2]
+  have hsp : sortPhrases D = sortPhrases D₂ := by funext s; simp only [sortPhrases, hN]
+  have hbs : bindsSort D = bindsSort D₂ := by funext ws s; simp only [bindsSort, hsp]
+  have hpa : propertiesAt D = propertiesAt D₂ := by funext ws j; simp only [propertiesAt, hsp, hE]
   have hpairs : earlierPairs D m = earlierPairs D₂ m := by simp only [earlierPairs, hs, hn]
-  have hprops : earlierProperties D m = earlierProperties D₂ m := by simp only [earlierProperties, hs, hE]
+  have hprops : earlierProperties D m = earlierProperties D₂ m := by simp only [earlierProperties, hs, hpa]
   have hord : ordinalIndex D m = ordinalIndex D₂ m := by simp only [ordinalIndex, hown]
   have hsec : namedSection D m = namedSection D₂ m := by simp only [namedSection, hown, han]
   have hreg : ∀ c, registered D c = registered D₂ c := by intro c; simp only [registered, hn]
   have hconst : ∀ c, constAcc D m c = constAcc D₂ m c := by intro c; simp only [constAcc, hreg, hw]
   have hcq : ∀ s, competingQuantifier D m s = competingQuantifier D₂ m s := by
-    intro s; simp only [competingQuantifier, hbind]
+    intro s; simp only [competingQuantifier, hs, hbs]
   have hanc : ∀ a, anchorOf D a = anchorOf D₂ a := by intro a; simp only [anchorOf, han]
   have hconstf : constAcc D m = constAcc D₂ m := funext hconst
   unfold Acc accB

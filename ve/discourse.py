@@ -243,6 +243,14 @@ def check_joint_extensions(meta, report, joint):
 
 # Reading the source ---------------------------------------------------------
 
+def _sort_phrases(env, sort):
+    """The words of a sort as segments: its name and its declared singular noun (the Lean
+    `sortPhrases`)."""
+    decl = env.sorts[sort]
+    words = [sort] + ([decl.verbalisation.singular] if decl.verbalisation else [])
+    return [p for p in ([w for _, _, w in _segments(word)] for word in words) if p]
+
+
 def _words(env):
     """The sort and unary-predicate words a reference surface may use: their symbol names
     (the Lean route's reading of the same bytes) and the English nouns of the sorts."""
@@ -387,29 +395,37 @@ def _scope_texts(doc, unit, position):
     return texts
 
 
+def _infix(a, b):
+    return any(b[i:i + len(a)] == a for i in range(len(b) + 1))
+
+
 def _competing_quantifier(doc, unit, position, sort):
-    """A quantified mention of `sort` in an earlier sentence of the innermost anchor or earlier in
-    the unit's own sentence: `every|a|an|some [modifier] <sort word>` (the Lean `binderAt`)."""
-    sorts, _ = _words(doc["environment"])
-    nouns = [w for w, s in sorts.items() if s == sort]
-    pattern = re.compile(r"\b(?:" + "|".join(_QUANTIFIERS) + r")\s+(?:[\w-]+\s+)?(?:" + _word_pattern(nouns) + r")\b",
-                         re.I)
-    return any(pattern.search(text) for text in _scope_texts(doc, unit, position))
+    """A binder of `sort` in an earlier sentence of the innermost anchor or earlier in the unit's
+    own sentence, read as segments: a quantifier word followed, later in the same text, by a word
+    of the sort, whatever lies between (the Lean `bindsSort`)."""
+    phrases = _sort_phrases(doc["environment"], sort)
+    for text in _scope_texts(doc, unit, position):
+        words = [w for _, _, w in _segments(text)]
+        if any(w in _QUANTIFIERS and any(_infix(p, words[j + 1:]) for p in phrases) for j, w in enumerate(words)):
+            return True
+    return False
 
 
 def _spellings(registration):
-    return [registration["display"], *registration.get("aliases", [])]
+    """The registered spellings of a name, as segments (the Lean `spellingSegments`)."""
+    words = [registration["display"], *registration.get("aliases", [])]
+    return [p for p in ([w for _, _, w in _segments(word)] for word in words) if p]
 
 
 def _coordinations(doc, unit, position, names):
-    """The coordinations `c1 and c2` of registered spellings in the texts accessibility reads,
-    in their order: the antecedents of `the former`/`the latter` (the Lean `earlierPairs`)."""
-    texts = _scope_texts(doc, unit, position)
+    """The coordinations `c1 and c2` of registered spellings in the texts accessibility reads, as
+    segments, in their order: the antecedents of `the former`/`the latter` (the Lean `earlierPairs`)."""
+    texts = [[w for _, _, w in _segments(text)] for text in _scope_texts(doc, unit, position)]
     pairs = []
     for first in names:
         for second in names:
-            if any(re.search(r"(?<![\w-])" + re.escape(a) + r"\s+and\s+" + re.escape(b) + r"(?![\w-])", text, re.I)
-                   for text in texts for a in _spellings(first) for b in _spellings(second)):
+            if any(_infix(a + ["and"] + b, words)
+                   for words in texts for a in _spellings(first) for b in _spellings(second)):
                 pairs.append((first["constant"], second["constant"]))
     return pairs
 

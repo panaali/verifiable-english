@@ -1331,3 +1331,67 @@ def test_lean_and_python_discover_the_same_slots(lean, tmp_path):
     assert rows[0]["error"] == "UnrecordedSlot: u2: [16, 18)"
     assert rows[1]["error"] == "UnrecordedSlot: u1: [0, 10)"
     assert compared > 200 and 20 < admitted < compared, (compared, admitted)
+
+
+# Regressions for the discourse loop re-check (manage-agents discourse2-looprecheck1.final.md): the
+# text inputs of `Acc` are read as segments and mention surfaces by the shared lexer, in both.
+
+IT_API = ("m1", "u2", "It", "pronoun", entity("api"))
+SAFE_U2 = {"u2": unary("safe", "api")}
+
+
+def agree(doc, tmp_path, environment=None):
+    """Lean's and Python's outcomes on one document: the shared diagnostic, or `admitted` when both
+    admit it with the same report."""
+    row, python = admit(doc, environment), python_outcome(doc, tmp_path, environment)
+    if isinstance(python, dict):
+        assert row.get("status") == "ok", (doc["_source"], row.get("error"))
+        assert (row["report_id"], row["references"]) == (python["report_id"], python["references"]), doc["_source"]
+        return "admitted"
+    assert row.get("error") == python, (doc["_source"], row.get("error"), python)
+    return python
+
+
+def noun_env(noun="system"):
+    environment = env()
+    environment["vocabulary"]["sorts"]["service"]["verbalisation"] = {"singular": noun, "plural": noun + "s"}
+    return environment
+
+
+def test_joined_words_never_hide_a_competing_quantifier(lean, tmp_path):
+    """A (Access.lean:183): `A service's owner is ready.` quantifies a service, so a later `It` has a
+    competing binder of its target's sort. Lean read `service's` as one word and admitted u2
+    CHECKED; Python rejected. Both now read the binders as segments."""
+    for opening in ["A service's owner is ready.", "A service’s owner is ready."]:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2)
+        assert agree(doc, tmp_path) == "UnresolvedReference: m1", opening
+    # the class: a joiner on either side of the quantifier or the sort word, and modifiers between
+    openings = [f"A service{j}s owner is ready." for j in JOINERS] + [f"Some{j}service is ready." for j in JOINERS]
+    openings += ["A big red service is ready.", "A well-known service is ready.", "Some v2.1 service is ready.",
+                 "Every service_owner is ready.", "An (old) service is ready.", "Alice owns a service-account.",
+                 "A person's service is ready."]
+    for opening in openings:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2)
+        assert agree(doc, tmp_path) == "UnresolvedReference: m1", opening
+    # a declared noun of the sort quantifies it too, joined or not
+    for opening in ["A system is deployed.", "A system's owner is ready.", "Some big system is ready."]:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2)
+        assert agree(doc, tmp_path, noun_env()) == "UnresolvedReference: m1", opening
+    # no quantifier of the target's sort: resolved in both (the rule stays scoped by sort)
+    for opening in ["Api's owner is ready.", "Alice is a person.", "Every person is ready.", "Api is reviewed."]:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2)
+        assert agree(doc, tmp_path) == "admitted", opening
+
+
+def test_coordinations_are_read_as_segments(lean, tmp_path):
+    """The same class for the other text input of `Acc` Python elaborates: a coordination whose
+    second name is joined (`Bob's`) is a coordination in both; one whose first name is joined
+    (`Alice's and`) is none in either."""
+    ready = {"u2": unary("ready", "alice")}
+    former = [("m1", "u2", "The former", "ordinal_pair", PAIR)]
+    for opening in ["Alice and Bob's manager is ready.", "Alice and Bob’s manager is ready.", "Alice and Bob-x is ready."]:
+        doc = document([opening, "The former is ready."], former, names=PY_NAMES, contents=ready)
+        assert agree(doc, tmp_path) == "admitted", opening
+    for opening in ["Alice's and Bob's managers are ready.", "Alice and Bobby are ready."]:
+        doc = document([opening, "The former is ready."], former, names=PY_NAMES, contents=ready)
+        assert agree(doc, tmp_path) == "UnresolvedReference: m1", opening

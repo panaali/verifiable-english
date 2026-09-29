@@ -490,10 +490,12 @@ structure Prepared where
   environmentId : String
   claims : List Validity
 
-/-- The singular nouns the environment declares for its sorts (`verbalisation.singular`). -/
-def sortNouns (environment : Json) : List String :=
+/-- The singular nouns the environment declares for its sorts (`verbalisation.singular`), with
+their sorts. -/
+def sortNouns (environment : Json) : List (String × String) :=
   match VE.Bridge.fields ((environment.getObjValD "vocabulary").getObjValD "sorts") with
-  | .ok kvs => kvs.filterMap fun (_, v) => ((v.getObjValD "verbalisation").getObjValD "singular").getStr?.toOption
+  | .ok kvs => kvs.filterMap fun (s, v) =>
+    (((v.getObjValD "verbalisation").getObjValD "singular").getStr?.toOption).map (s, ·)
   | .error _ => []
 
 def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
