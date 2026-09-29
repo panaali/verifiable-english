@@ -188,6 +188,9 @@ closed formulas. The family decoder performs the same typed AST check used by
 its route. -/
 def decodeTyped (checked : Validated) (ast : Json) (formula : Bool) : Except String Unit := do
   let e := checked.envelope
+  -- Python's AST limits hold on every family, counted across a document; the
+  -- closure, core and order single-formula decoders check depth only.
+  VE.Route.AstLimit.check (← if formula then pure [ast] else (·.toList) <$> ast.getArr?)
   match e.family with
   | .fol =>
     let rv ← VE.Route.Run.decodeRouteVocabulary e
@@ -253,7 +256,7 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
         else match environment.getObjValD "profiles" with
           | .arr ps => ps.toList.filterMap (·.getStr?.toOption)
           | _ => []
-      if message.startsWith "ResourceLimit" || message.startsWith "UnsupportedProfile" then throw message
+      if message.startsWith "UnsupportedProfile" then throw message
       throw ((TypingDiagnostic.diagnose profiles (environment.getObjValD "vocabulary")
         (if formula then [ast] else items)).getD message)
   let envId ← VE.CertificateWire.digest s!"ve-environment-{version}\n" environment
@@ -279,10 +282,8 @@ def checkCase (j : Json) : Except String Json := do
   match decodeTyped checked ast formula with
   | .ok () => pure ()
   | .error message =>
-    if !message.startsWith "ResourceLimit" then
-      throw ((TypingDiagnostic.diagnose e.profiles e.vocabulary
-        (if formula then [ast] else items.toList)).getD message)
-    else throw message
+    throw ((TypingDiagnostic.diagnose e.profiles e.vocabulary
+      (if formula then [ast] else items.toList)).getD message)
   -- Identities bind the submitted environment and profiles.
   let profiles ← VE.Route.Gate.profilesOf environment
   let envId ← VE.Route.Wire.environmentId profiles environment

@@ -6,10 +6,12 @@ The verdict of a typing request is always the proved family decoder's. When
 that decoder rejects a formula as ill typed, this classifier walks the wire AST
 in the order of Python's `_Checker` (`ve/ast.py`) and names the first error
 with Python's code and message (`UnknownSymbol`, `TypeMismatch`,
-`UnboundVariable`, `UnsupportedProfile`), so diagnostic codes agree at zero
-tolerance (SEMANTICS-MIGRATION-PLAN.md 2a). It never accepts anything: if it
-finds no error, the decoder's own message stands. Node and depth budgets are
-the decoder's and are not re-checked here. -/
+`UnboundVariable`, `UnsupportedProfile`, `ResourceLimit`), so diagnostic codes
+agree at zero tolerance (SEMANTICS-MIGRATION-PLAN.md 2a). It never accepts
+anything: if it finds no error, the decoder's own message stands. The walk
+keeps `_Checker`'s node counter (one per request, shared by a document's
+formulas) and its formula and term depths, so a budget rejection is named where
+and as Python names it. -/
 namespace VE.Service.TypingDiagnostic
 open Lean
 
@@ -40,10 +42,21 @@ def pyTuple : List String → String
 
 def intSort : String := "$int"
 
-/-- The diagnostic of the first error, as `Except` with the message on the left. -/
-abbrev Check := Except String
+/-- The diagnostic of the first error, as `Except` with the message on the
+left; the state is `_Checker.nodes`. -/
+abbrev Check := StateT Nat (Except String)
 
-def fail {α : Type} (code message : String) : Check α := .error s!"{code}: {message}"
+def fail {α : Type} (code message : String) : Check α := throw s!"{code}: {message}"
+
+/-- Python `ve/limits.py` `MAX_NODES` and `MAX_DEPTH`. -/
+def maxNodes : Nat := 10000
+def maxDepth : Nat := 64
+
+/-- `_Checker.tick`. -/
+def tick : Check Unit := do
+  let n ← get
+  if n + 1 > maxNodes then fail "ResourceLimit" "AST exceeds 10,000 nodes"
+  set (n + 1)
 
 /-- Python `repr` of a JSON value the Python decoder accepts as a name. -/
 def pyValue : Json → String
@@ -53,9 +66,11 @@ def pyValue : Json → String
   | .null => "None"
   | j => j.compress
 
-def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
+def term (sig : Signature) (ctx : List String) (depth : Nat) : Nat → Json → Check String
   | 0, _ => fail "TypeMismatch" "Expected a variable or constant term"
   | fuel + 1, j => do
+    tick
+    if depth > maxDepth then fail "ResourceLimit" "Arithmetic term exceeds 64 nesting levels"
     let items ← match j.getArr? with
       | .ok items => pure items.toList
       | .error _ => fail "TypeMismatch" "Expected a variable or constant term"
@@ -78,7 +93,7 @@ def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
           fail "UnsupportedProfile" "Integer arithmetic requires order@0"
         let parts := if tag == "num" then [] else if tag == "scale" then rest.drop 1 else rest
         for part in parts do
-          if (← term sig ctx fuel part) != intSort then
+          if (← term sig ctx (depth + 1) fuel part) != intSort then
             fail "TypeMismatch" "Arithmetic requires integer operands"
         pure intSort
       else fail "TypeMismatch" "Expected a variable or constant term"
@@ -87,13 +102,15 @@ def term (sig : Signature) (ctx : List String) : Nat → Json → Check String
 /-- Walk a formula in `_Checker.formula` order. The error channel carries the
 first diagnostic; `false` is an unrecognised construct, which ends the walk
 without one. -/
-def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
+def formula (sig : Signature) (ctx : List String) (depth : Nat) : Nat → Json → Check Bool
   | 0, _ => pure false
   | fuel + 1, j => do
+    tick
+    if depth > maxDepth then fail "ResourceLimit" "Formula exceeds 64 nesting levels"
     let items ← match j.getArr? with
       | .ok items => pure items.toList
       | .error _ => return false
-    let t := term sig ctx 64
+    let t := term sig ctx 1 (maxDepth + 1)
     let .str tag :: args := items | return false
     if tag == "top" || tag == "bottom" then return args.isEmpty
     if tag == "unary" || tag == "binary" || tag == "atom" then
@@ -134,7 +151,7 @@ def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
         | some [.str "body", sort, body] => do
           let .str s := sort | fail "UnknownSymbol" s!"Unknown closure sort {pyValue sort}"
           unless sig.sorts.contains s do fail "UnknownSymbol" s!"Unknown closure sort {pyRepr s}"
-          if ← formula sig (s :: s :: ctx) fuel body then pure (some s) else pure none
+          if ← formula sig (s :: s :: ctx) (depth + 1) fuel body then pure (some s) else pure none
         | _ => pure none
       let some sort ← edgeSort | return false
       if (← t left) != sort then
@@ -152,14 +169,14 @@ def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
           fail "UnsupportedProfile" "$string quantification requires data stage 2"
         fail "UnknownSymbol" s!"Unknown binder sort {pyValue sort}"
       let .str s := sort | return false
-      return ← formula sig (s :: ctx) fuel body
+      return ← formula sig (s :: ctx) (depth + 1) fuel body
     if tag == "not" then
       let [body] := args | return false
-      return ← formula sig ctx fuel body
+      return ← formula sig ctx (depth + 1) fuel body
     let [left, right] := args | return false
     if tag == "and" || tag == "or" || tag == "implies" then
-      unless ← formula sig ctx fuel left do return false
-      return ← formula sig ctx fuel right
+      unless ← formula sig ctx (depth + 1) fuel left do return false
+      return ← formula sig ctx (depth + 1) fuel right
     if tag == "lt" || tag == "le" then
       unless sig.profiles.contains "order@0" do fail "UnsupportedProfile" "Comparisons require order@0"
       if (← t left) != intSort then fail "TypeMismatch" "Comparisons require integer terms"
@@ -173,18 +190,19 @@ def formula (sig : Signature) (ctx : List String) : Nat → Json → Check Bool
       return true
     return false
 
-/-- The Python diagnostic for the first ill-typed formula of `asts`, if the
-walk finds one. -/
+/-- The Python diagnostic for the first ill-typed or over-budget formula of
+`asts`, if the walk finds one; one node counter spans the list. -/
 def diagnose (profiles : List String) (vocabulary : Json) (asts : List Json) : Option String :=
   match decodeSignature profiles vocabulary with
   | .error _ => none
   | .ok sig =>
-    let rec go : List Json → Option String
-      | [] => none
-      | a :: rest => match formula sig [] 65 a with
-        | .error message => some message
-        | .ok true => go rest
-        | .ok false => none
-    go asts
+    let rec go : List Json → Check Bool
+      | [] => pure true
+      | a :: rest => do
+        unless ← formula sig [] 1 (maxDepth + 1) a do return false
+        go rest
+    match (go asts).run' 0 with
+    | .error message => some message
+    | .ok _ => none
 
 end VE.Service.TypingDiagnostic
