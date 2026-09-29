@@ -47,24 +47,20 @@ def parse_line(env, source, *, name):
 
 def _line(document, right, line):
     kind = line["kind"]
-    if kind == "power":
-        rules = (line["liberty"], line["recognition"])
-    elif "fan_out" in line:
-        rules = tuple({**line["norm"], "predicate": predicate,
-                       "name": f"{line['norm']['name']}-{sort}"}
-                      for sort, predicate in sorted(line["fan_out"].items()))
-    else:
-        rules = (line["norm"],)
     explanations = []
-    for raw in rules:
-        rule = decode_rule(document.env, {"norm": raw})
-        sentence = render_rule_sentence(rule.core, document.env)
+    for index, instance in enumerate(document.instances):
+        if instance["right"] != right or instance["source_line"] is not line:
+            continue
+        rule = document.soft_document.rules[index]
+        sentence = render_rule_sentence(rule, document.environment)
         if rule.mode == "default":
             decider = (rule.exception or {}).get("decided_by") or document.env.soft.get("exception_decider") or "unstated"
             sentence += (f" This is a default line; {decider} decides its exception."
                          if decider != "unstated" else
                          " This is a default line; the source names no exception decider.")
         explanations.append(sentence)
+    if not explanations:
+        raise VEError("InvalidInput: rights line is not in the checked document")
     label = kind[0].upper() + kind[1:]
     return f"{label} of right {right}. " + " ".join(explanations)
 
@@ -83,7 +79,9 @@ def render_unit(document, content):
     if kind == "limitation":
         scope = ("every right" if body["scope"] == "all" else
                  "rights " + " and ".join(body["scope"]))
-        sentences = [f"Limitation {body['name']} applies to {scope}."]
+        kinds = ("every incident kind" if body["kinds"] == "all" else
+                 " and ".join(body["kinds"]) + " lines")
+        sentences = [f"Limitation {body['name']} applies to {scope} for {kinds}."]
         for condition in body["conditions"]:
             qualifier = "only where" if condition["role"] == "necessary" else "where"
             sentences.append(f"Limitation {body['name']} holds {qualifier} {condition['verbalisation']}.")

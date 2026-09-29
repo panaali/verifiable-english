@@ -339,7 +339,7 @@ class RightsDocument:
                             raise VEError(f"FanOutUndeclared: {raw.get('name')}, {bearer}")
                     yield {"right": right_name, "source_kind": kind, "kind": instance_kind,
                            "rule": rule, "holder_slot": slot, "cites": line["cites"],
-                           "bearer": bearer}
+                           "bearer": bearer, "source_line": line}
 
     def _validate_limitations(self, names):
         for limit in self.limitations:
@@ -403,7 +403,8 @@ class RightsDocument:
         cond_names = {triple: f"rights__cond__{index}" for index, triple in enumerate(triples, 1)}
         permissions = sorted({instance["rule"].core.predicate for instance in self.instances
                               if instance["kind"] in ("liberty", "powerLiberty")})
-        bar_names = {p: f"rights__bar__{i}" for i, p in enumerate(permissions, 1)}
+        bar_names = ({p: f"rights__bar__{i}" for i, p in enumerate(permissions, 1)}
+                     if self.bar is not None else {})
         for (name, act), generated in lim_names.items():
             limit = next(item for item in self.limitations if item["name"] == name)
             args = list(self.env.predicates[act].arguments)
