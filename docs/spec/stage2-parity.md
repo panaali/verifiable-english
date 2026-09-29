@@ -75,7 +75,7 @@ Totals over 9384 cells: regression 16, different 80, baseline drift 115, same, a
 | budget_boundaries | `MAX_TABLEAU_DEPTH_search` | same, python |  |
 | budget_boundaries | `MAX_TUPLES` | same, python |  |
 | budget_boundaries | `max_evaluations` | same, constituents | evaluate, typing |
-| budget_boundaries | `max_models` | same, constituents | countermodel_search, typing |
+| budget_boundaries | `max_models` | same, constituents | countermodel_check, countermodel_search, typing |
 | budget_boundaries | `max_trace_nodes` | same, constituents | evaluate, typing |
 | budget_boundaries | `order_search_depth` | same, python |  |
 | budget_boundaries | `order_trace_decoder_fuel` | same, python |  |
@@ -96,7 +96,7 @@ Totals over 9384 cells: regression 16, different 80, baseline drift 115, same, a
 | feature_probes | `replay:closure_transitivity` | same, constituents | background, typing |
 | feature_probes | `replay:nary_instantiation` | same, constituents | background, typing |
 | feature_probes | `replay:order_farkas` | same, constituents | background, typing |
-| feature_probes | `search:min_domain_size_0` | same, constituents | countermodel_search, typing |
-| feature_probes | `search:min_domain_size_1` | same, constituents | countermodel_search, typing |
-| feature_probes | `search:semantic_nonvacuity` | same, constituents | countermodel_search, typing |
-| feature_probes | `search:syntactic_nonvacuity` | same, constituents | countermodel_search, typing |
+| feature_probes | `search:min_domain_size_0` | same, constituents | countermodel_check, countermodel_search, typing |
+| feature_probes | `search:min_domain_size_1` | same, constituents | countermodel_check, countermodel_search, typing |
+| feature_probes | `search:semantic_nonvacuity` | same, constituents | countermodel_check, countermodel_search, typing |
+| feature_probes | `search:syntactic_nonvacuity` | same, constituents | countermodel_check, countermodel_search, typing |
