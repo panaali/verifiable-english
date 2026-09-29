@@ -101,7 +101,9 @@ def pinned_lean(toolchain: str) -> list[str] | None:
     """The command that runs the pinned toolchain's `lean`, or None if it is not installed.
 
     Never installs anything: elan's `lean +TOOLCHAIN` would download a missing
-    toolchain, so it is used only for one `elan toolchain list` shows.
+    toolchain, so it is used only for one `elan toolchain list` shows, and
+    only to find that toolchain's own binary (a timeout then kills `lean`
+    itself, not elan's proxy).
     """
     toolchain = toolchain.strip()
     try:
@@ -109,10 +111,14 @@ def pinned_lean(toolchain: str) -> list[str] | None:
         if elan is not None:
             listed = subprocess.run([elan, "toolchain", "list"], capture_output=True, text=True,
                                     timeout=2, check=False).stdout
-            lean = Path(elan).with_name("lean")
-            if toolchain in {line.split()[0] for line in listed.splitlines() if line.split()} and lean.exists():
-                return [str(lean), f"+{toolchain}"]
-            return None
+            proxy = Path(elan).with_name("lean")
+            if toolchain not in {line.split()[0] for line in listed.splitlines() if line.split()} \
+                    or not proxy.exists():
+                return None
+            prefix = subprocess.run([str(proxy), f"+{toolchain}", "--print-prefix"], capture_output=True,
+                                    text=True, timeout=2, check=False).stdout.strip()
+            lean = Path(prefix) / "bin/lean"
+            return [str(lean)] if prefix and lean.exists() else None
         lean = shutil.which("lean")
         version = toolchain.rpartition(":v")[2]
         if lean is not None and version and f"(version {version}," in subprocess.run(

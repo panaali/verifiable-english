@@ -332,8 +332,7 @@ def check_layers(index: Index) -> list[str]:
         if command is None:
             NOTES.append("lean --deps: pinned toolchain unavailable; plain-layout grammar only")
         else:
-            folder = index.snapshot / ".lean-headers"
-            folder.mkdir()
+            folder = Path(tempfile.mkdtemp(prefix="lean-headers-", dir=index.snapshot))
             files = {}
             for number, path in enumerate(read):
                 files[path] = (folder / f"{number}.lean", read[path])
