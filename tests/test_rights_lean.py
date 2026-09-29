@@ -224,10 +224,47 @@ def test_bar_rule_and_query_readings(lean):
     ])
     assert rows[0]["bars"] == [{"predicate": "impart_permitted", "aimed": "rights__bar__1", "reading": "rule",
                                 "barred": ["may-impart"], "blocked_defaults": ["should-impart"],
-                                "composition_conflicts": ["must-impart"]}]
+                                "composition_candidates": ["must-impart"], "composition_conflicts": []}]
     query = rows[1]["bars"][0]
     assert query["reading"] == "query" and "entailed" not in query
     assert query["target"][0] == "forall"
+
+
+def test_absent_bar_has_no_generated_aimed_predicate_or_query(lean):
+    one = {"holders": ["person"], "bearers": ["person"]}
+    raw = env(IMPART, sorts=("person", "idea"), rights=one)
+    source = [right("r19", [line("liberty", norm("may-impart", "impart_permitted", True))])]
+    rows = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": raw,
+                       "document": source},
+                      {"id": "b", "kind": "rights-bar", "environment": raw,
+                       "document": source}])
+    assert rows[0]["generated"] == []
+    assert "rights__bar__1" not in rows[0]["environment_prime"]["vocabulary"]["predicates"]
+    assert rows[1]["bars"] == []
+
+
+def test_unsatisfiable_strict_bar_overlap_is_only_a_candidate(lean):
+    one = {"holders": ["person"], "bearers": ["person"]}
+    raw = env(IMPART, sorts=("person", "idea"), rights=one)
+    source = [right("r19", [line("liberty", norm("may-impart", "impart_permitted", True))]),
+              {"norm": norm("impossible-impart", "impart_required", True,
+                            guard=("bottom",))},
+              {"bar": {"name": "b30", "reading": "rule"}}]
+    row = run(lean, [{"id": "b", "kind": "rights-bar", "environment": raw,
+                      "document": source}])[0]["bars"][0]
+    assert row["composition_candidates"] == ["impossible-impart"]
+    assert row["composition_conflicts"] == []
+
+
+def test_right_lines_follow_document_order_across_rights(lean):
+    first = right("r1", [line("claim", norm("first", "deprive_required", True))])
+    second = right("r2", [line("claim", norm("second", "deprive_required", True))])
+    later = {"right_lines": {"right": "r1", "lines": [
+        line("claim", norm("third", "deprive_required", True))]}}
+    raw = env(DEPRIVE)
+    row = run(lean, [{"id": "o", "kind": "rights-elaborate", "environment": raw,
+                      "document": [first, second, later]}])[0]
+    assert [item["rule"] for item in row["lines"]] == ["first", "second", "third"]
 
 
 def test_soft_cases_delegate_unchanged(lean):
