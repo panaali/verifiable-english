@@ -156,3 +156,53 @@ def test_model_identity_sorts_domains_as_python_does(monkeypatch):
     assert row["model_id"] == expected
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert FiniteModel.from_dict(env, wire).model_id == expected
+
+
+def chained(family=()):
+    """A definition over another definition, declared in the reverse order."""
+    raw = pm.raw_environment((*family, "definitions@0"))
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["top_derived"] = {"arguments": ["item"], "description": "top derived",
+                                 "defined": {"arguments": ["item"],
+                                             "body": ["not", ["unary", "derived", ["var", 0]]]}}
+    return raw
+
+
+@pytest.mark.parametrize("family", [(), ("closure@0",), ("closure@0", "nary@0")])
+def test_definitions_elaborate_in_lean_in_python_order(monkeypatch, family):
+    from ve.definitions import compile_definitions
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    records = {}
+    for authority in ("python", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        env = Environment(chained(family))
+        records[authority] = [(d.name, d.arguments, d.body)
+                              for d in compile_definitions(env, env.definition_entries, version="v")]
+    assert records["lean"] == records["python"]
+    assert [name for name, _, _ in records["lean"]] == ["derived", "top_derived"]
+    assert ("definitions_elaboration", "lean") in seen
+
+
+def test_a_definition_cycle_both_checkers_reject_is_named_by_python(monkeypatch):
+    from ve.definitions import compile_definitions
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    env = Environment(chained())
+    entries = {**env.definition_entries,
+               "derived": {"arguments": ["item"], "body": ["unary", "top_derived", ["var", 0]]}}
+    with pytest.raises(VEError, match="DependencyCycle"):
+        compile_definitions(env, entries, version="v")
+
+
+def test_lean_acceptance_of_rejected_definitions_is_unavailable(monkeypatch):
+    from ve.definitions import compile_definitions
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    env = Environment(chained())
+    entries = {**env.definition_entries,
+               "derived": {"arguments": ["item"], "body": ["unary", "missing", ["var", 0]]}}
+    fake_lean(monkeypatch, lambda mode, case: {"id": "definitions", "status": "ok",
+                                               "premises": [], "generators": [], "background": []})
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "definitions_elaboration=lean")
+    with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
+        compile_definitions(env, entries, version="v")

@@ -54,6 +54,7 @@ ADAPTERS = {
     "norms_conflict": "norms_conflict", "norms_certificate": "norms_certificate",
     "norms_admission": "norms_admission", "premise_status": "premise_status", "compare": "compare",
     "environment_validation": "environment_validation", "model_validation": "model_validation",
+    "definitions_elaboration": "definitions_elaboration",
 }
 _routed: set[str] = set()
 _backend = "python"
