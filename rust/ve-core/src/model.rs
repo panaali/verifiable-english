@@ -10,7 +10,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 /// The closed biconditional generated for one definition, binders in declared
 /// argument order (Python `definitions.premise`, Lean `Def.premise`).
-fn definition_premise(name: &str, sig: &[String], body: &Formula) -> Formula {
+pub(crate) fn definition_premise(name: &str, sig: &[String], body: &Formula) -> Formula {
     let n = sig.len() as u64;
     let head = match n {
         1 => Formula::Unary(name.to_owned(), Term::Var(0)),

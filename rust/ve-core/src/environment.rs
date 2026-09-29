@@ -2,6 +2,7 @@ use crate::{
     Error, Formula, Result,
     ast::{check_in_context, decode_formula, has_reach},
     canonical_json, dependency_order, digest, error, loads_json,
+    model::definition_premise,
     wire::{fields, object},
 };
 use serde_json::{Value, json};
@@ -513,6 +514,10 @@ impl Environment {
                 .map_err(|_| Error::new("InvalidInput",
                     format!("Definition {name}: the body is not a typed formula over the symbols below it")))?;
             below.predicates.insert(name.clone(), signature.clone());
+            // The generated biconditional has the AST limits of any formula,
+            // 10,000 nodes and depth 64 (Python checks `premise(definition)`
+            // after the body, in dependency order).
+            check_in_context(&below, &definition_premise(&name, &signature, &body), &[])?;
             result.push((name, signature, body));
         }
         Ok(result)
