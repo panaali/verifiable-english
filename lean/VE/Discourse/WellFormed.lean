@@ -246,12 +246,12 @@ around slot discovery. -/
 def contentUnit (D : DDoc) (u : String) : Bool :=
   ((contentOf D u).isSome || setUnit D u) && !(groupedUnits D).contains u
 
-/-- The unit's text has a reference slot: a derivation with a slot, or a reference word the
+/-- The unit's text has a reference slot: a derivation with a slot, or a reference surface the
 grammar does not place (3.4: slots are discovered from the source, never only from the
 manifest's recorded mentions). -/
 def hasSourceSlot (D : DDoc) (u : String) : Bool :=
   match D.text u with
-  | some s => (derivs D u s).any (fun d => !d.slots.isEmpty) || (referenceIndex D s).isSome
+  | some s => (derivs D u s).any (fun d => !d.slots.isEmpty) || !(discovered D u).isEmpty
   | none => false
 
 /-- The units elaborated on their own: every unit carrying a recorded formula-producing
@@ -261,28 +261,34 @@ def boundUnits (D : DDoc) : List String :=
   (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit ++
     (unitIdsOf D).filter fun u => contentUnit D u && hasSourceSlot D u
 
-/-- A reference surface of the unit's text that no recorded formula-producing mention overlaps.
-A derivation can accept a sentence with such a surface outside its slots (a registered spelling
-`He-api` over the reference word `he`, a section label `its`); it is still a slot to account for
-(3.4, the Python `_unrecorded`). -/
-def uncoveredSurface (D : DDoc) (u : String) : Option (Nat × Nat) :=
-  match D.text u with
-  | some s => (surfaceRanges D s).find? fun r =>
-      !(recordedSlots D u).any fun m => decide (m.span.1 < r.2) && decide (r.1 < m.span.2)
-  | none => none
+/-- The prose byte ranges of the unit's recorded formula-producing mentions (a location binding
+is never a slot, so it never accounts for one). -/
+def recordedBytes (D : DDoc) (u : String) : List (Nat × Nat) :=
+  (D.K.mentions.filter fun x => x.unit == u && formulaForm x.form).map Mention.bytes
 
-/-- Every reference surface of a unit with meaning is recorded (`UnrecordedSlot`). -/
+/-- The first reference surface of the unit that no recorded formula-producing mention records
+with exactly its byte range: overlapping or containing it is not enough (a pronoun `It` recorded
+inside the document display `It is safe` leaves the display unrecorded). The Python
+`_unrecorded`. -/
+def uncoveredSurface (D : DDoc) (u : String) : Option (Nat × Nat) :=
+  (discovered D u).find? fun r => !(recordedBytes D u).contains r
+
+/-- Every reference surface of a unit with meaning is recorded (`UnrecordedSlot: <unit>: [a, b)`,
+prose bytes, the Python text). -/
 def coveredOk (D : DDoc) (u : String) : Except String Unit :=
   if contentUnit D u then match uncoveredSurface D u with
     | some r => .error ("UnrecordedSlot: " ++ u ++ ": [" ++ toString r.1 ++ ", " ++ toString r.2 ++ ")")
     | none => .ok ()
   else .ok ()
 
-/-- 4.1(6): every bound unit validates, and a validated unit with meaning leaves no reference
-surface unrecorded. -/
+/-- 4.1(6), coverage: in document order, every unit with meaning records every reference surface
+of its text, before any unit is resolved (Python checks every unit before resolving one). -/
+def coverageOk (D : DDoc) : Except String Unit := allOk (unitIdsOf D) (coveredOk D)
+
+/-- 4.1(6): every bound unit validates. -/
 def boundOk (D : DDoc) : Except String Unit :=
   allOk (boundUnits D) fun u => match validate D u with
-    | .ok _ => coveredOk D u
+    | .ok _ => .ok ()
     | .error e => .error e
 
 /-- 4.8: the active open reading sets (the latest version per unit, status `open`), in
@@ -402,7 +408,7 @@ def labelsOk (D : DDoc) : Except String Unit := runAll [
 
 /-- 4.1 in order; every check returns the diagnostic text of section 8. -/
 def wellFormed (D : DDoc) : Except String Unit :=
-  runAll [fun _ => anchorsOk D, fun _ => tablesOk D, fun _ => mentionsOk D, fun _ => boundOk D,
+  runAll [fun _ => anchorsOk D, fun _ => tablesOk D, fun _ => mentionsOk D, fun _ => coverageOk D, fun _ => boundOk D,
     fun _ => groupsOk D, fun _ => jointOk D, fun _ => labelsOk D]
 
 def WellFormedDiscourse (D : DDoc) : Bool := (wellFormed D).toBool

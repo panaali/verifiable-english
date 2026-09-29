@@ -24,7 +24,7 @@ structure PrepareFacts (profiles : List String) (environment : Json) (rv : VE.Ro
   sourceId : P.doc.sourceId = Loader.sourceId (baseProfiles profiles) (Loader.sourceOf j)
   manifest : ∃ K₀ K, Wire.decodeManifest P.doc.sets (Loader.filesOf j) P.environmentId
       ((Loader.metaOf j).getObjValD "discourse") = .ok K₀ ∧
-    Wire.toTokenSpans ⟨Loader.sourceOf j, lex (Loader.sourceOf j)⟩ P.doc.base K₀ = .ok K ∧
+    Wire.toTokenSpans ⟨Loader.sourceOf j⟩ P.doc.base K₀ = .ok K ∧
     P.doc.K = { K with validity := [] } ∧ P.claims = K.validity
 
 theorem prepare_facts (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
@@ -984,7 +984,7 @@ theorem discourse_wire_binding (profiles : List String) (environment : Json) (rv
     res.doc.sourceId = Loader.sourceId (baseProfiles profiles) (Loader.sourceOf j) ∧
     (∃ K₀ K, Wire.decodeManifest res.doc.sets (Loader.filesOf j) res.environmentId
         ((Loader.metaOf j).getObjValD "discourse") = .ok K₀ ∧
-      Wire.toTokenSpans ⟨Loader.sourceOf j, lex (Loader.sourceOf j)⟩ res.doc.base K₀ = .ok K ∧
+      Wire.toTokenSpans ⟨Loader.sourceOf j⟩ res.doc.base K₀ = .ok K ∧
       res.doc.K = { K with validity := [] } ∧ res.claims = K.validity) ∧
     VE.Route.Wire.environmentId (baseProfiles profiles) (baseEnvironment environment) = .ok res.environmentId ∧
     res.doc.K.definitionsVersion = res.environmentId ∧

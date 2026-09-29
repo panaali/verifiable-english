@@ -527,8 +527,8 @@ def firstBad (D : DDoc) (d : DTree) (vec : List Target) : String :=
 /-- No type-checking accessible competitor: the unit's first recorded slot is unresolved. -/
 def unresolvedText (D : DDoc) (u : String) (s : List Tok) (ds : List DTree) : String :=
   match ds with
-  | [] => match (recordedSlots D u).isEmpty, referenceIndex D s with
-    | true, some i => "UnrecordedSlot: " ++ u ++ ": [" ++ toString i ++ ", " ++ toString (i + 1) ++ ")"
+  | [] => match (recordedSlots D u).isEmpty, (discovered D u).head? with
+    | true, some r => "UnrecordedSlot: " ++ u ++ ": [" ++ toString r.1 ++ ", " ++ toString r.2 ++ ")"
     | _, _ => "InvalidInput: unit " ++ u ++ " is outside the supported discourse fragment"
   | d :: _ => match d.slots.find? (fun m => (recordedTarget D m).isSome) with
     | some m => "UnresolvedReference: " ++ mentionIdAt D m

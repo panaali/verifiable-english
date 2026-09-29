@@ -93,12 +93,13 @@ def unit_record(uid, span, kind, content):
 
 
 def document(sentences, mentions=(), names=NAMES, kinds=None, contents=None, graph=None, extra=None,
-             format="ve-document@2"):
-    """A document front matter; `_source` is the body. Units cover every source byte."""
+             format="ve-document@2", sep=" "):
+    """A document front matter; `_source` is the body. Units cover every source byte; `sep` follows
+    every sentence but the last (a unit boundary with no space after the full stop when empty)."""
     source, units = "", []
     for i, s in enumerate(sentences):
         start = len(source.encode())
-        source += s + (" " if i + 1 < len(sentences) and not s.endswith("\n") else "")
+        source += s + (sep if i + 1 < len(sentences) and not s.endswith("\n") else "")
         uid = f"u{i + 1}"
         content = (contents or {}).get(uid)
         kind = (kinds or {}).get(uid, "asserted" if content is not None else "exposition")
@@ -229,8 +230,9 @@ def test_alpha_ill_typed_target(lean):
 def test_unrecorded_reference_is_a_slot(lean):
     """Astra A1: a reference surface with no recorded mention is discovered from the source."""
     graph = {"root": "n2", "nodes": [{"name": "n2", "ast": unary("deployed", "api"), "unit": "u2"}]}
-    for sentence, span in [("It is deployed.", "[0, 1)"), ("This service is deployed.", "[0, 2)"),
-                           ("It is deployed and safe.", "[0, 1)"), ("Its owner is deployed.", "[0, 1)")]:
+    # u2 starts at byte 21; the diagnostic prints the surface's prose bytes (the Python text)
+    for sentence, span in [("It is deployed.", "[21, 23)"), ("This service is deployed.", "[21, 33)"),
+                           ("It is deployed and safe.", "[21, 23)"), ("Its owner is deployed.", "[21, 24)")]:
         doc = document(["The API is reviewed.", sentence],
                        contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")}, graph=graph)
         assert admit(doc)["error"] == f"UnrecordedSlot: u2: {span}", sentence
@@ -805,7 +807,7 @@ def test_reading_sets_regenerate_their_slots(lean, tmp_path):
         for graph in (None, labelled):
             doc = document(["It is deployed."], names=PY_NAMES, kinds={"u1": "asserted"}, graph=graph)
             doc["reading_sets"] = [reading_set(env(), "rs1", "u1", [("r0", unary("safe", "api"))], status)]
-            assert admit(doc)["error"] == "UnrecordedSlot: u1: [0, 1)", (status, graph)
+            assert admit(doc)["error"] == "UnrecordedSlot: u1: [0, 2)", (status, graph)
             assert python_outcome(doc, tmp_path) == "UnrecordedSlot: u1: [0, 2)", (status, graph)
     # a recorded mention: the readings are compared with the elaboration, never trusted
     it = [("m1", "u1", "It", "pronoun", entity("api"))]
@@ -927,7 +929,7 @@ def test_location_binding_never_covers_a_slot(lean, tmp_path):
         doc = document(["Api is reviewed.", "It is deployed."],
                        [("m1", "u2", "It", form, {"kind": "anchor", "name": "doc"})], names=PY_NAMES,
                        contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
-        assert admit(doc)["error"] == "UnrecordedSlot: u2: [0, 1)", form
+        assert admit(doc)["error"] == "UnrecordedSlot: u2: [17, 19)", form
         assert python_outcome(doc, tmp_path) == "UnrecordedSlot: u2: [17, 19)", form
 
 
@@ -1089,8 +1091,7 @@ def test_unicode_spaces_separate_words(lean, tmp_path):
     safe = {"u1": unary("safe", "api")}
     for space in UNICODE_SPACES:
         lean_error, python_error = slot_outcomes([f"It{space}is safe."], tmp_path, safe)
-        assert lean_error == "UnrecordedSlot: u1: [0, 1)", hex(ord(space))
-        assert python_error == "UnrecordedSlot: u1: [0, 2)", (hex(ord(space)), python_error)
+        assert lean_error == python_error == "UnrecordedSlot: u1: [0, 2)", (hex(ord(space)), lean_error, python_error)
     # recorded, the pronoun resolves in both
     doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
                    contents=safe)
@@ -1114,29 +1115,26 @@ JOINERS = ["'", "’", "-", "_", "ʼ", "‑", "́", "é", "​", "⁠"]
 def test_joined_reference_words_are_slots(lean, tmp_path):
     """looprecheck2 A (Access.lean:28, Grammar.lean:95) and B (discourse.py:272): a reference
     word joined to anything else inside a word is still a slot. With a submitted formula and no
-    mention, each unit is `UnrecordedSlot` in both implementations (Lean prints token ranges,
-    Python byte ranges)."""
+    mention, each unit is `UnrecordedSlot` in both implementations, with the same byte range."""
     safe = {"u1": unary("safe", "api")}
     for sentence in ["It's safe.", "It’s safe.", "He's safe.", "They're safe.", "It-is safe.",
                      "It_ is safe.", "Itʼs safe."]:
         lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
-        assert lean_error == "UnrecordedSlot: u1: [0, 1)", sentence
         width = 4 if sentence.startswith("They") else 2
-        assert python_error == f"UnrecordedSlot: u1: [0, {width})", (sentence, python_error)
+        assert lean_error == python_error == f"UnrecordedSlot: u1: [0, {width})", (sentence, lean_error, python_error)
     lean_error, python_error = slot_outcomes(["Api is safe; it's deployed."], tmp_path, safe)
-    assert lean_error == "UnrecordedSlot: u1: [4, 5)"
-    assert python_error == "UnrecordedSlot: u1: [13, 15)"
+    assert lean_error == python_error == "UnrecordedSlot: u1: [13, 15)"
     # the class: every joiner on either side of every reference word, and every other surface
     for word in ("it", "she", "he", "her", "him", "his", "its", "their", "they", "them", "former", "latter", "such"):
         for joiner in JOINERS:
             for sentence in [f"{word.capitalize()}{joiner}x is safe.", f"Api is x{joiner}{word} safe."]:
                 lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+                assert lean_error == python_error, (sentence, lean_error, python_error)
                 assert lean_error.startswith("UnrecordedSlot: u1: ["), (sentence, lean_error)
-                assert python_error.startswith("UnrecordedSlot: u1: ["), (sentence, python_error)
     for sentence in ["This-service is safe.", "By-clause 3, api is safe.", "The-safe is safe.", "Api is the_safe."]:
         lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+        assert lean_error == python_error, (sentence, lean_error, python_error)
         assert lean_error.startswith("UnrecordedSlot: u1: ["), (sentence, lean_error)
-        assert python_error.startswith("UnrecordedSlot: u1: ["), (sentence, python_error)
     # a word that merely begins with a reference word's letters is not one
     lean_error, python_error = slot_outcomes(["Itself is safe."], tmp_path, safe)
     assert lean_error is None and isinstance(python_error, dict), (lean_error, python_error)
@@ -1149,8 +1147,7 @@ def test_every_reference_surface_is_recorded(lean, tmp_path):
     spelled as a reference word is one too (Python does not elaborate definition references)."""
     names = [{"constant": "api", "display": "He-api", "scope": "doc"}, *NAMES[1:]]
     lean_error, python_error = slot_outcomes(["He-api is safe."], tmp_path, {"u1": unary("safe", "api")}, names)
-    assert lean_error == "UnrecordedSlot: u1: [0, 1)"
-    assert python_error == "UnrecordedSlot: u1: [0, 2)"
+    assert lean_error == python_error == "UnrecordedSlot: u1: [0, 2)"
     plain = [{"constant": "api", "display": "Web-api", "scope": "doc"}, *NAMES[1:]]
     lean_error, python_error = slot_outcomes(["Web-api is safe."], tmp_path, {"u1": unary("safe", "api")}, plain)
     assert lean_error is None and isinstance(python_error, dict), (lean_error, python_error)
@@ -1164,4 +1161,95 @@ def test_every_reference_surface_is_recorded(lean, tmp_path):
                                             "span": [0, doc["units"][1]["span"][1]], "exports": ["eligible"]})
         return admit(doc)
     assert section("2")["statuses"]["u2"] == "CHECKED"
-    assert section("its")["error"] == "UnrecordedSlot: u2: [14, 15)"
+    assert section("its")["error"] == "UnrecordedSlot: u2: [127, 130)"
+
+
+# Regressions for discourse-loop.final.md and the slots directive (manage-agents
+# discourse-slots-directive.md): slot discovery is per unit, byte-exact and longest-first, with the
+# same case fold, in Lean and Python; both print the same `UnrecordedSlot` text.
+
+SELF = {"documents": [{"name": "this_policy", "display": ["It is safe"], "refers": "self", "version": 1}]}
+SELF_CONSTANTS = {"api": "service", "alice": "person", "bob": "person", "this_policy": "document"}
+
+
+def test_units_are_lexed_on_their_own(lean, tmp_path):
+    """A (Wire.lean:234): `Api is reviewed.It is safe.` as units [0, 16) and [16, 27). Lexing the
+    whole prose joined `reviewed.It` into one token that lay in neither unit, so u2 lost `It` and
+    was admitted with nothing bound. Each unit is now lexed from its own bytes."""
+    contents = {"u1": unary("reviewed", "api"), "u2": unary("safe", "api")}
+    doc = document(["Api is reviewed.", "It is safe."], names=PY_NAMES, contents=contents, sep="")
+    assert [u["span"] for u in doc["units"]] == [[0, 16], [16, 27]]
+    assert admit(doc)["error"] == python_outcome(doc, tmp_path) == "UnrecordedSlot: u2: [16, 18)"
+    recorded = document(["Api is reviewed.", "It is safe."], [("m1", "u2", "It", "pronoun", entity("api"))],
+                        names=PY_NAMES, contents=contents, sep="")
+    lean_row, python = admit(recorded), python_outcome(recorded, tmp_path)
+    assert lean_row["bound"] == {"u2": unary("safe", "api")}
+    assert lean_row["report_id"] == python["report_id"]
+    # the class: every unit boundary, with or without a space, and a unit that begins inside a word
+    for sep in ("", " ", "\n", "\u00a0"):
+        doc = document(["Api is reviewed.", "Its owner is ready."], names=PY_NAMES, sep=sep,
+                       contents={"u1": unary("reviewed", "api"), "u2": unary("ready", "alice")})
+        start = doc["units"][1]["span"][0]
+        assert admit(doc)["error"] == python_outcome(doc, tmp_path) == f"UnrecordedSlot: u2: [{start}, {start + 3})"
+    # a boundary inside `Apiit`: u1 ends after `Api`, so u2's `it` is a word of its own
+    doc = document(["Api", "it is safe."], names=PY_NAMES, sep="", contents={"u2": unary("safe", "api")})
+    assert admit(doc)["error"] == python_outcome(doc, tmp_path) == "UnrecordedSlot: u2: [3, 5)"
+
+
+def test_coverage_is_exact_and_longest_first(lean, tmp_path):
+    """A (WellFormed.lean:271): the self-document display `It is safe` is one surface of
+    `It is safe.`; a pronoun recorded on `It` overlaps it but does not record it, so the unit is
+    `UnrecordedSlot: u1: [0, 10)` in both (Lean admitted it CHECKED)."""
+    environment = env(constants=SELF_CONSTANTS)
+    it = ("m1", "u1", "It", "pronoun", entity("api"))
+    doc = document(["It is safe."], [it], names=PY_NAMES, contents={"u1": unary("safe", "api")}, extra=SELF)
+    assert admit(doc, environment)["error"] == python_outcome(doc, tmp_path, environment) == \
+        "UnrecordedSlot: u1: [0, 10)"
+    # without the display the pronoun alone is the surface and resolves in both
+    plain = document(["It is safe."], [it], names=PY_NAMES, contents={"u1": unary("safe", "api")},
+                     extra={"documents": [{**SELF["documents"][0], "display": ["this document"]}]})
+    lean_row, python = admit(plain, environment), python_outcome(plain, tmp_path, environment)
+    assert lean_row["bound"] == {"u1": unary("safe", "api")} and lean_row["report_id"] == python["report_id"]
+    # a mention that contains a surface without being it is not enough either
+    wide = document(["It is safe."], [("m1", "u1", "It is", "pronoun", entity("api"))], names=PY_NAMES,
+                    contents={"u1": unary("safe", "api")})
+    assert admit(wide)["error"] == python_outcome(wide, tmp_path) == "UnrecordedSlot: u1: [0, 2)"
+    # `the former` is one surface, recorded whole; its `former` alone is not
+    pair = {"kind": "entity", "name": "api", "pair": ["api", "alice"]}
+    for text, error in [("The former", None), ("former", "UnrecordedSlot: u2: [28, 38)")]:
+        doc = document(["Api and Alice are reviewed.", "The former is deployed."],
+                       [("m1", "u2", text, "ordinal_pair", pair)], names=PY_NAMES,
+                       contents={"u2": unary("deployed", "api")})
+        lean_row, python = admit(doc), python_outcome(doc, tmp_path)
+        if error is None:
+            assert lean_row["bound"] == {"u2": unary("deployed", "api")} and lean_row["report_id"] == python["report_id"]
+        else:
+            assert lean_row["error"] == python == error
+
+
+def test_unicode_case_variants_are_folded(lean, tmp_path):
+    """B (Grammar.lean:115): `İt`, `ıt` and `ſuch` read `it` and `such` in Python's case-insensitive
+    patterns; Lean's segments were ASCII-only and admitted them. Both now fold exactly the four
+    characters `re.I` equates with ASCII letters (İ, ı, ſ, the Kelvin sign)."""
+    safe = {"u1": unary("safe", "api")}
+    for sentence in ["İt is safe.", "ıt is safe.", "ſuch service is safe.", "Iſ it safe.", "Api is ſafe; ıts owner is ready.",
+                     "Tḣe api is safe; ſhe is ready.", "Api is safe; the formeꝛ is. It is.", "Api is reviewed by ſection."]:
+        lean_error, python_error = slot_outcomes([sentence], tmp_path, safe)
+        assert lean_error == python_error and python_error.startswith("UnrecordedSlot: u1: ["), \
+            (sentence, lean_error, python_error)
+    lean_error, python_error = slot_outcomes(["İt is safe."], tmp_path, safe)
+    assert lean_error == "UnrecordedSlot: u1: [0, 3)"
+    # recorded, a folded pronoun resolves in both, to the same report
+    doc = document(["İt is safe."], [("m1", "u1", "İt", "pronoun", entity("api"))], names=PY_NAMES, contents=safe)
+    lean_row, python = admit(doc), python_outcome(doc, tmp_path)
+    assert lean_row["bound"] == {"u1": unary("safe", "api")} and lean_row["report_id"] == python["report_id"]
+    # a quantifier spelled with ſ is still a competing binder in both (fixture beta)
+    beta = document(["ſome service is deployed.", "Api is reviewed.", "It is safe."],
+                    [("m1", "u3", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                    contents={"u3": unary("safe", "api")})
+    assert admit(beta)["error"] == "UnresolvedReference: m1"
+    assert not isinstance(python_outcome(beta, tmp_path), dict)
+    # a character outside the fold is not a letter of a reference word, in either checker
+    lean_error, python_error = slot_outcomes(["Іt is safe."], tmp_path, safe)  # Cyrillic І
+    assert lean_error is None and isinstance(python_error, dict)
+

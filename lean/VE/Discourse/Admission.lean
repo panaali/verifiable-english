@@ -490,6 +490,12 @@ structure Prepared where
   environmentId : String
   claims : List Validity
 
+/-- The singular nouns the environment declares for its sorts (`verbalisation.singular`). -/
+def sortNouns (environment : Json) : List String :=
+  match VE.Bridge.fields ((environment.getObjValD "vocabulary").getObjValD "sorts") with
+  | .ok kvs => kvs.filterMap fun (_, v) => ((v.getObjValD "verbalisation").getObjValD "singular").getStr?.toOption
+  | .error _ => []
+
 def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
     Except String Prepared := do
   wrapperOk profiles environment j
@@ -502,12 +508,13 @@ def prepare (profiles : List String) (environment : Json) (rv : Wire.RouteVocabu
   let K₀ ← Wire.decodeManifest front.sets (Loader.filesOf j) envId ((Loader.metaOf j).getObjValD "discourse")
   let base₀ ← VE.Route.Admission.decodeDoc rv data front.w2
   let base := { base₀ with literals := rv.literals, flags := rv.flags }
-  let src : Wire.Source := ⟨prose, lex prose⟩
+  let src : Wire.Source := ⟨prose⟩
   let K ← Wire.toTokenSpans src base K₀
   -- the document the admission reads holds no validity binding (4.7): the bindings are kept
   -- apart and read only in the second phase
   pure ⟨{ E := rv.environment, base, K := { K with validity := [] }, sourceId := Loader.sourceId bp prose,
-          text := src.text base, sets := front.sets, status := front.status, prose, files := j.getObjValD "files" },
+          text := src.text base, sets := front.sets, status := front.status, prose, files := j.getObjValD "files",
+          nouns := sortNouns environment },
         front, envId, K.validity⟩
 
 /-- 3.3: every certificate of the admitted graph is bound to the environment identity under the

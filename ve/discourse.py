@@ -265,16 +265,61 @@ def _word_pattern(words):
     return "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True)) or r"(?!)"
 
 
+_FOLD = {"\u0130": "i", "\u0131": "i", "\u017f": "s", "\u212a": "k"}
+_PUNCT = ',;:!?()"'
+
+
+def _fold(c):
+    """The case fold of a character onto a lowercase ASCII letter or digit, or None (the Lean
+    `foldChar`): ASCII letters and digits, and the four characters `re.I` equates with ASCII
+    letters (İ and ı read i, ſ reads s, the Kelvin sign reads k)."""
+    if c.isascii() and c.isalnum():
+        return c.lower()
+    return _FOLD.get(c)
+
+
+def _fold_text(text):
+    """A text with every character that has a fold folded (the Lean `foldWord`)."""
+    return "".join(_fold(c) or c for c in text)
+
+
 def _segments(text):
-    """The segments of a text: its maximal runs of ASCII letters and digits, lowercased, with
-    their character offsets (the Lean `segmentsOf`/`segWords`)."""
-    return [(m.start(), m.end(), m.group().lower()) for m in re.finditer(r"[A-Za-z0-9]+", text)]
+    """The segments of a text: its maximal runs of characters with a fold, folded, with their
+    character offsets (the Lean `segments`)."""
+    out, start = [], None
+    for i, c in enumerate(text + " "):
+        if i < len(text) and _fold(c) is not None:
+            start = i if start is None else start
+        elif start is not None:
+            out.append((start, i, "".join(_fold(x) for x in text[start:i])))
+            start = None
+    return out
+
+
+def _label_end(text, end):
+    """The end of a citation label: the first token the discourse lexer reads after offset `end`,
+    when it is a word (the Lean `labelEnd`: spaces separate, `,;:!?()"` and a `.` not between two
+    ASCII letters or digits are punctuation)."""
+    i = end
+    while i < len(text) and text[i].isspace():
+        i += 1
+    j = i
+    while j < len(text):
+        c = text[j]
+        if c.isspace() or c in _PUNCT:
+            break
+        if c == "." and not (j > i and text[j - 1].isascii() and text[j - 1].isalnum()
+                             and j + 1 < len(text) and text[j + 1].isascii() and text[j + 1].isalnum()):
+            break
+        j += 1
+    return j if j > i else None
 
 
 def _segment_lengths(words, j, sorts, unary, displays):
-    """The lengths, in segments, of the reference surfaces starting at segment `j` (the Lean
-    `segmentLengths`): a reference word; `this|that` before a sort word's segments; `the` before
-    segments whose `_`-join is a unary predicate; `by` before a citation word; a display's segments."""
+    """The lengths, in segments, of the reference surfaces starting at segment `j` that end on a
+    segment (the Lean `segmentLengths`): a reference word; `this|that` before a sort name's
+    segments; `the` before `former|latter` or segments whose `_`-join is a unary predicate; a
+    document display's segments."""
     after = words[j + 1:]
     lengths = []
     if words[j] in _REFERENCE_WORDS:
@@ -285,9 +330,9 @@ def _segment_lengths(words, j, sorts, unary, displays):
             if phrase and after[:len(phrase)] == phrase:
                 lengths.append(len(phrase) + 1)
     if words[j] == "the":
+        if after[:1] and after[0] in ("former", "latter"):
+            lengths.append(2)
         lengths.extend(k + 2 for k in range(min(len(after), _JOIN_LIMIT)) if "_".join(after[:k + 1]) in unary)
-    if words[j] == "by" and after[:1] and after[0] in _CITE_WORDS:
-        lengths.append(2)
     for display in displays:
         phrase = [w for _, _, w in _segments(display)]
         if phrase and words[j:j + len(phrase)] == phrase:
@@ -296,27 +341,33 @@ def _segment_lengths(words, j, sorts, unary, displays):
 
 
 def reference_surfaces(doc, text, displays=()):
-    """Every reference surface of a text as (start, end) character offsets: a reference word,
-    a demonstrative before a sort word, `the` before a unary predicate word, a citation
-    `by <clause|section|...>`, or a document name (3.4; the Lean route's `referenceAt`).
-    Surfaces are also found on the text's segments, so a reference word joined to anything
-    else (`It's`, `It_`, `Itʼs`, `It-is`) is still found (the Lean `segmentSurfaces`)."""
-    sorts, unary = _words(doc["environment"])
-    patterns = [r"\b(?:" + "|".join(_REFERENCE_WORDS) + r")\b",
-                r"\b(?:this|that)\s+(?:" + _word_pattern(sorts) + r")\b",
-                r"\bthe\s+(?:" + _word_pattern(unary) + r")\b",
-                r"\bby\s+(?:" + "|".join(_CITE_WORDS) + r")\b"]
-    patterns.extend(r"\b" + re.escape(d) + r"\b" for d in displays if d)
-    found = set()
-    for pattern in patterns:
-        for match in re.finditer(pattern, text, re.I):
-            found.add((match.start(), match.end()))
+    """The reference surfaces of one unit's text as (start, end) character offsets, in order
+    (docs/spec/discourse.md 4.1(6); the Lean `textSurfaces`). The text is read as its segments; at
+    each segment the surfaces starting there are a reference word, `this|that` before a sort name,
+    `the` before `former|latter` or a unary predicate, a document display, and after `by` a
+    citation word through its label. Scanning left to right, the longest surface starting at a
+    segment is taken and the scan resumes after it, so a longer surface is never split into its
+    shorter parts. A sort is read by its name and by its declared singular noun."""
+    env = doc["environment"]
+    sorts = sorted(env.sorts) + [d.verbalisation.singular for d in env.sorts.values() if d.verbalisation]
+    unary = {name for name, decl in env.predicates.items() if len(decl.arguments) == 1}
     segments = _segments(text)
     words = [w for _, _, w in segments]
-    for j in range(len(segments)):
-        for n in _segment_lengths(words, j, sorts, unary, displays):
-            found.add((segments[j][0], segments[j + n - 1][1]))
-    return sorted(found)
+    found, j = [], 0
+    while j < len(segments):
+        ends = [segments[j + n - 1][1] for n in _segment_lengths(words, j, sorts, unary, displays)]
+        if words[j] in _CITE_WORDS and j and words[j - 1] == "by":
+            label = _label_end(text, segments[j][1])
+            ends.append(segments[j][1] if label is None else label)
+        if not ends:
+            j += 1
+            continue
+        end = max(ends)
+        found.append((segments[j][0], end))
+        j += 1
+        while j < len(segments) and segments[j][0] < end:
+            j += 1
+    return found
 
 
 def _innermost(anchors, span):
@@ -368,7 +419,7 @@ def _coordinations(doc, unit, position, names):
 def _surface_fits(doc, mention):
     """A recorded pronoun, demonstrative or ordinal pair covers exactly its surface: a pronoun,
     `this|that <sort word>`, `the former|latter` (otherwise it is no slot: MentionNotSlot)."""
-    surface = doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8", "replace").strip().lower()
+    surface = _fold_text(doc["source"][mention["span"][0]:mention["span"][1]].decode("utf-8", "replace").strip())
     sorts, _ = _words(doc["environment"])
     form = mention["form"]
     if form == "pronoun":
@@ -802,13 +853,15 @@ def _definition_version(env, name):
 
 def _unrecorded(doc, unit, rows, displays):
     """The first reference surface of a unit with meaning that no recorded formula-producing
-    mention covers: a location binding (`navigation`, `section_ref`) is never a slot, so it
-    never accounts for one (the Lean `recordedSlots`)."""
+    mention records with exactly its byte range (containing or overlapping it is not enough): a
+    location binding (`navigation`, `section_ref`) is never a slot, so it never accounts for one
+    (the Lean `uncoveredSurface`)."""
     start = unit["span"][0]
+    recorded = {tuple(m["span"]) for m in rows}
     for a, b in reference_surfaces(doc, unit["source"], displays):
         begin = start + len(unit["source"][:a].encode("utf-8"))
         end = start + len(unit["source"][:b].encode("utf-8"))
-        if not any(_inside(m["span"], [begin, end]) for m in rows):
+        if (begin, end) not in recorded:
             return begin, end
     return None
 
@@ -967,23 +1020,28 @@ def validate_discourse(doc):
     for group in groups:
         if type(group) is dict and type(group.get("spans")) is list:
             grouped.update(group["spans"])
+    # a unit's meaning is its content or the readings of its active set (W2); either way its
+    # reference surfaces are slots, so a reading set is never a way around them. Every unit is
+    # checked, in document order, before any unit is resolved (the Lean `coverageOk`).
+    def has_meaning(unit):
+        return unit["content"] is not None or any(s["unit"] == unit["id"] for s in active)
+    for unit in doc["units"]:
+        if has_meaning(unit) and unit["id"] not in grouped:
+            producing = [m for m in by_unit.get(unit["id"], []) if m["form"] not in _LOCATION]
+            gap = _unrecorded(doc, unit, producing, displays)
+            if gap is not None:
+                raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
     presentations = {}
     for unit in doc["units"]:
         rows = by_unit.get(unit["id"], [])
         producing = [m for m in rows if m["form"] not in _LOCATION]
-        # a unit's meaning is its content or the readings of its active set (W2); either way
-        # its reference surfaces are slots, so a reading set is never a way around them
         readings = [r["content"] for s in active if s["unit"] == unit["id"] for r in s["readings"]]
-        has_meaning = unit["content"] is not None or any(s["unit"] == unit["id"] for s in active)
-        if has_meaning and unit["id"] not in grouped:
-            gap = _unrecorded(doc, unit, producing, displays)
-            if gap is not None:
-                raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
+        meaning = has_meaning(unit)
         if not producing or unit["id"] in grouped:
             continue
         unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
         if unsupported:
-            if has_meaning:
+            if meaning:
                 raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
                               f"is not implemented in Python ({unit['id']})")
             continue
@@ -992,7 +1050,7 @@ def validate_discourse(doc):
                 raise VEError(f"MentionNotSlot: {m['id']}")
         entity = [m for m in producing if m["target"]["kind"] == "entity"]
         if len(entity) != len(producing):
-            if has_meaning:
+            if meaning:
                 raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
                               f"is not implemented in Python ({unit['id']})")
             continue
@@ -1000,7 +1058,7 @@ def validate_discourse(doc):
                                      readings)
         for m in producing:
             statuses[m["id"]] = "resolved"
-        if has_meaning:
+        if meaning:
             presentations[unit["id"]] = presentation
     references = [{"mention": mid, "unit": m["unit"], "form": m["form"], "target": m["target"],
                    "status": statuses[mid]} for mid, m in mentions.items()]
