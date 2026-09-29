@@ -192,8 +192,23 @@ def amount(p, other):
     return Decimal("300.00")  # 3(4)
 
 
+KNOWN_BENEFITS = RELEVANT_BENEFITS | {"state_pension", "attendance_allowance"}
+RECORDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
+           "custody": ({"from", "release", "sentenced"}, set()), "claim": ({"automatic"}, {"claimed_on"})}
+# `home` (B08, B09) says where a person without E&W residence lives; S1 does not read it.
+FIELDS = {"birth", "partner", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "income", "home", *RECORDS}
+
+
 def person(raw, defaults):
+    """A person with dates parsed. A field this reading does not use is an error, so
+    that no profile fact is silently dropped."""
     p = {**defaults, **raw}
+    if set(p) - FIELDS or set(p["benefits"]) - KNOWN_BENEFITS:
+        raise ValueError(f"unread fields {sorted(set(p) - FIELDS)} or benefits"
+                         f" {sorted(set(p['benefits']) - KNOWN_BENEFITS)}")
+    for name, (required, optional) in RECORDS.items():
+        if p.get(name) is not None and not required <= set(p[name]) <= required | optional:
+            raise ValueError(f"{name}: fields {sorted(p[name])}")
     for field in ("birth", "ew_from", "ew_last_day", "scot_ni_from"):
         if p.get(field) is not None:
             p[field] = date.fromisoformat(p[field])

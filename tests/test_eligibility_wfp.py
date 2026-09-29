@@ -3,10 +3,13 @@
 The test fails on any mismatch with the key, and on any change to the key, the
 translation's generated files, or the answers recorded in results.json.
 """
+from datetime import date, timedelta
+from decimal import Decimal
 from hashlib import sha256
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 import pytest
@@ -14,14 +17,18 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "usecases" / "eligibility"
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+RUST = ROOT / "rust" / "target" / "release" / "ve"
 sys.path.insert(0, str(HERE))
 
 import reference  # noqa: E402
 import run  # noqa: E402
 import translation as T  # noqa: E402
+from ve import ast  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
-from ve.units import _core_problem  # noqa: E402
+from ve.evaluate import evaluate  # noqa: E402
+from ve.model import FiniteModel  # noqa: E402
+from ve.units import _core_problem, elaborate_quantity, erased_environment  # noqa: E402
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
@@ -149,6 +156,75 @@ def test_the_builder_never_reads_a_key():
     assert '["key"]' not in source and "import reference" not in source
 
 
+def _perturbed(value):
+    """A different value of the same kind: a flipped bool, the next day, one penny more,
+    or the benefit list with Pension Credit toggled."""
+    if isinstance(value, bool):
+        return not value
+    if isinstance(value, list):
+        return sorted(set(value) ^ {"pension_credit"})
+    try:
+        return (date.fromisoformat(value) + timedelta(days=1)).isoformat()
+    except ValueError:
+        return str(Decimal(value) + Decimal("0.01"))
+
+
+def _field_paths(p):
+    for name, value in p.items():
+        if isinstance(value, dict):
+            yield from ((name, sub) for sub in value)
+        elif value is not None and name not in ("birth", *T.UNREAD_FIELDS):  # birth indexes the bridge tables
+            yield (name,)
+
+
+def test_every_profile_field_reaches_a_fact():
+    """Eligibility recheck: role_facts dropped `care.until`, so a stay that ended before
+    the week still counted as residential care. The class: a profile field that no fact
+    carries. Changing any present field of any person must change the facts. The last
+    profile is synthetic: a claim date beside an automatic payment."""
+    data = T.load_cases()
+    extra = {"id": "X", "applicant": {"birth": "1955-03-14", "claim": {"automatic": True, "claimed_on": "2026-10-01"}},
+             "housemate": None}
+    checked = set()
+    for case in data["cases"] + [extra]:
+        base = T.profile_facts(case, data["defaults"])
+        for role in T.ROLES:
+            if case[role] is None:
+                continue
+            p = {**data["defaults"], **case[role]}
+            for path in _field_paths(p):
+                changed = json.loads(json.dumps(p))
+                if len(path) == 1:
+                    changed[path[0]] = _perturbed(p[path[0]])
+                else:
+                    changed[path[0]][path[1]] = _perturbed(p[path[0]][path[1]])
+                assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
+                checked.add(path)
+    assert ("care", "until") in checked and ("claim", "claimed_on") in checked and ("partner",) in checked
+
+
+@pytest.mark.parametrize("role, change", [
+    ("applicant", {"care": {"from": "2025-01-10", "to": "2026-09-24"}}),  # misspelt end date
+    ("applicant", {"care": {"until": "2026-09-24"}}),
+    ("applicant", {"partner": True}),  # the couple is recorded on the housemate
+    ("applicant", {"benefits": ["pension-credit"]}),
+    ("applicant", {"hospital": {"admitted": "2025-01-10", "discharged": "2026-10-01", "ward": "7"}}),
+    ("housemate", {"moved_in": "2026-09-22"}),
+])
+def test_an_unread_profile_field_is_rejected(role, change):
+    """The same class from the other side: a field or benefit name that no fact would
+    carry is an error in the translation and in the independent reference, not a
+    silent default."""
+    data = T.load_cases()
+    case = {"id": "X", "applicant": {"birth": "1955-03-14"}, "housemate": {"birth": "1957-11-02", "partner": False}}
+    case[role] = {**case[role], **change}
+    with pytest.raises(ValueError):
+        T.profile_facts(case, data["defaults"])
+    if "partner" not in change:  # the reference reads `partner` on either person
+        with pytest.raises(ValueError):
+            reference.answer(case, data["defaults"])
+
+
 def test_generated_files_match_the_translation():
     assert json.loads((HERE / "environment.json").read_text()) == T.environment()
     assert json.loads((HERE / "rules.json").read_text())["rules"] == T.rules()
@@ -183,6 +259,53 @@ def test_review_examples_get_the_source_answer(staged_runs):
         assert T.key(T.U("in_residential_care", T.OTHER[role])) not in T.key(r6["formula"])
         for bound in (T.num(role, "ew_from"), T.day(T.QW0)):
             assert T.key(["date_no_later", bound, T.num(role, "scot_ni_from")]) in T.key(r11["formula"])
+
+
+def test_recheck_examples_get_the_source_answer(staged_runs):
+    """Eligibility recheck: care from 2026-06-29 to 2026-09-26 (or to 2026-09-20) was a
+    Lean-certified 100.00; the source's whole-week condition gives 200.00. Ending the stay
+    on QW1 itself still counts. The other four take each path residential care feeds."""
+    answer = lambda amount: {"Q1": "YES", "Q2": amount, "Q3": "NO", "Q4": amount}
+    expected = {"C25": answer("200.00"), "C27": answer("200.00"), "C26": answer("100.00"),
+                "B20": answer("200.00"), "B21": answer("300.00"), "B22": answer("100.00"),
+                "B23": {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}}
+    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    for role in T.ROLES:  # R5 bounds the stay's end by QW1, on either role
+        r5 = next(r for r in T.rules() if r["id"] == f"R5b.{role}")
+        assert T.key(["date_no_later", T.day(T.QW1), T.num(role, "care_until")]) in T.key(r5["formula"])
+        assert T.key(T.U("care_ended", role)) in T.key(r5["formula"])
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
+    """R5b and its mutants M24 (end date ignored) and M25 (end bound strict), evaluated
+    in each recheck profile's reference fixture model. Python, Lean and Rust must give
+    the same value, the rule must be true, and each mutant false where it misreads."""
+    raw = T.environment()
+    env = Environment(raw)
+    target = erased_environment(env)
+    data = keyed_cases()
+    by_id = {c["id"]: c for c in data["cases"]}
+    roles = {"B20": "applicant", "B21": "applicant", "B22": "housemate", "B23": "applicant",
+             "C25": "applicant", "C26": "applicant", "C27": "applicant"}
+    rows, cases = [], []
+    for pid, role in roles.items():
+        model_data = run.fixture_model(by_id[pid], data["defaults"])
+        model = FiniteModel.from_dict(target, model_data)
+        for mutant in (None, "M24", "M25"):
+            [r5] = [r for r in T.role_rules(role, mutant) if r["rule"] == "R5b"]
+            quantity = T.q(r5["formula"])
+            _, core = elaborate_quantity(env, quantity)
+            python = evaluate(target, ast.formula_from_data(target, core), model, trace=False).value
+            expected = not (mutant == "M24" and pid != "C26" or mutant == "M25" and pid == "C26")
+            rows.append((pid, mutant, python, expected))
+            cases.append({"id": f"{pid}/{mutant}", "environment": raw, "quantity": quantity, "model": model_data})
+    lean_values = [r.get("value") for r in run.lean(cases)]
+    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=600,
+                             input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
+    rust_values = [r.get("value") for r in json.loads(process.stdout)]
+    assert [(pid, m, p) for pid, m, p, _ in rows] == [(pid, m, e) for pid, m, _, e in rows]
+    assert lean_values == rust_values == [p for _, _, p, _ in rows]
 
 
 @pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")

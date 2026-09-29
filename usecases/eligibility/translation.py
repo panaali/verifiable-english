@@ -58,6 +58,7 @@ ROLE_INTEGERS = {
     "ew_last_day": ("day", "last day of ordinary residence in England and Wales"),
     "scot_ni_from": ("day", "first day of ordinary residence in Scotland or Northern Ireland"),
     "care_from": ("day", "care start date"),
+    "care_until": ("day", "care end date"),
     "admitted": ("day", "hospital admission date"),
     "treatment_start": ("day", "treatment start date"),
     "discharged": ("day", "hospital discharge date"),
@@ -82,7 +83,8 @@ FACT_PREDICATES = {
     "ever_resident_ew": (["person"], "The person has a first day of ordinary residence in England and Wales."),
     "remains_resident_ew": (["person"], "The person's ordinary residence in England and Wales has not ended."),
     "moved_to_scotland_or_ni": (["person"], "The person has become ordinarily resident in Scotland or Northern Ireland."),
-    "in_care_setting": (["person"], "The person resides in a care home, independent hospital or Polish resettlement accommodation throughout the qualifying week and from the care start date."),
+    "in_care_setting": (["person"], "The person resides in a care home, independent hospital or Polish resettlement accommodation from the care start date, and to the care end date if the stay has one."),
+    "care_ended": (["person"], "The person's care stay has a last day, the care end date."),
     "inpatient": (["person"], "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date."),
     "detained_in_custody": (["person"], "The person is detained in custody from the custody start date to the release date."),
     "under_sentence": (["person"], "The person's custody is under a sentence imposed by a court."),
@@ -229,6 +231,7 @@ MUTANTS = {
     "M19": "R4 without universal credit",
     "M20": "R11 without the order of AR6", "M21": "R11 without the QW0 bound of AR6",
     "M22": "R11 without the E&W-start bound of AR6", "M23": "R6 with the other person also out of residential care",
+    "M24": "R5 without the care end date", "M25": "R5 with the care end date strictly after the week",
 }
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
@@ -259,8 +262,12 @@ def role_rules(r, mutant=None):
                       [f"{r}_care_before_week"]))
     care_days = (["lt", days(84), num(r, "care_before_week")] if mutant == "M3"
                  else ["le", days(84), num(r, "care_before_week")])
-    rules.append(rule("R5b", "S1 reg. 1(4)(a)", f"The {r} is in residential care exactly when the {r} is in a care setting and the {r}'s care days before the week are at least 84 days (12 weeks).",
-                      Iff(U("in_residential_care", r), And(U("in_care_setting", r), care_days)), r))
+    care = [U("in_care_setting", r), care_days]
+    if mutant != "M24":  # "throughout the qualifying week": a stay with a last day lasts to QW1
+        care.append(Or(Not(U("care_ended", r)),
+                       ["date_before" if mutant == "M25" else "date_no_later", day(QW1), num(r, "care_until")]))
+    rules.append(rule("R5b", "S1 reg. 1(4)(a)", f"The {r} is in residential care exactly when the {r} is in a care setting, the {r}'s care days before the week are at least 84 days (12 weeks), and the {r}'s care stay either has no end date or ends no earlier than {QW1}.",
+                      Iff(U("in_residential_care", r), And(*care)), r))
     lives = [B("shares_home", r, o), Not(U("in_residential_care", r))]  # the condition is on r only
     if mutant == "M23":
         lives.append(Not(U("in_residential_care", o)))
@@ -371,6 +378,34 @@ def rules(mutant=None):
 
 # --- facts of a profile ------------------------------------------------------
 
+# Every profile field role_facts reads: person fields, then per record the required
+# and the optional fields. A field outside these would be dropped without a fact, so
+# check_fields rejects it (the eligibility recheck found `care.until` dropped).
+PERSON_FIELDS = {"birth", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "care", "hospital",
+                 "custody", "claim", "income"}
+# Fields read by no rule, each with the reason. `home` names where a person without
+# E&W residence lives (B08, B09); S1 depends on that only through `ew_from`, and the
+# Scotland and Northern Ireland schemes are out of scope (PLAN O7).
+UNREAD_FIELDS = {"home": "S1 reads E&W residence only (O7)"}
+RECORD_FIELDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
+                 "custody": ({"from", "release", "sentenced"}, set()),
+                 "claim": ({"automatic"}, {"claimed_on"})}
+
+
+def check_fields(r, p):
+    """Raise ValueError on a field or benefit of person p that no fact would carry."""
+    allowed = PERSON_FIELDS | set(UNREAD_FIELDS) | ({"partner"} if r == "housemate" else set())
+    if set(p) - allowed:
+        raise ValueError(f"{r}: unread profile fields {sorted(set(p) - allowed)}")
+    if set(p["benefits"]) - set(BENEFITS):
+        raise ValueError(f"{r}: unknown benefits {sorted(set(p['benefits']) - set(BENEFITS))}")
+    for name, (required, optional) in RECORD_FIELDS.items():
+        record = p[name]
+        if record is not None and not required <= set(record) <= required | optional:
+            raise ValueError(f"{r}.{name}: fields {sorted(record)}, expected {sorted(required)}"
+                             f" and optionally {sorted(optional)}")
+
+
 def _person(raw, defaults):
     return {**defaults, **raw} if raw is not None else None
 
@@ -390,6 +425,7 @@ def role_facts(r, p, other_present):
         facts.append(fact("housemate.partner_of", lit(partner, B("partner_of", r, o))))
     if p is None:
         return facts
+    check_fields(r, p)
     for b in BENEFITS:
         facts.append(fact(f"{r}.paid.{b}", lit(b in p["benefits"], B("paid_for_week", r, b))))
     rule_pa = PENSIONABLE_AGE[p["birth"]]
@@ -409,6 +445,9 @@ def role_facts(r, p, other_present):
     facts.append(fact(f"{r}.in_care_setting", lit(care is not None, U("in_care_setting", r))))
     if care is not None:
         facts.append(fact(f"{r}.care_from", ["date_on", num(r, "care_from"), day(care["from"])]))
+        facts.append(fact(f"{r}.care_ended", lit(care.get("until") is not None, U("care_ended", r))))
+        if care.get("until") is not None:
+            facts.append(fact(f"{r}.care_until", ["date_on", num(r, "care_until"), day(care["until"])]))
     hospital = p["hospital"]
     facts.append(fact(f"{r}.inpatient", lit(hospital is not None, U("inpatient", r))))
     if hospital is not None:
@@ -422,10 +461,9 @@ def role_facts(r, p, other_present):
         facts.append(fact(f"{r}.release", ["date_on", num(r, "release"), day(custody["release"])]))
     claim = p["claim"]
     facts.append(fact(f"{r}.paid_without_claim", lit(claim["automatic"], U("paid_without_claim", r))))
-    if not claim["automatic"]:
-        facts.append(fact(f"{r}.claimed", lit(claim.get("claimed_on") is not None, U("claimed", r))))
-        if claim.get("claimed_on") is not None:
-            facts.append(fact(f"{r}.claim_date", ["date_on", num(r, "claim_date"), day(claim["claimed_on"])]))
+    facts.append(fact(f"{r}.claimed", lit(claim.get("claimed_on") is not None, U("claimed", r))))
+    if claim.get("claimed_on") is not None:
+        facts.append(fact(f"{r}.claim_date", ["date_on", num(r, "claim_date"), day(claim["claimed_on"])]))
     facts.append(fact(f"{r}.income", ["eq", num(r, "income"), gbp(p["income"])]))
     return facts
 

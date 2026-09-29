@@ -314,7 +314,7 @@ def fixture_model(case_with_key, defaults):
         values = {"pa_date": date.fromisoformat(pa[1]), "eightieth": date.fromisoformat(T.EIGHTIETH[x["birth"].isoformat()]),
                   "ew_from": x["ew_from"], "ew_last_day": x["ew_last_day"], "scot_ni_from": x["scot_ni_from"]}
         if x["care"]:
-            values["care_from"] = x["care"]["from"]
+            values.update(care_from=x["care"]["from"], care_until=x["care"].get("until"))
             constants[f"{r}_care_before_week"] = str((R.QW_START - x["care"]["from"]).days)
         if x["hospital"]:
             start = date.fromordinal(x["hospital"]["admitted"].toordinal() + 1)
@@ -335,6 +335,7 @@ def fixture_model(case_with_key, defaults):
                 constants.setdefault(name, "0")
         facts = {"ever_resident_ew": x["ew_from"] is not None, "remains_resident_ew": x["ew_last_day"] is None,
                  "moved_to_scotland_or_ni": x["scot_ni_from"] is not None, "in_care_setting": x["care"] is not None,
+                 "care_ended": bool(x["care"] and x["care"].get("until")),
                  "inpatient": x["hospital"] is not None, "detained_in_custody": x["custody"] is not None,
                  "under_sentence": bool(x["custody"] and x["custody"]["sentenced"]),
                  "claimed": x["claim"].get("claimed_on") is not None,
@@ -596,7 +597,8 @@ MUTANT_TARGETS = {"M1": ["C14"], "M2": ["C14"], "M3": ["C10"], "M4": ["D01"], "M
                   "M7": ["B02"], "M8": ["B03"], "M9": ["B06"], "M10": ["C20"], "M11": ["C22"],
                   "M12": ["C17", "C19"], "M13": ["D05"], "M14": ["A08"], "M15": ["B11"], "M16": ["B12"],
                   "M17": ["B01", "B04"], "M18": ["B13"], "M19": ["B14"], "M20": ["B15", "B16", "B19"],
-                  "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"]}
+                  "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"],
+                  "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"]}
 
 
 def mutation_check(cases, profiles, workers):
