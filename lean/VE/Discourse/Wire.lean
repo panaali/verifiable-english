@@ -11,6 +11,8 @@ whose text the case supplies (`files`). Mention spans arrive as prose byte range
 mapped to token ranges of their unit by the lexer (a named trust boundary), which reads each unit's
 own bytes; a byte range that does not start and end on token boundaries of its unit is
 `InvalidInput`. The byte range is kept (`Mention.bytes`): slot discovery compares it exactly.
+The unit of every formula-producing mention must have discourse wording (`canonicalWording`,
+docs/spec/discourse.md 4.1(4)), checked with its span: `InvalidInput: discourse wording of <unit>`.
 
 Beyond 3.1 the block may carry `validity` bindings, `self_truth` labels and the recorded
 reading choices `choices` (the Manifest fields of 9.1). A target's `version` pin is carried as
@@ -249,11 +251,37 @@ def Source.unitToks (src : Source) (D : VE.Route.Admission.Doc) (u : String) : O
 def Source.text (src : Source) (D : VE.Route.Admission.Doc) (u : String) : Option (List Tok) :=
   (src.unitToks D u).map (List.map fun t => .word t.1)
 
-/-- Every mention's span as a token range of its unit. -/
+/-- The bytes of one unit, read alone. -/
+def Source.unitText (src : Source) (D : VE.Route.Admission.Doc) (u : String) : Option String :=
+  (unitOf D u).map fun x => sliceText src.prose x.start x.stop
+
+/-- The layout characters a unit may carry around its sentences: ASCII space, tab, newline, return. -/
+def layoutChar (c : Char) : Bool := c == ' ' || c == '\t' || c == '\n' || c == '\r'
+
+/-- Punctuation no space may precede. -/
+def closingChar (c : Char) : Bool :=
+  c == '.' || c == ',' || c == ';' || c == ':' || c == '!' || c == '?' || c == ')'
+
+/-- Discourse wording (docs/spec/discourse.md 4.1(4)): once the layout characters around it are
+removed, the text is printable ASCII with canonical spacing: one space between words, none before
+`.,;:!?)` and none after `(`. So no tab, newline, Unicode space, control or non-ASCII character
+lies inside a sentence. -/
+def canonicalWording (t : String) : Bool :=
+  let cs := ((t.toList.dropWhile layoutChar).reverse.dropWhile layoutChar).reverse
+  cs.all (fun c => 0x20 ≤ c.val && c.val ≤ 0x7E) &&
+    (cs.zip cs.tail).all fun (a, b) => !(a == ' ' && (b == ' ' || closingChar b)) && !(a == '(' && b == ' ')
+
+/-- Every mention's span as a token range of its unit; the unit of every recorded reference (a
+formula-producing mention) has discourse wording (`InvalidInput: discourse wording of <unit>`),
+checked with its span, before the rest of the block. -/
 def toTokenSpans (src : Source) (D : VE.Route.Admission.Doc) (K : Manifest) : Except String Manifest := do
   let ms ← K.mentions.mapM fun m => do
     match src.unitToks D m.unit with
-    | some ts => pure { m with span := ← tokenSpan ts m }
+    | some ts =>
+      let span ← tokenSpan ts m
+      if formulaForm m.form && !((src.unitText D m.unit).all canonicalWording) then
+        throw s!"InvalidInput: discourse wording of {m.unit}"
+      pure { m with span := span }
     | none => throw s!"InvalidInput: mention {m.id} names an unknown unit"
   pure { K with mentions := ms }
 

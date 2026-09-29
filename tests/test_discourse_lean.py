@@ -1092,8 +1092,12 @@ def test_unicode_spaces_separate_words(lean, tmp_path):
     for space in UNICODE_SPACES:
         lean_error, python_error = slot_outcomes([f"It{space}is safe."], tmp_path, safe)
         assert lean_error == python_error == "UnrecordedSlot: u1: [0, 2)", (hex(ord(space)), lean_error, python_error)
-    # recorded, the pronoun resolves in both
+    # recorded, the unit's wording is not discourse wording (4.1(4)): rejected alike in both; with
+    # one ASCII space the pronoun resolves in both
     doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents=safe)
+    assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u1"
+    doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
                    contents=safe)
     assert admit(doc)["bound"] == {"u1": unary("safe", "api")}
     assert python_outcome(doc, tmp_path)["references"][0]["status"] == "resolved"
@@ -1239,10 +1243,9 @@ def test_unicode_case_variants_are_folded(lean, tmp_path):
             (sentence, lean_error, python_error)
     lean_error, python_error = slot_outcomes(["İt is safe."], tmp_path, safe)
     assert lean_error == "UnrecordedSlot: u1: [0, 3)"
-    # recorded, a folded pronoun resolves in both, to the same report
+    # recorded, a folded pronoun is not discourse wording (4.1(4)): rejected alike in both
     doc = document(["İt is safe."], [("m1", "u1", "İt", "pronoun", entity("api"))], names=PY_NAMES, contents=safe)
-    lean_row, python = admit(doc), python_outcome(doc, tmp_path)
-    assert lean_row["bound"] == {"u1": unary("safe", "api")} and lean_row["report_id"] == python["report_id"]
+    assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u1"
     # a quantifier spelled with ſ is still a competing binder in both (fixture beta)
     beta = document(["ſome service is deployed.", "Api is reviewed.", "It is safe."],
                     [("m1", "u3", "It", "pronoun", entity("api"))], names=PY_NAMES,
@@ -1400,16 +1403,18 @@ def test_coordinations_are_read_as_segments(lean, tmp_path):
 def test_mention_surfaces_are_read_by_the_lexer(lean, tmp_path):
     """B (discourse.py:429): `The\\u00a0former` (or two spaces) is the ordinal surface in Lean, whose
     lexer separates words at every `str.isspace` character; Python required one literal space and
-    reported `MentionNotSlot`. Python now reads a recorded surface as the lexer's words too."""
+    reported `MentionNotSlot`. Python now reads a recorded surface as the lexer's words too. Any
+    spacing but one ASCII space is not discourse wording (4.1(4)): rejected alike in both."""
     ready = {"u2": unary("ready", "alice")}
     for space in [" ", "  ", "\t", *UNICODE_SPACES]:
+        expected = "admitted" if space == " " else "InvalidInput: discourse wording of u2"
         doc = document(["Alice and Bob are ready.", f"The{space}former is ready."],
                        [("m1", "u2", f"The{space}former", "ordinal_pair", PAIR)], names=PY_NAMES, contents=ready)
-        assert agree(doc, tmp_path) == "admitted", hex(ord(space[-1]))
+        assert agree(doc, tmp_path) == expected, hex(ord(space[-1]))
         doc = document(["Api is reviewed.", f"This{space}service is safe."],
                        [("m1", "u2", f"This{space}service", "demonstrative", entity("api"))], names=PY_NAMES,
                        contents=SAFE_U2)
-        assert agree(doc, tmp_path) == "admitted", hex(ord(space[-1]))
+        assert agree(doc, tmp_path) == expected, hex(ord(space[-1]))
     # a demonstrative before the sort's declared noun is a slot in both (slot discovery reads it)
     doc = document(["Api is reviewed.", "This system is safe."],
                    [("m1", "u2", "This system", "demonstrative", entity("api"))], names=PY_NAMES, contents=SAFE_U2)
@@ -1501,3 +1506,131 @@ def test_lean_and_python_agree_on_joined_words_and_spans(lean, tmp_path):
             assert row.get("error") == python, (where, row.get("error"), python)
             outcomes.add(python.split(":")[0] + (": span" if python.endswith(" span") else ""))
     assert {"admitted", "UnresolvedReference", "InvalidInput: span"} <= outcomes, outcomes
+
+
+# Regressions for the discourse2 loop (manage-agents discourse2-loop.final.md) under the spacing
+# directive (discourse-spacing-directive.md): a unit that records a reference has discourse wording
+# (4.1(4)), printable ASCII with canonical spacing once the layout around it is removed, or it is
+# `InvalidInput: discourse wording of <unit>` in both checkers, before parsing, for pronouns,
+# demonstratives and ordinals alike.
+
+WORDING_FORMS = [
+    # (opening, later unit with {s} between its words and {p} before its full stop, recorded
+    # surface, form, target, content of the later unit)
+    ("Api is reviewed.", "It{s}is{s}safe{p}.", "It", "pronoun", entity("api"), SAFE_U2["u2"]),
+    ("Api is reviewed.", "This{s}service{s}is{s}safe{p}.", "This{s}service", "demonstrative", entity("api"),
+     SAFE_U2["u2"]),
+    ("Alice and Bob are ready.", "The{s}former{s}is{s}ready{p}.", "The{s}former", "ordinal_pair", PAIR,
+     unary("ready", "alice")),
+]
+
+
+def wording_doc(opening, later, surface, form, target, content, s=" ", p="", sep=" "):
+    return document([opening, later.format(s=s, p=p)], [("m1", "u2", surface.format(s=s), form, target)],
+                    names=PY_NAMES, contents={"u2": content}, sep=sep)
+
+
+def test_discourse_wording_is_canonical_ascii(lean, tmp_path):
+    """A (discourse.py:527): `It is safe .` with `It` recorded at [0, 2) was CHECKED in Lean and
+    `IllTypedTarget: m1: api` in Python, whose expansion parser does not read the space before the
+    full stop. Tabs, newlines and Unicode spaces did the same, for demonstratives and ordinals too.
+    Both checkers now reject every such unit before parsing, with one code."""
+    doc = document(["It is safe ."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents={"u1": unary("safe", "api")})
+    assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u1"
+    wording = "InvalidInput: discourse wording of u2"
+    for row in WORDING_FORMS:
+        assert agree(wording_doc(*row), tmp_path) == "admitted", row[1]
+        # any space before the full stop, and any spacing but one ASCII space between words
+        for p in [" ", "\t", "\n", "\r", "  ", *UNICODE_SPACES]:
+            assert agree(wording_doc(*row, p=p), tmp_path) == wording, (row[1], hex(ord(p[0])))
+        for s in ["  ", "\t", "\n", "\r", " \t", *UNICODE_SPACES]:
+            assert agree(wording_doc(*row, s=s), tmp_path) == wording, (row[1], hex(ord(s[0])))
+    # a space before any closing punctuation or after an opening parenthesis, a control or a
+    # non-ASCII character anywhere inside the sentence
+    safe = {"u1": unary("safe", "api")}
+    for sentence in ["It is safe , and it is.", "It is safe ; it is.", "It is safe : yes.", "It is safe !",
+                     "It is safe ?", "It is safe (v2 ).", "It is safe ( v2).", "It is\x00safe.", "It is safe\x7f.",
+                     "It is safe\x0b.", "It is safé.", "It is safe\u200b.", "It is safe\u2024", "It is “safe”.",
+                     "It\u00a0is safe.", "It is safe\u3002"]:
+        doc = document([sentence], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES, contents=safe)
+        assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u1", repr(sentence)
+    # the layout around a unit's sentences is not inside one: trailing and leading layout is admitted
+    # with the same report in both (Python parses the sentences alone)
+    for row in WORDING_FORMS:
+        for sep in ["\n", "\n\n", "\t", "\r\n"]:
+            assert agree(wording_doc(*row, sep=sep), tmp_path) == "admitted", (row[1], sep)
+    for sentence in [" It is safe.", "\n\tIt is safe.", "It is safe. \n"]:
+        at = sentence.index("It")
+        doc = document([sentence], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES, contents=safe)
+        assert doc["discourse"]["mentions"][0]["span"] == [at, at + 2]
+        assert agree(doc, tmp_path) == "admitted", repr(sentence)
+    # the rule is on units that record a reference: a unit without one keeps its own wording (its
+    # binder still competes, fixture beta), and the error names the recording unit
+    doc = wording_doc("A  service’s owner is ready .", *WORDING_FORMS[0][1:])
+    assert agree(doc, tmp_path) == "UnresolvedReference: m1"
+    doc = wording_doc("Api  is reviewed .", *WORDING_FORMS[0][1:], p=" ")
+    assert agree(doc, tmp_path) == wording
+
+
+def test_unparseable_recorded_reference_wording(lean, tmp_path):
+    """B (discourse.py:562): `İt is safe (v2.1).` with `İt` recorded at [0, 3) was `InvalidInput:
+    unit u1 is outside the supported discourse fragment` in Lean and `IllTypedTarget: m1: api` in
+    Python. Its non-ASCII letter is not discourse wording: the same code in both, before parsing.
+    Every folded character (4.1(6)) in a recorded unit is rejected alike."""
+    safe = {"u1": unary("safe", "api")}
+    for sentence, surface in [("İt is safe (v2.1).", "İt"), ("ıt is safe.", "ıt"), ("It is ſafe.", "It"),
+                              ("It is safe; İt is.", "It"), ("It is \u212aey.", "It")]:
+        doc = document([sentence], [("m1", "u1", surface, "pronoun", entity("api"))], names=PY_NAMES, contents=safe)
+        assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u1", sentence
+    for opening, later, surface, form, target, content in WORDING_FORMS:
+        folded = later.replace("i", "ı", 1) if form != "pronoun" else "İt{s}is{s}safe{p}."
+        doc = wording_doc(opening, folded, surface.replace("i", "ı", 1) if form != "pronoun" else "İt",
+                          form, target, content)
+        assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u2", folded
+    # the known limitation (docs/spec/discourse.md 8): in discourse wording, a unit outside both
+    # grammars is rejected by both, with different codes (Lean: outside the fragment; Python: the
+    # recorded expansion does not parse)
+    doc = document(["It is safe (v2.1)."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents=safe)
+    row, python = admit(doc), python_outcome(doc, tmp_path)
+    assert row["error"] == "InvalidInput: unit u1 is outside the supported discourse fragment"
+    assert python == "IllTypedTarget: m1: api"
+
+
+# The differential property over the class: generated documents whose recorded units carry random
+# spacing, punctuation spacing, layout and folded or non-ASCII characters.
+
+WORDING_SPACES = [" "] * 8 + ["  ", "\t", "\n", "\u00a0", "\u2003", "\u3000", " \t"]
+WORDING_BEFORE = [""] * 8 + [" ", "\t", "\u00a0", "\n"]
+
+
+def wording_document(rng):
+    opening, later, surface, form, target, content = rng.choice(WORDING_FORMS)
+    s, p = rng.choice(WORDING_SPACES), rng.choice(WORDING_BEFORE)
+    if rng.random() < 0.2:
+        later = later.replace("{s}is{s}", "{s}i" + rng.choice(["ſ", "s", "é"]) + "{s}", 1)
+    sep = rng.choice([" ", "\n", "\n\n", "", "\t"])
+    lead = rng.choice(["", "", " ", "\n"])
+    doc = document([opening, lead + later.format(s=s, p=p)], [("m1", "u2", surface.format(s=s), form, target)],
+                   names=PY_NAMES, contents={"u2": content} if rng.random() < 0.85 else {}, sep=sep)
+    return doc
+
+
+def test_lean_and_python_agree_on_discourse_wording(lean, tmp_path):
+    rng = __import__("random").Random(20261001)
+    docs = [wording_document(rng) for _ in range(400)]
+    rows = run([case("admission", doc) for doc in docs])
+    outcomes = {}
+    for doc, row in zip(docs, rows):
+        python = python_outcome(doc, tmp_path)
+        where = (doc["_source"], doc["discourse"]["mentions"])
+        if isinstance(python, dict):
+            assert row.get("status") == "ok", (where, row.get("error"))
+            assert (row["report_id"], row["references"]) == (python["report_id"], python["references"]), where
+            key = "admitted"
+        else:
+            assert row.get("error") == python, (where, row.get("error"), python)
+            key = python.split(" of ")[0] if "wording" in python else python.split(":")[0]
+        outcomes[key] = outcomes.get(key, 0) + 1
+    assert outcomes.get("admitted", 0) > 60 and outcomes.get("InvalidInput: discourse wording", 0) > 60, outcomes
