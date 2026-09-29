@@ -9,7 +9,7 @@ from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
 from ve.surface.registry import by_tag, enabled
-from ve.surface.risk import parse_wording
+from ve.surface.risk import legend_lines, parse_wording
 
 
 def risk_source():
@@ -167,3 +167,14 @@ def test_policy_english_uses_risk_readings():
     ):
         with pytest.raises(VEError, match=rewrite):
             parse_english_with_metadata(env, sentence)
+
+
+def test_legend_tracks_declared_order_and_pending_condition():
+    env = Environment(risk_source())
+    lines = legend_lines(env, used_words=("risk__less_worst", "avoidable"),
+                         condition_forms=("necessary", "sufficient"))
+    assert lines[0].startswith('"<action> might lead to <harm>"')
+    assert any("Severity, from most to least severe: severe, minor" in line for line in lines)
+    assert any(line == "outage is severe." for line in lines)
+    assert any("(wording pending)" in line for line in lines)
+    assert any("might not lead to the harm" in line for line in lines)
