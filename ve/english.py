@@ -384,6 +384,14 @@ class EnglishVocabulary:
             ]
         else:
             self.input_aliases = []
+        # rights@0 fixes one wording per generated limitation, condition and aimed
+        # predicate (rights.md 2.1, 13.11), installed on E″ by the correlation; as
+        # for alternatives@0, the generic lint's shape rules do not apply to them.
+        wordings = getattr(env, 'rights_wordings', None) or {}
+        for name, template in wordings.items():
+            if name in env.predicates:
+                self.predicates[name] = template
+                issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
