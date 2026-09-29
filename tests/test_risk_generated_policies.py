@@ -78,7 +78,8 @@ CLASSES = ENV["risk"]["severity"]["classes"]
 
 
 def risk_base_environment(env):
-    """Lean's `riskBaseEnvironmentJson` (lean/VE/Risk/Run.lean): the blocks, the W6 extension, the regulated
+    """Lean's `riskBaseEnvironmentJson` (lean/VE/Risk/Run.lean): the blocks, the W6 extension (with its vocabulary
+    annotations), the regulated
     predicates and `alternatives@0`, `risk@0`, `norms@0` removed; the severity sort, the three generated
     predicates and the class constants added with the descriptions written there."""
     base = deepcopy(env)
@@ -87,6 +88,14 @@ def risk_base_environment(env):
     base["profiles"] = [p for p in env["profiles"] if p not in ("alternatives@0", "risk@0", "norms@0")]
     vocabulary = base["vocabulary"]
     vocabulary["predicates"] = {name: p for name, p in vocabulary["predicates"].items() if "regulated" not in p}
+    # W6's vocabulary annotations go with the extension (Wire.lean `riskNormsView`)
+    for c in vocabulary["constants"].values():
+        c.pop("verbalisation", None)
+        if "units" in env:
+            c.pop("unit", None)
+    if "units" in env:
+        for p in vocabulary["predicates"].values():
+            p.pop("argument_units", None)
     alt = env["alternatives"]
     sev = env["risk"]["severity"]["sort"]
     vocabulary["sorts"][sev] = {"description": "severity class (risk@0)"}

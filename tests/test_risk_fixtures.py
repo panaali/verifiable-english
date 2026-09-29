@@ -49,6 +49,14 @@ def risk_base_environment(env, elaborated):
     base["profiles"] = [p for p in base["profiles"] if p not in ("alternatives@0", "risk@0", "norms@0")]
     vocab = base["vocabulary"]
     vocab["predicates"] = {n: p for n, p in vocab["predicates"].items() if "regulated" not in p}
+    # W6's vocabulary annotations go with the extension (Wire.lean `riskNormsView`)
+    for c in vocab["constants"].values():
+        c.pop("verbalisation", None)
+        if "units" in env:
+            c.pop("unit", None)
+    if "units" in env:
+        for p in vocab["predicates"].values():
+            p.pop("argument_units", None)
     generated = elaborated["e_risk"]
     vocab["sorts"][generated["sort"]] = {"description": "severity class (risk@0)"}
     for p, sorts in generated["predicates"].items():

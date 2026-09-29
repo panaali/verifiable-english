@@ -14,7 +14,8 @@ import os
 from pathlib import Path
 
 from .environment import valid_identifier
-from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol, VEError
+from .errors import (CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile,
+                     VEError)
 from .wire import canonical_json
 
 _STAGE_LATER = ("chance_tag", "bands", "costs", "additive_loss")
@@ -201,6 +202,17 @@ def check_block(raw, sorts, predicates, constants, alt, units):
             raise UnknownSymbol(f"risk.required_estimators {row['quantity_kind']}")
     if alt["outcomes"] != "signed":
         raise VEError("RiskOutcomes: risk@0 requires outcomes signed")
+
+
+def check_route_declarations(predicates, constants):
+    """`decodeRiskSource`'s refusals after the vocabulary: definitions, data flags, then `$string` literals."""
+    if any(decl.defined is not None for decl in predicates.values()):
+        raise UnsupportedProfile("risk route with definitions is not implemented")
+    # Lean keeps a flag only when `functional` or `total` is true.
+    if any(decl.functional or decl.total for decl in predicates.values()):
+        raise UnsupportedProfile("risk route with data flags is not implemented")
+    if any(decl.sort == "$string" for decl in constants.values()):
+        raise UnsupportedProfile("risk route with $string literals is not implemented")
 
 
 def validate_block(raw, sorts, predicates, constants, alt, units):

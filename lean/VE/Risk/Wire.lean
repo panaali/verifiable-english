@@ -30,29 +30,123 @@ def profileGate (environment : Json) : Except String (List String) := do
   if ps.contains "soft-norms@0" then throw "UnsupportedProfile: alternatives@0 with soft-norms@0"
   pure ps
 
-/-- The environment W1's decoder sees: the blocks and the W6 extension removed, the two profiles dropped. -/
+/-- `entry` without the field `k` (an entry that is not an object is left for W1's decoder to reject). -/
+def dropField (k : String) (entry : Json) : Json :=
+  match fields entry with
+  | .ok fs => Json.mkObj (fs.filter (·.1 != k))
+  | .error _ => entry
+
+/-- `entries` (a vocabulary map) with `f` applied to each entry; a map that is not an object is left alone. -/
+def mapEntries (f : Json → Json) (entries : Json) : Json :=
+  match fields entries with
+  | .ok fs => Json.mkObj (fs.map fun (n, e) => (n, f e))
+  | .error _ => entries
+
+/-- The environment W1's decoder sees: the blocks and the W6 extension removed, the two profiles dropped. The W6
+extension includes its vocabulary annotations (W6 2.1, as W6's own erasure): each constant's `verbalisation` (a
+display field Python admits on every route environment), and on an extended environment each predicate's
+`argument_units` and each constant's `unit`. `decodeRiskSource` checks them first (`checkVocabularyUnits`). -/
 def riskNormsView (environment : Json) (ps : List String) : Except String Json := do
+  let ext := (environment.getObjVal? "units").isOk
   let kept := (← fields environment).filter fun p =>
     !["alternatives", "risk", "unit_schema", "units"].contains p.1
-  pure ((Json.mkObj kept).setObjVal! "profiles"
-    (toJson (ps.filter (fun p => p != "alternatives@0" && p != "risk@0"))))
+  let view := (Json.mkObj kept).setObjVal! "profiles"
+    (toJson (ps.filter (fun p => p != "alternatives@0" && p != "risk@0")))
+  match view.getObjVal? "vocabulary" with
+  | .error _ => pure view
+  | .ok vocab =>
+    let vocab := match vocab.getObjVal? "constants" with
+      | .ok cs => vocab.setObjVal! "constants"
+          (mapEntries (fun e => if ext then dropField "unit" (dropField "verbalisation" e)
+            else dropField "verbalisation" e) cs)
+      | .error _ => vocab
+    let vocab := match vocab.getObjVal? "predicates" with
+      | .ok ps => if ext then vocab.setObjVal! "predicates" (mapEntries (dropField "argument_units") ps) else vocab
+      | .error _ => vocab
+    pure (view.setObjVal! "vocabulary" vocab)
 
-/-! ## The W6 unit extension -/
+/-! ## The W6 unit extension
+
+The route applies every W6 declaration rule that Python's `Environment` applies to a unit-carrying risk
+environment, in Python's order and with the frozen W6 texts: both fields or neither (first), the risk profile tuple,
+the unit records, then slot and constant units while the vocabulary is decoded, then after it no tag named like a
+sort, no `$string` literal and constant spellings that read back as themselves (`validate_extension`). -/
+
+def unitsTogether : String :=
+  "UnsupportedProfile: unit_schema and units require the ve.core@0.2 quantity route together"
+
+/-- The profile tuple that carries the extension on this route (Python's `RISK_UNIT_PROFILES`). -/
+def unitProfiles : List String := ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"]
+
+/-- W6's frozen profile diagnostic (`VE.Time.Wire.decodeEnvironment`, `ve/units.py`, `units.rs`). -/
+def w6ProfileText : String :=
+  "UnsupportedProfile: ve-units@1 requires exactly order@0, relational-fol@0 and time@0, optionally with documents@1"
+
+/-- Whether the environment carries the extension; one of `unit_schema` and `units` without the other is rejected. -/
+def extended (environment : Json) : Except String Bool := do
+  let s := (environment.getObjVal? "unit_schema").isOk
+  if s != (environment.getObjVal? "units").isOk then throw unitsTogether
+  pure s
 
 def decodeUnits (environment : Json) : Except String (List (String × Nat)) := do
-  match environment.getObjVal? "units" with
-  | .error _ =>
-    if (environment.getObjVal? "unit_schema").isOk then throw "InvalidInput: units" else pure []
-  | .ok u =>
-    unless environment.getObjValD "unit_schema" == .str VE.Time.Wire.schema do
-      throw "UnsupportedProfile: Unsupported unit schema"
-    let fs ← match fields u with
-      | .ok fs => pure fs
-      | .error _ => throw "units must be an object"
-    if fs.length > 64 then throw "ResourceLimit: At most 64 unit tags"
-    let decls ← fs.mapM fun (tag, record) => VE.Time.Wire.decodeUnit tag record
-    VE.Time.Wire.displayInjective decls
-    pure (decls.map fun u => (u.tag, u.places))
+  unless ← extended environment do return []
+  unless environment.getObjValD "unit_schema" == .str VE.Time.Wire.schema do
+    throw "UnsupportedProfile: Unsupported unit schema"
+  let fs ← match fields (environment.getObjValD "units") with
+    | .ok fs => pure fs
+    | .error _ => throw "units must be an object"
+  if fs.length > 64 then throw "ResourceLimit: At most 64 unit tags"
+  let decls ← fs.mapM fun (tag, record) => VE.Time.Wire.decodeUnit tag record
+  VE.Time.Wire.displayInjective decls
+  pure (decls.map fun u => (u.tag, u.places))
+
+/-- A constant's display `verbalisation`, as Python's `_verbalisation`: a nonempty string of at most 256
+characters. -/
+def checkVerbalisation (entry : Json) : Except String Unit :=
+  match entry.getObjVal? "verbalisation" with
+  | .error _ => pure ()
+  | .ok (.str w) =>
+    if w.isEmpty then throw "Verbalisations must be nonempty strings"
+    else if w.length > 256 then throw "ResourceLimit: Verbalisation exceeds 256 characters"
+    else pure ()
+  | .ok _ => throw "Verbalisations must be nonempty strings"
+
+/-- The vocabulary annotations `riskNormsView` removes, checked with W6's rules (`decodeSlots` and the constant
+unit rule of `VE.Time.Wire.decodeEnvironment`). A predicate whose arguments do not decode, and a constant of an
+undeclared sort, are left to W1's decoder. -/
+def checkVocabularyUnits (environment : Json) (units : List (String × Nat)) (ext : Bool) : Except String Unit := do
+  let vocab := environment.getObjValD "vocabulary"
+  let tags := units.map Prod.fst
+  let validTag := fun (t : String) => t == VE.Time.dimensionless || tags.contains t
+  let sortNames := ((fields (vocab.getObjValD "sorts")).toOption.getD []).map Prod.fst
+  if ext then
+    for (_, entry) in (fields (vocab.getObjValD "predicates")).toOption.getD [] do
+      if (entry.getObjVal? "argument_units").isOk then
+        if let .ok args := entry.getObjVal? "arguments" >>= strings then
+          let _ ← VE.Time.Wire.decodeSlots args validTag entry
+  for (c, entry) in (fields (vocab.getObjValD "constants")).toOption.getD [] do
+    checkVerbalisation entry
+    if ext then
+      if let .ok u := entry.getObjVal? "unit" then
+        match entry.getObjValD "sort" with
+        | .str "$int" =>
+          let t ← u.getStr?
+          unless validTag t do throw s!"UnknownUnit({t})"
+        | .str s => if sortNames.contains s then throw s!"Unit on non-integer constant {c}"
+        | _ => pure ()
+
+/-- Python's `validate_extension` after the vocabulary: no tag (or `dimensionless`) is a declared sort, no `$string`
+literal, and constant spellings that read back as themselves. -/
+def checkExtension (environment : Json) (units : List (String × Nat)) : Except String Unit := do
+  let vocab := environment.getObjValD "vocabulary"
+  let sortNames := (← fields (vocab.getObjValD "sorts")).map Prod.fst
+  for tag in VE.Time.dimensionless :: units.map Prod.fst do
+    if sortNames.contains tag then throw s!"Unit tag {tag} collides with a declared sort"
+  let constants ← fields (vocab.getObjValD "constants")
+  for (_, entry) in constants do
+    if entry.getObjValD "sort" == .str "$string" then
+      throw "UnsupportedProfile: $string literals are not admitted with ve-units@1"
+  VE.Time.Wire.checkVerbalisations constants
 
 /-! ## The risk block (1.1, 3.1) -/
 
@@ -202,6 +296,7 @@ def decodePremisesRisk (R0 : RiskDoc) (premises : Json) : Except String (List (S
 /-- Decode the environment with both blocks and the W6 extension, the norm objects and the active base units of
 `document` (`{"norms", "units"?}`), then run `WellFormedRisk` with the diagnostics of 6. -/
 def decodeRiskSource (environment document : Json) : Except String RiskSource := do
+  let ext ← extended environment
   let ps ← profileGate environment
   let altRaw ← match environment.getObjVal? "alternatives" with
     | .ok b => pure b
@@ -209,8 +304,15 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   let riskRaw ← match environment.getObjVal? "risk" with
     | .ok b => pure b
     | .error _ => throw (err "block")
+  let view ← riskNormsView environment ps
+  -- Python's order: the checker family (with the risk route's text), then the W6 profile tuple and units.
+  unless (← VE.Route.Gate.decodeEnvelope view).family == .fol do
+    throw "UnsupportedProfile: the risk norms route admits FOL documents only"
+  if ext && ps != unitProfiles then throw w6ProfileText
   let units ← decodeUnits environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment (← riskNormsView environment ps)
+  checkVocabularyUnits environment units ext
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment view
+  if ext then checkExtension environment units
   unless ne.rv.definitions.isEmpty do throw "UnsupportedProfile: risk route with definitions is not implemented"
   unless ne.rv.flags.isEmpty do throw "UnsupportedProfile: risk route with data flags is not implemented"
   unless ne.rv.literals.isEmpty do throw "UnsupportedProfile: risk route with $string literals is not implemented"
