@@ -418,7 +418,8 @@ def load_document(path: str | Path):
             content = unit["content"]
             if type(content) is not dict:
                 continue
-            kind = unit["kind"]
+            # The content's block, not the unit kind, is what was correlated.
+            kind = _rights_block(content) or "norm"
             if kind in ("limitation", "bar"):
                 unit["status"] = "OPEN"
             elif kind == "norm":
@@ -519,6 +520,14 @@ def _assertion_disjunctions(env, sets):
 
 
 _RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar")
+
+
+def _rights_block(content):
+    """The rights block a checked content holds (`right`, `right_lines`,
+    `limitation` or `bar`), else None."""
+    if type(content) is dict and len(content) == 1 and next(iter(content)) in _RIGHTS_KINDS:
+        return next(iter(content))
+    return None
 
 
 def _rights_source_units(doc):
@@ -1000,12 +1009,18 @@ def render_document(path):
                     f"to {kind_description(kind[3])} with the relation {kind[1]}")
         return f"a passage without a formal reading yet, for this reason: {kind[1].replace('_', ' ')}"
 
-    def kind_wording(kind, content):
+    def kind_wording(kind, content, rights=None):
+        """`rights`: the correlated document `content` was checked in, when it is
+        not the base one (a right-reading candidate is checked on its own)."""
         if content is None:
             return f"The passage is recorded as {kind_description(kind)}."
-        if kind in ("right", "right_lines", "limitation", "bar"):
+        block = _rights_block(content)
+        if block is not None:
+            # The content's own block decides the rendering; the kind only how
+            # the source presents it.
             from .surface.rights import render_unit
-            return render_unit(doc["rights_document"], content)
+            text = render_unit(doc["rights_document"] if rights is None else rights, content)
+            return text if kind == block else f"{text} The source presents this as {kind_description(kind)}."
         if type(content) is dict and "norm" in content:
             if doc["soft_document"] is not None:
                 rule = content["norm"]
@@ -1054,6 +1069,16 @@ def render_document(path):
             return claim
         return f"{claim} The source presents this as {kind_description(kind)}."
 
+    def candidate_rights(content):
+        # A right candidate is checked alone over the document's source units
+        # (validate_reading_sets), not in the base document: its line objects
+        # and right name live only in that correlated document.
+        if doc["rights_document"] is None or _rights_block(content) != "right":
+            return None
+        from .rights import RightsDocument
+        return RightsDocument(doc["environment"], [
+            {"source_units": sorted(u["id"] for u in doc["units"])}, content])
+
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
@@ -1076,7 +1101,8 @@ def render_document(path):
                 labels = candidate.get("labels") or {}
                 if labels:
                     lead += " (" + ", ".join(f"{axis} {value}" for axis, value in sorted(labels.items())) + ")"
-                lines.append(f"{lead}: {kind_wording(candidate['kind'], candidate['content'])}")
+                lines.append(f"{lead}: " + kind_wording(candidate["kind"], candidate["content"],
+                                                        candidate_rights(candidate["content"])))
     sets = {r["id"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for coupling in doc["meta"].get("couplings", []):
         units = [sets[ref["set"]]["unit"] for ref in coupling["sets"]]

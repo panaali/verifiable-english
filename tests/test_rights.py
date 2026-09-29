@@ -13,7 +13,9 @@ from ve.background import background
 from ve.model import FiniteModel
 from ve.surface.rights import parse_line, render_line, render_unit
 from ve.errors import VEError
-from ve.rights import RightsEnvironment, correlate
+from ve.rights import RightsDocument, RightsEnvironment, correlate
+from ve.ast import formula_from_data
+from ve.identity import meaning_id
 from ve.readings import plan_choices, rights_meaning_id, validate_couplings, validate_reading_sets
 
 
@@ -428,40 +430,225 @@ def test_document_english_distinguishes_the_finding_pairs(tmp_path):
     assert "Its exception applies only when" in texts[2]
 
 
-def test_document_english_shows_candidate_labels_and_couplings(tmp_path):
-    from ve.model import FiniteModel
-    raw = rights_env()
-    model = {"domains": {"state": ["s"], "person": ["p"]}, "complete": True, "constants": {},
-             "relations": {"protect_required": [], "protect_permitted": [], "person_may_act": []}}
-    mid = FiniteModel.from_dict(RightsEnvironment(raw), model).model_id
+def _separating_model(env, first, second, units, *, seed=0, attempts=64):
+    """A checked finite situation telling two right candidates apart, found by a
+    deterministic search over one state and two persons."""
+    import random
+    from itertools import product as tuples
+    from ve.readings import _right_situation
+    from ve.rights import RightsDocument
+    base = RightsDocument(env, [{"source_units": sorted(units)}, first]) \
+        .soft_document.elaborated.base_environment()
+    domains = {"state": ["s"], "person": ["p", "q"]}
+    rng = random.Random(seed)
+    for _ in range(attempts):
+        relations = {name: [list(values) for values in tuples(*(domains[s] for s in decl.arguments))
+                            if rng.randrange(2)]
+                     for name, decl in sorted(base.predicates.items())}
+        wire = {"domains": domains, "complete": True, "constants": {}, "relations": relations}
+        try:
+            model_id, a = _right_situation(env, first, wire, units)
+            _, b = _right_situation(env, second, wire, units)
+        except VEError:
+            continue
+        if a != b:
+            return model_id, wire
+    return None
 
-    def reading_set(name, unit):
-        return {"id": name, "unit": unit, "version": 1, "status": "open", "models": {mid: model},
-                "readings": [{"id": f"{name}-{force}", "kind": "right", "meaning_id": "pending",
-                              "content": None, "labels": {"force": force},
-                              "admission": {"who": "reviewer", "why": "shall",
-                                            "distinguishing_models": {f"{name}-{other}": mid}}}
-                             for force, other in (("strict", "default"), ("default", "strict"))]}
 
-    path = rights_document_file(tmp_path, [right(), right()])
+def _candidate_set(env, name, unit, contents, model, *, labels=None, kinds=None):
+    model_id, wire = model
+    ids = [f"{name}-{index}" for index in range(len(contents))]
+    return {"id": name, "unit": unit, "version": 1, "status": "open", "models": {model_id: wire},
+            "readings": [{"id": ids[index], "kind": (kinds or {}).get(index, "right"),
+                          "meaning_id": rights_meaning_id(env, content), "content": content,
+                          **({"labels": labels[index]} if labels else {}),
+                          "admission": {"who": "reviewer", "why": "shall",
+                                        "distinguishing_models": {other: model_id for other in ids
+                                                                  if other != ids[index]}}}
+                         for index, content in enumerate(contents)]}
+
+
+def _with_metadata(path, change):
     meta, source = path.read_text().split("\n---\n", 1)
     metadata = json.loads(meta.removeprefix("---\n"))
-    del metadata["units"][1]["content"]
-    metadata["reading_sets"] = [reading_set("a", "u0"), reading_set("b", "u1")]
+    change(metadata)
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    return path
+
+
+def _q_candidates():
+    # rights2 B9: two candidates guarded by q(state, person) and by its negation
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["q"] = {"arguments": ["state", "person"], "description": "q"}
+    q = ["binary", "q", ["var", 1], ["var", 0]]
+    contents = []
+    for guard in (q, ["not", q]):
+        line = claim()
+        line["norm"]["guard"] = guard
+        contents.append(right([line]))
+    return raw, contents
+
+
+@pytest.mark.parametrize("base", ["content", "no content", "other right"])
+def test_populated_right_candidates_render_in_their_own_correlated_context(tmp_path, base):
+    # The base document's correlated rights hold neither the candidates' line objects
+    # nor, without base content or under another name, their right name.
+    raw, contents = _q_candidates()
+    env = RightsEnvironment(raw)
+    model = _separating_model(env, *contents, {"u0"})
+    assert model is not None
+    other = right()
+    other["right"]["name"] = "liberty"
+    path = rights_document_file(tmp_path, [other if base == "other right" else right()], env=raw)
+
+    def change(metadata):
+        if base == "no content":
+            del metadata["units"][0]["content"]
+        metadata["reading_sets"] = [_candidate_set(env, "rs", "u0", contents, model)]
+
+    path = _with_metadata(path, change)
+    load_document(path)
+    rendered = render_document(path)
+    assert rendered == render_document(path)
+    first = next(line for line in rendered.splitlines() if line.startswith("One reading is: "))
+    second = next(line for line in rendered.splitlines() if line.startswith("Another reading is: "))
+    assert first.endswith('Every state must protect each person, if that state has the recorded '
+                          'relation "q" to that person.')
+    assert second.endswith('Every state must protect each person, if it is not the case that that '
+                           'state has the recorded relation "q" to that person.')
+    for line, content in ((first, contents[0]), (second, contents[1])):
+        own = RightsDocument(env, [{"source_units": ["u0"]}, content])
+        assert line.split(": ", 1)[1] == render_unit(own, content)
+    assert check_document(path)["rights"]["report_status"].startswith("UNKNOWN")
+
+
+def test_rendering_follows_the_checked_content_not_the_unit_kind(tmp_path):
+    # A reading's kind says how the source presents it; its content decides the
+    # rendering. A mismatched kind must not crash the renderer.
+    raw, contents = _q_candidates()
+    env = RightsEnvironment(raw)
+    model = _separating_model(env, *contents, {"u0"})
+    for kinds in ({0: "asserted"}, {1: "limitation"}, {0: "example", 1: "bar"}):
+        path = _with_metadata(rights_document_file(tmp_path, [right()], env=raw), lambda metadata: (
+            metadata.__setitem__("reading_sets", [_candidate_set(env, "rs", "u0", contents, model,
+                                                                 kinds=kinds)])))
+        rendered = render_document(path)
+        described = {"asserted": "a direct assertion", "limitation": "a limitation",
+                     "example": "an example", "bar": "a bar"}
+        for kind in kinds.values():
+            assert f"The source presents this as {described[kind]}." in rendered
+    formula = {"id": "rs", "unit": "u0", "version": 1, "status": "authored", "signature": "me",
+               "readings": [{"id": "a", "kind": "right", "content": ["top"],
+                             "meaning_id": meaning_id(env, formula_from_data(env, ["top"])),
+                             "admission": {"who": "r", "why": "w", "distinguishing_models": {}}}]}
+    path = _with_metadata(rights_document_file(tmp_path, [right()], env=raw),
+                          lambda metadata: metadata.__setitem__("reading_sets", [formula]))
+    assert "The source presents this as a right." in render_document(path)
+    # a right unit holding a limitation was correlated as a limitation; its status
+    # and English follow the block (the status check read `content["right"]`)
+    limitation = life_limitation()
+    limitation["limitation"]["conditions"] = []
+    path = _with_metadata(rights_document_file(tmp_path, [right(), limitation], env=raw),
+                          lambda metadata: metadata["units"][1].__setitem__("kind", "right"))
+    assert [u["status"] for u in load_document(path)["units"]] == ["OPEN", "OPEN"]
+    rendered = render_document(path)
+    assert ("Limitation 1 (on the claims of right 1)." in rendered and
+            "The source presents this as a right." in rendered)
+    # a norm unit holding a right block is rejected when loaded, not when rendered
+    path = _with_metadata(rights_document_file(tmp_path, [right()], env=raw),
+                          lambda metadata: metadata["units"][0].__setitem__("kind", "norm"))
+    for entry in (load_document, render_document):
+        with pytest.raises(VEError, match="rights@0 is required"):
+            entry(path)
+
+
+def test_document_english_shows_candidate_labels_and_couplings(tmp_path):
+    # Populated candidates (a `content: None` candidate never reached the rights
+    # renderer, which masked rights2 B9).
+    raw, contents = _q_candidates()
+    env = RightsEnvironment(raw)
+    model = _separating_model(env, *contents, {"u0", "u1"})
+    assert model is not None
+    labels = [{"scope": "related"}, {"scope": "unrelated"}]
+    path = rights_document_file(tmp_path, [right(), right()], env=raw)
 
     def rendered(couplings):
-        path.write_text("---\n" + json.dumps({**metadata, "couplings": couplings}) + "\n---\n" + source)
-        return render_document(path)
+        def change(metadata):
+            metadata["units"][1].pop("content", None)
+            metadata["reading_sets"] = [
+                _candidate_set(env, name, unit, contents, model, labels=labels)
+                for name, unit in (("a", "u0"), ("b", "u1"))]
+            metadata["couplings"] = couplings
+        return render_document(_with_metadata(path, change))
 
     uncoupled = rendered([])
-    assert "One reading is (force strict):" in uncoupled
-    assert "Another reading is (force default):" in uncoupled
-    coupled = rendered([{"id": "same-force", "axis": "force",
+    assert "One reading is (scope related): Right 1." in uncoupled
+    assert "Another reading is (scope unrelated): Right 1. " in uncoupled
+    assert uncoupled.count('if that state has the recorded relation "q" to that person.') == 2
+    coupled = rendered([{"id": "same-scope", "axis": "scope",
                          "sets": [{"set": "a", "version": 1}, {"set": "b", "version": 1}],
                          "by": "translator", "reason_spans": ["u0"]}])
     assert coupled != uncoupled
-    assert ("Reading units u0 and u1 with the same force, because u0 "
-            "(coupling same-force by translator).") in coupled
+    assert ("Reading units u0 and u1 with the same scope, because u0 "
+            "(coupling same-scope by translator).") in coupled
+
+
+def test_generated_populated_right_candidates_render_and_round_trip(tmp_path):
+    # Right units of generated rights documents (docs/spec/rights.md 10) become open
+    # sets of the unit's block and a renamed block with its first line's guard negated,
+    # told apart by a checked situation, with and without the base content. Every
+    # document that loads renders; each candidate renders exactly as in its own
+    # correlated document, and separated candidates render differently.
+    from conformance.rights_differential import document, loaded
+
+    rendered_count = 0
+    for seed in range(40):
+        raw, units = document(seed)
+        directory = tmp_path / str(seed)
+        directory.mkdir()
+        try:
+            loaded(raw, units, directory)
+        except VEError:
+            continue
+        env = RightsEnvironment(raw)
+        path = directory / "rights.ve.md"
+        metadata = json.loads(path.read_text().split("\n---\n", 1)[0].removeprefix("---\n"))
+        ids = {unit["id"] for unit in metadata["units"]}
+        target = next(unit for unit in metadata["units"] if unit["kind"] == "right")
+        first = target["content"]
+        second = deepcopy(first)
+        second["right"]["name"] += "-alt"
+        line = second["right"]["lines"][0]
+        norm = line.get("norm") or line["liberty"]
+        norm["guard"] = ["not", norm["guard"]]
+        try:
+            RightsDocument(env, [{"source_units": sorted(ids)}, second])
+        except VEError:
+            continue
+        model = _separating_model(env, first, second, ids, seed=seed)
+        if model is None:
+            continue
+
+        def change(metadata):
+            if seed % 2:
+                next(unit for unit in metadata["units"] if unit["id"] == target["id"]).pop("content")
+            metadata["reading_sets"] = [_candidate_set(env, "rs", target["id"], [first, second], model)]
+
+        _with_metadata(path, change)
+        try:
+            load_document(path)
+        except VEError:
+            continue  # e.g. a limitation scoped to the removed base right
+        rendered = render_document(path)
+        assert rendered == render_document(path)
+        own = [render_unit(RightsDocument(env, [{"source_units": sorted(ids)}, content]), content)
+               for content in (first, second)]
+        assert own[0] != own[1], seed
+        assert (f"\nThis sentence could mean:\nOne reading is: {own[0]}\n"
+                f"Another reading is: {own[1]}\n") in rendered, seed
+        rendered_count += 1
+    assert rendered_count >= 20
 
 
 def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
