@@ -319,6 +319,34 @@ def test_citations_name_declared_source_units_on_lines_and_outside_norms():
     assert report_rights(rights.env, source, rights)["unlicensed_limitations"] == []
 
 
+def test_document_loads_an_outside_norm_carrying_narrowing_citations(tmp_path):
+    # 3.2: the loader accepts what the rights profile and the Lean route accept.
+    rule = {"name": "may-protect", "predicate": "protect_permitted", "sign": False,
+            "guard": ["top"], "unless": [], "over": []}
+    outside = {"norm": rule, "cites": {"narrows:protect": ["u0"]}}
+    doc = load_document(rights_document_file(tmp_path, [right(), outside]))
+    unit = doc["units"][1]
+    assert unit["kind"] == "norm" and unit["content"]["cites"] == {"narrows:protect": ["u0"]}
+    assert doc["rights_document"].outside[0]["cites"] == {"narrows:protect": ["u0"]}
+    # the citation is part of the unit's meaning
+    uncited = load_document(rights_document_file(tmp_path, [right(), {"norm": rule}]))
+    assert unit["meaning_id"] != uncited["units"][1]["meaning_id"]
+    assert check_document(rights_document_file(tmp_path, [right(), outside]))["rights"]
+    with pytest.raises(VEError, match="UnknownSymbol: unit u9"):
+        load_document(rights_document_file(
+            tmp_path, [right(), {**outside, "cites": {"narrows:protect": ["u9"]}}]))
+    # only a norm unit outside rights carries citations, and only under rights@0
+    path = rights_document_file(tmp_path, [right(), outside])
+    meta, source = path.read_text().split("\n---\n", 1)
+    metadata = json.loads(meta.removeprefix("---\n"))
+    metadata["units"][1]["kind"] = "asserted"
+    path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
+    with pytest.raises(VEError, match="unit content must bind one formula or norm"):
+        load_document(path)
+    with pytest.raises(VEError, match="InvalidInput: expected norm object"):
+        load_document(rights_document_file(tmp_path, [outside], env=rights_env_without_profile()))
+
+
 def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
     raw = rights_env()
     raw["vocabulary"]["predicates"]["adult"] = {"arguments": ["person"],

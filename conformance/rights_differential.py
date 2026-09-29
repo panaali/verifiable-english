@@ -3,7 +3,9 @@
 independently, by the Lean rights route and the Lean soft route, and every output of
 `check_rights_regenerated` must agree (generated keys, E″′ byte for byte, line instances
 and nodes, Lim_D, bar nodes, order, layer premises, background, targets, warnings). A
-generated source Python rejects must be rejected by Lean too, and conversely.
+generated source Python rejects must be rejected by Lean too, and conversely. Every accepted
+source is also wrapped as a ve-document and loaded by `load_document`, which must accept it and
+correlate it to the same rules: the loader admits exactly the unit contents the profile does.
 
 The generator covers every incident shape (strict and default claims of both signs,
 fan-out claims, liberties, immunities, powers), holder guards, right_lines units later in
@@ -17,10 +19,12 @@ import json
 import random
 import subprocess
 import sys
+import tempfile
 from copy import deepcopy
 from pathlib import Path
 
 from tests.test_norms import environment, obligation, permission
+from ve.document import load_document
 from ve.errors import VEError
 from ve.rights import correlate
 from ve.rights_route import LEAN_ROUTE, _wire, check_rights_regenerated
@@ -204,6 +208,27 @@ def document(seed):
     return raw, units
 
 
+def loaded(raw, units, directory):
+    """The rights source as a ve-document, one source unit per content; `u2` is a plain
+    exposition unit when the source has a single content, so every citation resolves."""
+    contents = [unit for unit in units if "source_units" not in unit]
+    source, spans, start = "", [], 0
+    for index in range(max(len(contents), 2)):
+        text = f"Unit {index + 1}.\n"
+        source += text
+        spans.append([start, start + len(text)])
+        start += len(text)
+    document = [{"id": f"u{index + 1}", "span": spans[index],
+                 "kind": next(iter(contents[index])) if index < len(contents) else "exposition",
+                 "meaning": "specified", "support": "none",
+                 **({"content": deepcopy(contents[index])} if index < len(contents) else {})}
+                for index in range(len(spans))]
+    path = Path(directory) / "rights.ve.md"
+    path.write_text("---\n" + json.dumps({"format": "ve-document@1", "environment": deepcopy(raw),
+                                          "units": document}) + "\n---\n" + source)
+    return load_document(path)
+
+
 def _rows(executable, cases):
     run = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
                          capture_output=True, timeout=600, check=False)
@@ -216,8 +241,9 @@ def _rows(executable, cases):
 def run(count=1000, batch=50):
     """Compare until `count` generated sources are accepted by both routes."""
     accepted = rejected = seeds = 0
-    same_text = 0
+    same_text = loader = 0
     shapes = set()
+    directory = tempfile.TemporaryDirectory()
     while accepted < count:
         sources = []
         while len(sources) < min(batch, count - accepted):
@@ -251,6 +277,14 @@ def run(count=1000, batch=50):
                 check_rights_regenerated(rights, row, soft_rows[i])
             except VEError as exc:
                 raise AssertionError(f"seed {seed}: {exc}") from exc
+            try:
+                doc = loaded(raw, units, directory.name)
+            except VEError as exc:
+                raise AssertionError(f"seed {seed}: the document loader rejected an accepted source: {exc}") from exc
+            if ([r.to_dict() for r in doc["rights_document"].soft_document.rules] !=
+                    [r.to_dict() for r in rights.soft_document.rules]):
+                raise AssertionError(f"seed {seed}: the document loader correlated different rules")
+            loader += 1
             accepted += 1
             shapes.update(instance["kind"] for instance in rights.instances)
             shapes.update(("fan-out",) if any(instance["bearer"] for instance in rights.instances) else ())
@@ -259,6 +293,7 @@ def run(count=1000, batch=50):
             shapes.update((f"bar:{rights.bar['reading']}",) if rights.bar else ())
     return {"format": "rights-differential@0", "documents": accepted + rejected, "accepted_by_both": accepted,
             "rejected_by_both": rejected, "rejections_with_the_same_text": same_text,
+            "loaded_as_documents": loader,
             "seeds_examined": seeds, "shapes": sorted(shapes)}
 
 

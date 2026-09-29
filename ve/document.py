@@ -128,11 +128,20 @@ def _quantity_content(env, unit, content, fences):
     return canonical, quantity_meaning_id(env, canonical)
 
 
-def _content(env, unit, fences, *, formula_env=None):
+def _content(env, unit, fences, *, formula_env=None, rights=False):
     formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
         return None
+    if (rights and type(content) is dict and set(content) == {"norm", "cites"} and
+            unit.get("kind") == "norm"):
+        # 3.2: a norm unit outside rights may carry `narrows:<line>` citations,
+        # which the rights document validates; the meaning binds them too.
+        canonical, _ = _content(env, {**unit, "content": {"norm": content["norm"]}}, fences,
+                                formula_env=formula_env)
+        from .readings import rights_meaning_id
+        canonical = {**canonical, "cites": content["cites"]}
+        return canonical, rights_meaning_id(env, canonical)
     if type(content) is not dict or len(content) != 1:
         raise VEError("unit content must bind one formula or norm")
     if env.unit_schema is not None and "norm" not in content:
@@ -319,7 +328,8 @@ def load_document(path: str | Path):
             raise VEError("invalid support")
         content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
                        else formula_env)
-        content, mid = (_content(content_env, unit, fences, formula_env=formula_env)
+        content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
+                                 rights=rights_enabled)
                         if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
@@ -413,7 +423,7 @@ def load_document(path: str | Path):
                 unit["status"] = "OPEN"
             elif kind == "norm":
                 from .softnorms import decode_rule
-                if open_rule(decode_rule(rights.environment, content)):
+                if open_rule(decode_rule(rights.environment, {"norm": content["norm"]})):
                     unit["status"] = "OPEN"
             else:
                 body = content[kind]
