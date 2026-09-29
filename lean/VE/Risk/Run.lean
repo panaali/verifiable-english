@@ -419,6 +419,12 @@ def runDecision (id : String) (j : Json) : Except String Json := do
     let clear := (res.statuses.filter (·.2.clear)).map (·.1)
     let conditional := d.cited.map (·.id)
     let dilemmas := if clear.isEmpty then [diagnosisOf R d] else []
+    -- 2.4: the condition lines shown with a record that uses the form; c5's wording is pending (2.1)
+    let forms := d.conditions.map (·.form)
+    let conditionLegend :=
+      (if forms.contains .necessary then ["\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case they allow in which the condition does not hold."] else []) ++
+      (if forms.contains .exact then ["\"<action> leads to <harm> exactly when <condition>\" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold."] else []) ++
+      (if forms.contains .sufficient then ["\"<action> leads to <harm> if <condition>\" means the harm happens in every case they allow in which the condition holds. (wording pending)"] else [])
     let lines := Json.mkObj [
       ("unexamined_possible", toJson (unexaminedPossible.map fun (a, h) => s!"{a}/{h}")),
       ("assumed_ruled_out", Json.mkObj [("decider", .str decider),
@@ -442,6 +448,7 @@ def runDecision (id : String) (j : Json) : Except String Json := do
        | cs => s!"Clear actions: {"; ".intercalate cs}. The policy does not choose among them.")
     return ok id (base ++ [("tables", tablesJ), ("statuses", statusesJ), ("worst_cases", worstJ),
       ("margins", marginsJ), ("record_invalid", invalidJ), ("record_conflict", conflictJ), ("lines", lines),
+      ("legend", toJson conditionLegend),
       ("clear", toJson clear), ("conditional_on", toJson conditional), ("text", .str text)])
 
 def q1Text (R : RiskDoc) (d : Option Decision) (a : String) : Q1 → String
