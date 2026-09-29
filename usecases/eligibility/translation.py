@@ -69,6 +69,14 @@ ROLE_INTEGERS = {
     "treatment_before_week": ("elapsed_day", "treatment days before the week"),
     "income": ("gbp_penny", "total income"),
 }
+# Integer constants of the household (AR5): name -> (unit, English words after "the
+# household's"). They date the shared home and the partnership recorded on the housemate.
+HOUSEHOLD_INTEGERS = {
+    "home_from": ("day", "home start date"),
+    "home_until": ("day", "home end date"),
+    "partner_from": ("day", "partnership start date"),
+    "partner_until": ("day", "partnership end date"),
+}
 APPLICANT_MONEY = {
     "amount": "winter fuel payment amount",
     "recovered_amount": "recovered amount",
@@ -79,6 +87,10 @@ APPLICANT_MONEY = {
 FACT_PREDICATES = {
     "partner_of": (["person", "person"], "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3)."),
     "shares_home": (["person", "person"], "The two persons share accommodation as their mutual home in the qualifying week (S1 reg. 1(4)(b), taken as a fact)."),
+    "home_start_dated": (["person", "person"], "The two persons' mutual home began on the household's home start date; otherwise it began before the qualifying week (AR5)."),
+    "home_ended": (["person", "person"], "The two persons' mutual home has a last day, the household's home end date; otherwise it continues after the qualifying week (AR5)."),
+    "partnership_start_dated": (["person", "person"], "The two persons became partners on the household's partnership start date; otherwise before the qualifying week (AR5)."),
+    "partnership_ended": (["person", "person"], "The two persons' partnership has a last day, the household's partnership end date; otherwise it continues after the qualifying week (AR5)."),
     "paid_for_week": (["person", "benefit"], "The benefit has been, or falls to be, paid to the person for the qualifying week."),
     "ever_resident_ew": (["person"], "The person has a first day of ordinary residence in England and Wales."),
     "remains_resident_ew": (["person"], "The person's ordinary residence in England and Wales has not ended."),
@@ -98,6 +110,8 @@ DERIVED_PREDICATES = {
     "has_rb": (["person"], "R4: a relevant benefit has been, or falls to be, paid to the person for the qualifying week."),
     "in_residential_care": (["person"], "R5: the person is in residential care (S1 reg. 1(4)(a))."),
     "lives_with": (["person", "person"], "R6: the first person lives with the second (S1 reg. 1(4)(b))."),
+    "home_throughout": (["person", "person"], "R7a: the two persons share their mutual home on every day of the qualifying week (AR7)."),
+    "partners_throughout": (["person", "person"], "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."),
     "excluded_partner_benefit": (["person"], "R7: S1 reg. 4(2)(a) applies to the person."),
     "excluded_hospital": (["person"], "R8: S1 reg. 4(2)(b) applies to the person."),
     "excluded_custody": (["person"], "R9: S1 reg. 4(2)(c) applies to the person."),
@@ -129,6 +143,9 @@ def environment():
             constants[f"{role}_{suffix}"] = {"sort": "$int", "unit": unit,
                                              "description": f"The {role}'s {words}.",
                                              "verbalisation": f"the {role}'s {words}"}
+    for name, (unit, words) in HOUSEHOLD_INTEGERS.items():
+        constants[name] = {"sort": "$int", "unit": unit, "description": f"The household's {words}.",
+                           "verbalisation": f"the household's {words}"}
     for name, words in APPLICANT_MONEY.items():
         constants[name] = {"sort": "$int", "unit": "gbp_penny", "description": f"The applicant's {words}.",
                            "verbalisation": f"the applicant's {words}"}
@@ -151,6 +168,10 @@ def obj(name):
 
 def num(role, suffix):
     return ["const", ROLE_INTEGERS[suffix][0], f"{role}_{suffix}"]
+
+
+def household(name):
+    return ["const", HOUSEHOLD_INTEGERS[name][0], name]
 
 
 def money_const(name):
@@ -232,6 +253,9 @@ MUTANTS = {
     "M20": "R11 without the order of AR6", "M21": "R11 without the QW0 bound of AR6",
     "M22": "R11 without the E&W-start bound of AR6", "M23": "R6 with the other person also out of residential care",
     "M24": "R5 without the care end date", "M25": "R5 with the care end date strictly after the week",
+    "M26": "R7 without the whole-week shared home", "M27": "R7 without the whole-week partnership",
+    "M28": "R7 with the first days strictly before the week", "M29": "R7 with the last days strictly after the week",
+    "M30": "R14 with 'throughout' read into 3(3)",
 }
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
@@ -273,12 +297,29 @@ def role_rules(r, mutant=None):
         lives.append(Not(U("in_residential_care", o)))
     rules.append(rule("R6", "S1 reg. 1(4)(b)", f"The {r} lives with the {o} exactly when they share a mutual home and the {r} is not in residential care.",
                       Iff(B("lives_with", r, o), And(*lives)), r))
-    partner_body = [B("partner_of", r, o), B("lives_with", r, o), U("reached_pa", o), U("has_rb", o)]
+    # AR7: "throughout the qualifying week" holds for a period whose first day is no later
+    # than QW0 and whose last day is no earlier than QW1; an undated end lies outside QW (AR5).
+    first = "date_before" if mutant == "M28" else "date_no_later"
+    last = "date_before" if mutant == "M29" else "date_no_later"
+    for rid, derived, base, name, gloss in (
+            ("R7a", "home_throughout", "shares_home", "shared_home",
+             f"The {r} and the {o} share a mutual home throughout the week exactly when they share a mutual home, and the home"),
+            ("R7b", "partners_throughout", "partner_of", "partnership",
+             f"The {r} is a partner of the {o} throughout the week exactly when the {r} is a partner of the {o}, and the partnership")):
+        started, ended, start, end = PERIODS[name]
+        rules.append(rule(rid, "S1 reg. 4(2)(a) 'throughout the qualifying week', reading AR7",
+                          f"{gloss} either began before the week or has a start date no later than {QW0}, and either continues or has an end date no earlier than {QW1}.",
+                          Iff(B(derived, r, o), And(B(base, r, o), Or(Not(B(started, r, o)), [first, household(start), day(QW0)]),
+                                                    Or(Not(B(ended, r, o)), [last, day(QW1), household(end)]))), r))
+    partner_body = [B("partner_of" if mutant == "M27" else "partners_throughout", r, o), B("lives_with", r, o),
+                    B("home_throughout", r, o), U("reached_pa", o), U("has_rb", o)]
     if mutant == "M7":
         partner_body.pop(0)
     if mutant == "M8":
         partner_body.remove(U("reached_pa", o))
-    rules.append(rule("R7", "S1 reg. 4(2)(a)", f"Regulation 4(2)(a) applies to the {r} exactly when the {r} is a partner of the {o}, lives with the {o}, and the {o} has reached pensionable age and is paid a relevant benefit for the week.",
+    if mutant == "M26":
+        partner_body.remove(B("home_throughout", r, o))
+    rules.append(rule("R7", "S1 reg. 4(2)(a)", f"Regulation 4(2)(a) applies to the {r} exactly when, throughout the week, the {r} is a partner of the {o} and shares a mutual home with the {o}, the {r} lives with the {o}, and the {o} has reached pensionable age and is paid a relevant benefit for the week.",
                       Iff(U("excluded_partner_benefit", r), And(*partner_body)), r))
     rules.append(rule("R8a", "S3 reg. 2(5)", f"If the {r} is an in-patient, the {r}'s treatment start date is {0 if mutant == 'M2' else 1} day after the {r}'s hospital admission date.",
                       Implies(U("inpatient", r), ["shift_days", num(r, "treatment_start"), num(r, "admitted"), "0" if mutant == "M2" else "1"]), r,
@@ -325,7 +366,9 @@ def amount_rules(mutant=None):
     a, h = "applicant", "housemate"
     entitled, rb, e80, care = U("entitled", a), U("has_rb", a), U("reached_80", a), U("in_residential_care", a)
     with_entitled = And(B("lives_with", a, h), U("entitled", h))
-    partner_80 = And(B("partner_of", a, h), B("lives_with", a, h), U("reached_80", h))
+    partner_80 = And(B("partner_of", a, h), B("lives_with", a, h), U("reached_80", h))  # 3(3): "in that week"
+    if mutant == "M30":
+        partner_80 = And(B("partners_throughout", a, h), B("lives_with", a, h), B("home_throughout", a, h), U("reached_80", h))
     cond_2 = And(Not(rb), Or(with_entitled, care))
     cond_3 = And(rb, partner_80)
     cond_6 = And(Not(rb), Or(And(with_entitled, U("reached_80", h)), care))
@@ -387,23 +430,36 @@ PERSON_FIELDS = {"birth", "ew_from", "ew_last_day", "scot_ni_from", "benefits", 
 # E&W residence lives (B08, B09); S1 depends on that only through `ew_from`, and the
 # Scotland and Northern Ireland schemes are out of scope (PLAN O7).
 UNREAD_FIELDS = {"home": "S1 reads E&W residence only (O7)"}
+# The couple and its periods are recorded once, on the housemate (AR5): record name ->
+# (start-dated fact, ended fact, start constant, end constant).
+PERIODS = {"shared_home": ("home_start_dated", "home_ended", "home_from", "home_until"),
+           "partnership": ("partnership_start_dated", "partnership_ended", "partner_from", "partner_until")}
+HOUSEMATE_FIELDS = {"partner", *PERIODS}
 RECORD_FIELDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
                  "custody": ({"from", "release", "sentenced"}, set()),
-                 "claim": ({"automatic"}, {"claimed_on"})}
+                 "claim": ({"automatic"}, {"claimed_on"}),
+                 **{name: (set(), {"from", "until"}) for name in PERIODS}}
 
 
 def check_fields(r, p):
     """Raise ValueError on a field or benefit of person p that no fact would carry."""
-    allowed = PERSON_FIELDS | set(UNREAD_FIELDS) | ({"partner"} if r == "housemate" else set())
+    allowed = PERSON_FIELDS | set(UNREAD_FIELDS) | (HOUSEMATE_FIELDS if r == "housemate" else set())
     if set(p) - allowed:
         raise ValueError(f"{r}: unread profile fields {sorted(set(p) - allowed)}")
     if set(p["benefits"]) - set(BENEFITS):
         raise ValueError(f"{r}: unknown benefits {sorted(set(p['benefits']) - set(BENEFITS))}")
     for name, (required, optional) in RECORD_FIELDS.items():
-        record = p[name]
+        record = p.get(name)
         if record is not None and not required <= set(record) <= required | optional:
             raise ValueError(f"{r}.{name}: fields {sorted(record)}, expected {sorted(required)}"
                              f" and optionally {sorted(optional)}")
+    if p.get("partnership") is not None and not p.get("partner"):
+        raise ValueError(f"{r}: partnership dates without a partner")
+    for name in PERIODS:  # AR5: a listed period includes a day of the week
+        period = p.get(name) or {}
+        start, end = (date.fromisoformat(period.get(k, v)) for k, v in (("from", QW0), ("until", QW1)))
+        if not start <= end or start > date.fromisoformat(QW1) or end < date.fromisoformat(QW0):
+            raise ValueError(f"{r}.{name}: {period} includes no day of the qualifying week")
 
 
 def _person(raw, defaults):
@@ -414,15 +470,45 @@ def fact(fid, formula, kind="fact"):
     return {"id": fid, "kind": kind, "formula": formula}
 
 
-def role_facts(r, p, other_present):
+def lit(cond, f):
+    return f if cond else Not(f)
+
+
+def household_facts(r, housemate):
+    """Role r's facts on whether the shared home, and a partnership, recorded on the
+    housemate began or ended near the week (AR5). None without a housemate, and no
+    partnership facts without a partner."""
+    o = OTHER[r]
+    facts = []
+    for name, (started, ended, _, _) in PERIODS.items():
+        if housemate is None or name == "partnership" and not housemate.get("partner"):
+            continue
+        period = housemate.get(name) or {}
+        facts.append(fact(f"{r}.{started}", lit(period.get("from") is not None, B(started, r, o))))
+        facts.append(fact(f"{r}.{ended}", lit(period.get("until") is not None, B(ended, r, o))))
+    return facts
+
+
+def household_dates(housemate):
+    """The dates of the recorded periods, once for the household."""
+    facts = []
+    for name, (_, _, start, end) in PERIODS.items():
+        period = (housemate or {}).get(name) or {}
+        for field, constant in (("from", start), ("until", end)):
+            if period.get(field) is not None:
+                facts.append(fact(f"household.{constant}", ["date_on", household(constant), day(period[field])]))
+    return facts
+
+
+def role_facts(r, p, other_present, housemate=None):
     """Facts for role r from profile person p (None when the housemate is absent)."""
     o = OTHER[r]
     facts = []
-    lit = lambda cond, f: f if cond else Not(f)
     partner = bool(p and p.get("partner")) if r == "housemate" else None
     facts.append(fact(f"{r}.shares_home", lit(other_present, B("shares_home", r, o))))
     if r == "housemate":
         facts.append(fact("housemate.partner_of", lit(partner, B("partner_of", r, o))))
+    facts += household_facts(r, housemate)
     if p is None:
         return facts
     check_fields(r, p)
@@ -473,12 +559,14 @@ def profile_facts(case, defaults):
     applicant = _person(case["applicant"], defaults)
     housemate = _person(case["housemate"], defaults)
     present = housemate is not None
-    facts = role_facts("applicant", applicant, present)
-    # The partner relation is recorded on the housemate; it holds both ways.
+    facts = role_facts("applicant", applicant, present, housemate)
+    # The partner relation and the household's periods are recorded on the housemate;
+    # they hold both ways.
     partner = bool(housemate and housemate.get("partner"))
     facts.insert(1, fact("applicant.partner_of", B("partner_of", "applicant", "housemate") if partner
                          else Not(B("partner_of", "applicant", "housemate"))))
-    facts += role_facts("housemate", housemate, present)
+    facts += role_facts("housemate", housemate, present, housemate)
+    facts += household_dates(housemate)
     return facts
 
 

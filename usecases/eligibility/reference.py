@@ -157,27 +157,46 @@ def excluded_no_claim(p):
     return claim.get("claimed_on") is None or claim["claimed_on"] > date(YEAR + 1, 3, 31)
 
 
-def entitled(p, other):
+def throughout(period):
+    """Reading AR7: a period {from?, until?} of first and last days (an absent end lies
+    outside the week, AR5) covers every day of the qualifying week."""
+    period = period or {}
+    return (period.get("from") is None or period["from"] <= QW_START) and \
+        (period.get("until") is None or period["until"] >= QW_END)
+
+
+def excluded_partner_benefit(p, other, household):
+    """Reg. 4(2)(a): "throughout the qualifying week, P is a partner of and living with"
+    a person who has reached pensionable age and is paid a relevant benefit. Both the
+    partnership and the shared home must cover the whole week. `household` is the
+    housemate's record, which carries the couple and its dates for both persons."""
+    return (other is not None and household["partner"] and throughout(household["partnership"])
+            and lives_with(p, other) and throughout(household["shared_home"])
+            and reached_pensionable_age(other) and relevant_benefit(other))
+
+
+def entitled(p, other, household):
     """Reg. 2 subject to reg. 4. `other` is the one person P lives with, or None."""
     if not (reached_pensionable_age(p) and resident_in_qw(p)):
         return False
-    partner_benefit = (other is not None and other["partner"] and lives_with(p, other)
-                       and reached_pensionable_age(other) and relevant_benefit(other))
-    return not (partner_benefit or excluded_hospital(p) or excluded_custody(p)
+    return not (excluded_partner_benefit(p, other, household) or excluded_hospital(p) or excluded_custody(p)
                 or (in_residential_care(p) and relevant_benefit(p))
                 or excluded_move(p) or excluded_no_claim(p))
 
 
 def lives_with(p, other):
-    """Reg. 1(4)(b); every housemate in cases.json shares P's home in the week. "They are
-    not in residential care" qualifies P, the person who lives with another, not the other."""
+    """Reg. 1(4)(b); every housemate in cases.json shares P's home on a day of the week
+    (AR5), which is what reg. 3's "in that week" asks. "They are not in residential care"
+    qualifies P, the person who lives with another, not the other."""
     return other is not None and not in_residential_care(p)
 
 
 def amount(p, other):
-    """Reg. 3, with each 'subject to' paragraph taking precedence."""
+    """Reg. 3, with each 'subject to' paragraph taking precedence. `other` is the
+    housemate, whose record carries the couple. Reg. 3 says "in that week", not
+    "throughout" as reg. 4(2) does."""
     rb = relevant_benefit(p)
-    with_entitled = lives_with(p, other) and entitled(other, p)
+    with_entitled = lives_with(p, other) and entitled(other, p, other)
     care = in_residential_care(p)
     if not reached_80(p):
         if not rb and (with_entitled or care):
@@ -193,18 +212,24 @@ def amount(p, other):
 
 
 KNOWN_BENEFITS = RELEVANT_BENEFITS | {"state_pension", "attendance_allowance"}
+PERIODS = ("shared_home", "partnership")  # AR5: on the housemate, {from?, until?}
 RECORDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
-           "custody": ({"from", "release", "sentenced"}, set()), "claim": ({"automatic"}, {"claimed_on"})}
+           "custody": ({"from", "release", "sentenced"}, set()), "claim": ({"automatic"}, {"claimed_on"}),
+           **{name: (set(), {"from", "until"}) for name in PERIODS}}
 # `home` (B08, B09) says where a person without E&W residence lives; S1 does not read it.
-FIELDS = {"birth", "partner", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "income", "home", *RECORDS}
+# The couple and its dates are recorded once, on the housemate.
+FIELDS = {"birth", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "income", "home",
+          *(set(RECORDS) - set(PERIODS))}
+HOUSEMATE_FIELDS = {"partner", *PERIODS}
 
 
-def person(raw, defaults):
+def person(raw, defaults, role="applicant"):
     """A person with dates parsed. A field this reading does not use is an error, so
     that no profile fact is silently dropped."""
     p = {**defaults, **raw}
-    if set(p) - FIELDS or set(p["benefits"]) - KNOWN_BENEFITS:
-        raise ValueError(f"unread fields {sorted(set(p) - FIELDS)} or benefits"
+    allowed = FIELDS | (HOUSEMATE_FIELDS if role == "housemate" else set())
+    if set(p) - allowed or set(p["benefits"]) - KNOWN_BENEFITS:
+        raise ValueError(f"unread fields {sorted(set(p) - allowed)} or benefits"
                          f" {sorted(set(p['benefits']) - KNOWN_BENEFITS)}")
     for name, (required, optional) in RECORDS.items():
         if p.get(name) is not None and not required <= set(p[name]) <= required | optional:
@@ -212,18 +237,25 @@ def person(raw, defaults):
     for field in ("birth", "ew_from", "ew_last_day", "scot_ni_from"):
         if p.get(field) is not None:
             p[field] = date.fromisoformat(p[field])
-    for field in ("care", "hospital", "custody", "claim"):
+    for field in ("care", "hospital", "custody", "claim", *PERIODS):
         if p.get(field) is not None:
             p[field] = {k: date.fromisoformat(v) if isinstance(v, str) else v for k, v in p[field].items()}
     p.setdefault("partner", False)
+    if p.get("partnership") is not None and not p["partner"]:
+        raise ValueError("partnership dates without a partner")
+    for name in PERIODS:  # AR5: a listed period includes a day of the week
+        period = p.setdefault(name, None) or {}
+        start, end = period.get("from", QW_START), period.get("until", QW_END)
+        if not (start <= end and start <= QW_END and end >= QW_START):
+            raise ValueError(f"{name}: {period} includes no day of the qualifying week")
     p["income"] = Decimal(p["income"])
     return p
 
 
 def answer(case, defaults):
     p = person(case["applicant"], defaults)
-    other = person(case["housemate"], defaults) if case["housemate"] else None
-    if not entitled(p, other):
+    other = person(case["housemate"], defaults, "housemate") if case["housemate"] else None
+    if not entitled(p, other, other):
         return {"entitled": False}
     paid = amount(p, other)
     recovered = p["income"] > INCOME_THRESHOLD
