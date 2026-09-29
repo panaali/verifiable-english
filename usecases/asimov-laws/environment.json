@@ -129,6 +129,17 @@
           "default": "deny"
         }
       },
+      "lawfully_avoidable_threat": {
+        "arguments": [
+          "harm",
+          "robot"
+        ],
+        "description": "The outcome threatens the continued existence of the robot, and some permitted action available to the robot does not lead to it, as derived by the Law 3 threat rule",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
       "permitted": {
         "arguments": [
           "action"

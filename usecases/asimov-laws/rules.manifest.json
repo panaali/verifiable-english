@@ -1,7 +1,7 @@
 {
-  "environment_id": "d65ee04e775ba89f1d5e29f70575b74dd9b9f481f399fe25f0b0b461baccf9c2",
-  "document_hash": "d442d50c74b8fc15a3dbe2937b2924b908458fbae8baa2f07ddc37874c2e8dcd",
-  "text_digest": "0f2720be48230e94dff4f1acaac743dcc01b13b7bf024badd52028ce0d5034fc",
+  "environment_id": "3d05eacea12aec9d2c9e84371b8dbcc7f54125375f388ba263543cdbc3092e3d",
+  "document_hash": "6ed5532eee5fe69a14330445b487d39e107add6060163fa94287c18026ace9c6",
+  "text_digest": "6517be81f0133438cac436ee713445fcd7aeb1e685604d866b9eb324dbc2a828",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -103,12 +103,21 @@
       ]
     },
     {
-      "handle": "handle-law-3-preserve",
-      "name": "law-3-preserve",
+      "handle": "handle-law-3-threat",
+      "name": "law-3-threat",
       "number": 12,
       "span": [
         1645,
-        2020
+        1890
+      ]
+    },
+    {
+      "handle": "handle-law-3-preserve",
+      "name": "law-3-preserve",
+      "number": 13,
+      "span": [
+        1891,
+        2387
       ]
     }
   ]

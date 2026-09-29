@@ -4109,7 +4109,7 @@
     {
       "source": "usecases/asimov-laws/rules.ve",
       "surface": "norms@0",
-      "rules": 12,
+      "rules": 13,
       "round_trip": "exact"
     }
   ],
