@@ -69,6 +69,29 @@ class FiniteModel:
     @classmethod
     @semantic_entry("model")
     def from_dict(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
+        """Decode and validate a model under the selected authority.
+
+        `_defer_model_id` marks a search generator's candidate: it is never
+        reported before `countermodel.check` checks it, so it keeps Python's
+        structural decoder.
+        """
+        from .backends.dispatch import authority_for, execute
+
+        def python():
+            return cls._decode(env, wire, _defer_model_id=_defer_model_id)
+
+        # rust-experimental covers evaluation and search only; its witnesses
+        # keep the Python decoder, as before any adapter existed.
+        if _defer_model_id or authority_for("model_validation") in ("python", "rust-experimental"):
+            return python()
+        from .backends.validation import model_in_scope, validated_model
+        if not model_in_scope(env):
+            return python()
+        return execute("model_validation", {"kind": "model"}, python,
+                       lean=lambda: validated_model(env, wire, python))
+
+    @classmethod
+    def _decode(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
         _keys(wire, {"complete", "domains", "constants", "relations"}, "")
         if wire["complete"] is not True:
             _fail("complete must be the Boolean true", "/complete")

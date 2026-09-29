@@ -1,0 +1,158 @@
+"""Environment and model validation on the Lean authority (ve/backends/validation.py)."""
+from __future__ import annotations
+
+import itertools
+import json
+from pathlib import Path
+
+import pytest
+
+from ve.backends import dispatch, lean_runner, validation
+from ve.environment import Environment
+from ve.errors import CheckerUnavailable, InvalidModel, VEError
+from ve.model import FiniteModel
+from tests import probe_matrix as pm
+from tests.test_norms import environment, obligation, permission
+
+ROOT = Path(__file__).resolve().parents[1]
+pytestmark = pytest.mark.skipif(not (ROOT / "lean/.lake/build/bin/ve_service").exists(),
+                                reason="Lean service has not been built")
+
+
+def outcome(build):
+    try:
+        built = build()
+    except VEError as exc:
+        return ("rejected", exc.to_dict())
+    return ("accepted", built.to_dict(), getattr(built, "environment_id", None),
+            getattr(built, "model_id", None))
+
+
+def inputs():
+    """Every Stage 0 profile combination, valid and with an undeclared sort, and a
+    valid and an ill-sorted model of each valid environment."""
+    for family in pm.FAMILIES:
+        for n in range(len(pm.LAYERS) + 1):
+            for layers in itertools.combinations(pm.LAYERS, n):
+                raw = pm.raw_environment((*family, *layers))
+                bad = json.loads(json.dumps(raw))
+                bad["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+                yield raw, bad
+
+
+def test_environments_and_models_match_python_on_every_profile_combination(monkeypatch):
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    for raw, bad in inputs():
+        for data in (raw, bad):
+            monkeypatch.setenv("VE_AUTHORITY", "python")
+            expected = outcome(lambda: Environment(data))
+            monkeypatch.setenv("VE_AUTHORITY", "lean")
+            assert outcome(lambda: Environment(data)) == expected, data["profiles"]
+        monkeypatch.setenv("VE_AUTHORITY", "python")
+        try:
+            env = Environment(raw)
+        except VEError:
+            continue
+        good = pm.model_wire(env)
+        wrong = json.loads(json.dumps(good))
+        wrong["constants"]["x"] = "absent"
+        for wire in (good, wrong):
+            monkeypatch.setenv("VE_AUTHORITY", "python")
+            expected = outcome(lambda: FiniteModel.from_dict(env, wire))
+            monkeypatch.setenv("VE_AUTHORITY", "lean")
+            assert outcome(lambda: FiniteModel.from_dict(env, wire)) == expected, raw["profiles"]
+    assert ("environment_validation", "lean") in seen and ("model_validation", "lean") in seen
+
+
+def test_lean_checks_the_norms_profile_of_a_model(monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    env = environment({"required": obligation(), "permitted": permission()})
+    wire = {"complete": True, "domains": {"act": ["a"]}, "constants": {},
+            "relations": {"required": [["a"]], "permitted": []}}
+    with pytest.raises(InvalidModel, match="required relation required exceeds permission permitted") as caught:
+        lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])
+    assert caught.value.generator == "profile"
+    with pytest.raises(InvalidModel, match="required relation"):
+        FiniteModel.from_dict(env, wire)
+
+
+def fake_lean(monkeypatch, row):
+    calls = []
+
+    def run(mode, cases, **kw):
+        calls.append(mode)
+        return [row(mode, case) for case in cases]
+
+    monkeypatch.setattr(lean_runner, "run", run)
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    return calls
+
+
+def test_a_lean_only_rejection_carries_leans_diagnostic(monkeypatch):
+    from ve.backends.diagnostics import checker_error
+
+    def reject(mode, case):
+        raise checker_error("UnknownSymbol: lean refuses this vocabulary")
+
+    fake_lean(monkeypatch, reject)
+    with pytest.raises(VEError, match="^lean refuses this vocabulary$"):
+        Environment(pm.raw_environment(()))
+
+
+def test_python_names_a_rejection_both_checkers_make(monkeypatch):
+    from ve.backends.diagnostics import checker_error
+    raw = pm.raw_environment(())
+    raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+    fake_lean(monkeypatch, lambda mode, case: (_ for _ in ()).throw(checker_error("different words")))
+    with pytest.raises(VEError, match="Undeclared predicate argument sort"):
+        Environment(raw)
+
+
+def test_lean_acceptance_of_a_python_rejection_is_unavailable(monkeypatch):
+    raw = pm.raw_environment(())
+    raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+    fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                               "environment_id": "0" * 64})
+    with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
+        Environment(raw)
+
+
+def test_identity_mismatch_is_unavailable_and_acceptance_is_cached(monkeypatch):
+    raw = pm.raw_environment(())
+    calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                                       "environment_id": "0" * 64})
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(raw)
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    identity = Environment(raw).environment_id
+    calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                                       "environment_id": identity})
+    Environment(raw)
+    Environment(raw)
+    assert calls == ["environment"]
+
+
+def test_statement_layers_and_rust_keep_the_python_decoder(monkeypatch):
+    calls = fake_lean(monkeypatch, lambda mode, case: pytest.fail("Lean was asked"))
+    raw = pm.raw_environment(())
+    reports = {**raw, "profiles": ["relational-fol@0", "reports@0"]}
+    assert not validation.environment_in_scope(reports)
+    monkeypatch.setenv("VE_AUTHORITY", "rust-experimental")
+    env = Environment(raw)
+    FiniteModel.from_dict(env, pm.model_wire(env))
+    assert calls == []
+
+
+def test_model_identity_sorts_domains_as_python_does(monkeypatch):
+    """Python's model identity sorts each domain's entities (`j10` before `j2`)."""
+    env = Environment(pm.raw_environment(()))
+    wire = pm.model_wire(env)
+    wire["domains"]["item"] = ["j2", "i", "j10"]
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = FiniteModel.from_dict(env, wire).model_id
+    row = lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])[0]
+    assert row["model_id"] == expected
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert FiniteModel.from_dict(env, wire).model_id == expected
