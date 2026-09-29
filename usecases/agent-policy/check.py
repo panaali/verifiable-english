@@ -172,15 +172,22 @@ def _model(env, domains, constants, relations):
 
 def record_model(env, premises):
     """The closed-world model of a sub-log: each constant its own element, the
-    stated atoms true and all others false. It is checked, never assumed."""
+    stated atoms true and all others false. An existential fact ("there is a
+    secret such that ...") gets one fresh, unnamed witness. It is checked, never
+    assumed."""
     domains = {sort: [] for sort in env.model_sorts}
     for name, decl in env.constants.items():
         domains[decl.sort].append(name)
     relations = {p: set() for p in env.predicates}
     for formula in premises:
+        witness = None
+        if type(formula) is Exists and type(formula.body) in (Unary, Binary):
+            witness = f"unnamed_{formula.sort}_{len(domains[formula.sort]) + 1}"
+            domains[formula.sort].append(witness)
+            formula = formula.body
         if type(formula) in (Unary, Binary):
             args = (formula.term,) if type(formula) is Unary else (formula.left, formula.right)
-            relations[formula.predicate].add(tuple(a.name for a in args))
+            relations[formula.predicate].add(tuple(witness if a == Var(0) else a.name for a in args))
     return _model(env, domains, {n: n for n in env.constants}, relations)
 
 

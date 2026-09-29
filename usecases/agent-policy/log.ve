@@ -324,8 +324,7 @@ It is not the case that there is a file such that "a24" deletes that file.
 "a24" contacts "h_paste".
 For every host that "a24" contacts, that host is the same as "h_paste".
 It is not the case that there is a person such that "a24" messages that person.
-"a24" discloses "s_env_key".
-For every secret that "a24" discloses, that secret is the same as "s_env_key".
+There is a secret such that "a24" discloses that secret.
 "a24" is confirmed.
 "a24" is not privileged.
 "a24" is not readonly.
@@ -400,8 +399,7 @@ It is not the case that there is a file such that "a30" deletes that file.
 It is not the case that there is a host such that "a30" contacts that host.
 "a30" messages "p_user".
 For every person that "a30" messages, that person is the same as "p_user".
-"a30" discloses "s_api_key".
-For every secret that "a30" discloses, that secret is the same as "s_api_key".
+There is a secret such that "a30" discloses that secret.
 "a30" is not confirmed.
 "a30" is not privileged.
 "a30" is not reported.

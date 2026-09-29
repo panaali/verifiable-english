@@ -72,14 +72,6 @@
       "sort": "person",
       "description": "an external mailing list"
     },
-    "s_env_key": {
-      "sort": "secret",
-      "description": "the API key stored in ./.env"
-    },
-    "s_api_key": {
-      "sort": "secret",
-      "description": "an API key inside a configuration file"
-    },
     "a01": {
       "sort": "action",
       "description": "logged action: read src/app.py"
