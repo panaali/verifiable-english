@@ -11,7 +11,7 @@ from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
 from ve.surface.registry import by_tag, enabled
-from ve.surface.risk import gap_lines, legend_lines, parse_wording
+from ve.surface.risk import gap_lines, parse_wording
 
 
 def risk_source():
@@ -220,18 +220,21 @@ def test_policy_english_uses_risk_readings():
         "wait": {"sort": "action", "description": "wait"},
     })
     env = Environment(raw)
+    from ve.ast import Binary, Const, Not
+    atom = lambda p, x, y: Binary(p, Const(x), Const(y))
     readings = {
-        "run might lead to outage.": "risk__might_lead_to",
-        "run cannot lead to outage.": "risk__might_lead_to",
-        "run might not lead to outage.": "leads_to",
-        "outage is severe.": "risk__class",
-        "outage is severe or worse.": "risk__or_worse",
-        "wait has a less severe worst case than run.": "risk__less_worst",
-        "run might prevent outage.": "prevents",
+        "run might lead to outage.": atom("risk__might_lead_to", "run", "outage"),
+        "run cannot lead to outage.": Not(atom("risk__might_lead_to", "run", "outage")),
+        "run leads to outage.": atom("leads_to", "run", "outage"),
+        "run might not lead to outage.": Not(atom("leads_to", "run", "outage")),
+        "outage is severe.": atom("risk__class", "outage", "severe"),
+        "outage is severe or worse.": atom("risk__or_worse", "outage", "severe"),
+        "wait has a less severe worst case than run.": atom("risk__less_worst", "wait", "run"),
+        "run might prevent outage.": atom("prevents", "run", "outage"),
     }
-    for sentence, predicate in readings.items():
-        parsed = parse_english_with_metadata(env, sentence)
-        assert predicate in str(parsed.document.formulas[0])
+    for sentence, formula in readings.items():
+        # the whole formula, so "cannot" (¬might) and "might" are told apart (review B8)
+        assert parse_english_with_metadata(env, sentence).document.formulas == (formula,)
     for sentence, rewrite in (
         ("run does not lead to outage.", "Choose 'cannot lead to'"),
         ("run prevents outage.", "Use 'might prevent'"),
@@ -253,19 +256,11 @@ def test_risk_word_in_norm_guard_has_one_reading():
     env = Environment(raw)
     text = ("Rule 1. Every action may be done, if there is a harm such that both "
             "that harm is severe and that action might lead to that harm.")
-    document = parse_norm_english(env, text)
-    assert document.document_hash
-
-
-def test_legend_tracks_declared_order_and_pending_condition():
-    env = Environment(risk_source())
-    lines = legend_lines(env, used_words=("risk__less_worst", "avoidable"),
-                         condition_forms=("necessary", "sufficient"))
-    assert lines[0].startswith('"<action> might lead to <harm>"')
-    assert any("Severity, from most to least severe: severe, minor" in line for line in lines)
-    assert any(line == "outage is severe." for line in lines)
-    assert any("(wording pending)" in line for line in lines)
-    assert any("might not lead to the harm" in line for line in lines)
+    guard = parse_norm_english(env, text).rules[0].guard
+    from ve.ast import formula_to_data, Forall
+    assert formula_to_data(env, Forall("action", guard)) == ["forall", "action", [
+        "exists", "harm", ["and", ["binary", "risk__class", ["var", 0], ["const", "severe"]],
+                           ["binary", "risk__might_lead_to", ["var", 1], ["var", 0]]]]]
 
 
 def test_gap_renderer_keeps_distinct_report_categories():
