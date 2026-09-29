@@ -165,7 +165,7 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/Risk/Audit.lean` | 186 | 186 | 1–186 | `00a2fac1c2ce…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
 | `lean/VE/Risk/Run.lean` | 608 | 608 | 1–608 | `a317fe5b12bc…` |
-| **total** | | **11,141** | | |
+| **total** | | **12,134** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
