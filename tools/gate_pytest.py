@@ -6,11 +6,24 @@ import os
 from pathlib import Path
 
 def pytest_configure(config):
-    config._ve_gate_events = {"collected": [], "deselected": [], "tests": {}}
+    config._ve_gate_events = {"collected": [], "selected": [], "deselected": [],
+                              "collection_reports": [], "tests": {}}
 
 
-def pytest_collection_modifyitems(session, config, items):
-    config._ve_gate_events["collected"] = [item.nodeid for item in items]
+def pytest_itemcollected(item):
+    # This fires before collection_modifyitems hooks can remove tests silently.
+    _EVENTS["collected"].append(item.nodeid)
+
+
+def pytest_collection_finish(session):
+    _EVENTS["selected"] = [item.nodeid for item in session.items]
+
+
+def pytest_collectreport(report):
+    if report.failed or report.skipped:
+        _EVENTS["collection_reports"].append({"nodeid": report.nodeid,
+                                               "outcome": report.outcome,
+                                               "reason": str(report.longrepr)})
 
 
 def pytest_deselected(items):
