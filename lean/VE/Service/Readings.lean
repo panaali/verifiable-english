@@ -170,7 +170,7 @@ def readingsCase (j : Json) : Except String Json := do
   let rv ← VE.Route.Run.decodeRouteVocabulary e
   let E := rv.environment
   let data := e.profiles.contains "data@0"
-  let B := (VE.Route.Wire.fullBackground rv).map Prod.fst
+  let B := (← VE.Service.Standalone.folBackground environment rv).map Prod.fst
   let fixedJson ← (← j.getObjVal? "fixed").getArr?
   let fixed ← fixedJson.toList.mapM (VE.Route.Wire.decodeClosed E · data)
   let setsJson ← (← (← j.getObjVal? "sets").getArr?).toList.mapM fun s => do pure (← s.getArr?).toList

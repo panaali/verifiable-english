@@ -17,7 +17,8 @@ deductions whose `follows` certificate the package established.
   submitted environment, the regenerated Background followed by its premises'
   ASTs, and its conclusion's AST. Source text is bound through `source_id`;
   its parse is the parse mode's (the claim's AST is the checked formula).
-* Background: each regenerated premise (`Route.Wire.fullBackground`) is an
+* Background: each regenerated premise (`Standalone.folBackground`: flags,
+  definitions, literals, then norms profile premises) is an
   explicit assumption leaf `background:<i>` labelled `background:<generator>`,
   and it heads every deduction's premise list, as the route certificate
   predicate orders it (Background ++ premises). The proved graph checker then
@@ -127,7 +128,7 @@ def routeCtx (environment : Json) : Except String Ctx := do
     throw (VE.Route.Gate.unsupported "graph composition on this family is not implemented")
   let rv ← VE.Route.Run.decodeRouteVocabulary e
   let envId ← VE.Service.Standalone.environmentIdOf e.profiles environment
-  let background := VE.Route.Wire.fullBackground rv
+  let background ← VE.Service.Standalone.folBackground environment rv
   pure { E := rv.environment, environment, envId, version := VE.Route.Wire.identityVersion e.profiles,
          formula := fun a => VE.Route.Wire.decodeClosed rv.environment a (e.profiles.contains "data@0"),
          meaningId := VE.Route.Wire.meaningId e.profiles envId,

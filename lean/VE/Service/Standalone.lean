@@ -382,6 +382,15 @@ def identityCase (j : Json) : Except String Json := do
     else throw s!"unknown identity kind {kind}"
   pure (VE.Route.Wire.ok id [("kind", .str kind), ("identity_id", .str value)])
 
+/-- Python's Background of a ve.core@0.2 FOL-family environment, in generator
+order: the route's flags, definitions and literals, then the profile premise of
+each declared norms pair, as `Norms.Plain` regenerates it. -/
+def folBackground (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) :
+    Except String (List (VE.Formula × String)) := do
+  let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
+  let T : VE.Norms.Tree := ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩
+  pure (VE.Route.Wire.fullBackground rv ++ (VE.Norms.pairPremises T).map (·, "profile"))
+
 /-! ## Parsing -/
 
 def encodeKind : VE.Closure.Kind → Json

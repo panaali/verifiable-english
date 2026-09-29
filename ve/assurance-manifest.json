@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 9441,
+    "total_lines": 9442,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -91,10 +91,10 @@
       {"file": "lean/VE/Norms/Flagged.lean", "lines": 389, "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
        "ranges": [[1, 389]], "declarations": ["regenerated", "replayEntailment", "decodePackage", "replayConflict", "witnessFrom", "replayWitness"],
        "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Graph.lean", "lines": 254, "sha256": "b91aadbc9bb3d75a3ffc40c3d42a444070fd58d1c882c39ef30955571b10edcf",
-       "ranges": [[1, 254]], "declarations": ["decodeNode", "decodeEdge", "routeCtx", "legacyCtx", "compose", "graphCase"],
+      {"file": "lean/VE/Service/Graph.lean", "lines": 255, "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
+       "ranges": [[1, 255]], "declarations": ["decodeNode", "decodeEdge", "routeCtx", "legacyCtx", "compose", "graphCase"],
        "reason": "graph-mode package decoder: claims, deductions, recomputed identities and certificate bindings (no refinement theorem; trusted, plan 2.1); the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Readings.lean", "lines": 215, "sha256": "cf8c878871849d47cdaa72058da962d2855754ac29f318cbf037ada6780f4139",
+      {"file": "lean/VE/Service/Readings.lean", "lines": 215, "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
        "ranges": [[1, 215]], "declarations": ["decodeModel", "readingsCase"],
        "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"},
       {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",

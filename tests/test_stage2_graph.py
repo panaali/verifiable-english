@@ -154,3 +154,20 @@ def test_other_families_are_not_composed_by_lean(monkeypatch):
     seen = routed(monkeypatch, "lean")
     check_argument(graph, search=False)
     assert ("graph", "lean") not in seen
+
+
+def test_norms_profile_premises_are_background_leaves(monkeypatch):
+    """A norms environment's Background ends with its profile premises; a
+    certificate over them composes through Lean like any Background leaf."""
+    from tests.test_norms import environment, obligation, permission
+    env = environment({"required": obligation(), "permitted": permission()})
+    graph = with_certs(ArgumentGraph(env, (Claim.create(env, "root", "true.\n"),),
+                                     (Deduction("er", (), "root"),), "root"))
+    routed(monkeypatch, "python")
+    expected = check_argument(graph, search=False).to_dict()
+    assert expected["composed"]
+    routed(monkeypatch, "lean")
+    calls = graph_calls(monkeypatch)
+    assert check_argument(graph, search=False).to_dict() == expected
+    [(_, [row])] = calls
+    assert [b["label"] for b in row["background"]] == ["background:profile"]
