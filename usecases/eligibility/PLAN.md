@@ -143,10 +143,11 @@ definition** (used everywhere in this plan and in the results):
 - Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
   not-entitled profile they are **not applicable**, and neither the key nor VE
   gives them an answer. VE's NO on Q1 is scored as Q1 only.
-- That gives 69 + 54 + 54 + 54 = **231 scored questions**. The same 231 are
+- That gives 76 + 59 + 59 + 59 = **253 scored questions**. The same 253 are
   the denominator for accuracy, coverage and precision. (Before the
   eligibility review added B15 to B19, it was 57 + 44 × 3 = 189; before the
-  recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206.)
+  recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206; before B24 to
+  B30 were added for review finding C, 69 + 54 × 3 = 231.)
 
 A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
 If VE answers NO or OPEN there, it gives no amount, and those three questions
@@ -707,14 +708,14 @@ No model calls.
 ## 9. Metrics to report (`RESULTS.md`)
 
 - **Accuracy.**
-  - Strict, per profile: every scored question correct, x/69. OPEN counts as
+  - Strict, per profile: every scored question correct, x/76. OPEN counts as
     wrong.
-  - Per question (section 3): Q1 x/69; Q2 x/54; Q3 x/54; Q4 x/54; total
-    x/231.
-  - The same figures on the 60 unflagged profiles, on the 38 `guide`
+  - Per question (section 3): Q1 x/76; Q2 x/59; Q3 x/59; Q4 x/59; total
+    x/253.
+  - The same figures on the 65 unflagged profiles, on the 38 `guide`
     profiles (official answers), and for each flagged profile individually.
 - **Coverage.** Scored questions answered (certified YES/NO/amount) out of
-  231, and precision = correct / answered, over the same 231.
+  253, and precision = correct / answered, over the same 253.
 - **Evidence.** Certificates produced, and certificates replayed by Lean
   (must equal the number produced). Also profiles whose premises are
   consistent, and non-vacuity models accepted by Lean.
@@ -734,7 +735,7 @@ No model calls.
 | Path | Content |
 |---|---|
 | `PLAN.md` | this plan and the frozen key |
-| `cases.json` | the 69 profiles with their `key` (same as section 5) |
+| `cases.json` | the 76 profiles with their `key` (same as section 5) |
 | `reference.py` | the independent reference reading and key check |
 | `source/` | the pinned raw files, extracted text, and `extract_text.py` |
 
