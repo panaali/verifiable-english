@@ -113,8 +113,9 @@ Canonical names (identifiers of the existing grammar `[a-z][a-z0-9_]*`): `soft__
 contain no `_`, so this is injective) and the act key is the act's permission predicate when declared, else the act's
 only regulated predicate. Under `soft-norms@0` an author predicate beginning with `soft__` and a rank, party or
 act-key predicate name containing `__` are rejected (`InvalidInput`), so the generated names are collision-free.
-Author formulas (guards, carve-outs, exception conditions, document premises) are over `E`, never over the decision
-predicates; the English renders each decision predicate in document terms ("rule 12 is excepted here").
+Rule formulas (guards, carve-outs, exception conditions) are over `E`, never over the decision predicates.
+Premises `Γ` and W2 premise units may mention decision predicates as separately identified **decision findings**,
+typed over `E′`; the English renders each decision predicate in document terms ("rule 12 is excepted here").
 
 Decision predicates carry no attribution: what a decider considers is outside the checker (VISION.md, converged rule
 item 8). `off_{N,π}` records that `π` exercised a declared switch; the environment's `instruction_of` attributes
@@ -174,6 +175,8 @@ paraphrase states it (2.3).
 ### 2.2 Synonyms and non-synonyms
 
 Input synonyms rendered canonically: `generally must` → `should`; `generally must not` → `should not`. Nothing else.
+`should generally` and `should generally not` are rejected in authoring; in translation both have one reading
+(default).
 
 `normally`, `typically`, `usually`, `as a rule` are **not** synonyms (review B3): each also expresses frequency
 ("Claude can typically help" is an assertion about most cases). In authoring the IDE shows both paraphrases (a
@@ -191,8 +194,9 @@ decider (or "the source names none"); a situation in which the rule decides; one
 one in which a higher-ranked effective opponent dominates it; if it collides with another default rule, the collision
 and its resolution (2.1 rank sentences, or "a weighing point"); and its derived carve-outs in words:
 
-> "This rule gives way to strict rules on the same act and to higher-ranked effective opponents unless holistically
-> outweighed; under holistic ranking it gives way to an eligible lower-ranked rule the deciders find outweighs it,
+> "This rule gives way to strict decisions on the same predicate, or incompatible decisions across its declared dual
+> pair, and to higher-ranked effective opponents unless holistically outweighed; under holistic ranking it gives way
+> to an eligible lower-ranked rule the deciders find outweighs it,
 > even where that lower rule itself gives way."
 
 The asymmetry is part of the paraphrase: higher opponents must be effective, lower overriding opponents need only be
@@ -291,8 +295,11 @@ for every existing environment (none has the block). `soft-norms@0` requires `no
           "hard": false}}
 ```
 
-`mode` defaults to `strict` when absent, so every existing `norms@0` unit is a valid soft unit with unchanged
-meaning. `rank` is a declared rank or absent. `alterable` is a sorted list of distinct declared parties. `exception`
+`over` is a set of rule names: a name repeated in one rule's `over` is rejected when the rule is decoded
+(`InvalidInput: duplicate over <m> in rule <n>`, 8 check 4.2), never merged or counted twice. Its order is the
+author's and is kept in the wire form and the document hash (3.4); nothing derived from it depends on that order
+(5.1). `mode` defaults to `strict` when absent, so every existing `norms@0` unit whose `over` repeats no name is a
+valid soft unit with unchanged meaning. `rank` is a declared rank or absent. `alterable` is a sorted list of distinct declared parties. `exception`
 is mandatory when `mode` is `default` and forbidden when `strict` (`InvalidInput: rule <n> is strict and declares an
 exception`); its `decided_by` is a string, `unstated`, or `null` to inherit the environment's `exception_decider`;
 when both are absent the diagnostic is `MissingExceptionDecider: rule <n>`. `sufficient` and `necessary` are
@@ -327,8 +334,10 @@ and `meaning_id` are unchanged and a strict unswitchable soft unit has the same 
 soft document hash is the canonical array of soft norm objects in document order
 under `environment_id`. `E′`, `T′`, the exception premises and `Coh_T` are regenerated from these at every site. A
 conflict or classification package has an outer binding `(environment_id, soft_document_hash, target)` and an inner
-certificate bound to the canonical **regenerated** `E′_base` and `Background_base′` (norms.md 11.4 step 4); an
-entailment certificate binds the full regenerated `E′` and `background′ ++ layer premises ++ Γ` (6.1). Changing a
+certificate bound to the canonical **regenerated** `E′_base` and, for conflict, `Background_base′`, or, for
+classification, `Background_base(E′) ++ Exc_T` with all coherence conjuncts excluded (norms.md 11.4 step 4).
+Classification witnesses are checked against that same coherence-free background. An entailment certificate binds
+the full regenerated `E′` and `background′ ++ layer premises ++ Γ` (6.1). Changing a
 rank, an `outranks` edge, the flag, a party, a switch, an exception condition, a decider or a mode invalidates every
 certificate of the document.
 
@@ -352,13 +361,19 @@ A soft document `(E, T)` is well-formed when, in this order:
    tree. A strict child of a default parent is allowed.
 6. `hard: true` implies `mode = strict` and `alterable = ∅` (`HardConstraintAltered: rule <n>`).
 7. Exception conditions are typed over the rule's context and mention base predicates of `E` only (3.2).
-8. The elaborated `T′` (section 5) is within `MAX_NODES` per formula (`ResourceLimit: derived carve-out of rule
-   <n>`), and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
+8. `E′` is within `MAX_IDENTIFIER_BYTES` and `MAX_PREDICATES`; the elaborated `T′` (section 5) is within
+   `MAX_NODES`: at most 8 carve-outs per rule, each derived carve-out within `MAX_DEPTH` and `MAX_NODES`, and the
+   guards and carve-outs of the whole of `T′` within W1's one node budget (norms.md 11.5; `ResourceLimit: derived
+   carve-out`); each generated soft premise, each generated layer and each conflict target's certified conclusion
+   is within `MAX_DEPTH` and `MAX_NODES`, and so are `background′` and the layers followed by `⊤`, each typed by one
+   checker (8, 6.11 to 6.15),
+   and is W1 well-formed over `E′`: the stratification of norms.md 4.1(4) computed on `T′` succeeds, with the
    `DualGuardCycle` hint when the cycle is absent on `T` (5.2).
 
 Warnings (reported, never rejecting): `RankAgainstPrecedence: rule <N> over <M>` when `M ∈ over(N)`,
-`{M, N} ∈ CP(T)` and `rank(M) outranks⁺ rank(N)` (legal and pointless: `N` is effective only where `M` is not, so
-the edge removes nothing; fixture θ); undeclared ties; `Overlap(N, N′)` between two default rules of the same sign
+`{M, N} ∈ CP(T)` and `rank(M) outranks⁺ rank(N)` (legal; inert when `N` has no descendants, since `N` is effective
+only where `M` is not; otherwise `N`'s yielding descendants can still silence `M` through the edge even when `N` is
+dominated; fixtures θ and υ); undeclared ties; `Overlap(N, N′)` between two default rules of the same sign
 both selecting (norms.md 4.2, unchanged).
 
 ### 4.2 The direct semantics `ValueSoft`: a terminating decision procedure on `T`
@@ -473,6 +488,11 @@ precedence of T′      := author precedence of T; no derived edges
 regulated, definitions, completions of T′ := those of T; E′ as in 1.3
 ```
 
+`children(N)`, the rules whose `over` names `N`, is W1's: one entry per rule (a repeat is rejected, 3.2), in
+increasing rule-name order, whatever the order of the rules and of each `over` list. Every formula built from the
+precedence DAG (`yields`, `selects`, the strict selections in `blocked_N`), every size computed for it (8 checks 6.9
+to 6.15) and every regeneration of it (the soft route's comparison of Python's and Lean's `T′`) uses that order.
+
 `blocked_N` and `dominated_N` are the formulas of 4.2, unfolded: `P^s_p`, `N^s_p`, `P^s_r`, `N^s_m` are W1's
 selection formulas over the strict rules with `switch` as an extra carve-out; `dominated_N` inlines `eff_M` for every
 comparable colliding `M`, in increasing rank height, and `eff_M` inlines `dominated_M` in turn until a rule with no
@@ -502,8 +522,14 @@ restate rule <k>'s guard over the facts".
 
 ### 5.3 Size
 
-Unfolded size is subject to `MAX_NODES` (10,000 nodes per formula, `ve/limits.py`); overflow is `ResourceLimit:
-derived carve-out of rule <n>`, never a verdict. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
+Unfolded size is subject to `MAX_NODES` (10,000 nodes, term nodes included, `ve/limits.py`), which W1 applies to
+the guards and carve-outs of the whole document together (norms.md 11.5); overflow is `ResourceLimit: derived
+carve-out`, never a verdict. The generated premises, layers and targets are bounded one by one (8, 6.11 to 6.13), and
+`background′` and the layers as the entailment route types them, one checker over each list (6.14, 6.15), so a
+document is accepted only if its whole elaboration serialises, conflict targets included, and the smallest queries on it
+type-check. Sizes are computed before anything is built (8,
+"Accepted means elaborable"): an unfolding can be exponential in the source, since an expansion inlines each lower
+predicate's expanded outcome at every occurrence and `yields` inlines every path of the precedence DAG. "Carve-out growth stays under `MAX_NODES`" is a pilot expectation,
 not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
 
 ## 6. Decision assignments, coherence and what CONFLICT-FREE means (review A3)
@@ -512,7 +538,7 @@ not a theorem: `dominated_N` inlines `eff_M` for every higher colliding rule.
 
 ```text
 decision assignment   the tables of the decision predicates (1.3) in a base structure B over E′
-Exc_T                 the exception premises, one closed universal base formula per condition:
+Exc_T                 the exception premises, one universally closed base formula per condition:
                         sufficient C of N:  ∀x̄. C(x̄) → excepted_N(x̄)         label soft:exception:<N>:sufficient:<i>
                         necessary  C of N:  ∀x̄. excepted_N(x̄) → C(x̄)         label soft:exception:<N>:necessary:<i>
 Coh_T                 := ⋀_{{M,N} ∈ CP(T)} ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
@@ -527,25 +553,34 @@ coherent B            := B ⊨ Coh_T                            all colliding de
 BaseAdmissible′ E T B := BaseAdmissible E′ B ∧ Sat B Soft_T
 ```
 
-Every formula in `Soft_T` is universal over base symbols of `E′`, so norms.md 7.1(3) is preserved when the substituted
-selections are quantifier-free, and the fragment and small-model machinery of norms.md 7 apply to `T′` unchanged.
-`Exc_T` enters base admissibility exactly as flags do: it is the author's declared constraint on base facts.
+`fragment: yes` iff `(E′, T′)` passes norms.md 7.1 and every generated `Exc_T`/`Coh_T` formula, after outcome
+substitution and definition expansion, lies in the ordinary universal, function-free relational fragment with W1's
+exclusions: no `Reach`, `$int` term, `Lt`/`Le` atom or adapter predicate. The syntactic gate for this version requires
+every exception condition to be quantifier-free after definition expansion; `(E′, T′)` alone does not inspect these
+separately stored conditions. Otherwise report `fragment: no (<first reason>)`, with an exception-condition failure
+labelled `soft:exception:<N>:<kind>:<i>:<reason>`, retaining W1's three-valued status. Universal closure alone is
+insufficient: a necessary condition `∃y. R(x,y)` yields `∀x. excepted_N(x) → ∃y. R(x,y)`, which need not survive
+substructures. Under the complete gate, preservation of `Soft_T` under substructures is a proof obligation (9.3)
+for applying norms.md 7's small-model machinery. `Exc_T` enters base admissibility exactly as flags do: it is the
+author's declared constraint on base facts.
 
 ### 6.2 Classification of colliding pairs
 
 ```text
 for {M, N} ∈ CP(T):
   RANK-RESOLVED   Comparable(M, N)                             theorem rank_resolves; no search; the conjunct is valid
-  DISJOINT        certificate  Background_base′ minus this conjunct ⊢ ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
-                                                               the conjunct follows from the rest
-  WEIGHING POINT  checked witness (B, ā) over E′_base, B ⊨ Background_base′ minus this conjunct, both selecting;
+  DISJOINT        certificate  Background_base(E′) ++ Exc_T ⊢ ∀x̄. ¬(selects′_M°(x̄) ∧ selects′_N°(x̄))
+                                                               no coherence conjunct is assumed
+  WEIGHING POINT  checked witness (B, ā) over E′_base, B ⊨ Background_base(E′) ++ Exc_T, both selecting;
                   shown as a situation with its decision assignment in document terms
   UNKNOWN         neither within budget; the budget named
 WP(T)             := the WEIGHING POINT and UNKNOWN pairs (the undischarged conjuncts)
 ```
 
 `Coh_T` has exactly one conjunct per pair in `CP(T)` whatever the budget. RANK-RESOLVED conjuncts are theorems and
-DISJOINT conjuncts follow from their certificates; classification marks these as *discharged* without changing the
+DISJOINT conjuncts follow from their certificates over `Background_base(E′) ++ Exc_T`, excluding **all** coherence
+conjuncts so that none can discharge another circularly (fixture τ). Conflict checking still uses full
+`Background_base′`. Classification marks these as *discharged* without changing the
 route's coherence condition or requiring classifications to be replayed to regenerate it (debate group 2). A
 WEIGHING POINT witness is exactly a countermodel to the *unconditional* conflict-freedom claim, and the report shows
 it as such.
@@ -599,12 +634,14 @@ records those dependencies, as bridge leaves are shown today.
 
 ### 6.5 Vacuity
 
-1. The P0 vacuity report (PLAN-EXPAND2 3.8; document.md) runs over `Background_base′ ++ layer premises ++ Γ`, so a
-   `Γ` that fixes decision facts incompatible with `Coh_T` or `Exc_T` makes dependent certificates `vacuous`,
-   visibly (fixture ι).
-2. A CONFLICT-FREE report also exhibits one coherent decision assignment as a checked finite base model of
-   `Background_base′ ++ Γ` (the P0 premise-set model), or reports that line UNKNOWN with the budget; without it the
-   conditional claim could be about no situation at all. The status text carries the answer (7.3).
+1. The P0 vacuity report (PLAN-EXPAND2 3.8; document.md) runs over the certificate's actual premise set,
+   `background′ ++ layer premises ++ Γ` in full `E′`, including definitions and profile constraints. A `Γ` that
+   fixes decision facts incompatible with `Coh_T` or `Exc_T` makes dependent certificates `vacuous`, visibly
+   (fixture ι).
+2. A CONFLICT-FREE report also exhibits a checked finite model of `background′ ++ layer premises ++ Γ` in full
+   `E′` (the P0 premise-set model), displaying its `E′_base` restriction as the coherent decision assignment.
+   It reports inconsistent or UNKNOWN with the budget when appropriate; without a model the conditional claim
+   could be about no situation at all. The status text carries the answer (7.3).
 3. A default rule alone proves nothing about its act unless the premises constrain `excepted_N`; that is the intended
    content of "should", and the report says so rather than hiding it (plan risk 7).
 
@@ -678,14 +715,184 @@ A witness of the unconditional claim (a weighing point) is shown under the first
 For each rule, exactly the declared parties have a switch: there is no other `off` predicate to set, and a `Γ` that
 names one is `UnknownSymbol`. Separately, an attribution check per regulated `p` and party `π`: let `cone(p)` be the
 set of predicates reachable from the rules on `p` in `T′` through guards, carve-outs (including derived ones),
-definition bodies and the rules of lower regulated predicates, and `Q_π` the predicates with `instruction_of = π`
-together with every `off_{N,π}`. If `Q_π ∩ cone(p) = ∅` then `O_p°` is invariant under changes to `Q_π`
+definition bodies and the rules of lower regulated predicates, also closing transitively over the predicates in
+every declared sufficient or necessary condition of each `excepted_N` in the cone. Let `Q_π` be the predicates with
+`instruction_of = π` together with every `off_{N,π}`. If `Q_π ∩ cone(p) = ∅` then `O_p°` is invariant under changes to `Q_π`
 (`authority_independent`, a non-mention lemma); the report line is `independent of <π>`. Otherwise the line lists the
 `Q_π` predicates in the cone and makes no claim. The certificate is about *declared* attribution only. It says nothing
 about whether a decider of `excepted_N` or `outweighs` takes `π`'s instructions into account, and nothing about base
 facts the environment did not attribute; the report states both limits next to the result.
 
-## 8. Diagnostics (shared text in Python and Lean unless marked)
+## 8. Diagnostics
+
+Soft rejection responses carry a stable `code` alongside the human-readable `error`.
+Python soft validation exceptions expose the same value as `VEError.code` and in
+`VEError.to_dict()`. The code, rather than message wording or embedded names, is
+the Python/Lean conformance contract. Existing P0 and W1 responses keep their
+codes. This is the complete soft code table; the last row covers inherited W1
+and malformed-input diagnostics on the soft route.
+
+| Code | Rejection class |
+|---|---|
+| `SOFT_MISSING_EXCEPTION` | Default rule has no complete exception object. |
+| `SOFT_INVALID_TIES_PAIR` | Malformed, reflexive, or repeated ordered ties pair. |
+| `SOFT_INVALID_OUTRANKS_PAIR` | Malformed, reflexive, or repeated outranks pair. |
+| `SOFT_INVALID_BLOCK` | Soft block has invalid fields or shape. |
+| `SOFT_INVALID_OUTRANKING` | Outranking flag has invalid fields, shape, or mode. |
+| `SOFT_INVALID_DECIDER` | Present decider has invalid type, length, or value. |
+| `SOFT_MISSING_DECIDER` | Required outranking or exception decider is absent. |
+| `SOFT_STRICT_OUTRANKING_DECIDER` | Strict outranking declares a decider. |
+| `SOFT_INVALID_NAME` | Invalid soft declaration, reserved predicate, or act-key name. |
+| `SOFT_DUPLICATE_DECLARATION` | Duplicate party, rank, rule name, or unordered tie. |
+| `SOFT_UNKNOWN_RANK` | Rank reference is undeclared. |
+| `SOFT_TIE_AGAINST_ORDER` | Tie contradicts strict outranking. |
+| `SOFT_DEPENDENCY_CYCLE` | Rank or unfolded norm dependency cycle. |
+| `SOFT_UNKNOWN_PARTY` | Party reference is undeclared. |
+| `SOFT_STRICT_EXCEPTION` | Strict rule declares an exception. |
+| `SOFT_EXCEPTION_ARRAY` | Sufficient or necessary field is not an array. |
+| `SOFT_INVALID_FACTORS` | Exception factors have invalid shape or size. |
+| `SOFT_INVALID_ALTERABLE` | Alterable parties are unsorted, repeated, or malformed. |
+| `SOFT_HARD_CONSTRAINT` | A hard rule is default or alterable. |
+| `SOFT_INVALID_EXCEPTION_CONDITION` | Exception condition mentions a forbidden predicate. |
+| `SOFT_OVER_HARD` | Default rule takes precedence over strict rule. |
+| `SOFT_RESOURCE_LIMIT` | A soft route resource limit is exceeded. |
+| `SOFT_UNSUPPORTED_PROFILE` | Soft route profile gate fails. |
+| `SOFT_INVALID_ARRAY` | A soft block list has the wrong shape. |
+| `SOFT_INVALID_RULE_FIELDS` | Mode, rank, hard, or another typed soft rule field is invalid. |
+| `SOFT_INVALID_INPUT` | Other invalid input, including inherited W1 checks. |
+
+### Validation order
+
+The source of a soft check is the environment and the array of norm objects
+(for a W2 document, its active norm units). Both validators check it in the
+phases below. **The reported diagnostic is the first failing check in table
+order; where one check applies to several items, the first failing item in
+input order.** Arrays are in index order; object members are in canonical key
+order (Unicode code point order, the order in which Lean enumerates JSON
+objects), so the order in which an author wrote the keys never matters. No
+check of a phase runs before every check of the earlier phases has passed over
+the whole source; a rule's cross references are therefore checked only after
+every rule's fields, and the environment's semantic checks only after every
+rule's cross references. Checks marked *inherited* run W1's or P0's own
+decoder at that position and report `SOFT_INVALID_INPUT` with the inherited
+text, whatever class the inherited diagnostic has; every other check owns the
+code listed. Classification uses the check that failed, never substrings of
+the message, a name, or other input.
+
+| Check | Phase and check | Code |
+|---|---|---|
+| 1.1 | **Envelope.** The environment is an object with exactly `language`, `profiles`, `spec_revision`, `vocabulary` | `SOFT_INVALID_INPUT` |
+| 1.2 | `language` is `ve.core@0.2` | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.3 | `profiles` is an array of strings | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.4 | `spec_revision` is the current revision | `SOFT_UNSUPPORTED_PROFILE` |
+| 1.5 | `vocabulary` is an object with the objects `sorts`, `predicates`, `constants` and at most `soft` besides | `SOFT_INVALID_INPUT` |
+| 1.6 | The norms are an array | `SOFT_INVALID_INPUT` |
+| 1.7 | At most 256 norm objects | `SOFT_RESOURCE_LIMIT` |
+| 2.1 | **Vocabulary declarations.** No predicate name begins `soft__`; no predicate with `regulated` contains `__` (both skipped for the generated `E′`) | `SOFT_INVALID_NAME` |
+| 2.2 | An `instruction_of` is a string, on a predicate that is neither `regulated` nor `defined` | `SOFT_INVALID_INPUT` |
+| 2.3 | *Inherited:* W1's declaration checks on the vocabulary without the soft block and `instruction_of`, under the profiles of 1.3 restricted to `data@0`, `definitions@0`, `documents@1`, `time@0`, plus `norms@0` and `relational-fol@0` (W1 admits `defined` only under `definitions@0`) | `SOFT_INVALID_INPUT` |
+| 2.4 | The soft block (absent means the defaults) is an object with `outranking` and no field beyond `parties`, `ranks`, `outranks`, `ties`, `exception_decider` | `SOFT_INVALID_BLOCK` |
+| 2.5 | `parties` is an array | `SOFT_INVALID_ARRAY` |
+| 2.6 | At most 8 parties | `SOFT_RESOURCE_LIMIT` |
+| 2.7 | Each party, in order: a soft name (`[a-z][a-z0-9_]*`, at most 64 bytes, no `__`) | `SOFT_INVALID_NAME` |
+|  | and not repeated | `SOFT_DUPLICATE_DECLARATION` |
+| 2.8 | `ranks`: as 2.5 to 2.7, at most 16 | as 2.5 to 2.7 |
+| 2.9 | `outranking` is an object with `mode` `strict` or `holistic` and at most `decided_by` besides | `SOFT_INVALID_OUTRANKING` |
+| 2.10 | `strict` has no `decided_by` | `SOFT_STRICT_OUTRANKING_DECIDER` |
+| 2.11 | A `decided_by` is a string | `SOFT_INVALID_DECIDER` |
+| 2.12 | `holistic` has a `decided_by` | `SOFT_MISSING_DECIDER` |
+| 2.13 | The outranking decider is nonempty and at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 2.14 | An `exception_decider` is a nonempty string of at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 2.15 | `outranks` is an array | `SOFT_INVALID_ARRAY` |
+| 2.16 | Each outranks pair, in order: two strings, distinct, the ordered pair not repeated | `SOFT_INVALID_OUTRANKS_PAIR` |
+| 2.17 | `ties`: as 2.15 and 2.16 | `SOFT_INVALID_ARRAY`, `SOFT_INVALID_TIES_PAIR` |
+| 3.1 | **Profiles.** `profiles` is sorted and unique | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.2 | Every profile is registered (`soft-norms@0` included) | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.3 | `relational-fol@0`, then `soft-norms@0`, then `norms@0` is present | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.4 | No checker profile (`closure@0`, `nary@0`, `order@0`) | `SOFT_UNSUPPORTED_PROFILE` |
+| 3.5 | No W3 definition, then no W5 data flag, is declared | `SOFT_UNSUPPORTED_PROFILE` |
+| 4.1 | **Rule fields**, each norm object in order, its fields in this order. The object is `{"norm": {...}}` with every W1 field, optionally the soft fields, nothing else | `SOFT_INVALID_INPUT` |
+| 4.2 | *Inherited:* W1's field checks: rule-name syntax, `predicate` a string, `sign` a Boolean, `unless` an array of at most 8, `over` an array of strings, guard and carve-outs decode as FOL formulas, each within `MAX_DEPTH` and its own `MAX_NODES` budget (term nodes count) | `SOFT_INVALID_INPUT` |
+|  | then no name is repeated in `over` (the first repeat in order: `InvalidInput: duplicate over <m> in rule <n>`) | `SOFT_INVALID_INPUT` |
+| 4.3 | `mode` is absent, `strict` or `default` | `SOFT_INVALID_RULE_FIELDS` |
+| 4.4 | `rank` is absent, null or a string | `SOFT_INVALID_RULE_FIELDS` |
+| 4.5 | `alterable` is absent or an array of strings, sorted and distinct | `SOFT_INVALID_ALTERABLE` |
+| 4.6 | `hard` is absent or a Boolean | `SOFT_INVALID_RULE_FIELDS` |
+| 4.7 | A hard rule is strict and has no `alterable` | `SOFT_HARD_CONSTRAINT` |
+| 4.8 | A strict rule's `exception` is absent or null | `SOFT_STRICT_EXCEPTION` |
+| 4.9 | A default rule's `exception` is an object with `sufficient`, `necessary`, `factors` and at most `decided_by` besides | `SOFT_MISSING_EXCEPTION` |
+| 4.10 | `decided_by` is absent, null or a string | `SOFT_INVALID_DECIDER` |
+| 4.11 | A decider is given by `decided_by` or `exception_decider` | `SOFT_MISSING_DECIDER` |
+| 4.12 | A given `decided_by` is nonempty and at most 64 bytes | `SOFT_INVALID_DECIDER` |
+| 4.13 | `sufficient` is an array; then each element decodes as a FOL formula as in 4.2 (*inherited*, `SOFT_INVALID_INPUT`); then the same for `necessary` | `SOFT_EXCEPTION_ARRAY` |
+| 4.14 | `factors` is an array of strings of at most 200 bytes each | `SOFT_INVALID_FACTORS` |
+| 5.1 | **Cross references.** Each `instruction_of` names a declared party | `SOFT_UNKNOWN_PARTY` |
+| 5.2 | Each name in `outranks`, then `ties`, is a declared rank | `SOFT_UNKNOWN_RANK` |
+| 5.3 | Rule names are unique | `SOFT_DUPLICATE_DECLARATION` |
+| 5.4 | Then, each rule in order: its predicate is a declared regulated predicate | `SOFT_INVALID_INPUT` |
+| 5.5 | its `rank` is declared | `SOFT_UNKNOWN_RANK` |
+| 5.6 | each `alterable` party is declared | `SOFT_UNKNOWN_PARTY` |
+| 5.7 | *Inherited:* its guard and carve-outs are typed over the predicate's argument sorts; the rule's formulas here and in 5.8 share one `MAX_NODES` budget, exceeded at the formula whose typing crosses it | `SOFT_INVALID_INPUT` |
+| 5.8 | each exception condition (`sufficient`, then `necessary`) is typed likewise, within the rule's budget (*inherited*, `SOFT_INVALID_INPUT`), and then mentions no regulated, defined or `soft__` predicate | `SOFT_INVALID_EXCEPTION_CONDITION` |
+| 5.9 | each `over` names a rule on the same predicate | `SOFT_INVALID_INPUT` |
+| 6.1 | **Semantic checks.** `outranks` is acyclic | `SOFT_DEPENDENCY_CYCLE` |
+| 6.2 | No tie between comparable ranks | `SOFT_TIE_AGAINST_ORDER` |
+| 6.3 | Ties are distinct as unordered pairs | `SOFT_DUPLICATE_DECLARATION` |
+| 6.4 | `E′` is within the vocabulary limits: each decision predicate name (the `excepted` names, then the `off` names, then the `outweighs` names, 1.3), in order, is within `MAX_IDENTIFIER_BYTES`; then `E′` declares at most `MAX_PREDICATES` predicates | `SOFT_RESOURCE_LIMIT` |
+| 6.5 | *Inherited:* the guards and carve-outs of every rule of `T`, in order, are within W1's one document budget (`MAX_NODES`, norms.md 11.5), `SOFT_RESOURCE_LIMIT`; then author precedence is acyclic | `SOFT_RESOURCE_LIMIT`, `SOFT_DEPENDENCY_CYCLE` |
+| 6.6 | Precedence depth at most 16 | `SOFT_RESOURCE_LIMIT` |
+| 6.7 | The rules of `T` are stratified (W1's DAG) | `SOFT_DEPENDENCY_CYCLE` |
+| 6.8 | SoftOverHard (4.1(5)) | `SOFT_OVER_HARD` |
+| 6.9 | Each rule, in order: with its derived carve-out, at most 8 carve-outs, and the derived carve-out, typed on its own, within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.10 | `T′` passes W1's checks, its document node budget included: a stratification cycle is `SOFT_DEPENDENCY_CYCLE`, a resource limit `SOFT_RESOURCE_LIMIT`, anything else `SOFT_INVALID_INPUT` | as stated |
+| 6.11 | Each generated soft premise (exception premises, then coherence premises), in order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.12 | Each generated norm layer `layer:norms:<p>`, in layer order, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.13 | Each conflict target of `T′` (norms.md 5.1: `conflict_p` for each regulated predicate in layer order, then `conflict_(r,m)` for each declared pair in order of `r`), its certified conclusion `∀x̄. ¬conflict` on its own, is within `MAX_DEPTH` and `MAX_NODES` | `SOFT_RESOURCE_LIMIT` |
+| 6.14 | `background′` (definitions, literals, profile pairs, then the soft premises of 6.11), in order, typed by one checker: within `MAX_NODES` together | `SOFT_RESOURCE_LIMIT` |
+| 6.15 | The layers of 6.12, in layer order, then the one-node conclusion `⊤`, typed by one checker: within `MAX_NODES` together | `SOFT_RESOURCE_LIMIT` |
+
+**Accepted means elaborable.** 6.4 and 6.9 to 6.15 check every derived structure
+of the elaboration (5, 6.1) against the limits of `ve/limits.py` that its
+serialisation meets: `E′` against the vocabulary limits, each derived carve-out,
+generated soft premise, generated layer and conflict target on its own against `MAX_DEPTH` and
+`MAX_NODES` (term nodes included, as `soft-elaborate` serialises each one),
+`T′` as a whole against W1's document budget, and the two lists the entailment
+route types with one checker each against one `MAX_NODES` budget: `background′`
+(the Background of `E′`, soft premises included) and the layers followed by the
+conclusion. The smallest conclusion is the one-node `⊤`, so the layers together
+are at most `MAX_NODES - 1` nodes: an accepted document answers
+`prove_norm_entailment(elaborated, (), ⊤)` and a proof attempt for each conflict
+target without a resource error. Longer premises or conclusions of a caller's
+query may still exceed the budget; that is the query's limit, not the document's. These are checks on the
+structures the elaboration builds, run last in the table. Each structure's size
+(nodes, term nodes included, and depth, as the checker counts them) is computed
+from per-rule tables before the structure is built: a rule's `yields` and `eff`
+formulas once per level, a rank's closure once per environment, and each
+regulated predicate's expanded outcome once, read by every expansion that
+inlines it. A structure is built only if its size fits, so one whose unfolding
+is exponential in the source (outcome expansion across layers, a precedence DAG
+of wide diamonds, dominance over a dense rank order) is rejected in time
+polynomial in the source instead of being built. A source both
+validators accept therefore elaborates (`elaborate_soft_document`,
+`soft-elaborate`) without a resource error, and every output of `soft-elaborate` (derived
+carve-outs, layer order, background, layers, colliding pairs and conflict
+targets) is compared with Python's regeneration (`check_regenerated`). A conflict
+target is not a layer: it substitutes every lower predicate's expanded outcome
+for its atoms, so a target can exceed the limits although every layer fits. A layer states a rule's guard twice
+(where the rule is selected, and where the predicate is silent), so a guard of
+more than about half of `MAX_NODES` is rejected at 6.12 or 6.15 although it
+passes 4.2 and 6.5.
+
+A standalone environment (the English layer, generated `E′`) runs the same
+table with no norm objects. A single norm unit decoded on its own (a quoted
+norm) runs 4.1 to 4.14 and then 5.4 to 5.8. Diagnostics raised after this
+table (certificates, witnesses, graphs) keep the classification by their
+stable prefixes above. New soft rejection paths must be added to this table
+in both validators. The conformance suite enforces the table with generated
+multi-fault inputs: faults from different phases, and several faults within
+one phase, must produce the same code in Python and Lean.
+
+### Human-readable diagnostics
 
 | Text | When | Kind |
 |---|---|---|
@@ -698,17 +905,18 @@ facts the environment did not attribute; the report states both limits next to t
 | `HardConstraintAltered: rule <n>` | `hard: true` with `mode: default` or a switch | error |
 | `UnknownSymbol: party <π>` | undeclared party in `alterable` or `instruction_of` | error |
 | `DuplicateDeclaration: rank <a>` / `party <π>` | duplicate names in the `soft` block | error |
-| `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` | field consistency (3.1, 3.2) | error |
-| `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` on unfolding; more than 16 ranks; more than 8 parties | error |
+| `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` / `duplicate over <m> in rule <n>` | field consistency (3.1, 3.2) | error |
+| `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` or `MAX_DEPTH` on unfolding; more than 16 ranks; more than 8 parties | error |
+| `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
+| `ResourceLimit: generated soft premise <label>` / `ResourceLimit: generated norm layer layer:norms:<p>` / `ResourceLimit: generated conflict target <t>` | a generated premise, layer or conflict target beyond `MAX_DEPTH` or `MAX_NODES` (6.11 to 6.13) | error |
+| `ResourceLimit: generated background` / `ResourceLimit: generated norm layers` | `background′`, or the layers followed by `⊤`, beyond one checker's `MAX_NODES` (6.14, 6.15) | error |
 | `UnsupportedProfile: soft-norms@0 requires norms@0` | profile gate | error |
 | `RankAgainstPrecedence: rule <n> over <m>` | author edge against the ranks (4.1) | warning |
 | `Overlap(<n>, <m>)` | two same-sign rules both selecting (W1) | warning |
 | undeclared ties, `override_cycles` | report lines (1.2, 6.7) | warning |
 
-Diagnostics follow W1's check order (norms.md 11.1, `lean/NORMS.md` conventions): environment declarations, then
-W1's rule checks, then the soft rule checks in document order (mode and fields, rank, parties, decider, `hard`,
-exception typing), then `over` against modes, then ranks and ties, then the unfolded `T′` size and its DAG. English
-diagnostics carry the span and the plain-language expectation as today. Existing P0 and W1 diagnostics are unchanged.
+Diagnostics follow the validation order above. English diagnostics carry the span and the plain-language
+expectation as today. Existing P0 and W1 diagnostics are unchanged on their own routes.
 
 ## 9. Lean (item 4): definitions and the exact statements to prove
 
@@ -767,6 +975,7 @@ structure SoftDoc where
   T    : SoftTree
 
 def outranksPlus (env : SoftEnv) : String → String → Bool          -- transitive closure of the declared edges
+def rankHeight (D : SoftDoc) (N : SoftNode) : Nat                 -- longest ascending outranks⁺ chain above rk N
 def rankNodes (env : SoftEnv) : List VE.Route.DepNode              -- a → b for each "a outranks b"
 def Comparable (D : SoftDoc) (M N : SoftNode) : Bool
 def actKey (D : SoftDoc) (p : String) : String                     -- 1.3
@@ -807,6 +1016,8 @@ def cohPremise (D : SoftDoc) (M N : SoftNode) : VE.Formula :=
                                      (subst (soften D).T (size (soften D)) (selects' D N))))
 def cohPremises (D : SoftDoc) : List VE.Formula := (collidingPairs D).map (fun (M, N) => cohPremise D M N)
 def softPremises (D : SoftDoc) : List VE.Formula := excPremises D ++ cohPremises D
+/-- The complete syntactic fragment gate of 6.1, including the separately generated soft premises. -/
+def InFragment (D : SoftDoc) : Bool
 def backgroundBase' (D : SoftDoc) : List VE.Formula := VE.Norms.backgroundBase (soften D) ++ softPremises D
 def background' (D : SoftDoc) : List VE.Formula := VE.Norms.background (soften D) ++ softPremises D
 def BaseAdmissible' (D : SoftDoc) (B : VE.Structure) : Prop :=
@@ -838,7 +1049,7 @@ mutual
     | 0, N => EligibleD D S ρ N
     | g + 1, N => EligibleD D S ρ N ∧ ¬ DominatedD g N
   def DominatedD : Nat → SoftNode → Prop
-    | g, N => ∃ M, Incompatible D M N ∧ M.mode = .default ∧ Comparable D M N ∧
+    | g, N => ∃ M ∈ D.T.nodes, Incompatible D M N ∧ M.mode = .default ∧ Comparable D M N ∧
       ((higher D M N ∧ EffD g M ∧ (D.soft.outranking = .holistic → ¬ OutweighsD D S ρ (act N) (rk N) (rk M))) ∨
        (D.soft.outranking = .holistic ∧ higher D N M ∧ EligibleD D S ρ M ∧ OutweighsD D S ρ (act N) (rk M) (rk N)))
 end
@@ -874,7 +1085,8 @@ def NoHardPairConflict (D : SoftDoc) (B : VE.Structure) : Prop :=
 def SoftConflictFree (D : SoftDoc) : Prop :=
   ∀ B : VE.Structure, BaseAdmissible' D B → VE.Norms.ConflictFree (soften D) B
 
-/-- 7.4 -/
+/-- 7.4: predicates reached through T′ guards, carve-outs, definitions and lower regulated rules;
+    transitively include predicates of every sufficient/necessary condition of each excepted_N reached. -/
 def cone (D : SoftDoc) (p : String) : List String
 ```
 
@@ -882,7 +1094,9 @@ def cone (D : SoftDoc) (p : String) : List String
 is `outranksPlus D.soft (rk M) (rk N)` on ranked rules; `rk`, `act`, `actSorts`, `dualPerm`, `dualOblig` read the
 declarations. `defaultPos`/`defaultNeg` are `P^d_p`/`N^d_p` as formulas on `T′` (W1 `selects` restricted to default
 rules). The tuple convention is W1's: relation tuples in argument order, `tupleVal` for valuations, `[]` for closed
-formulas.
+formulas. `rankHeight D N` is the maximum number of strict ascending `outranks⁺` steps starting at `rk N`,
+over declared ranks (zero for an unranked rule or a rank with no higher rank). For a well-formed document and
+`N ∈ D.T.nodes`, `rankHeight D N < rankFuel D`; node-specific fuel stability assumes that same membership.
 
 ### 9.2 Theorems: elaboration and the direct semantics
 
@@ -911,8 +1125,8 @@ theorem derived_denote (D) (N) (S) (ρ) :
   (VE.Norms.applies { N.toNode with carveOuts := N.carveOuts ++ derivedList D N }).denote S ρ ↔ AppliesSoftD D S ρ N
 
 /-- Fuel stability: for a well-formed document the rank recursion is stable at rankFuel. -/
-theorem eff_fuel (D : SoftDoc) (h : WellFormedSoft D = true) (S) (ρ) (N : SoftNode) (g : Nat)
-    (hg : rankHeight D N < g) : EffD D S ρ g N ↔ EffD D S ρ (rankFuel D) N
+theorem eff_fuel (D : SoftDoc) (h : WellFormedSoft D = true) (S) (ρ) (N : SoftNode) (hN : N ∈ D.T.nodes)
+    (g : Nat) (hg : rankHeight D N < g) : EffD D S ρ g N ↔ EffD D S ρ (rankFuel D) N
 
 /-- 5.1: W1's Value on T′ is ValueSoft on T, on every structure and tuple. -/
 theorem soften_faithful (D : SoftDoc) (h : WellFormedSoft D = true) (r : Regulated) (hr : r ∈ D.T.regulated)
@@ -1005,6 +1219,14 @@ theorem weighing_points_complete (D : SoftDoc) (h : WellFormedSoft D = true) (S 
 ### 9.3 Theorems: coherence, the conditional contract and the wire
 
 ```lean
+/-- A sort-respecting substructure of E′_base: constants retained, base relations restricted. -/
+def BaseSubstructure (D : SoftDoc) (B₀ B : VE.Structure) : Prop
+
+/-- 6.1: the complete fragment gate makes every generated soft premise survive substructures. -/
+theorem soft_premises_substructure (D : SoftDoc) (h : WellFormedSoft D = true) (hf : InFragment D = true)
+    (B₀ B : VE.Structure) (hsub : BaseSubstructure D B₀ B) (hs : Sat B (softPremises D)) :
+  Sat B₀ (softPremises D)
+
 /-- W1's pointwise document iff on T′, instantiated (reused, not restated). -/
 theorem coherent_expands (D : SoftDoc) (h : WellFormedSoft D = true) (B : VE.Structure)
     (hB : VE.Norms.BaseAdmissible (soften D) B) :
@@ -1046,12 +1268,12 @@ theorem soft_conflict_witness_sound {α} [DecidableEq α] (D) (h) (t) (ht : t �
 
 /-- 6.2 soundness of the classification. -/
 theorem disjoint_sound (D) (h) (M N) (hc : (M, N) ∈ collidingPairs D) (c : VE.Tableau.Certificate)
-    (acc : VE.Tableau.checkCertificate (envAt (soften D) 0) ((backgroundBase' D).erase (cohPremise D M N))
+    (acc : VE.Tableau.checkCertificate (envAt (soften D) 0) (VE.Norms.backgroundBase (soften D) ++ excPremises D)
              (cohPremise D M N) c = true) :
-  ∀ B, VE.Norms.BaseAdmissible (soften D) B → Sat B ((softPremises D).erase (cohPremise D M N)) →
+  ∀ B, VE.Norms.BaseAdmissible (soften D) B → Sat B (excPremises D) →
     (cohPremise D M N).denote B []
 theorem weighing_point_sound {α} [DecidableEq α] (D) (h) (M N) (hc) (Mo : VE.FiniteModel α)
-    (valid : Mo.Valid (envAt (soften D) 0)) (hb : backgroundValidExcept' D (cohPremise D M N) Mo = true)
+    (valid : Mo.Valid (envAt (soften D) 0)) (hb : classificationBackgroundValid D Mo = true)
     (vs : List α) (typed) (hw : (.and (selects'° M) (selects'° N)).eval Mo (tupleVal vs) = true) :
   ¬ (cohPremise D M N).denote Mo.asStructure [] ∧ ¬ (∀ B, VE.Norms.BaseAdmissible (soften D) B → VE.Norms.ConflictFree (soften D) B)
 
@@ -1121,7 +1343,9 @@ theorem Run.soft_wire_acceptance (j answer : Json) (h : Run.runCase j = .ok answ
 ```
 
 `backgroundValid' D M` is W1's `backgroundValid` on `soften D` conjoined with the finite evaluation of every formula
-in `softPremises D`; `backgroundValidExcept'` omits one named conjunct. `SoftAdmissionAnswer` is W1's
+in `softPremises D`; `classificationBackgroundValid D M` instead conjoins W1's `backgroundValid` with finite
+evaluation of `excPremises D` only, excluding all coherence conjuncts. Thus both classification certificates and
+witnesses bind `Background_base(E′) ++ Exc_T`. `SoftAdmissionAnswer` is W1's
 `AdmissionAnswer` with the soft decoder, `soft:coherence:*` and `soft:exception:*` leaves admitted only when equal to
 the regenerated formulas, and the report consequence stated over `background' D ++ elaborate (soften D).T`.
 
@@ -1132,13 +1356,17 @@ is the executable root and no frozen file changes. On raw input it runs the froz
 requires `soft-norms@0` and `norms@0`, decodes the environment with its `soft` block through the W1 norms decoder
 plus a strict soft decoder (unknown fields rejected; the original complete environment hashed), decodes the soft norm
 objects, runs `WellFormedSoft`, regenerates `E′`, `T′`, `Exc_T`, `Coh_T`, `Background_base′`, `background′`, the
-layer premises on `T′` and every conflict and classification target, validates bindings, and delegates every checker
-call to the unchanged W1 functions on the regenerated data. Case kinds:
+layer premises on `T′` and every conflict and classification target, and validates bindings. It reuses the unchanged
+W1 leaves `checkCertificate`, `targets`, `targetConclusion`, `conflict`, `pairConflict`, `conflictFreeAt_of_base`,
+`expansion_unique`, `documentExpansion_iff` and the witness evaluator on regenerated data. Two shells are newly
+instantiated: `softConflictFreeCheck` supplies `Background_base′` where W1's `conflictFreeCheck` fixes
+`backgroundBase D`; the soft layer constructor supplies `PrefixAdmissible′` where W1's `symLayer` fixes
+`PrefixAdmissible D k`. Case kinds:
 
 | Kind | Extra input | Output |
 |---|---|---|
 | `soft-elaborate` | none | `environment_prime` (canonical), `decisions`, `derived` (per rule, the derived carve-out), `order`, `background` (with the `soft` slot), `premises` (`layer:norms:<p>` on `T′`), `colliding_pairs` (pair, act, comparable, `soft:coherence:<a>,<b>` ast), `conflict_targets`, `fragment`, `warnings` |
-| `soft-pairs` | per pair: `certificate` or `witness` | per pair RANK-RESOLVED / DISJOINT / WEIGHING POINT / UNKNOWN with detail |
+| `soft-pairs` | per pair: `certificate` or `witness` over `Background_base(E′) ++ Exc_T`, with all coherence conjuncts excluded | per pair RANK-RESOLVED / DISJOINT / WEIGHING POINT / UNKNOWN with detail |
 | `soft-conflict` | `packages` per target over `Background_base′`, or `witness` (base model over `E′_base` including decision tables, tuple) | `CONFLICT-FREE` (with `conditional_on` per target) / `CONFLICT` (classified) / `UNKNOWN` |
 | `soft-certificate` | `premises`, `conclusion`, `certificate` bound to `background′ ++ layer premises ++ premises` | `valid`, `background`, `layers`, `conditional_on` |
 | `admission` | W2 document with soft norm units and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
@@ -1196,22 +1424,24 @@ carve-outs or `over` edges; `Γ` empty. "Selects" means `selects′` at the one 
   with `instruction_of: operator`; variant 2: guard over an unattributed base predicate. Report: `user: switch`
   in both; `operator: mentions operator_instructs` in variant 1, `operator: independent` in variant 2
   (`authority_independent`). `off_{N,operator}` does not exist: a `Γ` naming it is `UnknownSymbol`.
-- **(η) Trees.** W1 10.1(q) diamond and 10.1(d) grandchild with every rule default and unranked: same selections and
-  outcomes as W1; CONFLICT-FREE. Strict child `E` of default parent `M`: where `E` is live it selects and `M` is
-  blocked; where `E`'s guard fails `M` applies. Default child of a strict parent: `SoftOverHard`. Default rule with
+- **(η) Trees.** W1 10.1(q) diamond and 10.1(d) grandchild with every rule default and unranked, at assignments with
+  every `excepted_N` false: same selections and outcomes as W1; CONFLICT-FREE. Strict child `E` of default parent `M`:
+  where `E` is live it selects and `M` is blocked; where `E`'s guard fails `M` applies. Default child of a strict parent: `SoftOverHard`. Default rule with
   author `unless U` and exception: `live` false when `U` holds and when `excepted` holds; otherwise it selects.
 - **(θ) Diagnostics.** `ties: [[a, b]]` with `a outranks b`: `TieAgainstOrder: a, b`. `a > b > c > a`:
   `DependencyCycle: a, b, c`. `N over M`, `{M, N} ∈ CP(T)`, `rank(M) outranks rank(N)`: `RankAgainstPrecedence: rule
-  n over m`, and every outcome is identical with the edge removed. Dual guard: strict `must not X` on `x_permitted`
-  with guard "it is not the case that S must X", default `should X` on `x_required`: `DependencyCycle: x_required`
+  n over m`; the edge is inert when `N` has no descendants (see υ for the descendant regression). Dual guard: strict
+  `must not X` on `x_permitted` with guard "it is not the case that S must X", default `should X` on `x_required`: `DependencyCycle: x_permitted, x_required`
   with the `DualGuardCycle` hint in Python's English diagnostic; the mirrored orientation (strict `must X` guarded on
-  "it is not the case that S may X", default `should not X`) likewise on `x_permitted`; the same documents with
+  "it is not the case that S may X", default `should not X`) likewise reports `DependencyCycle: x_permitted, x_required`; the same documents with
   base-only guards are accepted; strict `may X` with the first guard beside default `should X` is accepted (no
   block, no cycle).
-- **(ι) Vacuity.** Take (δ) unranked. `Γ` fixing `excepted_A(a)` and `excepted_B(a)` false together with both guards
-  true, no carve-out, no switch (the two rules therefore both select): the P0 premise-set check reports
-  `Background_base′ ++ Γ` inconsistent, every dependent certificate `vacuous`, and the coherent-model exhibit says
-  so. `Γ` fixing only the two exceptions false: consistent (a model with a guard false), not vacuous.
+- **(ι) Vacuity.** Take (δ) unranked, replacing its true guards with explicit base guards `g_A(x)` and `g_B(x)`.
+  `Γ` fixing `excepted_A(a)` and `excepted_B(a)` false together with `g_A(a)` and `g_B(a)` true, no carve-out,
+  no switch (the two rules therefore both select): the P0 premise-set check reports
+  `background′ ++ layer premises ++ Γ` in full `E′` inconsistent, every dependent certificate `vacuous`, and the
+  coherent-model exhibit says so. `Γ` fixing only the two exceptions false: consistent (a model with a guard false),
+  not vacuous; the exhibit displays the full premise-set model's `E′_base` restriction.
 - **(κ) Chain.** `A` requires X (rank `a`), `B` forbids X (`b`), `C` permits X (`c`), `a > b > c`, strict flag, all
   live, no strict rules, `x_permitted` deny-by-default. `B` is dominated by effective `A`; `C` is not dominated by
   ineffective `B`. `A` and `C` select: required and permitted; CONFLICT-FREE. (Liveness-based dominance would report
@@ -1240,10 +1470,22 @@ carve-outs or `over` edges; `Γ` empty. "Selects" means `selects′` at the one 
   and shown. `outranking: holistic` without `decided_by`: `MissingExceptionDecider: outranking`.
 - **(ρ) Exception conditions.** Default `should X` with `sufficient: [C]` and no other rule: the certificate for
   `∀a. C(a) → ¬x_required(a)` replays over `background′ ++ layer premises`; with the sufficient condition removed the
-  same certificate fails; a countermodel exists and is rendered with `excepted` true. A condition mentioning
+  same certificate fails; a countermodel exists and is rendered with `excepted` false. A condition mentioning
   `x_permitted`: `InvalidInput: exception condition of rule <n> mentions x_permitted`.
 - **(σ) Hard flag.** `hard: true` with `alterable: [user]`: `HardConstraintAltered: rule <n>`; with `mode: default`:
   the same; with `mode: strict` and no switch: accepted and inert.
+- **(τ) Circular discharge.** Unranked default `A` requires X; unranked defaults `B`, `C` release X. For each rule,
+  `sufficient: [Q]` and `necessary: [Q]` impose `excepted_N(x) ↔ Q(x)` for base predicate `Q`; guards are true,
+  no precedence. `CP(T) = {A–B, A–C}`; both coherence conjuncts are equivalent to `∀x. Q(x)`. Classification over
+  `Background_base(E′) ++ Exc_T` marks both WEIGHING POINT, witnessed by `Q(a)` false, all three exceptions false
+  and all three rules selecting. Neither conjunct may certify the other as DISJOINT. Conflict checking over full
+  `Background_base′` is CONFLICT-FREE; any used undischarged coherence leaf remains in `conditional_on`.
+- **(υ) Yield through a dominated rule.** Live defaults `M` requires X at high rank, `N` releases X at low rank,
+  `K` releases X unranked; `high outranks low`, strict ranking, all exceptions false; `N over M`, `K over N`.
+  `M` and `K` are effective; `N` is dominated. `K` yields through `N` and suppresses `M`; `K` alone selects,
+  `ValueSoft_{x_required} = some false`. Removing only `N over M` leaves effectiveness unchanged but makes `M`
+  and `K` both select, `ValueSoft_{x_required} = none`, a conflict at this assignment. The M–K coherence conjunct
+  excludes that assignment from the full coherent background; the `RankAgainstPrecedence` edge is not redundant.
 
 Beside these: norms.md 10.6 to 10.10 repeated on generated soft documents (surface round trip with the new fields
 and metadata; identity of every existing fixture unchanged; certificate binding against a changed rank, edge, flag,
@@ -1315,9 +1557,10 @@ Each is a point where the plan left a reading open; the review may overturn any 
     predicate.
 12. **The document-level decider** lives in the environment `soft` block (`exception_decider`), as the completion
     legend does; the English sentence of 2.1 renders it.
-13. **The coherent-model exhibit** is the P0 premise-set model of `Background_base′ ++ Γ`, reported in the P0 vacuity
-    vocabulary (model / inconsistent / UNKNOWN); CONFLICT-FREE is not downgraded when the exhibit is UNKNOWN, the
-    status text says so.
+13. **The coherent-model exhibit** is the P0 premise-set model of `background′ ++ layer premises ++ Γ` in full `E′`,
+    with its `E′_base` restriction displayed as the coherent assignment, reported in the P0 vacuity vocabulary
+    (model / inconsistent / UNKNOWN); CONFLICT-FREE is not downgraded when the exhibit is UNKNOWN, the status text
+    says so.
 14. **`weighing_points_complete` also asserts non-comparability** of the exhibited pair, folding `rank_resolves`
     into the statement, so the classification's "cannot be a discharged pair" is a theorem and not a remark.
 
@@ -1326,3 +1569,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-09-27 | Draft 1 | Item-1 specification from plan draft 3: attributes and environment declarations; decision vocabulary indexed by act and rank pair; effect-based collisions; the English table with the asymmetry and selection-disjointness paraphrases; wire form; `ValueSoft` with higher-effective/lower-eligible dominance and the existence lemma; `soften` with one derived carve-out and `DualGuardCycle`; `Exc_T`, `Coh_T` over all of `CP(T)`, `BaseAdmissible′`, decomposition and the conditional contract; report, residual lines and status text; diagnostics; every item-4 theorem as a statement in W1's Lean conventions; fixtures α to σ; resolved choices. Spec only: no code, Lean or frozen contract changed. |
+| 2026-09-27 | Converged item-1 FIX | Applied exactly the joint FIX set in `manage-agents/debates/soft-spec/fable.md` round 3 and `manage-agents/debates/soft-spec/astra.md` rounds 1–3: Astra’s seven and Fable’s three as amended, with the four final resolutions. Document-node dominance and fuel hypotheses; coherence-free classification and bindings; decision findings and full-premise vacuity exhibit; complete soft fragment gate and preservation obligation; exception-condition cone closure; authoring rejection of `should generally` forms; precise blocking and precedence prose; `rankHeight` and W1 reuse boundaries; corrected ι, ρ, η, θ and added circular-discharge and M/N/K regressions. Core semantics, `soften`, `Coh_T`, decomposition and route theorem statements unchanged; this agreed correction set satisfies the statement gate for items 2–4. |

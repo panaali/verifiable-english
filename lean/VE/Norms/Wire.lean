@@ -143,6 +143,7 @@ def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment
       let args ← strings (← entry.getObjVal? "arguments")
       some <$> decodeRegulated p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
+  actChecks regs
   pure ⟨rv, regs, e.profiles, environment⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
@@ -164,8 +165,70 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   pure (environment.setObjVal! "vocabulary"
     (vocab.setObjVal! "predicates" (Json.mkObj canonical)))
 
-/-- One norm object `{"norm": {...}}` (3.2). -/
-def decodeNorm (j : Json) : Except String Node := do
+/-! Python's `_Decoder` over the FOL fragment: `Bridge.decodeFormula 64` plus
+the node budget (`MAX_NODES`) and `MAX_INDEX`. One decoder counts every formula
+and term node in pre-order and checks the budget on entering a node, before its
+shape; `count` is the number of nodes the same decoder has already read. -/
+
+def maxNodes : Nat := 10000
+def maxIndex : Nat := 2 ^ 53 - 1
+
+def budgetTerm (count : Nat) (j : Json) : Except String (VE.Term × Nat) := do
+  if count + 1 > maxNodes then throw "ResourceLimit: AST exceeds depth or node budget"
+  let t ← VE.Bridge.decodeTerm j
+  if let .var i := t then
+    unless i ≤ maxIndex do throw "UnboundVariable: Invalid variable index"
+  pure (t, count + 1)
+
+def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
+  | 0, _, _ => throw "ResourceLimit: formula depth exceeds 64"
+  | n + 1, count, j => do
+    let count := count + 1
+    if count > maxNodes then throw "ResourceLimit: AST exceeds depth or node budget"
+    match (← j.getArr?).toList with
+    | [.str "top"] => return (.top, count)
+    | [.str "bottom"] => return (.bottom, count)
+    | [.str "unary", .str p, t] =>
+      let (t, count) ← budgetTerm count t
+      return (.unary p t, count)
+    | [.str "binary", .str p, t, u] =>
+      let (t, count) ← budgetTerm count t
+      let (u, count) ← budgetTerm count u
+      return (.binary p t u, count)
+    | [.str "eq", t, u] =>
+      let (t, count) ← budgetTerm count t
+      let (u, count) ← budgetTerm count u
+      return (.eq t u, count)
+    | [.str "not", a] =>
+      let (a, count) ← budgetFormula n count a
+      return (.not a, count)
+    | [.str "and", a, b] =>
+      let (a, count) ← budgetFormula n count a
+      let (b, count) ← budgetFormula n count b
+      return (.and a b, count)
+    | [.str "or", a, b] =>
+      let (a, count) ← budgetFormula n count a
+      let (b, count) ← budgetFormula n count b
+      return (.or a b, count)
+    | [.str "implies", a, b] =>
+      let (a, count) ← budgetFormula n count a
+      let (b, count) ← budgetFormula n count b
+      return (.implies a b, count)
+    | [.str "forall", .str s, a] =>
+      let (a, count) ← budgetFormula n count a
+      return (.all s a, count)
+    | [.str "exists", .str s, a] =>
+      let (a, count) ← budgetFormula n count a
+      return (.ex s a, count)
+    | _ => throw "invalid indexed formula"
+
+/-- One formula under a fresh decoder (Python `_Decoder().decode`). -/
+def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula 64 0 j
+
+/-- One norm object `{"norm": {...}}` (3.2). As Python `NormDocument._decode`,
+one decoder (one node budget) reads the guard and then the carve-outs; with
+`shared := false` each formula has its own, as the soft route's `_fol`. -/
+def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
   exactFields j ["norm"]
   let raw ← j.getObjVal? "norm"
   exactFields raw ["name", "predicate", "sign", "guard", "unless", "over"]
@@ -182,8 +245,13 @@ def decodeNorm (j : Json) : Except String Node := do
   let over ← match raw.getObjValD "over" with
     | .arr _ => strings (raw.getObjValD "over")
     | _ => throw "InvalidInput: unless and over must be arrays"
-  let guard ← VE.Bridge.decodeFormula 64 (raw.getObjValD "guard")
-  let carve ← unlessJ.mapM (VE.Bridge.decodeFormula 64)
+  let (guard, count) ← budgetFormula 64 0 (raw.getObjValD "guard")
+  let mut count := count
+  let mut carve := []
+  for x in unlessJ do
+    let (φ, next) ← budgetFormula 64 (if shared then count else 0) x
+    count := next
+    carve := carve ++ [φ]
   pure ⟨name, predicate, sign, guard, carve, over⟩
 
 /-- A decoded source: the norms environment and a well-formed tree over it. -/

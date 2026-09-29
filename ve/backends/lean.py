@@ -22,11 +22,36 @@ an `ok` row that fails its schema.
 from __future__ import annotations
 
 import subprocess
+import json
 import sys
 
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
+
+
+def run_soft_case(executable, case):
+    """Transport one soft route case through the shared Lean process boundary."""
+    try:
+        completed = subprocess.run(
+            [str(executable), "-"], input=json.dumps([case], ensure_ascii=False),
+            text=True, capture_output=True, timeout=120, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise VEError(f"soft route unavailable: {exc}") from exc
+    try:
+        rows = json.loads(completed.stdout)
+        if type(rows) is not list or len(rows) != 1 or type(rows[0]) is not dict:
+            raise ValueError("invalid result shape")
+    except ValueError as exc:
+        raise VEError(f"soft route returned invalid JSON: {completed.stderr.strip()}") from exc
+    row = rows[0]
+    if row.get("status") == "error":
+        error = VEError(row.get("error", "soft route rejected input"))
+        error.code = row.get("code", error.code)
+        raise error
+    if completed.returncode != 0 or row.get("status") != "ok":
+        raise VEError(f"soft route failed: {completed.stderr.strip()}")
+    return row
 
 
 _SCALARS = {
