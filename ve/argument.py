@@ -546,8 +546,7 @@ def _lean_deductions(graph, claims, records, reachable, executable):
 
 def _lean_graph_scope(graph) -> bool:
     """Whether Lean's `graph` mode composes this package: the frozen v0 envelope,
-    or a ve.core@0.2 FOL-family environment without norm declarations or
-    statement layers. The closure, core and order families (and ve.core@0.1)
+    or a ve.core@0.2 FOL-family environment without statement layers. The closure, core and order families (and ve.core@0.1)
     are not composed by Lean yet."""
     env = getattr(graph, "env", None)
     if type(env) is not Environment:
@@ -556,8 +555,7 @@ def _lean_graph_scope(graph) -> bool:
         return True
     return (env.language == "ve.core@0.2" and not env.closure
             and not env.order and env.unit_schema is None and env.alternatives is None
-            and not {"soft-norms@0", "reports@0"} & set(env.profiles)
-            and not any(d.regulated is not None for d in env.predicates.values()))
+            and not {"soft-norms@0", "reports@0"} & set(env.profiles))
 
 
 @semantic_entry("graph.compose")

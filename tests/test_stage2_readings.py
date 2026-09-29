@@ -110,3 +110,16 @@ def test_a_verdict_lean_does_not_confirm_is_unavailable(monkeypatch):
     monkeypatch.setattr(lean_runner, "run", other)
     with pytest.raises(CheckerUnavailable):
         check_readings(env(), sets, conclusion, fixed=fixed)
+
+
+@pytest.mark.parametrize("verdict", list(QUERIES))
+def test_readings_over_a_norms_environment(monkeypatch, verdict):
+    raw = pm.raw_environment(("norms@0",))
+    norms_env = Environment(raw)
+    sets, conclusion, fixed = QUERIES[verdict]
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = check_readings(norms_env, sets, conclusion, fixed=fixed)
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    calls = cases(monkeypatch)
+    assert check_readings(norms_env, sets, conclusion, fixed=fixed) == expected
+    assert [row["verdict"] for _, row in calls] == [verdict]
