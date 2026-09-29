@@ -45,6 +45,13 @@ def test_byte_partition_and_vacuity(tmp_path):
     assert "Café" in render_document(path)
 
 
+@pytest.mark.parametrize("meaning", ["specified", {"unformalised": "noun_complement"}])
+def test_root_unformalised_reason_must_match_meaning_without_reports(tmp_path, meaning):
+    path = write_doc(tmp_path, b"Unresolved.\n", [unit("u1", 0, 12, ["unformalised", "opaque"], meaning)])
+    with pytest.raises(VEError, match="^InvalidInput: unformalised kind reason does not match meaning of u1$"):
+        load_document(path)
+
+
 def test_mixed_csam_norm_is_checked_without_losing_rest_of_paragraph(tmp_path):
     env = norm_environment({"generate_csam_permitted": permission(
         act="{0} generate child sexual abuse material", args=("assistant",))},

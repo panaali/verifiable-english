@@ -470,7 +470,10 @@ Records explicitly retain `assurance: experimental`, `intent: unconfirmed`, and
 `proof: not_checked`. Exit 0 means successful output or a found countermodel;
 exit 1 means `Violated`; exit 2 means `InvalidInput`; exit 3 means
 bounded/filtered `NotFound`; exit 4 means `ResourceLimit` (both returned budget
-outcomes and raised resource exceptions). JSON statuses preserve these distinctions.
+outcomes and raised resource exceptions); exit 5 means `CheckerUnavailable`, an
+operational failure of a requested checker (missing, crashed, timed out, malformed
+output) that is never a verdict, `UNKNOWN` or `ResourceLimit`
+([assurance-manifest.md](spec/assurance-manifest.md)). JSON statuses preserve these distinctions.
 `evaluate`, `check`, and `countermodel` accept `--max-evaluations`.
 `evaluate` and `check` accept `--no-trace`. Search always omits traces and accepts
 `--min-domain-size`, `--nonempty-domains`, and `--nonvacuous-for FILE` (one strict
@@ -486,6 +489,10 @@ bounded; search also stops if a candidate domain vector requires more than
 a process interruption, not a logical finding.
 
 ## Trust and tests
+
+The per-operation authority, backing theorems and tests, and trusted components
+are recorded in `ve/assurance-manifest.json` and specified, with its executable
+bindings, in [assurance-manifest.md](spec/assurance-manifest.md).
 
 Trusted for the experimental acceptance/evaluation path: Python and its standard
 library/runtime; strict byte and JSON decoding; environment/model validators;

@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 import copy
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 from subprocesses import HANG_TIMEOUT
 import subprocess
 import sys
@@ -213,10 +213,14 @@ def test_rust_closure_search(rust_executable):
             assert not model.relations['unused']
 
 
-def test_seeded_3000_closure_case_fuzz(rust_executable):
+def test_seeded_3000_closure_case_fuzz(rust_executable, tmp_path):
+    output = tmp_path / 'closure-fuzz.jsonl'
     run = subprocess.run([sys.executable, str(ROOT/'rust/fuzz_closure.py'), '--rust', str(rust_executable),
-                          '--count', '3000'], cwd=ROOT, text=True, capture_output=True, timeout=HANG_TIMEOUT)
+                          '--count', '3000', '--output', str(output)], cwd=ROOT, text=True,
+                         capture_output=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
+    assert len(output.read_text().splitlines()) == 3000
+    assert output.with_suffix('.summary.json').exists()
     summary = json.loads(run.stdout)
     assert summary['agreements'] == summary['identity_agreements'] == 3000
     assert all(summary[k] > 0 for k in ('true', 'false', 'body_cases', 'nested_cases', 'empty_domain_cases',
@@ -323,21 +327,20 @@ def test_rust_shared_search(rust_executable):
                 assert check_countermodel(env,premises,conclusion,FiniteModel.from_dict(env,r['model'])).valid
 
 
-def test_seeded_5000_case_fuzz(rust_executable):
+def test_seeded_5000_case_fuzz(rust_executable, tmp_path):
+    output = tmp_path / 'fuzz.jsonl'
     run = subprocess.run([sys.executable,str(ROOT/'conformance/fuzz.py'),'--rust',str(rust_executable),
-                          '--count','5000'],cwd=ROOT,text=True,capture_output=True,timeout=HANG_TIMEOUT)
+                          '--count','5000','--output',str(output)],cwd=ROOT,text=True,
+                         capture_output=True,timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
+    assert len(output.read_text().splitlines()) == 5000
+    assert output.with_suffix('.summary.json').exists()
     result = json.loads(run.stdout)
     assert result['agreements'] == 5000
 
 
 @pytest.fixture(scope='session')
 def lean_shared_executable():
-    lake = shutil.which('lake')
-    if not lake: pytest.skip('lake is not available')
-    if not os.environ.get('VE_LEAN_PREBUILT'):
-        run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=HANG_TIMEOUT)
-        assert run.returncode == 0, run.stdout + run.stderr
     assert (ROOT/'lean/.lake/build/bin/ve_conformance').exists()
     return ROOT/'lean/.lake/build/bin/ve_conformance'
 

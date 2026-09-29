@@ -10,8 +10,8 @@ order countermodels but does not search for them.
 from __future__ import annotations
 
 import json
-from copy import deepcopy
 import os
+from copy import deepcopy
 import re
 import shutil
 from subprocesses import HANG_TIMEOUT

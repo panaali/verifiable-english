@@ -54,7 +54,7 @@ ALLOWED_ENVIRONMENT = (
 # Added only for the stage that needs them.
 STAGE_ENVIRONMENT = {
     "cargo": ("CARGO_NET_OFFLINE",),
-    "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_LEAN_PREBUILT",
+    "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
 
@@ -420,7 +420,7 @@ def main() -> int:
             pytest_env = record_environment(result, "pytest", {
                 **env, "VE_GATE_PYTEST_RESULT": str(events_file),
                 "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
-                "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
+                "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
                 "VE_RUST_BINARY": str(rust_binary)})
             try:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
