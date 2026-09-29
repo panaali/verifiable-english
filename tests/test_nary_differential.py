@@ -65,8 +65,8 @@ def lean_binary():
 
 @pytest.fixture(scope="module")
 def rust_binary():
-    binary = ROOT / ("rust/target/release/ve" if os.environ.get("VE_RUST_PREBUILT")
-                     else "rust/target/debug/ve")
+    binary = (Path(os.environ["VE_RUST_BINARY"]) if os.environ.get("VE_RUST_PREBUILT")
+              else ROOT / "rust/target/debug/ve")
     if os.environ.get("VE_RUST_PREBUILT"):
         assert binary.is_file(), f"gate Rust build missing: {binary}"
         return binary

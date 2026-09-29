@@ -14,9 +14,10 @@ from ve.errors import InvalidModel
 from ve.model import FiniteModel
 
 
-LEAN = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_conformance"
-RUST = Path(os.environ.get("VE_W5_RUST_BIN", str(Path(__file__).resolve().parents[1] /
-                                          "rust/target/release/ve")))
+ROOT = Path(__file__).resolve().parents[1]
+LEAN = ROOT / "lean/.lake/build/bin/ve_conformance"
+RUST = Path(os.environ.get("VE_RUST_BINARY", os.environ.get(
+    "VE_W5_RUST_BIN", str(ROOT / "rust/target/release/ve"))))
 
 
 def _run(cases):

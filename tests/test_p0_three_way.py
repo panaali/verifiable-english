@@ -206,7 +206,7 @@ def lean_executable():
 @pytest.fixture(scope="module")
 def rust_executable():
     if os.environ.get("VE_RUST_PREBUILT"):
-        binary = ROOT / "rust/target/release/ve"
+        binary = Path(os.environ["VE_RUST_BINARY"])
         assert binary.is_file(), f"gate Rust build missing: {binary}"
         return binary
     cargo = shutil.which("cargo")

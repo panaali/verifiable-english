@@ -27,7 +27,7 @@ from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
-RUST = ROOT / "rust/target/release/ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
 
 
 @pytest.fixture(scope="module")
