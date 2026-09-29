@@ -33,6 +33,7 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
                                     smallest_queries, _exact, _exception,
                                     soft_over_reproducers, soft_over_accepted)
 from ve.softnorms import decode_rule
+from subprocesses import ChildCPU
 
 REJECTED_INPUTS = 4626
 ACCEPTED_NEAR_LIMIT = 90
@@ -287,15 +288,15 @@ def test_expanded_conflict_targets_are_checked_before_acceptance(count, target):
 @pytest.mark.parametrize("name,raw,rules,code", list(soft4_reproducers()))
 def test_exponential_unfoldings_are_rejected_without_being_built(name, raw, rules, code):
     # Each unfolding is beyond 2 ** 24 nodes; both validators size it from their
-    # per-rule tables. A build of it would not finish within these bounds.
-    started = time.monotonic()
+    # per-rule tables. A build of it would not finish within these bounds, which
+    # are CPU seconds (tests/subprocesses.py), not elapsed time under load.
+    started = time.process_time()
     with pytest.raises(VEError) as python_error:
         load_soft_document(raw, rules)
-    assert time.monotonic() - started < 10
-    started = time.monotonic()
-    with pytest.raises(VEError) as lean_error:
+    assert time.process_time() - started < 10
+    with ChildCPU() as lean_cpu, pytest.raises(VEError) as lean_error:
         _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
-    assert time.monotonic() - started < 30
+    assert lean_cpu.seconds < 30
     assert python_error.value.code == lean_error.value.code == code
 
 
