@@ -307,9 +307,19 @@ pub fn evaluate_risk_condition(
     if ranges.len() > 64 {
         return error("ResourceLimit", "risk quantities");
     }
+    for (tag, scale) in scales {
+        let digits = scale.to_string();
+        if digits.len() > 40 || !digits.starts_with('1') || !digits[1..].bytes().all(|b| b == b'0')
+        {
+            return error("UnitScale", tag.clone());
+        }
+    }
     for (id, range) in ranges {
         if range.lo > range.hi {
             return error("RiskRange", id.clone());
+        }
+        if range.tag != "dimensionless" && !scales.contains_key(&range.tag) {
+            return error("UnknownSymbol", format!("unit {}", range.tag));
         }
     }
     let mut counts = BTreeMap::new();
@@ -542,5 +552,34 @@ mod tests {
         assert_eq!(rows[0]["leads"], false);
         assert_eq!(rows[1]["might"], true);
         assert_eq!(rows[1]["unexamined"], true);
+    }
+
+    #[test]
+    fn prepared_units_must_be_declared_grids() {
+        let ranges = BTreeMap::from([(
+            "q".into(),
+            Range {
+                tag: "count".into(),
+                lo: 0.into(),
+                hi: 1.into(),
+            },
+        )]);
+        let condition = json!(["top"]);
+        assert_eq!(
+            evaluate_risk_condition(&condition, &ranges, &BTreeMap::new())
+                .unwrap_err()
+                .code,
+            "UnknownSymbol"
+        );
+        assert_eq!(
+            evaluate_risk_condition(
+                &condition,
+                &ranges,
+                &BTreeMap::from([("count".into(), 2.into())])
+            )
+            .unwrap_err()
+            .code,
+            "UnitScale"
+        );
     }
 }
