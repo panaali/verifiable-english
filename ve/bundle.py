@@ -15,16 +15,16 @@ them sound (`bundle_sound`).
 """
 from __future__ import annotations
 
-import subprocess
-
 from .admission import _decode_reading_set, _disjunction, parse_label, validate_label
+from .assurance import semantic_entry
 from .ast import formula_from_data, formula_to_data
+from .backends import lean as lean_backend
 from .background import background
 from .entailment import check_entailment_certificate
 from .environment import Environment
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
-from .wire import canonical_json, digest, require_fields
+from .wire import digest, require_fields
 
 LEAN_REPLAY_TIMEOUT = 120
 
@@ -83,22 +83,27 @@ def _bind_leaf(label, formula, reading_sets):
 
 
 def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> dict:
-    """The Lean route's verdict on a whole bundle, in one run."""
-    from .wire import loads_json
+    """The Lean route's verdict on a whole bundle, in one run.
+
+    Raises `CheckerUnavailable` when Lean gives no well-formed answer (an `ok`
+    row must carry `lemmas`, one meaning-ID string per submitted lemma, and
+    `checked`, their count); a returned row with `status: error` is Lean's
+    rejection.
+    """
     case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
              **({} if document is None else {"document": document})}]
-    try:
-        run = subprocess.run([str(lean_executable), "route"], input=canonical_json(case),
-                             capture_output=True, timeout=LEAN_REPLAY_TIMEOUT)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise VEError("Lean lemma replay unavailable") from exc
-    rows = loads_json(run.stdout)
-    if type(rows) is not list or len(rows) != 1:
-        raise VEError("Lean lemma replay returned a malformed result")
-    return rows[0]
+    return lean_backend.run("bundle.check", lean_executable, case, runner="ve_conformance",
+                            mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
 
 
+@semantic_entry("bundle.check")
 def check_bundle(data, *, lean_executable=None):
+    """Replay a lemma bundle; with `lean_executable`, Lean must also accept it.
+
+    `lean_outcome` is `accepted`, `not_requested`, or `not_applicable` (no
+    lemmas). A Lean rejection raises `VEError`; Lean giving no answer raises
+    `CheckerUnavailable`, which is operational and never a verdict.
+    """
     require_fields(data, {"version", "environment", "lemmas"} |
                    ({"document"} if type(data) is dict and "document" in data else set()))
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
@@ -180,12 +185,14 @@ def check_bundle(data, *, lean_executable=None):
                         "english": _english(env, [names_by_id[c] for c in item["cites"]], conclusion)})
         names_by_id[mid] = item["name"]
     lean_checked = False
+    lean_outcome = "not_requested" if lean_executable is None else "not_applicable"
     if lean_executable is not None and data["lemmas"]:
         row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"], document)
         lean_checked = (row.get("status") == "ok" and
                         row.get("lemmas") == [report["meaning_id"] for report in reports])
         if not lean_checked:
             raise VEError("Lean did not accept every lemma certificate")
+        lean_outcome = "accepted"
     return {"status": "Checked", "environment_id": env.environment_id,
             "bundle_id": digest("ve-bundle-v0\n", data), "lemmas": reports,
-            "lean_checked": lean_checked}
+            "lean_checked": lean_checked, "lean_outcome": lean_outcome}
