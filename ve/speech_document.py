@@ -18,7 +18,7 @@ from .errors import ResourceLimit, VEError
 from .identity import source_id
 from .openterms import validate_open_terms
 from .readings import active_reading_sets, plan_choices, validate_narrowings, validate_reading_sets
-from .speech_acts import (SpeechDocument, choice_kind_conflicts, content_kind_ok, effective_scope,
+from .speech_acts import (SpeechDocument, ascii_wording, choice_kind_conflicts, content_kind_ok, effective_scope,
                           fixed_assertion_ids, formula_shape, latest_reading_sets, query_records,
                           wording_text, _reading_choice)
 from .wire import canonical_json
@@ -193,6 +193,8 @@ class SpeechSource:
                                **({"parent_id": parent} if parent is not None else {})})
         if cursor != len(source):
             raise VEError("unit spans do not partition all source bytes")
+        for text in self.fences.values():  # 3.2: a fence is ASCII as a span is (`wording_text`)
+            ascii_wording(text)
         self.open_terms = meta.get("open_terms", [])
         open_names = validate_open_terms(self.env, self.open_terms)
         for unit in self.units:

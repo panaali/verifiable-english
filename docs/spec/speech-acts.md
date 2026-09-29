@@ -390,11 +390,19 @@ type, `null` included, is `InvalidInput: speech wording` in both cores); the sou
 Its wording is the unit's span, in the inline and the English-fenced form alike (a fence is the unit's content, which
 the choice replaces, and never stands for the source sentence), and it passes that wording to the core as `source`
 for every unit with a signed choice, whatever the unit's original kind, as for every `instruction` or `question` unit.
+**A speech-act wording is ASCII only.** A wording holding any character outside U+0000 to U+007F is
+`InvalidInput: non-ASCII speech wording` (Python's `ascii_wording`, Lean's `asciiWording`) before it is classified,
+parsed or trimmed: each core checks a unit's string `source` when it decodes the unit, whatever its kind and whether or
+not it has a choice; the source wrapper checks every unit's span and every fence, a fence a signed choice replaces
+included; the speech parser checks its wording and every formula a wording embeds (a polar, which or consequence body,
+a guard, a proof task's target, an asserted fence) before P0's English, which folds and splits Unicode, reads it. So
+"Is it the case that atlas is checKed?" (U+212A) and "Is it the case that atlas is checked?" with U+00A0 for its
+second space are rejected in every checker and both source forms, never read as "atlas is checked".
 The surface kind reads the wording and each act phrase through **one normalisation, ASCII only** (Python's
 `surface_words`, Lean's `surfaceWords`): the six ASCII whitespace characters of Python's `string.whitespace` (space,
 `\t`, `\n`, `\r`, `\x0b`, `\x0c`) separate words, runs collapse to one space and none leads or trails; only `A`-`Z`
-fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), other control characters
-(`\x1c`-`\x1f`, `\x85`) and non-ASCII letters, is an ordinary character. Every other reader of a wording keeps that
+fold to `a`-`z`. Every other character, the other ASCII control characters (`\x1c`-`\x1f`, `\x7f`) included, is an
+ordinary character; a non-ASCII character never reaches it. Every other reader of a wording keeps that
 rule: the source wrapper trims a span and a fence, and the speech parser its wording, of those six ASCII whitespace
 characters only (Python's `wording_text`), and the parser matches act phrases, constant names and glosses folding only
 `A`-`Z` (`ascii_fold`), so a wording the parser reads as a command or question has that surface kind and no path
@@ -848,6 +856,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route (1.6) | error |
 | `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3), including a reading question whose `{"open": [...]}` meaning or open-term declaration differs from the derived form (4.6) | error |
 | `InvalidInput: speech template slot must stand apart` | environment load: a slot of an act phrase or a (negative) verbalisation touches a letter, digit, `'`, `-`, `_`, brace or non-ASCII character (3.1) | error |
+| `InvalidInput: non-ASCII speech wording` | a unit's `source`, span or fence, or a wording the speech parser reads, holds a character outside U+0000 to U+007F; checked before the wording is classified or read (3.2) | error |
 | `UnknownSymbol: <constant>` / `UnknownSymbol: sort <s>` | undeclared addressee, definite constant, command argument (a query constant included) or question sort (3.2) | error |
 | `TypeMismatch: command args for <u>` / `TypeMismatch: addressee` | a command argument of the wrong sort or number; the addressee's sort is not the act's slot 0 | error |
 | `InvalidInput: query` / `InvalidInput: duplicate query` | a query record whose `id`, `premises` or `target` is not of its shape; a repeated query id (3.2) | error |
@@ -1727,6 +1736,7 @@ statements of section 8 are unchanged.
 | A, slot-first acts: with the W1 act "{0} {1} click", the parser read "Check click." as a command, but no classifier has a slot's fillers, so both cores accepted an asserted choice on it and rejected the instruction choice | 3.2: an imperative begins with its act's verb; an act whose first word after `{0}` is a slot has none, classifies no wording and is read as no command by the parser. |
 | B, parser case and trimming: the parser upper-cased a command's first letter with Unicode case mapping ("Do not ßcheck." forbade the act "{0} sscheck") and Unicode-stripped a which-question's alternatives | 3.2: the parser's command match folds only `A`-`Z` on both sides and alternatives are trimmed of ASCII whitespace only. |
 | A, attached slots: with the acts "{0} click{1}" (likewise "click-{1}", "click'{1}", "pre{1}post"), W1 accepted the act and the parser read "Clickcheck." as an instruction, but both classifiers read it as a declarative, so both cores and both source forms accepted an asserted choice on it and rejected the instruction choice | 3.1 (orchestrator restriction): under `speech-acts@0` every slot of an act or verbalisation template stands apart from its words, `InvalidInput: speech template slot must stand apart` at environment load in both checkers. |
+| B, embedded formulas: with `reviewed` verbalised as "{0} is checked", "Is it the case that atlas is checKed?" (U+212A) and the same with U+00A0 for a space were read by P0's English, which folds and splits Unicode, and accepted by both loaders; command guards reproduced | 3.2 (orchestrator restriction): every speech-act wording (span, fence, `source`, embedded formula) is ASCII only, `InvalidInput: non-ASCII speech wording` before it is classified or read, in both cores and the source wrapper. |
 
 ## Change log
 

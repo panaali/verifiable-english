@@ -1284,6 +1284,7 @@ def test_speech_choice_on_a_binding_wording_is_unchecked(lean):
         assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok"
 
 
+NON_ASCII = "InvalidInput: non-ASCII speech wording"
 _SPACES = [" ", "\t", "\n", "\r", "\x0b", "\x0c"]
 _NOT_SPACES = ["\x1c", "\x1d", "\x1e", "\x1f", "\x85", "\xa0", " ", " ", " ", "　", "\x00", "\x7f"]
 
@@ -1312,9 +1313,12 @@ def test_surface_normalisation_is_one_ascii_definition_in_both_cores(lean):
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
     E = Environment(env)
     assert surface_kind(E, "Atlas is reviewed?\x0c") == "question"
-    assert surface_kind(E, "Atlas is reviewed?\x85") == surface_kind(E, "Atlas is reviewed?\xa0") == "asserted"
+    assert surface_kind(E, "Atlas is reviewed?\x1c") == surface_kind(E, "Atlas is reviewed?\x7f") == "asserted"
     assert surface_kind(E, "Do\x0bnot  click check.") == surface_kind(E, "DO NOT CLICK CHECK.") == "instruction"
-    assert surface_kind(E, "Iſ atlas reviewed.") == surface_kind(E, "İs atlas reviewed.") == "asserted"
+    # A non-ASCII wording is rejected before it is classified (3.2).
+    for wording in ["Atlas is reviewed?\x85", "Atlas is reviewed?\xa0", "Iſ atlas reviewed.", "İs atlas reviewed."]:
+        with pytest.raises(VEError, match=f"^{NON_ASCII}$"):
+            surface_kind(E, wording)
     assert surface_words("\x0c A\tB C \n") == "a b c"
     choices = [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
                ("instruction", command("require", "click_required", ["check"]))]
@@ -1324,7 +1328,7 @@ def test_surface_normalisation_is_one_ascii_definition_in_both_cores(lean):
             document, case = _choice_case(env, wording, kind, content)
             cases.append(case)
             python.append(_outcome(lambda: core(env, document)))
-            expected = ("InvalidInput: choice kind"
+            expected = (NON_ASCII if not wording.isascii() else "InvalidInput: choice kind"
                         if surface_kind(E, wording) in ("asserted", "question", "instruction")
                         and surface_kind(E, wording) != kind else "ok")
             assert python[-1] == expected, (wording, kind)
@@ -1405,9 +1409,12 @@ def test_unary_imperative_is_an_instruction_in_both_cores(lean, tmp_path):
             document, case = _choice_case(env, wording, kind, content)
             assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == expected, (wording, kind)
     # A word that only begins with the verb is no imperative: "clicked", "clicks", "click-through", "click_rate".
-    for wording in ["Clicked.", "Clicks.", "Click-through is fine.", "Click_rate is high.", "Click2.", "Clické."]:
+    for wording in ["Clicked.", "Clicks.", "Click-through is fine.", "Click_rate is high.", "Click2."]:
         document, case = _choice_case(env, wording, "asserted", choices["asserted"])
         assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok", wording
+    # A non-ASCII letter never continues or ends a verb: the wording is rejected before it is classified.
+    document, case = _choice_case(env, "Click\u00e9.", "asserted", choices["asserted"])
+    assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == NON_ASCII
 
 
 def test_every_parsed_speech_act_has_its_surface_kind(lean):
@@ -1545,7 +1552,7 @@ def test_speech_parser_folds_and_trims_ascii_only():
         content, kind = parse_speech(E, f"Which one of {alternatives} is reviewed?", E.speech_acts)
         assert (kind, content["domain"]) == ("question", ["atlas", "beacon"]), alternatives
     for alternatives in ["atlas and \u00a0beacon", "atlas\u00a0, beacon", "atlas, beacon\u2003"]:
-        with pytest.raises(VEError, match="UnknownAlternative"):
+        with pytest.raises(VEError, match=f"^{NON_ASCII}$"):
             parse_speech(E, f"Which one of {alternatives} is reviewed?", E.speech_acts)
 
 
@@ -1639,11 +1646,11 @@ def test_source_wording_is_one_ascii_trim_whatever_the_original_kind(lean, tmp_p
     # Lean reads no English: it agrees on the choice kind, and Python alone also parses a chosen command or question.
     kind_error = "InvalidInput: choice kind"
     assert [_lean_outcome(r) == kind_error for r in run(cases)] == [p == kind_error for p in python]
-    # The reproducer: accepted whatever the original kind, as by both cores.
+    # The reproducer: one outcome whatever the original kind, as by both cores, now the ASCII rule's (3.2).
     span = "Atlas is reviewed?\u00a0\n"
     for original, original_content in _ORIGINALS.items():
         base = {**unit("u", 0, original, original_content), "span": [0, len(span.encode())]}
-        assert _source_outcome(env, span, [base], sets=[reading_set("u", 1, "authored", *_CHOICES[0])]) == "ok"
+        assert _source_outcome(env, span, [base], sets=[reading_set("u", 1, "authored", *_CHOICES[0])]) == NON_ASCII
 
 
 ATTACHED = "InvalidInput: speech template slot must stand apart"
@@ -1696,6 +1703,65 @@ def test_attached_template_slots_are_rejected_at_environment_load(lean, tmp_path
     env = _act_env("{0} click{1}")
     env["speech_acts"]["extra"] = 1
     assert _env_outcomes(tmp_path, "block-first", env)[:3] == ["InvalidInput: speech_acts block"] * 3
+
+
+def _checked_env():
+    """F0 with `reviewed` verbalised as "{0} is checked", the speech-acts6 loop B reproducer's environment."""
+    env = F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is checked"
+    return env
+
+
+def test_non_ascii_wording_is_rejected_before_it_is_read(lean, tmp_path):
+    # Regression (speech-acts6 loop B): with `reviewed` verbalised as "{0} is checked", "Is it the case that atlas
+    # is checKed?" (U+212A) and "Is it the case that atlas is checked?" were read by P0's English, which
+    # folds and splits Unicode, so both loaders accepted them, and command guards reproduced.  Every speech-act
+    # wording (a sentence, a fence and the formula it embeds) is ASCII only, rejected before it is classified or
+    # read, in both cores and both source forms (3.2).
+    env = _checked_env()
+    E = Environment(env)
+    atlas = U("reviewed", "atlas")
+    guarded = {"command": {"force": "require", "act": "click_required", "args": ["check"], "guard": atlas}}
+    cases = []
+    for text, kind, content in [
+            ("Is it the case that atlas is checked?", "question", polar(atlas)),
+            ("Is atlas checked?", "question", polar(atlas)),
+            ("Click check, if atlas is checked.", "instruction", guarded)]:
+        for bad in (text.replace("k", "K", 1), text.replace("atlas ", "atlas ", 1), text + " ",
+                    text.replace("atlas", "аtlas", 1)):
+            with pytest.raises(VEError, match=f"^{NON_ASCII}$"):
+                parse_speech(E, bad, E.speech_acts)
+            document = {"units": [{**unit("u", 0, kind, content), "source": bad}]}
+            assert _outcome(lambda: core(env, document)) == NON_ASCII, bad
+            cases.append({"id": "ascii", "kind": "speech-elaborate", "environment": env, "document": document})
+            _, paths = _fenced_pair(tmp_path, f"ascii-{len(cases)}", env, [bad + "\n"], [unit("u", 0, kind, content)],
+                                    "u")
+            assert [_outcome(lambda p=p: load_speech_document(p)) for p in paths] == [NON_ASCII] * 2, bad
+            # Before the choice check: no signed choice of any kind is read against it.
+            for choice_kind, choice_content in [("asserted", {"ast": atlas}), (kind, content)]:
+                document, case = _choice_case(env, bad, choice_kind, choice_content)
+                assert _outcome(lambda: core(env, document)) == NON_ASCII, bad
+                cases.append(case)
+        # The ASCII wording is read in every checker.
+        document = {"units": [{**unit("u", 0, kind, content), "source": text}]}
+        assert _outcome(lambda: core(env, document)) == "ok"
+        assert _lean_outcome(run1({"id": "ascii-ok", "kind": "speech-elaborate", "environment": env,
+                                   "document": document})) == "ok"
+    assert [_lean_outcome(r) for r in run(cases)] == [NON_ASCII] * len(cases)
+    # The embedded formulas of consequence questions and proof tasks, and an asserted fence.
+    for bad in ["Does it follow from these premises that atlas is checKed?",
+                "Prove that atlas is checked using these premises."]:
+        with pytest.raises(VEError, match=f"^{NON_ASCII}$"):
+            parse_speech(E, bad, E.speech_acts, query="q1")
+    _, paths = _fenced_pair(tmp_path, "ascii-asserted", env, ["Atlas is checKed.\n"],
+                            [unit("u", 0, "asserted", {"ast": atlas})], "u")
+    assert [_outcome(lambda p=p: load_speech_document(p)) for p in paths] == [NON_ASCII] * 2
+    # A fence is ASCII even under an ASCII span, and even where a signed choice replaces it.
+    span = "Is atlas checked?\n"
+    fenced = {**unit("u", 0, "question"), "content": {"fence": "u"}, "surface": "english", "span": [0, len(span)]}
+    for sets in ([], [reading_set("u", 1, "authored", "question", polar(atlas))]):
+        assert _source_outcome(env, span, [fenced], {"u": "Is atlas checKed?\n"}, sets) == NON_ASCII
+        assert _source_outcome(env, span, [fenced], {"u": "Is atlas checked?\n"}, sets) == "ok"
 
 
 def test_answer_metadata_types_and_unit_meaning_id(lean):
