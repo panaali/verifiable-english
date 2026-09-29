@@ -617,11 +617,24 @@ pub fn regenerate_risk_cells(
         let might = evaluate_risk_condition(necessary, ranges, scales)?.0;
         values.push((might, leads));
     }
-    for (action, harm, _, sufficient, necessary) in &cells {
+    for (action, harm, source, sufficient, necessary) in &cells {
         if !same_condition(sufficient, necessary, ranges, scales) {
             let inconsistency = json!(["and", sufficient, ["not", necessary]]);
             if evaluate_risk_condition(&inconsistency, ranges, scales)?.0 {
-                return error("SufficientOutsideNecessary", format!("{action}/{harm}"));
+                // 4.4 V8: a side given by a stated cell (`leads`, `cannot`) makes the
+                // failure RiskInconsistent; two conditions make it SufficientOutsideNecessary.
+                let stated = |key| {
+                    source
+                        .and_then(|s| s.get(key))
+                        .and_then(Value::as_bool)
+                        == Some(true)
+                };
+                let code = if stated("sufficient_stated") || stated("necessary_stated") {
+                    "RiskInconsistent"
+                } else {
+                    "SufficientOutsideNecessary"
+                };
+                return error(code, format!("{action}/{harm}"));
             }
         }
     }

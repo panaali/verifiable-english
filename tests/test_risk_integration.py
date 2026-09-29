@@ -148,8 +148,8 @@ def test_random_records_lean_and_rust_regenerate_the_same_cells():
     """Review C1 (Fable) / B8: Lean against Rust on random records, not hand-built cells only.
 
     Each record's conditions and statements become Rust's prepared sides (a necessary condition
-    gives N, a sufficient one S, an exact one both; `leads` gives S = ⊤, `cannot` N = ⊥, `might`
-    the stated flag). Lean's regenerated `might`/`leads` tables, or its diagnostic, must equal Rust's.
+    gives N, a sufficient one S, an exact one both; `leads` gives S = ⊤ and `cannot` N = ⊥, both
+    marked as stated sides, and `might` the stated flag). Lean's regenerated `might`/`leads` tables, or its diagnostic, must equal Rust's.
     """
     import random
     from conformance.risk import statement
@@ -186,9 +186,9 @@ def test_random_records_lean_and_rust_regenerate_the_same_cells():
                 stated = rng.choice(("leads", "cannot", "might"))
                 log.add(seq, f"T{seq}", "statement", statement(action, harm, stated))
                 if stated == "leads":
-                    cell["sufficient"] = ["top"]
+                    cell["sufficient"], cell["sufficient_stated"] = ["top"], True
                 elif stated == "cannot":
-                    cell["necessary"] = ["bottom"]
+                    cell["necessary"], cell["necessary_stated"] = ["bottom"], True
                 else:
                     cell["stated_might"] = True
             else:
@@ -223,15 +223,9 @@ def test_random_records_lean_and_rust_regenerate_the_same_cells():
         kinds[l["status"]] += 1
         if l["status"] == "error":
             assert r["status"] == "error", (case["id"], l, r)
-            # Rust reports V8 as SufficientOutsideNecessary for every cell; Lean says RiskInconsistent
-            # when a stated cell gives a side (4.4 V8), and adds the witness case. Compare the cell.
+            # Lean adds the witness case of S ∧ ¬N to V8's text (4.3); Rust gives the diagnostic only
             text = l["error"].split(", case ")[0]
-            code, _, message = text.partition(": ")
-            if code in ("SufficientOutsideNecessary", "RiskInconsistent"):
-                assert r["error"]["code"] in ("SufficientOutsideNecessary", "RiskInconsistent"), (l, r)
-                assert r["error"]["message"] == message, (l, r)
-            else:
-                assert f'{r["error"]["code"]}: {r["error"]["message"]}' == text, (case["id"], l, r)
+            assert f'{r["error"]["code"]}: {r["error"]["message"]}' == text, (case["id"], l, r)
             continue
         assert r["status"] == "ok", (case["id"], l, r)
         lean_cells = {(row["alternative"], row["harm"]): [True, False] for row in l["tables"]["might"]}
