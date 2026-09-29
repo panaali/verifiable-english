@@ -396,12 +396,16 @@ def test_rights_admission_validates_coupled_reading_labels(lean):
         "by": "translator", "reason_spans": ["u1"]}
     good = {**base, "couplings": [coupling]}
     bad = {**base, "couplings": [{**coupling, "axis": "missing"}]}
+    many = {**base, "couplings": [{**coupling, "id": f"c{i}"} for i in range(9)]}
     rows = run(lean, [{"id": "good", "kind": "admission", "environment": raw,
                        "document": good},
                       {"id": "bad", "kind": "admission", "environment": raw,
-                       "document": bad}])
+                       "document": bad},
+                      {"id": "many", "kind": "admission", "environment": raw,
+                       "document": many}])
     assert rows[0]["admitted"] is True
     assert rows[1]["error"] == "CouplingLabelMissing: c-force, a"
+    assert rows[2]["error"] == "ResourceLimit: couplings"
 
 
 def test_soft_cases_delegate_unchanged(lean):

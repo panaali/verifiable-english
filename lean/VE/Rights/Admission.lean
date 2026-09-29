@@ -92,6 +92,7 @@ def validateCouplings (document : Json) : Except String (List String) := do
     | .ok (.arr xs) => pure xs.toList
     | .ok _ => throw "invalid couplings"
     | .error _ => pure []
+  if couplings.length > 8 then throw "ResourceLimit: couplings"
   let mut ids : List String := []
   for c in couplings do
     VE.Bridge.exactFields c ["id", "axis", "sets", "by", "reason_spans"]
