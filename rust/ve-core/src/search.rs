@@ -342,7 +342,7 @@ impl<'a> Models<'a> {
                 Err(err) if err.code == "InvalidModel"
                     && (err.message.starts_with("literals:") || err.message.ends_with("(literals)")
                         || err.message.starts_with("flags:") || err.message.ends_with("(flags)")
-                        || err.message.ends_with("(profile)")) => {
+                        || err.message.ends_with("(profile)") || err.message.ends_with("(soft)")) => {
                     continue;
                 }
                 Err(err) => return Err(err),

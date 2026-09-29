@@ -51,6 +51,17 @@ fn nonvacuity(env: &Environment, v: &Value) -> Result<(Option<Formula>, bool)> {
 }
 /// The route kinds that need only a gated envelope: the label grammar and the
 /// dependency-DAG order (same diagnostics as Python and the Lean `route`).
+/// The case's `soft_premises` (a validated soft document's Background slot),
+/// typed over the environment and attached to it.
+fn soft(env: Environment, v: &Value) -> Result<Environment> {
+    match v.get("soft_premises") {
+        None => Ok(env),
+        Some(asts) => {
+            let premises = Document::from_value(&env, asts)?.formulas().to_vec();
+            Ok(env.with_soft_premises(premises))
+        }
+    }
+}
 fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Environment::from_value(field(v, "environment")?)?;
     let id = v.get("id").cloned().unwrap_or(json!(""));
@@ -120,7 +131,7 @@ fn case(v: &Value) -> Result<Value> {
             "status":"ok","well_typed":true}));
     }
     if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
-        let env = Environment::from_value(field(v, "environment")?)?;
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
         if env.order() {
             return order_case(v);
         }
@@ -138,7 +149,7 @@ fn case(v: &Value) -> Result<Value> {
         return Ok(out);
     }
     if v.get("kind").and_then(Value::as_str) == Some("distinguishing-model") {
-        let env = Environment::from_value(field(v, "environment")?)?;
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
         if env.order() {
             return order_case(v);
         }
@@ -166,7 +177,7 @@ fn case(v: &Value) -> Result<Value> {
     {
         return order_case(v);
     }
-    let env = Environment::from_value(field(v, "environment")?)?;
+    let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
     if let Some(conclusion) = v.get("conclusion") {
         let ps = field(v, "premises")?
             .as_array()
