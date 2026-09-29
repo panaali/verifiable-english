@@ -216,3 +216,59 @@ def decision_17(log, policy, *, cites=None, alternatives=None, facts=(), seq=41,
     content = record(record_id, chooser, label, policy, alternatives or D17_ALTERNATIVES, D17_QUANTITIES,
                      log.cite(*cites), facts)
     return log.add(seq, id_, "decision", content)
+
+
+def asimov_risk(harms, classes=("fatal", "injuring"), fulfilment=None):
+    """Environment `asimov-risk` (8.1) with one variant's harm constants and classes."""
+    predicates = {
+        "available": base(["action", "robot"], "{0} is available to {1}"),
+        "leads_to": base(["action", "harm"], "{0} leads to {1}"),
+        "inaction": base(["action"], "{0} is inaction"),
+        "taken": base(["action"], "{0} is taken"),
+        "harms_human": base(["harm"], "{0} is a harm to a human being"),
+        "lawful": base(["action"], "{0} is lawful"),
+        "permitted": {"arguments": ["action"], "description": "permission", "regulated":
+                      {"role": "permission", "default": "allow", "act": "{0} be performed"}},
+        "required": {"arguments": ["action"], "description": "obligation", "regulated":
+                     {"role": "obligation", "default": "deny", "act": "{0} be performed", "permission": "permitted"}},
+        "prevent_required": {"arguments": ["robot", "harm"], "description": "prevention", "regulated":
+                             {"role": "obligation", "default": "deny", "act": "{0} prevent {1}"}},
+    }
+    alternatives = {"chooser": "robot", "action": "action", "harm": "harm", "available": "available",
+                    "leads_to": "leads_to", "outcomes": "signed", "decided_by": "Asimov case annotator",
+                    "performed": {"permission": "permitted", "obligation": "required"},
+                    "inaction": "inaction", "taken": "taken"}
+    if fulfilment:
+        alternatives["fulfilments"] = [{"obligation": "prevent_required", "body": fulfilment}]
+    return {"language": LANGUAGE, "profiles": ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"],
+            "spec_revision": SPEC_REVISION,
+            "vocabulary": {"sorts": {s: {"description": s} for s in ("robot", "action", "harm")},
+                           "predicates": predicates,
+                           "constants": {h: const("harm", text) for h, (text, _) in harms.items()}},
+            "alternatives": alternatives,
+            "risk": {"severity": {"sort": "severity", "classes": list(classes),
+                                  "more_severe": [[classes[0], classes[1]]], "unranked": [],
+                                  "decided_by": "the Asimov case annotator"},
+                     "harm_classes": [[h, c] for h, (_, c) in harms.items()],
+                     "unexamined": "possible"}}
+
+
+def asimov_rules():
+    """Rules 1, 2, 3, 2x and 8 of 2.5 (guards in the rule's context, reversed)."""
+    human_might = ["exists", "harm", ["and", ["unary", "harms_human", ["var", 0]],
+                                      ["binary", "risk__might_lead_to", ["var", 1], ["var", 0]]]]
+    human_allows = ["exists", "harm", ["and", ["unary", "harms_human", ["var", 0]],
+                                       ["binary", "allows", ["var", 1], ["var", 0]]]]
+    unbeaten = ["exists", "robot", ["and", ["binary", "available", ["var", 1], ["var", 0]],
+                                    ["not", ["exists", "action", ["and", ["and",
+                                        ["binary", "available", ["var", 0], ["var", 1]],
+                                        ["not", ["eq", ["var", 0], ["var", 2]]]],
+                                        ["binary", "risk__less_worst", ["var", 0], ["var", 2]]]]]]]
+    return {
+        "1": rule("rule-1", "permitted", False, human_might),
+        "2": rule("rule-2", "permitted", False, human_allows),
+        "2x": rule("rule-2", "permitted", False, human_allows, over=["rule-3"]),
+        "3": rule("rule-3", "permitted", True, unbeaten, over=["rule-1"]),
+        "8": rule("rule-8", "prevent_required", True,
+                  ["and", ["unary", "harms_human", ["var", 0]], ["binary", "avoidable", ["var", 0], ["var", 1]]]),
+    }
