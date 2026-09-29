@@ -21,6 +21,7 @@ from Lean the result is `CheckerUnavailable`, never a Python-only verdict.
 """
 from __future__ import annotations
 
+import collections
 import hashlib
 from itertools import product
 import json
@@ -854,23 +855,48 @@ def _stored_block(meta, name):
         raise VEError(f"InvalidInput: document {name}: {exc}") from exc
 
 
+def _import_names(meta):
+    """The sibling file names a front matter's import pins give (`bytes`), for any front matter."""
+    block = meta.get("discourse")
+    imports = block.get("imports") if type(block) is dict else None
+    if type(imports) is not dict:
+        return []
+    return [pin["bytes"] for pin in imports.values() if type(pin) is dict and type(pin.get("bytes")) is str]
+
+
+def _sibling(directory, name):
+    """The bytes of a named sibling file, or None when there is no such file."""
+    path = directory / name
+    try:
+        return path.read_bytes() if path.is_file() else None
+    except OSError as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: import file {name} cannot be read ({exc})") from None
+
+
+def _embedded(meta, source):
+    """The bytes of the embedded units a front matter names, for any front matter, as Lean's
+    `embeddedBytes` reads them: the first unit with the named id, its span's two naturals as a
+    clamped byte range."""
+    block = meta.get("discourse")
+    declarations = block.get("documents") if type(block) is dict else None
+    units = meta.get("units")
+    if type(declarations) is not list or type(units) is not list:
+        return []
+    children = []
+    for declaration in declarations:
+        refers = declaration.get("refers") if type(declaration) is dict else None
+        name = refers.get("embedded") if type(refers) is dict else None
+        unit = next((u for u in units if type(u) is dict and u.get("id") == name), None) if type(name) is str else None
+        span = unit.get("span") if unit is not None else None
+        if type(span) is list and len(span) == 2 and all(type(x) is int and x >= 0 for x in span):
+            children.append(source[span[0]:span[1]])
+    return children
+
+
 def _stored_children(meta, source, directory):
     """The stored documents a document names: its imports' sibling files and embedded units."""
-    block = meta.get("discourse", {}) if type(meta.get("discourse")) is dict else {}
-    imports = block.get("imports", {}) if type(block.get("imports", {})) is dict else {}
-    children = []
-    for pin in imports.values():
-        path = directory / pin.get("bytes", "") if type(pin) is dict and type(pin.get("bytes")) is str else None
-        if path is not None and path.is_file():
-            children.append(path.read_bytes())
-    units = {u.get("id"): u for u in meta.get("units", []) if type(u) is dict}
-    for declaration in block.get("documents", []) if type(block.get("documents", [])) is list else []:
-        refers = declaration.get("refers") if type(declaration) is dict else None
-        if type(refers) is dict and "embedded" in refers and refers["embedded"] in units:
-            span = units[refers["embedded"]].get("span")
-            if _span(span, len(source)):
-                children.append(source[span[0]:span[1]])
-    return children
+    stored = (_sibling(directory, name) for name in _import_names(meta))
+    return [data for data in stored if data is not None] + _embedded(meta, source)
 
 
 def _chain(raws, directory, depth):
@@ -1212,45 +1238,49 @@ def route_executable():
 
 
 def is_discourse_text(raw):
-    """Whether a document text is a `ve-document@2` document, whose admission is Lean's. A text
-    that does not split is not (the loader rejects it with the Lean loader's own text)."""
-    from .document import _split
+    """Whether a document text is a `ve-document@2` document, whose admission is Lean's: its
+    front matter's `format`, read before and apart from every other Python check, so a body or
+    metadata Python reads differently still reaches Lean. A text whose front matter does not
+    decode is not: Lean's restricted JSON reads a subset of Python's, so Lean rejects it too."""
+    from .document import front_matter
     try:
-        return _split(raw)[0]["format"] == "ve-document@2"
+        meta = front_matter(raw)[0]
     except VEError:
         return False
+    return type(meta) is dict and meta.get("format") == "ve-document@2"
 
 
 def import_files(raw, directory):
     """The sibling files the stored chain of a document text names, by the name its import pins
     give (`bytes`), as the texts the Lean route receives as the case's `files`: the imports of the
-    document, of each stored document and of each embedded unit, to the nesting budget. A named
-    file Python would read but that is no UTF-8 text cannot reach Lean: `CheckerUnavailable`."""
+    document, of each stored document and of each embedded unit, to the nesting budget. Any front
+    matter is read, however malformed (its rejection is Lean's), and breadth first, so a file is
+    read at its least depth. A named file Python cannot read, or that is no UTF-8 text, cannot
+    reach Lean: `CheckerUnavailable`."""
     from .document import _split
-    files, pending = {}, [(raw, 0)]
-    while pending:
-        text, depth = pending.pop()
-        if depth > _MAX_NESTING:
+    files, done, queue = {}, set(), collections.deque([(raw, 0)])
+    while queue:
+        text, depth = queue.popleft()
+        if depth > _MAX_NESTING or text in done:
             continue
+        done.add(text)
         try:
             meta, source, _ = _split(text)
         except VEError:
             continue
-        block = meta.get("discourse") if type(meta.get("discourse")) is dict else {}
-        imports = block.get("imports", {}) if type(block.get("imports", {})) is dict else {}
-        for pin in imports.values():
-            name = pin.get("bytes") if type(pin) is dict else None
-            if type(name) is not str or name in files or not (directory / name).is_file():
+        for name in _import_names(meta):
+            if name in files:
                 continue
-            data = (directory / name).read_bytes()
+            data = _sibling(directory, name)
+            if data is None:
+                continue
             try:
                 files[name] = data.decode("utf-8")
             except UnicodeError:
                 raise CheckerUnavailable(f"CheckerUnavailable: import file {name} is not UTF-8 text, "
                                          f"which the Lean discourse route cannot receive") from None
-            pending.append((data, depth + 1))
-        for child in _stored_children({**meta, "discourse": {**block, "imports": {}}}, source, directory):
-            pending.append((child, depth + 1))
+            queue.append((data, depth + 1))
+        queue.extend((child, depth + 1) for child in _embedded(meta, source))
     return files
 
 
@@ -1303,13 +1333,16 @@ def _error_of(message):
 
 def rejection(lean, python_error):
     """The error of a document Lean does not admit. Lean's `NotImplemented` is an abstention, not
-    a verdict: `UnsupportedProfile`. Otherwise both reject, and Python's diagnostic is kept when
-    Python rejects too (a different code is the known limitation of 8); Python's own abstention
-    (`UnsupportedProfile`) or admission gives Lean's diagnostic."""
+    a verdict: `UnsupportedProfile`; nor is its `ResourceLimit`, which stays Lean's whatever
+    Python reads. Otherwise both reject, and Python's diagnostic is kept when Python rejects too (a
+    different code is the known limitation of 8); Python's own abstention (`UnsupportedProfile`),
+    resource limit or admission gives Lean's diagnostic."""
     message = lean["error"]
     if message.startswith("NotImplemented"):
         return UnsupportedProfile(f"UnsupportedProfile: the Lean discourse route abstains ({message})")
-    if python_error is not None and not str(python_error).startswith("UnsupportedProfile"):
+    if message.startswith("ResourceLimit"):
+        return _error_of(message)
+    if python_error is not None and not str(python_error).startswith(("UnsupportedProfile", "ResourceLimit")):
         return python_error
     return _error_of(message)
 
@@ -1331,16 +1364,22 @@ def validate_discourse(doc, lean):
         raise
     except VEError as exc:
         info, error = None, exc
+    except Exception:
+        # Python failing on a shape it does not expect is no diagnostic: Lean's verdict stands
+        info, error = None, None
     if lean["status"] == "error":
         raise rejection(lean, error)
     if info is None:
         block = doc["meta"]["discourse"]
-        active = active_reading_sets(doc["meta"].get("reading_sets", []))
         try:
+            active = active_reading_sets(doc["meta"].get("reading_sets", []))
             joint = _joint(block, active)
-        except VEError:
-            joint = {"status": "UNKNOWN", "budget": 64, "constraints": len(block.get("constraints", []))}
-        info = {"groups": block.get("groups", []), "joint": joint,
+        except Exception:
+            constraints = block.get("constraints", []) if type(block) is dict else []
+            joint = {"status": "UNKNOWN", "budget": 64,
+                     "constraints": len(constraints) if type(constraints) is list else 0}
+        groups = block.get("groups", []) if type(block) is dict else []
+        info = {"groups": groups if type(groups) is list else [], "joint": joint,
                 "presentations": getattr(error, "presentations", {})}
     if lean["admitted"] == "UNKNOWN":
         info["joint"] = {"status": "UNKNOWN", "budget": 64, "constraints": info["joint"]["constraints"]}

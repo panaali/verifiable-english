@@ -1855,3 +1855,143 @@ def test_python_verdict_is_lean_verdict_on_wording_variants(lean, tmp_path):
             assert isinstance(python, str) and not python.startswith("CheckerUnavailable"), where
             outcomes["rejected"] += 1
     assert all(n > 20 for n in outcomes.values()), outcomes
+
+
+# discourse4 looprecheck1: a `ve-document@2` text reaches Lean whatever Python makes of its body or
+# metadata, both loaders split a body alike, and nothing Python runs before Lean's answer fails.
+
+def text_verdicts(body, tmp_path, name="doc.ve.md"):
+    """Lean's admission (`admitted` or its diagnostic) and the Python API's outcome on one text."""
+    row = run([{"id": "admission", "kind": "admission", "document": body}])[0]
+    path = tmp_path / name
+    path.write_bytes(body.encode())
+    try:
+        python = check_document(path)
+    except VEError as exc:
+        python = str(exc)
+    return ("admitted" if row["status"] == "ok" else row["error"]), python
+
+
+def test_line_breaks_split_the_body_as_python_does(lean, tmp_path):
+    """A (discourse.py:1219): an exposition unit `Note.\\r```ve u0\\r` before `It is safe.` (`It`
+    recorded for `api`) was LABELLED, CHECKED in Lean, which split lines at `\\n` only and saw no
+    fence, while Python, which splits at `\\r` too, found the fence unclosed and rejected without
+    consulting Lean. Lean's loader now splits lines at `\\n`, `\\r\\n` and `\\r` and strips fence
+    lines of `\\x0b`/`\\x0c` as `bytes.splitlines`/`bytes.strip` do, and Python sends every text whose
+    front matter says `ve-document@2` to Lean."""
+    from ve.discourse import is_discourse_text
+    unclosed = document(["Note.\r```ve u0\r", "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2, sep="")
+    unknown = {**unclosed, "extra": 1}
+    assert is_discourse_text(text(unclosed).encode()) and is_discourse_text(text(unknown).encode())
+    assert not is_discourse_text(text({**unclosed, "format": "ve-document@1"}).encode())
+    assert not is_discourse_text(b"---\n{\"format\": \"ve-document@2\"\n---\nx")
+    for opening in ["Note.\r```ve u0\r", "Note.\r\n```ve u0\r\n", "Note.\n```ve u0\n", "Note.\r```ve u0\x0c\r"]:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES, contents=SAFE_U2, sep="")
+        assert lean_verdict(doc, tmp_path) == ("unclosed VE fence", "unclosed VE fence"), opening
+    # prose on `\r` and `\r\n` lines, with a fence-like line that is not one, is one source in both
+    for opening in ["Api is reviewed.\r", "Api is reviewed.\r\n", "Api is\r ```ve u0\rreviewed.\r"]:
+        doc = document([opening, "It is safe."], [IT_API], names=PY_NAMES,
+                       contents={"u1": unary("reviewed", "api"), **SAFE_U2}, sep="")
+        assert lean_verdict(doc, tmp_path) == ("admitted", []), opening
+    # a fence closed, or named, across `\r` line breaks or `\x0b`/`\x0c` padding is a fence in both
+    # loaders (whose fenced content Lean does not implement: both abstain)
+    doc = document(["Api is reviewed.\n"], names=PY_NAMES, contents={"u1": unary("reviewed", "api")})
+    for fence in ["```ve u9\rApi is safe.\r```\r", "```ve u9\x0c\nApi is safe.\n```\x0b\n",
+                  "```ve u9\r\nApi is safe.\r\n\x0c```\r\n"]:
+        lean_error, python = text_verdicts(text(doc) + fence, tmp_path)
+        assert lean_error == "NotImplemented: fenced English or strict content", fence
+        assert python.startswith("UnsupportedProfile: the Lean discourse route abstains"), fence
+
+
+def test_malformed_metadata_reaches_lean(lean, tmp_path):
+    """B (discourse.py:1252): `"units": 7` in a valid fixture is `document needs units` in Lean,
+    but Python's import collector raised `TypeError: 'int' object is not iterable` first, as it did
+    on `"units": [{"id": []}]`. Every step Python takes before Lean's answer (format detection, the
+    import collector) now reads any front matter, and a Python check that fails on metadata Lean
+    rejects gives Lean's verdict, never an exception of its own."""
+    base = document(["Api is reviewed.", "It is safe."], [IT_API], names=PY_NAMES,
+                    contents={"u1": unary("reviewed", "api"), **SAFE_U2})
+    assert lean_verdict(base, tmp_path) == ("admitted", [])
+
+    def with_front(key, value):
+        doc = copy.deepcopy(base)
+        doc[key] = value
+        return doc
+
+    def with_block(key, value):
+        doc = copy.deepcopy(base)
+        doc["discourse"][key] = value
+        return doc
+
+    assert lean_verdict(with_front("units", 7), tmp_path) == ("document needs units", "document needs units")
+    # a pin whose sibling file is absent is well formed, and admitted by both
+    missing = with_block("imports", {"k": {"bytes": "missing.ve.md", "source_id": "x", "document_id": "y"}})
+    assert lean_verdict(missing, tmp_path) == ("admitted", [])
+    variants = [with_front("units", value) for value in
+                [[{"id": []}], [{"id": {"a": 1}, "span": [0, 1]}], "u1", {"u1": 1}, [7], [[]]]]
+    variants += [with_front(key, value) for key in ["reading_sets", "narrowings", "weights", "open_terms", "lemmas"]
+                 for value in [7, [7], [{"id": []}], [{"readings": 7}]]]
+    variants += [with_front("graph", value) for value in [7, [], {"root": [], "nodes": 7}]]
+    variants += [with_block(key, value) for key, value in [
+        ("imports", 7), ("imports", {"k": 7}), ("imports", {"k": {"bytes": 5}}), ("imports", {"k": {"bytes": []}}),
+        ("documents", 7), ("documents", [7]), ("documents", [{"refers": 7}]),
+        ("documents", [{"refers": {"embedded": []}}]), ("documents", [{"refers": {"embedded": "u1"}}]),
+        ("groups", 7), ("constraints", [7]), ("choices", 7), ("validity", [{}]), ("mentions", 7),
+        ("names", [7]), ("anchors", "doc")]]
+    embedded_units = copy.deepcopy(base)
+    embedded_units["discourse"]["documents"] = [{"refers": {"embedded": "u1"}}]
+    embedded_units["units"] = [{"id": "u1", "span": [0, "x"]}, {"id": "u1", "span": 7}]
+    discourse = copy.deepcopy(base)
+    discourse["discourse"] = 7
+    variants += [embedded_units, discourse]
+    for doc in variants:
+        verdict, _ = lean_verdict(doc, tmp_path)
+        assert verdict != "admitted", doc
+    # front matter nested past Python's recursion limit is a resource limit, never a RecursionError;
+    # nested past Lean's depth only, it is Lean's resource limit, not Python's rejection (Lean's
+    # loader read its parser's `offset n: ResourceLimit ...` as invalid JSON)
+    deep = "---\n" + "[" * 100000 + "]" * 100000 + "\n---\nText."
+    assert text_verdicts(deep, tmp_path) == ("ResourceLimit: JSON depth exceeds 256",
+                                             "ResourceLimit: JSON front matter nesting exceeds the parser's depth")
+    nested = with_front("weights", [json.loads("[" * 300 + "]" * 300)])
+    assert text_verdicts(text(nested), tmp_path) == ("ResourceLimit: JSON depth exceeds 256",) * 2
+
+
+def test_import_collection_reads_every_file_lean_reads(tmp_path):
+    """The import collector gives Lean every sibling file its stored chain names: a file named
+    both deep in one branch and near the top in another is read at its least depth (a depth-first
+    walk skipped its imports once it had met the file past the budget), and an embedded unit's
+    bytes are Lean's `embeddedBytes`: the first unit with the id, its span a clamped byte range."""
+    from ve.discourse import import_files
+
+    def stored_text(imports, body="Text.", units=None, documents=None):
+        block = {"imports": {k: {"bytes": v, "source_id": "s", "document_id": "d"} for k, v in imports}}
+        if documents is not None:
+            block["documents"] = documents
+        front = {"format": "ve-document@2", "units": units or [], "discourse": block}
+        return "---\n" + json.dumps(front) + "\n---\n" + body
+
+    chain = ["a1.md", "a2.md", "a3.md", "a4.md"]
+    for name, nxt in zip(chain, chain[1:] + ["x.md"]):
+        (tmp_path / name).write_text(stored_text([("n", nxt)]))
+    (tmp_path / "b.md").write_text(stored_text([("x", "x.md")]))
+    (tmp_path / "x.md").write_text(stored_text([("z", "z.md")]))
+    (tmp_path / "z.md").write_text(stored_text([]))
+    top = stored_text([("b", "b.md"), ("a", "a1.md")]).encode()
+    assert set(import_files(top, tmp_path)) == {*chain, "b.md", "x.md", "z.md"}
+    # an embedded unit whose span runs past the source is its bytes to the end, as in Lean; the
+    # second unit with the same id is never read
+    inner = stored_text([("z", "z.md")])
+    (tmp_path / "z.md").write_text(stored_text([]))
+    top = stored_text([], body=inner, units=[{"id": "e", "span": [0, 10 ** 9]}, {"id": "e", "span": [0, 0]}],
+                      documents=[{"refers": {"embedded": "e"}}]).encode()
+    assert set(import_files(top, tmp_path)) == {"z.md"}
+    first_empty = stored_text([], body=inner, units=[{"id": "e", "span": [5, 2]}, {"id": "e", "span": [0, 10 ** 9]}],
+                              documents=[{"refers": {"embedded": "e"}}]).encode()
+    assert import_files(first_empty, tmp_path) == {}
+    # any front matter: no exception, whatever the shapes
+    for units, documents in [(7, [{"refers": {"embedded": "e"}}]), ([{"id": []}], 7), ([7], [7]),
+                             ([{"id": "e", "span": [-1, 3]}], [{"refers": {"embedded": "e"}}]),
+                             ([{"id": "e", "span": [True, 3]}], [{"refers": {"embedded": ["e"]}}])]:
+        front = {"format": "ve-document@2", "units": units, "discourse": {"documents": documents, "imports": [7]}}
+        assert import_files(("---\n" + json.dumps(front) + "\n---\nText.").encode(), tmp_path) == {}
