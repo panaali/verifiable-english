@@ -208,6 +208,54 @@ def test_scope_audit_adopter_exception(lean):
     assert rows[1]["findings"] == [] and rows[1]["licensed"] is True
 
 
+PUBLISH = {"publish_about_required": obligation("deny", "publish_about_permitted", act="{0} publish about {1}",
+                                                args=("person", "person")),
+           "publish_about_permitted": permission("allow", act="{0} publish about {1}", args=("person", "person")),
+           "attacks_honour": base("person", "person")}
+EXCEPTION = {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}
+ONE = {"holders": ["person"], "bearers": ["person"]}
+
+
+def mu_env():
+    raw = env(PUBLISH, sorts=("person",), rights=ONE)
+    raw["vocabulary"]["soft"] = {"ranks": ["dignity", "expression"], "outranks": [["dignity", "expression"]],
+                                 "outranking": {"mode": "strict"}}
+    return raw
+
+
+def mu_document(liberty_cites=None, claim_cites=None, *, strict_liberty=False):
+    liberty = (norm("may-publish", "publish_about_permitted", True) if strict_liberty else
+               norm("may-publish", "publish_about_permitted", True, mode="default", exception=EXCEPTION,
+                    rank="expression"))
+    claim = norm("no-attack", "publish_about_permitted", False, mode="default", exception=EXCEPTION,
+                 rank="dignity", guard=("binary", "attacks_honour", ["var", 1], ["var", 0]))
+    return [right("r19", [line("liberty", liberty, cites={"exception": ["u1"], **(liberty_cites or {})})]),
+            right("r12", [line("claim", claim, holder_slot=1, cites={"exception": ["u1"], **(claim_cites or {})})]),
+            limitation()]
+
+
+def test_mu_uncited_rank_is_unlicensed_and_cited_rank_is_a_collision(lean):
+    rows = run(lean, [{"id": str(i), "kind": "rights-scope", "environment": mu_env(), "document": d}
+                      for i, d in enumerate([mu_document(), mu_document({"rank": ["u1"]}),
+                                             mu_document(None, {"rank": ["u1"]}),
+                                             mu_document(strict_liberty=True)])])
+    # both default and ranked, the rank uncited: RANK-RESOLVED, and the dominance is a finding
+    assert rows[0]["findings"] == ["UnlicensedLimitation: dominatedBy no-attack of rule may-publish on right r19"]
+    # the lower-ranked claim is never dominated by the liberty under strict outranking
+    claim = next(x for x in rows[0]["narrowings"] if x["rule"] == "no-attack")
+    assert all(not m["mechanism"].startswith("dominatedBy") for m in claim["mechanisms"])
+    # the rank cited on the dominated line: cited; on the dominating line: a collision
+    assert rows[1]["findings"] == [] and rows[2]["findings"] == []
+    dominated = next(x for x in rows[2]["narrowings"] if x["rule"] == "may-publish")
+    assert {"mechanism": "dominatedBy no-attack", "target": "may-publish:dominatedBy no-attack",
+            "licence": "collision"} in dominated["mechanisms"]
+    # another right's strict liberty blocks the default claim: a collision, no finding
+    assert rows[3]["findings"] == []
+    blocked = next(x for x in rows[3]["narrowings"] if x["rule"] == "no-attack")
+    assert {"mechanism": "blockedBy may-publish", "target": "no-attack:blockedBy may-publish",
+            "licence": "collision"} in blocked["mechanisms"]
+
+
 def test_bar_rule_and_query_readings(lean):
     liberty = right("r19", [line("liberty", norm("may-impart", "impart_permitted", True))])
     outside = [{"norm": norm("must-impart", "impart_required", True)},

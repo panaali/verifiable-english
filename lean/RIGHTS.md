@@ -25,7 +25,7 @@ is unchanged.
 | `Route.lean` | `coherent_expands` (reused), `rights_coherent_expands_all`, `rightsConflictFreeCheck`, `rights_conflict_free`, `backgroundValidR`, `rights_conflict_witness_sound`, `PrefixAdmissibleR` and the layer chain, `rightsRoute`, `rights_route_backgroundSound/Complete`, `rights_route_intended`, `rights_route_acceptance`, `rights_route_countermodel` |
 | `Wire.lean` | The rights environment and unit decoders, `RightsSource`, identity (`rightsDocumentHash`, `primeJsonR`, `basePrimeJsonR`), conflict/scope packages, witness and entailment replays, the wire theorems |
 | `Run.lean`, `../RightsMain.lean` | The `ve_rights_route` executable |
-| `Examples.lean` | Build-time `#guard` regressions on documents in the shapes of fixtures α, β, γ, ε, η, ο, π, ρ, υ, φ |
+| `Examples.lean` | Build-time `#guard` regressions on documents in the shapes of fixtures α, β, γ, ε, η, κ, μ, ο, π, ρ, σ, υ, φ, ψ (μ and ψ on the binary act `publish_about(person, person)`) |
 
 ## How the proofs are organised
 
@@ -111,13 +111,21 @@ The remaining theorems are helper lemmas, audited with the same allowlist.
    the rule reading only (without a bar unit `aimed_m` is not declared).
 9. `rightsRoute`'s subtype is exactly the spec's; `E_out` is the separate lemma
    `rightsRoute_E_out`.
-10. `right_lines` units are appended to their right's lines at the end (the decoder merges them),
-   so fan-out indices follow the right's complete line list; 1.6's "at the unit's own position"
-   differs only when an `includes` unit follows another right's unit.
+10. (Withdrawn.) The decoder records the source line order (`RightsDoc.sourceOrder`), so a
+   `right_lines` unit appends to its right at the unit's own position and instance order and
+   fan-out indices are 1.6's.
 11. Carve-out mechanisms are 0-based internally and rendered 1-based (`carve-out 1`, citation
    key `unless:1`), as the spec numbers `U_1`.
 12. Arity is at most two in the Lean formula language, so the ternary `nary@0` fixtures (μ, ψ)
-   are not expressible; `Examples.lean` covers their binary shapes.
+   are not expressible; `Examples.lean` and `tests/test_rights_lean.py` cover their binary shapes
+   on `publish_about(person, person)`.
+13. `rightCollision` follows the 4.5 table and 13.6, and the 9.1 comment is tightened to match:
+   blocking by a right-derived strict line of the opposite effect is a collision; dominance by a
+   right-derived line is a collision only under a cited ranking (`cites["rank"]` on either
+   line), so an uncited rank between two rights' lines stays `UnlicensedLimitation` (fixture μ).
+   `narrowings` lists `dominatedBy M` only when `M` can dominate (`dominable`: `M` outranks the
+   line, or holistic outranking with the line above `M`), the two disjuncts of `dom(M, N)`; a
+   lower-ranked `M` under strict outranking is never active and is not listed.
 
 ## The `ve_rights_route` cases
 
