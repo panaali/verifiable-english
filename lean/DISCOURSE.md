@@ -71,17 +71,19 @@ surface (`discourseSourceSurface`).
 
 ## What the route checks, beyond the statement's letter
 
-- **Slots are discovered from the source** (3.4): every unit with content or an active reading set (its readings
-  are its meaning) whose text has a derivation with a slot or an unplaced reference word (a pronoun, possessive,
-  `they`, `former`/`latter`, `such`, a demonstrative before a sort, `the` before a unary noun, a citation, a
-  document name) is validated, so an unrecorded reference is `UnrecordedSlot`, never unchecked content or an
-  unchecked reading. Words are separated at every character Python's `str.isspace` reads as a space (a no-break
-  space included), and the surfaces are also found on the sentence's segments, the maximal runs of ASCII letters
-  and digits, so a reference word joined to anything else (`It's`, `It’s`, `They're`, `It-is`, `It_`, `Itʼs`) is
-  still a slot; Python's `reference_surfaces` reads the same segments. A validated unit with meaning must also
-  record every surface: one that no recorded formula-producing mention overlaps (a registered spelling `He-api`
-  over `he`, a section label `its`) is `UnrecordedSlot` (`coveredOk`; Python requires containment). Fail closed:
-  a non-ASCII letter splits segments, so a word such as `Itália` has the surface `it`. A bound unit's content and every reading of its active set must be its elaboration
+- **Slots are discovered from the source** (3.4, 4.1(6)): before any unit is resolved, every unit with content or
+  an active reading set (its readings are its meaning) must record every reference surface of its own bytes
+  (`coverageOk`, `UnrecordedSlot: <unit>: [a, b)` in prose bytes, Python's text), and a unit whose text has a
+  derivation with a slot or a surface is validated. Discovery (`textSurfaces`, Python's `reference_surfaces`) reads
+  each unit alone, as its segments: maximal runs of characters with a fold (ASCII letters and digits, and `İ`, `ı`,
+  `ſ`, the Kelvin sign, which `re.I` equates with ASCII letters), folded. So a reference word joined to anything
+  else (`It's`, `It’s`, `They're`, `It-is`, `It_`, `Itʼs`, `İt`, `ſuch`) is still a slot, and a unit boundary with
+  no space after its full stop (`reviewed.It`) still ends a word. Surfaces are taken longest first (a document
+  display `It is safe` is one surface, not the pronoun inside it) and are recorded only by a formula-producing
+  mention with exactly their byte range (`Mention.bytes`); overlapping or containing one is not enough. The lexer
+  also reads each unit alone and folds its words, so `İt` is the pronoun `it` and `ſome` a competing quantifier,
+  as in Python. Fail closed: a non-ASCII letter splits segments, so a word such as `Itália` has the surface `it`.
+  A bound unit's content and every reading of its active set must be its elaboration
   (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
   therefore not admitted by the route (fail closed).
 - **Group readings are regenerated** from the spans' English (`a|an|some [ADJ] SORT is P.` then `PRONOUN is Q.`)
@@ -107,7 +109,8 @@ need renewed statement approval (the approved statement is false or unprovable a
 
 1. **Sentences are identified by their unit.** `Derives`, `Accepted`, `Intended` and `Supported` take the unit id.
 2. **Token spans.** `Mention.span` and `Slot.span` are token ranges of the unit; the decoder maps prose byte ranges
-   through the lexer. Diagnostics that print a span (`UnrecordedSlot`) print the token range.
+   through the lexer, reading each unit's bytes alone, and keeps the byte range (`Mention.bytes`). Diagnostics that
+   print a span (`UnrecordedSlot`) print the prose byte range, the text Python prints.
 3. **The discourse grammar.** `DTree.tree` is a discourse tree (`STree`), not `VE.English.Tree`; words are symbol
    names (sort noun = sort, adjective and unary noun = unary predicate, relational noun `p` for the binary `p_of`,
    verb = binary predicate), lowercased by the lexer.
