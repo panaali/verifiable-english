@@ -11,8 +11,9 @@ import hashlib
 import json
 import re
 
+from .assurance import semantic_entry
 from . import ast
-from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar
+from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
@@ -44,8 +45,9 @@ def _bindings(decl, words):
 
 
 def _guard_text(formula, env, words, scope):
-    traversal = EnglishTraversal(env, words)
-    traversal.maximum = Counter(sort for sort, _ in scope)
+    traversal = EnglishTraversal(env, words, word_markers=env.alternatives is not None)
+    initial = tuple(sort for sort, _ in scope)
+    traversal.maximum = _max_scope(formula, initial, Counter(initial))
     return traversal.formula(formula, scope)
 
 
@@ -69,6 +71,20 @@ def _parse_guard(source, env, words, scope):
         prefixes.append("for every " + noun + ", ")
     require_unique_derivation(env, "".join(prefixes) + source + ".")
     return formula
+
+
+def _mentions_outcome(formula, predicate):
+    """Find a deontic self-edge at any tuple, including another action."""
+    if isinstance(formula, (ast.Unary, ast.Binary)):
+        return formula.predicate == predicate
+    if isinstance(formula, (ast.Forall, ast.Exists)):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, ast.Not):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
+        return (_mentions_outcome(formula.left, predicate) or
+                _mentions_outcome(formula.right, predicate))
+    return False
 
 
 def _consequence(rule, env, words):
@@ -111,6 +127,22 @@ def default_sentence(env, predicate):
     return "By default, " + template.format(*(article(n) for n in nouns)) + "."
 
 
+def render_rule_sentence(rule, env, words=None):
+    """Render the content of one rule, including quoted rules outside a layer."""
+    words = _words(env) if words is None else words
+    consequence, scope = _consequence(rule, env, words)
+    sentence = consequence
+    if not isinstance(rule.guard, ast.Top):
+        sentence += ", if " + _guard_text(rule.guard, env, words, scope)
+    if len(rule.unless) == 1:
+        sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
+    sentence += "."
+    if len(rule.unless) > 1:
+        sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
+                                   for u in rule.unless)
+    return sentence
+
+
 def render_english(document: NormDocument, *, handles=None, _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in document.env.profiles:
         return _render_soft_english(document, handles=handles)
@@ -130,17 +162,7 @@ def render_english(document: NormDocument, *, handles=None, _w1=False):
                       f"Rule {i} (exception to rules {refs}).")
         else:
             header = f"Rule {i}."
-        consequence, scope = _consequence(rule, env, words)
-        sentence = consequence
-        if not isinstance(rule.guard, ast.Top):
-            sentence += ", if " + _guard_text(rule.guard, env, words, scope)
-        if len(rule.unless) == 1:
-            sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
-        sentence += "."
-        if len(rule.unless) > 1:
-            sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
-                                       for u in rule.unless)
-        block = header + " " + sentence
+        block = header + " " + render_rule_sentence(rule, env, words)
         start = sum(len(line) + 1 for line in lines)
         lines.append(block)
         entries.append({"handle": handles[rule.name] if handles is not None else f"handle-{rule.name}",
@@ -218,6 +240,7 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
+@semantic_entry("english.admission")
 def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
         return _parse_soft_english(env, source, manifest, existing_names=existing_names)
@@ -296,7 +319,20 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
             raise VEError("UnknownRule: display reference")
         rules.append(Norm(name, predicate, sign, guard, carveouts,
                           tuple(names[ref - 1] for ref in refs)))
-    document = NormDocument(env, rules)
+    try:
+        document = NormDocument(env, rules)
+    except VEError as exc:
+        if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
+                any(_mentions_outcome(formula, rule.predicate)
+                    for rule in rules for formula in (rule.guard, *rule.unless))):
+            raise VEError(f"{exc}; GuardOnOwnOutcome: A condition on this rule's own "
+                          "predicate creates a cycle. An author may instead select a factual guard "
+                          "like Rule 9: there is a robot such that that action is available to "
+                          "that robot and every other action available to that robot injures a human being or "
+                          "allows a harm to a human being to happen. This changes the rule's "
+                          "meaning and does not track later rules that forbid those actions "
+                          "for other reasons.") from exc
+        raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document

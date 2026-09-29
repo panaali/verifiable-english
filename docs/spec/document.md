@@ -24,11 +24,57 @@ kinds; lists for `attributed`, `hedged`, `causal`, and `unformalised`. Meaning i
 `specified`, `{"contextual":"name"}`, `{"open":["term"]}`, or
 `{"unformalised":"reason"}`. Support is `assumption`, `certificate`,
 `observation`, `calculation`, `statistical`, `testimony`, `adapter`, or `none`.
-These fields are independent: a question with no formula is still a unit.
+Apart from the root reason rule, these fields are independent: a question with
+no formula is still a unit.
+For a root kind `["unformalised", reason]`, meaning must be
+`{"unformalised": reason}` with the same reason. A disagreement is
+`InvalidInput`; the unit has one reason in coverage, counted once. Nested
+unformalised kinds under other roots carry their own reasons.
 `content` is `{"ast":[...]}` for an existing formula or
 `{"fence":"unit_id"}` with `surface` set to `english` or `strict`. An English
 fence goes through the existing all-derivations parser. The optional
 `meaning_id` must match the environment-bound formula identity.
+
+With `norms@0`, a unit of kind `norm` may instead carry the W1 `{"norm":{...}}`
+block from [the norm specification](norms.md#32-norm-units-document-content).
+The loader validates all active rules together, including precedence and
+typing, and passes their canonical blocks to the W1 document admission route.
+Quoted norm content retains its kind and source provenance but contributes no
+active layer. `ve document check` includes regenerated norm layers in its
+premise check; graph leaves may cite them with `layer:norms:<predicate>`.
+The compiled norm unit's `meaning_id` binds its canonical W1 block as `ast`
+and the environment ID under the shared `ve-meaning-<identity-version>` digest
+domain. Every active norm block is validated even when the environment has no
+regulated predicates; norm content requires `norms@0`.
+
+With a `ve-units@1` environment (`documents@1`, `order@0`, `relational-fol@0`,
+`time@0`), `content` is `{"quantity":{...}}`: a `ve-quantity@1` statement
+admitted before erasure. Legacy `ast` content is dimensionless source input to
+the same admission, and an English fence is read once across the whole
+grammar (`parse_w6_sentence`). Graph nodes carry `quantity` instead of `ast`,
+and deductions carry `ve-quantity-certificate@1`. Lean `VE.Time.Document`
+admits the graph with the base provenance rules and no Background, and binds
+the report to the annotated meaning ids (`admit_quantity_report_sound`).
+A quantity lemma is `{"name", "conclusion", "leaves", "certificate"}`: leaves
+are `{"quantity", "label"}` with no `cite` label, and the certificate is a
+`ve-quantity-certificate@1` from exactly the leaves, in order, to the
+conclusion, checked when the lemma is decoded. A `cite:<bundle>/<lemma>` leaf
+states that conclusion and the report carries every lemma leaf with its label,
+so the root holds wherever the report's non-citation leaves hold
+(`cites_discharged`).
+
+A source unit that contains both checked and unresolved text has
+`{"id", "span", "status":"MIXED", "parts":[...]}`. Each part has the ordinary
+unit fields plus a unique ID and one status: `CHECKED`, `OPEN`, `LABELLED`, or
+`UNFORMALISED`. Part spans use absolute byte offsets and exactly partition the
+parent span in order, including whitespace and punctuation. The parent has no
+independent content. Admission uses the part IDs; the checked document identity
+binds the parent and parts, and the loader retains `parent_id` on each compiled
+part. Coverage reports `bytes_by_status` alongside `bytes_by_kind`; the two
+tables each total the source byte count. Existing unsplit units may also set a
+status; otherwise it is inferred from content and meaning. An active reading
+set determines the compiled status: an open or non-assertion choice is `OPEN`,
+and an authored assertion singleton with content is `CHECKED`.
 
 An open term declares `name`, `arguments`, `decided_by`, `necessary`,
 `sufficient`, `factors`, `precedents`, `jurisdiction`, and `version`. Conditions
@@ -45,7 +91,12 @@ and cite source units for their reason. They never modify the set. Weights are
 separate removable intent annotations and are ignored by all checks and report identities.
 
 For assertion readings in one environment, `ve document readings --conclusion`
-uses fixed assertions and the latest reading-set version for each source unit.
+uses fixed assertions, validated active norm layers, and the latest reading-set
+version for each source unit. A pending norm reading leaves the premise status
+and norm layer admission unresolved until its choice can be elaborated.
+When a recorded narrowing removes every pending norm choice, the query
+recomputes fixed premises from the retained readings, restoring validated
+active norm layers. Retained pending norm choices still leave the query unknown.
 Authored singleton choices are premises too. It first proves ALL from fixed
 assertions and one conjunction of per-unit disjunctions, with
 certificate replay. It proves NONE with one checked finite model that satisfies

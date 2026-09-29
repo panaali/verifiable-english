@@ -2,13 +2,16 @@ import VE.Definitions.Route
 import VE.Route.Route
 import VE.Typing
 import VE.Order.ProfileGate
+import VE.Bridge
 
 /-! Executable elaboration of identity-bound `defined` declarations, mirroring
 Python `ve/definitions.py:compile_definitions`: order the definitions by the
 one dependency DAG (`VE.Route.dependencyOrder`, the same algorithm and cycle
 diagnostic as Python), then check each body over the symbols strictly below it.
-`chainOk_sound` connects the Boolean check to `Chain`, the hypothesis of the
-layer and acceptance theorems. -/
+Each generated biconditional then has the AST limits of any formula, as Python
+checks `premise(definition)` after the body: at most 10,000 nodes and 64
+levels. `chainOk_sound` connects the Boolean check to `Chain`, the hypothesis of
+the layer and acceptance theorems. -/
 namespace VE.Definitions
 open VE.Route
 
@@ -55,16 +58,30 @@ theorem chainOk_sound (E : VE.Environment) : (ds : List Def) → chainOk E ds = 
     simp only [chainOk, Bool.and_eq_true] at h
     exact ⟨stepOk_sound E (names ds) d h.1, chainOk_sound E ds h.2⟩
 
-/-- The first definition (in dependency order) whose step fails, for the
-diagnostic. -/
-def firstBad (E : VE.Environment) : List Def → Option Def
+/-- Formula levels as Python's checker counts them (a leaf is level 1). -/
+def levels : VE.Formula → Nat
+  | .top | .bottom | .unary .. | .binary .. | .eq .. => 1
+  | .not a | .all _ a | .ex _ a => levels a + 1
+  | .and a b | .or a b | .implies a b => max (levels a) (levels b) + 1
+
+/-- The generated biconditional is within the AST limits of one formula. -/
+def premiseWithin (d : Def) : Bool :=
+  decide (VE.Bridge.formulaNodes d.premise ≤ 10000) && decide (levels d.premise ≤ 64)
+
+/-- The first definition (in dependency order) whose step fails, or whose
+generated biconditional exceeds the AST limits, with the diagnostic. -/
+def firstBad (E : VE.Environment) : List Def → Option (Def × String)
   | [] => none
-  | d :: ds => if stepOk E (names ds) d then firstBad E ds else some d
+  | d :: ds =>
+    if stepOk E (names ds) d then
+      if premiseWithin d then firstBad E ds
+      else some (d, s!"ResourceLimit: Definition {d.name}: the generated biconditional exceeds the AST node or depth limit")
+    else some (d, s!"Definition {d.name}: the body is not a typed formula over the symbols below it")
 
 /-- The checked result, or the diagnostic naming the first failing definition. -/
 def finish (E : VE.Environment) (ds : List Def) : Except String (List Def) :=
   match firstBad E ds with
-  | some d => .error s!"Definition {d.name}: the body is not a typed formula over the symbols below it"
+  | some (_, e) => .error e
   | none => .ok ds
 
 theorem firstBad_none (E : VE.Environment) : (ds : List Def) → firstBad E ds = none →
@@ -74,7 +91,9 @@ theorem firstBad_none (E : VE.Environment) : (ds : List Def) → firstBad E ds =
     unfold firstBad at h
     split at h
     · rename_i hs
-      simp [chainOk, hs, firstBad_none E ds h]
+      split at h
+      · simp [chainOk, hs, firstBad_none E ds h]
+      · cases h
     · cases h
 
 theorem finish_chain (E : VE.Environment) (ds ds' : List Def) (h : finish E ds = .ok ds') :

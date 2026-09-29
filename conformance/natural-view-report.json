@@ -1,9 +1,9 @@
 {
   "method": "per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance; prose example adds document round trip and claim-graph certificate replay",
-  "statements": 1219,
-  "natural": 599,
+  "statements": 1220,
+  "natural": 600,
   "fallback": 620,
-  "natural_fraction": 0.4913863822805578,
+  "natural_fraction": 0.4918032786885246,
   "accepted_wrong_readings": 0,
   "fallback_dispositions": {
     "needs_confirmed_display_name_or_vocabulary": 551,
@@ -12,11 +12,11 @@
     "candidate_audit_failed_explicit_repair": 1
   },
   "real_documents": {
-    "documents": 57,
-    "statements": 107,
-    "notation_free": 84,
-    "exact_prose_round_trips": 51,
-    "ready_versioned_presentations": 43,
+    "documents": 58,
+    "statements": 108,
+    "notation_free": 85,
+    "exact_prose_round_trips": 52,
+    "ready_versioned_presentations": 44,
     "documents_needing_repair": 8,
     "prose_failures": []
   },
@@ -202,6 +202,18 @@
       "corpus": "usecases/birthright-citizenship-debate/countermodel/test5-premises.ve",
       "statements": 2,
       "natural": 2,
+      "fallback": 0,
+      "natural_fraction": 1.0,
+      "fallback_reasons": {},
+      "fallback_details": [],
+      "accepted_wrong_readings": 0,
+      "prose_round_trip": "exact",
+      "versioned_presentation": "ready"
+    },
+    {
+      "corpus": "usecases/cedar-attributes/claim.ve",
+      "statements": 1,
+      "natural": 1,
       "fallback": 0,
       "natural_fraction": 1.0,
       "fallback_reasons": {},
@@ -4091,6 +4103,14 @@
         }
       ],
       "accepted_wrong_readings": 0
+    }
+  ],
+  "non_formula_documents": [
+    {
+      "source": "usecases/asimov-laws/rules.ve",
+      "surface": "norms@0",
+      "rules": 13,
+      "round_trip": "exact"
     }
   ],
   "skipped": [],
