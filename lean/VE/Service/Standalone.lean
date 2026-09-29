@@ -1,4 +1,4 @@
-import VE.Norms.Wire
+import VE.Norms.Plain
 import VE.Core.Wire
 import VE.Route.Run
 
@@ -11,18 +11,8 @@ open Lean
 checks it, on any family: Python validates it in the environment constructor,
 whichever checker family the envelope selects. -/
 def checkRegulated (predicates : List (String × Json)) : Except String Unit := do
-  let regs ← predicates.filterMapM fun (p, entry) => do
-    match entry.getObjVal? "regulated" with
-    | .error _ => pure none
-    | .ok raw =>
-      if (entry.getObjVal? "defined").isOk then
-        throw s!"RegulatedDefinedPredicate: {p}"
-      if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
-        throw s!"RegulatedFlag: {p}"
-      let args ← VE.Bridge.strings (← entry.getObjVal? "arguments")
-      some <$> VE.Norms.Wire.decodeRegulated p args raw
-  if regs.length > 64 then throw "ResourceLimit: regulated predicates"
-  VE.Norms.actChecks regs
+  let _ ← VE.Norms.Plain.decodeRegulatedAll predicates
+  pure ()
 
 /-- A gated envelope and the environment JSON its family decoders read: the
 submitted one, with any `regulated` extension removed after it is checked.

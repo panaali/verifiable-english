@@ -8,6 +8,8 @@
       {"x-select": [
         {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "common.json#/$defs/admission"}},
         {"when": {"$ref": "#/$defs/kind/background"}, "then": {"$ref": "route.json#/$defs/background"}},
+        {"when": {"$ref": "route.json#/$defs/kind/evaluate"}, "then": {"$ref": "route.json#/$defs/evaluate"}},
+        {"when": {"$ref": "route.json#/$defs/kind/countermodel"}, "then": {"$ref": "route.json#/$defs/countermodel"}},
         {"when": {"$ref": "#/$defs/kind/norms-elaborate"}, "then": {"$ref": "#/$defs/norms-elaborate"}},
         {"when": {"$ref": "#/$defs/kind/norms-certificate"}, "then": {"$ref": "#/$defs/norms-certificate"}},
         {"when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]},
