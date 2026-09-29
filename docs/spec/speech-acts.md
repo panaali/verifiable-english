@@ -390,14 +390,20 @@ fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), o
 rule: the source wrapper trims a span and a fence, and the speech parser its wording, of those six ASCII whitespace
 characters only (Python's `wording_text`), and the parser matches act phrases, constant names and glosses folding only
 `A`-`Z` (`ascii_fold`), so a wording the parser reads as a command or question has that surface kind and no path
-(original kind, inline or fenced form) sees another sentence. A sentence is a question when its normalised
-form ends with `?` or starts with an interrogative word (not "do not "); a binding when it starts "in this task, " or
-"this document is task "; an instruction when it starts "do not ", "prove that ", "command " or the first word after
-`{0}` of a regulated act phrase as a whole word: the wording ends there or continues with a space or an ASCII
-punctuation character other than `'`, `-` and `_` (Python's `_starts_with_word`, Lean's `startsWithWord`), so the
-unary act "{0} click" makes "Click.", "Click, if ..." and "Do not click." instructions and "Clicked.", "Clicks.",
-"Click-through ..." and "Click_rate ..." not. The act phrases are W1's normalised ones (3.1), as both cores decode
-them; a `plain` regulated declaration has no act and never classifies a wording.
+(original kind, inline or fenced form) sees another sentence. The surface kind is decided in this order: a question when its normalised form ends
+with `?`; a binding when it starts "in this task, " or "this document is task "; an instruction when it starts
+"do not ", "prove that ", "command " or the verb of a regulated act phrase as a whole word; a question when it starts
+with an interrogative word ("question", "is", "are", "does", "do", "did", "was", "were", "will", "would", "who",
+"what", "when", "where", "why", "how", "which", "must", "can"); otherwise asserted. An act's verb is its first word
+after `{0}` (Python's `act_verb`, Lean's `actVerb`); it outranks an interrogative word, so under the act
+"{0} do {1}" the wording "Do check." is the instruction the parser reads, and "Do check?" is a question. A whole word
+ends the wording or continues with a space or an ASCII punctuation character other than `'`, `-` and `_` (Python's
+`_starts_with_word`, Lean's `startsWithWord`), so the unary act "{0} click" makes "Click.", "Click, if ..." and
+"Do not click." instructions and "Clicked.", "Clicks.", "Click-through ..." and "Click_rate ..." not. An imperative
+begins with its act's verb: an act whose first word after `{0}` is a slot (W1 accepts "{0} {1} click") has no verb,
+classifies no wording, and the parser reads no command of it (its wordings need a signed choice). The act phrases are
+W1's normalised ones (3.1), as both cores decode them; a `plain` regulated declaration has no act and never
+classifies a wording.
 
 **Every reference is resolved and typed at decode time**, identically in Python and Lean (the conformance suite
 checks every field below dangling and mistyped). A reference that is not a name of the JSON type its field takes is a
@@ -1706,6 +1712,8 @@ statements of section 8 are unchanged.
 | A, unary imperatives: with the act "{0} click", the parser read "Click." as an instruction, but both classifiers required a space after the verb, so both cores accepted an asserted choice on it and rejected the instruction choice, fenced and inline | 3.2: an act's verb is matched as a whole word, ending the wording or followed by a space or ASCII punctuation other than `'`, `-`, `_`, in both cores; a differential checks that every wording the parser reads as a command or question has that surface kind. |
 | A, fenced source sentence: with original kind `asserted`, source "Is atlas reviewed?", fence "Atlas is reviewed." and a signed asserted choice, the source wrapper checked the fence text and supplied an asserted premise, where the inline document was `InvalidInput: choice kind` | 3.2: the choice is checked against the unit's span in both forms; the fence is content the choice replaces. |
 | B, Unicode trimming by original kind: "Atlas is reviewed?" followed by U+00A0 under a signed asserted choice passed both cores and the source wrapper for original kind `asserted`, but the wrapper Unicode-stripped the wording of a `question` or `instruction` unit before the core's check and rejected it | 3.2: every reader of a wording (span, fence, speech parser) trims only ASCII whitespace and folds only `A`-`Z`, and every unit with a signed choice passes its wording to the core, so the outcome is the core's on the raw wording whatever the original kind or form. |
+| A, interrogative act verbs: with the W1 act "{0} do {1}" (likewise "question", "will", "how", ...), the parser read "Do check." as a command, but both classifiers took its first word for a question, so both cores accepted a question choice on it and rejected the instruction choice | 3.2: a final `?` decides first, then a declared act's verb outranks an interrogative first word, in both cores. |
+| A, slot-first acts: with the W1 act "{0} {1} click", the parser read "Check click." as a command, but no classifier has a slot's fillers, so both cores accepted an asserted choice on it and rejected the instruction choice | 3.2: an imperative begins with its act's verb; an act whose first word after `{0}` is a slot has none, classifies no wording and is read as no command by the parser. |
 
 ## Change log
 

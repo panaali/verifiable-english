@@ -8,7 +8,7 @@ from .ast import _Checker, _Decoder, _to_data
 from .english import parse_english
 from .environment import RESERVED
 from .errors import VEError
-from .speech_acts import ascii_fold, wording_text
+from .speech_acts import act_verb, ascii_fold, wording_text
 
 
 def _formula(env, sentence):
@@ -128,7 +128,8 @@ def _command_candidates(env, scope):
     """Enumerate declared act phrases with bound names and definite synonyms."""
     for predicate, decl in env.predicates.items():
         reg = decl.regulated
-        if reg is None or reg.role not in ("obligation", "permission"):
+        # An imperative begins with its act's verb (3.2): an act whose first word after `{0}` is a slot has none.
+        if reg is None or reg.role not in ("obligation", "permission") or act_verb(reg.act) is None:
             continue
         names = []
         for sort in decl.arguments[1:]:

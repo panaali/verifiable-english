@@ -263,20 +263,29 @@ def _starts_with_word(text, word):
     return text.startswith(word) and (len(text) == len(word) or text[len(word)] in _WORD_BREAK)
 
 
+def act_verb(act):
+    """The first word after `{0}` of an act phrase, normalised as `surface_words`, or None when it is a slot.
+
+    An imperative wording begins with this word (3.2), so only an act with one is
+    read as a command by the speech parser or classifies a wording, as Lean's `actVerb`.
+    """
+    words = surface_words(act).split(" ")
+    return words[1] if len(words) > 1 and words[0] == "{0}" and not words[1].startswith("{") else None
+
+
 def surface_kind(env, wording):
     """Classify the speech-act shape of a source sentence before a signed choice replaces it.
 
     This deliberately uses only the visible sentence form. The content parser still
     checks the complete command or question where that content is authoritative.
-    Acts are W1's normalised phrases; a `plain` declaration has none.
+    Acts are W1's normalised phrases; a `plain` declaration has none.  A final `?`
+    decides first; a declared act's verb then outranks an interrogative first word,
+    so "Do check." is the command of the act "{0} do {1}", as the parser reads it.
     """
     if type(wording) is not str:
         raise VEError("InvalidInput: speech wording")
     text = surface_words(wording)
-    if text.endswith("?") or text.startswith(("question ", "is ", "are ", "does ", "do ",
-                                                "did ", "was ", "were ", "will ", "would ",
-                                                "who ", "what ", "when ", "where ", "why ",
-                                                "how ", "which ", "must ", "can ")) and not text.startswith("do not "):
+    if text.endswith("?"):
         return "question"
     if text.startswith(("in this task, ", "this document is task ")):
         return "binding"
@@ -285,9 +294,12 @@ def surface_kind(env, wording):
     for decl in env.predicates.values():
         if decl.regulated is None or decl.regulated.act is None:
             continue
-        words = surface_words(decl.regulated.act).split(" ")
-        if len(words) > 1 and words[0] == "{0}" and _starts_with_word(text, words[1]):
+        verb = act_verb(decl.regulated.act)
+        if verb is not None and _starts_with_word(text, verb):
             return "instruction"
+    if text.startswith(("question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
+                        "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can ")):
+        return "question"
     return "asserted"
 
 

@@ -568,26 +568,31 @@ def startsWithWord (text word : String) : Bool :=
     | none => true
     | some c => wordBreak c
 
+/-- The first word after `{0}` of an act phrase, normalised as `surfaceWords`, or `none` when it is a slot: only an act
+with one classifies a wording (3.2), as Python's `act_verb`, whose parser reads no command of any other act. -/
+def actVerb (act : String) : Option String :=
+  match (surfaceWords act).splitOn " " with
+  | "{0}" :: verb :: _ => if verb.startsWith "{" then none else some verb
+  | _ => none
+
 /-- The speech-act kinds a signed choice must share with its wording (3.2); no other kind is checked. -/
 def speechKinds : List String := ["asserted", "question", "instruction"]
 
 /-- The visible sentence shape, checked before an authored reading replaces the unit. Acts are W1's normalised
-phrases (`Regulated.act`, as Python's `RegulatedDecl.act`); a `plain` declaration has none. -/
+phrases (`Regulated.act`, as Python's `RegulatedDecl.act`); a `plain` declaration has none. A final `?` decides first;
+a declared act's verb then outranks an interrogative first word ("Do check." under the act "{0} do {1}"). -/
 def surfaceKind (regulated : List VE.Norms.Regulated) (source : String) : String := Id.run do
   let text := surfaceWords source
-  if text.endsWith "?" ||
-      (["question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
-        "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can "].any text.startsWith &&
-       !text.startsWith "do not ") then return "question"
+  if text.endsWith "?" then return "question"
   if text.startsWith "in this task, " || text.startsWith "this document is task " then return "binding"
   if text.startsWith "do not " || text.startsWith "prove that " || text.startsWith "command " then
     return "instruction"
   for r in regulated do
-    if let some act := r.act then
-      match (surfaceWords act).splitOn " " with
-      | "{0}" :: verb :: _ =>
-        if startsWithWord text verb then return "instruction"
-      | _ => pure ()
+    if let some verb := r.act.bind actVerb then
+      if startsWithWord text verb then return "instruction"
+  if ["question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
+      "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can "].any text.startsWith then
+    return "question"
   return "asserted"
 
 /-- 3.2: a signed choice of `kind` contradicts its wording only when both are speech-act kinds and differ; a
