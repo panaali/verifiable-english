@@ -33,6 +33,7 @@ _AMOUNT_CHARS = frozenset("-.0123456789")
 POINTS_SUFFIX = " percentage points"
 W6_PROFILES = (("order@0", "relational-fol@0", "time@0"),
                ("documents@1", "order@0", "relational-fol@0", "time@0"),
+               ("alternatives@0", "norms@0", "relational-fol@0", "risk@0"),
                ("alternatives@0", "norms@0", "order@0", "relational-fol@0", "risk@0", "time@0"))
 NUMBERS2 = "$int quantification requires the missing numbers2 route"
 
@@ -195,8 +196,7 @@ def validate_slot_units(raw, args, units):
 def validate_extension(profiles, units, sorts, constants):
     """Route-level W6 environment conditions, after the vocabulary is decoded."""
     if tuple(profiles) not in W6_PROFILES:
-        raise UnsupportedProfile("ve-units@1 requires exactly order@0, relational-fol@0 and "
-                                 "time@0, optionally with documents@1")
+        raise UnsupportedProfile("ve-units@1 requires the quantity route or risk@0")
     for tag in (DIMENSIONLESS, *units):
         if tag in sorts:
             raise VEError(f"Unit tag {tag} collides with a declared sort")
