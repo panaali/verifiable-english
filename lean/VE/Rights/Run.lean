@@ -1,4 +1,5 @@
 import VE.Rights.Admission
+import VE.SoftNorms.Run
 
 /-! The `ve_rights_route` executable (docs/spec/rights.md 9.4), invoked as
 `lean/.lake/build/bin/ve_rights_route <cases.json|->`. Each case is
