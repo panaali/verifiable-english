@@ -1628,6 +1628,7 @@
   "tests/test_lean_import_reader.py::test_lean_deps_confirms_every_accepted_header",
   "tests/test_lean_import_reader.py::test_lean_deps_refutes_a_wrong_reading",
   "tests/test_lean_import_reader.py::test_listed_headers_are_rejected_or_read_as_lean_reads_them",
+  "tests/test_lean_import_reader.py::test_pinned_lean_is_the_toolchain_binary_not_a_proxy",
   "tests/test_lean_import_reader.py::test_pinned_lean_never_installs_a_toolchain",
   "tests/test_lean_import_reader.py::test_random_headers_are_rejected_or_read_as_lean_reads_them",
   "tests/test_lean_import_reader.py::test_stacked_comment_delimiters_are_rejected",
