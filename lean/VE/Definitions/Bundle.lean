@@ -140,6 +140,8 @@ def checkLemma (E : VE.Environment) (bg : List Leaf) (sets : List Admission.Read
   Gate.require (!known.any (·.meaningId == L.meaningId)) "Lemma meaning ID is stale or duplicated"
   let checked := bg.map Prod.snd ++ (L.premises.map Prod.snd ++ cited)
   bind checked L.conclusion L.certificate
+  Gate.require (decide (VE.Route.Steps.fol L.certificate.trace ≤ VE.Route.Steps.maxSteps))
+    s!"Lemma {L.name} certificate failed"
   Gate.require (VE.Tableau.checkCertificate E checked L.conclusion L.certificate)
     s!"Lemma {L.name} certificate failed"
   pure ⟨L.meaningId, L.conclusion, derived, leaves⟩
@@ -252,6 +254,7 @@ theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good 
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hcert, h⟩ := bind_ok h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
@@ -301,6 +304,7 @@ theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf) (sets : List Ad
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   cases h
   simp only [ReadingCompatible, hd]
   rfl
@@ -316,6 +320,7 @@ theorem checkLemma_binding (E : VE.Environment) (bg : List Leaf) (sets : List Ad
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h

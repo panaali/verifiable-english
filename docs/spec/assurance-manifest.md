@@ -138,22 +138,25 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
 | `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
-| `lean/VE/Core/Wire.lean` | 145 | 49 | 10–58 | `5561ccd07ab1…` |
-| `lean/VE/Route/Wire.lean` | 598 | 353 | 24–311, 380–388, 418–458, 528–535, 586–592 | `1bb7ce7e2fc6…` |
+| `lean/VE/Core/Wire.lean` | 164 | 164 | 1–164 | `a5e1d57194b2…` |
+| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `b4604ca7788a…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
 | `lean/VE/Norms/Wire.lean` | 238 | 212 | 25–236 | `5f36179e4729…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
-| `lean/VE/Route/Admission.lean` | 687 | 184 | 101–124, 206–245, 421–540 | `9fc91e6a200d…` |
+| `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
-| `lean/VE/Definitions/Bundle.lean` | 466 | 29 | 410–438 | `88375034efc2…` |
+| `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/Norms/Admission.lean` | 455 | 24 | 22–45 | `9996af265c1e…` |
 | `lean/VE/Alternatives/Wire.lean` | 296 | 296 | 1–296 | `26827ec1010c…` |
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
+| `lean/VE/Route/Decode.lean` | 282 | 282 | 1–282 | `7cd23701ca95…` |
+| `lean/VE/Time/Document.lean` | 615 | 615 | 1–615 | `0f80c18de219…` |
+| `lean/VE/Time/Wire.lean` | 863 | 863 | 1–863 | `c57241b6144d…` |
 | `lean/VE/Attribution/Admission.lean` | 327 | 327 | 1–327 | `357665dbfa39…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
 | `lean/VE/Attribution/Wire.lean` | 510 | 510 | 1–510 | `f8b2a8b0b381…` |
-| **total** | | **4,205** | | |
+| **total** | | **7,348** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

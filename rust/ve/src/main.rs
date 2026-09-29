@@ -67,6 +67,9 @@ fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
+    if v.get("kind") == Some(&json!("quantity")) {
+        return quantity_case(v);
+    }
     if v.get("family") == Some(&json!("elaborated-document")) {
         if v.get("profile") != Some(&json!("reports@0"))
             || v.get("untrusted") != Some(&json!(true))

@@ -89,7 +89,7 @@ def pytest_sessionstart(session):
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     lock = lock_path.open("a+")
     try:
-        if hasattr(session.config, "workerinput"):
+        if hasattr(session.config, "workerinput") or os.environ.get("VE_NATIVE_PREBUILT") == "1":
             fcntl.flock(lock, fcntl.LOCK_SH)
         else:
             fcntl.flock(lock, fcntl.LOCK_EX)

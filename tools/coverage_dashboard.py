@@ -18,6 +18,10 @@ AUDITS = {
     "news-article": (1, 11, 3, 11, 26),
     "us-constitution-14th-s1": (0, 1, 3, 0, 4),
 }
+# Later audits of the same rows, recorded beside the dated originals.
+REFRESHED = {
+    "news-article": ("coverage-w6a.md", "W6a, 2026-09-28", (6, 4, 5, 12, 27)),
+}
 
 
 def baseline(root: Path = ROOT) -> str:
@@ -29,6 +33,16 @@ def baseline(root: Path = ROOT) -> str:
         if not found or tuple(map(int, found.groups())) != counts[:4] or sum(counts[:4]) != counts[4]:
             raise ValueError(f"stale or inconsistent coverage audit: {name}")
         rows.append(f"| {name} | {' | '.join(map(str, counts))} |")
+    rows.extend(["", "Later refreshed audits (the dated files above stay unchanged):", "",
+                 "| Use case (refresh) | DIRECT | REIFIED | OPAQUE | NO | Total |",
+                 "|---|---:|---:|---:|---:|---:|"])
+    for name, (file, date, counts) in REFRESHED.items():
+        audit = (root / "usecases" / name / file).read_text()
+        found = re.search(r"(\d+) DIRECT,\s+(\d+) REIFIED, (\d+) OPAQUE, (\d+) NO", audit)
+        if not found or tuple(map(int, found.groups())) != counts[:4] or sum(counts[:4]) != counts[4]:
+            raise ValueError(f"stale or inconsistent refreshed audit: {name}")
+        rows.append(f"| {name} ({date}) | {' | '.join(map(str, counts))} |")
+    pilots = sorted((root / "usecases").glob("*/coverage.json"))
     debate = (root / "usecases/birthright-citizenship-debate/coverage.md").read_text()
     if "9 claims identified. 4 have a direct VE statement" not in debate:
         raise ValueError("stale birthright debate audit")
@@ -39,10 +53,9 @@ def baseline(root: Path = ROOT) -> str:
         "Math mini paper: **17/19** current verified outcomes (15 tableau certificates "
         "plus T9 and T9e by closure induction); its older `coverage.md` records the 15 tableau results. "
         "C1 is false, with a countermodel; T7mono remains resource-limited.",
-        "These are claim/section labels, not source-byte coverage. The `.ve.md` pilot "
-        "partition measurements are pending.",
+        "These are claim/section labels, not source-byte coverage."
+        + ("" if pilots else " The `.ve.md` pilot partition measurements are pending."),
     ])
-    pilots = sorted((root / "usecases").glob("*/coverage.json"))
     if pilots:
         rows.extend(["", "Measured `.ve.md` pilot partitions:", "",
                      "| Document | Accounted bytes | Source bytes | Residual |",

@@ -102,12 +102,40 @@ def _meaning(value, open_names, *, reports=False):
     raise VEError("invalid meaning status")
 
 
+def _quantity_content(env, unit, content, fences):
+    """W6 content: every statement is an annotated quantity admitted before
+    erasure. Legacy `ast` content is dimensionless source input; a fence goes
+    through the whole-grammar all-derivations gate (`parse_w6_sentence`)."""
+    from .units import elaborate_quantity, quantity_meaning_id
+    if "quantity" in content:
+        payload = content["quantity"]
+    elif "ast" in content:
+        payload = {"format": "ve-quantity@1", "formula": content["ast"]}
+    elif "fence" in content:
+        if content["fence"] != unit["id"]:
+            raise VEError("unit fence must match its id")
+        if unit["id"] not in fences:
+            raise VEError("missing VE fence")
+        if unit.get("surface") not in ("english", "strict"):
+            raise VEError("fenced content needs english or strict surface")
+        from .surface.time import parse_w6_sentence
+        payload = parse_w6_sentence(env, fences[unit["id"]].strip(), unit["surface"])
+    else:
+        raise VEError("unit content must bind one formula or norm")
+    canonical, _ = elaborate_quantity(env, payload)
+    return canonical, quantity_meaning_id(env, canonical)
+
+
 def _content(env, unit, fences):
     content = unit.get("content")
     if content is None:
         return None
     if type(content) is not dict or len(content) != 1:
         raise VEError("unit content must bind one formula or norm")
+    if env.unit_schema is not None and "norm" not in content:
+        return _quantity_content(env, unit, content, fences)
+    if "quantity" in content:
+        raise VEError("UnsupportedProfile: quantity content requires ve-units@1")
     if "reports@0" in env.profiles and set(content) & {"report", "assessment", "negated"}:
         return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
@@ -497,6 +525,65 @@ def _check_narrowing_choices(meta, labels):
                 raise VEError("reading choice conflicts with narrowing")
 
 
+def quantity_admission_input(doc, active):
+    """The P0-shaped admission input of a quantity document, as sent to Lean
+    `ve_quantity` (case kind `document`). A unit with an active reading set
+    contributes only through readings labels."""
+    active_units = {r["unit"] for r in active}
+    return {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
+                       **({"content": u["content"]}
+                          if u["content"] is not None and u["id"] not in active_units else {})}
+                      for u in doc["units"]],
+            "graph": doc["meta"]["graph"],
+            **({"lemmas": doc["meta"]["lemmas"]} if "lemmas" in doc["meta"] else {}),
+            "open_terms": [o["name"] for o in doc["meta"].get("open_terms", [])],
+            "reading_sets": [{"id": r["id"], "version": r["version"],
+                              "readings": [c["content"] for c in r["readings"]]}
+                             for r in active],
+            "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
+
+
+def _check_quantity_document(doc, active):
+    """`ve document check` on the quantity route: Lean-mirrored admission of the
+    claim graph over annotated statements, then premise status of the
+    regenerated cores in the erased target."""
+    from .units import core_formula, erased_environment
+    env = doc["environment"]
+    target = erased_environment(env)
+    result = {"format": "ve-document@1", "source_id": doc["source_id"],
+              "document_id": doc["document_id"],
+              "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
+    if any(c["kind"] != "asserted" or c["content"] is None for r in active for c in r["readings"]):
+        raise VEError("non-assertion reading admission needs an elaborator")
+    active_units = {r["unit"] for r in active}
+    payloads = [u["content"] for u in doc["units"] if u["kind"] == "asserted"
+                and u["content"] is not None and u["id"] not in active_units]
+    if "graph" in doc["meta"]:
+        result["admission"] = admit_document(env, quantity_admission_input(doc, active))
+        labels = [a.get("label") for a in result["admission"]["report"]["assumptions"]]
+        _check_narrowing_choices(doc["meta"], labels)
+        payloads.extend(a["quantity"] for a in result["admission"]["report"]["assumptions"])
+        result["admission"]["core_report_id"] = result["admission"]["report_id"]
+        result["admission"]["report_id"] = digest(
+            f"ve-report-{env.identity_version}\n",
+            {"environment_id": env.environment_id, "document": doc["document_id"],
+             "report": result["admission"]["report"]})
+    premises = [core_formula(env, p)[1] for p in payloads]
+    from .ast import Or
+    for reading_set in active:
+        cores = [core_formula(env, c["content"])[1] for c in reading_set["readings"]]
+        formula = cores[-1]
+        for previous in reversed(cores[:-1]):
+            formula = Or(previous, formula)
+        premises.append(formula)
+    result["premises"] = premise_status(target, premises)
+    if "admission" in result:
+        status = result["premises"]["status"]
+        result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
+                                           False if status == "model" else None)
+    return result
+
+
 @semantic_entry("document.check")
 def check_document(path):
     from .search import model_search_scope
@@ -548,6 +635,8 @@ def _check_document(path):
                 result["status"] = statuses["document_status"]
         return result
     env = doc["environment"]
+    if env.unit_schema is not None:
+        return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
@@ -630,6 +719,12 @@ def render_document(path):
     from .printer import render
 
     def wording(ast):
+        if doc["environment"].unit_schema is not None:
+            from .surface.time import render_quantity_sentence
+            try:
+                return render_quantity_sentence(doc["environment"], ast)
+            except VEError:
+                return "The checked quantity statement " + json.dumps(ast["formula"]) + "."
         formula = formula_from_data(doc["environment"], ast)
         return render(Document((formula,)), doc["environment"], "ve_english").strip()
 

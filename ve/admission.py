@@ -417,6 +417,10 @@ def admit_document(environment, document) -> dict:
     Returns the admitted report, its `ve-report-<identity>` id and the units'
     kinds rendered back (byte-identical to the input kinds)."""
     env = environment if type(environment) is Environment else Environment(environment)
+    if env.unit_schema is not None:
+        # W6: every statement is an annotated quantity, admitted before erasure.
+        from .quantity_admission import admit_quantity_document
+        return admit_quantity_document(env, document)
     if env.alternatives is not None:
         from .alternatives import run_case
         result = run_case({"id": "admission", "kind": "admission",

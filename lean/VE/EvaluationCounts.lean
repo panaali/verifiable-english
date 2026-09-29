@@ -93,13 +93,27 @@ theorem route_decodeFormulas_length {E fs} (j : Json) (data : Bool) (h : VE.Rout
   unfold VE.Route.Wire.decodeFormulas at h
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨fs, hfs, h⟩ := bind_ok h
-  refine ⟨arr, harr, ?_⟩
+  have hjson : ∃ a, j.getArr? = .ok a ∧ arr = a.toList := by
+    unfold VE.Route.Wire.formulasJson at harr
+    cases hj : j.getArr? with
+    | error e => simp [hj, bind, Except.bind] at harr
+    | ok a =>
+      refine ⟨a, ?_, ?_⟩
+      · rfl
+      simp [hj, bind, Except.bind] at harr
+      split at harr <;> simp_all [pure, Except.pure]
+  obtain ⟨a, ha, rfl⟩ := hjson
+  refine ⟨a, ha, ?_⟩
   have hl := mapM_length _ _ _ hfs
-  revert h
-  repeat' split
-  all_goals intro h
-  all_goals first
-    | (cases h; simpa using hl)
-    | (simp_all [bind, Except.bind, pure, Except.pure]; done)
+  cases hn : VE.Route.Wire.nodeLimit (fs.map VE.Bridge.formulaNodes) with
+  | error e => simp [hfs, hn, bind, Except.bind] at h
+  | ok u =>
+    by_cases hp : data = true ∧ ∃ x ∈ fs, VE.Route.Wire.usesStringBinder x = true
+    · simp [hfs, hn, hp, bind, Except.bind] at h
+    · simp [hfs, hn, hp, bind, Except.bind, pure, Except.pure] at h
+      split at h
+      · cases h
+        simpa using hl
+      · simp at h
 
 end VE.EvaluationCounts
