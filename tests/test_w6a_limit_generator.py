@@ -11,6 +11,7 @@ and each backend must finish its batch within a wall-time bound.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import random
 import subprocess
@@ -28,7 +29,7 @@ from ve.units import elaborate_quantity, erased_environment, quantity_countermod
 ROOT = Path(__file__).resolve().parents[1]
 QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 ROUTE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
-RUST = ROOT / "rust" / "target" / "release" / "ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)

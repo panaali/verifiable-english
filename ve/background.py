@@ -119,6 +119,25 @@ def _valid_definitions(env, model):
                                generator="definitions")
 
 
+def _soft_premises(env):
+    # Populated only by a validated soft document. Neither wire premises nor
+    # unvalidated environment metadata may supply this slot.
+    return tuple(formula for _, formula in getattr(env, "soft_premises", ()))
+
+
+def _valid_soft(env, model):
+    if not getattr(env, "soft_premises", ()):
+        return
+    from .evaluate import _evaluate_validated
+    from .limits import MAX_EVALUATIONS
+    for label, formula in env.soft_premises:
+        result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit(f"Soft background evaluation budget exhausted: {label}")
+        if result.value is not True:
+            raise InvalidModel(f"soft premise {label} is false", generator="soft")
+
+
 # Each entry is (premise generator, validity checker).
 HOOKS: dict[str, tuple[Callable, Callable]] = {
     "flags": (_flag_premises, _valid_flags),
@@ -128,6 +147,12 @@ HOOKS: dict[str, tuple[Callable, Callable]] = {
 }
 
 
+def _background_hooks(env):
+    yield from HOOKS.items()
+    if getattr(env, "soft_premises", ()):
+        yield "soft", (_soft_premises, _valid_soft)
+
+
 @semantic_entry("definitions.elaborate")
 def background(env) -> tuple[Premise, ...]:
     # Every checking site consults Background, so the gate on checker families
@@ -135,7 +160,7 @@ def background(env) -> tuple[Premise, ...]:
     from .profiles import require_checker
     require_checker(env)
     return tuple(Premise(formula, generator)
-                 for generator, (make, _) in HOOKS.items() for formula in make(env))
+                 for generator, (make, _) in _background_hooks(env) for formula in make(env))
 
 
 def checked_premises(env, layer_premises, case_premises):
@@ -151,7 +176,7 @@ def checked_premises(env, layer_premises, case_premises):
 def validate_background(env, model) -> None:
     from .profiles import require_checker
     require_checker(env)
-    for generator, (_, validate) in HOOKS.items():
+    for generator, (_, validate) in _background_hooks(env):
         try:
             validate(env, model)
         except InvalidModel as exc:
