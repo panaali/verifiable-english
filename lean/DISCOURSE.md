@@ -241,3 +241,8 @@ is the proved Lean statement.
   recorded choice, gives editor hints (`discourse_hints`, the reviewed presentations) and the diagnostic text of a
   document this route rejects too. A route that is missing, fails or answers anything but one well-formed answer to
   the case is `CheckerUnavailable`; `NotImplemented` is Python's `UnsupportedProfile`; neither is a verdict.
+  Python recognises a `@2` text by its front matter's `format` alone (`is_discourse_text`), collects sibling files
+  over any front matter (`import_files`, breadth first, embedded bytes as `embeddedBytes` reads them), and a Python
+  failure of any kind on a document this route rejects is this route's diagnostic. `Loader.linesOf`/`byteStrip`
+  split and strip the body as `bytes.splitlines`/`bytes.strip` do (`linesOf_carriage_return`,
+  `byteStrip_vertical_space`); a front matter over the JSON depth is `ResourceLimit`, never Python's rejection.
