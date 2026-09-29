@@ -10,6 +10,7 @@ order countermodels but does not search for them.
 from __future__ import annotations
 
 import json
+import os
 from copy import deepcopy
 import re
 import shutil
@@ -204,9 +205,19 @@ def lean_executable():
 
 @pytest.fixture(scope="module")
 def rust_executable():
-    binary = ROOT / "rust/target/release/ve"
-    assert binary.exists()
-    return binary
+    if os.environ.get("VE_RUST_PREBUILT"):
+        binary = Path(os.environ["VE_RUST_BINARY"])
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
+        return binary
+    cargo = shutil.which("cargo")
+    if not cargo:
+        pytest.skip("cargo is not available")
+    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
+                            str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env, capture_output=True,
+                           text=True, timeout=HANG_TIMEOUT)
+    assert built.returncode == 0, built.stdout + built.stderr
+    return ROOT / "rust/target/release/ve"
 
 
 def test_fixtures_are_generated():

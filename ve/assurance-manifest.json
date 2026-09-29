@@ -50,8 +50,8 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 9742,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
+    "total_lines": 10735,
+    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, and rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
        "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
@@ -79,6 +79,9 @@
       {"file": "lean/VE/Norms/Wire.lean", "lines": 306, "sha256": "911a3ac27e31f4d66445bf8c0f3b444891f7d39c2996d21d401cb44bfb19125b",
        "ranges": [[25, 305]],
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
+      {"file": "lean/VE/SpeechActs/Wire.lean", "lines": 993, "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+       "ranges": [[1, 993]], "declarations": ["parseScope", "decodeSpeechEnvironment", "decodeUnit", "decodeDocument"],
+       "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
       {"file": "lean/VE/Route/Admission.lean", "lines": 697, "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
@@ -141,6 +144,7 @@
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
+      "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
       "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",

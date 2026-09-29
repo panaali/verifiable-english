@@ -6,6 +6,7 @@ gives early diagnostics and produces certificates; Rust regenerates and evaluate
 import copy
 from datetime import date, timedelta
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -25,7 +26,7 @@ from ve.units import (check_quantity_certificate, day_number, decimal_exact, ela
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
-RUST = ROOT / "rust" / "target" / "release" / "ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
 pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
 

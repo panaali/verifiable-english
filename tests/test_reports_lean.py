@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import random
 import shutil
 import subprocess
@@ -697,7 +698,9 @@ def test_python_lean_differential_generated_chi(lean):
 
 
 def test_rust_report_witness_replays_in_lean(lean):
-    binary = ROOT / "rust/target/debug/ve"
+    binary = Path(os.environ["VE_RUST_BINARY"]) if os.environ.get("VE_RUST_PREBUILT") else ROOT / "rust/target/debug/ve"
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert binary.is_file(), f"gate Rust build missing: {binary}"
     if not binary.exists():
         built = subprocess.run(["cargo", "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
                                capture_output=True, text=True, timeout=600)
