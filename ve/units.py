@@ -12,7 +12,7 @@ from .ast import decimal_from_wire, MAX_NUMERAL_CHARS
 from .environment import INT_SORT, STRING_SORT, valid_identifier
 from .errors import ResourceLimit, TypeMismatch, UnsupportedProfile, VEError
 from .limits import MAX_NODES
-from .wire import canonical_json, digest, require_fields
+from .wire import canonical_json, digest
 
 SCHEMA = "ve-units@1"
 DIMENSIONLESS = "dimensionless"
@@ -41,43 +41,80 @@ W6_PROFILE_TEXT = ("ve-units@1 requires exactly order@0, relational-fol@0 and ti
 NUMBERS2 = "$int quantification requires the missing numbers2 route"
 
 
-def _fields(value, required, optional=(), path=""):
+def quote(s):
+    """Lean's `String.quote`, which the Lean and Rust W6 decoders use in their texts."""
+    escapes = {"\n": "\\n", "\t": "\\t", "\\": "\\\\", '"': '\\"'}
+    return '"' + "".join(escapes.get(c) or (f"\\x{ord(c):02x}" if ord(c) <= 31 or c == "\x7f" else c)
+                         for c in s) + '"'
+
+
+def _object(value):
     if type(value) is not dict:
-        raise VEError(f"Invalid object {path}")
-    require_fields(value, set(required) | (set(value) & set(optional)), path=path)
+        raise VEError("object expected")
+    return value
+
+
+def _string(value):
+    if type(value) is not str:
+        raise VEError("String expected")
+    return value
+
+
+def _fields(value, required, optional=()):
+    """Lean's `exactFields` (no optional fields) and `shape`, with their texts."""
+    got = f"got [{', '.join(sorted(_object(value)))}]"
+    if optional:
+        if not set(required) <= set(value) or not set(value) <= set(required) | set(optional):
+            raise VEError(f"fields do not match: required [{', '.join(required)}], "
+                          f"optional [{', '.join(optional)}], {got}")
+    elif set(value) != set(required):
+        raise VEError(f"fields do not match: expected [{', '.join(required)}], {got}")
+
+
+def _scale(tag, text):
+    """Lean's `decodeScale`: a canonical integer that is a positive power of ten."""
+    _string(text)
+    if len(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit("numeral length")
+    if not re.fullmatch(r"-?[0-9]+", text, re.ASCII):
+        raise VEError("invalid integer")
+    if str(int(text)) != text:
+        raise VEError("non-canonical integer")
+    if text[0] != "1" or set(text[1:]) - {"0"}:
+        raise VEError(f"UnitScale({tag}): expected a positive power of ten")
+    return int(text)
 
 
 def validate_units(schema, raw):
+    """The unit records, with the texts of Lean's `decodeUnit` and in its (sorted) tag order."""
     if schema != SCHEMA:
-        raise UnsupportedProfile(f"Unsupported unit schema {schema}")
+        raise UnsupportedProfile("Unsupported unit schema")
     if type(raw) is not dict:
         raise VEError("units must be an object")
     if len(raw) > 64:
         raise ResourceLimit("At most 64 unit tags")
-    for tag, record in raw.items():
+    for tag, record in sorted(raw.items()):
         if not valid_identifier(tag) or tag == DIMENSIONLESS:
-            raise VEError(f"Invalid unit tag {tag!r}")
-        _fields(record, ("scale", "display"), path=f"/units/{tag}")
-        scale = decimal_from_wire(record["scale"])
-        if scale <= 0 or str(scale)[0] != "1" or set(str(scale)[1:]) - {"0"}:
-            raise VEError(f"UnitScale({tag}): expected a positive power of ten")
+            raise VEError(f"Invalid unit tag {quote(tag)}")
+        _fields(record, ("scale", "display"))
+        scale = _scale(tag, record["scale"])
         display = record["display"]
         if type(display) is not dict or "kind" not in display:
             raise VEError(f"Invalid display for {tag}")
-        kind = display["kind"]
+        kind = _string(display["kind"])
         if kind == "percent":
             _fields(display, ("kind",))
         elif kind == "money":
             _fields(display, ("kind", "currency"), ("input_symbol",))
-            currency = display["currency"]
-            if type(currency) is not str or not re.fullmatch(r"[A-Z]{3}", currency):
+            currency = _string(display["currency"])
+            if not re.fullmatch(r"[A-Z]{3}", currency):
                 raise VEError(f"Invalid currency for {tag}")
             if "input_symbol" in display:
-                display_string(display["input_symbol"], trailing_space=True)
+                display_string(_string(display["input_symbol"]), trailing_space=True)
         elif kind == "decimal":
             _fields(display, ("kind", "label"), ("placement",))
-            display_string(display["label"])
-            if display.get("placement", "suffix") not in ("prefix", "suffix"):
+            display_string(_string(display["label"]))
+            if _string(display.get("placement", "suffix")) not in ("prefix", "suffix"):
                 raise VEError(f"Invalid placement for {tag}")
         elif kind == "iso_date":
             _fields(display, ("kind",))
@@ -106,7 +143,7 @@ def display_string(s, *, trailing_space=False, what="Display string"):
     if trailing_space and len(words) > 1 and words[-1] == "":
         words = words[:-1]
     if any(not word or SPACES & set(word) for word in words):
-        raise VEError(f"{what} {s!r} must be whitespace-normalized")
+        raise VEError(f"{what} {quote(s)} must be whitespace-normalized")
     return s
 
 
@@ -119,9 +156,10 @@ def sentence_initial(words):
 def check_verbalisations(constants):
     """Constant names are spelled so that the sentence normalizer keeps them and
     no two share a spelling, even when one starts a sentence. Then a rendered
-    name is read back as exactly its own constant."""
+    name is read back as exactly its own constant. Names are checked in sorted
+    order, as the Lean and Rust decoders read a JSON object."""
     spellings = {}
-    for name, decl in constants.items():
+    for name, decl in sorted(constants.items()):
         if decl.verbalisation is None:
             continue
         display_string(decl.verbalisation, what="Verbalisation")
@@ -162,11 +200,11 @@ def check_display_injective(units):
     another on the same side, even for the same tag, and no affix may touch the
     amount with a digit, sign or point. Then every literal string has at most one
     (tag, amount) reading; bare decimals and dates carry no affix at all."""
-    forms = display_affixes(units)
+    forms = display_affixes(dict(sorted(units.items())))
     for side, text, _ in forms:
         edge = text[0] if side == "prefix" else text[-1]
         if edge in _AMOUNT_CHARS:
-            raise VEError(f"DisplayCollision({text!r} touches the amount)")
+            raise VEError(f"DisplayCollision({quote(text)} touches the amount)")
     for i, (side, text, _) in enumerate(forms):
         for other_side, other, _ in forms[i + 1:]:
             if side != other_side:
@@ -174,7 +212,7 @@ def check_display_injective(units):
             extends = (text.startswith(other) or other.startswith(text) if side == "prefix"
                        else text.endswith(other) or other.endswith(text))
             if extends:
-                raise VEError(f"DisplayCollision({text!r}, {other!r})")
+                raise VEError(f"DisplayCollision({quote(text)}, {quote(other)})")
 
 
 def validate_tag(tag, units):
@@ -187,20 +225,20 @@ def validate_slot_units(raw, args, units):
     if type(raw) is not dict:
         raise VEError("argument_units must be an object")
     result = {}
-    for slot, tag in raw.items():
+    for slot, tag in sorted(raw.items()):
         if type(slot) is not str or not _SLOT.fullmatch(slot) or int(slot) >= len(args):
             raise VEError(f"Invalid argument unit slot {slot}")
         if args[int(slot)] != INT_SORT:
             raise VEError(f"Unit on non-integer slot {slot}")
-        result[slot] = validate_tag(tag, units)
-    return result
+        result[slot] = validate_tag(_string(tag), units)
+    return {slot: result[slot] for slot in raw}
 
 
 def validate_extension(profiles, units, sorts, constants):
     """Route-level W6 environment conditions, after the vocabulary is decoded."""
     if tuple(profiles) not in W6_PROFILES + RISK_UNIT_PROFILES:
         raise UnsupportedProfile(W6_PROFILE_TEXT)
-    for tag in (DIMENSIONLESS, *units):
+    for tag in (DIMENSIONLESS, *sorted(units)):
         if tag in sorts:
             raise VEError(f"Unit tag {tag} collides with a declared sort")
     if any(decl.sort == STRING_SORT for decl in constants.values()):

@@ -117,7 +117,10 @@ fn scale(e: &Value, tag: &str) -> Result<BigInt> {
     let s = string(&record["scale"])?;
     let n = int(s)?;
     if !s.starts_with('1') || !s[1..].bytes().all(|b| b == b'0') {
-        return error("InvalidInput", format!("UnitScale({tag})"));
+        return error(
+            "InvalidInput",
+            format!("UnitScale({tag}): expected a positive power of ten"),
+        );
     }
     Ok(n)
 }
