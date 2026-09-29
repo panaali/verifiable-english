@@ -15,9 +15,21 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
-# Bound at import: a later monkeypatch of subprocess.run (a test fake for some
-# other process) must not intercept the checker process.
-_RUN = subprocess.run
+
+
+def _run_checker(argv, *, input, timeout):
+    """`subprocess.run` through Popen, as the Lean service client starts its
+    process: a test's fake of `subprocess.run` for some other process cannot
+    intercept the checker."""
+    with subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE) as process:
+        try:
+            stdout, stderr = process.communicate(input, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.communicate()
+            raise
+    return subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
 
 
 def soft_case(env) -> dict:
@@ -56,9 +68,7 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
     try:
-        completed = _RUN([str(binary), "jsonl", "-"], input=data,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         timeout=timeout, check=False)
+        completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
     if len(completed.stdout) > MAX_LINE_BYTES:
