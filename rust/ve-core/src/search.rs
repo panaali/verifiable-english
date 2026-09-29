@@ -122,28 +122,74 @@ impl SearchResult {
     }
 }
 /// Increment a mixed-radix counter, last entry fastest. Empty product has one state.
-fn increment(values: &mut [usize], minima: &[usize], limits: &[usize]) -> bool {
+pub(crate) fn increment(values: &mut [usize], limits: &[usize]) -> bool {
     for i in (0..values.len()).rev() {
         if values[i] + 1 < limits[i] {
             values[i] += 1;
             return true;
         }
-        values[i] = minima[i];
+        values[i] = 0;
     }
     false
 }
+/// Advance a k-combination of 0..n in lexicographic order.
+pub(crate) fn next_combination(indices: &mut [usize], n: usize) -> bool {
+    let k = indices.len();
+    for i in (0..k).rev() {
+        if indices[i] < n - k + i {
+            indices[i] += 1;
+            for j in i + 1..k {
+                indices[j] = indices[j - 1] + 1;
+            }
+            return true;
+        }
+    }
+    false
+}
+/// Python `search._domain_sizes`: bounded vectors by total entities, then lexicographically.
+pub(crate) fn domain_sizes(minima: &[usize], maximum: usize) -> Vec<Vec<usize>> {
+    fn walk(minima: &[usize], suffix: &[usize], maximum: usize, index: usize, remaining: usize,
+            prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
+        if index == minima.len() {
+            if remaining == 0 { out.push(prefix.clone()); }
+            return;
+        }
+        let rest = maximum * (minima.len() - index - 1);
+        let low = minima[index].max(remaining.saturating_sub(rest));
+        let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
+        for size in low..=high.min(maximum) {
+            prefix.push(size);
+            walk(minima, suffix, maximum, index + 1, remaining - size, prefix, out);
+            prefix.pop();
+        }
+    }
+    let mut suffix = vec![0; minima.len() + 1];
+    for index in (0..minima.len()).rev() {
+        suffix[index] = minima[index] + suffix[index + 1];
+    }
+    let mut out = Vec::new();
+    for total in suffix[0]..=minima.len() * maximum {
+        walk(minima, &suffix, maximum, 0, total, &mut Vec::new(), &mut out);
+    }
+    out
+}
+/// Python `search._models` for the relational families, in its exact order:
+/// domain sizes by total entities, used-relation subsets by tuple count (a
+/// subset violating a permission pair or a data flag is not a candidate),
+/// then constant denotations. A model Python rejects with a Background
+/// generator is skipped.
 struct Models<'a> {
     env: &'a Environment,
-    maximum: usize,
     sorts: Vec<String>,
     names: Vec<String>,
     used: BTreeSet<String>,
-    sizes: Vec<usize>,
-    minima: Vec<usize>,
+    sizes: Vec<Vec<usize>>,
+    size_index: usize,
+    domains: BTreeMap<String, Vec<String>>,
+    atoms: Vec<(String, Vec<String>)>,
+    subset: Vec<usize>,
     choices: Vec<usize>,
     choice_limits: Vec<usize>,
-    atoms: Vec<(String, Vec<String>)>,
-    bits: Vec<bool>,
     ready: bool,
     done: bool,
 }
@@ -180,82 +226,90 @@ impl<'a> Models<'a> {
             }
         }
         used.retain(|p| !env.is_defined(p));
+        let sizes = domain_sizes(&minima, maximum);
         Self {
             env,
-            maximum,
             sorts,
             names: env.constants.keys().cloned().collect(),
             used,
-            sizes: minima.clone(),
-            done: minima.iter().any(|n| *n > maximum),
-            minima,
-            choices: vec![0; env.constants.len()],
-            choice_limits: Vec::new(),
+            done: sizes.is_empty(),
+            sizes,
+            size_index: 0,
+            domains: BTreeMap::new(),
             atoms: Vec::new(),
-            bits: Vec::new(),
+            subset: Vec::new(),
+            choices: Vec::new(),
+            choice_limits: Vec::new(),
             ready: false,
         }
     }
     fn prepare(&mut self) -> Result<()> {
-        self.atoms.clear();
-        let sizes: BTreeMap<_, _> = self.sorts.iter().zip(self.sizes.iter().copied()).collect();
-        let count: usize = self
-            .used
-            .iter()
-            .map(|p| {
-                self.env.predicates[p]
-                    .iter()
-                    .map(|s| sizes[s])
-                    .product::<usize>()
-            })
+        self.domains = self.sorts.iter().zip(&self.sizes[self.size_index])
+            .map(|(s, n)| (s.clone(), (0..*n).map(|i| format!("e{i}")).collect()))
+            .collect();
+        let count: usize = self.used.iter()
+            .map(|p| self.env.predicates[p].iter().map(|s| self.domains[s].len()).product::<usize>())
             .sum();
         if count > 100_000 {
             return error("ResourceLimit", "used relation atom space exceeds 100,000");
         }
-        // Reverse predicate order: lowest bit corresponds to last predicate,
-        // matching Python's lexicographic product of subset masks when all are used.
-        for p in self.used.iter().rev() {
+        self.atoms.clear();
+        for p in &self.used {
             let sig = &self.env.predicates[p];
-            let limits: Vec<_> = sig.iter().map(|s| sizes[s]).collect();
+            let limits: Vec<_> = sig.iter().map(|s| self.domains[s].len()).collect();
             if limits.contains(&0) { continue; }
             let mut indices = vec![0; sig.len()];
             loop {
-                self.atoms.push((p.clone(), indices.iter().map(|i| format!("e{i}")).collect()));
-                if !increment(&mut indices, &vec![0; sig.len()], &limits) { break; }
+                self.atoms.push((p.clone(), indices.iter().zip(sig)
+                    .map(|(i, s)| self.domains[s][*i].clone()).collect()));
+                if !increment(&mut indices, &limits) { break; }
             }
         }
-        self.bits = vec![false; self.atoms.len()];
-        self.choices.fill(0);
-        self.choice_limits = self
-            .names
-            .iter()
-            .map(|n| sizes[&self.env.constants[n]])
-            .collect();
+        self.subset.clear();
+        self.choice_limits = self.names.iter().map(|n| self.domains[&self.env.constants[n]].len()).collect();
+        self.choices = vec![0; self.names.len()];
         self.ready = true;
         Ok(())
     }
-    fn advance(&mut self) {
-        for bit in &mut self.bits {
-            if !*bit {
-                *bit = true;
-                return;
+    fn relations(&self) -> BTreeMap<String, Vec<Vec<String>>> {
+        let mut relations: BTreeMap<_, Vec<Vec<String>>> = self.env.predicates.keys()
+            .filter(|p| !self.env.is_defined(p)).map(|p| (p.clone(), Vec::new())).collect();
+        for index in &self.subset {
+            let (p, row) = &self.atoms[*index];
+            relations.get_mut(p).expect("declared relation").push(row.clone());
+        }
+        relations
+    }
+    /// Python `_relation_assignments`' filters: permission pairs and data flags.
+    fn candidate(&self, relations: &BTreeMap<String, Vec<Vec<String>>>) -> bool {
+        for (required, permitted) in &self.env.profile_pairs {
+            if relations[required].iter().any(|row| !relations[permitted].contains(row)) {
+                return false;
             }
-            *bit = false;
         }
-        if increment(
-            &mut self.choices,
-            &vec![0; self.names.len()],
-            &self.choice_limits,
-        ) {
-            return;
+        for (name, (functional, total)) in &self.env.predicate_flags {
+            if !(*functional || *total) || self.env.is_defined(name) { continue; }
+            let rows = &relations[name];
+            let sources: BTreeSet<&String> = rows.iter().map(|row| &row[0]).collect();
+            if *functional && sources.len() != rows.len() { return false; }
+            let domain = &self.domains[&self.env.predicates[name][0]];
+            if *total && (sources.len() != domain.len()
+                          || domain.iter().any(|e| !sources.contains(e))) {
+                return false;
+            }
         }
-        self.ready = false;
-        if !increment(
-            &mut self.sizes,
-            &self.minima,
-            &vec![self.maximum + 1; self.sorts.len()],
-        ) {
-            self.done = true;
+        true
+    }
+    /// The next relation subset (by size, then lexicographically) that is a candidate.
+    fn advance_subset(&mut self) -> bool {
+        loop {
+            let n = self.atoms.len();
+            let k = self.subset.len();
+            if !(k > 0 && next_combination(&mut self.subset, n)) {
+                if k == n { return false; }
+                self.subset = (0..k + 1).collect();
+            }
+            if self.candidate(&self.relations()) { return true; }
         }
     }
     fn next(&mut self) -> Result<Option<FiniteModel>> {
@@ -265,46 +319,40 @@ impl<'a> Models<'a> {
             }
             if !self.ready {
                 self.prepare()?;
-            }
-            let domains: BTreeMap<_, Vec<_>> = self
-                .sorts
-                .iter()
-                .zip(&self.sizes)
-                .map(|(s, n)| (s, (0..*n).map(|i| format!("e{i}")).collect()))
-                .collect();
-            let constants: BTreeMap<_, _> = self
-                .names
-                .iter()
-                .zip(&self.choices)
-                .map(|(n, i)| (n, format!("e{i}")))
-                .collect();
-            let mut relations: BTreeMap<_, Vec<Vec<String>>> = self
-                .env
-                .predicates
-                .keys()
-                .filter(|p| !self.env.is_defined(p))
-                .map(|p| (p.clone(), Vec::new()))
-                .collect();
-            for ((p, row), bit) in self.atoms.iter().zip(&self.bits) {
-                if *bit {
-                    relations.get_mut(p).unwrap().push(row.clone());
+                // An empty denotation set yields no model for any subset.
+                if self.choice_limits.contains(&0)
+                    || (!self.candidate(&self.relations()) && !self.advance_subset()) {
+                    self.next_sizes();
+                    continue;
                 }
             }
+            let relations = self.relations();
+            let constants: BTreeMap<_, _> = self.names.iter().zip(&self.choices)
+                .map(|(n, i)| (n, self.domains[&self.env.constants[n]][*i].clone()))
+                .collect();
             let model = FiniteModel::from_value(
                 self.env,
-                &json!({"complete":true,"domains":domains,"constants":constants,"relations":relations}),
+                &json!({"complete":true,"domains":self.domains,"constants":constants,"relations":relations}),
             );
-            self.advance();
+            if !increment(&mut self.choices, &self.choice_limits) && !self.advance_subset() {
+                self.next_sizes();
+            }
             match model {
                 Ok(model) => return Ok(Some(model)),
                 Err(err) if err.code == "InvalidModel"
                     && (err.message.starts_with("literals:") || err.message.ends_with("(literals)")
-                        || err.message.starts_with("flags:") || err.message.ends_with("(flags)")) => {
+                        || err.message.starts_with("flags:") || err.message.ends_with("(flags)")
+                        || err.message.ends_with("(profile)")) => {
                     continue;
                 }
                 Err(err) => return Err(err),
             }
         }
+    }
+    fn next_sizes(&mut self) {
+        self.ready = false;
+        self.size_index += 1;
+        self.done = self.size_index >= self.sizes.len();
     }
 }
 

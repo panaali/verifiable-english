@@ -394,3 +394,21 @@ def test_core_family_layers_match_python(monkeypatch, layers):
             run("route", [{"id": "bad", "kind": "evaluate", "environment": env.to_dict(),
                            "model": bad, "ast": [formula_to_data(env, formula)]}])
         assert caught.value.generator == "flags"
+
+
+@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
+@pytest.mark.parametrize("profiles", [(), ("data@0",), ("definitions@0",), ("data@0", "definitions@0"),
+    ("closure@0",), ("closure@0", "nary@0", "data@0"), ("norms@0",)])
+def test_search_streams_python_model_order(monkeypatch, profiles):
+    """Every model budget stops Rust's stream where Python's stops: same order and counts."""
+    from tests.probe_matrix import raw_environment, semantic_formula
+    env = Environment(raw_environment(profiles))
+    late = And(Exists("item", Unary("base", Var(0))), semantic_formula(env))
+    for max_models in range(0, 7):
+        options = {"max_domain_size": 2, "max_models": max_models}
+        monkeypatch.setenv("VE_AUTHORITY", "python")
+        expected = (find_countermodel(env, (late,), Bottom(), **options).to_dict(),
+                    find_distinguishing_model(env, Top(), late, **options).to_dict())
+        monkeypatch.setenv("VE_AUTHORITY", "lean")
+        assert (find_countermodel(env, (late,), Bottom(), **options).to_dict(),
+                find_distinguishing_model(env, Top(), late, **options).to_dict()) == expected
