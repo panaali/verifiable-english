@@ -147,6 +147,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
+| `lean/VE/Service/Graph.lean` | 254 | 254 | 1–254 | `b91aadbc9bb3…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Alternatives/Wire.lean` | 296 | 296 | 1–296 | `26827ec1010c…` |
@@ -161,7 +162,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| **total** | | **8,972** | | |
+| **total** | | **9,226** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -251,7 +252,7 @@ the manifest `notes`, not changed:
 | `label` | leaf | python → lean | experimental / experimental | `ve.admission:parse_label`<br>`ve.admission:validate_label` | `ve_conformance route label` | `VE.Route.Admission.parseLabel_render` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `identity` | leaf | python → lean | experimental / experimental | `ve.identity:source_id`<br>`ve.identity:meaning_id`<br>`ve.argument:Claim.claim_id`<br>`ve.argument:deduction_identity` | none | none | `conformance` | `python:implementation`<br>`python:wire` |
 | `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Route.readings_all_sound (planned)`<br>`VE.Route.readings_none_sound (planned)`<br>`VE.Route.readings_some_sound (planned)` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
-| `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound`<br>`VE.Service.Graph.graph_sound`<br>`VE.Service.Graph.graph_entails`<br>`VE.Service.Graph.graph_unfolds` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.checkAll_length`<br>`VE.Definitions.Bundle.backgroundLeaves_hold` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
