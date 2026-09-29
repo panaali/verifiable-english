@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import fnmatch
 import hashlib
 import json
@@ -169,6 +170,22 @@ def gate_environment() -> dict[str, str]:
     return env
 
 
+@contextmanager
+def isolated_cargo(env: dict[str, str]):
+    # Cargo discovers config from its current directory's ancestors and from
+    # CARGO_HOME. Keep both outside the checkout and the user's home. Copy the
+    # existing registry cache so the locked build remains offline.
+    with tempfile.TemporaryDirectory(prefix="ve-gate-cargo-", dir="/tmp") as directory:
+        workdir = Path(directory)
+        cargo_home = workdir / "cargo-home"
+        cargo_home.mkdir()
+        registry = ROOT / ".cargo-home/registry"
+        if registry.is_dir():
+            shutil.copytree(registry, cargo_home / "registry")
+        cargo_env = {**env, "CARGO_HOME": str(cargo_home), "CARGO_NET_OFFLINE": "true"}
+        yield cargo_env, workdir
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
@@ -219,25 +236,27 @@ def main() -> int:
         target_dir = ROOT / "rust/target"
         cargo_options = ["--target-dir", str(target_dir), "--target", target]
 
-        command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
-                 str(ROOT / "rust/Cargo.toml")], env=env, stage="Rust build")
-        rust_binary = target_dir / target / "release/ve"
-        if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
-            raise RuntimeError(f"Rust build did not produce {rust_binary}")
-        result["stages"].append("rust_build")
+        with isolated_cargo(env) as (cargo_env, cargo_cwd):
+            command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
+                     str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
+                    stage="Rust build")
+            rust_binary = target_dir / target / "release/ve"
+            if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
+                raise RuntimeError(f"Rust build did not produce {rust_binary}")
+            result["stages"].append("rust_build")
 
-        rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
-                              "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                             env=env, stage="native Rust tests")
-        summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
-                               r"(\d+) ignored;", rust_tests)
-        if not summaries:
-            raise RuntimeError("cargo test produced no parseable test result")
-        result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
-        result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
-        if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
-            raise RuntimeError("native Rust tests absent or ignored")
-        result["stages"].append("cargo_test")
+            rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
+                                  "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                                 cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
+            summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
+                                   r"(\d+) ignored;", rust_tests)
+            if not summaries:
+                raise RuntimeError("cargo test produced no parseable test result")
+            result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
+            result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
+            if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
+                raise RuntimeError("native Rust tests absent or ignored")
+            result["stages"].append("cargo_test")
 
         with tempfile.TemporaryDirectory(prefix="ve-gate-") as directory:
             events_file = Path(directory) / "pytest.json"
