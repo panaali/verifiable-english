@@ -77,6 +77,8 @@ import VE.Risk.Record
 import VE.Risk.Piecewise
 import VE.Risk.Report
 import VE.Risk.Audit
+import VE.Risk.Run
+import VE.Risk.Wire
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2018,3 +2020,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Risk.snapshot_prefix
 #print axioms VE.Risk.verdict_ignores_outcomes
 #print axioms VE.Risk.snapshot_no_hindsight
+#print axioms VE.Risk.Run.bind_unit
+#print axioms VE.Risk.Run.risk_wire_scenario_sound
+#print axioms VE.Risk.Run.risk_wire_audit_sound
+#print axioms VE.Risk.Run.risk_wire_conflict_sound
+#print axioms VE.Risk.Run.risk_wire_followable_sound
