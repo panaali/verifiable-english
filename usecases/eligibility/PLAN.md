@@ -136,7 +136,7 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 54 entitled and 15 not-entitled cases. **Scoring
+The profiles contain 59 entitled and 17 not-entitled cases. **Scoring
 definition** (used everywhere in this plan and in the results):
 
 - Q1 is scored on every profile.
