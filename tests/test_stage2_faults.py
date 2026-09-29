@@ -30,6 +30,7 @@ from ve.norm_admission import admit_norm_document
 from ve.norms import (NormDocument, check_conflict, check_norm_entailment_certificate,
                       prove_norm_entailment)
 from ve.parser import parse
+from ve.readings import check_readings
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 from ve.vacuity import premise_status
 from tests import probe_matrix as pm
@@ -93,6 +94,9 @@ def inputs():
                                         "lemmas": [lemma]}),
         "parse": lambda: parse(env, "x is base.\n"),
         "graph": lambda: check_argument(graph, search=False).require_available(),
+        "readings": lambda: check_readings(env, [{"id": "s", "version": 1, "readings": [
+            {"kind": "asserted", "content": ["unary", "base", ["const", "x"]]},
+            {"kind": "asserted", "content": ["top"]}]}], ["top"], max_steps=64),
     }
 
 
@@ -105,7 +109,7 @@ LEAN = (
     "evaluate", "countermodel_check", "countermodel_search", "distinguishing_model",
     "norms_elaborate", "norms_certificate", "norms_conflict", "norms_admission", "premise_status",
     "compare", "environment_validation", "model_validation", "definitions_elaboration", "bundle",
-    "parse", "graph")
+    "parse", "graph", "readings")
 
 
 @pytest.fixture(scope="module")

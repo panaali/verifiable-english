@@ -56,6 +56,7 @@ ADAPTERS = {
     "environment_validation": "environment_validation", "model_validation": "model_validation",
     "definitions_elaboration": "definitions_elaboration", "bundle": "bundle",
     "parse_accept": "parse", "canonicalize": "parse", "argument_graph": "graph",
+    "readings": "readings",
 }
 _routed: set[str] = set()
 _backend = "python"
