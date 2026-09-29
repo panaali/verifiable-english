@@ -147,12 +147,14 @@ Matched wire choices (the Lean executable's choices where the spec leaves bytes 
 
 ## Status and what is not claimed
 
-* Proved: every theorem of spec 9.2, the non-admission theorems of 9.3, and the three wire
-  theorems of 9.3 (with the deviations recorded).
-* Not implemented: W2 `admission` on the rights path (`Admission.lean`,
-  `RightsAdmissionAnswer`, `Run.rights_wire_acceptance`). It needs the W2 side of item 2
-  (right units in W2 documents, candidate `labels`, `couplings`, `rights:limitation:*` and
-  `coupling:<id>` leaves), which this branch does not have; the executable rejects it.
+* Proved: every theorem of spec 9.2, the wire theorems of 9.3 and the rights W2
+  admission theorem on accepted documents (with the deviations recorded).
+* W2 `admission` on the rights path decodes active right, right_lines, limitation,
+  bar and outside norm units; regenerates the extended environment and exact layer,
+  soft and limitation leaves; checks source citation ids and coupling labels; and
+  proves `Run.rights_wire_acceptance`. Reading sets whose candidates are rights
+  objects still require per-choice elaboration and are reported as pending by the
+  document checker.
 * Tested: `Examples.lean` (build-time `#guard`: well-formedness, exact diagnostic texts,
   generated names, `Lim_D` labels, outcomes on finite base models through `selects″°` and
   `O_p°`, the audit with an uncited and a cited adopter exception); `tests/test_rights_lean.py`

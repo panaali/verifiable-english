@@ -1729,6 +1729,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.Wire.primeModelR_valid
 #print axioms VE.Rights.Wire.replayRightsEntailment_decodes
 #print axioms VE.Rights.Wire.rights_wire_acceptance
+#print axioms VE.Rights.Admission.admitNodes_ok
+#print axioms VE.Rights.Admission.admitDocument_spec
+#print axioms VE.Rights.Admission.layerLeaf_formula
+#print axioms VE.Rights.Admission.softLeaf_formula
+#print axioms VE.Rights.Admission.rightsLeaf_formula
+#print axioms VE.Rights.Admission.rights_wire_report_consequence
+#print axioms VE.Rights.Run.runAdmission_sound
+#print axioms VE.Rights.Run.rights_wire_acceptance
 #print axioms VE.Rights.Wire.rights_wire_conflict_sound
 #print axioms VE.Rights.Wire.rights_wire_conflict_witness_sound
 #print axioms VE.Rights.Wire.rights_wire_scope_sound

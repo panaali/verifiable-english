@@ -832,6 +832,7 @@ def _check_document(path):
                                      for (limit, act, condition), generated in rights.condition_names.items()],
             "limitation_background_labels": [label for label, _ in rights.limitation_premises]}
         from .rights_route import report_rights
+        assertions.extend(formula for _, formula in rights.limitation_premises)
         source_units = [u["content"] for u in doc["units"]
                         if u["kind"] in ("right", "right_lines", "limitation", "bar", "norm")
                         and type(u["content"]) is dict]
@@ -846,8 +847,6 @@ def _check_document(path):
                 "distinction_hits": report["distinction_hits"],
                 "limitation_premises_used": report["limitation_premises_used"]}
     if "graph" in doc["meta"]:
-        if doc["rights_document"] is not None:
-            raise VEError("UnsupportedProfile: rights graph admission requires a rights route")
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
@@ -875,12 +874,19 @@ def _check_document(path):
                      "lemmas": doc["meta"].get("lemmas", []),
                      "open_terms": [o["name"] for o in doc["meta"].get("open_terms", [])],
                      "reading_sets": [{"id": r["id"], "version": r["version"],
-                                       "readings": [c["content"] for c in r["readings"]]}
+                                       "readings": [c["content"] for c in r["readings"]],
+                                       **({"labels": [c.get("labels", {}) for c in r["readings"]]}
+                                          if rights is not None else {})}
                                       for r in active
                                       if all(c["kind"] == "asserted" and c["content"] is not None
                                              for c in r["readings"])],
-                     "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
-        if soft is not None:
+                     "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])],
+                     **({"couplings": doc["meta"]["couplings"]}
+                        if rights is not None and doc["meta"].get("couplings") else {})}
+        if rights is not None:
+            from .rights_route import admit_rights_document
+            result["admission"] = admit_rights_document(doc["environment"], admission, rights)
+        elif soft is not None:
             from .soft_route import admit_soft_document
             result["admission"] = admit_soft_document(doc["environment"], admission,
                                                        soft_document=soft)

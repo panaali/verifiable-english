@@ -267,6 +267,89 @@ def test_right_lines_follow_document_order_across_rights(lean):
     assert [item["rule"] for item in row["lines"]] == ["first", "second", "third"]
 
 
+def test_interleaved_fan_out_names_follow_source_unit_order(lean):
+    torture = {"torture_permitted_state": permission(
+        "allow", act="{0} torture {1}", args=("state", "person")),
+        "torture_permitted_person": permission(
+            "allow", act="{0} torture {1}", args=("person", "person"))}
+    fan = {"state": "torture_permitted_state", "person": "torture_permitted_person"}
+
+    def fan_line(name, guard=("top",)):
+        return line("claim", norm(name, None, False, guard=guard), fan_out=fan)
+
+    units = [right("r5", [fan_line("first")]),
+             right("r6", [fan_line("middle", guard=("bottom",))]),
+             {"right_lines": {"right": "r5", "lines": [fan_line("last")]}}]
+    row = elaborate(lean, env(torture), units)
+    assert [(x["right"], x["rule"], x["node"]["guard"]) for x in row["lines"]] == [
+        ("r5", "rights-fan-1", ["top"]), ("r5", "rights-fan-2", ["top"]),
+        ("r6", "rights-fan-3", ["bottom"]), ("r6", "rights-fan-4", ["bottom"]),
+        ("r5", "rights-fan-5", ["top"]), ("r5", "rights-fan-6", ["top"])]
+
+
+def test_rights_admission_replays_regenerated_layer_and_limitation_leaves(lean):
+    raw = env(ARREST)
+    elaborated = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": raw,
+                             "document": GAMMA}])[0]
+    layer = next(p for p in elaborated["premises"] if p["label"].startswith("layer:norms:"))
+    limitation = elaborated["limitations"][0]
+    units = [{"id": f"u{i}", "span": [i, i + 1],
+              "kind": next(iter(content)), "content": content}
+             for i, content in enumerate(GAMMA)]
+
+    def admission(premise):
+        return {"units": units, "graph": {"root": "leaf", "nodes": [
+            {"name": "leaf", "ast": premise["ast"], "label": premise["label"]}]}}
+
+    rows = run(lean, [{"id": "l", "kind": "admission", "environment": raw,
+                       "document": admission(layer)},
+                      {"id": "r", "kind": "admission", "environment": raw,
+                       "document": admission(limitation)},
+                      {"id": "bad", "kind": "admission", "environment": raw,
+                       "document": admission({**limitation, "ast": ["top"]})}])
+    assert rows[0]["admitted"] is True and rows[0]["kinds"] == ["right", "limitation"]
+    assert rows[1]["admitted"] is True
+    assert rows[1]["conditional_on"] == [limitation["label"]]
+    assert rows[2]["status"] == "error"
+
+
+def test_rights_admission_rejects_nonexistent_citation_target(lean):
+    source = right("r9", [line("claim", norm("no-arbitrary-arrest", "arrest_permitted", False),
+                                cites={"exception": ["nonexistent-source-unit"]})])
+    document = {"units": [{"id": "u1", "span": [0, 1], "kind": "right", "content": source}],
+                "graph": {"root": "leaf", "nodes": [
+                    {"name": "leaf", "ast": ["top"], "label": "asserted", "unit": "u1"}]}}
+    row = run(lean, [{"id": "c", "kind": "admission", "environment": env(ARREST),
+                      "document": document}])[0]
+    assert row["error"] == "InvalidInput: citation target is not a source unit"
+
+
+def test_rights_admission_validates_coupled_reading_labels(lean):
+    raw = env(ARREST)
+    source = [right("r9", [line("claim", norm("no-arbitrary-arrest", "arrest_permitted", False))])]
+    elaborated = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": raw,
+                             "document": source}])[0]
+    premise = elaborated["premises"][0]
+    base = {"units": [{"id": "u1", "span": [0, 1], "kind": "right", "content": source[0]}],
+            "graph": {"root": "leaf", "nodes": [
+                {"name": "leaf", "ast": premise["ast"], "label": premise["label"]}]},
+            "reading_sets": [{"id": "a", "version": 1, "readings": [["top"], ["bottom"]],
+                              "labels": [{"force": "strict"}, {"force": "default"}]},
+                             {"id": "b", "version": 1, "readings": [["top"], ["bottom"]],
+                              "labels": [{"force": "strict"}, {"force": "default"}]}]}
+    coupling = {"id": "c-force", "axis": "force", "sets": [
+        {"set": "a", "version": 1}, {"set": "b", "version": 1}],
+        "by": "translator", "reason_spans": ["u1"]}
+    good = {**base, "couplings": [coupling]}
+    bad = {**base, "couplings": [{**coupling, "axis": "missing"}]}
+    rows = run(lean, [{"id": "good", "kind": "admission", "environment": raw,
+                       "document": good},
+                      {"id": "bad", "kind": "admission", "environment": raw,
+                       "document": bad}])
+    assert rows[0]["admitted"] is True
+    assert rows[1]["error"] == "CouplingLabelMissing: c-force, a"
+
+
 def test_soft_cases_delegate_unchanged(lean):
     raw = env(DEPRIVE, profiles=("norms@0", "soft-norms@0"))
     del raw["vocabulary"]["rights"]

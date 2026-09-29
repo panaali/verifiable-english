@@ -1,4 +1,4 @@
-import VE.Rights.Wire
+import VE.Rights.Admission
 
 /-! The `ve_rights_route` executable (docs/spec/rights.md 9.4), invoked as
 `lean/.lake/build/bin/ve_rights_route <cases.json|->`. Each case is
@@ -28,8 +28,7 @@ import VE.Rights.Wire
 * `rights-certificate`: `premises`, `conclusion`, `certificate` bound to
   `background″ ++ layer premises ++ premises` over `E″′` → `valid`, `conditional_on`
   (`Wire.rights_wire_acceptance`).
-* `admission` on the rights path is not implemented here (the W2 side of item 2 defines
-  the unit kinds, labels and couplings it needs); it is rejected, never delegated.
+* `admission`: a W2 document with active rights units and exact regenerated leaves.
 * A case without a rights construct is delegated unchanged to soft's `Run.runCase`. -/
 namespace VE.Rights.Run
 open Lean
@@ -220,12 +219,65 @@ def barResult (src : RightsSource) (environment document certs : Json) : List (S
 
 /-! ## Dispatch -/
 
+def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
+  let labels := VE.SoftNorms.Wire.openCoherence (correlate res.src.D) ++
+    (limPremisesLabelled res.src.D).map (·.1)
+  let conditional := labels.filter (fun l => res.report.assumptions.any (fun c => c.label == l))
+  VE.Route.Wire.ok id [("admitted", .bool true), ("report", Norms.Run.reportJson res.report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray),
+    ("conditional_on", toJson conditional)]
+
+def runAdmission (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocument environment document
+  let canonical ← Norms.Wire.canonicalEnvironmentJson environment
+  let envId ← VE.Route.Wire.environmentId res.src.re.profiles canonical
+  let reportId ← VE.CertificateWire.digest (Norms.Run.reportDomain res.src.re.profiles)
+    (Norms.Run.reportPayload envId document res.report)
+  return encodeAdmitted id reportId res
+
+def RightsAdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
+  ∃ res : Admission.Admitted, ∃ reportId : String,
+    Admission.admitDocument environment document = .ok res ∧
+    WellFormedRights res.src.D = true ∧
+    answer = encodeAdmitted id reportId res ∧
+    VE.Rights.Wire.primeJsonR res.src.D environment = .ok res.prime ∧
+    VE.Norms.Admission.checkBindings res.src.re.profiles res.prime res.decoded = .ok () ∧
+    VE.Graph.SoundReport.{0} (VE.SoftNorms.envPrime (correlate res.src.D)) res.graph res.report ∧
+    (∀ w ∈ res.wires, Admission.NodeAdmitted res.src res.doc res.couplingIds w) ∧
+    VE.Route.Admission.CitationsClosed res.doc res.report ∧
+    VE.Route.Admission.ChoicesCompatible res.report ∧
+    Admission.CouplingChoicesCompatible document res.report = true ∧
+    (∀ S : VE.Structure.{0}, S.Admissible (VE.SoftNorms.envPrime (correlate res.src.D)) →
+      Sat S (backgroundR res.src.D ++ elaborate (soften (correlate res.src.D)).T) →
+      Sat S ((Admission.otherAssumptions res).map (·.formula)) →
+      res.report.root.formula.denote S []) ∧
+    ∃ canonical envId, Norms.Wire.canonicalEnvironmentJson environment = .ok canonical ∧
+      VE.Route.Wire.environmentId res.src.re.profiles canonical = .ok envId ∧
+      VE.CertificateWire.digest (Norms.Run.reportDomain res.src.re.profiles)
+        (Norms.Run.reportPayload envId document res.report) = .ok reportId
+
+open VE.Order.ProfileGate (bind_ok) in
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    RightsAdmissionAnswer id environment document answer := by
+  unfold runAdmission at h
+  obtain ⟨res, hr, h⟩ := bind_ok h
+  obtain ⟨canonical, hc, h⟩ := bind_ok h
+  obtain ⟨envId, he, h⟩ := bind_ok h
+  obtain ⟨reportId, hd, h⟩ := bind_ok h
+  cases h
+  obtain ⟨hwf, hp, hb, hs, hn, hcit, hch, hcoupling⟩ :=
+    Admission.admitDocument_spec environment document res hr
+  exact ⟨res, reportId, hr, hwf, rfl, hp, hb, hs, hn, hcit, hch, hcoupling,
+    (fun S hS hg ho => Admission.rights_wire_report_consequence environment document res hr S hS hg ho),
+    canonical, envId, hc, he, hd⟩
+
 def witnessKind (t : String × List String × VE.Formula) : String :=
   if (t.1.splitOn "->").length > 1 then s!"pair conflict on {t.1}" else s!"strict collision on {t.1}"
 
 def runRightsKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "admission" then
-    throw "UnsupportedProfile: admission on the rights route is not implemented"
+    return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "rights-elaborate" then
     let environment ← j.getObjVal? "environment"
     let src ← decodeRightsSource environment (j.getObjValD "document")
@@ -280,6 +332,28 @@ def runCase (j : Json) : Except String Json := do
   let kind ← VE.Route.Run.caseKind j
   if !usesRightsPath j then return ← VE.SoftNorms.Run.runCase j
   runRightsKind id kind j
+
+open VE.Order.ProfileGate (bind_ok) in
+theorem rights_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesRightsPath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      RightsAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := bind_ok h
+  obtain ⟨kind, hkind, h⟩ := bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp [hn] at h
+  unfold runRightsKind at h
+  simp at h
+  obtain ⟨environment, he, h⟩ := bind_ok h
+  obtain ⟨document, hd, h⟩ := bind_ok h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesRightsPath j then
