@@ -71,6 +71,11 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
         if name in seen:
             raise DuplicateDeclaration(f"risk class {name}")
         seen.add(name)
+    if sort in seen:
+        raise VEError(f"RiskReserved: {sort}")
+    for name in ("avoidable", "unavoidable", "allows", "prevents"):
+        if name in seen:
+            raise VEError(f"RiskReserved: {name}")
     for name in (*sorts, *predicates, *constants):
         if name.startswith("risk__") or name in seen:
             raise VEError(f"RiskReserved: {name}")
@@ -131,7 +136,7 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
     if type(always) is not list:
         raise VEError("InvalidInput: risk.always_possible")
     for klass in always:
-        if klass not in seen:
+        if type(klass) is not str or klass not in seen:
             raise UnknownSymbol(f"risk.always_possible {klass}")
     if "combination" in raw and raw["combination"] not in ("latest", "hull", "intersection"):
         raise VEError("InvalidInput: risk.combination")
@@ -143,7 +148,7 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
             _identifier(name, field)
             if field == "alternative_kinds":
                 _short_text(value, field)
-            elif units is None or value not in units and value != "dimensionless":
+            elif type(value) is not str or units is None or value not in units and value != "dimensionless":
                 raise UnknownSymbol(f"risk.{field} {value}")
     requirements = raw.get("required_alternatives", [])
     if type(requirements) is not list:
@@ -152,7 +157,7 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
         if type(row) is not dict or set(row) != {"when", "require"} or type(row["require"]) is not list:
             raise VEError("InvalidInput: risk.required_alternatives")
         for name in (row["when"], *row["require"]):
-            if name not in raw.get("alternative_kinds", {}):
+            if type(name) is not str or name not in raw.get("alternative_kinds", {}):
                 raise UnknownSymbol(f"risk.required_alternatives {name}")
     requirements = raw.get("required_estimators", [])
     if type(requirements) is not list:
@@ -160,13 +165,35 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
     for row in requirements:
         if type(row) is not dict or set(row) != {"quantity_kind", "estimators"} or type(row["estimators"]) is not list:
             raise VEError("InvalidInput: risk.required_estimators")
-        if row["quantity_kind"] not in raw.get("quantity_kinds", {}):
+        if type(row["quantity_kind"]) is not str or row["quantity_kind"] not in raw.get("quantity_kinds", {}):
             raise UnknownSymbol(f"risk.required_estimators {row['quantity_kind']}")
         for name in row["estimators"]:
             _short_text(name, "required_estimators")
     if type(raw.get("use_all_recorded", False)) is not bool:
         raise VEError("InvalidInput: risk.use_all_recorded")
     return canonical_json(raw)
+
+
+def _shape_case(case):
+    """Catch malformed envelopes early; Lean repeats admission from raw JSON."""
+    kind = case["kind"]
+    if kind == "risk-decision":
+        if type(case.get("decision")) is not dict or type(case.get("entries")) is not list:
+            raise VEError("InvalidInput: risk-decision.entries")
+        entry = case["decision"]
+        if entry.get("kind") != "decision" or type(entry.get("content")) is not dict:
+            raise VEError("InvalidInput: risk-decision.decision")
+        record = entry["content"]
+        if record.get("format") != "ve-risk-decision@0":
+            raise VEError("InvalidInput: risk-decision.format")
+        for name in ("id", "chooser", "chooser_label", "policy", "alternatives",
+                     "quantities", "cites", "facts"):
+            if name not in record:
+                raise VEError(f"InvalidInput: risk-decision.{name}")
+    elif kind == "risk-audit":
+        log = case.get("log")
+        if type(log) is not dict or log.get("format") != "ve-risk-log@0" or type(log.get("entries")) is not list:
+            raise VEError("InvalidInput: risk-log.entries")
 
 
 def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> dict:
@@ -177,6 +204,7 @@ def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> d
     env = Environment(case["environment"])
     if "risk@0" not in env.profiles:
         raise UnsupportedProfile("risk@0 is required")
+    _shape_case(case)
     if os.environ.get("VE_AUTHORITY") == "python":
         raise CheckerUnavailable("risk@0 requires the Lean checker")
     executable = _BINARY if binary is None else Path(binary)

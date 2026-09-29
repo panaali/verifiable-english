@@ -4,6 +4,7 @@ from copy import deepcopy
 import pytest
 
 from ve.environment import Environment
+from ve.english import parse_english_with_metadata
 from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
@@ -47,17 +48,30 @@ def test_block_round_trip_and_identity():
     assert Environment(changed).environment_id != env.environment_id
 
 
+def test_risk_block_with_w6_quantity_kind_round_trips():
+    raw = risk_source()
+    raw["profiles"] += ["order@0", "time@0"]
+    raw["profiles"].sort()
+    raw["unit_schema"] = "ve-units@1"
+    raw["units"] = {"gb": {"scale": "10", "display": {"kind": "decimal", "label": "GB"}}}
+    raw["risk"]["quantity_kinds"] = {"memory": "gb"}
+    env = Environment(raw)
+    assert env.to_dict() == raw
+
+
 @pytest.mark.parametrize("edit,diagnostic", [
     (lambda r: r["risk"].update(bands=[]), "stage B or C not enabled"),
     (lambda r: r["risk"].update(unknown=True), "InvalidInput: risk.unknown"),
     (lambda r: r["risk"]["severity"].update(sort="harm"), "RiskSeverityNotFresh"),
     (lambda r: r["risk"]["severity"].update(classes=["minor", "minor"]), "risk class minor"),
+    (lambda r: r["risk"]["severity"].update(classes=["avoidable"]), "RiskReserved"),
     (lambda r: r["risk"]["severity"].update(more_severe=[["severe", "minor"], ["minor", "severe"]]), "DependencyCycle"),
     (lambda r: r["risk"]["severity"].update(unranked=[["minor", "severe"]]), "RiskUnrankedAgainstOrder"),
     (lambda r: r["risk"].update(harm_classes=[]), "HarmUnclassified"),
     (lambda r: r["risk"].update(harm_classes=[["outage", "severe"]] * 2), "HarmTwoClasses"),
     (lambda r: r["alternatives"].update(outcomes={"complete_by": "team"}), "RiskOutcomes"),
     (lambda r: r["profiles"].remove("alternatives@0"), "risk@0 requires alternatives@0"),
+    (lambda r: r["risk"].update(required_alternatives=[{"when": [], "require": []}]), "risk.required_alternatives"),
 ])
 def test_block_rejections(edit, diagnostic):
     raw = risk_source()
@@ -77,6 +91,15 @@ def test_excludes_and_route_unavailable(monkeypatch, tmp_path):
     monkeypatch.delenv("VE_AUTHORITY")
     with pytest.raises(CheckerUnavailable, match="unavailable"):
         run_case(case, binary=tmp_path / "absent")
+
+
+def test_decision_envelope_shape_precedes_dispatch(monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    case = {"id": "one", "kind": "risk-decision", "environment": risk_source(),
+            "decision": {"kind": "decision", "content": {"format": "ve-risk-decision@0"}},
+            "entries": []}
+    with pytest.raises(VEError, match="risk-decision.id"):
+        run_case(case)
 
 
 def test_frozen_wordings_and_pending_sufficient_form():
@@ -104,3 +127,32 @@ def test_frozen_wordings_and_pending_sufficient_form():
     for word in ("might", "cannot", "leads", "might-not", "class", "or-worse", "less-worst",
                  "necessary", "exact"):
         assert enabled(by_tag("risk-" + word), env)
+
+
+def test_policy_english_uses_risk_readings():
+    raw = risk_source()
+    raw["vocabulary"]["constants"].update({
+        "run": {"sort": "action", "description": "run"},
+        "wait": {"sort": "action", "description": "wait"},
+    })
+    env = Environment(raw)
+    readings = {
+        "run might lead to outage.": "risk__might_lead_to",
+        "run cannot lead to outage.": "risk__might_lead_to",
+        "run might not lead to outage.": "leads_to",
+        "outage is severe.": "risk__class",
+        "outage is severe or worse.": "risk__or_worse",
+        "wait has a less severe worst case than run.": "risk__less_worst",
+        "run might prevent outage.": "prevents",
+    }
+    for sentence, predicate in readings.items():
+        parsed = parse_english_with_metadata(env, sentence)
+        assert predicate in str(parsed.document.formulas[0])
+    for sentence, rewrite in (
+        ("run does not lead to outage.", "Choose 'cannot lead to'"),
+        ("run prevents outage.", "Use 'might prevent'"),
+        ("run may lead to outage.", "Use 'might lead to'"),
+        ("wait is safer than run.", "less severe worst case"),
+    ):
+        with pytest.raises(VEError, match=rewrite):
+            parse_english_with_metadata(env, sentence)

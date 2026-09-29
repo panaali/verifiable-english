@@ -375,13 +375,30 @@ class EnglishVocabulary:
                 'avoidable': '{0} is avoidable by {1}',
                 'unavoidable': '{0} is unavoidable by {1}',
                 'allows': '{0} allows {1} to happen',
-                'prevents': '{0} prevents {1}',
+                'prevents': ('{0} might prevent {1}' if getattr(env, 'risk', None) is not None
+                             else '{0} prevents {1}'),
             })
             self.input_aliases = [
                 ('avoidable', '{0} is preventable by {1}', False),
                 ('allows', '{0} lets {1} happen', False),
-                (block['leads_to'], '{0} does not lead to {1}', True),
             ]
+            if getattr(env, 'risk', None) is None:
+                self.input_aliases.append((block['leads_to'], '{0} does not lead to {1}', True))
+            else:
+                from .wire import loads_json
+                risk = loads_json(env.risk)
+                severity_sort = risk['severity']['sort']
+                self.sorts[severity_sort] = 'severity'
+                self.predicates.update({
+                    'risk__might_lead_to': '{0} might lead to {1}',
+                    'risk__class': '{0} is {1}',
+                    'risk__or_worse': '{0} is {1} or worse',
+                    'risk__less_worst': '{0} has a less severe worst case than {1}',
+                })
+                self.input_aliases.extend([
+                    ('risk__might_lead_to', '{0} cannot lead to {1}', True),
+                    (block['leads_to'], '{0} might not lead to {1}', True),
+                ])
         else:
             self.input_aliases = []
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
@@ -389,6 +406,10 @@ class EnglishVocabulary:
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
                                 and name not in _RESERVED and name not in {'is', 'has'} else quote(name))
                           for name in env.constants}
+        if getattr(env, 'risk', None) is not None:
+            from .wire import loads_json
+            for klass in loads_json(env.risk)['severity']['classes']:
+                self.constants[klass] = klass
         # Names are declared display data, never inferred from descriptions.
         # A rejected or colliding form retains its exact quoted identifier.
         aliases = {}
@@ -1155,6 +1176,15 @@ class EnglishParser:
         phrase = self.source[start:end]
         if getattr(self.env, 'alternatives', None) is not None:
             lowered = phrase.lower()
+            if getattr(self.env, 'risk', None) is not None:
+                if lowered.startswith('may lead to '):
+                    self.error("Use 'might lead to': 'may' is permission.")
+                if lowered.startswith('does not lead to '):
+                    self.error("Choose 'cannot lead to' or 'might not lead to'.")
+                if lowered.startswith('prevents '):
+                    self.error("Use 'might prevent' in a risk environment.")
+                if lowered.startswith('is safer than '):
+                    self.error("Use 'has a less severe worst case than'.")
             if lowered.startswith('causes '):
                 self.error("The proximate cause wording needs a declared proximate role; declare it or write 'leads to'.")
             if lowered.startswith(('results in ', 'brings about ')):
@@ -1533,6 +1563,15 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
+    if getattr(env, 'risk', None) is not None:
+        for pattern, message in (
+            (r'\bdoes not lead to\b', "Choose 'cannot lead to' or 'might not lead to'."),
+            (r'\bmay lead to\b', "Use 'might lead to': 'may' is permission."),
+            (r'\bprevents\b', "Use 'might prevent' in a risk environment."),
+            (r'\bis safer than\b', "Use 'has a less severe worst case than'."),
+        ):
+            if re.search(pattern, source, re.I):
+                raise SyntaxError(message)
     words = EnglishVocabulary(env, **options)
     normalised, boundaries = _normalise_english_source(source, words)
     parser = EnglishParser(env, normalised, words)

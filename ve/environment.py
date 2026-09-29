@@ -506,6 +506,8 @@ class Environment:
         elif has_risk:
             raise UnsupportedProfile("risk block requires risk@0")
         profile_predicates = {}
+        profile_sorts = {}
+        profile_constants = {}
         if alternatives is not None:
             block = loads_json(alternatives)
             for name, arguments in (("avoidable", (block["harm"], block["chooser"])),
@@ -513,13 +515,30 @@ class Environment:
                                     ("allows", (block["action"], block["harm"])),
                                     ("prevents", (block["action"], block["harm"]))):
                 profile_predicates[name] = PredicateDecl(arguments, "alternatives@0 profile word")
+        if risk is not None:
+            block = loads_json(risk)
+            severity_sort = block["severity"]["sort"]
+            profile_sorts[severity_sort] = SortDecl("risk severity")
+            for klass in block["severity"]["classes"]:
+                profile_constants[klass] = ConstantDecl(severity_sort, "risk severity class")
+            alt_block = loads_json(alternatives)
+            for name, arguments in (
+                ("risk__might_lead_to", (alt_block["action"], alt_block["harm"])),
+                ("risk__class", (alt_block["harm"], severity_sort)),
+                ("risk__more_severe", (severity_sort, severity_sort)),
+                ("risk__or_worse", (alt_block["harm"], severity_sort)),
+                ("risk__less_worst", (alt_block["action"], alt_block["action"])),
+            ):
+                profile_predicates[name] = PredicateDecl(arguments, "risk@0 generated word")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
                              ("profiles", tuple(data["profiles"]) if route else
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
-                             ("sorts", MappingProxyType(sorts)), ("predicates", _ProfilePredicates(predicates, profile_predicates)
+                             ("sorts", _ProfilePredicates(sorts, profile_sorts) if risk is not None
+                              else MappingProxyType(sorts)), ("predicates", _ProfilePredicates(predicates, profile_predicates)
                               if alternatives is not None else MappingProxyType(predicates)),
-                             ("constants", MappingProxyType(constants)),
+                             ("constants", _ProfilePredicates(constants, profile_constants) if risk is not None
+                              else MappingProxyType(constants)),
                              ("unit_schema", data["unit_schema"] if extended else None),
                              ("units", MappingProxyType(units) if extended else None),
                              ("alternatives", alternatives)):
