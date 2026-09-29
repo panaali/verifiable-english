@@ -128,7 +128,8 @@ The test compares that classification with a scan of `lean/`, so a new JSON-hand
 
 `lean/VE/Norms/Admission.lean` lines 22–45 (`splitUnit`, `splitDocument`) are pinned because they rewrite the wire
 document before `decodeDoc` sees it and `admitDocument_spec` takes their result as given; the remaining JSON reads
-in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
+in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`, and its `envelopeGate` only rejects,
+through the pinned `Gate.decodeEnvelope`.
 
 <!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
@@ -141,12 +142,12 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `280802e8f79a…` |
 | `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `7a9f5a63f666…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
-| `lean/VE/Norms/Wire.lean` | 308 | 283 | 25–307 | `4af70fb4b49f…` |
+| `lean/VE/Norms/Wire.lean` | 314 | 289 | 25–313 | `9e2638cc8352…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
 | `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
-| `lean/VE/Norms/Admission.lean` | 455 | 24 | 22–45 | `9996af265c1e…` |
+| `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Alternatives/Wire.lean` | 296 | 296 | 1–296 | `26827ec1010c…` |
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
@@ -159,7 +160,7 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| **total** | | **8,577** | | |
+| **total** | | **8,583** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

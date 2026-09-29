@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 8577,
+    "total_lines": 8583,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -77,8 +77,8 @@
       {"file": "lean/VE/Order/Wire.lean", "lines": 292, "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
        "ranges": [[24, 233], [247, 253]],
        "declarations": ["decodeEnvironment", "decodeFormula", "decodeModel", "decodeTrace", "decodeCertificate", "environmentId", "meaningId"]},
-      {"file": "lean/VE/Norms/Wire.lean", "lines": 308, "sha256": "4af70fb4b49fcab28d78eb8ed9926d739882c0078bb85add2f3f60b0cea1b52b",
-       "ranges": [[25, 307]],
+      {"file": "lean/VE/Norms/Wire.lean", "lines": 314, "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
+       "ranges": [[25, 313]],
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
@@ -90,9 +90,9 @@
        "declarations": ["baseEnvironmentJson", "documentHash", "decodePackage", "witnessFrom"]},
       {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
        "ranges": [[1, 471]], "declarations": ["decodeLeaf", "decodeLemma"]},
-      {"file": "lean/VE/Norms/Admission.lean", "lines": 455, "sha256": "9996af265c1e4148d32b6af4105f688e02bd89cd6bc45dcad83ac49e9d9bdf3f",
+      {"file": "lean/VE/Norms/Admission.lean", "lines": 465, "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
        "ranges": [[22, 45]], "declarations": ["splitUnit", "splitDocument"],
-       "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec)"},
+       "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec); envelopeGate only rejects, through the pinned Gate.decodeEnvelope"},
       {"file": "lean/VE/Alternatives/Wire.lean", "lines": 296, "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
        "ranges": [[1, 296]], "declarations": ["profileGate", "normsView", "decodeBlock", "decodeAltSource"],
        "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"},
