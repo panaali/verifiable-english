@@ -50,7 +50,9 @@ ADAPTERS = {
     "countermodel_search_semantic_nonvacuity": "countermodel_search",
     "distinguishing_model": "distinguishing_model", "evaluate": "evaluate", "evaluate_trace": "evaluate",
     "dependency_order": "dependency_order", "label": "label", "typing": "typing",
-    "certificate_replay": "certificate_replay",
+    "certificate_replay": "certificate_replay", "norms_elaborate": "norms_elaborate",
+    "norms_conflict": "norms_conflict", "norms_certificate": "norms_certificate",
+    "norms_admission": "norms_admission",
 }
 _routed: set[str] = set()
 _backend = "python"
