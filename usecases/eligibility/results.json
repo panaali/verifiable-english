@@ -1,8 +1,8 @@
 {
  "b1_certified": true,
  "english": {
-  "facts": 162,
-  "round_trip": 82,
+  "facts": 166,
+  "round_trip": 86,
   "rows": [
    {
     "fact": "applicant.shares_home",
@@ -615,6 +615,26 @@
     "sentence": "The household's partnership end date is on 2026-09-27."
    },
    {
+    "fact": "household.partner_until",
+    "round_trip": true,
+    "sentence": "The household's partnership end date is on 2026-09-22."
+   },
+   {
+    "fact": "household.home_until",
+    "round_trip": true,
+    "sentence": "The household's home end date is on 2026-09-22."
+   },
+   {
+    "fact": "household.partner_until",
+    "round_trip": true,
+    "sentence": "The household's partnership end date is on 2026-09-23."
+   },
+   {
+    "fact": "household.home_until",
+    "round_trip": true,
+    "sentence": "The household's home end date is on 2026-09-23."
+   },
+   {
     "fact": "applicant.pa_date",
     "round_trip": true,
     "sentence": "The applicant's pensionable-age date is on 2026-09-27."
@@ -816,7 +836,7 @@
    }
   ]
  },
- "environment_id": "d3f9aa74da95e0778b5ac04a583a49fb4cb860c15a3cab9634814c3f9187aafa",
+ "environment_id": "d5cad9b8af36f278fe8784caa0f24003b6b037a7fd89036ace9831734e271181",
  "format": "wfp-eligibility-results@1",
  "mutants": {
   "M1": {
@@ -898,6 +918,10 @@
     "B26",
     "B27",
     "B30",
+    "B31",
+    "B32",
+    "B33",
+    "B34",
     "C01",
     "C03",
     "C04",
@@ -936,6 +960,8 @@
     "A08",
     "B14",
     "B30",
+    "B33",
+    "B34",
     "C08"
    ],
    "description": "R14 without 3(3)",
@@ -976,6 +1002,10 @@
     "B28",
     "B29",
     "B30",
+    "B31",
+    "B32",
+    "B33",
+    "B34",
     "C08",
     "C09"
    ],
@@ -1149,12 +1179,38 @@
   },
   "M30": {
    "changed": [
-    "B30"
+    "B30",
+    "B33",
+    "B34"
    ],
    "description": "R14 with 'throughout' read into 3(3)",
    "killed": true,
    "must_change": [
     "B30"
+   ]
+  },
+  "M31": {
+   "changed": [
+    "B31",
+    "B32"
+   ],
+   "description": "R14 without the common day of AR8",
+   "killed": true,
+   "must_change": [
+    "B31",
+    "B32"
+   ]
+  },
+  "M32": {
+   "changed": [
+    "B33",
+    "B34"
+   ],
+   "description": "R14 with the bounds of AR8 strict",
+   "killed": true,
+   "must_change": [
+    "B33",
+    "B34"
    ]
   },
   "M4": {
@@ -1321,17 +1377,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -1445,6 +1501,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -1563,17 +1624,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -1687,6 +1748,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -1805,17 +1871,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -1929,6 +1995,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -2047,17 +2118,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -2171,6 +2242,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -2289,17 +2365,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -2413,6 +2489,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -2531,17 +2612,17 @@
     "Q4": "150.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -2655,6 +2736,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -2773,17 +2859,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -2897,6 +2983,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -3015,17 +3106,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -3139,6 +3230,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -3257,17 +3353,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -3381,6 +3477,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -3499,17 +3600,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -3623,6 +3724,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -3741,17 +3847,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -3865,6 +3971,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -3983,17 +4094,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -4107,6 +4218,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -4225,17 +4341,17 @@
     "Q4": "150.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -4352,6 +4468,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -4464,14 +4585,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true
@@ -4585,6 +4706,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -4680,17 +4806,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 94,
+    "model_premises": 95,
     "model_premises_not_true": [],
-    "model_premises_true": 94
+    "model_premises_true": 95
    },
    "score": {
     "Q1": true,
@@ -4804,6 +4930,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -4922,17 +5053,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -5049,6 +5180,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -5161,14 +5297,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true
@@ -5189,7 +5325,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 133
      }
     }
    },
@@ -5279,6 +5415,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -5377,17 +5518,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -5501,6 +5642,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -5619,17 +5765,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -5743,6 +5889,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -5858,14 +6009,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true
@@ -5979,6 +6130,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -6071,14 +6227,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 69,
+    "model_premises": 70,
     "model_premises_not_true": [],
-    "model_premises_true": 69
+    "model_premises_true": 70
    },
    "score": {
     "Q1": true
@@ -6099,7 +6255,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 615
+      "steps": 286
      }
     }
    },
@@ -6189,6 +6345,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -6284,14 +6445,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 69,
+    "model_premises": 70,
     "model_premises_not_true": [],
-    "model_premises_true": 69
+    "model_premises_true": 70
    },
    "score": {
     "Q1": true
@@ -6312,7 +6473,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 615
+      "steps": 286
      }
     }
    },
@@ -6402,6 +6563,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -6500,17 +6666,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 96,
+    "model_premises": 97,
     "model_premises_not_true": [],
-    "model_premises_true": 96
+    "model_premises_true": 97
    },
    "score": {
     "Q1": true,
@@ -6624,6 +6790,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -6739,14 +6910,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true
@@ -6767,7 +6938,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 131
      }
     }
    },
@@ -6857,6 +7028,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -6952,14 +7128,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true
@@ -7073,6 +7249,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -7168,17 +7349,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -7292,6 +7473,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -7410,17 +7596,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -7534,6 +7720,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -7652,17 +7843,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 72,
+    "model_premises": 73,
     "model_premises_not_true": [],
-    "model_premises_true": 72
+    "model_premises_true": 73
    },
    "score": {
     "Q1": true,
@@ -7686,7 +7877,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 125
      }
     }
    },
@@ -7776,6 +7967,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -7894,17 +8090,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -8018,6 +8214,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -8136,17 +8337,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -8263,6 +8464,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 5,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -8375,14 +8581,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 102,
+    "model_premises": 103,
     "model_premises_not_true": [],
-    "model_premises_true": 102
+    "model_premises_true": 103
    },
    "score": {
     "Q1": true
@@ -8496,6 +8702,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -8591,17 +8802,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 72,
+    "model_premises": 73,
     "model_premises_not_true": [],
-    "model_premises_true": 72
+    "model_premises_true": 73
    },
    "score": {
     "Q1": true,
@@ -8625,7 +8836,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 125
      }
     }
    },
@@ -8715,6 +8926,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -8833,17 +9049,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -8957,6 +9173,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -9075,17 +9296,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -9199,6 +9420,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -9317,17 +9543,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 97,
+    "model_premises": 98,
     "model_premises_not_true": [],
-    "model_premises_true": 97
+    "model_premises_true": 98
    },
    "score": {
     "Q1": true,
@@ -9441,6 +9667,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -9556,14 +9787,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 101,
+    "model_premises": 102,
     "model_premises_not_true": [],
-    "model_premises_true": 101
+    "model_premises_true": 102
    },
    "score": {
     "Q1": true
@@ -9677,6 +9908,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -9772,17 +10008,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 99,
+    "model_premises": 100,
     "model_premises_not_true": [],
-    "model_premises_true": 99
+    "model_premises_true": 100
    },
    "score": {
     "Q1": true,
@@ -9896,6 +10132,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 8,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -10014,17 +10255,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 99,
+    "model_premises": 100,
     "model_premises_not_true": [],
-    "model_premises_true": 99
+    "model_premises_true": 100
    },
    "score": {
     "Q1": true,
@@ -10138,6 +10379,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 8,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -10256,17 +10502,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 99,
+    "model_premises": 100,
     "model_premises_not_true": [],
-    "model_premises_true": 99
+    "model_premises_true": 100
    },
    "score": {
     "Q1": true,
@@ -10380,6 +10626,11 @@
      "certified": 1,
      "premise_count": 5,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 8,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -10498,17 +10749,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 99,
+    "model_premises": 100,
     "model_premises_not_true": [],
-    "model_premises_true": 99
+    "model_premises_true": 100
    },
    "score": {
     "Q1": true,
@@ -10625,6 +10876,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 8,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 6,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -10737,14 +10993,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 100,
+    "model_premises": 101,
     "model_premises_not_true": [],
-    "model_premises_true": 100
+    "model_premises_true": 101
    },
    "score": {
     "Q1": true
@@ -10855,6 +11111,11 @@
      "certified": 1,
      "premise_count": 5,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -10950,14 +11211,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 32,
-    "certificates_accepted": 32,
+    "certificates": 33,
+    "certificates_accepted": 33,
     "documents": {
      "Q1": true
     },
-    "model_premises": 100,
+    "model_premises": 101,
     "model_premises_not_true": [],
-    "model_premises_true": 100
+    "model_premises_true": 101
    },
    "score": {
     "Q1": true
@@ -11068,6 +11329,11 @@
      "certified": 1,
      "premise_count": 5,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -11166,17 +11432,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 99,
+    "model_premises": 100,
     "model_premises_not_true": [],
-    "model_premises_true": 99
+    "model_premises_true": 100
    },
    "score": {
     "Q1": true,
@@ -11290,6 +11556,999 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 8,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 14,
+     "target": "amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "recovered.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "recovered_amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "kept"
+    }
+   ]
+  },
+  {
+   "answers": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "id": "B31",
+   "key": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "lean": {
+    "certificates": 37,
+    "certificates_accepted": 37,
+    "documents": {
+     "Q1": true,
+     "Q2": true,
+     "Q3": true,
+     "Q4": true
+    },
+    "model_premises": 101,
+    "model_premises_not_true": [],
+    "model_premises_true": 101
+   },
+   "score": {
+    "Q1": true,
+    "Q2": true,
+    "Q3": true,
+    "Q4": true
+   },
+   "single_shot": {
+    "Q1": "OPEN",
+    "searches": {
+     "bottom": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "not_entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 132
+     }
+    }
+   },
+   "staged": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "steps": [
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 14,
+     "target": "amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "recovered.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "recovered_amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "kept"
+    }
+   ]
+  },
+  {
+   "answers": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "id": "B32",
+   "key": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "lean": {
+    "certificates": 37,
+    "certificates_accepted": 37,
+    "documents": {
+     "Q1": true,
+     "Q2": true,
+     "Q3": true,
+     "Q4": true
+    },
+    "model_premises": 101,
+    "model_premises_not_true": [],
+    "model_premises_true": 101
+   },
+   "score": {
+    "Q1": true,
+    "Q2": true,
+    "Q3": true,
+    "Q4": true
+   },
+   "single_shot": {
+    "Q1": "OPEN",
+    "searches": {
+     "bottom": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "not_entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 132
+     }
+    }
+   },
+   "staged": {
+    "Q1": "YES",
+    "Q2": "200.00",
+    "Q3": "NO",
+    "Q4": "200.00"
+   },
+   "steps": [
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 14,
+     "target": "amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "recovered.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "recovered_amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "kept"
+    }
+   ]
+  },
+  {
+   "answers": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "id": "B33",
+   "key": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "lean": {
+    "certificates": 37,
+    "certificates_accepted": 37,
+    "documents": {
+     "Q1": true,
+     "Q2": true,
+     "Q3": true,
+     "Q4": true
+    },
+    "model_premises": 101,
+    "model_premises_not_true": [],
+    "model_premises_true": 101
+   },
+   "score": {
+    "Q1": true,
+    "Q2": true,
+    "Q3": true,
+    "Q4": true
+   },
+   "single_shot": {
+    "Q1": "OPEN",
+    "searches": {
+     "bottom": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "not_entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 132
+     }
+    }
+   },
+   "staged": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "steps": [
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "excluded_partner_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_hospital.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "excluded_custody.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_care_benefit.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "excluded_moved.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "excluded_no_claim.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "excluded.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "entitled.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 14,
+     "target": "amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "recovered.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "recovered_amount"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "kept"
+    }
+   ]
+  },
+  {
+   "answers": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "id": "B34",
+   "key": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "lean": {
+    "certificates": 37,
+    "certificates_accepted": 37,
+    "documents": {
+     "Q1": true,
+     "Q2": true,
+     "Q3": true,
+     "Q4": true
+    },
+    "model_premises": 101,
+    "model_premises_not_true": [],
+    "model_premises_true": 101
+   },
+   "score": {
+    "Q1": true,
+    "Q2": true,
+    "Q3": true,
+    "Q4": true
+   },
+   "single_shot": {
+    "Q1": "OPEN",
+    "searches": {
+     "bottom": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 131
+     },
+     "not_entitled": {
+      "certified": false,
+      "status": "NotFound",
+      "steps": 132
+     }
+    }
+   },
+   "staged": {
+    "Q1": "YES",
+    "Q2": "300.00",
+    "Q3": "NO",
+    "Q4": "300.00"
+   },
+   "steps": [
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_pa.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 2,
+     "target": "reached_80.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 4,
+     "target": "resident_in_week.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 6,
+     "target": "has_rb.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "in_residential_care.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.applicant"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "lives_with.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "home_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 5,
+     "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 9,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -11408,17 +12667,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -11532,6 +12791,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -11647,14 +12911,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true
@@ -11768,6 +13032,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -11863,17 +13132,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -11987,6 +13256,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -12105,17 +13379,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -12229,6 +13503,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -12347,17 +13626,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -12471,6 +13750,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -12589,17 +13873,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -12713,6 +13997,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -12831,17 +14120,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -12955,6 +14244,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -13073,17 +14367,17 @@
     "Q4": "300.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -13197,6 +14491,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -13315,17 +14614,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -13439,6 +14738,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -13557,17 +14861,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -13681,6 +14985,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -13799,17 +15108,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -13923,6 +15232,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -14041,17 +15355,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -14075,7 +15389,7 @@
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 133
      }
     }
    },
@@ -14165,6 +15479,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -14280,14 +15599,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true
@@ -14401,6 +15720,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -14496,17 +15820,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -14620,6 +15944,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -14738,17 +16067,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -14865,6 +16194,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -14977,14 +16311,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true
@@ -15098,6 +16432,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -15193,17 +16532,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -15320,6 +16659,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -15432,14 +16776,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true
@@ -15553,6 +16897,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -15648,17 +16997,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 72,
+    "model_premises": 73,
     "model_premises_not_true": [],
-    "model_premises_true": 72
+    "model_premises_true": 73
    },
    "score": {
     "Q1": true,
@@ -15772,6 +17121,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -15887,14 +17241,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true
@@ -16008,6 +17362,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -16103,17 +17462,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 73,
+    "model_premises": 74,
     "model_premises_not_true": [],
-    "model_premises_true": 73
+    "model_premises_true": 74
    },
    "score": {
     "Q1": true,
@@ -16227,6 +17586,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -16345,17 +17709,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 72,
+    "model_premises": 73,
     "model_premises_not_true": [],
-    "model_premises_true": 72
+    "model_premises_true": 73
    },
    "score": {
     "Q1": true,
@@ -16469,6 +17833,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -16584,14 +17953,14 @@
     "Q1": "NO"
    },
    "lean": {
-    "certificates": 20,
-    "certificates_accepted": 20,
+    "certificates": 21,
+    "certificates_accepted": 21,
     "documents": {
      "Q1": true
     },
-    "model_premises": 72,
+    "model_premises": 73,
     "model_premises_not_true": [],
-    "model_premises_true": 72
+    "model_premises_true": 73
    },
    "score": {
     "Q1": true
@@ -16705,6 +18074,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -16800,17 +18174,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -16924,6 +18298,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -17042,17 +18421,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -17166,6 +18545,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -17284,17 +18668,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -17408,6 +18792,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -17526,17 +18915,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 74,
+    "model_premises": 75,
     "model_premises_not_true": [],
-    "model_premises_true": 74
+    "model_premises_true": 75
    },
    "score": {
     "Q1": true,
@@ -17650,6 +19039,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -17768,17 +19162,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -17892,6 +19286,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -18010,17 +19409,17 @@
     "Q4": "0.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -18134,6 +19533,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -18252,17 +19656,17 @@
     "Q4": "200.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -18376,6 +19780,11 @@
      "certified": 1,
      "premise_count": 2,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -18494,17 +19903,17 @@
     "Q4": "0.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -18618,6 +20027,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -18736,17 +20150,17 @@
     "Q4": "100.00"
    },
    "lean": {
-    "certificates": 36,
-    "certificates_accepted": 36,
+    "certificates": 37,
+    "certificates_accepted": 37,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 98,
+    "model_premises": 99,
     "model_premises_not_true": [],
-    "model_premises_true": 98
+    "model_premises_true": 99
    },
    "score": {
     "Q1": true,
@@ -18860,6 +20274,11 @@
      "certified": 1,
      "premise_count": 4,
      "target": "partners_throughout.housemate"
+    },
+    {
+     "certified": 1,
+     "premise_count": 7,
+     "target": "partner_at_home.applicant"
     },
     {
      "certified": 1,
@@ -18978,17 +20397,17 @@
     "Q4": "0.00"
    },
    "lean": {
-    "certificates": 24,
-    "certificates_accepted": 24,
+    "certificates": 25,
+    "certificates_accepted": 25,
     "documents": {
      "Q1": true,
      "Q2": true,
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 71,
+    "model_premises": 72,
     "model_premises_not_true": [],
-    "model_premises_true": 71
+    "model_premises_true": 72
    },
    "score": {
     "Q1": true,
@@ -19105,6 +20524,11 @@
     },
     {
      "certified": 1,
+     "premise_count": 3,
+     "target": "partner_at_home.applicant"
+    },
+    {
+     "certified": 1,
      "premise_count": 4,
      "target": "excluded_partner_benefit.applicant"
     },
@@ -19207,13 +20631,13 @@
   }
  ],
  "prover": {
-  "calls": 5454,
-  "searches": 462
+  "calls": 5910,
+  "searches": 512
  },
- "seconds": 636,
+ "seconds": 352,
  "summary": {
-  "answered": 253,
-  "correct_answered": 253,
+  "answered": 269,
+  "correct_answered": 269,
   "disagreements": [],
   "groups": {
    "guide": {
@@ -19223,34 +20647,34 @@
     "strict": 38
    },
    "unflagged": {
-    "correct": 218,
-    "profiles": 65,
-    "scored": 218,
-    "strict": 65
+    "correct": 226,
+    "profiles": 67,
+    "scored": 226,
+    "strict": 67
    }
   },
   "lean": {
-   "certificates": 2128,
-   "certificates_accepted": 2128,
-   "documents": 253,
-   "documents_admitted": 253,
-   "model_premises": 6297,
-   "model_premises_true": 6297
+   "certificates": 2352,
+   "certificates_accepted": 2352,
+   "documents": 269,
+   "documents_admitted": 269,
+   "model_premises": 6777,
+   "model_premises_true": 6777
   },
-  "mutants_killed": "30/30",
+  "mutants_killed": "32/32",
   "open": [],
   "per_question": {
-   "Q1": "76/76",
-   "Q2": "59/59",
-   "Q3": "59/59",
-   "Q4": "59/59"
+   "Q1": "80/80",
+   "Q2": "63/63",
+   "Q3": "63/63",
+   "Q4": "63/63"
   },
-  "profiles": 76,
+  "profiles": 80,
   "single_shot": {
    "answered": 0,
-   "profiles": 76
+   "profiles": 80
   },
-  "strict": 76,
-  "total": "253/253"
+  "strict": 80,
+  "total": "269/269"
  }
 }

@@ -472,7 +472,12 @@ key, because the housemate's R7 needs RB(P) and every reg. 3 paragraph that
 reads the housemate's entitlement needs ¬RB(P). After B24 to B30 were added,
 it printed **76/76**. Dropping the whole-week test on the home changes B24 and
 B25, on the partnership B26 and B27, making the first or last bound strict
-changes B28 or B29, and reading "throughout" into 3(3) changes B30.
+changes B28 or B29, and reading "throughout" into 3(3) changes B30. The R7
+recheck found that its 3(3), like the translation's, asked for a partner on
+some day and a shared home on some day. It now asks for a day of QW in both
+(AR8). After B31 to B34 were added, it printed **80/80**. Restoring the old
+3(3) changes B31 and B32, and requiring more than the one shared day changes
+B33 and B34 (reading "throughout" into 3(3) now changes B30, B33 and B34).
 
 **Limits of this independence.**
 
@@ -550,8 +555,15 @@ and `["decimal", "gbp_penny", …]`):
   The four day constants belong to the household, not to a role, since
   `cases.json` records the couple once, on the housemate. The first
   translation used `partner_of` and `lives_with` alone, which hold on some
-  day of QW, so R7 lost "throughout" (review finding C). R14's 3(3) keeps
-  `partner_of ∧ lives_with`, since it says "in that week".
+  day of QW, so R7 lost "throughout" (review finding C). R14's 3(3) says
+  "in that week", not "throughout".
+- **R14a (AR8):** 3(3) asks for one day of QW in both periods,
+  `partner_at_home(applicant, housemate) ⇔ partner_of ∧ shares_home ∧ (¬home_start_dated ∨ ¬partnership_ended ∨ date_no_later(home_from, partner_until)) ∧ (¬partnership_start_dated ∨ ¬home_ended ∨ date_no_later(partner_from, home_until))`,
+  and R14.3 uses `partner_at_home ∧ lives_with ∧ reached_80(housemate)`.
+  Each period includes a day of QW (AR5, checked by the builder), so the two
+  cross bounds are exactly interval intersection with QW. Before the R7
+  recheck, R14.3 used `partner_of ∧ lives_with`, which hold on some day each,
+  so a partnership that ended before the shared home began still gave £300.
 - **R8:**
   - `inpatient(r) → shift_days(r_treatment_start, r_admitted, 1)`, the day
     after admission, by S3 reg. 2(5);

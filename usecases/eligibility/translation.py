@@ -112,6 +112,7 @@ DERIVED_PREDICATES = {
     "lives_with": (["person", "person"], "R6: the first person lives with the second (S1 reg. 1(4)(b))."),
     "home_throughout": (["person", "person"], "R7a: the two persons share their mutual home on every day of the qualifying week (AR7)."),
     "partners_throughout": (["person", "person"], "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."),
+    "partner_at_home": (["person", "person"], "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8)."),
     "excluded_partner_benefit": (["person"], "R7: S1 reg. 4(2)(a) applies to the person."),
     "excluded_hospital": (["person"], "R8: S1 reg. 4(2)(b) applies to the person."),
     "excluded_custody": (["person"], "R9: S1 reg. 4(2)(c) applies to the person."),
@@ -256,6 +257,7 @@ MUTANTS = {
     "M26": "R7 without the whole-week shared home", "M27": "R7 without the whole-week partnership",
     "M28": "R7 with the first days strictly before the week", "M29": "R7 with the last days strictly after the week",
     "M30": "R14 with 'throughout' read into 3(3)",
+    "M31": "R14 without the common day of AR8", "M32": "R14 with the bounds of AR8 strict",
 }
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
@@ -366,7 +368,20 @@ def amount_rules(mutant=None):
     a, h = "applicant", "housemate"
     entitled, rb, e80, care = U("entitled", a), U("has_rb", a), U("reached_80", a), U("in_residential_care", a)
     with_entitled = And(B("lives_with", a, h), U("entitled", h))
-    partner_80 = And(B("partner_of", a, h), B("lives_with", a, h), U("reached_80", h))  # 3(3): "in that week"
+    # AR8: 3(3) "in that week, P is the partner of and living with" asks for one day of
+    # QW in the partnership and in the shared home. Each includes a day of QW (AR5), so
+    # they share one exactly when each begins no later than the other ends; an undated
+    # start lies before QW and an undated end after it.
+    bound = "date_before" if mutant == "M32" else "date_no_later"
+    common_day = rule("R14a", "S1 reg. 3(3) 'in that week', reading AR8", "The applicant is a partner of the housemate and they share a mutual home on one day of the week exactly when the applicant is a partner of the housemate, they share a mutual home, the home either began before the week or began no later than the partnership's end date if the partnership has one, and the partnership either began before the week or began no later than the home's end date if the home has one.",
+                      Iff(B("partner_at_home", a, h),
+                          And(B("partner_of", a, h), B("shares_home", a, h),
+                              Or(Not(B("home_start_dated", a, h)), Not(B("partnership_ended", a, h)),
+                                 [bound, household("home_from"), household("partner_until")]),
+                              Or(Not(B("partnership_start_dated", a, h)), Not(B("home_ended", a, h)),
+                                 [bound, household("partner_from"), household("home_until")]))))
+    partner_80 = And(B("partner_of" if mutant == "M31" else "partner_at_home", a, h), B("lives_with", a, h),
+                     U("reached_80", h))  # 3(3): "in that week", on a common day (AR8)
     if mutant == "M30":
         partner_80 = And(B("partners_throughout", a, h), B("lives_with", a, h), B("home_throughout", a, h), U("reached_80", h))
     cond_2 = And(Not(rb), Or(with_entitled, care))
@@ -378,7 +393,7 @@ def amount_rules(mutant=None):
              Implies(And(entitled, Not(e80), cond_2), ["eq", money_const("amount"), gbp("100.00")])),
     ]
     if mutant != "M14":
-        rules.append(rule("R14.3", "S1 reg. 3(3)", "If the applicant is entitled, has not reached 80, is paid a relevant benefit, and is the partner of and lives with a person who has reached 80, the amount is GBP 300.00.",
+        rules.append(rule("R14.3", "S1 reg. 3(3), reading AR8", "If the applicant is entitled, has not reached 80, is paid a relevant benefit, and, on one day of the week, is the partner of and lives with a person who has reached 80, the amount is GBP 300.00.",
                           Implies(And(entitled, Not(e80), cond_3), ["eq", money_const("amount"), gbp("300.00")])))
     guard_1 = [Not(cond_2)] + ([] if mutant == "M14" else [Not(cond_3)])
     rules += [
@@ -408,7 +423,7 @@ def amount_rules(mutant=None):
         item["defines"] = {"R16a": [key(U("recovered", a)), "recovered_amount"],
                            "R16b": [key(U("recovered", a)), "recovered_amount"],
                            "R16c": ["kept"]}.get(item["rule"], ["amount"])
-    return rules
+    return [common_day, *rules]
 
 
 B1 = rule("B1", "S1 reg. 1(3), bridge B1", f"{QW1} is 6 days after {QW0}.", ["shift_days", day(QW1), day(QW0), "6"])

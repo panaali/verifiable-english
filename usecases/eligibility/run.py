@@ -43,6 +43,7 @@ LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 STEP_CONSTANTS = ("amount", "recovered_amount", "kept")
 LEVEL1 = ("reached_pa", "reached_80", "resident_in_week", "has_rb", "in_residential_care")
 PAIRS = ("lives_with", "home_throughout", "partners_throughout")  # binary derived atoms, role to other
+APPLICANT_PAIRS = ("partner_at_home",)  # binary derived atoms of reg. 3, applicant to housemate only
 EXCLUSIONS = ("excluded_partner_benefit", "excluded_hospital", "excluded_custody",
               "excluded_care_benefit", "excluded_moved", "excluded_no_claim")
 
@@ -203,6 +204,8 @@ class Staged:
         for r in T.ROLES:
             for p in PAIRS:
                 self.atom(T.B(p, r, T.OTHER[r]), f"{p}.{r}")
+        for p in APPLICANT_PAIRS:
+            self.atom(T.B(p, "applicant", "housemate"), f"{p}.applicant")
         for r in T.ROLES:
             for p in EXCLUSIONS + ("excluded", "entitled"):
                 self.atom(T.U(p, r), f"{p}.{r}")
@@ -350,7 +353,8 @@ def fixture_model(case_with_key, defaults):
         partners = present and h["partner"]  # cases.json records the couple on the housemate
         pairs = {"shares_home": present, "partner_of": partners, "lives_with": lives,
                  "home_throughout": present and R.throughout(h["shared_home"]),
-                 "partners_throughout": partners and R.throughout(h["partnership"])}
+                 "partners_throughout": partners and R.throughout(h["partnership"]),
+                 "partner_at_home": R.partner_at_home(h if present else None)}
         for name, (started, ended, _, _) in T.PERIODS.items():
             period = (present and h[name]) or {}
             pairs[started], pairs[ended] = bool(period.get("from")), bool(period.get("until"))
@@ -607,7 +611,8 @@ MUTANT_TARGETS = {"M1": ["C14"], "M2": ["C14"], "M3": ["C10"], "M4": ["D01"], "M
                   "M17": ["B01", "B04"], "M18": ["B13"], "M19": ["B14"], "M20": ["B15", "B16", "B19"],
                   "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"],
                   "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"],
-                  "M26": ["B24", "B25"], "M27": ["B26", "B27"], "M28": ["B28"], "M29": ["B29"], "M30": ["B30"]}
+                  "M26": ["B24", "B25"], "M27": ["B26", "B27"], "M28": ["B28"], "M29": ["B29"], "M30": ["B30"],
+                  "M31": ["B31", "B32"], "M32": ["B33", "B34"]}
 
 
 def mutation_check(cases, profiles, workers):
