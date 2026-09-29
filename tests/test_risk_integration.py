@@ -142,3 +142,102 @@ def test_w2_admission_through_python_route_binds_regenerated_risk_leaf():
     assert result == _direct_lean(case)
     assert result["status"] == "ok" and result["admitted"] is True
     assert result["report"]["assumptions"][0]["label"] == "risk:certain_possible"
+
+
+def test_random_records_lean_and_rust_regenerate_the_same_cells():
+    """Review C1 (Fable) / B8: Lean against Rust on random records, not hand-built cells only.
+
+    Each record's conditions and statements become Rust's prepared sides (a necessary condition
+    gives N, a sufficient one S, an exact one both; `leads` gives S = ⊤, `cannot` N = ⊥, `might`
+    the stated flag). Lean's regenerated `might`/`leads` tables, or its diagnostic, must equal Rust's.
+    """
+    import random
+    from conformance.risk import statement
+    rng = random.Random(4242)
+    env = cell_env()
+    policy = run_case({"id": "p", "kind": "risk-elaborate", "environment": env, "document": {"norms": []}})
+    harms = [h for h, _ in env["risk"]["harm_classes"]]
+    D = "dimensionless"
+
+    def cmp(name):
+        op = rng.choice(("lt", "le", "eq"))
+        tree = [op, ["add", D, q(name), ["scale", D, str(rng.choice((1, -1, 2))), q("p")]] if op != "eq"
+                else q(name), dec(D, str(rng.randrange(-2, 9)))]
+        return ["not", tree] if rng.randrange(4) == 0 else tree
+
+    cases, prepared = [], []
+    for index in range(300):
+        log = Log()
+        ranges = {}
+        for seq, name in enumerate(("a", "b"), start=1):
+            lo = rng.randrange(0, 6)
+            hi = lo + rng.randrange(0, 4)
+            ranges[name] = {"tag": D, "lo": str(lo), "hi": str(hi)}
+            log.add(seq, "E" + name, "estimate", estimate(name, str(lo), str(hi), "est", "assumption"))
+        point = rng.randrange(0, 3)
+        ranges["p"] = {"tag": D, "lo": str(point), "hi": str(point)}
+        log.add(3, "Ep", "estimate", estimate("p", str(point), str(point), "est", "assumption"))
+        sides = {}
+        seq = 4
+        for harm in rng.sample(harms, rng.randrange(1, 4)):
+            action = rng.choice(("act", "nothing"))
+            cell = sides.setdefault((action, harm), {"action": action, "harm": harm})
+            if rng.randrange(3) == 0:
+                stated = rng.choice(("leads", "cannot", "might"))
+                log.add(seq, f"T{seq}", "statement", statement(action, harm, stated))
+                if stated == "leads":
+                    cell["sufficient"] = ["top"]
+                elif stated == "cannot":
+                    cell["necessary"] = ["bottom"]
+                else:
+                    cell["stated_might"] = True
+            else:
+                form = rng.choice(("necessary", "sufficient", "exact"))
+                tree = cmp(rng.choice(("a", "b")))
+                if rng.randrange(2):
+                    tree = [rng.choice(("and", "or")), tree, cmp("b" if "a" in json.dumps(tree) else "a")]
+                log.add(seq, f"C{seq}", "condition", condition(action, harm, form, tree))
+                if form in ("necessary", "exact"):
+                    cell["necessary"] = tree
+                if form in ("sufficient", "exact"):
+                    cell["sufficient"] = tree
+            seq += 1
+        alternatives = [{"name": "act", "label": "acting"},
+                        {"name": "nothing", "label": "doing nothing", "inaction": True}]
+        quantities = [{"name": n, "label": n, "tag": D} for n in ("a", "b", "p")]
+        dx = log.add(50, "DX", "decision", record(
+            "x", "the_agent", "the agent", (policy["environment_id"], policy["document_hash"]),
+            alternatives, quantities, log.cite(*[e["id"] for e in log.entries])))
+        cases.append({"id": str(index), "kind": "risk-decision", "environment": env, "document": {"norms": []},
+                      "decision": dx, "entries": log.entries[:-1]})
+        prepared.append({"id": str(index), "kind": "risk-cells", "ranges": ranges, "scales": {},
+                         "record": {"alternatives": ["act", "nothing"], "harms": harms,
+                                    "classes": dict(env["risk"]["harm_classes"]), "always_possible": [],
+                                    "unexamined": "possible", "cells": list(sides.values())}})
+    lean = json.loads(subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
+                                     capture_output=True, timeout=500).stdout)
+    rust = json.loads(subprocess.run([str(RUST), "conformance"], input=json.dumps(prepared), text=True,
+                                     capture_output=True, timeout=500).stdout)
+    kinds = {"ok": 0, "error": 0}
+    for case, l, r in zip(cases, lean, rust):
+        kinds[l["status"]] += 1
+        if l["status"] == "error":
+            assert r["status"] == "error", (case["id"], l, r)
+            # Rust reports V8 as SufficientOutsideNecessary for every cell; Lean says RiskInconsistent
+            # when a stated cell gives a side (4.4 V8), and adds the witness case. Compare the cell.
+            text = l["error"].split(", case ")[0]
+            code, _, message = text.partition(": ")
+            if code in ("SufficientOutsideNecessary", "RiskInconsistent"):
+                assert r["error"]["code"] in ("SufficientOutsideNecessary", "RiskInconsistent"), (l, r)
+                assert r["error"]["message"] == message, (l, r)
+            else:
+                assert f'{r["error"]["code"]}: {r["error"]["message"]}' == text, (case["id"], l, r)
+            continue
+        assert r["status"] == "ok", (case["id"], l, r)
+        lean_cells = {(row["alternative"], row["harm"]): [True, False] for row in l["tables"]["might"]}
+        for row in l["tables"]["leads"]:
+            lean_cells.setdefault((row["alternative"], row["harm"]), [False, False])[1] = True
+        rust_cells = {(c["action"], c["harm"]): [c["might"], c["leads"]] for c in r["tables"]
+                      if c["might"] or c["leads"]}
+        assert lean_cells == rust_cells, (case["id"], lean_cells, rust_cells)
+    assert kinds["ok"] > 100 and kinds["error"] > 10, kinds
