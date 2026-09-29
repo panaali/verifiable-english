@@ -1,0 +1,8 @@
+1. **(a)** Memory above 8 GB permits an outage, but the text does not say one happens.
+2. **(b)** “Allows” means the other available action, taking the stairs, avoids a dropped parcel in at least one case.
+3. **(d)** “Exactly when” says a delay happens above 30 minutes and does not happen at 30 minutes or less.
+4. **(a)** The stated comparison leaves possible a more severe harm at the crossing than any harm possible between parked cars.
+5. **(a)** “Serious or worse” includes serious and severe.
+6. **(c)** Since the stairs always lead to a fall, the ramp must avoid a fall in at least one case for the fall to be avoidable.
+7. **(d)** A rash is possible, while drowsiness happens in every allowed case.
+8. **(b)** Drug B rules nausea out; drug A does not, because doses above 40 mg lead to nausea.

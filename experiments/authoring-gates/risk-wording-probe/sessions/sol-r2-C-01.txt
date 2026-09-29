@@ -1,0 +1,73 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) The text does not say.
+(b) It happens in every case the text allows.
+(c) More likely than not.
+(d) It cannot happen.
+
+Text 2
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+(b) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(c) Yes: crossing between parked cars is dangerous.
+(d) The text does not say.
+
+Text 3
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) A rash is possible; drowsiness is what usually happens.
+(b) The text does not say.
+(c) There is no difference: neither is ruled out, and neither is certain.
+(d) A rash is not ruled out; drowsiness happens in every case the text allows.
+
+Text 4
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) If the robot takes the lift, no lift failure happens in any case the text allows.
+(b) The text does not say.
+(c) A lift failure is unlikely if the robot takes the lift.
+(d) The robot is not allowed to cause a lift failure.
+
+Text 5
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) The text does not say.
+(b) No seizure happens.
+(c) A seizure happens.
+
+Text 6
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) Only minor.
+(b) The text does not say.
+(c) Only serious.
+(d) Serious or severe.
+
+Text 7
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) If the agent deletes the only copy, data loss happens in no case the text allows.
+(b) If the agent deletes the only copy, data loss happens in every case the text allows.
+(c) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+(d) The text does not say.

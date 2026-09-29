@@ -1,0 +1,25 @@
+# Answer Key
+
+**Text 1: (a) No server outage happens.**
+The rule states the outage occurs "exactly when peak memory > 8 GB," but the actual peak memory is 5 GB, which does not satisfy this condition.
+
+**Text 2: (a) The text does not say.**
+The text provides conditional information (failure if weight > 28 kg) and possibility ("might"), but contains no probability or likelihood estimates.
+
+**Text 3: (c) The text does not say.**
+The rule only applies when weight < 50 kg, but the patient weighs 80 kg, so the text provides no information about whether dizziness occurs.
+
+**Text 4: (c) No: the text rules out data loss when the agent empties the cache.**
+The text explicitly states "Emptying the cache cannot lead to data loss," which means the text rules it out completely.
+
+**Text 5: (b) No: a task delay happens in every case the text allows.**
+The text states the action "leads to a task delay," which by definition means it happens in every case allowed, leaving no cases without task delay.
+
+**Text 6: (c) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.**
+The rule states dropped parcels occur when weight > 25 kg (which is possible within the 2–30 kg range), so a dropped parcel is not ruled out.
+
+**Text 7: (c) The text does not say.**
+The rule "cannot lead to outage unless peak memory > 8 GB" only rules out outages when memory ≤ 8 GB; it specifies nothing about what happens when memory = 10 GB (which exceeds 8 GB).
+
+**Text 8: (a) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.**
+This directly applies the given definition of "less severe worst case," restating what the definition requires.

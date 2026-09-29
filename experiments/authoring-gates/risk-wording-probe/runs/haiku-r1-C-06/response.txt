@@ -1,0 +1,22 @@
+# Reading Comprehension Answers
+
+**Text 1: (d) Data loss is not ruled out.**
+"Might lead to" indicates it's possible but not certain; the text doesn't confirm or deny whether loss actually occurred, so the possibility remains open.
+
+**Text 2: (d) No: in no case the text allows does giving penicillin lead to an allergic reaction.**
+The text explicitly states penicillin "cannot lead to an allergic reaction," which is an absolute negation.
+
+**Text 3: (b) Yes: it was greater than 30 minutes.**
+"Cannot lead to a task delay unless the duration is greater than 30 minutes" means by contrapositive: if a task delay happened, the duration must have been greater than 30 minutes.
+
+**Text 4: (d) The text does not say.**
+"Might prevent" only establishes possibility, not concrete facts about whether it does prevent in actual cases or how "doing nothing" compares.
+
+**Text 5: (b) No server outage happens.**
+"Leads to a server outage exactly when the peak memory is greater than 8 gigabytes" means a server outage occurs if and only if memory > 8GB; since the peak is 5GB, no outage occurs.
+
+**Text 6: (a) The text does not say.**
+"Leads to a job failure if the peak memory is greater than 4 gigabytes" establishes a sufficient condition but not a necessary one; the text doesn't rule out other ways failure could occur.
+
+**Text 7: (d) In at least one case the text allows, the agent runs the job and no server outage happens.**
+"Might not lead to a server outage" establishes that there exists at least one possible scenario where running the job results in no outage.

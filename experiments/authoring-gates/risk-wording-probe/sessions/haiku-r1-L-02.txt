@@ -1,0 +1,108 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+A clinic prevents a harm by taking an action that cannot lead to the harm.
+By default, an action may be performed.
+
+The actions available to the clinic are giving the patient an antihistamine and giving the patient penicillin. Giving the patient an antihistamine might lead to a rash. Giving the patient an antihistamine might not lead to a rash. Giving the patient penicillin cannot lead to a rash.
+Rule 1. Every clinic must prevent a rash.
+
+According to the text, which of the clinic's actions fulfil Rule 1?
+(a) The text does not say.
+(b) Only giving the patient an antihistamine.
+(c) Giving the patient an antihistamine and giving the patient penicillin.
+(d) Only giving the patient penicillin.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall happens in every case the text allows.
+(b) No fall happens: a robot is safe inside a lift.
+(c) The text does not say.
+(d) A fall usually happens, but not in every case.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) No: the first rules data loss out, and the second says data loss is not ruled out.
+(b) The text does not say.
+(c) Yes: data loss can happen, but only rarely.
+(d) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) The text does not say.
+(b) In no case the text allows does deleting the production database lead to data loss.
+(c) Deleting the production database leads to data loss in every case the text allows.
+(d) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) The text does not say.
+(b) More likely than not.
+(c) It cannot happen.
+(d) It happens in every case the text allows.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure happens.
+(b) No lift failure happens: a lift easily carries 4 kilograms.
+(c) The text does not say.
+(d) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job cannot lead to a server outage unless the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 10 gigabytes. What does the text tell you about a server outage?
+(a) A server outage happens, because the peak memory of the job is greater than 8 gigabytes.
+(b) No server outage happens.
+(c) The text does not say.
