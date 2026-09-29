@@ -154,10 +154,11 @@ need renewed statement approval (the approved statement is false or unprovable a
     a W3 definition version (W2 defers definitions; `definitionVersion` is `none`), so every pin is stale and fixture
     ι's pinned reference is `StaleTarget: m1: eligible@2` where the fixture (10) expects CHECKED at version 2, rather
     than admitted with an unchecked pin; an unpinned `definition_ref` resolves (CHECKED). Beyond 3.1 the
-    block may carry `validity`, `self_truth` and `choices` (the Manifest fields of 9.1); Python reports them as
-    `UnsupportedProfile`.
+    block may carry `validity`, `self_truth` and `choices` (the Manifest fields of 9.1); Python does not evaluate
+    them and relays this route's verdicts on them (the Lean authority below).
 11. **The loader.** JSON `null` (which the restricted parser does not read), fenced English or strict content, norm
-    content and `MIXED` units are `NotImplemented: <feature>`. A `@2` input is the document text; a W2 admission
+    content, `MIXED` units and a document without a claim graph (W2 admission needs one; Python loads such a
+    document without admitting it) are `NotImplemented: <feature>`. A `@2` input is the document text; a W2 admission
     object with a `format` field is the unchanged `@1` path.
 12. **(renewal) Outcomes, `validity_self` and `validity_import`.** `outcomeOf` also treats `NotImplemented` as
     `unknown` (a check the route cannot complete is never a rejection), and a successful admission whose joint set hit
@@ -232,5 +233,11 @@ is the proved Lean statement.
   bundles, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it needs a certificate), and
   the 1,000-manifest Python/Lean differential. `discourse-joint` reports the joint set and the disjunction, not
   ALL/NONE/SOME verdicts.
-- **Python** elaborates pronouns, demonstratives and ordinal pairs only; a content unit using another form is
-  `UnsupportedProfile`, and validity claims, self-truth labels and recorded choices are not implemented there.
+- **The Lean authority** (`manage-agents/discourse-authority-directive.md`, spec 3.4): Python's admission of a
+  `ve-document@2` document is this route's `admission` answer on the same bytes (`ve/discourse.py`
+  `lean_admission`, `validate_discourse`), with the sibling files its imports name: the verdict, every unit's
+  status, the references, the validity verdicts and the report id. Python's own check (`python_discourse`), which
+  elaborates pronouns, demonstratives and ordinal pairs only and evaluates no validity claim, self-truth label or
+  recorded choice, gives editor hints (`discourse_hints`, the reviewed presentations) and the diagnostic text of a
+  document this route rejects too. A route that is missing, fails or answers anything but one well-formed answer to
+  the case is `CheckerUnavailable`; `NotImplemented` is Python's `UnsupportedProfile`; neither is a verdict.
