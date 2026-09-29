@@ -139,3 +139,54 @@ def test_lean_typing_on_legacy_envelopes_matches_python(kind, monkeypatch):
         monkeypatch.setenv("VE_AUTHORITY", "lean")
         assert _typing_error(env, bad) == expected
         monkeypatch.delenv("VE_AUTHORITY")
+
+
+def _nested(leaves):
+    from ve.ast import And
+    level = [Top() for _ in range(leaves)]
+    while len(level) > 1:
+        level = [And(level[i], level[i + 1]) if i + 1 < len(level) else level[i]
+                 for i in range(0, len(level), 2)]
+    return level[0]
+
+
+def _negated(formula, times):
+    from ve.ast import Not
+    for _ in range(times):
+        formula = Not(formula)
+    return formula
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("kind", ["current", "order", "closure", "closure+nary", "v0"])
+def test_lean_typing_budget_diagnostics_match_python(kind, monkeypatch):
+    """Budget rejections are named where `_Checker` meets them, with its message."""
+    from ve.ast import Add, And, Const, Document, Le, Num, Unary, check_document
+    from ve.errors import VEError
+    profiles = {"current": (), "order": ("order@0",), "closure": ("closure@0",),
+                "closure+nary": ("closure@0", "nary@0")}
+    env = _legacy_environment("v0") if kind == "v0" else Environment(raw_environment(profiles[kind]))
+    deep = _negated(Top(), 64)
+    cases = [deep, _negated(_nested(5000), 2), And(Unary("missing", Const("x")), deep),
+             And(deep, Unary("missing", Const("x"))), Document((_nested(3000), _nested(3000)))]
+    if kind == "order":
+        term = Num(0)
+        for _ in range(64):
+            term = Add(Num(1), term)
+        cases.append(Le(term, Num(0)))
+
+    def error(case):
+        if type(case) is Document:
+            try:
+                check_document(env, case)
+            except VEError as exc:
+                return exc.code, exc.message
+            return None
+        return _typing_error(env, case)
+
+    for case in cases:
+        expected = error(case)
+        assert expected is not None and expected[0] in ("ResourceLimit", "UnknownSymbol")
+        monkeypatch.setenv("VE_AUTHORITY", "lean")
+        assert error(case) == expected
+        monkeypatch.delenv("VE_AUTHORITY")

@@ -22,6 +22,10 @@ _CODES["DependencyCycle"] = VEError
 # Python raises these errors without the code in the message; the Lean
 # runners prefix it only to carry the code.
 _UNPREFIXED = frozenset({"UnknownSymbol", "TypeMismatch", "UnboundVariable", "UnsupportedProfile"})
+# Other ResourceLimit messages carry their prefix in Python too; `_Checker`'s
+# budget messages (ve/ast.py) do not.
+_UNPREFIXED_LIMITS = frozenset({"AST exceeds 10,000 nodes", "Formula exceeds 64 nesting levels",
+                                "Arithmetic term exceeds 64 nesting levels"})
 
 
 def checker_error(message: str, *, code: str | None = None,
@@ -35,7 +39,8 @@ def checker_error(message: str, *, code: str | None = None,
         code = head if head in _CODES else "InvalidInput"
         if message.startswith("Definition "):
             code = "InvalidInput"
-        if code in _UNPREFIXED and sep:
+        if sep and (code in _UNPREFIXED or
+                    (code == "ResourceLimit" and rest.lstrip() in _UNPREFIXED_LIMITS)):
             message = rest.lstrip()
     cls = _CODES.get(code, VEError)
     if cls is None:
