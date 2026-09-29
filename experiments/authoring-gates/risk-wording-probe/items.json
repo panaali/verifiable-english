@@ -275,31 +275,6 @@
     "rationale": "One reading: 'might lead to' = not ruled out; 'leads to' = every allowed case: (a). The rival makes drowsiness only usual: (b). (c) collapses the two words, wrong under both."
   },
   {
-    "id": "c3a-4",
-    "construct": "c3a",
-    "domain": "agent-operations",
-    "setting": "agent operations",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": true,
-    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.\n\"<action> leads to <harm>\" means it happens in every case they allow.",
-    "situation_text": "An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 40 minutes. Applying the migration might lead to a server outage. Applying the migration leads to a task delay.",
-    "target_sentence": "Applying the migration leads to a task delay.",
-    "question": "The agent applies the migration, and the migration takes 5 minutes. According to the text, does a task delay happen?",
-    "options": [
-      {"label": "a", "text": "Yes: a task delay happens in every case the text allows, including this one."},
-      {"label": "b", "text": "Probably, but not certainly: a task delay is what usually happens."},
-      {"label": "c", "text": "No: a 5-minute migration is too short to delay anything."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "the harm happens in every case the declarations allow (2.1)",
-    "rival_reading": "\"leads to\" read as \"tends to lead to\" or \"usually leads to\"",
-    "rationale": "A 5-minute migration is an allowed case (at least 5, at most 40), and 'leads to' covers every allowed case: (a). The rival gives (b). World knowledge suggests 5 minutes is harmless: (c), which contradicts the text."
-  },
-  {
     "id": "c3b-1",
     "construct": "c3b",
     "domain": "agent-operations",
@@ -376,32 +351,6 @@
     "one_reading": "the harm happens in every case the declarations allow (2.1)",
     "rival_reading": "\"certainly leads to\" read as \"tends to lead to\" or \"usually leads to\"",
     "rationale": "As c3a-3 with 'certainly leads to'. (a) under the one reading, (b) under the rival."
-  },
-  {
-    "id": "c3b-4",
-    "construct": "c3b",
-    "domain": "agent-operations",
-    "setting": "agent operations",
-    "same_situation_as": "c3a-4",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": true,
-    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.\n\"<action> certainly leads to <harm>\" means it happens in every case they allow.",
-    "situation_text": "An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 40 minutes. Applying the migration might lead to a server outage. Applying the migration certainly leads to a task delay.",
-    "target_sentence": "Applying the migration certainly leads to a task delay.",
-    "question": "The agent applies the migration, and the migration takes 5 minutes. According to the text, does a task delay happen?",
-    "options": [
-      {"label": "a", "text": "Yes: a task delay happens in every case the text allows, including this one."},
-      {"label": "b", "text": "Probably, but not certainly: a task delay is what usually happens."},
-      {"label": "c", "text": "No: a 5-minute migration is too short to delay anything."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "the harm happens in every case the declarations allow (2.1)",
-    "rival_reading": "\"certainly leads to\" read as \"tends to lead to\" or \"usually leads to\"",
-    "rationale": "As c3a-4 with 'certainly leads to'. (a) under the one reading, (b) under the rival, (c) world knowledge."
   },
   {
     "id": "c4-1",
@@ -623,31 +572,6 @@
     "one_reading": "necessary condition: in no allowed case where the condition fails does the harm happen (2.1)",
     "rival_reading": "\"cannot lead to ... unless\" read as \"leads to ... if\" (a sufficient condition)",
     "rationale": "One reading: the condition is necessary only; at 10 GB it holds, which leaves the outage open: (c). The rival makes it sufficient, so an outage happens: (a). (b) is wrong under both."
-  },
-  {
-    "id": "c6-2",
-    "construct": "c6",
-    "domain": "non-computer",
-    "setting": "delivery robot",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": true,
-    "legend_text": "Each robot faces one choice among the actions available to it and takes at most one of them.\n\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.",
-    "situation_text": "A delivery robot can take the ramp or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 40 kilograms. Taking the stairs cannot lead to a dropped parcel unless the weight of the parcel is greater than 35 kilograms.",
-    "target_sentence": "Taking the stairs cannot lead to a dropped parcel unless the weight of the parcel is greater than 35 kilograms.",
-    "question": "The robot takes the stairs with a parcel that weighs 30 kilograms. What does the text tell you?",
-    "options": [
-      {"label": "a", "text": "No dropped parcel happens."},
-      {"label": "b", "text": "The parcel might be dropped: 30 kilograms is heavy to carry down stairs."},
-      {"label": "c", "text": "A dropped parcel happens."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b", "d"],
-    "one_reading": "necessary condition: in no allowed case where the condition fails does the harm happen (2.1)",
-    "rival_reading": "\"cannot lead to ... unless\" read as \"leads to ... if\" (a sufficient condition)",
-    "rationale": "World knowledge says 30 kg is heavy on stairs. One reading: the necessary condition fails at 30 kg, so no drop: (a). The rival (sufficient only) says nothing about 30 kg, so the drop is open: (d), and (b) states that open outcome with the world-knowledge reason. (c) is wrong under both."
   },
   {
     "id": "c6-3",
@@ -945,56 +869,6 @@
     "rationale": "World knowledge says the crossing is the safer way; the sentence says the opposite about worst cases. One reading: (a). The rivals: (b), (c)."
   },
   {
-    "id": "c9-3",
-    "construct": "c9",
-    "domain": "agent-operations",
-    "setting": "agent operations",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.\n<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
-    "situation_text": "Severity, from most to least severe: severe, serious, minor. Data loss is severe. A server outage is serious. An agent can run the job or run the job with a memory limit. Running the job might lead to a server outage. Running the job with a memory limit has a less severe worst case than running the job.",
-    "target_sentence": "Running the job with a memory limit has a less severe worst case than running the job.",
-    "question": "According to the text, might running the job with a memory limit lead to data loss?",
-    "options": [
-      {"label": "a", "text": "No: the text rules it out."},
-      {"label": "b", "text": "Yes, but it is less likely than if the agent runs the job without a limit."},
-      {"label": "c", "text": "The text does not say."},
-      {"label": "d", "text": "Yes: data loss happens in every case the text allows."}
-    ],
-    "key": "a",
-    "critical": ["b", "c"],
-    "one_reading": "<a> might lead to a harm more severe than every harm <a'> might lead to (2.1)",
-    "rival_reading": "\"has a less severe worst case than\" read as \"is less likely to cause harm than\" or \"leads to fewer harms than\"",
-    "rationale": "One reading: running the job might lead to some harm h more severe than every harm the limited run might lead to. If the limited run might lead to data loss (severe, the top class), h would have to be more severe than severe, which is impossible; so it is ruled out: (a). The rivals say nothing about which harms the limited run has: 'less likely' gives (b), and both leave the question open: (c). (d) is wrong under all readings."
-  },
-  {
-    "id": "c9-4",
-    "construct": "c9",
-    "domain": "non-computer",
-    "setting": "clinic",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each clinic faces one choice among the actions available to it and takes at most one of them.\n\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.\n<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
-    "situation_text": "Severity, from most to least severe: severe, serious, minor. A seizure is severe. A rash is serious. A clinic can give the patient drug A or give the patient drug B. Giving drug A might lead to a rash. Giving drug B has a less severe worst case than giving drug A.",
-    "target_sentence": "Giving drug B has a less severe worst case than giving drug A.",
-    "question": "According to the text, might giving drug B lead to a seizure?",
-    "options": [
-      {"label": "a", "text": "No: the text rules it out."},
-      {"label": "b", "text": "Yes, but it is less likely than with drug A."},
-      {"label": "c", "text": "The text does not say."},
-      {"label": "d", "text": "Yes: a seizure happens in every case the text allows."}
-    ],
-    "key": "a",
-    "critical": ["b", "c"],
-    "one_reading": "<a> might lead to a harm more severe than every harm <a'> might lead to (2.1)",
-    "rival_reading": "\"has a less severe worst case than\" read as \"is less likely to cause harm than\" or \"leads to fewer harms than\"",
-    "rationale": "As c9-3: a seizure is severe, the top class, so no harm of drug A can be more severe than it; drug B therefore cannot lead to a seizure: (a). The rivals give (b) or leave it open (c). (d) is wrong under all readings."
-  },
-  {
     "id": "c10-1",
     "construct": "c10",
     "domain": "agent-operations",
@@ -1220,31 +1094,6 @@
     "rationale": "One reading (2.5), with doing nothing the only other action: (a). The guarantee rival: (b). (c) contradicts the sentence. Parallel control: ctl-1."
   },
   {
-    "id": "c12-2",
-    "construct": "c12",
-    "domain": "non-computer",
-    "setting": "delivery robot",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each robot faces one choice among the actions available to it and takes at most one of them.\n\"<action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow.\n\"<action> might not lead to <harm>\" means some case they allow avoids the harm.\n\"<action> leads to <harm> if <condition>\" means the harm happens in every case they allow in which the condition holds.\n\"<action> might prevent <harm>\" means the action might not lead to the harm, and another action available to the same chooser leads to it.",
-    "situation_text": "The actions available to the robot are taking the ramp and taking the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the ramp leads to a fall if the weight of the parcel is greater than 25 kilograms. Taking the ramp might prevent a fall.",
-    "target_sentence": "Taking the ramp might prevent a fall.",
-    "question": "The robot takes the ramp with a parcel that weighs 28 kilograms. What does the text tell you?",
-    "options": [
-      {"label": "a", "text": "A fall happens."},
-      {"label": "b", "text": "No fall happens: taking the ramp prevents a fall."},
-      {"label": "c", "text": "A fall is less likely than on the stairs."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "the action might not lead to the harm, and another action available to the same chooser leads to it (2.5)",
-    "rival_reading": "\"might prevent\" read as \"guarantees that the harm does not happen\"",
-    "rationale": "One reading: 'might prevent' needs only some case where the ramp avoids a fall (a light parcel) and the stairs leading to a fall; a 28 kg parcel is allowed and the condition then gives a fall: (a). The guarantee rival: (b). (c) adds a likelihood the text does not give. Parallel control: ctl-2."
-  },
-  {
     "id": "c12-3",
     "construct": "c12",
     "domain": "non-computer",
@@ -1268,30 +1117,6 @@
     "one_reading": "the action might not lead to the harm, and another action available to the same chooser leads to it (2.5)",
     "rival_reading": "\"might prevent\" read as \"guarantees that the harm does not happen\"",
     "rationale": "World knowledge says vaccines prevent illness and only sometimes cause fever; the sentence implies the vaccine leads to a fever in every case. One reading: (a). The guarantee rival: (b). (c) contradicts the second half of the paraphrase."
-  },
-  {
-    "id": "c12-4",
-    "construct": "c12",
-    "domain": "agent-operations",
-    "setting": "agent operations",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each agent faces one choice among the actions available to it and takes at most one of them.\n\"<action> leads to <harm>\" means the harm happens in every case the declared estimates, conditions and statements allow.\n\"<action> might not lead to <harm>\" means some case they allow avoids the harm.\n\"<action> leads to <harm> if <condition>\" means the harm happens in every case they allow in which the condition holds.\n\"<action> might prevent <harm>\" means the action might not lead to the harm, and another action available to the same chooser leads to it.",
-    "situation_text": "The actions available to the agent are running the job and running the job with a memory limit. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a server outage if the peak memory of the job is greater than 10 gigabytes. Running the job with a memory limit might prevent a server outage.",
-    "target_sentence": "Running the job with a memory limit might prevent a server outage.",
-    "question": "The agent runs the job with a memory limit, and the peak memory of the job is 11 gigabytes. What does the text tell you about a server outage?",
-    "options": [
-      {"label": "a", "text": "A server outage happens."},
-      {"label": "b", "text": "No server outage happens: running the job with a memory limit prevents one."},
-      {"label": "c", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "the action might not lead to the harm, and another action available to the same chooser leads to it (2.5)",
-    "rival_reading": "\"might prevent\" read as \"guarantees that the harm does not happen\"",
-    "rationale": "One reading: 'might prevent' needs only some case where the limited run avoids an outage; an 11 GB peak is allowed and the condition then gives an outage: (a). The guarantee rival: (b). (c) ignores the condition."
   },
   {
     "id": "c13-1",
@@ -1447,31 +1272,6 @@
     "rationale": "World knowledge says crossing between parked cars is dangerous: (c). One reading: the statement rules a collision out, so Rule 1's condition fails for that action: (a). Under the prohibition rival the sentence is a rule, nothing rules a collision out, and Rule 1 applies: (b)."
   },
   {
-    "id": "c14-3",
-    "construct": "c14",
-    "domain": "non-computer",
-    "setting": "clinic",
-    "scored": true,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each clinic faces one choice among the actions available to it and takes at most one of them.\n\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.\n\"<action> cannot lead to <harm>\" means they rule it out.\nBy default, an action may be performed.",
-    "situation_text": "The actions available to the clinic are giving the patient drug A and giving the patient nothing.\nRule 1. Every action must not be performed, if that action might lead to an allergic reaction, unless a doctor has approved that action.\nGiving drug A might lead to an allergic reaction.\nGiving drug A cannot lead to a fever.\nRule 2. Every action may be performed, if a doctor has approved that action.",
-    "target_sentence": "Giving drug A cannot lead to a fever.",
-    "question": "No doctor has approved anything. May the clinic give the patient drug A?",
-    "options": [
-      {"label": "a", "text": "No: Rule 1 forbids it, because giving drug A might lead to an allergic reaction."},
-      {"label": "b", "text": "Yes: the sentence saying that giving drug A cannot lead to a fever permits it."},
-      {"label": "c", "text": "Yes: Rule 2 permits it."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "a statement about the declared model (the harm is ruled out), not a rule",
-    "rival_reading": "\"cannot lead to\" read as a rule: a prohibition or a permission",
-    "rationale": "One reading: the fever sentence is a model statement and grants nothing; Rule 1 forbids drug A: (a). The permission rival: (b). (c) ignores that no doctor has approved."
-  },
-  {
     "id": "c14-4",
     "construct": "c14",
     "domain": "agent-operations",
@@ -1521,31 +1321,5 @@
     "one_reading": "prevents(a, h) keeps its alternatives@0 definition; under risk@0 its canonical form is 'might prevent' (2.5): the action might not lead to the harm, and another action leads to it",
     "rival_reading": "bare \"prevents\" read in its ordinary English sense, that the harm cannot happen (the reason 2.1 rejects it)",
     "rationale": "Unscored control, c12-1 with bare 'prevents'. Bare 'prevents' is rejected in risk environments, so no legend line is generated for it. The key is the risk@0 meaning of prevents(a, h): (a). The ordinary-English reading, which 2.1 gives as the reason for rejection: (b)."
-  },
-  {
-    "id": "ctl-2",
-    "construct": "control-prevents",
-    "domain": "non-computer",
-    "setting": "delivery robot",
-    "parallel_to": "c12-2",
-    "scored": false,
-    "conditions": ["L", "C"],
-    "separates_rival": true,
-    "counter_world_knowledge": false,
-    "legend_text": "Each robot faces one choice among the actions available to it and takes at most one of them.\n\"<action> leads to <harm> if <condition>\" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.",
-    "situation_text": "The actions available to the robot are taking the ramp and taking the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the ramp leads to a fall if the weight of the parcel is greater than 25 kilograms. Taking the ramp prevents a fall.",
-    "target_sentence": "Taking the ramp prevents a fall.",
-    "question": "The robot takes the ramp with a parcel that weighs 28 kilograms. What does the text tell you?",
-    "options": [
-      {"label": "a", "text": "A fall happens."},
-      {"label": "b", "text": "No fall happens: taking the ramp prevents a fall."},
-      {"label": "c", "text": "A fall is less likely than on the stairs."},
-      {"label": "d", "text": "The text does not say."}
-    ],
-    "key": "a",
-    "critical": ["b"],
-    "one_reading": "prevents(a, h) keeps its alternatives@0 definition; under risk@0 its canonical form is 'might prevent' (2.5): the action might not lead to the harm, and another action leads to it",
-    "rival_reading": "bare \"prevents\" read in its ordinary English sense, that the harm cannot happen (the reason 2.1 rejects it)",
-    "rationale": "Unscored control, c12-2 with bare 'prevents'; no legend line for 'prevents' (rejected in risk environments). Under the risk@0 meaning a 28 kg parcel on the ramp gives a fall: (a). The ordinary-English reading gives (b)."
   }
 ]

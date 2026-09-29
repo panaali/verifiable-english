@@ -1,19 +1,44 @@
-# Risk wording probe: items (draft, not sealed)
+# Risk wording probe: items (sealed)
 
 The reader-comprehension items for the wording probe of `docs/spec/risk-PLAN.md` section 2.6. The item writer wrote
-them from 2.1, 2.5 and the legend sentences of 9.1 only. **Status: not checked by the second reviewer, not run, not
-sealed.** There is no manifest yet, and until sealing any item may be dropped.
+them from 2.1, 2.5 and the legend sentences of 9.1 only. The second plan reviewer checked every key and critical option
+(`manage-agents/risk-probe-check.final.md`), and the items it rejected were dropped before sealing. **Status: sealed.**
+`MANIFEST.sha256` lists every sealed file with its SHA-256; nothing it lists is edited after sealing. An item found
+defective afterwards is reported in `RESULTS.md` with its reason, and its construct is scored with and without it.
+
+## Dropped before sealing
+
+| Item | Reason (checking reviewer) |
+|---|---|
+| c3a-4 | Critical (b) infers "probably" at a specific five-minute duration from "usually" overall; the rival gives no likelihood conditional on that duration. |
+| c3b-4 | The same conditional-likelihood error as c3a-4. |
+| c6-2 | Critical (b) adds a world-knowledge explanation that does not follow from the sufficient-condition rival; critical (d) is supported. |
+| c9-3 | Critical (b) infers a lower probability of data loss from a lower probability of any harm; neither rival establishes that comparison. |
+| c9-4 | Critical (b) infers a lower seizure probability from a lower probability of any harm. |
+| c12-2 | At 28 kilograms the sufficient condition requires a fall and the guarantee rival excludes it; the options give no conflict answer. |
+| c12-4 | At 11 gigabytes the sufficient condition requires an outage and the guarantee rival excludes it. |
+| c14-3 | The permission rival conflicts with Rule 1's prohibition; nothing gives it precedence, so critical (b)'s "Yes" is unsupported. |
+| ctl-2 | Unscored control with the same contradiction as c12-2. |
 
 ## Contents
 
-`items.json` holds 62 items: 4 for each of the 15 scored constructs (c1, c2, c3a, c3b, c4 to c14) and 2 unscored
-`prevents` controls. Each item object has:
+| File | What it is |
+|---|---|
+| `items.json` | 53 items: 52 scored over the 15 constructs (c1, c2, c3a, c3b, c4 to c14) and the control `ctl-1` |
+| `prompt.txt` | the fixed reader instruction (2.6 Readers), and nothing else |
+| `readers.json` | the reader list: family, model and the exact invocation |
+| `sessions.json` | the seed, the dropped ids, and for every session its family, replicate, condition and items in order, with the shown-letter to sealed-label map of each item's shuffled options |
+| `sessions/<session>.txt` | the exact text each reader session receives |
+| `seal.py` | the script that dropped the items and wrote the files above (run once) |
+| `score.py` | the mechanical scorer; it writes `scored.json` and `RESULTS.md` |
+
+Each item object in `items.json` has:
 
 | Field | Meaning |
 |---|---|
-| `id`, `construct` | `c3b-2`, `ctl-1`, … ; controls have construct `control-prevents` |
+| `id`, `construct` | `c3b-2`, `ctl-1`, … ; the control has construct `control-prevents` |
 | `domain`, `setting` | `agent-operations` or `non-computer`; the setting is agent operations, delivery robot or clinic |
-| `scored` | `false` for the two controls |
+| `scored` | `false` for the control |
 | `conditions` | `["L","C"]`, except c13, which is `["L"]` (2.6 Conditions) |
 | `separates_rival` | whether the rival reading gives a different answer from the key |
 | `counter_world_knowledge` | whether the declarations contradict what world knowledge suggests |
@@ -24,62 +49,50 @@ sealed.** There is no manifest yet, and until sealing any item may be dropped.
 | `key`, `critical` | the correct label, and the labels the rival reading selects (empty only for c8-4) |
 | `one_reading`, `rival_reading` | the construct's one reading and the rival reading, from the 2.6 table |
 | `rationale` | why the key follows from the one reading, and why each critical option follows from the rival |
-| `same_situation_as`, `parallel_to`, `fulfilment_body` | c3b items reuse the c3a situations; controls mirror c12-1 and c12-2; c13 items name `avoids` or `excludes` |
+| `same_situation_as`, `parallel_to`, `fulfilment_body` | c3b items reuse the c3a situations; the control mirrors c12-1; c13 items name `avoids` or `excludes` |
 
-Option labels are identifiers only. The runner shuffles the displayed order with the recorded seed. The fixed
-instruction (2.6 Readers) asks for one option and a one-sentence reason.
+## Counts after the drops
 
-## Counts
+| Construct | Items | L answers | C answers |
+|---|---|---|---|
+| c1, c2, c4, c5, c7, c8, c10, c11 (each) | 4 | 16 | 16 |
+| c3a, c3b, c6, c14 (each) | 3 | 12 | 12 |
+| c9, c12 (each) | 2 | 8 | 8 |
+| c13 | 4 | 16 | (L only) |
+| `prevents` control | 1 | 4 | 4 |
+| **Total** | **53** | **212** | **196** |
 
-| Construct | Items | Separating | Agent-ops / non-computer | Against world knowledge |
-|---|---|---|---|---|
-| c1, c4 to c7, c9 to c14 (each) | 4 | 4 | 2 / 2 | 1 |
-| c2, c3a, c3b (each) | 4 | 4 | 2 / 2 | 2 |
-| c8 | 4 | 3 | 2 / 2 | 2 |
-| `prevents` controls | 2 | 2 | 1 / 1 | 0 |
-| **Total** | **62** | **61** | **31 / 31** | |
+408 answers in all, from 56 sessions. Every remaining scored construct keeps at least two separating items; c6 no
+longer has an item against world knowledge (c6-2 was its only one).
 
-c8-4 is the only item that does not separate. It tests the bare form `<h> is <class>`, where the rival
-("exactly `<class>`" for "or worse") does not apply, so it has no critical option. Answers per 2.6: 60 scored items
-give 240 in L and 224 in C (c13 is L only), and the controls add 16, for 480 in all.
+## Sessions
 
-## How the legends were built
+Two readers (Claude Haiku 4.5, GPT-6 Sol), two replicates each, two conditions: for each (family, replicate,
+condition) the items of that condition are split into 7 sessions of at most 8 items with a seeded random greedy
+assignment. A session holds at most one item per construct, never both c3a and c3b, never c12 with the control, and
+one condition only. Item order and each item's option order are shuffled with the same seed; options are shown as
+(a) to (d) in shuffled order and mapped back to the sealed labels by `sessions.json`. So every item is answered in
+each of its conditions by two independent sessions per family. Session ids are `<family>-r<replicate>-<L|C>-<nn>`;
+readers never see ids, constructs or keys.
 
-- Lines that 9.1 contains are copied verbatim: the choice line, `might lead to`, `cannot lead to`, `leads to`, the
-  worst-case line and the default permission.
-- Lines for words that 9.1 does not use are written in 9.1's style from the 2.1 and 2.5 paraphrases: `might not lead to`,
-  `if`, `unless`, `exactly when`, `certainly leads to`, `or worse`, `avoidable`, `allows`, `might prevent`, and the
-  `avoids` and `excludes` bodies (the 2.5 template "A `<chooser>` `<act>` by taking an action that …", with `<act>` =
-  "prevents a harm").
-- The first risk line in a legend spells out "the declared estimates, conditions and statements"; later lines say
-  "they", as 9.1 does.
-- A legend covers only the words in the situation text, plus the words its own paraphrases use (for example, `avoidable`
-  brings in `might not lead to`). The choice line is always included, and the default-permission line appears only where
-  rules appear (c13, c14).
-- Severity orders and class assignments are declarations, so they are in the situation text and C readers see them
-  too. Only the meaning lines differ between L and C.
-- Bare `prevents` gets no legend line, because risk environments reject it.
-- 9.1's `unexamined` line is left out. It is block configuration, not the meaning of a word.
+In L each text starts with a `Legend:` block of the item's legend lines, as the IDE shows it; in C the block is
+absent and the text is otherwise identical.
 
-## Notes for the checking reviewer
+## Scoring (fixed before any run)
 
-1. **Undeclared cells.** No key rests on whether an undeclared action–harm cell counts as possible. Where a question
-   needs a cell settled, the item declares it.
-2. **"The text does not say" as a critical option** (c5-2, c6-2, c6-3, c6-4, c7-1, c7-2, c7-3, c9-3, c9-4). It is
-   marked critical wherever it is the rival reading's own answer.
-3. **c12-2, c12-4 and ctl-2** declare a condition under which the action leads to the harm. That condition contradicts
-   the guarantee rival, so a rival reader may notice the conflict. The items are kept because this is the realistic IDE
-   case, and c12-1 and c12-3 test the construct without it.
-4. **Rule sentences** in c13 and c14 follow the shape of the 9.1 rules. This goes slightly beyond the three permitted
-   sources, but the constructs need "must prevent", "must not" and "may" rules.
-5. **c9-3 and c9-4** need one inference: the harm named is `severe`, the top class, so no worst case can be more severe
-   than it.
-6. **Controls.** The key is the risk@0 meaning of `prevents(a, h)` (2.5: its canonical form is `might prevent`). The
-   critical option is the ordinary-English reading that 2.1 gives as the reason for rejecting it.
+- `score.py` splits a response into one block per text (at `Text n`, `Item n`, `Question n` or a line starting
+  `n.`), takes the earliest option letter in the block (`(b)`, `b)`, `**b**`, `Answer: b`, `Text 2: b`), and
+  otherwise a unique verbatim option text. Anything else is **unparseable**: wrong, not critical.
+  `python3 score.py --selftest` checks the parser on hand-written shapes.
+- Rule 1 of 2.6 ("at least 15 of its 16 answers are correct and none is critical") is applied as the same
+  allowance to the answers that remain after the drops: **a construct passes when, in L, at most one of its answers
+  is not correct and none is critical.** RESULTS.md also shows, without deciding anything, the proportional reading
+  (at least 15/16 of the answers correct), which for 8 or 12 answers requires every answer correct.
+- A construct that passes L with a critical answer in C is **legend-dependent**. Rules 2 to 5 of 2.6 are applied as
+  written; the control is reported, not scored.
 
-## Next steps (2.6 Sealing)
+## After sealing (not in the manifest)
 
-The second plan reviewer checks each key against the one reading and each critical option against the rival reading,
-and drops any item the two reviewers disagree on. Then prompts, seeds, the reader list and a SHA-256 manifest are
-committed here, before any run. Nothing is edited after sealing. Results go to `RESULTS.md`, labelled "proxy; human
-readability unmeasured".
+`run.py` sends each session to its reader in a fresh empty temporary directory outside the repository and saves the
+raw output under `runs/<session>/`; `scored.json` and `RESULTS.md` are generated by `score.py`. Every result is
+labelled "proxy; human readability unmeasured".

@@ -1,0 +1,74 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) The text does not say.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) No lift failure happens: a lift easily carries 4 kilograms.
+(d) A lift failure happens.
+
+Text 2
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) Neither drug.
+(b) Both drug A and drug B.
+(c) The text does not say.
+(d) Only drug B.
+
+Text 3
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) The text does not say.
+(b) A rule: it permits the agent to empty the cache.
+(c) A rule: it forbids the agent to cause data loss by emptying the cache.
+(d) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+
+Text 4
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) No fall happens: a robot is safe inside a lift.
+(b) A fall happens in every case the text allows.
+(c) The text does not say.
+(d) A fall usually happens, but not in every case.
+
+Text 5
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) The text does not say.
+(b) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(c) Giving drug B leads to a fever in every case the text allows.
+(d) In no case the text allows does giving drug B lead to a fever.
+
+Text 6
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(b) The text does not say.
+(c) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+(d) Giving the vaccine avoids a fever in at least one case the text allows.
+
+Text 7
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) Serious or severe.
+(b) Only severe.
+(c) Only serious.
+(d) The text does not say.
