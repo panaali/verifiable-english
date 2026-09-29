@@ -166,15 +166,13 @@ def _background_python(env) -> tuple[Premise, ...]:
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
     from .backends.dispatch import execute
-    from .backends.lean_runner import run
+    from .backends.lean_runner import route_mode, run
     from .ast import formula_from_data
 
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
 
     def lean():
-        # The route decoder rejects `regulated`; the norms route strips and checks it.
-        regulated = any(d.regulated is not None for d in env.predicates.values())
-        row = run("norms" if regulated else "route", [case])[0]
+        row = run(route_mode(env), [case])[0]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
