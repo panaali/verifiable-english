@@ -1,6 +1,7 @@
 # Use case: agent-policy (PLAN, written before any VE run)
 
-Status: plan only, 2026-09-29, branch `usecase/agent-policy`. Nothing below has been run through VE.
+Status: planned 2026-09-29, then built the same day on branch `usecase/agent-policy`. The results are in
+`README.md`; section 12 records every deviation. Sections 1 to 11 still read as written before the VE run.
 The answer key (sections 6 and 7) is frozen at the commit that adds this file. If running VE later shows a key
 entry is wrong, that entry is corrected in section 12 (deviations) with the reason and the old value. It is
 never edited in place.
@@ -466,6 +467,83 @@ confirmed all 42 base verdicts, deciding-rule sets, default outcomes and totals,
 - Finding B (sections 4.1, 8 and 9, M8): 39 records are complete, not 40. a42 is excluded from the finite-model
   differential; M8 now expects 39/39.
 - Finding C (section 1): the Claude Code source URL is corrected. Step 0 pins the pages in `sources.md`.
+
+**Implementation deviations (2026-09-29).** VE agreed with every entry of sections 6 and 7 and with every
+expected mutant change in section 11, so no key entry is corrected. The deviations below change how the
+use case is written or computed, not what the key expects.
+
+1. **Step 0 probe results.** `data@0 × norms@0` is accepted, and `$string` literals work in guards. Every rule
+   parses with one reading, and `render_english` reproduces `policy.ve` byte for byte. A finite model may hold a
+   `$string` element that is no declared literal, so an action with an undeclared tool is a gap with a witness,
+   not OPEN (section 7). The Lean P0 `certificate` kind accepts data flags; the Lean `norms-route` does not
+   (finding A). The prover result is item 6.
+2. **Section 3.1, wording of the base predicates.** VE's vocabulary lint admits a unary wording only as "is"
+   plus one word, and a binary wording only as a verb phrase without articles. Wordings it rejects fall back to
+   `is classified as "…"`, which is not plain English. The predicates were therefore renamed and reworded as
+   below; each description still names the decider.
+
+   | Plan | VE predicate and wording |
+   |---|---|
+   | `tool`, "{0} uses the tool {1}" | `tool`, "{0} uses {1}"; VE writes a functional attribute as "the tool of {0} is {1}" |
+   | `sends_to`, "{0} sends a message to {1}" | `messages`, "{0} messages {1}" |
+   | `inside_workspace(file)`, "{0} is inside the workspace" | `resides_in(file, directory)`, "{0} resides in {1}", with the constant `workspace`; negative "{0} does not reside in {1}" |
+   | `credential_file`, "{0} is a credential file" | `confidential`, "{0} is confidential" (on the resolver's credential path list) |
+   | `version_controlled`, "{0} is under version control" | `tracked`, "{0} is tracked" |
+   | `allowlisted`, "{0} is on the network allowlist" | `allowlisted`, "{0} is allowlisted" |
+   | `is_user`, "{0} is the user" | `principal`, "{0} is principal" (the user the agent works for) |
+   | `confirmed`, "{0} is confirmed by the user" | `confirmed`, "{0} is confirmed" |
+   | `read_only`, "{0} is read-only" | `readonly`, "{0} is readonly" |
+   | `elevated`, "{0} runs with elevated privileges" | `privileged`, "{0} is privileged" |
+   | `discloses_secret(action)`, "{0} discloses a secret" | `discloses(action, secret)`, "{0} discloses {1}", with a new sort `secret`; a record states it like any other effect, with a closure sentence |
+   | `within_limit`, "{0} is within the spending limit" | `affordable`, "{0} is affordable" |
+   | `reported`, "{0} is reported to the user" | `reported`, "{0} is reported" |
+
+   Each unary predicate also declares its negative wording ("is not confirmed"), so no guard needs "it is not
+   the case that".
+3. **Section 3.3, rule text.** VE's compact "both A and B" joins two atoms only. Rules 2 and 8 therefore put the
+   confirmation inside the existential ("there is a file such that both that action reads that file and that
+   action is confirmed"), which has the same meaning. Rule 12 needs three conjuncts. It is written as "…, if
+   there is a file such that both that action reads that file and that file is confidential, unless that action
+   is not confirmed". That selects exactly the same actions, because a rule applies when its guard holds and its
+   carve-out fails. The exception lists use VE's rendered form "1, 2, 3, …, 11, 12".
+4. **Section 3.3, rule 25.** A disjunction of an atom and an existential has no one-line English form without
+   listing markers. Rule 25 is therefore two rule blocks: Rule 25 (`report-delete`) and Rule 26
+   (`report-purchase`), both positive rules on `report_required`. The key's "rule 25" column is read as "rule 25
+   or rule 26 selects". Mutant m2's rule M is Rule 27, `message-others-confirmed`.
+5. **Sections 4.1 and 4.2, the log.** The closure sentences read "For every file that "a01" reads, that file is
+   the same as "f_main"." and "It is not the case that there is a file such that "a01" writes that file." With
+   two objects they end "…, or both". The log's names (actions, files, hosts, people and two secrets) are declared
+   in `log.vocabulary.json`. Each action's sub-log is checked in an environment that declares only that action's
+   name. The reason is that `tool` is total: each extra action name adds Background work, and with all 42 names
+   VE's prover exhausted its budget on a one-step query. `emit_log.py` stands in for the agent's tools and writes
+   `log.ve` from the section 4.3 table.
+6. **Section 5, how the definitions are computed.** VE's prover reaches its step limit (ResourceLimit at 20,000
+   steps) on the selection formula of a positive rule, which negates 12 guards. It also fails on
+   `prove_norm_entailment` with the full layers. The harness therefore works in stages. VE's prover proves, for
+   each rule, that its guard and carve-outs hold or fail for the action. A focused search (`focused.py`) then
+   proves each selection formula, and each completed outcome, from those lemmas. The search only chooses among
+   VE's own tableau rules. VE's checker replays every certificate it emits, and Lean replays them too. The section
+   5 definitions are unchanged: every S+, S− and U membership rests on a chain of certificates, or on two checked
+   models of the same sub-log that disagree.
+7. **Section 5, completed outcomes.** Each predicate's completed outcome is computed under its own two defaults:
+   `permitted` in `deny-neednot` and `allow-neednot`, and `report_required` in `deny-neednot` and `deny-must`. The
+   selection formulas are identical in all four environments (a test checks this), so every verdict is too.
+8. **Section 7, gap queries.** Each per-tool proof uses only that tool's sentence of `log-schema.ve`. Fewer
+   premises keep a proof valid for the whole schema. Gap witnesses are record models, record models with one
+   atom changed, or record models whose tool is replaced by an undeclared string.
+9. **Section 8, Lean.** The flag-free fallback runs as planned. `report_required` is also certified on the norms
+   route as a sub-document of the two obligation rules, because the route certifies a document only when every
+   target has a certificate. The completed-outcome certificates are replayed on the P0 route in a copy of the
+   environment that declares the two regulated predicates as ordinary predicates, with the layers as premises.
+10. **Section 11, m3.** Rule 2 joins seven deciding sets, so seven same-sign overlaps with rule 2 appear too. This
+    follows from the named change and is not a separate result.
+11. **Section 13, files and entries.** The mutants are text edits in `mutants.py`, not a `mutants/` directory.
+    Extra files: `environments.py`, `environment.lean.json`, `emit_log.py`, `log.vocabulary.json`, `focused.py`
+    and `results.json`. The harness also uses private `ve` helpers (`_instantiate`, `_any`, `_bind`,
+    `_used_predicates`) and the tableau internals that `focused.py` needs. No `ve/` or `lean/` file changed.
+12. **Section 1, sources.** `sources.md` pins the pages with their SHA-256. The Codex `docs/sandbox.md` now only
+    links to other pages, so the linked sandboxing page is pinned too. The Cedar authorization page, which states
+    "forbid overrides permit", replaces the documentation home page.
 
 ## 13. Implementation steps and files (for the implementation round, not this commit)
 

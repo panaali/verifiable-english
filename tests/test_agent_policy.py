@@ -79,6 +79,17 @@ def test_policy_has_one_reading_round_trips_and_keeps_the_seeded_defects():
     assert len(source.split("\n")) == 26
 
 
+def test_verdicts_do_not_read_the_default():
+    """The selection formulas, and so every verdict, are the same in all four environments."""
+    from ve.norms import NormDocument
+    rules = check.policy().rules
+    selections = []
+    for variant in check.VARIANTS:
+        doc = NormDocument(check.environment(variant), rules)
+        selections.append([doc.selection(p) for p in ("permitted", "report_required")])
+    assert all(s == selections[0] for s in selections)
+
+
 def _plan_rows():
     plan = (HERE / "PLAN.md").read_text()
     section = plan[plan.index("## 6. Answer key: per action"):plan.index("Totals: APPROVED")]
