@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 238 local Python files and 11 pinned external package files; found 1933 import edges into section 1.1 modules.
+Parsed 238 local Python files and 11 pinned external package files; found 1944 import edges into section 1.1 modules.
 External scans include only the native `ve_webapp/` and `bench/` packages; vendored `ve/`, tests, and conformance copies are excluded. Their paths and source SHA-256 values are pinned in `conformance/baseline-2026-09/external-imports.json`, so replay does not depend on local clones or home paths. Refresh with `--refresh-external` only after reviewing external changes.
 
 ## Symbols
@@ -88,13 +88,13 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/argument.py` | `_predicates` | 667 | S | — | `tests/test_nary.py:55` |
 | `ve/argument.py` | `predicate_use_panel` | 694 | S | — | `ve/__init__.py:22`, `ve/argument_fixtures.py:198`, `tests/test_argument.py:6`, `tests/test_argument_adversarial.py:6`, `tests/test_argument_fixtures.py:1`, `tests/test_nary.py:58` |
 | `ve/ast.py` | `Var` | 18 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+45) |
-| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+44) |
-| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+4) |
+| `ve/ast.py` | `Const` | 23 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+45) |
+| `ve/ast.py` | `Num` | 28 | S | — | `ve/evaluate.py:7`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+5) |
 | `ve/ast.py` | `Add` | 34 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281` (+2) |
 | `ve/ast.py` | `Scale` | 40 | S | — | `ve/evaluate.py:7`, `ve/norms.py:49`, `ve/norms.py:85`, `ve/order.py:38`, `ve/search.py:247`, `ve/search.py:281` (+3) |
 | `ve/ast.py` | `Top` | 50 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/attacks.py:14`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+53) |
 | `ve/ast.py` | `Bottom` | 55 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:13` (+37) |
-| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+46) |
+| `ve/ast.py` | `Unary` | 60 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+47) |
 | `ve/ast.py` | `Binary` | 66 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/background.py:11`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+36) |
 | `ve/ast.py` | `Atom` | 73 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+4) |
 | `ve/ast.py` | `Atom.__post_init__` | 78 | S | — | `ve/entailment.py:13`, `ve/evaluate.py:7`, `ve/search.py:9`, `ve/surface/nary.py:10`, `tests/probe_matrix.py:24`, `tests/test_nary.py:4` (+4) |
@@ -109,28 +109,28 @@ Every A row uses the signature-preserving `ve/backends/dispatch.py` adapter from
 | `ve/ast.py` | `Body` | 131 | S | — | `ve/__init__.py:2`, `ve/argument.py:16`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/search.py:9` (+7) |
 | `ve/ast.py` | `Reach` | 140 | S | — | `ve/__init__.py:2`, `ve/adapters/cedar.py:17`, `ve/argument.py:16`, `ve/entailment.py:13`, `ve/equivalence.py:12`, `ve/evaluate.py:7` (+16) |
 | `ve/ast.py` | `Lt` | 148 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:247`, `tests/probe_matrix.py:568`, `tests/test_natural.py:15` (+2) |
-| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:247`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+4) |
+| `ve/ast.py` | `Le` | 154 | S | — | `ve/evaluate.py:7`, `ve/norms.py:61`, `ve/order.py:38`, `ve/search.py:247`, `tests/probe_matrix.py:24`, `tests/probe_matrix.py:568` (+5) |
 | `ve/ast.py` | `integer_value` | 166 | S | — | — |
 | `ve/ast.py` | `decimal_from_wire` | 175 | S | — | `ve/model.py:93`, `ve/order.py:38` |
 | `ve/ast.py` | `decimal_to_wire` | 186 | S | — | `ve/order.py:38` |
-| `ve/ast.py` | `Document` | 191 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+25) |
-| `ve/ast.py` | `Document.__post_init__` | 194 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+25) |
+| `ve/ast.py` | `Document` | 191 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+27) |
+| `ve/ast.py` | `Document.__post_init__` | 194 | S | — | `ve/__init__.py:2`, `ve/authoring.py:12`, `ve/check.py:5`, `ve/document.py:15`, `ve/entailment.py:13`, `ve/equivalence.py:12` (+27) |
 | `ve/ast.py` | `_Checker` | 200 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.__init__` | 201 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.tick` | 206 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.term` | 211 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
 | `ve/ast.py` | `_Checker.formula` | 242 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/entailment.py:13`, `ve/norms.py:13` |
-| `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+5) |
-| `ve/ast.py` | `check_document` | 321 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6` |
-| `ve/ast.py` | `_to_data` | 330 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/evaluate.py:231`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:122` (+9) |
-| `ve/ast.py` | `formula_to_data` | 369 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+27) |
-| `ve/ast.py` | `document_to_data` | 374 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:24`, `tests/test_closure_certificates.py:9` (+10) |
-| `ve/ast.py` | `_Decoder` | 379 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
-| `ve/ast.py` | `_Decoder.__init__` | 380 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
-| `ve/ast.py` | `_Decoder.decode` | 383 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
-| `ve/ast.py` | `formula_from_data` | 449 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/background.py:143` (+25) |
-| `ve/ast.py` | `document_from_data` | 455 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/lean_service_corpus.py:45`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145` (+15) |
-| `ve/ast.py` | `doc_from_json` | 462 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7` |
+| `ve/ast.py` | `check_formula` | 315 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/assist/ambiguity_patterns.py:16`, `ve/assist/recovery.py:18`, `ve/equivalence.py:12`, `ve/evaluate.py:7`, `ve/search.py:9` (+7) |
+| `ve/ast.py` | `check_document` | 340 | A | `ve/backends/dispatch.py` → Lean typecheck / formula decode | `ve/__init__.py:2`, `ve/check.py:5`, `ve/entailment.py:13`, `ve/evaluate.py:7`, `tests/test_conformance.py:6`, `tests/test_stage2_standalone.py:42` (+1) |
+| `ve/ast.py` | `_to_data` | 371 | U | — | `ve/definitions.py:159`, `ve/entailment.py:389`, `ve/evaluate.py:231`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:122` (+9) |
+| `ve/ast.py` | `formula_to_data` | 410 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/bundle.py:21`, `ve/document.py:15` (+27) |
+| `ve/ast.py` | `document_to_data` | 415 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7`, `ve/check.py:5`, `ve/identity.py:4`, `tests/probe_matrix.py:24`, `tests/test_closure_certificates.py:9` (+11) |
+| `ve/ast.py` | `_Decoder` | 420 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `_Decoder.__init__` | 421 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `_Decoder.decode` | 424 | U | — | `ve/entailment.py:629`, `ve/norms.py:13`, `ve/order.py:38`, `ve/search.py:350` |
+| `ve/ast.py` | `formula_from_data` | 490 | U | — | `ve/__init__.py:2`, `ve/admission.py:16`, `ve/argument.py:16`, `ve/assist/recovery.py:18`, `ve/attacks.py:14`, `ve/background.py:143` (+25) |
+| `ve/ast.py` | `document_from_data` | 496 | U | — | `ve/__init__.py:2`, `ve/__main__.py:270`, `ve/check.py:5`, `tests/lean_service_corpus.py:45`, `tests/test_conformance.py:6`, `tests/test_definitions_differential.py:145` (+15) |
+| `ve/ast.py` | `doc_from_json` | 503 | U | — | `ve/__init__.py:2`, `ve/__main__.py:7` |
 | `ve/background.py` | `Premise` | 15 | U | — | — |
 | `ve/background.py` | `_empty` | 20 | D | — | — |
 | `ve/background.py` | `_valid` | 24 | D | — | — |
@@ -2384,9 +2384,11 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Forall` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Implies` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Le` | 38 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Le` | 61 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Named` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Not` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Num` | 38 |
+| `tests/test_stage2_evaluation.py` | `ve.ast` | `Num` | 61 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Or` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Reach` | 11 |
 | `tests/test_stage2_evaluation.py` | `ve.ast` | `Top` | 11 |
@@ -2400,7 +2402,16 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_stage2_evaluation.py` | `ve.search` | `check_countermodel` | 17 |
 | `tests/test_stage2_evaluation.py` | `ve.search` | `find_countermodel` | 17 |
 | `tests/test_stage2_evaluation.py` | `ve.search` | `find_distinguishing_model` | 17 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `Const` | 68 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `Document` | 42 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `Document` | 68 |
 | `tests/test_stage2_standalone.py` | `ve.ast` | `Top` | 9 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `Unary` | 68 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `check_document` | 42 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `check_document` | 68 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `check_formula` | 42 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `check_formula` | 68 |
+| `tests/test_stage2_standalone.py` | `ve.ast` | `document_to_data` | 42 |
 | `tests/test_stage2_standalone.py` | `ve.ast` | `formula_to_data` | 10 |
 | `tests/test_stage2_standalone.py` | `ve.environment` | `Environment` | 9 |
 | `tests/test_stage2_standalone.py` | `ve.model` | `FiniteModel` | 9 |
