@@ -150,9 +150,10 @@ def runCase (j : Json) : Except String Json := do
       match Replay.firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
-  if Plain.isPlainKind kind && usesNormsPath j && !(j.getObjVal? "norms").toBool then
+  if Plain.isPlainKind kind && (usesNormsPath j || Plain.layered (j.getObjValD "environment"))
+      && !(j.getObjVal? "norms").toBool then
     return ← Plain.run j
-  if usesNormsPath j then
+  if usesNormsPath j || Plain.layered (j.getObjValD "environment") then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norms route"
   VE.Route.Run.runCase j
 
@@ -179,7 +180,7 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
 def runCaseReported (j : Json) : Json :=
-  if usesNormsPath j then
+  if usesNormsPath j || Plain.layered (j.getObjValD "environment") then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),

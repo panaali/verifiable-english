@@ -110,43 +110,81 @@ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Ro
 
 /-- A certificate case over the environment without the validated extension,
 bound to the submitted one: the family's Background, then the profile premises. -/
-def certificate (environment stripped : Json) (T : Tree) (id : String) (j : Json) :
-    Except String Json := do
+def certificate (profiles : List String) (environment stripped : Json) (T : Tree)
+    (extra : List VE.Formula) (id : String) (j : Json) : Except String Json := do
   let e ← VE.Route.Gate.decodeEnvelope stripped
-  let profile := pairPremises T
+  let profile := pairPremises T ++ extra
   match e.family with
   | .fol =>
     let rv ← VE.Route.Run.decodeRouteVocabulary e
-    folCertificate e.profiles environment rv ((VE.Route.Wire.fullBackground rv).map Prod.fst ++ profile) id j
+    folCertificate profiles environment rv ((VE.Route.Wire.fullBackground rv).map Prod.fst ++ profile) id j
   | .closure =>
     let rv ← VE.Route.Run.decodeRouteVocabulary e
-    closureCertificate e.profiles environment rv
+    closureCertificate profiles environment rv
       ((VE.Route.Wire.fullBackground rv).map Prod.fst ++ profile) id j
   | .closureNary =>
     if VE.Core.Layers.usesLayers stripped then
       let base ← VE.Core.Layers.background e.profiles stripped
-      VE.Core.Layers.coreCertificate e.profiles environment (← VE.Core.Layers.coreEnvironment stripped)
+      VE.Core.Layers.coreCertificate profiles environment (← VE.Core.Layers.coreEnvironment stripped)
         (base ++ profile) id j
     else
       let v ← VE.Core.Bridge.decodeEnvironment stripped
-      VE.Core.Layers.coreCertificate e.profiles environment stripped
+      VE.Core.Layers.coreCertificate profiles environment stripped
         (VE.Route.Background.literals (VE.Core.Wire.literals v) ++ profile) id j
   | .order =>
     unless profile.isEmpty do
       throw (VE.Route.Gate.unsupported "profile pairs on the order family are deferred")
-    VE.Route.Wire.runOrder e.profiles environment (← VE.Route.Wire.decodeOrderVocabulary e.vocabulary)
+    VE.Route.Wire.runOrder profiles environment (← VE.Route.Wire.decodeOrderVocabulary e.vocabulary)
       id "certificate" j
+
+/-- Statement-layer profiles whose declarations Plain removes before decoding:
+`reports@0` (the reports block, constant verbalisations) and `soft-norms@0`
+(the soft block, `instruction_of`). Identities keep the submitted environment. -/
+def layered (environment : Json) : Bool :=
+  match environment.getObjValD "profiles" with
+  | .arr ps => ps.any (fun p => p == .str "reports@0" || p == .str "soft-norms@0")
+  | _ => false
+
+def reduced (environment : Json) : Except String Json := do
+  let profiles := (← VE.Route.Gate.profilesOf environment).filter
+    (fun p => p != "reports@0" && p != "soft-norms@0")
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let constants ← (← fields (← vocabulary.getObjVal? "constants")).mapM fun (c, entry) => do
+    pure (c, Json.mkObj ((← fields entry).filter (·.1 != "verbalisation")))
+  let predicates ← (← fields (← vocabulary.getObjVal? "predicates")).mapM fun (p, entry) => do
+    pure (p, Json.mkObj ((← fields entry).filter (·.1 != "instruction_of")))
+  let rest := (← fields vocabulary).filter (fun kv => kv.1 != "reports" && kv.1 != "soft")
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (((Json.mkObj rest).setObjVal! "constants" (Json.mkObj constants)).setObjVal! "predicates"
+      (Json.mkObj predicates)))
+
+/-- The premises a validated soft document adds to Background, as the case
+carries them (a trusted composition point: they are not environment data;
+the Lean soft route regenerates them). Each is a closed FOL formula. -/
+def softPremises (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
+  match j.getObjVal? "soft_premises" with
+  | .error _ => pure []
+  | .ok ps => (← ps.getArr?).toList.mapM fun a => do
+    let f ← VE.Bridge.decodeFormula 64 a
+    unless f.check E [] do throw "ill-typed or unbound soft premise"
+    pure f
 
 def run (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
-  let environment ← j.getObjVal? "environment"
+  let submitted ← j.getObjVal? "environment"
+  let profiles ← VE.Route.Gate.profilesOf submitted
+  let environment ← if layered submitted then reduced submitted else pure submitted
   let e ← VE.Route.Gate.decodeEnvelope environment
   let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
   let T : Tree := ⟨← decodeRegulatedAll predicates, [], []⟩
   let stripped ← strip environment predicates
   if kind == "certificate" then
-    return ← certificate environment stripped T id j
+    let extra ← if !(j.getObjVal? "soft_premises").isOk then pure []
+      else if e.family == .fol then
+        softPremises (← VE.Route.Run.decodeRouteVocabulary (← VE.Route.Gate.decodeEnvelope stripped)).environment j
+      else throw (VE.Route.Gate.unsupported "soft premises outside the FOL family are deferred")
+    return ← certificate profiles submitted stripped T extra id j
   let result ← VE.Route.Run.runCase (j.setObjVal! "environment" stripped)
   if kind == "background" then
     let profile := (pairPremises T).map VE.Route.Wire.encodeFormula

@@ -736,17 +736,19 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
     except (VEError, ValueError, TypeError, KeyError, IndexError, AttributeError, _InvalidTrace) as exc:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
-    for profile in ("reports@0", "soft-norms@0"):
-        if profile in env.profiles:
-            raise CheckerUnavailable(f"CheckerUnavailable: Lean certificate replay on {profile} "
-                                     "environments is not available")
     case = {"id": "certificate", "environment": env.to_dict(),
             "premises": [_to_data(p) for p in premises], "conclusion": _to_data(conclusion),
             "certificate": certificate}
     if env.language == "ve.core@0.2":
         # Lean's own cap is the trace size, so it reports validity; the public
-        # budget is applied below.
-        mode, case = route_mode(env), {**case, "kind": "certificate", "max_steps": max(nodes, 10_000)}
+        # budget is applied below. The norms route's Plain glue also answers
+        # reports@0 and soft-norms@0 environments; soft premises are a
+        # validated soft document's Background slot, carried by the case.
+        layered = {"reports@0", "soft-norms@0"} & set(env.profiles)
+        mode = "norms" if layered else route_mode(env)
+        soft = getattr(env, "soft_premises", ())
+        case = {**case, "kind": "certificate", "max_steps": max(nodes, 10_000),
+                **({"soft_premises": [_to_data(f) for _, f in soft]} if soft else {})}
     elif env.order:
         mode, case = "order", {**case, "kind": "certificate"}
     else:
