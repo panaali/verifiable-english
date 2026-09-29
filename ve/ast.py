@@ -319,6 +319,7 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
         _Checker(env).formula(formula)
         return formula
     from .backends.lean_runner import run
+    from .backends.rust_jsonl import run as rust_run
     case = {"id": "typing", "environment": env.to_dict(), "ast": _to_data(formula)}
 
     def python():
@@ -329,7 +330,11 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
         run("check", [case])
         return formula
 
-    return execute("typing", case, python, lean=lean)
+    def rust():
+        rust_run({**case, "kind": "check"})
+        return formula
+
+    return execute("typing", case, python, lean=lean, rust=rust)
 
 
 def check_document(env: Environment, document: Document) -> Document:
@@ -342,6 +347,7 @@ def check_document(env: Environment, document: Document) -> Document:
             checker.formula(formula)
         return document
     from .backends.lean_runner import run
+    from .backends.rust_jsonl import run as rust_run
     case = {"id": "typing", "environment": env.to_dict(),
             "ast": [_to_data(formula) for formula in document.formulas]}
 
@@ -355,7 +361,11 @@ def check_document(env: Environment, document: Document) -> Document:
         run("check", [case])
         return document
 
-    return execute("typing", case, python, lean=lean)
+    def rust():
+        rust_run({**case, "kind": "check"})
+        return document
+
+    return execute("typing", case, python, lean=lean, rust=rust)
 
 
 def _to_data(node):
