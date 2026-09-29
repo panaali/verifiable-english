@@ -1421,3 +1421,83 @@ def test_mention_surfaces_are_read_by_the_lexer(lean, tmp_path):
         contents = ready if form == "ordinal_pair" else SAFE_U2
         doc = document([opening, sentence], [("m1", "u2", text, form, target)], names=PY_NAMES, contents=contents)
         assert agree(doc, tmp_path).startswith("UnrecordedSlot: u2: ["), text
+
+
+def test_mention_spans_start_and_end_on_tokens(lean, tmp_path):
+    """B (discourse.py:957): Lean maps a mention's byte range to a token range of its unit and
+    rejects one that does not start and end on tokens (`InvalidInput: mention m1 span`) before any
+    other check of the block; Python reported `UnrecordedSlot`. Every byte range of the unit now
+    has the same outcome in both."""
+    doc = document(["It is safe."], [("m1", "u1", "It ", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents={"u1": unary("safe", "api")})
+    assert agree(doc, tmp_path) == "InvalidInput: mention m1 span"
+    for sentence in ["It is safe.", "İt is  safe."]:
+        base = document(["Api is reviewed.", sentence], [("m1", "u2", sentence[:2], "pronoun", entity("api"))],
+                        names=PY_NAMES, contents=SAFE_U2)
+        a0, b0 = base["units"][1]["span"]
+        docs = []
+        for a in range(0, b0 + 2):
+            for b in range(a + 1, b0 + 2):
+                doc = copy.deepcopy(base)
+                doc["discourse"]["mentions"][0]["span"] = [a, b]
+                docs.append(doc)
+        rows = run([case("admission", doc) for doc in docs])
+        aligned = 0
+        for doc, row in zip(docs, rows):
+            python = python_outcome(doc, tmp_path)
+            span = doc["discourse"]["mentions"][0]["span"]
+            if isinstance(python, dict):
+                assert row.get("status") == "ok" and row["report_id"] == python["report_id"], (sentence, span)
+            else:
+                assert row.get("error") == python, (sentence, span, row.get("error"), python)
+            aligned += python != "InvalidInput: mention m1 span"
+        assert 0 < aligned < len(docs) // 4, (sentence, aligned)
+    # a mention naming no unit is the same error in both
+    doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents={"u1": unary("safe", "api")})
+    doc["discourse"]["mentions"][0]["unit"] = "u9"
+    assert agree(doc, tmp_path) == "InvalidInput: mention m1 names an unknown unit"
+
+
+# The differential property over these classes: generated documents with joined, hyphenated and
+# Unicode-spaced binders, coordinations and surfaces, and mention ranges off and on token boundaries.
+
+JOIN_OPENINGS = ["A service{j}s owner is ready.", "Api{j}s owner is ready.", "Some{j}service is ready.",
+                 "Alice and Bob{j}s manager is ready.", "Alice{j}s and Bob is ready.", "A big{j}red service is ready.",
+                 "Alice and Bob are ready.", "Api is reviewed."]
+JOIN_LATER = [
+    ("It is safe.", SAFE_U2["u2"], [("It", "pronoun", entity("api")), ("It ", "pronoun", entity("api")),
+                                    ("t", "pronoun", entity("api"))]),
+    ("The{s}former is ready.", unary("ready", "alice"), [("The{s}former", "ordinal_pair", PAIR),
+                                                         ("The{s}", "ordinal_pair", PAIR)]),
+    ("This{s}service is safe.", SAFE_U2["u2"], [("This{s}service", "demonstrative", entity("api")),
+                                                ("This{s}service is", "demonstrative", entity("api"))]),
+]
+
+
+def join_document(rng):
+    j = rng.choice(JOINERS + [" ", " "])
+    s = rng.choice([" ", "  ", " ", " ", "\t"])
+    opening = rng.choice(JOIN_OPENINGS).format(j=j)
+    later, ast, candidates = rng.choice(JOIN_LATER)
+    text, form, target = rng.choice(candidates)
+    return document([opening, later.format(s=s)], [("m1", "u2", text.format(s=s), form, target)], names=PY_NAMES,
+                    contents={"u2": ast} if rng.random() < 0.85 else {})
+
+
+def test_lean_and_python_agree_on_joined_words_and_spans(lean, tmp_path):
+    rng = __import__("random").Random(20260930)
+    docs = [join_document(rng) for _ in range(300)]
+    rows = run([case("admission", doc) for doc in docs])
+    outcomes = set()
+    for doc, row in zip(docs, rows):
+        python = python_outcome(doc, tmp_path)
+        where = (doc["_source"], doc["discourse"]["mentions"])
+        if isinstance(python, dict):
+            assert row.get("status") == "ok", (where, row.get("error"))
+            assert (row["report_id"], row["references"]) == (python["report_id"], python["references"]), where
+            outcomes.add("admitted")
+        else:
+            assert row.get("error") == python, (where, row.get("error"), python)
+            outcomes.add(python.split(":")[0] + (": span" if python.endswith(" span") else ""))
+    assert {"admitted", "UnresolvedReference", "InvalidInput: span"} <= outcomes, outcomes

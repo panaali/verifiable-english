@@ -127,9 +127,15 @@ def test_rejects_partial_overlap_and_stale_version(tmp_path):
     front["discourse"]["mentions"].append({"id": "m2", "unit": "u2",
         "span": [cut + 1, cut + 5], "form": "pronoun",
         "target": {"kind": "entity", "name": "api"}})
+    # a range that starts inside the token `It` is no token range of its unit (the Lean `tokenSpan`)
+    with pytest.raises(VEError, match="InvalidInput: mention m2 span"):
+        load_document(_write(tmp_path, front, source))
+    front["discourse"]["mentions"][0]["span"] = [cut, cut + 5]
+    front["discourse"]["mentions"][1]["span"] = [cut + 3, cut + 14]
     with pytest.raises(VEError, match="overlap"):
         load_document(_write(tmp_path, front, source))
     front["discourse"]["mentions"].pop()
+    front["discourse"]["mentions"][0]["span"] = [cut, cut + 2]
     front["discourse"]["definitions_version"] = "old"
     with pytest.raises(VEError, match="StaleTarget: definitions@old"):
         load_document(_write(tmp_path, front, source))

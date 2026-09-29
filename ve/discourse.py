@@ -346,6 +346,27 @@ def _mention_words(doc, units, mention):
     return [w for w, x, y in _unit_tokens(doc, units[mention["unit"]]) if a <= x and y <= b]
 
 
+def _token_spans(doc, block):
+    """Every mention's prose byte range starts and ends on token boundaries of its unit, which the
+    lexer reads from the unit's own bytes (the Lean `toTokenSpans`, before any other check of the
+    block's contents): an unknown unit or a range that does not is `InvalidInput`."""
+    units = {u["id"]: u for u in doc["units"]}
+    mentions = block.get("mentions", [])
+    for m in mentions if type(mentions) is list else []:
+        if type(m) is not dict or type(m.get("id")) is not str or type(m.get("unit")) is not str:
+            continue
+        span = m.get("span")
+        if type(span) is not list or len(span) != 2 or not all(type(x) is int for x in span):
+            continue
+        if m["unit"] not in units:
+            raise VEError(f"InvalidInput: mention {m['id']} names an unknown unit")
+        tokens = _unit_tokens(doc, units[m["unit"]])
+        starts = [i for i, (_, a, _) in enumerate(tokens) if a == span[0]]
+        ends = [i for i, (_, _, b) in enumerate(tokens) if b == span[1]]
+        if len(starts) != 1 or len(ends) != 1 or starts[0] > ends[0]:
+            raise VEError(f"InvalidInput: mention {m['id']} span")
+
+
 def _segment_lengths(words, j, sorts, unary, displays):
     """The lengths, in segments, of the reference surfaces starting at segment `j` that end on a
     segment (the Lean `segmentLengths`): a reference word; `this|that` before a sort name's
@@ -917,6 +938,7 @@ def validate_discourse(doc):
         raise VEError("InvalidInput: discourse version")
     if set(block) - _BLOCK_KEYS - set(_LEAN_ONLY):
         raise VEError("InvalidInput: discourse field")
+    _token_spans(doc, block)
     if block.get("definitions_version", doc["environment"].environment_id) != doc["environment"].environment_id:
         raise VEError(f"StaleTarget: definitions@{block['definitions_version']}")
     env, units = doc["environment"], {u["id"]: u for u in doc["units"]}
