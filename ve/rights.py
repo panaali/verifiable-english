@@ -163,11 +163,23 @@ class RightsDocument:
         bars = []
         outside = []
         names = set()
+        source_units = None
         for unit in units:
+            if type(unit) is dict and set(unit) == {"norm", "cites"}:
+                # 3.2: a norm unit outside rights may carry `narrows:<line>` citations.
+                outside.append(unit)
+                continue
             if type(unit) is not dict or len(unit) != 1:
                 raise VEError("InvalidInput: rights unit")
             kind, body = next(iter(unit.items()))
-            if kind == "right":
+            if kind == "source_units":
+                # The ids of the source units a citation may name (the Lean wire's element).
+                if source_units is not None:
+                    raise VEError("InvalidInput: duplicate source_units")
+                if type(body) is not list or any(type(item) is not str for item in body):
+                    raise VEError("InvalidInput: source_units must list unit ids")
+                source_units = tuple(body)
+            elif kind == "right":
                 if (type(body) is not dict or
                         set(body) != {"name", "holder", "guard", "lines"}):
                     raise VEError("InvalidInput: right")
@@ -237,7 +249,9 @@ class RightsDocument:
         self.limitations = tuple(limitations)
         self.bar = bars[0] if bars else None
         self.outside = tuple(outside)
+        self.source_units = source_units or ()
         self._validate_limitations(names)
+        self._validate_citations(entries)
         self.line_env = self._line_environment(entries)
         self.instances = tuple(self._instances(entries, names))
         self._correlate()
@@ -287,8 +301,6 @@ class RightsDocument:
             if type(line) is not dict or line.get("kind") not in _KINDS:
                 raise VEError("InvalidInput: incident line")
             kind = line["kind"]
-            if type(line.get("cites")) is not dict:
-                raise VEError("InvalidInput: line citations")
             allowed = ({"kind", "cites", "liberty", "recognition", "holder_slot"} if kind == "power"
                        else {"kind", "cites", "norm", "holder_slot", "fan_out"})
             if set(line) - allowed or (kind == "power" and not {"liberty", "recognition"} <= set(line)):
@@ -343,8 +355,23 @@ class RightsDocument:
                                 actual.regulated.role != example.regulated.role):
                             raise VEError(f"FanOutUndeclared: {raw.get('name')}, {bearer}")
                     yield {"right": right_name, "source_kind": kind, "kind": instance_kind,
-                           "rule": rule, "holder_slot": slot, "cites": line["cites"],
+                           "rule": rule, "holder_slot": slot, "cites": line.get("cites", {}),
                            "bearer": bearer, "source_line": line}
+
+    def _validate_citations(self, entries):
+        """4.1 step 3: every citation names a source unit, so a citation to a
+        non-existent unit never licenses a mechanism (4.5)."""
+        tables = [line.get("cites", {}) for _, line in entries if type(line) is dict]
+        tables += [unit["cites"] for unit in self.outside if "cites" in unit]
+        for cites in tables:
+            if type(cites) is not dict:
+                raise VEError("InvalidInput: line citations")
+            for key, targets in cites.items():
+                if type(targets) is not list or not targets or any(type(t) is not str for t in targets):
+                    raise VEError(f"InvalidInput: cites {key} must list unit ids")
+                for target in targets:
+                    if target not in self.source_units:
+                        raise VEError(f"UnknownSymbol: unit {target}")
 
     def _validate_limitations(self, names):
         for limit in self.limitations:
@@ -456,7 +483,7 @@ class RightsDocument:
             if any(type(parent) is str and parent.startswith("rights-")
                    for parent in raw.get("over", ())):
                 raise VEError("InvalidInput: authored precedence cites a generated rule")
-            rules.append(decode_rule(env, unit))
+            rules.append(decode_rule(env, {"norm": raw}))
         if self.bar is not None and self.bar["reading"] == "rule":
             for index, predicate in enumerate(permissions, 1):
                 parents = tuple(instance["rule"].core.name for instance in self.instances

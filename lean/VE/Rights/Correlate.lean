@@ -406,6 +406,12 @@ def checkRights (D : RightsDoc) : Except String Unit := do
   if D.bars.length > 1 then throw "DuplicateDeclaration: bar"
   for b in D.bars do
     unless validDecider b.decidedBy do throw s!"InvalidInput: invalid decider for bar {b.name}"
+  -- 4.1 step 3: every citation names a source unit, so no citation to a non-existent unit
+  -- licenses a mechanism (4.5).
+  for cs in D.rs.flatMap (fun R => R.lines.map (·.cites)) ++ D.outsideCites.map (·.2) do
+    for kv in cs do
+      for u in kv.2 do
+        unless D.sourceUnits.contains u do throw s!"UnknownSymbol: unit {u}"
 
 /-! ## The facts behind the proofs -/
 

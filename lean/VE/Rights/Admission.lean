@@ -34,10 +34,14 @@ def splitUnit (u : Json) : Except String (Json × Option Json) := do
     throw "InvalidInput: rights content requires its matching active unit kind"
   return (u, none)
 
+/-- The W2 document without rights content, and the rights source: the document's unit ids
+(what a citation may name, 3.2) followed by the active rights and outside norm contents. -/
 def splitDocument (document : Json) : Except String (Json × Json) := do
-  let units ← (← (← document.getObjVal? "units").getArr?).toList.mapM splitUnit
+  let raw := (← (← document.getObjVal? "units").getArr?).toList
+  let units ← raw.mapM splitUnit
+  let ids ← raw.mapM (fun u => VE.Bridge.stringField u "id")
   let clean := document.setObjVal! "units" (Json.arr (units.map Prod.fst).toArray)
-  let active := Json.arr (units.filterMap Prod.snd).toArray
+  let active := Json.arr (#[Json.mkObj [("source_units", toJson ids)]] ++ (units.filterMap Prod.snd).toArray)
   return (clean, active)
 
 def checkCites (ids : List String) (cites : Json) : Except String Unit := do
@@ -45,8 +49,9 @@ def checkCites (ids : List String) (cites : Json) : Except String Unit := do
   let entries ← VE.Bridge.fields cites
   for (_, targets) in entries do
     let names ← VE.Bridge.strings targets
-    unless !names.isEmpty && names.all ids.contains do
-      throw "InvalidInput: citation target is not a source unit"
+    if names.isEmpty then throw "InvalidInput: cites must list unit ids"
+    for n in names do
+      unless ids.contains n do throw s!"UnknownSymbol: unit {n}"
 
 def checkSourceCites (document : Json) : Except String Unit := do
   let units := (← (← document.getObjVal? "units").getArr?).toList

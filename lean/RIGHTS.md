@@ -142,6 +142,11 @@ Matched wire choices (the Lean executable's choices where the spec leaves bytes 
 * No `null` on the Lean wire: `holder_slot`, `recognition`, `decided_by` and a fan-out line's
   `predicate` are sent absent.
 * An outside norm unit is `{"norm": {...}}` with an optional `"cites"` beside `norm`.
+* The document may carry one `{"source_units": [ids]}` element, the source unit ids a `cites`
+  entry may name (`RightsDoc.sourceUnits`); `WellFormedRights` rejects a citation to any other
+  unit with `UnknownSymbol: unit <u>` (4.1 step 3), so none is declared means no citation is
+  valid. W2 admission prepends the document's unit ids; the Python profile reads the same
+  element, and the document checker sends it.
 * Generated predicate entries in `E″′` JSON (`genEntries`), byte for byte the Python profile's:
   `lim` `{"arguments", "description": "limitation <L> of <act key>", "verbalisation":
   "limitation <m> holds where <act phrase>"}` with `<m>` the limitation's display number
