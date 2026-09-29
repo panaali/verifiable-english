@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from itertools import product
 
+from .assurance import semantic_entry
 from .admission import _check_kind, token
 from .ast import formula_from_data
 from .errors import UnsupportedProfile, VEError
@@ -158,6 +159,7 @@ def plan_choices(sets, *, limit=64):
              for c in product(*(range(len(s["readings"])) for s in sets))]}
 
 
+@semantic_entry("readings")
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
                    max_models=10_000, max_evaluations=100_000, fixed=()):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
