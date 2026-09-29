@@ -80,7 +80,7 @@ def test_shadow_classifies_nested_trace_and_composition(monkeypatch, tmp_path):
 def test_rust_rejects_malformed_evaluation_response(monkeypatch, tmp_path, response):
     executable = tmp_path / "ve"
     executable.write_bytes(b"mock")
-    monkeypatch.setattr("ve.backends.rust_jsonl._RUN", lambda *a, **kw:
+    monkeypatch.setattr("ve.backends.rust_jsonl._run_checker", lambda *a, **kw:
                         subprocess.CompletedProcess(a, 0, response, b""))
     from hashlib import sha256
     case = {"id": "x", "kind": "evaluate-budgeted", "max_evaluations": 1}
