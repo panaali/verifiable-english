@@ -14,8 +14,8 @@ ids), the active reading sets with their statuses and reading ids, and each unit
 
 What the Lean route does not implement is `NotImplemented: <feature>`, never a rejection of the
 document (4.7: an import whose check cannot complete is `unconfirmed`): fenced English or
-strict content, norm content, `MIXED` units, distinguishing models of reading sets, and JSON
-`null`, which the restricted parser does not read. Decoding, hashing and display remain named
+strict content, norm content, `MIXED` units, distinguishing models of reading sets, a document
+without a claim graph, and JSON `null`, which the restricted parser does not read. Decoding, hashing and display remain named
 trust boundaries (3.4). -/
 namespace VE.Discourse.Loader
 open Lean
@@ -450,9 +450,11 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   let w2sets := (active.filter fun (_, kinds) => kinds.all id).map fun (rs, _) => Json.mkObj [
     ("id", .str rs.id), ("version", toJson rs.version),
     ("readings", Json.arr (rs.readings.map fun (_, f) => VE.Route.Wire.encodeFormula f).toArray)]
-  let graph := match front.getObjVal? "graph" with
-    | .ok g => [("graph", g)]
-    | .error _ => []
+  -- a document without a claim graph is loaded but not admitted by Python (document.md); W2
+  -- admission, which this route runs, needs a graph: the route abstains, it never rejects one
+  let graph ← match front.getObjVal? "graph" with
+    | .ok g => pure [("graph", g)]
+    | .error _ => throw (notImplemented "a document without a claim graph")
   let w2 := Json.mkObj ([("units", Json.arr w2units.toArray)] ++ graph ++
     [("lemmas", optionalList front "lemmas"), ("open_terms", Json.arr (openNames.map Json.str).toArray),
      ("reading_sets", Json.arr w2sets.toArray), ("narrowings", Json.arr (narrowings.map Json.str).toArray)])
