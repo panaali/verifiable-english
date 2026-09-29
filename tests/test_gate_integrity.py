@@ -338,6 +338,30 @@ def test_cargo_registry_seed_takes_only_locked_archives(tmp_path, monkeypatch):
     assert (home / "registry/index" / index / "config.json").is_file()
 
 
+def test_fsmonitor_hook_cannot_hide_edited_source(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = gate.gate_environment(tmp_path / "scratch")
+    identity = ["-c", "user.name=gate", "-c", "user.email=gate@example.invalid"]
+    for args in (["init", "-q"], ["commit", "-q", "--allow-empty", "-m", "init"]):
+        subprocess.run(["git", *identity, *args], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    subprocess.run(["git", *identity, "commit", "-q", "-m", "source"], cwd=repo, env=env, check=True)
+    # The hook reports that nothing has changed since any token.
+    hook = tmp_path / "fsmonitor"
+    hook.write_text("#!/bin/sh\nprintf 'token\\0'\n")
+    hook.chmod(0o755)
+    subprocess.run(["git", "config", "core.fsmonitor", str(hook)], cwd=repo, env=env, check=True)
+    subprocess.run(["git", "status", "--porcelain"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("two\n")
+    plain = subprocess.run(["git", "status", "--porcelain"], cwd=repo, env=env,
+                           capture_output=True, text=True, check=True)
+    assert plain.stdout == ""
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
