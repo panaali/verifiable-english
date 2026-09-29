@@ -675,6 +675,19 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
+    if os.environ.get("VE_AUTHORITY", "python") != "python":
+        # A backend search returns one witness; a refused witness is a
+        # disagreement between generator and check, never NotFound.
+        with pytest.raises(CheckerUnavailable):
+            search.find_countermodel(p0, (), senior)
+        assert set(calls) == {((), senior)}
+        calls.clear()
+        with pytest.raises(CheckerUnavailable):
+            search.find_distinguishing_model(p0, senior, Not(senior))
+        assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
+        calls.clear()
+    # Python's generator keeps searching past a refused candidate.
+    monkeypatch.setenv("VE_AUTHORITY", "python")
     assert search.find_countermodel(p0, (), senior).status == "NotFound"
     assert set(calls) == {((), senior)}
     calls.clear()

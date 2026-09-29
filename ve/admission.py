@@ -10,6 +10,7 @@ formulas are regenerated from the environment.
 """
 from __future__ import annotations
 
+from pathlib import Path
 import re
 from typing import NamedTuple
 
@@ -459,8 +460,7 @@ def admit_document(environment, document) -> dict:
             # entry only transports the case to it.
             return _admit_document_python(env, document)
         if env.unit_schema is not None:
-            raise CheckerUnavailable("CheckerUnavailable: Lean adapter for W6 quantity admission "
-                                     "is not available")
+            return _lean_quantity_admission(env, document)
         row = run("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
@@ -473,6 +473,21 @@ def admit_document(environment, document) -> dict:
         return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
     return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
+
+
+QUANTITY_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_quantity"
+
+
+def _lean_quantity_admission(env, document) -> dict:
+    """W6 quantity admission by Lean `ve_quantity` (case kind `document`)."""
+    from .backends import lean as backend
+    from .backends.diagnostics import checker_error
+    [row] = backend.run("admission", QUANTITY_ROUTE,
+                        [{"id": "admission", "kind": "document", "environment": env.to_dict(),
+                          "document": document}], runner="ve_quantity", timeout=60.0)
+    if row["status"] == "error":
+        raise checker_error(row["error"])
+    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
 def _admit_document_python(environment, document) -> dict:
