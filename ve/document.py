@@ -15,7 +15,7 @@ from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment
-from .errors import VEError
+from .errors import ResourceLimit, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices,
@@ -60,7 +60,9 @@ def _body(body: bytes):
     return bytes(source), fences
 
 
-def _split(raw: bytes):
+def front_matter(raw: bytes):
+    """The decoded JSON front matter of a document text and its body bytes, before any check of
+    the metadata or the body: all that names a text's format."""
     if len(raw) > MAX_DOCUMENT_BYTES:
         raise VEError("document byte budget exceeded")
     if not raw.startswith(b"---\n"):
@@ -72,6 +74,13 @@ def _split(raw: bytes):
         meta = json.loads(raw[4:boundary].decode("utf-8"))
     except (ValueError, UnicodeError) as exc:
         raise VEError("invalid JSON front matter") from exc
+    except RecursionError:
+        raise ResourceLimit("ResourceLimit: JSON front matter nesting exceeds the parser's depth") from None
+    return meta, raw[boundary + 5:]
+
+
+def _split(raw: bytes):
+    meta, body = front_matter(raw)
     if type(meta) is not dict or meta.get("format") not in ("ve-document@1", "ve-document@2"):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
@@ -80,7 +89,7 @@ def _split(raw: bytes):
         allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
-    return meta, *_body(raw[boundary + 5:])
+    return meta, *_body(body)
 
 
 def _meaning(value, open_names):
@@ -194,7 +203,8 @@ def load_document(path: str | Path):
     """Load and check a document. A `ve-document@2` document's admission is Lean's
     (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): Python's checks give
     the diagnostic text of a document Lean rejects too, and a document Lean admits that Python
-    cannot load is `CheckerUnavailable`, never a Python-only verdict."""
+    cannot load is `CheckerUnavailable`, never a Python-only verdict. Python's checks may fail in
+    any way on metadata Lean rejects (a `TypeError` on `"units": 7`): Lean's diagnostic then."""
     raw = Path(path).read_bytes()
     from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
     if not is_discourse_text(raw):
@@ -204,10 +214,10 @@ def load_document(path: str | Path):
         return _load_document(raw, path, lean)
     except CheckerUnavailable:
         raise
-    except VEError as exc:
+    except Exception as exc:
         if lean["status"] != "error":
             raise unavailable_report(exc) from exc
-        error = rejection(lean, exc)
+        error = rejection(lean, exc if isinstance(exc, VEError) else None)
         if error is exc:
             raise
         raise error from exc
@@ -431,7 +441,7 @@ def _check_document(path):
         return _report(doc)
     except CheckerUnavailable:
         raise
-    except VEError as exc:
+    except Exception as exc:
         # Lean admitted the document (load_document): Python never rejects it on its own
         from .discourse import unavailable_report
         raise unavailable_report(exc) from exc
