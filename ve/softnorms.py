@@ -343,6 +343,12 @@ def _rule_fields(content, exception_decider):
         raise invalid('rule predicate and precedence edges must be strings')
     core = Norm(name, raw['predicate'], raw['sign'], _fol(raw['guard']),
                 tuple(_fol(x) for x in raw['unless']), tuple(raw['over']))
+    # `over` is a set of rule names (3.2): a repeated name is rejected, not merged.
+    seen = set()
+    for parent in core.over:
+        if parent in seen:
+            raise invalid(f'duplicate over {parent} in rule {name}')
+        seen.add(parent)
     mode = raw.get('mode', 'strict')
     if type(mode) is not str or mode not in ('strict', 'default'):
         raise _fault('SOFT_INVALID_RULE_FIELDS', f'InvalidInput: invalid mode for rule {name}')
@@ -843,7 +849,9 @@ class SoftNormDocument:
         # these syntax trees, so Boolean equivalence alone is insufficient.
         arity = {p: len(d.arguments) for p, d in self.env.predicates.items()
                  if d.regulated is not None}
-        children = {r.core.name: [x for x in self.rules if r.core.name in x.core.over]
+        # W1 `children`: sorted by name, whatever the order of rules and `over` entries.
+        children = {r.core.name: sorted((x for x in self.rules if r.core.name in x.core.over),
+                                        key=lambda x: x.core.name)
                     for r in self.rules}
 
         def strict_live(rule):

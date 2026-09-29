@@ -38,7 +38,11 @@ def generated(seed):
     extra = {p: {"arguments": ["assistant"], "description": p} for p in ("q", "u")}
     raw = env(block, extra=extra)
     rules = []
-    for i in range(rng.randrange(1, 5)):
+    # Names out of document order and `over` a random subset in random order, so
+    # children (sorted by name on both sides) differ from source order.
+    count = rng.randrange(1, 7)
+    names = [f"n{j}" for j in rng.sample(range(6), count)]
+    for name in names:
         pred = rng.choice(["x_required", "x_permitted"])
         soft_mode = rng.choice(["strict", "default"])
         parents = [r["norm"]["name"] for r in rules if r["norm"]["predicate"] == pred
@@ -60,10 +64,10 @@ def generated(seed):
             fields["hard"] = True
         guard = (["unary", "q", ["var", 0]] if rng.randrange(4) == 0 else ["top"])
         unless = (["unary", "u", ["var", 0]] if rng.randrange(4) == 0 else None)
-        rules.append(norm(f"n{i}", pred, rng.choice([True, False]), guard=guard,
-                          unless=[unless] if unless else [],
-                          over=[rng.choice(parents)] if parents and rng.randrange(3) == 0 else [],
-                          **fields))
+        over = (rng.sample(parents, rng.randint(1, len(parents)))
+                if parents and rng.randrange(3) else [])
+        rules.append(norm(name, pred, rng.choice([True, False]), guard=guard,
+                          unless=[unless] if unless else [], over=over, **fields))
     return raw, rules
 
 
@@ -561,6 +565,56 @@ def soft4_near_limit():
             yield (f"soft4-near-rank-tower-{ranks_count}-{mode}", *_rank_tower(ranks_count, 1, mode))
 
 
+def soft_over_reproducers():
+    """soft4-loop.final B, class: `over` is a set of rule names (3.2). Python merged a
+    repeated name and Lean kept every copy, so the two sized and built different
+    derived formulas. A repeat is now rejected at 4.2, after W1's field decoding
+    and before the rule's soft fields (4.3 on) and every cross reference (5)."""
+    a, d = norm("a", "x_required", True), should("d", "x_required", True)
+    code = "SOFT_INVALID_INPUT"
+    for times in (2, 41):
+        yield (f"soft-over-repeat-{times}", env(),
+               [a, norm("b", "x_required", False, over=["a"] * times), d], code)
+    yield ("soft-over-repeat-apart", env(),
+           [a, norm("c", "x_required", True), norm("b", "x_required", False, over=["a", "c", "a"]), d], code)
+    yield ("soft-over-repeat-before-mode", env(),
+           [a, norm("b", "x_required", False, over=["a", "a"], mode="other"), d], code)
+    yield ("soft-over-repeat-before-predicate", env(),
+           [a, norm("b", "u", False, over=["zz", "zz"]), d], code)
+    yield ("soft-over-repeat-after-earlier-rule", env({"parties": ["p", "q"], "outranking": {"mode": "strict"}}),
+           [norm("a", "x_required", True, alterable=["q", "p"]),
+            norm("b", "x_required", False, over=["a", "a"]), d], "SOFT_INVALID_ALTERABLE")
+    yield ("soft-over-repeat-default", env(),
+           [should("a", "x_required", True), should("b", "x_required", False, over=["a", "a"])], code)
+
+
+def soft_over_accepted():
+    """soft4-loop.final B, class: distinct children out of name order. Both
+    validators sort a rule's children by name wherever a derived formula is
+    built, sized or regenerated, whatever the children's document order and the
+    order of each `over` list."""
+    bottom, d = ("bottom",), should("d", "x_required", True)
+    yield ("soft-over-children-reversed", env(),
+           [norm("a", "x_required", True), norm("c", "x_required", True, unless=[bottom], over=["a"]),
+            norm("b", "x_required", False, over=["a"]), d])
+    yield ("soft-over-list-reversed", env(),
+           [norm("c", "x_required", True), norm("b", "x_required", False, unless=[bottom]),
+            norm("a", "x_required", True), norm("g", "x_required", False, over=["c", "b", "a"]),
+            norm("f", "x_required", True, unless=[bottom, bottom], over=["c", "a"]), d])
+    levels = [norm("r", "x_required", True)]
+    for depth, names in enumerate((["m3", "m1", "m2"], ["k2", "k0", "k1"])):
+        parents = [n["norm"]["name"] for n in levels[-3:]] if depth else ["r"]
+        levels += [norm(n, "x_required", i % 2 == 0, unless=[bottom] * i, over=parents[::-1])
+                   for i, n in enumerate(names)]
+    yield "soft-over-diamond-shuffled", env(), [*levels, d]
+    yield ("soft-over-defaults-shuffled", env(ranks(["hi", "lo"], "holistic")),
+           [should("z", "x_required", True, rank="hi"),
+            should("y", "x_required", False, rank="lo", over=["z"]),
+            should("x", "x_required", True, unless=[bottom], rank="lo", over=["z"]),
+            norm("w", "x_permitted", False), norm("v", "x_permitted", True, unless=[bottom], over=["w"]),
+            norm("u", "x_permitted", False, over=["w"])])
+
+
 def near_limit_sources(count=120, seed=0):
     """Seeded sources near every budget: deep guards, many exception
     conditions, large guards (the 8191-node doubled tree among them), shared
@@ -624,7 +678,7 @@ def near_limit_cases():
             *((name, raw, rules) for name, raw, rules, _ in soft_limits_reproducers()),
             *((name, raw, rules) for name, raw, rules, _ in soft4_reproducers()),
             *((name, raw, rules) for name, raw, rules, _ in soft4_aggregate_reproducers()),
-            *soft4_near_limit(), *near_limit_sources()]
+            *soft4_near_limit(), *soft_over_accepted(), *near_limit_sources()]
 
 
 def smallest_queries(soft):
@@ -769,6 +823,8 @@ def multi_faults():
         *[fault for i in range(4) for fault in (
             (f"r{i}-field", f"r{i}-extra", (4, i, 1), "SOFT_INVALID_INPUT", _set(rule(i, "extra"), 1)),
             (f"r{i}-sign", f"r{i}-sign", (4, i, 2), "SOFT_INVALID_INPUT", _set(rule(i, "sign"), "yes")),
+            (f"r{i}-over-repeat", f"r{i}-over", (4, i, 2, 1), "SOFT_INVALID_INPUT",
+             _set(rule(i, "over"), ["a0", "a0"])),
             (f"r{i}-guard-nodes", f"r{i}-guard", (4, i, 2), "SOFT_INVALID_INPUT",
              _set(rule(i, "guard"), _doubled(13))),
             (f"r{i}-mode", f"r{i}-mode", (4, i, 3), "SOFT_INVALID_RULE_FIELDS", _set(rule(i, "mode"), "x")),
@@ -999,7 +1055,7 @@ def generated_invalid_exceptions():
 def expected_rejections():
     """Named sources whose first diagnostic the validation table (8) fixes."""
     return [*loop_recheck_reproducers(), *soft2_reproducers(), *soft3_reproducers(),
-            *soft_limits_reproducers(), *multi_fault_cases()]
+            *soft_limits_reproducers(), *soft_over_reproducers(), *multi_fault_cases()]
 
 
 def _batches(cases, limit=8 << 20):

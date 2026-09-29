@@ -233,6 +233,11 @@ def ruleFields (exceptionDecider : Option String) (j : Json) : Check SoftNode :=
     (Json.mkObj [("norm", Json.mkObj (obj.filter (fun kv => w1Keys.contains kv.1)))]) (shared := false))
   unless ruleName N.name do fail "SOFT_INVALID_INPUT" s!"InvalidInput: invalid rule name {pyRepr N.name}"
   if N.carveOuts.length > 8 then fail "SOFT_INVALID_INPUT" "InvalidInput: invalid sign or too many carve-outs"
+  -- `over` is a set of rule names (3.2): a repeated name is rejected, not merged.
+  let mut seen : Std.HashSet String := {}
+  for m in N.over do
+    if seen.contains m then fail "SOFT_INVALID_INPUT" s!"InvalidInput: duplicate over {m} in rule {N.name}"
+    seen := seen.insert m
   let mode ← match raw.getObjVal? "mode" with
     | .error _ => pure Mode.strict
     | .ok (.str "strict") => pure Mode.strict
