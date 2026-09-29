@@ -1024,7 +1024,10 @@ def render_document(path):
                   "norm" in u["content"] and
                   (u["content"]["norm"].get("mode") == "default" or
                    bool(u["content"]["norm"].get("alterable"))) else
-                  "Checked reading: " if u["content"] is not None else "Recorded meaning: ")
+                  "Checked reading: " if u["content"] is not None and
+                  u["status"] == "CHECKED" else
+                  "Open reading: " if u["content"] is not None and
+                  u["status"] == "OPEN" else "Recorded meaning: ")
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
         reading_set = active_by_unit.get(u["id"])
         if reading_set is not None:
