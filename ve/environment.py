@@ -311,8 +311,7 @@ class Environment:
             if extended:
                 from .units import W6_PROFILES
                 if tuple(data["profiles"]) not in W6_PROFILES:
-                    raise UnsupportedProfile("ve-units@1 requires exactly order@0, relational-fol@0 "
-                                             "and time@0, optionally with documents@1")
+                    raise UnsupportedProfile("ve-units@1 requires the quantity route or risk@0")
         elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
