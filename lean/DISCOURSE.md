@@ -246,3 +246,6 @@ is the proved Lean statement.
   failure of any kind on a document this route rejects is this route's diagnostic. `Loader.linesOf`/`byteStrip`
   split and strip the body as `bytes.splitlines`/`bytes.strip` do (`linesOf_carriage_return`,
   `byteStrip_vertical_space`); a front matter over the JSON depth is `ResourceLimit`, never Python's rejection.
+  The case is UTF-8 JSON: an import name with an unpaired surrogate is no import (this route's JSON rejects it), a
+  sibling file that is no UTF-8 text is absent from `files` and this route's admission is then Python's
+  `InvalidInput`, and a document that is no UTF-8 text never reaches this route (`InvalidInput`).
