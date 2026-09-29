@@ -151,6 +151,19 @@ def test_staged_answers_match_the_key_and_the_recorded_results(staged_runs):
         assert all(scored.values()), (pid, result["staged"], keys[pid])
 
 
+def test_review_examples_get_the_source_answer(staged_runs):
+    """Eligibility review: A, resident in Scotland from 2026-09-20 and in England from
+    2026-09-22 was a certified NO; B, the shared-care profile was 200 instead of 100."""
+    assert staged_runs["B15"][0]["staged"] == {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}
+    assert staged_runs["B17"][0]["staged"] == {"Q1": "YES", "Q2": "100.00", "Q3": "NO", "Q4": "100.00"}
+    assert staged_runs["B18"][0]["staged"]["Q1"] == "NO"
+    for role in T.ROLES:  # R6 conditions only its subject; R11 orders the move after an E&W day
+        r6, r11 = (next(r for r in T.rules() if r["id"] == f"{rid}.{role}") for rid in ("R6", "R11"))
+        assert T.key(T.U("in_residential_care", T.OTHER[role])) not in T.key(r6["formula"])
+        for bound in (T.num(role, "ew_from"), T.day(T.QW0)):
+            assert T.key(["date_no_later", bound, T.num(role, "scot_ni_from")]) in T.key(r11["formula"])
+
+
 @pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
 def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
     raw = T.environment()
@@ -160,7 +173,7 @@ def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
             cases.append({"id": f"{pid}/{question}", "kind": "document", "environment": raw,
                           "document": staged.document(target)})
     got = run.lean(cases)
-    assert len(got) == 189
+    assert len(got) == 206
     assert all(r["status"] == "ok" and r["assurance"] == "lean-admitted" for r in got), \
         [r for r in got if r.get("status") != "ok"][:3]
 
@@ -192,18 +205,18 @@ def test_single_shot_stops_at_the_tableau_depth_cap():
 def test_recorded_summary():
     results = recorded()
     s = results["summary"]
-    assert s["strict"] == 57 and s["total"] == "189/189" and s["answered"] == 189
-    assert s["per_question"] == {"Q1": "57/57", "Q2": "44/44", "Q3": "44/44", "Q4": "44/44"}
+    assert s["strict"] == 62 and s["total"] == "206/206" and s["answered"] == 206
+    assert s["per_question"] == {"Q1": "62/62", "Q2": "48/48", "Q3": "48/48", "Q4": "48/48"}
     assert s["disagreements"] == [] and s["open"] == []
-    assert s["single_shot"] == {"answered": 0, "profiles": 57}
-    assert s["mutants_killed"] == "19/19"
+    assert s["single_shot"] == {"answered": 0, "profiles": 62}
+    assert s["mutants_killed"] == "23/23"
     lean = s["lean"]
     assert lean["certificates"] == lean["certificates_accepted"] > 0
-    assert lean["documents"] == lean["documents_admitted"] == 189
+    assert lean["documents"] == lean["documents_admitted"] == 206
     assert lean["model_premises"] == lean["model_premises_true"] > 0
     assert results["b1_certified"] is True
     assert results["environment_id"] == Environment(T.environment()).environment_id
     readme = (HERE / "README.md").read_text(encoding="utf-8")
-    assert "189/189" in readme and "57/57" in readme
+    assert "206/206" in readme and "62/62" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})
