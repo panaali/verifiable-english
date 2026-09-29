@@ -18,17 +18,6 @@ universe u
 
 /-! ## Typing of the bodies -/
 
-theorem riskEnv_might (R : RiskDoc) : (riskEnv R).predicates mightName = some [R.alt.action, R.alt.harm] := by
-  simp [riskEnv]
-
-theorem riskEnv_class (R : RiskDoc) : (riskEnv R).predicates classPred = some [R.alt.harm, R.sev] := by
-  simp [riskEnv, classPred, mightName]
-
-theorem riskEnv_ms (R : RiskDoc) : (riskEnv R).predicates moreSeverePred = some [R.sev, R.sev] := by
-  simp [riskEnv, classPred, mightName, moreSeverePred]
-
-theorem riskEnv_sev (R : RiskDoc) : R.sev ∈ (riskEnv R).sorts := by simp [riskEnv]
-
 section Bodies
 variable {R : RiskDoc} (hv : RiskValid R)
 include hv
@@ -167,56 +156,6 @@ theorem lessWorst_iff (R : RiskDoc) (B : VE.Structure.{u}) (a' a : B.Carrier) :
         ∃ s', B.domain R.sev s' ∧ B.relation classPred [h', s'] ∧ B.relation moreSeverePred [s, s'] := by
   simp [LessWorst, lessWorstF, tupleVal, VE.Formula.denote, VE.Term.denote]
 
-section Premises
-variable {R : RiskDoc} {B : VE.Structure.{u}} (hB : BaseAdmissibleRisk R B)
-include hB
-
-theorem prem_mem {p : VE.Formula} (hp : p ∈ riskPremises R) : p.denote B [] := hB.2 p hp
-
-theorem class_functional_of (h s s' : B.Carrier) (hh : B.domain R.alt.harm h) (hs : B.domain R.sev s)
-    (hs' : B.domain R.sev s') (h1 : B.relation classPred [h, s]) (h2 : B.relation classPred [h, s']) : s = s' := by
-  have := prem_mem hB (p := classFunctional R) (by simp [riskPremises])
-  simp only [classFunctional, VE.Formula.denote, VE.Term.denote] at this
-  have := this h hh s hs s' hs' ⟨⟨h, s, by simp, by simp, h1⟩, ⟨h, s', by simp, by simp, h2⟩⟩
-  obtain ⟨x, hx1, hx2⟩ := this
-  simp at hx1 hx2
-  rw [hx1, hx2]
-
-theorem sev_closed (s : B.Carrier) (hs : B.domain R.sev s) : ∃ c ∈ R.classes, B.constant c = some s := by
-  have := prem_mem hB (p := severityClosure R) (by simp [riskPremises])
-  simp only [severityClosure, VE.Formula.denote] at this
-  have := (anyF_denote B [s] _).mp (this s hs)
-  obtain ⟨φ, hφ, hd⟩ := this
-  obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hφ
-  simp only [VE.Formula.denote, VE.Term.denote] at hd
-  obtain ⟨x, hx1, hx2⟩ := hd
-  simp at hx1
-  subst hx1
-  exact ⟨c, hc, hx2⟩
-
-theorem order_of {c c' : String} (hc : c ∈ R.classes) (hc' : c' ∈ R.classes) {x y : B.Carrier}
-    (hx : B.constant c = some x) (hy : B.constant c' = some y) :
-    B.relation moreSeverePred [x, y] ↔ (c, c') ∈ closure R := by
-  have hmem : orderLiteral R (c, c') ∈ riskPremises R := by
-    simp only [riskPremises, List.mem_cons, List.mem_append]
-    right; right; left; right
-    exact List.mem_map.mpr ⟨(c, c'), List.mem_flatMap.mpr ⟨c, hc, List.mem_map.mpr ⟨c', hc', rfl⟩⟩, rfl⟩
-  have := prem_mem hB hmem
-  unfold orderLiteral at this
-  split at this
-  · rename_i hin
-    simp only [VE.Formula.denote, VE.Term.denote, hx, hy, Option.some.injEq] at this
-    obtain ⟨_, _, rfl, rfl, hr⟩ := this
-    exact ⟨fun _ => by simpa using hin, fun _ => hr⟩
-  · rename_i hin
-    simp only [VE.Formula.denote, VE.Term.denote, hx, hy, Option.some.injEq] at this
-    constructor
-    · intro hr
-      exact absurd ⟨x, y, rfl, rfl, hr⟩ this
-    · intro hin'
-      exact absurd (by simpa using hin') hin
-
-end Premises
 
 /-- 4.5: `less_worst` is irreflexive and transitive under the slot premises (functionality of `class`
 and the order table). -/

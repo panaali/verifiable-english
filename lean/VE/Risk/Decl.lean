@@ -187,7 +187,11 @@ def riskSemanticCheck (R : RiskDoc) : Bool :=
   (closure R).all (fun p => R.classes.contains p.1 && R.classes.contains p.2) &&
   R.risk.harmClasses.all (fun p => R.E.constants p.1 == some R.alt.harm && R.classes.contains p.2) &&
   decide (harms R).Nodup &&
-  R.alt.outcomes == .signed
+  R.alt.outcomes == .signed &&
+  (VE.Alternatives.roleNames R.alt).all (fun p => R.E.predicates p != none) &&
+  [R.alt.chooser, R.alt.action, R.alt.harm].all R.E.sorts.contains &&
+  R.lits.all (fun l => R.E.constants l != some R.sev && !R.classes.contains l) &&
+  R.T.definitions.all (fun d => !(generatedPreds ++ riskWords).contains d.name)
 
 def classPairs (R : RiskDoc) : List (String × String) := R.classes.flatMap fun a => R.classes.map (a, ·)
 
@@ -288,15 +292,19 @@ structure RiskValid (R : RiskDoc) : Prop where
   harmClasses : ∀ p ∈ R.risk.harmClasses, R.E.constants p.1 = some R.alt.harm ∧ p.2 ∈ R.classes
   harmsNodup : (harms R).Nodup
   signed : R.alt.outcomes = .signed
+  roles : ∀ p ∈ VE.Alternatives.roleNames R.alt, R.E.predicates p ≠ none
+  sorts : R.alt.chooser ∈ R.E.sorts ∧ R.alt.action ∈ R.E.sorts ∧ R.alt.harm ∈ R.E.sorts
+  lits : ∀ l ∈ R.lits, R.E.constants l ≠ some R.sev ∧ l ∉ R.classes
+  definitions : ∀ d ∈ R.T.definitions, d.name ∉ generatedPreds ++ riskWords
 
 theorem riskValid_of_wellFormed (R : RiskDoc) (h : WellFormedRisk R = true) : RiskValid R := by
   have hc := riskSemanticCheck_of_wellFormed R h
   simp only [riskSemanticCheck, closureIrrefl, closureTrans, Bool.and_eq_true, Bool.not_eq_true',
     decide_eq_true_eq, beq_iff_eq, List.all_eq_true, List.contains_iff_mem, List.isEmpty_eq_false_iff,
     and_assoc] at hc
-  obtain ⟨hwa, hfr, hres, hcf, hnd, hne, hbd, hsn, hreg, hirr, htr, hcc, hhc, hhn, hsg⟩ := hc
+  obtain ⟨hwa, hfr, hres, hcf, hnd, hne, hbd, hsn, hreg, hirr, htr, hcc, hhc, hhn, hsg, hrole, hsrt, hlit, hdef⟩ := hc
   refine ⟨hwa, ?_, hres, fun c hc' => ?_, hnd, ?_, hbd, ?_, fun r hr => ?_, fun p hp => ?_, fun p hp q hq => ?_,
-    fun p hp => ?_, fun p hp => ?_, hhn, hsg⟩
+    fun p hp => ?_, fun p hp => ?_, hhn, hsg, fun p hp => ?_, ?_, fun l hl => ?_, fun d hd => ?_⟩
   · simpa using hfr
   · simpa using hcf c hc'
   · simpa using hne
@@ -311,5 +319,20 @@ theorem riskValid_of_wellFormed (R : RiskDoc) (h : WellFormedRisk R = true) : Ri
     · simpa using h1
   · simpa using hcc p hp
   · simpa using hhc p hp
+  · simpa using hrole p hp
+  · simpa using hsrt
+  · simpa using hlit l hl
+  · simpa using hdef d hd
+
+theorem riskEnv_might (R : RiskDoc) : (riskEnv R).predicates mightName = some [R.alt.action, R.alt.harm] := by
+  simp [riskEnv]
+
+theorem riskEnv_class (R : RiskDoc) : (riskEnv R).predicates classPred = some [R.alt.harm, R.sev] := by
+  simp [riskEnv, classPred, mightName]
+
+theorem riskEnv_ms (R : RiskDoc) : (riskEnv R).predicates moreSeverePred = some [R.sev, R.sev] := by
+  simp [riskEnv, classPred, mightName, moreSeverePred]
+
+theorem riskEnv_sev (R : RiskDoc) : R.sev ∈ (riskEnv R).sorts := by simp [riskEnv]
 
 end VE.Risk
