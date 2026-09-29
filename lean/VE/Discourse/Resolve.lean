@@ -400,7 +400,13 @@ def targetText (t : Target) : String :=
   | some n => n
   | none => if t.members.isEmpty then ", ".intercalate t.units else ", ".intercalate t.members
 
-def spanText (m : Slot) : String := "[" ++ toString m.span.1 ++ ", " ++ toString m.span.2 ++ ")"
+/-- A slot's span as the prose byte range of its tokens, the range Python prints (the token range
+when the unit has no such tokens). -/
+def spanText (D : DDoc) (m : Slot) : String :=
+  let toks := ((unitOf D.base m.unit).map fun x => unitTokens D.prose x.start x.stop).getD []
+  match toks[m.span.1]?, toks[m.span.2 - 1]? with
+  | some a, some b => "[" ++ toString a.2.1 ++ ", " ++ toString b.2.2 ++ ")"
+  | _, _ => "[" ++ toString m.span.1 ++ ", " ++ toString m.span.2 ++ ")"
 
 /-- The formula-producing forms: their mentions are slots of the unit's derivation. -/
 def formulaForm (f : Form) : Bool :=
@@ -524,7 +530,9 @@ def firstBad (D : DDoc) (d : DTree) (vec : List Target) : String :=
     else "TargetKindMismatch: " ++ mentionIdAt D m
   | none => "UnresolvedReference: " ++ ((d.slots.head?.map (mentionIdAt D)).getD "?")
 
-/-- No type-checking accessible competitor: the unit's first recorded slot is unresolved. -/
+/-- No type-checking accessible competitor: the unit's first recorded slot is unresolved; when the
+derivation records none of its slots, a recorded mention that is not one of them is named first
+(`MentionNotSlot`, as Python reports a surface that fits no slot). -/
 def unresolvedText (D : DDoc) (u : String) (s : List Tok) (ds : List DTree) : String :=
   match ds with
   | [] => match (recordedSlots D u).isEmpty, (discovered D u).head? with
@@ -532,9 +540,10 @@ def unresolvedText (D : DDoc) (u : String) (s : List Tok) (ds : List DTree) : St
     | _, _ => "InvalidInput: unit " ++ u ++ " is outside the supported discourse fragment"
   | d :: _ => match d.slots.find? (fun m => (recordedTarget D m).isSome) with
     | some m => "UnresolvedReference: " ++ mentionIdAt D m
-    | none => match d.slots.head? with
-      | some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText m
-      | none => "UnresolvedReference: " ++ u
+    | none => match (recordedSlots D u).find? (fun m => !d.slots.contains m), d.slots.head? with
+      | some m, _ => "MentionNotSlot: " ++ mentionIdAt D m
+      | none, some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText D m
+      | none, none => "UnresolvedReference: " ++ u
 
 /-- Two type-checking competitors disagree: at the first slot where their targets differ, every
 target a competitor of the same derivation gives it, sorted (8: `AmbiguousReference: <mention>:
@@ -554,15 +563,14 @@ def slotMismatchText (D : DDoc) (u : String) (d : DTree) : String :=
   match (recordedSlots D u).find? (fun m => !d.slots.contains m) with
   | some m => "MentionNotSlot: " ++ mentionIdAt D m
   | none => match d.slots.find? (fun m => !(recordedSlots D u).contains m) with
-    | some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText m
+    | some m => "UnrecordedSlot: " ++ u ++ ": " ++ spanText D m
     | none => "UnrecordedSlot: " ++ u
 
 /-- After uniqueness: the recorded assignment, its accessibility, its agreement with the
 unique competitor, slot correspondence, the restrictions, and its typed elaboration. -/
 def checkRecorded (D : DDoc) (u : String) (d : DTree) (vec : List Target) : Except String VE.Formula :=
   match recordedVec D d with
-  | none => .error ("UnrecordedSlot: " ++ u ++ ": " ++
-      (((d.slots.find? fun m => (recordedTarget D m).isNone).map spanText).getD "?"))
+  | none => .error (slotMismatchText D u d)
   | some rvec =>
     if !((d.slots.zip rvec).all fun x => accB D x.1 x.2) then .error (firstBad D d rvec)
     else if !aligned D d d vec rvec then .error ("ManifestMismatch: mentions." ++
