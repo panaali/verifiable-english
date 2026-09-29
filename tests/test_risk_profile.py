@@ -51,13 +51,21 @@ def test_block_round_trip_and_identity():
 
 def test_risk_block_with_w6_quantity_kind_round_trips():
     raw = risk_source()
-    raw["profiles"] += ["order@0", "time@0"]
-    raw["profiles"].sort()
     raw["unit_schema"] = "ve-units@1"
     raw["units"] = {"gb": {"scale": "10", "display": {"kind": "decimal", "label": "GB"}}}
     raw["risk"]["quantity_kinds"] = {"memory": "gb"}
     env = Environment(raw)
     assert env.to_dict() == raw
+
+
+def test_risk_quantity_environment_rejects_order_checker():
+    raw = risk_source()
+    raw["profiles"] += ["order@0", "time@0"]
+    raw["profiles"].sort()
+    raw["unit_schema"] = "ve-units@1"
+    raw["units"] = {"gb": {"scale": "10", "display": {"kind": "decimal", "label": "GB"}}}
+    with pytest.raises(VEError, match="risk norms route admits FOL documents only"):
+        Environment(raw)
 
 
 @pytest.mark.parametrize("edit,diagnostic", [

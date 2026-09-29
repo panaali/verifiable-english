@@ -73,6 +73,8 @@ def checker_family(profiles):
     if "nary@0" in checker and "closure@0" not in checker:
         # Stage 1 requires the closure+n-ary Core family.
         raise UnsupportedProfile("Unsupported profile nary@0 without closure@0")
+    if "risk@0" in profiles and checker:
+        raise UnsupportedProfile("the risk norms route admits FOL documents only")
     if "soft-norms@0" in profiles and "norms@0" not in profiles:
         raise UnsupportedProfile("soft-norms@0 requires norms@0")
     return ("order" if "order@0" in checker else
