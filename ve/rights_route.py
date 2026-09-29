@@ -26,6 +26,16 @@ def run_rights_case(environment, units, kind, **extra):
     return run_soft_case(LEAN_ROUTE, case)
 
 
+def expected_environment_prime(rights):
+    """`E″′` as the Lean route prints it: the source environment with its rights
+    block and profiles, plus the generated and soft decision declarations."""
+    source = rights.env.to_dict()
+    prime = rights.soft_document.extended_env.to_dict()
+    prime["profiles"] = source["profiles"]
+    prime["vocabulary"]["rights"] = source["vocabulary"]["rights"]
+    return _wire(prime)
+
+
 def report_rights(environment, units, rights):
     """Return the checked five-question rows available without submitted certificates."""
     elaborated = run_rights_case(environment, units, "rights-elaborate")
@@ -39,21 +49,10 @@ def report_rights(environment, units, rights):
          for k, v in rights.bar_names.items()])
     if elaborated["generated"] != expected_generated:
         raise VEError("rights route regeneration mismatch: generated predicates")
-    source = rights.env.to_dict()
-    lean_env = elaborated["environment_prime"]
-    py_env = rights.soft_document.extended_env.to_dict()
-    if (lean_env.get("profiles") != source["profiles"] or
-            any(lean_env["vocabulary"][key] != source["vocabulary"][key]
-                for key in ("rights", "sorts", "constants")) or
-            set(lean_env["vocabulary"]["predicates"]) !=
-            set(py_env["vocabulary"]["predicates"])):
+    # E″′ is compared whole, generated declarations included: its bytes are the
+    # environment every certificate over the regenerated document is bound to.
+    if elaborated["environment_prime"] != expected_environment_prime(rights):
         raise VEError("rights route regeneration mismatch: environment")
-    generated_names = {item["name"] for item in expected_generated}
-    for name, declaration in py_env["vocabulary"]["predicates"].items():
-        actual = lean_env["vocabulary"]["predicates"][name]
-        if (actual["arguments"] != declaration["arguments"] if name in generated_names
-                else actual != declaration):
-            raise VEError("rights route regeneration mismatch: environment")
 
     def node(rule):
         core = rule.core

@@ -295,6 +295,65 @@ def test_rights_english_preserves_default_holder_guard_and_generated_conditions(
     assert "claim lines" in render_unit(document, units[1])
 
 
+def test_python_applies_the_lean_carve_out_and_count_limits():
+    from ve.rights_route import run_rights_case
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["q"] = {"arguments": ["state", "person"], "description": "q"}
+    env = RightsEnvironment(raw)
+    seven = claim("seven")
+    seven["norm"]["unless"] = [["binary", "q", ["var", 1], ["var", 0]]] * 7
+    six = claim("six")
+    six["norm"]["unless"] = [["binary", "q", ["var", 1], ["var", 0]]] * 6
+    many_rights = [{"right": {"name": f"r{i}", "holder": "person", "guard": ["top"],
+                              "lines": [claim(f"c{i}")]}} for i in range(129)]
+    limit = life_limitation()["limitation"]
+    many_limits = [right(), *({"limitation": {**limit, "name": f"l{i}"}} for i in range(17))]
+    many_conditions = [right(), {"limitation": {**limit, "conditions": [
+        {"name": f"c{i}", "role": "necessary", "decided_by": None, "verbalisation": "v"}
+        for i in range(9)]}}]
+    cases = [([right([seven])], "carve-outs of rule seven"),  # no limitation covers the line
+             (many_rights, "rights"), (many_limits, "limitations"), (many_conditions, "conditions")]
+    for units, message in cases:
+        with pytest.raises(VEError, match=message):
+            correlate(raw, units)
+        with pytest.raises(VEError, match=f"ResourceLimit: {message}"):
+            run_rights_case(env, units, "rights-elaborate")
+    correlate(raw, [right([six])])
+    assert run_rights_case(env, [right([six])], "rights-elaborate")["lines"]
+
+
+def test_generated_declarations_are_the_same_bytes_in_python_and_lean(monkeypatch):
+    from ve import rights_route
+    raw = rights_env()
+    liberty = {"kind": "liberty", "holder_slot": None, "cites": {},
+               "norm": {"name": "may-act", "predicate": "person_may_act", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    units = [right([claim(), liberty]), life_limitation(),
+             {"bar": {"name": "b30", "reading": "rule", "decided_by": "unstated"}}]
+    rights = correlate(raw, units)
+    row = rights_route.run_rights_case(rights.env, units, "rights-elaborate")
+    predicates = row["environment_prime"]["vocabulary"]["predicates"]
+    assert predicates["rights__lim__1"] == {
+        "arguments": ["state", "person"], "description": "limitation l29 of protect_permitted",
+        "verbalisation": "limitation 1 holds where {0} protect {1}"}
+    assert predicates["rights__cond__1"]["verbalisation"] == "determined by law where {0} protect {1}"
+    assert predicates["rights__bar__1"]["verbalisation"] == "{0} act aimed at the destruction of a right"
+    assert row["environment_prime"] == rights_route.expected_environment_prime(rights)
+    rights_route.report_rights(rights.env, units, rights)
+    original = rights_route.run_rights_case
+
+    def drifted(environment, source, kind, **extra):
+        result = original(environment, source, kind, **extra)
+        if kind == "rights-elaborate":
+            generated = result["environment_prime"]["vocabulary"]["predicates"]["rights__lim__1"]
+            generated["description"] = "rights-generated open predicate"
+        return result
+
+    monkeypatch.setattr(rights_route, "run_rights_case", drifted)
+    with pytest.raises(VEError, match="regeneration mismatch: environment"):
+        rights_route.report_rights(rights.env, units, rights)
+
+
 def test_reporting_rejects_swapped_lean_lines_even_when_names_match(monkeypatch):
     from ve import rights_route
     raw = rights_env()

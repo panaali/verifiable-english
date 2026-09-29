@@ -142,9 +142,14 @@ Matched wire choices (the Lean executable's choices where the spec leaves bytes 
 * No `null` on the Lean wire: `holder_slot`, `recognition`, `decided_by` and a fan-out line's
   `predicate` are sent absent.
 * An outside norm unit is `{"norm": {...}}` with an optional `"cites"` beside `norm`.
-* Generated predicate entries in `E″′` JSON: `{"arguments": <sorts>, "description":
-  "rights-generated open predicate"}`, appended after the author predicates and before soft's
-  decision entries.
+* Generated predicate entries in `E″′` JSON (`genEntries`), byte for byte the Python profile's:
+  `lim` `{"arguments", "description": "limitation <L> of <act key>", "verbalisation":
+  "limitation <m> holds where <act phrase>"}` with `<m>` the limitation's display number
+  (document order); `cond` `{…, "description": "condition <c> of limitation <L> on <act key>",
+  "verbalisation": "<condition verbalisation> where <act phrase>"}`; `aimed` `{…,
+  "description": "act aimed at destruction of a right", "verbalisation": "<act phrase> aimed at
+  the destruction of a right"}`; appended after the author predicates and before soft's decision
+  entries. The document report compares the whole `environment_prime` with Python's.
 * Rights document hash: domain `ve-rights-<identity version>\n` over `{"environment_id",
   "document": [canonical units]}`, each norm object omitting `mode: "strict"`, `alterable: []`,
   `hard: false`.

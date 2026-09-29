@@ -9,7 +9,7 @@ from tests.test_norms import obligation, permission
 from tests.test_rights import claim, right, rights_env
 from ve.ast import formula_to_data
 from ve.rights import correlate
-from ve.rights_route import run_rights_case
+from ve.rights_route import expected_environment_prime, run_rights_case
 from ve.soft_route import elaborate_soft_document
 
 
@@ -87,17 +87,12 @@ def run():
         rights = correlate(deepcopy(raw), deepcopy(units))
         lean = run_rights_case(rights.env, units, "rights-elaborate")
         soft = elaborate_soft_document(rights.soft_document)
-        generated = set(rights.limitation_names.values()) | set(rights.condition_names.values())
-        if rights.bar is not None:
-            generated |= set(rights.bar_names.values())
+        # E″ = E + lim + cond + aimed exactly (1.5): every generated name, with no
+        # allowance for a bar that is absent, and E″′ byte for byte.
+        generated = (set(rights.limitation_names.values()) | set(rights.condition_names.values()) |
+                     set(rights.bar_names.values()))
         assert {item["name"] for item in lean["generated"]} == generated, name
-        lean_predicates = lean["environment_prime"]["vocabulary"]["predicates"]
-        python_predicates = rights.soft_document.extended_env.to_dict()["vocabulary"]["predicates"]
-        assert set(lean_predicates) == set(python_predicates), (name, "environment names")
-        for predicate, declaration in python_predicates.items():
-            assert (lean_predicates[predicate]["arguments"] == declaration["arguments"]
-                    if predicate in generated else lean_predicates[predicate] == declaration), (
-                        name, "environment declaration", predicate)
+        assert lean["environment_prime"] == expected_environment_prime(rights), (name, "environment")
         assert [(item["right"], item["rule"], item["predicate"]) for item in lean["lines"]] == [
             (item["right"], item["rule"].core.name, item["rule"].core.predicate)
             for item in rights.instances], name

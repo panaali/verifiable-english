@@ -319,14 +319,38 @@ def rightsDocumentHash (profiles : List String) (environment document : Json) : 
   VE.CertificateWire.digest s!"ve-rights-{VE.Route.Wire.identityVersion profiles}\n"
     (Json.mkObj [("environment_id", .str envId), ("document", canon)])
 
-def generatedEntry (sorts : List String) : Json :=
-  Json.mkObj [("arguments", toJson sorts), ("description", .str "rights-generated open predicate")]
+/-- The declared act phrase of a regulated predicate. -/
+def actPhrase (D : RightsDoc) (p : String) : String := ((regOfName D p).bind (·.act)).getD ""
+
+/-- A limitation's display number: its position in document order (2.1). -/
+def limDisplay (D : RightsDoc) (L : String) : Nat := (D.limits.map (·.name)).idxOf L + 1
+
+def condVerbalisation (D : RightsDoc) (L c : String) : String :=
+  (((D.limits.find? (·.name == L)).bind (fun l => l.conditions.find? (·.name == c))).map (·.verbalisation)).getD ""
+
+def generatedEntry (sorts : List String) (description verbalisation : String) : Json :=
+  Json.mkObj [("arguments", toJson sorts), ("description", .str description), ("verbalisation", .str verbalisation)]
+
+/-- Every rights-generated declaration of `E″` (the names and sorts of `genDecls`), with the
+source keys in its description and its one generated wording (2.1): `lim` as `limitation <m>
+holds where <act>`, `cond` as `<condition phrase> where <act>`, `aimed` as `<act> aimed at the
+destruction of a right`. The Python profile generates the same bytes, so `E″′` and every
+certificate binding over it agree. -/
+def genEntries (D : RightsDoc) : List (String × Json) :=
+  (limKeys D).map (fun k => (limName ((limKeys D).idxOf k + 1),
+      generatedEntry (VE.SoftNorms.sortsOf D.soft k.2) s!"limitation {k.1} of {k.2}"
+        s!"limitation {limDisplay D k.1} holds where {actPhrase D k.2}")) ++
+  (condKeys D).map (fun k => (condName ((condKeys D).idxOf k + 1),
+      generatedEntry (VE.SoftNorms.sortsOf D.soft k.2.1) s!"condition {k.2.2} of limitation {k.1} on {k.2.1}"
+        s!"{condVerbalisation D k.1 k.2.2} where {actPhrase D k.2.1}")) ++
+  (if D.bars = [] then [] else (barPreds D).map (fun m => (aimedName (barIndex D m),
+      generatedEntry (VE.SoftNorms.sortsOf D.soft m) "act aimed at destruction of a right"
+        s!"{actPhrase D m} aimed at the destruction of a right")))
 
 def withGenerated (D : RightsDoc) (environment : Json) : Except String Json := do
   let vocab ← environment.getObjVal? "vocabulary"
   let preds ← fields (← vocab.getObjVal? "predicates")
-  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates"
-    (Json.mkObj (preds ++ (genDecls D).map (fun (n, ss) => (n, generatedEntry ss))))))
+  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj (preds ++ genEntries D))))
 
 /-- The regenerated `E″′_base`: no regulated predicate, no soft or rights construct, the
 rights-generated and decision predicates as base predicates; profiles without `norms@0`,
