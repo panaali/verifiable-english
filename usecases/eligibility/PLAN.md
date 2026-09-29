@@ -5,9 +5,17 @@
 > and `cases.json` is frozen at the commit that adds this file. A later change to
 > a key must be a separate commit that says why; it must not be folded into a
 > results commit. No model calls were made.
+>
+> **Plan review applied** (`eligibility-planreview.final.md`, verdict FIX):
+> A, one scoring definition with the same denominators everywhere (sections 3
+> and 9); B, Q2 to Q4 are not applicable after a certified NO, and the fallback
+> trigger no longer needs to know why a search failed (section 8); C, four
+> profiles B11 to B14 make each relevant-benefit membership decisive, with
+> deletion mutants M15 to M19 (sections 5 and 8). The new keys were written
+> before any VE run, in the same way as the others.
 
 This use case measures VE's **accuracy**, not only its coverage. VE checks a
-published benefit rule on 53 applicant profiles, and its answers are compared
+published benefit rule on 57 applicant profiles, and its answers are compared
 with an answer key worked out beforehand from the source. It is also the first
 real-document test of the merged W6a quantities and dates feature
 ([units-schema.md](../../docs/spec/units-schema.md),
@@ -89,9 +97,19 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 42 entitled and 11 not-entitled cases, which gives
-53 + 42 + 42 + 42 = **179 scored questions**. For a not-entitled profile, the
-correct response to Q2 to Q4 is that no amount is established (section 8).
+The profiles contain 44 entitled and 13 not-entitled cases. **Scoring
+definition** (used everywhere in this plan and in the results):
+
+- Q1 is scored on every profile.
+- Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
+  not-entitled profile they are **not applicable**, and neither the key nor VE
+  gives them an answer. VE's NO on Q1 is scored as Q1 only.
+- That gives 57 + 44 + 44 + 44 = **189 scored questions**. The same 189 are
+  the denominator for accuracy, coverage and precision.
+
+A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
+If VE answers NO or OPEN there, it gives no amount, and those three questions
+count as wrong.
 
 ## 4. Rules, adopted readings and bridges
 
@@ -223,6 +241,10 @@ because £20,000.00 is not over £35,000.00.
 | B08 | has always lived in Scotland | NO | — | — | — | R3 fails | guide |
 | B09 | has always lived in Northern Ireland | NO | — | — | — | R3 fails under S1 (E&W only); S2 says eligible under the NI scheme (flag `scope`) | SI≠guide |
 | B10 | b. 1955, lives with sister b. 1957 who leaves E&W 2026-09-23 and is resident in Scotland from 2026-09-24 | YES | £200 | NO | £200 | sister excluded by R11 → not entitled (AR2) → 3(2) no → 3(1) (flag `ambiguous-source`; other reading £100) | SI |
+| B11 | care home since 2025-01-10, b. 1955, paid income support | NO | — | — | — | income support is on the R4 list → RB(P); R10: residential care and RB | SI |
+| B12 | b. 1957, partner b. 1955 paid income-based JSA | NO | — | — | — | income-based JSA is on the R4 list; R7: partner reached PA and RB(partner) | SI |
+| B13 | b. 1955 paid income-related ESA, partner b. 1957, no RB | YES | £200 | NO | £200 | ESA is on the R4 list → RB(P) → not 3(2); partner under 80 → not 3(3) → 3(1). Without ESA on the list: £100 | SI |
+| B14 | b. 1955 paid universal credit, partner b. 1944, no RB | YES | £300 | NO | £300 | universal credit is on the R4 list → RB(P); partner 80 → 3(3). Without it on the list: £100 | SI |
 | C01 | alone, b. 1960-06-27 | YES | £200 | NO | £200 | PA date 2026-09-27 = QW₁ → R2 holds | guide |
 | C02 | alone, b. 1960-06-28 | NO | — | — | — | PA date 2026-09-28 > QW₁ | guide |
 | C03 | alone, b. 1960-02-29 | YES | £200 | NO | £200 | PA 2026-02-28 or 2026-03-01; both ≤ QW₁ | guide |
@@ -256,24 +278,33 @@ because £20,000.00 is not over £35,000.00.
 
 **Summary.**
 
-- **Profiles.** There are 53: 13 in group A (S2 amount-table rows), 10 in group
+- **Profiles.** There are 57: 13 in group A (S2 amount-table rows), 14 in group
   B (exclusions and combinations), 24 in group C (date boundaries, each with
   both sides) and 6 in group D (the income threshold with one penny either
   side).
-- **Basis.** 38 are `guide` cases, 9 are `SI` cases and 6 are `SI≠guide`
+- **Basis.** 38 are `guide` cases, 13 are `SI` cases and 6 are `SI≠guide`
   cases.
-- **Flags.** 3 profiles are flagged `ambiguous-source` (B10, C11, C24); C11
-  is also `SI≠guide`.
-- **Size.** The brief asked for about 40 profiles. The extra 13 come from
-  covering both sides of every date boundary.
+- **Flags.** 8 profiles carry a flag in `cases.json`, so 49 are unflagged.
+  3 are flagged `ambiguous-source` (B10, C11, C24); C11 is also `SI≠guide`.
+- **Benefit list.** Each of the five relevant benefits decides the answer of
+  at least one profile: income support B11, income-based JSA B12, state
+  pension credit B01 and B04, income-related ESA B13, universal credit B14.
+  B11 to B14 were added by the plan review (finding C), because deleting any
+  of those four from the reference changed no key. Such a profile is
+  hypothetical, since few people over pension age get these benefits, but the
+  rule applies to it.
+- **Size.** The brief asked for about 40 profiles. The extra 17 come from
+  covering both sides of every date boundary and every benefit on the list.
 
 **Independent check of the key.** [`reference.py`](reference.py) is a
 stdlib-only reading written from S1–S4. It imports nothing from `ve` and was
 not derived from any VE text. It computes the qualifying week from "the third
 Monday in September", pensionable age from S4's tables, anniversaries under
 both leap-day readings, and each rule in 4.1. Running
-`uv run python usecases/eligibility/reference.py` at this commit printed
+`uv run python usecases/eligibility/reference.py` at the plan commit printed
 `qualifying week 2026-09-21 to 2026-09-27` and **53/53 agree with the hand key**.
+After B11 to B14 were added, it printed **57/57**. Deleting any one of the five
+relevant benefits from its list now changes at least one key.
 
 **Limits of this independence.**
 
@@ -421,7 +452,7 @@ These are decided now, before any run.
 
 **Predictions.**
 
-- **Answers.** With the bridges, every one of the 179 questions should be
+- **Answers.** With the bridges, every one of the 189 questions should be
   answerable. The main risk is O9: about 30 biconditional rules per problem may
   exhaust the tableau budget.
 - **Accuracy.** No disagreement is expected on unflagged profiles, since the
@@ -456,15 +487,23 @@ These are decided now, before any run.
    certificate in Lean `ve_quantity` (certificate mode). A Python certificate
    that Lean does not accept counts as OPEN, and the rejection is reported as
    a VE fault.
-4. **Q2.** For each a ∈ {100, 150, 200, 300}, try `amount = £a.00`. Exactly
-   one certified value is the answer; none gives OPEN. For a not-entitled
-   profile, the answer is correct iff Q1 is certified NO and no amount is
-   certified.
+4. **Q2.** Only after Q1 is certified YES. For each a ∈ {100, 150, 200, 300},
+   try `amount = £a.00`. Exactly one certified value is the answer; none gives
+   OPEN, and two or more count as an inconsistency (a translation error). After
+   a certified NO, Q2 to Q4 are **not applicable** and are not attempted; after
+   an OPEN Q1 they are OPEN. The harness decides this from VE's Q1 answer, never
+   from the key. The claim that no amount follows from a NO is therefore never
+   made, so it needs no countermodel.
 5. **Q3 and Q4.** Try `recovered(applicant)` and its negation. For Q4, try
    `kept = £k` where k is the certified amount or £0.00.
-6. **Fallback.** If step 3 or 4 is OPEN only because the search budget ran
-   out, run the **staged** version, planned now: a `documents@1` quantity
-   document with checked lemmas in this order:
+6. **Fallback.** The trigger is simply that the single-shot search certified
+   no answer for a question: neither polarity for Q1 or Q3, and no value for
+   Q2 or Q4. `prove_quantity` returns `None` for every inconclusive search,
+   whether the step budget, the depth limit or a stuck search caused it, so the
+   trigger does not depend on the cause. For the report, the harness also
+   records the status and step count of the underlying `prove_entailment`
+   search. Then run the **staged** version, planned now: a `documents@1`
+   quantity document with checked lemmas in this order:
    1. `reached_pa`, `reached_80`, `resident_in_week`, `has_rb` and
       `in_residential_care` per role;
    2. each exclusion;
@@ -494,8 +533,13 @@ each.
 | M12: R3 "every day" for "any day" | C17, C19 |
 | M13: R16 counting the partner's income | D05 |
 | M14: R14 without 3(3) | A08 |
+| M15: R4 without income support | B11 |
+| M16: R4 without income-based JSA | B12 |
+| M17: R4 without state pension credit | B01, B04 |
+| M18: R4 without income-related ESA | B13 |
+| M19: R4 without universal credit | B14 |
 
-Kill rate = mutants killed / 14; 14/14 is expected.
+Kill rate = mutants killed / 19; 19/19 is expected.
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:
@@ -510,14 +554,14 @@ No model calls.
 ## 9. Metrics to report (`RESULTS.md`)
 
 - **Accuracy.**
-  - Strict, per profile: all four questions correct, x/53. OPEN counts as
+  - Strict, per profile: every scored question correct, x/57. OPEN counts as
     wrong.
-  - Per question: Q1 x/53; Q2 x/53 (42 amounts plus 11 "no amount"); Q3 x/42;
-    Q4 x/42; total x/179.
-  - The same figures on the 45 unflagged profiles, on the 38 `guide`
+  - Per question (section 3): Q1 x/57; Q2 x/44; Q3 x/44; Q4 x/44; total
+    x/189.
+  - The same figures on the 49 unflagged profiles, on the 38 `guide`
     profiles (official answers), and for each flagged profile individually.
-- **Coverage.** Questions answered (certified YES/NO/amount) out of 179, and
-  precision = correct / answered.
+- **Coverage.** Scored questions answered (certified YES/NO/amount) out of
+  189, and precision = correct / answered, over the same 189.
 - **Evidence.** Certificates produced, and certificates replayed by Lean
   (must equal the number produced). Also profiles whose premises are
   consistent, and non-vacuity models accepted by Lean.
@@ -537,7 +581,7 @@ No model calls.
 | Path | Content |
 |---|---|
 | `PLAN.md` | this plan and the frozen key |
-| `cases.json` | the 53 profiles with their `key` (same as section 5) |
+| `cases.json` | the 57 profiles with their `key` (same as section 5) |
 | `reference.py` | the independent reference reading and key check |
 | `source/` | the pinned raw files, extracted text, and `extract_text.py` |
 
