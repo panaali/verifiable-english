@@ -23,6 +23,20 @@
     },
     {
       "conflict_targets": 4,
+      "fixture": "delta",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 6,
+      "fixture": "epsilon",
+      "limitations": 0,
+      "lines": 2,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
       "fixture": "eta",
       "limitations": 0,
       "lines": 1,
@@ -34,8 +48,29 @@
       "limitations": 0,
       "lines": 1,
       "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "rho",
+      "limitations": 2,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "pi",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "tau",
+      "limitations": 1,
+      "lines": 1,
+      "three_way": "PASS"
     }
   ],
   "format": "rights-three-way@0",
-  "passed": 5
+  "passed": 10
 }

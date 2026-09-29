@@ -43,6 +43,9 @@ def fixtures():
         "name": "l29b", "scope": "all", "kinds": ["claim"], "decided_by": "unstated",
         "conditions": [{"name": "purpose", "role": "necessary", "decided_by": None,
                         "verbalisation": "for a permitted purpose"}], "factors": []}}])
+    tau_line = claim("conditional-protect")
+    tau_line["norm"]["guard"] = ["binary", "rights__cond__1", ["var", 1], ["var", 0]]
+    tau = (rights_env(), [right([tau_line]), deepcopy(gamma[1][1])])
 
     epsilon_env = rights_env()
     epsilon_preds = epsilon_env["vocabulary"]["predicates"]
@@ -72,7 +75,8 @@ def fixtures():
         "name": "outside", "predicate": "protect_required", "sign": False,
         "guard": ["top"], "unless": [], "over": []}}])
     return {"alpha": alpha, "beta": beta, "gamma": gamma, "delta": delta,
-            "epsilon": epsilon, "eta": eta, "theta": theta, "rho": rho, "pi": pi}
+            "epsilon": epsilon, "eta": eta, "theta": theta, "rho": rho, "pi": pi,
+            "tau": tau}
 
 
 def run():
