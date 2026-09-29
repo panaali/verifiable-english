@@ -314,17 +314,48 @@ class _Checker:
 
 def check_formula(env: Environment, formula: Formula) -> Formula:
     """Check a closed formula. Open formulas are never accepted as claims."""
-    _Checker(env).formula(formula)
-    return formula
+    from .backends.dispatch import authority_for, execute
+    if authority_for("typing") == "python":
+        _Checker(env).formula(formula)
+        return formula
+    from .backends.lean_runner import run
+    case = {"id": "typing", "environment": env.to_dict(), "ast": _to_data(formula)}
+
+    def python():
+        _Checker(env).formula(formula)
+        return formula
+
+    def lean():
+        run("check", [case])
+        return formula
+
+    return execute("typing", case, python, lean=lean)
 
 
 def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")
-    checker = _Checker(env)
-    for formula in document.formulas:
-        checker.formula(formula)
-    return document
+    from .backends.dispatch import authority_for, execute
+    if authority_for("typing") == "python":
+        checker = _Checker(env)
+        for formula in document.formulas:
+            checker.formula(formula)
+        return document
+    from .backends.lean_runner import run
+    case = {"id": "typing", "environment": env.to_dict(),
+            "ast": [_to_data(formula) for formula in document.formulas]}
+
+    def python():
+        checker = _Checker(env)
+        for formula in document.formulas:
+            checker.formula(formula)
+        return document
+
+    def lean():
+        run("check", [case])
+        return document
+
+    return execute("typing", case, python, lean=lean)
 
 
 def _to_data(node):

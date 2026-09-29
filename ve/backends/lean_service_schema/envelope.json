@@ -12,7 +12,7 @@
         {"contains": {"const": "order"}}, {"contains": {"const": "route"}},
         {"contains": {"const": "norms"}}, {"contains": {"const": "english"}},
         {"contains": {"const": "environment"}}, {"contains": {"const": "model"}},
-        {"contains": {"const": "identity"}}]},
+        {"contains": {"const": "check"}}, {"contains": {"const": "identity"}}]},
       "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
         "additionalProperties": false,
         "properties": {

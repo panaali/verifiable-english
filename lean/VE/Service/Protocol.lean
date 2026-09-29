@@ -35,7 +35,7 @@ def maxLineBytes : Nat := 16777216
 def maxCases : Nat := 4096
 
 inductive Mode where
-  | evaluate | checkCertificate | order | route | norms | english | environment | model | identity
+  | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -47,10 +47,11 @@ def Mode.name : Mode → String
   | .english => "english"
   | .environment => "environment"
   | .model => "model"
+  | .check => "check"
   | .identity => "identity"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .environment, .model, .identity]
+  .environment, .model, .check, .identity]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -75,6 +76,7 @@ def runMode : Mode → Json → Json
   | .english, j => englishReported j
   | .environment, j => Standalone.reported Standalone.environmentCase j
   | .model, j => Standalone.reported Standalone.modelCase j
+  | .check, j => Standalone.reported Standalone.checkCase j
   | .identity, j => Standalone.reported Standalone.identityCase j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
@@ -269,6 +271,8 @@ theorem runMode_environment (j : Json) :
     runMode .environment j = Standalone.reported Standalone.environmentCase j := rfl
 theorem runMode_model (j : Json) :
     runMode .model j = Standalone.reported Standalone.modelCase j := rfl
+theorem runMode_check (j : Json) :
+    runMode .check j = Standalone.reported Standalone.checkCase j := rfl
 theorem runMode_identity (j : Json) :
     runMode .identity j = Standalone.reported Standalone.identityCase j := rfl
 

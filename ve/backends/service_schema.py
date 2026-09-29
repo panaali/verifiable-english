@@ -15,7 +15,7 @@ import re
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
-         "environment", "model", "identity")
+         "environment", "model", "check", "identity")
 
 
 class Invalid(Exception):

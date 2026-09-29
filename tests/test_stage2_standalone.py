@@ -33,3 +33,43 @@ def test_source_and_meaning_ids():
         "identity_id"] == source_id("true.\n", env)
     assert run("identity", [{**case, "kind": "meaning", "ast": formula_to_data(env, Top())}])[0][
         "identity_id"] == meaning_id(env, Top())
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("data@0",), ("definitions@0",),
+    ("closure@0",), ("closure@0", "nary@0"), ("order@0",)])
+def test_standalone_check_matches_python_identity(profiles):
+    from ve.ast import Document, check_document, check_formula, document_to_data
+    env = Environment(raw_environment(profiles))
+    formula = Top()
+    case = {"id": "check", "environment": env.to_dict()}
+    check_formula(env, formula)
+    row = run("check", [{**case, "ast": formula_to_data(env, formula)}])[0]
+    assert row == {"id": "check", "status": "ok", "well_typed": True,
+                   "meaning_id": meaning_id(env, formula)}
+    document = Document((formula,))
+    check_document(env, document)
+    row = run("check", [{**case, "ast": document_to_data(env, document)}])[0]
+    assert row["well_typed"] is True
+    assert row["meaning_id"] == meaning_id(env, document)
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_standalone_check_rejects_undeclared_predicate():
+    from ve.errors import VEError
+    env = Environment(raw_environment(()))
+    with pytest.raises(VEError):
+        run("check", [{"id": "bad", "environment": env.to_dict(),
+                       "ast": ["unary", "missing", ["const", "x"]]}])
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_public_typing_uses_standalone_lean(monkeypatch):
+    from ve.ast import Document, Unary, Const, check_document, check_formula
+    from ve.errors import VEError
+    env = Environment(raw_environment(()))
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert check_formula(env, Top()) == Top()
+    assert check_document(env, Document((Top(),))) == Document((Top(),))
+    with pytest.raises(VEError):
+        check_formula(env, Unary("missing", Const("x")))

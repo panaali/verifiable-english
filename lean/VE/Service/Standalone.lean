@@ -89,6 +89,55 @@ def modelCase (j : Json) : Except String Json := do
       ("model", ← normalizedModel environment model)])
   pure (VE.Route.Wire.ok id [("valid", .bool true), ("model_id", .str modelId)])
 
+/-- A standalone typing request accepts one closed formula or a document of
+closed formulas. The family decoder performs the same typed AST check used by
+its route. -/
+def checkCase (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let environment ← j.getObjVal? "environment"
+  let ast ← j.getObjVal? "ast"
+  let e ← validatedEnvironment environment
+  let items ← ast.getArr?
+  let formula := match items[0]? with
+    | some (.str _) => true
+    | _ => false
+  match e.family with
+  | .fol =>
+    let rv ← VE.Route.Run.decodeRouteVocabulary e
+    if formula then
+      let _ ← VE.Route.Wire.decodeClosed rv.environment ast (e.profiles.contains "data@0")
+      pure ()
+    else
+      let _ ← VE.Route.Wire.decodeFormulas rv.environment ast (e.profiles.contains "data@0")
+      pure ()
+  | .closure =>
+    let rv ← VE.Route.Run.decodeRouteVocabulary e
+    if formula then
+      let a ← VE.Closure.Bridge.decodeFormula 64 ast
+      unless a.check rv.environment [] do throw "ill-typed or unbound formula"
+    else
+      let _ ← VE.Closure.Bridge.decodeFormulas rv.environment ast
+      pure ()
+  | .closureNary =>
+    let v ← VE.Core.Bridge.decodeEnvironment environment
+    if formula then
+      let a ← VE.Core.Bridge.decodeFormula 64 ast
+      VE.Core.Bridge.checkFormula v.environment a "formula"
+    else
+      let _ ← VE.Core.Bridge.decodeFormulas v.environment ast
+      pure ()
+  | .order =>
+    let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
+    if formula then
+      let a ← VE.Order.Wire.decodeFormula 64 ast
+      unless a.check v.vocabulary.environment [] do throw "ill-typed or unbound formula"
+    else
+      let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast
+      pure ()
+  let envId ← VE.Route.Wire.environmentId e.profiles environment
+  let meaningId ← VE.Route.Wire.meaningId e.profiles envId ast
+  pure (VE.Route.Wire.ok id [("well_typed", .bool true), ("meaning_id", .str meaningId)])
+
 /-- Source and meaning identities derive their domain from a checked
 environment. Claim and edge bindings use their fixed v1 domains. -/
 def identityCase (j : Json) : Except String Json := do
