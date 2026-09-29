@@ -100,6 +100,17 @@ def test_decision_envelope_shape_precedes_dispatch(monkeypatch):
             "entries": []}
     with pytest.raises(VEError, match="risk-decision.id"):
         run_case(case)
+    record = case["decision"]["content"]
+    record.update(id="17", chooser="agent", chooser_label="agent",
+                  policy={"environment_id": "e", "document_hash": "d"},
+                  alternatives=[{"name": "run", "label": "running"}], quantities=[], cites=[], facts=[])
+    case["decision"].update(seq=4, day="2026-09-29", id="D17", prev="", hash="h")
+    case["entries"] = [{"kind": "estimate", "id": "E1", "content": {}, "prev": "", "hash": "h"}]
+    with pytest.raises(VEError, match="EstimateProvenance: E1 recorded"):
+        run_case(case)
+    case["entries"][0].update(seq=1, day="2026-09-29")
+    with pytest.raises(CheckerUnavailable, match="Lean checker"):
+        run_case(case)
 
 
 def test_frozen_wordings_and_pending_sufficient_form():
