@@ -1,127 +1,175 @@
 """Reject new outward Lean imports and stale, exact legacy exceptions."""
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import json
+import os
+from pathlib import Path
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
+import time
 
 from layer_policy import ROOT, lean_layer
 
 LEDGER = ROOT / "tools/lean-layer-exceptions.json"
-# The header grammar of the pinned toolchain (Lean.Parser.Module.header):
-#   ["module"] ["prelude"] {["public"] ["meta"] "import" ["all"] ident}
-# Lean reads nothing else as an import: the header ends at the first other
-# token, and an `import` after it is a command error, not an import.
-HEADER_KEYWORDS = frozenset({"module", "prelude", "public", "meta", "import", "all"})
-BLOCK = re.compile(r"/-|-/")
-# Lean's isIdRest: ASCII alphanumerics, _ ' ! ?, isLetterLike, isSubScriptAlnum.
-ORDINARY_PART_REST = re.compile(r"[A-Za-z0-9_'!?À-ÖØ-öø-ſΑ-ΟΡ΢"
-                                r"Τ-Ωα-κμ-ϻἀ-῾℀-⅏"
-                                r"\U0001d49c-\U0001d59f₀-₉ₐ-ₜᵢ-ᵪⱼ]*")
+PLAIN_LAYOUT = ("write the header in the plain layout: one `import A.B.C` per line at column 0, "
+                "with only blank lines, full-line `--` comments and `/- ... -/` block comments "
+                "(no `/-` inside, nothing after the closing `-/`) between them")
+# One plain import: ASCII identifier parts, nothing else on the line.
+PLAIN_IMPORT = re.compile(r"import ((?:[A-Za-z_][A-Za-z0-9_']*\.)*[A-Za-z_][A-Za-z0-9_']*) *")
+# A line that starts with one of these may continue Lean's header
+# (["module"] ["prelude"] {["public"] ["meta"] "import" ["all"] ident}), so it
+# must be a plain import. The test is a bare prefix: fail closed.
+HEADER_WORDS = ("import", "prelude", "module", "public", "meta")
+KEYWORD_NAMES = {"import", "prelude", "module", "public", "meta", "all"}
+# `lean --deps` has this long in total to confirm the staged headers.
+ORACLE_BUDGET = 3.0
 
 
-def _id_first(char: str) -> bool:
-    """Lean's isIdFirst: ASCII letters, `_`, and isLetterLike."""
-    code = ord(char)
-    return (char.isascii() and (char.isalpha() or char == "_")
-            or (0x3b1 <= code <= 0x3c9 and code != 0x3bb)
-            or (0x391 <= code <= 0x3a9 and code not in (0x3a0, 0x3a3))
-            or 0x3ca <= code <= 0x3fb or 0x1f00 <= code <= 0x1ffe or 0x2100 <= code <= 0x214f
-            or 0x1d49c <= code <= 0x1d59f
-            or (0xc0 <= code <= 0xff and code not in (0xd7, 0xf7)) or 0x100 <= code <= 0x17f)
+class HeaderError(ValueError):
+    """A Lean header outside the plain layout; `line` is 1-based."""
 
-
-def _skip_whitespace(source: str, index: int) -> int | None:
-    """Lean's `whitespace`: spaces, newlines, `--` and nested `/- -/` comments.
-
-    None marks what Lean rejects there: a tab, an isolated carriage return, or
-    an unterminated comment. `/--` and `/-!` are doc-comment tokens, not space.
-    """
-    while index < len(source):
-        char = source[index]
-        if char in " \n":
-            index += 1
-        elif char in "\t\r":
-            return None
-        elif source.startswith("--", index):
-            end = source.find("\n", index)
-            index = len(source) if end < 0 else end
-        elif source.startswith("/-", index) and source[index + 2:index + 3] not in ("-", "!"):
-            depth, index = 1, index + 2
-            while depth:
-                mark = BLOCK.search(source, index)
-                if mark is None:
-                    return None
-                depth += 1 if mark[0] == "/-" else -1
-                index = mark.end()
-        else:
-            break
-    return index
-
-
-def _token(source: str, index: int) -> tuple[str, str | tuple[str, ...], int] | None:
-    """Read the token at `index` as Lean's identFn does.
-
-    Returns ("keyword", word, end) for a header keyword, ("ident", parts, end)
-    for an identifier (a «quoted» part is one part, taken verbatim), or None for
-    any other token, which ends the header.
-    """
-    start, parts = index, []
-    while True:
-        if source.startswith("«", index):
-            close = source.find("»", index + 1)
-            if close < 0:
-                return None  # unterminated identifier escape
-            parts.append(source[index + 1:close])
-            index = close + 1
-        elif index < len(source) and _id_first(source[index]):
-            end = ORDINARY_PART_REST.match(source, index + 1).end()
-            parts.append(source[index:end])
-            index = end
-        else:
-            return None
-        following = source[index + 1:index + 2]
-        if not (source.startswith(".", index) and following and (following == "«" or _id_first(following))):
-            break
-        index += 1
-    raw = source[start:index]
-    if raw in HEADER_KEYWORDS:  # a keyword token beats an identifier of equal length
-        return "keyword", raw, index
-    return "ident", tuple(parts), index
+    def __init__(self, line: int, reason: str) -> None:
+        super().__init__(f"line {line}: {reason}; {PLAIN_LAYOUT}")
+        self.line = line
 
 
 def imports(source: str) -> list[str]:
-    """Read the modules a Lean file's header imports, as the header parser does.
+    """The modules a Lean file imports, read from a header in the plain layout.
 
-    Only the header is read, so an `import` inside a later declaration name,
-    string or comment is never an import. The source is taken as Lean's
-    frontend reads it (CRLF becomes LF). A name's parts are joined with `.`,
-    quoted parts verbatim, which is how a module path maps to its name here.
+    The header is the run of lines at the start of the file that are blank,
+    full-line `--` comments, ordinary `/- -/` block comments or `import A.B.C`
+    lines; it ends at the first other line, which Lean reads as a command (a
+    `/--` or `/-!` doc comment, a declaration, ...). Inside that run every
+    layout Lean could read differently raises HeaderError instead of being
+    interpreted: a block comment containing `/-` (nesting, or delimiters that
+    overlap as in `/-/-/`), text after a closing `-/`, an import sharing its
+    line with anything, `prelude`/`module`/`public`/`meta` forms, «» names,
+    tabs and lone carriage returns. CRLF is read as LF, as Lean's frontend does.
     """
-    source = source.replace("\r\n", "\n")
+    lines = source.replace("\r\n", "\n").split("\n")
     found: list[str] = []
-
-    def keyword(at: int | None, word: str) -> int | None:
-        """The position after `word` and its whitespace, or None if absent."""
-        token = None if at is None else _token(source, at)
-        return _skip_whitespace(source, token[2]) if token and token[:2] == ("keyword", word) else None
-
-    index = _skip_whitespace(source, 0)
-    for word in ("module", "prelude"):
-        index = keyword(index, word) or index
-    while index is not None:
-        at = index
-        for word in ("public", "meta"):
-            at = keyword(at, word) or at
-        if (at := keyword(at, "import")) is None:
-            break
-        at = keyword(at, "all") or at
-        token = _token(source, at)
-        if not token or token[0] != "ident":
-            break
-        found.append(".".join(token[1]))
-        index = _skip_whitespace(source, token[2])
+    number = 0
+    while number < len(lines):
+        line = lines[number]
+        number += 1
+        text = line.lstrip(" ")
+        if not text or text.startswith("--"):
+            if "\r" in line:
+                raise HeaderError(number, "carriage return in the header")
+            continue
+        if not text[0].isprintable():  # a tab, carriage return, byte order mark, Unicode space...
+            raise HeaderError(number, f"character {text[0]!r} at the start of a header line")
+        if text.startswith("/-") and text[2:3] not in ("-", "!"):
+            number = _block_comment(lines, number - 1, len(line) - len(text))
+            continue
+        if text.startswith(HEADER_WORDS):
+            match = PLAIN_IMPORT.fullmatch(line)
+            if match is None or "\r" in line:
+                raise HeaderError(number, "not a plain `import A.B.C` line")
+            if match[1] in KEYWORD_NAMES:
+                raise HeaderError(number, f"`{match[1]}` is a header keyword, not a module")
+            found.append(match[1])
+            continue
+        break  # the first command: Lean's header has ended
     return found
+
+
+def _block_comment(lines: list[str], first: int, column: int) -> int:
+    """Check the block comment opening at lines[first][column]; return the next line's index."""
+    text = "\n".join(lines[first:])
+    start = column
+    close = text.find("-/", start + 2)
+    if close < 0:
+        raise HeaderError(first + 1, "unterminated block comment")
+    if "/-" in text[start + 2:close + 2]:
+        raise HeaderError(first + 1 + text.count("\n", start, text.index("/-", start + 2)),
+                          "`/-` inside a block comment")
+    last = first + text.count("\n", 0, close)
+    rest = text[close + 2:].split("\n", 1)[0]
+    if rest.strip(" "):
+        raise HeaderError(last + 1, "text after the closing `-/` of a block comment")
+    if "\r" in text[start:close]:
+        raise HeaderError(first + 1, "carriage return in a header comment")
+    return last + 1
+
+
+def pinned_lean(toolchain: str) -> list[str] | None:
+    """The command that runs the pinned toolchain's `lean`, or None if it is not installed.
+
+    Never installs anything: elan's `lean +TOOLCHAIN` would download a missing
+    toolchain, so it is used only for one `elan toolchain list` shows.
+    """
+    toolchain = toolchain.strip()
+    try:
+        elan = shutil.which("elan")
+        if elan is not None:
+            listed = subprocess.run([elan, "toolchain", "list"], capture_output=True, text=True,
+                                    timeout=2, check=False).stdout
+            lean = Path(elan).with_name("lean")
+            if toolchain in {line.split()[0] for line in listed.splitlines() if line.split()} and lean.exists():
+                return [str(lean), f"+{toolchain}"]
+            return None
+        lean = shutil.which("lean")
+        version = toolchain.rpartition(":v")[2]
+        if lean is not None and version and f"(version {version}," in subprocess.run(
+                [lean, "--version"], capture_output=True, text=True, timeout=2, check=False).stdout:
+            return [lean]
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+def lean_disagreements(lean: list[str], files: dict[str, tuple[Path, list[str]]],
+                       budget: float = ORACLE_BUDGET) -> tuple[dict[str, str], int]:
+    """Ask the pinned toolchain's own header parser (`lean --deps`) what each file imports.
+
+    `files` maps a name to (a file holding the source, the imports `imports`
+    read). Returns the files whose imports Lean reads differently, with a
+    message, and how many files were confirmed or refuted within `budget`
+    seconds; files left unchecked rely on the plain-layout grammar alone.
+    """
+    deadline = time.monotonic() + budget
+    with tempfile.TemporaryDirectory(prefix="ve-lean-deps-") as folder:
+        # `lean --deps` resolves each import to an .olean path under a search
+        # root holding the module's top-level directory; it needs no .olean.
+        root = Path(folder)
+        for _, claimed in files.values():
+            for module in claimed:
+                (root / module.split(".")[0]).mkdir(exist_ok=True)
+        env = {**os.environ, "LEAN_PATH": str(root)}
+
+        def ask(item: tuple[str, tuple[Path, list[str]]]) -> tuple[str, str | None] | None:
+            name, (path, claimed) = item
+            left = deadline - time.monotonic()
+            if left <= 0:
+                return None
+            try:
+                result = subprocess.run([*lean, "--deps", str(path)], env=env, capture_output=True,
+                                        text=True, timeout=left, check=False)
+            except subprocess.TimeoutExpired:
+                return None
+            lines = result.stdout.splitlines()
+            if result.returncode or not lines or Path(lines[0]).name != "Init.olean":
+                problem = (result.stderr.strip().splitlines() or ["no output"])[0]
+                return name, f"the pinned Lean cannot read this header (`lean --deps`: {problem})"
+            library = Path(lines[0]).parent  # the implicit `import Init` comes first
+            read = []
+            for line in lines[1:]:
+                path = Path(line)
+                base = root if path.is_relative_to(root) else library
+                read.append(".".join(path.relative_to(base).with_suffix("").parts)
+                            if path.suffix == ".olean" and path.is_relative_to(base) else line)
+            if read != claimed:
+                return name, f"the pinned Lean reads imports {read}, not {claimed}"
+            return name, None
+
+        with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as pool:
+            answers = [answer for answer in pool.map(ask, files.items()) if answer is not None]
+    return {name: message for name, message in answers if message is not None}, len(answers)
 
 
 def main() -> int:
@@ -130,8 +178,22 @@ def main() -> int:
     unmapped = sorted(module for module in paths if lean_layer(module) is None)
     edges = set()
     unknown = set()
+    headers = []
+    read = {}
     for importer, path in paths.items():
-        for imported in imports(path.read_text()):
+        try:
+            read[importer] = imports(path.read_text())
+        except HeaderError as error:
+            headers.append(f"{path.relative_to(ROOT)}: {error}")
+    toolchain = ROOT / "lean/lean-toolchain"
+    lean = pinned_lean(toolchain.read_text()) if toolchain.exists() else None
+    if lean is not None:
+        wrong, _ = lean_disagreements(lean, {importer: (paths[importer], found)
+                                             for importer, found in read.items()}, budget=60)
+        headers.extend(f"{paths[importer].relative_to(ROOT)}: {message}; {PLAIN_LAYOUT}"
+                       for importer, message in sorted(wrong.items()))
+    for importer, found in read.items():
+        for imported in found:
             if imported not in paths:
                 if imported.startswith("VE.") or imported in {"VE", "Iceberg"}:
                     unknown.add(f"{importer} -> {imported}")
@@ -143,13 +205,15 @@ def main() -> int:
     expected = json.loads(LEDGER.read_text())
     for message in (f"unmapped Lean module: {x}" for x in unmapped):
         print(message, file=sys.stderr)
+    for message in (f"Lean header not in the plain layout: {x}" for x in sorted(headers)):
+        print(message, file=sys.stderr)
     for message in (f"missing local Lean import: {x}" for x in sorted(unknown)):
         print(message, file=sys.stderr)
     for edge in sorted(edges - expected.keys()):
         print(f"new outward Lean import: {edge}", file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or unknown or edges != expected.keys():
+    if unmapped or headers or unknown or edges != expected.keys():
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0
