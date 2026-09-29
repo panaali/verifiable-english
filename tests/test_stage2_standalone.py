@@ -107,3 +107,35 @@ def test_lean_typing_diagnostics_match_python(profiles, monkeypatch):
         monkeypatch.setenv("VE_AUTHORITY", "lean")
         assert _typing_error(env, formula) == expected, formula
         monkeypatch.delenv("VE_AUTHORITY")
+
+
+def _legacy_environment(kind):
+    from ve.environment import (LANGUAGE, PROFILE, SPEC_REVISION as V0_REV, CLOSURE_LANGUAGE,
+                                CLOSURE_PROFILES, CLOSURE_REVISION, ORDER_PROFILES, ORDER_REVISION)
+    raw = raw_environment(())
+    raw.pop("profiles")
+    if kind == "v0":
+        raw.update(language=LANGUAGE, spec_revision=V0_REV, profile=PROFILE)
+    else:
+        raw.update(language=CLOSURE_LANGUAGE,
+                   spec_revision=CLOSURE_REVISION if kind == "closure" else ORDER_REVISION,
+                   profiles=list(CLOSURE_PROFILES if kind == "closure" else ORDER_PROFILES))
+    return Environment(raw)
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("kind", ["v0", "closure", "order"])
+def test_lean_typing_on_legacy_envelopes_matches_python(kind, monkeypatch):
+    from ve.ast import Binary, Const, Forall, Unary, Var, check_formula
+    env = _legacy_environment(kind)
+    formula = Forall("item", Unary("base", Var(0)))
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert check_formula(env, formula) == formula
+    row = run("check", [{"id": "c", "environment": env.to_dict(), "ast": formula_to_data(env, formula)}])[0]
+    assert row["meaning_id"] == meaning_id(env, formula)
+    monkeypatch.delenv("VE_AUTHORITY")
+    for bad in (Unary("missing", Const("x")), Binary("base", Const("x"), Const("x"))):
+        expected = _typing_error(env, bad)
+        monkeypatch.setenv("VE_AUTHORITY", "lean")
+        assert _typing_error(env, bad) == expected
+        monkeypatch.delenv("VE_AUTHORITY")

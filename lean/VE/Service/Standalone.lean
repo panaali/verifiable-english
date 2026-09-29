@@ -167,10 +167,53 @@ def decodeTyped (checked : Validated) (ast : Json) (formula : Bool) : Except Str
       let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast
       pure ()
 
+/-- The frozen pre-route envelopes: `ve.core@0` (v0) and `ve.core@0.1`
+(closure, or order with exactly the order profiles). Returns the profiles
+Python reports and the identity domain version. -/
+def legacyTyped (environment ast : Json) (formula : Bool) :
+    Except String (List String × String) := do
+  let language ← VE.Bridge.stringField environment "language"
+  let asts := if formula then Json.arr #[ast] else ast
+  if language == "ve.core@0" then
+    let v ← VE.Bridge.decodeEnvironment environment
+    let _ ← VE.Bridge.decodeDocument v.environment asts
+    pure (["relational-fol@0"], "v0")
+  else if language == "ve.core@0.1" then
+    if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
+      let v ← VE.Order.Wire.decodeEnvironment environment
+      let _ ← VE.Order.Wire.decodeFormulas v.environment asts
+      pure (["order@0", "relational-fol@0"], "v0.1-order")
+    else
+      let v ← VE.Closure.Bridge.decodeEnvironment environment
+      let _ ← VE.Closure.Bridge.decodeFormulas v.environment asts
+      pure (["closure@0", "relational-fol@0"], "v0.1")
+  else throw "UnsupportedProfile: Unsupported language"
+
+def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (items : List Json) :
+    Except String Json := do
+  let (_, version) ← match legacyTyped environment ast formula with
+    | .ok result => pure result
+    | .error message =>
+      let profiles := if environment.getObjValD "language" == .str "ve.core@0" then ["relational-fol@0"]
+        else match environment.getObjValD "profiles" with
+          | .arr ps => ps.toList.filterMap (·.getStr?.toOption)
+          | _ => []
+      if message.startsWith "ResourceLimit" || message.startsWith "UnsupportedProfile" then throw message
+      throw ((TypingDiagnostic.diagnose profiles (environment.getObjValD "vocabulary")
+        (if formula then [ast] else items)).getD message)
+  let envId ← VE.CertificateWire.digest s!"ve-environment-{version}\n" environment
+  let meaningId ← VE.CertificateWire.digest s!"ve-meaning-{version}\n"
+    (Json.mkObj [("environment_id", .str envId), ("ast", ast)])
+  pure (VE.Route.Wire.ok id [("well_typed", .bool true), ("meaning_id", .str meaningId)])
+
 def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let ast ← j.getObjVal? "ast"
+  if environment.getObjValD "language" != Json.str "ve.core@0.2" then
+    let items ← ast.getArr?
+    return ← legacyCheckCase id environment ast
+      (match items[0]? with | some (Json.str _) => true | _ => false) items.toList
   let checked ← validated environment (typing := true)
   let e := checked.envelope
   let items ← ast.getArr?
