@@ -101,14 +101,10 @@ def test_risk_quantity_environment_rejects_order_checker():
     (lambda r: r["risk"].update(unknown=True), "InvalidInput: risk.unknown"),
     (lambda r: r["risk"]["severity"].update(sort="harm"), "RiskSeverityNotFresh"),
     (lambda r: r["risk"]["severity"].update(classes=["minor", "minor"]), "risk class minor"),
-    (lambda r: r["risk"]["severity"].update(classes=["avoidable"]), "RiskReserved"),
+    (lambda r: r["risk"]["severity"].update(classes=["avoidable"]), "AlternativesReserved: avoidable"),
     (lambda r: r["risk"]["severity"].update(more_severe=[["severe", "minor"], ["minor", "severe"]]), "DependencyCycle"),
     (lambda r: r["risk"]["severity"].update(unranked=[["minor", "severe"]]), "RiskUnrankedAgainstOrder"),
     (lambda r: r["risk"].update(harm_classes=[]), "HarmUnclassified"),
-    (lambda r: r["vocabulary"]["predicates"].update(alias={"arguments": ["action", "harm"],
-                                                          "description": "alias",
-                                                          "verbalisation": "{0} might lead to {1}"}),
-     "RiskReserved: wording"),
     (lambda r: r["risk"].update(harm_classes=[["outage", "severe"]] * 2), "HarmTwoClasses"),
     (lambda r: r["alternatives"].update(outcomes={"complete_by": "team"}), "RiskOutcomes"),
     (lambda r: r["profiles"].remove("alternatives@0"), "risk@0 requires alternatives@0"),
@@ -134,27 +130,59 @@ def test_excludes_and_route_unavailable(monkeypatch, tmp_path):
         run_case(case, binary=tmp_path / "absent")
 
 
-def test_decision_envelope_shape_precedes_dispatch(monkeypatch):
+def _decision_cases():
+    """Malformed records whose first diagnostic Python used to decide (review A3, B1)."""
+    base = {"format": "ve-risk-decision@0", "id": "17", "chooser": "agent", "chooser_label": "agent",
+            "policy": {"environment_id": "e", "document_hash": "d"},
+            "alternatives": [{"name": "run", "label": "running"}], "quantities": [], "cites": [], "facts": []}
+    entry = {"seq": 4, "day": "2026-09-29", "id": "D17", "kind": "decision", "prev": "", "hash": "h"}
+    unrecorded = {"kind": "estimate", "id": "E1", "content": {}, "prev": "", "hash": "h"}
+    no_facts = {k: v for k, v in base.items() if k != "facts"}
+    cases = {
+        # A1: supplied entries decode (EstimateProvenance … recorded) before the record does
+        "facts-missing-and-unrecorded": ({**entry, "content": no_facts}, [unrecorded]),
+        # Lean's record decoder accepts empty strings; the answer is its next check
+        "empty-id": ({**entry, "content": {**base, "id": "", "chooser_label": ""}}, []),
+        "empty-alternative-label": ({**entry, "content": {**base, "alternatives": [{"name": "run", "label": ""}]}}, []),
+        # one text per field: Lean's `InvalidInput: risk-decision.record`, not `.fields`
+        "extra-field": ({**entry, "content": {**base, "note": "x"}}, []),
+        "cite-seq-type": ({**entry, "content": {**base, "cites": [{"id": "E1", "seq": "1", "hash": "h"}]}}, []),
+    }
+    from conformance.risk import entry_hash
+    for decision, _ in cases.values():
+        decision["hash"] = entry_hash(decision)
+    return {name: {"id": name, "kind": "risk-decision", "environment": risk_source(),
+                   "document": {"norms": []}, "decision": decision, "entries": entries}
+            for name, (decision, entries) in cases.items()}
+
+
+def test_python_authority_gives_no_record_verdict(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
-    case = {"id": "one", "kind": "risk-decision", "environment": risk_source(),
-            "decision": {"kind": "decision", "content": {"format": "ve-risk-decision@0"}},
-            "entries": []}
-    with pytest.raises(VEError, match="risk-decision.id"):
-        run_case(case)
-    record = case["decision"]["content"]
-    record.update(id="17", chooser="agent", chooser_label="agent",
-                  policy={"environment_id": "e", "document_hash": "d"},
-                  alternatives=[{"name": "run", "label": "running"}], quantities=[], cites=[], facts=[])
-    case["decision"].update(seq=4, day="2026-09-29", id="D17", prev="", hash="h")
-    case["entries"] = [{"kind": "estimate", "id": "E1", "content": {}, "prev": "", "hash": "h"}]
-    with pytest.raises(VEError, match="EstimateProvenance: E1 recorded"):
-        run_case(case)
-    case["entries"][0].update(seq=1, day="2026-09-29")
-    with pytest.raises(CheckerUnavailable, match="Lean checker"):
-        run_case(case)
-    case["kind"] = []
+    for case in _decision_cases().values():
+        with pytest.raises(CheckerUnavailable, match="Lean checker"):
+            run_case(case)
     with pytest.raises(VEError, match="risk route case"):
-        run_case(case)
+        run_case({"id": "x", "kind": [], "environment": {}})
+
+
+@pytest.mark.skipif(not (Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route").exists(),
+                    reason="ve_risk_route is not built")
+def test_record_diagnostics_are_the_routes():
+    """risk.md 6: record diagnostics come from the Lean route; Python only dispatches."""
+    import json
+    import subprocess
+    binary = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route"
+    cases = _decision_cases()
+    direct = json.loads(subprocess.run([str(binary), "-"], input=json.dumps(list(cases.values())), text=True,
+                                       capture_output=True, timeout=300).stdout)
+    for (name, case), expected in zip(cases.items(), direct):
+        assert run_case(case) == expected, name
+    errors = {name: row["error"] for name, row in zip(cases, direct)}
+    assert errors["facts-missing-and-unrecorded"] == "EstimateProvenance: E1 recorded"
+    assert errors["extra-field"] == "InvalidInput: risk-decision.record"
+    assert errors["cite-seq-type"] == "InvalidInput: risk-decision.cites"
+    # the empty strings decode; binding to the loaded policy is the first failure
+    assert errors["empty-id"] == errors["empty-alternative-label"] == "RiskBinding: policy"
 
 
 def test_frozen_wordings_and_pending_sufficient_form():
