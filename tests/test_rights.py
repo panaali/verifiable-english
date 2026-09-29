@@ -387,6 +387,76 @@ def test_joint_couplings_reject_empty_complete_choice_space():
                            {"a", "b", "preamble"})
 
 
+def _labelled_sets(contents):
+    return [{"id": name, "version": 1, "unit": f"u-{name}", "status": "open",
+             "readings": [{"id": f"{name}-{i}", "kind": "asserted", "content": content,
+                           "labels": {"force": force}, "original_index": i}
+                          for i, (force, content) in enumerate(pairs)]}
+            for name, pairs in contents.items()]
+
+
+FORCE = [{"id": "same-force", "axis": "force",
+          "sets": [{"set": "a", "version": 1}, {"set": "b", "version": 1}],
+          "by": "translator", "reason_spans": ["preamble"]}]
+
+
+def test_coupled_readings_never_turn_zero_choices_into_all():
+    from tests.test_document import VOCAB, envelope
+    from ve.environment import Environment
+    from ve.readings import check_readings
+    env = Environment(envelope(VOCAB))
+    p = ["unary", "senior", ["const", "alice"]]
+    # a narrowing that keeps a strict candidate of a and a default one of b leaves no
+    # coupled choice; before, zero choices of which zero failed were reported ALL
+    narrowed = _labelled_sets({"a": [("strict", p)], "b": [("default", p)]})
+    with pytest.raises(VEError, match="CouplingUnsatisfiable: same-force"):
+        check_readings(env, narrowed, ["top"], couplings=FORCE)
+    with pytest.raises(VEError, match="CouplingUnsatisfiable: same-force"):
+        plan_choices(narrowed, couplings=FORCE)
+
+
+def test_coupled_positive_choices_carry_their_premise_status():
+    from tests.test_document import VOCAB, envelope
+    from ve.environment import Environment
+    from ve.readings import check_readings
+    env = Environment(envelope(VOCAB))
+    p = ["unary", "senior", ["const", "alice"]]
+    sets = _labelled_sets({"a": [("strict", p), ("default", ["top"])],
+                           "b": [("strict", ["not", p]), ("default", ["top"])]})
+    result = check_readings(env, sets, ["bottom"], couplings=FORCE)
+    # the only choice that proves the conclusion is inconsistent: shown vacuous, not as support
+    assert result["verdict"] == "SOME"
+    positive = [row for row in result["choices"] if "certificate" in row]
+    assert len(positive) == 1 and positive[0]["vacuous"] is True
+    assert positive[0]["premises"]["status"] == "INCONSISTENT"
+    assert result["vacuous"] is True
+    consistent = check_readings(env, sets, ["top"], couplings=FORCE)
+    assert consistent["verdict"] == "ALL"
+    assert [row["vacuous"] for row in consistent["choices"]] == [True, False]
+
+
+def test_unknown_past_the_budget_names_the_open_units():
+    # iota, scaled: coupled sets resolved to one candidate per joint value, plus uncoupled
+    # binary sets; past 64 choices the verdict names only the units still open
+    def labelled(name, pairs):
+        return {"id": name, "version": 1, "unit": f"u-{name}", "status": "open",
+                "readings": [{"id": f"{name}-{i}", "kind": "right", "content": None,
+                              "labels": labels} for i, labels in enumerate(pairs)]}
+    four = [{"bearer": b, "polarity": p} for b in ("state", "person") for p in ("negative", "positive")]
+    coupled = [labelled(f"c{i}", four) for i in range(3)]
+    loose = [labelled(f"f{i}", [{"force": "strict"}, {"force": "default"}]) for i in range(5)]
+    couplings = [{"id": f"c-{axis}", "axis": axis, "sets": [{"set": s["id"], "version": 1} for s in coupled],
+                  "by": "translator", "reason_spans": ["preamble"]} for axis in ("bearer", "polarity")]
+    plan = plan_choices(coupled + loose, couplings=couplings)
+    assert plan["route"] == "UNKNOWN"
+    assert plan["units"] == [f"u-f{i}" for i in range(5)]
+    assert plan_choices(coupled + loose[:4], couplings=couplings)["route"] == "enumerate"
+    assert len(plan_choices(coupled + loose[:4], couplings=couplings)["choices"]) == 64
+    uncoupled = plan_choices(coupled + loose)
+    assert uncoupled["route"] == "UNKNOWN"
+    assert uncoupled["units"] == [s["unit"] for s in coupled + loose]
+
+
 def test_power_splits_into_liberty_and_recognition():
     raw = rights_env()
     predicates = raw["vocabulary"]["predicates"]
