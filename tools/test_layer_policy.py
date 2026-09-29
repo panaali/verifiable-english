@@ -190,8 +190,18 @@ class LayerSelectionTests(unittest.TestCase):
                        "import /- c -/ VE.Surface\n", "import -- c\n  VE.Surface\n"):
             self.assertIn("VE.Surface", check_lean_imports.imports(source), source)
         for source in ('def s := "import VE.Surface"\n', "def x := Foo.import\nimportant VE.Surface\n",
-                       '/- "unclosed -/\ndef s := "\\" import VE.Surface"\n'):
+                       '/- "unclosed -/\ndef s := "\\" import VE.Surface"\n',
+                       "import VE.Core.Bridge\ndef «an import VE.Surface» := 1\n",
+                       "import VE.Core.Bridge\ndef x := 1\nimport VE.Surface\n",
+                       "/-! doc -/\nimport VE.Surface\n"):
             self.assertNotIn("VE.Surface", check_lean_imports.imports(source), source)
+
+    def test_successive_lean_imports_are_read_separately(self):
+        # tests/test_lean_import_reader.py checks these against Lean's own header parser.
+        for source in ("import VE.Core.Bridge import«VE».Surface\n", "import VE.Core.Bridge import «VE».Surface\n",
+                       "import VE.Core.Bridge/- c -/import VE.Surface\n"):
+            self.assertEqual(check_lean_imports.imports(source), ["VE.Core.Bridge", "VE.Surface"], source)
+        self.assertEqual(check_lean_imports.imports("module\nmeta import all VE.Surface\n"), ["VE.Surface"])
 
     def test_quoted_lean_local_import_is_checked(self):
         with TemporaryDirectory() as directory:
