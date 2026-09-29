@@ -1177,8 +1177,10 @@ soundness → document iff; the theorem over already-decoded formulas in 6.2 can
 
 ### 11.5 Limits
 
-Rules ≤ 256 per document, regulated predicates ≤ 64, precedence depth ≤ 16, carve-outs ≤ 8 per rule, guard size
-within `MAX_NODES`; witness search uses the existing search bounds and `MAX_EVALUATIONS`; every overflow is
+Rules ≤ 256 per document, regulated predicates ≤ 64, precedence depth ≤ 16, carve-outs ≤ 8 per rule. Node budgets
+(`MAX_NODES`, term nodes included) are those of Python's decoder and checker: each norm object's guard and
+carve-outs decode within one budget, and every guard and carve-out of the document is typed within one budget, in
+rule order; witness search uses the existing search bounds and `MAX_EVALUATIONS`; every overflow is
 `ResourceLimit` with the limit named, never a truth value.
 
 ### 11.6 Rust (P0 3.7)
