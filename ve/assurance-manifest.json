@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 8583,
+    "total_lines": 8972,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -88,6 +88,9 @@
       {"file": "lean/VE/Norms/Replay.lean", "lines": 393, "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
        "ranges": [[92, 140], [272, 291]],
        "declarations": ["baseEnvironmentJson", "documentHash", "decodePackage", "witnessFrom"]},
+      {"file": "lean/VE/Norms/Flagged.lean", "lines": 389, "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
+       "ranges": [[1, 389]], "declarations": ["regenerated", "replayEntailment", "decodePackage", "replayConflict", "witnessFrom", "replayWitness"],
+       "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"},
       {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
        "ranges": [[1, 471]], "declarations": ["decodeLeaf", "decodeLemma"]},
       {"file": "lean/VE/Norms/Admission.lean", "lines": 465, "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
@@ -486,7 +489,7 @@
       "authority": "python",
       "target": "lean",
       "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; norms with definitions or data flags are a Lean gap (plan 2.3)"},
+                    "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; the Lean norms route takes FOL-family documents with definitions and data flags, and norms on the closure, core and order families are a Lean gap (plan 2.3)"},
       "python": ["ve.norms:NormDocument.elaborate", "ve.norms:NormDocument.premises"],
       "outcomes": {"verdict": ["regenerated layer premises"], "unknown": [],
                    "rejection": ["DuplicateDeclaration", "UnsupportedProfile", "InvalidInput"],
@@ -498,7 +501,7 @@
         "planned_modes": [],
         "theorems": ["VE.Norms.elaborate_iff", "VE.Norms.elaborate_iff_at", "VE.Norms.norms_route_intended"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Flagged.lean"]
       },
       "rust": {"commands": ["conformance"], "role": "evaluates the regenerated formulas"},
       "lean_call_sites": [],
@@ -526,9 +529,10 @@
         "planned_modes": [],
         "theorems": ["VE.Norms.conflictFreeCheck_sound", "VE.Norms.conflict_witness_sound", "VE.Norms.conflict_smallModel",
                      "VE.Norms.Replay.norms_wire_conflict_sound", "VE.Norms.Replay.norms_wire_conflict_free_expands",
-                     "VE.Norms.Replay.norms_wire_conflict_witness_sound"],
+                     "VE.Norms.Replay.norms_wire_conflict_witness_sound",
+                     "VE.Norms.Flagged.norms_flagged_conflict_sound", "VE.Norms.Flagged.norms_flagged_witness_sound"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean"]
       },
       "rust": {"commands": ["conformance"], "role": "evaluates Python-generated conflict targets"},
       "lean_call_sites": [],
@@ -555,9 +559,10 @@
         ],
         "planned_modes": [],
         "theorems": ["VE.Norms.Replay.norms_wire_acceptance", "VE.Norms.norms_route_acceptance",
-                     "VE.Norms.norms_route_entails_iff", "VE.Norms.norms_route_countermodel"],
+                     "VE.Norms.norms_route_entails_iff", "VE.Norms.norms_route_countermodel",
+                     "VE.Norms.Flagged.norms_flagged_acceptance"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/CertificateWire.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean", "lean/VE/CertificateWire.lean"]
       },
       "rust": null,
       "lean_call_sites": [],
