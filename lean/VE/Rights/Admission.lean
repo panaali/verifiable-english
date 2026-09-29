@@ -141,7 +141,7 @@ def validateCouplings (document : Json) : Except String (List String) := do
     let common := labelValues sets refs.head! axis
     unless common.any (fun v => refs.all (fun ref => (labelValues sets ref axis).contains v)) do
       throw s!"CouplingLabelMissing: {id}, {refs.head!.1}"
-  -- The couplings together must admit a complete choice (6.2).
+  -- The couplings together must allow a complete choice (6.2).
   let constraints := couplings.map (fun c =>
     ((c.getObjValD "axis").getStr?.toOption.getD "",
      match c.getObjValD "sets" with
