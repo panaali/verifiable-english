@@ -42,9 +42,36 @@ def lean_mode(env) -> str:
     return "order" if env.order else "evaluate"
 
 
+def route_environment(env) -> dict:
+    """The environment of a route case whose answer carries no environment identity.
+
+    The route gate refuses reports@0 and soft-norms@0. No Background generator,
+    evaluation or countermodel check reads the reports block or the soft
+    declarations, so such cases take the vocabulary without them (for reports,
+    the one the Lean attribution decoder hands the route decoder,
+    lean/VE/Attribution/Wire.lean decodeEnvironment).
+    """
+    data = env.to_dict()
+    if "reports@0" in env.profiles:
+        vocabulary = {key: value for key, value in data["vocabulary"].items() if key != "reports"}
+        vocabulary["constants"] = {name: {k: v for k, v in entry.items() if k != "verbalisation"}
+                                   for name, entry in vocabulary["constants"].items()}
+        data = {**data, "vocabulary": vocabulary,
+                "profiles": [p for p in data["profiles"] if p != "reports@0"]}
+    if "soft-norms@0" in env.profiles:
+        # The soft block and instruction_of name parties and ranks; the soft
+        # premises a validated soft document adds are not environment data.
+        vocabulary = {key: value for key, value in data["vocabulary"].items() if key != "soft"}
+        vocabulary["predicates"] = {name: {k: v for k, v in entry.items() if k != "instruction_of"}
+                                    for name, entry in vocabulary["predicates"].items()}
+        data = {**data, "vocabulary": vocabulary,
+                "profiles": [p for p in data["profiles"] if p != "soft-norms@0"]}
+    return data
+
+
 def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dict]:
     """(mode, case) for evaluating the formulas `ast` on `model`; rows carry `values`."""
-    case = {"id": case_id, "environment": env.to_dict(), "model": model, "ast": ast}
+    case = {"id": case_id, "environment": route_environment(env), "model": model, "ast": ast}
     mode = lean_mode(env)
     # The legacy evaluation runner takes a kind-less case; the others name it.
     return mode, case if mode == "evaluate" else {**case, "kind": "evaluate"}

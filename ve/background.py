@@ -166,7 +166,7 @@ def _background_python(env) -> tuple[Premise, ...]:
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
     from .backends.dispatch import execute
-    from .backends.lean_runner import route_mode, run
+    from .backends.lean_runner import route_environment, route_mode, run
     from .ast import formula_from_data
 
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
@@ -176,12 +176,17 @@ def background(env) -> tuple[Premise, ...]:
             # The frozen v0 and v0.1 envelopes have no generated Background: their
             # Lean certificate runners bind the case premises alone.
             return ()
-        row = run(route_mode(env), [case])[0]
+        request = {**case, "environment": route_environment(env)}
+        row = run(route_mode(env), [request])[0]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
-        return tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
+        base = tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
                      for wire, generator in zip(row["premises"], row["generators"], strict=True))
+        # Trusted composition: soft premises belong to a validated soft
+        # document, not to the environment JSON. Lean regenerates them in the
+        # soft route, and soft_route.check_regenerated compares them there.
+        return base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
 
     return execute("background", case, lambda: _background_python(env), lean=lean)
 

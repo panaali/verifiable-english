@@ -43,11 +43,66 @@ def stripPredicates (e : VE.Route.Gate.Envelope) (environment : Json) (names : L
   let vocabulary := e.vocabulary.setObjVal! "predicates" (Json.mkObj stripped)
   pure ⟨{ e with vocabulary }, environment.setObjVal! "vocabulary" vocabulary⟩
 
+/-- A `reports@0` environment as its FOL family reads it for typing: the
+profile, the `reports` block and constant verbalisations removed (the route
+decoder the attribution decoder delegates to sees the same vocabulary). -/
+def reportsReduced (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let constants ← VE.Bridge.fields (← vocabulary.getObjVal? "constants")
+  let constants ← constants.mapM fun (c, entry) => do
+    pure (c, Json.mkObj ((← VE.Bridge.fields entry).filter (·.1 != "verbalisation")))
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "reports@0"
+  let fields := (← VE.Bridge.fields vocabulary).filter (·.1 != "reports")
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    ((Json.mkObj fields).setObjVal! "constants" (Json.mkObj constants)))
+
+/-- An `alternatives@0` environment as typing reads it: the block removed and
+its four profile words declared over the block's role sorts (Python's
+`Environment` overlay), the profile removed. -/
+def alternativesReduced (environment : Json) : Except String Json := do
+  let block ← environment.getObjVal? "alternatives"
+  let chooser ← VE.Bridge.stringField block "chooser"
+  let action ← VE.Bridge.stringField block "action"
+  let harm ← VE.Bridge.stringField block "harm"
+  let word := fun (args : List String) => Json.mkObj [("arguments", toJson args),
+    ("description", .str "alternatives@0 profile word")]
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let words := [("avoidable", word [harm, chooser]), ("unavoidable", word [harm, chooser]),
+    ("allows", word [action, harm]), ("prevents", word [action, harm])]
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "alternatives@0"
+  let fields := (← VE.Bridge.fields environment).filter (·.1 != "alternatives")
+  pure (((Json.mkObj fields).setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (vocabulary.setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
+
+/-- The environment typing decodes: statement-layer profiles that add no typing
+constraint removed (`reports@0`, `soft-norms@0`, `alternatives@0` with its
+profile words declared). -/
+def typingReduced (environment : Json) : Except String Json := do
+  let profiles := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  let mut env := environment
+  if profiles.contains "reports@0" then env ← reportsReduced env
+  if profiles.contains "alternatives@0" then env ← alternativesReduced env
+  if profiles.contains "soft-norms@0" then
+    -- The soft block and `instruction_of` fields declare parties and ranks,
+    -- never argument sorts.
+    let vocabulary ← env.getObjVal? "vocabulary"
+    let predicates ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (p, entry) => do
+      pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (·.1 != "instruction_of")))
+    let fields := (← VE.Bridge.fields vocabulary).filter (·.1 != "soft")
+    env := (env.setObjVal! "profiles" (toJson (profiles.filter (fun p =>
+      p != "soft-norms@0" && p != "reports@0" && p != "alternatives@0")))).setObjVal! "vocabulary"
+      ((Json.mkObj fields).setObjVal! "predicates" (Json.mkObj predicates))
+  pure env
+
 /-- With `typing`, the core family's decoder, which has no `defined` or data
-flag fields, reads each predicate by its argument sorts alone: typing does not
-depend on those fields, which Python has already validated. Validation and
-model modes do not use this relaxation. -/
+flag fields, reads each predicate by its argument sorts alone, and a `reports@0`
+environment is read without its statement-layer profiles (`typingReduced`): typing
+depends on none of these, and Python has
+already validated them. Validation and model modes do not use these relaxations. -/
 def validated (environment : Json) (typing : Bool := false) : Except String Validated := do
+  -- Typing only: other modes keep the gate's refusal of these statement profiles.
+  let environment ← if typing then typingReduced environment else pure environment
   let e ← VE.Route.Gate.decodeEnvelope environment
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
   let mut v : Validated := ⟨e, environment⟩
@@ -228,8 +283,10 @@ def checkCase (j : Json) : Except String Json := do
       throw ((TypingDiagnostic.diagnose e.profiles e.vocabulary
         (if formula then [ast] else items.toList)).getD message)
     else throw message
-  let envId ← VE.Route.Wire.environmentId e.profiles environment
-  let meaningId ← VE.Route.Wire.meaningId e.profiles envId ast
+  -- Identities bind the submitted environment and profiles.
+  let profiles ← VE.Route.Gate.profilesOf environment
+  let envId ← VE.Route.Wire.environmentId profiles environment
+  let meaningId ← VE.Route.Wire.meaningId profiles envId ast
   pure (VE.Route.Wire.ok id [("well_typed", .bool true), ("meaning_id", .str meaningId)])
 
 /-- Source and meaning identities derive their domain from a checked
