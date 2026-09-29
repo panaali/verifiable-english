@@ -242,6 +242,38 @@ def test_document_rejects_citation_to_nonexistent_source_unit(tmp_path):
                result["rights"]["report"]["unlicensed_limitations"])
 
 
+def test_rights_coverage_counts_open_limitation_terms_and_findings(tmp_path):
+    from ve.document import coverage
+    # strict lines only, but a limitation's lim and cond terms are open: never soft CHECKED
+    path = rights_document_file(tmp_path, [right(), life_limitation()])
+    result = check_document(path)
+    residual = result["coverage"]["residual"]
+    assert residual["limitation_terms"] == 2
+    assert result["coverage"]["soft_status"] == "OPEN"
+    assert residual["unlicensed_limitations"] == 0 and residual["distinction_hits"] == 0
+    # an uncited default exception under the limitation is a finding counted in the total
+    line = claim()
+    line["norm"].update(mode="default", exception={"decided_by": "unstated",
+                         "sufficient": [], "necessary": [], "factors": []})
+    path = rights_document_file(tmp_path, [right([line]), life_limitation()])
+    result = check_document(path)
+    residual = result["coverage"]["residual"]
+    assert residual["unlicensed_limitations"] == 1
+    assert result["coverage"]["residual_total"] == sum(residual.values())
+    assert result["coverage"]["rights_report"]["unlicensed_limitations"] == [
+        "UnlicensedLimitation: exception of rule protect on right life"]
+    assert coverage(load_document(path))["residual"] == residual
+    # a bar's aimed terms are open too
+    liberty = {"kind": "liberty", "holder_slot": None, "cites": {},
+               "norm": {"name": "may-act", "predicate": "person_may_act", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    bar = {"bar": {"name": "b30", "reading": "query", "decided_by": "unstated"}}
+    covered = check_document(rights_document_file(tmp_path, [right([liberty]), bar]))["coverage"]
+    assert covered["residual"]["bar_terms"] == 1 and covered["soft_status"] == "OPEN"
+    # with no liberty there is no aimed term to count
+    assert check_document(rights_document_file(tmp_path, [right(), bar]))["coverage"]["residual"]["bar_terms"] == 0
+
+
 def test_rights_english_preserves_default_holder_guard_and_generated_conditions():
     raw = rights_env()
     raw["vocabulary"]["predicates"]["adult"] = {"arguments": ["person"],

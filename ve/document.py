@@ -523,9 +523,32 @@ def _assertion_disjunctions(env, sets):
     return result
 
 
-def coverage(doc, scoped=None):
+_RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar")
+
+
+def _rights_source_units(doc):
+    return [u["content"] for u in doc["units"]
+            if u["kind"] in (*_RIGHTS_KINDS, "norm") and type(u["content"]) is dict]
+
+
+def _rights_report(doc):
+    """The Lean-replayed rights report, or None while a rights reading set still
+    needs per-choice elaboration (its findings are then not yet known)."""
+    rights = doc.get("rights_document")
+    if rights is None:
+        return None
+    if any(c["kind"] in _RIGHTS_KINDS
+           for reading_set in active_reading_sets(doc["meta"].get("reading_sets", []))
+           for c in reading_set["readings"]):
+        return None
+    from .rights_route import report_rights
+    return report_rights(doc["environment"], _rights_source_units(doc), rights)
+
+
+def coverage(doc, scoped=None, rights_report=None):
     """`scoped`: the reports layer's checked scoped verdicts (`check_document`);
-    without them a scoped check is reported as not replayed."""
+    without them a scoped check is reported as not replayed. `rights_report`: the
+    replayed rights report when the caller already has it."""
     units = doc["units"]
     source = doc["source"]
     kinds = {}
@@ -658,15 +681,24 @@ def coverage(doc, scoped=None):
                 for reading_set in active_reading_sets(meta.get("reading_sets", [])))
         residual["couplings"] = len({item["axis"] for item in meta.get("couplings", [])})
         residual["narrowings"] = len(meta.get("narrowings", []))
+        # 7.2: the audit findings are residual lines and count into the total;
+        # while a rights reading set is pending they are not known, and say so.
+        if rights_report is None:
+            rights_report = _rights_report(doc)
+        if rights_report is None:
+            residual["rights_findings_pending"] = 1
+        else:
+            residual["unlicensed_limitations"] = len(rights_report["unlicensed_limitations"])
+            residual["distinction_hits"] = sum(len(row["hits"]) for row in rights_report["distinction"])
+    soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
+                 "limitation_terms", "bar_terms")
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
             "residual": residual, "residual_total": sum(residual.values()),
             **({"residual_lines": lines} if lines else {}),
             **({"alternatives": alternatives} if alternatives is not None else {}),
-            **({"soft_status": "OPEN" if any(residual[key] for key in
-                ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"))
-                else "CHECKED",
+            **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
                 "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
                 "soft_background_labels": [label for label, _ in soft.exception_premises]}
@@ -683,7 +715,12 @@ def coverage(doc, scoped=None):
                 *[f"coupling:{item['id']} ({item['axis']}, " +
                   ", ".join(ref["set"] for ref in item["sets"]) + ")"
                   for item in meta.get("couplings", [])]]}
-               if rights is not None else {})}
+               if rights is not None else {}),
+            **({"rights_report": {
+                "unlicensed_limitations": rights_report["unlicensed_limitations"],
+                "distinction_hits": rights_report["distinction_hits"],
+                "limitation_premises_used": rights_report["limitation_premises_used"]}}
+               if rights is not None and rights_report is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):
@@ -817,9 +854,11 @@ def _check_document(path):
         return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
+    rights_report = _rights_report(doc)
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
-              "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
+              "coverage": coverage(doc, rights_report=rights_report),
+              "reading_plan": doc["reading_plan"]}
     if soft is not None:
         from .soft_route import elaborate_soft_document
         elaborate_soft_document(soft)
@@ -839,21 +878,11 @@ def _check_document(path):
                                       "condition": condition}
                                      for (limit, act, condition), generated in rights.condition_names.items()],
             "limitation_background_labels": [label for label, _ in rights.limitation_premises]}
-        from .rights_route import report_rights
         assertions.extend(formula for _, formula in rights.limitation_premises)
-        source_units = [u["content"] for u in doc["units"]
-                        if u["kind"] in ("right", "right_lines", "limitation", "bar", "norm")
-                        and type(u["content"]) is dict]
-        if any(c["kind"] in ("right", "right_lines", "limitation", "bar")
-               for reading_set in active for c in reading_set["readings"]):
+        if rights_report is None:
             result["rights"]["report_status"] = "UNKNOWN: per-choice rights elaboration pending"
         else:
-            report = report_rights(doc["environment"], source_units, rights)
-            result["rights"]["report"] = report
-            result["coverage"]["rights_report"] = {
-                "unlicensed_limitations": report["unlicensed_limitations"],
-                "distinction_hits": report["distinction_hits"],
-                "limitation_premises_used": report["limitation_premises_used"]}
+            result["rights"]["report"] = rights_report
     if "graph" in doc["meta"]:
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
