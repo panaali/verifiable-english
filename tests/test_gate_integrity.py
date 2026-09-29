@@ -70,13 +70,46 @@ def test_pytest_plugin_observes_collection_bypasses(tmp_path, body, conftest):
 def test_gate_environment_discards_test_and_cargo_overrides(monkeypatch):
     for name, value in {"PYTEST_ADDOPTS": "--ignore=tests/test_lean_conformance.py",
                         "PYTEST_PLUGINS": "drop_tests", "CARGO_TARGET_DIR": "/tmp/stale",
-                        "CARGO_BUILD_TARGET": "other-target", "RUSTFLAGS": "--cfg fake"}.items():
+                        "CARGO_BUILD_TARGET": "other-target", "RUSTFLAGS": "--cfg fake",
+                        "RUSTC": "/tmp/fake-rustc", "RUSTC_WRAPPER": "/tmp/wrapper",
+                        "RUSTC_WORKSPACE_WRAPPER": "/tmp/wrapper", "RUSTDOC": "/tmp/fake-rustdoc",
+                        "GIT_DIR": "/tmp/fake-git", "GIT_WORK_TREE": "/tmp/fake-worktree",
+                        "GIT_INDEX_FILE": "/tmp/fake-index", "GIT_CONFIG_GLOBAL": "/tmp/fake-config",
+                        "PYTHONPATH": "/tmp/fake-tools", "PYTHONHOME": "/tmp/fake-python",
+                        "UV_PYTHON": "/tmp/fake-python"}.items():
         monkeypatch.setenv(name, value)
     env = gate.gate_environment()
-    for name in ("PYTEST_ADDOPTS", "PYTEST_PLUGINS", "CARGO_TARGET_DIR",
-                 "CARGO_BUILD_TARGET", "RUSTFLAGS"):
+    for name in ("PYTEST_ADDOPTS", "PYTEST_PLUGINS", "CARGO_TARGET_DIR", "CARGO_BUILD_TARGET",
+                 "RUSTFLAGS", "RUSTC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTDOC",
+                 "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_CONFIG_GLOBAL",
+                 "PYTHONPATH", "PYTHONHOME", "UV_PYTHON"):
         assert name not in env
     assert env["CARGO_HOME"] == str(gate.ROOT / ".cargo-home")
+    assert env["PYTHONNOUSERSITE"] == "1"
+
+
+def test_gate_environment_uses_real_repository_and_recorder(tmp_path, monkeypatch):
+    fake_tools = tmp_path / "tools"
+    fake_tools.mkdir()
+    (fake_tools / "__init__.py").write_text("")
+    (fake_tools / "gate_pytest.py").write_text("raise RuntimeError('fake recorder loaded')\n")
+    marker = tmp_path / "sitecustomize-loaded"
+    (tmp_path / "sitecustomize.py").write_text(
+        f"from pathlib import Path\nPath({str(marker)!r}).touch()\n")
+    monkeypatch.setenv("PYTHONPATH", str(tmp_path))
+    monkeypatch.setenv("GIT_DIR", str(tmp_path / "absent-git"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(tmp_path))
+    monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / "fake-index"))
+    env = gate.gate_environment()
+    sha, _ = gate.source_identity(env)
+    assert sha == subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=gate.ROOT,
+                                           env=env, text=True).strip()
+    run = subprocess.run([sys.executable, "-c", "from tools import gate_pytest; "
+                          "print(gate_pytest.__file__)"], cwd=gate.ROOT, env=env,
+                         capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr
+    assert run.stdout.strip() == str(gate.ROOT / "tools/gate_pytest.py")
+    assert not marker.exists()
 
 
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
