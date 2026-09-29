@@ -111,6 +111,9 @@ def test_decision_envelope_shape_precedes_dispatch(monkeypatch):
     case["entries"][0].update(seq=1, day="2026-09-29")
     with pytest.raises(CheckerUnavailable, match="Lean checker"):
         run_case(case)
+    case["kind"] = []
+    with pytest.raises(VEError, match="risk route case"):
+        run_case(case)
 
 
 def test_frozen_wordings_and_pending_sufficient_form():
