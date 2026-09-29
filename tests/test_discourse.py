@@ -488,3 +488,20 @@ def test_navigation_relabel_does_not_hide_a_slot(tmp_path):
     front["discourse"]["mentions"][0]["target"] = {"kind": "anchor", "name": "doc"}
     with pytest.raises(VEError, match=r"UnrecordedSlot: u2: \[17, 19\)"):
         check_document(_write(tmp_path, front, source))
+
+
+def test_discourse_wording(tmp_path):
+    """discourse2 loop A and B (discourse.py:527, 562): a unit recording a reference is printable
+    ASCII with canonical spacing once its surrounding layout is removed (4.1(4)), else one code."""
+    from ve.discourse import _canonical_wording
+    for text in ["It is safe.", "It is safe.\n", "\n\tIt is safe. ", "It is safe (v2.1).", "It, then, is safe; yes."]:
+        assert _canonical_wording(text), repr(text)
+    for text in ["It is safe .", "It is safe\t.", "It  is safe.", "It\tis safe.", "It\nis safe.", "It is safe.",
+                 "İt is safe (v2.1).", "It is safe , ok.", "It is ( v2).", "It is safe\x00.", "It is safe​."]:
+        assert not _canonical_wording(text), repr(text)
+    source, front = _sample(tmp_path)
+    cut = source.index(b"It")
+    source = source[:cut] + b"It is deployed .\n"
+    front["units"][1]["span"] = [cut, len(source)]
+    with pytest.raises(VEError, match=r"^InvalidInput: discourse wording of u2$"):
+        check_document(_write(tmp_path, front, source))

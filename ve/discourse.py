@@ -346,10 +346,26 @@ def _mention_words(doc, units, mention):
     return [w for w, x, y in _unit_tokens(doc, units[mention["unit"]]) if a <= x and y <= b]
 
 
+_LAYOUT = " \t\n\r"
+_CLOSING = ".,;:!?)"
+
+
+def _canonical_wording(text):
+    """Discourse wording (4.1(4), the Lean `canonicalWording`): once the layout characters around
+    it are removed, the text is printable ASCII with canonical spacing: one space between words,
+    none before `.,;:!?)` and none after `(`. So no tab, newline, Unicode space, control or
+    non-ASCII character lies inside a sentence."""
+    body = text.strip(_LAYOUT)
+    return (all(" " <= c <= "~" for c in body) and "  " not in body and "( " not in body
+            and not any(" " + c in body for c in _CLOSING))
+
+
 def _token_spans(doc, block):
     """Every mention's prose byte range starts and ends on token boundaries of its unit, which the
     lexer reads from the unit's own bytes (the Lean `toTokenSpans`, before any other check of the
-    block's contents): an unknown unit or a range that does not is `InvalidInput`."""
+    block's contents): an unknown unit or a range that does not is `InvalidInput`. With its span,
+    the unit of every recorded reference (a formula-producing mention) must have discourse wording
+    (`InvalidInput: discourse wording of <unit>`)."""
     units = {u["id"]: u for u in doc["units"]}
     mentions = block.get("mentions", [])
     for m in mentions if type(mentions) is list else []:
@@ -365,6 +381,9 @@ def _token_spans(doc, block):
         ends = [i for i, (_, _, b) in enumerate(tokens) if b == span[1]]
         if len(starts) != 1 or len(ends) != 1 or starts[0] > ends[0]:
             raise VEError(f"InvalidInput: mention {m['id']} span")
+        if (m.get("form") in _FORM_KINDS and m["form"] not in _LOCATION
+                and not _canonical_wording(units[m["unit"]]["source"])):
+            raise VEError(f"InvalidInput: discourse wording of {m['unit']}")
 
 
 def _segment_lengths(words, j, sorts, unary, displays):
@@ -514,7 +533,8 @@ def _accessible(doc, unit, mention, names, anchors):
 
 
 def _expanded(doc, unit, choices):
-    """The unit's text with each mention replaced by an explicit name: its one typed parse."""
+    """The unit's text with each mention replaced by an explicit name: its one typed parse. The
+    layout around the unit's sentences is not part of them (4.1(4)): the parser reads them alone."""
     from .english import parse_english
     start, end = unit["span"]
     raw, cursor = b"", start
@@ -524,7 +544,7 @@ def _expanded(doc, unit, choices):
     raw += doc["source"][cursor:end]
     try:
         expanded = raw.decode("utf-8")
-        parsed = parse_english(doc["environment"], expanded)
+        parsed = parse_english(doc["environment"], expanded.strip(_LAYOUT))
         if len(parsed.formulas) != 1:
             return None
         return expanded, formula_to_data(doc["environment"], parsed.formulas[0])
