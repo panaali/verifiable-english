@@ -3,10 +3,11 @@ import argparse
 import os
 from pathlib import Path
 import uvicorn
+from .models import ASSIST_MODELS, DEFAULT_ASSIST_MODEL
 from .server import Settings, create_app
 
 
-def main():
+def parser():
     p = argparse.ArgumentParser(description="VE writing desk (HTTPS by default)")
     p.add_argument("--host", default="0.0.0.0")
     p.add_argument("--port", type=int, default=8443)
@@ -16,10 +17,16 @@ def main():
     p.add_argument("--token-file", default=os.getenv("VE_WEB_TOKEN_FILE"))
     p.add_argument("--state-dir", type=Path, default=Path(".webapp-private"))
     p.add_argument("--assist", action="store_true", help="Enable subscription-spending Claude assistance")
-    p.add_argument("--model", choices=("haiku", "sonnet", "opus"), default="haiku")
+    p.add_argument("--model", choices=tuple(ASSIST_MODELS), default=DEFAULT_ASSIST_MODEL,
+                   help="Assistant model (default: Claude Sonnet 5.5)")
     p.add_argument("--claude-cli-version", help="Expected output of claude --version (detected at startup by default)")
     p.add_argument("--minute-cap", type=int, default=3)
     p.add_argument("--daily-cap", type=int, default=30)
+    return p
+
+
+def main():
+    p = parser()
     args = p.parse_args()
     if not 1024 <= args.port <= 65535:
         p.error("Use an unprivileged port from 1024 to 65535.")

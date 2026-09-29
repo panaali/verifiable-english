@@ -40,10 +40,10 @@ Non-loopback plain HTTP and privileged ports are rejected. Sessions expire after
 Configure the same authenticated Claude CLI/account used by `ve assist`, then append:
 
 ```bash
---assist --model haiku --minute-cap 3 --daily-cap 30
+--assist --minute-cap 3 --daily-cap 30
 ```
 
-The existing `ve_experiments.assist_haiku.ClaudeProposer` uses the controlled CLI endpoint, its pinned model/CLI checks, isolated working directory, and credential sanitizer. Account selection uses `VE_ASSIST_CLAUDE_ACCOUNT` or the existing `VE_CLAUDE_ACCOUNT_CONFIG_DIR`. No credentials are provisioned by this app. The repository currently pins Claude CLI `2.1.280 (Claude Code)`. Put that version on `PATH` for live assistance. A missing CLI, incompatible version, or unavailable account returns an availability error; there is no provider fallback. Preflight rejection can happen before any calls-ledger row is written.
+The assistant uses **Claude Sonnet 5.5** (`claude-sonnet-5-5`) by default. `--model` also accepts `haiku`, `sonnet` (Sonnet 5) and `opus`. The web app keeps this table in `ve_webapp/models.py`; the frozen experiment pins in `ve_experiments/claude_cli.py` are unchanged. The existing `ve_experiments.assist_haiku.ClaudeProposer` path uses the controlled CLI endpoint, its model/CLI checks, isolated working directory, and credential sanitizer. Account selection uses `VE_ASSIST_CLAUDE_ACCOUNT` or the existing `VE_CLAUDE_ACCOUNT_CONFIG_DIR`. No credentials are provisioned by this app. The repository currently pins Claude CLI `2.1.280 (Claude Code)`. Put that version on `PATH` for live assistance. A missing CLI, incompatible version, or unavailable account returns an availability error; there is no provider fallback. Preflight rejection can happen before any calls-ledger row is written.
 
 Each click proposes **one sentence**, with at most one backend attempt and a 1,024-token output ceiling; automatic repair is disabled. Suggestions never run while typing. Calls are limited to three per rolling minute and 30 per UTC day by default, shared by all sessions using the access token. SQLite reservations persist in the state directory and count failures conservatively, including rejected or timed-out requests. Do not delete or change the state directory to reset allowance. These are call caps, not exact input-token or currency caps. Input is bounded to 6,000 characters per text field and 32 KiB per request. A user can request 1–3 readings in the single response; the UI shows all candidates and checked distinguishing worlds when available.
 

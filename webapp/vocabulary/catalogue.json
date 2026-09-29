@@ -3,8 +3,8 @@
   "sources": {
     "ve_webapp/static/index.html": "6efad0d475915071c774f1aef55ea098b25e0b4e9f4ee8ba5687f5f2250aa3c0",
     "ve_webapp/static/app.js": "2374276d1a34c1f103779e3bc038512d1abf6836f54ca83063761eaa4800bd7d",
-    "ve_webapp/server.py": "16c4140b3ae42c564dd854ab66784d975b98a6efcd3c99bbb39a5f2db2198417",
-    "ve_webapp/worker.py": "db363fe1ab680d67a38bd6dfe2dc4137e704f3b0d7b9fe9d1210b2f3cfc6b9c0",
+    "ve_webapp/server.py": "3ffe501a63dab6b3adbf09105b84fe09bc55b1631affad374b5f65bbc7792849",
+    "ve_webapp/worker.py": "52a33d21498f459ad81a1c222f04ebe7af2a6b3a6b6c59493fbd565826c8afe2",
     "ve_webapp/drafts.py": "78fc21ca526c488bb8363b0a5f479c89ae4d316958780859be1939db51f27576",
     "ve_webapp/rules.py": "65847f56a2552b0b0f46588698510c8b5eaf1d8186715015e099211f42c8143e",
     "ve_webapp/examples.py": "d39de409076ebeba175c4bb9b57dd5744de8675f1b5d96342bed771505a138e0"
@@ -3265,6 +3265,11 @@
     },
     {
       "source": "ve_webapp/server.py",
+      "raw": ", ",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
       "raw": "--version",
       "visibility": "INTERNAL"
     },
@@ -3425,6 +3430,11 @@
     {
       "source": "ve_webapp/server.py",
       "raw": "CallAllowanceReached",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/server.py",
+      "raw": "Choose an assistant model from: ",
       "visibility": "INTERNAL"
     },
     {
@@ -3921,11 +3931,6 @@
     {
       "source": "ve_webapp/server.py",
       "raw": "form",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/server.py",
-      "raw": "haiku",
       "visibility": "INTERNAL"
     },
     {

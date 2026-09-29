@@ -70,14 +70,13 @@ def run(action, data, config=None, proposer=None):
         if len(session.sentence_order) != 1:
             raise ve.VEError("Select one sentence at a time for assistance.")
         if proposer is None:
-            from ve_experiments.assist_haiku import ClaudeProposer
-            from ve_experiments.claude_cli import Controls, MODELS
+            from .models import ASSIST_MODELS, AssistControls, AssistProposer
             date = datetime.now(timezone.utc).date().isoformat()
-            controls = Controls(model=MODELS[config["model"]], cli_version=config["cli_version"],
+            controls = AssistControls(model=ASSIST_MODELS[config["model"]], cli_version=config["cli_version"],
                 thinking_tokens=None, output_tokens=1024, effort=None, timeout_s=40,
                 working_directory=str(Path(config["state"]) / "claude-empty" / "cwd"),
                 context_date=date)
-            proposer = ClaudeProposer(Path(config["state"]) / f"calls-{date}.jsonl", model=config["model"],
+            proposer = AssistProposer(Path(config["state"]) / f"calls-{date}.jsonl", model=config["model"],
                 controls=controls, account_config_dir=config["account_config_dir"],
                 allow_builtin_agents_md=True)
         session.proposer = proposer

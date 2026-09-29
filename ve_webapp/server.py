@@ -18,6 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from ve.errors import VEError
 from .examples import EXAMPLES, BY_ID
 from .drafts import DraftStore, StaleDraft
+from .models import ASSIST_MODELS, DEFAULT_ASSIST_MODEL
 from .rules import check_rules, RULES_TEXT
 
 STATIC = Path(__file__).parent / "static"
@@ -30,7 +31,7 @@ class Settings:
     state: Path
     secure: bool = True
     assist: bool = False
-    model: str = "haiku"
+    model: str = DEFAULT_ASSIST_MODEL
     minute_cap: int = 3
     daily_cap: int = 30
     claude_cli_version: str | None = None
@@ -43,6 +44,8 @@ class Settings:
         self.state.mkdir(parents=True, exist_ok=True, mode=0o700)
         if self.minute_cap < 1 or self.daily_cap < 1:
             raise ValueError("Call caps must be positive.")
+        if self.model not in ASSIST_MODELS:
+            raise ValueError("Choose an assistant model from: " + ", ".join(ASSIST_MODELS))
         if self.assist:
             (self.state / "claude-empty").mkdir(mode=0o700, exist_ok=True)
             if self.claude_cli_version is None:

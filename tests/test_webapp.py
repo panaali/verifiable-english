@@ -141,19 +141,23 @@ def test_mocked_assist_and_persistent_quota(setup):
     assert calls==['propose','propose']
 
 
-def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch):
-    from ve_experiments.claude_cli import ClaudeCLI, MODELS
+@pytest.mark.parametrize('model,model_id', [(None, 'claude-sonnet-5-5'),
+                                             ('haiku', 'claude-haiku-4-5-20251001')])
+def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch, model, model_id):
+    from ve_experiments.claude_cli import ClaudeCLI
     monkeypatch.setenv('VE_CLAUDE_ACCOUNT_CONFIG_DIR', str(tmp_path / 'account'))
     monkeypatch.setattr('ve_webapp.server.subprocess.check_output',
                         lambda args, **kwargs: '2.1.283 (Claude Code)\n')
-    settings = Settings(TOKEN, tmp_path / '.webapp-private', assist=True)
+    settings = Settings(TOKEN, tmp_path / '.webapp-private', assist=True,
+                        **({'model': model} if model else {}))
+    assert settings.model == (model or 'sonnet-5.5')
     assert (settings.state / 'claude-empty').is_dir()
     assert settings.claude_cli_version == '2.1.283 (Claude Code)'
     seen = []
     def sample(client, item_id, system, prompt, sample_index):
         seen.append(client)
         return {'text': json.dumps({'candidates': [{'ve': '@api is safe.', 'reading': 'The API is safe.'}]}),
-                'input_tokens': 1, 'output_tokens': 1, 'served_model': MODELS['haiku'],
+                'input_tokens': 1, 'output_tokens': 1, 'served_model': model_id,
                 'account_label': client.account_label, 'key': 'mocked'}
     monkeypatch.setattr(ClaudeCLI, 'sample', sample)
     config = {'state': str(settings.state), 'model': settings.model,
@@ -164,12 +168,46 @@ def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch):
     assert len(seen) == 1
     controls = seen[0].controls
     assert controls.cli_version == '2.1.283 (Claude Code)'
-    assert controls.model == MODELS['haiku']
+    assert controls.model == model_id
+    assert seen[0].max_calls is None
     assert controls.working_directory == str(settings.state / 'claude-empty' / 'cwd')
     assert not (settings.state / 'claude-empty' / 'cwd').exists()
     assert seen[0].ledger.name.startswith('calls-')
     assert seen[0].account_config == tmp_path / 'account'
     assert seen[0].allow_builtin_agents_md is True
+
+
+def test_assistant_model_table_defaults_to_sonnet_5_5_without_changing_experiment_pins(tmp_path):
+    from ve_experiments.claude_cli import MODELS, Controls
+    from ve_webapp.__main__ import parser
+    from ve_webapp.models import ASSIST_MODELS, AssistControls, AssistProposer
+    # Frozen experiment pins stay as they are; Sonnet 5.5 lives in the web app's table.
+    assert MODELS == {'opus': 'claude-opus-5-5', 'haiku': 'claude-haiku-4-5-20251001',
+                      'sonnet': 'claude-sonnet-5'}
+    assert ASSIST_MODELS == {'sonnet-5.5': 'claude-sonnet-5-5', **MODELS}
+    assert next(iter(ASSIST_MODELS)) == 'sonnet-5.5'
+    assert parser().parse_args([]).model == 'sonnet-5.5'
+    assert parser().parse_args(['--model', 'haiku']).model == 'haiku'
+    with pytest.raises(SystemExit):
+        parser().parse_args(['--model', 'claude-sonnet-5-5'])
+    assert Settings(TOKEN, tmp_path, secure=False).model == 'sonnet-5.5'
+    with pytest.raises(ValueError, match='assistant model'):
+        Settings(TOKEN, tmp_path, secure=False, model='gpt')
+    with pytest.raises(ValueError, match='Sonnet 5'):
+        Controls(model='claude-sonnet-5-5')
+    with pytest.raises(ValueError, match="assistant table"):
+        AssistControls(model='claude-sonnet-4')
+    with pytest.raises(ValueError, match='thinking budget'):
+        AssistControls(model='claude-sonnet-5-5', output_tokens=10, thinking_tokens=20)
+    controls = AssistControls(model='claude-sonnet-5-5', thinking_tokens=None, effort=None)
+    with pytest.raises(ValueError, match='must match'):
+        AssistProposer(tmp_path / 'calls.jsonl', model='haiku', controls=controls,
+                       account_config_dir=tmp_path / 'account')
+    proposer = AssistProposer(tmp_path / 'calls.jsonl', model='sonnet-5.5', controls=controls,
+                              account_config_dir=tmp_path / 'account', allow_builtin_agents_md=True)
+    assert (proposer.model, proposer.model_id) == ('sonnet-5.5', 'claude-sonnet-5-5')
+    assert proposer.client.ledger == tmp_path / 'calls.jsonl'
+    assert proposer.client.account_config == tmp_path / 'account'
 
 
 def test_webapp_allows_only_cli_builtin_agents_md():
