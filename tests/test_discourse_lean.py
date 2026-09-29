@@ -1056,3 +1056,38 @@ def test_renewal_items_are_counterexamples_to_the_approved_statements(lean, tmp_
     result = admit(authored)
     assert result["admitted"] is True and result["joint"] == 1
     assert [leaf["label"] for leaf in result["report"]["assumptions"]] == ["readings:rs1@1:0"]
+
+
+# Regressions for the second loop re-check (manage-agents discourse-looprecheck2.final.md).
+
+# every character Python's `\s` (str.isspace) reads as a space, beyond ' ', \t, \n, \r
+UNICODE_SPACES = [chr(c) for c in range(0x110000) if chr(c).isspace() and chr(c) not in " \t\n\r"]
+
+
+def slot_outcomes(sentences, tmp_path, contents, names=PY_NAMES, environment=None):
+    """The Lean route's error (None when it admits) and the Python outcome on one document."""
+    doc = document(sentences, names=names, contents=contents)
+    return admit(doc, environment).get("error"), python_outcome(doc, tmp_path, environment)
+
+
+def test_unicode_spaces_separate_words(lean, tmp_path):
+    """looprecheck2 A (Access.lean:28): a no-break or any other Unicode space separates words in
+    Lean as `\\s` does in Python, so "It<space>is safe." has the pronoun slot `It`, and a
+    quantifier before one is a competing binder in both implementations."""
+    safe = {"u1": unary("safe", "api")}
+    for space in UNICODE_SPACES:
+        lean_error, python_error = slot_outcomes([f"It{space}is safe."], tmp_path, safe)
+        assert lean_error == "UnrecordedSlot: u1: [0, 1)", hex(ord(space))
+        assert python_error == "UnrecordedSlot: u1: [0, 2)", (hex(ord(space)), python_error)
+    # recorded, the pronoun resolves in both
+    doc = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents=safe)
+    assert admit(doc)["bound"] == {"u1": unary("safe", "api")}
+    assert python_outcome(doc, tmp_path)["references"][0]["status"] == "resolved"
+    # a quantifier spelled with a no-break space still competes (fixture beta)
+    beta = document(["A service is deployed.", "Api is reviewed.", "It is safe."],
+                    [("m1", "u3", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                    contents={"u3": unary("safe", "api")})
+    assert unit_result(resolve(beta), "u3") == "UnresolvedReference: m1"
+    assert admit(beta)["error"] == "UnresolvedReference: m1"
+    assert not isinstance(python_outcome(beta, tmp_path), dict)

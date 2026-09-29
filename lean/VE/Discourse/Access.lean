@@ -25,7 +25,14 @@ open VE.Route.Admission (DocUnit Kind)
 def punctChar (c : Char) : Bool :=
   c == ',' || c == ';' || c == ':' || c == '!' || c == '?' || c == '(' || c == ')' || c == '"'
 
-def wordChar (c : Char) : Bool := !c.isWhitespace && !punctChar c && c != '.'
+/-- The characters that separate words: Python's `str.isspace` (the `\s` of the Python checker's
+patterns), so a no-break or other Unicode space separates words as it does for a reader. -/
+def spaceChar (c : Char) : Bool :=
+  c.isWhitespace || (0x09 ≤ c.val && c.val ≤ 0x0D) || (0x1C ≤ c.val && c.val ≤ 0x1F) || c.val == 0x85 ||
+    c.val == 0xA0 || c.val == 0x1680 || (0x2000 ≤ c.val && c.val ≤ 0x200A) || c.val == 0x2028 ||
+    c.val == 0x2029 || c.val == 0x202F || c.val == 0x205F || c.val == 0x3000
+
+def wordChar (c : Char) : Bool := !spaceChar c && !punctChar c && c != '.'
 
 def charsBytes (cs : List Char) : Nat := cs.foldl (fun n c => n + c.utf8Size) 0
 
@@ -43,7 +50,7 @@ def lexGo : List Char → Nat → List Char → Nat → List (String × Nat × N
       (match rest with | n :: _ => n.isAlphanum | [] => false)
     if wordChar c || inner then
       lexGo rest next (c :: cur) (if cur.isEmpty then pos else start)
-    else if c.isWhitespace then flush cur start ++ lexGo rest next [] next
+    else if spaceChar c then flush cur start ++ lexGo rest next [] next
     else flush cur start ++ [(c.toString, pos, next)] ++ lexGo rest next [] next
 
 def lex (s : String) : List (String × Nat × Nat) := lexGo s.toList 0 [] 0
