@@ -42,8 +42,9 @@ def python_imports(module: str, source: str, exports: dict[str, str],
     facade_aliases = set()
 
     def local_module(name: str) -> bool:
+        # A directory without __init__.py still imports, as a namespace package.
         path = root.joinpath(*name.split("."))
-        return path.with_suffix(".py").exists() or (path / "__init__.py").exists()
+        return path.with_suffix(".py").exists() or path.is_dir()
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
