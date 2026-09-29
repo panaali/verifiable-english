@@ -1191,7 +1191,7 @@ theorem modelVocabulary_valid {R : RiskDoc} (hv : RiskValid R) (M : VE.FiniteMod
       exact riskEnv_ms R
   · have hnone : VE.Bridge.lookup (genPredList R) p = none := by
       simp only [generatedPreds, List.mem_cons, List.not_mem_nil, or_false, not_or] at hg
-      simp [genPredList, VE.Bridge.lookup, hg.1, hg.2.1, hg.2.2, Ne.symm hg.1, Ne.symm hg.2.1, Ne.symm hg.2.2]
+      simp [genPredList, VE.Bridge.lookup, Ne.symm hg.1, Ne.symm hg.2.1, Ne.symm hg.2.2]
     rw [hnone, Option.none_or, VE.Norms.Replay.lookup_filter_not] at hss
     simp only [envAt, VE.Norms.hide, List.drop_zero]
     split at hss
