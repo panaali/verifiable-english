@@ -706,19 +706,13 @@ def _trace_nodes(node: Any) -> int:
     return total
 
 
-def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
-    """Validate inputs and bindings as Python does, then replay in Lean.
+def _replay_prechecks(env, premises, conclusion, certificate, max_steps):
+    """Python's input, wire-schema and binding checks before a Lean replay.
 
-    Lean decides validity over the whole trace; Python's budget charges one
-    step per node before checking it. Below a trace's node count the outcome
-    depends on where an invalid trace first fails, which Lean does not report,
-    so that case is CheckerUnavailable rather than a guess.
+    They run in Python's order with Python's wording. The result is the trace's
+    node count (Python's replay charge), or the rejection record. They never
+    accept a certificate: validity is the Lean replay's.
     """
-    from .ast import _to_data
-    from .backends.lean_runner import route_mode, run
-    if getattr(env, "alternatives", None) is not None:
-        return EntailmentCertificateCheck(False, "InvalidCertificate", 0,
-                                          "alternatives@0 requires the Lean checker")
     try:
         canonical_json(certificate)
         full = _validate_inputs(env, premises, conclusion, background=True)
@@ -731,11 +725,51 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
             expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
-        nodes = _trace_nodes(certificate["trace"])
+        return _trace_nodes(certificate["trace"])
     except (ResourceLimit, RecursionError) as exc:
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
     except (VEError, ValueError, TypeError, KeyError, IndexError, AttributeError, _InvalidTrace) as exc:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+
+
+def _lean_replay_record(replay, nodes: int, max_steps: int) -> EntailmentCertificateCheck:
+    """The public record of a Lean replay (`replay()` is Lean's validity).
+
+    Lean decides validity over the whole trace; Python's budget charges one
+    step per node before checking it. Below a trace's node count the outcome
+    depends on where an invalid trace first fails, which Lean does not report,
+    so that case is CheckerUnavailable rather than a guess.
+    """
+    try:
+        valid = replay()
+    except ResourceLimit as exc:
+        if str(exc).startswith("ResourceLimit: certificate replay exceeds"):
+            raise CheckerUnavailable("CheckerUnavailable: the trace exceeds the Lean route's "
+                                     "replay cap") from None
+        return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
+    except VEError as exc:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+    if nodes > max_steps:
+        if valid:
+            return EntailmentCertificateCheck(False, "ResourceLimit", max_steps,
+                                              "certificate replay budget exhausted")
+        raise CheckerUnavailable("CheckerUnavailable: the replay budget is below the trace size "
+                                 "and Lean does not report where the trace fails")
+    if valid:
+        return EntailmentCertificateCheck(True, "Valid", nodes)
+    return EntailmentCertificateCheck(False, "InvalidCertificate", 0, "certificate does not replay")
+
+
+def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
+    """Validate inputs and bindings as Python does, then replay in Lean."""
+    from .ast import _to_data
+    from .backends.lean_runner import route_mode, run
+    if getattr(env, "alternatives", None) is not None:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0,
+                                          "alternatives@0 requires the Lean checker")
+    nodes = _replay_prechecks(env, premises, conclusion, certificate, max_steps)
+    if isinstance(nodes, EntailmentCertificateCheck):
+        return nodes
     case = {"id": "certificate", "environment": env.to_dict(),
             "premises": [_to_data(p) for p in premises], "conclusion": _to_data(conclusion),
             "certificate": certificate}
@@ -753,24 +787,7 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
         mode, case = "order", {**case, "kind": "certificate"}
     else:
         mode = "check-certificate"
-    try:
-        valid = run(mode, [case])[0]["valid"]
-    except ResourceLimit as exc:
-        if str(exc).startswith("ResourceLimit: certificate replay exceeds"):
-            raise CheckerUnavailable("CheckerUnavailable: the trace exceeds the Lean route's "
-                                     "replay cap") from None
-        return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
-    except VEError as exc:
-        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
-    if nodes > max_steps:
-        if valid:
-            return EntailmentCertificateCheck(False, "ResourceLimit", max_steps,
-                                              "certificate replay budget exhausted")
-        raise CheckerUnavailable("CheckerUnavailable: the replay budget is below the trace size "
-                                 "and Lean does not report where the trace fails")
-    if valid:
-        return EntailmentCertificateCheck(True, "Valid", nodes)
-    return EntailmentCertificateCheck(False, "InvalidCertificate", 0, "certificate does not replay")
+    return _lean_replay_record(lambda: run(mode, [case])[0]["valid"], nodes, max_steps)
 
 
 def _check_certificate_python(env: Any, premises: Sequence[Any], conclusion: Any,
