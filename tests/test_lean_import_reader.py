@@ -106,11 +106,11 @@ def lean_reads(tmp_path_factory):
             for source, verdict in zip(sources, verdicts)}
 
 
-@pytest.mark.parametrize("source,expected", CASES, ids=[repr(source)[:48] for source, _ in CASES])
-def test_listed_headers_read_as_lean_reads_them(lean_reads, source, expected):
-    assert lean_reads[source] == expected  # the listed expectation is Lean's own reading
-    if expected is not None:
-        assert imports(source) == expected
+def test_listed_headers_read_as_lean_reads_them(lean_reads):
+    for source, expected in CASES:
+        assert lean_reads[source] == expected, repr(source)  # each expectation is Lean's own reading
+        if expected is not None:
+            assert imports(source) == expected, repr(source)
 
 
 def test_random_headers_read_as_lean_reads_them(lean_reads):
